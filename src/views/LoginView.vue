@@ -27,8 +27,8 @@
     methods: {
       onLogin() {
         // Handle login here
-        // If successful, redirect to HomeView
-        this.$router.push({ name: 'HomeView' });
+        // If successful, redirect to ChatView
+        this.$router.push({ name: 'ChatView' });
       },
     },
   };

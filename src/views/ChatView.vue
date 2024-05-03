@@ -27,7 +27,7 @@ import { gptAPICall } from '@/services/gptServices';
 
 
 export default {
-  name: 'HomeView',
+  name: 'ChatView',
   props: ['threadId'],
   components: {
     ChatHeader,
