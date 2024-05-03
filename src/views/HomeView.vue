@@ -1,14 +1,16 @@
 <template>
   <div class="home-container">
     <div class="chat-container">
-      <chat-header :threadId="currentThread" />
-      <chat-window>
-        <message-component v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
+      <ChatHeader :threadId="currentThread" />
+      <ChatFrame>
+        <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
           :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
           :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar" />
-      </chat-window>
-      <UserInput :newMessage="message" @send-message="handleSendMessage" @clear-message="clearMessage" />
+      </ChatFrame>
 
+
+
+      <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
 
 
@@ -17,7 +19,7 @@
 
 <script>
 import ChatHeader from '../components/ChatHeader.vue';
-import ChatWindow from '../components/ChatWindow.vue';
+import ChatFrame from '../components/ChatFrame.vue'
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
@@ -29,13 +31,11 @@ export default {
   props: ['threadId'],
   components: {
     ChatHeader,
-    ChatWindow,
+    ChatFrame,
     MessageComponent,
     UserInput,
-
   },
   data() {
-
     return {
       newMessage: '',
       messages: [],
@@ -64,14 +64,23 @@ export default {
     },
   },
   methods: {
-    handleSendMessage(message, file) {
-      console.log(message, file);
-      console.log("Hello your messsage is ", message)
-      this.message = ''; // Clear the message in the parent after sending
-    },
     clearMessage() {
-      this.message = ''; // Clear the message
+      this.newMessage = ''
     },
+    // sendMessage(newMessage) {
+    //   console.log("start sending this.newMessage: ", newMessage)
+    //   this.messages.push({
+    //     text: newMessage.trim(),
+    //     isUser: true,
+    //     typing: true,
+    //     timestamp: new Date().toLocaleTimeString()
+    //   });
+    //   // Simulate a delay for typing effect, then set typing to false
+    //   console.log("Updated messages array: ", this.messages);
+
+    //   this.newMessage = '';
+    // },
+
     updateCurrentThread(newThreadId) {
       console.log("Update current thread function triggered: ", newThreadId)
       // const thread = this.threads.find(thread => thread.id.toString() === newThreadId);
@@ -87,32 +96,37 @@ export default {
       }
       console.log("Current thread: ", this.currentThread)
     },
-    async sendMessage() {
-      if (this.newMessage.trim() !== '') {
+    async sendMessage(newMessage) {
+      // if (!this.newMessage.trim()) return;
 
-        this.messages.push({ text: this.newMessage.trim(), isUser: true, typing: true, timestamp: new Date().toLocaleTimeString() });
-        // Simulate a delay for typing effect, then set typing to false
+      console.log("start sending message in send message..")
 
-        this.newMessage = '';
+      this.messages.push({
+        text: newMessage.trim(),
+        isUser: true,
+        typing: true,
+        timestamp: new Date().toLocaleTimeString()
+      });
+      // Simulate a delay for typing effect, then set typing to false
 
+      this.newMessage = '';
 
-        const { stockCode, shares } = this.extractSharesAndCode(this.messages[this.messages.length - 1].text);
-
-        if (stockCode) {
-          try {
-            const price = await fetchStockPrice(stockCode);
-            const timeStamp = new Date().toLocaleTimeString();
-            console.log("This is time stamp when ask about stock price: ", timeStamp)
-            let responseText = `Giá cổ phiếu ${stockCode} hiện giờ là $${price}, tính theo mốc thời gian ${timeStamp} `;
-            if (shares !== null) {
-              // If both stock code and shares are provided, calculate total value
-              const totalValue = (Number(price) * shares).toFixed(2);
-              responseText = `Bạn có ${shares} cổ phiếu ${stockCode}, với tổng trị giá là $${totalValue}.`;
-              this.messages.push({ text: `Bạn có ${shares} cổ phiếu ${stockCode}, với tổng trị giá là $${totalValue}.`, isUser: false, });
-            }
-            this.addTypingResponse(responseText, false);
-            // Send a fixed message to the GPT API asking for analysis about the company
-            const analysisQuestion = `Phân tích các số liệu sau từ công ty Tesla Chỉ Số Nâng CaoTên	Công ty	Ngành
+      const stockCode = this.extractStockCode(this.messages[this.messages.length - 1].text);
+      if (stockCode != '') {
+        try {
+          const price = await fetchStockPrice(stockCode);
+          const timeStamp = new Date().toLocaleTimeString();
+          console.log("This is time stamp when ask about stock price: ", timeStamp)
+          let responseText = `Giá cổ phiếu ${stockCode} hiện giờ là $${price}, tính theo mốc thời gian ${timeStamp} `;
+          // if (shares !== null) {
+          //   // If both stock code and shares are provided, calculate total value
+          //   const totalValue = (Number(price) * shares).toFixed(2);
+          //   responseText = `Bạn có ${shares} cổ phiếu ${stockCode}, với tổng trị giá là $${totalValue}.`;
+          //   this.messages.push({ text: `Bạn có ${shares} cổ phiếu ${stockCode}, với tổng trị giá là $${totalValue}.`, isUser: false, });
+          // }
+          this.addTypingResponse(responseText, false);
+          // Send a fixed message to the GPT API asking for analysis about the company
+          const analysisQuestion = `Phân tích các số liệu sau từ công ty Tesla Chỉ Số Nâng CaoTên	Công ty	Ngành
       Tỉ số P/E TTM	39.31	18.18
   Giá trên doanh thu TTM	5.66	3.93
   Giá và dòng tiền mặt MRQ	64.94	16.68
@@ -152,24 +166,26 @@ export default {
   Tiền mặt/Cổ phần MRQ	3.71	1,383.5
   Dòng tiền/Cổ phần TTM	3.45	-72.97
        `;
-            const gptResponse = await gptAPICall(analysisQuestion);
-            const gptText = gptResponse.choices[0].message.content;
+          const gptResponse = await gptAPICall(analysisQuestion);
+          const gptText = gptResponse.choices[0].message.content;
 
-            this.addTypingResponse(gptText, false);
+          this.addTypingResponse(gptText, false);
 
-          } catch (error) {
-            console.error('Error:', error);
-            this.messages.push({ text: `Error fetching data for ${stockCode}.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
-          }
-        } else {
-          setTimeout(
-            () => {
-              this.addTypingResponse('Tôi là FinBud, trợ lý AI trong lĩnh vực tài chính của bạn, phát triển bởi Bui Dinh Tri. Tôi được cấu hình đặc biệt trên nền tảng GPT-3.5 Turbo, với mục tiêu cung cấp thông tin sâu hơn và chuyên môn về tài chính và thị trường cổ phiếu.', false);
-              console.log('call API: ', this.messages[this.messages.length - 1].text)
-            }, 1500
-          )
+        } catch (error) {
+          console.error('Error:', error);
+          this.messages.push({ text: `Error fetching data for ${stockCode}.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
         }
       }
+      else {
+        setTimeout(
+          () => {
+            this.addTypingResponse('Tôi là FinBud, trợ lý AI trong lĩnh vực tài chính của bạn, phát triển bởi Bui Dinh Tri. Tôi được cấu hình đặc biệt trên nền tảng GPT-3.5 Turbo, với mục tiêu cung cấp thông tin sâu hơn và chuyên môn về tài chính và thị trường cổ phiếu.', false);
+          }, 300
+        )
+      }
+
+
+
 
 
     },
@@ -195,6 +211,7 @@ export default {
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
       const matches = message.match(pattern) || [];
+      console.log("Ham extract: ", matches)
       return matches;
     },
 

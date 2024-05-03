@@ -1,12 +1,9 @@
 <template>
   <div class="user-input">
     <input type="file" ref="fileInput" @change="handleImageUpload" style="display: none;" />
-    <button @click="triggerFileInput" class="upload-btn">
-      📷
-    </button>
-    <input type="text" :value="newMessage" @input="$emit('update:newMessage', $event.target.value)"
-      @keyup.enter="sendMessage" placeholder="Type your message here..." />
-    <button @click="sendMessage">Send</button>
+    <button @click="triggerFileInput" class="upload-btn">📷</button>
+    <input type="text" v-model="messageText" @keyup.enter="send" placeholder="Type your message here..." />
+    <button @click="send">Send</button>
   </div>
 </template>
 
@@ -16,24 +13,26 @@ export default {
   props: {
     newMessage: String,
   },
+  data() {
+    return {
+      messageText: ''
+    };
+  },
   methods: {
-    sendMessage() {
-
-      this.$emit('send-message', this.newMessage);
-      console.log("new message from UserInput: ", this.newMessage)
-
-      this.$emit('clear-message');
+    send() {
+      this.$emit('send-message', this.messageText);
+      console.log("UserInput message - textMessage: ", this.messageText)
+      this.messageText = ""
     },
     triggerFileInput() {
-      this.$refs.fileInput.click(); 
+      this.$refs.fileInput.click();
     },
     handleImageUpload(event) {
       const file = event.target.files[0];
       if (file) {
         this.$emit('send-message', null, file);
       }
-
-      this.$refs.fileInput.value = null;
+      this.$refs.fileInput.value = '';  // Reset file input
     },
   },
 };
