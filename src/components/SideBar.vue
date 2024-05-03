@@ -1,10 +1,21 @@
 <template>
     <aside class="side-bar">
-      <div class="sidebar-header">Chat Threads</div>
+      <div class="sidebar-header">
+        Chat Threads
+        <button class="add-thread-btn" @click="addThread">+</button>
+      </div>
       <ul class="thread-list">
-        <!-- Iterate over chat threads -->
-        <li v-for="(thread, index) in threads" :key="index" @click="selectThread(thread)">
-          {{ thread.name }}
+        <li v-for="(thread, index) in threads" :key="index">
+          <div v-if="!thread.editing">
+            {{ thread.name }}
+            <button class="edit-btn" @click="editThread(index)">Edit</button>
+          </div>
+          <input
+            v-else
+            v-model="thread.editedName"
+            @blur="saveThreadName(thread, index)"
+            @keyup.enter="saveThreadName(thread, index)"
+          />
         </li>
       </ul>
     </aside>
@@ -15,9 +26,23 @@
     name: 'SideBar',
     props: ['threads'],
     methods: {
-      selectThread(thread) {
-        // Handle thread selection
-        this.$emit('thread-selected', thread);
+      addThread() {
+        // Handle adding a new thread
+        this.threads.push({
+          name: 'New Thread',
+          editing: false,
+          editedName: 'New Thread'
+        });
+      },
+      editThread(index) {
+        // Set the thread to editing mode
+        this.$set(this.threads[index], 'editing', true);
+      },
+      saveThreadName(thread, index) {
+        if (thread.editedName.trim()) {
+          this.$set(this.threads[index], 'name', thread.editedName);
+        }
+        this.$set(this.threads[index], 'editing', false);
       }
     }
   };
@@ -25,32 +50,16 @@
   
   <style scoped>
   .side-bar {
-    background-color: #333;
-    width: 250px;
-    height: 100vh;
-    padding: 1rem;
-    box-shadow: 3px 0px 10px rgba(0, 0, 0, 0.2);
-    color: white;
+    /* styles */
   }
-  
-  .sidebar-header {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
+  .add-thread-btn {
+    /* styles */
   }
-  
-  .thread-list {
-    list-style: none;
-    padding: 0;
+  .edit-btn {
+    /* styles */
   }
-  
-  .thread-list li {
-    padding: 0.8rem 0;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  .thread-list li:hover {
-    background-color: #555;
+  .thread-list input {
+    /* styles for the input field */
   }
   </style>
   
