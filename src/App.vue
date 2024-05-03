@@ -1,8 +1,15 @@
 <template>
-  <nav-bar></nav-bar>
-  <SideBar>
-  </SideBar>
-  <HomeView></HomeView>
+  <div id="app">
+    <NavBar />
+    <div class="content">
+      <SideBar :threads="threads" 
+               @add-thread="handleAddThread"
+               @edit-thread="handleEditThread"
+               @save-thread-name="handleSaveThreadName"
+               @cancel-edit="handleCancelEdit" />
+      <HomeView />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -13,20 +20,65 @@ import HomeView from './views/HomeView.vue';
 export default {
   name: 'App',
   components: {
-    HomeView,
     NavBar,
-    SideBar
+    SideBar,
+    HomeView
+  },
+  data() {
+    return {
+      threads: []
+    };
+  },
+  methods: {
+    handleAddThread(newThread) {
+      this.threads.push(newThread);
+    },
+    handleEditThread(index) {
+      this.$set(this.threads[index], 'editing', true);
+    },
+    handleSaveThreadName(data) {
+      this.$set(this.threads[data.index], 'name', data.newName);
+      this.$set(this.threads[data.index], 'editing', false);
+    },
+    handleCancelEdit(index) {
+      this.$set(this.threads[index], 'editing', false);
+    }
   }
 }
 </script>
 
 <style>
 #app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 100vw; /* Full viewport width */
+  margin: 0; /* Remove any default margin */
+  padding: 0; /* Remove any default padding */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Stretches children to the full width */
 }
+
+.content {
+  display: flex;
+  width: 100%;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%; /* This makes sure your app fills the entire height of the viewport */
+}
+
+* {
+  box-sizing: border-box; /* Includes padding and border in the width and height */
+}
+
+
 </style>

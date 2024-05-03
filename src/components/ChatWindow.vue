@@ -1,7 +1,9 @@
-<div class="chat-window">
-    <slot></slot> <!-- Use slot for message components -->
-  </div>
-</template>
+<template>
+    <div class="chat-window">
+
+
+    </div>
+    </template>
 
 <script>
 export default {
