@@ -65,8 +65,8 @@ export default {
   },
   methods: {
     handleSendMessage(message, file) {
-      // Logic to send the message or file
       console.log(message, file);
+      console.log("Hello your messsage is ", message)
       this.message = ''; // Clear the message in the parent after sending
     },
     clearMessage() {
