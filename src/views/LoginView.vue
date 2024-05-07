@@ -1,6 +1,5 @@
-
 <template>
-  <div class="login-container">
+  <div class="login-container" id="app">
     <h1>Login</h1>
     <form @submit.prevent="onLogin">
       <div class="input-group">
@@ -29,7 +28,7 @@ export default {
     onLogin() {
   if (this.username && this.password) {
     if (this.username === 'user' && this.password === 'pass') {
-      this.$router.push({ name: 'ChatView' });      
+      this.$router.push('/login');      
     } else {
       alert('Invalid username or password!');
     }

@@ -1,5 +1,6 @@
 import ChatView from '@/views/ChatView.vue';
-import LoginView from '@/views/ChatView.vue';
+import LoginView from '@/views/LoginView.vue'; // Correct the import here
+
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [

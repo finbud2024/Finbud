@@ -1,5 +1,5 @@
 <template>
-  <nav class="nav-bar">
+  <nav class="nav-bar" id="app">
     <div class="navbar-brand">FinBud</div>
     <ul class="nav-items">
       <li><a href="#about">About</a></li>
@@ -8,7 +8,8 @@
       <li><a href="#pricing">Pricing</a></li>
     </ul>
     <ul class="nav-actions">
-      <li><a href="/login" class="login-button">Log In</a></li>
+      <!-- Sử dụng router-link để điều hướng đúng -->
+      <li><router-link to="/login" class="login-button">Log In</router-link></li>
       <li><a href="#" class="sign-up-button">Sign Up</a></li>
     </ul>
   </nav>

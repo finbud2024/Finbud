@@ -1,35 +1,42 @@
 <template>
   <div id="app">
-    <NavBar />
+    <NavBar @login-clicked="toggleLogin"/>
     <div class="content">
       <SideBar :threads="threads" 
                @add-thread="handleAddThread"
                @edit-thread="handleEditThread"
                @save-thread-name="handleSaveThreadName"
                @cancel-edit="handleCancelEdit" />
-      <!-- <LoginView /> -->
+      <LoginView v-if="showLogin" />
+      <MainContent /> <!-- Add this line here -->
     </div>
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue';
+import NavBar from './components/NavBar.vue'; 
 import SideBar from './components/SideBar.vue';
-// import LoginView from './views/LoginView.vue';
+import LoginView from './views/LoginView.vue'; // Ensure LoginView is correctly imported
+import MainContent from './components/MainContent.vue'; // Import MainContent
 
 export default {
   name: 'App',
   components: {
     NavBar,
     SideBar,
-    // LoginView,
+    LoginView,
+    MainContent, // Register MainContent
   },
   data() {
     return {
-      threads: []
+      threads: [],
+      showLogin: false,
     };
   },
   methods: {
+    toggleLogin() {
+      this.showLogin = !this.showLogin; // Toggle the display state of LoginView
+    },
     handleAddThread(newThread) {
       this.threads.push(newThread);
     },
@@ -46,39 +53,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#app {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  width: 100vw; /* Full viewport width */
-  margin: 0; /* Remove any default margin */
-  padding: 0; /* Remove any default padding */
-  display: flex;
-  flex-direction: column;
-  align-items: stretch; /* Stretches children to the full width */
-}
-
-.content {
-  display: flex;
-  width: 100%;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%; /* This makes sure your app fills the entire height of the viewport */
-}
-
-* {
-  box-sizing: border-box; /* Includes padding and border in the width and height */
-}
-
-
-</style>
