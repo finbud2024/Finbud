@@ -7,7 +7,7 @@
                @edit-thread="handleEditThread"
                @save-thread-name="handleSaveThreadName"
                @cancel-edit="handleCancelEdit" />
-      <ChatView />
+      <!-- <LoginView /> -->
     </div>
   </div>
 </template>
@@ -15,14 +15,14 @@
 <script>
 import NavBar from './components/NavBar.vue';
 import SideBar from './components/SideBar.vue';
-import ChatView from './views/ChatView.vue';
+// import LoginView from './views/LoginView.vue';
 
 export default {
   name: 'App',
   components: {
     NavBar,
     SideBar,
-    ChatView,
+    // LoginView,
   },
   data() {
     return {
