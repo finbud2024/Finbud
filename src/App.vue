@@ -1,55 +1,49 @@
+<!-- App.vue -->
 <template>
-  <div id="app">
-    <NavBar @login-clicked="toggleLogin"/>
+  <div class="nav-actions">
+    <NavBar />
     <div class="content">
-      <SideBar :threads="threads" 
-               @add-thread="handleAddThread"
-               @edit-thread="handleEditThread"
-               @save-thread-name="handleSaveThreadName"
-               @cancel-edit="handleCancelEdit" />
-      <LoginView v-if="showLogin" />
-      <MainContent /> <!-- Add this line here -->
+      <!-- Use router-link to navigate to the login page -->
+  
+      <MainContentVue />
+
+
     </div>
   </div>
+  <!-- router-view will render the component associated with the current route -->
+  <router-view />
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue'; 
-import SideBar from './components/SideBar.vue';
-import LoginView from './views/LoginView.vue'; // Ensure LoginView is correctly imported
-import MainContent from './components/MainContent.vue'; // Import MainContent
+import NavBar from './components/NavBar.vue';
 
 export default {
   name: 'App',
   components: {
     NavBar,
-    SideBar,
-    LoginView,
-    MainContent, // Register MainContent
   },
-  data() {
-    return {
-      threads: [],
-      showLogin: false,
-    };
-  },
-  methods: {
-    toggleLogin() {
-      this.showLogin = !this.showLogin; // Toggle the display state of LoginView
-    },
-    handleAddThread(newThread) {
-      this.threads.push(newThread);
-    },
-    handleEditThread(index) {
-      this.$set(this.threads[index], 'editing', true);
-    },
-    handleSaveThreadName(data) {
-      this.$set(this.threads[data.index], 'name', data.newName);
-      this.$set(this.threads[data.index], 'editing', false);
-    },
-    handleCancelEdit(index) {
-      this.$set(this.threads[index], 'editing', false);
-    }
-  }
-}
+};
 </script>
+
+<style scoped>
+.nav-actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  margin-top: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: blue;
+  padding: 10px;
+  border: 1px solid blue;
+  border-radius: 5px;
+}
+
+a:hover {
+  background-color: #e7f3ff;
+}
+</style>

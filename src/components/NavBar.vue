@@ -2,23 +2,29 @@
   <nav class="nav-bar" id="app">
     <div class="navbar-brand">FinBud</div>
     <ul class="nav-items">
+      <li><router-link to="/" class="home">Home</router-link></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#technology">Technology</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="#pricing">Pricing</a></li>
+      <li><router-link to="/tech" class="technology">Technology</router-link></li>
+      <li><router-link to="/contact" class="contact">Contact</router-link></li>
+      <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
+      <li><router-link to="/chatview" class="chatview">ChatView</router-link></li>
     </ul>
     <ul class="nav-actions">
-      <!-- Sử dụng router-link để điều hướng đúng -->
       <li><router-link to="/login" class="login-button">Log In</router-link></li>
-      <li><a href="#" class="sign-up-button">Sign Up</a></li>
+      <li><router-link to="/signup" class="signup-button">Sign Up</router-link></li>
     </ul>
   </nav>
 </template>
 
+<script>
+export default {
+  name: 'NavBar'
+}
+</script>
 
 <style scoped>
 .nav-bar {
-  background-color: #FFFFFF; /* Background màu trắng */
+  background-color: #FFFFFF; /* White background */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -28,7 +34,7 @@
 .navbar-brand {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #007bff; /* Màu xanh nhãn hiệu */
+  color: #007bff; /* Brand blue */
   cursor: pointer;
 }
 
@@ -40,18 +46,18 @@
   margin: 0;
 }
 
-.nav-items li a {
+.nav-items li a, .nav-actions li .router-link {
   color: black;
   text-decoration: none;
   padding: 0.5rem 1rem;
   transition: color 0.3s ease;
 }
 
-.nav-items li a:hover {
-  color: #007bff; /* Màu khi hover */
+.nav-items li a:hover, .nav-actions li .router-link:hover {
+  color: #007bff; /* Blue on hover */
 }
 
-.login-button, .sign-up-button {
+.login-button, .signup-button {
   background-color: transparent;
   color: black;
   border: none;
@@ -61,15 +67,15 @@
   transition: background-color 0.3s ease;
 }
 
-.sign-up-button {
-  background-color: #4CAF50; /* Nút màu xanh lá */
+.signup-button {
+  background-color: #4CAF50; /* Green button */
   color: white;
   border-radius: 5px;
+  padding: 0.8rem 1.2rem; /* Slightly larger padding for button appearance */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow for depth */
 }
 
-.sign-up-button:hover {
-  background-color: #45a049; /* Màu xanh lá đậm khi hover */
+.signup-button:hover {
+  background-color: #45a049; /* Darker green on hover */
 }
 </style>
-
-
