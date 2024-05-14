@@ -16,20 +16,12 @@
       <ul class="footer-items2">  <!-- First column -->
         <li><a href="#">Home</a></li>
         <li><a href="#">About</a></li>
-        <li><a href="#">Services</a></li>
+        <li><a href="#">Technology</a></li>
+      </ul>
+      <ul class="footer-items2">  <!-- Second column -->
         <li><a href="#">Contact</a></li>
-      </ul>
-      <ul class="footer-items2">  <!-- Second column -->
-        <li><a href="#">Product</a></li>
         <li><a href="#">Pricing</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Careers</a></li>
-      </ul>
-      <ul class="footer-items2">  <!-- Second column -->
-        <li><a href="#">Product</a></li>
-        <li><a href="#">Pricing</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Careers</a></li>
+        <li><a href="#">ChatView</a></li>
       </ul>
     </div>
   </nav>

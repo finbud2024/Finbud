@@ -1,30 +1,32 @@
 <template>
   <section id="main-content">
-    <div class='container'>
+    <div class='intro-container'>
       <div class="intro-text">
+        <div>
           <li class="title">Making the most informed choices</li>
           <li class="description">With FinBud, you can ask for the best financial advice anytime, anywhere</li>
-          <div class="small-description">
-              <div class=sdesitem>
-                  <li class="sdesimg">
-                      <img src='@/assets/bot.png' alt="placeholder">
-                  </li>
-                  <li class="sdestext">
-                      Fine-tuned model specializing in finance and investing
-                  </li>
-              </div>
-              <div class=sdesitem>
-                  <li class="sdesimg">
-                      <img src='@/assets/bot.png' alt="placeholder">
-                  </li>
-                  <li class="sdestext">
-                    Accessible and up-to-date on the latest information
-                  </li>
-              </div>
-          </div>
-      </div>
-      <div class="photo">
+        </div>
+        <div class="photo">
           <img src='@/assets/bot.png' alt="placeholder">
+        </div>
+      </div>
+      <div class="small-description">
+        <div class=sdesitem>
+            <li class="sdesimg">
+                <img src='@/assets/bot.png' alt="placeholder">
+            </li>
+            <li class="sdestext">
+                Fine-tuned model specializing in finance and investing
+            </li>
+        </div>
+        <div class=sdesitem>
+            <li class="sdesimg">
+                <img src='@/assets/bot.png' alt="placeholder">
+            </li>
+            <li class="sdestext">
+              Accessible and up-to-date on the latest information
+            </li>
+        </div>
       </div>
     </div>
     <header>
@@ -141,34 +143,37 @@ export default {
 
 <style scoped>
 
-.container {
+.intro-container {
   gap: 0.1rem;
   padding-left: 3rem;
   padding-right: 3rem;
   padding-top: 1.5rem;
+  flex-direction: column;
   display: flex;
-  flex-direction: row;
+}
+
+.intro-text {
+  display: flex;
+  width: auto;
 }
 
 .title {
   font-weight: bold;
-  color: #007bff;
+  color: black;
   display: flex;
   text-align: left;
   flex-direction: column;
-  font-size: 5rem;
-  width: 30rem;
+  font-size: 4rem;
+  max-width: 30rem;
   flex-wrap: wrap;
 }
 
 .description {
-  color: white;
+  color: dark gray;
   display: flex;
   text-align: left;
-  font-size: 20px;
-  flex-direction: column;
+  font-size: 1.2rem;
   padding-top: 20px;
-  width: 600px;
   flex-wrap: wrap;
 }
 
@@ -177,6 +182,7 @@ export default {
   flex-direction: row;
   gap: 80px;
   display: flex;
+  flex-direction: row;
 }
 
 .sdesitem {
@@ -185,7 +191,7 @@ export default {
 
 .sdestext {
   list-style-type: none;
-  color: white;
+  color: dark gray;
   font-size: 18px;
   text-align: left;
   flex-direction: column;
@@ -195,6 +201,7 @@ export default {
 .sdesimg img {
   list-style-type: none;
   width: 30%;
+  border-radius: 20%;
 }
 
 .sdesimg {
@@ -202,18 +209,20 @@ export default {
 }
 
 .photo img {
-  width: 80%;
+  width: 50%;
+  border-radius: 20%;
 }
 
 .photo {
   text-align: right;
+  margin: auto;
 }
 /* Global settings and the main content area */
 #main-content {
   display: flex;
   flex-direction: column;
-  background-color: #1e2d47; /* Dark blue background */
-  color: #ffffff; /* White text for better contrast */
+  background-color: white; /* Dark blue background */
+  color: black; /* White text for better contrast */
   font-family: 'Segoe UI', Arial, sans-serif; /* Modern font */
   margin-top: 0;
 }
@@ -351,7 +360,7 @@ ul {
 }
 
 /* Medium devices (tablets, 768px and up) */
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .container, .dashboard-content, .real-time-insights .content-with-image {
     flex-direction: row;
     justify-content: space-between; /* Distributes space between items */
@@ -368,6 +377,18 @@ ul {
 
   .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
     flex: 1 1 50%; /* Takes up half of the container width */
+  }
+
+  .intro-text {
+    flex-direction: column;
+  }
+
+  .photo {
+    padding: 1rem;
+  }
+
+  .photo img{
+    width: 80%;
   }
 }
 
