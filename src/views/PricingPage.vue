@@ -1,26 +1,23 @@
 <template>
   <div class="features-container">
-    <!-- Vehicle & Employee Tracking Section -->
-    <div class="tracking-section blue-background">
-      <h2>Vehicle & Employee Tracking</h2>
-      <p class="installation-fee">*Installation Fee of $100/bay is assessed at install.</p>
+    <!-- Financial Consulting Section -->
+    <div class="consulting-section blue-background">
+      <h2>Financial Consulting</h2>
+      <p class="note">Personalized plans to secure your financial future.</p>
       <div class="service-details">
-        <div class="price-detail">$50 per bay</div>
         <div class="services-grid">
           <div class="left-column">
             <ul class="service-highlights">
-              <li>Detect Auto Dashboard</li>
-              <li>Vehicle Repair Tracking</li>
-              <li>Bay Utilization</li>
-              <li>Vehicle Repair Efficiency</li>
+              <li>Debt Management</li>
+              <li>Savings Strategies</li>
+              <li>Investment Advice</li>
             </ul>
           </div>
           <div class="right-column">
             <ul class="service-highlights">
-              <li>Employee Repair Efficiency</li>
-              <li>Dynamic Labor Pricing</li>
-              <li>Enterprise support and uptime</li>
-              <li>Custom API Development</li>
+              <li>Custom Financial Planning</li>
+              <li>Goal-Oriented Guidance</li>
+              <li>Personal Wealth Management</li>
             </ul>
           </div>
         </div>
@@ -28,20 +25,16 @@
       </div>
     </div>
 
-    <!-- Enterprise Plan Section -->
-    <div class="tracking-section white-background">
-      <h2>Enterprise Plan</h2>
-      <p class="installation-fee">*Installation Fee of $100/bay is assessed at install.</p>
+    <!-- Financial Education Section -->
+    <div class="education-section white-background">
+      <h2>Financial Education</h2>
+      <p class="note">Empower yourself with knowledge to make better financial decisions.</p>
       <div class="service-details">
         <ul class="service-highlights">
-          <li>Detect Auto Dashboard</li>
-          <li>Vehicle Repair Tracking</li>
-          <li>Bay Utilization</li>
-          <li>Vehicle Repair Efficiency</li>
-          <li>Employee Repair Efficiency</li>
-          <li>Dynamic Labor Pricing</li>
-          <li>Enterprise support and uptime</li>
-          <li>Custom API Development</li>
+          <li>Basic to Advanced Financial Concepts</li>
+          <li>Interactive Lessons and Quizzes</li>
+          <li>Real-time Financial Trend Analysis</li>
+          <li>AI-Driven Insights</li>
         </ul>
         <button>Start your 30-day free trial</button>
       </div>
@@ -50,19 +43,25 @@
 </template>
 
 <style scoped>
-.tracking-section {
-  background-color: #007bff;
+.feature-section {
+  background-color: #007bff; /* Blue background for consulting */
   color: white;
   padding: 40px;
   border-radius: 8px;
-  width: 80%; /* Adjust width to not span the full screen */
-  margin: 20px auto; /* Center the section */
-  text-align: left; /* Align text to the left */
+  width: 80%;
+  margin: 20px auto;
+  text-align: left;
+}
+
+.feature-section.white-background {
+  background-color: white;
+  color: black; /* Text color for better readability on white */
 }
 
 .installation-fee {
   font-size: 14px;
   margin-bottom: 20px;
+  color: inherit; /* Ensures the text color matches the section's color */
 }
 
 .service-details {
@@ -73,6 +72,7 @@
 .price-detail {
   font-size: 28px;
   margin-bottom: 20px;
+  color: inherit; /* Price detail inherits section color */
 }
 
 .services-grid {
@@ -81,7 +81,7 @@
 }
 
 .left-column, .right-column {
-  width: 48%; /* Nearly half the container width */
+  width: 48%; /* Close to half the container width to fit all items nicely */
 }
 
 .service-highlights {
@@ -96,18 +96,17 @@
 }
 
 button {
-  background-color: #0056b3;
+  background-color: #0056b3; /* Darker blue for buttons */
   color: white;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
   font-size: 16px;
   border-radius: 5px;
-  align-self: flex-start; /* Align button to the left */
+  align-self: flex-start; /* Left align the button */
 }
 
 button:hover {
-  background-color: #004080;
+  background-color: #004080; /* Even darker on hover */
 }
-
 </style>

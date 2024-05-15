@@ -1,36 +1,36 @@
 <template>
   <section id="main-content">
     <header>
-      <h1>Improve your repair efficiency by 25%</h1>
-      <p>Detect Auto is an AI-driven analytics platform that makes your shop more profitable.</p>
+      <h1>Enhance Your Financial Awareness by 25%</h1>
+      <p>FinBud is an AI-driven financial analytics platform that makes managing your finances more efficient.</p>
       <button @click="learnMore">Learn More</button>
     </header>
 
     <div id="efficiency-chart"></div>
 
     <div class="feature-icons">
-      <div>Compatible with any shop or dealer management software</div>
-      <div>Data-driven insights provide actionable steps to improve efficiency</div>
+      <div>Compatible with any personal finance management software</div>
+      <div>Data-driven insights provide actionable steps to manage and improve your financial health</div>
     </div>
 
     <!-- Statistics Section -->
     <section id="statistics" class="stats-section">
       <div class="stats-header">
-        <h2>Don't take our word for it.</h2>
-        <p>Receive actionable insights on your repairs without ever pressing a button. It’s automation at its finest.</p>
+        <h2>Experience the Impact</h2>
+        <p>Gain actionable insights into your finances automatically. It’s financial management at its best.</p>
       </div>
       <div class="stats-container">
         <div class="stat-item">
-          <h3>$1,500+</h3>
-          <p>Increase in monthly earnings per bay</p>
+          <h3>20% Savings Increase</h3>
+          <p>Average increase in savings per user</p>
         </div>
         <div class="stat-item">
-          <h3>25%</h3>
-          <p>Improvement in technician repair efficiency</p>
+          <h3>30% Debt Reduction</h3>
+          <p>Average reduction in debt after one year</p>
         </div>
         <div class="stat-item">
-          <h3>5+ Hours</h3>
-          <p>Monthly increase in billable time per bay</p>
+          <h3>Improved Credit Score</h3>
+          <p>Enhance your credit score within six months</p>
         </div>
       </div>
     </section>
@@ -39,36 +39,36 @@
     <section id="features" class="container">
       <img src="@/assets/performance-overview.png" alt="Performance Overview" />
       <div class="text-content">
-        <h2>Highlight Your Performance</h2>
-        <p>Designed with auto shops in mind, Detect Auto helps optimize every aspect of your operations.</p>
+        <h2>Optimize Your Financial Operations</h2>
+        <p>FinBud is tailored for individual financial needs, helping to optimize your economic potential.</p>
         <ul>
-          <li>Repair Analytics: Pinpoint issues automatically and suggest actions.</li>
-          <li>Continuous Improvement: Track and improve process efficiencies.</li>
+          <li>Expense Tracking: Automatically categorize and track expenses.</li>
+          <li>Investment Guidance: Personalized insights to help you invest wisely.</li>
         </ul>
       </div>
     </section>
 
     <!-- Analytics Dashboard Section -->
     <section id="analytics-dashboard">
-      <h2>View your repairs like you never have before</h2>
-      <p>Gain insights into your repair process through the power of AI</p>
+      <h2>Understand Your Financial Landscape</h2>
+      <p>Delve deeper into your financial habits with our powerful AI insights.</p>
       <div class="dashboard-content">
         <div class="info-cards">
           <div class="info-card">
-            <h3>Precise Labor Rates</h3>
-            <p>Understand your shop's strengths and weaknesses for every repair completed.</p>
+            <h3>Comprehensive Budget Analysis</h3>
+            <p>Get detailed reports breaking down your spending and savings.</p>
           </div>
           <div class="info-card">
-            <h3>Identify Outliers</h3>
-            <p>See which vehicles and technicians are performing the best (and more importantly, the worst) for your shop.</p>
+            <h3>Future Expense Projections</h3>
+            <p>Our AI predicts upcoming expenses to help you plan ahead.</p>
           </div>
           <div class="info-card">
-            <h3>Track Your Growth</h3>
-            <p>View breakdowns of Gross Profit percentage by vehicle and employee. Watch your profits soar as we make dynamic changes to the way your shop runs.</p>
+            <h3>Investment Performance Tracker</h3>
+            <p>Track how your investments are performing in real-time.</p>
           </div>
         </div>
         <div class="dashboard-visual">
-          <img src="@/assets/car.png" alt="Analytics Dashboard">
+          <img src="@/assets/car.png" alt="Financial Dashboard">
         </div>
       </div>
     </section>
@@ -77,23 +77,23 @@
     <section id="real-time-insights">
       <div class="content-with-image">
         <div class="text-content">
-          <h2>Get real-time insights on your performance.</h2>
-          <p>Know what works and leverage your data to constantly improve.</p>
+          <h2>Real-Time Financial Insights</h2>
+          <p>Stay ahead with up-to-the-minute data on your financial status.</p>
           <div class="insight-cards">
             <div class="insight-card">
-              <h3>Auto-generated reports</h3>
-              <p>Get accurate insights on your performance with auto-generated reports that help provide actionable summaries from the past week.</p>
+              <h3>Auto-generated Financial Reports</h3>
+              <p>Instantly receive comprehensive financial summaries tailored to your needs.</p>
             </div>
             <div class="insight-card">
-              <h3>Customer analysis</h3>
-              <p>Get a complete view of your customer's repair history and understand how to service them better the next time they roll through.</p>
+              <h3>Spending Habit Analysis</h3>
+              <p>Understand your spending patterns and receive tips for better budget management.</p>
             </div>
           </div>
           <button @click="learnMore">Learn more</button>
         </div>
         <!-- Image on the right -->
         <div class="image-container">
-          <img src="@/assets/real-data.png" alt="Insightful Data Visualization">
+          <img src="/assets/real-data.png" alt="Detailed Financial Analysis">
         </div>
       </div>
     </section>
