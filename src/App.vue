@@ -4,32 +4,38 @@
     <div class="content">
       <!-- Use router-link to navigate to the login page -->
       <MainContentVue />
-      <ChatBox/>
+      <ChatBox />
     </div>
   </div>
   <!-- router-view will render the component associated with the current route -->
   <router-view />
-
+  <FooterBar />
 </template>
 
 <script>
-
 import NavBar from './components/NavBar.vue';
 import ChatBox from './components/ChatBox.vue';
+import FooterBar from './components/FooterBar.vue';
 
 export default {
   name: 'App',
   components: {
     NavBar,
     ChatBox,
-  }
+    FooterBar,
+  },
 };
 </script>
 
 <style scoped>
+body {
+  margin: 0px;
+}
+
 .nav-actions {
   display: flex;
   flex-direction: column;
+  margin: 0px;
 }
 
 .content {
@@ -39,9 +45,7 @@ export default {
 a {
   text-decoration: none;
   color: blue;
-  padding: 10px;
   border: 1px solid blue;
-  border-radius: 5px;
 }
 
 a:hover {

@@ -1,5 +1,32 @@
 <template>
   <section id="main-content">
+    <div class='container'>
+      <div class="intro-text">
+          <li class="title">Making the most informed choices</li>
+          <li class="description">With FinBud, you can ask for the best financial advice anytime, anywhere</li>
+          <div class="small-description">
+              <div class=sdesitem>
+                  <li class="sdesimg">
+                      <img src='@/assets/bot.png' alt="placeholder">
+                  </li>
+                  <li class="sdestext">
+                      Fine-tuned model specializing in finance and investing
+                  </li>
+              </div>
+              <div class=sdesitem>
+                  <li class="sdesimg">
+                      <img src='@/assets/bot.png' alt="placeholder">
+                  </li>
+                  <li class="sdestext">
+                    Accessible and up-to-date on the latest information
+                  </li>
+              </div>
+          </div>
+      </div>
+      <div class="photo">
+          <img src='@/assets/bot.png' alt="placeholder">
+      </div>
+    </div>
     <header>
       <h1>Enhance Your Financial Awareness by 25%</h1>
       <p>FinBud is an AI-driven financial analytics platform that makes managing your finances more efficient.</p>
@@ -113,6 +140,74 @@ export default {
 
 
 <style scoped>
+
+.container {
+  gap: 0.1rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.title {
+  font-weight: bold;
+  color: #007bff;
+  display: flex;
+  text-align: left;
+  flex-direction: column;
+  font-size: 5rem;
+  width: 30rem;
+  flex-wrap: wrap;
+}
+
+.description {
+  color: white;
+  display: flex;
+  text-align: left;
+  font-size: 20px;
+  flex-direction: column;
+  padding-top: 20px;
+  width: 600px;
+  flex-wrap: wrap;
+}
+
+.small-description {
+  padding-top: 90px;
+  flex-direction: row;
+  gap: 80px;
+  display: flex;
+}
+
+.sdesitem {
+  max-width: 150px;
+}
+
+.sdestext {
+  list-style-type: none;
+  color: white;
+  font-size: 18px;
+  text-align: left;
+  flex-direction: column;
+  font-weight: normal;
+}
+
+.sdesimg img {
+  list-style-type: none;
+  width: 30%;
+}
+
+.sdesimg {
+  list-style-type: none;
+}
+
+.photo img {
+  width: 80%;
+}
+
+.photo {
+  text-align: right;
+}
 /* Global settings and the main content area */
 #main-content {
   display: flex;
@@ -120,7 +215,6 @@ export default {
   background-color: #1e2d47; /* Dark blue background */
   color: #ffffff; /* White text for better contrast */
   font-family: 'Segoe UI', Arial, sans-serif; /* Modern font */
-  padding: 20px;
   margin-top: 0;
 }
 
@@ -255,5 +349,54 @@ ul {
   height: auto;
   border-radius: 8px;
 }
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .container, .dashboard-content, .real-time-insights .content-with-image {
+    flex-direction: row;
+    justify-content: space-between; /* Distributes space between items */
+  }
+
+  .stats-container {
+    flex-direction: row;
+    justify-content: space-around; /* Evenly spaces stat items */
+  }
+
+  .feature-icons div, .stat-item, .info-card {
+    flex: 1 1 auto; /* Allows flex items to grow and shrink as needed */
+  }
+
+  .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
+    flex: 1 1 50%; /* Takes up half of the container width */
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .container, .stats-container, .dashboard-content, .real-time-insights .content-with-image {
+    max-width: 1140px; /* Bootstrap's default container max-width for large screens */
+    margin: auto; /* Centers the container */
+  }
+
+  .stat-item, .info-card {
+    flex: 1 1 33%; /* Allows three items per row */
+  }
+
+  .text-content, .dashboard-visual {
+    flex: 1 1 50%; /* Ensures text and visuals are balanced */
+  }
+
+  .real-time-insights .text-content, .real-time-insights .image-container {
+    width: 60%; /* Text takes slightly more space */
+    width: 35%; /* Image takes less space */
+  }
+}
+
+/* Ensuring padding and gap responsiveness */
+.container, .stats-container, .dashboard-content, .real-time-insights .content-with-image {
+  padding: 20px;
+  gap: 20px;
+}
+
 
 </style>

@@ -8,6 +8,7 @@ import ChatView from '@/views/ChatView.vue';
 import SideBar from '@/components/SideBar.vue';
 import TechnologyPage from '@/views/TechnologyPage.vue'; 
 import PricingPage from '@/views/PricingPage.vue'; 
+import AboutUsPage from '@/views/AboutUsPage.vue';
 
 const routes = [
   {
@@ -49,7 +50,11 @@ const routes = [
     name: 'PricingPage',
     component: PricingPage  // Setup the route for the contact page
   },
-
+  {
+    path: '/about',
+    name: 'AboutUsPage',
+    component: AboutUsPage  // Setup the route for the contact page
+  },
 
 ];
 
