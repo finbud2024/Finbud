@@ -1,84 +1,51 @@
 <template>
-  <div id="app">
+  <div class="nav-actions">
     <NavBar />
     <div class="content">
-      <SideBar :threads="threads" 
-               @add-thread="handleAddThread"
-               @edit-thread="handleEditThread"
-               @save-thread-name="handleSaveThreadName"
-               @cancel-edit="handleCancelEdit" />
-      <ChatView />
+      <!-- Use router-link to navigate to the login page -->
+      <MainContentVue />
     </div>
   </div>
+  <!-- router-view will render the component associated with the current route -->
+  <router-view />
+  <FooterBar />
 </template>
 
 <script>
 import NavBar from './components/NavBar.vue';
-import SideBar from './components/SideBar.vue';
-import ChatView from './views/ChatView.vue';
+import FooterBar from './components/FooterBar.vue';
 
 export default {
   name: 'App',
   components: {
     NavBar,
-    SideBar,
-    ChatView,
+    FooterBar,
   },
-  data() {
-    return {
-      threads: []
-    };
-  },
-  methods: {
-    handleAddThread(newThread) {
-      this.threads.push(newThread);
-    },
-    handleEditThread(index) {
-      this.$set(this.threads[index], 'editing', true);
-    },
-    handleSaveThreadName(data) {
-      this.$set(this.threads[data.index], 'name', data.newName);
-      this.$set(this.threads[data.index], 'editing', false);
-    },
-    handleCancelEdit(index) {
-      this.$set(this.threads[index], 'editing', false);
-    }
-  }
-}
+};
 </script>
 
-<style>
-#app {
+<style scoped>
+body {
+  margin: 0px;
+}
+
+.nav-actions {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  width: 100vw; /* Full viewport width */
-  margin: 0; /* Remove any default margin */
-  padding: 0; /* Remove any default padding */
-  display: flex;
-  flex-direction: column;
-  align-items: stretch; /* Stretches children to the full width */
+  margin: 0px;
 }
 
 .content {
-  display: flex;
-  width: 100%;
+  margin-top: 20px;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%; /* This makes sure your app fills the entire height of the viewport */
+a {
+  text-decoration: none;
+  color: blue;
+  border: 1px solid blue;
 }
 
-* {
-  box-sizing: border-box; /* Includes padding and border in the width and height */
+a:hover {
+  background-color: #e7f3ff;
 }
-
-
 </style>

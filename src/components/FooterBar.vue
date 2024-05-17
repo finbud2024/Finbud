@@ -42,18 +42,19 @@ export default {
 </script>
 
 <style scoped>
+/* Existing styles */
 .gap {
   gap: 10px;
 }
 
 .footer-bar {
-  height: 250px;  /* Adjusted height for additional content */
   background-color: #0F1F3D;
   color: white;
   display: flex;
-  justify-content: space-between;  /* This creates space between sections */
+  justify-content: space-between;
   align-items: center;
-  padding: 1rem 3rem;  /* Additional padding for breathing room */
+  padding: 1rem 3rem;
+  flex-wrap: wrap; /* Allows items to wrap as needed on smaller screens */
 }
 
 .subscribe {
@@ -63,12 +64,13 @@ export default {
 
 .subscribe-box {
   margin-top: 5px;
+  display: flex;
 }
 
 .footer-content {
   display: flex;
-  flex-direction: column;  /* Vertical alignment */
-  justify-content: space-between;  /* This creates even spacing within the section */
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -80,39 +82,35 @@ export default {
 
 .description {
   font-size: 15px;
-  color: gray;  /* Corrected from double quotes to proper syntax */
+  color: gray;
 }
 
 .footer-items {
-  list-style: none;
   display: flex;
-  flex-direction: row;  /* Horizontal alignment */
-  gap: 2rem;  /* Space between the two columns */
+  flex-direction: row;
+  gap: 2rem;
+  list-style: none;
   align-items: flex-start;
 }
 
 .footer-items2 {
   list-style: none;
-  flex-direction: column;  /* Vertical alignment within each column */
-  gap: 0.5rem;  /* Space between items in a column */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .footer-items2 li {
-  padding: 0.5rem 0;  /* Additional padding for spacing */
+  padding: 0.5rem 0;
 }
 
 .footer-text-field {
     color: white;
     background-color: rgba(255, 255, 255, .2);
-    border: 1px #000;
+    border: 1px solid #000;
     border-radius: 5px;
-    margin-bottom: 0;
-    margin-right: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 24px;
+    padding: 10px 24px;
     font-size: 16px;
-    overflow: hidden;
 }
 
 .button.footer-form-button {
@@ -123,9 +121,7 @@ export default {
     font-weight: 700;
     line-height: 120%;
     cursor: pointer;
-    border: 0;
-    text-decoration: none;
-    display: inline-block;
+    border: none;
 }
 
 .footer-items li a {
@@ -138,5 +134,43 @@ export default {
   background-color: #0056b3;
   border-radius: 5px;
 }
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .footer-content, .subscribe, .footer-items {
+    flex: 1 1 100%; /* Make each section full width */
+    text-align: center;
+  }
+
+  .footer-brand, .description {
+    font-size: 24px; /* Slightly reduce the font size */
+  }
+
+  .subscribe-box {
+    flex-direction: column; /* Stack input and button vertically */
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-bar {
+    padding: 20px; /* Increase padding slightly for smaller devices */
+  }
+
+  .footer-text-field, .button.footer-form-button {
+    width: auto; /* Full width for input and button */
+    margin-right: 0.2rem; /* Remove margin to fit full width */
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-brand {
+    font-size: 20px; /* Further reduce the font size for small devices */
+  }
+
+  .description {
+    font-size: 14px; /* Reduce description font size for readability */
+  }
+}
 </style>
+
 

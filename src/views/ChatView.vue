@@ -1,21 +1,32 @@
 <template>
   <div class="home-container">
+    <SideBar /> <!-- Include the sidebar here -->
     <div class="chat-container">
       <ChatHeader :threadId="currentThread" />
       <ChatFrame>
-        <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
-          :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
-          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar" />
+        <MessageComponent v-for="(message, index) in messages" :key="index"
+          :is-user="message.isUser" :text="message.text" :typing="message.typing"
+          :timestamp="message.timestamp" :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
+          :avatar-src="message.isUser ? userAvatar : botAvatar" />
       </ChatFrame>
-
-
-
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
-
-
   </div>
 </template>
+<style>
+.home-container {
+  display: flex; /* Changes the flex-direction to row by default */
+  width: 100%; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
+}
+
+.chat-container {
+  flex-grow: 1; /* Takes up the remaining space */
+  display: flex;
+  flex-direction: column;
+}
+</style>
+
 
 <script>
 import ChatHeader from '../components/ChatHeader.vue';
@@ -24,6 +35,7 @@ import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import { gptAPICall } from '@/services/gptServices';
+import SideBar from '../components/SideBar.vue';
 
 
 export default {
@@ -34,6 +46,7 @@ export default {
     ChatFrame,
     MessageComponent,
     UserInput,
+    SideBar
   },
   data() {
     return {
