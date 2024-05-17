@@ -11,21 +11,21 @@
         </div>
       </div>
       <div class="small-description">
-        <div class=sdesitem>
-            <li class="sdesimg">
-                <img src='@/assets/bot.png' alt="placeholder">
-            </li>
-            <li class="sdestext">
-                Fine-tuned model specializing in finance and investing
-            </li>
+        <div class="sdesitem">
+          <li class="sdesimg">
+            <img src='@/assets/bot.png' alt="placeholder">
+          </li>
+          <li class="sdestext">
+            Fine-tuned model specializing in finance and investing
+          </li>
         </div>
-        <div class=sdesitem>
-            <li class="sdesimg">
-                <img src='@/assets/bot.png' alt="placeholder">
-            </li>
-            <li class="sdestext">
-              Accessible and up-to-date on the latest information
-            </li>
+        <div class="sdesitem">
+          <li class="sdesimg">
+            <img src='@/assets/bot.png' alt="placeholder">
+          </li>
+          <li class="sdestext">
+            Accessible and up-to-date on the latest information
+          </li>
         </div>
       </div>
     </div>
@@ -79,8 +79,10 @@
 
     <!-- Analytics Dashboard Section -->
     <section id="analytics-dashboard">
-      <h2>Understand Your Financial Landscape</h2>
-      <p>Delve deeper into your financial habits with our powerful AI insights.</p>
+      <div class="dashboard-title">
+        <h2>Understand Your Financial Landscape</h2>
+        <p>Delve deeper into your financial habits with our powerful AI insights.</p>
+      </div>
       <div class="dashboard-content">
         <div class="info-cards">
           <div class="info-card">
@@ -135,13 +137,35 @@ export default {
   methods: {
     learnMore() {
       this.$router.push('/learn-more');
-    }
+    },
+    addAnimation() {
+      const elements = document.querySelectorAll('.intro-container, .intro-text, .title, .description, .photo, .small-description, .sdesitem, header, .feature-icons div, .stats-section, .stats-header, .stats-container, .stat-item, .container, .text-content, .dashboard-visual, .info-cards, .info-card, .dashboard-title, #real-time-insights .content-with-image, #real-time-insights .text-content, #real-time-insights .image-container, .insight-cards, .insight-card');
+
+      elements.forEach((element, index) => {
+        requestAnimationFrame(() => {
+          element.style.opacity = '0';
+          element.style.animation = `slide-in 0.5s ease-in-out ${index * 0.1}s forwards`;
+        });
+      });
+    },
+    mounted() {
+      this.addAnimation();
+    },
   }
 }
 </script>
 
-
 <style scoped>
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
 .intro-container {
   gap: 0.1rem;
@@ -150,11 +174,15 @@ export default {
   padding-top: 1.5rem;
   flex-direction: column;
   display: flex;
+  opacity: 1;
+  animation: none;
 }
 
 .intro-text {
   display: flex;
   width: auto;
+  opacity: 1;
+  animation: none;
 }
 
 .title {
@@ -166,6 +194,8 @@ export default {
   font-size: 4rem;
   max-width: 30rem;
   flex-wrap: wrap;
+  opacity: 1;
+  animation: none;
 }
 
 .description {
@@ -175,6 +205,8 @@ export default {
   font-size: 1.2rem;
   padding-top: 20px;
   flex-wrap: wrap;
+  opacity: 1;
+  animation: none;
 }
 
 .small-description {
@@ -183,10 +215,14 @@ export default {
   gap: 80px;
   display: flex;
   flex-direction: row;
+  opacity: 1;
+  animation: none;
 }
 
 .sdesitem {
   max-width: 150px;
+  opacity: 1;
+  animation: none;
 }
 
 .sdestext {
@@ -196,26 +232,36 @@ export default {
   text-align: left;
   flex-direction: column;
   font-weight: normal;
+  opacity: 1;
+  animation: none;
 }
 
 .sdesimg img {
   list-style-type: none;
   width: 30%;
   border-radius: 20%;
+  opacity: 1;
+  animation: none;
 }
 
 .sdesimg {
   list-style-type: none;
+  opacity: 1;
+  animation: none;
 }
 
 .photo img {
   width: 50%;
   border-radius: 20%;
+  opacity: 1;
+  animation: none;
 }
 
 .photo {
   text-align: right;
   margin: auto;
+  opacity: 1;
+  animation: none;
 }
 /* Global settings and the main content area */
 #main-content {
@@ -225,20 +271,28 @@ export default {
   color: black; /* White text for better contrast */
   font-family: 'Segoe UI', Arial, sans-serif; /* Modern font */
   margin-top: 0;
+  opacity: 1;
+  animation: none;
 }
 
 header {
   text-align: center;
   padding: 50px 20px;
   background: none; /* Removing the light background */
+  opacity: 1;
+  animation: none;
 }
 
 h1, h2, h3 {
-  color: #ffffff;
+  color: #007bff;
+  opacity: 1;
+  animation: none;
 }
 
 p {
-  color: #cccccc; /* Lighter grey for paragraphs */
+  color: black; /* Lighter grey for paragraphs */
+  opacity: 1;
+  animation: none;
 }
 
 button {
@@ -250,10 +304,14 @@ button {
   cursor: pointer;
   font-weight: bold; /* Make the text a bit bolder */
   transition: background-color 0.3s ease;
+  opacity: 1;
+  animation: none;
 }
 
 button:hover {
   background-color: #357ab8; /* Darker shade on hover */
+  opacity: 1;
+  animation: none;
 }
 
 /* Feature icons and stats section styling */
@@ -264,32 +322,57 @@ button:hover {
   margin: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadows for depth */
   font-size: 1rem;
+  color: white;
+  opacity: 1;
+  animation: none;
+  text-align: center;
+}
+
+.feature-icons {
+  align-self: center;
 }
 
 .stats-section {
   text-align: center;
   padding: 40px;
-  background: #23344e; /* Even darker background for the section */
+  background: white; /* Even darker background for the section */
+  opacity: 1;
+  animation: none;
 }
 
 .stats-header h2 {
   font-size: 1.8rem; /* Slightly larger for better visibility */
   margin-bottom: 20px;
+  opacity: 1;
+  animation: none;
 }
 
 .stats-header p {
   font-size: 1.2rem;
   margin-bottom: 20px;
+  opacity: 1;
+  animation: none;
 }
 
 .stats-container {
   display: flex;
   justify-content: space-around;
   padding: 20px;
+  opacity: 1;
+  animation: none;
+  flex-wrap: wrap;
 }
 
 .stat-item {
   width: 30%; /* Ensuring even spacing */
+  opacity: 1;
+  animation: none;
+}
+
+.stat-item p {
+  color: white;
+  opacity: 1;
+  animation: none;
 }
 
 .container {
@@ -297,15 +380,21 @@ button:hover {
   justify-content: space-between;
   align-items: center; /* Align items vertically */
   margin-top: 20px;
+  opacity: 1;
+  animation: none;
 }
 
 .text-content, .dashboard-visual {
   flex: 1;
   padding: 20px;
+  opacity: 1;
+  animation: none;
 }
 
 .text-content {
   align-self: start; /* Align text content to the top */
+  opacity: 1;
+  animation: none;
 }
 
 /* Dashboard section specific */
@@ -313,10 +402,33 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: flex-start; /* Aligns children at the top */
+  opacity: 1;
+  animation: none;
+}
+
+.dashboard-title {
+  align-content: center;
+  text-align: center;
+  opacity: 1;
+  animation: none;
 }
 
 .info-cards {
   width: 40%; /* Allocate width for the info cards */
+  opacity: 1;
+  animation: none;
+}
+
+.info-cards p{
+  color: white;
+  opacity: 1;
+  animation: none;
+}
+
+.inf-cards h2{
+  color: #45BAF6;
+  opacity: 1;
+  animation: none;
 }
 
 .info-card {
@@ -324,6 +436,8 @@ button:hover {
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 5px;
+  opacity: 1;
+  animation: none;
 }
 
 .dashboard-visual {
@@ -332,63 +446,82 @@ button:hover {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+  opacity: 1;
+  animation: none;
 }
 
 ul {
   list-style-type: none; /* Removing bullet points */
   padding-left: 0; /* Align list items */
+  opacity: 1;
+  animation: none;
 }
 #real-time-insights .content-with-image {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  opacity: 1;
+  animation: none;
 }
 
 #real-time-insights .text-content {
   width: 60%;
+  opacity: 1;
+  animation: none;
 }
 
 #real-time-insights .image-container {
   width: 35%;
   padding-left: 20px;
+  opacity: 1;
+  animation: none;
 }
 
 #real-time-insights .image-container img {
   width: 100%;
   height: auto;
   border-radius: 8px;
+  opacity: 1;
+  animation: none;
+}
+
+/* Responsive images styling */
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  opacity: 1;
+  animation: none;
 }
 
 /* Medium devices (tablets, 768px and up) */
 @media (max-width: 768px) {
   .container, .dashboard-content, .real-time-insights .content-with-image {
-    flex-direction: row;
-    justify-content: space-between; /* Distributes space between items */
+    flex-direction: column;
   }
 
   .stats-container {
-    flex-direction: row;
-    justify-content: space-around; /* Evenly spaces stat items */
+    flex-direction: column;
+    align-items: center;
   }
 
   .feature-icons div, .stat-item, .info-card {
-    flex: 1 1 auto; /* Allows flex items to grow and shrink as needed */
+    width: 80%;
+    margin-bottom: 20px;
   }
 
   .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
-    flex: 1 1 50%; /* Takes up half of the container width */
+    width: 100%;
   }
 
   .intro-text {
     flex-direction: column;
+    align-items: center;
   }
 
   .photo {
-    padding: 1rem;
-  }
-
-  .photo img{
-    width: 80%;
+    text-align: center;
+    margin: 20px 0;
   }
 }
 
@@ -396,7 +529,7 @@ ul {
 @media (min-width: 992px) {
   .container, .stats-container, .dashboard-content, .real-time-insights .content-with-image {
     max-width: 1140px; /* Bootstrap's default container max-width for large screens */
-    margin: auto; /* Centers the container */
+    margin: auto;
   }
 
   .stat-item, .info-card {
@@ -404,7 +537,7 @@ ul {
   }
 
   .text-content, .dashboard-visual {
-    flex: 1 1 50%; /* Ensures text and visuals are balanced */
+    flex: 1 1 50%;
   }
 
   .real-time-insights .text-content, .real-time-insights .image-container {
@@ -417,7 +550,7 @@ ul {
 .container, .stats-container, .dashboard-content, .real-time-insights .content-with-image {
   padding: 20px;
   gap: 20px;
+  opacity: 1;
+  animation: none;
 }
-
-
 </style>
