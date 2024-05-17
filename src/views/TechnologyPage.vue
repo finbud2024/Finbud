@@ -16,36 +16,36 @@
       <div class="content">
         <h2>ARTIFICIAL INTELLIGENCE</h2>
         <h3>Get real-time insights on your performance.</h3>
-        <p>Know what works and leverage your data to constantly improve.</p>
+        <p>Empower your financial decisions with our cutting-edge AI technology.</p>
         <div class="list-item">
           <img src= "@/assets/tick.png" alt="Check">
-          <span>Auto-generated reports: Get accurate insights on your performance with auto-generated reports that help you optimize your operations.</span>
+           <span>Personalized Financial Analysis: Gain comprehensive insights with auto-generated reports tailored to your financial behavior, helping you optimize your budget and savings.</span>
         </div>
         <div class="list-item">
           <img src="@/assets/tick.png"  alt="Check">
-          <span>Customer analysis: Get a complete view of your customer's repair data so you can understand how to price your services.</span>
+          <span>Trend Prediction: Our AI-driven tools analyze past spending and earning trends to forecast your financial future, enabling proactive financial planning.</span>
         </div>
         <button @click="learnMore">Learn more</button>
       </div>
     </div>
     <div class="computer-vision-section">
-      <h2 class="section-title">See the technology that’s driving the change.</h2>
-      <p class="section-description">Our advanced computer vision system records all the work your technicians do on your customer’s vehicles. This allows us to show you exactly how efficient each and every repair is.</p>
+      <h2>ADVANCED AI CHATBOT</h2>
+      <p>Smart Financial Assistance at Your Fingertips.</p>
 
       <div class="tracking-features">
         <div class="tracking-feature">
           <img src="@/assets/vehicle-tracking.png" alt="Vehicle Tracking">
-          <h3>Vehicle Tracking</h3>
-          <p>Tired of asking technicians how much progress they’ve made on a repair? Our vehicle tracking system provides detailed tracking from the moment a vehicle first enters a bay through its exit when a job is completed.</p>
+          <h3>Instant Financial Insights</h3>
+          <p>Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.</p>
         </div>
         <div class="tracking-feature">
           <img src="@/assets/employee-tracking.png" alt="Employee Tracking">
-          <h3>Employee Tracking</h3>
-          <p>Curious how your technicians are doing? We collect repair efficiency statistics for each job, allowing managers to see what aspects need improvement and what techs deserve praise.</p>
+          <h3>Interactive Financial Planning</h3>
+          <p>Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.</p>
         </div>
         <div class="tracking-feature">
           <img src="@/assets/advanced-cv.png" alt="Advanced Computer Vision">
-          <h3>Advanced Computer Vision</h3>
+          <h3>Secure and Confidential</h3>
           <p>Our proprietary system utilizes neural networks to identify the information that matters most. Think of it like the way your brain works, only it never gets tired (or needs 3 cups of coffee to get through the day).</p>
         </div>
       </div>
@@ -73,29 +73,30 @@ export default {
   data() {
     return {
       features: [
+       
         {
           id: 1,
-          title: 'Dynamic Labor Rates',
-          description: 'Update labor rates to reflect your shop’s strengths and weaknesses. Never get burned by an RO again.',
-          imageUrl: "@/assets/logo1.png",
+          title: 'Financial Planning',
+          description: 'I help you create and maintain a perfect personal financial plan.',
+          icon: "@/assets/financial-planning.png",
         },
         {
           id: 2,
-          title: 'Identify Outliers',
-          description: 'Learn from the best repairs and make changes to the worst to keep your shop running at its peak.',
-          icon: 'path/to/your-icon2.svg'
+          title: 'Debt and Investment Management',
+          description: 'Manage your debts and invest wisely with targeted advice tailored to your goals.',
+          icon: 'path/to/debt-management-icon.svg'
         },
         {
           id: 3,
-          title: 'Data-Driven Insights',
-          description: 'Auto-extract details about your shop performance from data collected through our camera system.',
-          icon: 'path/to/your-icon3.svg'
+          title: 'Financial Education',
+          description: 'Providing knowledge on basic and advanced financial concepts to empower your decisions.',
+          icon: 'path/to/financial-education-icon.svg'
         },
         {
           id: 4,
-          title: 'Repair Order Mapping',
-          description: 'Prioritize what work to complete and when to complete it.',
-          icon: 'path/to/your-icon4.svg'
+          title: 'Predictive Financial Analytics',
+          description: 'Utilize AI to analyze and predict financial trends to make smart decisions.',
+          icon: 'path/to/predictive-analytics-icon.svg'
         }
       ]
     };

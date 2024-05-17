@@ -19,7 +19,7 @@
       <div class="input-group">
         <label for="company-name">Company name</label>
         <input type="text" id="company-name" placeholder="The P-Corp.">
-      </div>
+      </div>    
 
       <div class="input-group">
         <label for="mobile-number">Mobile number</label>
