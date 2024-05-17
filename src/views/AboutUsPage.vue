@@ -1,52 +1,71 @@
 <template>
-  <div class="team-section">
+  <div>
+    <div class="team-section">
       <li class="title">About us</li>
-      <li class="description">We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures.</li>
-  </div>
-  <div class="team-section">
+      <li class="description">
+        We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures.
+      </li>
+    </div>
+    <div class="team-section">
       <li class="title">Meet Our Team</li>
       <div class="team-container">
-          <div class="team-member">
-              <img src='@/assets/tri.jpeg' alt="Alex Smith">
-              <h3>Alex Smith</h3>
-              <p>Creative Leader</p>
-              <h2>(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</h2>
-              <div class="social-icons">
-                  <a href="#"><img src="facebook_icon.png" alt="Facebook"></a>
-                  <a href="#"><img src="instagram_icon.png" alt="Instagram"></a>
-              </div>
+        <div class="team-member" v-for="member in teamMembers" :key="member.name">
+          <img :src="member.img" :alt="member.name" class="fade-in" />
+          <h3>{{ member.name }}</h3>
+          <p>{{ member.role }}</p>
+          <h2>{{ member.intro }}</h2>
+          <div class="social-icons">
+            <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link">
+              <img :src="icon.img" :alt="icon.name" />
+            </a>
           </div>
-          <div class="team-member">
-              <img src='@/assets/tri.jpeg' alt="May Brown">
-              <h3>May Brown</h3>
-              <p>Sales Manager</p>
-              <h2>(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</h2>
-              <div class="social-icons">
-                  <a href="#"><img src="facebook_icon.png" alt="Facebook"></a>
-                  <a href="#"><img src="instagram_icon.png" alt="Instagram"></a>
-              </div>
-          </div>
-          <div class="team-member">
-              <img src='@/assets/tri.jpeg' alt="Ann Richmond">
-              <h3>Ann Richmond</h3>
-              <p>Web Developer</p>
-              <h2>(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore</h2>
-              <div class="social-icons">
-                  <a href="#"><img src="facebook_icon.png" alt="Facebook"></a>
-                  <a href="#"><img src="instagram_icon.png" alt="Instagram"></a>
-              </div>
-          </div>
+        </div>
       </div>
+    </div>
   </div>
-
 </template>
 
 <script>
 export default {
   name: 'AboutUsPage',
-}
+  data() {
+    return {
+      teamMembers: [
+        {
+          name: 'Alex Smith',
+          role: 'Creative Leader',
+          intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+          img: '@/assets/tri.jpeg',
+          socialIcons: [
+            { name: 'Facebook', img: 'facebook_icon.png', link: '#' },
+            { name: 'Instagram', img: 'instagram_icon.png', link: '#' },
+          ],
+        },
+        {
+          name: 'May Brown',
+          role: 'Sales Manager',
+          intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+          img: '@/assets/tri.jpeg',
+          socialIcons: [
+            { name: 'Facebook', img: 'facebook_icon.png', link: '#' },
+            { name: 'Instagram', img: 'instagram_icon.png', link: '#' },
+          ],
+        },
+        {
+          name: 'Ann Richmond',
+          role: 'Web Developer',
+          intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+          img: '@/assets/tri.jpeg',
+          socialIcons: [
+            { name: 'Facebook', img: 'facebook_icon.png', link: '#' },
+            { name: 'Instagram', img: 'instagram_icon.png', link: '#' },
+          ],
+        },
+      ],
+    };
+  },
+};
 </script>
-
 
 <style scoped>
 body {
@@ -57,99 +76,143 @@ body {
   box-sizing: border-box;
 }
 
-.about_us {
+.team-section {
+  text-align: center;
   background-color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
 }
 
 .title {
   font-weight: bold;
   color: #007bff;
-  display: flex;
-  text-align: center;
-  flex-direction: column;
   font-size: 2.5rem;
+  margin-bottom: 1rem;
+  animation: fadeInDown 1s ease-in-out;
 }
 
 .description {
-  color: black;
-  display: flex;
-  text-align: center;
-  align-self: center;
+  color: #333;
   font-size: 1.5rem;
-  flex-direction: column;
-  padding-top: 1.5rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.team-section {
-  margin: 0 auto;
-  background: white;
-  padding: 0.8rem;
-  padding-top: 0.9rem;
-  align-content: center;
-  text-align: center;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease-in-out;
 }
 
 .team-container {
-  justify-content: center;
   display: flex;
-  gap: 0.2rem;
   flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .team-member {
-  max-width: 18rem;
   background: #fff;
-  margin: 10px;
-  padding: 20px;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: calc(25% - 2rem);
   text-align: center;
-  width: calc(25% - 20px);
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.team-member:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .team-member img {
   width: 60%;
   border-radius: 50%;
+  margin-bottom: 1rem;
+  animation: zoomIn 1s ease-in-out;
 }
 
-h2 {
-  color: black;
-  font-size: 15px;
-  text-align: center;
-  flex-direction: column;
-  font-weight: normal;
+.team-member h3 {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #333;
 }
 
-h3 {
-  color: black;
-  font-size: 20px;
-  font-weight: bold;
+.team-member p {
+  font-size: 1rem;
+  color: #777;
+  margin: 0.5rem 0 1rem;
 }
 
-p {
-  color: black;
-  font-size: 18px;
-}
-
-.social-icons {
-  margin-top: 10px;
+.team-member h2 {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1rem;
 }
 
 .social-icons img {
   width: 20px;
   margin: 0 5px;
+  transition: transform 0.3s;
+}
+
+.social-icons img:hover {
+  transform: scale(1.2);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @media (max-width: 1024px) {
   .title {
-      font-size: 30px;
+    font-size: 30px;
   }
   .description {
-      font-size: 15px
+    font-size: 15px;
+  }
+  .team-member {
+    width: calc(50% - 2rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .team-member {
+    width: calc(100% - 2rem);
   }
 }
 </style>

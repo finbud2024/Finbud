@@ -10,6 +10,7 @@
         <li><router-link to="/contact" class="contact">Contact</router-link></li>
         <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
         <li><router-link to="/chatview" class="chatview">ChatView</router-link></li>
+        <li><router-link to="/quizz" class="chatview">Quizz</router-link></li>
       </div>
     </div>
     <ul class="nav-items">
@@ -19,10 +20,12 @@
       <li><router-link to="/contact" class="contact">Contact</router-link></li>
       <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
       <li><router-link to="/chatview" class="chatview">ChatView</router-link></li>
+      <li><router-link to="/quizz" class="chatview">Quizz</router-link></li>
     </ul>
     <ul class="nav-actions">
       <li><router-link to="/login" class="login-button">Log In</router-link></li>
       <li><router-link to="/signup" class="signup-button">Sign Up</router-link></li>
+      
     </ul>
   </nav>
 </template>
