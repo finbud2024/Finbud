@@ -14,14 +14,12 @@
 
 <script>
 import NavBar from './components/NavBar.vue';
-import ChatBox from './components/ChatBox.vue';
 import FooterBar from './components/FooterBar.vue';
 
 export default {
   name: 'App',
   components: {
     NavBar,
-    ChatBox,
     FooterBar,
   },
 };
