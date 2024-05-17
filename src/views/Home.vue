@@ -1,61 +1,61 @@
 <template>
   <section id="main-content">
-    <div class='container'>
+    <div class="container">
       <div class="intro-text">
-          <li class="title">Making the most informed choices</li>
-          <li class="description">With FinBud, you can ask for the best financial advice anytime, anywhere</li>
-          <div class="small-description">
-              <div class=sdesitem>
-                  <li class="sdesimg">
-                      <img src='@/assets/bot.png' alt="placeholder">
-                  </li>
-                  <li class="sdestext">
-                      Fine-tuned model specializing in finance and investing
-                  </li>
-              </div>
-              <div class=sdesitem>
-                  <li class="sdesimg">
-                      <img src='@/assets/bot.png' alt="placeholder">
-                  </li>
-                  <li class="sdestext">
-                    Accessible and up-to-date on the latest information
-                  </li>
-              </div>
+        <li class="title animate fade-in">Making the most informed choices</li>
+        <li class="description animate fade-in">With FinBud, you can ask for the best financial advice anytime, anywhere</li>
+        <div class="small-description">
+          <div class="sdesitem animate slide-in-left">
+            <li class="sdesimg">
+              <img src='@/assets/bot.png' alt="placeholder">
+            </li>
+            <li class="sdestext">
+              Fine-tuned model specializing in finance and investing
+            </li>
           </div>
+          <div class="sdesitem animate slide-in-right">
+            <li class="sdesimg">
+              <img src='@/assets/bot.png' alt="placeholder">
+            </li>
+            <li class="sdestext">
+              Accessible and up-to-date on the latest information
+            </li>
+          </div>
+        </div>
       </div>
-      <div class="photo">
-          <img src='@/assets/bot.png' alt="placeholder">
+      <div class="photo animate fade-in">
+        <img src='@/assets/bot.png' alt="placeholder">
       </div>
     </div>
     <header>
-      <h1>Enhance Your Financial Awareness by 25%</h1>
-      <p>FinBud is an AI-driven financial analytics platform that makes managing your finances more efficient.</p>
-      <button @click="learnMore">Learn More</button>
+      <h1 class="animate fade-in">Enhance Your Financial Awareness by 25%</h1>
+      <p class="animate fade-in">FinBud is an AI-driven financial analytics platform that makes managing your finances more efficient.</p>
+      <button @click="learnMore" class="animate slide-in-up">Learn More</button>
     </header>
 
-    <div id="efficiency-chart"></div>
+    <div id="efficiency-chart" class="animate fade-in"></div>
 
     <div class="feature-icons">
-      <div>Compatible with any personal finance management software</div>
-      <div>Data-driven insights provide actionable steps to manage and improve your financial health</div>
+      <div class="animate slide-in-left">Compatible with any personal finance management software</div>
+      <div class="animate slide-in-right">Data-driven insights provide actionable steps to manage and improve your financial health</div>
     </div>
 
     <!-- Statistics Section -->
     <section id="statistics" class="stats-section">
       <div class="stats-header">
-        <h2>Experience the Impact</h2>
-        <p>Gain actionable insights into your finances automatically. It’s financial management at its best.</p>
+        <h2 class="animate fade-in">Experience the Impact</h2>
+        <p class="animate fade-in">Gain actionable insights into your finances automatically. It’s financial management at its best.</p>
       </div>
       <div class="stats-container">
-        <div class="stat-item">
+        <div class="stat-item animate slide-in-left">
           <h3>20% Savings Increase</h3>
           <p>Average increase in savings per user</p>
         </div>
-        <div class="stat-item">
+        <div class="stat-item animate slide-in-up">
           <h3>30% Debt Reduction</h3>
           <p>Average reduction in debt after one year</p>
         </div>
-        <div class="stat-item">
+        <div class="stat-item animate slide-in-right">
           <h3>Improved Credit Score</h3>
           <p>Enhance your credit score within six months</p>
         </div>
@@ -64,8 +64,8 @@
 
     <!-- Feature Highlights Section -->
     <section id="features" class="container">
-      <img src="@/assets/performance-overview.png" alt="Performance Overview" />
-      <div class="text-content">
+      <img src="@/assets/performance-overview.png" alt="Performance Overview" class="animate slide-in-left" />
+      <div class="text-content animate slide-in-right">
         <h2>Optimize Your Financial Operations</h2>
         <p>FinBud is tailored for individual financial needs, helping to optimize your economic potential.</p>
         <ul>
@@ -77,24 +77,24 @@
 
     <!-- Analytics Dashboard Section -->
     <section id="analytics-dashboard">
-      <h2>Understand Your Financial Landscape</h2>
-      <p>Delve deeper into your financial habits with our powerful AI insights.</p>
+      <h2 class="animate fade-in">Understand Your Financial Landscape</h2>
+      <p class="animate fade-in">Delve deeper into your financial habits with our powerful AI insights.</p>
       <div class="dashboard-content">
         <div class="info-cards">
-          <div class="info-card">
+          <div class="info-card animate slide-in-left">
             <h3>Comprehensive Budget Analysis</h3>
             <p>Get detailed reports breaking down your spending and savings.</p>
           </div>
-          <div class="info-card">
+          <div class="info-card animate slide-in-up">
             <h3>Future Expense Projections</h3>
             <p>Our AI predicts upcoming expenses to help you plan ahead.</p>
           </div>
-          <div class="info-card">
+          <div class="info-card animate slide-in-right">
             <h3>Investment Performance Tracker</h3>
             <p>Track how your investments are performing in real-time.</p>
           </div>
         </div>
-        <div class="dashboard-visual">
+        <div class="dashboard-visual animate fade-in">
           <img src="@/assets/car.png" alt="Financial Dashboard">
         </div>
       </div>
@@ -103,23 +103,22 @@
     <!-- Real-time Insights Section -->
     <section id="real-time-insights">
       <div class="content-with-image">
-        <div class="text-content">
+        <div class="text-content animate slide-in-left">
           <h2>Real-Time Financial Insights</h2>
           <p>Stay ahead with up-to-the-minute data on your financial status.</p>
           <div class="insight-cards">
-            <div class="insight-card">
+            <div class="insight-card animate slide-in-up">
               <h3>Auto-generated Financial Reports</h3>
               <p>Instantly receive comprehensive financial summaries tailored to your needs.</p>
             </div>
-            <div class="insight-card">
+            <div class="insight-card animate slide-in-up">
               <h3>Spending Habit Analysis</h3>
               <p>Understand your spending patterns and receive tips for better budget management.</p>
             </div>
           </div>
-          <button @click="learnMore">Learn more</button>
+          <button @click="learnMore" class="animate slide-in-up">Learn more</button>
         </div>
-        <!-- Image on the right -->
-        <div class="image-container">
+        <div class="image-container animate slide-in-right">
           <img src="/assets/real-data.png" alt="Detailed Financial Analysis">
         </div>
       </div>
@@ -133,14 +132,72 @@ export default {
   methods: {
     learnMore() {
       this.$router.push('/learn-more');
-    }
-  }
-}
+    },
+  },
+  mounted() {
+    const observerOptions = {
+      threshold: 0.1,
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    const elements = document.querySelectorAll('.animate');
+    elements.forEach(el => observer.observe(el));
+  },
+};
 </script>
 
-
 <style scoped>
+/* Add animations */
+.animate {
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+}
 
+.animate-visible {
+  opacity: 1;
+}
+
+.fade-in {
+  transform: translateY(20px);
+}
+
+.fade-in.animate-visible {
+  transform: translateY(0);
+}
+
+.slide-in-left {
+  transform: translateX(-20px);
+}
+
+.slide-in-left.animate-visible {
+  transform: translateX(0);
+}
+
+.slide-in-right {
+  transform: translateX(20px);
+}
+
+.slide-in-right.animate-visible {
+  transform: translateX(0);
+}
+
+.slide-in-up {
+  transform: translateY(20px);
+}
+
+.slide-in-up.animate-visible {
+  transform: translateY(0);
+}
+
+/* General Styling */
 .container {
   gap: 0.1rem;
   padding-left: 3rem;
@@ -352,7 +409,7 @@ ul {
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-  .container, .dashboard-content, .real-time-insights .content-with-image {
+  .container, .dashboard-content, #real-time-insights .content-with-image {
     flex-direction: row;
     justify-content: space-between; /* Distributes space between items */
   }
@@ -366,14 +423,14 @@ ul {
     flex: 1 1 auto; /* Allows flex items to grow and shrink as needed */
   }
 
-  .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
+  .text-content, .dashboard-visual, #real-time-insights .text-content, #real-time-insights .image-container {
     flex: 1 1 50%; /* Takes up half of the container width */
   }
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-  .container, .stats-container, .dashboard-content, .real-time-insights .content-with-image {
+  .container, .stats-container, .dashboard-content, #real-time-insights .content-with-image {
     max-width: 1140px; /* Bootstrap's default container max-width for large screens */
     margin: auto; /* Centers the container */
   }
@@ -386,17 +443,15 @@ ul {
     flex: 1 1 50%; /* Ensures text and visuals are balanced */
   }
 
-  .real-time-insights .text-content, .real-time-insights .image-container {
+  #real-time-insights .text-content, #real-time-insights .image-container {
     width: 60%; /* Text takes slightly more space */
     width: 35%; /* Image takes less space */
   }
 }
 
 /* Ensuring padding and gap responsiveness */
-.container, .stats-container, .dashboard-content, .real-time-insights .content-with-image {
+.container, .stats-container, .dashboard-content, #real-time-insights .content-with-image {
   padding: 20px;
   gap: 20px;
 }
-
-
 </style>

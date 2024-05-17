@@ -9,6 +9,7 @@ import SideBar from '@/components/SideBar.vue';
 import TechnologyPage from '@/views/TechnologyPage.vue'; 
 import PricingPage from '@/views/PricingPage.vue'; 
 import AboutUsPage from '@/views/AboutUsPage.vue';
+import QuizzPage from '@/views/QuizzPage.vue';
 
 const routes = [
   {
@@ -54,6 +55,11 @@ const routes = [
     path: '/about',
     name: 'AboutUsPage',
     component: AboutUsPage  // Setup the route for the contact page
+  },
+  {
+    path: '/quizz',
+    name: 'QuizzPage',
+    component: QuizzPage  // Setup the route for the contact page
   },
 
 ];

@@ -4,7 +4,6 @@
     <div class="content">
       <!-- Use router-link to navigate to the login page -->
       <MainContentVue />
-      <ChatBox />
     </div>
   </div>
   <!-- router-view will render the component associated with the current route -->
