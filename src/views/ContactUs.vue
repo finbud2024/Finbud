@@ -1,11 +1,11 @@
 <template>
-  <section id="contact-page">
-    <div class="contact-header">
+  <section id="contact-page" class="animate fade-in">
+    <div class="contact-header animate slide-in-up">
       <h1>We'd love to talk about how we can work together.</h1>
       <p>Let us know how we can help (or if we can't, tell us)!</p>
     </div>
 
-    <form class="contact-form">
+    <form class="contact-form animate slide-in-up">
       <div class="input-group">
         <label for="full-name">Full name</label>
         <input type="text" id="full-name" placeholder="Frank Castle" required>
@@ -38,7 +38,24 @@
 
 <script>
 export default {
-  name: 'ContactUs'
+  name: 'ContactUs',
+  mounted() {
+    const observerOptions = {
+      threshold: 0.1,
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    const elements = document.querySelectorAll('.animate');
+    elements.forEach(el => observer.observe(el));
+  }
 }
 </script>
 
@@ -50,6 +67,7 @@ export default {
   background: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .contact-header h1,
@@ -88,5 +106,30 @@ export default {
 .contact-form button:hover {
   background-color: #003975;
 }
-</style>
 
+/* Add animations */
+.animate {
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.animate-visible {
+  opacity: 1;
+}
+
+.fade-in {
+  transform: translateY(20px);
+}
+
+.fade-in.animate-visible {
+  transform: translateY(0);
+}
+
+.slide-in-up {
+  transform: translateY(20px);
+}
+
+.slide-in-up.animate-visible {
+  transform: translateY(0);
+}
+</style>

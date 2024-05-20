@@ -34,6 +34,7 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
 /* Existing styles */
 .gap {
   gap: 10px;
@@ -47,6 +48,8 @@ export default {
   align-items: center;
   padding: 1rem 3rem;
   flex-wrap: wrap; /* Allows items to wrap as needed on smaller screens */
+  font-family: 'Space Grotesk', sans-serif;
+  height: auto;
 }
 
 .subscribe {
@@ -128,9 +131,9 @@ export default {
 }
 
 /* Responsive adjustments */
-@media (max-width: 992px) {
+@media (max-width: 985px) {
   .footer-content, .subscribe, .footer-items {
-    flex: 1 1 100%; /* Make each section full width */
+    flex: 1 1 auto; /* Make each section full width */
     text-align: center;
   }
 
@@ -140,6 +143,17 @@ export default {
 
   .subscribe-box {
     flex-direction: column; /* Stack input and button vertically */
+  }
+
+  .footer-items {
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .footer-items2 {
+    justify-content: center;
+    text-align: center;
+    padding-inline-start: 0px;
   }
 }
 

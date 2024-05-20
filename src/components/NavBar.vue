@@ -10,6 +10,7 @@
         <li><router-link to="/contact" class="contact">Contact</router-link></li>
         <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
         <li><router-link to="/chatview" class="chatview">ChatView</router-link></li>
+        <li><router-link to="/quizz" class="chatview">Quizz</router-link></li>
       </div>
     </div>
     <ul class="nav-items">
@@ -19,10 +20,12 @@
       <li><router-link to="/contact" class="contact">Contact</router-link></li>
       <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
       <li><router-link to="/chatview" class="chatview">ChatView</router-link></li>
+      <li><router-link to="/quizz" class="chatview">Quizz</router-link></li>
     </ul>
     <ul class="nav-actions">
       <li><router-link to="/login" class="login-button">Log In</router-link></li>
       <li><router-link to="/signup" class="signup-button">Sign Up</router-link></li>
+      
     </ul>
   </nav>
 </template>
@@ -41,10 +44,11 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 2rem;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .navbar-brand {
-  font-size: 1.8rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #007bff;
   cursor: pointer;
@@ -120,6 +124,7 @@ export default {
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
+  list-style-type: none;
 }
 
 .dropdown-content a {
@@ -135,9 +140,13 @@ export default {
 
 .dropdown:hover .dropbtn {background-color: #3e8e41;}
 
-@media (max-width: 1062px) {
+@media (max-width: 1207px) {
   .nav-items {
     gap: 1rem; /* Hide regular navigation items on smaller screens */
+  }
+
+  .nav-items li a {
+    font-size: 1rem;
   }
 
   .nav-bar {
@@ -146,7 +155,7 @@ export default {
   }
 }
 
-@media (max-width: 868px) {
+@media (max-width: 960px) {
   .nav-items {
     display: none; /* Hide regular navigation items on smaller screens */
   }
@@ -158,6 +167,10 @@ export default {
   .nav-bar {
     flex-direction: row;
     justify-content: space-between; /* Ensures spacing between elements */
+  }
+
+  .navbar-brand {
+    font-size: 1.5rem;
   }
 }
 
@@ -182,10 +195,6 @@ export default {
   .dropbtn {
     font-size: 0.5rem;
     padding: 10px;
-  }
-
-  .nav-brand {
-    font-size: 0.5rem;
   }
 
   .nav-bar {

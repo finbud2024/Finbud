@@ -62,6 +62,7 @@ export default {
   border-radius: 15px;
   background: white;
   text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 h1 {
