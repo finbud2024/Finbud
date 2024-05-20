@@ -56,6 +56,7 @@ export default {
   border-radius: 10px;
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .brand-name {

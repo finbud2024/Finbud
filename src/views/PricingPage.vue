@@ -1,7 +1,7 @@
 <template>
   <div class="features-container">
     <!-- Financial Consulting Section -->
-    <div class="consulting-section blue-background">
+    <div class="feature-section consulting-section animate slide-in-left">
       <h2>Financial Consulting</h2>
       <p class="note">Personalized plans to secure your financial future.</p>
       <div class="service-details">
@@ -26,7 +26,7 @@
     </div>
 
     <!-- Financial Education Section -->
-    <div class="education-section white-background">
+    <div class="feature-section education-section animate slide-in-right">
       <h2>Financial Education</h2>
       <p class="note">Empower yourself with knowledge to make better financial decisions.</p>
       <div class="service-details">
@@ -42,7 +42,40 @@
   </div>
 </template>
 
+<script>
+export default {
+  name: 'FeaturesSection',
+  mounted() {
+    const observerOptions = {
+      threshold: 0.1,
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    const elements = document.querySelectorAll('.animate');
+    elements.forEach(el => observer.observe(el));
+  }
+}
+</script>
+
 <style scoped>
+.features-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  margin: 40px auto;
+  max-width: 1200px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
 .feature-section {
   background-color: #007bff; /* Blue background for consulting */
   color: white;
@@ -51,6 +84,7 @@
   width: 80%;
   margin: 20px auto;
   text-align: left;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .feature-section.white-background {
@@ -58,8 +92,13 @@
   color: black; /* Text color for better readability on white */
 }
 
-.installation-fee {
-  font-size: 14px;
+.feature-section:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.note {
+  font-size: 18px;
   margin-bottom: 20px;
   color: inherit; /* Ensures the text color matches the section's color */
 }
@@ -69,15 +108,10 @@
   flex-direction: column;
 }
 
-.price-detail {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: inherit; /* Price detail inherits section color */
-}
-
 .services-grid {
   display: flex;
   justify-content: space-between;
+  gap: 20px;
 }
 
 .left-column, .right-column {
@@ -104,9 +138,45 @@ button {
   font-size: 16px;
   border-radius: 5px;
   align-self: flex-start; /* Left align the button */
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 button:hover {
   background-color: #004080; /* Even darker on hover */
+  transform: scale(1.05);
+}
+
+/* Add animations */
+.animate {
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.animate-visible {
+  opacity: 1;
+}
+
+.fade-in {
+  transform: translateY(20px);
+}
+
+.fade-in.animate-visible {
+  transform: translateY(0);
+}
+
+.slide-in-left {
+  transform: translateX(-20px);
+}
+
+.slide-in-left.animate-visible {
+  transform: translateX(0);
+}
+
+.slide-in-right {
+  transform: translateX(20px);
+}
+
+.slide-in-right.animate-visible {
+  transform: translateX(0);
 }
 </style>
