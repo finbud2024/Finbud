@@ -373,6 +373,7 @@ button:hover {
   opacity: 1;
   animation: none;
   text-align: center;
+  box-shadow: 0 0 8px #202938;
 }
 
 .feature-icons {
@@ -414,6 +415,7 @@ button:hover {
   width: 30%; /* Ensuring even spacing */
   opacity: 1;
   animation: none;
+  box-shadow: 0 0 8px #202938;
 }
 
 .stat-item p {
@@ -485,6 +487,7 @@ button:hover {
   border-radius: 5px;
   opacity: 1;
   animation: none;
+  box-shadow: 0 0 8px #202938;
 }
 
 .dashboard-visual {
@@ -565,6 +568,10 @@ img {
 
   .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
     flex: 1 1 50%; /* Takes up half of the container width */
+  }
+
+  .content-with-image {
+    flex-wrap: wrap;
   }
 }
 
