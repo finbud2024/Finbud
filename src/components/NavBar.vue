@@ -20,7 +20,7 @@
         <button class="dropbtn" @click="toggleDropdown">☰</button>
         <div class="dropdown-content" v-if="isDropdownOpen">
           <router-link to="/" class="home" @click="closeDropdown">Home</router-link>
-          <li><router-link to="/stock-simulator" class="simulator">Simulator</router-link></li>
+          <router-link to="/stock-simulator" class="simulator">Simulator</router-link>
           <router-link to="/chatview" class="chatview" @click="closeDropdown">ChatView</router-link>
           <router-link to="/quizz" class="quizz" @click="closeDropdown">Quizz</router-link>
           <router-link to="/login" class="login-button" @click="closeDropdown">Log In</router-link>
