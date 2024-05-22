@@ -56,8 +56,4 @@ a:hover {
   background-color: #e7f3ff;
 }
 
-@font-face {
-  font-family: "Space Grotesk Regular";
-  src: url('../public/SpaceGrotesk-Regular.ttf');
-}
 </style>
