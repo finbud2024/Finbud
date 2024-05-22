@@ -9,6 +9,7 @@ import TechnologyPage from '@/views/TechnologyPage.vue';
 import PricingPage from '@/views/PricingPage.vue'; 
 import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
+import StockSimulator from '@/views/StockSimulator.vue';
 
 const routes = [
   {
@@ -58,6 +59,11 @@ const routes = [
     path: '/quizz',
     name: 'QuizzPage',
     component: QuizzPage,
+  },
+  {
+    path: '/stock-simulator',
+    name: 'StockSimulator',
+    component: StockSimulator,
   },
 ];
 
