@@ -57,6 +57,7 @@ export default {
   font-family: Arial, sans-serif;
   padding: 20px;
   text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 header {

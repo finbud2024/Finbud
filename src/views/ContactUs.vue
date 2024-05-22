@@ -104,6 +104,12 @@ export default {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   margin-bottom: 40px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.contact-header h1,
+.contact-header p {
+  margin-bottom: 20px;
 }
 
 .contact-form .input-group {
