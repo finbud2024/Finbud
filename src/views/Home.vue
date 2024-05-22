@@ -366,7 +366,7 @@ button:hover {
   background: #2a3f5f; /* Slightly lighter blue background for items */
   border-radius: 5px;
   padding: 15px;
-  margin: 10px;
+  margin: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadows for depth */
   font-size: 1rem;
   color: white;
@@ -412,7 +412,6 @@ button:hover {
 }
 
 .stat-item {
-  width: 30%; /* Ensuring even spacing */
   opacity: 1;
   animation: none;
   box-shadow: 0 0 8px #202938;
