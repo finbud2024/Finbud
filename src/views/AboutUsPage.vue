@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="team-section">
       <li class="title">About us</li>
       <li class="description">
@@ -69,26 +69,31 @@ export default {
 
 <style scoped>
 body {
-  font-family: Arial, sans-serif;
   background: #f4f4f4;
   margin: 0;
   padding: 20px;
   box-sizing: border-box;
 }
 
+.container {
+  font-family: 'Space Grotesk', sans-serif;
+  list-style-type: none;
+}
+
 .team-section {
   text-align: center;
   background-color: white;
-  padding: 2rem 1rem;
   margin-bottom: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .title {
-  font-weight: bold;
   color: #007bff;
   font-size: 2.5rem;
   margin-bottom: 1rem;
   animation: fadeInDown 1s ease-in-out;
+  font-weight: 700;
 }
 
 .description {
@@ -96,6 +101,7 @@ body {
   font-size: 1.5rem;
   margin-bottom: 2rem;
   animation: fadeInUp 1s ease-in-out;
+  font-weight: 300;
 }
 
 .team-container {
@@ -114,6 +120,7 @@ body {
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
   animation: fadeIn 1s ease-in-out;
+  font-weight: 300;
 }
 
 .team-member:hover {

@@ -59,10 +59,11 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 2rem;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .navbar-brand {
-  font-size: 1.8rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #007bff;
   cursor: pointer;

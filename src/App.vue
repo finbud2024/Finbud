@@ -24,11 +24,18 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 body {
-  margin: 0px;
+  min-height: 100%;
+  margin:0;
 }
 
+html { 
+  height: 100% 
+}
+</style>
+
+<style scoped>
 .nav-actions {
   display: flex;
   flex-direction: column;
@@ -48,4 +55,5 @@ a {
 a:hover {
   background-color: #e7f3ff;
 }
+
 </style>
