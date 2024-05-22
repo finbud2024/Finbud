@@ -61,6 +61,16 @@ export default {
             { name: 'Instagram', link: 'https://www.instagram.com' },
           ],
         },
+        {
+          name: 'Truong Hoang Bach',
+          role: 'Back-end Developer',
+          intro: 'A first year Computer Science student at VinUniversity',
+          img: require('@/assets/bach.jpg'),
+          socialIcons: [
+            { name: 'Facebook', link: 'https://www.facebook.com' },
+            { name: 'Instagram', link: 'https://www.instagram.com' },
+          ],
+        },
       ],
     };
   },
@@ -116,7 +126,7 @@ body {
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: calc(25% - 2rem);
+  width: calc(25% - 8rem);
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
   animation: fadeIn 1s ease-in-out;
@@ -129,7 +139,7 @@ body {
 }
 
 .team-member img {
-  width: 60%;
+  max-width: 60%;
   border-radius: 50%;
   margin-bottom: 1rem;
   animation: zoomIn 1s ease-in-out;
