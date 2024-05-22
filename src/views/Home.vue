@@ -119,7 +119,7 @@
           <button @click="learnMore" class="animate slide-in-up">Learn more</button>
         </div>
         <div class="image-container animate slide-in-right">
-          <img src="/assets/real-data.png" alt="Detailed Financial Analysis">
+          <img src="@/assets/real.png" alt="Detailed Financial Analysis">
         </div>
       </div>
     </section>
@@ -453,5 +453,48 @@ ul {
 .container, .stats-container, .dashboard-content, #real-time-insights .content-with-image {
   padding: 20px;
   gap: 20px;
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  .container, .dashboard-content, .real-time-insights .content-with-image {
+    flex-direction: row;
+    justify-content: space-between; /* Distributes space between items */
+  }
+
+  .stats-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-icons div, .stat-item, .info-card {
+    width: 80%;
+    margin-bottom: 20px;
+  }
+
+  .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
+    flex: 1 1 50%; /* Takes up half of the container width */
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .container, .stats-container, .dashboard-content, #real-time-insights .content-with-image {
+    max-width: 1140px; /* Bootstrap's default container max-width for large screens */
+    margin: auto;
+  }
+
+  .stat-item, .info-card {
+    flex: 1 1 33%; /* Allows three items per row */
+  }
+
+  .text-content, .dashboard-visual {
+    flex: 1 1 50%;
+  }
+
+  #real-time-insights .text-content, #real-time-insights .image-container {
+    width: 60%; /* Text takes slightly more space */
+    width: 35%; /* Image takes less space */
+  }
 }
 </style>

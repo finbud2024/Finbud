@@ -15,8 +15,8 @@
           <p>{{ member.role }}</p>
           <h2>{{ member.intro }}</h2>
           <div class="social-icons">
-            <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link">
-              <img :src="icon.img" :alt="icon.name" />
+            <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
+              {{ icon.name }}
             </a>
           </div>
         </div>
@@ -35,30 +35,30 @@ export default {
           name: 'Alex Smith',
           role: 'Creative Leader',
           intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-          img: '@/assets/tri.jpeg',
+          img: require('@/assets/tri.jpeg'),
           socialIcons: [
-            { name: 'Facebook', img: 'facebook_icon.png', link: '#' },
-            { name: 'Instagram', img: 'instagram_icon.png', link: '#' },
+            { name: 'Facebook', link: 'https://www.facebook.com' },
+            { name: 'Instagram', link: 'https://www.instagram.com' },
           ],
         },
         {
           name: 'May Brown',
           role: 'Sales Manager',
           intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-          img: '@/assets/tri.jpeg',
+          img: require('@/assets/tri.jpeg'),
           socialIcons: [
-            { name: 'Facebook', img: 'facebook_icon.png', link: '#' },
-            { name: 'Instagram', img: 'instagram_icon.png', link: '#' },
+            { name: 'Facebook', link: 'https://www.facebook.com' },
+            { name: 'Instagram', link: 'https://www.instagram.com' },
           ],
         },
         {
           name: 'Ann Richmond',
           role: 'Web Developer',
           intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-          img: '@/assets/tri.jpeg',
+          img: require('@/assets/tri.jpeg'),
           socialIcons: [
-            { name: 'Facebook', img: 'facebook_icon.png', link: '#' },
-            { name: 'Instagram', img: 'instagram_icon.png', link: '#' },
+            { name: 'Facebook', link: 'https://www.facebook.com' },
+            { name: 'Instagram', link: 'https://www.instagram.com' },
           ],
         },
       ],
@@ -146,14 +146,15 @@ body {
   margin-bottom: 1rem;
 }
 
-.social-icons img {
-  width: 20px;
+.social-icons a {
+  font-size: 1rem;
+  color: #007bff;
   margin: 0 5px;
-  transition: transform 0.3s;
+  transition: color 0.3s;
 }
 
-.social-icons img:hover {
-  transform: scale(1.2);
+.social-icons a:hover {
+  color: #0056b3;
 }
 
 @keyframes fadeIn {
