@@ -10,43 +10,45 @@ app.post('/api/generate-quiz', async (req, res) => {
   const { keywords } = req.body;
 
   try {
-    console.log("this action is active")
-    const response = await axios.post('https://api.openai.com/v1/engines/davinci-codex/completions', {
-      prompt: `Generate a quiz question with 4 multiple-choice answers based on the keywords: ${keywords}. Provide the correct answer in the response.`,
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "user", content: `Generate a finance-related multiple-choice quiz question including the keywords: ${keywords}. Provide the question and four answer options. Indicate the correct answer with an asterisk (*). Format: Question: <question>\nA. <option1>\nB. <option2>\nC. <option3>\nD. <option4>` }
+      ],
       max_tokens: 150,
       n: 1,
-      stop: ["\n"],
+      stop: ["\n\n"]
     }, {
       headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+        'Authorization': `Bearer ${process.env.GPT_API_KEY}`,
+        'Content-Type': 'application/json'
       }
     });
 
-    const completion = response.data.choices[0].text.trim();
-
-    // Assuming the API response is parsed properly
+    const completion = response.data.choices[0].message.content.trim();
     const question = parseQuizResponse(completion);
-
     res.json(question);
   } catch (error) {
-    console.error('Error generating quiz:', error);
     res.status(500).send('Error generating quiz');
   }
 });
 
 const parseQuizResponse = (response) => {
-  // Parse the GPT response into a question object
-  // Example format:
-  // { text: "What is ...?", answers: [{ text: "Answer 1", correct: false }, { text: "Answer 2", correct: true }, ...] }
-  // Parsing logic here...
+  const lines = response.split('\n').filter(line => line.trim() !== '');
+  const question = lines[0].replace('Question:', '').trim();
+  const options = lines.slice(1).map(line => {
+    const isCorrect = line.includes('*');
+    const cleanedLine = line.replace('*', '').trim();
+    return {
+      text: cleanedLine,
+      correct: isCorrect
+    };
+  });
+
   return {
-    text: "Sample question text",
-    answers: [
-      { text: "Answer 1", correct: false },
-      { text: "Answer 2", correct: true },
-      { text: "Answer 3", correct: false },
-      { text: "Answer 4", correct: false },
-    ],
+    question,
+    answers: options
   };
 };
 
