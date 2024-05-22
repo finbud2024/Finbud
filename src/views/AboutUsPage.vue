@@ -42,10 +42,10 @@ export default {
           ],
         },
         {
-          name: 'May Brown',
-          role: 'Sales Manager',
-          intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-          img: require('@/assets/tri.jpeg'),
+          name: 'Tran Binh Minh',
+          role: 'Lead Front-end',
+          intro: 'My innovation endeavors aim to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy.',
+          img: require('@/assets/BinhMinh.png'),
           socialIcons: [
             { name: 'Facebook', link: 'https://www.facebook.com' },
             { name: 'Instagram', link: 'https://www.instagram.com' },
