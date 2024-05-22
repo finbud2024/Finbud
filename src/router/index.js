@@ -1,4 +1,3 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import SignUp from '@/views/SignUp.vue';
@@ -13,55 +12,53 @@ import QuizzPage from '@/views/QuizzPage.vue';
 
 const routes = [
   {
+    path: '/',
+    name: 'Home',
+    component: Home,
+  },
+  {
     path: '/login',
     name: 'Login',
     component: LoginView,
   },
-  // Add other routes as needed
   {
     path: '/signup',
     name: 'SignUp',
     component: SignUp,
   },
   {
-    path: '/',
-    name: 'Home',
-    component: Home, // Set the component for the homepage
-  },
-  {
     path: '/contact',
-    name: 'contact',
-    component: ContactUs // Setup the route for the contact page
+    name: 'ContactUs',
+    component: ContactUs,
   },
   {
-  path: '/chatview',
-  name: 'chatview',
-  components: {
-    default: ChatView,
-    sidebar: SideBar
-  }
+    path: '/chatview',
+    name: 'ChatView',
+    components: {
+      default: ChatView,
+      sidebar: SideBar,
+    },
   },
   {
     path: '/tech',
     name: 'TechnologyPage',
-    component: TechnologyPage  // Setup the route for the contact page
+    component: TechnologyPage,
   },
   {
     path: '/pricing',
     name: 'PricingPage',
-    component: PricingPage  // Setup the route for the contact page
+    component: PricingPage,
   },
   {
     path: '/about',
     name: 'AboutUsPage',
-    component: AboutUsPage  // Setup the route for the contact page
+    component: AboutUsPage,
   },
   {
     path: '/quizz',
     name: 'QuizzPage',
-    component: QuizzPage  // Setup the route for the contact page
+    component: QuizzPage,
   },
-
 ];
 
 const router = createRouter({

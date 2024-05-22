@@ -3,7 +3,7 @@
   <div class="login-container">
     <h1>Sign in to FinBud</h1>
     <button @click="signInWithGoogle" class="login-google">
-      <img src="Signin.png" class="google-logo">
+      <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
       Sign in with Google
     </button>
     <div class="or-separator">
@@ -53,6 +53,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
 /* Container for the login page */
 .login-container {
   max-width: 400px;
@@ -62,6 +64,7 @@ export default {
   border-radius: 15px;
   background: white;
   text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 h1 {
@@ -143,5 +146,20 @@ input[type="password"] {
   border: none;
   border-radius: 50px;
   background-color: #000;
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.signup-link {
+  margin-top: 20px;
+}
+
+.signup-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
 }
 </style>

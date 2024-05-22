@@ -4,8 +4,10 @@
     <p class="description animate fade-in">Review your performance and drive change with our actionable insights provided via our intuitive web app.</p>
     <div class="feature-grid">
       <div class="feature animate slide-in-left" v-for="feature in features" :key="feature.id">
-        <img :src="feature.icon" :alt="feature.title" class="feature-icon"/>
-        <h3 class="feature-title">{{ feature.title }}</h3>
+        <div class="feature-icon-title">
+          <img src="@/assets/tick.png" alt="Tick" class="tick-icon" />
+          <h3 class="feature-title">{{ feature.title }}</h3>
+        </div>
         <p class="feature-description">{{ feature.description }}</p>
       </div>
     </div>
@@ -77,25 +79,25 @@ export default {
           id: 1,
           title: 'Financial Planning',
           description: 'I help you create and maintain a perfect personal financial plan.',
-          icon: "@/assets/financial-planning.png",
+          icon: "@/assets/tick.png",
         },
         {
           id: 2,
           title: 'Debt and Investment Management',
           description: 'Manage your debts and invest wisely with targeted advice tailored to your goals.',
-          icon: 'path/to/debt-management-icon.svg'
+          icon: "@/assets/tick.png"
         },
         {
           id: 3,
           title: 'Financial Education',
           description: 'Providing knowledge on basic and advanced financial concepts to empower your decisions.',
-          icon: 'path/to/financial-education-icon.svg'
+          icon: "@/assets/tick.png"
         },
         {
           id: 4,
           title: 'Predictive Financial Analytics',
           description: 'Utilize AI to analyze and predict financial trends to make smart decisions.',
-          icon: 'path/to/predictive-analytics-icon.svg'
+          icon: "@/assets/tick.png"
         }
       ]
     };
@@ -126,6 +128,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
 /* Add animations */
 .animate {
   opacity: 0;
@@ -173,6 +177,7 @@ export default {
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .features-title {
@@ -198,10 +203,17 @@ export default {
   background: #fff;
 }
 
-.feature-icon {
-  width: 50px;
-  height: 50px;
+.feature-icon-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 10px;
+}
+
+.tick-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
 }
 
 .feature-title {
@@ -262,6 +274,8 @@ button {
   border: none;
   cursor: pointer;
   margin-top: 20px;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 button:hover {
@@ -276,7 +290,6 @@ button:hover {
 .section-title {
   font-size: 24px;
   color: #333;
-  margin-bottom: 10px;
 }
 
 .section-description {

@@ -33,6 +33,19 @@
 
       <button type="submit">Send message</button>
     </form>
+
+    <div class="contact-info animate fade-in">
+      <div class="info-block">
+        <div class="icon">&#x2709;</div> <!-- Mail icon -->
+        <p>Message us</p>
+        <a href="mailto:contact@detectauto.com">contact@detectauto.com</a>
+      </div>
+      <div class="info-block">
+        <div class="icon">&#x260E;</div> <!-- Phone icon -->
+        <p>Call us</p>
+        <a href="tel:+17632679917">+1 763-267-9917</a>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -60,27 +73,48 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
 #contact-page {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  font-family: 'Space Grotesk', sans-serif;
+  text-align: center;
 }
 
-.contact-header h1,
+.contact-header {
+  margin-bottom: 40px;
+}
+
+.contact-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
 .contact-header p {
-  margin-bottom: 20px;
+  font-size: 18px;
+  color: #666;
+}
+
+.contact-form {
+  background: #f9f9f9;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 40px;
 }
 
 .contact-form .input-group {
   margin-bottom: 20px;
+  text-align: left;
 }
 
 .contact-form label {
   display: block;
   margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .contact-form input[type="text"],
@@ -88,22 +122,70 @@ export default {
 .contact-form input[type="tel"],
 .contact-form textarea {
   width: 100%;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  background: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+.contact-form input[type="text"]:focus,
+.contact-form input[type="email"]:focus,
+.contact-form input[type="tel"]:focus,
+.contact-form textarea:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
 .contact-form button {
-  padding: 10px 20px;
+  padding: 15px 30px;
   background-color: #0056b3;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 .contact-form button:hover {
   background-color: #003975;
+}
+
+.contact-info {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.info-block {
+  text-align: center;
+}
+
+.info-block .icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.info-block p {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.info-block a {
+  font-size: 16px;
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.info-block a:hover {
+  text-decoration: underline;
 }
 
 /* Add animations */

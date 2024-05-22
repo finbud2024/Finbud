@@ -1,3 +1,4 @@
+
 <template>
   <div class="features-container">
     <!-- Financial Consulting Section -->
@@ -66,6 +67,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
 .features-container {
   display: flex;
   flex-direction: column;
@@ -73,6 +76,7 @@ export default {
   gap: 40px;
   margin: 40px auto;
   max-width: 1200px;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .feature-section {
