@@ -13,7 +13,7 @@
     </div>
     <div class="insights-section">
       <div class="image animate slide-in-right">
-        <img src="@/assets/car.png" alt="Car in garage">
+        <img src="@/assets/stock.png" alt="Car in garage">
       </div>
       <div class="content animate slide-in-left">
         <h2>ARTIFICIAL INTELLIGENCE</h2>
@@ -36,17 +36,17 @@
 
       <div class="tracking-features">
         <div class="tracking-feature animate slide-in-left">
-          <img src="@/assets/vehicle-tracking.png" alt="Vehicle Tracking">
+          <img src="@/assets/forecast.png" alt="Vehicle Tracking">
           <h3>Instant Financial Insights</h3>
           <p>Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.</p>
         </div>
         <div class="tracking-feature animate slide-in-up">
-          <img src="@/assets/employee-tracking.png" alt="Employee Tracking">
+          <img src="@/assets/sales.png" alt="Employee Tracking">
           <h3>Interactive Financial Planning</h3>
           <p>Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.</p>
         </div>
         <div class="tracking-feature animate slide-in-right">
-          <img src="@/assets/advanced-cv.png" alt="Advanced Computer Vision">
+          <img src="@/assets/dashboard.png" alt="Advanced Computer Vision">
           <h3>Secure and Confidential</h3>
           <p>Our proprietary system utilizes neural networks to identify the information that matters most. Think of it like the way your brain works, only it never gets tired (or needs 3 cups of coffee to get through the day).</p>
         </div>
