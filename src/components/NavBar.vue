@@ -4,6 +4,7 @@
     <div class="nav-right">
       <ul class="nav-items">
         <li><router-link to="/" class="home">Home</router-link></li>
+        <li><router-link to="/goal" class="goal">Goal</router-link></li>
         <li><router-link to="/stock-simulator" class="simulator">Simulator</router-link></li>
         <li><router-link to="/chatview" class="chatview">ChatView</router-link></li>
         <li><router-link to="/quizz" class="quizz">Quizz</router-link></li>
@@ -20,6 +21,7 @@
         <button class="dropbtn" @click="toggleDropdown">☰</button>
         <div class="dropdown-content" v-if="isDropdownOpen">
           <router-link to="/" class="home" @click="closeDropdown">Home</router-link>
+          <router-link to="/goal" class="goal">Goal</router-link>
           <router-link to="/stock-simulator" class="simulator">Simulator</router-link>
           <router-link to="/chatview" class="chatview" @click="closeDropdown">ChatView</router-link>
           <router-link to="/quizz" class="quizz" @click="closeDropdown">Quizz</router-link>
@@ -82,7 +84,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 0.2rem;
-  gap: 3rem;
+  gap: 2rem;
 }
 
 .nav-actions {
