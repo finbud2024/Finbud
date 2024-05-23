@@ -10,6 +10,7 @@ import PricingPage from '@/views/PricingPage.vue';
 import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
+import GoalPage from '@/views/GoalPage.vue';
 
 const routes = [
   {
@@ -64,6 +65,11 @@ const routes = [
     path: '/stock-simulator',
     name: 'StockSimulator',
     component: StockSimulator,
+  },
+  {
+    path: '/goal',
+    name: 'GoalPage',
+    component: GoalPage,
   },
 ];
 
