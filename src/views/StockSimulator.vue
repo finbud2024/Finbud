@@ -97,7 +97,7 @@
   }
   
   .dashboard-header {
-    background-color: #1a1a1a;
+    background-color: #1e06fb;
     color: white;
     padding: 20px;
     text-align: center;
