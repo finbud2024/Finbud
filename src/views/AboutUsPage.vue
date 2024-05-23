@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="container">
     <div class="team-section">
@@ -10,7 +12,9 @@
       <li class="title">Meet Our Team</li>
       <div class="team-container">
         <div class="team-member" v-for="member in teamMembers" :key="member.name">
-          <img :src="member.img" :alt="member.name" class="fade-in" />
+          <div class="image-container">
+            <img :src="member.img" :alt="member.name" class="fade-in" />
+          </div>
           <h3>{{ member.name }}</h3>
           <p>{{ member.role }}</p>
           <h2>{{ member.intro }}</h2>
@@ -42,20 +46,20 @@ export default {
           ],
         },
         {
-          name: 'Tran Binh Minh',
-          role: 'Lead Front-end',
-          intro: 'My innovation endeavors aim to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy.',
-          img: require('@/assets/BinhMinh.png'),
+          name: 'Tung Nguyen',
+          role: 'Tech Lead',
+          intro: 'As a junior Computer Science major at Luther College, I am leading a team of 3 in developing the web app Finbud.',
+          img: require('@/assets/tung.jpg'),
           socialIcons: [
             { name: 'Facebook', link: 'https://www.facebook.com' },
             { name: 'Instagram', link: 'https://www.instagram.com' },
           ],
         },
         {
-          name: 'Ann Richmond',
-          role: 'Web Developer',
-          intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-          img: require('@/assets/tri.jpeg'),
+          name: 'Tran Binh Minh',
+          role: 'Lead Front-end',
+          intro: 'My innovation endeavors aim to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy.',
+          img: require('@/assets/BinhMinh.png'),
           socialIcons: [
             { name: 'Facebook', link: 'https://www.facebook.com' },
             { name: 'Instagram', link: 'https://www.instagram.com' },
@@ -91,7 +95,6 @@ body {
 }
 
 .team-section {
-  text-align: center;
   background-color: white;
   margin-bottom: 2rem;
   padding-left: 2rem;
@@ -99,6 +102,7 @@ body {
 }
 
 .title {
+  text-align: center;
   color: #007bff;
   font-size: 2.5rem;
   margin-bottom: 1rem;
@@ -122,27 +126,39 @@ body {
 }
 
 .team-member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: #fff;
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: calc(25% - 8rem);
-  text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
   animation: fadeIn 1s ease-in-out;
   font-weight: 300;
+  justify-content: space-between;
+}
+
+.image-container {
+  width: 100%;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+  animation: zoomIn 1s ease-in-out;
 }
 
 .team-member:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-}
-
-.team-member img {
-  max-width: 60%;
-  border-radius: 50%;
-  margin-bottom: 1rem;
-  animation: zoomIn 1s ease-in-out;
 }
 
 .team-member h3 {
@@ -161,6 +177,20 @@ body {
   font-size: 0.9rem;
   color: #555;
   margin-bottom: 1rem;
+}
+
+.team-member img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  animation: zoomIn 1s ease-in-out;
+}
+
+
+.social-icons {
+  margin-top: 5px;
 }
 
 .social-icons a {
