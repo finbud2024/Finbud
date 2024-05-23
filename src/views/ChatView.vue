@@ -1,32 +1,31 @@
 <template>
   <div class="home-container">
-    <SideBar /> <!-- Include the sidebar here -->
+    <SideBar
+      :threads="threads"
+      @add-thread="addThread"
+      @edit-thread="editThread"
+      @save-thread-name="saveThreadName"
+      @cancel-edit="cancelEdit"
+      @select-thread="selectThread"
+    />
     <div class="chat-container">
-      <ChatHeader :threadId="currentThread" />
+      <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
-        <MessageComponent v-for="(message, index) in messages" :key="index"
-          :is-user="message.isUser" :text="message.text" :typing="message.typing"
-          :timestamp="message.timestamp" :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
-          :avatar-src="message.isUser ? userAvatar : botAvatar" />
+        <MessageComponent
+          v-for="(message, index) in messages"
+          :key="index"
+          :is-user="message.isUser"
+          :text="message.text"
+          :typing="message.typing"
+          :timestamp="message.timestamp"
+          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
+          :avatar-src="message.isUser ? userAvatar : botAvatar"
+        />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
   </div>
 </template>
-
-<style>
-.home-container {
-  display: flex; /* Changes the flex-direction to row by default */
-  width: 100%; /* Full width of the viewport */
-  height: 100vh; /* Full height of the viewport */
-}
-
-.chat-container {
-  flex-grow: 1; /* Takes up the remaining space */
-  display: flex;
-  flex-direction: column;
-}
-</style>
 
 <script>
 import ChatHeader from '../components/ChatHeader.vue';
@@ -53,39 +52,32 @@ export default {
       messages: [],
       userAvatar: require('@/assets/tri.jpeg'),
       botAvatar: require('@/assets/bot.png'),
-      currentThread: {}, // The current selected thread
+      currentThread: {},
+      threads: []
     };
   },
-
   watch: {
     threadId: {
       immediate: true,
       handler(newThreadId) {
         console.log('Received new thread ID:', newThreadId);
         if (newThreadId != null) {
-          console.log("Hello");
           this.updateCurrentThread(newThreadId);
         }
       }
-    },
-  },
-  computed: {
-    currentChatWindow() {
-      // Dynamic component name based on the selected thread or default chat window
-      return this.currentThread.id ? 'ChatWindow' : 'DefaultChatWindow';
     },
   },
   methods: {
     clearMessage() {
       this.newMessage = ''
     },
-
     updateCurrentThread(newThreadId) {
       console.log("Update current thread function triggered: ", newThreadId)
-      const thread = newThreadId.toString();
+      const thread = this.threads.find(thread => thread.id.toString() === newThreadId);
       console.log(thread)
       if (thread) {
         this.currentThread = thread;
+        this.messages = thread.messages || [];
       } else {
         console.error('Thread with ID', newThreadId, 'not found');
         this.currentThread = {};
@@ -93,7 +85,24 @@ export default {
       }
       console.log("Current thread: ", this.currentThread)
     },
-
+    addThread(newThread) {
+      newThread.id = this.threads.length + 1;
+      this.threads.push(newThread);
+      console.log("Added new thread: ", newThread);
+    },
+    editThread(index) {
+      this.threads[index].editing = true;
+    },
+    saveThreadName({ newName, index }) {
+      this.threads[index].name = newName;
+      this.threads[index].editing = false;
+    },
+    cancelEdit(index) {
+      this.threads[index].editing = false;
+    },
+    selectThread(index) {
+      this.updateCurrentThread(this.threads[index].id.toString());
+    },
     async sendMessage(newMessage) {
       console.log("start sending message in send message..")
 
@@ -192,28 +201,74 @@ export default {
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
       const matches = message.match(pattern) || [];
-      console.log("Extracted stock codes: ", matches)
+      console.log("Ham extract: ", matches)
       return matches;
     },
-  },
 
-  mounted() {
-    setInterval(() => {
-      this.currentTime = new Date().toLocaleTimeString();
-    }, 500);
+    extractSharesAndCode(message) {
+      // Regex to find stock codes: assumes codes are upper-case letters optionally followed by numbers
+      const stockCodePattern = /\b[A-Z]{1,5}\b/g;
+      // Regex to find numbers: looks for numbers that may have commas and come after the word 'shares'
+      const sharesPattern = /(\b\d{1,3}(,\d{3})*\b)(?=\s*shares)/gi;
+
+      const stockCodes = message.match(stockCodePattern);
+      const sharesMatches = message.match(sharesPattern);
+
+      let shares;
+      if (sharesMatches && sharesMatches.length > 0) {
+        // Remove commas and convert to integer
+        shares = parseInt(sharesMatches[0].replace(/,/g, ''), 10);
+      }
+
+      // We return the first stock code found and the number of shares, if any
+      return {
+        stockCode: stockCodes ? stockCodes[0] : null, // Just taking the first match for simplicity
+        shares: shares || null
+      };
+    },
+
+    async calculateTotalValue(stockCode, shares) {
+      if (!stockCode || !shares) {
+        throw new Error("Stock code or number of shares missing.");
+      }
+      try {
+        const price = await fetchStockPrice(stockCode);
+        // Convert price to a number and calculate total value
+        const totalValue = (Number(price) * shares).toFixed(2);
+        return totalValue;
+      } catch (error) {
+        console.error('Error calculating total value:', error);
+        throw error; // Re-throw the error to handle it in the calling function
+      }
+    },
+
+    async fakeResponse(message) {
+      // Simulate fake response from the backend API
+      return "This is a fake response to the message: " + message;
+    },
+
+
+    mounted() {
+      // Update the current time every second
+      setInterval(() => {
+        this.currentTime = new Date().toLocaleTimeString();
+      }, 500);
+    }
   }
 }
 </script>
 
-<style>
+
+<style scoped>
 .home-container {
-  width: 100%;
-  box-sizing: border-box;
+  display: flex; /* Changes the flex-direction to row by default */
+  width: 100%; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
 }
 
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
 }
 </style>
