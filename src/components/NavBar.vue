@@ -6,7 +6,7 @@
         <li><router-link to="/" class="home">Home</router-link></li>
         <li><router-link to="/goal" class="goal">Goal</router-link></li>
         <li><router-link to="/stock-simulator" class="simulator">Simulator</router-link></li>
-        <li><router-link to="/chatview" class="chatview">ChatView</router-link></li>
+        <li><router-link to="/chatview" class="chatview">Chat</router-link></li>
         <li><router-link to="/quizz" class="quizz">Quizz</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
@@ -23,7 +23,7 @@
           <router-link to="/" class="home" @click="closeDropdown">Home</router-link>
           <router-link to="/goal" class="goal">Goal</router-link>
           <router-link to="/stock-simulator" class="simulator">Simulator</router-link>
-          <router-link to="/chatview" class="chatview" @click="closeDropdown">ChatView</router-link>
+          <router-link to="/chatview" class="chatview" @click="closeDropdown">Chat</router-link>
           <router-link to="/quizz" class="quizz" @click="closeDropdown">Quizz</router-link>
           <router-link to="/login" class="login-button" @click="closeDropdown">Log In</router-link>
           <router-link to="/signup" class="signup-button" @click="closeDropdown">Sign Up</router-link>

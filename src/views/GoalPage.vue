@@ -221,7 +221,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #003366;
+  background-color: #1e06fb;
   color: #ffffff;
   padding: 20px 40px;
   border-radius: 10px;
@@ -286,7 +286,7 @@ export default {
 .transactions {
   margin-top: 40px;
   text-align: center;
-  border: 2px solid #003366;
+  border: 2px solid #1e06fb;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);

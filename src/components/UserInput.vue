@@ -77,7 +77,7 @@ export default {
   border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .user-input button:hover {

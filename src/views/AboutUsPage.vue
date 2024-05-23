@@ -36,9 +36,9 @@ export default {
     return {
       teamMembers: [
         {
-          name: 'Alex Smith',
-          role: 'Creative Leader',
-          intro: '(Introduction) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+          name: 'Tri Bui',
+          role: 'Founder & CEO',
+          intro: "I'm a senior at Macalester College, studying Quantitative Economics and Computer Science. I aim to create a startup that merges Finance, Tech, and Business to benefit young people in Vietnam.",
           img: require('@/assets/tri.jpeg'),
           socialIcons: [
             { name: 'Facebook', link: 'https://www.facebook.com' },
