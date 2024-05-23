@@ -1,7 +1,6 @@
 <template>
   <div class="chat-header">
     <h1>FINBUD - FINANCIAL BUDDY</h1>
-    <h2>Thread ID: {{ threadId }}</h2> <!-- Display the threadId here -->
   </div>
 </template>
 
@@ -9,9 +8,9 @@
 export default {
   props: {
     threadId: {
-      type: [String, Number], // Accept both string and number types
-      default: '' // Default to an empty string if not provided
-    },
+      type: [String, Number],
+      default: ''
+    }
   },
   mounted() {
     console.log('ChatHeader mounted with thread ID:', this.threadId);
@@ -26,6 +25,9 @@ export default {
 
 <style scoped>
 .chat-header {
+  background-image: linear-gradient(to right, #3541c9, #3340b2);
+  color: #ecf0f1;
+  padding: 20px;
   text-align: center;
   font-size: 1.5rem;
   font-family: 'Space Grotesk', sans-serif;
