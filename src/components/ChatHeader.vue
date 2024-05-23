@@ -28,7 +28,7 @@ export default {
 .chat-header {
   text-align: center;
   font-size: 1.5rem;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   background-image: linear-gradient(to right, #4444c5, #2348db);
   color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
