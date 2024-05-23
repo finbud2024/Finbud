@@ -30,7 +30,7 @@
 
 <script>
 import ChatHeader from '../components/ChatHeader.vue';
-import ChatFrame from '../components/ChatFrame.vue'
+import ChatFrame from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
@@ -153,20 +153,22 @@ export default {
       }
       else {
         const userMessage = this.messages[this.messages.length - 1].text;
-        if (userMessage.toLowerCase().includes("ipo")) {
-          this.addTypingResponse("IPO stands for Initial Public Offering. It's when a company sells its shares to the public for the first time. Think of it like when a company decides to let anyone buy a small piece of it.", false);
-        }  else if (userMessage.toLowerCase().includes("balance sheet")) {
-          this.addTypingResponse("A balance sheet is like a financial snapshot of a company at a specific point in time. It shows what the company owns (assets), what it owes (liabilities), and the value left over for the owners (equity). Think of it as a list that helps you understand a company's financial health.", false);
-        }  else if (userMessage.toLowerCase().includes("define bond")) {
-          this.addTypingResponse("Bonds are loans from investors to companies or governments. Investors receive regular interest payments and get their money back when the bond matures. Think of it like lending money to a friend with a promise. When you give them the money, they agree to pay you back a little extra each month (interest) and return the full amount you lent them after a certain time (maturity)..", false);
-        }
-        else {
-          setTimeout(
-            () => {
-              this.addTypingResponse('I am FinBud, your AI financial assistant developed by Bui Dinh Tri. I am specially configured on the GPT-3.5 Turbo platform to provide deeper insights and expertise in finance and stock markets.', false);
-            }, 300
-          )
-        }
+        setTimeout(() => {
+          if (userMessage.toLowerCase().includes("ipo")) {
+            this.addTypingResponse("IPO stands for Initial Public Offering. It's when a company sells its shares to the public for the first time. Think of it like when a company decides to let anyone buy a small piece of it.", false);
+          }  else if (userMessage.toLowerCase().includes("balance sheet")) {
+            this.addTypingResponse("A balance sheet is like a financial snapshot of a company at a specific point in time. It shows what the company owns (assets), what it owes (liabilities), and the value left over for the owners (equity). Think of it as a list that helps you understand a company's financial health.", false);
+          }  else if (userMessage.toLowerCase().includes("define bond")) {
+            this.addTypingResponse("Bonds are loans from investors to companies or governments. Investors receive regular interest payments and get their money back when the bond matures. Think of it like lending money to a friend with a promise. When you give them the money, they agree to pay you back a little extra each month (interest) and return the full amount you lent them after a certain time (maturity).", false);
+          }
+          else {
+            setTimeout(
+              () => {
+                this.addTypingResponse('I am FinBud, your AI financial assistant developed by Bui Dinh Tri. I am specially configured on the GPT-3.5 Turbo platform to provide deeper insights and expertise in finance and stock markets.', false);
+              }, 300
+            )
+          }
+        }, 2000);
       }
     },
 

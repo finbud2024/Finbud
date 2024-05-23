@@ -3,29 +3,11 @@
     <div class='intro-container'>
       <div class="intro-text">
         <div class="intro-text1">
-          <li class="title animate fade-in">Making the most informed choices</li>
+          <li class="title animate fade-in">Making the most informed financial choices</li>
           <li class="description animate fade-in">With FinBud, you can ask for the best financial advice anytime, anywhere</li>
         </div>
         <div class="photo">
-          <img src='@/assets/bot.png' alt="placeholder">
-        </div>
-      </div>
-      <div class="small-description">
-        <div class="sdesitem animate slide-in-left">
-          <li class="sdesimg">
-            <img src='@/assets/bot.png' alt="placeholder">
-          </li>
-          <li class="sdestext">
-            Fine-tuned model specializing in finance and investing
-          </li>
-        </div>
-        <div class="sdesitem animate slide-in-right">
-          <li class="sdesimg">
-            <img src='@/assets/bot.png' alt="placeholder">
-          </li>
-          <li class="sdestext">
-            Accessible and up-to-date on the latest information
-          </li>
+          <img src='@/assets/botrmbg.png' alt="placeholder">
         </div>
       </div>
     </div>
@@ -99,7 +81,8 @@
           </div>
         </div>
         <div class="dashboard-visual animate fade-in">
-          <img src="@/assets/car.png" alt="Financial Dashboard">
+
+          <img src="@/assets/how-to-improve-your-financial-literacy.png" alt="Financial Dashboard">
         </div>
       </div>
     </section>
@@ -283,7 +266,7 @@ export default {
 
 .sdesimg img {
   list-style-type: none;
-  width: 30%;
+  width:150%;
   border-radius: 20%;
   opacity: 1;
   animation: none;
