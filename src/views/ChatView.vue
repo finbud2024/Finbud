@@ -34,6 +34,7 @@ import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import { gptAPICall } from '@/services/gptServices';
+import { gptAPICallDefine } from '@/services/gptServices';
 import SideBar from '../components/SideBar.vue';
 
 export default {
@@ -125,36 +126,34 @@ export default {
 
           this.addTypingResponse(responseText, false);
 
-          const analysisQuestion = `Analyze the following data for Tesla:
-            P/E ratio TTM: 39.31
-            Price to sales TTM: 5.66
-            Price to cash flow MRQ: 64.94
-            Price to free cash flow TTM: 388.36
-            Price to book MRQ: 8.34
-            Price to tangible book MRQ: 8.39
-            Profitability:
-            Gross margin TTM: 17.78%
-            Gross margin 5YA: 21.49%
-            Operating margin TTM: 7.81%
-            Operating margin 5YA: 8.96%
-            Pre-tax margin TTM: 9.21%
-            Pre-tax margin 5YA: 7.96%
-            Net margin TTM: 14.37%
-            Net margin 5YA: 7.59%
-            Revenue per share TTM: 29.75
-            Basic EPS ANN: 4.73
-            Diluted EPS ANN: 4.3
-            Book value per share MRQ: 20.21
-            Tangible book value per share MRQ: 20.06
-            Cash per share MRQ: 3.71
-            Cash flow per share TTM: 3.45
-          `;
-          this.addTypingResponse(analysisQuestion, false);
-          const gptResponse = await gptAPICall(analysisQuestion);
-          const gptText = gptResponse.choices[0].message.content;
+          // const analysisQuestion = `Analyze the following data for Tesla:
+          //   P/E ratio TTM: 39.31
+          //   Price to sales TTM: 5.66
+          //   Price to cash flow MRQ: 64.94
+          //   Price to free cash flow TTM: 388.36
+          //   Price to book MRQ: 8.34
+          //   Price to tangible book MRQ: 8.39
+          //   Profitability:
+          //   Gross margin TTM: 17.78%
+          //   Gross margin 5YA: 21.49%
+          //   Operating margin TTM: 7.81%
+          //   Operating margin 5YA: 8.96%
+          //   Pre-tax margin TTM: 9.21%
+          //   Pre-tax margin 5YA: 7.96%
+          //   Net margin TTM: 14.37%
+          //   Net margin 5YA: 7.59%
+          //   Revenue per share TTM: 29.75
+          //   Basic EPS ANN: 4.73
+          //   Diluted EPS ANN: 4.3
+          //   Book value per share MRQ: 20.21
+          //   Tangible book value per share MRQ: 20.06
+          //   Cash per share MRQ: 3.71
+          //   Cash flow per share TTM: 3.45
+          // `;
+          // this.addTypingResponse(analysisQuestion, false);
 
-          this.addTypingResponse(gptText, false);
-
+          const gptResponse = await gptAPICall(stockCode[0]);
+          this.addTypingResponse(gptResponse, false);
         } catch (error) {
           console.error('Error:', error);
           this.messages.push({ text: `Error fetching data for ${stockCode}.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
@@ -162,8 +161,11 @@ export default {
       }
       else {
         const userMessage = this.messages[this.messages.length - 1].text;
-        setTimeout(() => {
-          if (userMessage.toLowerCase().includes("ipo")) {
+        setTimeout(async () => {
+          if (userMessage.toLowerCase().includes("define")) {
+            const gptResponseDefine = await gptAPICallDefine(userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim());
+            this.addTypingResponse(gptResponseDefine, false);
+          } else if (userMessage.toLowerCase().includes("ipo")) {
             this.addTypingResponse("IPO stands for Initial Public Offering. It's when a company sells its shares to the public for the first time. Think of it like when a company decides to let anyone buy a small piece of it.", false);
           }  else if (userMessage.toLowerCase().includes("balance sheet")) {
             this.addTypingResponse("A balance sheet is like a financial snapshot of a company at a specific point in time. It shows what the company owns (assets), what it owes (liabilities), and the value left over for the owners (equity). Think of it as a list that helps you understand a company's financial health.", false);
