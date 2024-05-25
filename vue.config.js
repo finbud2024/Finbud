@@ -1,3 +1,11 @@
 module.exports = {
-  transpileDependencies: []
+  transpileDependencies: [],
+  devServer: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  }
 }
