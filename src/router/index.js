@@ -2,10 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import SignUp from '@/views/SignUp.vue';
 import Home from '@/views/Home.vue';
-import ChatView from '@/views/ChatView.vue'; 
+import ChatView from '@/views/ChatView.vue';
 import SideBar from '@/components/SideBar.vue';
-import TechnologyPage from '@/views/TechnologyPage.vue'; 
-import PricingPage from '@/views/PricingPage.vue'; 
+import TechnologyPage from '@/views/TechnologyPage.vue';
+import PricingPage from '@/views/PricingPage.vue';
 import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
@@ -16,6 +16,10 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/*',
+    component: 404,
   },
   {
     path: '/login',
