@@ -14,13 +14,13 @@
     </header>
     <section class="assets">
       <div class="assets-value">
-        <p>24,340.43 US$</p>
+        <p>31,340.43 US$</p>
         <p>-$49.83 (-0.20%) Today</p>
       </div>
       <div class="assets-graph">
         <img src="@/assets/stockTri.png" alt="Assets Graph">
         <p class="assets-description">
-          At just 22 years old, Trí Bui from Vietnam has amassed an impressive $24,340.43 in assets. This remarkable achievement places him among the top 5% of his peers, demonstrating exceptional financial acumen and strategic foresight.
+          At just 22 years old, Trí Bui from Vietnam has amassed an impressive $31,340.43 in assets. This remarkable achievement places him among the top 5% of his peers, demonstrating exceptional financial acumen and strategic foresight.
         </p>
       </div>
     </section>
