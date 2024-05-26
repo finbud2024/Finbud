@@ -1,26 +1,13 @@
 <template>
   <div class="home-container">
-    <SideBar
-      :threads="threads"
-      @add-thread="addThread"
-      @edit-thread="editThread"
-      @save-thread-name="saveThreadName"
-      @cancel-edit="cancelEdit"
-      @select-thread="selectThread"
-    />
+    <SideBar :threads="threads" @add-thread="addThread" @edit-thread="editThread" @save-thread-name="saveThreadName"
+      @cancel-edit="cancelEdit" @select-thread="selectThread" />
     <div class="chat-container">
       <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
-        <MessageComponent
-          v-for="(message, index) in messages"
-          :key="index"
-          :is-user="message.isUser"
-          :text="message.text"
-          :typing="message.typing"
-          :timestamp="message.timestamp"
-          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
-          :avatar-src="message.isUser ? userAvatar : botAvatar"
-        />
+        <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
+          :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
+          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar" />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
@@ -104,76 +91,102 @@ export default {
       this.updateCurrentThread(this.threads[index].id.toString());
     },
     async sendMessage(newMessage) {
-      console.log("start sending message in send message..");
+    console.log("start sending message in send message..");
 
-      this.messages.push({
-        text: newMessage.trim(),
-        isUser: true,
-        typing: true,
-        timestamp: new Date().toLocaleTimeString()
-      });
+    this.messages.push({
+      text: newMessage.trim(),
+      isUser: true,
+      typing: true,
+      timestamp: new Date().toLocaleTimeString()
+    });
 
-      this.newMessage = '';
+    this.newMessage = '';
 
-      const userMessage = this.messages[this.messages.length - 1].text;
+    const userMessage = this.messages[this.messages.length - 1].text;
+
+    try {
       if (userMessage.toLowerCase().includes("define")) {
-        const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-        try {
-          const response = await axios.post('/.netlify/functions/defineTerm', { term });
-          this.addTypingResponse(response.data.definition, false);
-        } catch (error) {
-          console.error('Error:', error);
-          this.messages.push({ text: `Error defining term.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
-        }
+        await this.handleDefineMessage(userMessage);
       } else {
         const stockCode = this.extractStockCode(userMessage);
         if (stockCode.length > 0) {
-          try {
-            const price = await fetchStockPrice(stockCode[0]);
-            const timeStamp = new Date().toLocaleTimeString();
-            console.log("This is time stamp when asking about stock price: ", timeStamp);
-            let responseText = `The current price of ${stockCode[0]} stock is $${price}, as of ${timeStamp}.`;
-
-            this.addTypingResponse(responseText, false);
-
-            const response = await axios.post('/.netlify/functions/analyzeStock', { stockSymbol: stockCode[0] });
-            this.addTypingResponse(response.data.analysis, false);
-          } catch (error) {
-            console.error('Error:', error);
-            this.messages.push({ text: `Error fetching data for ${stockCode}.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
-          }
+          await this.handleStockMessage(stockCode[0]);
         } else {
-          try {
-            console.log("Calling normAns function with term:", userMessage); // Add this line for logging
-          const response = await axios.post('/.netlify/functions/normAns', { term: userMessage });
-          console.log("Response from normAns:", response.data); // Add this line for logging
-          this.addTypingResponse(response.data.definition, false);
-            this.addTypingResponse(response.data.definition, false);
-          } catch (error) {
-            console.error('Error:', error);
-            this.messages.push({ text: `Error generating answer.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
-          }
+          await this.handleGeneralMessage(userMessage);
         }
       }
-    },
-    addTypingResponse(text, isUser) {
-      const typingMessage = {
-        text: text,
-        isUser: isUser,
-        typing: true,
-        timestamp: new Date().toLocaleTimeString(),
-        username: isUser ? 'You' : 'FinBud Bot'
-      };
+    } catch (error) {
+      console.error('Error:', error);
+      this.messages.push({
+        text: `Error processing your message.`,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString()
+      });
+    }
+  },
 
-      this.messages.push(typingMessage);
-      setTimeout(() => {
-        typingMessage.text = text;
-        typingMessage.typing = false;
-        this.$forceUpdate();
-      }, 1000);
-    },
+  // async handleDefineMessage(userMessage) {
+  //   const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
+  //   const response = await axios.post('/.netlify/functions/defineTerm', { term });
+  //   this.addTypingResponse(response.data.definition, false);
+  // },
 
-    
+  // async handleStockMessage(stockCode) {
+  //   const price = await fetchStockPrice(stockCode);
+  //   const timeStamp = new Date().toLocaleTimeString();
+  //   let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+
+  //   this.addTypingResponse(responseText, false);
+
+  //   const response = await axios.post('/.netlify/functions/analyzeStock', { stockSymbol: stockCode });
+  //   this.addTypingResponse(response.data.analysis, false);
+  // },
+
+  // async handleGeneralMessage(userMessage) {
+  //   const response = await axios.post('/.netlify/functions/normAns', { term: userMessage });
+  //   this.addTypingResponse(response.data.definition, false);
+  // },
+
+  async handleDefineMessage(userMessage) {
+    const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
+    const response = await axios.post('http://localhost:3000/defineTerm', { term }); // Updated URL
+    this.addTypingResponse(response.data.definition, false);
+},
+
+async handleStockMessage(stockCode) {
+    const price = await fetchStockPrice(stockCode);
+    const timeStamp = new Date().toLocaleTimeString();
+    let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+
+    this.addTypingResponse(responseText, false);
+
+    const response = await axios.post('http://localhost:3000/analyzeStock', { stockSymbol: stockCode }); // Updated URL
+    this.addTypingResponse(response.data.analysis, false);
+},
+
+async handleGeneralMessage(userMessage) {
+    const response = await axios.post('http://localhost:3000/normAns', { term: userMessage }); // Updated URL
+    this.addTypingResponse(response.data.definition, false);
+},
+
+
+
+  addTypingResponse(text, isUser) {
+    const typingMessage = {
+      text: text,
+      isUser: isUser,
+      typing: true,
+      timestamp: new Date().toLocaleTimeString(),
+      username: isUser ? 'You' : 'FinBud Bot'
+    };
+
+    this.messages.push(typingMessage);
+    setTimeout(() => {
+      typingMessage.typing = false;
+      this.$forceUpdate();
+    }, 1000);
+  },
+
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
       const matches = message.match(pattern) || [];
@@ -218,14 +231,14 @@ export default {
 
   },
   mounted() {
-      console.log("Component has been mounted.");
-  // Update the current time every second
-  setInterval(() => {
-    this.currentTime = new Date().toLocaleTimeString();
-  }, 500);
+    console.log("Component has been mounted.");
+    // Update the current time every second
+    setInterval(() => {
+      this.currentTime = new Date().toLocaleTimeString();
+    }, 500);
 
-  // Add the user guidance message when the page loads
-  const guidanceMessage = `
+    // Add the user guidance message when the page loads
+    const guidanceMessage = `
     Welcome to FinBud! Here are some tips to get started:
     
     1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
@@ -233,21 +246,24 @@ export default {
     3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
   `;
 
-  // Ensure messages array is ready
-  if (!this.messages) {
-    this.messages = [];
+    // Ensure messages array is ready
+    if (!this.messages) {
+      this.messages = [];
+    }
+    console.log("Guidance message added to messages.");
+    this.addTypingResponse(guidanceMessage.trim(), false);
   }
-  console.log("Guidance message added to messages.");
-  this.addTypingResponse(guidanceMessage.trim(), false);
-}
 };
 </script>
 
 <style scoped>
 .home-container {
-  display: flex; /* Changes the flex-direction to row by default */
-  width: 100%; /* Full width of the viewport */
-  height: 100vh; /* Full height of the viewport */
+  display: flex;
+  /* Changes the flex-direction to row by default */
+  width: 100%;
+  /* Full width of the viewport */
+  height: 100vh;
+  /* Full height of the viewport */
 }
 
 .chat-container {
