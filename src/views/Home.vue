@@ -4,8 +4,14 @@
       <div class="intro-text">
         <div class="intro-text1">
           <li class="title animate fade-in">Making the most informed financial choices</li>
-          <li class="description animate fade-in">With FinBud, you can ask for the best financial advice anytime, anywhere</li>
+          <li class="description animate fade-in">With FinBud, you can ask for the best financial advice anytime,
+            anywhere</li>
+          <br>
+          <br>
+          <br>
+          <BigGreenButton @click="onButtonClick">Chat Now!</BigGreenButton>
         </div>
+
         <div class="photo">
           <img src='@/assets/botrmbg.png' alt="placeholder">
         </div>
@@ -13,7 +19,8 @@
     </div>
     <header>
       <h1 class="animate fade-in">Enhance Your Financial Awareness by 25%</h1>
-      <p class="animate fade-in">FinBud is an AI-driven financial analytics platform that makes managing your finances more efficient.</p>
+      <p class="animate fade-in">FinBud is an AI-driven financial analytics platform that makes managing your finances
+        more efficient.</p>
       <button @click="learnMore" class="animate slide-in-up">Learn More</button>
     </header>
 
@@ -21,14 +28,16 @@
 
     <div class="feature-icons">
       <div class="animate slide-in-left">Compatible with any personal finance management software</div>
-      <div class="animate slide-in-right">Data-driven insights provide actionable steps to manage and improve your financial health</div>
+      <div class="animate slide-in-right">Data-driven insights provide actionable steps to manage and improve your
+        financial health</div>
     </div>
 
     <!-- Statistics Section -->
     <section id="statistics" class="stats-section">
       <div class="stats-header">
         <h2 class="animate fade-in">Experience the Impact</h2>
-        <p class="animate fade-in">Gain actionable insights into your finances automatically. It’s financial management at its best.</p>
+        <p class="animate fade-in">Gain actionable insights into your finances automatically. It’s financial management
+          at its best.</p>
       </div>
       <div class="stats-container">
         <div class="stat-item animate slide-in-left">
@@ -54,6 +63,7 @@
         <p>FinBud is tailored for individual financial needs, helping to optimize your economic potential.</p>
         <ul>
           <li>Expense Tracking: Automatically categorize and track expenses.</li>
+          <br>
           <li>Investment Guidance: Personalized insights to help you invest wisely.</li>
         </ul>
       </div>
@@ -114,11 +124,18 @@
 </template>
 
 <script>
+import BigGreenButton from "../components/Button/ChatNow.vue";
 export default {
   name: 'MainContent',
+  components: {
+    BigGreenButton,
+  },
   methods: {
     learnMore() {
       this.$router.push('/learn-more');
+    },
+    chatNow() {
+      this.$router.push('/chat-view');
     },
   },
   mounted() {
@@ -266,7 +283,7 @@ export default {
 
 .sdesimg img {
   list-style-type: none;
-  width:150%;
+  width: 150%;
   border-radius: 20%;
   opacity: 1;
   animation: none;
@@ -292,13 +309,17 @@ export default {
   opacity: 1;
   animation: none;
 }
+
 /* Global settings and the main content area */
 #main-content {
   display: flex;
   flex-direction: column;
-  background-color: white; /* Dark blue background */
-  color: black; /* White text for better contrast */
-  font-family: 'Segoe UI', Arial, sans-serif; /* Modern font */
+  background-color: white;
+  /* Dark blue background */
+  color: black;
+  /* White text for better contrast */
+  font-family: 'Segoe UI', Arial, sans-serif;
+  /* Modern font */
   margin-top: 0;
   opacity: 1;
   animation: none;
@@ -308,49 +329,60 @@ export default {
 header {
   text-align: center;
   padding: 50px 20px;
-  background: none; /* Removing the light background */
+  background: none;
+  /* Removing the light background */
   opacity: 1;
   animation: none;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: #007bff;
   opacity: 1;
   animation: none;
 }
 
 p {
-  color: black; /* Lighter grey for paragraphs */
+  color: black;
+  /* Lighter grey for paragraphs */
   opacity: 1;
   animation: none;
 }
 
 button {
-  background-color: #4a90e2; /* Blue that stands out */
+  background-color: #4a90e2;
+  /* Blue that stands out */
   color: white;
   border: none;
   padding: 12px 24px;
   border-radius: 5px;
   cursor: pointer;
-  font-weight: bold; /* Make the text a bit bolder */
+  font-weight: bold;
+  /* Make the text a bit bolder */
   transition: background-color 0.3s ease;
   opacity: 1;
   animation: none;
 }
 
 button:hover {
-  background-color: #357ab8; /* Darker shade on hover */
+  background-color: #357ab8;
+  /* Darker shade on hover */
   opacity: 1;
   animation: none;
 }
 
 /* Feature icons and stats section styling */
-.feature-icons div, .stat-item, #features li {
-  background: #2a3f5f; /* Slightly lighter blue background for items */
+.feature-icons div,
+.stat-item,
+#features li {
+  background: #2a3f5f;
+  /* Slightly lighter blue background for items */
   border-radius: 5px;
   padding: 15px;
   margin: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Subtle shadows for depth */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  /* Subtle shadows for depth */
   font-size: 1rem;
   color: white;
   opacity: 1;
@@ -366,13 +398,15 @@ button:hover {
 .stats-section {
   text-align: center;
   padding: 40px;
-  background: white; /* Even darker background for the section */
+  background: white;
+  /* Even darker background for the section */
   opacity: 1;
   animation: none;
 }
 
 .stats-header h2 {
-  font-size: 1.8rem; /* Slightly larger for better visibility */
+  font-size: 1.8rem;
+  /* Slightly larger for better visibility */
   margin-bottom: 20px;
   opacity: 1;
   animation: none;
@@ -409,13 +443,15 @@ button:hover {
 .container {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Align items vertically */
+  align-items: center;
+  /* Align items vertically */
   margin-top: 20px;
   opacity: 1;
   animation: none;
 }
 
-.text-content, .dashboard-visual {
+.text-content,
+.dashboard-visual {
   flex: 1;
   padding: 20px;
   opacity: 1;
@@ -423,7 +459,8 @@ button:hover {
 }
 
 .text-content {
-  align-self: start; /* Align text content to the top */
+  align-self: start;
+  /* Align text content to the top */
   opacity: 1;
   animation: none;
 }
@@ -432,7 +469,8 @@ button:hover {
 #analytics-dashboard .dashboard-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Aligns children at the top */
+  align-items: flex-start;
+  /* Aligns children at the top */
   opacity: 1;
   animation: none;
 }
@@ -445,25 +483,27 @@ button:hover {
 }
 
 .info-cards {
-  width: 40%; /* Allocate width for the info cards */
+  width: 40%;
+  /* Allocate width for the info cards */
   opacity: 1;
   animation: none;
 }
 
-.info-cards p{
+.info-cards p {
   color: white;
   opacity: 1;
   animation: none;
 }
 
-.inf-cards h2{
+.inf-cards h2 {
   color: #45BAF6;
   opacity: 1;
   animation: none;
 }
 
 .info-card {
-  background: #2a3f5f; /* Card background */
+  background: #2a3f5f;
+  /* Card background */
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 5px;
@@ -473,21 +513,27 @@ button:hover {
 }
 
 .dashboard-visual {
-  width: 58%; /* Allocate width for the visual */
-  background-color: #202938; /* Slightly different background for emphasis */
+  width: 58%;
+  /* Allocate width for the visual */
+  background-color: #202938;
+  /* Slightly different background for emphasis */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* More prominent shadow */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  /* More prominent shadow */
   opacity: 1;
   animation: none;
 }
 
 ul {
-  list-style-type: none; /* Removing bullet points */
-  padding-left: 0; /* Align list items */
+  list-style-type: none;
+  /* Removing bullet points */
+  padding-left: 0;
+  /* Align list items */
   opacity: 1;
   animation: none;
 }
+
 #real-time-insights .content-with-image {
   display: flex;
   justify-content: space-between;
@@ -528,9 +574,13 @@ img {
 
 /* Medium devices (tablets, 768px and up) */
 @media (max-width: 768px) {
-  .container, .dashboard-content, .real-time-insights .content-with-image {
+
+  .container,
+  .dashboard-content,
+  .real-time-insights .content-with-image {
     flex-direction: column;
-    justify-content: space-between; /* Distributes space between items */
+    justify-content: space-between;
+    /* Distributes space between items */
   }
 
   .info-cards {
@@ -543,13 +593,19 @@ img {
     align-items: center;
   }
 
-  .feature-icons div, .stat-item, .info-card {
+  .feature-icons div,
+  .stat-item,
+  .info-card {
     width: 80%;
     margin-bottom: 20px;
   }
 
-  .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
-    flex: 1 1 50%; /* Takes up half of the container width */
+  .text-content,
+  .dashboard-visual,
+  .real-time-insights .text-content,
+  .real-time-insights .image-container {
+    flex: 1 1 50%;
+    /* Takes up half of the container width */
   }
 
   .content-with-image {
@@ -559,16 +615,24 @@ img {
 
 /* Large devices (desktops, 992px and up) */
 @media (max-width: 992px) {
-  .container, .stats-container, .dashboard-content, #real-time-insights .content-with-image {
-    max-width: 1140px; /* Bootstrap's default container max-width for large screens */
+
+  .container,
+  .stats-container,
+  .dashboard-content,
+  #real-time-insights .content-with-image {
+    max-width: 1140px;
+    /* Bootstrap's default container max-width for large screens */
     margin: auto;
   }
 
-  .stat-item, .info-card {
-    flex: 1 1 33%; /* Allows three items per row */
+  .stat-item,
+  .info-card {
+    flex: 1 1 33%;
+    /* Allows three items per row */
   }
 
-  .text-content, .dashboard-visual {
+  .text-content,
+  .dashboard-visual {
     flex: 1 1 50%;
   }
 
@@ -580,18 +644,24 @@ img {
     padding-top: 1rem;
   }
 
-  .photo img{
+  .photo img {
     width: 100%;
   }
 
-  #real-time-insights .text-content, #real-time-insights .image-container {
-    width: 60%; /* Text takes slightly more space */
-    width: 35%; /* Image takes less space */
+  #real-time-insights .text-content,
+  #real-time-insights .image-container {
+    width: 60%;
+    /* Text takes slightly more space */
+    width: 35%;
+    /* Image takes less space */
   }
 }
 
 /* Ensuring padding and gap responsiveness */
-.container, .stats-container, .dashboard-content, #real-time-insights .content-with-image {
+.container,
+.stats-container,
+.dashboard-content,
+#real-time-insights .content-with-image {
   padding: 20px;
   gap: 20px;
   opacity: 1;
@@ -600,9 +670,13 @@ img {
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-  .container, .dashboard-content, .real-time-insights .content-with-image {
+
+  .container,
+  .dashboard-content,
+  .real-time-insights .content-with-image {
     flex-direction: row;
-    justify-content: space-between; /* Distributes space between items */
+    justify-content: space-between;
+    /* Distributes space between items */
   }
 
   .stats-container {
@@ -610,34 +684,51 @@ img {
     align-items: center;
   }
 
-  .feature-icons div, .stat-item, .info-card {
+  .feature-icons div,
+  .stat-item,
+  .info-card {
     width: 80%;
     margin-bottom: 20px;
   }
 
-  .text-content, .dashboard-visual, .real-time-insights .text-content, .real-time-insights .image-container {
-    flex: 1 1 50%; /* Takes up half of the container width */
+  .text-content,
+  .dashboard-visual,
+  .real-time-insights .text-content,
+  .real-time-insights .image-container {
+    flex: 1 1 50%;
+    /* Takes up half of the container width */
   }
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-  .container, .stats-container, .dashboard-content, #real-time-insights .content-with-image {
-    max-width: 1140px; /* Bootstrap's default container max-width for large screens */
+
+  .container,
+  .stats-container,
+  .dashboard-content,
+  #real-time-insights .content-with-image {
+    max-width: 1140px;
+    /* Bootstrap's default container max-width for large screens */
     margin: auto;
   }
 
-  .stat-item, .info-card {
-    flex: 1 1 33%; /* Allows three items per row */
+  .stat-item,
+  .info-card {
+    flex: 1 1 33%;
+    /* Allows three items per row */
   }
 
-  .text-content, .dashboard-visual {
+  .text-content,
+  .dashboard-visual {
     flex: 1 1 50%;
   }
 
-  #real-time-insights .text-content, #real-time-insights .image-container {
-    width: 60%; /* Text takes slightly more space */
-    width: 35%; /* Image takes less space */
+  #real-time-insights .text-content,
+  #real-time-insights .image-container {
+    width: 60%;
+    /* Text takes slightly more space */
+    width: 35%;
+    /* Image takes less space */
   }
 }
 </style>
