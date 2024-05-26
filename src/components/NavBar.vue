@@ -6,11 +6,10 @@
         <li><router-link to="/" class="home">Home</router-link></li>
         <li><router-link to="/goal" class="goal">Goal</router-link></li>
         <li><router-link to="/stock-simulator" class="simulator">Simulator</router-link></li>
-        <li><router-link to="/chatview" class="chatview">Chat</router-link></li>
+        <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/quizz" class="quizz">Quizz</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <li><router-link to="/contact" class="contact">Contact</router-link></li>
         <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
       </ul>
       <ul class="nav-actions">
@@ -23,13 +22,12 @@
           <router-link to="/" class="home" @click="closeDropdown">Home</router-link>
           <router-link to="/goal" class="goal">Goal</router-link>
           <router-link to="/stock-simulator" class="simulator">Simulator</router-link>
-          <router-link to="/chatview" class="chatview" @click="closeDropdown">Chat</router-link>
+          <router-link to="/chat-view" class="chatview" @click="closeDropdown">Chat</router-link>
           <router-link to="/quizz" class="quizz" @click="closeDropdown">Quizz</router-link>
           <router-link to="/login" class="login-button" @click="closeDropdown">Log In</router-link>
           <router-link to="/signup" class="signup-button" @click="closeDropdown">Sign Up</router-link>
           <router-link to="/about" class="about" @click="closeDropdown">About</router-link>
           <router-link to="/tech" class="technology" @click="closeDropdown">Technology</router-link>
-          <router-link to="/contact" class="contact" @click="closeDropdown">Contact</router-link>
           <router-link to="/pricing" class="pricing" @click="closeDropdown">Pricing</router-link>
         </div>
       </div>
