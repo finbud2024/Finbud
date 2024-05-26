@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import SignUp from '@/views/SignUp.vue';
 import Home from '@/views/Home.vue';
-import ContactUs from '@/views/ContactUs.vue'; 
 import ChatView from '@/views/ChatView.vue'; 
 import SideBar from '@/components/SideBar.vue';
 import TechnologyPage from '@/views/TechnologyPage.vue'; 
@@ -29,12 +28,7 @@ const routes = [
     component: SignUp,
   },
   {
-    path: '/contact',
-    name: 'ContactUs',
-    component: ContactUs,
-  },
-  {
-    path: '/chatview',
+    path: '/chat-view',
     name: 'ChatView',
     components: {
       default: ChatView,
@@ -74,7 +68,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(process.env.BASE_URL),
   routes,
 });
 

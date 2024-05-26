@@ -38,7 +38,7 @@ export default {
   methods: {
     startTypingEffect() {
       const length = this.text.length;
-      const typingSpeed = 20; // milliseconds per character
+      const typingSpeed = 5; // milliseconds per character
       let currentLength = 0;
 
       const interval = setInterval(() => {
@@ -83,7 +83,7 @@ export default {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
-  max-width: 60%;
+  max-width: 80%;
   word-wrap: break-word;
 }
 

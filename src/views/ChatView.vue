@@ -28,13 +28,12 @@
 </template>
 
 <script>
+import axios from 'axios';
 import ChatHeader from '../components/ChatHeader.vue';
 import ChatFrame from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
-import { gptAPICall } from '@/services/gptServices';
-import { gptAPICallDefine } from '@/services/gptServices';
 import SideBar from '../components/SideBar.vue';
 
 export default {
@@ -70,12 +69,12 @@ export default {
   },
   methods: {
     clearMessage() {
-      this.newMessage = ''
+      this.newMessage = '';
     },
     updateCurrentThread(newThreadId) {
-      console.log("Update current thread function triggered: ", newThreadId)
+      console.log("Update current thread function triggered: ", newThreadId);
       const thread = this.threads.find(thread => thread.id.toString() === newThreadId);
-      console.log(thread)
+      console.log(thread);
       if (thread) {
         this.currentThread = thread;
         this.messages = thread.messages || [];
@@ -84,7 +83,7 @@ export default {
         this.currentThread = {};
         this.messages = [];
       }
-      console.log("Current thread: ", this.currentThread)
+      console.log("Current thread: ", this.currentThread);
     },
     addThread(newThread) {
       newThread.id = this.threads.length + 1;
@@ -105,7 +104,7 @@ export default {
       this.updateCurrentThread(this.threads[index].id.toString());
     },
     async sendMessage(newMessage) {
-      console.log("start sending message in send message..")
+      console.log("start sending message in send message..");
 
       this.messages.push({
         text: newMessage.trim(),
@@ -116,73 +115,44 @@ export default {
 
       this.newMessage = '';
 
-      const stockCode = this.extractStockCode(this.messages[this.messages.length - 1].text);
-      if (stockCode.length > 0) {
+      const userMessage = this.messages[this.messages.length - 1].text;
+      if (userMessage.toLowerCase().includes("define")) {
+        const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
         try {
-          const price = await fetchStockPrice(stockCode[0]);
-          const timeStamp = new Date().toLocaleTimeString();
-          console.log("This is time stamp when asking about stock price: ", timeStamp)
-          let responseText = `The current price of ${stockCode[0]} stock is $${price}, as of ${timeStamp}.`;
-
-          this.addTypingResponse(responseText, false);
-
-          // const analysisQuestion = `Analyze the following data for Tesla:
-          //   P/E ratio TTM: 39.31
-          //   Price to sales TTM: 5.66
-          //   Price to cash flow MRQ: 64.94
-          //   Price to free cash flow TTM: 388.36
-          //   Price to book MRQ: 8.34
-          //   Price to tangible book MRQ: 8.39
-          //   Profitability:
-          //   Gross margin TTM: 17.78%
-          //   Gross margin 5YA: 21.49%
-          //   Operating margin TTM: 7.81%
-          //   Operating margin 5YA: 8.96%
-          //   Pre-tax margin TTM: 9.21%
-          //   Pre-tax margin 5YA: 7.96%
-          //   Net margin TTM: 14.37%
-          //   Net margin 5YA: 7.59%
-          //   Revenue per share TTM: 29.75
-          //   Basic EPS ANN: 4.73
-          //   Diluted EPS ANN: 4.3
-          //   Book value per share MRQ: 20.21
-          //   Tangible book value per share MRQ: 20.06
-          //   Cash per share MRQ: 3.71
-          //   Cash flow per share TTM: 3.45
-          // `;
-          // this.addTypingResponse(analysisQuestion, false);
-
-          const gptResponse = await gptAPICall(stockCode[0]);
-          this.addTypingResponse(gptResponse, false);
+          const response = await axios.post('/api/define-term', { term });
+          this.addTypingResponse(response.data.definition, false);
         } catch (error) {
           console.error('Error:', error);
-          this.messages.push({ text: `Error fetching data for ${stockCode}.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
+          this.messages.push({ text: `Error defining term.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
+        }
+      } else {
+        const stockCode = this.extractStockCode(userMessage);
+        if (stockCode.length > 0) {
+          try {
+            const price = await fetchStockPrice(stockCode[0]);
+            const timeStamp = new Date().toLocaleTimeString();
+            console.log("This is time stamp when asking about stock price: ", timeStamp);
+            let responseText = `The current price of ${stockCode[0]} stock is $${price}, as of ${timeStamp}.`;
+
+            this.addTypingResponse(responseText, false);
+
+            const response = await axios.post('/api/analyze-stock', { stockSymbol: stockCode[0] });
+            this.addTypingResponse(response.data.analysis, false);
+          } catch (error) {
+            console.error('Error:', error);
+            this.messages.push({ text: `Error fetching data for ${stockCode}.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
+          }
+        } else {
+          try {
+            const response = await axios.post('/api/norm-ans', { term: userMessage });
+            this.addTypingResponse(response.data.definition, false);
+          } catch (error) {
+            console.error('Error:', error);
+            this.messages.push({ text: `Error generating answer.`, isUser: false, timestamp: new Date().toLocaleTimeString() });
+          }
         }
       }
-      else {
-        const userMessage = this.messages[this.messages.length - 1].text;
-        setTimeout(async () => {
-          if (userMessage.toLowerCase().includes("define")) {
-            const gptResponseDefine = await gptAPICallDefine(userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim());
-            this.addTypingResponse(gptResponseDefine, false);
-          } else if (userMessage.toLowerCase().includes("ipo")) {
-            this.addTypingResponse("IPO stands for Initial Public Offering. It's when a company sells its shares to the public for the first time. Think of it like when a company decides to let anyone buy a small piece of it.", false);
-          }  else if (userMessage.toLowerCase().includes("balance sheet")) {
-            this.addTypingResponse("A balance sheet is like a financial snapshot of a company at a specific point in time. It shows what the company owns (assets), what it owes (liabilities), and the value left over for the owners (equity). Think of it as a list that helps you understand a company's financial health.", false);
-          }  else if (userMessage.toLowerCase().includes("bond")) {
-            this.addTypingResponse("Bonds are loans from investors to companies or governments. Investors receive regular interest payments and get their money back when the bond matures. Think of it like lending money to a friend with a promise. When you give them the money, they agree to pay you back a little extra each month (interest) and return the full amount you lent them after a certain time (maturity).", false);
-          }
-          else {
-            setTimeout(
-              () => {
-                this.addTypingResponse('I am FinBud, your AI financial assistant developed by Bui Dinh Tri. I am specially configured on the GPT-3.5 Turbo platform to provide deeper insights and expertise in finance and stock markets.', false);
-              }, 300
-            )
-          }
-        }, 2000);
-      }
     },
-
     addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
@@ -197,16 +167,16 @@ export default {
         typingMessage.text = text;
         typingMessage.typing = false;
         this.$forceUpdate();
-      }, 2000);
+      }, 1000);
     },
 
+    
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
       const matches = message.match(pattern) || [];
-      console.log("Ham extract: ", matches)
+      console.log("Ham extract: ", matches);
       return matches;
     },
-
     extractSharesAndCode(message) {
       // Regex to find stock codes: assumes codes are upper-case letters optionally followed by numbers
       const stockCodePattern = /\b[A-Z]{1,5}\b/g;
@@ -228,7 +198,6 @@ export default {
         shares: shares || null
       };
     },
-
     async calculateTotalValue(stockCode, shares) {
       if (!stockCode || !shares) {
         throw new Error("Stock code or number of shares missing.");
@@ -244,22 +213,32 @@ export default {
       }
     },
 
-    async fakeResponse(message) {
-      // Simulate fake response from the backend API
-      return "This is a fake response to the message: " + message;
-    },
+  },
+  mounted() {
+      console.log("Component has been mounted.");
+  // Update the current time every second
+  setInterval(() => {
+    this.currentTime = new Date().toLocaleTimeString();
+  }, 500);
 
+  // Add the user guidance message when the page loads
+  const guidanceMessage = `
+    Welcome to FinBud! Here are some tips to get started:
+    
+    1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
+    2. Financial Term Definitions:** Use "Define" followed by the term (e.g., "define IPO").
+    3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+  `;
 
-    mounted() {
-      // Update the current time every second
-      setInterval(() => {
-        this.currentTime = new Date().toLocaleTimeString();
-      }, 500);
-    }
+  // Ensure messages array is ready
+  if (!this.messages) {
+    this.messages = [];
   }
+  console.log("Guidance message added to messages.");
+  this.addTypingResponse(guidanceMessage.trim(), false);
 }
+};
 </script>
-
 
 <style scoped>
 .home-container {
