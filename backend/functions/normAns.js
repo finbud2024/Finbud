@@ -3,7 +3,6 @@ require('dotenv').config();
 
 
 exports.handler = async (event, context) => {
-    console.log("normAns function called with event:", event.body);
     const { term } = JSON.parse(event.body);
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 

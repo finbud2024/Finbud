@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
   transpileDependencies: [],
@@ -10,17 +11,21 @@ module.exports = {
       },
     },
   },
+  pages: {
+    index: {
+      entry: 'src/main.js',  // Correct path to main.js relative to the frontend directory
+      template: 'public/index.html',
+      filename: 'index.html',
+      title: 'Finbud',
+    },
+  },
   configureWebpack: {
     resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
       fallback: {
-        crypto: require.resolve('crypto-browserify'),
-        stream: require.resolve('stream-browserify'),
-        assert: require.resolve('assert/'),
-        http: require.resolve('stream-http'),
-        https: require.resolve('https-browserify'),
-        os: require.resolve('os-browserify/browser'),
-        url: require.resolve('url/'),
-        path: require.resolve('path-browserify')
+        "process": require.resolve("process/browser"),
       }
     },
     plugins: [
