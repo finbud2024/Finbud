@@ -3,7 +3,6 @@
     <NavBar />
     <div class="content">
       <!-- Use router-link to navigate to the login page -->
-      <MainContentVue />
     </div>
   </div>
   <!-- router-view will render the component associated with the current route -->
@@ -14,6 +13,7 @@
 <script>
 import NavBar from './components/NavBar.vue';
 import FooterBar from './components/FooterBar.vue';
+
 
 export default {
   name: 'App',
