@@ -1,4 +1,3 @@
-```md
 # FinBud
 
 ## Giới thiệu
