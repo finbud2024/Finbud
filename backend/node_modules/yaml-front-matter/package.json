@@ -1,0 +1,42 @@
+{
+  "author": "Derek Worthen",
+  "license": "MIT",
+  "name": "yaml-front-matter",
+  "description": "yaml front matter for JS. Parse yaml or JSON from the beginning of files.",
+  "main": "dist/yamlFront.js",
+  "module": "src/index.js",
+  "version": "4.1.1",
+  "keywords": [
+    "yaml",
+    "front matter",
+    "json"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dworthen/js-yaml-front-matter"
+  },
+  "dependencies": {
+    "commander": "^6.2.0",
+    "js-yaml": "^3.14.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "babel-loader": "^8.2.2",
+    "mocha": "^8.2.1",
+    "should": "^13.2.3",
+    "standard-version": "^9.0.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.2.0"
+  },
+  "bin": {
+    "yaml-front-matter": "bin/js-yaml-front.js"
+  },
+  "scripts": {
+    "test": "npm run build && mocha -u bdd --reporter spec",
+    "start": "npm run build:browser && http-server ./docs -p 8080",
+    "release": "standard-version",
+    "build": "webpack --mode production",
+    "build:browser": "webpack --mode production --env.browser"
+  }
+}

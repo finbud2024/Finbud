@@ -119,7 +119,7 @@ export default {
       if (userMessage.toLowerCase().includes("define")) {
         const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
         try {
-          const response = await axios.post('/api/define-term', { term });
+          const response = await axios.post('/.netlify/functions/defineTerm', { term });
           this.addTypingResponse(response.data.definition, false);
         } catch (error) {
           console.error('Error:', error);
@@ -136,7 +136,7 @@ export default {
 
             this.addTypingResponse(responseText, false);
 
-            const response = await axios.post('/api/analyze-stock', { stockSymbol: stockCode[0] });
+            const response = await axios.post('/.netlify/functions/analyzeStock', { stockSymbol: stockCode[0] });
             this.addTypingResponse(response.data.analysis, false);
           } catch (error) {
             console.error('Error:', error);
@@ -144,7 +144,10 @@ export default {
           }
         } else {
           try {
-            const response = await axios.post('/api/norm-ans', { term: userMessage });
+            console.log("Calling normAns function with term:", userMessage); // Add this line for logging
+          const response = await axios.post('/.netlify/functions/normAns', { term: userMessage });
+          console.log("Response from normAns:", response.data); // Add this line for logging
+          this.addTypingResponse(response.data.definition, false);
             this.addTypingResponse(response.data.definition, false);
           } catch (error) {
             console.error('Error:', error);
