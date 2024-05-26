@@ -2,7 +2,11 @@
   "name": "FinBud",
   "version": "0.1.0",
   "private": true,
-
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@vue/cli": "^5.0.8",
