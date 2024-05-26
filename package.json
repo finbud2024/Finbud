@@ -2,11 +2,10 @@
     "name": "FinBud-AI-bot",
     "version": "0.1.0",
     "scripts": {
-      "start": "netlify dev",
-      "build": "npm run build --prefix frontend"
+        "start": "netlify dev",
+        "build": "npm run build --prefix frontend"
     },
-    "dependencies": {
- 
+    "devDependencies": {
+        "@vue/cli-service": "^5.0.8"
     }
-  }
-  
+}
