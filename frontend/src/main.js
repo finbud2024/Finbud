@@ -5,7 +5,6 @@ import router from './router'; // Adjust the path to your router file
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 
-
 // Create the application and mount it with the router
 createApp(App)
   .use(router)
