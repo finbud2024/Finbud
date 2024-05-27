@@ -23,7 +23,10 @@ import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import SideBar from '../components/SideBar.vue';
-const apiUrl = process.env.VUE_APP_API_URL;
+const apiUrl = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:3000' 
+  : 'https://finbud-ai.netlify.app/.netlify/functions';
+
 
 export default {
   name: 'ChatView',
