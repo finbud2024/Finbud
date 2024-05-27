@@ -1,32 +1,62 @@
 <template>
-  <div class="company-card" :style="{ width: `${width}px` }">
-    <h2>{{ companyName }}</h2>
-    <!-- Add more company details here -->
+  <div class="tradingview-widget-container componentCard" ref="divRef">
+    <div class="tradingview-widget-container__widget"></div>
   </div>
 </template>
 
 <script>
+import { ref, onMounted, watch } from 'vue';
+
 export default {
   name: 'CompanyCard',
   props: {
     companyName: {
       type: String,
-      required: true
+      required: true,
     },
     width: {
       type: Number,
-      default: 800
-    }
-  }
+      required: true,
+    },
+  },
+  setup(props) {
+    const divRef = ref(null);
+
+    const loadTradingViewWidget = () => {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        symbol: props.companyName,
+        width: props.width,
+        locale: 'en',
+        colorTheme: 'dark',
+        isTransparent: false,
+      });
+      script.className = 'componentCard';
+      divRef.value.appendChild(script);
+    };
+
+    onMounted(() => {
+      loadTradingViewWidget();
+    });
+
+    watch(() => [props.companyName, props.width], () => {
+      if (divRef.value) {
+        divRef.value.innerHTML = '';
+        loadTradingViewWidget();
+      }
+    });
+
+    return {
+      divRef,
+    };
+  },
 };
 </script>
 
 <style scoped>
-.company-card {
-  border: 1px solid #3aafa9;
-  border-radius: 5px;
-  padding: 20px;
-  margin: 10px;
-  text-align: center;
+.tradingview-widget-container {
+    margin-bottom: 1rem;
 }
 </style>
