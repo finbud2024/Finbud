@@ -3,7 +3,7 @@
     <header>
       <h1>Keyword-Based Quiz</h1>
       <input type="text" v-model="keywords" placeholder="Enter finance-related keywords" />
-      <button @click="generateQuiz">Generate Quiz 2</button>
+      <button @click="generateQuiz">Generate Quiz</button>
     </header>
     <div class="score-timer-box">
       <p>Points: {{ score }}</p>
