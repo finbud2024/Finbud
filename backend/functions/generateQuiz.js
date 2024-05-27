@@ -10,7 +10,7 @@ app.use(cors()); // Use the cors middleware
 app.post('/generate-quiz', async (req, res) => {
     const { keywords } = req.body;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
+    console.log("Generate Quiz")
     
 
     try {
