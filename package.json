@@ -9,12 +9,14 @@
     },
     "devDependencies": {
         "@vue/cli-service": "^5.0.8",
-        "concurrently": "^8.2.2"
+        "concurrently": "^8.2.2",
+        "dotenv-webpack": "^8.1.0"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.5.2",
         "@vue/compiler-sfc": "^3.4.27",
         "axios": "^1.7.2",
+        "dotenv": "^16.4.5",
         "process": "^0.11.10",
         "vue": "^3.4.27",
         "vue-router": "^4.3.2",

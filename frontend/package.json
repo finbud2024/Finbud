@@ -10,12 +10,14 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "axios": "^1.7.2",
     "bootstrap-vue": "^2.23.1",
+    "dotenv": "^16.4.5",
     "process": "^0.11.10",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@vue/cli-service": "^5.0.8",
+    "dotenv-webpack": "^8.1.0",
     "eslint-plugin-vue": "^7.0.0"
   }
 }

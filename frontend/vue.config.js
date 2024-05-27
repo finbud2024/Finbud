@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const Dotenv = require('dotenv-webpack'); // Import dotenv-webpack
 
 module.exports = {
   transpileDependencies: [],
@@ -32,7 +33,10 @@ module.exports = {
       new webpack.ProvidePlugin({
         process: 'process/browser',
         Buffer: ['buffer', 'Buffer']
-      })
+      }),
+      new Dotenv({ // Correctly use Dotenv here
+        path: './.env.local', // Load .env.local file
+      }),
     ]
   }
 };
