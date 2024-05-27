@@ -16,6 +16,10 @@ export default {
       type: Number,
       required: true,
     },
+    height: {
+      type: Number,
+      required: true,
+    },
   },
   mounted() {
     const script = document.createElement('script');
@@ -24,6 +28,7 @@ export default {
     script.innerHTML = JSON.stringify({
       symbol: this.companyName,
       width: this.width,
+      height: this.height,
       locale: 'en',
       colorTheme: 'light',
       isTransparent: false,
@@ -34,5 +39,8 @@ export default {
 </script>
 
 <style scoped>
-/* Add your styles here if needed */
+.tradingview-widget-container {
+    margin-top: 1rem;
+    height: 80%;
+}
 </style>
