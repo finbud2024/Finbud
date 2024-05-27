@@ -7,11 +7,12 @@
     "test": "vue-cli-service test"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.3",
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "axios": "^1.7.2",
     "bootstrap-vue": "^2.23.1",
     "process": "^0.11.10",
-    "vue": "^3.0.0",
-    "vue-router": "^4.0.0"
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@vue/cli-service": "^5.0.8",
