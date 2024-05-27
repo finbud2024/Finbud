@@ -173,6 +173,7 @@ export default {
 
     async handleGeneralMessage(userMessage) {
       console.log(`Day la link to ${apiUrl}/normAns`)
+      
       const response = await axios.post(`${apiUrl}/normAns`, { term: userMessage });
       this.addTypingResponse(response.data.definition, false);
     },
