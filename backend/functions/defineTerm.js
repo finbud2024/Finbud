@@ -7,6 +7,19 @@ exports.handler = async (event, context) => {
     const { term } = JSON.parse(event.body);
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
+    const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+    };
+
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: JSON.stringify({ message: 'CORS preflight request success' })
+        };
+    }
     try {
         const prompt = `Explain ${term} to me as if I'm 15.`;
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {

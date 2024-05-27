@@ -6,6 +6,20 @@ exports.handler = async (event, context) => {
     const ALPHAVANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
+    const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+    };
+
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: JSON.stringify({ message: 'CORS preflight request success' })
+        };
+    }
+
     try {
         const stockUrl = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
         const stockResponse = await axios.get(stockUrl);

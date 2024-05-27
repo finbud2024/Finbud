@@ -1,11 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require('cors'); // Import the cors package
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Use the cors middleware
+app.use(cors());
 app.use(bodyParser.json());
 
 // Import the functions
@@ -21,22 +24,22 @@ const asyncHandler = fn => (req, res, next) => {
 
 // Define routes
 app.post('/analyzeStock', asyncHandler(async (req, res) => {
-    const response = await analyzeStock({ body: req.body }, null);
+    const response = await analyzeStock({ body: JSON.stringify(req.body) }, null);
     res.status(response.statusCode).json(JSON.parse(response.body));
 }));
 
 app.post('/defineTerm', asyncHandler(async (req, res) => {
-    const response = await defineTerm({ body: req.body }, null);
+    const response = await defineTerm({ body: JSON.stringify(req.body) }, null);
     res.status(response.statusCode).json(JSON.parse(response.body));
 }));
 
 app.post('/generateQuiz', asyncHandler(async (req, res) => {
-    const response = await generateQuiz({ body: req.body }, null);
+    const response = await generateQuiz({ body: JSON.stringify(req.body) }, null);
     res.status(response.statusCode).json(JSON.parse(response.body));
 }));
 
 app.post('/normAns', asyncHandler(async (req, res) => {
-    const response = await normAns({ body: req.body }, null);
+    const response = await normAns({ body: JSON.stringify(req.body) }, null);
     res.status(response.statusCode).json(JSON.parse(response.body));
 }));
 
