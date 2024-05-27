@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
-    console.log("get into this!")
+    console.log("analyse stock")
     const { stockSymbol } = JSON.parse(event.body);
     const ALPHAVANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;

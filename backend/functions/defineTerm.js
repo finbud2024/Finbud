@@ -2,8 +2,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 exports.handler = async (event, context) => {
-    console.log('OPENAI_API_KEY:', process.env.OPENAI_API_KEY);
-    
+    console.log("define term")
     const { term } = JSON.parse(event.body);
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
