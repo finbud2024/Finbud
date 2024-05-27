@@ -10,6 +10,7 @@ import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
 import GoalPage from '@/views/GoalPage.vue';
+import RecommendationGenerator from '@/views/RecommendationGenerator.vue';
 
 const routes = [
   {
@@ -68,6 +69,11 @@ const routes = [
     path: '/goal',
     name: 'GoalPage',
     component: GoalPage,
+  },
+  {
+    path: '/recommendation-generator',
+    name: 'RecommendationGenerator',
+    component: RecommendationGenerator,
   },
 ];
 
