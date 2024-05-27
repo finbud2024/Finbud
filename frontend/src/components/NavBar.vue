@@ -194,6 +194,10 @@ export default {
     justify-content: space-between;
   }
 
+  .navbar-brand {
+    margin-left: 50px; /* Adjust this value to move the text to the right */
+  }
+
   .dropdown-content {
     display: flex;
   }
