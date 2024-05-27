@@ -93,21 +93,21 @@ export default {
       count: 0,
     };
   },
-  methods: {
+    methods: {
     async searchSimilarStocks() {
-      const url = `https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-recommendations?symbol=${this.query}`;
-      try {
+        const url = `https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-recommendations?symbol=${this.query}`;
+        try {
         const res = await axios.get(url, {
-          headers: {
+            headers: {
             'x-rapidapi-key': 'a48948c3dbmsh0752220de3da440p119094jsnf7916aa82678',
             'x-rapidapi-host': 'apidojo-yahoo-finance-v1.p.rapidapi.com',
-          },
+            },
         });
         this.similarStocks = res.data.finance.result[0].quotes;
         this.count = res.data.finance.result[0].count;
-      } catch (err) {
+        } catch (err) {
         console.log(err);
-      }
+        }
     },
     handleSearch() {
       this.searching = true;
