@@ -1,8 +1,17 @@
+const express = require('express');
+const cors = require('cors');
 const axios = require('axios');
+require('dotenv').config();
 
-exports.handler = async (event, context) => {
-    const { keywords } = JSON.parse(event.body);
+const app = express();
+app.use(express.json());
+app.use(cors()); // Use the cors middleware
+
+app.post('/generate-quiz', async (req, res) => {
+    const { keywords } = req.body;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+    
 
     try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
@@ -23,15 +32,24 @@ exports.handler = async (event, context) => {
 
         const completion = response.data.choices[0].message.content.trim();
         const question = parseQuizResponse(completion);
-        res.json(question);
+        
+        res.status(200).json(question);
     } catch (error) {
         console.error('Error generating quiz:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: 'Error generating quiz' })
-        };
+        
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+        } else {
+            console.error('Error message:', error.message);
+        }
+
+        res.status(500).json({ error: 'Error generating quiz' });
     }
-};
+});
 
 const parseQuizResponse = (response) => {
     const lines = response.split('\n').filter(line => line.trim() !== '');
@@ -50,3 +68,8 @@ const parseQuizResponse = (response) => {
         answers: options
     };
 };
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`Server for Quizz is running on port ${PORT}`);
+});
