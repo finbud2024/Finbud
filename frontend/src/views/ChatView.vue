@@ -15,6 +15,7 @@
 </template>
 
 <script>
+
 import axios from 'axios';
 import ChatHeader from '../components/ChatHeader.vue';
 import ChatFrame from '../components/ChatFrame.vue';
@@ -22,6 +23,7 @@ import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import SideBar from '../components/SideBar.vue';
+const apiUrl = process.env.VUE_APP_API_URL;
 
 export default {
   name: 'ChatView',
@@ -55,6 +57,7 @@ export default {
     },
   },
   methods: {
+
     clearMessage() {
       this.newMessage = '';
     },
@@ -91,101 +94,105 @@ export default {
       this.updateCurrentThread(this.threads[index].id.toString());
     },
     async sendMessage(newMessage) {
-    console.log("start sending message in send message..");
+      console.log("start sending message in send message..");
+      console.log(process.env.VUE_APP_API_URL);
 
-    this.messages.push({
-      text: newMessage.trim(),
-      isUser: true,
-      typing: true,
-      timestamp: new Date().toLocaleTimeString()
-    });
-
-    this.newMessage = '';
-
-    const userMessage = this.messages[this.messages.length - 1].text;
-
-    try {
-      if (userMessage.toLowerCase().includes("define")) {
-        await this.handleDefineMessage(userMessage);
-      } else {
-        const stockCode = this.extractStockCode(userMessage);
-        if (stockCode.length > 0) {
-          await this.handleStockMessage(stockCode[0]);
-        } else {
-          await this.handleGeneralMessage(userMessage);
-        }
-      }
-    } catch (error) {
-      console.error('Error:', error);
       this.messages.push({
-        text: `Error processing your message.`,
-        isUser: false,
+        text: newMessage.trim(),
+        isUser: true,
+        typing: true,
         timestamp: new Date().toLocaleTimeString()
       });
-    }
-  },
 
-  // async handleDefineMessage(userMessage) {
-  //   const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-  //   const response = await axios.post('/.netlify/functions/defineTerm', { term });
-  //   this.addTypingResponse(response.data.definition, false);
-  // },
+      this.newMessage = '';
 
-  // async handleStockMessage(stockCode) {
-  //   const price = await fetchStockPrice(stockCode);
-  //   const timeStamp = new Date().toLocaleTimeString();
-  //   let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+      const userMessage = this.messages[this.messages.length - 1].text;
 
-  //   this.addTypingResponse(responseText, false);
+      try {
+        if (userMessage.toLowerCase().includes("define")) {
+          await this.handleDefineMessage(userMessage);
+        } else {
+          const stockCode = this.extractStockCode(userMessage);
+          if (stockCode.length > 0) {
+            await this.handleStockMessage(stockCode[0]);
+          } else {
+            await this.handleGeneralMessage(userMessage);
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        this.messages.push({
+          text: `Error processing your message.`,
+          isUser: false,
+          timestamp: new Date().toLocaleTimeString()
+        });
+      }
+    },
 
-  //   const response = await axios.post('/.netlify/functions/analyzeStock', { stockSymbol: stockCode });
-  //   this.addTypingResponse(response.data.analysis, false);
-  // },
+    // async handleDefineMessage(userMessage) {
+    //   const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
+    //   const response = await axios.post('/.netlify/functions/defineTerm', { term });
+    //   this.addTypingResponse(response.data.definition, false);
+    // },
 
-  // async handleGeneralMessage(userMessage) {
-  //   const response = await axios.post('/.netlify/functions/normAns', { term: userMessage });
-  //   this.addTypingResponse(response.data.definition, false);
-  // },
+    // async handleStockMessage(stockCode) {
+    //   const price = await fetchStockPrice(stockCode);
+    //   const timeStamp = new Date().toLocaleTimeString();
+    //   let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
 
-  async handleDefineMessage(userMessage) {
-    const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-    const response = await axios.post('http://localhost:3000/defineTerm', { term }); // Updated URL
-    this.addTypingResponse(response.data.definition, false);
-},
+    //   this.addTypingResponse(responseText, false);
 
-async handleStockMessage(stockCode) {
-    const price = await fetchStockPrice(stockCode);
-    const timeStamp = new Date().toLocaleTimeString();
-    let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+    //   const response = await axios.post('/.netlify/functions/analyzeStock', { stockSymbol: stockCode });
+    //   this.addTypingResponse(response.data.analysis, false);
+    // },
 
-    this.addTypingResponse(responseText, false);
-
-    const response = await axios.post('http://localhost:3000/analyzeStock', { stockSymbol: stockCode }); // Updated URL
-    this.addTypingResponse(response.data.analysis, false);
-},
-
-async handleGeneralMessage(userMessage) {
-    const response = await axios.post('http://localhost:3000/normAns', { term: userMessage }); // Updated URL
-    this.addTypingResponse(response.data.definition, false);
-},
+    // async handleGeneralMessage(userMessage) {
+    //   const response = await axios.post('/.netlify/functions/normAns', { term: userMessage });
+    //   this.addTypingResponse(response.data.definition, false);
+    // },
 
 
 
-  addTypingResponse(text, isUser) {
-    const typingMessage = {
-      text: text,
-      isUser: isUser,
-      typing: true,
-      timestamp: new Date().toLocaleTimeString(),
-      username: isUser ? 'You' : 'FinBud Bot'
-    };
 
-    this.messages.push(typingMessage);
-    setTimeout(() => {
-      typingMessage.typing = false;
-      this.$forceUpdate();
-    }, 1000);
-  },
+    async handleDefineMessage(userMessage) {
+      const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
+      const response = await axios.post(`${apiUrl}/defineTerm`, { term });
+      this.addTypingResponse(response.data.definition, false);
+    },
+
+    async handleStockMessage(stockCode) {
+      const price = await fetchStockPrice(stockCode);
+      const timeStamp = new Date().toLocaleTimeString();
+      let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+
+      this.addTypingResponse(responseText, false);
+
+      const response = await axios.post(`${apiUrl}/analyzeStock`, { stockSymbol: stockCode });
+      this.addTypingResponse(response.data.analysis, false);
+    },
+
+    async handleGeneralMessage(userMessage) {
+      console.log(`Day la link to ${apiUrl}/normAns`)
+      const response = await axios.post(`${apiUrl}/normAns`, { term: userMessage });
+      this.addTypingResponse(response.data.definition, false);
+    },
+
+
+    addTypingResponse(text, isUser) {
+      const typingMessage = {
+        text: text,
+        isUser: isUser,
+        typing: true,
+        timestamp: new Date().toLocaleTimeString(),
+        username: isUser ? 'You' : 'FinBud Bot'
+      };
+
+      this.messages.push(typingMessage);
+      setTimeout(() => {
+        typingMessage.typing = false;
+        this.$forceUpdate();
+      }, 1000);
+    },
 
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;

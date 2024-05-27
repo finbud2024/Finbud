@@ -2,10 +2,18 @@
     "name": "FinBud-AI-bot",
     "version": "0.1.0",
     "scripts": {
-        "start": "netlify dev",
-        "build": "npm run build --prefix frontend"
+        "start": "concurrently \"npm run server\" \"npm run client\"",
+        "build": "npm run build --prefix frontend",
+        "server": "cd backend && node server.js",
+        "client": "cd frontend && npm run serve",
+        "netlify-dev": "concurrently \"npm run server\" \"netlify dev\""
     },
     "devDependencies": {
-        "@vue/cli-service": "^5.0.8"
+        "@vue/cli-service": "^5.0.8",
+        "concurrently": "^8.2.2"
+    },
+    "dependencies": {
+        "@vue/compiler-sfc": "^3.4.27",
+        "vue-template-compiler": "^2.7.16"
     }
 }
