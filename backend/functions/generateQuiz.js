@@ -7,11 +7,23 @@ const app = express();
 app.use(express.json());
 app.use(cors()); // Use the cors middleware
 
-app.post('/generate-quiz', async (req, res) => {
+exports.handler = async (req, res) => {
     const { keywords } = req.body;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     console.log("Generate Quiz")
-    
+    const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+    };
+
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: JSON.stringify({ message: 'CORS preflight request success' })
+        };
+    }
 
     try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
@@ -49,7 +61,7 @@ app.post('/generate-quiz', async (req, res) => {
 
         res.status(500).json({ error: 'Error generating quiz' });
     }
-});
+};
 
 const parseQuizResponse = (response) => {
     const lines = response.split('\n').filter(line => line.trim() !== '');
@@ -69,7 +81,7 @@ const parseQuizResponse = (response) => {
     };
 };
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-    console.log(`Server for Quizz is running on port ${PORT}`);
-});
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//     console.log(`Server for Quizz is running on port ${PORT}`);
+// });

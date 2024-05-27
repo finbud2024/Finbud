@@ -51,7 +51,9 @@
 
 <script>
 import axios from 'axios';
-
+const apiUrl = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:3000' 
+  : 'https://finbud-ai.netlify.app/.netlify/functions';
 export default {
   name: 'QuizComponent',
   data() {
@@ -72,7 +74,7 @@ export default {
     async generateQuiz() {
       console.log('Hello');
       try {
-        const response = await axios.post('http://localhost:3001/generate-quiz', { keywords: this.keywords });
+        const response = await axios.post(`${apiUrl}/generate-quiz`, { keywords: this.keywords });
         this.question = response.data;
         this.selectedAnswer = null;
         this.isQuizStarted = true;
