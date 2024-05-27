@@ -5,6 +5,8 @@ exports.handler = async (event, context) => {
     console.log("NORM ANS")
     const { term } = JSON.parse(event.body);
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+    console.log(OPENAI_API_KEY)
+    console.log("YO")
 
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
