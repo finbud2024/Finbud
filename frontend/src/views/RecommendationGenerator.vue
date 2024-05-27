@@ -3,8 +3,6 @@
     <div class="content">
       <div class="header-recommend">
         <h1>Get Similar Stocks</h1>
-      </div>
-      <div class="header-recommend">
         <h2>Enter a Stock Symbol to Generate Recommendations. Reset before Searching Again.</h2>
       </div>
       <div class="bar">
@@ -68,6 +66,15 @@
         />
       </div>
     </div>
+    <div class="additional-info" v-if="similarStocks && searchedStocks && count === 5">
+      <h2>Additional Information</h2>
+      <div class="info-grid">
+        <div class="info-item" v-for="(info, index) in additionalInfo" :key="index">
+          <h3>{{ info.title }}</h3>
+          <p>{{ info.description }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -91,6 +98,11 @@ export default {
       searchedStocks: '',
       searching: false,
       count: 0,
+      additionalInfo: [
+        { title: 'Market Trends', description: 'Latest market trends and insights.' },
+        { title: 'Investment Tips', description: 'Top tips for successful stock investments.' },
+        { title: 'Risk Analysis', description: 'Understand the risks involved with similar stocks.' },
+      ],
     };
   },
   methods: {
@@ -126,70 +138,72 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+
 .wrap-recommend {
-  background-image: none;
   background-color: white;
+  color: #1e06fb;
+  font-family: 'Space Grotesk', sans-serif;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: scroll;
-  overflow-y: scroll;
+  overflow-y: auto;
+  padding: 20px;
 }
 
-.company-container {
-  width: 100%;
-  height: 60%;
-  display: flex;
-  justify-content: space-around;
+.header-recommend h1,
+.header-recommend h2 {
+  text-align: center;
+  margin: 10px 0;
 }
 
 .bar {
-  margin: 0 auto;
-  width: 800px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 800px;
   border-radius: 40px;
   border: 1px solid #dcdcdc;
+  background: white;
+  transition: box-shadow 0.3s;
 }
-.bar:hover {
-  box-shadow: 1px 1px 8px 1px #dcdcdc;
-}
+
+.bar:hover,
 .bar:focus-within {
   box-shadow: 1px 1px 8px 1px #dcdcdc;
-  outline: none;
 }
+
 .searchbar {
   height: 60px;
   border: none;
-  width: 500px;
+  width: calc(100% - 60px);
   font-size: 18px;
   outline: none;
-  margin-left: 30px;
+  margin: 0 30px;
 }
 
 .buttons {
   margin-top: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
+
 .button {
-  background-color: #3aafa9;
+  background-color: #1e06fb;
   border: none;
-  color: #def2f1;
+  color: white;
   font-size: 15px;
   padding: 12px 20px;
   margin: 5px;
   border-radius: 4px;
   outline: none;
-  width: fit-content;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
 }
+
 .button:hover {
-  border: 1px solid #2b7a78;
-  padding: 12px 19px;
-  color: #2b7a78;
-}
-.button:focus {
-  border: 1px solid #2b7a78;
-  padding: 12px 19px;
+  background-color: #0d04a7;
+  transform: translateY(-3px);
 }
 
 .button[disabled] {
@@ -197,8 +211,9 @@ export default {
   cursor: not-allowed;
 }
 
-.header-recommend {
+.recommend-warning {
   text-align: center;
+  margin-top: 20px;
 }
 
 .wrapper {
@@ -207,6 +222,8 @@ export default {
   background: white;
   width: 250px;
   height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 .wrapper .pie {
@@ -214,8 +231,7 @@ export default {
   height: 100%;
   transform-origin: 100% 50%;
   position: absolute;
-  background: #2b7a78;
-  border: #17252a;
+  background: #1e06fb;
 }
 
 .wrapper .spinner {
@@ -228,7 +244,7 @@ export default {
 .wrapper:hover .spinner,
 .wrapper:hover .filler,
 .wrapper:hover .mask {
-  animation-play-state: "5px solid rgba(0,0,0,0.5)";
+  animation-play-state: running;
 }
 
 .wrapper .filler {
@@ -258,6 +274,7 @@ export default {
     transform: rotate(360deg);
   }
 }
+
 @keyframes opa {
   0% {
     opacity: 1;
@@ -268,9 +285,71 @@ export default {
   }
 }
 
-.warning {
-  text-align: center;
-  color: #2b7a78;
+.company-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
   margin-top: 20px;
+}
+
+.company-container h1 {
+  width: 100%;
+  text-align: center;
+}
+
+.additional-info {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.additional-info h2 {
+  color: #1e06fb;
+  margin-bottom: 20px;
+}
+
+.info-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  background-color: #f0f0f0;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 20px;
+  width: 250px;
+  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.1);
+}
+
+.info-item h3 {
+  color: #1e06fb;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .bar {
+    width: 90%;
+  }
+
+  .searchbar {
+    width: calc(100% - 40px);
+    margin: 0 20px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .company-container {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>
