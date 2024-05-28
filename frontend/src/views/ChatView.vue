@@ -112,6 +112,10 @@ export default {
       try {
         if (userMessage.toLowerCase().includes("define")) {
           await this.handleDefineMessage(userMessage);
+        } else if (userMessage.toLowerCase().includes("buy")) {
+          this.handleBuyMessage(userMessage);
+        } else if (userMessage.toLowerCase().includes("sell")) {
+          this.handleSellMessage(userMessage);
         } else {
           const stockCode = this.extractStockCode(userMessage);
           if (stockCode.length > 0) {
@@ -152,6 +156,34 @@ export default {
       this.addTypingResponse(response.data.definition, false);
     },
 
+    async handleBuyMessage(userMessage) {
+      const match = userMessage.match(/#buy\s+(\w+)\s+(\d+)/i);
+      if (match) {
+        const stockName = match[1];
+        const quantity = parseInt(match[2], 10);
+        this.redirectToSimulator(stockName, quantity, 'buy');
+      } else {
+        this.addTypingResponse('Please specify the stock name and quantity you want to buy.', false);
+      }
+    },
+
+    async handleSellMessage(userMessage) {
+      const match = userMessage.match(/#sell\s+(\w+)\s+(\d+)/i);
+      if (match) {
+        const stockName = match[1];
+        const quantity = parseInt(match[2], 10);
+        this.redirectToSimulator(stockName, -quantity, 'sell');
+      } else {
+        this.addTypingResponse('Please specify the stock name and quantity you want to sell.', false);
+      }
+    },
+
+    redirectToSimulator(stockName, quantity, action) {
+      const simulatorUrl = `/stock-simulator?stock=${stockName}&quantity=${quantity}&action=${action}`;
+      window.open(simulatorUrl, '_blank');
+      this.addTypingResponse(`Redirecting you to the ${action} simulator for ${stockName} with quantity ${quantity}...`, false);
+    },
+    
     addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
@@ -183,8 +215,10 @@ export default {
     Welcome to FinBud! Here are some tips to get started:
     
     1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
-    2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
-    3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+    2. Financial Term Definitions: Use "define" followed by the term (e.g., "define IPO").
+    3. Buy/Sell Stocks: Use "#buy" or "#sell" followed by the stock code and quantity (e.g., "#buy TSLA 20").
+    4. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+    
   `;
 
     if (!this.messages) {
