@@ -14,21 +14,18 @@ export default {
       type: String,
       required: true,
     },
-    width: {
-      type: Number,
-      required: true,
-    },
   },
   setup(props) {
     const divRef = ref(null);
 
     const loadTradingViewWidget = () => {
+      const width = divRef.value.clientWidth;
       const script = document.createElement('script');
       script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
       script.async = true;
       script.innerHTML = JSON.stringify({
         symbol: props.companyName,
-        width: props.width,
+        width: width,
         locale: 'en',
         colorTheme: 'dark',
         isTransparent: false,
@@ -41,7 +38,7 @@ export default {
       loadTradingViewWidget();
     });
 
-    watch(() => [props.companyName, props.width], () => {
+    watch(() => [props.companyName], () => {
       if (divRef.value) {
         divRef.value.innerHTML = '';
         loadTradingViewWidget();
@@ -57,6 +54,8 @@ export default {
 
 <style scoped>
 .tradingview-widget-container {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 100%;
 }
 </style>
