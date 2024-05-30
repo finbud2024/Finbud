@@ -12,6 +12,7 @@
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
         <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
         <li><router-link to="/recommendation-generator" class="recommendation">Recommendations</router-link></li>
+        <li><router-link to="/trading-market" class="trading-market">Trading Market</router-link></li>
       </ul>
       <ul class="nav-actions">
         <li><router-link to="/login" class="login-button">Log In</router-link></li>
@@ -31,6 +32,7 @@
           <router-link to="/tech" class="technology" @click="closeDropdown">Technology</router-link>
           <router-link to="/pricing" class="pricing" @click="closeDropdown">Pricing</router-link>
           <router-link to="/recommendation-generator" class="recommendation" @click="closeDropdown">Recommendations</router-link>
+          <router-link to="/trading-market" class="trading-market" @click="closeDropdown">Trading Market</router-link>
         </div>
       </div>
     </div>
