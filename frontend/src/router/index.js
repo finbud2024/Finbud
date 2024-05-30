@@ -72,13 +72,8 @@ const routes = [
     component: GoalPage,
   },
   {
-    path: '/recommendation-generator',
-    name: 'RecommendationGenerator',
-    component: RecommendationGenerator,
-  },
-  {
-    path: '/trading-market',
-    name: 'TradingMarket',
+    path: '/market',
+    name: 'Market',
     component: MarketDataCenter,
   },
 ];
