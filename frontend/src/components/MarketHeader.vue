@@ -13,19 +13,6 @@
           <li><router-link to="/tech" class="retirement">Retirement</router-link></li>
           <li><router-link to="/tech" class="more">More</router-link></li>
         </ul>
-        <!-- <div class="dropdown">
-          <button class="dropbtn" @click="toggleDropdown">☰</button>
-          <div class="dropdown-content" v-if="isDropdownOpen">
-            <router-link to="/" class="home" @click="closeDropdown">Home</router-link>
-            <router-link to="/reference" class="latest">Latest</router-link>
-            <router-link to="/reference" class="market">Markets</router-link>
-            <router-link to="/reference" class="investing" @click="closeDropdown">Investing</router-link>
-            <router-link to="/reference" class="finance" @click="closeDropdown">Personal Finance</router-link>
-            <router-link to="/reference" class="economy" @click="closeDropdown">Economy</router-link>
-            <router-link to="/reference" class="retirement" @click="closeDropdown">Retirement</router-link>
-            <router-link to="/reference" class="more" @click="closeDropdown">More</router-link>
-          </div>
-        </div> -->
         <div class="navbar-right">
           <button>50¢ PER WEEK</button>
           <div class="search-icon">
