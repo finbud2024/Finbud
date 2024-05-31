@@ -3,10 +3,6 @@
   <h1 class="headtitle">Market Data Center</h1>
   <div class="market-data-center">
     <div class="market-section">
-      <!-- <MarketIndex title="U.S." :indexes="usIndexes" />
-      <MarketIndex title="Europe" :indexes="europeIndexes" />
-      <MarketIndex title="Asia" :indexes="asiaIndexes" />
-      <CurrencyRate :currencies="currencies" /> -->
       <CryptoMarket />
       <!--<StockList />-->
       <NewsSection /> <!-- Use the renamed component here -->
