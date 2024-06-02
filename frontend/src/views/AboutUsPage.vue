@@ -9,17 +9,34 @@
     <div class="team-section">
       <li class="title">Meet Our Team</li>
       <div class="team-container">
-        <div class="team-member" v-for="member in teamMembers" :key="member.name">
-          <div class="image-container">
-            <img :src="member.img" :alt="member.name" class="fade-in" />
+        <div class="team-row">
+          <div class="team-member" v-for="member in firstRowMembers" :key="member.name">
+            <div class="image-container">
+              <img :src="member.img" :alt="member.name" class="fade-in" />
+            </div>
+            <h3>{{ member.name }}</h3>
+            <p>{{ member.role }}</p>
+            <h2>{{ member.intro }}</h2>
+            <div class="social-icons">
+              <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
+                {{ icon.name }}
+              </a>
+            </div>
           </div>
-          <h3>{{ member.name }}</h3>
-          <p>{{ member.role }}</p>
-          <h2>{{ member.intro }}</h2>
-          <div class="social-icons">
-            <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
-              {{ icon.name }}
-            </a>
+        </div>
+        <div class="team-row">
+          <div class="team-member" v-for="member in secondRowMembers" :key="member.name">
+            <div class="image-container">
+              <img :src="member.img" :alt="member.name" class="fade-in" />
+            </div>
+            <h3>{{ member.name }}</h3>
+            <p>{{ member.role }}</p>
+            <h2>{{ member.intro }}</h2>
+            <div class="social-icons">
+              <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
+                {{ icon.name }}
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -87,8 +104,18 @@ export default {
           intro: "I'm a senior at Macalester College, studying Quantitative Economics and Computer Science. I aim to create a startup that merges Finance, Tech, and Business to benefit young people in Vietnam.",
           img: require('@/assets/tri.jpeg'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
+          ],
+        },
+        {
+          name: 'Minh Nguyen',
+          role: 'Chief Technology Officer (CTO)',
+          intro: "MCS, University of Iowa. BA in Computer Science and Economics & Minor in Statistics, Grinell College. Passionate about AI/ML, software engineering, and the intersection of technology and economics.",
+          img: require('@/assets/MinhNguyen_Photo.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/minh~nguyen/' },
+            { name: 'GitHub', link: 'https://github.com/minh-nguyen-mqn' },
           ],
         },
         {
@@ -97,8 +124,8 @@ export default {
           intro: 'As a junior Computer Science major at Luther College, I am leading a team of 3 in developing the web app Finbud.',
           img: require('@/assets/tung.jpg'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
           ],
         },
         {
@@ -107,8 +134,8 @@ export default {
           intro: 'My innovation endeavors aim to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy.',
           img: require('@/assets/BinhMinh.png'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
           ],
         },
         {
@@ -117,12 +144,20 @@ export default {
           intro: 'A first year Computer Science student at VinUniversity',
           img: require('@/assets/bach.jpg'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
           ],
         },
       ],
     };
+  },
+  computed: {
+    firstRowMembers() {
+      return this.teamMembers.slice(0, 2);
+    },
+    secondRowMembers() {
+      return this.teamMembers.slice(2);
+    }
   },
   mounted() {
     const observerOptions = {
@@ -183,23 +218,28 @@ body {
 
 .team-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.team-row {
+  display: flex;
   justify-content: center;
   gap: 2rem;
 }
 
 .team-member {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   background: #fff;
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: calc(25% - 8rem);
+  width: calc(50% - 1rem);
   transition: transform 0.3s, box-shadow 0.3s;
   animation: fadeIn 1s ease-in-out;
   font-weight: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -308,21 +348,9 @@ body {
   }
 }
 
-@media (max-width: 1024px) {
-  .title {
-    font-size: 30px;
-  }
-  .description {
-    font-size: 15px;
-  }
-  .team-member {
-    width: calc(50% - 2rem);
-  }
-}
-
 @media (max-width: 768px) {
   .team-member {
-    width: calc(100% - 2rem);
+    width: 100%;
   }
 }
 
