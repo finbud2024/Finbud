@@ -21,6 +21,7 @@
         "process": "^0.11.10",
         "vue": "^3.4.27",
         "vue-router": "^4.3.2",
-        "vue-template-compiler": "^2.7.16"
+        "vue-template-compiler": "^2.7.16",
+        "vuex": "^4.1.0"
     }
 }
