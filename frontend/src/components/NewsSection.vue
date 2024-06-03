@@ -1,11 +1,11 @@
 <template>
-  <div class="news-section">
+  <div class="news-section animate__animated animate__fadeIn" :class="{ 'no-interaction': disableClicks }">
     <div class="news-header">
       <h2>Most Popular</h2>
     </div>
     <div v-if="loading" class="loading">Loading...</div>
     <div v-else class="news-container">
-      <div class="news-item" v-for="news in newsList" :key="news.url" @click="openArticle(news.url)">
+      <div class="news-item animate__animated animate__zoomIn" v-for="news in newsList" :key="news.url" @click="openArticle(news.url)">
         <img :src="news.urlToImage" alt="news image" class="news-image">
         <div class="news-title">
           <p>{{ news.title }}</p>
@@ -24,6 +24,9 @@ export default {
   name: 'NewsSection',
   components: {
     Modal,
+  },
+  props: {
+    disableClicks: Boolean,
   },
   data() {
     return {
@@ -46,7 +49,6 @@ export default {
             country: 'us',
           },
         });
-        // Filter newsList to include only items with both title and urlToImage
         this.newsList = response.data.articles.filter(news => news.title && news.urlToImage);
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -55,6 +57,7 @@ export default {
       }
     },
     openArticle(url) {
+      if (this.disableClicks) return;
       this.currentUrl = url;
       this.showModal = true;
     },
@@ -63,19 +66,33 @@ export default {
 </script>
 
 <style scoped>
+@import 'animate.css';
+
 .news-section {
   margin-top: 20px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.news-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: black;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
 }
 
 .news-container {
   display: flex;
-  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-x: auto;
   gap: 20px;
   padding: 10px;
 }
 
 .news-item {
-  flex: 0 0 20%; /* Show 5 larger tags initially */
+  flex: 0 0 20%;
   max-width: 300px;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -87,7 +104,7 @@ export default {
 }
 
 .news-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transform: translateY(-5px);
 }
 
@@ -109,7 +126,7 @@ export default {
 }
 
 .news-item:hover .news-title {
-  height: 40%; /* Adjust this value to expand over a portion of the news image */
+  height: 40%;
   bottom: 20%;
 }
 
@@ -123,9 +140,16 @@ export default {
 .loading {
   text-align: center;
   font-size: 1.5rem;
+  color: #666;
 }
 
 .news-header {
   text-align: left;
+  margin-bottom: 20px;
+}
+
+.no-interaction {
+  pointer-events: none;
+  opacity: 0.5;
 }
 </style>
