@@ -14,8 +14,9 @@
         <li><router-link to="/market" class="market">Market</router-link></li>
       </ul>
       <ul class="nav-actions">
-        <li><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li><router-link to="/signup" class="signup-button">Sign Up</router-link></li>
+        <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
+        <li v-if="!authStore.isAuthenticated"><router-link to="/signup" class="signup-button">Sign Up</router-link></li>
+        <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Sign Out</button></li>
       </ul>
       <div class="dropdown">
         <button class="dropbtn" @click="toggleDropdown">☰</button>
@@ -25,12 +26,13 @@
           <router-link to="/stock-simulator" class="simulator">Simulator</router-link>
           <router-link to="/chat-view" class="chatview" @click="closeDropdown">Chat</router-link>
           <router-link to="/quizz" class="quizz" @click="closeDropdown">Quizz</router-link>
-          <router-link to="/login" class="login-button" @click="closeDropdown">Log In</router-link>
-          <router-link to="/signup" class="signup-button" @click="closeDropdown">Sign Up</router-link>
           <router-link to="/about" class="about" @click="closeDropdown">About</router-link>
           <router-link to="/tech" class="technology" @click="closeDropdown">Technology</router-link>
           <router-link to="/pricing" class="pricing" @click="closeDropdown">Pricing</router-link>
           <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+          <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="closeDropdown">Log In</router-link>
+          <router-link v-if="!authStore.isAuthenticated" to="/signup" class="signup-button" @click="closeDropdown">Sign Up</router-link>
+          <button v-if="authStore.isAuthenticated" @click="logout" class="logout-button">Sign Out</button>
         </div>
       </div>
     </div>
@@ -38,6 +40,8 @@
 </template>
 
 <script>
+import authStore from '@/authStore';
+
 export default {
   name: 'NavBar',
   data() {
@@ -45,12 +49,21 @@ export default {
       isDropdownOpen: false,
     };
   },
+  computed: {
+    authStore() {
+      return authStore;
+    },
+  },
   methods: {
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
     closeDropdown() {
       this.isDropdownOpen = false;
+    },
+    logout() {
+      authStore.logout();
+      this.$router.push('/login');
     },
   },
 };
@@ -107,17 +120,18 @@ export default {
   color: #007bff;
 }
 
-.login-button, .signup-button {
-  background-color: transparent;
+.login-button, .signup-button, .logout-button{
+  background-color: #45a049;
   color: black;
   border: none;
+  border-radius: 8px;
   text-decoration: none;
   padding: 0.5rem 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.signup-button {
+.signup-button .logout-button{
   background-color: #4CAF50;
   color: white;
   border-radius: 5px;
@@ -126,6 +140,10 @@ export default {
 }
 
 .signup-button:hover {
+  background-color: #45a049;
+}
+
+.logout-button:hover {
   background-color: #45a049;
 }
 

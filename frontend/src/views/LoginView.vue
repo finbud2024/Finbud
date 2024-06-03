@@ -26,6 +26,7 @@
 
 <script>
 import axios from 'axios';
+import authStore from '@/authStore';
 
 export default {
   name: 'LoginView',
@@ -44,14 +45,14 @@ export default {
         });
 
         alert('Login successful!');
-        localStorage.setItem('token', response.data.token);
+        authStore.login(response.data.token);
         this.$router.push('/'); // Redirect to the main page after login
       } catch (err) {
         console.error('Login Error:', err.response ? err.response.data : err.message);
         alert('Invalid username or password!');
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
