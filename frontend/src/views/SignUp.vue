@@ -13,16 +13,17 @@
         <input id="password" type="password" v-model="password" placeholder="Password" required />
         <span v-if="!password" class="error-text">Password is required</span>
       </div>
-      <!-- Removed the form-check div and checkbox -->
       <button type="submit" class="register-button">Register</button>
     </form>
     <p class="signin-text">
-      Log in with an existing account
+      Already have an account? <router-link to="/login">Log in here</router-link>
     </p>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -31,10 +32,21 @@ export default {
     };
   },
   methods: {
-    register() {
-      // Add form submission logic here
+    async register() {
       if (this.email && this.password) {
-        alert('Registration successful!');
+        try {
+          const response = await axios.post('http://localhost:3000/signup', {
+            email: this.email,
+            password: this.password,
+          });
+
+          alert('Registration successful!');
+          // Store token and redirect to login or dashboard
+          localStorage.setItem('token', response.data.token);
+          this.$router.push('/login');
+        } catch (err) {
+          alert(`Registration failed: ${err.response.data.message}`);
+        }
       } else {
         alert('Please fill in all required fields.');
       }
@@ -44,81 +56,58 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
 .form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
   max-width: 400px;
-  margin: auto;
-  padding: 2rem;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 100px auto;
+  padding: 30px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  background: white;
+  text-align: center;
   font-family: 'Space Grotesk', sans-serif;
 }
 
 .brand-name {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #007bff;
-  margin-bottom: 1rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+input[type="email"],
+input[type="password"] {
   width: 100%;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #d0d0d0;
-  border-radius: 5px;
-}
-
-.error-text {
-  color: red;
-  font-size: 0.8rem;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 
 .register-button {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #007bff;
-  color: #ffffff;
+  padding: 12px;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.register-button:hover {
-  background-color: #0056b3;
+  border-radius: 50px;
+  background-color: #000;
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .signin-text {
-  margin-top: 1rem;
-  color: #777777;
+  margin-top: 20px;
 }
 
-a {
+.signin-text a {
   color: #007bff;
   text-decoration: none;
 }
 
-a:hover {
+.signin-text a:hover {
   text-decoration: underline;
 }
 </style>
