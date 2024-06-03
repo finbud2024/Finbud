@@ -23,6 +23,7 @@
     methods: {
       closeModal() {
         this.$emit('close');
+        document.body.classList.remove('no-scroll');
       },
     },
   };
