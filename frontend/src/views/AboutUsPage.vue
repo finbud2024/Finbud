@@ -190,13 +190,13 @@ body {
 .container {
   font-family: 'Space Grotesk', sans-serif;
   list-style-type: none;
+  padding: 20px;
 }
 
 .team-section {
   background-color: white;
   margin-bottom: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding: 2rem;
 }
 
 .title {
@@ -224,6 +224,7 @@ body {
 
 .team-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 2rem;
 }
@@ -352,6 +353,14 @@ body {
   .team-member {
     width: 100%;
   }
+
+  .team-container {
+    padding: 0 10px;
+  }
+
+  .contact-form {
+    padding: 20px;
+  }
 }
 
 #contact-page {
@@ -441,6 +450,7 @@ body {
 
 .contact-info {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
   background: white;
   padding: 20px;
@@ -450,6 +460,7 @@ body {
 
 .info-block {
   text-align: center;
+  margin: 10px 0;
 }
 
 .info-block .icon {
