@@ -1,6 +1,8 @@
-const express = require ('express');
-const Chat = require('../Database Schema/Chat');
+import express from 'express';
+import Chat from '../Database Schema/Chat.js';
+
 const chatRoute = express.Router();
+
 
 chatRoute.post('/saveChat', async(req, res) => {
     console.log(req.body)
@@ -19,4 +21,4 @@ chatRoute.post('/saveChat', async(req, res) => {
   }
 );  
 
-module.exports = chatRoute;
+export default chatRoute;

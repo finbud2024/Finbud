@@ -2,6 +2,7 @@
     "name": "FinBud",
     "version": "0.1.0",
     "private": true,
+    "type":"module",
     "scripts": {
         "start": "netlify-lambda serve functions",
         "serve": "vue-cli-service serve",
