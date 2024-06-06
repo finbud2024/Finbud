@@ -3,7 +3,7 @@ import Chat from '../Database Schema/Chat.js';
 
 const chatRoute = express.Router();
 
-
+//save user prompt and finBot response to database
 chatRoute.post('/saveChat', async(req, res) => {
     console.log(req.body)
     try{
@@ -20,5 +20,17 @@ chatRoute.post('/saveChat', async(req, res) => {
     } 
   }
 );  
+
+//getting the all chats in the same thread
+chatRoute.get('/thread/:threadID', async()=>{
+    //TO-DO 
+})
+
+//getting the all chats from the same user
+chatRoute.get('/thread/:threadID', async()=>{
+    //TO-DO
+})
+
+//deleting all chats from the same thread
 
 export default chatRoute;
