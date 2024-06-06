@@ -1,10 +1,11 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 //----- import the Routes/Endpoints -----------
-const chatRoute = require('./Endpoints/chatRoute');
+import chatRoute from './Endpoints/chatRoute.js';
+
 
 // const jwt = require('jsonwebtoken');
 // const connectDB = require('./db');
