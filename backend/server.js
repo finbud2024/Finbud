@@ -6,12 +6,7 @@ import dotenv from 'dotenv';
 //----- import the Routes/Endpoints -----------
 import chatRoute from './Endpoints/chatRoute.js';
 
-
-// const jwt = require('jsonwebtoken');
-// const connectDB = require('./db');
-
-// connectDB();// duplicated code 
-
+//load environment variable from .env
 dotenv.config();
 
 const app = express();
