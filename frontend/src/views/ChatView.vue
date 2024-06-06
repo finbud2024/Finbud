@@ -27,7 +27,7 @@ import SideBar from '../components/SideBar.vue';
 
 
 const apiUrl = process.env.NODE_ENV === 'development'? 'http://localhost:3000' : 'https://finbud-ai.netlify.app/.netlify/functions';
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 export default {
   name: 'ChatView',
@@ -107,8 +107,8 @@ export default {
 
       this.newMessage = '';
       const userMessage = this.messages[this.messages.length - 1].text;
-      const id = "665aad4b821f97662f576618";
-      const ObjectID =  new mongoose.Types.ObjectId(id);
+      // const id = "665aad4b821f97662f576618";
+      // const ObjectID =  new mongoose.Types.ObjectId(id);
       // const res = 'this is a response';
       // try{
       //   const header = {
