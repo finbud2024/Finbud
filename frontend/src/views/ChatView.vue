@@ -25,9 +25,9 @@ import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import SideBar from '../components/SideBar.vue';
 
-const apiUrl = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3000' 
-  : 'https://finbud-ai.netlify.app/.netlify/functions';
+
+const apiUrl = process.env.NODE_ENV === 'development'? 'http://localhost:3000' : 'https://finbud-ai.netlify.app/.netlify/functions';
+const mongoose = require('mongoose');
 
 export default {
   name: 'ChatView',
@@ -106,16 +106,35 @@ export default {
       });
 
       this.newMessage = '';
-
       const userMessage = this.messages[this.messages.length - 1].text;
+      const id = "665aad4b821f97662f576618";
+      const ObjectID =  new mongoose.Types.ObjectId(id);
+      // const res = 'this is a response';
+      // try{
+      //   const header = {
+      //     'Content-Type': 'application/json'
+      //   }
+      //   const response = await axios.post('http://localhost:3000/saveChat',{
+      //     threadID:1,
+      //     userID: ObjectID,
+      //     prompt: userMessage,
+      //     response: res,
+      //   },header)
+      // } catch (error) {
+      //   console.error('Error posting data:', error);
+      // }
 
       try {
+        // if prompt contains "define"
         if (userMessage.toLowerCase().includes("define")) {
           await this.handleDefineMessage(userMessage);
+        // if prompt contains "buy"
         } else if (userMessage.toLowerCase().includes("buy")) {
           this.handleBuyMessage(userMessage);
+        // if prompt contains "sell"
         } else if (userMessage.toLowerCase().includes("sell")) {
           this.handleSellMessage(userMessage);
+        //Possible to break code here ***** FIX ******
         } else {
           const stockCode = this.extractStockCode(userMessage);
           if (stockCode.length > 0) {
@@ -140,6 +159,7 @@ export default {
       this.addTypingResponse(response.data.definition, false);
     },
 
+    
     async handleStockMessage(stockCode) {
       const price = await fetchStockPrice(stockCode);
       const timeStamp = new Date().toLocaleTimeString();
@@ -155,8 +175,8 @@ export default {
       const response = await axios.post(`${apiUrl}/normAns`, { term: userMessage });
       this.addTypingResponse(response.data.definition, false);
     },
-
-    async handleBuyMessage(userMessage) {
+    // no need for this function to become async function (NOT perfoeming any CRUD operation)
+    handleBuyMessage(userMessage) {
       const match = userMessage.match(/#buy\s+(\w+)\s+(\d+)/i);
       if (match) {
         const stockName = match[1];
@@ -167,7 +187,8 @@ export default {
       }
     },
 
-    async handleSellMessage(userMessage) {
+    // no need for this function to become async function (NOT perfoeming any CRUD operation)
+    handleSellMessage(userMessage) {
       const match = userMessage.match(/#sell\s+(\w+)\s+(\d+)/i);
       if (match) {
         const stockName = match[1];
@@ -177,13 +198,14 @@ export default {
         this.addTypingResponse('Please specify the stock name and quantity you want to sell.', false);
       }
     },
-
+    // better to pass value as payload
     redirectToSimulator(stockName, quantity, action) {
       const simulatorUrl = `/stock-simulator?stock=${stockName}&quantity=${quantity}&action=${action}`;
       window.open(simulatorUrl, '_blank');
       this.addTypingResponse(`Redirecting you to the ${action} simulator for ${stockName} with quantity ${quantity}...`, false);
     },
-    
+
+    //animation for typing 
     addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
