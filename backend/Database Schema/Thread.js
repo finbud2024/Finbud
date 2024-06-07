@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const ThreadSchema = new mongoose.Schema({
     prompt:[String],
-    answer:[String],
+    response:[String],
     createdDate: Date
 })
 
-const Thread = mongoose.model('Thread', threadSchema);
-export default {ThreadSchema,Thread};
+const Thread = mongoose.model('Thread', ThreadSchema);
+export {ThreadSchema,Thread};
