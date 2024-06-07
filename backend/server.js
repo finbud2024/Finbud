@@ -4,7 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 //----- import the Routes/Endpoints -----------
-import chatRoute from './Endpoints/chatRoute.js';
+import chatRoute from './Endpoints/threadtRoute.js';
 
 //load environment variable from .env
 dotenv.config();

@@ -4,10 +4,10 @@ import {ThreadSchema} from "./Thread";
 
 const userSchema = new mongoose.Schema({
   	accountData:{
-		id:String,
+		username:String,
 		password: String,
-		securityQuestion: String,
-		securityAnswer: String
+		// securityQuestion: String,
+		// securityAnswer: String
   	},
 	identityData:{//expand later
 		displayName: String,
