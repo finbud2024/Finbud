@@ -1,5 +1,5 @@
 import express from 'express';
-import Chat from '../Database Schema/Chat.js';
+import Chat from '../Database Schema/Thread.js';
 
 const chatRoute = express.Router();
 
