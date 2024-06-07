@@ -1,19 +1,21 @@
+Here is the combined code:
+
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <h1>{{ stockName }}</h1>
-      <h2>{{ stockSymbol }} <span class="market">Nasdaq Stock Market</span></h2>
+      <h1>APPLE INC</h1>
+      <h2>{{ SYMBOL }} <span class="market">Nasdaq Stock Market</span></h2>
       <div class="stock-prices">
-        <span class="current-price">190.90 USD</span>
-        <span class="price-change">-1.45 (-0.75%)</span>
-        <span class="post-market">190.37 -0.53 (-0.28%)</span>
+        <span class="current-price">{{ appleData.price }} USD</span>
+        <span class="price-change">{{ appleData.priceChange }}</span>
+        <span class="post-market">{{ appleData.postMarket }}</span>
       </div>
       <div class="stock-info">
-        <span class="earnings-date">July 24 UPCOMING EARNINGS</span>
-        <span class="eps">6.46 EPS</span>
-        <span class="market-cap">2.927T MARKET CAP</span>
-        <span class="div-yield">0.52% DIV YIELD</span>
-        <span class="pe-ratio">29.91 P/E</span>
+        
+        <span class="eps">{{ appleData.eps }} EPS</span>
+        <span class="market-cap">{{ appleData.marketCap }} MARKET CAP</span>
+        <span class="div-yield">{{ appleData.divYield }} DIV YIELD</span>
+        <span class="pe-ratio">{{ appleData.peRatio }} P/E</span>
       </div>
     </header>
     <div class="main-content">
@@ -22,38 +24,38 @@
         <div class="stats-grid">
           <div class="stat">
             <span class="label">Open:</span>
-            <span class="value"></span>
+            <span class="value">{{ appleData.open }}</span>
           </div>
           <div class="stat">
             <span class="label">Close:</span>
-            <span class="value"></span>
+            <span class="value">{{ appleData.previousClose }}</span>
           </div>
           <div class="stat">
             <span class="label">52 Week High:</span>
-            <span class="value"></span>
+            <span class="value">{{ appleData.high }}</span>
           </div>
           <div class="stat">
             <span class="label">52 Week Low:</span>
-            <span class="value"></span>
+            <span class="value">{{ appleData.low }}</span>
           </div>
           <div class="stat">
             <span class="label">Market Cap:</span>
-            <span class="value"></span>
+            <span class="value">{{ appleData.marketCap }}</span>
           </div>
           <div class="stat">
             <span class="label">Volume:</span>
-            <span class="value"></span>
+            <span class="value">{{ appleData.volume }}</span>
           </div>
         </div>
       </section>
       <section class="actions">
         <h3>Actions</h3>
         <div class="action-form">
-          <input type="text" placeholder="Enter stock symbol" v-model="stockSymbol" />
-          <input type="number" placeholder="Quantity" v-model.number="quantity" />
+          <input type="text" placeholder="Enter stock symbol" />
+          <input type="number" placeholder="Quantity" />
           <div class="buttons">
-            <button class="clear-btn" @click="clearForm">CLEAR</button>
-            <button class="preview-btn" @click="previewOrder">{{ actionLabel }}</button>
+            <button class="clear-btn">CLEAR</button>
+            <button class="preview-btn">PREVIEW ORDER</button>
           </div>
         </div>
       </section>
@@ -78,9 +80,12 @@
     <stock-screener></stock-screener>
   </div>
 </template>
-  
+
 <script>
 import StockScreener from '../components/StockScreener.vue';
+import axios from 'axios';
+
+const SYMBOL = 'AAPL'; // Define the constant symbol
 
 export default {
   name: 'StockDashboard',
@@ -89,46 +94,66 @@ export default {
   },
   data() {
     return {
-      stockSymbol: '',
-      stockName: '',
-      quantity: 0,
+      SYMBOL, // Bind the symbol to the template
+      appleData: {
+        price: '',
+        open: '',
+        high: '',
+        low: '',
+        previousClose: '',
+        volume: '',
+        priceChange: '',
+        postMarket: '',
+        earningsDate: '',
+        eps: '',
+        marketCap: '',
+        divYield: '',
+        peRatio: ''
+      }
     };
   },
-  computed: {
-    actionLabel() {
-      return this.quantity >= 0 ? 'PREVIEW BUY ORDER' : 'PREVIEW SELL ORDER';
-    }
-  },
   methods: {
-    clearForm() {
-      this.stockSymbol = '';
-      this.quantity = 0;
+    fetchAppleData() {
+      const apiKey = 'KAK6FUFDSN3RKLGT'; // Replace this with your actual Alpha Vantage API key
+      const SYMBOL = 'AAPL'; // Define the constant symbol
+      const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${SYMBOL}&apikey=${apiKey}`;
+      const earningsUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${SYMBOL}&apikey=${apiKey}`;
+
+      axios.get(url)
+        .then(response => {
+          if (response.data['Global Quote']) {
+            const quote = response.data['Global Quote'];
+            this.appleData.price = quote['05. price'];
+            this.appleData.open = quote['02. open'];
+            this.appleData.high = quote['03. high'];
+            this.appleData.low = quote['04. low'];
+            this.appleData.previousClose = quote['08. previous close'];
+            this.appleData.volume = quote['06. volume'];
+            this.appleData.priceChange = `${quote['09. change']} (${quote['10. change percent']})`;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching Apple data:', error);
+        });
+
+      axios.get(earningsUrl)
+        .then(response => {
+          if (response.data) {
+            const overview = response.data;
+            this.appleData.earningsDate = 'July 24'; // Replace with the actual date if available from the API
+            this.appleData.eps = overview.EPS;
+            this.appleData.marketCap = (overview.MarketCapitalization / 1e12).toFixed(3) + 'T';
+            this.appleData.divYield = (overview.DividendYield * 100).toFixed(2) + '%';
+            this.appleData.peRatio = overview.PERatio;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching Apple overview data:', error);
+        });
     },
-    previewOrder() {
-      console.log(`Previewing order: ${this.quantity >= 0 ? 'buy' : 'sell'} ${Math.abs(this.quantity)} shares of ${this.stockSymbol}`);
-      // TODO: Trigger/redirect to order preview
-    },
-    async fetchStockName(stockSymbol) {
-      // Fetch the stock name using the stock symbol
-      // For this example, let's assume the stock name is fetched successfully
-      this.stockName = 'APPLE INC';  // TODO: This would be fetched dynamically
-    }
   },
-  async mounted() {
-    // Get query params
-    const urlParams = new URLSearchParams(window.location.search);
-    this.stockSymbol = urlParams.get('stock') || '';
-    this.quantity = parseInt(urlParams.get('quantity'), 10) || 0;
-    
-    // Fetch the stock name
-    if (this.stockSymbol) {
-      await this.fetchStockName(this.stockSymbol);
-    }
-    
-    // Automatically trigger the preview order if parameters are present
-    if (this.stockSymbol && this.quantity !== 0) {
-      this.previewOrder();
-    }
+  mounted() {
+    this.fetchAppleData();
   }
 };
 </script>

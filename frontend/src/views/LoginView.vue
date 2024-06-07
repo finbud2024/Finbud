@@ -1,4 +1,3 @@
-<!-- LoginView.vue -->
 <template>
   <div class="login-container">
     <h1>Sign in to FinBud</h1>
@@ -21,11 +20,14 @@
       <div class="forgot-password"><a href="#">Forgot?</a></div>
       <button type="submit" class="login-button">Sign In</button>
     </form>
-    <p class="signup-link">Don't have an account? <a href="#">Sign up</a></p>
+    <p class="signup-link">Don't have an account? <router-link to="/signup">Sign up</router-link></p>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+import authStore from '@/authStore';
+
 export default {
   name: 'LoginView',
   data() {
@@ -35,18 +37,20 @@ export default {
     };
   },
   methods: {
-    onLogin() {
-      // Placeholder logic for login
-      if (this.username === 'user' && this.password === 'pass') {
+    async onLogin() {
+      try {
+        const response = await axios.post('http://localhost:3000/login', {
+          email: this.username,
+          password: this.password,
+        });
+
         alert('Login successful!');
+        authStore.login(response.data.token);
         this.$router.push('/'); // Redirect to the main page after login
-      } else {
+      } catch (err) {
+        console.error('Login Error:', err.response ? err.response.data : err.message);
         alert('Invalid username or password!');
       }
-    },
-    signInWithGoogle() {
-      // Placeholder action for Google sign-in
-      alert('Google sign-in not implemented.');
     },
   },
 };
