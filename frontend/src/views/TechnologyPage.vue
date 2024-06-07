@@ -252,6 +252,47 @@ export default {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* subtle shadow */
 }
 
+@media (max-width: 767px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-section,
+  .computer-vision-section,
+  .partners-section {
+    flex-direction: column;
+  }
+
+  .image,
+  .content,
+  .tracking-feature,
+  .partner {
+    max-width: 100%;
+  }
+
+  .insights-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .content {
+    order: 1;
+  }
+
+  .image {
+    order: 2;
+    margin-top: 20px;
+  }
+
+  .tracking-features {
+    flex-direction: column;
+  }
+
+  .tracking-feature {
+    margin-bottom: 20px;
+  }
+}
+
 .list-item {
   display: flex;
   align-items: center;
@@ -300,45 +341,45 @@ button:hover {
 
 .tracking-features {
   display: flex;
-  justify-content: space-between; /* This will ensure the items are spread evenly */
-  align-items: start; /* Aligns items to the top */
-  flex-wrap: nowrap; /* Prevents wrapping into multiple lines */
-  margin: 20px 0; /* Adds some vertical spacing */
+  justify-content: space-between;
+  align-items: start;
+  flex-wrap: nowrap;
+  margin: 20px 0;
 }
 
 .tracking-feature {
-  flex: 1; /* Allows each feature to grow and take up equal space */
-  margin: 0 10px; /* Adds horizontal spacing between the features */
+  flex: 1;
+  margin: 0 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   padding: 20px;
   border-radius: 8px;
-  background: #fff; /* Gives a white background to each feature block */
-  display: flex; /* Makes the internal content use flexbox for layout */
-  flex-direction: column; /* Stacks the content vertically */
+  background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 .tracking-feature img {
-  width: 100%; /* Ensures the image takes the full width of the container */
-  height: auto; /* Keeps the image aspect ratio */
-  margin-bottom: 15px; /* Adds space between the image and the text */
+  width: 100%;
+  height: auto;
+  margin-bottom: 15px;
 }
 
 .tracking-feature h3 {
   font-size: 18px;
   color: #333;
-  margin-bottom: 10px; /* Adds space below the heading */
+  margin-bottom: 10px;
 }
 
 .tracking-feature p {
   font-size: 14px;
   color: #666;
-  text-align: left; /* Aligns the text to the left */
+  text-align: left;
 }
 
 .partners-section {
   text-align: center;
   padding: 40px 0;
-  background-color: #f7f7f7; /* Slightly different background for visual separation */
+  background-color: #f7f7f7;
 }
 
 .section-title {
@@ -355,16 +396,16 @@ button:hover {
 .partners {
   display: flex;
   justify-content: center;
-  gap: 50px; /* Space between partner entries */
+  gap: 50px;
 }
 
 .partner {
-  width: 300px; /* Fixed width for each partner block */
+  width: 300px;
   text-align: left;
 }
 
 .partner img {
-  width: 100%; /* Makes the logo responsive within the container width */
+  width: 100%;
   height: auto;
   margin-bottom: 10px;
 }

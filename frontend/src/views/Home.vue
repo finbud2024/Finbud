@@ -17,6 +17,7 @@
         </div>
       </div>
     </div>
+    
     <header>
       <h1 class="animate fade-in">Enhance Your Financial Awareness by 25%</h1>
       <p class="animate fade-in">FinBud is an AI-driven financial analytics platform that makes managing your finances
