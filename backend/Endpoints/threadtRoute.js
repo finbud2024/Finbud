@@ -8,7 +8,7 @@ threadRoute.route('/threads/:threadId')
 	//GET thread request with a given thread ID
 	.get(async(req,res)=>{
 		const threadId = req.params.threadId
-		console.log('in /threads Route (GET) thread with ID:' + JSON.stringify(threadId));
+		console.log('in /threads/:threadId Route (GET) thread with ID:' + JSON.stringify(threadId));
 		try{
 			let thread = await Thread.findOne({"_id": threadId});
 			if(!thread){
@@ -64,6 +64,7 @@ threadRoute.route('/threads')
 		try{
 			// Get all threads with specifies userId
 			if(userid){//checking to see if the request contains userid
+				console.log("in /theads route (GET) threads that belongto user with Id: " + userid);
 				let threads = await Thread.find({"_id": userid});
 				if(threads){
 					return res.status(200).json(threads).send("Successfully return all threads from user with id: "+ userid);
@@ -71,6 +72,7 @@ threadRoute.route('/threads')
 					return res.status(404).send("No thread from user with id: " + JSON.stringify(userid) + "is found in database");
 				}
 			}else{//get all threads regardless
+				console.log("in /theads route (GET) ALL threads from database");
 				let threads = await Thread.find();
 				return res.status(200).json(threads);
 			}
@@ -80,6 +82,7 @@ threadRoute.route('/threads')
 	})
 	//POST: saving a new thread into database
 	.post(async(req,res)=>{
+		console.log(console.log('in /threads Route (POST) new thread to database'))
 		if(!req.body.userId){
 			return res.status(500).send("Unable to save thread to database due to missing userId");
 		}
