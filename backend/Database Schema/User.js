@@ -1,19 +1,34 @@
 import mongoose from "mongoose";
-import {ThreadSchema} from "./Thread";
 
 
 const userSchema = new mongoose.Schema({
   	accountData:{
-		username:String,
-		password: String,
-		// securityQuestion: String,
-		// securityAnswer: String
+		username:{
+			type: String,
+			required: true
+		},
+		password: {
+			type: String,
+			required: true
+		},
+		priviledge:{
+			type:String,
+			enum: ['admin', 'user'],
+			required: true,
+			default: 'user'
+		},
+		securityQuestion: String,
+		securityAnswer: String
   	},
-	identityData:{//expand later
+	identityData:{
+		firstName: String,
+		lastName: String,
 		displayName: String,
-	},
-	threads:[ThreadSchema]
+	}
 });
+
+const User = mongoose.model('user', userSchema);
+export default User;
 
 // Hash password before saving user
 // userSchema.pre('save', async function (next) {
@@ -29,7 +44,3 @@ const userSchema = new mongoose.Schema({
 // userSchema.methods.matchPassword = async function (enteredPassword) {
 //   return await bcrypt.compare(enteredPassword, this.password);
 // };
-
-const user = mongoose.model('user', userSchema);
-
-export default user;
