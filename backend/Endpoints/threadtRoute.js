@@ -19,18 +19,42 @@ threadRoute.route('/threads/:threadId')
 			return res.status(404).send("Unexpected error occured when looking for thread with id: "+ threadId + "in database: "+ err);
 		}
 	})
-	//PUT thread: update a Thread with a given ID ----- NEED FINISH
-  	.put(async(req,res)=>{
-		const threadId = req.params.threadId
-		console.log("in /theads Route (PUT) update thread with ID: " + JSON.stringify(threadId));
-		try{
-			let thread = await Thread.findOneAndUpdate({},)
-		}catch(err){
-			return res.status(404).send("Unexpected error occured when update thread with id: "+ threadId + "in database: "+ err);
-		}
+	//PUT thread: update a Thread with a given ID --- NEED DISCUSSION
+	.put(async (req, res) => {
+		// const threadId = req.params.threadId;
+		// console.log('In /threads Route (PUT) for thread with ID: ' + threadId);
+		// const { prompt, response, createdDate, userId } = req.body;
+	
+		// try {
+		// 	let thread = await Thread.findOneAndUpdate(
+		// 		{ _id: threadId },
+		// 		{ prompt, response, createdDate, userId },
+		// 		{ new: true }
+		// 	);
+	
+		// 	if (!thread) {
+		// 		return res.status(404).send("No thread with ID: " + threadId + " exists in the database.");
+		// 	}
+	
+		// 	return res.status(200).json({ message: "Thread updated successfully.", updatedThread: thread });
+		// } catch (err) {
+		// 	return res.status(500).send("Unexpected error occurred while updating thread with ID: " + threadId + " in the database: " + err);
+		// }
 	})
-	//TODO
-  	.delete()
+	//DELETE: removing a thread with a given id
+	.delete(async (req, res) => {
+		const threadId = req.params.threadId;
+		console.log('In /threads Route (DELETE) for thread with ID: ' + threadId);
+		try {
+			let thread = await Thread.findOneAndDelete({ _id: threadId });
+			if (!thread) {
+				return res.status(404).send("No thread with ID: " + threadId + " exists in the database.");
+			}
+			return res.status(200).send("Deleted successfully thread with Id: " + threadId);
+		} catch (err) {
+			return res.status(500).send("Unexpected error occurred while deleting thread with ID: " + threadId + " from the database: " + err);
+		}
+	});
 
 
 threadRoute.route('/threads')
@@ -54,7 +78,7 @@ threadRoute.route('/threads')
 			return res.status(500).send("Unexpected error occured when getting thread in database: "+ err);
 		}
 	})
-	//post: saving a new thread into database
+	//POST: saving a new thread into database
 	.post(async(req,res)=>{
 		if(!req.body.userId){
 			return res.status(500).send("Unable to save thread to database due to missing userId");
