@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 
+//define Thread Schema
 const ThreadSchema = new mongoose.Schema({
     prompt:[String],
     response:[String],
     createdDate: Date,
-    userID:{
+    userId:{
         type: mongoose.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
+        require: true
     }
 })
 

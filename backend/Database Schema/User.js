@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import {ThreadSchema} from "./Thread";
 
-
 const userSchema = new mongoose.Schema({
   	accountData:{
 		username:String,
@@ -11,8 +10,7 @@ const userSchema = new mongoose.Schema({
   	},
 	identityData:{//expand later
 		displayName: String,
-	},
-	threads:[ThreadSchema]
+	}
 });
 
 // Hash password before saving user
