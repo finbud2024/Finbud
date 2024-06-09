@@ -19,6 +19,7 @@
         "axios": "^1.7.2",
         "chart.js": "^4.4.3",
         "dotenv": "^16.4.5",
+        "lightweight-charts": "^4.1.4",
         "process": "^0.11.10",
         "vue": "^3.4.27",
         "vue-chartjs": "^5.3.1",
