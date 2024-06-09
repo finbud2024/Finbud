@@ -8,6 +8,11 @@
     props: {
       show: Boolean,
     },
+    methods: {
+      close() {
+      this.$emit('close');
+      },
+    },
   };
   </script>
   

@@ -1,145 +1,74 @@
 <template>
-  <div>
-    <GlobalOverlay :show="true" @close="close" />
-    <div class="popup-overlay">
-      <div class="popup-content">
-        <button class="close-button" @click="close">X</button>
-        <h3>{{ crypto.name }} ({{ crypto.symbol }})</h3>
-        <div class="chart-container">
-          <canvas ref="chartCanvas"></canvas>
-        </div>
+  <div class="popup">
+    <div class="popup-content">
+      <button class="close-btn" @click="$emit('close')">&times;</button>
+      <div class="chart-wrapper">
+        <CryptoChart :uuid="crypto.uuid" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Chart } from 'chart.js/auto';
-import GlobalOverlay from './GlobalOverlay.vue';
+import CryptoChart from './CryptoChart.vue';
 
 export default {
   name: 'CryptoPopup',
-  props: {
-    crypto: Object,
-  },
   components: {
-    GlobalOverlay,
+    CryptoChart,
   },
-  data() {
-    return {
-      chart: null,
-    };
-  },
-  mounted() {
-    this.createChart();
-  },
-  methods: {
-    createChart() {
-      const ctx = this.$refs.chartCanvas.getContext('2d');
-      this.chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-          datasets: [
-            {
-              label: `${this.crypto.name} Price`,
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
+  props: {
+    crypto: {
+      type: Object,
+      required: true,
     },
-    close() {
-      if (this.chart) {
-        this.chart.destroy();
-      }
-      this.$emit('close');
-      //document.body.classList.remove('no-scroll');
-    },
-  },
-  beforeDestroy() {
-    if (this.chart) {
-      this.chart.destroy();
-    }
   },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap');
-
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-
-.popup-overlay {
+.popup {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1001;
-  opacity: 0;
-  animation: fadeIn 0.3s forwards;
+  z-index: 1000; /* Ensure the popup appears above other content */
 }
 
 .popup-content {
-  background: #fff;
+  background: white;
   padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 600px;
-  z-index: 1002;
+  border-radius: 5px;
   position: relative;
-  transform: scale(0.7);
-  animation: popupShow 0.3s forwards;
+  width: 90%;
+  max-width: 1200px;
+  height: 50%; /* Set height to 90% of the viewport height */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.close-button {
+.chart-wrapper {
+  width: 95%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: transparent;
+  background: none;
   border: none;
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.5em;
   cursor: pointer;
-  color: #333;
-  transition: color 0.3s;
-}
-
-.close-button:hover {
-  color: #ff0000;
-}
-
-.chart-container {
-  width: 100%;
-  height: 300px;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes popupShow {
-  to {
-    transform: scale(1);
-  }
 }
 </style>

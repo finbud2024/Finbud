@@ -2,7 +2,7 @@
   <div>
     <div class="crypto-watch animate__animated animate__fadeIn">
       <div class="header">
-        <h2>CRYPTOCURRENCY</h2>
+        <!--<h2>CRYPTOCURRENCY</h2>-->
       </div>
       <div class="crypto-table-wrapper">
         <div class="crypto-table">
@@ -35,14 +35,13 @@
       </div>
     </div>
     <CryptoPopup v-if="showPopup" :crypto="selectedCrypto" @close="closePopup" />
-    <NewsSection :disableClicks="showPopup" />
+    <!--<NewsSection :disableClicks="showPopup" />-->
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import CryptoPopup from './CryptoPopup.vue';
-import NewsSection from './NewsSection.vue';
 
 const API_KEY = 'coinranking687d4cc37a39468baeffcc6c0546f518c3c54b2b87e4f73a';
 
@@ -50,7 +49,6 @@ export default {
   name: 'CryptoWatch',
   components: {
     CryptoPopup,
-    NewsSection,
   },
   data() {
     return {
@@ -77,7 +75,11 @@ export default {
           price: parseFloat(coin.price),
           change: parseFloat(coin.change),
           changeAmount: parseFloat(coin.change) * parseFloat(coin.price) / 100,
+          uuid: coin.uuid,
         }));
+        if (this.cryptos.length > 0) {
+          this.selectedCrypto = this.cryptos[0].uuid; // Set default selected crypto
+        }
         this.distributeCryptos();
       } catch (error) {
         console.error('Error fetching cryptos:', error);
@@ -141,7 +143,7 @@ body {
   display: flex;
   border: 1px solid transparent;
   padding: 8px;
-  min-width: 375px;
+  min-width: 363px;
   margin-right: 10px;
   position: relative;
   cursor: pointer;
