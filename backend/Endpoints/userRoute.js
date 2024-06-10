@@ -37,7 +37,9 @@ userRoute.route('/users/:userId')
             if(password){ user.accountData.password = password; }
             if(priviledge === "admin" || priviledge === "user"){
                 user.accountData.priviledge = priviledge;
-            } // NEED DISCUSSION
+            }else if(priviledge !== ""){
+                return res.status(404).send(`Please provide the right role. ${priviledge}`);
+            }
             if(securityQuestion) { user.accountData.securityQuestion = securityQuestion; }
             if(securityAnswer) { user.accountData.securityAnswer = securityAnswer; }
 
@@ -69,12 +71,37 @@ userRoute.route('/users/:userId')
     })
 
 userRoute.route('/users')
-    //GET: get all user from database 
+    //GET: get all user from database if not specified query
     .get(async(req, res) => {
-        console.log("in /users route (GET) all user")
+        const data = req.query;
+        const {username, password} = data;
+        console.log("in /users route (GET) all user if not specified query")
         try{
-            const users = await User.find();
-            return res.status(200).json(users);
+            //without query
+            if(!data){
+                const users = await User.find();
+                return res.status(200).json(users);
+            }
+
+            //with query
+            if(!username){
+                return res.status(404).send(`Please provide username!`);
+            }
+            if(!password){
+                return res.status(404).send('Please provide password!');
+            }
+
+            const user = await User.findOne({"accountData.username": username});
+ 
+            if(!user){
+                return res.status(404).send('User does not exist in db, please sign in!');
+            }
+
+            if(user.accountData.password !== password){
+                return res.status(401).send("Authorize error!");
+            }
+            return res.status(200).json(user);
+
         }catch(err){
             return res.status(501).send('Internal sever error', err);
         }
@@ -111,6 +138,26 @@ userRoute.route('/users')
             return res.status(200).json(newUser);
         }catch(err){
             return res.status(500).send("Unexpected error occured when saving user to database: "+ err);
+        }
+    })
+    //GET: get user with given username and password
+    .get(async(req, res) => {
+        const data = req.query;
+        const {username, password} = data;
+        console.log('in /users Route (GET) user with username and password:' + JSON.stringify(data));
+        try{
+            const user = await User.findOne({username: username});
+            if(!user){
+                return res.status(404).send('User does not exist in db, please sign in!');
+            }
+
+            if(user.password !== password){
+                return res.status(401).send("Authorize error!");
+            }
+            return res.status(200).send("Log in successfully with " + user);
+
+        }catch(err){
+            return res.status(501).send('Internal sever error' + err);
         }
     })
 
