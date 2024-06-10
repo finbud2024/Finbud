@@ -161,33 +161,4 @@ userRoute.route('/users')
         }
     })
 
-// userRoute.route('/users/auth')
-//     //GET: get user with given username and password
-//     .get(async(req, res) => {
-//         const data = req.query;
-//         const {username, password} = data;
-//         console.log('in /users Route (GET) user with username and password:' + JSON.stringify(data));
-//         try{
-//             if(!username){
-//                 return res.status(404).send(`Please provide username!`);
-//             }
-//             if(!password){
-//                 return res.status(404).send('Please proide password!');
-//             }
-
-//             const user = await User.findOne({username: username});
-//             if(!user){
-//                 return res.status(404).send('User does not exist in db, please sign in!');
-//             }
-
-//             if(user.password !== password){
-//                 return res.status(401).send("Authorize error!");
-//             }
-//             return res.status(200).send("Log in successfully with " + user);
-
-//         }catch(err){
-//             return res.status(501).send('Internal sever error' + err);
-//         }
-//     })
-
 export default userRoute;
