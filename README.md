@@ -14,7 +14,8 @@ FinBud là một ứng dụng web cung cấp thông tin tài chính và hỗ tr�
 - **frontend**: Thư mục chứa mã nguồn của giao diện người dùng (Vue.js).
 - **backend**: Thư mục chứa mã nguồn của máy chủ (Node.js, Express).
 
-- FinBud
+```
+FinBud
 │
 ├── .netlify/
 │
@@ -54,7 +55,7 @@ FinBud là một ứng dụng web cung cấp thông tin tài chính và hỗ tr�
 │   │       └── RecommendationGenerator.vue
 │   ├── .env.local              # File chứa các biến môi trường cho frontend
 │   └── vue.config.js           # File cấu hình Vue.js
-
+```
 
 ## Cách chạy hệ thống
 
