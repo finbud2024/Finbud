@@ -14,6 +14,48 @@ FinBud là một ứng dụng web cung cấp thông tin tài chính và hỗ tr�
 - **frontend**: Thư mục chứa mã nguồn của giao diện người dùng (Vue.js).
 - **backend**: Thư mục chứa mã nguồn của máy chủ (Node.js, Express).
 
+- FinBud
+│
+├── .netlify/
+│
+├── backend/
+│   ├── Database Schema/        # Thư mục chứa các file liên quan đến cấu trúc cơ sở dữ liệu
+│   ├── dist/                   # Thư mục chứa các file được biên dịch
+│   ├── Endpoints/              # Thư mục chứa các file định tuyến API
+│   │   ├── threadRoute.js      # Định tuyến cho các yêu cầu liên quan đến threads
+│   │   └── userRoute.js        # Định tuyến cho các yêu cầu liên quan đến users
+│   ├── functions/              # Thư mục chứa các hàm xử lý
+│   ├── node_modules/           # Thư mục chứa các module Node.js
+│   ├── .env                    # File chứa các biến môi trường cho backend
+│   ├── .gitignore              # File để bỏ qua các file/thư mục không cần thiết trong git
+│   ├── package-lock.json       # File quản lý phiên bản của các gói npm
+│   ├── package.json            # File cấu hình dự án Node.js
+│   ├── README.md               # File tài liệu của dự án
+│   └── server.js               # File cấu hình và khởi động server
+│
+├── frontend/
+│   ├── dist/                   # Thư mục chứa các file được biên dịch
+│   ├── node_modules/           # Thư mục chứa các module Node.js
+│   ├── public/                 # Thư mục chứa các file tĩnh
+│   ├── src/                    # Thư mục chứa mã nguồn frontend
+│   │   ├── assets/             # Thư mục chứa các tài nguyên như hình ảnh, CSS
+│   │   ├── components/         # Thư mục chứa các component Vue.js
+│   │   ├── router/             # Thư mục chứa cấu hình định tuyến Vue.js
+│   │   ├── services/           # Thư mục chứa các dịch vụ như gọi API
+│   │   └── views/              # Thư mục chứa các view của ứng dụng
+│   │       ├── AboutUsPage.vue
+│   │       ├── ChatView.vue
+│   │       ├── GoalPage.vue
+│   │       ├── Home.vue
+│   │       ├── LoginView.vue
+│   │       ├── MarketDataCenter.vue
+│   │       ├── PricingPage.vue
+│   │       ├── QuizPage.vue
+│   │       └── RecommendationGenerator.vue
+│   ├── .env.local              # File chứa các biến môi trường cho frontend
+│   └── vue.config.js           # File cấu hình Vue.js
+
+
 ## Cách chạy hệ thống
 
 Để chạy hệ thống, thực hiện các bước sau:
