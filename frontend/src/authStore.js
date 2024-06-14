@@ -5,7 +5,7 @@ const authStore = reactive({
 
   login(token) {
     localStorage.setItem('token', token);
-    this.isAuthenticated = true;
+    this.isAuthenticated = true;  
   },
 
   logout() {
