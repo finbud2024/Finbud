@@ -13,8 +13,14 @@
         <input id="password" type="password" v-model="password" placeholder="Password" required />
         <span v-if="!password" class="error-text">Password is required</span>
       </div>
+      <div class="form-group">
+        <label for="confirmPassword"> Re-enter your password</label>
+        <input id="confirmPassword" type="password" v-model="confirmPassword" placeholder="re-enter your password"required>
+        <span v-if="!password" class="error-text">Confirm Password is required</span>
+      </div>
       <button type="submit" class="register-button">Register</button>
     </form>
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     <p class="signin-text">
       Already have an account? <router-link to="/login">Log in here</router-link>
     </p>
@@ -28,27 +34,40 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      confirmPassword: '',
+      errorMessage: '',
     };
   },
   methods: {
     async register() {
-      if (this.email && this.password) {
+      if (this.email && this.password && this.confirmPassword) {
         try {
-          const response = await axios.post('http://localhost:3000/signup', {
-            email: this.email,
-            password: this.password,
+          if(this.password !== this.confirmPassword){
+            this.errorMessage = "Passwords do not match!";
+            return;
+          }
+          const response = await axios.post('http://localhost:3000/users', {
+            accountData: {
+              username: this.email,
+              password: this.password
+            }, identityData: {
+              
+            }
           });
 
-          alert('Registration successful!');
+          //alert('Registration successful!');
           // Store token and redirect to login or dashboard
           localStorage.setItem('token', response.data.token);
           this.$router.push('/login');
         } catch (err) {
-          alert(`Registration failed: ${err.response.data.message}`);
+          console.log(err);
+          this.errorMessage = "Email has already been registered!"
+          //alert(`Registration failed: ${err}`);
         }
       } else {
-        alert('Please fill in all required fields.');
+        this.errorMessage = "Please fill in all required fields."
+        //alert('Please fill in all required fields.');
       }
     }
   }
@@ -88,6 +107,10 @@ input[type="password"] {
   box-sizing: border-box;
 }
 
+.register-button:hover {
+  cursor: pointer;
+}
+
 .register-button {
   width: 100%;
   padding: 12px;
@@ -96,6 +119,12 @@ input[type="password"] {
   background-color: #000;
   color: white;
   font-family: 'Space Grotesk', sans-serif;
+}
+
+.error-message{
+  color: red;
+  text-align: center;
+  margin-top: 10px;
 }
 
 .signin-text {
