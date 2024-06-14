@@ -41,6 +41,7 @@
 
 <script>
 import authStore from '@/authStore';
+import axios from 'axios';
 
 export default {
   name: 'NavBar',
@@ -48,6 +49,22 @@ export default {
     return {
       isDropdownOpen: false,
     };
+  },
+  async mounted(){
+    try{
+      const check = await axios.get("http//localhost:3000/auth/test");
+
+      if(check.isAuthenticated){
+        //show full navbar
+        alert("yayy");
+      }else{
+        //show part of nav bar?
+        alert("no");
+      }
+    }catch(err){
+      //alert(err);
+    }
+
   },
   computed: {
     authStore() {

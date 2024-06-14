@@ -16,6 +16,7 @@
       <div class="input-group">
         <label for="password">Password:</label>
         <input type="password" id="password" v-model="password" required>
+        <p id="errorMessage" class="wrong-password"> wrong username or password!</p>
       </div>
       <div class="forgot-password"><a href="#">Forgot?</a></div>
       <button type="submit" class="login-button">Sign In</button>
@@ -39,17 +40,18 @@ export default {
   methods: {
     async onLogin() {
       try {
-        const response = await axios.post('http://localhost:3000/login', {
-          email: this.username,
-          password: this.password,
-        });
-
-        alert('Login successful!');
-        authStore.login(response.data.token);
+        const username = this.username;
+        const password = this.password;
+        const response = await axios.get(`http://localhost:3000/users/?username=${username}&password=${password}`);
+        
+        console.log('Login successful!');
+        console.log(response.data.token);
+        authStore.login(response.data._id);
         this.$router.push('/'); // Redirect to the main page after login
       } catch (err) {
         console.error('Login Error:', err.response ? err.response.data : err.message);
-        alert('Invalid username or password!');
+        document.getElementById('errorMessage').classList.remove('wrong-password');
+        //alert('Invalid username or password!');
       }
     },
   },
@@ -154,6 +156,10 @@ input[type="password"] {
   font-family: 'Space Grotesk', sans-serif;
 }
 
+.login-button:hover {
+  cursor: pointer;
+}
+
 .signup-link {
   margin-top: 20px;
 }
@@ -165,5 +171,13 @@ input[type="password"] {
 
 .signup-link a:hover {
   text-decoration: underline;
+}
+
+#errorMessage{
+  color: red;
+}
+
+.wrong-password {
+  display: none;
 }
 </style>

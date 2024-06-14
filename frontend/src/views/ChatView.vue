@@ -107,22 +107,6 @@ export default {
 
       this.newMessage = '';
       const userMessage = this.messages[this.messages.length - 1].text;
-      // const id = "665aad4b821f97662f576618";
-      // const ObjectID =  new mongoose.Types.ObjectId(id);
-      // const res = 'this is a response';
-      // try{
-      //   const header = {
-      //     'Content-Type': 'application/json'
-      //   }
-      //   const response = await axios.post('http://localhost:3000/saveChat',{
-      //     threadID:1,
-      //     userID: ObjectID,
-      //     prompt: userMessage,
-      //     response: res,
-      //   },header)
-      // } catch (error) {
-      //   console.error('Error posting data:', error);
-      // }
 
       try {
         // if prompt contains "define"
@@ -155,8 +139,29 @@ export default {
 
     async handleDefineMessage(userMessage) {
       const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-      const response = await axios.post(`${apiUrl}/defineTerm`, { term });
-      this.addTypingResponse(response.data.definition, false);
+      //const response = await axios.post(`${apiUrl}/defineTerm`, { term });
+      try{
+
+        OPEN_API_KEY
+        const prompt = `Explain ${term} to me as if I'm 15.`;
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.7
+        }, {
+            headers: {
+                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const responseData = response.data;
+        const answer = responseData.choices[0]?.message?.content || "";
+        this.addTypingResponse(answer, false);
+
+      }catch(err){
+        console.log(err);
+      }
     },
 
     
