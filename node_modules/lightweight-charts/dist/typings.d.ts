@@ -203,6 +203,15 @@ export declare function createChart(container: string | HTMLElement, options?: D
  */
 export declare function createChartEx<HorzScaleItem, THorzScaleBehavior extends IHorzScaleBehavior<HorzScaleItem>>(container: string | HTMLElement, horzScaleBehavior: THorzScaleBehavior, options?: DeepPartial<ReturnType<THorzScaleBehavior["options"]>>): IChartApiBase<HorzScaleItem>;
 /**
+ * Provides the default implementation of the horizontal scale (time-based) that can be used as a base for extending the horizontal scale with custom behavior.
+ * This allows for the introduction of custom functionality without re-implementing the entire {@link IHorzScaleBehavior}&lt;{@link Time}&gt; interface.
+ *
+ * For further details, refer to the {@link createChartEx} chart constructor method.
+ *
+ * @returns An uninitialized class implementing the {@link IHorzScaleBehavior}&lt;{@link Time}&gt; interface
+ */
+export declare function defaultHorzScaleBehavior(): new () => IHorzScaleBehavior<Time>;
+/**
  * Check if a time value is a business day object.
  *
  * @param time - The time to check.
@@ -1599,6 +1608,15 @@ export interface IHorzScaleBehavior<HorzScaleItem> {
 	 * @returns void
 	 */
 	fillWeightsForPoints(sortedTimePoints: readonly Mutable<TimeScalePoint>[], startIndex: number): void;
+	/**
+	 * If returns true, then the tick mark formatter will be called for all the visible
+	 * tick marks even if the formatter has previously been called for a specific tick mark.
+	 * This allows you to change the formatting on all the tick marks.
+	 *
+	 * @param tickMarks - array of tick marks
+	 * @returns boolean
+	 */
+	shouldResetTickmarkLabels?(tickMarks: readonly TickMark[]): boolean;
 }
 /** Interface to be implemented by the object in order to be used as a price formatter */
 export interface IPriceFormatter {
