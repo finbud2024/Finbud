@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { request } from 'express';
 import User from '../Database Schema/User.js';
 
 const userRoute = express.Router();
@@ -23,32 +23,28 @@ userRoute.route('/users/:userId')
         const userId = req.params.userId;
         console.log('in /users/:userId Route (PUT) user with ID:' + userId);
         try{
-            const user = await User.findById(userId)
-            if(!user){
+            const filter = {"_id": userId};
+            const updatedUser = {};
+            
+            if(req.body.accountData){
+                for(const key in req.body.accountData){
+                    updatedUser[`accountData.${key}`] = req.body.accountData[key];
+                }
+            }
+
+            if(req.body.identityData){
+                for(const key in req.body.identityData){
+                    updatedUser[`identityData.${key}`] = req.body.identityData[key];
+                }
+            }
+
+            const user = await User.updateOne(filter, updatedUser, {
+                new: true
+            }) 
+
+            if(!user.modifiedCount){
                 return res.status(404).send(`Cannot find user with user ID : ${userId} in database`);
             }
-
-            const {accountData, identityData} = req.body;
-            const {username, password, priviledge, securityQuestion, securityAnswer} = accountData;
-            const {firstName, lastName, displayName} = identityData;
-
-            //accountData update
-            if(username){ user.accountData.username = username; }
-            if(password){ user.accountData.password = password; }
-            if(priviledge === "admin" || priviledge === "user"){
-                user.accountData.priviledge = priviledge;
-            }else if(priviledge !== ""){
-                return res.status(404).send(`Please provide the right role. ${priviledge}`);
-            }
-            if(securityQuestion) { user.accountData.securityQuestion = securityQuestion; }
-            if(securityAnswer) { user.accountData.securityAnswer = securityAnswer; }
-
-            //identityData update
-            if(firstName) { user.identityData.firstName = firstName; }
-            if(lastName) { user.identityData.lastName = lastName; }
-            if(displayName) { user.identityData.displayName = displayName; } 
-            
-            await user.save();
 
             return res.status(200).send({message: `User updated successfully`, updatedUser: user});
         }catch(err){
@@ -108,7 +104,9 @@ userRoute.route('/users')
     })
     //POST: saving a new user into database
     .post(async(req,res)=>{
+        console.log(req.body);
         if(!req.body.accountData.username){
+            console.log(req.body);
             return res.status(404).send("Unable to save new user to database due to missing username");
         }
         if(!req.body.accountData.password){
@@ -137,6 +135,7 @@ userRoute.route('/users')
             }).save();
             return res.status(200).json(newUser);
         }catch(err){
+            console.log(err);
             return res.status(500).send("Unexpected error occured when saving user to database: "+ err);
         }
     })
@@ -146,15 +145,12 @@ userRoute.route('/users')
         const {username, password} = data;
         console.log('in /users Route (GET) user with username and password:' + JSON.stringify(data));
         try{
-            const user = await User.findOne({username: username});
+            const user = await User.find({username: username, password: password});
             if(!user){
-                return res.status(404).send('User does not exist in db, please sign in!');
+                return res.status(404).send('Wrong username or password, please..!');
             }
 
-            if(user.password !== password){
-                return res.status(401).send("Authorize error!");
-            }
-            return res.status(200).send("Log in successfully with " + user);
+            return res.status(200).send("Login successful!");
 
         }catch(err){
             return res.status(501).send('Internal sever error' + err);
