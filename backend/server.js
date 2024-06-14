@@ -4,7 +4,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 //----- import the Routes/Endpoints -----------
-import chatRoute from './Endpoints/chatRoute.js';
+import threadRoute from './Endpoints/threadtRoute.js';
+import userRoute from './Endpoints/userRoute.js';
 
 //load environment variable from .env
 dotenv.config();
@@ -13,7 +14,7 @@ const app = express();
 const port = 3000;
 const mongoURI = process.env.MONGO_URI;
 
-mongoose.connect(mongoURI, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(mongoURI)
   .then(() => {
       console.log('MongoDB connected');
     }
@@ -23,12 +24,13 @@ mongoose.connect(mongoURI, {useNewUrlParser: true, useUnifiedTopology: true})
 });
 
 app
-//setting up app as middleware
+//setting up server.js as middleware
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
   .use(cors())
 //define endpoints
-  .use('/',chatRoute)
+  .use('/',threadRoute)
+  .use('/', userRoute)
   .listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
