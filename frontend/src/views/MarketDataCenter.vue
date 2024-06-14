@@ -1,71 +1,83 @@
 <template>
-  <MarketHeader />
-  <h1 class="headtitle">Market Data Center</h1>
-  <div class="market-data-center">
-    <div class="market-section">
-      <!-- <MarketIndex title="U.S." :indexes="usIndexes" />
-      <MarketIndex title="Europe" :indexes="europeIndexes" />
-      <MarketIndex title="Asia" :indexes="asiaIndexes" />
-      <CurrencyRate :currencies="currencies" /> -->
-      <CryptoMarket />
-      <!--<StockList />-->
-      <NewsSection /> <!-- Use the renamed component here -->
+  <div>
+    <MarketHeader />
+    <h1 class="headtitle">Market Data Center</h1>
+    <div class="market-data-center">
+      <div class="market-section">
+        <div class="section-title">CRYPTOCURRENCY</div>
+        <CryptoWatch class="CryptoArea" />
+        <div class="section-title">STOCK</div>
+        <StockWatch class="StockArea" />
+      </div>
     </div>
+    <NewsSection :disableClicks="showPopup" />
   </div>
 </template>
 
 <script>
-// import MarketIndex from '../components/MarketIndex.vue';
-// import CurrencyRate from '../components/CurrencyRate.vue';
 import MarketHeader from '../components/MarketHeader.vue';
-import CryptoMarket from '../components/CryptoMarket.vue'; // Import the CryptoMarket component
-import NewsSection from '../components/NewsSection.vue'; // Import the renamed component
-//import StockList from '../components/StockList.vue';
+import NewsSection from '../components/NewsSection.vue';
+import CryptoWatch from '@/components/CryptoWatch.vue';
+import StockWatch from '@/components/StockWatch.vue';
 
 export default {
   name: 'MarketDataCenter',
   components: {
     MarketHeader,
-    // MarketIndex,
-    // CurrencyRate,
-    CryptoMarket, // Register the CryptoMarket component
     NewsSection,
-    //StockList // Register the renamed component
+    CryptoWatch,
+    StockWatch
   },
-  data() {
-    return {
-      usIndexes: [
-        { name: 'DJIA', value: 38852.86, change: -216.73, percentage: -0.55 },
-        { name: 'COMP', value: 17019.88, change: 99.09, percentage: 0.59 },
-        { name: 'SPX', value: 5306.04, change: 1.32, percentage: 0.02 },
-        { name: 'GDOW', value: 4696.80, change: -32.04, percentage: -0.68 },
-      ],
-      europeIndexes: [
-        { name: 'FTSE 100', value: 8224.35, change: -29.83, percentage: -0.36 },
-      ],
-      asiaIndexes: [
-        { name: 'XX: ADOW', value: 3949.51, change: -66.33, percentage: -1.65 },
-      ],
-      currencies: [
-        { name: 'Euro', value: 1.0846, change: -0.0010, percentage: -0.09 },
-      ]
-    };
-  }
 };
 </script>
 
 <style scoped>
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+
 .market-data-center {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 2rem;
+  padding: 2rem;
+  background: white;
+  margin: 2rem auto;
+  max-width: 1200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 .headtitle {
+  text-align: center;
+  color: #333;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.market-section {
   display: flex;
-  color: rgb(23, 125, 165);
-  gap: 1rem;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section-title {
+  font-weight: bold;
+  color: #007bff;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
+}
+
+.CryptoArea, .StockArea {
+  background: #fff;
   padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
 }
 </style>

@@ -1,5 +1,9 @@
+Here is the combined `TechnologySection` and `FeaturesSection` components into one `FeaturesAndTechnologySection.vue` component:
+
+```vue
 <template>
   <div class="features-container">
+
     <h2 class="features-title animate fade-in">Analytics that drive your business.</h2>
     <p class="description animate fade-in">Review your performance and drive change with our actionable insights provided via our intuitive web app.</p>
     <div class="feature-grid">
@@ -11,6 +15,46 @@
         <p class="feature-description">{{ feature.description }}</p>
       </div>
     </div>
+            <!-- Financial Consulting Section -->
+            <div class="feature-section consulting-section animate slide-in-left">
+      <h2>Financial Consulting</h2>
+      <p class="note">Personalized plans to secure your financial future.</p>
+      <div class="service-details">
+        <div class="services-grid">
+          <div class="left-column">
+            <ul class="service-highlights">
+              <li>Debt Management</li>
+              <li>Savings Strategies</li>
+              <li>Investment Advice</li>
+            </ul>
+          </div>
+          <div class="right-column">
+            <ul class="service-highlights">
+              <li>Custom Financial Planning</li>
+              <li>Goal-Oriented Guidance</li>
+              <li>Personal Wealth Management</li>
+            </ul>
+          </div>
+        </div>
+        <button>Start your 30-day free trial</button>
+      </div>
+    </div>
+
+    <!-- Financial Education Section -->
+    <div class="feature-section education-section animate slide-in-right">
+      <h2>Financial Education</h2>
+      <p class="note">Empower yourself with knowledge to make better financial decisions.</p>
+      <div class="service-details">
+        <ul class="service-highlights">
+          <li>Basic to Advanced Financial Concepts</li>
+          <li>Interactive Lessons and Quizzes</li>
+          <li>Real-time Financial Trend Analysis</li>
+          <li>AI-Driven Insights</li>
+        </ul>
+        <button>Start your 30-day free trial</button>
+      </div>
+    </div>
+    
     <div class="insights-section">
       <div class="image animate slide-in-right">
         <img src="@/assets/stock.png" alt="Car in garage">
@@ -24,12 +68,13 @@
           <span>Personalized Financial Analysis: Gain comprehensive insights with auto-generated reports tailored to your financial behavior, helping you optimize your budget and savings.</span>
         </div>
         <div class="list-item">
-          <img src="@/assets/tick.png"  alt="Check">
+          <img src="@/assets/tick.png" alt="Check">
           <span>Trend Prediction: Our AI-driven tools analyze past spending and earning trends to forecast your financial future, enabling proactive financial planning.</span>
         </div>
         <button @click="learnMore" class="animate slide-in-up">Learn more</button>
       </div>
     </div>
+    
     <div class="computer-vision-section animate fade-in">
       <h2>ADVANCED AI CHATBOT</h2>
       <p>Smart Financial Assistance at Your Fingertips.</p>
@@ -52,6 +97,7 @@
         </div>
       </div>
     </div>
+
     <div class="partners-section animate fade-in">
       <h2 class="section-title">Integrate with the best tools in the market</h2>
       <p class="section-description">Check out our connected partners. Don’t see your software on the list of partners? <a href="mailto:contact@yourdomain.com">Drop us a note</a> and we’ll get them added.</p>
@@ -66,12 +112,14 @@
         </div>
       </div>
     </div>
+    
+
   </div>
 </template>
 
 <script>
 export default {
-  name: 'TechnologySection',
+  name: 'FeaturesAndTechnologySection',
   data() {
     return {
       features: [
@@ -217,7 +265,9 @@ export default {
 }
 
 .feature-title {
-  font-size: 18px;
+  font-size: 
+
+18px;
   color: #333;
 }
 
@@ -414,4 +464,77 @@ button:hover {
   font-size: 14px;
   color: #666;
 }
+
+.feature-section {
+  background-color: #007bff; /* Blue background for consulting */
+  color: white;
+  padding: 40px;
+  border-radius: 8px;
+  width: 80%;
+  margin: 20px auto;
+  text-align: left;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-section.white-background {
+  background-color: white;
+  color: black; /* Text color for better readability on white */
+}
+
+.feature-section:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.note {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: inherit; /* Ensures the text color matches the section's color */
+}
+
+.service-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.services-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.left-column, .right-column {
+  width: 48%; /* Close to half the container width to fit all items nicely */
+}
+
+.service-highlights {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.service-highlights li {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+button {
+  background-color: #0056b3; /* Darker blue for buttons */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  align-self: flex-start; /* Left align the button */
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+  background-color: #004080; /* Even darker on hover */
+  transform: scale(1.05);
+}
 </style>
+```
+
+This combines the content and styles from both `technology.vue` and `pricing.vue` into a single Vue component.
