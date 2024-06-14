@@ -4,50 +4,68 @@
     <div class="nav-right">
       <ul class="nav-items">
         <li><router-link to="/" class="home">Home</router-link></li>
-        <li><router-link to="/goal" class="goal">Goal</router-link></li>
-        <li><router-link to="/stock-simulator" class="simulator">Simulator</router-link></li>
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
-        <li><router-link to="/quizz" class="quizz">Quizz</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <li><router-link to="/pricing" class="pricing">Pricing</router-link></li>
-        <li><router-link to="/market" class="market">Market</router-link></li>
       </ul>
+      <li class="dropdown">
+        <button class="dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
+        <div class="dropdown-content" v-show="isDropdownOpen">
+          <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
+          <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
+          <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
+          <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+        </div>
+      </li>
       <ul class="nav-actions">
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="!authStore.isAuthenticated"><router-link to="/signup" class="signup-button">Sign Up</router-link></li>
-        <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Sign Out</button></li>
+        <li><button @click="logout" class="logout-button">Sign Out</button></li>
       </ul>
-      <div class="dropdown">
-        <button class="dropbtn" @click="toggleDropdown">☰</button>
-        <div class="dropdown-content" v-if="isDropdownOpen">
-          <router-link to="/" class="home" @click="closeDropdown">Home</router-link>
-          <router-link to="/goal" class="goal">Goal</router-link>
-          <router-link to="/stock-simulator" class="simulator">Simulator</router-link>
-          <router-link to="/chat-view" class="chatview" @click="closeDropdown">Chat</router-link>
-          <router-link to="/quizz" class="quizz" @click="closeDropdown">Quizz</router-link>
-          <router-link to="/about" class="about" @click="closeDropdown">About</router-link>
-          <router-link to="/tech" class="technology" @click="closeDropdown">Technology</router-link>
-          <router-link to="/pricing" class="pricing" @click="closeDropdown">Pricing</router-link>
-          <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
-          <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="closeDropdown">Log In</router-link>
-          <router-link v-if="!authStore.isAuthenticated" to="/signup" class="signup-button" @click="closeDropdown">Sign Up</router-link>
+      <div class="dropdown mobile-only">
+        <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
+        <div class="dropdown-content" v-show="isDropdownOpenMobile">
+          <router-link to="/" class="home" @click="closeDropdownMobile">Home</router-link>
+          <router-link to="/goal" class="goal" @click="closeDropdownMobile">Goal</router-link>
+          <router-link to="/stock-simulator" class="simulator" @click="closeDropdownMobile">Simulator</router-link>
+          <router-link to="/quizz" class="quizz" @click="closeDropdownMobile">Quiz</router-link>
+          <router-link to="/market" class="market" @click="closeDropdownMobile">Market</router-link>
+          <router-link to="/chat-view" class="chatview" @click="closeDropdownMobile">Chat</router-link>
+          <router-link to="/about" class="about" @click="closeDropdownMobile">About</router-link>
+          <router-link to="/tech" class="technology" @click="closeDropdownMobile">Technology</router-link>
+          <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>
           <button v-if="authStore.isAuthenticated" @click="logout" class="logout-button">Sign Out</button>
         </div>
       </div>
     </div>
   </nav>
 </template>
-
 <script>
 import authStore from '@/authStore';
+import axios from 'axios';
 
 export default {
   name: 'NavBar',
   data() {
     return {
       isDropdownOpen: false,
+      isDropdownOpenMobile: false,
     };
+  },
+  async mounted(){
+    try{
+      const check = await axios.get("http//localhost:3000/auth/test");
+
+      if(check.isAuthenticated){
+        //show full navbar
+        alert("yayy");
+      }else{
+        //show part of nav bar?
+        alert("no");
+      }
+    }catch(err){
+      //alert(err);
+    }
+
   },
   computed: {
     authStore() {
@@ -61,6 +79,12 @@ export default {
     closeDropdown() {
       this.isDropdownOpen = false;
     },
+    toggleDropdownMobile() {
+      this.isDropdownOpenMobile = !this.isDropdownOpenMobile;
+    },
+    closeDropdownMobile() {
+      this.isDropdownOpenMobile = false;
+    },
     logout() {
       authStore.logout();
       this.$router.push('/login');
@@ -70,6 +94,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
 .nav-bar {
   background-color: #FFFFFF;
   display: flex;
@@ -109,20 +135,24 @@ export default {
   gap: 1.2rem;
 }
 
-.nav-items li a, .nav-actions li a {
+.nav-items li a,
+.nav-actions li a {
   color: black;
   text-decoration: none;
   transition: color 0.3s ease;
   font-size: 1.2rem;
 }
 
-.nav-items li a:hover, .nav-actions li a:hover {
+.nav-items li a:hover,
+.nav-actions li a:hover {
   color: #007bff;
 }
 
-.login-button, .signup-button, .logout-button{
+.login-button,
+.signup-button,
+.logout-button {
   background-color: #45a049;
-  color: black;
+  color: white;
   border: none;
   border-radius: 8px;
   text-decoration: none;
@@ -131,47 +161,35 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.signup-button .logout-button{
-  background-color: #4CAF50;
-  color: white;
-  border-radius: 5px;
-  padding: 0.8rem 1.2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.signup-button:hover {
-  background-color: #45a049;
-}
-
+.signup-button:hover,
 .logout-button:hover {
-  background-color: #45a049;
+  background-color: #3e8e41;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
 }
 
 .dropbtn {
   background-color: #04AA6D;
   color: white;
-  padding: 16px;
+  padding: 10px;
   font-size: 16px;
   border: none;
   cursor: pointer;
 }
 
-.dropdown {
-  display: none;
-  position: relative;
-}
-
 .dropdown-content {
   display: none;
-  position: fixed;
-  top: 60px; /* Adjust according to the height of your nav-bar */
-  left: 0;
-  width: 100%;
+  position: absolute;
   background-color: white;
-  z-index: 1000;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .dropdown-content a {
@@ -179,34 +197,53 @@ export default {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
-  width: 100%;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.dropdown-content a:last-child {
-  border-bottom: none;
 }
 
 .dropdown-content a:hover {
-  background-color: #f1f1f1;
+  background-color: #ddd;
 }
 
 .dropdown:hover .dropdown-content {
-  display: flex;
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
+.arrow-down {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  vertical-align: middle;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid white;
+}
+
+.mobile-only {
+  display: none;
 }
 
 @media (max-width: 868px) {
-  .nav-items, .nav-actions {
+
+  .nav-items,
+  .nav-actions {
     display: none;
   }
 
-  .dropdown {
+  .dropdown.mobile-only {
     display: inline-block;
+  }
+
+  .dropdown-content {
+    position: fixed;
+    top: 60px;
+    /* Adjust according to the height of your nav-bar */
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
   }
 
   .nav-bar {
@@ -215,11 +252,8 @@ export default {
   }
 
   .navbar-brand {
-    margin-left: 50px; /* Adjust this value to move the text to the right */
-  }
-
-  .dropdown-content {
-    display: flex;
+    margin-left: 50px;
+    /* Adjust this value to move the text to the right */
   }
 }
 </style>

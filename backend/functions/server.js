@@ -36,18 +36,18 @@ app
 
 export const handler = serverless(app);
 
-// Import the functions
+// // Import the functions
 // const analyzeStock = require('./functions/analyzeStock').handler;
 // const defineTerm = require('./functions/defineTerm').handler;
 // const generateQuiz = require('./functions/generateQuiz').handler;
 // const normAns = require('./functions/normAns').handler;
 
-// Helper to handle async route handlers
+// // Helper to handle async route handlers
 // const asyncHandler = fn => (req, res, next) => {
 //     Promise.resolve(fn(req, res, next)).catch(next);
 // };
 
-// Define routes
+// //Define routes
 // app.post('/analyzeStock', asyncHandler(async (req, res) => {
 //     const response = await analyzeStock({ body: JSON.stringify(req.body) }, null);
 //     res.status(response.statusCode).json(JSON.parse(response.body));

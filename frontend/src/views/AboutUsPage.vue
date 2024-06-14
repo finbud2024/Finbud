@@ -3,44 +3,42 @@
     <div class="team-section">
       <li class="title">About us</li>
       <li class="description">
-        We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures.
+        We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures. Our team consists of experienced professionals with diverse backgrounds in technology, finance, and business. We are passionate about leveraging technology to make financial management accessible and straightforward for everyone.
       </li>
     </div>
     <div class="team-section">
       <li class="title">Meet Our Team</li>
       <div class="team-container">
-        <div class="team-row">
-          <div class="team-member" v-for="member in firstRowMembers" :key="member.name">
-            <div class="image-container">
-              <img :src="member.img" :alt="member.name" class="fade-in" />
-            </div>
-            <h3>{{ member.name }}</h3>
-            <p>{{ member.role }}</p>
-            <h2>{{ member.intro }}</h2>
-            <div class="social-icons">
-              <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
-                {{ icon.name }}
-              </a>
-            </div>
+        <div class="team-member" v-for="member in teamMembers" :key="member.name">
+          <div class="image-container">
+            <img :src="member.img" :alt="member.name" class="fade-in" />
           </div>
-        </div>
-        <div class="team-row">
-          <div class="team-member" v-for="member in secondRowMembers" :key="member.name">
-            <div class="image-container">
-              <img :src="member.img" :alt="member.name" class="fade-in" />
-            </div>
-            <h3>{{ member.name }}</h3>
-            <p>{{ member.role }}</p>
-            <h2>{{ member.intro }}</h2>
-            <div class="social-icons">
-              <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
-                {{ icon.name }}
-              </a>
-            </div>
+          <h3>{{ member.name }}</h3>
+          <p>{{ member.role }}</p>
+          <h2>{{ member.intro }}</h2>
+          <div class="social-icons">
+            <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
+              {{ icon.name }}
+            </a>
           </div>
         </div>
       </div>
     </div>
+    
+    <!-- Testimonials Section -->
+    <div class="testimonials-section">
+      <li class="title">What our users say about FinBud</li>
+      <div class="testimonials-container">
+        <div class="testimonial-card" v-for="testimonial in testimonials" :key="testimonial.name">
+          <h3>{{ testimonial.name }}</h3>
+          <div class="stars">
+            <span v-for="star in 5" :key="star" class="star">&#9733;</span>
+          </div>
+          <p>{{ testimonial.feedback }}</p>
+        </div>
+      </div>
+    </div>
+    
     <section id="contact-page" class="animate fade-in">
       <div class="contact-header animate slide-in-up">
         <h1>We'd love to talk about how we can work together.</h1>
@@ -149,15 +147,25 @@ export default {
           ],
         },
       ],
+      testimonials: [
+        {
+          name: 'John Doe',
+          feedback: 'FinBud has completely transformed my financial management. The AI chatbot provides spot-on advice and helps me stay on top of my investments and expenses.',
+        },
+        {
+          name: 'Jane Smith',
+          feedback: 'I love using FinBud! It\'s like having a personal financial advisor available 24/7. The insights and tips are incredibly useful and easy to understand.',
+        },
+        {
+          name: 'Michael Johnson',
+          feedback: 'The best financial tool I have ever used. FinBud\'s AI is amazing at predicting market trends and giving personalized advice.',
+        },
+        {
+          name: 'Emily Davis',
+          feedback: 'FinBud has helped me save so much money. The budgeting tools and financial insights are top-notch.',
+        },
+      ],
     };
-  },
-  computed: {
-    firstRowMembers() {
-      return this.teamMembers.slice(0, 2);
-    },
-    secondRowMembers() {
-      return this.teamMembers.slice(2);
-    }
   },
   mounted() {
     const observerOptions = {
@@ -217,15 +225,8 @@ body {
 }
 
 .team-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.team-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 2rem;
 }
 
@@ -234,7 +235,6 @@ body {
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: calc(50% - 1rem);
   transition: transform 0.3s, box-shadow 0.3s;
   animation: fadeIn 1s ease-in-out;
   font-weight: 300;
@@ -283,15 +283,6 @@ body {
   margin-bottom: 1rem;
 }
 
-.team-member img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 1rem;
-  object-fit: cover;
-  animation: zoomIn 1s ease-in-out;
-}
-
 .social-icons {
   margin-top: 5px;
 }
@@ -305,6 +296,36 @@ body {
 
 .social-icons a:hover {
   color: #0056b3;
+}
+
+.testimonials-section {
+  background-color: white;
+  margin: 2rem 0;
+  padding: 2rem;
+}
+
+.testimonials-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.testimonial-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.stars {
+  color: gold;
+  margin: 0.5rem 0;
+}
+
+.star {
+  font-size: 1.2rem;
 }
 
 @keyframes fadeIn {
@@ -350,11 +371,11 @@ body {
 }
 
 @media (max-width: 768px) {
-  .team-member {
+  .team-member, .testimonial-card {
     width: 100%;
   }
 
-  .team-container {
+  .team-container, .testimonials-container {
     padding: 0 10px;
   }
 
