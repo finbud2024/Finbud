@@ -10,16 +10,15 @@ import serverless from 'serverless-http';
 
 // Load environment variables from .env
 dotenv.config();
-
+const mongoURI = process.env.MONGO_URI;
 const app = express();
-const mongoURI = process.env.MONGO_URI || "mongodb+srv://root:Tung123.@cluster0.cus72g5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 if (!mongoURI) {
   console.error('MONGO_URI is not defined in the environment variables');
   process.exit(1);
 }
 
-// // Connect to MongoDB
+// Connect to MongoDB
 let isConnected = false;
 const connectToDatabase = async () => {
   if (isConnected) {
