@@ -67,37 +67,15 @@ userRoute.route('/users/:userId')
     })
 
 userRoute.route('/users')
-    //GET: get all user from database if not specified query
+    //GET: get all user from database
     .get(async(req, res) => {
         const data = req.query;
         const {username, password} = data;
-        console.log("in /users route (GET) all user if not specified query")
+        console.log("in /users route (GET) all user")
         try{
             //without query
-            if(!data){
                 const users = await User.find();
                 return res.status(200).json(users);
-            }
-
-            //with query
-            if(!username){
-                return res.status(404).send(`Please provide username!`);
-            }
-            if(!password){
-                return res.status(404).send('Please provide password!');
-            }
-
-            const user = await User.findOne({"accountData.username": username});
- 
-            if(!user){
-                return res.status(404).send('User does not exist in db, please sign in!');
-            }
-
-            if(user.accountData.password !== password){
-                return res.status(401).send("Authorize error!");
-            }
-            return res.status(200).json(user);
-
         }catch(err){
             return res.status(501).send('Internal sever error', err);
         }

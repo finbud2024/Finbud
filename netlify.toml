@@ -8,3 +8,6 @@
   to = "/.netlify/functions/server"
   status = 200
 
+[dev]
+  targetPort = 3000
+  port = 8888
