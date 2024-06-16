@@ -53,16 +53,11 @@ export default {
   },
   async mounted(){
     try{
-      const check = await axios.get("http//localhost:3000/auth/test");
-
-      if(check.isAuthenticated){
-        //show full navbar
-        alert("yayy");
-      }else{
-        //show part of nav bar?
-        alert("no");
-      }
+      const api = process.env.NODE_ENV !== 'production'? "http://localhost:8888/api/users":"https://finbud-ai.netlify.app/api/users";
+      const check = await axios.get(api);
+      console.log(check);
     }catch(err){
+      console.log(err);
       //alert(err);
     }
 
