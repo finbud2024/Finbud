@@ -1,144 +1,61 @@
+import fetch from 'node-fetch';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-//----- import the Routes/Endpoints -----------
 import threadRoute from '../Endpoints/threadtRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
-
 import serverless from 'serverless-http';
 
-//load environment variable from .env
+// Load environment variables from .env
 dotenv.config();
-
-const app = express();
-const port = 3000;
 const mongoURI = process.env.MONGO_URI;
+const app = express();
 
-mongoose.connect(mongoURI)
-  .then(() => {
-      console.log('MongoDB connected');
-    }
-  ).catch(err => {
-  console.error(err.message);
+if (!mongoURI) {
+  console.error('MONGO_URI is not defined in the environment variables');
   process.exit(1);
-});
+}
 
+// Connect to MongoDB
+let isConnected = false;
+const connectToDatabase = async () => {
+  if (isConnected) {
+    return;
+  }
+  try {
+    await mongoose.connect(mongoURI);
+    isConnected = true;
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('Error connecting to MongoDB:', err.message);
+    process.exit(1);
+  }
+};
+
+// Set up Express middlewares
 app
-//setting up server.js as middleware
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json())
   .use(cors())
-//define endpoints
-  .use('/api/',threadRoute)
-  .use('/api/', userRoute)
+  .use('/api/', threadRoute)
+  .use('/api/', userRoute);
 
-export const handler = serverless(app);
+// Lambda handler for Netlify
+const handler = async (event, context) => {
+  await connectToDatabase();
+  const serverlessHandler = serverless(app);
+  return serverlessHandler(event, context);
+};
 
-// // Import the functions
-// const analyzeStock = require('./functions/analyzeStock').handler;
-// const defineTerm = require('./functions/defineTerm').handler;
-// const generateQuiz = require('./functions/generateQuiz').handler;
-// const normAns = require('./functions/normAns').handler;
+// Local development setup
+if (process.env.NODE_ENV !== 'production') {
+  const port = 3000;
+  app.listen(port, async () => {
+    await connectToDatabase();
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
-// // Helper to handle async route handlers
-// const asyncHandler = fn => (req, res, next) => {
-//     Promise.resolve(fn(req, res, next)).catch(next);
-// };
-
-// //Define routes
-// app.post('/analyzeStock', asyncHandler(async (req, res) => {
-//     const response = await analyzeStock({ body: JSON.stringify(req.body) }, null);
-//     res.status(response.statusCode).json(JSON.parse(response.body));
-// }));
-
-// app.post('/defineTerm', asyncHandler(async (req, res) => {
-//     const response = await defineTerm({ body: JSON.stringify(req.body) }, null);
-//     res.status(response.statusCode).json(JSON.parse(response.body));
-// }));
-
-// app.post('/generateQuiz', asyncHandler(async (req, res) => {
-//     const response = await generateQuiz({ body: JSON.stringify(req.body) }, null);
-//     res.status(response.statusCode).json(JSON.parse(response.body));
-// }));
-
-// app.post('/normAns', asyncHandler(async (req, res) => {
-//     const response = await normAns({ body: JSON.stringify(req.body) }, null);
-//     res.status(response.statusCode).json(JSON.parse(response.body));
-// }));
-
-// app.post('/signup', async (req, res) => {
-//     const { email, password } = req.body;
-  
-//     try {
-//       let user = await User.findOne({ email });
-//       if (user) {
-//         return res.status(400).json({ message: 'User already exists' });
-//       }
-  
-//       user = new User({
-//         email,
-//         password,
-//       });
-  
-//       await user.save();
-  
-//       const payload = {
-//         user: {
-//           id: user.id,
-//         },
-//       };
-  
-//       jwt.sign(
-//         payload,
-//         process.env.JWT_SECRET,
-//         { expiresIn: '1h' },
-//         (err, token) => {
-//           if (err) throw err;
-//           res.status(201).json({ token });
-//         }
-//       );
-//     } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send('Server error');
-//     }
-//   });
-
-// app.post('/login', async (req, res) => {
-//   const { email, password } = req.body;
-
-//   try {
-//     let user = await User.findOne({ email });
-//     if (!user) {
-//       return res.status(400).json({ message: 'Invalid credentials' });
-//     }
-
-//     const isMatch = await user.matchPassword(password);
-//     if (!isMatch) {
-//       return res.status(400).json({ message: 'Invalid credentials' });
-//     }
-
-//     const payload = {
-//       user: {
-//         id: user.id,
-//       },
-//     };
-
-//     jwt.sign(
-//       payload,
-//       process.env.JWT_SECRET,
-//       { expiresIn: '1h' },
-//       (err, token) => {
-//         if (err) {
-//           console.error('JWT Sign Error:', err.message);
-//           throw err;
-//         }
-//         res.status(200).json({ token });
-//       }
-//     );
-//   } catch (err) {
-//     console.error('Server Error:', err.message);
-//     res.status(500).send('Server error');
-//   }
-// });
+export { handler };
