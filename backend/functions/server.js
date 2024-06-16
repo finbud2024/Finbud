@@ -38,8 +38,8 @@ const connectToDatabase = async () => {
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
-app.use('/api/', threadRoute)
-app.use('/api/', userRoute);
+app.use('/.netlify/functions/server/', threadRoute)
+app.use('/.netlify/functions/server/', userRoute);
 
 // Lambda handler for Netlify
 const handler = async (event, context) => {
