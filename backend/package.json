@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.5.2",
+        "@google/generative-ai": "^0.12.0",
         "@vue/cli": "^5.0.8",
         "assert": "^2.1.0",
         "axios": "^1.7.2",
@@ -30,6 +31,7 @@
         "stream-http": "^3.2.0",
         "url": "^0.11.3",
         "vue": "^3.4.26",
+        "vue-axios": "^3.5.2",
         "vue-router": "^4.3.2",
         "vuex": "^4.0.2"
     },
