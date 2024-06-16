@@ -35,12 +35,11 @@ const connectToDatabase = async () => {
 };
 
 // Set up Express middlewares
-app
-  .use(bodyParser.urlencoded({ extended: true }))
-  .use(bodyParser.json())
-  .use(cors())
-  .use('/api/', threadRoute)
-  .use('/api/', userRoute);
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(cors())
+app.use('/api/', threadRoute)
+app.use('/api/', userRoute);
 
 // Lambda handler for Netlify
 const handler = async (event, context) => {
