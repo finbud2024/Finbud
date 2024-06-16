@@ -2,9 +2,9 @@
     <div class="home-container">
         <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
         <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-        <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
+        <!-- <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
             @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
-            @select-thread="selectThread" />
+            @select-thread="selectThread" /> -->
         <div class="chat-container">
             <ChatFrame>
                 <ChatHeader :threadId="currentThread.id" />
@@ -118,13 +118,44 @@ export default {
                 });
             }
         },
+
+        // console.log(typeof(response.data.text));
+        // await this.addTypingResponse(response.data.text, false);
         async handleMessage(userMessage) {
-            const response = await axios.post(`${apiUrl}/analyzeRisk`, {  userMessage });
-            console.log("API response:", response);
-            console.log(typeof(response.data));
-            // console.log(typeof(response.data.text));
-            // await this.addTypingResponse(response.data.text, false);
-            await this.addTypingResponse(response.data, false);
+            try {
+                // Send user's message to the backend for processing
+                const response = await axios.post(`${apiUrl}/analyzeRisk`, { userMessage });
+
+                // Log and process the API response
+                console.log("API response:", response);
+                console.log("Type of response data:", typeof (response.data));
+
+                // Assuming addTypingResponse handles the response data
+                await this.addTypingResponse(response.data, false);
+            } catch (error) {
+                // Handle Axios error or any other error from backend
+                console.error('Error in handleMessage:', error);
+
+                // Optionally, handle different types of errors (e.g., network, server-side)
+                if (error.response) {
+                    // The request was made and the server responded with a status code
+                    console.error("Response status:", error.response.status);
+                    console.error("Response data:", error.response.data);
+                } else if (error.request) {
+                    // The request was made but no response was received
+                    console.error("No response received:", error.request);
+                } else {
+                    // Something happened in setting up the request that triggered an Error
+                    console.error("Error setting up the request:", error.message);
+                }
+
+                // Update UI with error message
+                this.messages.push({
+                    text: `Error processing your message: ${error.message}`,
+                    isUser: false,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+            }
         },
         addTypingResponse(text, isUser) {
             const typingMessage = {

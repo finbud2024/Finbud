@@ -20,7 +20,7 @@ export async function handler(req){
         };
     }
 }
-start("explain stock");
+// start("explain stock");
 async function start(prompt){
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const chat = await model.startChat({

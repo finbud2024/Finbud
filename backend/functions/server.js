@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import threadRoute from '../Endpoints/threadtRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
 import serverless from 'serverless-http';
+import{ handler as analyzeRisk }  from './analyzeRisk.js';
 
 // Load environment variables from .env
 dotenv.config();
@@ -40,6 +41,29 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use('/api/', threadRoute)
 app.use('/api/', userRoute);
+
+app.post('/analyzeRisk', async(req, res) => {
+  console.log("request from server.js :", req.body);
+  try{
+  const response = await analyzeRisk(req);
+  console.log("Response from server.js",response)
+  console.log("Type of response.body:", typeof(response.body));}
+  catch (error){
+    console.log("Error in Step 2:" , error);
+  }
+  try {
+    const response = await analyzeRisk(req);
+    console.log("Response from analyzeRisk:", response);
+    console.log("Type of response.body:", typeof response.body);
+
+    // Attempt to parse response.body as JSON
+    const responseBody = JSON.parse(response.body); // Assuming response.body is JSON stringified
+    res.status(response.statusCode).json(responseBody);
+  } catch (error) {
+    console.error('Error in /analyzeRisk endpoint:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } 
+});
 
 // Lambda handler for Netlify
 const handler = async (event, context) => {
