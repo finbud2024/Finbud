@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "type":"module",
     "scripts": {
-       "start": "concurrently \"npm run server\" \"npm run client\"",
+       "start": "npm run server",
         "build": "npm run build --prefix frontend",
         "server": "cd backend && npm run start",
         "client": "cd frontend && npm run serve"
