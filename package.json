@@ -5,7 +5,8 @@
     "scripts": {
         "build": "npm run build --prefix frontend",
         "start": "npm run server",
-        "server": "cd backend && npm run start"
+        "server": "cd backend && npm run start",
+        "client": "cd frontend && npm run serve"
     },
     "devDependencies": {
         "@vue/cli-service": "^5.0.8",
