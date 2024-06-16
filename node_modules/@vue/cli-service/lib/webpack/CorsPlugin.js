@@ -1,5 +1,3 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-
 module.exports = class CorsPlugin {
   constructor ({ publicPath, crossorigin, integrity }) {
     this.crossorigin = crossorigin
@@ -24,8 +22,8 @@ module.exports = class CorsPlugin {
         }
       }
 
-      HtmlWebpackPlugin.getHooks(compilation).alterAssetTagGroups.tap(ID, data => {
-        const tags = [...data.headTags, ...data.bodyTags]
+      compilation.hooks.htmlWebpackPluginAlterAssetTags.tap(ID, data => {
+        const tags = [...data.head, ...data.body]
         if (this.crossorigin != null) {
           tags.forEach(tag => {
             if (tag.tagName === 'script' || tag.tagName === 'link') {
@@ -52,7 +50,7 @@ module.exports = class CorsPlugin {
           // the preloaded resource, and causes the files to be downloaded twice.
           // this is a Chrome bug (https://bugs.chromium.org/p/chromium/issues/detail?id=677022)
           // for now we disable preload if SRI is used.
-          data.headTags = data.headTags.filter(tag => {
+          data.head = data.head.filter(tag => {
             return !(
               tag.tagName === 'link' &&
               tag.attributes.rel === 'preload'
@@ -61,7 +59,7 @@ module.exports = class CorsPlugin {
         }
       })
 
-      HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tap(ID, data => {
+      compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tap(ID, data => {
         data.html = data.html.replace(/\scrossorigin=""/g, ' crossorigin')
       })
     })

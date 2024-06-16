@@ -1,10 +1,10 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory((global.acorn = global.acorn || {}, global.acorn.walk = {})));
-})(this, (function (exports) { 'use strict';
+  (global = global || self, factory((global.acorn = global.acorn || {}, global.acorn.walk = {})));
+}(this, function (exports) { 'use strict';
 
-  // AST walker module for ESTree compatible trees
+  // AST walker module for Mozilla Parser API compatible trees
 
   // A simple walk is one where you simply specify callbacks to be
   // called on specific nodes. The last two arguments are optional. A
@@ -14,7 +14,7 @@
   //         Expression: function(node) { ... }
   //     });
   //
-  // to do something with all expressions. All ESTree node types
+  // to do something with all expressions. All Parser API node types
   // can be used to identify node types, as well as Expression and
   // Statement, which denote categories of nodes.
   //
@@ -25,26 +25,26 @@
   function simple(node, visitors, baseVisitor, state, override) {
     if (!baseVisitor) { baseVisitor = base
     ; }(function c(node, st, override) {
-      var type = override || node.type;
+      var type = override || node.type, found = visitors[type];
       baseVisitor[type](node, st, c);
-      if (visitors[type]) { visitors[type](node, st); }
+      if (found) { found(node, st); }
     })(node, state, override);
   }
 
   // An ancestor walk keeps an array of ancestor nodes (including the
   // current node) and passes them to the callback as third parameter
   // (and also as state parameter when no other state is present).
-  function ancestor(node, visitors, baseVisitor, state, override) {
+  function ancestor(node, visitors, baseVisitor, state) {
     var ancestors = [];
     if (!baseVisitor) { baseVisitor = base
     ; }(function c(node, st, override) {
-      var type = override || node.type;
+      var type = override || node.type, found = visitors[type];
       var isNew = node !== ancestors[ancestors.length - 1];
       if (isNew) { ancestors.push(node); }
       baseVisitor[type](node, st, c);
-      if (visitors[type]) { visitors[type](node, st || ancestors, ancestors); }
+      if (found) { found(node, st || ancestors, ancestors); }
       if (isNew) { ancestors.pop(); }
-    })(node, state, override);
+    })(node, state);
   }
 
   // A recursive walk is one where your functions override the default
@@ -72,15 +72,11 @@
 
   // A full walk triggers the callback on each node
   function full(node, callback, baseVisitor, state, override) {
-    if (!baseVisitor) { baseVisitor = base; }
-    var last
-    ;(function c(node, st, override) {
+    if (!baseVisitor) { baseVisitor = base
+    ; }(function c(node, st, override) {
       var type = override || node.type;
       baseVisitor[type](node, st, c);
-      if (last !== node) {
-        callback(node, st, type);
-        last = node;
-      }
+      if (!override) { callback(node, st, type); }
     })(node, state, override);
   }
 
@@ -88,16 +84,13 @@
   // the callback on each node
   function fullAncestor(node, callback, baseVisitor, state) {
     if (!baseVisitor) { baseVisitor = base; }
-    var ancestors = [], last
+    var ancestors = []
     ;(function c(node, st, override) {
       var type = override || node.type;
       var isNew = node !== ancestors[ancestors.length - 1];
       if (isNew) { ancestors.push(node); }
       baseVisitor[type](node, st, c);
-      if (last !== node) {
-        callback(node, st || ancestors, ancestors, type);
-        last = node;
-      }
+      if (!override) { callback(node, st || ancestors, ancestors, type); }
       if (isNew) { ancestors.pop(); }
     })(node, state);
   }
@@ -175,10 +168,17 @@
     return max
   }
 
+  // Fallback to an Object.create polyfill for older environments.
+  var create = Object.create || function(proto) {
+    function Ctor() {}
+    Ctor.prototype = proto;
+    return new Ctor
+  };
+
   // Used to create a custom walker. Will fill in all missing node
   // type properties with the defaults.
   function make(funcs, baseVisitor) {
-    var visitor = Object.create(baseVisitor || base);
+    var visitor = create(baseVisitor || base);
     for (var type in funcs) { visitor[type] = funcs[type]; }
     return visitor
   }
@@ -190,7 +190,7 @@
 
   var base = {};
 
-  base.Program = base.BlockStatement = base.StaticBlock = function (node, st, c) {
+  base.Program = base.BlockStatement = function (node, st, c) {
     for (var i = 0, list = node.body; i < list.length; i += 1)
       {
       var stmt = list[i];
@@ -200,7 +200,7 @@
   };
   base.Statement = skipThrough;
   base.EmptyStatement = ignore;
-  base.ExpressionStatement = base.ParenthesizedExpression = base.ChainExpression =
+  base.ExpressionStatement = base.ParenthesizedExpression =
     function (node, st, c) { return c(node.expression, st, "Expression"); };
   base.IfStatement = function (node, st, c) {
     c(node.test, st, "Expression");
@@ -405,8 +405,6 @@
     if (node.source) { c(node.source, st, "Expression"); }
   };
   base.ExportAllDeclaration = function (node, st, c) {
-    if (node.exported)
-      { c(node.exported, st); }
     c(node.source, st, "Expression");
   };
   base.ImportDeclaration = function (node, st, c) {
@@ -418,10 +416,7 @@
     }
     c(node.source, st, "Expression");
   };
-  base.ImportExpression = function (node, st, c) {
-    c(node.source, st, "Expression");
-  };
-  base.ImportSpecifier = base.ImportDefaultSpecifier = base.ImportNamespaceSpecifier = base.Identifier = base.PrivateIdentifier = base.Literal = ignore;
+  base.ImportSpecifier = base.ImportDefaultSpecifier = base.ImportNamespaceSpecifier = base.Identifier = base.Literal = base.Import = ignore;
 
   base.TaggedTemplateExpression = function (node, st, c) {
     c(node.tag, st, "Expression");
@@ -441,9 +436,9 @@
       c(elt, st);
     }
   };
-  base.MethodDefinition = base.PropertyDefinition = base.Property = function (node, st, c) {
+  base.MethodDefinition = base.Property = function (node, st, c) {
     if (node.computed) { c(node.key, st, "Expression"); }
-    if (node.value) { c(node.value, st, "Expression"); }
+    c(node.value, st, "Expression");
   };
 
   exports.ancestor = ancestor;
@@ -457,5 +452,7 @@
   exports.make = make;
   exports.recursive = recursive;
   exports.simple = simple;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

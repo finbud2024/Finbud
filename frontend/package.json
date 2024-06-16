@@ -8,11 +8,14 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "@google/generative-ai": "^0.12.0",
     "axios": "^1.7.2",
     "bootstrap-vue": "^2.23.1",
     "dotenv": "^16.4.5",
+    "moment": "^2.30.1",
     "process": "^0.11.10",
     "vue": "^3.4.27",
+    "vue-axios": "^3.5.2",
     "vue-cli": "^2.9.6",
     "vue-router": "^4.3.2"
   },
