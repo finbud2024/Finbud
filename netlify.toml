@@ -3,16 +3,6 @@
   publish = "frontend/dist"
   command = "npm run build --prefix frontend"
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/server/:splat"
-  status = 200
-  force = true
-
-[functions]
-  external_node_modules = ["express"]
-  node_bundler = "esbuild"
-
 [dev]
   targetPort = 3000
   port = 8888
