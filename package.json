@@ -1,12 +1,14 @@
 {
     "name": "FinBud-AI-bot",
     "version": "0.1.0",
-    "type":"module",
+    "type": "module",
     "scripts": {
+        "build": "npm run build --prefix frontend",
         "start": "npm run server",
         "server": "cd backend && npm run start"
     },
     "devDependencies": {
+        "@vue/cli-service": "^5.0.8",
         "serverless-http": "^3.2.0"
     },
     "dependencies": {
