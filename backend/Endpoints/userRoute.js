@@ -1,4 +1,4 @@
-import express, { request } from 'express';
+import express from 'express';
 import User from '../Database Schema/User.js';
 
 const userRoute = express.Router();
