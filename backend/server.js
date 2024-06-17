@@ -16,6 +16,7 @@ const analyzeStock = require('./functions/analyzeStock').handler;
 const defineTerm = require('./functions/defineTerm').handler;
 const generateQuiz = require('./functions/generateQuiz').handler;
 const normAns = require('./functions/normAns').handler;
+const generateNews = require('./functions/generateNews').handler;
 
 // Helper to handle async route handlers
 const asyncHandler = fn => (req, res, next) => {
@@ -40,6 +41,11 @@ app.post('/generateQuiz', asyncHandler(async (req, res) => {
 
 app.post('/normAns', asyncHandler(async (req, res) => {
     const response = await normAns({ body: JSON.stringify(req.body) }, null);
+    res.status(response.statusCode).json(JSON.parse(response.body));
+}));
+
+app.post('/generateNews', asyncHandler(async (req, res) => {
+    const response = await generateNews({ body: JSON.stringify(req.body) }, null);
     res.status(response.statusCode).json(JSON.parse(response.body));
 }));
 
