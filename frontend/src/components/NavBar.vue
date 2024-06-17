@@ -57,7 +57,7 @@ export default {
   },
   async mounted(){
     try{
-      const api = process.env.NODE_ENV !== 'production'? "http://localhost:8888/api/users":"https://finbud-ai.netlify.app/api/users";
+      const api = process.env.NODE_ENV !== 'production'? "http://localhost:8888/.netlify/functions/server/users":"https://finbud-ai.netlify.app/.netlify/functions/server/users";
       const check = await axios.get(api);
       console.log(check);
     }catch(err){
