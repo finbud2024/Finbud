@@ -29,6 +29,10 @@ import MessageComponent from '../components/MessageComponent.vue';
 import ChatFrame from '../components/ChatFrame.vue';
 import UserInput from '../components/UserInput.vue';
 // import SideBar from '../components/SideBar.vue';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+// const gemini_api = process.env.VUE_APP_GEMINI_API_KEY;
+// const genAI = new GoogleGenerativeAI(gemini_api);
+const genAI = new GoogleGenerativeAI('AIzaSyBoqZUePAhe5n5INyoApGlytjx57t8-UYI');
 export default {
     name: 'RiskChat',
     components: {
@@ -118,37 +122,23 @@ export default {
                 });
             }
         },
-
-        // console.log(typeof(response.data.text));
-        // await this.addTypingResponse(response.data.text, false);
         async handleMessage(userMessage) {
             try {
-                // Send user's message to the backend for processing
-                const response = await axios.post(`${apiUrl}/analyzeRisk`, { userMessage });
-
-                // Log and process the API response
+                // const response = await axios.post(`${apiUrl}/analyzeRisk`, { userMessage });
+                const response = await this.start(userMessage);
                 console.log("API response:", response);
-                console.log("Type of response data:", typeof (response.data));
-
-                // Assuming addTypingResponse handles the response data
-                await this.addTypingResponse(response.data, false);
+                // console.log("Type of response data:", typeof (response.data)
+                await this.addTypingResponse(response, false);
             } catch (error) {
-                // Handle Axios error or any other error from backend
                 console.error('Error in handleMessage:', error);
-
-                // Optionally, handle different types of errors (e.g., network, server-side)
                 if (error.response) {
-                    // The request was made and the server responded with a status code
                     console.error("Response status:", error.response.status);
                     console.error("Response data:", error.response.data);
                 } else if (error.request) {
-                    // The request was made but no response was received
                     console.error("No response received:", error.request);
                 } else {
-                    // Something happened in setting up the request that triggered an Error
                     console.error("Error setting up the request:", error.message);
                 }
-
                 // Update UI with error message
                 this.messages.push({
                     text: `Error processing your message: ${error.message}`,
@@ -156,6 +146,28 @@ export default {
                     timestamp: new Date().toLocaleTimeString()
                 });
             }
+        },
+        async start(prompt) {
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const chat = await model.startChat({
+                history: [
+                    {
+                        role: "user",
+                        parts: [{ text: "I'm a 15 years old boy, from now on, answer me everything simply!" }],
+                    },
+                    {
+                        role: "model",
+                        parts: [{ text: "Great to meet you. What would you like to know?" }],
+                    },
+                ],
+                generationConfig: {
+                    maxOutputTokens: 100,
+                },
+            });
+            const result = await chat.sendMessage(prompt);
+            const response = await result.response;
+            const text = response.text();
+              return text;
         },
         addTypingResponse(text, isUser) {
             const typingMessage = {
