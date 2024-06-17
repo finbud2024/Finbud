@@ -141,17 +141,6 @@
           this.loading = false;
         }
       }, 
-      async saveStock(){
-        for (const stock of this.stockQuotes) {
-            try {
-              await axios.post('/api/saveStock', stock);
-            } catch (error) {
-              console.log(error);
-              throw error;
-            }
-          }
-      },
-      
       async getCryptoPrice() {
         const url = "https://api.coinranking.com/v2/coins";
         try {
