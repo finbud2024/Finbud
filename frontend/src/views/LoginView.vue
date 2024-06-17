@@ -42,7 +42,7 @@ export default {
       try {
         const username = this.username;
         const password = this.password;
-        const response = await axios.get(`http://localhost:3000/users/?username=${username}&password=${password}`);
+        const response = await axios.get(`http://localhost:3000/api/users/?username=${username}&password=${password}`);
         
         console.log('Login successful!');
         console.log(response.data.token);
