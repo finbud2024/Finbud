@@ -3,7 +3,7 @@
     <div class="team-section">
       <li class="title">About us</li>
       <li class="description">
-        We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures.
+        We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures. Our team consists of experienced professionals with diverse backgrounds in technology, finance, and business. We are passionate about leveraging technology to make financial management accessible and straightforward for everyone.
       </li>
     </div>
     <div class="team-section">
@@ -24,6 +24,21 @@
         </div>
       </div>
     </div>
+    
+    <!-- Testimonials Section -->
+    <div class="testimonials-section">
+      <li class="title">What our users say about FinBud</li>
+      <div class="testimonials-container">
+        <div class="testimonial-card" v-for="testimonial in testimonials" :key="testimonial.name">
+          <h3>{{ testimonial.name }}</h3>
+          <div class="stars">
+            <span v-for="star in 5" :key="star" class="star">&#9733;</span>
+          </div>
+          <p>{{ testimonial.feedback }}</p>
+        </div>
+      </div>
+    </div>
+    
     <section id="contact-page" class="animate fade-in">
       <div class="contact-header animate slide-in-up">
         <h1>We'd love to talk about how we can work together.</h1>
@@ -87,8 +102,18 @@ export default {
           intro: "I'm a senior at Macalester College, studying Quantitative Economics and Computer Science. I aim to create a startup that merges Finance, Tech, and Business to benefit young people in Vietnam.",
           img: require('@/assets/tri.jpeg'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
+          ],
+        },
+        {
+          name: 'Minh Nguyen',
+          role: 'Chief Technology Officer (CTO)',
+          intro: "MCS, University of Iowa. BA in Computer Science and Economics & Minor in Statistics, Grinell College. Passionate about AI/ML, software engineering, and the intersection of technology and economics.",
+          img: require('@/assets/MinhNguyen_Photo.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/minh~nguyen/' },
+            { name: 'GitHub', link: 'https://github.com/minh-nguyen-mqn' },
           ],
         },
         {
@@ -97,8 +122,8 @@ export default {
           intro: 'As a junior Computer Science major at Luther College, I am leading a team of 3 in developing the web app Finbud.',
           img: require('@/assets/tung.jpg'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
           ],
         },
         {
@@ -107,8 +132,8 @@ export default {
           intro: 'My innovation endeavors aim to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy.',
           img: require('@/assets/BinhMinh.png'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
           ],
         },
         {
@@ -117,9 +142,27 @@ export default {
           intro: 'A first year Computer Science student at VinUniversity',
           img: require('@/assets/bach.jpg'),
           socialIcons: [
-            { name: 'Facebook', link: 'https://www.facebook.com' },
-            { name: 'Instagram', link: 'https://www.instagram.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
+            { name: 'GitHub', link: 'https://www.github.com' },
           ],
+        },
+      ],
+      testimonials: [
+        {
+          name: 'John Doe',
+          feedback: 'FinBud has completely transformed my financial management. The AI chatbot provides spot-on advice and helps me stay on top of my investments and expenses.',
+        },
+        {
+          name: 'Jane Smith',
+          feedback: 'I love using FinBud! It\'s like having a personal financial advisor available 24/7. The insights and tips are incredibly useful and easy to understand.',
+        },
+        {
+          name: 'Michael Johnson',
+          feedback: 'The best financial tool I have ever used. FinBud\'s AI is amazing at predicting market trends and giving personalized advice.',
+        },
+        {
+          name: 'Emily Davis',
+          feedback: 'FinBud has helped me save so much money. The budgeting tools and financial insights are top-notch.',
         },
       ],
     };
@@ -155,13 +198,13 @@ body {
 .container {
   font-family: 'Space Grotesk', sans-serif;
   list-style-type: none;
+  padding: 20px;
 }
 
 .team-section {
   background-color: white;
   margin-bottom: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding: 2rem;
 }
 
 .title {
@@ -182,24 +225,22 @@ body {
 }
 
 .team-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 2rem;
 }
 
 .team-member {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   background: #fff;
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: calc(25% - 8rem);
   transition: transform 0.3s, box-shadow 0.3s;
   animation: fadeIn 1s ease-in-out;
   font-weight: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -242,15 +283,6 @@ body {
   margin-bottom: 1rem;
 }
 
-.team-member img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 1rem;
-  object-fit: cover;
-  animation: zoomIn 1s ease-in-out;
-}
-
 .social-icons {
   margin-top: 5px;
 }
@@ -264,6 +296,36 @@ body {
 
 .social-icons a:hover {
   color: #0056b3;
+}
+
+.testimonials-section {
+  background-color: white;
+  margin: 2rem 0;
+  padding: 2rem;
+}
+
+.testimonials-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.testimonial-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.stars {
+  color: gold;
+  margin: 0.5rem 0;
+}
+
+.star {
+  font-size: 1.2rem;
 }
 
 @keyframes fadeIn {
@@ -308,21 +370,17 @@ body {
   }
 }
 
-@media (max-width: 1024px) {
-  .title {
-    font-size: 30px;
-  }
-  .description {
-    font-size: 15px;
-  }
-  .team-member {
-    width: calc(50% - 2rem);
-  }
-}
-
 @media (max-width: 768px) {
-  .team-member {
-    width: calc(100% - 2rem);
+  .team-member, .testimonial-card {
+    width: 100%;
+  }
+
+  .team-container, .testimonials-container {
+    padding: 0 10px;
+  }
+
+  .contact-form {
+    padding: 20px;
   }
 }
 
@@ -413,6 +471,7 @@ body {
 
 .contact-info {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
   background: white;
   padding: 20px;
@@ -422,6 +481,7 @@ body {
 
 .info-block {
   text-align: center;
+  margin: 10px 0;
 }
 
 .info-block .icon {

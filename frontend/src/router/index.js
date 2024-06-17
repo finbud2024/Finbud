@@ -12,6 +12,7 @@ import StockSimulator from '@/views/StockSimulator.vue';
 import GoalPage from '@/views/GoalPage.vue';
 import RecommendationGenerator from '@/views/RecommendationGenerator.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
+import ProfilePage from '@/views/ProfilePage.vue';
 
 const routes = [
   {
@@ -72,15 +73,15 @@ const routes = [
     component: GoalPage,
   },
   {
-    path: '/recommendation-generator',
-    name: 'RecommendationGenerator',
-    component: RecommendationGenerator,
-  },
-  {
-    path: '/trading-market',
-    name: 'TradingMarket',
+    path: '/market',
+    name: 'Market',
     component: MarketDataCenter,
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfilePage,
+  }
 ];
 
 const router = createRouter({
