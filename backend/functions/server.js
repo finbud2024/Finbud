@@ -1,10 +1,9 @@
-import fetch from 'node-fetch';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import threadRoute from '../Endpoints/threadtRoute.js';
+// import threadRoute from '../Endpoints/threadtRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
 import serverless from 'serverless-http';
 import{ handler as analyzeRisk }  from './analyzeRisk.js';
@@ -13,6 +12,7 @@ import{ handler as analyzeRisk }  from './analyzeRisk.js';
 dotenv.config();
 const mongoURI = process.env.MONGO_URI;
 const app = express();
+const router = express.Router();
 
 if (!mongoURI) {
   console.error('MONGO_URI is not defined in the environment variables');
@@ -20,28 +20,26 @@ if (!mongoURI) {
 }
 
 // Connect to MongoDB
-let isConnected = false;
-const connectToDatabase = async () => {
-  if (isConnected) {
-    return;
-  }
-  try {
-    await mongoose.connect(mongoURI);
-    isConnected = true;
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('Error connecting to MongoDB:', err.message);
-    process.exit(1);
-  }
-};
+mongoose.connect(mongoURI)
+.then(() => console.log('MongoDB connected'))
+.catch((err) => {
+  console.error('Error connecting to MongoDB:', err.message);
+  process.exit(1);
+});
+
+router.get('/test',(req,res)=>{
+   return res.json({
+    "a":"aaaaaa",
+    "b":"bbbbbb"
+   })
+});
+
+app.use("/.netlify/functions/server", router);
 
 // Set up Express middlewares
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
-app.use('/api/', threadRoute)
-app.use('/api/', userRoute);
-
 app.post('/analyzeRisk', async(req, res) => {
   console.log("request from server.js :", req.body);
   try{
@@ -64,21 +62,8 @@ app.post('/analyzeRisk', async(req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   } 
 });
+// app.use('/.netlify/functions/server/', threadRoute)
+app.use('/.netlify/functions/server/', userRoute);
 
-// Lambda handler for Netlify
-const handler = async (event, context) => {
-  await connectToDatabase();
-  const serverlessHandler = serverless(app);
-  return serverlessHandler(event, context);
-};
-
-// Local development setup
-if (process.env.NODE_ENV !== 'production') {
-  const port = 3000;
-  app.listen(port, async () => {
-    await connectToDatabase();
-    console.log(`Server is running on port ${port}`);
-  });
-}
-
-export { handler };
+const handler = serverless(app);
+export {handler};
