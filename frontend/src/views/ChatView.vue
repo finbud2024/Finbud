@@ -2,8 +2,9 @@
   <div class="home-container">
     <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
     <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-    <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread" @edit-thread="editThread" @save-thread-name="saveThreadName"
-      @cancel-edit="cancelEdit" @select-thread="selectThread" />
+    <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
+      @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
+      @select-thread="selectThread" />
     <div class="chat-container">
       <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
@@ -25,9 +26,10 @@ import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import SideBar from '../components/SideBar.vue';
 
-const apiUrl = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3000' 
-  : 'https://finbud-ai.netlify.app/.netlify/functions';
+
+const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://finbud-ai.netlify.app/.netlify/functions';
+const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export default {
   name: 'ChatView',
@@ -112,6 +114,13 @@ export default {
       try {
         if (userMessage.toLowerCase().includes("define")) {
           await this.handleDefineMessage(userMessage);
+          // if prompt contains "buy"
+        } else if (userMessage.toLowerCase().includes("buy")) {
+          this.handleBuyMessage(userMessage);
+          // if prompt contains "sell"
+        } else if (userMessage.toLowerCase().includes("sell")) {
+          this.handleSellMessage(userMessage);
+          //Possible to break code here ***** FIX ******
         } else {
           const stockCode = this.extractStockCode(userMessage);
           if (stockCode.length > 0) {
@@ -132,24 +141,75 @@ export default {
 
     async handleDefineMessage(userMessage) {
       const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-      const response = await axios.post(`${apiUrl}/defineTerm`, { term });
-      this.addTypingResponse(response.data.definition, false);
+      //const response = await axios.post(`${apiUrl}/defineTerm`, { term });
+      try {
+        const prompt = `Explain ${term} to me as if I'm 15.`;
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.7
+        }, {
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const responseData = response.data;
+        const answer = responseData.choices[0]?.message?.content || "";
+        this.addTypingResponse(answer, false);
+
+      } catch (err) {
+        console.log(err);
+      }
     },
 
-    async handleStockMessage(stockCode) {
-      const price = await fetchStockPrice(stockCode);
-      const timeStamp = new Date().toLocaleTimeString();
-      let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
 
+    async handleStockMessage(stockCode) {
+      //alpha vantage api      
+      const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${ALPHA_VANTAGE_API_KEY}`);
+      const stockData = stockResponse.data;
+      const price = stockData['Global Quote']['05. price'];
+      const timeStamp = new Date().toLocaleTimeString();
+
+      let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
       this.addTypingResponse(responseText, false);
 
-      const response = await axios.post(`${apiUrl}/analyzeStock`, { stockSymbol: stockCode });
-      this.addTypingResponse(response.data.analysis, false);
+      //openai api
+      const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7
+        }, {
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const responseData = response.data;
+      const answer = responseData.choices[0]?.message?.content || "";
+
+      this.addTypingResponse(answer, false);
     },
 
     async handleGeneralMessage(userMessage) {
-      const response = await axios.post(`${apiUrl}/normAns`, { term: userMessage });
-      this.addTypingResponse(response.data.definition, false);
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: userMessage }],
+            temperature: 0.7
+        }, {
+            headers: {
+                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+      const responseData = response.data;
+      const answer = responseData.choices[0]?.message?.content || "";
+      
+      this.addTypingResponse(answer, false);
     },
 
     addTypingResponse(text, isUser) {
@@ -231,9 +291,11 @@ export default {
   .side-bar {
     display: none;
   }
+
   .toggle-sidebar-btn {
     display: block;
   }
+
   .chat-header {
     font-size: 1rem;
     padding: 10px;
@@ -241,15 +303,15 @@ export default {
 }
 
 .overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-  }
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
 
 .side-bar.is-visible {
   display: block;
