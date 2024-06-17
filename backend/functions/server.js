@@ -42,7 +42,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 // app.use('/.netlify/functions/server/', threadRoute)
-// app.use('/.netlify/functions/server', userRoute);
+app.use('/.netlify/functions/server', userRoute);
 
 const handler = serverless(app);
 export {handler};
