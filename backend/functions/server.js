@@ -27,6 +27,7 @@ mongoose.connect(mongoURI)
 });
 
 router.get('/test',(req,res)=>{
+  console.log(process.cwd())
    return res.json({
     "a":"aaaaaa",
     "b":"bbbbbb"
@@ -41,7 +42,7 @@ app.use(bodyParser.json())
 app.use(cors())
 
 // app.use('/.netlify/functions/server/', threadRoute)
-app.use('/.netlify/functions/server/', userRoute);
+// app.use('/.netlify/functions/server', userRoute);
 
 const handler = serverless(app);
 export {handler};
