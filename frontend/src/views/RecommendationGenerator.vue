@@ -39,41 +39,32 @@
       </div>
     </div>
     <div class="company-container">
-      <div>
+        <div class="company-cards">
         <h1 v-if="searchedStocks && similarStocks && count === 5">
-          We found 5 alternatives
+            We found 5 alternatives
         </h1>
         <CompanyCard
-          v-for="stock in similarStocks"
-          :key="stock.symbol"
-          :companyName="stock.symbol"
-          :width="800"
+            v-for="stock in similarStocks"
+            :key="stock.symbol"
+            :companyName="stock.symbol"
         />
-      </div>
-      <div>
+        </div>
+        <div class="searched-company">
         <h1 v-if="similarStocks && searchedStocks && count === 5">
-          You searched for:
+            You searched for:
         </h1>
         <SmallCompanyCard
-          v-if="similarStocks && searchedStocks && count === 5"
-          :companyName="searchedStocks"
-          :width="500"
+            v-if="similarStocks && searchedStocks && count === 5"
+            :companyName="searchedStocks"
+            :width="350"
         />
         <TechAnalysis
-          v-if="similarStocks && searchedStocks && count === 5"
-          :companyName="searchedStocks"
-          :width="500"
+            v-if="similarStocks && searchedStocks && count === 5"
+            :companyName="searchedStocks"
+            :width="350"
+            :height="400"
         />
-      </div>
-    </div>
-    <div class="additional-info" v-if="similarStocks && searchedStocks && count === 5">
-      <h2>Additional Information</h2>
-      <div class="info-grid">
-        <div class="info-item" v-for="(info, index) in additionalInfo" :key="index">
-          <h3>{{ info.title }}</h3>
-          <p>{{ info.description }}</p>
         </div>
-      </div>
     </div>
   </div>
 </template>
@@ -98,28 +89,23 @@ export default {
       searchedStocks: '',
       searching: false,
       count: 0,
-      additionalInfo: [
-        { title: 'Market Trends', description: 'Latest market trends and insights.' },
-        { title: 'Investment Tips', description: 'Top tips for successful stock investments.' },
-        { title: 'Risk Analysis', description: 'Understand the risks involved with similar stocks.' },
-      ],
     };
   },
-    methods: {
+  methods: {
     async searchSimilarStocks() {
-        const url = `https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-recommendations?symbol=${this.query}`;
-        try {
+      const url = `https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-recommendations?symbol=${this.query}`;
+      try {
         const res = await axios.get(url, {
-            headers: {
+          headers: {
             'x-rapidapi-key': 'a48948c3dbmsh0752220de3da440p119094jsnf7916aa82678',
             'x-rapidapi-host': 'apidojo-yahoo-finance-v1.p.rapidapi.com',
-            },
+          },
         });
         this.similarStocks = res.data.finance.result[0].quotes;
         this.count = res.data.finance.result[0].count;
-        } catch (err) {
+      } catch (err) {
         console.log(err);
-        }
+      }
     },
     handleSearch() {
       this.searching = true;
@@ -148,6 +134,7 @@ export default {
   flex-direction: column;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
 }
 
@@ -270,6 +257,9 @@ export default {
   0% {
     transform: rotate(0deg);
   }
+  50% {
+    transform: rotate(180deg);
+  }
   100% {
     transform: rotate(360deg);
   }
@@ -277,9 +267,11 @@ export default {
 
 @keyframes opa {
   0% {
+    opacity: 0;
+  }
+  50% {
     opacity: 1;
   }
-  50%,
   100% {
     opacity: 0;
   }
@@ -287,69 +279,39 @@ export default {
 
 .company-container {
   display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin-top: 20px;
-}
-
-.company-container h1 {
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  text-align: center;
 }
 
-.additional-info {
-  margin-top: 40px;
-  text-align: center;
-}
-
-.additional-info h2 {
-  color: #1e06fb;
-  margin-bottom: 20px;
-}
-
-.info-grid {
+.company-cards {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
 }
 
-.info-item {
-  background-color: #f0f0f0;
-  border: 1px solid #dcdcdc;
-  border-radius: 10px;
-  margin: 10px;
-  padding: 20px;
-  width: 250px;
-  box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.1);
+.searched-company {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
 }
 
-.info-item h3 {
-  color: #1e06fb;
-}
-
-/* Media queries for responsiveness */
-@media (max-width: 768px) {
-  .bar {
-    width: 90%;
-  }
-
-  .searchbar {
-    width: calc(100% - 40px);
-    margin: 0 20px;
-  }
-
-  .buttons {
-    flex-direction: column;
-  }
-
-  .button {
-    width: 100%;
-    margin: 10px 0;
-  }
-
+@media (min-width: 768px) {
   .company-container {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .company-cards {
+    flex: 2;
+  }
+
+  .searched-company {
+    flex: 1;
+    margin-top: 0;
   }
 }
 </style>

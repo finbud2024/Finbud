@@ -1,4 +1,3 @@
-<!-- LoginView.vue -->
 <template>
   <div class="login-container">
     <h1>Sign in to FinBud</h1>
@@ -17,15 +16,19 @@
       <div class="input-group">
         <label for="password">Password:</label>
         <input type="password" id="password" v-model="password" required>
+        <p id="errorMessage" class="wrong-password"> wrong username or password!</p>
       </div>
       <div class="forgot-password"><a href="#">Forgot?</a></div>
       <button type="submit" class="login-button">Sign In</button>
     </form>
-    <p class="signup-link">Don't have an account? <a href="#">Sign up</a></p>
+    <p class="signup-link">Don't have an account? <router-link to="/signup">Sign up</router-link></p>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+import authStore from '@/authStore';
+
 export default {
   name: 'LoginView',
   data() {
@@ -35,18 +38,21 @@ export default {
     };
   },
   methods: {
-    onLogin() {
-      // Placeholder logic for login
-      if (this.username === 'user' && this.password === 'pass') {
-        alert('Login successful!');
+    async onLogin() {
+      try {
+        const username = this.username;
+        const password = this.password;
+        const response = await axios.get(`http://localhost:3000/api/users/?username=${username}&password=${password}`);
+        
+        console.log('Login successful!');
+        console.log(response.data.token);
+        authStore.login(response.data._id);
         this.$router.push('/'); // Redirect to the main page after login
-      } else {
-        alert('Invalid username or password!');
+      } catch (err) {
+        console.error('Login Error:', err.response ? err.response.data : err.message);
+        document.getElementById('errorMessage').classList.remove('wrong-password');
+        //alert('Invalid username or password!');
       }
-    },
-    signInWithGoogle() {
-      // Placeholder action for Google sign-in
-      alert('Google sign-in not implemented.');
     },
   },
 };
@@ -150,6 +156,10 @@ input[type="password"] {
   font-family: 'Space Grotesk', sans-serif;
 }
 
+.login-button:hover {
+  cursor: pointer;
+}
+
 .signup-link {
   margin-top: 20px;
 }
@@ -161,5 +171,13 @@ input[type="password"] {
 
 .signup-link a:hover {
   text-decoration: underline;
+}
+
+#errorMessage{
+  color: red;
+}
+
+.wrong-password {
+  display: none;
 }
 </style>
