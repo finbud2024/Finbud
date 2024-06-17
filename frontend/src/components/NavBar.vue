@@ -7,6 +7,7 @@
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
+        <li><router-link to="/market" class="market">Market</router-link></li>
       </ul>
       <ul class="nav-actions">
         <li v-if="authStore.isAuthenticated" class="dropdown">
