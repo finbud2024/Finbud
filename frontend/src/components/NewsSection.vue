@@ -20,10 +20,6 @@
 import axios from 'axios';
 import Modal from './Modal.vue';
 
-const apiUrl = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3000'
-  : 'https://finbud-ai.netlify.app/.netlify/functions';
-
 export default {
   name: 'NewsSection',
   components: {
@@ -45,14 +41,23 @@ export default {
   },
   methods: {
     async fetchNews() {
+      
+      const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://finbud-ai.netlify.app/.netlify/functions';
+
       try {
-        const response = await axios.post(`${apiUrl}/generateNews`, {
-          apiKey: process.env.NEWS_API_KEY,
-          category: 'business',
-          country: 'us',
+        const response = await axios.get('https://newsapi.org/v2/top-headlines', {
+          params: {
+            apiKey: process.env.NEWS_API_KEY, // Use environment variable
+            category: 'business',
+            country: 'us',
+          },
         });
 
-        this.newsList = response.data.articles;
+        const articles = response.data.articles.filter(news => news.title && news.urlToImage);
+
+        const urlCheckResponse = await axios.post(apiUrl, { articles });
+
+        this.newsList = urlCheckResponse.data.articles;
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
@@ -95,8 +100,8 @@ export default {
 }
 
 .news-item {
-  flex: 0 0 auto;
-  width: 300px;
+  flex: 0 0 20%;
+  max-width: 300px;
   border: 1px solid #ddd;
   border-radius: 10px;
   overflow: hidden;
@@ -154,24 +159,5 @@ export default {
 .no-interaction {
   pointer-events: none;
   opacity: 0.5;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .news-item {
-    width: 250px;
-  }
-}
-
-@media (max-width: 992px) {
-  .news-item {
-    width: 300px;
-  }
-}
-
-@media (max-width: 768px) {
-  .news-item {
-    width: 350px;
-  }
 }
 </style>

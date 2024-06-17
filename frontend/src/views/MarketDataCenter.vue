@@ -3,14 +3,17 @@
     <!--<MarketHeader />-->
     <h1 class="headtitle">Market Data Center</h1>
     <div class="market-data-center">
+      
       <div class="market-section">
         <div class="section-title">CRYPTOCURRENCY</div>
         <CryptoWatch class="CryptoArea" />
         <div class="section-title">STOCK</div>
         <StockWatch class="StockArea" />
+        <div class="section-title">REAL ESTATE</div>
+        <RealEstateMap class="RealEstate" />
       </div>
     </div>
-    <NewsSection :disableClicks="showPopup" />
+    <!--<NewsSection :disableClicks="showPopup" />-->
   </div>
 </template>
 
@@ -19,6 +22,7 @@
 import NewsSection from '../components/NewsSection.vue';
 import CryptoWatch from '@/components/CryptoWatch.vue';
 import StockWatch from '@/components/StockWatch.vue';
+import RealEstateMap from '@/components/RealEstateMap.vue'; 
 
 export default {
   name: 'MarketDataCenter',
@@ -26,7 +30,8 @@ export default {
     //MarketHeader,
     NewsSection,
     CryptoWatch,
-    StockWatch
+    StockWatch,
+    RealEstateMap
   },
 };
 </script>
@@ -75,7 +80,7 @@ body {
   padding-bottom: 0.5rem;
 }
 
-.CryptoArea, .StockArea {
+.CryptoArea, .StockArea, .RealEstate {
   background: #fff;
   padding: 1rem;
   border-radius: 8px;
@@ -98,7 +103,7 @@ body {
     font-size: 1.25rem;
   }
 
-  .CryptoArea, .StockArea {
+  .CryptoArea, .StockArea, .RealEstate {
     padding: 0.75rem;
   }
 }
@@ -117,7 +122,7 @@ body {
     font-size: 1rem;
   }
 
-  .CryptoArea, .StockArea {
+  .CryptoArea, .StockArea, .RealEstate {
     padding: 0.5rem;
   }
 }
@@ -136,7 +141,7 @@ body {
     font-size: 0.875rem;
   }
 
-  .CryptoArea, .StockArea {
+  .CryptoArea, .StockArea, .RealEstate {
     padding: 0.25rem;
   }
 }
