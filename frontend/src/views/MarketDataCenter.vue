@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MarketHeader />
+    <!--<MarketHeader />-->
     <h1 class="headtitle">Market Data Center</h1>
     <div class="market-data-center">
       <div class="market-section">
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import MarketHeader from '../components/MarketHeader.vue';
+//import MarketHeader from '../components/MarketHeader.vue';
 import NewsSection from '../components/NewsSection.vue';
 import CryptoWatch from '@/components/CryptoWatch.vue';
 import StockWatch from '@/components/StockWatch.vue';
@@ -23,7 +23,7 @@ import StockWatch from '@/components/StockWatch.vue';
 export default {
   name: 'MarketDataCenter',
   components: {
-    MarketHeader,
+    //MarketHeader,
     NewsSection,
     CryptoWatch,
     StockWatch
@@ -32,6 +32,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap');
+
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   background-color: #f0f2f5;
@@ -79,5 +81,63 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .market-data-center {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .headtitle {
+    font-size: 1.75rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .CryptoArea, .StockArea {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .market-data-center {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  .headtitle {
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+  }
+
+  .CryptoArea, .StockArea {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .market-data-center {
+    padding: 0.5rem;
+    margin: 0.5rem auto;
+  }
+
+  .headtitle {
+    font-size: 1.25rem;
+  }
+
+  .section-title {
+    font-size: 0.875rem;
+  }
+
+  .CryptoArea, .StockArea {
+    padding: 0.25rem;
+  }
 }
 </style>
