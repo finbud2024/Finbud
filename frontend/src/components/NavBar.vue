@@ -8,6 +8,17 @@
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
       </ul>
+      <li class="dropdown">
+        <button class="dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
+        <div class="dropdown-content" v-show="isDropdownOpen">
+          <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
+          <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
+          <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
+          <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
+          <router-link to="/riskchat" class="risk" @click="closeDropdown">RiskChat</router-link>
+          <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+        </div>
+      </li>
       <ul class="nav-actions">
         <li v-if="authStore.isAuthenticated" class="dropdown">
           <button class="dropdown-button" >Services <span class="arrow-down"></span></button>
@@ -31,6 +42,8 @@
           <router-link to="/quizz" class="quizz" @click="closeDropdownMobile">Quiz</router-link>
           <router-link to="/market" class="market" @click="closeDropdownMobile">Market</router-link>
           <router-link to="/chat-view" class="chatview" @click="closeDropdownMobile">Chat</router-link>
+          <router-link to="/risk" class="risk"  @click="closeDropdownMobile">Risk</router-link>
+          <router-link to="/riskchat" class="risk" @click="closeDropdownMobile">RiskChat</router-link>
           <router-link to="/about" class="about" @click="closeDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="closeDropdownMobile">Technology</router-link>
           <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>

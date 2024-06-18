@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div class="home-container">
     <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
     <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
@@ -108,10 +108,10 @@ export default {
       });
 
       this.newMessage = '';
+
       const userMessage = this.messages[this.messages.length - 1].text;
 
       try {
-        // if prompt contains "define"
         if (userMessage.toLowerCase().includes("define")) {
           await this.handleDefineMessage(userMessage);
           // if prompt contains "buy"
@@ -211,37 +211,7 @@ export default {
       
       this.addTypingResponse(answer, false);
     },
-    // no need for this function to become async function (NOT perfoeming any CRUD operation)
-    handleBuyMessage(userMessage) {
-      const match = userMessage.match(/#buy\s+(\w+)\s+(\d+)/i);
-      if (match) {
-        const stockName = match[1];
-        const quantity = parseInt(match[2], 10);
-        this.redirectToSimulator(stockName, quantity, 'buy');
-      } else {
-        this.addTypingResponse('Please specify the stock name and quantity you want to buy.', false);
-      }
-    },
 
-    // no need for this function to become async function (NOT perfoeming any CRUD operation)
-    handleSellMessage(userMessage) {
-      const match = userMessage.match(/#sell\s+(\w+)\s+(\d+)/i);
-      if (match) {
-        const stockName = match[1];
-        const quantity = parseInt(match[2], 10);
-        this.redirectToSimulator(stockName, -quantity, 'sell');
-      } else {
-        this.addTypingResponse('Please specify the stock name and quantity you want to sell.', false);
-      }
-    },
-    // better to pass value as payload
-    redirectToSimulator(stockName, quantity, action) {
-      const simulatorUrl = `/stock-simulator?stock=${stockName}&quantity=${quantity}&action=${action}`;
-      window.open(simulatorUrl, '_blank');
-      this.addTypingResponse(`Redirecting you to the ${action} simulator for ${stockName} with quantity ${quantity}...`, false);
-    },
-
-    //animation for typing 
     addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
@@ -273,10 +243,8 @@ export default {
     Welcome to FinBud! Here are some tips to get started:
     
     1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
-    2. Financial Term Definitions: Use "define" followed by the term (e.g., "define IPO").
-    3. Buy/Sell Stocks: Use "#buy" or "#sell" followed by the stock code and quantity (e.g., "#buy TSLA 20").
-    4. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
-    
+    2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
+    3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
   `;
 
     if (!this.messages) {
