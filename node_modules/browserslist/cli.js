@@ -1,40 +1,57 @@
 #!/usr/bin/env node
 
+var updateDb = require('update-browserslist-db')
 var fs = require('fs')
 
 var browserslist = require('./')
 var pkg = require('./package.json')
+
 var args = process.argv.slice(2)
 
-var USAGE = 'Usage:\n' +
-            '  ' + pkg.name + '\n' +
-            '  ' + pkg.name + ' "QUERIES"\n' +
-            '  ' + pkg.name + ' --config="path/to/browserlist/file"\n' +
-            '  ' + pkg.name + ' --coverage "QUERIES"\n' +
-            '  ' + pkg.name + ' --coverage=US "QUERIES"\n' +
-            '  ' + pkg.name + ' --env="environment name defined in config"\n' +
-            '  ' + pkg.name + ' --stats="path/to/browserlist/stats/file"'
+var USAGE =
+  'Usage:\n' +
+  '  npx browserslist\n' +
+  '  npx browserslist "QUERIES"\n' +
+  '  npx browserslist --json "QUERIES"\n' +
+  '  npx browserslist --config="path/to/browserlist/file"\n' +
+  '  npx browserslist --coverage "QUERIES"\n' +
+  '  npx browserslist --coverage=US "QUERIES"\n' +
+  '  npx browserslist --coverage=US,RU,global "QUERIES"\n' +
+  '  npx browserslist --env="environment name defined in config"\n' +
+  '  npx browserslist --stats="path/to/browserlist/stats/file"\n' +
+  '  npx browserslist --mobile-to-desktop\n' +
+  '  npx browserslist --ignore-unknown-versions\n'
 
-function isArg (arg) {
+function isArg(arg) {
   return args.some(function (str) {
     return str === arg || str.indexOf(arg + '=') === 0
   })
 }
 
-function error (msg) {
-  process.stderr.write(pkg.name + ': ' + msg + '\n')
+function error(msg) {
+  process.stderr.write('browserslist: ' + msg + '\n')
   process.exit(1)
 }
 
 if (isArg('--help') || isArg('-h')) {
   process.stdout.write(pkg.description + '.\n\n' + USAGE + '\n')
 } else if (isArg('--version') || isArg('-v')) {
-  process.stdout.write(pkg.name + ' ' + pkg.version + '\n')
+  process.stdout.write('browserslist ' + pkg.version + '\n')
+} else if (isArg('--update-db')) {
+  /* c8 ignore next 8 */
+  process.stdout.write(
+    'The --update-db command is deprecated.\n' +
+      'Please use npx update-browserslist-db@latest instead.\n'
+  )
+  process.stdout.write('Browserslist DB update will still be made.\n')
+  updateDb(function (str) {
+    process.stdout.write(str)
+  })
 } else {
   var mode = 'browsers'
-  var opts = { }
+  var opts = {}
   var queries
-  var country
+  var areas
 
   for (var i = 0; i < args.length; i++) {
     if (args[i][0] !== '-') {
@@ -55,8 +72,20 @@ if (isArg('--help') || isArg('-h')) {
     } else if (name === '--stats' || name === '-s') {
       opts.stats = value
     } else if (name === '--coverage' || name === '-c') {
-      mode = 'coverage'
-      if (value) country = value
+      if (mode !== 'json') mode = 'coverage'
+      if (value) {
+        areas = value.split(',')
+      } else {
+        areas = ['global']
+      }
+    } else if (name === '--json') {
+      mode = 'json'
+    } else if (name === '--mobile-to-desktop') {
+      /* c8 ignore next */
+      opts.mobileToDesktop = true
+    } else if (name === '--ignore-unknown-versions') {
+      /* c8 ignore next */
+      opts.ignoreUnknownVersions = true
     } else {
       error('Unknown arguments ' + args[i] + '.\n\n' + USAGE)
     }
@@ -64,49 +93,64 @@ if (isArg('--help') || isArg('-h')) {
 
   var browsers
   try {
-    if (!queries && !opts.config) {
-      if (browserslist.findConfig(process.cwd())) {
-        opts.path = process.cwd()
-      } else {
-        error(
-          'Browserslist config was not found. ' +
-          'Define queries or config path.' +
-          '\n\n' + USAGE
-        )
-      }
-    }
     browsers = browserslist(queries, opts)
   } catch (e) {
     if (e.name === 'BrowserslistError') {
       error(e.message)
-    } else {
+    } /* c8 ignore start */ else {
       throw e
-    }
+    } /* c8 ignore end */
   }
 
+  var coverage
   if (mode === 'browsers') {
     browsers.forEach(function (browser) {
       process.stdout.write(browser + '\n')
     })
-  } else {
-    var stats
-    if (country) {
-      stats = country
-    } else if (opts.stats) {
-      stats = JSON.parse(fs.readFileSync(opts.stats))
-    }
-    var result = browserslist.coverage(browsers, stats)
-    var round = Math.round(result * 100) / 100.0
+  } else if (areas) {
+    coverage = areas.map(function (area) {
+      var stats
+      if (area !== 'global') {
+        stats = area
+      } else if (opts.stats) {
+        stats = JSON.parse(fs.readFileSync(opts.stats))
+      }
+      var result = browserslist.coverage(browsers, stats)
+      var round = Math.round(result * 100) / 100.0
 
-    var end = 'globally'
-    if (country && country !== 'global') {
-      end = 'in the ' + country.toUpperCase()
-    } else if (opts.stats) {
-      end = 'in custom statistics'
-    }
+      return [area, round]
+    })
 
-    process.stdout.write(
-      'These browsers account for ' + round + '% of all users ' +
-            end + '\n')
+    if (mode === 'coverage') {
+      var prefix = 'These browsers account for '
+      process.stdout.write(prefix)
+      coverage.forEach(function (data, index) {
+        var area = data[0]
+        var round = data[1]
+        var end = 'globally'
+        if (area && area !== 'global') {
+          end = 'in the ' + area.toUpperCase()
+        } else if (opts.stats) {
+          end = 'in custom statistics'
+        }
+
+        if (index !== 0) {
+          process.stdout.write(prefix.replace(/./g, ' '))
+        }
+
+        process.stdout.write(round + '% of all users ' + end + '\n')
+      })
+    }
+  }
+
+  if (mode === 'json') {
+    var data = { browsers: browsers }
+    if (coverage) {
+      data.coverage = coverage.reduce(function (object, j) {
+        object[j[0]] = j[1]
+        return object
+      }, {})
+    }
+    process.stdout.write(JSON.stringify(data, null, '  ') + '\n')
   }
 }
