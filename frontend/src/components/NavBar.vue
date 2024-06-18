@@ -7,6 +7,13 @@
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
+        <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
+          <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
+          <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
+          <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
+          <router-link to="/riskchat" class="risk" @click="closeDropdown">RiskChat</router-link>
+          <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+        
       </ul>
       <li class="dropdown">
         <button class="dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
