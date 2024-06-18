@@ -35,7 +35,7 @@ module.exports = {
         Buffer: ['buffer', 'Buffer']
       }),
       new Dotenv({ // Correctly use Dotenv here
-        path: './.env.local', // Load .env.local file
+        path: '../.env', // Load .env.local file
       }),
     ]
   }

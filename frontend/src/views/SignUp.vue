@@ -47,7 +47,9 @@ export default {
             this.errorMessage = "Passwords do not match!";
             return;
           }
-          const response = await axios.post('http://localhost:3000/users', {
+
+          const apiUrl = `${process.env.DEPLOYED_URL}/users`;
+          const response = await axios.post(apiUrl, {
             accountData: {
               username: this.email,
               password: this.password
