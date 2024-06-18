@@ -8,18 +8,19 @@
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
       </ul>
-      <li class="dropdown">
-        <button class="dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
-        <div class="dropdown-content" v-show="isDropdownOpen">
-          <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
-          <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
-          <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
-          <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
-        </div>
-      </li>
       <ul class="nav-actions">
+        <li v-if="authStore.isAuthenticated" class="dropdown">
+          <button class="dropdown-button" >Services <span class="arrow-down"></span></button>
+          <div class="dropdown-content" v-show="isDropdownOpen">
+            <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
+            <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
+            <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
+            <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+          </div>
+        </li>
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li><button @click="logout" class="logout-button">Sign Out</button></li>
+        <li v-if="!authStore.isAuthenticated"><router-link to="/signup" class="login-button">Sign Up</router-link></li>
+        <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Log Out</button></li>
       </ul>
       <div class="dropdown mobile-only">
         <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
@@ -47,22 +48,17 @@ export default {
   name: 'NavBar',
   data() {
     return {
-      isDropdownOpen: false,
+      isDropdownOpen: true,
       isDropdownOpenMobile: false,
     };
   },
   async mounted(){
     try{
-      const check = await axios.get("http//localhost:3000/auth/test");
-
-      if(check.isAuthenticated){
-        //show full navbar
-        alert("yayy");
-      }else{
-        //show part of nav bar?
-        alert("no");
-      }
+      const api = process.env.NODE_ENV !== 'production'? "http://localhost:8888/.netlify/functions/server/users":"https://finbud-ai.netlify.app/.netlify/functions/server/users";
+      const check = await axios.get(api);
+      console.log(check);
     }catch(err){
+      console.log(err);
       //alert(err);
     }
 
@@ -73,9 +69,6 @@ export default {
     },
   },
   methods: {
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
-    },
     closeDropdown() {
       this.isDropdownOpen = false;
     },
@@ -132,7 +125,6 @@ export default {
   align-items: center;
   padding: 0;
   margin: 0;
-  gap: 1.2rem;
 }
 
 .nav-items li a,
@@ -149,21 +141,37 @@ export default {
 }
 
 .login-button,
-.signup-button,
-.logout-button {
+.signup-button {
   background-color: #45a049;
-  color: white;
+  color: black;
   border: none;
   border-radius: 8px;
   text-decoration: none;
   padding: 0.5rem 1rem;
+  margin-left: 1.2rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
+.logout-button{
+  background-color: #45a049;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  margin-left: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
 .signup-button:hover,
-.logout-button:hover {
+.logout-button:hover,
+.dropdown-button:hover,
+.login-button:hover {
   background-color: #3e8e41;
+  color: #007bff;
 }
 
 .dropdown {
@@ -171,13 +179,17 @@ export default {
   display: inline-block;
 }
 
-.dropbtn {
-  background-color: #04AA6D;
-  color: white;
-  padding: 10px;
-  font-size: 16px;
+.dropdown-button {
+  background-color: #45a049;
+  color: black;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  margin-left: 1.2rem;
   border: none;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .dropdown-content {
@@ -185,7 +197,7 @@ export default {
   position: absolute;
   background-color: white;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
   opacity: 0;
   transform: translateY(20px);
