@@ -160,6 +160,7 @@
     width: 100%;
     height: 500px;
     display: flex;
+    z-index: 1;
   }
   
   .location-dropdown {

@@ -40,7 +40,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Increased z-index for overlay */
+  z-index: 2000; /* Increased z-index for overlay */
 }
 
 .modal-content {
@@ -51,7 +51,7 @@ export default {
   height: 80%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
-  z-index: 1001; /* Increased z-index for content */
+  z-index: 2001; /* Increased z-index for content */
 }
 
 .close-button {
@@ -60,7 +60,7 @@ export default {
   right: 20px;
   font-size: 24px;
   cursor: pointer;
-  z-index: 1002; /* Increased z-index for close button */
+  z-index: 2002; /* Increased z-index for close button */
 }
 
 iframe {

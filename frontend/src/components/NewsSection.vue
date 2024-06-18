@@ -41,9 +41,6 @@ export default {
   },
   methods: {
     async fetchNews() {
-      
-      const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : 'https://finbud-ai.netlify.app/.netlify/functions';
-
       try {
         const response = await axios.get('https://newsapi.org/v2/top-headlines', {
           params: {
@@ -52,12 +49,7 @@ export default {
             country: 'us',
           },
         });
-
-        const articles = response.data.articles.filter(news => news.title && news.urlToImage);
-
-        const urlCheckResponse = await axios.post(apiUrl, { articles });
-
-        this.newsList = urlCheckResponse.data.articles;
+        this.newsList = response.data.articles.filter(news => news.title && news.urlToImage);
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
