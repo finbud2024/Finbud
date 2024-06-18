@@ -18,11 +18,8 @@
             <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
           </div>
         </li>
-      </ul>
-      <ul class="nav-actions">
-        <li><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li><router-link to="/signup" class="login-button">Sign Up</router-link></li>
-        <li ><button @click="logout" class="logout-button">Log Out</button></li>
+        <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
+        <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Log Out</button></li>
       </ul>
       <div class="dropdown mobile-only">
         <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
@@ -57,15 +54,10 @@ export default {
       isDropdownOpenMobile: false,
     };
   },
-  async mounted(){
-    try{
-      const api = process.env.NODE_ENV !== 'production'? "http://localhost:8888/.netlify/functions/server/users":"https://finbud-ai.netlify.app/.netlify/functions/server/users";
-      const check = await axios.get(api);
-      console.log(check);
-    }catch(err){
-      console.log(err);
-      //alert(err);
-    }
+  computed: {
+    authStore() {
+      return authStore;
+    },
   },
   methods: {
     closeDropdown() {
