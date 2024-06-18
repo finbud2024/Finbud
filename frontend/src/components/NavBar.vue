@@ -19,7 +19,6 @@
           </div>
         </li>
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="!authStore.isAuthenticated"><router-link to="/signup" class="login-button">Sign Up</router-link></li>
         <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Log Out</button></li>
       </ul>
       <div class="dropdown mobile-only">
