@@ -41,14 +41,16 @@ export default {
   },
   methods: {
     async fetchNews() {
+      console.log("Hello API NEWS");
       try {
         const response = await axios.get('https://newsapi.org/v2/top-headlines', {
           params: {
-            apiKey: process.env.NEWS_API_KEY, // Use environment variable
+            apiKey: process.env.VUE_APP_NEWS_API_KEY,
             category: 'business',
             country: 'us',
           },
         });
+        
         this.newsList = response.data.articles.filter(news => news.title && news.urlToImage);
       } catch (error) {
         console.error('Error fetching news:', error);
