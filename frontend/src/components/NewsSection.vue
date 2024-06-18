@@ -44,7 +44,7 @@ export default {
       try {
         const response = await axios.get('https://newsapi.org/v2/top-headlines', {
           params: {
-            apiKey: process.env.VUE_APP_NEWS_API_KEY, // Use environment variable
+            apiKey: process.env.NEWS_API_KEY, // Use environment variable
             category: 'business',
             country: 'us',
           },
