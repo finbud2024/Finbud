@@ -3,9 +3,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import threadRoute from '../Endpoints/threadtRoute.js';
+import threadRoute from '../Endpoints/threadRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
+import newsRoute from '../Endpoints/newsRoute.js';
 import serverless from 'serverless-http';
+import{ handler as analyzeRisk }  from './analyzeRisk.js';
 
 // Load environment variables from .env
 dotenv.config();
@@ -30,8 +32,27 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
 
+app.post('/analyzeRisk', async (req, res) => {
+  console.log("Request from server.js:", req.body);
+
+  try {
+    const response = await analyzeRisk(req);
+    console.log("Response from analyzeRisk:", response);
+    console.log("Type of response.body:", typeof response.body);
+
+    // Assuming response.body is a JSON string
+    const responseBody = JSON.parse(response.body);
+    res.status(response.statusCode).json(responseBody);
+  } catch (error) {
+    console.error('Error in /analyzeRisk endpoint:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// app.use('/.netlify/functions/server/', threadRoute)
+app.use('/.netlify/functions/server/', userRoute);
 app.use('/.netlify/functions/server', threadRoute)
 app.use('/.netlify/functions/server', userRoute);
+app.use('/.netlify/functions/server', newsRoute);
 
 const handler = serverless(app);
-export {handler};
+export { handler };

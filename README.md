@@ -102,7 +102,7 @@ Khi đã sẵn sàng để triển khai ứng dụng lên Netlify, thực hiện
 
     ```bash
     netlify login
-    ```
+    ``` `
 
     **Lưu ý**: Đảm bảo đang sử dụng tài khoản có email tbui@macalester.edu để có quyền triển khai.
 

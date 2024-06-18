@@ -9,9 +9,11 @@ import PricingPage from '@/views/PricingPage.vue';
 import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
+import RiskPage from '@/views/RiskPage.vue';
 import GoalPage from '@/views/GoalPage.vue';
 import RecommendationGenerator from '@/views/RecommendationGenerator.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
+import ProfilePage from '@/views/ProfilePage.vue';
 
 const routes = [
   {
@@ -52,6 +54,11 @@ const routes = [
     component: PricingPage,
   },
   {
+    path: '/risk',
+    name: 'RiskPage',
+    component: RiskPage,
+  },
+  {
     path: '/about',
     name: 'AboutUsPage',
     component: AboutUsPage,
@@ -76,6 +83,11 @@ const routes = [
     name: 'Market',
     component: MarketDataCenter,
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfilePage,
+  }
 ];
 
 const router = createRouter({
