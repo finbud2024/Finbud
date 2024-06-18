@@ -1,6 +1,3 @@
-Here's the updated code with the CSS for the services button enhanced similarly to the login button, with additional effects for an improved user experience:
-
-```vue
 <template>
   <nav class="nav-bar" id="app">
     <router-link to="/" class="navbar-brand">FinBud</router-link>
@@ -10,7 +7,7 @@ Here's the updated code with the CSS for the services button enhanced similarly 
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <li v-if="!authStore.isAuthenticated" class="dropdown">
+        <li v-if="authStore.isAuthenticated" class="dropdown">
           <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
@@ -36,7 +33,7 @@ Here's the updated code with the CSS for the services button enhanced similarly 
           <router-link to="/about" class="about" @click="closeDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="closeDropdownMobile">Technology</router-link>
           <router-link to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>
-          <button  @click="logout" class="logout-button">Sign Out</button>
+          <button @click="logout" class="logout-button">Sign Out</button>
         </div>
       </div>
     </div>
@@ -45,7 +42,6 @@ Here's the updated code with the CSS for the services button enhanced similarly 
 
 <script>
 import authStore from '@/authStore';
-import axios from 'axios';
 
 export default {
   name: 'NavBar',
@@ -125,12 +121,11 @@ export default {
   color: #007bff;
 }
 
-
 .signup-button,
-
-.services-button, .login-button{
-  background-color: #45a049;;
-  color: rgb(255, 255, 255);
+.services-button,
+.login-button {
+  background-color: #45a049;
+  color: white; /* Ensure the text color is white */
   border: none;
   border-radius: 8px;
   text-decoration: none;
@@ -155,12 +150,12 @@ export default {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid rgb(255, 255, 255);
+  border-top: 5px solid white;
 }
 
 .logout-button {
   background-color: #45a049;
-  color: rgb(255, 255, 255);
+  color: white; /* Ensure the text color is white */
   border: none;
   border-radius: 8px;
   font-size: 1.2rem;
@@ -183,6 +178,7 @@ export default {
   color: #007bff;
   transform: scale(1.05);
 }
+
 .dropdown {
   position: relative;
   display: inline-block;
@@ -261,5 +257,3 @@ export default {
   }
 }
 </style>
-```
-
