@@ -3,8 +3,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import threadRoute from '../Endpoints/threadtRoute.js';
+import threadRoute from '../Endpoints/threadRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
+import newsRoute from '../Endpoints/newsRoute.js';
 import serverless from 'serverless-http';
 import{ handler as analyzeRisk }  from './analyzeRisk.js';
 
@@ -51,6 +52,7 @@ app.post('/analyzeRisk', async (req, res) => {
 app.use('/.netlify/functions/server/', userRoute);
 app.use('/.netlify/functions/server', threadRoute)
 app.use('/.netlify/functions/server', userRoute);
+app.use('/.netlify/functions/server', newsRoute);
 
 const handler = serverless(app);
-export {handler};
+export { handler };

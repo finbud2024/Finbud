@@ -232,4 +232,26 @@ body {
   width: 100%; /* Ensure the divider spans the entire width of the scrolling area */
   margin: 10px 0;
 }
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .cryto-item {
+    width: 363px;
+  }
+}
+
+@media (max-width: 992px) {
+  .crypto-item {
+    width: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .crypto-item {
+    width: 350px;
+  }
+}
+
 </style>
+
+

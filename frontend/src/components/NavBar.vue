@@ -7,38 +7,22 @@
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
-          <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
-          <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
-          <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
-          <router-link to="/riskchat" class="risk" @click="closeDropdown">RiskChat</router-link>
-          <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
-        
-      </ul>
-      <li class="dropdown">
-        <button class="dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
-        <div class="dropdown-content" v-show="isDropdownOpen">
-          <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
-          <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
-          <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
-          <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
-          <router-link to="/riskchat" class="risk" @click="closeDropdown">RiskChat</router-link>
-          <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
-        </div>
-      </li>
-      <ul class="nav-actions">
-        <li v-if="authStore.isAuthenticated" class="dropdown">
-          <button class="dropdown-button" >Services <span class="arrow-down"></span></button>
+        <li class="dropdown">
+          <button class="dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
+            <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
+            <router-link to="/riskchat" class="risk" @click="closeDropdown">RiskChat</router-link>
             <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
           </div>
         </li>
-        <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="!authStore.isAuthenticated"><router-link to="/signup" class="login-button">Sign Up</router-link></li>
-        <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Log Out</button></li>
+      </ul>
+      <ul class="nav-actions">
+        <li><router-link to="/login" class="login-button">Log In</router-link></li>
+        <li><router-link to="/signup" class="login-button">Sign Up</router-link></li>
+        <li ><button @click="logout" class="logout-button">Log Out</button></li>
       </ul>
       <div class="dropdown mobile-only">
         <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
@@ -49,17 +33,18 @@
           <router-link to="/quizz" class="quizz" @click="closeDropdownMobile">Quiz</router-link>
           <router-link to="/market" class="market" @click="closeDropdownMobile">Market</router-link>
           <router-link to="/chat-view" class="chatview" @click="closeDropdownMobile">Chat</router-link>
-          <router-link to="/risk" class="risk"  @click="closeDropdownMobile">Risk</router-link>
+          <router-link to="/risk" class="risk" @click="closeDropdownMobile">Risk</router-link>
           <router-link to="/riskchat" class="risk" @click="closeDropdownMobile">RiskChat</router-link>
           <router-link to="/about" class="about" @click="closeDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="closeDropdownMobile">Technology</router-link>
-          <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>
-          <button v-if="authStore.isAuthenticated" @click="logout" class="logout-button">Sign Out</button>
+          <router-link to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>
+          <button  @click="logout" class="logout-button">Sign Out</button>
         </div>
       </div>
     </div>
   </nav>
 </template>
+
 <script>
 import authStore from '@/authStore';
 import axios from 'axios';
@@ -68,7 +53,7 @@ export default {
   name: 'NavBar',
   data() {
     return {
-      isDropdownOpen: true,
+      isDropdownOpen: false,
       isDropdownOpenMobile: false,
     };
   },
@@ -81,16 +66,13 @@ export default {
       console.log(err);
       //alert(err);
     }
-
-  },
-  computed: {
-    authStore() {
-      return authStore;
-    },
   },
   methods: {
     closeDropdown() {
       this.isDropdownOpen = false;
+    },
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
     },
     toggleDropdownMobile() {
       this.isDropdownOpenMobile = !this.isDropdownOpenMobile;
