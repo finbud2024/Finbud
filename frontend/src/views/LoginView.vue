@@ -42,7 +42,8 @@ export default {
       try {
         const username = this.username;
         const password = this.password;
-        const response = await axios.get(`http://localhost:3000/api/users/?username=${username}&password=${password}`);
+        const apiUrl = `${process.env.DEPLOY_URL}/users?username=${username}&password=${password}`
+        const response = await axios.get(apiUrl);
         
         console.log('Login successful!');
         console.log(response.data.token);

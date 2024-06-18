@@ -75,9 +75,19 @@ const userRoute = express.Router();
             const {username, password} = data;
             console.log("in /users route (GET) all user")
             try{
+                //with query
+                if(username && password){
+                    console.log(username, password);
+                    const user = await User.find({username: username, password: password});
+                    if(!user){
+                        return res.status(404).send('Wrong username or password, please..!');
+                    }
+                    return res.status(200).send("Login successful!");
+                }else{
                 //without query
                     const users = await User.find();
                     return res.status(200).json(users);
+                }
             }catch(err){
                 return res.status(501).send('Internal sever error', err);
             }
@@ -121,7 +131,7 @@ const userRoute = express.Router();
         }
     })
     //GET: get user with given username and password
-    // userRoute.get("/users/:userId",async(req, res) => {
+    // userRoute.get("/users",async(req, res) => {
     //     const data = req.query;
     //     const {username, password} = data;
     //     console.log('in /users Route (GET) user with username and password:' + JSON.stringify(data));
