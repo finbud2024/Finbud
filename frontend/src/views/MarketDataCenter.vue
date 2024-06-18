@@ -2,8 +2,7 @@
   <div>
     <!--<MarketHeader />-->
     <h1 class="headtitle">Market Data Center</h1>
-    <div class="market-data-center">
-      
+    <div class="market-data-center"> 
       <div class="market-section">
         <div class="section-title">CRYPTOCURRENCY</div>
         <CryptoWatch class="CryptoArea" />
@@ -13,7 +12,7 @@
         <RealEstateMap class="RealEstate" />
       </div>
     </div>
-    <!--<NewsSection :disableClicks="showPopup" />-->
+    <NewsSection :disableClicks="showPopup" />
   </div>
 </template>
 
