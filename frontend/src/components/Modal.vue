@@ -1,8 +1,8 @@
 <template>
-  <div v-if="show" class="modal-overlay" @click.self="closeModal">
+  <div class="modal-overlay" v-if="show" @click.self="close">
     <div class="modal-content">
-      <span class="close-button" @click="closeModal">&times;</span>
-      <iframe :src="url" frameborder="0"></iframe>
+      <iframe :src="url" frameborder="0" class="modal-iframe"></iframe>
+      <button class="close-button" @click="close">Close</button>
     </div>
   </div>
 </template>
@@ -11,19 +11,12 @@
 export default {
   name: 'Modal',
   props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
+    show: Boolean,
+    url: String,
   },
   methods: {
-    closeModal() {
+    close() {
       this.$emit('close');
-      document.body.classList.remove('no-scroll');
     },
   },
 };
@@ -40,31 +33,38 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* Increased z-index for overlay */
+  z-index: 1000; /* Ensure this is high enough */
 }
 
 .modal-content {
-  background: white;
+  background: #fff;
   padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  height: 80%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 2001; /* Increased z-index for content */
+  border-radius: 8px;
+  max-width: 800px;
+  width: 90%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1001; /* Ensure this is high enough */
+}
+
+.modal-iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
+  border-radius: 8px;
 }
 
 .close-button {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  font-size: 24px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  z-index: 2002; /* Increased z-index for close button */
+  z-index: 1002; /* Ensure this is high enough */
 }
 
-iframe {
-  width: 100%;
-  height: 100%;
+.close-button:hover {
+  background-color: #0056b3;
 }
 </style>
