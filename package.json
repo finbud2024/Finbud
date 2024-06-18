@@ -19,6 +19,7 @@
         "animate.css": "^4.1.1",
         "axios": "^1.7.2",
         "chart.js": "^4.4.3",
+        "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "lightweight-charts": "^4.1.4",
         "mongoose": "^8.4.1",
