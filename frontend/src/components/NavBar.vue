@@ -1,3 +1,6 @@
+Here's the updated code with the CSS for the services button enhanced similarly to the login button, with additional effects for an improved user experience:
+
+```vue
 <template>
   <nav class="nav-bar" id="app">
     <router-link to="/" class="navbar-brand">FinBud</router-link>
@@ -7,14 +10,13 @@
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <li class="dropdown">
-          <button class="dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
+        <li v-if="!authStore.isAuthenticated" class="dropdown">
+          <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
             <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
-            <router-link to="/riskchat" class="risk" @click="closeDropdown">RiskChat</router-link>
             <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
           </div>
         </li>
@@ -31,7 +33,6 @@
           <router-link to="/market" class="market" @click="closeDropdownMobile">Market</router-link>
           <router-link to="/chat-view" class="chatview" @click="closeDropdownMobile">Chat</router-link>
           <router-link to="/risk" class="risk" @click="closeDropdownMobile">Risk</router-link>
-          <router-link to="/riskchat" class="risk" @click="closeDropdownMobile">RiskChat</router-link>
           <router-link to="/about" class="about" @click="closeDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="closeDropdownMobile">Technology</router-link>
           <router-link to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>
@@ -113,43 +114,53 @@ export default {
   gap: 2rem;
 }
 
-.nav-actions {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-items li a,
-.nav-actions li a {
+.nav-items li a {
   color: black;
   text-decoration: none;
   transition: color 0.3s ease;
   font-size: 1.2rem;
 }
 
-.nav-items li a:hover,
-.nav-actions li a:hover {
+.nav-items li a:hover {
   color: #007bff;
 }
 
-.login-button,
-.signup-button {
-  background-color: #45a049;
-  color: black;
+
+.signup-button,
+
+.services-button, .login-button{
+  background-color: #45a049;;
+  color: rgb(255, 255, 255);
   border: none;
   border-radius: 8px;
   text-decoration: none;
   padding: 0.5rem 1rem;
   margin-left: 1.2rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  min-width: 100px; /* Ensures the buttons have the same minimum width */
 }
 
-.logout-button{
+.services-button {
+  position: relative;
+}
+
+.services-button .arrow-down {
+  margin-left: 0.5rem;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgb(255, 255, 255);
+}
+
+.logout-button {
   background-color: #45a049;
-  color: black;
+  color: rgb(255, 255, 255);
   border: none;
   border-radius: 8px;
   font-size: 1.2rem;
@@ -157,33 +168,24 @@ export default {
   padding: 0.5rem 1rem;
   margin-left: 1.2rem;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px; /* Ensures the buttons have the same minimum width */
 }
 
 .signup-button:hover,
 .logout-button:hover,
-.dropdown-button:hover,
+.services-button:hover,
 .login-button:hover {
   background-color: #3e8e41;
   color: #007bff;
+  transform: scale(1.05);
 }
-
 .dropdown {
   position: relative;
   display: inline-block;
-}
-
-.dropdown-button {
-  background-color: #45a049;
-  color: black;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  font-size: 1.2rem;
-  border-radius: 8px;
-  margin-left: 1.2rem;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease;
 }
 
 .dropdown-content {
@@ -232,9 +234,7 @@ export default {
 }
 
 @media (max-width: 868px) {
-
-  .nav-items,
-  .nav-actions {
+  .nav-items {
     display: none;
   }
 
@@ -245,7 +245,6 @@ export default {
   .dropdown-content {
     position: fixed;
     top: 60px;
-    /* Adjust according to the height of your nav-bar */
     left: 0;
     width: 100%;
     flex-direction: column;
@@ -259,7 +258,8 @@ export default {
 
   .navbar-brand {
     margin-left: 50px;
-    /* Adjust this value to move the text to the right */
   }
 }
 </style>
+```
+
