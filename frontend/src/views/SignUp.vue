@@ -48,7 +48,7 @@ export default {
             return;
           }
 
-          const apiUrl = `${process.env.DEPLOY_URL}/users`;
+          const apiUrl = `${process.env.DEPLOYED_URL}/users`;
           const response = await axios.post(apiUrl, {
             accountData: {
               username: this.email,

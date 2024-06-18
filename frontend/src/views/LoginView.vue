@@ -42,7 +42,7 @@ export default {
       try {
         const username = this.username;
         const password = this.password;
-        const apiUrl = `${process.env.DEPLOY_URL}/users?username=${username}&password=${password}`
+        const apiUrl = `${process.env.DEPLOYED_URL}/users?username=${username}&password=${password}`
         const response = await axios.get(apiUrl);
         
         console.log('Login successful!');
