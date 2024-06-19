@@ -52,7 +52,7 @@
           const response = await axios.get('https://newsapi.org/v2/everything', {
             params: {
               //a66d9911a3bf4ed2bd636c5e2959253e
-                apiKey: "7eac0646bd5d43d0a4d5d5bfd8a3a95c",
+                apiKey: process.env.VUE_APP_NEWS_API_KEY,
                 q: keyword,
             },
         });

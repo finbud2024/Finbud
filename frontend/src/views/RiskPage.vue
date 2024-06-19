@@ -63,9 +63,8 @@
             @update:currentPage="updateCryptoCurrentPage" />
         </div>
       </div>
-      
-      <RiskChat/>
     </div>
+    <RiskChat/>
   </template>
   
   <script>
