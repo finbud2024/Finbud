@@ -27,7 +27,7 @@ async function start(prompt){
         history: [
           {
             role: "user",
-            parts: [{ text: "I'm a 10 years old boy, from now on, answer me everything simply!" }],
+            parts: [{ text: "I'm a 15 years old boy, from now on, answer me everything simply!" }],
           },
           {
             role: "model",
@@ -41,7 +41,6 @@ async function start(prompt){
       const result = await chat.sendMessage(prompt);
       const response = await result.response;
       const text = response.text();
-    //   console.log(chat.getHistory);
     console.log(text);
     //   return text;
 }

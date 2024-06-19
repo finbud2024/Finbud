@@ -31,28 +31,10 @@ mongoose.connect(mongoURI)
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
-
-app.post('/analyzeRisk', async (req, res) => {
-  console.log("Request from server.js:", req.body);
-
-  try {
-    const response = await analyzeRisk(req);
-    console.log("Response from analyzeRisk:", response);
-    console.log("Type of response.body:", typeof response.body);
-
-    // Assuming response.body is a JSON string
-    const responseBody = JSON.parse(response.body);
-    res.status(response.statusCode).json(responseBody);
-  } catch (error) {
-    console.error('Error in /analyzeRisk endpoint:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 // app.use('/.netlify/functions/server/', threadRoute)
 app.use('/.netlify/functions/server/', userRoute);
 app.use('/.netlify/functions/server', threadRoute)
 app.use('/.netlify/functions/server', userRoute);
 app.use('/.netlify/functions/server', newsRoute);
-
 const handler = serverless(app);
 export { handler };

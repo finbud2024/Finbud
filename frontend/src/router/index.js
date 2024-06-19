@@ -10,6 +10,7 @@ import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
 import RiskPage from '@/views/RiskPage.vue';
+import RiskChat from '@/components/RiskChat.vue'
 import GoalPage from '@/views/GoalPage.vue';
 import RecommendationGenerator from '@/views/RecommendationGenerator.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
@@ -57,6 +58,11 @@ const routes = [
     path: '/risk',
     name: 'RiskPage',
     component: RiskPage,
+  },
+  {
+    path: '/riskchat',
+    name: 'RiskChat',
+    component: RiskChat,
   },
   {
     path: '/about',

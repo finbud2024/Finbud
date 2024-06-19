@@ -2,9 +2,6 @@
     <div class="home-container">
         <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
         <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-        <!-- <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
-            @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
-            @select-thread="selectThread" /> -->
         <div class="chat-container">
             <ChatFrame>
                 <ChatHeader :threadId="currentThread.id" />
@@ -15,23 +12,20 @@
             </ChatFrame>
             <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
         </div>
+        <News :keyword="keyword" />
     </div>
 </template>
 
 <script>
-const apiUrl = process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000'
-    : 'https://finbud-ai.netlify.app/.netlify/functions';
+const apiUrl = process.env.NODE_ENV === 'development' ? 'localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server'
 
 import axios from 'axios';
 import ChatHeader from '../components/ChatHeader.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import ChatFrame from '../components/ChatFrame.vue';
 import UserInput from '../components/UserInput.vue';
-// import SideBar from '../components/SideBar.vue';
+import News from '../components/News.vue'
 import { GoogleGenerativeAI } from '@google/generative-ai';
-// const gemini_api = process.env.VUE_APP_GEMINI_API_KEY;
-// const genAI = new GoogleGenerativeAI(gemini_api);
 const genAI = new GoogleGenerativeAI('AIzaSyBoqZUePAhe5n5INyoApGlytjx57t8-UYI');
 export default {
     name: 'RiskChat',
@@ -39,9 +33,9 @@ export default {
         ChatFrame,
         MessageComponent,
         UserInput,
-        // SideBar,
         ChatFrame,
         ChatHeader,
+        News,
     },
     data() {
         return {
@@ -51,7 +45,8 @@ export default {
             botAvatar: require('@/assets/bot.png'),
             currentThread: {},
             threads: [],
-            isSidebarVisible: false
+            isSidebarVisible: false,
+            keyword: '',
         }
     }, watch: {
         threadId: {
@@ -101,6 +96,7 @@ export default {
         // message functions
         clearMessage() {
             this.newMessage = '';
+            this.keyword = '';
         },
         async sendMessage(newMessage) {
             this.messages.push({
@@ -124,9 +120,11 @@ export default {
         },
         async handleMessage(userMessage) {
             try {
-                // const response = await axios.post(`${apiUrl}/analyzeRisk`, { userMessage });
-                const response = await this.start(userMessage);
-                console.log("API response:", response);
+                const response = await this.getGeminiPrompt(userMessage);
+                const keyword = await this.getGeminiKeyword(userMessage);
+                this.keyword = keyword;
+                // console.log("API response:", response);
+                console.log("API keyword response:", this.keyword);
                 // console.log("Type of response data:", typeof (response.data)
                 await this.addTypingResponse(response, false);
             } catch (error) {
@@ -147,7 +145,31 @@ export default {
                 });
             }
         },
-        async start(prompt) {
+        async getGeminiKeyword(prompt) {
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const chat = await model.startChat({
+                history: [
+                    {
+                        role: "user",
+                        parts: [{
+                            text: `Given a sentence, extract and format the relevant keywords or phrases according to the following criteria: Must include: Keywords or phrases prepended with a + symbol. Exact match: Keywords or phrases surrounded by quotes ("). Logical operators: Use AND, OR, NOT to connect keywords or phrases. Group: Use parentheses to group logical operations if necessary.`
+                        }],
+                    },
+                    {
+                        role: "user",
+                        parts: [{ text: `Examples: My input: "Look up data on electric vehicles or hybrid cars and clean energy." Output: +electric vehicles OR +hybrid cars AND "clean energy"` }],
+                    },
+                ],
+                generationConfig: {
+                    maxOutputTokens: 100,
+                },
+            });
+            const result = await chat.sendMessage(prompt);
+            const response = await result.response;
+            const text = response.text();
+            return text;
+        },
+        async getGeminiPrompt(prompt) {
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             const chat = await model.startChat({
                 history: [
@@ -167,7 +189,7 @@ export default {
             const result = await chat.sendMessage(prompt);
             const response = await result.response;
             const text = response.text();
-              return text;
+            return text;
         },
         addTypingResponse(text, isUser) {
             const typingMessage = {
@@ -203,7 +225,7 @@ export default {
 <style scoped>
 .home-container {
     display: flex;
-    width: 40%;
+    width: 45%;
     height: 100vh;
 }
 
