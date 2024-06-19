@@ -5,8 +5,12 @@ import yfinance as yf
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+import pathlib
 
-df = pd.read_excel("D:/Work/FinBud/all_tickers_NYSE.xlsx")
+PATH = pathlib.Path(__file__).parent
+DATA_PATH = PATH.joinpath("./data").resolve()
+
+df = pd.read_excel(DATA_PATH.joinpath('all_tickers_NYSE.xlsx'))
 df = df.dropna(axis=0).reset_index(drop=True)
 x_axis = ['P/E', 'P/B']
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME])
