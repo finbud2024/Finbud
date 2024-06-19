@@ -7,7 +7,6 @@ import threadRoute from '../Endpoints/threadRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
 import newsRoute from '../Endpoints/newsRoute.js';
 import serverless from 'serverless-http';
-import{ handler as analyzeRisk }  from './analyzeRisk.js';
 
 // Load environment variables from .env
 dotenv.config();

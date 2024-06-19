@@ -26,7 +26,7 @@ import ChatFrame from '../components/ChatFrame.vue';
 import UserInput from '../components/UserInput.vue';
 import News from '../components/News.vue'
 import { GoogleGenerativeAI } from '@google/generative-ai';
-const genAI = new GoogleGenerativeAI(process.env.VUE_APP_GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_AI_KEY);
 export default {
     name: 'RiskChat',
     components: {

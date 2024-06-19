@@ -51,7 +51,6 @@
         try {
           const response = await axios.get('https://newsapi.org/v2/everything', {
             params: {
-              //a66d9911a3bf4ed2bd636c5e2959253e
                 apiKey: process.env.VUE_APP_NEWS_API_KEY,
                 q: keyword,
             },
