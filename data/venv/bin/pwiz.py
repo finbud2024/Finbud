@@ -1,4 +1,4 @@
-#!/Users/buidinhtri/Desktop/Finbud/data/venv/bin/python3.12
+#!/Users/buidinhtri/Desktop/Finbud/data/venv/bin/python
 
 import datetime
 import os
