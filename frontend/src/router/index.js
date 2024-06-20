@@ -12,9 +12,9 @@ import StockSimulator from '@/views/StockSimulator.vue';
 import RiskPage from '@/views/RiskPage.vue';
 import RiskChat from '@/components/Risk&Chat/RiskChat.vue'
 import GoalPage from '@/views/GoalPage.vue';
-import RecommendationGenerator from '@/views/RecommendationGenerator.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
+import QuantAnalysis from '@/views/QuantAnalysis.vue';
 
 const routes = [
   {
@@ -63,6 +63,9 @@ const routes = [
     path: '/riskchat',
     name: 'RiskChat',
     component: RiskChat,
+    path: '/quant-analysis',
+    name: 'QuantAnalysis',
+    component: QuantAnalysis,
   },
   {
     path: '/about',

@@ -2,3 +2,8 @@
 .netlify
 .env
 node_modules
+
+
+# Virtual environment
+venv/
+env/
