@@ -69,8 +69,8 @@
   
   <script>
   import axios from 'axios';
-  import Pagination from '../components/Pagination.vue';
-  import RiskChat from '../components/RiskChat.vue';
+  import Pagination from '../components/Risk&Chat/Pagination.vue';
+  import RiskChat from '../components/Risk&Chat/RiskChat.vue';
   const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
   const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
   

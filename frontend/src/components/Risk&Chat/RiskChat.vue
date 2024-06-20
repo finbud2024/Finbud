@@ -18,13 +18,11 @@
 
 <script>
 const apiUrl = process.env.NODE_ENV === 'development' ? 'localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server'
-
-import axios from 'axios';
-import ChatHeader from '../components/ChatHeader.vue';
-import MessageComponent from '../components/MessageComponent.vue';
-import ChatFrame from '../components/ChatFrame.vue';
-import UserInput from '../components/UserInput.vue';
-import News from '../components/News.vue'
+import ChatHeader from './ChatHeader.vue';
+import MessageComponent from './MessageComponent.vue';
+import ChatFrame from './ChatFrame.vue';
+import UserInput from './UserInput.vue';
+import News from '../Risk&Chat/News.vue'
 import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.VUE_APP_GEMINI_API_KEY);
 export default {
@@ -33,7 +31,6 @@ export default {
         ChatFrame,
         MessageComponent,
         UserInput,
-        ChatFrame,
         ChatHeader,
         News,
     },
@@ -226,7 +223,11 @@ export default {
 .home-container {
     display: flex;
     width: 45%;
-    height: 100vh;
+    height: 90vh;
+    background-image: linear-gradient(to bottom,#7BDBBF, #e0dede);
+    
+    
+
 }
 
 .toggle-sidebar-btn {
