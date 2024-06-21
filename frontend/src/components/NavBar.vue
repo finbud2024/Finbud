@@ -8,7 +8,7 @@
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
         <li><router-link to="/quant-analysis" class="home">Quant</router-link></li>
-        <li v-if="authStore.isAuthenticated" class="dropdown">
+        <li v-if="!authStore.isAuthenticated" class="dropdown">
           <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
