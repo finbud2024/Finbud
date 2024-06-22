@@ -1,0 +1,238 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Prediction</title>
+    <style>
+        .data-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Stock Prediction Using ML Model</h1>
+    <form id="data-form">
+        <label for="ticker">Stock Ticker:</label>
+        <input type="text" id="ticker" name="ticker" required>
+        <br>
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        <br>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date">
+        <br>
+        <button type="submit">Update Data</button>
+    </form>
+    <div id="data-table"></div>
+    
+    <form id="predict-form">
+        <input type="hidden" id="predict_ticker" name="ticker">
+        <input type="hidden" id="predict_start_date" name="start_date">
+        <input type="hidden" id="predict_end_date" name="end_date">
+        <button type="submit">Predict Next 10 Days</button>
+    </form>
+    <div id="prediction-result"></div>
+
+    <script>
+        document.getElementById('data-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const ticker = document.getElementById('ticker').value;
+            const start_date = document.getElementById('start_date').value;
+            const end_date = document.getElementById('end_date').value;
+            const response = await fetch('/update_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `ticker=${ticker}&start_date=${start_date}&end_date=${end_date}`,
+            });
+            const data = await response.json();
+            document.getElementById('data-table').innerHTML = data.html_table;
+            document.getElementById('predict_ticker').value = ticker;
+            document.getElementById('predict_start_date').value = start_date;
+            document.getElementById('predict_end_date').value = end_date;
+        };
+
+        document.getElementById('predict-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const ticker = document.getElementById('predict_ticker').value;
+            const start_date = document.getElementById('predict_start_date').value;
+            const end_date = document.getElementById('predict_end_date').value;
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `ticker=${ticker}&start_date=${start_date}&end_date=${end_date}`,
+            });
+            const data = await response.json();
+            const resultDiv = document.getElementById('prediction-result');
+            resultDiv.innerHTML = '<h2>Predicted Prices for the Next 10 Days:</h2>';
+            data.forEach(item => {
+                resultDiv.innerHTML += `<p>${item.Date}: ${item.Predicted_Close.toFixed(2)}</p>`;
+            });
+        };
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="date"],
+        button {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .data-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+        .prediction-result {
+            margin-top: 20px;
+        }
+        .prediction-result h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .prediction-result p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Prediction Using ML Model</h1>
+
+        <div class="form-group">
+            <label for="ticker">Stock Ticker:</label>
+            <input type="text" id="ticker" name="ticker" required>
+        </div>
+
+        <div class="form-group">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" required>
+        </div>
+
+        <div class="form-group">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date">
+        </div>
+
+        <div class="form-group">
+            <button type="submit" id="update-data-button">Update Data</button>
+        </div>
+
+        <div id="data-table" class="data-table"></div>
+        
+        <div class="form-group">
+            <button type="submit" id="predict-button">Predict Next 10 Days</button>
+        </div>
+
+        <div id="prediction-result" class="prediction-result"></div>
+    </div>
+
+    <script>
+        document.getElementById('update-data-button').onclick = async function(e) {
+            e.preventDefault();
+            const ticker = document.getElementById('ticker').value;
+            const start_date = document.getElementById('start_date').value;
+            const end_date = document.getElementById('end_date').value;
+            
+            const response = await fetch('/update_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `ticker=${ticker}&start_date=${start_date}&end_date=${end_date}`,
+            });
+            
+            const data = await response.json();
+            document.getElementById('data-table').innerHTML = data.html_table;
+        };
+
+        document.getElementById('predict-button').onclick = async function(e) {
+            e.preventDefault();
+            const ticker = document.getElementById('ticker').value;
+            const start_date = document.getElementById('start_date').value;
+            const end_date = document.getElementById('end_date').value;
+            
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `ticker=${ticker}&start_date=${start_date}&end_date=${end_date}`,
+            });
+            
+            const data = await response.json();
+            const resultDiv = document.getElementById('prediction-result');
+            resultDiv.innerHTML = '<h2>Predicted Prices for the Next 10 Days:</h2>';
+            data.forEach(item => {
+                resultDiv.innerHTML += `<p>${item.Date}: ${item.Predicted_Close.toFixed(2)}</p>`;
+            });
+        };
+    </script>
+</body>
+</html>
