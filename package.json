@@ -6,7 +6,8 @@
         "build": "npm run build --prefix frontend",
         "start": "npm run server",
         "server": "cd backend && npm run start",
-        "client": "cd frontend && npm run serve"
+        "client": "cd frontend && npm run serve",
+        "dev": "dotenv -e .env netlify dev"
     },
     "devDependencies": {
         "@vue/cli-service": "^5.0.8",
