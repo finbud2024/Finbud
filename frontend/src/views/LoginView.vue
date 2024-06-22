@@ -54,7 +54,12 @@ export default {
         document.getElementById('errorMessage').classList.remove('wrong-password');
         //alert('Invalid username or password!');
       }
+
     },
+    async signInWithGoogle(){
+        const api = `${process.env.DEPLOYED_URL}/.netlify/functions/server/auth/google`
+        window.location.href = api;
+    }
   },
 };
 </script>
