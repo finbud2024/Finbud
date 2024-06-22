@@ -1,20 +1,20 @@
 {
 	"geolocation": {
 		"data": {
-			"city": "Chicago",
+			"city": "Valdosta",
 			"country": {
 				"code": "US",
 				"name": "United States"
 			},
 			"subdivision": {
-				"code": "IL",
-				"name": "Illinois"
+				"code": "GA",
+				"name": "Georgia"
 			},
-			"timezone": "America/Chicago",
-			"latitude": 41.923,
-			"longitude": -87.7531
+			"timezone": "America/New_York",
+			"latitude": 30.8936,
+			"longitude": -83.3235
 		},
-		"timestamp": 1718682217530
+		"timestamp": 1719080512433
 	},
 	"siteId": "4baa0252-2c32-490f-a936-403489533982"
 }
