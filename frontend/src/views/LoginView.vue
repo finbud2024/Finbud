@@ -57,7 +57,7 @@ export default {
 
     },
     async signInWithGoogle(){
-        const api = `${process.env.DEPLOYED_URL}/.netlify/functions/server/auth/google`
+        const api = `https://finbud-ai.netlify.app/.netlify/functions/server/auth/google`
         // const api = `http://localhost:8888/.netlify/functions/server/auth/google`
         window.location.href = api;
     }
