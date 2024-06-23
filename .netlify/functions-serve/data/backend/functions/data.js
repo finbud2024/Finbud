@@ -4247,9 +4247,9 @@ var require_bson = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/bson.js
+// backend/node_modules/mongodb/lib/bson.js
 var require_bson2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/bson.js"(exports2) {
+  "backend/node_modules/mongodb/lib/bson.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.resolveBSONOptions = exports2.pluckBSONSerializeOptions = exports2.toUTF8 = exports2.getBigInt64LE = exports2.getFloat64LE = exports2.getInt32LE = exports2.parseToElementsToArray = exports2.UUID = exports2.Timestamp = exports2.serialize = exports2.ObjectId = exports2.MinKey = exports2.MaxKey = exports2.Long = exports2.Int32 = exports2.EJSON = exports2.Double = exports2.deserialize = exports2.Decimal128 = exports2.DBRef = exports2.Code = exports2.calculateObjectSize = exports2.BSONType = exports2.BSONSymbol = exports2.BSONRegExp = exports2.BSONError = exports2.BSON = exports2.Binary = void 0;
@@ -4362,9 +4362,9 @@ var require_bson2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/error.js
+// backend/node_modules/mongodb/lib/error.js
 var require_error = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/error.js"(exports2) {
+  "backend/node_modules/mongodb/lib/error.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isResumableError = exports2.isNetworkTimeoutError = exports2.isSDAMUnrecoverableError = exports2.isNodeShuttingDownError = exports2.isRetryableReadError = exports2.isRetryableWriteError = exports2.needsRetryableWriteLabel = exports2.MongoWriteConcernError = exports2.MongoServerSelectionError = exports2.MongoSystemError = exports2.MongoMissingDependencyError = exports2.MongoMissingCredentialsError = exports2.MongoCompatibilityError = exports2.MongoInvalidArgumentError = exports2.MongoParseError = exports2.MongoNetworkTimeoutError = exports2.MongoNetworkError = exports2.isNetworkErrorBeforeHandshake = exports2.MongoTopologyClosedError = exports2.MongoCursorExhaustedError = exports2.MongoServerClosedError = exports2.MongoCursorInUseError = exports2.MongoUnexpectedServerResponseError = exports2.MongoGridFSChunkError = exports2.MongoGridFSStreamError = exports2.MongoTailableCursorError = exports2.MongoChangeStreamError = exports2.MongoAzureError = exports2.MongoAWSError = exports2.MongoKerberosError = exports2.MongoExpiredSessionError = exports2.MongoTransactionError = exports2.MongoNotConnectedError = exports2.MongoDecompressionError = exports2.MongoBatchReExecutionError = exports2.MongoRuntimeError = exports2.MongoAPIError = exports2.MongoDriverError = exports2.MongoServerError = exports2.MongoError = exports2.MongoErrorLabel = exports2.GET_MORE_RESUMABLE_CODES = exports2.MONGODB_ERROR_CODES = exports2.NODE_IS_RECOVERING_ERROR_MESSAGE = exports2.LEGACY_NOT_PRIMARY_OR_SECONDARY_ERROR_MESSAGE = exports2.LEGACY_NOT_WRITABLE_PRIMARY_ERROR_MESSAGE = void 0;
@@ -5281,9 +5281,9 @@ var require_error = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/read_preference.js
+// backend/node_modules/mongodb/lib/read_preference.js
 var require_read_preference = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/read_preference.js"(exports2) {
+  "backend/node_modules/mongodb/lib/read_preference.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ReadPreference = exports2.ReadPreferenceMode = void 0;
@@ -5467,9 +5467,9 @@ var require_read_preference = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/common.js
+// backend/node_modules/mongodb/lib/sdam/common.js
 var require_common = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/common.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/common.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2._advanceClusterTime = exports2.drainTimerQueue = exports2.ServerType = exports2.TopologyType = exports2.STATE_CONNECTED = exports2.STATE_CONNECTING = exports2.STATE_CLOSED = exports2.STATE_CLOSING = void 0;
@@ -5516,9 +5516,9 @@ var require_common = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server_selection.js
+// backend/node_modules/mongodb/lib/sdam/server_selection.js
 var require_server_selection = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server_selection.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/server_selection.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.readPreferenceServerSelector = exports2.secondaryWritableServerSelector = exports2.sameServerSelector = exports2.writableServerSelector = exports2.MIN_SECONDARY_WRITE_WIRE_VERSION = void 0;
@@ -5691,9 +5691,9 @@ var require_server_selection = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/constants.js
+// backend/node_modules/mongodb/lib/cmap/wire_protocol/constants.js
 var require_constants = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/constants.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/wire_protocol/constants.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OP_MSG = exports2.OP_COMPRESSED = exports2.OP_DELETE = exports2.OP_QUERY = exports2.OP_INSERT = exports2.OP_UPDATE = exports2.OP_REPLY = exports2.MIN_SUPPORTED_QE_SERVER_VERSION = exports2.MIN_SUPPORTED_QE_WIRE_VERSION = exports2.MAX_SUPPORTED_WIRE_VERSION = exports2.MIN_SUPPORTED_WIRE_VERSION = exports2.MAX_SUPPORTED_SERVER_VERSION = exports2.MIN_SUPPORTED_SERVER_VERSION = void 0;
@@ -5713,9 +5713,9 @@ var require_constants = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/constants.js
+// backend/node_modules/mongodb/lib/constants.js
 var require_constants2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/constants.js"(exports2) {
+  "backend/node_modules/mongodb/lib/constants.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.END = exports2.CHANGE = exports2.INIT = exports2.MORE = exports2.RESPONSE = exports2.SERVER_HEARTBEAT_FAILED = exports2.SERVER_HEARTBEAT_SUCCEEDED = exports2.SERVER_HEARTBEAT_STARTED = exports2.COMMAND_FAILED = exports2.COMMAND_SUCCEEDED = exports2.COMMAND_STARTED = exports2.CLUSTER_TIME_RECEIVED = exports2.CONNECTION_CHECKED_IN = exports2.CONNECTION_CHECKED_OUT = exports2.CONNECTION_CHECK_OUT_FAILED = exports2.CONNECTION_CHECK_OUT_STARTED = exports2.CONNECTION_CLOSED = exports2.CONNECTION_READY = exports2.CONNECTION_CREATED = exports2.CONNECTION_POOL_READY = exports2.CONNECTION_POOL_CLEARED = exports2.CONNECTION_POOL_CLOSED = exports2.CONNECTION_POOL_CREATED = exports2.WAITING_FOR_SUITABLE_SERVER = exports2.SERVER_SELECTION_SUCCEEDED = exports2.SERVER_SELECTION_FAILED = exports2.SERVER_SELECTION_STARTED = exports2.TOPOLOGY_DESCRIPTION_CHANGED = exports2.TOPOLOGY_CLOSED = exports2.TOPOLOGY_OPENING = exports2.SERVER_DESCRIPTION_CHANGED = exports2.SERVER_CLOSED = exports2.SERVER_OPENING = exports2.DESCRIPTION_RECEIVED = exports2.UNPINNED = exports2.PINNED = exports2.MESSAGE = exports2.ENDED = exports2.CLOSED = exports2.CONNECT = exports2.OPEN = exports2.CLOSE = exports2.TIMEOUT = exports2.ERROR = exports2.SYSTEM_JS_COLLECTION = exports2.SYSTEM_COMMAND_COLLECTION = exports2.SYSTEM_USER_COLLECTION = exports2.SYSTEM_PROFILE_COLLECTION = exports2.SYSTEM_INDEX_COLLECTION = exports2.SYSTEM_NAMESPACE_COLLECTION = void 0;
@@ -5831,9 +5831,9 @@ var require_constants2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/read_concern.js
+// backend/node_modules/mongodb/lib/read_concern.js
 var require_read_concern = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/read_concern.js"(exports2) {
+  "backend/node_modules/mongodb/lib/read_concern.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ReadConcern = exports2.ReadConcernLevel = void 0;
@@ -5893,9 +5893,9 @@ var require_read_concern = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/write_concern.js
+// backend/node_modules/mongodb/lib/write_concern.js
 var require_write_concern = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/write_concern.js"(exports2) {
+  "backend/node_modules/mongodb/lib/write_concern.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.WriteConcern = exports2.WRITE_CONCERN_KEYS = void 0;
@@ -5968,9 +5968,9 @@ var require_write_concern = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/utils.js
+// backend/node_modules/mongodb/lib/utils.js
 var require_utils = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/utils.js"(exports2) {
+  "backend/node_modules/mongodb/lib/utils.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DOCUMENT_DB_MSG = exports2.COSMOS_DB_CHECK = exports2.DOCUMENT_DB_CHECK = exports2.request = exports2.matchesParentDomain = exports2.parseUnsignedInteger = exports2.parseInteger = exports2.compareObjectId = exports2.commandSupportsReadConcern = exports2.shuffle = exports2.supportsRetryableWrites = exports2.enumToString = exports2.emitWarningOnce = exports2.emitWarning = exports2.MONGODB_WARNING_CODE = exports2.DEFAULT_PK_FACTORY = exports2.HostAddress = exports2.BufferPool = exports2.List = exports2.deepCopy = exports2.isRecord = exports2.setDifference = exports2.isHello = exports2.isSuperset = exports2.resolveOptions = exports2.hasAtomicOperators = exports2.calculateDurationInMs = exports2.now = exports2.makeStateMachine = exports2.errorStrictEqual = exports2.arrayStrictEqual = exports2.maxWireVersion = exports2.uuidV4 = exports2.makeCounter = exports2.MongoDBCollectionNamespace = exports2.MongoDBNamespace = exports2.ns = exports2.getTopology = exports2.decorateWithExplain = exports2.decorateWithReadConcern = exports2.decorateWithCollation = exports2.isPromiseLike = exports2.applyRetryableWrites = exports2.filterOptions = exports2.mergeOptions = exports2.isObject = exports2.normalizeHintField = exports2.hostMatchesWildcards = exports2.isUint8Array = exports2.ByteUtils = void 0;
@@ -6779,9 +6779,9 @@ var require_utils = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/operation.js
+// backend/node_modules/mongodb/lib/operations/operation.js
 var require_operation = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/operation.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/operation.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.defineAspects = exports2.AbstractOperation = exports2.Aspect = void 0;
@@ -6842,9 +6842,9 @@ var require_operation = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/execute_operation.js
+// backend/node_modules/mongodb/lib/operations/execute_operation.js
 var require_execute_operation = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/execute_operation.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/execute_operation.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.executeOperation = void 0;
@@ -6996,9 +6996,9 @@ var require_execute_operation = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/explain.js
+// backend/node_modules/mongodb/lib/explain.js
 var require_explain = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/explain.js"(exports2) {
+  "backend/node_modules/mongodb/lib/explain.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Explain = exports2.ExplainVerbosity = void 0;
@@ -7031,9 +7031,9 @@ var require_explain = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/command.js
+// backend/node_modules/mongodb/lib/operations/command.js
 var require_command = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/command.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/command.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CommandOperation = void 0;
@@ -7103,9 +7103,9 @@ var require_command = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/list_databases.js
+// backend/node_modules/mongodb/lib/operations/list_databases.js
 var require_list_databases = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/list_databases.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/list_databases.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ListDatabasesOperation = void 0;
@@ -7143,9 +7143,9 @@ var require_list_databases = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/remove_user.js
+// backend/node_modules/mongodb/lib/operations/remove_user.js
 var require_remove_user = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/remove_user.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/remove_user.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.RemoveUserOperation = void 0;
@@ -7170,9 +7170,9 @@ var require_remove_user = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/run_command.js
+// backend/node_modules/mongodb/lib/operations/run_command.js
 var require_run_command = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/run_command.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/run_command.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.RunAdminCommandOperation = exports2.RunCommandOperation = void 0;
@@ -7223,9 +7223,9 @@ var require_run_command = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/validate_collection.js
+// backend/node_modules/mongodb/lib/operations/validate_collection.js
 var require_validate_collection = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/validate_collection.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/validate_collection.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ValidateCollectionOperation = void 0;
@@ -7264,9 +7264,9 @@ var require_validate_collection = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/admin.js
+// backend/node_modules/mongodb/lib/admin.js
 var require_admin = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/admin.js"(exports2) {
+  "backend/node_modules/mongodb/lib/admin.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Admin = void 0;
@@ -7384,9 +7384,9 @@ var require_admin = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/delete.js
+// backend/node_modules/mongodb/lib/operations/delete.js
 var require_delete = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/delete.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/delete.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.makeDeleteStatement = exports2.DeleteManyOperation = exports2.DeleteOneOperation = exports2.DeleteOperation = void 0;
@@ -7501,9 +7501,9 @@ var require_delete = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/bulk_write.js
+// backend/node_modules/mongodb/lib/operations/bulk_write.js
 var require_bulk_write = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/bulk_write.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/bulk_write.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.BulkWriteOperation = void 0;
@@ -7535,9 +7535,9 @@ var require_bulk_write = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/insert.js
+// backend/node_modules/mongodb/lib/operations/insert.js
 var require_insert = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/insert.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/insert.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.InsertManyOperation = exports2.InsertOneOperation = exports2.InsertOperation = void 0;
@@ -7635,9 +7635,9 @@ var require_insert = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/update.js
+// backend/node_modules/mongodb/lib/operations/update.js
 var require_update = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/update.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/update.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.makeUpdateStatement = exports2.ReplaceOneOperation = exports2.UpdateManyOperation = exports2.UpdateOneOperation = exports2.UpdateOperation = void 0;
@@ -7809,9 +7809,9 @@ var require_update = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/bulk/common.js
+// backend/node_modules/mongodb/lib/bulk/common.js
 var require_common2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/bulk/common.js"(exports2) {
+  "backend/node_modules/mongodb/lib/bulk/common.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.BulkOperationBase = exports2.BulkWriteShimOperation = exports2.FindOperators = exports2.MongoBulkWriteError = exports2.mergeBatchResults = exports2.WriteError = exports2.WriteConcernError = exports2.BulkWriteResult = exports2.Batch = exports2.BatchType = void 0;
@@ -8578,9 +8578,9 @@ var require_common2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/bulk/ordered.js
+// backend/node_modules/mongodb/lib/bulk/ordered.js
 var require_ordered = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/bulk/ordered.js"(exports2) {
+  "backend/node_modules/mongodb/lib/bulk/ordered.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OrderedBulkOperation = void 0;
@@ -8638,9 +8638,9 @@ var require_ordered = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/bulk/unordered.js
+// backend/node_modules/mongodb/lib/bulk/unordered.js
 var require_unordered = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/bulk/unordered.js"(exports2) {
+  "backend/node_modules/mongodb/lib/bulk/unordered.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.UnorderedBulkOperation = void 0;
@@ -8716,9 +8716,9 @@ var require_unordered = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/aggregate.js
+// backend/node_modules/mongodb/lib/operations/aggregate.js
 var require_aggregate = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/aggregate.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/aggregate.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AggregateOperation = exports2.DB_AGGREGATE_COLLECTION = void 0;
@@ -8809,9 +8809,9 @@ var require_aggregate = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/on_demand/document.js
+// backend/node_modules/mongodb/lib/cmap/wire_protocol/on_demand/document.js
 var require_document = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/on_demand/document.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/wire_protocol/on_demand/document.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OnDemandDocument = void 0;
@@ -9025,9 +9025,9 @@ var require_document = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/responses.js
+// backend/node_modules/mongodb/lib/cmap/wire_protocol/responses.js
 var require_responses = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/responses.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/wire_protocol/responses.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CursorResponse = exports2.MongoDBResponse = exports2.isErrorResponse = void 0;
@@ -9202,9 +9202,9 @@ var require_responses = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_logger.js
+// backend/node_modules/mongodb/lib/mongo_logger.js
 var require_mongo_logger = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_logger.js"(exports2) {
+  "backend/node_modules/mongodb/lib/mongo_logger.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoLogger = exports2.defaultLogTransform = exports2.stringifyWithMaxLen = exports2.createStdioLogger = exports2.parseSeverityFromString = exports2.MongoLoggableComponent = exports2.SEVERITY_LEVEL_MAP = exports2.DEFAULT_MAX_DOCUMENT_LENGTH = exports2.SeverityLevel = void 0;
@@ -9688,9 +9688,9 @@ var require_mongo_logger = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_types.js
+// backend/node_modules/mongodb/lib/mongo_types.js
 var require_mongo_types = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_types.js"(exports2) {
+  "backend/node_modules/mongodb/lib/mongo_types.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CancellationToken = exports2.TypedEventEmitter = void 0;
@@ -9736,9 +9736,9 @@ var require_mongo_types = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/get_more.js
+// backend/node_modules/mongodb/lib/operations/get_more.js
 var require_get_more = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/get_more.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/get_more.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GetMoreOperation = void 0;
@@ -9798,9 +9798,9 @@ var require_get_more = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/kill_cursors.js
+// backend/node_modules/mongodb/lib/operations/kill_cursors.js
 var require_kill_cursors = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/kill_cursors.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/kill_cursors.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.KillCursorsOperation = void 0;
@@ -9841,9 +9841,9 @@ var require_kill_cursors = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/metrics.js
+// backend/node_modules/mongodb/lib/cmap/metrics.js
 var require_metrics = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/metrics.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/metrics.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ConnectionPoolMetrics = void 0;
@@ -9899,9 +9899,9 @@ var require_metrics = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server_description.js
+// backend/node_modules/mongodb/lib/sdam/server_description.js
 var require_server_description = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server_description.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/server_description.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.compareTopologyVersion = exports2.parseServerType = exports2.ServerDescription = void 0;
@@ -10042,9 +10042,9 @@ var require_server_description = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/topology_description.js
+// backend/node_modules/mongodb/lib/sdam/topology_description.js
 var require_topology_description = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/topology_description.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/topology_description.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.TopologyDescription = void 0;
@@ -10359,9 +10359,9 @@ var require_topology_description = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/shared.js
+// backend/node_modules/mongodb/lib/cmap/wire_protocol/shared.js
 var require_shared = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/shared.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/wire_protocol/shared.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isSharded = exports2.getReadPreference = void 0;
@@ -10397,9 +10397,9 @@ var require_shared = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/transactions.js
+// backend/node_modules/mongodb/lib/transactions.js
 var require_transactions = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/transactions.js"(exports2) {
+  "backend/node_modules/mongodb/lib/transactions.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isTransactionCommand = exports2.Transaction = exports2.TxnState = void 0;
@@ -10532,9 +10532,9 @@ var require_transactions = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sessions.js
+// backend/node_modules/mongodb/lib/sessions.js
 var require_sessions = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sessions.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sessions.js"(exports2) {
     "use strict";
     var _a;
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -11197,9 +11197,9 @@ var require_sessions = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/abstract_cursor.js
+// backend/node_modules/mongodb/lib/cursor/abstract_cursor.js
 var require_abstract_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/abstract_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/abstract_cursor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.assertUninitialized = exports2.AbstractCursor = exports2.CURSOR_FLAGS = void 0;
@@ -11835,9 +11835,9 @@ var require_abstract_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/aggregation_cursor.js
+// backend/node_modules/mongodb/lib/cursor/aggregation_cursor.js
 var require_aggregation_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/aggregation_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/aggregation_cursor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AggregationCursor = void 0;
@@ -11978,9 +11978,9 @@ var require_aggregation_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/count.js
+// backend/node_modules/mongodb/lib/operations/count.js
 var require_count = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/count.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/count.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CountOperation = void 0;
@@ -12023,9 +12023,9 @@ var require_count = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sort.js
+// backend/node_modules/mongodb/lib/sort.js
 var require_sort = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sort.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sort.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.formatSort = void 0;
@@ -12115,9 +12115,9 @@ var require_sort = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/find.js
+// backend/node_modules/mongodb/lib/operations/find.js
 var require_find = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/find.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/find.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.FindOperation = void 0;
@@ -12261,9 +12261,9 @@ var require_find = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/find_cursor.js
+// backend/node_modules/mongodb/lib/cursor/find_cursor.js
 var require_find_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/find_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/find_cursor.js"(exports2) {
     "use strict";
     var _a;
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -12636,9 +12636,9 @@ var require_find_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/indexes.js
+// backend/node_modules/mongodb/lib/operations/indexes.js
 var require_indexes = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/indexes.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/indexes.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ListIndexesOperation = exports2.DropIndexOperation = exports2.CreateIndexesOperation = void 0;
@@ -12798,9 +12798,9 @@ var require_indexes = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/list_indexes_cursor.js
+// backend/node_modules/mongodb/lib/cursor/list_indexes_cursor.js
 var require_list_indexes_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/list_indexes_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/list_indexes_cursor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ListIndexesCursor = void 0;
@@ -12834,9 +12834,9 @@ var require_list_indexes_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/list_search_indexes_cursor.js
+// backend/node_modules/mongodb/lib/cursor/list_search_indexes_cursor.js
 var require_list_search_indexes_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/list_search_indexes_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/list_search_indexes_cursor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ListSearchIndexesCursor = void 0;
@@ -12852,9 +12852,9 @@ var require_list_search_indexes_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/count_documents.js
+// backend/node_modules/mongodb/lib/operations/count_documents.js
 var require_count_documents = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/count_documents.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/count_documents.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CountDocumentsOperation = void 0;
@@ -12886,9 +12886,9 @@ var require_count_documents = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/distinct.js
+// backend/node_modules/mongodb/lib/operations/distinct.js
 var require_distinct = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/distinct.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/distinct.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DistinctOperation = void 0;
@@ -12941,9 +12941,9 @@ var require_distinct = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/drop.js
+// backend/node_modules/mongodb/lib/operations/drop.js
 var require_drop = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/drop.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/drop.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DropDatabaseOperation = exports2.DropCollectionOperation = void 0;
@@ -13011,9 +13011,9 @@ var require_drop = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/estimated_document_count.js
+// backend/node_modules/mongodb/lib/operations/estimated_document_count.js
 var require_estimated_document_count = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/estimated_document_count.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/estimated_document_count.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.EstimatedDocumentCountOperation = void 0;
@@ -13049,9 +13049,9 @@ var require_estimated_document_count = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/find_and_modify.js
+// backend/node_modules/mongodb/lib/operations/find_and_modify.js
 var require_find_and_modify = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/find_and_modify.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/find_and_modify.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.FindOneAndUpdateOperation = exports2.FindOneAndReplaceOperation = exports2.FindOneAndDeleteOperation = exports2.FindAndModifyOperation = exports2.ReturnDocument = void 0;
@@ -13190,9 +13190,9 @@ var require_find_and_modify = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/is_capped.js
+// backend/node_modules/mongodb/lib/operations/is_capped.js
 var require_is_capped = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/is_capped.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/is_capped.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.IsCappedOperation = void 0;
@@ -13220,9 +13220,9 @@ var require_is_capped = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/options_operation.js
+// backend/node_modules/mongodb/lib/operations/options_operation.js
 var require_options_operation = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/options_operation.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/options_operation.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OptionsOperation = void 0;
@@ -13250,9 +13250,9 @@ var require_options_operation = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/rename.js
+// backend/node_modules/mongodb/lib/operations/rename.js
 var require_rename = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/rename.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/rename.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.RenameOperation = void 0;
@@ -13289,9 +13289,9 @@ var require_rename = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/search_indexes/create.js
+// backend/node_modules/mongodb/lib/operations/search_indexes/create.js
 var require_create = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/search_indexes/create.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/search_indexes/create.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CreateSearchIndexesOperation = void 0;
@@ -13320,9 +13320,9 @@ var require_create = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/search_indexes/drop.js
+// backend/node_modules/mongodb/lib/operations/search_indexes/drop.js
 var require_drop2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/search_indexes/drop.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/search_indexes/drop.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DropSearchIndexOperation = void 0;
@@ -13359,9 +13359,9 @@ var require_drop2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/search_indexes/update.js
+// backend/node_modules/mongodb/lib/operations/search_indexes/update.js
 var require_update2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/search_indexes/update.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/search_indexes/update.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.UpdateSearchIndexOperation = void 0;
@@ -13391,9 +13391,9 @@ var require_update2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/collection.js
+// backend/node_modules/mongodb/lib/collection.js
 var require_collection2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/collection.js"(exports2) {
+  "backend/node_modules/mongodb/lib/collection.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Collection = void 0;
@@ -13993,9 +13993,9 @@ var require_collection2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/change_stream_cursor.js
+// backend/node_modules/mongodb/lib/cursor/change_stream_cursor.js
 var require_change_stream_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/change_stream_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/change_stream_cursor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ChangeStreamCursor = void 0;
@@ -14096,9 +14096,9 @@ var require_change_stream_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/list_collections.js
+// backend/node_modules/mongodb/lib/operations/list_collections.js
 var require_list_collections = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/list_collections.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/list_collections.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ListCollectionsOperation = void 0;
@@ -14148,9 +14148,9 @@ var require_list_collections = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/list_collections_cursor.js
+// backend/node_modules/mongodb/lib/cursor/list_collections_cursor.js
 var require_list_collections_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/list_collections_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/list_collections_cursor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ListCollectionsCursor = void 0;
@@ -14185,9 +14185,9 @@ var require_list_collections_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/run_command_cursor.js
+// backend/node_modules/mongodb/lib/cursor/run_command_cursor.js
 var require_run_command_cursor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cursor/run_command_cursor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cursor/run_command_cursor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.RunCommandCursor = void 0;
@@ -14281,9 +14281,9 @@ var require_run_command_cursor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/collections.js
+// backend/node_modules/mongodb/lib/operations/collections.js
 var require_collections = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/collections.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/collections.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CollectionsOperation = void 0;
@@ -14313,9 +14313,9 @@ var require_collections = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/create_collection.js
+// backend/node_modules/mongodb/lib/operations/create_collection.js
 var require_create_collection = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/create_collection.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/create_collection.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CreateCollectionOperation = void 0;
@@ -14409,9 +14409,9 @@ var require_create_collection = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/profiling_level.js
+// backend/node_modules/mongodb/lib/operations/profiling_level.js
 var require_profiling_level = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/profiling_level.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/profiling_level.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ProfilingLevelOperation = void 0;
@@ -14445,9 +14445,9 @@ var require_profiling_level = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/set_profiling_level.js
+// backend/node_modules/mongodb/lib/operations/set_profiling_level.js
 var require_set_profiling_level = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/set_profiling_level.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/set_profiling_level.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.SetProfilingLevelOperation = exports2.ProfilingLevel = void 0;
@@ -14496,9 +14496,9 @@ var require_set_profiling_level = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/operations/stats.js
+// backend/node_modules/mongodb/lib/operations/stats.js
 var require_stats = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/operations/stats.js"(exports2) {
+  "backend/node_modules/mongodb/lib/operations/stats.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.DbStatsOperation = void 0;
@@ -14525,9 +14525,9 @@ var require_stats = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/db.js
+// backend/node_modules/mongodb/lib/db.js
 var require_db = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/db.js"(exports2) {
+  "backend/node_modules/mongodb/lib/db.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Db = void 0;
@@ -14853,9 +14853,9 @@ var require_db = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/deps.js
+// backend/node_modules/mongodb/lib/deps.js
 var require_deps = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/deps.js"(exports2) {
+  "backend/node_modules/mongodb/lib/deps.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getMongoDBClientEncryption = exports2.aws4 = exports2.getSocks = exports2.getSnappy = exports2.getGcpMetadata = exports2.getAwsCredentialProvider = exports2.getZstdLibrary = exports2.getKerberos = void 0;
@@ -14956,9 +14956,9 @@ var require_deps = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/auth_provider.js
+// backend/node_modules/mongodb/lib/cmap/auth/auth_provider.js
 var require_auth_provider = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/auth_provider.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/auth_provider.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AuthProvider = exports2.AuthContext = void 0;
@@ -15002,9 +15002,9 @@ var require_auth_provider = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/gssapi.js
+// backend/node_modules/mongodb/lib/cmap/auth/gssapi.js
 var require_gssapi = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/gssapi.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/gssapi.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.resolveCname = exports2.performGSSAPICanonicalizeHostName = exports2.GSSAPI = exports2.GSSAPICanonicalizationValue = void 0;
@@ -15137,9 +15137,9 @@ var require_gssapi = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/providers.js
+// backend/node_modules/mongodb/lib/cmap/auth/providers.js
 var require_providers = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/providers.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/providers.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AUTH_MECHS_AUTH_SRC_EXTERNAL = exports2.AuthMechanism = void 0;
@@ -15164,9 +15164,9 @@ var require_providers = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongo_credentials.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongo_credentials.js
 var require_mongo_credentials = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongo_credentials.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongo_credentials.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoCredentials = exports2.DEFAULT_ALLOWED_HOSTS = void 0;
@@ -15827,9 +15827,9 @@ var require_utils2 = __commonJS({
   }
 });
 
-// backend/node_modules/punycode/punycode.js
+// node_modules/punycode/punycode.js
 var require_punycode = __commonJS({
-  "backend/node_modules/punycode/punycode.js"(exports2, module2) {
+  "node_modules/punycode/punycode.js"(exports2, module2) {
     "use strict";
     var maxInt = 2147483647;
     var base = 36;
@@ -19191,9 +19191,9 @@ var require_lib2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/package.json
+// backend/node_modules/mongodb/package.json
 var require_package = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/package.json"(exports2, module2) {
+  "backend/node_modules/mongodb/package.json"(exports2, module2) {
     module2.exports = {
       name: "mongodb",
       version: "6.6.2",
@@ -19375,9 +19375,9 @@ var require_package = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/handshake/client_metadata.js
+// backend/node_modules/mongodb/lib/cmap/handshake/client_metadata.js
 var require_client_metadata = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/handshake/client_metadata.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/handshake/client_metadata.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getFAASEnv = exports2.addContainerMetadata = exports2.makeClientMetadata = exports2.LimitedSizeDocument = void 0;
@@ -19552,9 +19552,9 @@ var require_client_metadata = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/commands.js
+// backend/node_modules/mongodb/lib/cmap/commands.js
 var require_commands = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/commands.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/commands.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OpCompressedRequest = exports2.OpMsgResponse = exports2.OpMsgRequest = exports2.OpReply = exports2.OpQueryRequest = void 0;
@@ -19923,9 +19923,9 @@ var require_commands = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/compression.js
+// backend/node_modules/mongodb/lib/cmap/wire_protocol/compression.js
 var require_compression = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/compression.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/wire_protocol/compression.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.decompressResponse = exports2.compressCommand = exports2.decompress = exports2.compress = exports2.uncompressibleCommands = exports2.Compressor = void 0;
@@ -20066,9 +20066,9 @@ var require_compression = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/crypto_callbacks.js
+// backend/node_modules/mongodb/lib/client-side-encryption/crypto_callbacks.js
 var require_crypto_callbacks = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/crypto_callbacks.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/crypto_callbacks.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.hmacSha256Hook = exports2.hmacSha512Hook = exports2.aes256CtrDecryptHook = exports2.aes256CtrEncryptHook = exports2.aes256CbcDecryptHook = exports2.aes256CbcEncryptHook = exports2.signRsaSha256Hook = exports2.makeHmacHook = exports2.sha256Hook = exports2.randomHook = exports2.makeAES256Hook = void 0;
@@ -20150,9 +20150,9 @@ ${key.toString("base64")}
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/errors.js
+// backend/node_modules/mongodb/lib/client-side-encryption/errors.js
 var require_errors = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/errors.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/errors.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoCryptKMSRequestNetworkTimeoutError = exports2.MongoCryptAzureKMSRequestError = exports2.MongoCryptCreateEncryptedCollectionError = exports2.MongoCryptCreateDataKeyError = exports2.MongoCryptInvalidArgumentError = exports2.MongoCryptError = void 0;
@@ -20269,9 +20269,9 @@ var require_errors = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/mongocryptd_manager.js
+// backend/node_modules/mongodb/lib/client-side-encryption/mongocryptd_manager.js
 var require_mongocryptd_manager = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/mongocryptd_manager.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/mongocryptd_manager.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongocryptdManager = void 0;
@@ -20327,9 +20327,9 @@ var require_mongocryptd_manager = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/aws_temporary_credentials.js
+// backend/node_modules/mongodb/lib/cmap/auth/aws_temporary_credentials.js
 var require_aws_temporary_credentials = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/aws_temporary_credentials.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/aws_temporary_credentials.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.LegacyAWSTemporaryCredentialProvider = exports2.AWSSDKCredentialProvider = exports2.AWSTemporaryCredentialProvider = void 0;
@@ -20428,9 +20428,9 @@ var require_aws_temporary_credentials = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/aws.js
+// backend/node_modules/mongodb/lib/client-side-encryption/providers/aws.js
 var require_aws = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/aws.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/providers/aws.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.loadAWSCredentials = void 0;
@@ -20449,9 +20449,9 @@ var require_aws = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/utils.js
+// backend/node_modules/mongodb/lib/client-side-encryption/providers/utils.js
 var require_utils3 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/utils.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/providers/utils.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.get = void 0;
@@ -20482,9 +20482,9 @@ var require_utils3 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/azure.js
+// backend/node_modules/mongodb/lib/client-side-encryption/providers/azure.js
 var require_azure = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/azure.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/providers/azure.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.loadAzureCredentials = exports2.fetchAzureKMSToken = exports2.prepareRequest = exports2.tokenCache = exports2.AzureCredentialCache = void 0;
@@ -20576,9 +20576,9 @@ var require_azure = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/gcp.js
+// backend/node_modules/mongodb/lib/client-side-encryption/providers/gcp.js
 var require_gcp = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/gcp.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/providers/gcp.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.loadGCPCredentials = void 0;
@@ -20597,9 +20597,9 @@ var require_gcp = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/index.js
+// backend/node_modules/mongodb/lib/client-side-encryption/providers/index.js
 var require_providers2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/providers/index.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/providers/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.refreshKMSCredentials = exports2.isEmptyCredentials = void 0;
@@ -20631,9 +20631,9 @@ var require_providers2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/state_machine.js
+// backend/node_modules/mongodb/lib/client-side-encryption/state_machine.js
 var require_state_machine = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/state_machine.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/state_machine.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.StateMachine = void 0;
@@ -20961,9 +20961,9 @@ var require_state_machine = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/auto_encrypter.js
+// backend/node_modules/mongodb/lib/client-side-encryption/auto_encrypter.js
 var require_auto_encrypter = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/auto_encrypter.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/auto_encrypter.js"(exports2) {
     "use strict";
     var _a;
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -21225,9 +21225,9 @@ var require_auto_encrypter = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/encrypter.js
+// backend/node_modules/mongodb/lib/encrypter.js
 var require_encrypter = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/encrypter.js"(exports2) {
+  "backend/node_modules/mongodb/lib/encrypter.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Encrypter = void 0;
@@ -21334,9 +21334,9 @@ var require_encrypter = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/command_monitoring_events.js
+// backend/node_modules/mongodb/lib/cmap/command_monitoring_events.js
 var require_command_monitoring_events = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/command_monitoring_events.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/command_monitoring_events.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.SENSITIVE_COMMANDS = exports2.CommandFailedEvent = exports2.CommandSucceededEvent = exports2.CommandStartedEvent = void 0;
@@ -21560,9 +21560,9 @@ var require_command_monitoring_events = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/stream_description.js
+// backend/node_modules/mongodb/lib/cmap/stream_description.js
 var require_stream_description = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/stream_description.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/stream_description.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.StreamDescription = void 0;
@@ -21627,9 +21627,9 @@ var require_stream_description = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/on_data.js
+// backend/node_modules/mongodb/lib/cmap/wire_protocol/on_data.js
 var require_on_data = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/wire_protocol/on_data.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/wire_protocol/on_data.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.onData = void 0;
@@ -21700,9 +21700,9 @@ var require_on_data = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connection.js
+// backend/node_modules/mongodb/lib/cmap/connection.js
 var require_connection = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connection.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/connection.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CryptoConnection = exports2.SizedMessageTransform = exports2.Connection = exports2.hasSessionSupport = void 0;
@@ -22104,9 +22104,9 @@ var require_connection = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connect.js
+// backend/node_modules/mongodb/lib/cmap/connect.js
 var require_connect = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connect.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/connect.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.makeSocket = exports2.LEGAL_TCP_SOCKET_OPTIONS = exports2.LEGAL_TLS_SOCKET_OPTIONS = exports2.prepareHandshakeDocument = exports2.performInitialHandshake = exports2.makeConnection = exports2.connect = void 0;
@@ -22431,9 +22431,9 @@ var require_connect = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/events.js
+// backend/node_modules/mongodb/lib/sdam/events.js
 var require_events = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/events.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/events.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ServerHeartbeatFailedEvent = exports2.ServerHeartbeatSucceededEvent = exports2.ServerHeartbeatStartedEvent = exports2.TopologyClosedEvent = exports2.TopologyOpeningEvent = exports2.TopologyDescriptionChangedEvent = exports2.ServerClosedEvent = exports2.ServerOpeningEvent = exports2.ServerDescriptionChangedEvent = void 0;
@@ -22527,9 +22527,9 @@ var require_events = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/timeout.js
+// backend/node_modules/mongodb/lib/timeout.js
 var require_timeout = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/timeout.js"(exports2) {
+  "backend/node_modules/mongodb/lib/timeout.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Timeout = exports2.TimeoutError = void 0;
@@ -22596,9 +22596,9 @@ var require_timeout = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connection_pool_events.js
+// backend/node_modules/mongodb/lib/cmap/connection_pool_events.js
 var require_connection_pool_events = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connection_pool_events.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/connection_pool_events.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ConnectionPoolClearedEvent = exports2.ConnectionCheckedInEvent = exports2.ConnectionCheckedOutEvent = exports2.ConnectionCheckOutFailedEvent = exports2.ConnectionCheckOutStartedEvent = exports2.ConnectionClosedEvent = exports2.ConnectionReadyEvent = exports2.ConnectionCreatedEvent = exports2.ConnectionPoolClosedEvent = exports2.ConnectionPoolReadyEvent = exports2.ConnectionPoolCreatedEvent = exports2.ConnectionPoolMonitoringEvent = void 0;
@@ -22716,9 +22716,9 @@ var require_connection_pool_events = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/errors.js
+// backend/node_modules/mongodb/lib/cmap/errors.js
 var require_errors2 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/errors.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/errors.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.WaitQueueTimeoutError = exports2.PoolClearedOnNetworkError = exports2.PoolClearedError = exports2.PoolClosedError = void 0;
@@ -22811,9 +22811,9 @@ var require_errors2 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connection_pool.js
+// backend/node_modules/mongodb/lib/cmap/connection_pool.js
 var require_connection_pool = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/connection_pool.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/connection_pool.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ConnectionPool = exports2.PoolState = void 0;
@@ -23306,9 +23306,9 @@ var require_connection_pool = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server.js
+// backend/node_modules/mongodb/lib/sdam/server.js
 var require_server = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/server.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Server = void 0;
@@ -23618,9 +23618,9 @@ var require_server = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/monitor.js
+// backend/node_modules/mongodb/lib/sdam/monitor.js
 var require_monitor = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/monitor.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/monitor.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.RTTSampler = exports2.MonitorInterval = exports2.RTTPinger = exports2.Monitor = exports2.ServerMonitoringMode = void 0;
@@ -24115,9 +24115,9 @@ var require_monitor = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/connection_string.js
+// backend/node_modules/mongodb/lib/connection_string.js
 var require_connection_string = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/connection_string.js"(exports2) {
+  "backend/node_modules/mongodb/lib/connection_string.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.FEATURE_FLAGS = exports2.DEFAULT_OPTIONS = exports2.OPTIONS = exports2.parseOptions = exports2.resolveSRVRecord = void 0;
@@ -25137,9 +25137,9 @@ var require_connection_string = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongocr.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongocr.js
 var require_mongocr = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongocr.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongocr.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoCR = void 0;
@@ -25170,9 +25170,9 @@ var require_mongocr = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_aws.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_aws.js
 var require_mongodb_aws = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_aws.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_aws.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoDBAWS = void 0;
@@ -25296,9 +25296,9 @@ var require_mongodb_aws = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/service_workflow.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/service_workflow.js
 var require_service_workflow = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/service_workflow.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/service_workflow.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.commandDocument = exports2.ServiceWorkflow = void 0;
@@ -25337,9 +25337,9 @@ var require_service_workflow = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/aws_service_workflow.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/aws_service_workflow.js
 var require_aws_service_workflow = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/aws_service_workflow.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/aws_service_workflow.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AwsServiceWorkflow = void 0;
@@ -25366,9 +25366,9 @@ var require_aws_service_workflow = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/cache.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/cache.js
 var require_cache = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/cache.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/cache.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Cache = exports2.ExpiringCacheEntry = void 0;
@@ -25419,9 +25419,9 @@ var require_cache = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_token_cache.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_token_cache.js
 var require_azure_token_cache = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_token_cache.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_token_cache.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AzureTokenCache = exports2.AzureTokenEntry = void 0;
@@ -25468,9 +25468,9 @@ var require_azure_token_cache = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_service_workflow.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_service_workflow.js
 var require_azure_service_workflow = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_service_workflow.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/azure_service_workflow.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.AzureServiceWorkflow = void 0;
@@ -25528,9 +25528,9 @@ var require_azure_service_workflow = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_lock_cache.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_lock_cache.js
 var require_callback_lock_cache = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_lock_cache.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_lock_cache.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CallbackLockCache = void 0;
@@ -25606,9 +25606,9 @@ var require_callback_lock_cache = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/token_entry_cache.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/token_entry_cache.js
 var require_token_entry_cache = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/token_entry_cache.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/token_entry_cache.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.TokenEntryCache = exports2.TokenEntry = void 0;
@@ -25667,9 +25667,9 @@ var require_token_entry_cache = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_workflow.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_workflow.js
 var require_callback_workflow = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_workflow.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc/callback_workflow.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.CallbackWorkflow = void 0;
@@ -25820,9 +25820,9 @@ var require_callback_workflow = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc.js
+// backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc.js
 var require_mongodb_oidc = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/mongodb_oidc.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/mongodb_oidc.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoDBOIDC = exports2.OIDC_WORKFLOWS = void 0;
@@ -25881,9 +25881,9 @@ var require_mongodb_oidc = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/plain.js
+// backend/node_modules/mongodb/lib/cmap/auth/plain.js
 var require_plain = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/plain.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/plain.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.Plain = void 0;
@@ -26278,9 +26278,9 @@ var require_node = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/scram.js
+// backend/node_modules/mongodb/lib/cmap/auth/scram.js
 var require_scram = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/scram.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/scram.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ScramSHA256 = exports2.ScramSHA1 = void 0;
@@ -26519,9 +26519,9 @@ var require_scram = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/x509.js
+// backend/node_modules/mongodb/lib/cmap/auth/x509.js
 var require_x509 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/cmap/auth/x509.js"(exports2) {
+  "backend/node_modules/mongodb/lib/cmap/auth/x509.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.X509 = void 0;
@@ -26560,9 +26560,9 @@ var require_x509 = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_client_auth_providers.js
+// backend/node_modules/mongodb/lib/mongo_client_auth_providers.js
 var require_mongo_client_auth_providers = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_client_auth_providers.js"(exports2) {
+  "backend/node_modules/mongodb/lib/mongo_client_auth_providers.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoClientAuthProviders = void 0;
@@ -26614,9 +26614,9 @@ var require_mongo_client_auth_providers = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server_selection_events.js
+// backend/node_modules/mongodb/lib/sdam/server_selection_events.js
 var require_server_selection_events = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/server_selection_events.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/server_selection_events.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.WaitingForSuitableServerEvent = exports2.ServerSelectionSucceededEvent = exports2.ServerSelectionFailedEvent = exports2.ServerSelectionStartedEvent = exports2.ServerSelectionEvent = void 0;
@@ -26675,9 +26675,9 @@ var require_server_selection_events = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/srv_polling.js
+// backend/node_modules/mongodb/lib/sdam/srv_polling.js
 var require_srv_polling = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/srv_polling.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/srv_polling.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.SrvPoller = exports2.SrvPollingEvent = void 0;
@@ -26776,9 +26776,9 @@ var require_srv_polling = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/topology.js
+// backend/node_modules/mongodb/lib/sdam/topology.js
 var require_topology = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/sdam/topology.js"(exports2) {
+  "backend/node_modules/mongodb/lib/sdam/topology.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ServerCapabilities = exports2.Topology = void 0;
@@ -27354,9 +27354,9 @@ var require_topology = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_client.js
+// backend/node_modules/mongodb/lib/mongo_client.js
 var require_mongo_client = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/mongo_client.js"(exports2) {
+  "backend/node_modules/mongodb/lib/mongo_client.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoClient = exports2.ServerApiVersion = void 0;
@@ -27675,9 +27675,9 @@ var require_mongo_client = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/change_stream.js
+// backend/node_modules/mongodb/lib/change_stream.js
 var require_change_stream = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/change_stream.js"(exports2) {
+  "backend/node_modules/mongodb/lib/change_stream.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ChangeStream = void 0;
@@ -28007,9 +28007,9 @@ var require_change_stream = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/gridfs/download.js
+// backend/node_modules/mongodb/lib/gridfs/download.js
 var require_download = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/gridfs/download.js"(exports2) {
+  "backend/node_modules/mongodb/lib/gridfs/download.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GridFSBucketReadStream = void 0;
@@ -28265,9 +28265,9 @@ var require_download = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/gridfs/upload.js
+// backend/node_modules/mongodb/lib/gridfs/upload.js
 var require_upload = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/gridfs/upload.js"(exports2) {
+  "backend/node_modules/mongodb/lib/gridfs/upload.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GridFSBucketWriteStream = void 0;
@@ -28538,9 +28538,9 @@ var require_upload = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/gridfs/index.js
+// backend/node_modules/mongodb/lib/gridfs/index.js
 var require_gridfs = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/gridfs/index.js"(exports2) {
+  "backend/node_modules/mongodb/lib/gridfs/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.GridFSBucket = void 0;
@@ -28655,9 +28655,9 @@ var require_gridfs = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/client_encryption.js
+// backend/node_modules/mongodb/lib/client-side-encryption/client_encryption.js
 var require_client_encryption = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/client-side-encryption/client_encryption.js"(exports2) {
+  "backend/node_modules/mongodb/lib/client-side-encryption/client_encryption.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.ClientEncryption = void 0;
@@ -29182,9 +29182,9 @@ var require_client_encryption = __commonJS({
   }
 });
 
-// backend/node_modules/mongoose/node_modules/mongodb/lib/index.js
+// backend/node_modules/mongodb/lib/index.js
 var require_lib3 = __commonJS({
-  "backend/node_modules/mongoose/node_modules/mongodb/lib/index.js"(exports2) {
+  "backend/node_modules/mongodb/lib/index.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MongoUnexpectedServerResponseError = exports2.MongoTransactionError = exports2.MongoTopologyClosedError = exports2.MongoTailableCursorError = exports2.MongoSystemError = exports2.MongoServerSelectionError = exports2.MongoServerError = exports2.MongoServerClosedError = exports2.MongoRuntimeError = exports2.MongoParseError = exports2.MongoNotConnectedError = exports2.MongoNetworkTimeoutError = exports2.MongoNetworkError = exports2.MongoMissingDependencyError = exports2.MongoMissingCredentialsError = exports2.MongoKerberosError = exports2.MongoInvalidArgumentError = exports2.MongoGridFSStreamError = exports2.MongoGridFSChunkError = exports2.MongoExpiredSessionError = exports2.MongoError = exports2.MongoDriverError = exports2.MongoDecompressionError = exports2.MongoCursorInUseError = exports2.MongoCursorExhaustedError = exports2.MongoCompatibilityError = exports2.MongoChangeStreamError = exports2.MongoBatchReExecutionError = exports2.MongoAzureError = exports2.MongoAWSError = exports2.MongoAPIError = exports2.ChangeStreamCursor = exports2.ClientEncryption = exports2.MongoBulkWriteError = exports2.UUID = exports2.Timestamp = exports2.ObjectId = exports2.MinKey = exports2.MaxKey = exports2.Long = exports2.Int32 = exports2.Double = exports2.Decimal128 = exports2.DBRef = exports2.Code = exports2.BSONType = exports2.BSONSymbol = exports2.BSONRegExp = exports2.Binary = exports2.BSON = void 0;
@@ -49251,9 +49251,9 @@ var require_utils5 = __commonJS({
   }
 });
 
-// backend/node_modules/ms/index.js
+// node_modules/ms/index.js
 var require_ms2 = __commonJS({
-  "backend/node_modules/ms/index.js"(exports2, module2) {
+  "node_modules/ms/index.js"(exports2, module2) {
     var s = 1e3;
     var m = s * 60;
     var h = m * 60;
@@ -49367,9 +49367,9 @@ var require_ms2 = __commonJS({
   }
 });
 
-// backend/node_modules/debug/src/common.js
+// node_modules/debug/src/common.js
 var require_common4 = __commonJS({
-  "backend/node_modules/debug/src/common.js"(exports2, module2) {
+  "node_modules/debug/src/common.js"(exports2, module2) {
     function setup(env) {
       createDebug.debug = createDebug;
       createDebug.default = createDebug;
@@ -49530,9 +49530,9 @@ var require_common4 = __commonJS({
   }
 });
 
-// backend/node_modules/debug/src/browser.js
+// node_modules/debug/src/browser.js
 var require_browser = __commonJS({
-  "backend/node_modules/debug/src/browser.js"(exports2, module2) {
+  "node_modules/debug/src/browser.js"(exports2, module2) {
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -49699,35 +49699,41 @@ var require_browser = __commonJS({
   }
 });
 
-// backend/node_modules/has-flag/index.js
+// node_modules/has-flag/index.js
 var require_has_flag = __commonJS({
-  "backend/node_modules/has-flag/index.js"(exports2, module2) {
+  "node_modules/has-flag/index.js"(exports2, module2) {
     "use strict";
-    module2.exports = (flag, argv) => {
-      argv = argv || process.argv;
+    module2.exports = (flag, argv = process.argv) => {
       const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
-      const pos = argv.indexOf(prefix + flag);
-      const terminatorPos = argv.indexOf("--");
-      return pos !== -1 && (terminatorPos === -1 ? true : pos < terminatorPos);
+      const position = argv.indexOf(prefix + flag);
+      const terminatorPosition = argv.indexOf("--");
+      return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
     };
   }
 });
 
-// backend/node_modules/supports-color/index.js
+// node_modules/supports-color/index.js
 var require_supports_color = __commonJS({
-  "backend/node_modules/supports-color/index.js"(exports2, module2) {
+  "node_modules/supports-color/index.js"(exports2, module2) {
     "use strict";
     var os = require("os");
+    var tty = require("tty");
     var hasFlag = require_has_flag();
-    var env = process.env;
+    var { env } = process;
     var forceColor;
-    if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false")) {
-      forceColor = false;
+    if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
+      forceColor = 0;
     } else if (hasFlag("color") || hasFlag("colors") || hasFlag("color=true") || hasFlag("color=always")) {
-      forceColor = true;
+      forceColor = 1;
     }
     if ("FORCE_COLOR" in env) {
-      forceColor = env.FORCE_COLOR.length === 0 || parseInt(env.FORCE_COLOR, 10) !== 0;
+      if (env.FORCE_COLOR === "true") {
+        forceColor = 1;
+      } else if (env.FORCE_COLOR === "false") {
+        forceColor = 0;
+      } else {
+        forceColor = env.FORCE_COLOR.length === 0 ? 1 : Math.min(parseInt(env.FORCE_COLOR, 10), 3);
+      }
     }
     function translateLevel(level) {
       if (level === 0) {
@@ -49740,8 +49746,8 @@ var require_supports_color = __commonJS({
         has16m: level >= 3
       };
     }
-    function supportsColor(stream) {
-      if (forceColor === false) {
+    function supportsColor(haveStream, streamIsTTY) {
+      if (forceColor === 0) {
         return 0;
       }
       if (hasFlag("color=16m") || hasFlag("color=full") || hasFlag("color=truecolor")) {
@@ -49750,19 +49756,22 @@ var require_supports_color = __commonJS({
       if (hasFlag("color=256")) {
         return 2;
       }
-      if (stream && !stream.isTTY && forceColor !== true) {
+      if (haveStream && !streamIsTTY && forceColor === void 0) {
         return 0;
       }
-      const min = forceColor ? 1 : 0;
+      const min = forceColor || 0;
+      if (env.TERM === "dumb") {
+        return min;
+      }
       if (process.platform === "win32") {
         const osRelease = os.release().split(".");
-        if (Number(process.versions.node.split(".")[0]) >= 8 && Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
+        if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
           return Number(osRelease[2]) >= 14931 ? 3 : 2;
         }
         return 1;
       }
       if ("CI" in env) {
-        if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI"].some((sign) => sign in env) || env.CI_NAME === "codeship") {
+        if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "GITHUB_ACTIONS", "BUILDKITE"].some((sign) => sign in env) || env.CI_NAME === "codeship") {
           return 1;
         }
         return min;
@@ -49791,26 +49800,23 @@ var require_supports_color = __commonJS({
       if ("COLORTERM" in env) {
         return 1;
       }
-      if (env.TERM === "dumb") {
-        return min;
-      }
       return min;
     }
     function getSupportLevel(stream) {
-      const level = supportsColor(stream);
+      const level = supportsColor(stream, stream && stream.isTTY);
       return translateLevel(level);
     }
     module2.exports = {
       supportsColor: getSupportLevel,
-      stdout: getSupportLevel(process.stdout),
-      stderr: getSupportLevel(process.stderr)
+      stdout: translateLevel(supportsColor(true, tty.isatty(1))),
+      stderr: translateLevel(supportsColor(true, tty.isatty(2)))
     };
   }
 });
 
-// backend/node_modules/debug/src/node.js
+// node_modules/debug/src/node.js
 var require_node2 = __commonJS({
-  "backend/node_modules/debug/src/node.js"(exports2, module2) {
+  "node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
     var util = require("util");
     exports2.init = init;
@@ -49950,7 +49956,7 @@ var require_node2 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util.format(...args) + "\n");
+      return process.stderr.write(util.formatWithOptions(exports2.inspectOpts, ...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -49982,9 +49988,9 @@ var require_node2 = __commonJS({
   }
 });
 
-// backend/node_modules/debug/src/index.js
+// node_modules/debug/src/index.js
 var require_src = __commonJS({
-  "backend/node_modules/debug/src/index.js"(exports2, module2) {
+  "node_modules/debug/src/index.js"(exports2, module2) {
     if (typeof process === "undefined" || process.type === "renderer" || process.browser === true || process.__nwjs) {
       module2.exports = require_browser();
     } else {
@@ -60805,9 +60811,9 @@ var require_mongoose2 = __commonJS({
   }
 });
 
-// backend/node_modules/moment/moment.js
+// node_modules/moment/moment.js
 var require_moment = __commonJS({
-  "backend/node_modules/moment/moment.js"(exports2, module2) {
+  "node_modules/moment/moment.js"(exports2, module2) {
     (function(global2, factory) {
       typeof exports2 === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : global2.moment = factory();
     })(exports2, function() {
