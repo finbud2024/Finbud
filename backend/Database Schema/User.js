@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
 			type: String,
 			required: true
 		},
+		password: String,
 		priviledge:{
 			type:String,
 			enum: ['admin', 'user'],

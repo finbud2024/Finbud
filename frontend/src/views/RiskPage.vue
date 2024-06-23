@@ -65,6 +65,9 @@
       </div>
     </div>
     <RiskChat/>
+      
+      <RiskChat/>
+    </div>
   </template>
   
   <script>
@@ -73,6 +76,10 @@
   import RiskChat from '../components/Risk&Chat/RiskChat.vue';
   const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
   const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
+  import Pagination from '../components/Pagination.vue';
+  import RiskChat from '../components/RiskChat.vue';
+  const apiKey = 'BS4H8D1PZ63W5IC0';
+  const apiKeyCrypto = 'coinranking687d4cc37a39468baeffcc6c0546f518c3c54b2b87e4f73a';
   
   export default {
     name: 'StockQuote',

@@ -1,3 +1,4 @@
+//configurations
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -7,6 +8,14 @@ import threadRoute from '../Endpoints/threadRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
 import newsRoute from '../Endpoints/newsRoute.js';
 import serverless from 'serverless-http';
+import serverless from 'serverless-http';
+import passportConfig from '../Passport/config.js';
+//routes for processing users request
+import threadRoute from '../Endpoints/threadRoute.js';
+import userRoute from '../Endpoints/userRoute.js';
+import newsRoute from '../Endpoints/newsRoute.js';
+import authRoute from '../Endpoints/authRoute.js';
+//--------------------
 
 // Load environment variables from .env
 dotenv.config();
@@ -26,14 +35,28 @@ mongoose.connect(mongoURI)
   process.exit(1);
 });
 
+passportConfig(app)
+
+const corsOptions = {
+	origin: '*', // Ensure this environment variable is set
+	methods: ['GET', 'POST', 'PUT', 'DELETE'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-XSRF-TOKEN', 'Accept', 'Origin'],
+	credentials: true,
+	optionsSuccessStatus: 200 // Some legacy browsers choke on a 204 status
+};
+
+
+app.options('*', cors(corsOptions)); 
+
 // Set up Express middlewares
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(cors())
-// app.use('/.netlify/functions/server/', threadRoute)
-app.use('/.netlify/functions/server/', userRoute);
+app.use(cors(corsOptions));
+
 app.use('/.netlify/functions/server', threadRoute)
 app.use('/.netlify/functions/server', userRoute);
 app.use('/.netlify/functions/server', newsRoute);
+app.use('/.netlify/functions/server', authRoute);
+
 const handler = serverless(app);
 export { handler };

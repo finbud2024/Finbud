@@ -54,7 +54,13 @@ export default {
         document.getElementById('errorMessage').classList.remove('wrong-password');
         //alert('Invalid username or password!');
       }
+
     },
+    async signInWithGoogle(){
+        const api = `https://finbud-ai.netlify.app/.netlify/functions/server/auth/google`
+        // const api = `http://localhost:8888/.netlify/functions/server/auth/google`
+        window.location.href = api;
+    }
   },
 };
 </script>

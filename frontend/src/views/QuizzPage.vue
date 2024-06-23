@@ -51,9 +51,9 @@
 
 <script>
 import axios from 'axios';
-const apiUrl = process.env.NODE_ENV === 'development'
-  ? 'http://localhost:3000' 
-  : 'https://finbud-ai.netlify.app/.netlify/functions';
+
+const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY; 
+
 export default {
   name: 'QuizComponent',
   data() {
@@ -72,10 +72,26 @@ export default {
   },
   methods: {
     async generateQuiz() {
-      console.log('Hello');
       try {
-        const response = await axios.post(`${apiUrl}/generate-quiz`, { keywords: this.keywords });
-        this.question = response.data;
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "You are a helpful assistant." },
+            { role: "user", content: `Generate a finance-related multiple-choice quiz question including the keywords: ${this.keywords}. Provide the question and four answer options. Indicate the correct answer with an asterisk (*). Format: Question: <question>\nA. <option1>\nB. <option2>\nC. <option3>\nD. <option4>` }
+          ],
+          max_tokens: 150,
+          n: 1,
+          stop: ["\n\n"]
+        }, {
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const completion = response.data.choices[0].message.content.trim();
+        const quizData = this.parseQuizResponse(completion);
+        this.question = quizData;
         this.selectedAnswer = null;
         this.isQuizStarted = true;
         this.attempts = 0;
@@ -141,6 +157,23 @@ export default {
         this.score = 0;
       }
     },
+    parseQuizResponse(response) {
+      const lines = response.split('\n').filter(line => line.trim() !== '');
+      const question = lines[0].replace('Question:', '').trim();
+      const options = lines.slice(1).map(line => {
+        const isCorrect = line.includes('*');
+        const cleanedLine = line.replace('*', '').trim();
+        return {
+          text: cleanedLine,
+          correct: isCorrect
+        };
+      });
+
+      return {
+        question,
+        answers: options
+      };
+    }
   },
 };
 </script>
