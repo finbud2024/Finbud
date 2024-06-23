@@ -3,31 +3,33 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import axios from 'axios';
 // import dotenv from 'dotenv';
-import StockPrice from '..//Database Schema/Stock.js';
+import StockPrice from '../Database Schema/Stock.js';
 import CryptoCurrency from '../Database Schema/Crypto.js'
 //MongoDB connect
 const apiKey = 'CKMO3Q3NLK0OOSZG';
-
-// console.log(todayDate);
-// autoGetPrice();
+mongoose.connect('mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {})
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Could not connect to MongoDB', err));
+autoGetPrice();
 async function autoGetPrice(){
     var todayDate = await resetToMidNight(new Date());
     const latestDateInStockDB = await getLatestDate(StockPrice);
     const latestDateInCryptoDB = await getLatestDate(CryptoCurrency);
-    console.log("Latest date in Stock DB:",new Date(latestDateInStockDB));
-    console.log("Latest date :",new Date(todayDate));
-    if(new Date(todayDate) > new Date(latestDateInStockDB)){
-        getStockPrice();
-    }else{
-        console.log("Today Date is equal to the latest Date in Stock, so no need to update DB");
-    }
+    // console.log("Latest date in Stock DB:",new Date(latestDateInStockDB));
+    // console.log("Latest date :",new Date(todayDate));
+    // if(new Date(todayDate) > new Date(latestDateInStockDB)){
+    //    await  getStockPrice();
+    // }else{
+    //     console.log("Today Date is equal to the latest Date in Stock, so no need to update DB");
+    // }
     console.log("Latest date in Crypto DB:", new Date(latestDateInCryptoDB));
     console.log("today Date:", new Date(todayDate));
     if(new Date(todayDate) > new Date(latestDateInCryptoDB)){
-        getCryptoPrice();
+        await getCryptoPrice();
     }else{
         console.log("Today Date is equal to the latest Date in Crypto, so no need to update DB");
     }
+    
 }
 const firstofFebuary = moment("2024-02-01", "YYYY-MM-DD").toDate();
 async function resetToMidNight(date){
@@ -36,10 +38,6 @@ async function resetToMidNight(date){
     return  date;
 }
 
-// 'mongodb+srv://kat46:kat46@cluster0.ntsqlct.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-mongoose.connect(process.env.MONGO_URI, {})
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Could not connect to MongoDB', err));
 // Get Crypto Price to MongoDB 
 async function getStockPrice() {
     const listOfStocks = ['IBM','AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB', 'TSLA', 'BRK.B', 'NVDA', 'JNJ', 'WMT', 'JPM', 'PG', 'DIS', 'MA', 'NFLX', 'ADBE', 'PYPL', 'INTC', 'CSCO'];
@@ -94,7 +92,7 @@ async function saveNewStock(metaData, data, recordDate) {
         date: recordDate,
     })
     try {
-        const savedCrypto = newStock.save();
+        const savedStock = newStock.save();
         console.log("Stock saved Successfully", metaData['2. Symbol']);
     } catch (error) {
         console.log("Error saving new stock", error);

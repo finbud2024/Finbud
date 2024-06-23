@@ -63,6 +63,8 @@ const routes = [
     path: '/riskchat',
     name: 'RiskChat',
     component: RiskChat,
+  },
+  {
     path: '/quant-analysis',
     name: 'QuantAnalysis',
     component: QuantAnalysis,
