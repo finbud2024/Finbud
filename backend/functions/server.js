@@ -8,12 +8,8 @@ import threadRoute from '../Endpoints/threadRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
 import newsRoute from '../Endpoints/newsRoute.js';
 import serverless from 'serverless-http';
-import serverless from 'serverless-http';
 import passportConfig from '../Passport/config.js';
 //routes for processing users request
-import threadRoute from '../Endpoints/threadRoute.js';
-import userRoute from '../Endpoints/userRoute.js';
-import newsRoute from '../Endpoints/newsRoute.js';
 import authRoute from '../Endpoints/authRoute.js';
 //--------------------
 

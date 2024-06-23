@@ -7,6 +7,10 @@ var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
+var __export = (target, all3) => {
+  for (var name in all3)
+    __defProp(target, name, { get: all3[name], enumerable: true });
+};
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
@@ -62,7 +66,7 @@ var require_immediate = __commonJS({
 var require_collection = __commonJS({
   "backend/node_modules/mongoose/lib/collection.js"(exports2, module2) {
     "use strict";
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var STATES = require_connectionState();
     var immediate = require_immediate();
     function Collection(name, conn, opts) {
@@ -75,7 +79,7 @@ var require_collection = __commonJS({
       this.conn = conn;
       this.queue = [];
       this.buffer = true;
-      this.emitter = new EventEmitter();
+      this.emitter = new EventEmitter2();
       if (STATES.connected === this.conn.readyState) {
         this.onOpen();
       }
@@ -224,13 +228,13 @@ var require_bson = __commonJS({
     function isUint8Array(value) {
       return Object.prototype.toString.call(value) === "[object Uint8Array]";
     }
-    function isRegExp(d) {
+    function isRegExp2(d) {
       return Object.prototype.toString.call(d) === "[object RegExp]";
     }
     function isMap(d) {
       return Object.prototype.toString.call(d) === "[object Map]";
     }
-    function isDate(d) {
+    function isDate2(d) {
       return Object.prototype.toString.call(d) === "[object Date]";
     }
     function defaultInspect(x, _options) {
@@ -2629,7 +2633,7 @@ var require_bson = __commonJS({
       }
       return totalLength;
     }
-    function calculateElement(name, value, serializeFunctions = false, isArray = false, ignoreUndefined = false) {
+    function calculateElement(name, value, serializeFunctions = false, isArray2 = false, ignoreUndefined = false) {
       if (typeof value?.toBSON === "function") {
         value = value.toBSON();
       }
@@ -2647,7 +2651,7 @@ var require_bson = __commonJS({
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + (8 + 1);
           }
         case "undefined":
-          if (isArray || !ignoreUndefined)
+          if (isArray2 || !ignoreUndefined)
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + 1;
           return 0;
         case "boolean":
@@ -2659,7 +2663,7 @@ var require_bson = __commonJS({
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + 1;
           } else if (value._bsontype === "ObjectId") {
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + (12 + 1);
-          } else if (value instanceof Date || isDate(value)) {
+          } else if (value instanceof Date || isDate2(value)) {
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + (8 + 1);
           } else if (ArrayBuffer.isView(value) || value instanceof ArrayBuffer || isAnyArrayBuffer(value)) {
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + (1 + 4 + 1) + value.byteLength;
@@ -2691,7 +2695,7 @@ var require_bson = __commonJS({
               ordered_values["$db"] = value.db;
             }
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + 1 + internalCalculateObjectSize(ordered_values, serializeFunctions, ignoreUndefined);
-          } else if (value instanceof RegExp || isRegExp(value)) {
+          } else if (value instanceof RegExp || isRegExp2(value)) {
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + 1 + ByteUtils.utf8ByteLength(value.source) + 1 + (value.global ? 1 : 0) + (value.ignoreCase ? 1 : 0) + (value.multiline ? 1 : 0) + 1;
           } else if (value._bsontype === "BSONRegExp") {
             return (name != null ? ByteUtils.utf8ByteLength(name) + 1 : 0) + 1 + ByteUtils.utf8ByteLength(value.pattern) + 1 + ByteUtils.utf8ByteLength(value.options) + 1;
@@ -2862,7 +2866,7 @@ var require_bson = __commonJS({
     Timestamp.MAX_VALUE = Long.MAX_UNSIGNED_VALUE;
     var JS_INT_MAX_LONG = Long.fromNumber(JS_INT_MAX);
     var JS_INT_MIN_LONG = Long.fromNumber(JS_INT_MIN);
-    function internalDeserialize(buffer2, options, isArray) {
+    function internalDeserialize(buffer2, options, isArray2) {
       options = options == null ? {} : options;
       const index = options && options.index ? options.index : 0;
       const size = NumberUtils.getInt32LE(buffer2, index);
@@ -2881,10 +2885,10 @@ var require_bson = __commonJS({
       if (buffer2[index + size - 1] !== 0) {
         throw new BSONError("One object, sized correctly, with a spot for an EOO, but the EOO isn't 0x00");
       }
-      return deserializeObject(buffer2, index, options, isArray);
+      return deserializeObject(buffer2, index, options, isArray2);
     }
     var allowedDBRefKeys = /^\$ref$|^\$id$|^\$db$/;
-    function deserializeObject(buffer2, index, options, isArray = false) {
+    function deserializeObject(buffer2, index, options, isArray2 = false) {
       const fieldsAsRaw = options["fieldsAsRaw"] == null ? null : options["fieldsAsRaw"];
       const raw = options["raw"] == null ? false : options["raw"];
       const bsonRegExp = typeof options["bsonRegExp"] === "boolean" ? options["bsonRegExp"] : false;
@@ -2934,10 +2938,10 @@ var require_bson = __commonJS({
       index += 4;
       if (size < 5 || size > buffer2.length)
         throw new BSONError("corrupt bson message");
-      const object = isArray ? [] : {};
+      const object = isArray2 ? [] : {};
       let arrayIndex = 0;
       const done = false;
-      let isPossibleDBRef = isArray ? false : null;
+      let isPossibleDBRef = isArray2 ? false : null;
       while (!done) {
         const elementType = buffer2[index++];
         if (elementType === 0)
@@ -2948,7 +2952,7 @@ var require_bson = __commonJS({
         }
         if (i >= buffer2.byteLength)
           throw new BSONError("Bad BSON Document: illegal CString");
-        const name = isArray ? arrayIndex++ : ByteUtils.toUTF8(buffer2, index, i, false);
+        const name = isArray2 ? arrayIndex++ : ByteUtils.toUTF8(buffer2, index, i, false);
         let shouldValidateKey = true;
         if (globalUTFValidation || utf8KeysSet?.has(name)) {
           shouldValidateKey = validationSetting;
@@ -3233,7 +3237,7 @@ var require_bson = __commonJS({
         }
       }
       if (size !== index - startIndex) {
-        if (isArray)
+        if (isArray2)
           throw new BSONError("corrupt array bson");
         throw new BSONError("corrupt object bson");
       }
@@ -3546,7 +3550,7 @@ var require_bson = __commonJS({
           throw new BSONError("serialize does not support non-object as the root input");
         } else if ("_bsontype" in object && typeof object._bsontype === "string") {
           throw new BSONError(`BSON types cannot be serialized as a document`);
-        } else if (isDate(object) || isRegExp(object) || isUint8Array(object) || isAnyArrayBuffer(object)) {
+        } else if (isDate2(object) || isRegExp2(object) || isUint8Array(object) || isAnyArrayBuffer(object)) {
           throw new BSONError(`date, regexp, typedarray, and arraybuffer cannot be BSON documents`);
         }
         path = /* @__PURE__ */ new Set();
@@ -3568,7 +3572,7 @@ var require_bson = __commonJS({
             index = serializeBigInt(buffer2, key, value, index);
           } else if (typeof value === "boolean") {
             index = serializeBoolean(buffer2, key, value, index);
-          } else if (value instanceof Date || isDate(value)) {
+          } else if (value instanceof Date || isDate2(value)) {
             index = serializeDate(buffer2, key, value, index);
           } else if (value === void 0) {
             index = serializeNull(buffer2, key, value, index);
@@ -3576,7 +3580,7 @@ var require_bson = __commonJS({
             index = serializeNull(buffer2, key, value, index);
           } else if (isUint8Array(value)) {
             index = serializeBuffer(buffer2, key, value, index);
-          } else if (value instanceof RegExp || isRegExp(value)) {
+          } else if (value instanceof RegExp || isRegExp2(value)) {
             index = serializeRegExp(buffer2, key, value, index);
           } else if (typeof value === "object" && value._bsontype == null) {
             index = serializeObject(buffer2, key, value, index, checkKeys, depth, serializeFunctions, ignoreUndefined, path);
@@ -3644,13 +3648,13 @@ var require_bson = __commonJS({
             index = serializeBigInt(buffer2, key, value, index);
           } else if (type === "boolean") {
             index = serializeBoolean(buffer2, key, value, index);
-          } else if (value instanceof Date || isDate(value)) {
+          } else if (value instanceof Date || isDate2(value)) {
             index = serializeDate(buffer2, key, value, index);
           } else if (value === null || value === void 0 && ignoreUndefined === false) {
             index = serializeNull(buffer2, key, value, index);
           } else if (isUint8Array(value)) {
             index = serializeBuffer(buffer2, key, value, index);
-          } else if (value instanceof RegExp || isRegExp(value)) {
+          } else if (value instanceof RegExp || isRegExp2(value)) {
             index = serializeRegExp(buffer2, key, value, index);
           } else if (type === "object" && value._bsontype == null) {
             index = serializeObject(buffer2, key, value, index, checkKeys, depth, serializeFunctions, ignoreUndefined, path);
@@ -3717,7 +3721,7 @@ var require_bson = __commonJS({
             index = serializeBigInt(buffer2, key, value, index);
           } else if (type === "boolean") {
             index = serializeBoolean(buffer2, key, value, index);
-          } else if (value instanceof Date || isDate(value)) {
+          } else if (value instanceof Date || isDate2(value)) {
             index = serializeDate(buffer2, key, value, index);
           } else if (value === void 0) {
             if (ignoreUndefined === false)
@@ -3726,7 +3730,7 @@ var require_bson = __commonJS({
             index = serializeNull(buffer2, key, value, index);
           } else if (isUint8Array(value)) {
             index = serializeBuffer(buffer2, key, value, index);
-          } else if (value instanceof RegExp || isRegExp(value)) {
+          } else if (value instanceof RegExp || isRegExp2(value)) {
             index = serializeRegExp(buffer2, key, value, index);
           } else if (type === "object" && value._bsontype == null) {
             index = serializeObject(buffer2, key, value, index, checkKeys, depth, serializeFunctions, ignoreUndefined, path);
@@ -3908,7 +3912,7 @@ var require_bson = __commonJS({
         return serializeArray(value, options);
       if (value === void 0)
         return null;
-      if (value instanceof Date || isDate(value)) {
+      if (value instanceof Date || isDate2(value)) {
         const dateNum = value.getTime(), inRange = dateNum > -1 && dateNum < 2534023188e5;
         if (options.legacy) {
           return options.relaxed && inRange ? { $date: value.getTime() } : { $date: getISOString(value) };
@@ -3932,7 +3936,7 @@ var require_bson = __commonJS({
         }
         return Number(BigInt.asIntN(64, value));
       }
-      if (value instanceof RegExp || isRegExp(value)) {
+      if (value instanceof RegExp || isRegExp2(value)) {
         let flags = value.flags;
         if (flags === void 0) {
           const match = value.toString().match(/[gimuy]*$/);
@@ -5679,8 +5683,8 @@ var require_server_selection = __commonJS({
             return result;
           }
         }
-        const filter = mode === read_preference_1.ReadPreference.NEAREST ? nearestFilter : secondaryFilter;
-        const selectedServers = latencyWindowReducer(topologyDescription, tagSetReducer(readPreference, maxStalenessReducer(readPreference, topologyDescription, servers.filter(filter))));
+        const filter2 = mode === read_preference_1.ReadPreference.NEAREST ? nearestFilter : secondaryFilter;
+        const selectedServers = latencyWindowReducer(topologyDescription, tagSetReducer(readPreference, maxStalenessReducer(readPreference, topologyDescription, servers.filter(filter2))));
         if (mode === read_preference_1.ReadPreference.SECONDARY_PREFERRED && selectedServers.length === 0) {
           return servers.filter(primaryFilter);
         }
@@ -5977,8 +5981,8 @@ var require_utils = __commonJS({
     exports2.noop = exports2.fileIsAccessible = exports2.maybeAddIdToDocuments = exports2.once = exports2.randomBytes = exports2.squashError = exports2.promiseWithResolvers = exports2.isHostMatch = exports2.COSMOS_DB_MSG = void 0;
     var crypto = require("crypto");
     var fs_1 = require("fs");
-    var http = require("http");
-    var url = require("url");
+    var http2 = require("http");
+    var url2 = require("url");
     var url_1 = require("url");
     var util_1 = require("util");
     var bson_1 = require_bson2();
@@ -6035,10 +6039,10 @@ var require_utils = __commonJS({
     }
     exports2.normalizeHintField = normalizeHintField;
     var TO_STRING = (object) => Object.prototype.toString.call(object);
-    function isObject(arg) {
+    function isObject2(arg) {
       return "[object Object]" === TO_STRING(arg);
     }
-    exports2.isObject = isObject;
+    exports2.isObject = isObject2;
     function mergeOptions(target, source) {
       return { ...target, ...source };
     }
@@ -6292,12 +6296,12 @@ var require_utils = __commonJS({
     exports2.setDifference = setDifference;
     var HAS_OWN = (object, prop) => Object.prototype.hasOwnProperty.call(object, prop);
     function isRecord(value, requiredKeys = void 0) {
-      if (!isObject(value)) {
+      if (!isObject2(value)) {
         return false;
       }
       const ctor = value.constructor;
       if (ctor && ctor.prototype) {
-        if (!isObject(ctor.prototype)) {
+        if (!isObject2(ctor.prototype)) {
           return false;
         }
         if (!HAS_OWN(ctor.prototype, "isPrototypeOf")) {
@@ -6423,9 +6427,9 @@ var require_utils = __commonJS({
         return this.remove(this.head.prev);
       }
       /** Iterates through the list and removes nodes where filter returns true */
-      prune(filter) {
+      prune(filter2) {
         for (const node of this.nodes()) {
-          if (filter(node.value)) {
+          if (filter2(node.value)) {
             this.remove(node);
           }
         }
@@ -6516,16 +6520,16 @@ var require_utils = __commonJS({
           return;
         }
         const urlString = `iLoveJS://${escapedHost}`;
-        let url2;
+        let url3;
         try {
-          url2 = new url_1.URL(urlString);
+          url3 = new url_1.URL(urlString);
         } catch (urlError) {
           const runtimeError = new error_1.MongoRuntimeError(`Unable to parse ${escapedHost} with URL`);
           runtimeError.cause = urlError;
           throw runtimeError;
         }
-        const hostname = url2.hostname;
-        const port = url2.port;
+        const hostname = url3.hostname;
+        const port = url3.port;
         let normalized = decodeURIComponent(hostname).toLowerCase();
         if (normalized.startsWith("[") && normalized.endsWith("]")) {
           this.isIPv6 = true;
@@ -6683,10 +6687,10 @@ var require_utils = __commonJS({
           method: "GET",
           timeout: 1e4,
           json: true,
-          ...url.parse(uri),
+          ...url2.parse(uri),
           ...options
         };
-        const req = http.request(requestOptions, (res) => {
+        const req = http2.request(requestOptions, (res) => {
           res.setEncoding("utf8");
           let data = "";
           res.on("data", (d) => {
@@ -6772,10 +6776,10 @@ var require_utils = __commonJS({
       }
     }
     exports2.fileIsAccessible = fileIsAccessible;
-    function noop() {
+    function noop2() {
       return;
     }
-    exports2.noop = noop;
+    exports2.noop = noop2;
   }
 });
 
@@ -7435,8 +7439,8 @@ var require_delete = __commonJS({
     };
     exports2.DeleteOperation = DeleteOperation;
     var DeleteOneOperation = class extends DeleteOperation {
-      constructor(collection, filter, options) {
-        super(collection.s.namespace, [makeDeleteStatement(filter, { ...options, limit: 1 })], options);
+      constructor(collection, filter2, options) {
+        super(collection.s.namespace, [makeDeleteStatement(filter2, { ...options, limit: 1 })], options);
       }
       async execute(server, session) {
         const res = await super.execute(server, session);
@@ -7454,8 +7458,8 @@ var require_delete = __commonJS({
     };
     exports2.DeleteOneOperation = DeleteOneOperation;
     var DeleteManyOperation = class extends DeleteOperation {
-      constructor(collection, filter, options) {
-        super(collection.s.namespace, [makeDeleteStatement(filter, options)], options);
+      constructor(collection, filter2, options) {
+        super(collection.s.namespace, [makeDeleteStatement(filter2, options)], options);
       }
       async execute(server, session) {
         const res = await super.execute(server, session);
@@ -7472,9 +7476,9 @@ var require_delete = __commonJS({
       }
     };
     exports2.DeleteManyOperation = DeleteManyOperation;
-    function makeDeleteStatement(filter, options) {
+    function makeDeleteStatement(filter2, options) {
       const op = {
-        q: filter,
+        q: filter2,
         limit: typeof options.limit === "number" ? options.limit : 0
       };
       if (options.collation) {
@@ -7689,8 +7693,8 @@ var require_update = __commonJS({
     };
     exports2.UpdateOperation = UpdateOperation;
     var UpdateOneOperation = class extends UpdateOperation {
-      constructor(collection, filter, update, options) {
-        super(collection.s.namespace, [makeUpdateStatement(filter, update, { ...options, multi: false })], options);
+      constructor(collection, filter2, update, options) {
+        super(collection.s.namespace, [makeUpdateStatement(filter2, update, { ...options, multi: false })], options);
         if (!(0, utils_1.hasAtomicOperators)(update)) {
           throw new error_1.MongoInvalidArgumentError("Update document requires atomic operators");
         }
@@ -7714,8 +7718,8 @@ var require_update = __commonJS({
     };
     exports2.UpdateOneOperation = UpdateOneOperation;
     var UpdateManyOperation = class extends UpdateOperation {
-      constructor(collection, filter, update, options) {
-        super(collection.s.namespace, [makeUpdateStatement(filter, update, { ...options, multi: true })], options);
+      constructor(collection, filter2, update, options) {
+        super(collection.s.namespace, [makeUpdateStatement(filter2, update, { ...options, multi: true })], options);
         if (!(0, utils_1.hasAtomicOperators)(update)) {
           throw new error_1.MongoInvalidArgumentError("Update document requires atomic operators");
         }
@@ -7739,8 +7743,8 @@ var require_update = __commonJS({
     };
     exports2.UpdateManyOperation = UpdateManyOperation;
     var ReplaceOneOperation = class extends UpdateOperation {
-      constructor(collection, filter, replacement, options) {
-        super(collection.s.namespace, [makeUpdateStatement(filter, replacement, { ...options, multi: false })], options);
+      constructor(collection, filter2, replacement, options) {
+        super(collection.s.namespace, [makeUpdateStatement(filter2, replacement, { ...options, multi: false })], options);
         if ((0, utils_1.hasAtomicOperators)(replacement)) {
           throw new error_1.MongoInvalidArgumentError("Replacement document must not contain atomic operators");
         }
@@ -7763,14 +7767,14 @@ var require_update = __commonJS({
       }
     };
     exports2.ReplaceOneOperation = ReplaceOneOperation;
-    function makeUpdateStatement(filter, update, options) {
-      if (filter == null || typeof filter !== "object") {
+    function makeUpdateStatement(filter2, update, options) {
+      if (filter2 == null || typeof filter2 !== "object") {
         throw new error_1.MongoInvalidArgumentError("Selector must be a valid JavaScript object");
       }
       if (update == null || typeof update !== "object") {
         throw new error_1.MongoInvalidArgumentError("Document must be a valid JavaScript object");
       }
-      const op = { q: filter, u: update };
+      const op = { q: filter2, u: update };
       if (typeof options.upsert === "boolean") {
         op.upsert = options.upsert;
       }
@@ -8817,10 +8821,10 @@ var require_document = __commonJS({
     exports2.OnDemandDocument = void 0;
     var bson_1 = require_bson2();
     var OnDemandDocument = class _OnDemandDocument {
-      constructor(bson, offset = 0, isArray = false) {
+      constructor(bson, offset = 0, isArray2 = false) {
         this.bson = bson;
         this.offset = offset;
-        this.isArray = isArray;
+        this.isArray = isArray2;
         this.cache = /* @__PURE__ */ Object.create(null);
         this.indexFound = /* @__PURE__ */ Object.create(null);
         this.elements = (0, bson_1.parseToElementsToArray)(this.bson, offset);
@@ -9153,8 +9157,8 @@ var require_responses = __commonJS({
       static is(value) {
         return value instanceof _CursorResponse || value === _CursorResponse.emptyGetMore;
       }
-      constructor(bytes, offset, isArray) {
-        super(bytes, offset, isArray);
+      constructor(bytes, offset, isArray2) {
+        super(bytes, offset, isArray2);
         this.ns = null;
         this.batchSize = 0;
         this.iterated = 0;
@@ -9269,11 +9273,11 @@ var require_mongo_logger = __commonJS({
       return null;
     }
     exports2.parseSeverityFromString = parseSeverityFromString;
-    function createStdioLogger(stream) {
+    function createStdioLogger(stream4) {
       return {
         write: (0, util_1.promisify)((log, cb) => {
           const logLine = (0, util_1.inspect)(log, { compact: true, breakLength: Infinity });
-          stream.write(`${logLine}
+          stream4.write(`${logLine}
 `, "utf-8", cb);
           return;
         })
@@ -11987,11 +11991,11 @@ var require_count = __commonJS({
     var command_1 = require_command();
     var operation_1 = require_operation();
     var CountOperation = class extends command_1.CommandOperation {
-      constructor(namespace, filter, options) {
+      constructor(namespace, filter2, options) {
         super({ s: { namespace } }, options);
         this.options = options;
         this.collectionName = namespace.collection;
-        this.query = filter;
+        this.query = filter2;
       }
       get commandName() {
         return "count";
@@ -12128,15 +12132,15 @@ var require_find = __commonJS({
     var command_1 = require_command();
     var operation_1 = require_operation();
     var FindOperation = class extends command_1.CommandOperation {
-      constructor(ns, filter = {}, options = {}) {
+      constructor(ns, filter2 = {}, options = {}) {
         super(void 0, options);
         this.options = { ...options };
         delete this.options.writeConcern;
         this.ns = ns;
-        if (typeof filter !== "object" || Array.isArray(filter)) {
+        if (typeof filter2 !== "object" || Array.isArray(filter2)) {
           throw new error_1.MongoInvalidArgumentError("Query filter must be a plain object or ObjectId");
         }
-        this.filter = filter != null && filter._bsontype === "ObjectId" ? { _id: filter } : filter;
+        this.filter = filter2 != null && filter2._bsontype === "ObjectId" ? { _id: filter2 } : filter2;
       }
       get commandName() {
         return "find";
@@ -12157,10 +12161,10 @@ var require_find = __commonJS({
       }
     };
     exports2.FindOperation = FindOperation;
-    function makeFindCommand(ns, filter, options) {
+    function makeFindCommand(ns, filter2, options) {
       const findCommand = {
         find: ns.collection,
-        filter
+        filter: filter2
       };
       if (options.sort) {
         findCommand.sort = (0, sort_1.formatSort)(options.sort);
@@ -12289,10 +12293,10 @@ var require_find_cursor = __commonJS({
     ];
     var FindCursor = class _FindCursor extends abstract_cursor_1.AbstractCursor {
       /** @internal */
-      constructor(client, namespace, filter = {}, options = {}) {
+      constructor(client, namespace, filter2 = {}, options = {}) {
         super(client, namespace, options);
         this[_a] = 0;
-        this[kFilter] = filter;
+        this[kFilter] = filter2;
         this[kBuiltOptions] = options;
         if (options.sort != null) {
           this[kBuiltOptions].sort = (0, sort_1.formatSort)(options.sort);
@@ -12370,9 +12374,9 @@ var require_find_cursor = __commonJS({
         }));
       }
       /** Set the cursor query */
-      filter(filter) {
+      filter(filter2) {
         (0, abstract_cursor_1.assertUninitialized)(this);
-        this[kFilter] = filter;
+        this[kFilter] = filter2;
         return this;
       }
       /**
@@ -13136,18 +13140,18 @@ var require_find_and_modify = __commonJS({
     };
     exports2.FindAndModifyOperation = FindAndModifyOperation;
     var FindOneAndDeleteOperation = class extends FindAndModifyOperation {
-      constructor(collection, filter, options) {
-        if (filter == null || typeof filter !== "object") {
+      constructor(collection, filter2, options) {
+        if (filter2 == null || typeof filter2 !== "object") {
           throw new error_1.MongoInvalidArgumentError('Argument "filter" must be an object');
         }
-        super(collection, filter, options);
+        super(collection, filter2, options);
         this.cmdBase.remove = true;
       }
     };
     exports2.FindOneAndDeleteOperation = FindOneAndDeleteOperation;
     var FindOneAndReplaceOperation = class extends FindAndModifyOperation {
-      constructor(collection, filter, replacement, options) {
-        if (filter == null || typeof filter !== "object") {
+      constructor(collection, filter2, replacement, options) {
+        if (filter2 == null || typeof filter2 !== "object") {
           throw new error_1.MongoInvalidArgumentError('Argument "filter" must be an object');
         }
         if (replacement == null || typeof replacement !== "object") {
@@ -13156,15 +13160,15 @@ var require_find_and_modify = __commonJS({
         if ((0, utils_1.hasAtomicOperators)(replacement)) {
           throw new error_1.MongoInvalidArgumentError("Replacement document must not contain atomic operators");
         }
-        super(collection, filter, options);
+        super(collection, filter2, options);
         this.cmdBase.update = replacement;
         configureFindAndModifyCmdBaseUpdateOpts(this.cmdBase, options);
       }
     };
     exports2.FindOneAndReplaceOperation = FindOneAndReplaceOperation;
     var FindOneAndUpdateOperation = class extends FindAndModifyOperation {
-      constructor(collection, filter, update, options) {
-        if (filter == null || typeof filter !== "object") {
+      constructor(collection, filter2, update, options) {
+        if (filter2 == null || typeof filter2 !== "object") {
           throw new error_1.MongoInvalidArgumentError('Argument "filter" must be an object');
         }
         if (update == null || typeof update !== "object") {
@@ -13173,7 +13177,7 @@ var require_find_and_modify = __commonJS({
         if (!(0, utils_1.hasAtomicOperators)(update)) {
           throw new error_1.MongoInvalidArgumentError("Update document requires atomic operators");
         }
-        super(collection, filter, options);
+        super(collection, filter2, options);
         this.cmdBase.update = update;
         configureFindAndModifyCmdBaseUpdateOpts(this.cmdBase, options);
         if (options.arrayFilters) {
@@ -13570,8 +13574,8 @@ var require_collection2 = __commonJS({
        * @param update - The modifications to apply
        * @param options - Optional settings for the command
        */
-      async updateOne(filter, update, options) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new update_2.UpdateOneOperation(this, filter, update, (0, utils_1.resolveOptions)(this, options)));
+      async updateOne(filter2, update, options) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new update_2.UpdateOneOperation(this, filter2, update, (0, utils_1.resolveOptions)(this, options)));
       }
       /**
        * Replace a document in a collection with another document
@@ -13580,8 +13584,8 @@ var require_collection2 = __commonJS({
        * @param replacement - The Document that replaces the matching document
        * @param options - Optional settings for the command
        */
-      async replaceOne(filter, replacement, options) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new update_2.ReplaceOneOperation(this, filter, replacement, (0, utils_1.resolveOptions)(this, options)));
+      async replaceOne(filter2, replacement, options) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new update_2.ReplaceOneOperation(this, filter2, replacement, (0, utils_1.resolveOptions)(this, options)));
       }
       /**
        * Update multiple documents in a collection
@@ -13594,8 +13598,8 @@ var require_collection2 = __commonJS({
        * @param update - The modifications to apply
        * @param options - Optional settings for the command
        */
-      async updateMany(filter, update, options) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new update_2.UpdateManyOperation(this, filter, update, (0, utils_1.resolveOptions)(this, options)));
+      async updateMany(filter2, update, options) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new update_2.UpdateManyOperation(this, filter2, update, (0, utils_1.resolveOptions)(this, options)));
       }
       /**
        * Delete a document from a collection
@@ -13603,8 +13607,8 @@ var require_collection2 = __commonJS({
        * @param filter - The filter used to select the document to remove
        * @param options - Optional settings for the command
        */
-      async deleteOne(filter = {}, options = {}) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new delete_1.DeleteOneOperation(this, filter, (0, utils_1.resolveOptions)(this, options)));
+      async deleteOne(filter2 = {}, options = {}) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new delete_1.DeleteOneOperation(this, filter2, (0, utils_1.resolveOptions)(this, options)));
       }
       /**
        * Delete multiple documents from a collection
@@ -13612,8 +13616,8 @@ var require_collection2 = __commonJS({
        * @param filter - The filter used to select the documents to remove
        * @param options - Optional settings for the command
        */
-      async deleteMany(filter = {}, options = {}) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new delete_1.DeleteManyOperation(this, filter, (0, utils_1.resolveOptions)(this, options)));
+      async deleteMany(filter2 = {}, options = {}) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new delete_1.DeleteManyOperation(this, filter2, (0, utils_1.resolveOptions)(this, options)));
       }
       /**
        * Rename the collection.
@@ -13638,14 +13642,14 @@ var require_collection2 = __commonJS({
       async drop(options) {
         return await (0, execute_operation_1.executeOperation)(this.client, new drop_1.DropCollectionOperation(this.s.db, this.collectionName, options));
       }
-      async findOne(filter = {}, options = {}) {
-        const cursor = this.find(filter, options).limit(-1).batchSize(1);
+      async findOne(filter2 = {}, options = {}) {
+        const cursor = this.find(filter2, options).limit(-1).batchSize(1);
         const res = await cursor.next();
         await cursor.close();
         return res;
       }
-      find(filter = {}, options = {}) {
-        return new find_cursor_1.FindCursor(this.client, this.s.namespace, filter, (0, utils_1.resolveOptions)(this, options));
+      find(filter2 = {}, options = {}) {
+        return new find_cursor_1.FindCursor(this.client, this.s.namespace, filter2, (0, utils_1.resolveOptions)(this, options));
       }
       /**
        * Returns the options of the collection.
@@ -13820,11 +13824,11 @@ var require_collection2 = __commonJS({
        * @see https://www.mongodb.com/docs/manual/reference/operator/query/center/#op._S_center
        * @see https://www.mongodb.com/docs/manual/reference/operator/query/centerSphere/#op._S_centerSphere
        */
-      async countDocuments(filter = {}, options = {}) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new count_documents_1.CountDocumentsOperation(this, filter, (0, utils_1.resolveOptions)(this, options)));
+      async countDocuments(filter2 = {}, options = {}) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new count_documents_1.CountDocumentsOperation(this, filter2, (0, utils_1.resolveOptions)(this, options)));
       }
-      async distinct(key, filter = {}, options = {}) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new distinct_1.DistinctOperation(this, key, filter, (0, utils_1.resolveOptions)(this, options)));
+      async distinct(key, filter2 = {}, options = {}) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new distinct_1.DistinctOperation(this, key, filter2, (0, utils_1.resolveOptions)(this, options)));
       }
       async indexes(options) {
         const indexes = await this.listIndexes(options).toArray();
@@ -13835,14 +13839,14 @@ var require_collection2 = __commonJS({
         const object = Object.fromEntries(indexes.map(({ name, key }) => [name, Object.entries(key)]));
         return object;
       }
-      async findOneAndDelete(filter, options) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new find_and_modify_1.FindOneAndDeleteOperation(this, filter, (0, utils_1.resolveOptions)(this, options)));
+      async findOneAndDelete(filter2, options) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new find_and_modify_1.FindOneAndDeleteOperation(this, filter2, (0, utils_1.resolveOptions)(this, options)));
       }
-      async findOneAndReplace(filter, replacement, options) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new find_and_modify_1.FindOneAndReplaceOperation(this, filter, replacement, (0, utils_1.resolveOptions)(this, options)));
+      async findOneAndReplace(filter2, replacement, options) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new find_and_modify_1.FindOneAndReplaceOperation(this, filter2, replacement, (0, utils_1.resolveOptions)(this, options)));
       }
-      async findOneAndUpdate(filter, update, options) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new find_and_modify_1.FindOneAndUpdateOperation(this, filter, update, (0, utils_1.resolveOptions)(this, options)));
+      async findOneAndUpdate(filter2, update, options) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new find_and_modify_1.FindOneAndUpdateOperation(this, filter2, update, (0, utils_1.resolveOptions)(this, options)));
       }
       /**
        * Execute an aggregation framework pipeline against the collection, needs MongoDB \>= 2.2
@@ -13935,8 +13939,8 @@ var require_collection2 = __commonJS({
        * @param filter - The filter for the count.
        * @param options - Optional settings for the command
        */
-      async count(filter = {}, options = {}) {
-        return await (0, execute_operation_1.executeOperation)(this.client, new count_1.CountOperation(this.fullNamespace, filter, (0, utils_1.resolveOptions)(this, options)));
+      async count(filter2 = {}, options = {}) {
+        return await (0, execute_operation_1.executeOperation)(this.client, new count_1.CountOperation(this.fullNamespace, filter2, (0, utils_1.resolveOptions)(this, options)));
       }
       listSearchIndexes(indexNameOrOptions, options) {
         options = typeof indexNameOrOptions === "object" ? indexNameOrOptions : options == null ? {} : options;
@@ -14106,12 +14110,12 @@ var require_list_collections = __commonJS({
     var command_1 = require_command();
     var operation_1 = require_operation();
     var ListCollectionsOperation = class extends command_1.CommandOperation {
-      constructor(db, filter, options) {
+      constructor(db, filter2, options) {
         super(db, options);
         this.options = { ...options };
         delete this.options.writeConcern;
         this.db = db;
-        this.filter = filter;
+        this.filter = filter2;
         this.nameOnly = !!this.options.nameOnly;
         this.authorizedCollections = !!this.options.authorizedCollections;
         if (typeof this.options.batchSize === "number") {
@@ -14158,10 +14162,10 @@ var require_list_collections_cursor = __commonJS({
     var list_collections_1 = require_list_collections();
     var abstract_cursor_1 = require_abstract_cursor();
     var ListCollectionsCursor = class _ListCollectionsCursor extends abstract_cursor_1.AbstractCursor {
-      constructor(db, filter, options) {
+      constructor(db, filter2, options) {
         super(db.client, db.s.namespace, options);
         this.parent = db;
-        this.filter = filter;
+        this.filter = filter2;
         this.options = options;
       }
       clone() {
@@ -14727,8 +14731,8 @@ var require_db = __commonJS({
       async stats(options) {
         return await (0, execute_operation_1.executeOperation)(this.client, new stats_1.DbStatsOperation(this, (0, utils_1.resolveOptions)(this, options)));
       }
-      listCollections(filter = {}, options = {}) {
-        return new list_collections_cursor_1.ListCollectionsCursor(this, filter, (0, utils_1.resolveOptions)(this, options));
+      listCollections(filter2 = {}, options = {}) {
+        return new list_collections_cursor_1.ListCollectionsCursor(this, filter2, (0, utils_1.resolveOptions)(this, options));
       }
       /**
        * Rename a collection.
@@ -15666,7 +15670,7 @@ var require_lib = __commonJS({
 var require_utils2 = __commonJS({
   "backend/node_modules/mongodb-connection-string-url/node_modules/whatwg-url/lib/utils.js"(exports2, module2) {
     "use strict";
-    function isObject(value) {
+    function isObject2(value) {
       return typeof value === "object" && value !== null || typeof value === "function";
     }
     var hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
@@ -15752,7 +15756,7 @@ var require_utils2 = __commonJS({
       return true;
     }
     var byteLengthGetter = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, "byteLength").get;
-    function isArrayBuffer(value) {
+    function isArrayBuffer2(value) {
       try {
         byteLengthGetter.call(value);
         return true;
@@ -15791,7 +15795,7 @@ var require_utils2 = __commonJS({
     var asyncIteratorInit = Symbol("async iterator initialization steps");
     var asyncIteratorEOI = Symbol("async iterator end of iteration");
     module2.exports = exports2 = {
-      isObject,
+      isObject: isObject2,
       hasOwn,
       define: define2,
       newObjectInRealm,
@@ -15805,7 +15809,7 @@ var require_utils2 = __commonJS({
       tryWrapperForImpl,
       tryImplForWrapper,
       iterInternalSymbol,
-      isArrayBuffer,
+      isArrayBuffer: isArrayBuffer2,
       isArrayIndexPropName,
       supportsPropertyIndex,
       supportedPropertyIndices,
@@ -15970,7 +15974,7 @@ var require_punycode = __commonJS({
       }
       return String.fromCodePoint(...output);
     };
-    var encode = function(input) {
+    var encode3 = function(input) {
       const output = [];
       input = ucs2decode(input);
       const inputLength = input.length;
@@ -16036,7 +16040,7 @@ var require_punycode = __commonJS({
     };
     var toASCII = function(input) {
       return mapDomain(input, function(string) {
-        return regexNonASCII.test(string) ? "xn--" + encode(string) : string;
+        return regexNonASCII.test(string) ? "xn--" + encode3(string) : string;
       });
     };
     var punycode = {
@@ -16058,7 +16062,7 @@ var require_punycode = __commonJS({
         "encode": ucs2encode
       },
       "decode": decode,
-      "encode": encode,
+      "encode": encode3,
       "toASCII": toASCII,
       "toUnicode": toUnicode
     };
@@ -16585,11 +16589,11 @@ var require_url_state_machine = __commonJS({
     function isSpecialScheme(scheme) {
       return specialSchemes[scheme] !== void 0;
     }
-    function isSpecial(url) {
-      return isSpecialScheme(url.scheme);
+    function isSpecial(url2) {
+      return isSpecialScheme(url2.scheme);
     }
-    function isNotSpecial(url) {
-      return !isSpecialScheme(url.scheme);
+    function isNotSpecial(url2) {
+      return !isSpecialScheme(url2.scheme);
     }
     function defaultPort(scheme) {
       return specialSchemes[scheme];
@@ -16888,41 +16892,41 @@ var require_url_state_machine = __commonJS({
       }
       return result;
     }
-    function trimControlChars(url) {
-      return url.replace(/^[\u0000-\u001F\u0020]+|[\u0000-\u001F\u0020]+$/ug, "");
+    function trimControlChars(url2) {
+      return url2.replace(/^[\u0000-\u001F\u0020]+|[\u0000-\u001F\u0020]+$/ug, "");
     }
-    function trimTabAndNewline(url) {
-      return url.replace(/\u0009|\u000A|\u000D/ug, "");
+    function trimTabAndNewline(url2) {
+      return url2.replace(/\u0009|\u000A|\u000D/ug, "");
     }
-    function shortenPath(url) {
-      const { path } = url;
+    function shortenPath(url2) {
+      const { path } = url2;
       if (path.length === 0) {
         return;
       }
-      if (url.scheme === "file" && path.length === 1 && isNormalizedWindowsDriveLetter(path[0])) {
+      if (url2.scheme === "file" && path.length === 1 && isNormalizedWindowsDriveLetter(path[0])) {
         return;
       }
       path.pop();
     }
-    function includesCredentials(url) {
-      return url.username !== "" || url.password !== "";
+    function includesCredentials(url2) {
+      return url2.username !== "" || url2.password !== "";
     }
-    function cannotHaveAUsernamePasswordPort(url) {
-      return url.host === null || url.host === "" || url.scheme === "file";
+    function cannotHaveAUsernamePasswordPort(url2) {
+      return url2.host === null || url2.host === "" || url2.scheme === "file";
     }
-    function hasAnOpaquePath(url) {
-      return typeof url.path === "string";
+    function hasAnOpaquePath(url2) {
+      return typeof url2.path === "string";
     }
     function isNormalizedWindowsDriveLetter(string) {
       return /^[A-Za-z]:$/u.test(string);
     }
-    function URLStateMachine(input, base, encodingOverride, url, stateOverride) {
+    function URLStateMachine(input, base, encodingOverride, url2, stateOverride) {
       this.pointer = 0;
       this.input = input;
       this.base = base || null;
       this.encodingOverride = encodingOverride || "utf-8";
       this.stateOverride = stateOverride;
-      this.url = url;
+      this.url = url2;
       this.failure = false;
       this.parseError = false;
       if (!this.url) {
@@ -17441,31 +17445,31 @@ var require_url_state_machine = __commonJS({
       }
       return true;
     };
-    function serializeURL(url, excludeFragment) {
-      let output = `${url.scheme}:`;
-      if (url.host !== null) {
+    function serializeURL(url2, excludeFragment) {
+      let output = `${url2.scheme}:`;
+      if (url2.host !== null) {
         output += "//";
-        if (url.username !== "" || url.password !== "") {
-          output += url.username;
-          if (url.password !== "") {
-            output += `:${url.password}`;
+        if (url2.username !== "" || url2.password !== "") {
+          output += url2.username;
+          if (url2.password !== "") {
+            output += `:${url2.password}`;
           }
           output += "@";
         }
-        output += serializeHost(url.host);
-        if (url.port !== null) {
-          output += `:${url.port}`;
+        output += serializeHost(url2.host);
+        if (url2.port !== null) {
+          output += `:${url2.port}`;
         }
       }
-      if (url.host === null && !hasAnOpaquePath(url) && url.path.length > 1 && url.path[0] === "") {
+      if (url2.host === null && !hasAnOpaquePath(url2) && url2.path.length > 1 && url2.path[0] === "") {
         output += "/.";
       }
-      output += serializePath(url);
-      if (url.query !== null) {
-        output += `?${url.query}`;
+      output += serializePath(url2);
+      if (url2.query !== null) {
+        output += `?${url2.query}`;
       }
-      if (!excludeFragment && url.fragment !== null) {
-        output += `#${url.fragment}`;
+      if (!excludeFragment && url2.fragment !== null) {
+        output += `#${url2.fragment}`;
       }
       return output;
     }
@@ -17477,22 +17481,22 @@ var require_url_state_machine = __commonJS({
       }
       return result;
     }
-    function serializePath(url) {
-      if (hasAnOpaquePath(url)) {
-        return url.path;
+    function serializePath(url2) {
+      if (hasAnOpaquePath(url2)) {
+        return url2.path;
       }
       let output = "";
-      for (const segment of url.path) {
+      for (const segment of url2.path) {
         output += `/${segment}`;
       }
       return output;
     }
     module2.exports.serializeURL = serializeURL;
     module2.exports.serializePath = serializePath;
-    module2.exports.serializeURLOrigin = function(url) {
-      switch (url.scheme) {
+    module2.exports.serializeURLOrigin = function(url2) {
+      switch (url2.scheme) {
         case "blob": {
-          const pathURL = module2.exports.parseURL(serializePath(url));
+          const pathURL = module2.exports.parseURL(serializePath(url2));
           if (pathURL === null) {
             return "null";
           }
@@ -17507,9 +17511,9 @@ var require_url_state_machine = __commonJS({
         case "ws":
         case "wss":
           return serializeOrigin({
-            scheme: url.scheme,
-            host: url.host,
-            port: url.port
+            scheme: url2.scheme,
+            host: url2.host,
+            port: url2.port
           });
         case "file":
           return "null";
@@ -17527,11 +17531,11 @@ var require_url_state_machine = __commonJS({
       }
       return usm.url;
     };
-    module2.exports.setTheUsername = function(url, username) {
-      url.username = utf8PercentEncodeString(username, isUserinfoPercentEncode);
+    module2.exports.setTheUsername = function(url2, username) {
+      url2.username = utf8PercentEncodeString(username, isUserinfoPercentEncode);
     };
-    module2.exports.setThePassword = function(url, password) {
-      url.password = utf8PercentEncodeString(password, isUserinfoPercentEncode);
+    module2.exports.setThePassword = function(url2, password) {
+      url2.password = utf8PercentEncodeString(password, isUserinfoPercentEncode);
     };
     module2.exports.serializeHost = serializeHost;
     module2.exports.cannotHaveAUsernamePasswordPort = cannotHaveAUsernamePasswordPort;
@@ -18261,7 +18265,7 @@ var require_URL_impl = __commonJS({
       // Unlike the spec, we duplicate some code between the constructor and canParse, because we want to give useful error
       // messages in the constructor that distinguish between the different causes of failure.
       constructor(globalObject, constructorArgs) {
-        const url = constructorArgs[0];
+        const url2 = constructorArgs[0];
         const base = constructorArgs[1];
         let parsedBase = null;
         if (base !== void 0) {
@@ -18270,16 +18274,16 @@ var require_URL_impl = __commonJS({
             throw new TypeError(`Invalid base URL: ${base}`);
           }
         }
-        const parsedURL = usm.basicURLParse(url, { baseURL: parsedBase });
+        const parsedURL = usm.basicURLParse(url2, { baseURL: parsedBase });
         if (parsedURL === null) {
-          throw new TypeError(`Invalid URL: ${url}`);
+          throw new TypeError(`Invalid URL: ${url2}`);
         }
         const query = parsedURL.query !== null ? parsedURL.query : "";
         this._url = parsedURL;
         this._query = URLSearchParams.createImpl(globalObject, [query], { doNotStripQMark: true });
         this._query._url = this;
       }
-      static canParse(url, base) {
+      static canParse(url2, base) {
         let parsedBase = null;
         if (base !== void 0) {
           parsedBase = usm.basicURLParse(base);
@@ -18287,7 +18291,7 @@ var require_URL_impl = __commonJS({
             return false;
           }
         }
-        const parsedURL = usm.basicURLParse(url, { baseURL: parsedBase });
+        const parsedURL = usm.basicURLParse(url2, { baseURL: parsedBase });
         if (parsedURL === null) {
           return false;
         }
@@ -18336,14 +18340,14 @@ var require_URL_impl = __commonJS({
         usm.setThePassword(this._url, v);
       }
       get host() {
-        const url = this._url;
-        if (url.host === null) {
+        const url2 = this._url;
+        if (url2.host === null) {
           return "";
         }
-        if (url.port === null) {
-          return usm.serializeHost(url.host);
+        if (url2.port === null) {
+          return usm.serializeHost(url2.host);
         }
-        return `${usm.serializeHost(url.host)}:${usm.serializeInteger(url.port)}`;
+        return `${usm.serializeHost(url2.host)}:${usm.serializeInteger(url2.port)}`;
       }
       set host(v) {
         if (usm.hasAnOpaquePath(this._url)) {
@@ -18396,16 +18400,16 @@ var require_URL_impl = __commonJS({
         return `?${this._url.query}`;
       }
       set search(v) {
-        const url = this._url;
+        const url2 = this._url;
         if (v === "") {
-          url.query = null;
+          url2.query = null;
           this._query._list = [];
           this._potentiallyStripTrailingSpacesFromAnOpaquePath();
           return;
         }
         const input = v[0] === "?" ? v.substring(1) : v;
-        url.query = "";
-        usm.basicURLParse(input, { url, stateOverride: "query" });
+        url2.query = "";
+        usm.basicURLParse(input, { url: url2, stateOverride: "query" });
         this._query._list = urlencoded.parseUrlencodedString(input);
       }
       get searchParams() {
@@ -18520,7 +18524,7 @@ var require_URL = __commonJS({
       }
       const ctorRegistry = utils.initCtorRegistry(globalObject);
       class URL2 {
-        constructor(url) {
+        constructor(url2) {
           if (arguments.length < 1) {
             throw new globalObject.TypeError(
               `Failed to construct 'URL': 1 argument required, but only ${arguments.length} present.`
@@ -18757,7 +18761,7 @@ var require_URL = __commonJS({
           });
           esValue[implSymbol]["hash"] = V;
         }
-        static canParse(url) {
+        static canParse(url2) {
           if (arguments.length < 1) {
             throw new globalObject.TypeError(
               `Failed to execute 'canParse' on 'URL': 1 argument required, but only ${arguments.length} present.`
@@ -18901,32 +18905,32 @@ var require_redact = __commonJS({
     var index_1 = __importStar(require_lib2());
     function redactValidConnectionString(inputUrl, options) {
       var _a, _b;
-      const url = inputUrl.clone();
+      const url2 = inputUrl.clone();
       const replacementString = (_a = options === null || options === void 0 ? void 0 : options.replacementString) !== null && _a !== void 0 ? _a : "_credentials_";
       const redactUsernames = (_b = options === null || options === void 0 ? void 0 : options.redactUsernames) !== null && _b !== void 0 ? _b : true;
-      if ((url.username || url.password) && redactUsernames) {
-        url.username = replacementString;
-        url.password = "";
-      } else if (url.password) {
-        url.password = replacementString;
+      if ((url2.username || url2.password) && redactUsernames) {
+        url2.username = replacementString;
+        url2.password = "";
+      } else if (url2.password) {
+        url2.password = replacementString;
       }
-      if (url.searchParams.has("authMechanismProperties")) {
-        const props = new index_1.CommaAndColonSeparatedRecord(url.searchParams.get("authMechanismProperties"));
+      if (url2.searchParams.has("authMechanismProperties")) {
+        const props = new index_1.CommaAndColonSeparatedRecord(url2.searchParams.get("authMechanismProperties"));
         if (props.get("AWS_SESSION_TOKEN")) {
           props.set("AWS_SESSION_TOKEN", replacementString);
-          url.searchParams.set("authMechanismProperties", props.toString());
+          url2.searchParams.set("authMechanismProperties", props.toString());
         }
       }
-      if (url.searchParams.has("tlsCertificateKeyFilePassword")) {
-        url.searchParams.set("tlsCertificateKeyFilePassword", replacementString);
+      if (url2.searchParams.has("tlsCertificateKeyFilePassword")) {
+        url2.searchParams.set("tlsCertificateKeyFilePassword", replacementString);
       }
-      if (url.searchParams.has("proxyUsername") && redactUsernames) {
-        url.searchParams.set("proxyUsername", replacementString);
+      if (url2.searchParams.has("proxyUsername") && redactUsernames) {
+        url2.searchParams.set("proxyUsername", replacementString);
       }
-      if (url.searchParams.has("proxyPassword")) {
-        url.searchParams.set("proxyPassword", replacementString);
+      if (url2.searchParams.has("proxyPassword")) {
+        url2.searchParams.set("proxyPassword", replacementString);
       }
-      return url;
+      return url2;
     }
     exports2.redactValidConnectionString = redactValidConnectionString;
     function redactConnectionString(uri, options) {
@@ -19163,8 +19167,8 @@ var require_lib2 = __commonJS({
         return this.searchParams;
       }
       [Symbol.for("nodejs.util.inspect.custom")]() {
-        const { href, origin, protocol, username, password, hosts, pathname, search, searchParams, hash } = this;
-        return { href, origin, protocol, username, password, hosts, pathname, search, searchParams, hash };
+        const { href, origin: origin2, protocol, username, password, hosts, pathname, search, searchParams, hash } = this;
+        return { href, origin: origin2, protocol, username, password, hosts, pathname, search, searchParams, hash };
       }
     };
     exports2.ConnectionString = ConnectionString;
@@ -19930,7 +19934,7 @@ var require_compression = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.decompressResponse = exports2.compressCommand = exports2.decompress = exports2.compress = exports2.uncompressibleCommands = exports2.Compressor = void 0;
     var util_1 = require("util");
-    var zlib = require("zlib");
+    var zlib2 = require("zlib");
     var constants_1 = require_constants2();
     var deps_1 = require_deps();
     var error_1 = require_error();
@@ -19955,8 +19959,8 @@ var require_compression = __commonJS({
       "copydb"
     ]);
     var ZSTD_COMPRESSION_LEVEL = 3;
-    var zlibInflate = (0, util_1.promisify)(zlib.inflate.bind(zlib));
-    var zlibDeflate = (0, util_1.promisify)(zlib.deflate.bind(zlib));
+    var zlibInflate = (0, util_1.promisify)(zlib2.inflate.bind(zlib2));
+    var zlibDeflate = (0, util_1.promisify)(zlib2.deflate.bind(zlib2));
     var zstd;
     var Snappy = null;
     function loadSnappy() {
@@ -19970,7 +19974,7 @@ var require_compression = __commonJS({
       return Snappy;
     }
     async function compress(options, dataToBeCompressed) {
-      const zlibOptions = {};
+      const zlibOptions2 = {};
       switch (options.agreedCompressor) {
         case "snappy": {
           Snappy ??= loadSnappy();
@@ -19985,9 +19989,9 @@ var require_compression = __commonJS({
         }
         case "zlib": {
           if (options.zlibCompressionLevel) {
-            zlibOptions.level = options.zlibCompressionLevel;
+            zlibOptions2.level = options.zlibCompressionLevel;
           }
-          return await zlibDeflate(dataToBeCompressed, zlibOptions);
+          return await zlibDeflate(dataToBeCompressed, zlibOptions2);
         }
         default: {
           throw new error_1.MongoInvalidArgumentError(`Unknown compressor ${options.agreedCompressor} failed to compress`);
@@ -20455,13 +20459,13 @@ var require_utils3 = __commonJS({
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.get = void 0;
-    var http = require("http");
+    var http2 = require("http");
     var timers_1 = require("timers");
     var errors_1 = require_errors();
-    function get(url, options = {}) {
+    function get(url2, options = {}) {
       return new Promise((resolve, reject) => {
         let timeoutId;
-        const request = http.get(url, options, (response) => {
+        const request = http2.get(url2, options, (response) => {
           response.setEncoding("utf8");
           let body = "";
           response.on("data", (chunk) => body += chunk);
@@ -20548,17 +20552,17 @@ var require_azure = __commonJS({
       };
     }
     function prepareRequest(options) {
-      const url = new URL(options.url?.toString() ?? "http://169.254.169.254/metadata/identity/oauth2/token");
-      url.searchParams.append("api-version", "2018-02-01");
-      url.searchParams.append("resource", "https://vault.azure.net");
+      const url2 = new URL(options.url?.toString() ?? "http://169.254.169.254/metadata/identity/oauth2/token");
+      url2.searchParams.append("api-version", "2018-02-01");
+      url2.searchParams.append("resource", "https://vault.azure.net");
       const headers = { ...options.headers, "Content-Type": "application/json", Metadata: true };
-      return { headers, url };
+      return { headers, url: url2 };
     }
     exports2.prepareRequest = prepareRequest;
     async function fetchAzureKMSToken(options = {}) {
-      const { headers, url } = prepareRequest(options);
+      const { headers, url: url2 } = prepareRequest(options);
       try {
-        const response = await (0, utils_1.get)(url, { headers });
+        const response = await (0, utils_1.get)(url2, { headers });
         return await parseResponse(response);
       } catch (error) {
         if (error instanceof errors_1.MongoCryptKMSRequestNetworkTimeoutError) {
@@ -20707,11 +20711,11 @@ var require_state_machine = __commonJS({
           debug(`[context#${context.id}] ${stateToString.get(context.state) || context.state}`);
           switch (context.state) {
             case MONGOCRYPT_CTX_NEED_MONGO_COLLINFO: {
-              const filter = (0, bson_1.deserialize)(context.nextMongoOperation());
+              const filter2 = (0, bson_1.deserialize)(context.nextMongoOperation());
               if (!metaDataClient) {
                 throw new errors_1.MongoCryptError("unreachable state machine state: entered MONGOCRYPT_CTX_NEED_MONGO_COLLINFO but metadata client is undefined");
               }
-              const collInfo = await this.fetchCollectionInfo(metaDataClient, context.ns, filter);
+              const collInfo = await this.fetchCollectionInfo(metaDataClient, context.ns, filter2);
               if (collInfo) {
                 context.addMongoOperationResponse(collInfo);
               }
@@ -20729,8 +20733,8 @@ var require_state_machine = __commonJS({
               break;
             }
             case MONGOCRYPT_CTX_NEED_MONGO_KEYS: {
-              const filter = context.nextMongoOperation();
-              const keys = await this.fetchKeys(keyVaultClient, keyVaultNamespace, filter);
+              const filter2 = context.nextMongoOperation();
+              const keys = await this.fetchKeys(keyVaultClient, keyVaultNamespace, filter2);
               if (keys.length === 0) {
                 result = { v: [] };
               }
@@ -20920,9 +20924,9 @@ var require_state_machine = __commonJS({
        * @param filter - A filter for the listCollections command
        * @param callback - Invoked with the info of the requested collection, or with an error
        */
-      async fetchCollectionInfo(client, ns, filter) {
+      async fetchCollectionInfo(client, ns, filter2) {
         const { db } = utils_1.MongoDBCollectionNamespace.fromString(ns);
-        const collections = await client.db(db).listCollections(filter, {
+        const collections = await client.db(db).listCollections(filter2, {
           promoteLongs: false,
           promoteValues: false
         }).toArray();
@@ -20952,9 +20956,9 @@ var require_state_machine = __commonJS({
        * @param filter - The filter for the find query against the keyVault Collection
        * @param callback - Invoked with the found keys, or with an error
        */
-      fetchKeys(client, keyVaultNamespace, filter) {
+      fetchKeys(client, keyVaultNamespace, filter2) {
         const { db: dbName, collection: collectionName } = utils_1.MongoDBCollectionNamespace.fromString(keyVaultNamespace);
-        return client.db(dbName).collection(collectionName, { readConcern: { level: "majority" } }).find((0, bson_1.deserialize)(filter)).toArray();
+        return client.db(dbName).collection(collectionName, { readConcern: { level: "majority" } }).find((0, bson_1.deserialize)(filter2)).toArray();
       }
     };
     exports2.StateMachine = StateMachine;
@@ -21728,18 +21732,18 @@ var require_connection = __commonJS({
       return description.logicalSessionTimeoutMinutes != null;
     }
     exports2.hasSessionSupport = hasSessionSupport;
-    function streamIdentifier(stream, options) {
+    function streamIdentifier(stream4, options) {
       if (options.proxyHost) {
         return options.hostAddress.toString();
       }
-      const { remoteAddress, remotePort } = stream;
+      const { remoteAddress, remotePort } = stream4;
       if (typeof remoteAddress === "string" && typeof remotePort === "number") {
         return utils_1.HostAddress.fromHostPort(remoteAddress, remotePort).toString();
       }
       return (0, utils_1.uuidV4)().toString("hex");
     }
     var Connection = class _Connection extends mongo_types_1.TypedEventEmitter {
-      constructor(stream, options) {
+      constructor(stream4, options) {
         super();
         this.lastHelloMS = -1;
         this.helloOk = false;
@@ -21748,9 +21752,9 @@ var require_connection = __commonJS({
         this.clusterTime = null;
         this.error = null;
         this.dataEvents = null;
-        this.socket = stream;
+        this.socket = stream4;
         this.id = options.id;
-        this.address = streamIdentifier(stream, options);
+        this.address = streamIdentifier(stream4, options);
         this.socketTimeoutMS = options.socketTimeoutMS ?? 0;
         this.monitorCommands = options.monitorCommands;
         this.serverApi = options.serverApi;
@@ -22067,8 +22071,8 @@ var require_connection = __commonJS({
     };
     exports2.SizedMessageTransform = SizedMessageTransform;
     var CryptoConnection = class extends Connection {
-      constructor(stream, options) {
-        super(stream, options);
+      constructor(stream4, options) {
+        super(stream4, options);
         this.autoEncrypter = options.autoEncrypter;
       }
       async command(ns, cmd, options, _responseType) {
@@ -24284,8 +24288,8 @@ var require_connection_string = __commonJS({
       if (options.useBigInt64 && typeof options.promoteValues === "boolean" && !options.promoteValues) {
         throw new error_1.MongoAPIError("Must request either bigint or Long for int64 deserialization");
       }
-      const url = new mongodb_connection_string_url_1.default(uri);
-      const { hosts, isSRV } = url;
+      const url2 = new mongodb_connection_string_url_1.default(uri);
+      const { hosts, isSRV } = url2;
       const mongoOptions = /* @__PURE__ */ Object.create(null);
       for (const flag of Object.getOwnPropertySymbols(options)) {
         if (exports2.FEATURE_FLAGS.has(flag)) {
@@ -24294,23 +24298,23 @@ var require_connection_string = __commonJS({
       }
       mongoOptions.hosts = isSRV ? [] : hosts.map(utils_1.HostAddress.fromString);
       const urlOptions = new CaseInsensitiveMap();
-      if (url.pathname !== "/" && url.pathname !== "") {
-        const dbName = decodeURIComponent(url.pathname[0] === "/" ? url.pathname.slice(1) : url.pathname);
+      if (url2.pathname !== "/" && url2.pathname !== "") {
+        const dbName = decodeURIComponent(url2.pathname[0] === "/" ? url2.pathname.slice(1) : url2.pathname);
         if (dbName) {
           urlOptions.set("dbName", [dbName]);
         }
       }
-      if (url.username !== "") {
+      if (url2.username !== "") {
         const auth = {
-          username: decodeURIComponent(url.username)
+          username: decodeURIComponent(url2.username)
         };
-        if (typeof url.password === "string") {
-          auth.password = decodeURIComponent(url.password);
+        if (typeof url2.password === "string") {
+          auth.password = decodeURIComponent(url2.password);
         }
         urlOptions.set("auth", [auth]);
       }
-      for (const key of url.searchParams.keys()) {
-        const values = url.searchParams.getAll(key);
+      for (const key of url2.searchParams.keys()) {
+        const values = url2.searchParams.getAll(key);
         const isReadPreferenceTags = /readPreferenceTags/i.test(key);
         if (!isReadPreferenceTags && values.length > 1) {
           throw new error_1.MongoInvalidArgumentError(`URI option "${key}" cannot appear more than once in the connection string`);
@@ -25513,8 +25517,8 @@ var require_azure_service_workflow = __commonJS({
     };
     exports2.AzureServiceWorkflow = AzureServiceWorkflow;
     async function getAzureTokenData(tokenAudience) {
-      const url = `${AZURE_BASE_URL}&resource=${tokenAudience}`;
-      const data = await (0, utils_1.request)(url, {
+      const url2 = `${AZURE_BASE_URL}&resource=${tokenAudience}`;
+      const data = await (0, utils_1.request)(url2, {
         json: true,
         headers: AZURE_HEADERS
       });
@@ -26172,14 +26176,14 @@ var require_sparse_bitfield = __commonJS({
       return this.setByte(j, v ? b | 128 >> o : b & (255 ^ 128 >> o));
     };
     Bitfield.prototype.toBuffer = function() {
-      var all = alloc(this.pages.length * this.pageSize);
+      var all3 = alloc(this.pages.length * this.pageSize);
       for (var i = 0; i < this.pages.length; i++) {
         var next = this.pages.get(i, true);
         var allOffset = i * this.pageSize;
         if (next)
-          next.buffer.copy(all, allOffset, this.pageOffset, this.pageOffset + this.pageSize);
+          next.buffer.copy(all3, allOffset, this.pageOffset, this.pageOffset + this.pageSize);
       }
-      return all;
+      return all3;
     };
     Bitfield.prototype.setByte = function(i, b) {
       var o = i & this._pageMask;
@@ -27384,14 +27388,14 @@ var require_mongo_client = __commonJS({
     });
     var kOptions = Symbol("options");
     var MongoClient = class extends mongo_types_1.TypedEventEmitter {
-      constructor(url, options) {
+      constructor(url2, options) {
         super();
-        this[kOptions] = (0, connection_string_1.parseOptions)(url, this, options);
+        this[kOptions] = (0, connection_string_1.parseOptions)(url2, this, options);
         const shouldSetLogger = Object.values(this[kOptions].mongoLoggerOptions.componentSeverities).some((value) => value !== mongo_logger_1.SeverityLevel.OFF);
         this.mongoLogger = shouldSetLogger ? new mongo_logger_1.MongoLogger(this[kOptions].mongoLoggerOptions) : void 0;
         const client = this;
         this.s = {
-          url,
+          url: url2,
           bsonOptions: (0, bson_1.resolveBSONOptions)(this[kOptions]),
           namespace: (0, utils_1.ns)("admin"),
           hasBeenClosed: false,
@@ -27606,8 +27610,8 @@ var require_mongo_client = __commonJS({
        *
        * @see https://www.mongodb.com/docs/manual/reference/connection-string/
        */
-      static async connect(url, options) {
-        const client = new this(url, options);
+      static async connect(url2, options) {
+        const client = new this(url2, options);
         return await client.connect();
       }
       /**
@@ -27912,9 +27916,9 @@ var require_change_stream = __commonJS({
       /** @internal */
       _streamEvents(cursor) {
         this._setIsEmitter();
-        const stream = this[kCursorStream] ?? cursor.stream();
-        this[kCursorStream] = stream;
-        stream.on("data", (change) => {
+        const stream4 = this[kCursorStream] ?? cursor.stream();
+        this[kCursorStream] = stream4;
+        stream4.on("data", (change) => {
           try {
             const processedChange = this._processChange(change);
             this.emit(_ChangeStream.CHANGE, processedChange);
@@ -27922,7 +27926,7 @@ var require_change_stream = __commonJS({
             this.emit(_ChangeStream.ERROR, error);
           }
         });
-        stream.on("error", (error) => this._processErrorStreamMode(error));
+        stream4.on("error", (error) => this._processErrorStreamMode(error));
       }
       /** @internal */
       _endStream() {
@@ -28023,7 +28027,7 @@ var require_download = __commonJS({
        * @param filter - The filter to use to find the file document
        * @internal
        */
-      constructor(chunks, files, readPreference, filter, options) {
+      constructor(chunks, files, readPreference, filter2, options) {
         super({ emitClose: true });
         this.s = {
           bytesToTrim: 0,
@@ -28032,7 +28036,7 @@ var require_download = __commonJS({
           chunks,
           expected: 0,
           files,
-          filter,
+          filter: filter2,
           init: false,
           expectedEnd: 0,
           options: {
@@ -28090,147 +28094,147 @@ var require_download = __commonJS({
     };
     GridFSBucketReadStream.FILE = "file";
     exports2.GridFSBucketReadStream = GridFSBucketReadStream;
-    function throwIfInitialized(stream) {
-      if (stream.s.init) {
+    function throwIfInitialized(stream4) {
+      if (stream4.s.init) {
         throw new error_1.MongoGridFSStreamError("Options cannot be changed after the stream is initialized");
       }
     }
-    function doRead(stream) {
-      if (stream.destroyed)
+    function doRead(stream4) {
+      if (stream4.destroyed)
         return;
-      if (!stream.s.cursor)
+      if (!stream4.s.cursor)
         return;
-      if (!stream.s.file)
+      if (!stream4.s.file)
         return;
       const handleReadResult = (doc) => {
-        if (stream.destroyed)
+        if (stream4.destroyed)
           return;
         if (!doc) {
-          stream.push(null);
-          stream.s.cursor?.close().then(void 0, (error) => stream.destroy(error));
+          stream4.push(null);
+          stream4.s.cursor?.close().then(void 0, (error) => stream4.destroy(error));
           return;
         }
-        if (!stream.s.file)
+        if (!stream4.s.file)
           return;
-        const bytesRemaining = stream.s.file.length - stream.s.bytesRead;
-        const expectedN = stream.s.expected++;
-        const expectedLength = Math.min(stream.s.file.chunkSize, bytesRemaining);
+        const bytesRemaining = stream4.s.file.length - stream4.s.bytesRead;
+        const expectedN = stream4.s.expected++;
+        const expectedLength = Math.min(stream4.s.file.chunkSize, bytesRemaining);
         if (doc.n > expectedN) {
-          return stream.destroy(new error_1.MongoGridFSChunkError(`ChunkIsMissing: Got unexpected n: ${doc.n}, expected: ${expectedN}`));
+          return stream4.destroy(new error_1.MongoGridFSChunkError(`ChunkIsMissing: Got unexpected n: ${doc.n}, expected: ${expectedN}`));
         }
         if (doc.n < expectedN) {
-          return stream.destroy(new error_1.MongoGridFSChunkError(`ExtraChunk: Got unexpected n: ${doc.n}, expected: ${expectedN}`));
+          return stream4.destroy(new error_1.MongoGridFSChunkError(`ExtraChunk: Got unexpected n: ${doc.n}, expected: ${expectedN}`));
         }
         let buf = Buffer.isBuffer(doc.data) ? doc.data : doc.data.buffer;
         if (buf.byteLength !== expectedLength) {
           if (bytesRemaining <= 0) {
-            return stream.destroy(new error_1.MongoGridFSChunkError(`ExtraChunk: Got unexpected n: ${doc.n}, expected file length ${stream.s.file.length} bytes but already read ${stream.s.bytesRead} bytes`));
+            return stream4.destroy(new error_1.MongoGridFSChunkError(`ExtraChunk: Got unexpected n: ${doc.n}, expected file length ${stream4.s.file.length} bytes but already read ${stream4.s.bytesRead} bytes`));
           }
-          return stream.destroy(new error_1.MongoGridFSChunkError(`ChunkIsWrongSize: Got unexpected length: ${buf.byteLength}, expected: ${expectedLength}`));
+          return stream4.destroy(new error_1.MongoGridFSChunkError(`ChunkIsWrongSize: Got unexpected length: ${buf.byteLength}, expected: ${expectedLength}`));
         }
-        stream.s.bytesRead += buf.byteLength;
+        stream4.s.bytesRead += buf.byteLength;
         if (buf.byteLength === 0) {
-          return stream.push(null);
+          return stream4.push(null);
         }
         let sliceStart = null;
         let sliceEnd = null;
-        if (stream.s.bytesToSkip != null) {
-          sliceStart = stream.s.bytesToSkip;
-          stream.s.bytesToSkip = 0;
+        if (stream4.s.bytesToSkip != null) {
+          sliceStart = stream4.s.bytesToSkip;
+          stream4.s.bytesToSkip = 0;
         }
-        const atEndOfStream = expectedN === stream.s.expectedEnd - 1;
-        const bytesLeftToRead = stream.s.options.end - stream.s.bytesToSkip;
-        if (atEndOfStream && stream.s.bytesToTrim != null) {
-          sliceEnd = stream.s.file.chunkSize - stream.s.bytesToTrim;
-        } else if (stream.s.options.end && bytesLeftToRead < doc.data.byteLength) {
+        const atEndOfStream = expectedN === stream4.s.expectedEnd - 1;
+        const bytesLeftToRead = stream4.s.options.end - stream4.s.bytesToSkip;
+        if (atEndOfStream && stream4.s.bytesToTrim != null) {
+          sliceEnd = stream4.s.file.chunkSize - stream4.s.bytesToTrim;
+        } else if (stream4.s.options.end && bytesLeftToRead < doc.data.byteLength) {
           sliceEnd = bytesLeftToRead;
         }
         if (sliceStart != null || sliceEnd != null) {
           buf = buf.slice(sliceStart || 0, sliceEnd || buf.byteLength);
         }
-        stream.push(buf);
+        stream4.push(buf);
         return;
       };
-      stream.s.cursor.next().then(handleReadResult, (error) => {
-        if (stream.destroyed)
+      stream4.s.cursor.next().then(handleReadResult, (error) => {
+        if (stream4.destroyed)
           return;
-        stream.destroy(error);
+        stream4.destroy(error);
       });
     }
-    function init(stream) {
+    function init(stream4) {
       const findOneOptions = {};
-      if (stream.s.readPreference) {
-        findOneOptions.readPreference = stream.s.readPreference;
+      if (stream4.s.readPreference) {
+        findOneOptions.readPreference = stream4.s.readPreference;
       }
-      if (stream.s.options && stream.s.options.sort) {
-        findOneOptions.sort = stream.s.options.sort;
+      if (stream4.s.options && stream4.s.options.sort) {
+        findOneOptions.sort = stream4.s.options.sort;
       }
-      if (stream.s.options && stream.s.options.skip) {
-        findOneOptions.skip = stream.s.options.skip;
+      if (stream4.s.options && stream4.s.options.skip) {
+        findOneOptions.skip = stream4.s.options.skip;
       }
       const handleReadResult = (doc) => {
-        if (stream.destroyed)
+        if (stream4.destroyed)
           return;
         if (!doc) {
-          const identifier = stream.s.filter._id ? stream.s.filter._id.toString() : stream.s.filter.filename;
+          const identifier = stream4.s.filter._id ? stream4.s.filter._id.toString() : stream4.s.filter.filename;
           const errmsg = `FileNotFound: file ${identifier} was not found`;
           const err = new error_1.MongoRuntimeError(errmsg);
           err.code = "ENOENT";
-          return stream.destroy(err);
+          return stream4.destroy(err);
         }
         if (doc.length <= 0) {
-          stream.push(null);
+          stream4.push(null);
           return;
         }
-        if (stream.destroyed) {
-          stream.destroy();
+        if (stream4.destroyed) {
+          stream4.destroy();
           return;
         }
         try {
-          stream.s.bytesToSkip = handleStartOption(stream, doc, stream.s.options);
+          stream4.s.bytesToSkip = handleStartOption(stream4, doc, stream4.s.options);
         } catch (error) {
-          return stream.destroy(error);
+          return stream4.destroy(error);
         }
-        const filter = { files_id: doc._id };
-        if (stream.s.options && stream.s.options.start != null) {
-          const skip = Math.floor(stream.s.options.start / doc.chunkSize);
+        const filter2 = { files_id: doc._id };
+        if (stream4.s.options && stream4.s.options.start != null) {
+          const skip = Math.floor(stream4.s.options.start / doc.chunkSize);
           if (skip > 0) {
-            filter["n"] = { $gte: skip };
+            filter2["n"] = { $gte: skip };
           }
         }
-        stream.s.cursor = stream.s.chunks.find(filter).sort({ n: 1 });
-        if (stream.s.readPreference) {
-          stream.s.cursor.withReadPreference(stream.s.readPreference);
+        stream4.s.cursor = stream4.s.chunks.find(filter2).sort({ n: 1 });
+        if (stream4.s.readPreference) {
+          stream4.s.cursor.withReadPreference(stream4.s.readPreference);
         }
-        stream.s.expectedEnd = Math.ceil(doc.length / doc.chunkSize);
-        stream.s.file = doc;
+        stream4.s.expectedEnd = Math.ceil(doc.length / doc.chunkSize);
+        stream4.s.file = doc;
         try {
-          stream.s.bytesToTrim = handleEndOption(stream, doc, stream.s.cursor, stream.s.options);
+          stream4.s.bytesToTrim = handleEndOption(stream4, doc, stream4.s.cursor, stream4.s.options);
         } catch (error) {
-          return stream.destroy(error);
+          return stream4.destroy(error);
         }
-        stream.emit(GridFSBucketReadStream.FILE, doc);
+        stream4.emit(GridFSBucketReadStream.FILE, doc);
         return;
       };
-      stream.s.files.findOne(stream.s.filter, findOneOptions).then(handleReadResult, (error) => {
-        if (stream.destroyed)
+      stream4.s.files.findOne(stream4.s.filter, findOneOptions).then(handleReadResult, (error) => {
+        if (stream4.destroyed)
           return;
-        stream.destroy(error);
+        stream4.destroy(error);
       });
     }
-    function waitForFile(stream, callback2) {
-      if (stream.s.file) {
+    function waitForFile(stream4, callback2) {
+      if (stream4.s.file) {
         return callback2();
       }
-      if (!stream.s.init) {
-        init(stream);
-        stream.s.init = true;
+      if (!stream4.s.init) {
+        init(stream4);
+        stream4.s.init = true;
       }
-      stream.once("file", () => {
+      stream4.once("file", () => {
         callback2();
       });
     }
-    function handleStartOption(stream, doc, options) {
+    function handleStartOption(stream4, doc, options) {
       if (options && options.start != null) {
         if (options.start > doc.length) {
           throw new error_1.MongoInvalidArgumentError(`Stream start (${options.start}) must not be more than the length of the file (${doc.length})`);
@@ -28241,13 +28245,13 @@ var require_download = __commonJS({
         if (options.end != null && options.end < options.start) {
           throw new error_1.MongoInvalidArgumentError(`Stream start (${options.start}) must not be greater than stream end (${options.end})`);
         }
-        stream.s.bytesRead = Math.floor(options.start / doc.chunkSize) * doc.chunkSize;
-        stream.s.expected = Math.floor(options.start / doc.chunkSize);
-        return options.start - stream.s.bytesRead;
+        stream4.s.bytesRead = Math.floor(options.start / doc.chunkSize) * doc.chunkSize;
+        stream4.s.expected = Math.floor(options.start / doc.chunkSize);
+        return options.start - stream4.s.bytesRead;
       }
       throw new error_1.MongoInvalidArgumentError("Start option must be defined");
     }
-    function handleEndOption(stream, doc, cursor, options) {
+    function handleEndOption(stream4, doc, cursor, options) {
       if (options && options.end != null) {
         if (options.end > doc.length) {
           throw new error_1.MongoInvalidArgumentError(`Stream end (${options.end}) must not be more than the length of the file (${doc.length})`);
@@ -28257,7 +28261,7 @@ var require_download = __commonJS({
         }
         const start = options.start != null ? Math.floor(options.start / doc.chunkSize) : 0;
         cursor.limit(Math.ceil(options.end / doc.chunkSize) - start);
-        stream.s.expectedEnd = Math.ceil(options.end / doc.chunkSize);
+        stream4.s.expectedEnd = Math.ceil(options.end / doc.chunkSize);
         return Math.ceil(options.end / doc.chunkSize) * doc.chunkSize - options.end;
       }
       throw new error_1.MongoInvalidArgumentError("End option must be defined");
@@ -28360,12 +28364,12 @@ var require_upload = __commonJS({
       }
     };
     exports2.GridFSBucketWriteStream = GridFSBucketWriteStream;
-    function handleError(stream, error, callback2) {
-      if (stream.state.errored) {
+    function handleError(stream4, error, callback2) {
+      if (stream4.state.errored) {
         process.nextTick(callback2);
         return;
       }
-      stream.state.errored = true;
+      stream4.state.errored = true;
       process.nextTick(callback2, error);
     }
     function createChunkDoc(filesId, n, data) {
@@ -28376,11 +28380,11 @@ var require_upload = __commonJS({
         data
       };
     }
-    async function checkChunksIndex(stream) {
+    async function checkChunksIndex(stream4) {
       const index = { files_id: 1, n: 1 };
       let indexes;
       try {
-        indexes = await stream.chunks.listIndexes().toArray();
+        indexes = await stream4.chunks.listIndexes().toArray();
       } catch (error) {
         if (error instanceof error_1.MongoError && error.code === error_1.MONGODB_ERROR_CODES.NamespaceNotFound) {
           indexes = [];
@@ -28396,40 +28400,40 @@ var require_upload = __commonJS({
         return false;
       });
       if (!hasChunksIndex) {
-        await stream.chunks.createIndex(index, {
-          ...stream.writeConcern,
+        await stream4.chunks.createIndex(index, {
+          ...stream4.writeConcern,
           background: true,
           unique: true
         });
       }
     }
-    function checkDone(stream, callback2) {
-      if (stream.done) {
+    function checkDone(stream4, callback2) {
+      if (stream4.done) {
         return process.nextTick(callback2);
       }
-      if (stream.state.streamEnd && stream.state.outstandingRequests === 0 && !stream.state.errored) {
-        stream.done = true;
-        const gridFSFile = createFilesDoc(stream.id, stream.length, stream.chunkSizeBytes, stream.filename, stream.options.contentType, stream.options.aliases, stream.options.metadata);
-        if (isAborted(stream, callback2)) {
+      if (stream4.state.streamEnd && stream4.state.outstandingRequests === 0 && !stream4.state.errored) {
+        stream4.done = true;
+        const gridFSFile = createFilesDoc(stream4.id, stream4.length, stream4.chunkSizeBytes, stream4.filename, stream4.options.contentType, stream4.options.aliases, stream4.options.metadata);
+        if (isAborted(stream4, callback2)) {
           return;
         }
-        stream.files.insertOne(gridFSFile, { writeConcern: stream.writeConcern }).then(() => {
-          stream.gridFSFile = gridFSFile;
+        stream4.files.insertOne(gridFSFile, { writeConcern: stream4.writeConcern }).then(() => {
+          stream4.gridFSFile = gridFSFile;
           callback2();
-        }, (error) => handleError(stream, error, callback2));
+        }, (error) => handleError(stream4, error, callback2));
         return;
       }
       process.nextTick(callback2);
     }
-    async function checkIndexes(stream) {
-      const doc = await stream.files.findOne({}, { projection: { _id: 1 } });
+    async function checkIndexes(stream4) {
+      const doc = await stream4.files.findOne({}, { projection: { _id: 1 } });
       if (doc != null) {
         return;
       }
       const index = { filename: 1, uploadDate: 1 };
       let indexes;
       try {
-        indexes = await stream.files.listIndexes().toArray();
+        indexes = await stream4.files.listIndexes().toArray();
       } catch (error) {
         if (error instanceof error_1.MongoError && error.code === error_1.MONGODB_ERROR_CODES.NamespaceNotFound) {
           indexes = [];
@@ -28445,9 +28449,9 @@ var require_upload = __commonJS({
         return false;
       });
       if (!hasFileIndex) {
-        await stream.files.createIndex(index, { background: false });
+        await stream4.files.createIndex(index, { background: false });
       }
-      await checkChunksIndex(stream);
+      await checkChunksIndex(stream4);
     }
     function createFilesDoc(_id, length, chunkSize, filename, contentType, aliases, metadata) {
       const ret = {
@@ -28468,68 +28472,68 @@ var require_upload = __commonJS({
       }
       return ret;
     }
-    function doWrite(stream, chunk, encoding, callback2) {
-      if (isAborted(stream, callback2)) {
+    function doWrite(stream4, chunk, encoding, callback2) {
+      if (isAborted(stream4, callback2)) {
         return;
       }
       const inputBuf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, encoding);
-      stream.length += inputBuf.length;
-      if (stream.pos + inputBuf.length < stream.chunkSizeBytes) {
-        inputBuf.copy(stream.bufToStore, stream.pos);
-        stream.pos += inputBuf.length;
+      stream4.length += inputBuf.length;
+      if (stream4.pos + inputBuf.length < stream4.chunkSizeBytes) {
+        inputBuf.copy(stream4.bufToStore, stream4.pos);
+        stream4.pos += inputBuf.length;
         process.nextTick(callback2);
         return;
       }
       let inputBufRemaining = inputBuf.length;
-      let spaceRemaining = stream.chunkSizeBytes - stream.pos;
+      let spaceRemaining = stream4.chunkSizeBytes - stream4.pos;
       let numToCopy = Math.min(spaceRemaining, inputBuf.length);
       let outstandingRequests = 0;
       while (inputBufRemaining > 0) {
         const inputBufPos = inputBuf.length - inputBufRemaining;
-        inputBuf.copy(stream.bufToStore, stream.pos, inputBufPos, inputBufPos + numToCopy);
-        stream.pos += numToCopy;
+        inputBuf.copy(stream4.bufToStore, stream4.pos, inputBufPos, inputBufPos + numToCopy);
+        stream4.pos += numToCopy;
         spaceRemaining -= numToCopy;
         let doc;
         if (spaceRemaining === 0) {
-          doc = createChunkDoc(stream.id, stream.n, Buffer.from(stream.bufToStore));
-          ++stream.state.outstandingRequests;
+          doc = createChunkDoc(stream4.id, stream4.n, Buffer.from(stream4.bufToStore));
+          ++stream4.state.outstandingRequests;
           ++outstandingRequests;
-          if (isAborted(stream, callback2)) {
+          if (isAborted(stream4, callback2)) {
             return;
           }
-          stream.chunks.insertOne(doc, { writeConcern: stream.writeConcern }).then(() => {
-            --stream.state.outstandingRequests;
+          stream4.chunks.insertOne(doc, { writeConcern: stream4.writeConcern }).then(() => {
+            --stream4.state.outstandingRequests;
             --outstandingRequests;
             if (!outstandingRequests) {
-              checkDone(stream, callback2);
+              checkDone(stream4, callback2);
             }
-          }, (error) => handleError(stream, error, callback2));
-          spaceRemaining = stream.chunkSizeBytes;
-          stream.pos = 0;
-          ++stream.n;
+          }, (error) => handleError(stream4, error, callback2));
+          spaceRemaining = stream4.chunkSizeBytes;
+          stream4.pos = 0;
+          ++stream4.n;
         }
         inputBufRemaining -= numToCopy;
         numToCopy = Math.min(spaceRemaining, inputBufRemaining);
       }
     }
-    function writeRemnant(stream, callback2) {
-      if (stream.pos === 0) {
-        return checkDone(stream, callback2);
+    function writeRemnant(stream4, callback2) {
+      if (stream4.pos === 0) {
+        return checkDone(stream4, callback2);
       }
-      ++stream.state.outstandingRequests;
-      const remnant = Buffer.alloc(stream.pos);
-      stream.bufToStore.copy(remnant, 0, 0, stream.pos);
-      const doc = createChunkDoc(stream.id, stream.n, remnant);
-      if (isAborted(stream, callback2)) {
+      ++stream4.state.outstandingRequests;
+      const remnant = Buffer.alloc(stream4.pos);
+      stream4.bufToStore.copy(remnant, 0, 0, stream4.pos);
+      const doc = createChunkDoc(stream4.id, stream4.n, remnant);
+      if (isAborted(stream4, callback2)) {
         return;
       }
-      stream.chunks.insertOne(doc, { writeConcern: stream.writeConcern }).then(() => {
-        --stream.state.outstandingRequests;
-        checkDone(stream, callback2);
-      }, (error) => handleError(stream, error, callback2));
+      stream4.chunks.insertOne(doc, { writeConcern: stream4.writeConcern }).then(() => {
+        --stream4.state.outstandingRequests;
+        checkDone(stream4, callback2);
+      }, (error) => handleError(stream4, error, callback2));
     }
-    function isAborted(stream, callback2) {
-      if (stream.state.aborted) {
+    function isAborted(stream4, callback2) {
+      if (stream4.state.aborted) {
         process.nextTick(callback2, new error_1.MongoAPIError("Stream has been aborted"));
         return true;
       }
@@ -28607,8 +28611,8 @@ var require_gridfs = __commonJS({
         }
       }
       /** Convenience wrapper around find on the files collection */
-      find(filter = {}, options = {}) {
-        return this.s._filesCollection.find(filter, options);
+      find(filter2 = {}, options = {}) {
+        return this.s._filesCollection.find(filter2, options);
       }
       /**
        * Returns a readable stream (GridFSBucketReadStream) for streaming the
@@ -28637,9 +28641,9 @@ var require_gridfs = __commonJS({
        * @param filename - new name for the file
        */
       async rename(id, filename) {
-        const filter = { _id: id };
+        const filter2 = { _id: id };
         const update = { $set: { filename } };
-        const { matchedCount } = await this.s._filesCollection.updateOne(filter, update);
+        const { matchedCount } = await this.s._filesCollection.updateOne(filter2, update);
         if (matchedCount === 0) {
           throw new error_1.MongoRuntimeError(`File with id ${id} not found`);
         }
@@ -28816,13 +28820,13 @@ var require_client_encryption = __commonJS({
        * }
        * ```
        */
-      async rewrapManyDataKey(filter, options) {
+      async rewrapManyDataKey(filter2, options) {
         let keyEncryptionKeyBson = void 0;
         if (options) {
           const keyEncryptionKey = Object.assign({ provider: options.provider }, options.masterKey);
           keyEncryptionKeyBson = (0, bson_1.serialize)(keyEncryptionKey);
         }
-        const filterBson = (0, bson_1.serialize)(filter);
+        const filterBson = (0, bson_1.serialize)(filter2);
         const context = this._mongoCrypt.makeRewrapManyDataKeyContext(filterBson, keyEncryptionKeyBson);
         const stateMachine = new state_machine_1.StateMachine({
           proxyOptions: this._proxyOptions,
@@ -29803,7 +29807,7 @@ var require_clone = __commonJS({
     var getFunctionName = require_getFunctionName();
     var isBsonType = require_isBsonType();
     var isMongooseArray = require_isMongooseArray().isMongooseArray;
-    var isObject = require_isObject();
+    var isObject2 = require_isObject();
     var isPOJO = require_isPOJO();
     var symbols = require_symbols();
     var trustedSymbol = require_trusted().trustedSymbol;
@@ -29817,7 +29821,7 @@ var require_clone = __commonJS({
       if (isMongooseObject(obj)) {
         if (options) {
           if (options._skipSingleNestedGetters && obj.$isSingleNested) {
-            options = Object.assign({}, options, { getters: false });
+            options._calledWithOptions = Object.assign({}, options._calledWithOptions || {}, { getters: false });
           }
           if (options.retainDocuments && obj.$__ != null) {
             const clonedDoc = obj.$clone();
@@ -29871,7 +29875,7 @@ var require_clone = __commonJS({
         }
         return Decimal.fromString(obj.toString());
       }
-      if (!objConstructor && isObject(obj)) {
+      if (!objConstructor && isObject2(obj)) {
         return cloneObject(obj, options, isArrayChild);
       }
       if (typeof obj === "object" && obj[symbols.schemaTypeSymbol]) {
@@ -29947,8 +29951,8 @@ var require_collection3 = __commonJS({
     var ObjectId2 = require_objectid();
     var getConstructorName = require_getConstructorName();
     var internalToObjectOptions = require_options().internalToObjectOptions;
-    var stream = require("stream");
-    var util = require("util");
+    var stream4 = require("stream");
+    var util2 = require("util");
     function NativeCollection(name, conn, options) {
       this.collection = null;
       this.Promise = options.Promise || Promise;
@@ -30088,7 +30092,7 @@ var require_collection3 = __commonJS({
               _this,
               [_this.name, i].concat(argsToAdd)
             );
-          } else if (debug instanceof stream.Writable) {
+          } else if (debug instanceof stream4.Writable) {
             this.$printToStream(_this.name, i, args, debug);
           } else {
             const color = debug.color == null ? true : debug.color;
@@ -30103,22 +30107,29 @@ var require_collection3 = __commonJS({
             throw new MongooseError(message);
           }
           if (syncCollectionMethods[i] && typeof lastArg === "function") {
-            const ret2 = collection[i].apply(collection, _args.slice(0, _args.length - 1));
-            return lastArg.call(this, null, ret2);
+            const result = collection[i].apply(collection, _args.slice(0, _args.length - 1));
+            this.conn.emit("operation-end", { _id: opId, modelName: _this.modelName, collectionName: this.name, method: i, result });
+            return lastArg.call(this, null, result);
           }
           const ret = collection[i].apply(collection, _args);
           if (ret != null && typeof ret.then === "function") {
             return ret.then(
-              (res) => {
-                typeof lastArg === "function" && lastArg(null, res);
-                return res;
-              },
-              (err) => {
+              (result) => {
                 if (typeof lastArg === "function") {
-                  lastArg(err);
-                  return;
+                  lastArg(null, result);
+                } else {
+                  this.conn.emit("operation-end", { _id: opId, modelName: _this.modelName, collectionName: this.name, method: i, result });
                 }
-                throw err;
+                return result;
+              },
+              (error) => {
+                if (typeof lastArg === "function") {
+                  lastArg(error);
+                  return;
+                } else {
+                  this.conn.emit("operation-end", { _id: opId, modelName: _this.modelName, collectionName: this.name, method: i, error });
+                }
+                throw error;
               }
             );
           }
@@ -30155,7 +30166,7 @@ var require_collection3 = __commonJS({
       const params = "(" + _args.join(", ") + ")";
       console.info(moduleName + functionCall + params);
     };
-    NativeCollection.prototype.$printToStream = function(name, i, args, stream2) {
+    NativeCollection.prototype.$printToStream = function(name, i, args, stream5) {
       const functionCall = [name, i].join(".");
       const _args = [];
       for (let j = args.length - 1; j >= 0; --j) {
@@ -30164,7 +30175,7 @@ var require_collection3 = __commonJS({
         }
       }
       const params = "(" + _args.join(", ") + ")";
-      stream2.write(functionCall + params, "utf8");
+      stream5.write(functionCall + params, "utf8");
     };
     NativeCollection.prototype.$format = function(arg, color, shell) {
       const type = typeof arg;
@@ -30178,8 +30189,8 @@ var require_collection3 = __commonJS({
           return representation;
         }
       };
-      if (util.inspect.custom) {
-        ret[util.inspect.custom] = ret.inspect;
+      if (util2.inspect.custom) {
+        ret[util2.inspect.custom] = ret.inspect;
       }
       return ret;
     }
@@ -30249,7 +30260,7 @@ var require_collection3 = __commonJS({
       if (sub) {
         return x;
       }
-      return util.inspect(x, false, 10, color).replace(/\n/g, "").replace(/\s{2,}/g, " ");
+      return util2.inspect(x, false, 10, color).replace(/\n/g, "").replace(/\s{2,}/g, " ");
     }
     NativeCollection.prototype.getIndexes = NativeCollection.prototype.indexInformation;
     module2.exports = NativeCollection;
@@ -30260,9 +30271,9 @@ var require_collection3 = __commonJS({
 var require_changeStream = __commonJS({
   "backend/node_modules/mongoose/lib/cursor/changeStream.js"(exports2, module2) {
     "use strict";
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var driverChangeStreamEvents = ["close", "change", "end", "error", "resumeTokenChanged"];
-    var ChangeStream = class extends EventEmitter {
+    var ChangeStream = class extends EventEmitter2 {
       constructor(changeStreamThunk, pipeline, options) {
         super();
         this.driverChangeStream = null;
@@ -30896,25 +30907,25 @@ var require_notFound = __commonJS({
   "backend/node_modules/mongoose/lib/error/notFound.js"(exports2, module2) {
     "use strict";
     var MongooseError = require_mongooseError();
-    var util = require("util");
+    var util2 = require("util");
     var DocumentNotFoundError = class extends MongooseError {
       /**
        * OverwriteModel Error constructor.
        * @api private
        */
-      constructor(filter, model, numAffected, result) {
+      constructor(filter2, model, numAffected, result) {
         let msg;
         const messages = MongooseError.messages;
         if (messages.DocumentNotFoundError != null) {
-          msg = typeof messages.DocumentNotFoundError === "function" ? messages.DocumentNotFoundError(filter, model) : messages.DocumentNotFoundError;
+          msg = typeof messages.DocumentNotFoundError === "function" ? messages.DocumentNotFoundError(filter2, model) : messages.DocumentNotFoundError;
         } else {
-          msg = 'No document found for query "' + util.inspect(filter) + '" on model "' + model + '"';
+          msg = 'No document found for query "' + util2.inspect(filter2) + '" on model "' + model + '"';
         }
         super(msg);
         this.result = result;
         this.numAffected = numAffected;
-        this.filter = filter;
-        this.query = filter;
+        this.filter = filter2;
+        this.query = filter2;
       }
     };
     Object.defineProperty(DocumentNotFoundError.prototype, "name", {
@@ -30929,7 +30940,7 @@ var require_cast = __commonJS({
   "backend/node_modules/mongoose/lib/error/cast.js"(exports2, module2) {
     "use strict";
     var MongooseError = require_mongooseError();
-    var util = require("util");
+    var util2 = require("util");
     var CastError = class extends MongooseError {
       constructor(type, value, path, reason, schemaType) {
         if (arguments.length > 0) {
@@ -30999,7 +31010,7 @@ var require_cast = __commonJS({
       value: "CastError"
     });
     function getStringValue(value) {
-      let stringValue = util.inspect(value);
+      let stringValue = util2.inspect(value);
       stringValue = stringValue.replace(/^'|'$/g, '"');
       if (!stringValue.startsWith('"')) {
         stringValue = '"' + stringValue + '"';
@@ -31079,7 +31090,7 @@ var require_validation = __commonJS({
     "use strict";
     var MongooseError = require_mongooseError();
     var getConstructorName = require_getConstructorName();
-    var util = require("util");
+    var util2 = require("util");
     var combinePathErrors = require_combinePathErrors();
     var ValidationError = class _ValidationError extends MongooseError {
       /**
@@ -31134,8 +31145,8 @@ var require_validation = __commonJS({
         this.message = this._message + ": " + combinePathErrors(this);
       }
     };
-    if (util.inspect.custom) {
-      ValidationError.prototype[util.inspect.custom] = ValidationError.prototype.inspect;
+    if (util2.inspect.custom) {
+      ValidationError.prototype[util2.inspect.custom] = ValidationError.prototype.inspect;
     }
     Object.defineProperty(ValidationError.prototype, "toJSON", {
       enumerable: false,
@@ -32146,7 +32157,7 @@ var require_promiseOrCallback = __commonJS({
 var require_merge = __commonJS({
   "backend/node_modules/mongoose/lib/helpers/schema/merge.js"(exports2, module2) {
     "use strict";
-    module2.exports = function merge(s1, s2, skipConflictingPaths) {
+    module2.exports = function merge2(s1, s2, skipConflictingPaths) {
       const paths = Object.keys(s2.tree);
       const pathsToAdd = {};
       for (const key of paths) {
@@ -32268,7 +32279,7 @@ var require_stateMachine = __commonJS({
         });
       };
     };
-    StateMachine.prototype.forEach = function forEach() {
+    StateMachine.prototype.forEach = function forEach2() {
       this.forEach = this._iter("forEach");
       return this.forEach.apply(this, arguments);
     };
@@ -32328,14 +32339,14 @@ var require_mixed = __commonJS({
     "use strict";
     var SchemaType = require_schemaType();
     var symbols = require_symbols2();
-    var isObject = require_isObject();
+    var isObject2 = require_isObject();
     var utils = require_utils4();
     function SchemaMixed(path, options) {
       if (options && options.default) {
         const def = options.default;
         if (Array.isArray(def) && def.length === 0) {
           options.default = Array;
-        } else if (!options.shared && isObject(def) && Object.keys(def).length === 0) {
+        } else if (!options.shared && isObject2(def) && Object.keys(def).length === 0) {
           options.default = function() {
             return {};
           };
@@ -32656,13 +32667,13 @@ var require_compile = __commonJS({
         defineKey({ prop: key, subprops, prototype: proto, prefix, options });
       }
     }
-    function defineKey({ prop, subprops, prototype, prefix, options }) {
+    function defineKey({ prop, subprops, prototype: prototype3, prefix, options }) {
       Document = Document || require_document2();
       const path = (prefix ? prefix + "." : "") + prop;
       prefix = prefix || "";
       const useGetOptions = prefix ? Object.freeze({}) : noDottedPathGetOptions;
       if (subprops) {
-        Object.defineProperty(prototype, prop, {
+        Object.defineProperty(prototype3, prop, {
           enumerable: true,
           configurable: true,
           get: function() {
@@ -32680,19 +32691,19 @@ var require_compile = __commonJS({
                 enumerable: false,
                 configurable: true,
                 writable: false,
-                value: prototype.schema
+                value: prototype3.schema
               });
               Object.defineProperty(nested, "$__schema", {
                 enumerable: false,
                 configurable: true,
                 writable: false,
-                value: prototype.schema
+                value: prototype3.schema
               });
               Object.defineProperty(nested, documentSchemaSymbol, {
                 enumerable: false,
                 configurable: true,
                 writable: false,
-                value: prototype.schema
+                value: prototype3.schema
               });
               Object.defineProperty(nested, "toObject", {
                 enumerable: false,
@@ -32760,7 +32771,7 @@ var require_compile = __commonJS({
           }
         });
       } else {
-        Object.defineProperty(prototype, prop, {
+        Object.defineProperty(prototype3, prop, {
           enumerable: true,
           configurable: true,
           get: function() {
@@ -32811,7 +32822,7 @@ var require_common3 = __commonJS({
     var isBsonType = require_isBsonType();
     var isMongooseObject = require_isMongooseObject();
     var MongooseError = require_error2();
-    var util = require("util");
+    var util2 = require("util");
     exports2.flatten = flatten;
     exports2.modifiedPaths = modifiedPaths;
     function flatten(update, path, options, schema) {
@@ -32867,7 +32878,7 @@ var require_common3 = __commonJS({
       }
       if (recursion.trace.has(update)) {
         throw new MongooseError(`a circular reference in the update value, updateValue:
-${util.inspect(recursion.raw.update, { showHidden: false, depth: 1 })}
+${util2.inspect(recursion.raw.update, { showHidden: false, depth: 1 })}
 updatePath: '${recursion.raw.path}'`);
       }
       recursion.trace.add(update);
@@ -33632,7 +33643,7 @@ var require_subdocument = __commonJS({
     var Document = require_document2();
     var immediate = require_immediate();
     var internalToObjectOptions = require_options().internalToObjectOptions;
-    var util = require("util");
+    var util2 = require("util");
     var utils = require_utils4();
     module2.exports = Subdocument;
     function Subdocument(value, fields, parent, skipId, options) {
@@ -33834,8 +33845,8 @@ var require_subdocument = __commonJS({
     Subdocument.prototype.inspect = function() {
       return this.toObject();
     };
-    if (util.inspect.custom) {
-      Subdocument.prototype[util.inspect.custom] = Subdocument.prototype.inspect;
+    if (util2.inspect.custom) {
+      Subdocument.prototype[util2.inspect.custom] = Subdocument.prototype.inspect;
     }
     function registerRemoveListener(sub) {
       let owner = sub.ownerDocument();
@@ -33856,7 +33867,7 @@ var require_subdocument = __commonJS({
 var require_arraySubdocument = __commonJS({
   "backend/node_modules/mongoose/lib/types/arraySubdocument.js"(exports2, module2) {
     "use strict";
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var Subdocument = require_subdocument();
     var utils = require_utils4();
     var documentArrayParent = require_symbols().documentArrayParent;
@@ -33891,8 +33902,8 @@ var require_arraySubdocument = __commonJS({
       writable: false,
       value: true
     });
-    for (const i in EventEmitter.prototype) {
-      ArraySubdocument[i] = EventEmitter.prototype[i];
+    for (const i in EventEmitter2.prototype) {
+      ArraySubdocument[i] = EventEmitter2.prototype[i];
     }
     ArraySubdocument.prototype.$setIndex = function(index) {
       this.__index = index;
@@ -35295,7 +35306,7 @@ var require_documentArray = __commonJS({
 var require_document2 = __commonJS({
   "backend/node_modules/mongoose/lib/document.js"(exports2, module2) {
     "use strict";
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var InternalCache = require_internal();
     var MongooseError = require_error2();
     var MixedSchema = require_mixed();
@@ -35374,10 +35385,10 @@ var require_document2 = __commonJS({
       if (obj != null && typeof obj !== "object") {
         throw new ObjectParameterError(obj, "obj", "Document");
       }
-      let defaults = true;
+      let defaults2 = true;
       if (options.defaults !== void 0) {
         this.$__.defaults = options.defaults;
-        defaults = options.defaults;
+        defaults2 = options.defaults;
       }
       const schema = this.$__schema;
       if (typeof fields === "boolean" || fields === "throw") {
@@ -35401,7 +35412,7 @@ var require_document2 = __commonJS({
       const hasIncludedChildren = exclude === false && fields ? $__hasIncludedChildren(fields) : null;
       if (this._doc == null) {
         this.$__buildDoc(obj, fields, skipId, exclude, hasIncludedChildren, false);
-        if (defaults) {
+        if (defaults2) {
           applyDefaults(this, fields, exclude, hasIncludedChildren, true, null);
         }
       }
@@ -35415,11 +35426,11 @@ var require_document2 = __commonJS({
           this.$isNew = obj.$isNew;
         }
       }
-      if (options.willInit && defaults) {
+      if (options.willInit && defaults2) {
         if (options.skipDefaults) {
           this.$__.skipDefaults = options.skipDefaults;
         }
-      } else if (defaults) {
+      } else if (defaults2) {
         applyDefaults(this, fields, exclude, hasIncludedChildren, false, options.skipDefaults);
       }
       if (!this.$__.strictMode && obj) {
@@ -35468,7 +35479,7 @@ var require_document2 = __commonJS({
             if (emitterFn === "emit") {
               return;
             }
-            this.$__.emitter = new EventEmitter();
+            this.$__.emitter = new EventEmitter2();
             this.$__.emitter.setMaxListeners(0);
           }
           return this.$__.emitter[emitterFn].apply(this.$__.emitter, arguments);
@@ -35477,8 +35488,8 @@ var require_document2 = __commonJS({
       }
     );
     Document.prototype.constructor = Document;
-    for (const i in EventEmitter.prototype) {
-      Document[i] = EventEmitter.prototype[i];
+    for (const i in EventEmitter2.prototype) {
+      Document[i] = EventEmitter2.prototype[i];
     }
     Document.prototype.$__schema;
     Document.prototype.schema;
@@ -35810,7 +35821,7 @@ var require_document2 = __commonJS({
         options = type;
         type = void 0;
       }
-      const merge = options && options.merge;
+      const merge2 = options && options.merge;
       const adhoc = type && type !== true;
       const constructing = type === true;
       let adhocs;
@@ -35943,7 +35954,7 @@ var require_document2 = __commonJS({
               this.$__.savedState[path + "." + key2] = initialVal[key2];
             }
           }
-          if (!merge) {
+          if (!merge2) {
             this.$__setValue(path, null);
             cleanModifiedSubpaths(this, path);
           } else {
@@ -36047,7 +36058,7 @@ var require_document2 = __commonJS({
       if (schema.$isSingleNested || schema.$isMongooseArray) {
         _markValidSubpaths(this, path);
       }
-      if (val != null && merge && schema.$isSingleNested) {
+      if (val != null && merge2 && schema.$isSingleNested) {
         if (val instanceof Document) {
           val = val.toObject({ virtuals: false, transform: false });
         }
@@ -37375,14 +37386,14 @@ var require_document2 = __commonJS({
     };
     Document.prototype.$__dirty = function() {
       const _this = this;
-      let all = this.$__.activePaths.map("modify", function(path) {
+      let all3 = this.$__.activePaths.map("modify", function(path) {
         return {
           path,
           value: _this.$__getValue(path),
           schema: _this.$__path(path)
         };
       });
-      all = all.concat(this.$__.activePaths.map("default", function(path) {
+      all3 = all3.concat(this.$__.activePaths.map("default", function(path) {
         if (path === "_id" || _this.$__getValue(path) == null) {
           return;
         }
@@ -37392,9 +37403,9 @@ var require_document2 = __commonJS({
           schema: _this.$__path(path)
         };
       }));
-      const allPaths = new Map(all.filter((el) => el != null).map((el) => [el.path, el.value]));
+      const allPaths = new Map(all3.filter((el) => el != null).map((el) => [el.path, el.value]));
       const minimal = [];
-      all.forEach(function(item) {
+      all3.forEach(function(item) {
         if (!item) {
           return;
         }
@@ -37509,14 +37520,10 @@ var require_document2 = __commonJS({
       }
     };
     Document.prototype.$toObject = function(options, json) {
-      const defaultOptions = {
-        transform: true,
-        flattenDecimals: true
-      };
       const path = json ? "toJSON" : "toObject";
       const baseOptions = this.constructor && this.constructor.base && this.constructor.base.options && get(this.constructor.base.options, path) || {};
       const schemaOptions = this.$__schema && this.$__schema.options || {};
-      Object.assign(defaultOptions, baseOptions, schemaOptions[path]);
+      const defaultOptions = Object.assign({}, baseOptions, schemaOptions[path]);
       options = utils.isPOJO(options) ? { ...options } : {};
       options._calledWithOptions = options._calledWithOptions || { ...options };
       let _minimize;
@@ -37527,35 +37534,11 @@ var require_document2 = __commonJS({
       } else {
         _minimize = schemaOptions.minimize;
       }
-      let flattenMaps;
-      if (options._calledWithOptions.flattenMaps != null) {
-        flattenMaps = options.flattenMaps;
-      } else if (defaultOptions.flattenMaps != null) {
-        flattenMaps = defaultOptions.flattenMaps;
-      } else {
-        flattenMaps = schemaOptions.flattenMaps;
-      }
-      let flattenObjectIds;
-      if (options._calledWithOptions.flattenObjectIds != null) {
-        flattenObjectIds = options.flattenObjectIds;
-      } else if (defaultOptions.flattenObjectIds != null) {
-        flattenObjectIds = defaultOptions.flattenObjectIds;
-      } else {
-        flattenObjectIds = schemaOptions.flattenObjectIds;
-      }
-      const cloneOptions = {
-        ...options,
-        _isNested: true,
-        json,
-        minimize: _minimize,
-        flattenMaps,
-        flattenObjectIds,
-        _seen: options && options._seen || /* @__PURE__ */ new Map(),
-        _calledWithOptions: options._calledWithOptions
-      };
-      const depopulate = options.depopulate || (options._parentOptions && options._parentOptions.depopulate || false);
+      options.minimize = _minimize;
+      options._seen = options._seen || /* @__PURE__ */ new Map();
+      const depopulate = options._calledWithOptions.depopulate ?? options._parentOptions?.depopulate ?? defaultOptions.depopulate ?? false;
       if (depopulate && options._isNested && this.$__.wasPopulated) {
-        return clone(this.$__.wasPopulated.value || this._id, cloneOptions);
+        return clone(this.$__.wasPopulated.value || this._id, options);
       }
       for (const key of Object.keys(defaultOptions)) {
         if (options[key] == null) {
@@ -37565,40 +37548,39 @@ var require_document2 = __commonJS({
       options._isNested = true;
       options.json = json;
       options.minimize = _minimize;
-      cloneOptions._parentOptions = options;
-      cloneOptions._skipSingleNestedGetters = false;
-      const originalTransform = options.transform;
-      let ret = clone(this._doc, cloneOptions) || {};
-      cloneOptions._skipSingleNestedGetters = true;
-      if (options.getters) {
-        applyGetters(this, ret, cloneOptions);
+      options._parentOptions = options;
+      options._skipSingleNestedGetters = false;
+      let ret = clone(this._doc, options) || {};
+      options._skipSingleNestedGetters = true;
+      const getters = options._calledWithOptions.getters ?? options.getters ?? defaultOptions.getters ?? false;
+      if (getters) {
+        applyGetters(this, ret, options);
         if (options.minimize) {
           ret = minimize(ret) || {};
         }
       }
-      if (options.virtuals || options.getters && options.virtuals !== false) {
-        applyVirtuals(this, ret, cloneOptions, options);
+      const virtuals = options._calledWithOptions.virtuals ?? defaultOptions.virtuals ?? void 0;
+      if (virtuals || getters && virtuals !== false) {
+        applyVirtuals(this, ret, options, options);
       }
       if (options.versionKey === false && this.$__schema.options.versionKey) {
         delete ret[this.$__schema.options.versionKey];
       }
-      let transform = options.transform;
+      const transform = options._calledWithOptions.transform ?? true;
+      let transformFunction = void 0;
+      if (transform === true) {
+        transformFunction = defaultOptions.transform;
+      } else if (typeof transform === "function") {
+        transformFunction = transform;
+      }
       if (transform) {
         applySchemaTypeTransforms(this, ret);
       }
       if (options.useProjection) {
         omitDeselectedFields(this, ret);
       }
-      if (transform === true || schemaOptions.toObject && transform) {
-        const opts = options.json ? schemaOptions.toJSON : schemaOptions.toObject;
-        if (opts) {
-          transform = typeof options.transform === "function" ? options.transform : opts.transform;
-        }
-      } else {
-        options.transform = originalTransform;
-      }
-      if (typeof transform === "function") {
-        const xformed = transform(this, ret, options);
+      if (typeof transformFunction === "function") {
+        const xformed = transformFunction(this, ret, options);
         if (typeof xformed !== "undefined") {
           ret = xformed;
         }
@@ -37649,7 +37631,8 @@ var require_document2 = __commonJS({
           assignPath = path.substring(options.path.length + 1);
         }
         if (assignPath.indexOf(".") === -1 && assignPath === path) {
-          v = clone(self2.get(path, null, { noDottedPath: true }), options);
+          v = self2.get(path, null, { noDottedPath: true });
+          v = clone(v, options);
           if (v === void 0) {
             continue;
           }
@@ -38007,7 +37990,7 @@ var require_utils4 = __commonJS({
     var PopulateOptions = require_populateOptions();
     var clone = require_clone();
     var immediate = require_immediate();
-    var isObject = require_isObject();
+    var isObject2 = require_isObject();
     var isMongooseArray = require_isMongooseArray();
     var isMongooseDocumentArray = require_isMongooseDocumentArray();
     var isBsonType = require_isBsonType();
@@ -38141,7 +38124,7 @@ var require_utils4 = __commonJS({
       }
       return ret;
     };
-    exports2.merge = function merge(to, from, options, path) {
+    exports2.merge = function merge2(to, from, options, path) {
       options = options || {};
       const keys = Object.keys(from);
       let i = 0;
@@ -38190,7 +38173,7 @@ var require_utils4 = __commonJS({
               continue;
             }
           }
-          merge(to[key], from[key], options, path ? path + "." + key : key);
+          merge2(to[key], from[key], options, path ? path + "." + key : key);
         } else if (options.overwrite) {
           to[key] = from[key];
         }
@@ -38227,7 +38210,7 @@ var require_utils4 = __commonJS({
       }
       return obj;
     };
-    exports2.isObject = isObject;
+    exports2.isObject = isObject2;
     exports2.isPOJO = require_isPOJO();
     exports2.isNonBuiltinObject = function isNonBuiltinObject(val) {
       return typeof val === "object" && !exports2.isNativeObject(val) && !exports2.isMongooseType(val) && !(val instanceof UUID) && val != null;
@@ -38396,13 +38379,13 @@ var require_utils4 = __commonJS({
       return val === null || val === void 0;
     };
     exports2.array = {};
-    exports2.array.flatten = function flatten(arr, filter, ret) {
+    exports2.array.flatten = function flatten(arr, filter2, ret) {
       ret || (ret = []);
       arr.forEach(function(item) {
         if (Array.isArray(item)) {
-          flatten(item, filter, ret);
+          flatten(item, filter2, ret);
         } else {
-          if (!filter || filter(item)) {
+          if (!filter2 || filter2(item)) {
             ret.push(item);
           }
         }
@@ -38851,9 +38834,9 @@ var require_schemaType = __commonJS({
       this.getters.push(fn);
       return this;
     };
-    SchemaType.prototype.validateAll = function(validators) {
-      for (let i = 0; i < validators.length; i++) {
-        this.validate(validators[i]);
+    SchemaType.prototype.validateAll = function(validators3) {
+      for (let i = 0; i < validators3.length; i++) {
+        this.validate(validators3[i]);
       }
       return this;
     };
@@ -39021,16 +39004,16 @@ var require_schemaType = __commonJS({
       if (typeof fn !== "function") {
         throw new TypeError(`Must pass callback function to doValidate(), got ${typeof fn}`);
       }
-      const validators = this.validators.filter((v) => typeof v === "object" && v !== null);
-      let count = validators.length;
+      const validators3 = this.validators.filter((v) => typeof v === "object" && v !== null);
+      let count = validators3.length;
       if (!count) {
         return fn(null);
       }
-      for (let i = 0, len = validators.length; i < len; ++i) {
+      for (let i = 0, len = validators3.length; i < len; ++i) {
         if (err) {
           break;
         }
-        const v = validators[i];
+        const v = validators3[i];
         const validator = v.validator;
         let ok;
         const validatorProperties = isSimpleValidator(v) ? Object.assign({}, v) : clone(v);
@@ -39111,19 +39094,19 @@ var require_schemaType = __commonJS({
       if (!count) {
         return null;
       }
-      let validators = this.validators;
+      let validators3 = this.validators;
       if (value === void 0) {
         if (this.validators.length !== 0 && this.validators[0].type === "required") {
-          validators = [this.validators[0]];
+          validators3 = [this.validators[0]];
         } else {
           return null;
         }
       }
       let err = null;
       let i = 0;
-      const len = validators.length;
+      const len = validators3.length;
       for (i = 0; i < len; ++i) {
-        const v = validators[i];
+        const v = validators3[i];
         if (v === null || typeof v !== "object") {
           continue;
         }
@@ -39399,7 +39382,7 @@ var require_modelNamesFromRefPath = __commonJS({
     var isPathExcluded = require_isPathExcluded();
     var lookupLocalFields = require_lookupLocalFields();
     var mpath = require_mpath();
-    var util = require("util");
+    var util2 = require("util");
     var utils = require_utils4();
     var hasNumericPropRE = /(\.\d+$|\.\d+\.)/g;
     module2.exports = function modelNamesFromRefPath(refPath, doc, populatedPath, modelSchema, queryProjection) {
@@ -39407,7 +39390,7 @@ var require_modelNamesFromRefPath = __commonJS({
         return [];
       }
       if (typeof refPath === "string" && queryProjection != null && isPathExcluded(queryProjection, refPath)) {
-        throw new MongooseError("refPath `" + refPath + "` must not be excluded in projection, got " + util.inspect(queryProjection));
+        throw new MongooseError("refPath `" + refPath + "` must not be excluded in projection, got " + util2.inspect(queryProjection));
       }
       if (hasNumericPropRE.test(populatedPath)) {
         const chunks = populatedPath.split(hasNumericPropRE);
@@ -39599,9 +39582,9 @@ var require_getIndexes = __commonJS({
           const index = path._index || path.caster && path.caster._index;
           if (index !== false && index !== null && index !== void 0) {
             const field = {};
-            const isObject = helperIsObject(index);
-            const options = isObject ? index : {};
-            const type = typeof index === "string" ? index : isObject ? index.type : false;
+            const isObject2 = helperIsObject(index);
+            const options = isObject2 ? index : {};
+            const type = typeof index === "string" ? index : isObject2 ? index.type : false;
             if (type && indexTypes.indexOf(type) !== -1) {
               field[prefix + key] = type;
             } else if (options.text) {
@@ -40167,7 +40150,7 @@ var require_validateRef = __commonJS({
   "backend/node_modules/mongoose/lib/helpers/populate/validateRef.js"(exports2, module2) {
     "use strict";
     var MongooseError = require_mongooseError();
-    var util = require("util");
+    var util2 = require("util");
     module2.exports = validateRef;
     function validateRef(ref, path) {
       if (typeof ref === "string") {
@@ -40176,7 +40159,7 @@ var require_validateRef = __commonJS({
       if (typeof ref === "function") {
         return;
       }
-      throw new MongooseError('Invalid ref at path "' + path + '". Got ' + util.inspect(ref, { depth: 0 }));
+      throw new MongooseError('Invalid ref at path "' + path + '". Got ' + util2.inspect(ref, { depth: 0 }));
     }
   }
 });
@@ -40327,7 +40310,7 @@ var require_buffer = __commonJS({
     "use strict";
     var Binary = require_bson().Binary;
     var utils = require_utils4();
-    function MongooseBuffer(value, encode, offset) {
+    function MongooseBuffer(value, encode3, offset) {
       let val = value;
       if (value == null) {
         val = 0;
@@ -40335,11 +40318,11 @@ var require_buffer = __commonJS({
       let encoding;
       let path;
       let doc;
-      if (Array.isArray(encode)) {
-        path = encode[0];
-        doc = encode[1];
+      if (Array.isArray(encode3)) {
+        path = encode3[0];
+        doc = encode3[1];
       } else {
-        encoding = encode;
+        encoding = encode3;
       }
       let buf;
       if (typeof val === "number" || val instanceof Number) {
@@ -40505,7 +40488,7 @@ var require_map = __commonJS({
     var deepEqual = require_utils4().deepEqual;
     var getConstructorName = require_getConstructorName();
     var handleSpreadDoc = require_handleSpreadDoc();
-    var util = require("util");
+    var util2 = require("util");
     var specialProperties = require_specialProperties();
     var isBsonType = require_isBsonType();
     var populateModelSymbol = require_symbols().populateModelSymbol;
@@ -40590,7 +40573,7 @@ var require_map = __commonJS({
               v.$__.wasPopulated = { value: v._id };
               return v;
             });
-          } else {
+          } else if (value != null) {
             if (value.$__ == null) {
               value = new populated.options[populateModelSymbol](value);
             }
@@ -40717,8 +40700,8 @@ var require_map = __commonJS({
         this.$__deferred = null;
       }
     };
-    if (util.inspect.custom) {
-      Object.defineProperty(MongooseMap.prototype, util.inspect.custom, {
+    if (util2.inspect.custom) {
+      Object.defineProperty(MongooseMap.prototype, util2.inspect.custom, {
         enumerable: false,
         writable: false,
         configurable: false,
@@ -41244,14 +41227,14 @@ var require_cast2 = __commonJS({
     var get = require_get();
     var getSchemaDiscriminatorByValue = require_getSchemaDiscriminatorByValue();
     var isOperator = require_isOperator();
-    var util = require("util");
-    var isObject = require_isObject();
+    var util2 = require("util");
+    var isObject2 = require_isObject();
     var isMongooseObject = require_isMongooseObject();
     var utils = require_utils4();
     var ALLOWED_GEOWITHIN_GEOJSON_TYPES = ["Polygon", "MultiPolygon"];
     module2.exports = function cast(schema, obj, options, context) {
       if (Array.isArray(obj)) {
-        throw new Error("Query filter must be an object, got an array ", util.inspect(obj));
+        throw new Error("Query filter must be an object, got an array ", util2.inspect(obj));
       }
       if (obj == null) {
         return obj;
@@ -41357,7 +41340,7 @@ var require_cast2 = __commonJS({
               }
               continue;
             }
-            if (isObject(val)) {
+            if (isObject2(val)) {
               let geo = "";
               if (val.$near) {
                 geo = "$near";
@@ -41539,7 +41522,7 @@ var require_cast2 = __commonJS({
     function _cast(val, numbertype, context) {
       if (Array.isArray(val)) {
         val.forEach(function(item, i) {
-          if (Array.isArray(item) || isObject(item)) {
+          if (Array.isArray(item) || isObject2(item)) {
             return _cast(item, numbertype, context);
           }
           val[i] = numbertype.castForQuery(null, item, context);
@@ -41550,7 +41533,7 @@ var require_cast2 = __commonJS({
         while (nearLen--) {
           const nkey = nearKeys[nearLen];
           const item = val[nkey];
-          if (Array.isArray(item) || isObject(item)) {
+          if (Array.isArray(item) || isObject2(item)) {
             _cast(item, numbertype, context);
             val[nkey] = item;
           } else {
@@ -41931,7 +41914,7 @@ var require_array2 = __commonJS({
     var cast = require_cast2();
     var clone = require_clone();
     var isOperator = require_isOperator();
-    var util = require("util");
+    var util2 = require("util");
     var utils = require_utils4();
     var castToNumber = require_helpers().castToNumber;
     var geospatial = require_geospatial();
@@ -42115,7 +42098,7 @@ var require_array2 = __commonJS({
               rawValue[i] = caster.applySetters(rawValue[i], doc, init, void 0, opts);
             }
           } catch (e) {
-            throw new CastError("[" + e.kind + "]", util.inspect(value), this.path + "." + i, e, this);
+            throw new CastError("[" + e.kind + "]", util2.inspect(value), this.path + "." + i, e, this);
           }
         }
         return value;
@@ -42127,7 +42110,7 @@ var require_array2 = __commonJS({
         }
         return this.cast([value], doc, init);
       }
-      throw new CastError("Array", util.inspect(value), this.path, null, this);
+      throw new CastError("Array", util2.inspect(value), this.path, null, this);
     };
     SchemaArray.prototype._castForPopulate = function _castForPopulate(value, doc) {
       MongooseArray || (MongooseArray = require_types().Array);
@@ -42146,12 +42129,12 @@ var require_array2 = __commonJS({
               rawValue[i] = caster.cast(rawValue[i], doc, false, void 0, opts);
             }
           } catch (e) {
-            throw new CastError("[" + e.kind + "]", util.inspect(value), this.path + "." + i, e, this);
+            throw new CastError("[" + e.kind + "]", util2.inspect(value), this.path + "." + i, e, this);
           }
         }
         return value;
       }
-      throw new CastError("Array", util.inspect(value), this.path, null, this);
+      throw new CastError("Array", util2.inspect(value), this.path, null, this);
     };
     SchemaArray.prototype.$toObject = SchemaArray.prototype.toObject;
     SchemaArray.prototype.discriminator = function(...args) {
@@ -43312,7 +43295,7 @@ var require_mergeDiscriminatorSchema = __commonJS({
     var specialProperties = require_specialProperties();
     var isBsonType = require_isBsonType();
     var ObjectId2 = require_objectid();
-    var isObject = require_isObject();
+    var isObject2 = require_isObject();
     module2.exports = function mergeDiscriminatorSchema(to, from, path, seen) {
       const keys = Object.keys(from);
       let i = 0;
@@ -43339,8 +43322,8 @@ var require_mergeDiscriminatorSchema = __commonJS({
         }
         if (to[key] == null) {
           to[key] = from[key];
-        } else if (isObject(from[key])) {
-          if (!isObject(to[key])) {
+        } else if (isObject2(from[key])) {
+          if (!isObject2(to[key])) {
             to[key] = {};
           }
           if (from[key] != null) {
@@ -43436,7 +43419,7 @@ var require_discriminator = __commonJS({
       if (typeof tiedValue === "string" && tiedValue.length || tiedValue != null) {
         value = tiedValue;
       }
-      function merge(schema2, baseSchema) {
+      function merge2(schema2, baseSchema) {
         schema2._baseSchema = baseSchema;
         if (baseSchema.paths._id && baseSchema.paths._id.options && !baseSchema.paths._id.options.auto) {
           schema2.remove("_id");
@@ -43485,7 +43468,7 @@ var require_discriminator = __commonJS({
         if (baseSchema.options.collection) {
           schema2.options.collection = baseSchema.options.collection;
         }
-        const toJSON = schema2.options.toJSON;
+        const toJSON2 = schema2.options.toJSON;
         const toObject = schema2.options.toObject;
         const _id = schema2.options._id;
         const id = schema2.options.id;
@@ -43503,8 +43486,8 @@ var require_discriminator = __commonJS({
         for (const _key of Object.keys(userProvidedOptions)) {
           schema2.options[_key] = userProvidedOptions[_key];
         }
-        if (toJSON)
-          schema2.options.toJSON = toJSON;
+        if (toJSON2)
+          schema2.options.toJSON = toJSON2;
         if (toObject)
           schema2.options.toObject = toObject;
         if (typeof _id !== "undefined") {
@@ -43520,7 +43503,7 @@ var require_discriminator = __commonJS({
         schema2.callQueue = baseSchema.callQueue.concat(schema2.callQueue);
         delete schema2._requiredpaths;
       }
-      merge(schema, model.schema);
+      merge2(schema, model.schema);
       if (!model.discriminators) {
         model.discriminators = {};
       }
@@ -43615,7 +43598,7 @@ var require_subdocument2 = __commonJS({
   "backend/node_modules/mongoose/lib/schema/subdocument.js"(exports2, module2) {
     "use strict";
     var CastError = require_cast();
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var ObjectExpectedError = require_objectExpected();
     var SchemaSubdocumentOptions = require_schemaSubdocumentOptions();
     var SchemaType = require_schemaType();
@@ -43672,7 +43655,7 @@ var require_subdocument2 = __commonJS({
       _embedded.base = schema.base;
       _embedded.schema = schema;
       _embedded.$isSingleNested = true;
-      _embedded.events = new EventEmitter();
+      _embedded.events = new EventEmitter2();
       _embedded.prototype.toBSON = function() {
         return this.toObject(internalToObjectOptions);
       };
@@ -43682,8 +43665,8 @@ var require_subdocument2 = __commonJS({
       for (const i in schema.statics) {
         _embedded[i] = schema.statics[i];
       }
-      for (const i in EventEmitter.prototype) {
-        _embedded[i] = EventEmitter.prototype[i];
+      for (const i in EventEmitter2.prototype) {
+        _embedded[i] = EventEmitter2.prototype[i];
       }
       return _embedded;
     }
@@ -43809,7 +43792,7 @@ var require_subdocument2 = __commonJS({
     SchemaSubdocument.set = SchemaType.set;
     SchemaSubdocument.setters = [];
     SchemaSubdocument.get = SchemaType.get;
-    SchemaSubdocument.prototype.toJSON = function toJSON() {
+    SchemaSubdocument.prototype.toJSON = function toJSON2() {
       return { path: this.path, options: this.options };
     };
     SchemaSubdocument.prototype.clone = function() {
@@ -43891,7 +43874,7 @@ var require_documentArray2 = __commonJS({
     "use strict";
     var CastError = require_cast();
     var DocumentArrayElement = require_documentArrayElement();
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var SchemaArray = require_array2();
     var SchemaDocumentArrayOptions = require_schemaDocumentArrayOptions();
     var SchemaType = require_schemaType();
@@ -43967,7 +43950,7 @@ var require_documentArray2 = __commonJS({
       EmbeddedDocument.schema = schema;
       EmbeddedDocument.prototype.constructor = EmbeddedDocument;
       EmbeddedDocument.$isArraySubdocument = true;
-      EmbeddedDocument.events = new EventEmitter();
+      EmbeddedDocument.events = new EventEmitter2();
       EmbeddedDocument.base = schema.base;
       for (const i in schema.methods) {
         EmbeddedDocument.prototype[i] = schema.methods[i];
@@ -43975,8 +43958,8 @@ var require_documentArray2 = __commonJS({
       for (const i in schema.statics) {
         EmbeddedDocument[i] = schema.statics[i];
       }
-      for (const i in EventEmitter.prototype) {
-        EmbeddedDocument[i] = EventEmitter.prototype[i];
+      for (const i in EventEmitter2.prototype) {
+        EmbeddedDocument[i] = EventEmitter2.prototype[i];
       }
       EmbeddedDocument.options = options;
       return EmbeddedDocument;
@@ -44950,7 +44933,7 @@ var require_schema = __commonJS({
 var require_schema2 = __commonJS({
   "backend/node_modules/mongoose/lib/schema.js"(exports2, module2) {
     "use strict";
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var Kareem = require_kareem();
     var MongooseError = require_mongooseError();
     var SchemaType = require_schemaType();
@@ -44964,13 +44947,13 @@ var require_schema2 = __commonJS({
     var getIndexes = require_getIndexes();
     var handleReadPreferenceAliases = require_handleReadPreferenceAliases();
     var idGetter = require_idGetter();
-    var merge = require_merge();
+    var merge2 = require_merge();
     var mpath = require_mpath();
     var setPopulatedVirtualValue = require_setPopulatedVirtualValue();
     var setupTimestamps = require_setupTimestamps();
     var utils = require_utils4();
     var validateRef = require_validateRef();
-    var util = require("util");
+    var util2 = require("util");
     var hasNumericSubpathRegex = /\.\d+(\.|$)/;
     var MongooseTypes;
     var queryHooks = require_constants3().queryMiddlewareFunctions;
@@ -45090,7 +45073,7 @@ var require_schema2 = __commonJS({
         }(prop));
       }
     }
-    Schema.prototype = Object.create(EventEmitter.prototype);
+    Schema.prototype = Object.create(EventEmitter2.prototype);
     Schema.prototype.constructor = Schema;
     Schema.prototype.instanceOfSchema = true;
     Object.defineProperty(Schema.prototype, "$schemaType", {
@@ -45259,7 +45242,7 @@ var require_schema2 = __commonJS({
     };
     Schema.prototype.add = function add(obj, prefix) {
       if (obj instanceof Schema || obj != null && obj.instanceOfSchema) {
-        merge(this, obj);
+        merge2(this, obj);
         return this;
       }
       if (obj._id === false && prefix == null) {
@@ -45374,7 +45357,7 @@ var require_schema2 = __commonJS({
       }
       if (typeof index === "object") {
         for (let i = this._indexes.length - 1; i >= 0; --i) {
-          if (util.isDeepStrictEqual(this._indexes[i][0], index)) {
+          if (util2.isDeepStrictEqual(this._indexes[i][0], index)) {
             this._indexes.splice(i, 1);
           }
         }
@@ -46487,7 +46470,7 @@ var require_connection2 = __commonJS({
   "backend/node_modules/mongoose/lib/connection.js"(exports2, module2) {
     "use strict";
     var ChangeStream = require_changeStream();
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var Schema = require_schema2();
     var STATES = require_connectionState();
     var MongooseError = require_error2();
@@ -46526,7 +46509,7 @@ var require_connection2 = __commonJS({
       }
       this._queue = [];
     }
-    Object.setPrototypeOf(Connection.prototype, EventEmitter.prototype);
+    Object.setPrototypeOf(Connection.prototype, EventEmitter2.prototype);
     Object.defineProperty(Connection.prototype, "readyState", {
       get: function() {
         return this._readyState;
@@ -46808,14 +46791,14 @@ var require_connection2 = __commonJS({
         this.$initialConnection.catch(() => {
         });
       }
-      return EventEmitter.prototype.on.call(this, event, callback2);
+      return EventEmitter2.prototype.on.call(this, event, callback2);
     };
     Connection.prototype.once = function on(event, callback2) {
       if (event === "error" && this.$initialConnection) {
         this.$initialConnection.catch(() => {
         });
       }
-      return EventEmitter.prototype.once.call(this, event, callback2);
+      return EventEmitter2.prototype.once.call(this, event, callback2);
     };
     function _validateArgs(uri, options, callback2) {
       if (typeof options === "function" && callback2 == null) {
@@ -47118,7 +47101,7 @@ var require_package2 = __commonJS({
     module2.exports = {
       name: "mongoose",
       description: "Mongoose MongoDB ODM",
-      version: "8.4.1",
+      version: "8.4.3",
       author: "Guillermo Rauch <guillermo@learnboost.com>",
       keywords: [
         "mongodb",
@@ -47145,8 +47128,8 @@ var require_package2 = __commonJS({
         sift: "17.1.3"
       },
       devDependencies: {
-        "@babel/core": "7.24.5",
-        "@babel/preset-env": "7.24.5",
+        "@babel/core": "7.24.6",
+        "@babel/preset-env": "7.24.6",
         "@typescript-eslint/eslint-plugin": "^6.2.1",
         "@typescript-eslint/parser": "^6.2.1",
         acquit: "1.3.0",
@@ -47155,7 +47138,6 @@ var require_package2 = __commonJS({
         "assert-browserify": "2.0.0",
         axios: "1.1.3",
         "babel-loader": "8.2.5",
-        benchmark: "2.1.4",
         "broken-link-checker": "^0.7.8",
         buffer: "^5.6.0",
         cheerio: "1.0.0-rc.12",
@@ -47163,8 +47145,8 @@ var require_package2 = __commonJS({
         dotenv: "16.4.5",
         dox: "1.0.0",
         eslint: "8.57.0",
-        "eslint-plugin-markdown": "^4.0.1",
-        "eslint-plugin-mocha-no-only": "1.1.1",
+        "eslint-plugin-markdown": "^5.0.0",
+        "eslint-plugin-mocha-no-only": "1.2.0",
         express: "^4.18.1",
         "fs-extra": "~11.2.0",
         "highlight.js": "11.8.0",
@@ -47175,12 +47157,12 @@ var require_package2 = __commonJS({
         mkdirp: "^3.0.1",
         mocha: "10.4.0",
         moment: "2.x",
-        "mongodb-memory-server": "9.2.0",
+        "mongodb-memory-server": "9.3.0",
         ncp: "^2.0.0",
         nyc: "15.1.0",
-        pug: "3.0.2",
+        pug: "3.0.3",
         q: "1.5.1",
-        sinon: "17.0.1",
+        sinon: "18.0.0",
         "stream-browserify": "3.0.0",
         tsd: "0.31.0",
         typescript: "5.4.5",
@@ -47691,8 +47673,8 @@ var require_eachAsync = __commonJS({
         function createFetch() {
           let documentsBatch = [];
           let drained = false;
-          return fetch;
-          function fetch(done) {
+          return fetch2;
+          function fetch2(done) {
             if (drained || aborted) {
               return done();
             } else if (error) {
@@ -47729,7 +47711,7 @@ var require_eachAsync = __commonJS({
                 documentsBatch.push(doc);
               }
               if (batchSize && documentsBatch.length !== batchSize) {
-                immediate(() => enqueue(fetch));
+                immediate(() => enqueue(fetch2));
                 return;
               }
               const docsToProcess = batchSize ? documentsBatch : doc;
@@ -47752,7 +47734,7 @@ var require_eachAsync = __commonJS({
                   const finalErr = continueOnError ? createEachAsyncMultiError(aggregatedErrors) : error;
                   return finalCallback(finalErr);
                 }
-                immediate(() => enqueue(fetch));
+                immediate(() => enqueue(fetch2));
               }
               handleNextResult(docsToProcess, currentDocumentIndex++, handleNextResultCallBack);
             });
@@ -47815,14 +47797,14 @@ var require_queryCursor = __commonJS({
   "backend/node_modules/mongoose/lib/cursor/queryCursor.js"(exports2, module2) {
     "use strict";
     var MongooseError = require_mongooseError();
-    var Readable = require("stream").Readable;
+    var Readable2 = require("stream").Readable;
     var eachAsync = require_eachAsync();
     var helpers = require_queryHelpers();
     var kareem = require_kareem();
     var immediate = require_immediate();
-    var util = require("util");
+    var util2 = require("util");
     function QueryCursor(query) {
-      Readable.call(this, { autoDestroy: true, objectMode: true });
+      Readable2.call(this, { autoDestroy: true, objectMode: true });
       this.cursor = null;
       this.skipped = false;
       this.query = query;
@@ -47837,7 +47819,7 @@ var require_queryCursor = __commonJS({
             const resultValue = err.args[0];
             if (resultValue != null && (!Array.isArray(resultValue) || resultValue.length)) {
               const err2 = new MongooseError(
-                'Cannot `skipMiddlewareFunction()` with a value when using `.find().cursor()`, value must be nullish or empty array, got "' + util.inspect(resultValue) + '".'
+                'Cannot `skipMiddlewareFunction()` with a value when using `.find().cursor()`, value must be nullish or empty array, got "' + util2.inspect(resultValue) + '".'
               );
               this._markError(err2);
               this.listeners("error").length > 0 && this.emit("error", err2);
@@ -47868,7 +47850,7 @@ var require_queryCursor = __commonJS({
         }
       });
     }
-    util.inherits(QueryCursor, Readable);
+    util2.inherits(QueryCursor, Readable2);
     function _getRawCursor(query, queryCursor) {
       try {
         const cursor = query.model.collection.find(query._conditions, queryCursor.options);
@@ -48294,9 +48276,9 @@ var require_getPath = __commonJS({
       }
       const pieces = path.split(".");
       let cur = "";
-      let isArray = false;
+      let isArray2 = false;
       for (const piece of pieces) {
-        if (isArray && numberRE.test(piece)) {
+        if (isArray2 && numberRE.test(piece)) {
           continue;
         }
         cur = cur.length === 0 ? piece : cur + "." + piece;
@@ -48304,8 +48286,8 @@ var require_getPath = __commonJS({
         if (schematype != null && schematype.schema) {
           schema = schematype.schema;
           cur = "";
-          if (!isArray && schematype.$isMongooseDocumentArray) {
-            isArray = true;
+          if (!isArray2 && schematype.$isMongooseDocumentArray) {
+            isArray2 = true;
           }
         }
       }
@@ -48396,18 +48378,18 @@ var require_castArrayFilters = __commonJS({
       if (!Array.isArray(arrayFilters)) {
         return;
       }
-      for (const filter of arrayFilters) {
-        if (filter == null) {
+      for (const filter2 of arrayFilters) {
+        if (filter2 == null) {
           throw new Error(`Got null array filter in ${arrayFilters}`);
         }
-        const keys = Object.keys(filter).filter((key) => filter[key] != null);
+        const keys = Object.keys(filter2).filter((key) => filter2[key] != null);
         if (keys.length === 0) {
           continue;
         }
         const firstKey = keys[0];
         if (firstKey === "$and" || firstKey === "$or") {
           for (const key of keys) {
-            _castArrayFilters(filter[key], schema, strictQuery, updatedPathsByFilter, query);
+            _castArrayFilters(filter2[key], schema, strictQuery, updatedPathsByFilter, query);
           }
           continue;
         }
@@ -48421,8 +48403,8 @@ var require_castArrayFilters = __commonJS({
         );
         const baseSchematype = getPath(schema, baseFilterPath);
         let filterBaseSchema = baseSchematype != null ? baseSchematype.schema : null;
-        if (filterBaseSchema != null && filterBaseSchema.discriminators != null && filter[filterWildcardPath + "." + filterBaseSchema.options.discriminatorKey]) {
-          filterBaseSchema = filterBaseSchema.discriminators[filter[filterWildcardPath + "." + filterBaseSchema.options.discriminatorKey]] || filterBaseSchema;
+        if (filterBaseSchema != null && filterBaseSchema.discriminators != null && filter2[filterWildcardPath + "." + filterBaseSchema.options.discriminatorKey]) {
+          filterBaseSchema = filterBaseSchema.discriminators[filter2[filterWildcardPath + "." + filterBaseSchema.options.discriminatorKey]] || filterBaseSchema;
         }
         for (const key of keys) {
           if (updatedPathsByFilter[key] === null) {
@@ -48447,10 +48429,10 @@ var require_castArrayFilters = __commonJS({
             const filterPath = filterPathRelativeToBase == null ? baseFilterPath + ".0" : baseFilterPath + ".0" + filterPathRelativeToBase;
             throw new Error(`Could not find path "${filterPath}" in schema`);
           }
-          if (typeof filter[key] === "object") {
-            filter[key] = castFilterPath(query, schematype, filter[key]);
+          if (typeof filter2[key] === "object") {
+            filter2[key] = castFilterPath(query, schematype, filter2[key]);
           } else {
-            filter[key] = schematype.castForQuery(null, filter[key]);
+            filter2[key] = schematype.castForQuery(null, filter2[key]);
           }
         }
       }
@@ -48466,11 +48448,11 @@ var require_getEmbeddedDiscriminatorPath2 = __commonJS({
     var get = require_get();
     var getDiscriminatorByValue = require_getDiscriminatorByValue();
     var updatedPathsByArrayFilter = require_updatedPathsByArrayFilter();
-    module2.exports = function getEmbeddedDiscriminatorPath(schema, update, filter, path, options) {
+    module2.exports = function getEmbeddedDiscriminatorPath(schema, update, filter2, path, options) {
       const parts = path.split(".");
       let schematype = null;
       let type = "adhocOrUndefined";
-      filter = filter || {};
+      filter2 = filter2 || {};
       update = update || {};
       const arrayFilters = options != null && Array.isArray(options.arrayFilters) ? options.arrayFilters : [];
       const updatedPathsByFilter = updatedPathsByArrayFilter(update);
@@ -48486,15 +48468,15 @@ var require_getEmbeddedDiscriminatorPath2 = __commonJS({
           const discriminatorValuePath = subpath + "." + key;
           const discriminatorFilterPath = discriminatorValuePath.replace(/\.\d+\./, ".");
           let discriminatorKey = null;
-          if (discriminatorValuePath in filter) {
-            discriminatorKey = filter[discriminatorValuePath];
+          if (discriminatorValuePath in filter2) {
+            discriminatorKey = filter2[discriminatorValuePath];
           }
-          if (discriminatorFilterPath in filter) {
-            discriminatorKey = filter[discriminatorFilterPath];
+          if (discriminatorFilterPath in filter2) {
+            discriminatorKey = filter2[discriminatorFilterPath];
           }
           const wrapperPath = subpath.replace(/\.\d+$/, "");
-          if (schematype.$isMongooseDocumentArrayElement && get(filter[wrapperPath], "$elemMatch." + key) != null) {
-            discriminatorKey = filter[wrapperPath].$elemMatch[key];
+          if (schematype.$isMongooseDocumentArrayElement && get(filter2[wrapperPath], "$elemMatch." + key) != null) {
+            discriminatorKey = filter2[wrapperPath].$elemMatch[key];
           }
           if (discriminatorValuePath in update) {
             discriminatorKey = update[discriminatorValuePath];
@@ -48503,9 +48485,9 @@ var require_getEmbeddedDiscriminatorPath2 = __commonJS({
             const schemaKey = updatedPathsByFilter[filterKey] + "." + key;
             const arrayFilterKey = filterKey + "." + key;
             if (schemaKey === discriminatorFilterPath) {
-              const filter2 = arrayFilters.find((filter3) => filter3.hasOwnProperty(arrayFilterKey));
-              if (filter2 != null) {
-                discriminatorKey = filter2[arrayFilterKey];
+              const filter3 = arrayFilters.find((filter4) => filter4.hasOwnProperty(arrayFilterKey));
+              if (filter3 != null) {
+                discriminatorKey = filter3[arrayFilterKey];
               }
             }
           }
@@ -48672,7 +48654,7 @@ var require_castUpdate = __commonJS({
       "$pullAll",
       "$bit"
     ]);
-    module2.exports = function castUpdate(schema, obj, options, context, filter) {
+    module2.exports = function castUpdate(schema, obj, options, context, filter2) {
       if (obj == null) {
         return void 0;
       }
@@ -48695,7 +48677,7 @@ var require_castUpdate = __commonJS({
       const ret = {};
       let val;
       let hasDollarKey = false;
-      filter = filter || {};
+      filter2 = filter2 || {};
       while (i--) {
         const op = ops[i];
         if (!mongodbUpdateOperators.has(op)) {
@@ -48728,7 +48710,7 @@ var require_castUpdate = __commonJS({
           ret[op] = val;
         }
         if (val && typeof val === "object" && !Buffer.isBuffer(val) && mongodbUpdateOperators.has(op)) {
-          walkUpdatePath(schema, val, op, options, context, filter);
+          walkUpdatePath(schema, val, op, options, context, filter2);
         } else {
           const msg = "Invalid atomic update value for " + op + ". Expected an object, received " + typeof val;
           throw new Error(msg);
@@ -48737,8 +48719,8 @@ var require_castUpdate = __commonJS({
           delete ret[op];
         }
       }
-      if (Object.keys(ret).length === 0 && options.upsert && Object.keys(filter).length > 0) {
-        return { $setOnInsert: { ...filter } };
+      if (Object.keys(ret).length === 0 && options.upsert && Object.keys(filter2).length > 0) {
+        return { $setOnInsert: { ...filter2 } };
       }
       return ret;
     };
@@ -48768,7 +48750,7 @@ var require_castUpdate = __commonJS({
       }
       throw new MongooseError('Invalid update pipeline operator: "' + op + '"');
     }
-    function walkUpdatePath(schema, obj, op, options, context, filter, pref) {
+    function walkUpdatePath(schema, obj, op, options, context, filter2, pref) {
       const strict = options.strict;
       const prefix = pref ? pref + "." : "";
       const keys = Object.keys(obj);
@@ -48804,7 +48786,7 @@ var require_castUpdate = __commonJS({
         if (getConstructorName(val) === "Object") {
           schematype = schema._getSchema(prefix + key);
           if (schematype == null) {
-            const _res = getEmbeddedDiscriminatorPath(schema, obj, filter, prefix + key, options);
+            const _res = getEmbeddedDiscriminatorPath(schema, obj, filter2, prefix + key, options);
             if (_res.schematype != null) {
               schematype = _res.schematype;
             }
@@ -48878,7 +48860,7 @@ var require_castUpdate = __commonJS({
                 continue;
               }
             }
-            hasKeys |= walkUpdatePath(schema, val, op, options, context, filter, prefix + key) || utils.isObject(val) && Object.keys(val).length === 0;
+            hasKeys |= walkUpdatePath(schema, val, op, options, context, filter2, prefix + key) || utils.isObject(val) && Object.keys(val).length === 0;
           }
         } else {
           const checkPath = key === "$each" || key === "$or" || key === "$and" || key === "$in" ? pref : prefix + key;
@@ -48888,7 +48870,7 @@ var require_castUpdate = __commonJS({
           }
           let pathDetails = schema._getPathType(checkPath);
           if (schematype == null) {
-            const _res = getEmbeddedDiscriminatorPath(schema, obj, filter, checkPath, options);
+            const _res = getEmbeddedDiscriminatorPath(schema, obj, filter2, checkPath, options);
             if (_res.schematype != null) {
               schematype = _res.schematype;
               pathDetails = _res.type;
@@ -49118,7 +49100,7 @@ var require_utils5 = __commonJS({
         if ("Buffer" === obj.constructor.name)
           return Buffer.from(obj);
       }
-      if (isObject(obj))
+      if (isObject2(obj))
         return exports2.cloneObject(obj, options);
       if (obj.valueOf)
         return obj.valueOf();
@@ -49146,7 +49128,7 @@ var require_utils5 = __commonJS({
         ret.push(clone(arr[i], options));
       return ret;
     };
-    exports2.merge = function merge(to, from) {
+    exports2.merge = function merge2(to, from) {
       const keys = Object.keys(from);
       for (const key of keys) {
         if (specialProperties.indexOf(key) !== -1) {
@@ -49156,7 +49138,7 @@ var require_utils5 = __commonJS({
           to[key] = from[key];
         } else {
           if (exports2.isObject(from[key])) {
-            merge(to[key], from[key]);
+            merge2(to[key], from[key]);
           } else {
             to[key] = from[key];
           }
@@ -49227,7 +49209,7 @@ var require_utils5 = __commonJS({
     exports2.toString = function(arg) {
       return _toString.call(arg);
     };
-    var isObject = exports2.isObject = function(arg) {
+    var isObject2 = exports2.isObject = function(arg) {
       return "[object Object]" == exports2.toString(arg);
     };
     exports2.keys = Object.keys;
@@ -49436,7 +49418,7 @@ var require_common4 = __commonJS({
         debug.namespace = namespace;
         debug.useColors = createDebug.useColors();
         debug.color = createDebug.selectColor(namespace);
-        debug.extend = extend;
+        debug.extend = extend2;
         debug.destroy = createDebug.destroy;
         Object.defineProperty(debug, "enabled", {
           enumerable: true,
@@ -49460,7 +49442,7 @@ var require_common4 = __commonJS({
         }
         return debug;
       }
-      function extend(namespace, delimiter) {
+      function extend2(namespace, delimiter) {
         const newDebug = createDebug(this.namespace + (typeof delimiter === "undefined" ? ":" : delimiter) + namespace);
         newDebug.log = this.log;
         return newDebug;
@@ -49740,7 +49722,7 @@ var require_supports_color = __commonJS({
         has16m: level >= 3
       };
     }
-    function supportsColor(stream) {
+    function supportsColor(stream4) {
       if (forceColor === false) {
         return 0;
       }
@@ -49750,7 +49732,7 @@ var require_supports_color = __commonJS({
       if (hasFlag("color=256")) {
         return 2;
       }
-      if (stream && !stream.isTTY && forceColor !== true) {
+      if (stream4 && !stream4.isTTY && forceColor !== true) {
         return 0;
       }
       const min = forceColor ? 1 : 0;
@@ -49796,8 +49778,8 @@ var require_supports_color = __commonJS({
       }
       return min;
     }
-    function getSupportLevel(stream) {
-      const level = supportsColor(stream);
+    function getSupportLevel(stream4) {
+      const level = supportsColor(stream4);
       return translateLevel(level);
     }
     module2.exports = {
@@ -49812,14 +49794,14 @@ var require_supports_color = __commonJS({
 var require_node2 = __commonJS({
   "backend/node_modules/debug/src/node.js"(exports2, module2) {
     var tty = require("tty");
-    var util = require("util");
+    var util2 = require("util");
     exports2.init = init;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
     exports2.useColors = useColors;
-    exports2.destroy = util.deprecate(
+    exports2.destroy = util2.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
@@ -49950,7 +49932,7 @@ var require_node2 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util.format(...args) + "\n");
+      return process.stderr.write(util2.format(...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -49973,11 +49955,11 @@ var require_node2 = __commonJS({
     var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
+      return util2.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
     };
     formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util.inspect(v, this.inspectOpts);
+      return util2.inspect(v, this.inspectOpts);
     };
   }
 });
@@ -50202,7 +50184,7 @@ var require_mquery = __commonJS({
   "backend/node_modules/mquery/lib/mquery.js"(exports2, module2) {
     "use strict";
     var assert = require("assert");
-    var util = require("util");
+    var util2 = require("util");
     var utils = require_utils5();
     var debug = require_src()("mquery");
     function Query(criteria, options) {
@@ -50535,7 +50517,7 @@ var require_mquery = __commonJS({
         }
       } else {
         if (val.center.type != "Point" || !Array.isArray(val.center.coordinates)) {
-          throw new Error(util.format("Invalid GeoJSON specified for %s", type));
+          throw new Error(util2.format("Invalid GeoJSON specified for %s", type));
         }
         conds[type] = { $geometry: val.center };
         if ("maxDistance" in val) {
@@ -51245,7 +51227,7 @@ var require_removeUnusedArrayFilters = __commonJS({
         if (!Array.isArray(arrayFilter[firstKey])) {
           return false;
         }
-        return arrayFilter[firstKey].find((filter) => _checkSingleFilterKey(filter, updateKeys)) != null;
+        return arrayFilter[firstKey].find((filter2) => _checkSingleFilterKey(filter2, updateKeys)) != null;
       }
       const firstDot = firstKey.indexOf(".");
       const arrayFilterKey = firstDot === -1 ? firstKey : firstKey.slice(0, firstDot);
@@ -51280,19 +51262,19 @@ var require_sanitizeFilter = __commonJS({
     "use strict";
     var hasDollarKeys = require_hasDollarKeys();
     var { trustedSymbol } = require_trusted();
-    module2.exports = function sanitizeFilter(filter) {
-      if (filter == null || typeof filter !== "object") {
-        return filter;
+    module2.exports = function sanitizeFilter(filter2) {
+      if (filter2 == null || typeof filter2 !== "object") {
+        return filter2;
       }
-      if (Array.isArray(filter)) {
-        for (const subfilter of filter) {
+      if (Array.isArray(filter2)) {
+        for (const subfilter of filter2) {
           sanitizeFilter(subfilter);
         }
-        return filter;
+        return filter2;
       }
-      const filterKeys = Object.keys(filter);
+      const filterKeys = Object.keys(filter2);
       for (const key of filterKeys) {
-        const value = filter[key];
+        const value = filter2[key];
         if (value != null && value[trustedSymbol]) {
           continue;
         }
@@ -51305,10 +51287,10 @@ var require_sanitizeFilter = __commonJS({
           if (keys.length === 1 && keys[0] === "$eq") {
             continue;
           }
-          filter[key] = { $eq: filter[key] };
+          filter2[key] = { $eq: filter2[key] };
         }
       }
-      return filter;
+      return filter2;
     };
   }
 });
@@ -51392,7 +51374,7 @@ var require_setDefaultsOnInsert = __commonJS({
     "use strict";
     var modifiedPaths = require_common3().modifiedPaths;
     var get = require_get();
-    module2.exports = function(filter, schema, castedDoc, options) {
+    module2.exports = function(filter2, schema, castedDoc, options) {
       options = options || {};
       const shouldSetDefaultsOnInsert = options.setDefaultsOnInsert != null ? options.setDefaultsOnInsert : schema.base.options.setDefaultsOnInsert;
       if (!options.upsert || shouldSetDefaultsOnInsert === false) {
@@ -51413,11 +51395,11 @@ var require_setDefaultsOnInsert = __commonJS({
       if (!hasDollarUpdate) {
         modifiedPaths(castedDoc, "", modified);
       }
-      const paths = Object.keys(filter);
+      const paths = Object.keys(filter2);
       const numPaths = paths.length;
       for (let i = 0; i < numPaths; ++i) {
         const path = paths[i];
-        const condition = filter[path];
+        const condition = filter2[path];
         if (condition && typeof condition === "object") {
           const conditionKeys = Object.keys(condition);
           const numConditionKeys = conditionKeys.length;
@@ -51738,7 +51720,7 @@ var require_query = __commonJS({
     var setDefaultsOnInsert = require_setDefaultsOnInsert();
     var specialProperties = require_specialProperties();
     var updateValidators = require_updateValidators();
-    var util = require("util");
+    var util2 = require("util");
     var utils = require_utils4();
     var queryMiddlewareFunctions = require_constants3().queryMiddlewareFunctions;
     var queryOptionMethods = /* @__PURE__ */ new Set([
@@ -51820,7 +51802,7 @@ var require_query = __commonJS({
         this._mongooseOptions = clone(p._mongooseOptions);
         Query.call(this, criteria, options2 || null, model, coll);
       };
-      util.inherits(CustomQuery, model.Query);
+      util2.inherits(CustomQuery, model.Query);
       const p = CustomQuery.prototype;
       p.options = {};
       const options = Object.assign({}, this.options);
@@ -52041,15 +52023,15 @@ var require_query = __commonJS({
       }
       return this;
     };
-    Query.prototype.toString = function toString() {
+    Query.prototype.toString = function toString3() {
       if (this.op === "count" || this.op === "countDocuments" || this.op === "find" || this.op === "findOne" || this.op === "deleteMany" || this.op === "deleteOne" || this.op === "findOneAndDelete" || this.op === "remove") {
-        return `${this.model.modelName}.${this.op}(${util.inspect(this._conditions)})`;
+        return `${this.model.modelName}.${this.op}(${util2.inspect(this._conditions)})`;
       }
       if (this.op === "distinct") {
-        return `${this.model.modelName}.distinct('${this._distinct}', ${util.inspect(this._conditions)})`;
+        return `${this.model.modelName}.distinct('${this._distinct}', ${util2.inspect(this._conditions)})`;
       }
       if (this.op === "findOneAndReplace" || this.op === "findOneAndUpdate" || this.op === "replaceOne" || this.op === "update" || this.op === "updateMany" || this.op === "updateOne") {
-        return `${this.model.modelName}.${this.op}(${util.inspect(this._conditions)}, ${util.inspect(this._update)})`;
+        return `${this.model.modelName}.${this.op}(${util2.inspect(this._conditions)}, ${util2.inspect(this._update)})`;
       }
       return `${this.model.modelName}.${this.op}()`;
     };
@@ -52407,9 +52389,9 @@ var require_query = __commonJS({
         lean: mongooseOptions.lean || null
       });
       const options = this._optionsForExec();
-      const filter = this._conditions;
+      const filter2 = this._conditions;
       const fields = options.projection;
-      const cursor = await this.mongooseCollection.find(filter, options);
+      const cursor = await this.mongooseCollection.find(filter2, options);
       if (options.explain) {
         return cursor.explain();
       }
@@ -52792,17 +52774,17 @@ var require_query = __commonJS({
       }
       throw new TypeError("Invalid sort value: { " + key + ": " + val + " }");
     }
-    Query.prototype.deleteOne = function deleteOne(filter, options) {
-      if (typeof filter === "function" || typeof options === "function" || typeof arguments[2] === "function") {
+    Query.prototype.deleteOne = function deleteOne(filter2, options) {
+      if (typeof filter2 === "function" || typeof options === "function" || typeof arguments[2] === "function") {
         throw new MongooseError("Query.prototype.deleteOne() no longer accepts a callback");
       }
       this.op = "deleteOne";
       this.setOptions(options);
-      if (mquery.canMerge(filter)) {
-        this.merge(filter);
+      if (mquery.canMerge(filter2)) {
+        this.merge(filter2);
         prepareDiscriminatorCriteria(this);
-      } else if (filter != null) {
-        this.error(new ObjectParameterError(filter, "filter", "deleteOne"));
+      } else if (filter2 != null) {
+        this.error(new ObjectParameterError(filter2, "filter", "deleteOne"));
       }
       return this;
     };
@@ -52815,17 +52797,17 @@ var require_query = __commonJS({
       const options = this._optionsForExec();
       return this.mongooseCollection.deleteOne(this._conditions, options);
     };
-    Query.prototype.deleteMany = function(filter, options) {
-      if (typeof filter === "function" || typeof options === "function" || typeof arguments[2] === "function") {
+    Query.prototype.deleteMany = function(filter2, options) {
+      if (typeof filter2 === "function" || typeof options === "function" || typeof arguments[2] === "function") {
         throw new MongooseError("Query.prototype.deleteMany() no longer accepts a callback");
       }
       this.setOptions(options);
       this.op = "deleteMany";
-      if (mquery.canMerge(filter)) {
-        this.merge(filter);
+      if (mquery.canMerge(filter2)) {
+        this.merge(filter2);
         prepareDiscriminatorCriteria(this);
-      } else if (filter != null) {
-        this.error(new ObjectParameterError(filter, "filter", "deleteMany"));
+      } else if (filter2 != null) {
+        this.error(new ObjectParameterError(filter2, "filter", "deleteMany"));
       }
       return this;
     };
@@ -52874,8 +52856,8 @@ var require_query = __commonJS({
         query._conditions[schema.discriminatorMapping.key] = schema.discriminatorMapping.value;
       }
     }
-    Query.prototype.findOneAndUpdate = function(filter, doc, options) {
-      if (typeof filter === "function" || typeof doc === "function" || typeof options === "function" || typeof arguments[3] === "function") {
+    Query.prototype.findOneAndUpdate = function(filter2, doc, options) {
+      if (typeof filter2 === "function" || typeof doc === "function" || typeof options === "function" || typeof arguments[3] === "function") {
         throw new MongooseError("Query.prototype.findOneAndUpdate() no longer accepts a callback");
       }
       this.op = "findOneAndUpdate";
@@ -52886,15 +52868,15 @@ var require_query = __commonJS({
           options = void 0;
           break;
         case 1:
-          doc = filter;
-          filter = options = void 0;
+          doc = filter2;
+          filter2 = options = void 0;
           break;
       }
-      if (mquery.canMerge(filter)) {
-        this.merge(filter);
-      } else if (filter != null) {
+      if (mquery.canMerge(filter2)) {
+        this.merge(filter2);
+      } else if (filter2 != null) {
         this.error(
-          new ObjectParameterError(filter, "filter", "findOneAndUpdate")
+          new ObjectParameterError(filter2, "filter", "findOneAndUpdate")
         );
       }
       if (doc) {
@@ -52978,15 +52960,15 @@ var require_query = __commonJS({
         });
       });
     };
-    Query.prototype.findOneAndDelete = function(filter, options) {
-      if (typeof filter === "function" || typeof options === "function" || typeof arguments[2] === "function") {
+    Query.prototype.findOneAndDelete = function(filter2, options) {
+      if (typeof filter2 === "function" || typeof options === "function" || typeof arguments[2] === "function") {
         throw new MongooseError("Query.prototype.findOneAndDelete() no longer accepts a callback");
       }
       this.op = "findOneAndDelete";
       this._validateOp();
       this._validate();
-      if (mquery.canMerge(filter)) {
-        this.merge(filter);
+      if (mquery.canMerge(filter2)) {
+        this.merge(filter2);
       }
       options && this.setOptions(options);
       return this;
@@ -52998,9 +52980,9 @@ var require_query = __commonJS({
         throw this.error();
       }
       const includeResultMetadata = this.options.includeResultMetadata;
-      const filter = this._conditions;
+      const filter2 = this._conditions;
       const options = this._optionsForExec(this.model);
-      let res = await this.mongooseCollection.findOneAndDelete(filter, options);
+      let res = await this.mongooseCollection.findOneAndDelete(filter2, options);
       for (const fn of this._transforms) {
         res = fn(res);
       }
@@ -53014,18 +52996,18 @@ var require_query = __commonJS({
         });
       });
     };
-    Query.prototype.findOneAndReplace = function(filter, replacement, options) {
-      if (typeof filter === "function" || typeof replacement === "function" || typeof options === "function" || typeof arguments[4] === "function") {
+    Query.prototype.findOneAndReplace = function(filter2, replacement, options) {
+      if (typeof filter2 === "function" || typeof replacement === "function" || typeof options === "function" || typeof arguments[4] === "function") {
         throw new MongooseError("Query.prototype.findOneAndReplace() no longer accepts a callback");
       }
       this.op = "findOneAndReplace";
       this._validateOp();
       this._validate();
-      if (mquery.canMerge(filter)) {
-        this.merge(filter);
-      } else if (filter != null) {
+      if (mquery.canMerge(filter2)) {
+        this.merge(filter2);
+      } else if (filter2 != null) {
         this.error(
-          new ObjectParameterError(filter, "filter", "findOneAndReplace")
+          new ObjectParameterError(filter2, "filter", "findOneAndReplace")
         );
       }
       if (replacement != null) {
@@ -53049,7 +53031,7 @@ var require_query = __commonJS({
         this._mongooseOptions.strict = this.options.strict;
         delete this.options.strict;
       }
-      const filter = this._conditions;
+      const filter2 = this._conditions;
       const options = this._optionsForExec();
       convertNewToReturnDocument(options);
       const includeResultMetadata = this.options.includeResultMetadata;
@@ -53074,7 +53056,7 @@ var require_query = __commonJS({
         validationError.errors[err.path] = err;
         throw validationError;
       }
-      let res = await this.mongooseCollection.findOneAndReplace(filter, this._update, options);
+      let res = await this.mongooseCollection.findOneAndReplace(filter2, this._update, options);
       for (const fn of this._transforms) {
         res = fn(res);
       }
@@ -53322,7 +53304,7 @@ var require_query = __commonJS({
       }
       return _update(this, "replaceOne", conditions, doc, options, callback2);
     };
-    function _update(query, op, filter, doc, options, callback2) {
+    function _update(query, op, filter2, doc, options, callback2) {
       query.op = op;
       query._validateOp();
       doc = doc || {};
@@ -53331,10 +53313,10 @@ var require_query = __commonJS({
           query._mongooseOptions.strict = options.strict;
         }
       }
-      if (!(filter instanceof Query) && filter != null && filter.toString() !== "[object Object]") {
-        query.error(new ObjectParameterError(filter, "filter", op));
+      if (!(filter2 instanceof Query) && filter2 != null && filter2.toString() !== "[object Object]") {
+        query.error(new ObjectParameterError(filter2, "filter", op));
       } else {
-        query.merge(filter);
+        query.merge(filter2);
       }
       if (utils.isObject(options)) {
         query.setOptions(options);
@@ -53531,7 +53513,7 @@ var require_query = __commonJS({
     Query.prototype.finally = function(onFinally) {
       return this.exec().finally(onFinally);
     };
-    Query.prototype[Symbol.toStringTag] = function toString() {
+    Query.prototype[Symbol.toStringTag] = function toString3() {
       return `Query { ${this.op} }`;
     };
     Query.prototype.pre = function(fn) {
@@ -53558,9 +53540,9 @@ var require_query = __commonJS({
       if ("upsert" in this.options) {
         upsert = this.options.upsert;
       }
-      const filter = this._conditions;
-      if (schema != null && utils.hasUserDefinedProperty(filter, schema.options.discriminatorKey) && typeof filter[schema.options.discriminatorKey] !== "object" && schema.discriminators != null) {
-        const discriminatorValue = filter[schema.options.discriminatorKey];
+      const filter2 = this._conditions;
+      if (schema != null && utils.hasUserDefinedProperty(filter2, schema.options.discriminatorKey) && typeof filter2[schema.options.discriminatorKey] !== "object" && schema.discriminators != null) {
+        const discriminatorValue = filter2[schema.options.discriminatorKey];
         const byValue = getDiscriminatorByValue(this.model.discriminators, discriminatorValue);
         schema = schema.discriminators[discriminatorValue] || byValue && byValue.schema || schema;
       }
@@ -53820,12 +53802,12 @@ var require_aggregationCursor = __commonJS({
   "backend/node_modules/mongoose/lib/cursor/aggregationCursor.js"(exports2, module2) {
     "use strict";
     var MongooseError = require_mongooseError();
-    var Readable = require("stream").Readable;
+    var Readable2 = require("stream").Readable;
     var eachAsync = require_eachAsync();
     var immediate = require_immediate();
-    var util = require("util");
+    var util2 = require("util");
     function AggregationCursor(agg) {
-      Readable.call(this, { autoDestroy: true, objectMode: true });
+      Readable2.call(this, { autoDestroy: true, objectMode: true });
       this.cursor = null;
       this.agg = agg;
       this._transforms = [];
@@ -53834,7 +53816,7 @@ var require_aggregationCursor = __commonJS({
       this._mongooseOptions = {};
       _init(model, this, agg);
     }
-    util.inherits(AggregationCursor, Readable);
+    util2.inherits(AggregationCursor, Readable2);
     function _init(model, c, agg) {
       if (!model.collection.buffer) {
         model.hooks.execPre("aggregate", agg, function() {
@@ -55022,7 +55004,7 @@ var require_lib5 = __commonJS({
       var comparable = function(value) {
         if (value instanceof Date) {
           return value.getTime();
-        } else if (isArray(value)) {
+        } else if (isArray2(value)) {
           return value.map(comparable);
         } else if (value && typeof value.toJSON === "function") {
           return value.toJSON();
@@ -55032,11 +55014,11 @@ var require_lib5 = __commonJS({
       var coercePotentiallyNull = function(value) {
         return value == null ? null : value;
       };
-      var isArray = typeChecker("Array");
-      var isObject = typeChecker("Object");
-      var isFunction = typeChecker("Function");
+      var isArray2 = typeChecker("Array");
+      var isObject2 = typeChecker("Object");
+      var isFunction2 = typeChecker("Function");
       var isProperty = function(item, key) {
-        return item.hasOwnProperty(key) && !isFunction(item[key]);
+        return item.hasOwnProperty(key) && !isFunction2(item[key]);
       };
       var isVanillaObject = function(value) {
         return value && (value.constructor === Object || value.constructor === Array || value.constructor.toString() === "function Object() { [native code] }" || value.constructor.toString() === "function Array() { [native code] }") && !value.toJSON;
@@ -55051,7 +55033,7 @@ var require_lib5 = __commonJS({
         if (Object.prototype.toString.call(a) !== Object.prototype.toString.call(b)) {
           return false;
         }
-        if (isArray(a)) {
+        if (isArray2(a)) {
           if (a.length !== b.length) {
             return false;
           }
@@ -55060,7 +55042,7 @@ var require_lib5 = __commonJS({
               return false;
           }
           return true;
-        } else if (isObject(a)) {
+        } else if (isObject2(a)) {
           if (Object.keys(a).length !== Object.keys(b).length) {
             return false;
           }
@@ -55074,7 +55056,7 @@ var require_lib5 = __commonJS({
       };
       var walkKeyPathValues = function(item, keyPath, next, depth, key, owner) {
         var currentKey = keyPath[depth];
-        if (isArray(item) && isNaN(Number(currentKey)) && !isProperty(item, currentKey)) {
+        if (isArray2(item) && isNaN(Number(currentKey)) && !isProperty(item, currentKey)) {
           for (var i = 0, length_1 = item.length; i < length_1; i++) {
             if (!walkKeyPathValues(item[i], keyPath, next, depth, i, item)) {
               return false;
@@ -55383,7 +55365,7 @@ var require_lib5 = __commonJS({
             this._queryOperation.reset();
           };
           $ElemMatch2.prototype.next = function(item) {
-            if (isArray(item)) {
+            if (isArray2(item)) {
               for (var i = 0, length_1 = item.length; i < length_1; i++) {
                 this._queryOperation.reset();
                 var child = item[i];
@@ -55435,7 +55417,7 @@ var require_lib5 = __commonJS({
           $Size2.prototype.init = function() {
           };
           $Size2.prototype.next = function(item) {
-            if (isArray(item) && item.length === this.params) {
+            if (isArray2(item) && item.length === this.params) {
               this.done = true;
               this.keep = true;
             }
@@ -55553,7 +55535,7 @@ var require_lib5 = __commonJS({
           }
           $Nin2.prototype.next = function(item, key, owner, root) {
             this._in.next(item, key, owner);
-            if (isArray(owner) && !root) {
+            if (isArray2(owner) && !root) {
               if (this._in.keep) {
                 this.keep = false;
                 this.done = true;
@@ -55730,7 +55712,7 @@ var require_lib5 = __commonJS({
       };
       var $where = function(params, ownerQuery, options) {
         var test;
-        if (isFunction(params)) {
+        if (isFunction2(params)) {
           test = params;
         } else if (!process.env.CSP_ENABLED) {
           test = new Function("obj", "return " + params);
@@ -55993,7 +55975,7 @@ var require_assignVals = __commonJS({
     }
     function valueFilter(val, assignmentOpts, populateOptions, allIds) {
       const userSpecifiedTransform = typeof populateOptions.transform === "function";
-      const transform = userSpecifiedTransform ? populateOptions.transform : noop;
+      const transform = userSpecifiedTransform ? populateOptions.transform : noop2;
       if (Array.isArray(val)) {
         const ret = [];
         const numValues = val.length;
@@ -56056,7 +56038,7 @@ var require_assignVals = __commonJS({
       }
       return Array.isArray(obj) || obj.$isMongooseMap || obj.$__ != null || leanPopulateMap.has(obj);
     }
-    function noop(v) {
+    function noop2(v) {
       return v;
     }
   }
@@ -57455,7 +57437,7 @@ var require_model = __commonJS({
     var Document = require_document2();
     var DocumentNotFoundError = require_notFound();
     var DivergentArrayError = require_divergentArray();
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var Kareem = require_kareem();
     var MongooseBuffer = require_buffer();
     var MongooseError = require_error2();
@@ -57511,7 +57493,7 @@ var require_model = __commonJS({
     var removeDeselectedForeignField = require_removeDeselectedForeignField();
     var setDottedPath = require_setDottedPath();
     var STATES = require_connectionState();
-    var util = require("util");
+    var util2 = require("util");
     var utils = require_utils4();
     var MongooseBulkWriteError = require_bulkWriteError();
     var minimize = require_minimize();
@@ -58102,12 +58084,12 @@ var require_model = __commonJS({
       return this[modelDbSymbol].model(name);
     };
     Model.prototype.model = Model.prototype.$model;
-    Model.exists = function exists(filter, options) {
+    Model.exists = function exists(filter2, options) {
       _checkContext(this, "exists");
       if (typeof arguments[2] === "function") {
         throw new MongooseError("Model.exists() no longer accepts a callback");
       }
-      const query = this.findOne(filter).select({ _id: 1 }).lean().setOptions(options);
+      const query = this.findOne(filter2).select({ _id: 1 }).lean().setOptions(options);
       return query;
     };
     Model.discriminator = function(name, schema, options) {
@@ -58123,6 +58105,7 @@ var require_model = __commonJS({
       const value = utils.isPOJO(options) ? options.value : options;
       const clone2 = typeof options.clone === "boolean" ? options.clone : true;
       const mergePlugins = typeof options.mergePlugins === "boolean" ? options.mergePlugins : true;
+      const overwriteModels = typeof options.overwriteModels === "boolean" ? options.overwriteModels : false;
       _checkContext(this, "discriminator");
       if (utils.isObject(schema) && !schema.instanceOfSchema) {
         schema = new Schema(schema);
@@ -58130,8 +58113,8 @@ var require_model = __commonJS({
       if (schema instanceof Schema && clone2) {
         schema = schema.clone();
       }
-      schema = discriminator(this, name, schema, value, mergePlugins, options.mergeHooks);
-      if (this.db.models[name] && !schema.options.overwriteModels) {
+      schema = discriminator(this, name, schema, value, mergePlugins, options.mergeHooks, overwriteModels);
+      if (this.db.models[name] && !schema.options.overwriteModels && !overwriteModels) {
         throw new OverwriteModelError(name);
       }
       schema.$isRootDiscriminator = true;
@@ -58162,8 +58145,8 @@ var require_model = __commonJS({
         throw new MongooseError("`Model." + fnName + "()` cannot run without a model as `this`. Make sure you are not calling `new Model." + fnName + "()`");
       }
     }
-    for (const i in EventEmitter.prototype) {
-      Model[i] = EventEmitter.prototype[i];
+    for (const i in EventEmitter2.prototype) {
+      Model[i] = EventEmitter2.prototype[i];
     }
     Model.init = function init() {
       _checkContext(this, "init");
@@ -58746,7 +58729,7 @@ var require_model = __commonJS({
       }
       return this.findOneAndDelete({ _id: id }, options);
     };
-    Model.findOneAndReplace = function(filter, replacement, options) {
+    Model.findOneAndReplace = function(filter2, replacement, options) {
       _checkContext(this, "findOneAndReplace");
       if (typeof arguments[0] === "function" || typeof arguments[1] === "function" || typeof arguments[2] === "function" || typeof arguments[3] === "function") {
         throw new MongooseError("Model.findOneAndReplace() no longer accepts a callback");
@@ -58758,7 +58741,7 @@ var require_model = __commonJS({
       }
       const mq = new this.Query({}, {}, this, this.$__collection);
       mq.select(fields);
-      return mq.findOneAndReplace(filter, replacement, options);
+      return mq.findOneAndReplace(filter2, replacement, options);
     };
     Model.create = async function create(doc, options) {
       if (typeof options === "function" || typeof arguments[2] === "function") {
@@ -59951,7 +59934,7 @@ var require_model = __commonJS({
       model.prototype[modelDbSymbol] = connection;
       model.discriminators = model.prototype.discriminators = void 0;
       model[modelSymbol] = true;
-      model.events = new EventEmitter();
+      model.events = new EventEmitter2();
       schema._preCompile();
       const _userProvidedOptions = schema._userProvidedOptions || {};
       const collectionOptions = {
@@ -60059,8 +60042,8 @@ var require_model = __commonJS({
     Model.inspect = function() {
       return `Model { ${this.modelName} }`;
     };
-    if (util.inspect.custom) {
-      Model[util.inspect.custom] = Model.inspect;
+    if (util2.inspect.custom) {
+      Model[util2.inspect.custom] = Model.inspect;
     }
     Model._applyQueryMiddleware = function _applyQueryMiddleware() {
       const Query2 = this.Query;
@@ -60176,7 +60159,7 @@ var require_setOptionError = __commonJS({
   "backend/node_modules/mongoose/lib/error/setOptionError.js"(exports2, module2) {
     "use strict";
     var MongooseError = require_mongooseError();
-    var util = require("util");
+    var util2 = require("util");
     var combinePathErrors = require_combinePathErrors();
     var SetOptionError = class _SetOptionError extends MongooseError {
       /**
@@ -60220,8 +60203,8 @@ var require_setOptionError = __commonJS({
         this.message = combinePathErrors(this);
       }
     };
-    if (util.inspect.custom) {
-      SetOptionError.prototype[util.inspect.custom] = SetOptionError.prototype.inspect;
+    if (util2.inspect.custom) {
+      SetOptionError.prototype[util2.inspect.custom] = SetOptionError.prototype.inspect;
     }
     Object.defineProperty(SetOptionError.prototype, "toJSON", {
       enumerable: false,
@@ -60269,18 +60252,18 @@ var require_browserDocument = __commonJS({
   "backend/node_modules/mongoose/lib/browserDocument.js"(exports2, module2) {
     "use strict";
     var NodeJSDocument = require_document2();
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var MongooseError = require_error2();
     var Schema = require_schema2();
     var ObjectId2 = require_objectid();
     var ValidationError = MongooseError.ValidationError;
     var applyHooks = require_applyHooks();
-    var isObject = require_isObject();
+    var isObject2 = require_isObject();
     function Document(obj, schema, fields, skipId, skipInit) {
       if (!(this instanceof Document)) {
         return new Document(obj, schema, fields, skipId, skipInit);
       }
-      if (isObject(schema) && !schema.instanceOfSchema) {
+      if (isObject2(schema) && !schema.instanceOfSchema) {
         schema = new Schema(schema);
       }
       schema = this.schema || schema;
@@ -60305,8 +60288,8 @@ var require_browserDocument = __commonJS({
     }
     Document.prototype = Object.create(NodeJSDocument.prototype);
     Document.prototype.constructor = Document;
-    Document.events = new EventEmitter();
-    Document.$emitter = new EventEmitter();
+    Document.events = new EventEmitter2();
+    Document.$emitter = new EventEmitter2();
     [
       "on",
       "once",
@@ -60350,7 +60333,7 @@ var require_mongoose = __commonJS({
   "backend/node_modules/mongoose/lib/mongoose.js"(exports2, module2) {
     "use strict";
     var Document = require_document2();
-    var EventEmitter = require("events").EventEmitter;
+    var EventEmitter2 = require("events").EventEmitter;
     var Kareem = require_kareem();
     var Schema = require_schema2();
     var SchemaType = require_schemaType();
@@ -60383,7 +60366,7 @@ var require_mongoose = __commonJS({
       this.connections = [];
       this.nextConnectionId = 0;
       this.models = {};
-      this.events = new EventEmitter();
+      this.events = new EventEmitter2();
       this.__driver = driver.get();
       this.options = Object.assign({
         pluralization: true,
@@ -60819,10 +60802,10 @@ var require_moment = __commonJS({
       function setHookCallback(callback2) {
         hookCallback = callback2;
       }
-      function isArray(input) {
+      function isArray2(input) {
         return input instanceof Array || Object.prototype.toString.call(input) === "[object Array]";
       }
-      function isObject(input) {
+      function isObject2(input) {
         return input != null && Object.prototype.toString.call(input) === "[object Object]";
       }
       function hasOwnProp(a, b) {
@@ -60841,13 +60824,13 @@ var require_moment = __commonJS({
           return true;
         }
       }
-      function isUndefined(input) {
+      function isUndefined2(input) {
         return input === void 0;
       }
-      function isNumber(input) {
+      function isNumber2(input) {
         return typeof input === "number" || Object.prototype.toString.call(input) === "[object Number]";
       }
-      function isDate(input) {
+      function isDate2(input) {
         return input instanceof Date || Object.prototype.toString.call(input) === "[object Date]";
       }
       function map(arr, fn) {
@@ -60857,7 +60840,7 @@ var require_moment = __commonJS({
         }
         return res;
       }
-      function extend(a, b) {
+      function extend2(a, b) {
         for (var i in b) {
           if (hasOwnProp(b, i)) {
             a[i] = b[i];
@@ -60936,7 +60919,7 @@ var require_moment = __commonJS({
       function createInvalid(flags) {
         var m = createUTC(NaN);
         if (flags != null) {
-          extend(getParsingFlags(m), flags);
+          extend2(getParsingFlags(m), flags);
         } else {
           getParsingFlags(m).userInvalidated = true;
         }
@@ -60945,41 +60928,41 @@ var require_moment = __commonJS({
       var momentProperties = hooks.momentProperties = [], updateInProgress = false;
       function copyConfig(to2, from2) {
         var i, prop, val, momentPropertiesLen = momentProperties.length;
-        if (!isUndefined(from2._isAMomentObject)) {
+        if (!isUndefined2(from2._isAMomentObject)) {
           to2._isAMomentObject = from2._isAMomentObject;
         }
-        if (!isUndefined(from2._i)) {
+        if (!isUndefined2(from2._i)) {
           to2._i = from2._i;
         }
-        if (!isUndefined(from2._f)) {
+        if (!isUndefined2(from2._f)) {
           to2._f = from2._f;
         }
-        if (!isUndefined(from2._l)) {
+        if (!isUndefined2(from2._l)) {
           to2._l = from2._l;
         }
-        if (!isUndefined(from2._strict)) {
+        if (!isUndefined2(from2._strict)) {
           to2._strict = from2._strict;
         }
-        if (!isUndefined(from2._tzm)) {
+        if (!isUndefined2(from2._tzm)) {
           to2._tzm = from2._tzm;
         }
-        if (!isUndefined(from2._isUTC)) {
+        if (!isUndefined2(from2._isUTC)) {
           to2._isUTC = from2._isUTC;
         }
-        if (!isUndefined(from2._offset)) {
+        if (!isUndefined2(from2._offset)) {
           to2._offset = from2._offset;
         }
-        if (!isUndefined(from2._pf)) {
+        if (!isUndefined2(from2._pf)) {
           to2._pf = getParsingFlags(from2);
         }
-        if (!isUndefined(from2._locale)) {
+        if (!isUndefined2(from2._locale)) {
           to2._locale = from2._locale;
         }
         if (momentPropertiesLen > 0) {
           for (i = 0; i < momentPropertiesLen; i++) {
             prop = momentProperties[i];
             val = from2[prop];
-            if (!isUndefined(val)) {
+            if (!isUndefined2(val)) {
               to2[prop] = val;
             }
           }
@@ -61008,7 +60991,7 @@ var require_moment = __commonJS({
       }
       function deprecate(msg, fn) {
         var firstTime = true;
-        return extend(function() {
+        return extend2(function() {
           if (hooks.deprecationHandler != null) {
             hooks.deprecationHandler(null, msg);
           }
@@ -61049,7 +61032,7 @@ var require_moment = __commonJS({
       }
       hooks.suppressDeprecationWarnings = false;
       hooks.deprecationHandler = null;
-      function isFunction(input) {
+      function isFunction2(input) {
         return typeof Function !== "undefined" && input instanceof Function || Object.prototype.toString.call(input) === "[object Function]";
       }
       function set(config) {
@@ -61057,7 +61040,7 @@ var require_moment = __commonJS({
         for (i in config) {
           if (hasOwnProp(config, i)) {
             prop = config[i];
-            if (isFunction(prop)) {
+            if (isFunction2(prop)) {
               this[i] = prop;
             } else {
               this["_" + i] = prop;
@@ -61070,13 +61053,13 @@ var require_moment = __commonJS({
         );
       }
       function mergeConfigs(parentConfig, childConfig) {
-        var res = extend({}, parentConfig), prop;
+        var res = extend2({}, parentConfig), prop;
         for (prop in childConfig) {
           if (hasOwnProp(childConfig, prop)) {
-            if (isObject(parentConfig[prop]) && isObject(childConfig[prop])) {
+            if (isObject2(parentConfig[prop]) && isObject2(childConfig[prop])) {
               res[prop] = {};
-              extend(res[prop], parentConfig[prop]);
-              extend(res[prop], childConfig[prop]);
+              extend2(res[prop], parentConfig[prop]);
+              extend2(res[prop], childConfig[prop]);
             } else if (childConfig[prop] != null) {
               res[prop] = childConfig[prop];
             } else {
@@ -61085,8 +61068,8 @@ var require_moment = __commonJS({
           }
         }
         for (prop in parentConfig) {
-          if (hasOwnProp(parentConfig, prop) && !hasOwnProp(childConfig, prop) && isObject(parentConfig[prop])) {
-            res[prop] = extend({}, res[prop]);
+          if (hasOwnProp(parentConfig, prop) && !hasOwnProp(childConfig, prop) && isObject2(parentConfig[prop])) {
+            res[prop] = extend2({}, res[prop]);
           }
         }
         return res;
@@ -61120,7 +61103,7 @@ var require_moment = __commonJS({
       };
       function calendar(key, mom, now2) {
         var output = this._calendar[key] || this._calendar["sameElse"];
-        return isFunction(output) ? output.call(mom, now2) : output;
+        return isFunction2(output) ? output.call(mom, now2) : output;
       }
       function zeroFill(number, targetLength, forceSign) {
         var absNumber = "" + Math.abs(number), zerosToFill = targetLength - absNumber.length, sign2 = number >= 0;
@@ -61169,7 +61152,7 @@ var require_moment = __commonJS({
         return function(mom) {
           var output = "", i2;
           for (i2 = 0; i2 < length; i2++) {
-            output += isFunction(array[i2]) ? array[i2].call(mom, format2) : array[i2];
+            output += isFunction2(array[i2]) ? array[i2].call(mom, format2) : array[i2];
           }
           return output;
         };
@@ -61247,11 +61230,11 @@ var require_moment = __commonJS({
       };
       function relativeTime(number, withoutSuffix, string, isFuture) {
         var output = this._relativeTime[string];
-        return isFunction(output) ? output(number, withoutSuffix, string, isFuture) : output.replace(/%d/i, number);
+        return isFunction2(output) ? output(number, withoutSuffix, string, isFuture) : output.replace(/%d/i, number);
       }
       function pastFuture(diff2, output) {
         var format2 = this._relativeTime[diff2 > 0 ? "future" : "past"];
-        return isFunction(format2) ? format2(output) : format2.replace(/%s/i, output);
+        return isFunction2(format2) ? format2(output) : format2.replace(/%s/i, output);
       }
       var aliases = {
         D: "date",
@@ -61351,7 +61334,7 @@ var require_moment = __commonJS({
       var match1 = /\d/, match2 = /\d\d/, match3 = /\d{3}/, match4 = /\d{4}/, match6 = /[+-]?\d{6}/, match1to2 = /\d\d?/, match3to4 = /\d\d\d\d?/, match5to6 = /\d\d\d\d\d\d?/, match1to3 = /\d{1,3}/, match1to4 = /\d{1,4}/, match1to6 = /[+-]?\d{1,6}/, matchUnsigned = /\d+/, matchSigned = /[+-]?\d+/, matchOffset = /Z|[+-]\d\d:?\d\d/gi, matchShortOffset = /Z|[+-]\d\d(?::?\d\d)?/gi, matchTimestamp = /[+-]?\d+(\.\d{1,3})?/, matchWord = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i, match1to2NoLeadingZero = /^[1-9]\d?/, match1to2HasZero = /^([1-9]\d|\d)/, regexes;
       regexes = {};
       function addRegexToken(token2, regex, strictRegex) {
-        regexes[token2] = isFunction(regex) ? regex : function(isStrict, localeData2) {
+        regexes[token2] = isFunction2(regex) ? regex : function(isStrict, localeData2) {
           return isStrict && strictRegex ? strictRegex : regex;
         };
       }
@@ -61394,7 +61377,7 @@ var require_moment = __commonJS({
         if (typeof token2 === "string") {
           token2 = [token2];
         }
-        if (isNumber(callback2)) {
+        if (isNumber2(callback2)) {
           func = function(input, array) {
             array[callback2] = toInt(input);
           };
@@ -61522,7 +61505,7 @@ var require_moment = __commonJS({
       }
       function stringGet(units) {
         units = normalizeUnits(units);
-        if (isFunction(this[units])) {
+        if (isFunction2(this[units])) {
           return this[units]();
         }
         return this;
@@ -61536,7 +61519,7 @@ var require_moment = __commonJS({
           }
         } else {
           units = normalizeUnits(units);
-          if (isFunction(this[units])) {
+          if (isFunction2(this[units])) {
             return this[units](value);
           }
         }
@@ -61600,15 +61583,15 @@ var require_moment = __commonJS({
       ), defaultLocaleMonthsShort = "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"), MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s)+MMMM?/, defaultMonthsShortRegex = matchWord, defaultMonthsRegex = matchWord;
       function localeMonths(m, format2) {
         if (!m) {
-          return isArray(this._months) ? this._months : this._months["standalone"];
+          return isArray2(this._months) ? this._months : this._months["standalone"];
         }
-        return isArray(this._months) ? this._months[m.month()] : this._months[(this._months.isFormat || MONTHS_IN_FORMAT).test(format2) ? "format" : "standalone"][m.month()];
+        return isArray2(this._months) ? this._months[m.month()] : this._months[(this._months.isFormat || MONTHS_IN_FORMAT).test(format2) ? "format" : "standalone"][m.month()];
       }
       function localeMonthsShort(m, format2) {
         if (!m) {
-          return isArray(this._monthsShort) ? this._monthsShort : this._monthsShort["standalone"];
+          return isArray2(this._monthsShort) ? this._monthsShort : this._monthsShort["standalone"];
         }
-        return isArray(this._monthsShort) ? this._monthsShort[m.month()] : this._monthsShort[MONTHS_IN_FORMAT.test(format2) ? "format" : "standalone"][m.month()];
+        return isArray2(this._monthsShort) ? this._monthsShort[m.month()] : this._monthsShort[MONTHS_IN_FORMAT.test(format2) ? "format" : "standalone"][m.month()];
       }
       function handleStrictParse(monthName, format2, strict) {
         var i, ii, mom, llc = monthName.toLocaleLowerCase();
@@ -61695,7 +61678,7 @@ var require_moment = __commonJS({
             value = toInt(value);
           } else {
             value = mom.localeData().monthsParse(value);
-            if (!isNumber(value)) {
+            if (!isNumber2(value)) {
               return mom;
             }
           }
@@ -61941,7 +61924,7 @@ var require_moment = __commonJS({
       }
       var defaultLocaleWeekdays = "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), defaultLocaleWeekdaysShort = "Sun_Mon_Tue_Wed_Thu_Fri_Sat".split("_"), defaultLocaleWeekdaysMin = "Su_Mo_Tu_We_Th_Fr_Sa".split("_"), defaultWeekdaysRegex = matchWord, defaultWeekdaysShortRegex = matchWord, defaultWeekdaysMinRegex = matchWord;
       function localeWeekdays(m, format2) {
-        var weekdays = isArray(this._weekdays) ? this._weekdays : this._weekdays[m && m !== true && this._weekdays.isFormat.test(format2) ? "format" : "standalone"];
+        var weekdays = isArray2(this._weekdays) ? this._weekdays : this._weekdays[m && m !== true && this._weekdays.isFormat.test(format2) ? "format" : "standalone"];
         return m === true ? shiftWeekdays(weekdays, this._week.dow) : m ? weekdays[m.day()] : weekdays;
       }
       function localeWeekdaysShort(m) {
@@ -62341,7 +62324,7 @@ var require_moment = __commonJS({
       function getSetGlobalLocale(key, values) {
         var data;
         if (key) {
-          if (isUndefined(values)) {
+          if (isUndefined2(values)) {
             data = getLocale(key);
           } else {
             data = defineLocale(key, values);
@@ -62441,7 +62424,7 @@ var require_moment = __commonJS({
         if (!key) {
           return globalLocale;
         }
-        if (!isArray(key)) {
+        if (!isArray2(key)) {
           locale2 = loadLocale(key);
           if (locale2) {
             return locale2;
@@ -62654,7 +62637,7 @@ var require_moment = __commonJS({
           config._d = /* @__PURE__ */ new Date(config._i + (config._useUTC ? " UTC" : ""));
         }
       );
-      function defaults(a, b, c) {
+      function defaults2(a, b, c) {
         if (a != null) {
           return a;
         }
@@ -62684,7 +62667,7 @@ var require_moment = __commonJS({
           dayOfYearFromWeekInfo(config);
         }
         if (config._dayOfYear != null) {
-          yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
+          yearToUse = defaults2(config._a[YEAR], currentDate[YEAR]);
           if (config._dayOfYear > daysInYear(yearToUse) || config._dayOfYear === 0) {
             getParsingFlags(config)._overflowDayOfYear = true;
           }
@@ -62723,13 +62706,13 @@ var require_moment = __commonJS({
         if (w.GG != null || w.W != null || w.E != null) {
           dow = 1;
           doy = 4;
-          weekYear = defaults(
+          weekYear = defaults2(
             w.GG,
             config._a[YEAR],
             weekOfYear(createLocal(), 1, 4).year
           );
-          week = defaults(w.W, 1);
-          weekday = defaults(w.E, 1);
+          week = defaults2(w.W, 1);
+          weekday = defaults2(w.E, 1);
           if (weekday < 1 || weekday > 7) {
             weekdayOverflow = true;
           }
@@ -62737,8 +62720,8 @@ var require_moment = __commonJS({
           dow = config._locale._week.dow;
           doy = config._locale._week.doy;
           curWeek = weekOfYear(createLocal(), dow, doy);
-          weekYear = defaults(w.gg, config._a[YEAR], curWeek.year);
-          week = defaults(w.w, curWeek.week);
+          weekYear = defaults2(w.gg, config._a[YEAR], curWeek.year);
+          week = defaults2(w.w, curWeek.week);
           if (w.d != null) {
             weekday = w.d;
             if (weekday < 0 || weekday > 6) {
@@ -62883,7 +62866,7 @@ var require_moment = __commonJS({
             }
           }
         }
-        extend(config, bestMoment || tempConfig);
+        extend2(config, bestMoment || tempConfig);
       }
       function configFromObject(config) {
         if (config._d) {
@@ -62917,9 +62900,9 @@ var require_moment = __commonJS({
         }
         if (isMoment(input)) {
           return new Moment(checkOverflow(input));
-        } else if (isDate(input)) {
+        } else if (isDate2(input)) {
           config._d = input;
-        } else if (isArray(format2)) {
+        } else if (isArray2(format2)) {
           configFromStringAndArray(config);
         } else if (format2) {
           configFromStringAndFormat(config);
@@ -62933,20 +62916,20 @@ var require_moment = __commonJS({
       }
       function configFromInput(config) {
         var input = config._i;
-        if (isUndefined(input)) {
+        if (isUndefined2(input)) {
           config._d = new Date(hooks.now());
-        } else if (isDate(input)) {
+        } else if (isDate2(input)) {
           config._d = new Date(input.valueOf());
         } else if (typeof input === "string") {
           configFromString(config);
-        } else if (isArray(input)) {
+        } else if (isArray2(input)) {
           config._a = map(input.slice(0), function(obj) {
             return parseInt(obj, 10);
           });
           configFromArray(config);
-        } else if (isObject(input)) {
+        } else if (isObject2(input)) {
           configFromObject(config);
-        } else if (isNumber(input)) {
+        } else if (isNumber2(input)) {
           config._d = new Date(input);
         } else {
           hooks.createFromInputFallback(config);
@@ -62962,7 +62945,7 @@ var require_moment = __commonJS({
           strict = locale2;
           locale2 = void 0;
         }
-        if (isObject(input) && isObjectEmpty(input) || isArray(input) && input.length === 0) {
+        if (isObject2(input) && isObjectEmpty(input) || isArray2(input) && input.length === 0) {
           input = void 0;
         }
         c._isAMomentObject = true;
@@ -62999,7 +62982,7 @@ var require_moment = __commonJS({
       );
       function pickBy(fn, moments) {
         var res, i;
-        if (moments.length === 1 && isArray(moments[0])) {
+        if (moments.length === 1 && isArray2(moments[0])) {
           moments = moments[0];
         }
         if (!moments.length) {
@@ -63124,7 +63107,7 @@ var require_moment = __commonJS({
         var res, diff2;
         if (model._isUTC) {
           res = model.clone();
-          diff2 = (isMoment(input) || isDate(input) ? input.valueOf() : createLocal(input).valueOf()) - res.valueOf();
+          diff2 = (isMoment(input) || isDate2(input) ? input.valueOf() : createLocal(input).valueOf()) - res.valueOf();
           res._d.setTime(res._d.valueOf() + diff2);
           hooks.updateOffset(res, false);
           return res;
@@ -63226,7 +63209,7 @@ var require_moment = __commonJS({
         return this.utcOffset() > this.clone().month(0).utcOffset() || this.utcOffset() > this.clone().month(5).utcOffset();
       }
       function isDaylightSavingTimeShifted() {
-        if (!isUndefined(this._isDSTShifted)) {
+        if (!isUndefined2(this._isDSTShifted)) {
           return this._isDSTShifted;
         }
         var c = {}, other;
@@ -63258,7 +63241,7 @@ var require_moment = __commonJS({
             d: input._days,
             M: input._months
           };
-        } else if (isNumber(input) || !isNaN(+input)) {
+        } else if (isNumber2(input) || !isNaN(+input)) {
           duration = {};
           if (key) {
             duration[key] = +input;
@@ -63374,14 +63357,14 @@ var require_moment = __commonJS({
         }
       }
       var add = createAdder(1, "add"), subtract = createAdder(-1, "subtract");
-      function isString(input) {
+      function isString2(input) {
         return typeof input === "string" || input instanceof String;
       }
       function isMomentInput(input) {
-        return isMoment(input) || isDate(input) || isString(input) || isNumber(input) || isNumberOrStringArray(input) || isMomentInputObject(input) || input === null || input === void 0;
+        return isMoment(input) || isDate2(input) || isString2(input) || isNumber2(input) || isNumberOrStringArray(input) || isMomentInputObject(input) || input === null || input === void 0;
       }
       function isMomentInputObject(input) {
-        var objectTest = isObject(input) && !isObjectEmpty(input), propertyTest = false, properties = [
+        var objectTest = isObject2(input) && !isObjectEmpty(input), propertyTest = false, properties = [
           "years",
           "year",
           "y",
@@ -63414,16 +63397,16 @@ var require_moment = __commonJS({
         return objectTest && propertyTest;
       }
       function isNumberOrStringArray(input) {
-        var arrayTest = isArray(input), dataTypeTest = false;
+        var arrayTest = isArray2(input), dataTypeTest = false;
         if (arrayTest) {
           dataTypeTest = input.filter(function(item) {
-            return !isNumber(item) && isString(input);
+            return !isNumber2(item) && isString2(input);
           }).length === 0;
         }
         return arrayTest && dataTypeTest;
       }
       function isCalendarSpec(input) {
-        var objectTest = isObject(input) && !isObjectEmpty(input), propertyTest = false, properties = [
+        var objectTest = isObject2(input) && !isObjectEmpty(input), propertyTest = false, properties = [
           "sameDay",
           "nextDay",
           "lastDay",
@@ -63454,7 +63437,7 @@ var require_moment = __commonJS({
             time = void 0;
           }
         }
-        var now2 = time || createLocal(), sod = cloneWithOffset(now2, this).startOf("day"), format2 = hooks.calendarFormat(this, sod) || "sameElse", output = formats && (isFunction(formats[format2]) ? formats[format2].call(this, now2) : formats[format2]);
+        var now2 = time || createLocal(), sod = cloneWithOffset(now2, this).startOf("day"), format2 = hooks.calendarFormat(this, sod) || "sameElse", output = formats && (isFunction2(formats[format2]) ? formats[format2].call(this, now2) : formats[format2]);
         return this.format(
           output || this.localeData().calendar(format2, this, createLocal(now2))
         );
@@ -63570,7 +63553,7 @@ var require_moment = __commonJS({
       }
       hooks.defaultFormat = "YYYY-MM-DDTHH:mm:ssZ";
       hooks.defaultFormatUtc = "YYYY-MM-DDTHH:mm:ss[Z]";
-      function toString() {
+      function toString3() {
         return this.clone().locale("en").format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ");
       }
       function toISOString(keepOffset) {
@@ -63584,7 +63567,7 @@ var require_moment = __commonJS({
             utc ? "YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]" : "YYYYYY-MM-DD[T]HH:mm:ss.SSSZ"
           );
         }
-        if (isFunction(Date.prototype.toISOString)) {
+        if (isFunction2(Date.prototype.toISOString)) {
           if (utc) {
             return this.toDate().toISOString();
           } else {
@@ -63808,7 +63791,7 @@ var require_moment = __commonJS({
       function toDate() {
         return new Date(this.valueOf());
       }
-      function toArray() {
+      function toArray2() {
         var m = this;
         return [
           m.year(),
@@ -63832,14 +63815,14 @@ var require_moment = __commonJS({
           milliseconds: m.milliseconds()
         };
       }
-      function toJSON() {
+      function toJSON2() {
         return this.isValid() ? this.toISOString() : null;
       }
       function isValid$2() {
         return isValid(this);
       }
       function parsingFlags() {
-        return extend({}, getParsingFlags(this));
+        return extend2({}, getParsingFlags(this));
       }
       function invalidAt() {
         return getParsingFlags(this).overflow;
@@ -64257,7 +64240,7 @@ var require_moment = __commonJS({
       proto.set = stringSet;
       proto.startOf = startOf;
       proto.subtract = subtract;
-      proto.toArray = toArray;
+      proto.toArray = toArray2;
       proto.toObject = toObject;
       proto.toDate = toDate;
       proto.toISOString = toISOString;
@@ -64267,8 +64250,8 @@ var require_moment = __commonJS({
           return "Moment<" + this.format() + ">";
         };
       }
-      proto.toJSON = toJSON;
-      proto.toString = toString;
+      proto.toJSON = toJSON2;
+      proto.toString = toString3;
       proto.unix = unix;
       proto.valueOf = valueOf;
       proto.creationData = creationData;
@@ -64377,7 +64360,7 @@ var require_moment = __commonJS({
         return locale2[field](utc, format2);
       }
       function listMonthsImpl(format2, index, field) {
-        if (isNumber(format2)) {
+        if (isNumber2(format2)) {
           index = format2;
           format2 = void 0;
         }
@@ -64393,7 +64376,7 @@ var require_moment = __commonJS({
       }
       function listWeekdaysImpl(localeSorted, format2, index, field) {
         if (typeof localeSorted === "boolean") {
-          if (isNumber(format2)) {
+          if (isNumber2(format2)) {
             index = format2;
             format2 = void 0;
           }
@@ -64402,7 +64385,7 @@ var require_moment = __commonJS({
           format2 = localeSorted;
           index = format2;
           localeSorted = false;
-          if (isNumber(format2)) {
+          if (isNumber2(format2)) {
             index = format2;
             format2 = void 0;
           }
@@ -64749,7 +64732,7 @@ var require_moment = __commonJS({
       hooks.utc = createUTC;
       hooks.unix = createUnix;
       hooks.months = listMonths;
-      hooks.isDate = isDate;
+      hooks.isDate = isDate2;
       hooks.locale = getSetGlobalLocale;
       hooks.invalid = createInvalid;
       hooks.duration = createDuration;
@@ -64794,9 +64777,13271 @@ var require_moment = __commonJS({
   }
 });
 
+// backend/node_modules/delayed-stream/lib/delayed_stream.js
+var require_delayed_stream = __commonJS({
+  "backend/node_modules/delayed-stream/lib/delayed_stream.js"(exports2, module2) {
+    var Stream = require("stream").Stream;
+    var util2 = require("util");
+    module2.exports = DelayedStream;
+    function DelayedStream() {
+      this.source = null;
+      this.dataSize = 0;
+      this.maxDataSize = 1024 * 1024;
+      this.pauseStream = true;
+      this._maxDataSizeExceeded = false;
+      this._released = false;
+      this._bufferedEvents = [];
+    }
+    util2.inherits(DelayedStream, Stream);
+    DelayedStream.create = function(source, options) {
+      var delayedStream = new this();
+      options = options || {};
+      for (var option in options) {
+        delayedStream[option] = options[option];
+      }
+      delayedStream.source = source;
+      var realEmit = source.emit;
+      source.emit = function() {
+        delayedStream._handleEmit(arguments);
+        return realEmit.apply(source, arguments);
+      };
+      source.on("error", function() {
+      });
+      if (delayedStream.pauseStream) {
+        source.pause();
+      }
+      return delayedStream;
+    };
+    Object.defineProperty(DelayedStream.prototype, "readable", {
+      configurable: true,
+      enumerable: true,
+      get: function() {
+        return this.source.readable;
+      }
+    });
+    DelayedStream.prototype.setEncoding = function() {
+      return this.source.setEncoding.apply(this.source, arguments);
+    };
+    DelayedStream.prototype.resume = function() {
+      if (!this._released) {
+        this.release();
+      }
+      this.source.resume();
+    };
+    DelayedStream.prototype.pause = function() {
+      this.source.pause();
+    };
+    DelayedStream.prototype.release = function() {
+      this._released = true;
+      this._bufferedEvents.forEach(function(args) {
+        this.emit.apply(this, args);
+      }.bind(this));
+      this._bufferedEvents = [];
+    };
+    DelayedStream.prototype.pipe = function() {
+      var r = Stream.prototype.pipe.apply(this, arguments);
+      this.resume();
+      return r;
+    };
+    DelayedStream.prototype._handleEmit = function(args) {
+      if (this._released) {
+        this.emit.apply(this, args);
+        return;
+      }
+      if (args[0] === "data") {
+        this.dataSize += args[1].length;
+        this._checkIfMaxDataSizeExceeded();
+      }
+      this._bufferedEvents.push(args);
+    };
+    DelayedStream.prototype._checkIfMaxDataSizeExceeded = function() {
+      if (this._maxDataSizeExceeded) {
+        return;
+      }
+      if (this.dataSize <= this.maxDataSize) {
+        return;
+      }
+      this._maxDataSizeExceeded = true;
+      var message = "DelayedStream#maxDataSize of " + this.maxDataSize + " bytes exceeded.";
+      this.emit("error", new Error(message));
+    };
+  }
+});
+
+// backend/node_modules/combined-stream/lib/combined_stream.js
+var require_combined_stream = __commonJS({
+  "backend/node_modules/combined-stream/lib/combined_stream.js"(exports2, module2) {
+    var util2 = require("util");
+    var Stream = require("stream").Stream;
+    var DelayedStream = require_delayed_stream();
+    module2.exports = CombinedStream;
+    function CombinedStream() {
+      this.writable = false;
+      this.readable = true;
+      this.dataSize = 0;
+      this.maxDataSize = 2 * 1024 * 1024;
+      this.pauseStreams = true;
+      this._released = false;
+      this._streams = [];
+      this._currentStream = null;
+      this._insideLoop = false;
+      this._pendingNext = false;
+    }
+    util2.inherits(CombinedStream, Stream);
+    CombinedStream.create = function(options) {
+      var combinedStream = new this();
+      options = options || {};
+      for (var option in options) {
+        combinedStream[option] = options[option];
+      }
+      return combinedStream;
+    };
+    CombinedStream.isStreamLike = function(stream4) {
+      return typeof stream4 !== "function" && typeof stream4 !== "string" && typeof stream4 !== "boolean" && typeof stream4 !== "number" && !Buffer.isBuffer(stream4);
+    };
+    CombinedStream.prototype.append = function(stream4) {
+      var isStreamLike = CombinedStream.isStreamLike(stream4);
+      if (isStreamLike) {
+        if (!(stream4 instanceof DelayedStream)) {
+          var newStream = DelayedStream.create(stream4, {
+            maxDataSize: Infinity,
+            pauseStream: this.pauseStreams
+          });
+          stream4.on("data", this._checkDataSize.bind(this));
+          stream4 = newStream;
+        }
+        this._handleErrors(stream4);
+        if (this.pauseStreams) {
+          stream4.pause();
+        }
+      }
+      this._streams.push(stream4);
+      return this;
+    };
+    CombinedStream.prototype.pipe = function(dest, options) {
+      Stream.prototype.pipe.call(this, dest, options);
+      this.resume();
+      return dest;
+    };
+    CombinedStream.prototype._getNext = function() {
+      this._currentStream = null;
+      if (this._insideLoop) {
+        this._pendingNext = true;
+        return;
+      }
+      this._insideLoop = true;
+      try {
+        do {
+          this._pendingNext = false;
+          this._realGetNext();
+        } while (this._pendingNext);
+      } finally {
+        this._insideLoop = false;
+      }
+    };
+    CombinedStream.prototype._realGetNext = function() {
+      var stream4 = this._streams.shift();
+      if (typeof stream4 == "undefined") {
+        this.end();
+        return;
+      }
+      if (typeof stream4 !== "function") {
+        this._pipeNext(stream4);
+        return;
+      }
+      var getStream = stream4;
+      getStream(function(stream5) {
+        var isStreamLike = CombinedStream.isStreamLike(stream5);
+        if (isStreamLike) {
+          stream5.on("data", this._checkDataSize.bind(this));
+          this._handleErrors(stream5);
+        }
+        this._pipeNext(stream5);
+      }.bind(this));
+    };
+    CombinedStream.prototype._pipeNext = function(stream4) {
+      this._currentStream = stream4;
+      var isStreamLike = CombinedStream.isStreamLike(stream4);
+      if (isStreamLike) {
+        stream4.on("end", this._getNext.bind(this));
+        stream4.pipe(this, { end: false });
+        return;
+      }
+      var value = stream4;
+      this.write(value);
+      this._getNext();
+    };
+    CombinedStream.prototype._handleErrors = function(stream4) {
+      var self2 = this;
+      stream4.on("error", function(err) {
+        self2._emitError(err);
+      });
+    };
+    CombinedStream.prototype.write = function(data) {
+      this.emit("data", data);
+    };
+    CombinedStream.prototype.pause = function() {
+      if (!this.pauseStreams) {
+        return;
+      }
+      if (this.pauseStreams && this._currentStream && typeof this._currentStream.pause == "function")
+        this._currentStream.pause();
+      this.emit("pause");
+    };
+    CombinedStream.prototype.resume = function() {
+      if (!this._released) {
+        this._released = true;
+        this.writable = true;
+        this._getNext();
+      }
+      if (this.pauseStreams && this._currentStream && typeof this._currentStream.resume == "function")
+        this._currentStream.resume();
+      this.emit("resume");
+    };
+    CombinedStream.prototype.end = function() {
+      this._reset();
+      this.emit("end");
+    };
+    CombinedStream.prototype.destroy = function() {
+      this._reset();
+      this.emit("close");
+    };
+    CombinedStream.prototype._reset = function() {
+      this.writable = false;
+      this._streams = [];
+      this._currentStream = null;
+    };
+    CombinedStream.prototype._checkDataSize = function() {
+      this._updateDataSize();
+      if (this.dataSize <= this.maxDataSize) {
+        return;
+      }
+      var message = "DelayedStream#maxDataSize of " + this.maxDataSize + " bytes exceeded.";
+      this._emitError(new Error(message));
+    };
+    CombinedStream.prototype._updateDataSize = function() {
+      this.dataSize = 0;
+      var self2 = this;
+      this._streams.forEach(function(stream4) {
+        if (!stream4.dataSize) {
+          return;
+        }
+        self2.dataSize += stream4.dataSize;
+      });
+      if (this._currentStream && this._currentStream.dataSize) {
+        this.dataSize += this._currentStream.dataSize;
+      }
+    };
+    CombinedStream.prototype._emitError = function(err) {
+      this._reset();
+      this.emit("error", err);
+    };
+  }
+});
+
+// backend/node_modules/mime-db/db.json
+var require_db2 = __commonJS({
+  "backend/node_modules/mime-db/db.json"(exports2, module2) {
+    module2.exports = {
+      "application/1d-interleaved-parityfec": {
+        source: "iana"
+      },
+      "application/3gpdash-qoe-report+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/3gpp-ims+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/3gpphal+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/3gpphalforms+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/a2l": {
+        source: "iana"
+      },
+      "application/ace+cbor": {
+        source: "iana"
+      },
+      "application/activemessage": {
+        source: "iana"
+      },
+      "application/activity+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-costmap+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-costmapfilter+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-directory+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-endpointcost+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-endpointcostparams+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-endpointprop+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-endpointpropparams+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-error+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-networkmap+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-networkmapfilter+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-updatestreamcontrol+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/alto-updatestreamparams+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/aml": {
+        source: "iana"
+      },
+      "application/andrew-inset": {
+        source: "iana",
+        extensions: ["ez"]
+      },
+      "application/applefile": {
+        source: "iana"
+      },
+      "application/applixware": {
+        source: "apache",
+        extensions: ["aw"]
+      },
+      "application/at+jwt": {
+        source: "iana"
+      },
+      "application/atf": {
+        source: "iana"
+      },
+      "application/atfx": {
+        source: "iana"
+      },
+      "application/atom+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["atom"]
+      },
+      "application/atomcat+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["atomcat"]
+      },
+      "application/atomdeleted+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["atomdeleted"]
+      },
+      "application/atomicmail": {
+        source: "iana"
+      },
+      "application/atomsvc+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["atomsvc"]
+      },
+      "application/atsc-dwd+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["dwd"]
+      },
+      "application/atsc-dynamic-event-message": {
+        source: "iana"
+      },
+      "application/atsc-held+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["held"]
+      },
+      "application/atsc-rdt+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/atsc-rsat+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rsat"]
+      },
+      "application/atxml": {
+        source: "iana"
+      },
+      "application/auth-policy+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/bacnet-xdd+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/batch-smtp": {
+        source: "iana"
+      },
+      "application/bdoc": {
+        compressible: false,
+        extensions: ["bdoc"]
+      },
+      "application/beep+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/calendar+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/calendar+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xcs"]
+      },
+      "application/call-completion": {
+        source: "iana"
+      },
+      "application/cals-1840": {
+        source: "iana"
+      },
+      "application/captive+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/cbor": {
+        source: "iana"
+      },
+      "application/cbor-seq": {
+        source: "iana"
+      },
+      "application/cccex": {
+        source: "iana"
+      },
+      "application/ccmp+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/ccxml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ccxml"]
+      },
+      "application/cdfx+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["cdfx"]
+      },
+      "application/cdmi-capability": {
+        source: "iana",
+        extensions: ["cdmia"]
+      },
+      "application/cdmi-container": {
+        source: "iana",
+        extensions: ["cdmic"]
+      },
+      "application/cdmi-domain": {
+        source: "iana",
+        extensions: ["cdmid"]
+      },
+      "application/cdmi-object": {
+        source: "iana",
+        extensions: ["cdmio"]
+      },
+      "application/cdmi-queue": {
+        source: "iana",
+        extensions: ["cdmiq"]
+      },
+      "application/cdni": {
+        source: "iana"
+      },
+      "application/cea": {
+        source: "iana"
+      },
+      "application/cea-2018+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/cellml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/cfw": {
+        source: "iana"
+      },
+      "application/city+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/clr": {
+        source: "iana"
+      },
+      "application/clue+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/clue_info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/cms": {
+        source: "iana"
+      },
+      "application/cnrp+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/coap-group+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/coap-payload": {
+        source: "iana"
+      },
+      "application/commonground": {
+        source: "iana"
+      },
+      "application/conference-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/cose": {
+        source: "iana"
+      },
+      "application/cose-key": {
+        source: "iana"
+      },
+      "application/cose-key-set": {
+        source: "iana"
+      },
+      "application/cpl+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["cpl"]
+      },
+      "application/csrattrs": {
+        source: "iana"
+      },
+      "application/csta+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/cstadata+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/csvm+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/cu-seeme": {
+        source: "apache",
+        extensions: ["cu"]
+      },
+      "application/cwt": {
+        source: "iana"
+      },
+      "application/cybercash": {
+        source: "iana"
+      },
+      "application/dart": {
+        compressible: true
+      },
+      "application/dash+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mpd"]
+      },
+      "application/dash-patch+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mpp"]
+      },
+      "application/dashdelta": {
+        source: "iana"
+      },
+      "application/davmount+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["davmount"]
+      },
+      "application/dca-rft": {
+        source: "iana"
+      },
+      "application/dcd": {
+        source: "iana"
+      },
+      "application/dec-dx": {
+        source: "iana"
+      },
+      "application/dialog-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/dicom": {
+        source: "iana"
+      },
+      "application/dicom+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/dicom+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/dii": {
+        source: "iana"
+      },
+      "application/dit": {
+        source: "iana"
+      },
+      "application/dns": {
+        source: "iana"
+      },
+      "application/dns+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/dns-message": {
+        source: "iana"
+      },
+      "application/docbook+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["dbk"]
+      },
+      "application/dots+cbor": {
+        source: "iana"
+      },
+      "application/dskpp+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/dssc+der": {
+        source: "iana",
+        extensions: ["dssc"]
+      },
+      "application/dssc+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xdssc"]
+      },
+      "application/dvcs": {
+        source: "iana"
+      },
+      "application/ecmascript": {
+        source: "iana",
+        compressible: true,
+        extensions: ["es", "ecma"]
+      },
+      "application/edi-consent": {
+        source: "iana"
+      },
+      "application/edi-x12": {
+        source: "iana",
+        compressible: false
+      },
+      "application/edifact": {
+        source: "iana",
+        compressible: false
+      },
+      "application/efi": {
+        source: "iana"
+      },
+      "application/elm+json": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/elm+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emergencycalldata.cap+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/emergencycalldata.comment+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emergencycalldata.control+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emergencycalldata.deviceinfo+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emergencycalldata.ecall.msd": {
+        source: "iana"
+      },
+      "application/emergencycalldata.providerinfo+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emergencycalldata.serviceinfo+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emergencycalldata.subscriberinfo+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emergencycalldata.veds+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/emma+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["emma"]
+      },
+      "application/emotionml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["emotionml"]
+      },
+      "application/encaprtp": {
+        source: "iana"
+      },
+      "application/epp+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/epub+zip": {
+        source: "iana",
+        compressible: false,
+        extensions: ["epub"]
+      },
+      "application/eshop": {
+        source: "iana"
+      },
+      "application/exi": {
+        source: "iana",
+        extensions: ["exi"]
+      },
+      "application/expect-ct-report+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/express": {
+        source: "iana",
+        extensions: ["exp"]
+      },
+      "application/fastinfoset": {
+        source: "iana"
+      },
+      "application/fastsoap": {
+        source: "iana"
+      },
+      "application/fdt+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["fdt"]
+      },
+      "application/fhir+json": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/fhir+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/fido.trusted-apps+json": {
+        compressible: true
+      },
+      "application/fits": {
+        source: "iana"
+      },
+      "application/flexfec": {
+        source: "iana"
+      },
+      "application/font-sfnt": {
+        source: "iana"
+      },
+      "application/font-tdpfr": {
+        source: "iana",
+        extensions: ["pfr"]
+      },
+      "application/font-woff": {
+        source: "iana",
+        compressible: false
+      },
+      "application/framework-attributes+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/geo+json": {
+        source: "iana",
+        compressible: true,
+        extensions: ["geojson"]
+      },
+      "application/geo+json-seq": {
+        source: "iana"
+      },
+      "application/geopackage+sqlite3": {
+        source: "iana"
+      },
+      "application/geoxacml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/gltf-buffer": {
+        source: "iana"
+      },
+      "application/gml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["gml"]
+      },
+      "application/gpx+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["gpx"]
+      },
+      "application/gxf": {
+        source: "apache",
+        extensions: ["gxf"]
+      },
+      "application/gzip": {
+        source: "iana",
+        compressible: false,
+        extensions: ["gz"]
+      },
+      "application/h224": {
+        source: "iana"
+      },
+      "application/held+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/hjson": {
+        extensions: ["hjson"]
+      },
+      "application/http": {
+        source: "iana"
+      },
+      "application/hyperstudio": {
+        source: "iana",
+        extensions: ["stk"]
+      },
+      "application/ibe-key-request+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/ibe-pkg-reply+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/ibe-pp-data": {
+        source: "iana"
+      },
+      "application/iges": {
+        source: "iana"
+      },
+      "application/im-iscomposing+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/index": {
+        source: "iana"
+      },
+      "application/index.cmd": {
+        source: "iana"
+      },
+      "application/index.obj": {
+        source: "iana"
+      },
+      "application/index.response": {
+        source: "iana"
+      },
+      "application/index.vnd": {
+        source: "iana"
+      },
+      "application/inkml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ink", "inkml"]
+      },
+      "application/iotp": {
+        source: "iana"
+      },
+      "application/ipfix": {
+        source: "iana",
+        extensions: ["ipfix"]
+      },
+      "application/ipp": {
+        source: "iana"
+      },
+      "application/isup": {
+        source: "iana"
+      },
+      "application/its+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["its"]
+      },
+      "application/java-archive": {
+        source: "apache",
+        compressible: false,
+        extensions: ["jar", "war", "ear"]
+      },
+      "application/java-serialized-object": {
+        source: "apache",
+        compressible: false,
+        extensions: ["ser"]
+      },
+      "application/java-vm": {
+        source: "apache",
+        compressible: false,
+        extensions: ["class"]
+      },
+      "application/javascript": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["js", "mjs"]
+      },
+      "application/jf2feed+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/jose": {
+        source: "iana"
+      },
+      "application/jose+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/jrd+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/jscalendar+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/json": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["json", "map"]
+      },
+      "application/json-patch+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/json-seq": {
+        source: "iana"
+      },
+      "application/json5": {
+        extensions: ["json5"]
+      },
+      "application/jsonml+json": {
+        source: "apache",
+        compressible: true,
+        extensions: ["jsonml"]
+      },
+      "application/jwk+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/jwk-set+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/jwt": {
+        source: "iana"
+      },
+      "application/kpml-request+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/kpml-response+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/ld+json": {
+        source: "iana",
+        compressible: true,
+        extensions: ["jsonld"]
+      },
+      "application/lgr+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["lgr"]
+      },
+      "application/link-format": {
+        source: "iana"
+      },
+      "application/load-control+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/lost+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["lostxml"]
+      },
+      "application/lostsync+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/lpf+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/lxf": {
+        source: "iana"
+      },
+      "application/mac-binhex40": {
+        source: "iana",
+        extensions: ["hqx"]
+      },
+      "application/mac-compactpro": {
+        source: "apache",
+        extensions: ["cpt"]
+      },
+      "application/macwriteii": {
+        source: "iana"
+      },
+      "application/mads+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mads"]
+      },
+      "application/manifest+json": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["webmanifest"]
+      },
+      "application/marc": {
+        source: "iana",
+        extensions: ["mrc"]
+      },
+      "application/marcxml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mrcx"]
+      },
+      "application/mathematica": {
+        source: "iana",
+        extensions: ["ma", "nb", "mb"]
+      },
+      "application/mathml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mathml"]
+      },
+      "application/mathml-content+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mathml-presentation+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-associated-procedure-description+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-deregister+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-envelope+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-msk+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-msk-response+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-protection-description+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-reception-report+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-register+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-register-response+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-schedule+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbms-user-service-description+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mbox": {
+        source: "iana",
+        extensions: ["mbox"]
+      },
+      "application/media-policy-dataset+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mpf"]
+      },
+      "application/media_control+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mediaservercontrol+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mscml"]
+      },
+      "application/merge-patch+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/metalink+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["metalink"]
+      },
+      "application/metalink4+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["meta4"]
+      },
+      "application/mets+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mets"]
+      },
+      "application/mf4": {
+        source: "iana"
+      },
+      "application/mikey": {
+        source: "iana"
+      },
+      "application/mipc": {
+        source: "iana"
+      },
+      "application/missing-blocks+cbor-seq": {
+        source: "iana"
+      },
+      "application/mmt-aei+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["maei"]
+      },
+      "application/mmt-usd+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["musd"]
+      },
+      "application/mods+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mods"]
+      },
+      "application/moss-keys": {
+        source: "iana"
+      },
+      "application/moss-signature": {
+        source: "iana"
+      },
+      "application/mosskey-data": {
+        source: "iana"
+      },
+      "application/mosskey-request": {
+        source: "iana"
+      },
+      "application/mp21": {
+        source: "iana",
+        extensions: ["m21", "mp21"]
+      },
+      "application/mp4": {
+        source: "iana",
+        extensions: ["mp4s", "m4p"]
+      },
+      "application/mpeg4-generic": {
+        source: "iana"
+      },
+      "application/mpeg4-iod": {
+        source: "iana"
+      },
+      "application/mpeg4-iod-xmt": {
+        source: "iana"
+      },
+      "application/mrb-consumer+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/mrb-publish+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/msc-ivr+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/msc-mixer+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/msword": {
+        source: "iana",
+        compressible: false,
+        extensions: ["doc", "dot"]
+      },
+      "application/mud+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/multipart-core": {
+        source: "iana"
+      },
+      "application/mxf": {
+        source: "iana",
+        extensions: ["mxf"]
+      },
+      "application/n-quads": {
+        source: "iana",
+        extensions: ["nq"]
+      },
+      "application/n-triples": {
+        source: "iana",
+        extensions: ["nt"]
+      },
+      "application/nasdata": {
+        source: "iana"
+      },
+      "application/news-checkgroups": {
+        source: "iana",
+        charset: "US-ASCII"
+      },
+      "application/news-groupinfo": {
+        source: "iana",
+        charset: "US-ASCII"
+      },
+      "application/news-transmission": {
+        source: "iana"
+      },
+      "application/nlsml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/node": {
+        source: "iana",
+        extensions: ["cjs"]
+      },
+      "application/nss": {
+        source: "iana"
+      },
+      "application/oauth-authz-req+jwt": {
+        source: "iana"
+      },
+      "application/oblivious-dns-message": {
+        source: "iana"
+      },
+      "application/ocsp-request": {
+        source: "iana"
+      },
+      "application/ocsp-response": {
+        source: "iana"
+      },
+      "application/octet-stream": {
+        source: "iana",
+        compressible: false,
+        extensions: ["bin", "dms", "lrf", "mar", "so", "dist", "distz", "pkg", "bpk", "dump", "elc", "deploy", "exe", "dll", "deb", "dmg", "iso", "img", "msi", "msp", "msm", "buffer"]
+      },
+      "application/oda": {
+        source: "iana",
+        extensions: ["oda"]
+      },
+      "application/odm+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/odx": {
+        source: "iana"
+      },
+      "application/oebps-package+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["opf"]
+      },
+      "application/ogg": {
+        source: "iana",
+        compressible: false,
+        extensions: ["ogx"]
+      },
+      "application/omdoc+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["omdoc"]
+      },
+      "application/onenote": {
+        source: "apache",
+        extensions: ["onetoc", "onetoc2", "onetmp", "onepkg"]
+      },
+      "application/opc-nodeset+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/oscore": {
+        source: "iana"
+      },
+      "application/oxps": {
+        source: "iana",
+        extensions: ["oxps"]
+      },
+      "application/p21": {
+        source: "iana"
+      },
+      "application/p21+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/p2p-overlay+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["relo"]
+      },
+      "application/parityfec": {
+        source: "iana"
+      },
+      "application/passport": {
+        source: "iana"
+      },
+      "application/patch-ops-error+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xer"]
+      },
+      "application/pdf": {
+        source: "iana",
+        compressible: false,
+        extensions: ["pdf"]
+      },
+      "application/pdx": {
+        source: "iana"
+      },
+      "application/pem-certificate-chain": {
+        source: "iana"
+      },
+      "application/pgp-encrypted": {
+        source: "iana",
+        compressible: false,
+        extensions: ["pgp"]
+      },
+      "application/pgp-keys": {
+        source: "iana",
+        extensions: ["asc"]
+      },
+      "application/pgp-signature": {
+        source: "iana",
+        extensions: ["asc", "sig"]
+      },
+      "application/pics-rules": {
+        source: "apache",
+        extensions: ["prf"]
+      },
+      "application/pidf+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/pidf-diff+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/pkcs10": {
+        source: "iana",
+        extensions: ["p10"]
+      },
+      "application/pkcs12": {
+        source: "iana"
+      },
+      "application/pkcs7-mime": {
+        source: "iana",
+        extensions: ["p7m", "p7c"]
+      },
+      "application/pkcs7-signature": {
+        source: "iana",
+        extensions: ["p7s"]
+      },
+      "application/pkcs8": {
+        source: "iana",
+        extensions: ["p8"]
+      },
+      "application/pkcs8-encrypted": {
+        source: "iana"
+      },
+      "application/pkix-attr-cert": {
+        source: "iana",
+        extensions: ["ac"]
+      },
+      "application/pkix-cert": {
+        source: "iana",
+        extensions: ["cer"]
+      },
+      "application/pkix-crl": {
+        source: "iana",
+        extensions: ["crl"]
+      },
+      "application/pkix-pkipath": {
+        source: "iana",
+        extensions: ["pkipath"]
+      },
+      "application/pkixcmp": {
+        source: "iana",
+        extensions: ["pki"]
+      },
+      "application/pls+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["pls"]
+      },
+      "application/poc-settings+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/postscript": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ai", "eps", "ps"]
+      },
+      "application/ppsp-tracker+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/problem+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/problem+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/provenance+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["provx"]
+      },
+      "application/prs.alvestrand.titrax-sheet": {
+        source: "iana"
+      },
+      "application/prs.cww": {
+        source: "iana",
+        extensions: ["cww"]
+      },
+      "application/prs.cyn": {
+        source: "iana",
+        charset: "7-BIT"
+      },
+      "application/prs.hpub+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/prs.nprend": {
+        source: "iana"
+      },
+      "application/prs.plucker": {
+        source: "iana"
+      },
+      "application/prs.rdf-xml-crypt": {
+        source: "iana"
+      },
+      "application/prs.xsf+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/pskc+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["pskcxml"]
+      },
+      "application/pvd+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/qsig": {
+        source: "iana"
+      },
+      "application/raml+yaml": {
+        compressible: true,
+        extensions: ["raml"]
+      },
+      "application/raptorfec": {
+        source: "iana"
+      },
+      "application/rdap+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/rdf+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rdf", "owl"]
+      },
+      "application/reginfo+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rif"]
+      },
+      "application/relax-ng-compact-syntax": {
+        source: "iana",
+        extensions: ["rnc"]
+      },
+      "application/remote-printing": {
+        source: "iana"
+      },
+      "application/reputon+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/resource-lists+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rl"]
+      },
+      "application/resource-lists-diff+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rld"]
+      },
+      "application/rfc+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/riscos": {
+        source: "iana"
+      },
+      "application/rlmi+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/rls-services+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rs"]
+      },
+      "application/route-apd+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rapd"]
+      },
+      "application/route-s-tsid+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["sls"]
+      },
+      "application/route-usd+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rusd"]
+      },
+      "application/rpki-ghostbusters": {
+        source: "iana",
+        extensions: ["gbr"]
+      },
+      "application/rpki-manifest": {
+        source: "iana",
+        extensions: ["mft"]
+      },
+      "application/rpki-publication": {
+        source: "iana"
+      },
+      "application/rpki-roa": {
+        source: "iana",
+        extensions: ["roa"]
+      },
+      "application/rpki-updown": {
+        source: "iana"
+      },
+      "application/rsd+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["rsd"]
+      },
+      "application/rss+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["rss"]
+      },
+      "application/rtf": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rtf"]
+      },
+      "application/rtploopback": {
+        source: "iana"
+      },
+      "application/rtx": {
+        source: "iana"
+      },
+      "application/samlassertion+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/samlmetadata+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/sarif+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/sarif-external-properties+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/sbe": {
+        source: "iana"
+      },
+      "application/sbml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["sbml"]
+      },
+      "application/scaip+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/scim+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/scvp-cv-request": {
+        source: "iana",
+        extensions: ["scq"]
+      },
+      "application/scvp-cv-response": {
+        source: "iana",
+        extensions: ["scs"]
+      },
+      "application/scvp-vp-request": {
+        source: "iana",
+        extensions: ["spq"]
+      },
+      "application/scvp-vp-response": {
+        source: "iana",
+        extensions: ["spp"]
+      },
+      "application/sdp": {
+        source: "iana",
+        extensions: ["sdp"]
+      },
+      "application/secevent+jwt": {
+        source: "iana"
+      },
+      "application/senml+cbor": {
+        source: "iana"
+      },
+      "application/senml+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/senml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["senmlx"]
+      },
+      "application/senml-etch+cbor": {
+        source: "iana"
+      },
+      "application/senml-etch+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/senml-exi": {
+        source: "iana"
+      },
+      "application/sensml+cbor": {
+        source: "iana"
+      },
+      "application/sensml+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/sensml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["sensmlx"]
+      },
+      "application/sensml-exi": {
+        source: "iana"
+      },
+      "application/sep+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/sep-exi": {
+        source: "iana"
+      },
+      "application/session-info": {
+        source: "iana"
+      },
+      "application/set-payment": {
+        source: "iana"
+      },
+      "application/set-payment-initiation": {
+        source: "iana",
+        extensions: ["setpay"]
+      },
+      "application/set-registration": {
+        source: "iana"
+      },
+      "application/set-registration-initiation": {
+        source: "iana",
+        extensions: ["setreg"]
+      },
+      "application/sgml": {
+        source: "iana"
+      },
+      "application/sgml-open-catalog": {
+        source: "iana"
+      },
+      "application/shf+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["shf"]
+      },
+      "application/sieve": {
+        source: "iana",
+        extensions: ["siv", "sieve"]
+      },
+      "application/simple-filter+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/simple-message-summary": {
+        source: "iana"
+      },
+      "application/simplesymbolcontainer": {
+        source: "iana"
+      },
+      "application/sipc": {
+        source: "iana"
+      },
+      "application/slate": {
+        source: "iana"
+      },
+      "application/smil": {
+        source: "iana"
+      },
+      "application/smil+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["smi", "smil"]
+      },
+      "application/smpte336m": {
+        source: "iana"
+      },
+      "application/soap+fastinfoset": {
+        source: "iana"
+      },
+      "application/soap+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/sparql-query": {
+        source: "iana",
+        extensions: ["rq"]
+      },
+      "application/sparql-results+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["srx"]
+      },
+      "application/spdx+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/spirits-event+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/sql": {
+        source: "iana"
+      },
+      "application/srgs": {
+        source: "iana",
+        extensions: ["gram"]
+      },
+      "application/srgs+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["grxml"]
+      },
+      "application/sru+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["sru"]
+      },
+      "application/ssdl+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["ssdl"]
+      },
+      "application/ssml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ssml"]
+      },
+      "application/stix+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/swid+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["swidtag"]
+      },
+      "application/tamp-apex-update": {
+        source: "iana"
+      },
+      "application/tamp-apex-update-confirm": {
+        source: "iana"
+      },
+      "application/tamp-community-update": {
+        source: "iana"
+      },
+      "application/tamp-community-update-confirm": {
+        source: "iana"
+      },
+      "application/tamp-error": {
+        source: "iana"
+      },
+      "application/tamp-sequence-adjust": {
+        source: "iana"
+      },
+      "application/tamp-sequence-adjust-confirm": {
+        source: "iana"
+      },
+      "application/tamp-status-query": {
+        source: "iana"
+      },
+      "application/tamp-status-response": {
+        source: "iana"
+      },
+      "application/tamp-update": {
+        source: "iana"
+      },
+      "application/tamp-update-confirm": {
+        source: "iana"
+      },
+      "application/tar": {
+        compressible: true
+      },
+      "application/taxii+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/td+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/tei+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["tei", "teicorpus"]
+      },
+      "application/tetra_isi": {
+        source: "iana"
+      },
+      "application/thraud+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["tfi"]
+      },
+      "application/timestamp-query": {
+        source: "iana"
+      },
+      "application/timestamp-reply": {
+        source: "iana"
+      },
+      "application/timestamped-data": {
+        source: "iana",
+        extensions: ["tsd"]
+      },
+      "application/tlsrpt+gzip": {
+        source: "iana"
+      },
+      "application/tlsrpt+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/tnauthlist": {
+        source: "iana"
+      },
+      "application/token-introspection+jwt": {
+        source: "iana"
+      },
+      "application/toml": {
+        compressible: true,
+        extensions: ["toml"]
+      },
+      "application/trickle-ice-sdpfrag": {
+        source: "iana"
+      },
+      "application/trig": {
+        source: "iana",
+        extensions: ["trig"]
+      },
+      "application/ttml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ttml"]
+      },
+      "application/tve-trigger": {
+        source: "iana"
+      },
+      "application/tzif": {
+        source: "iana"
+      },
+      "application/tzif-leap": {
+        source: "iana"
+      },
+      "application/ubjson": {
+        compressible: false,
+        extensions: ["ubj"]
+      },
+      "application/ulpfec": {
+        source: "iana"
+      },
+      "application/urc-grpsheet+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/urc-ressheet+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rsheet"]
+      },
+      "application/urc-targetdesc+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["td"]
+      },
+      "application/urc-uisocketdesc+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vcard+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vcard+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vemmi": {
+        source: "iana"
+      },
+      "application/vividence.scriptfile": {
+        source: "apache"
+      },
+      "application/vnd.1000minds.decision-model+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["1km"]
+      },
+      "application/vnd.3gpp-prose+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp-prose-pc3ch+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp-v2x-local-service-information": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.5gnas": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.access-transfer-events+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.bsf+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.gmop+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.gtpc": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.interworking-data": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.lpp": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.mc-signalling-ear": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.mcdata-affiliation-command+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcdata-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcdata-payload": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.mcdata-service-config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcdata-signalling": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.mcdata-ue-config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcdata-user-profile+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-affiliation-command+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-floor-request+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-location-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-mbms-usage-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-service-config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-signed+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-ue-config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-ue-init-config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcptt-user-profile+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-affiliation-command+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-affiliation-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-location-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-mbms-usage-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-service-config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-transmission-request+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-ue-config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mcvideo-user-profile+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.mid-call+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.ngap": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.pfcp": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.pic-bw-large": {
+        source: "iana",
+        extensions: ["plb"]
+      },
+      "application/vnd.3gpp.pic-bw-small": {
+        source: "iana",
+        extensions: ["psb"]
+      },
+      "application/vnd.3gpp.pic-bw-var": {
+        source: "iana",
+        extensions: ["pvb"]
+      },
+      "application/vnd.3gpp.s1ap": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.sms": {
+        source: "iana"
+      },
+      "application/vnd.3gpp.sms+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.srvcc-ext+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.srvcc-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.state-and-event-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp.ussd+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp2.bcmcsinfo+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.3gpp2.sms": {
+        source: "iana"
+      },
+      "application/vnd.3gpp2.tcap": {
+        source: "iana",
+        extensions: ["tcap"]
+      },
+      "application/vnd.3lightssoftware.imagescal": {
+        source: "iana"
+      },
+      "application/vnd.3m.post-it-notes": {
+        source: "iana",
+        extensions: ["pwn"]
+      },
+      "application/vnd.accpac.simply.aso": {
+        source: "iana",
+        extensions: ["aso"]
+      },
+      "application/vnd.accpac.simply.imp": {
+        source: "iana",
+        extensions: ["imp"]
+      },
+      "application/vnd.acucobol": {
+        source: "iana",
+        extensions: ["acu"]
+      },
+      "application/vnd.acucorp": {
+        source: "iana",
+        extensions: ["atc", "acutc"]
+      },
+      "application/vnd.adobe.air-application-installer-package+zip": {
+        source: "apache",
+        compressible: false,
+        extensions: ["air"]
+      },
+      "application/vnd.adobe.flash.movie": {
+        source: "iana"
+      },
+      "application/vnd.adobe.formscentral.fcdt": {
+        source: "iana",
+        extensions: ["fcdt"]
+      },
+      "application/vnd.adobe.fxp": {
+        source: "iana",
+        extensions: ["fxp", "fxpl"]
+      },
+      "application/vnd.adobe.partial-upload": {
+        source: "iana"
+      },
+      "application/vnd.adobe.xdp+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xdp"]
+      },
+      "application/vnd.adobe.xfdf": {
+        source: "iana",
+        extensions: ["xfdf"]
+      },
+      "application/vnd.aether.imp": {
+        source: "iana"
+      },
+      "application/vnd.afpc.afplinedata": {
+        source: "iana"
+      },
+      "application/vnd.afpc.afplinedata-pagedef": {
+        source: "iana"
+      },
+      "application/vnd.afpc.cmoca-cmresource": {
+        source: "iana"
+      },
+      "application/vnd.afpc.foca-charset": {
+        source: "iana"
+      },
+      "application/vnd.afpc.foca-codedfont": {
+        source: "iana"
+      },
+      "application/vnd.afpc.foca-codepage": {
+        source: "iana"
+      },
+      "application/vnd.afpc.modca": {
+        source: "iana"
+      },
+      "application/vnd.afpc.modca-cmtable": {
+        source: "iana"
+      },
+      "application/vnd.afpc.modca-formdef": {
+        source: "iana"
+      },
+      "application/vnd.afpc.modca-mediummap": {
+        source: "iana"
+      },
+      "application/vnd.afpc.modca-objectcontainer": {
+        source: "iana"
+      },
+      "application/vnd.afpc.modca-overlay": {
+        source: "iana"
+      },
+      "application/vnd.afpc.modca-pagesegment": {
+        source: "iana"
+      },
+      "application/vnd.age": {
+        source: "iana",
+        extensions: ["age"]
+      },
+      "application/vnd.ah-barcode": {
+        source: "iana"
+      },
+      "application/vnd.ahead.space": {
+        source: "iana",
+        extensions: ["ahead"]
+      },
+      "application/vnd.airzip.filesecure.azf": {
+        source: "iana",
+        extensions: ["azf"]
+      },
+      "application/vnd.airzip.filesecure.azs": {
+        source: "iana",
+        extensions: ["azs"]
+      },
+      "application/vnd.amadeus+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.amazon.ebook": {
+        source: "apache",
+        extensions: ["azw"]
+      },
+      "application/vnd.amazon.mobi8-ebook": {
+        source: "iana"
+      },
+      "application/vnd.americandynamics.acc": {
+        source: "iana",
+        extensions: ["acc"]
+      },
+      "application/vnd.amiga.ami": {
+        source: "iana",
+        extensions: ["ami"]
+      },
+      "application/vnd.amundsen.maze+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.android.ota": {
+        source: "iana"
+      },
+      "application/vnd.android.package-archive": {
+        source: "apache",
+        compressible: false,
+        extensions: ["apk"]
+      },
+      "application/vnd.anki": {
+        source: "iana"
+      },
+      "application/vnd.anser-web-certificate-issue-initiation": {
+        source: "iana",
+        extensions: ["cii"]
+      },
+      "application/vnd.anser-web-funds-transfer-initiation": {
+        source: "apache",
+        extensions: ["fti"]
+      },
+      "application/vnd.antix.game-component": {
+        source: "iana",
+        extensions: ["atx"]
+      },
+      "application/vnd.apache.arrow.file": {
+        source: "iana"
+      },
+      "application/vnd.apache.arrow.stream": {
+        source: "iana"
+      },
+      "application/vnd.apache.thrift.binary": {
+        source: "iana"
+      },
+      "application/vnd.apache.thrift.compact": {
+        source: "iana"
+      },
+      "application/vnd.apache.thrift.json": {
+        source: "iana"
+      },
+      "application/vnd.api+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.aplextor.warrp+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.apothekende.reservation+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.apple.installer+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mpkg"]
+      },
+      "application/vnd.apple.keynote": {
+        source: "iana",
+        extensions: ["key"]
+      },
+      "application/vnd.apple.mpegurl": {
+        source: "iana",
+        extensions: ["m3u8"]
+      },
+      "application/vnd.apple.numbers": {
+        source: "iana",
+        extensions: ["numbers"]
+      },
+      "application/vnd.apple.pages": {
+        source: "iana",
+        extensions: ["pages"]
+      },
+      "application/vnd.apple.pkpass": {
+        compressible: false,
+        extensions: ["pkpass"]
+      },
+      "application/vnd.arastra.swi": {
+        source: "iana"
+      },
+      "application/vnd.aristanetworks.swi": {
+        source: "iana",
+        extensions: ["swi"]
+      },
+      "application/vnd.artisan+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.artsquare": {
+        source: "iana"
+      },
+      "application/vnd.astraea-software.iota": {
+        source: "iana",
+        extensions: ["iota"]
+      },
+      "application/vnd.audiograph": {
+        source: "iana",
+        extensions: ["aep"]
+      },
+      "application/vnd.autopackage": {
+        source: "iana"
+      },
+      "application/vnd.avalon+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.avistar+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.balsamiq.bmml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["bmml"]
+      },
+      "application/vnd.balsamiq.bmpr": {
+        source: "iana"
+      },
+      "application/vnd.banana-accounting": {
+        source: "iana"
+      },
+      "application/vnd.bbf.usp.error": {
+        source: "iana"
+      },
+      "application/vnd.bbf.usp.msg": {
+        source: "iana"
+      },
+      "application/vnd.bbf.usp.msg+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.bekitzur-stech+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.bint.med-content": {
+        source: "iana"
+      },
+      "application/vnd.biopax.rdf+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.blink-idb-value-wrapper": {
+        source: "iana"
+      },
+      "application/vnd.blueice.multipass": {
+        source: "iana",
+        extensions: ["mpm"]
+      },
+      "application/vnd.bluetooth.ep.oob": {
+        source: "iana"
+      },
+      "application/vnd.bluetooth.le.oob": {
+        source: "iana"
+      },
+      "application/vnd.bmi": {
+        source: "iana",
+        extensions: ["bmi"]
+      },
+      "application/vnd.bpf": {
+        source: "iana"
+      },
+      "application/vnd.bpf3": {
+        source: "iana"
+      },
+      "application/vnd.businessobjects": {
+        source: "iana",
+        extensions: ["rep"]
+      },
+      "application/vnd.byu.uapi+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.cab-jscript": {
+        source: "iana"
+      },
+      "application/vnd.canon-cpdl": {
+        source: "iana"
+      },
+      "application/vnd.canon-lips": {
+        source: "iana"
+      },
+      "application/vnd.capasystems-pg+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.cendio.thinlinc.clientconf": {
+        source: "iana"
+      },
+      "application/vnd.century-systems.tcp_stream": {
+        source: "iana"
+      },
+      "application/vnd.chemdraw+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["cdxml"]
+      },
+      "application/vnd.chess-pgn": {
+        source: "iana"
+      },
+      "application/vnd.chipnuts.karaoke-mmd": {
+        source: "iana",
+        extensions: ["mmd"]
+      },
+      "application/vnd.ciedi": {
+        source: "iana"
+      },
+      "application/vnd.cinderella": {
+        source: "iana",
+        extensions: ["cdy"]
+      },
+      "application/vnd.cirpack.isdn-ext": {
+        source: "iana"
+      },
+      "application/vnd.citationstyles.style+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["csl"]
+      },
+      "application/vnd.claymore": {
+        source: "iana",
+        extensions: ["cla"]
+      },
+      "application/vnd.cloanto.rp9": {
+        source: "iana",
+        extensions: ["rp9"]
+      },
+      "application/vnd.clonk.c4group": {
+        source: "iana",
+        extensions: ["c4g", "c4d", "c4f", "c4p", "c4u"]
+      },
+      "application/vnd.cluetrust.cartomobile-config": {
+        source: "iana",
+        extensions: ["c11amc"]
+      },
+      "application/vnd.cluetrust.cartomobile-config-pkg": {
+        source: "iana",
+        extensions: ["c11amz"]
+      },
+      "application/vnd.coffeescript": {
+        source: "iana"
+      },
+      "application/vnd.collabio.xodocuments.document": {
+        source: "iana"
+      },
+      "application/vnd.collabio.xodocuments.document-template": {
+        source: "iana"
+      },
+      "application/vnd.collabio.xodocuments.presentation": {
+        source: "iana"
+      },
+      "application/vnd.collabio.xodocuments.presentation-template": {
+        source: "iana"
+      },
+      "application/vnd.collabio.xodocuments.spreadsheet": {
+        source: "iana"
+      },
+      "application/vnd.collabio.xodocuments.spreadsheet-template": {
+        source: "iana"
+      },
+      "application/vnd.collection+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.collection.doc+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.collection.next+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.comicbook+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.comicbook-rar": {
+        source: "iana"
+      },
+      "application/vnd.commerce-battelle": {
+        source: "iana"
+      },
+      "application/vnd.commonspace": {
+        source: "iana",
+        extensions: ["csp"]
+      },
+      "application/vnd.contact.cmsg": {
+        source: "iana",
+        extensions: ["cdbcmsg"]
+      },
+      "application/vnd.coreos.ignition+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.cosmocaller": {
+        source: "iana",
+        extensions: ["cmc"]
+      },
+      "application/vnd.crick.clicker": {
+        source: "iana",
+        extensions: ["clkx"]
+      },
+      "application/vnd.crick.clicker.keyboard": {
+        source: "iana",
+        extensions: ["clkk"]
+      },
+      "application/vnd.crick.clicker.palette": {
+        source: "iana",
+        extensions: ["clkp"]
+      },
+      "application/vnd.crick.clicker.template": {
+        source: "iana",
+        extensions: ["clkt"]
+      },
+      "application/vnd.crick.clicker.wordbank": {
+        source: "iana",
+        extensions: ["clkw"]
+      },
+      "application/vnd.criticaltools.wbs+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["wbs"]
+      },
+      "application/vnd.cryptii.pipe+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.crypto-shade-file": {
+        source: "iana"
+      },
+      "application/vnd.cryptomator.encrypted": {
+        source: "iana"
+      },
+      "application/vnd.cryptomator.vault": {
+        source: "iana"
+      },
+      "application/vnd.ctc-posml": {
+        source: "iana",
+        extensions: ["pml"]
+      },
+      "application/vnd.ctct.ws+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.cups-pdf": {
+        source: "iana"
+      },
+      "application/vnd.cups-postscript": {
+        source: "iana"
+      },
+      "application/vnd.cups-ppd": {
+        source: "iana",
+        extensions: ["ppd"]
+      },
+      "application/vnd.cups-raster": {
+        source: "iana"
+      },
+      "application/vnd.cups-raw": {
+        source: "iana"
+      },
+      "application/vnd.curl": {
+        source: "iana"
+      },
+      "application/vnd.curl.car": {
+        source: "apache",
+        extensions: ["car"]
+      },
+      "application/vnd.curl.pcurl": {
+        source: "apache",
+        extensions: ["pcurl"]
+      },
+      "application/vnd.cyan.dean.root+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.cybank": {
+        source: "iana"
+      },
+      "application/vnd.cyclonedx+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.cyclonedx+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.d2l.coursepackage1p0+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.d3m-dataset": {
+        source: "iana"
+      },
+      "application/vnd.d3m-problem": {
+        source: "iana"
+      },
+      "application/vnd.dart": {
+        source: "iana",
+        compressible: true,
+        extensions: ["dart"]
+      },
+      "application/vnd.data-vision.rdz": {
+        source: "iana",
+        extensions: ["rdz"]
+      },
+      "application/vnd.datapackage+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dataresource+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dbf": {
+        source: "iana",
+        extensions: ["dbf"]
+      },
+      "application/vnd.debian.binary-package": {
+        source: "iana"
+      },
+      "application/vnd.dece.data": {
+        source: "iana",
+        extensions: ["uvf", "uvvf", "uvd", "uvvd"]
+      },
+      "application/vnd.dece.ttml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["uvt", "uvvt"]
+      },
+      "application/vnd.dece.unspecified": {
+        source: "iana",
+        extensions: ["uvx", "uvvx"]
+      },
+      "application/vnd.dece.zip": {
+        source: "iana",
+        extensions: ["uvz", "uvvz"]
+      },
+      "application/vnd.denovo.fcselayout-link": {
+        source: "iana",
+        extensions: ["fe_launch"]
+      },
+      "application/vnd.desmume.movie": {
+        source: "iana"
+      },
+      "application/vnd.dir-bi.plate-dl-nosuffix": {
+        source: "iana"
+      },
+      "application/vnd.dm.delegation+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dna": {
+        source: "iana",
+        extensions: ["dna"]
+      },
+      "application/vnd.document+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dolby.mlp": {
+        source: "apache",
+        extensions: ["mlp"]
+      },
+      "application/vnd.dolby.mobile.1": {
+        source: "iana"
+      },
+      "application/vnd.dolby.mobile.2": {
+        source: "iana"
+      },
+      "application/vnd.doremir.scorecloud-binary-document": {
+        source: "iana"
+      },
+      "application/vnd.dpgraph": {
+        source: "iana",
+        extensions: ["dpg"]
+      },
+      "application/vnd.dreamfactory": {
+        source: "iana",
+        extensions: ["dfac"]
+      },
+      "application/vnd.drive+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ds-keypoint": {
+        source: "apache",
+        extensions: ["kpxx"]
+      },
+      "application/vnd.dtg.local": {
+        source: "iana"
+      },
+      "application/vnd.dtg.local.flash": {
+        source: "iana"
+      },
+      "application/vnd.dtg.local.html": {
+        source: "iana"
+      },
+      "application/vnd.dvb.ait": {
+        source: "iana",
+        extensions: ["ait"]
+      },
+      "application/vnd.dvb.dvbisl+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.dvbj": {
+        source: "iana"
+      },
+      "application/vnd.dvb.esgcontainer": {
+        source: "iana"
+      },
+      "application/vnd.dvb.ipdcdftnotifaccess": {
+        source: "iana"
+      },
+      "application/vnd.dvb.ipdcesgaccess": {
+        source: "iana"
+      },
+      "application/vnd.dvb.ipdcesgaccess2": {
+        source: "iana"
+      },
+      "application/vnd.dvb.ipdcesgpdd": {
+        source: "iana"
+      },
+      "application/vnd.dvb.ipdcroaming": {
+        source: "iana"
+      },
+      "application/vnd.dvb.iptv.alfec-base": {
+        source: "iana"
+      },
+      "application/vnd.dvb.iptv.alfec-enhancement": {
+        source: "iana"
+      },
+      "application/vnd.dvb.notif-aggregate-root+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.notif-container+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.notif-generic+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.notif-ia-msglist+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.notif-ia-registration-request+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.notif-ia-registration-response+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.notif-init+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.dvb.pfr": {
+        source: "iana"
+      },
+      "application/vnd.dvb.service": {
+        source: "iana",
+        extensions: ["svc"]
+      },
+      "application/vnd.dxr": {
+        source: "iana"
+      },
+      "application/vnd.dynageo": {
+        source: "iana",
+        extensions: ["geo"]
+      },
+      "application/vnd.dzr": {
+        source: "iana"
+      },
+      "application/vnd.easykaraoke.cdgdownload": {
+        source: "iana"
+      },
+      "application/vnd.ecdis-update": {
+        source: "iana"
+      },
+      "application/vnd.ecip.rlp": {
+        source: "iana"
+      },
+      "application/vnd.eclipse.ditto+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ecowin.chart": {
+        source: "iana",
+        extensions: ["mag"]
+      },
+      "application/vnd.ecowin.filerequest": {
+        source: "iana"
+      },
+      "application/vnd.ecowin.fileupdate": {
+        source: "iana"
+      },
+      "application/vnd.ecowin.series": {
+        source: "iana"
+      },
+      "application/vnd.ecowin.seriesrequest": {
+        source: "iana"
+      },
+      "application/vnd.ecowin.seriesupdate": {
+        source: "iana"
+      },
+      "application/vnd.efi.img": {
+        source: "iana"
+      },
+      "application/vnd.efi.iso": {
+        source: "iana"
+      },
+      "application/vnd.emclient.accessrequest+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.enliven": {
+        source: "iana",
+        extensions: ["nml"]
+      },
+      "application/vnd.enphase.envoy": {
+        source: "iana"
+      },
+      "application/vnd.eprints.data+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.epson.esf": {
+        source: "iana",
+        extensions: ["esf"]
+      },
+      "application/vnd.epson.msf": {
+        source: "iana",
+        extensions: ["msf"]
+      },
+      "application/vnd.epson.quickanime": {
+        source: "iana",
+        extensions: ["qam"]
+      },
+      "application/vnd.epson.salt": {
+        source: "iana",
+        extensions: ["slt"]
+      },
+      "application/vnd.epson.ssf": {
+        source: "iana",
+        extensions: ["ssf"]
+      },
+      "application/vnd.ericsson.quickcall": {
+        source: "iana"
+      },
+      "application/vnd.espass-espass+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.eszigno3+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["es3", "et3"]
+      },
+      "application/vnd.etsi.aoc+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.asic-e+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.etsi.asic-s+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.etsi.cug+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvcommand+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvdiscovery+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvprofile+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvsad-bc+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvsad-cod+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvsad-npvr+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvservice+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvsync+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.iptvueprofile+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.mcid+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.mheg5": {
+        source: "iana"
+      },
+      "application/vnd.etsi.overload-control-policy-dataset+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.pstn+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.sci+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.simservs+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.timestamp-token": {
+        source: "iana"
+      },
+      "application/vnd.etsi.tsl+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.etsi.tsl.der": {
+        source: "iana"
+      },
+      "application/vnd.eu.kasparian.car+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.eudora.data": {
+        source: "iana"
+      },
+      "application/vnd.evolv.ecig.profile": {
+        source: "iana"
+      },
+      "application/vnd.evolv.ecig.settings": {
+        source: "iana"
+      },
+      "application/vnd.evolv.ecig.theme": {
+        source: "iana"
+      },
+      "application/vnd.exstream-empower+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.exstream-package": {
+        source: "iana"
+      },
+      "application/vnd.ezpix-album": {
+        source: "iana",
+        extensions: ["ez2"]
+      },
+      "application/vnd.ezpix-package": {
+        source: "iana",
+        extensions: ["ez3"]
+      },
+      "application/vnd.f-secure.mobile": {
+        source: "iana"
+      },
+      "application/vnd.familysearch.gedcom+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.fastcopy-disk-image": {
+        source: "iana"
+      },
+      "application/vnd.fdf": {
+        source: "iana",
+        extensions: ["fdf"]
+      },
+      "application/vnd.fdsn.mseed": {
+        source: "iana",
+        extensions: ["mseed"]
+      },
+      "application/vnd.fdsn.seed": {
+        source: "iana",
+        extensions: ["seed", "dataless"]
+      },
+      "application/vnd.ffsns": {
+        source: "iana"
+      },
+      "application/vnd.ficlab.flb+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.filmit.zfc": {
+        source: "iana"
+      },
+      "application/vnd.fints": {
+        source: "iana"
+      },
+      "application/vnd.firemonkeys.cloudcell": {
+        source: "iana"
+      },
+      "application/vnd.flographit": {
+        source: "iana",
+        extensions: ["gph"]
+      },
+      "application/vnd.fluxtime.clip": {
+        source: "iana",
+        extensions: ["ftc"]
+      },
+      "application/vnd.font-fontforge-sfd": {
+        source: "iana"
+      },
+      "application/vnd.framemaker": {
+        source: "iana",
+        extensions: ["fm", "frame", "maker", "book"]
+      },
+      "application/vnd.frogans.fnc": {
+        source: "iana",
+        extensions: ["fnc"]
+      },
+      "application/vnd.frogans.ltf": {
+        source: "iana",
+        extensions: ["ltf"]
+      },
+      "application/vnd.fsc.weblaunch": {
+        source: "iana",
+        extensions: ["fsc"]
+      },
+      "application/vnd.fujifilm.fb.docuworks": {
+        source: "iana"
+      },
+      "application/vnd.fujifilm.fb.docuworks.binder": {
+        source: "iana"
+      },
+      "application/vnd.fujifilm.fb.docuworks.container": {
+        source: "iana"
+      },
+      "application/vnd.fujifilm.fb.jfi+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.fujitsu.oasys": {
+        source: "iana",
+        extensions: ["oas"]
+      },
+      "application/vnd.fujitsu.oasys2": {
+        source: "iana",
+        extensions: ["oa2"]
+      },
+      "application/vnd.fujitsu.oasys3": {
+        source: "iana",
+        extensions: ["oa3"]
+      },
+      "application/vnd.fujitsu.oasysgp": {
+        source: "iana",
+        extensions: ["fg5"]
+      },
+      "application/vnd.fujitsu.oasysprs": {
+        source: "iana",
+        extensions: ["bh2"]
+      },
+      "application/vnd.fujixerox.art-ex": {
+        source: "iana"
+      },
+      "application/vnd.fujixerox.art4": {
+        source: "iana"
+      },
+      "application/vnd.fujixerox.ddd": {
+        source: "iana",
+        extensions: ["ddd"]
+      },
+      "application/vnd.fujixerox.docuworks": {
+        source: "iana",
+        extensions: ["xdw"]
+      },
+      "application/vnd.fujixerox.docuworks.binder": {
+        source: "iana",
+        extensions: ["xbd"]
+      },
+      "application/vnd.fujixerox.docuworks.container": {
+        source: "iana"
+      },
+      "application/vnd.fujixerox.hbpl": {
+        source: "iana"
+      },
+      "application/vnd.fut-misnet": {
+        source: "iana"
+      },
+      "application/vnd.futoin+cbor": {
+        source: "iana"
+      },
+      "application/vnd.futoin+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.fuzzysheet": {
+        source: "iana",
+        extensions: ["fzs"]
+      },
+      "application/vnd.genomatix.tuxedo": {
+        source: "iana",
+        extensions: ["txd"]
+      },
+      "application/vnd.gentics.grd+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.geo+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.geocube+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.geogebra.file": {
+        source: "iana",
+        extensions: ["ggb"]
+      },
+      "application/vnd.geogebra.slides": {
+        source: "iana"
+      },
+      "application/vnd.geogebra.tool": {
+        source: "iana",
+        extensions: ["ggt"]
+      },
+      "application/vnd.geometry-explorer": {
+        source: "iana",
+        extensions: ["gex", "gre"]
+      },
+      "application/vnd.geonext": {
+        source: "iana",
+        extensions: ["gxt"]
+      },
+      "application/vnd.geoplan": {
+        source: "iana",
+        extensions: ["g2w"]
+      },
+      "application/vnd.geospace": {
+        source: "iana",
+        extensions: ["g3w"]
+      },
+      "application/vnd.gerber": {
+        source: "iana"
+      },
+      "application/vnd.globalplatform.card-content-mgt": {
+        source: "iana"
+      },
+      "application/vnd.globalplatform.card-content-mgt-response": {
+        source: "iana"
+      },
+      "application/vnd.gmx": {
+        source: "iana",
+        extensions: ["gmx"]
+      },
+      "application/vnd.google-apps.document": {
+        compressible: false,
+        extensions: ["gdoc"]
+      },
+      "application/vnd.google-apps.presentation": {
+        compressible: false,
+        extensions: ["gslides"]
+      },
+      "application/vnd.google-apps.spreadsheet": {
+        compressible: false,
+        extensions: ["gsheet"]
+      },
+      "application/vnd.google-earth.kml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["kml"]
+      },
+      "application/vnd.google-earth.kmz": {
+        source: "iana",
+        compressible: false,
+        extensions: ["kmz"]
+      },
+      "application/vnd.gov.sk.e-form+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.gov.sk.e-form+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.gov.sk.xmldatacontainer+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.grafeq": {
+        source: "iana",
+        extensions: ["gqf", "gqs"]
+      },
+      "application/vnd.gridmp": {
+        source: "iana"
+      },
+      "application/vnd.groove-account": {
+        source: "iana",
+        extensions: ["gac"]
+      },
+      "application/vnd.groove-help": {
+        source: "iana",
+        extensions: ["ghf"]
+      },
+      "application/vnd.groove-identity-message": {
+        source: "iana",
+        extensions: ["gim"]
+      },
+      "application/vnd.groove-injector": {
+        source: "iana",
+        extensions: ["grv"]
+      },
+      "application/vnd.groove-tool-message": {
+        source: "iana",
+        extensions: ["gtm"]
+      },
+      "application/vnd.groove-tool-template": {
+        source: "iana",
+        extensions: ["tpl"]
+      },
+      "application/vnd.groove-vcard": {
+        source: "iana",
+        extensions: ["vcg"]
+      },
+      "application/vnd.hal+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.hal+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["hal"]
+      },
+      "application/vnd.handheld-entertainment+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["zmm"]
+      },
+      "application/vnd.hbci": {
+        source: "iana",
+        extensions: ["hbci"]
+      },
+      "application/vnd.hc+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.hcl-bireports": {
+        source: "iana"
+      },
+      "application/vnd.hdt": {
+        source: "iana"
+      },
+      "application/vnd.heroku+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.hhe.lesson-player": {
+        source: "iana",
+        extensions: ["les"]
+      },
+      "application/vnd.hl7cda+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/vnd.hl7v2+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/vnd.hp-hpgl": {
+        source: "iana",
+        extensions: ["hpgl"]
+      },
+      "application/vnd.hp-hpid": {
+        source: "iana",
+        extensions: ["hpid"]
+      },
+      "application/vnd.hp-hps": {
+        source: "iana",
+        extensions: ["hps"]
+      },
+      "application/vnd.hp-jlyt": {
+        source: "iana",
+        extensions: ["jlt"]
+      },
+      "application/vnd.hp-pcl": {
+        source: "iana",
+        extensions: ["pcl"]
+      },
+      "application/vnd.hp-pclxl": {
+        source: "iana",
+        extensions: ["pclxl"]
+      },
+      "application/vnd.httphone": {
+        source: "iana"
+      },
+      "application/vnd.hydrostatix.sof-data": {
+        source: "iana",
+        extensions: ["sfd-hdstx"]
+      },
+      "application/vnd.hyper+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.hyper-item+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.hyperdrive+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.hzn-3d-crossword": {
+        source: "iana"
+      },
+      "application/vnd.ibm.afplinedata": {
+        source: "iana"
+      },
+      "application/vnd.ibm.electronic-media": {
+        source: "iana"
+      },
+      "application/vnd.ibm.minipay": {
+        source: "iana",
+        extensions: ["mpy"]
+      },
+      "application/vnd.ibm.modcap": {
+        source: "iana",
+        extensions: ["afp", "listafp", "list3820"]
+      },
+      "application/vnd.ibm.rights-management": {
+        source: "iana",
+        extensions: ["irm"]
+      },
+      "application/vnd.ibm.secure-container": {
+        source: "iana",
+        extensions: ["sc"]
+      },
+      "application/vnd.iccprofile": {
+        source: "iana",
+        extensions: ["icc", "icm"]
+      },
+      "application/vnd.ieee.1905": {
+        source: "iana"
+      },
+      "application/vnd.igloader": {
+        source: "iana",
+        extensions: ["igl"]
+      },
+      "application/vnd.imagemeter.folder+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.imagemeter.image+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.immervision-ivp": {
+        source: "iana",
+        extensions: ["ivp"]
+      },
+      "application/vnd.immervision-ivu": {
+        source: "iana",
+        extensions: ["ivu"]
+      },
+      "application/vnd.ims.imsccv1p1": {
+        source: "iana"
+      },
+      "application/vnd.ims.imsccv1p2": {
+        source: "iana"
+      },
+      "application/vnd.ims.imsccv1p3": {
+        source: "iana"
+      },
+      "application/vnd.ims.lis.v2.result+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ims.lti.v2.toolconsumerprofile+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ims.lti.v2.toolproxy+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ims.lti.v2.toolproxy.id+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ims.lti.v2.toolsettings+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ims.lti.v2.toolsettings.simple+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.informedcontrol.rms+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.informix-visionary": {
+        source: "iana"
+      },
+      "application/vnd.infotech.project": {
+        source: "iana"
+      },
+      "application/vnd.infotech.project+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.innopath.wamp.notification": {
+        source: "iana"
+      },
+      "application/vnd.insors.igm": {
+        source: "iana",
+        extensions: ["igm"]
+      },
+      "application/vnd.intercon.formnet": {
+        source: "iana",
+        extensions: ["xpw", "xpx"]
+      },
+      "application/vnd.intergeo": {
+        source: "iana",
+        extensions: ["i2g"]
+      },
+      "application/vnd.intertrust.digibox": {
+        source: "iana"
+      },
+      "application/vnd.intertrust.nncp": {
+        source: "iana"
+      },
+      "application/vnd.intu.qbo": {
+        source: "iana",
+        extensions: ["qbo"]
+      },
+      "application/vnd.intu.qfx": {
+        source: "iana",
+        extensions: ["qfx"]
+      },
+      "application/vnd.iptc.g2.catalogitem+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.iptc.g2.conceptitem+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.iptc.g2.knowledgeitem+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.iptc.g2.newsitem+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.iptc.g2.newsmessage+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.iptc.g2.packageitem+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.iptc.g2.planningitem+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ipunplugged.rcprofile": {
+        source: "iana",
+        extensions: ["rcprofile"]
+      },
+      "application/vnd.irepository.package+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["irp"]
+      },
+      "application/vnd.is-xpr": {
+        source: "iana",
+        extensions: ["xpr"]
+      },
+      "application/vnd.isac.fcs": {
+        source: "iana",
+        extensions: ["fcs"]
+      },
+      "application/vnd.iso11783-10+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.jam": {
+        source: "iana",
+        extensions: ["jam"]
+      },
+      "application/vnd.japannet-directory-service": {
+        source: "iana"
+      },
+      "application/vnd.japannet-jpnstore-wakeup": {
+        source: "iana"
+      },
+      "application/vnd.japannet-payment-wakeup": {
+        source: "iana"
+      },
+      "application/vnd.japannet-registration": {
+        source: "iana"
+      },
+      "application/vnd.japannet-registration-wakeup": {
+        source: "iana"
+      },
+      "application/vnd.japannet-setstore-wakeup": {
+        source: "iana"
+      },
+      "application/vnd.japannet-verification": {
+        source: "iana"
+      },
+      "application/vnd.japannet-verification-wakeup": {
+        source: "iana"
+      },
+      "application/vnd.jcp.javame.midlet-rms": {
+        source: "iana",
+        extensions: ["rms"]
+      },
+      "application/vnd.jisp": {
+        source: "iana",
+        extensions: ["jisp"]
+      },
+      "application/vnd.joost.joda-archive": {
+        source: "iana",
+        extensions: ["joda"]
+      },
+      "application/vnd.jsk.isdn-ngn": {
+        source: "iana"
+      },
+      "application/vnd.kahootz": {
+        source: "iana",
+        extensions: ["ktz", "ktr"]
+      },
+      "application/vnd.kde.karbon": {
+        source: "iana",
+        extensions: ["karbon"]
+      },
+      "application/vnd.kde.kchart": {
+        source: "iana",
+        extensions: ["chrt"]
+      },
+      "application/vnd.kde.kformula": {
+        source: "iana",
+        extensions: ["kfo"]
+      },
+      "application/vnd.kde.kivio": {
+        source: "iana",
+        extensions: ["flw"]
+      },
+      "application/vnd.kde.kontour": {
+        source: "iana",
+        extensions: ["kon"]
+      },
+      "application/vnd.kde.kpresenter": {
+        source: "iana",
+        extensions: ["kpr", "kpt"]
+      },
+      "application/vnd.kde.kspread": {
+        source: "iana",
+        extensions: ["ksp"]
+      },
+      "application/vnd.kde.kword": {
+        source: "iana",
+        extensions: ["kwd", "kwt"]
+      },
+      "application/vnd.kenameaapp": {
+        source: "iana",
+        extensions: ["htke"]
+      },
+      "application/vnd.kidspiration": {
+        source: "iana",
+        extensions: ["kia"]
+      },
+      "application/vnd.kinar": {
+        source: "iana",
+        extensions: ["kne", "knp"]
+      },
+      "application/vnd.koan": {
+        source: "iana",
+        extensions: ["skp", "skd", "skt", "skm"]
+      },
+      "application/vnd.kodak-descriptor": {
+        source: "iana",
+        extensions: ["sse"]
+      },
+      "application/vnd.las": {
+        source: "iana"
+      },
+      "application/vnd.las.las+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.las.las+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["lasxml"]
+      },
+      "application/vnd.laszip": {
+        source: "iana"
+      },
+      "application/vnd.leap+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.liberty-request+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.llamagraphics.life-balance.desktop": {
+        source: "iana",
+        extensions: ["lbd"]
+      },
+      "application/vnd.llamagraphics.life-balance.exchange+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["lbe"]
+      },
+      "application/vnd.logipipe.circuit+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.loom": {
+        source: "iana"
+      },
+      "application/vnd.lotus-1-2-3": {
+        source: "iana",
+        extensions: ["123"]
+      },
+      "application/vnd.lotus-approach": {
+        source: "iana",
+        extensions: ["apr"]
+      },
+      "application/vnd.lotus-freelance": {
+        source: "iana",
+        extensions: ["pre"]
+      },
+      "application/vnd.lotus-notes": {
+        source: "iana",
+        extensions: ["nsf"]
+      },
+      "application/vnd.lotus-organizer": {
+        source: "iana",
+        extensions: ["org"]
+      },
+      "application/vnd.lotus-screencam": {
+        source: "iana",
+        extensions: ["scm"]
+      },
+      "application/vnd.lotus-wordpro": {
+        source: "iana",
+        extensions: ["lwp"]
+      },
+      "application/vnd.macports.portpkg": {
+        source: "iana",
+        extensions: ["portpkg"]
+      },
+      "application/vnd.mapbox-vector-tile": {
+        source: "iana",
+        extensions: ["mvt"]
+      },
+      "application/vnd.marlin.drm.actiontoken+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.marlin.drm.conftoken+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.marlin.drm.license+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.marlin.drm.mdcf": {
+        source: "iana"
+      },
+      "application/vnd.mason+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.maxar.archive.3tz+zip": {
+        source: "iana",
+        compressible: false
+      },
+      "application/vnd.maxmind.maxmind-db": {
+        source: "iana"
+      },
+      "application/vnd.mcd": {
+        source: "iana",
+        extensions: ["mcd"]
+      },
+      "application/vnd.medcalcdata": {
+        source: "iana",
+        extensions: ["mc1"]
+      },
+      "application/vnd.mediastation.cdkey": {
+        source: "iana",
+        extensions: ["cdkey"]
+      },
+      "application/vnd.meridian-slingshot": {
+        source: "iana"
+      },
+      "application/vnd.mfer": {
+        source: "iana",
+        extensions: ["mwf"]
+      },
+      "application/vnd.mfmp": {
+        source: "iana",
+        extensions: ["mfm"]
+      },
+      "application/vnd.micro+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.micrografx.flo": {
+        source: "iana",
+        extensions: ["flo"]
+      },
+      "application/vnd.micrografx.igx": {
+        source: "iana",
+        extensions: ["igx"]
+      },
+      "application/vnd.microsoft.portable-executable": {
+        source: "iana"
+      },
+      "application/vnd.microsoft.windows.thumbnail-cache": {
+        source: "iana"
+      },
+      "application/vnd.miele+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.mif": {
+        source: "iana",
+        extensions: ["mif"]
+      },
+      "application/vnd.minisoft-hp3000-save": {
+        source: "iana"
+      },
+      "application/vnd.mitsubishi.misty-guard.trustweb": {
+        source: "iana"
+      },
+      "application/vnd.mobius.daf": {
+        source: "iana",
+        extensions: ["daf"]
+      },
+      "application/vnd.mobius.dis": {
+        source: "iana",
+        extensions: ["dis"]
+      },
+      "application/vnd.mobius.mbk": {
+        source: "iana",
+        extensions: ["mbk"]
+      },
+      "application/vnd.mobius.mqy": {
+        source: "iana",
+        extensions: ["mqy"]
+      },
+      "application/vnd.mobius.msl": {
+        source: "iana",
+        extensions: ["msl"]
+      },
+      "application/vnd.mobius.plc": {
+        source: "iana",
+        extensions: ["plc"]
+      },
+      "application/vnd.mobius.txf": {
+        source: "iana",
+        extensions: ["txf"]
+      },
+      "application/vnd.mophun.application": {
+        source: "iana",
+        extensions: ["mpn"]
+      },
+      "application/vnd.mophun.certificate": {
+        source: "iana",
+        extensions: ["mpc"]
+      },
+      "application/vnd.motorola.flexsuite": {
+        source: "iana"
+      },
+      "application/vnd.motorola.flexsuite.adsi": {
+        source: "iana"
+      },
+      "application/vnd.motorola.flexsuite.fis": {
+        source: "iana"
+      },
+      "application/vnd.motorola.flexsuite.gotap": {
+        source: "iana"
+      },
+      "application/vnd.motorola.flexsuite.kmr": {
+        source: "iana"
+      },
+      "application/vnd.motorola.flexsuite.ttc": {
+        source: "iana"
+      },
+      "application/vnd.motorola.flexsuite.wem": {
+        source: "iana"
+      },
+      "application/vnd.motorola.iprm": {
+        source: "iana"
+      },
+      "application/vnd.mozilla.xul+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xul"]
+      },
+      "application/vnd.ms-3mfdocument": {
+        source: "iana"
+      },
+      "application/vnd.ms-artgalry": {
+        source: "iana",
+        extensions: ["cil"]
+      },
+      "application/vnd.ms-asf": {
+        source: "iana"
+      },
+      "application/vnd.ms-cab-compressed": {
+        source: "iana",
+        extensions: ["cab"]
+      },
+      "application/vnd.ms-color.iccprofile": {
+        source: "apache"
+      },
+      "application/vnd.ms-excel": {
+        source: "iana",
+        compressible: false,
+        extensions: ["xls", "xlm", "xla", "xlc", "xlt", "xlw"]
+      },
+      "application/vnd.ms-excel.addin.macroenabled.12": {
+        source: "iana",
+        extensions: ["xlam"]
+      },
+      "application/vnd.ms-excel.sheet.binary.macroenabled.12": {
+        source: "iana",
+        extensions: ["xlsb"]
+      },
+      "application/vnd.ms-excel.sheet.macroenabled.12": {
+        source: "iana",
+        extensions: ["xlsm"]
+      },
+      "application/vnd.ms-excel.template.macroenabled.12": {
+        source: "iana",
+        extensions: ["xltm"]
+      },
+      "application/vnd.ms-fontobject": {
+        source: "iana",
+        compressible: true,
+        extensions: ["eot"]
+      },
+      "application/vnd.ms-htmlhelp": {
+        source: "iana",
+        extensions: ["chm"]
+      },
+      "application/vnd.ms-ims": {
+        source: "iana",
+        extensions: ["ims"]
+      },
+      "application/vnd.ms-lrm": {
+        source: "iana",
+        extensions: ["lrm"]
+      },
+      "application/vnd.ms-office.activex+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ms-officetheme": {
+        source: "iana",
+        extensions: ["thmx"]
+      },
+      "application/vnd.ms-opentype": {
+        source: "apache",
+        compressible: true
+      },
+      "application/vnd.ms-outlook": {
+        compressible: false,
+        extensions: ["msg"]
+      },
+      "application/vnd.ms-package.obfuscated-opentype": {
+        source: "apache"
+      },
+      "application/vnd.ms-pki.seccat": {
+        source: "apache",
+        extensions: ["cat"]
+      },
+      "application/vnd.ms-pki.stl": {
+        source: "apache",
+        extensions: ["stl"]
+      },
+      "application/vnd.ms-playready.initiator+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ms-powerpoint": {
+        source: "iana",
+        compressible: false,
+        extensions: ["ppt", "pps", "pot"]
+      },
+      "application/vnd.ms-powerpoint.addin.macroenabled.12": {
+        source: "iana",
+        extensions: ["ppam"]
+      },
+      "application/vnd.ms-powerpoint.presentation.macroenabled.12": {
+        source: "iana",
+        extensions: ["pptm"]
+      },
+      "application/vnd.ms-powerpoint.slide.macroenabled.12": {
+        source: "iana",
+        extensions: ["sldm"]
+      },
+      "application/vnd.ms-powerpoint.slideshow.macroenabled.12": {
+        source: "iana",
+        extensions: ["ppsm"]
+      },
+      "application/vnd.ms-powerpoint.template.macroenabled.12": {
+        source: "iana",
+        extensions: ["potm"]
+      },
+      "application/vnd.ms-printdevicecapabilities+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ms-printing.printticket+xml": {
+        source: "apache",
+        compressible: true
+      },
+      "application/vnd.ms-printschematicket+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ms-project": {
+        source: "iana",
+        extensions: ["mpp", "mpt"]
+      },
+      "application/vnd.ms-tnef": {
+        source: "iana"
+      },
+      "application/vnd.ms-windows.devicepairing": {
+        source: "iana"
+      },
+      "application/vnd.ms-windows.nwprinting.oob": {
+        source: "iana"
+      },
+      "application/vnd.ms-windows.printerpairing": {
+        source: "iana"
+      },
+      "application/vnd.ms-windows.wsd.oob": {
+        source: "iana"
+      },
+      "application/vnd.ms-wmdrm.lic-chlg-req": {
+        source: "iana"
+      },
+      "application/vnd.ms-wmdrm.lic-resp": {
+        source: "iana"
+      },
+      "application/vnd.ms-wmdrm.meter-chlg-req": {
+        source: "iana"
+      },
+      "application/vnd.ms-wmdrm.meter-resp": {
+        source: "iana"
+      },
+      "application/vnd.ms-word.document.macroenabled.12": {
+        source: "iana",
+        extensions: ["docm"]
+      },
+      "application/vnd.ms-word.template.macroenabled.12": {
+        source: "iana",
+        extensions: ["dotm"]
+      },
+      "application/vnd.ms-works": {
+        source: "iana",
+        extensions: ["wps", "wks", "wcm", "wdb"]
+      },
+      "application/vnd.ms-wpl": {
+        source: "iana",
+        extensions: ["wpl"]
+      },
+      "application/vnd.ms-xpsdocument": {
+        source: "iana",
+        compressible: false,
+        extensions: ["xps"]
+      },
+      "application/vnd.msa-disk-image": {
+        source: "iana"
+      },
+      "application/vnd.mseq": {
+        source: "iana",
+        extensions: ["mseq"]
+      },
+      "application/vnd.msign": {
+        source: "iana"
+      },
+      "application/vnd.multiad.creator": {
+        source: "iana"
+      },
+      "application/vnd.multiad.creator.cif": {
+        source: "iana"
+      },
+      "application/vnd.music-niff": {
+        source: "iana"
+      },
+      "application/vnd.musician": {
+        source: "iana",
+        extensions: ["mus"]
+      },
+      "application/vnd.muvee.style": {
+        source: "iana",
+        extensions: ["msty"]
+      },
+      "application/vnd.mynfc": {
+        source: "iana",
+        extensions: ["taglet"]
+      },
+      "application/vnd.nacamar.ybrid+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.ncd.control": {
+        source: "iana"
+      },
+      "application/vnd.ncd.reference": {
+        source: "iana"
+      },
+      "application/vnd.nearst.inv+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.nebumind.line": {
+        source: "iana"
+      },
+      "application/vnd.nervana": {
+        source: "iana"
+      },
+      "application/vnd.netfpx": {
+        source: "iana"
+      },
+      "application/vnd.neurolanguage.nlu": {
+        source: "iana",
+        extensions: ["nlu"]
+      },
+      "application/vnd.nimn": {
+        source: "iana"
+      },
+      "application/vnd.nintendo.nitro.rom": {
+        source: "iana"
+      },
+      "application/vnd.nintendo.snes.rom": {
+        source: "iana"
+      },
+      "application/vnd.nitf": {
+        source: "iana",
+        extensions: ["ntf", "nitf"]
+      },
+      "application/vnd.noblenet-directory": {
+        source: "iana",
+        extensions: ["nnd"]
+      },
+      "application/vnd.noblenet-sealer": {
+        source: "iana",
+        extensions: ["nns"]
+      },
+      "application/vnd.noblenet-web": {
+        source: "iana",
+        extensions: ["nnw"]
+      },
+      "application/vnd.nokia.catalogs": {
+        source: "iana"
+      },
+      "application/vnd.nokia.conml+wbxml": {
+        source: "iana"
+      },
+      "application/vnd.nokia.conml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.nokia.iptv.config+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.nokia.isds-radio-presets": {
+        source: "iana"
+      },
+      "application/vnd.nokia.landmark+wbxml": {
+        source: "iana"
+      },
+      "application/vnd.nokia.landmark+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.nokia.landmarkcollection+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.nokia.n-gage.ac+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ac"]
+      },
+      "application/vnd.nokia.n-gage.data": {
+        source: "iana",
+        extensions: ["ngdat"]
+      },
+      "application/vnd.nokia.n-gage.symbian.install": {
+        source: "iana",
+        extensions: ["n-gage"]
+      },
+      "application/vnd.nokia.ncd": {
+        source: "iana"
+      },
+      "application/vnd.nokia.pcd+wbxml": {
+        source: "iana"
+      },
+      "application/vnd.nokia.pcd+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.nokia.radio-preset": {
+        source: "iana",
+        extensions: ["rpst"]
+      },
+      "application/vnd.nokia.radio-presets": {
+        source: "iana",
+        extensions: ["rpss"]
+      },
+      "application/vnd.novadigm.edm": {
+        source: "iana",
+        extensions: ["edm"]
+      },
+      "application/vnd.novadigm.edx": {
+        source: "iana",
+        extensions: ["edx"]
+      },
+      "application/vnd.novadigm.ext": {
+        source: "iana",
+        extensions: ["ext"]
+      },
+      "application/vnd.ntt-local.content-share": {
+        source: "iana"
+      },
+      "application/vnd.ntt-local.file-transfer": {
+        source: "iana"
+      },
+      "application/vnd.ntt-local.ogw_remote-access": {
+        source: "iana"
+      },
+      "application/vnd.ntt-local.sip-ta_remote": {
+        source: "iana"
+      },
+      "application/vnd.ntt-local.sip-ta_tcp_stream": {
+        source: "iana"
+      },
+      "application/vnd.oasis.opendocument.chart": {
+        source: "iana",
+        extensions: ["odc"]
+      },
+      "application/vnd.oasis.opendocument.chart-template": {
+        source: "iana",
+        extensions: ["otc"]
+      },
+      "application/vnd.oasis.opendocument.database": {
+        source: "iana",
+        extensions: ["odb"]
+      },
+      "application/vnd.oasis.opendocument.formula": {
+        source: "iana",
+        extensions: ["odf"]
+      },
+      "application/vnd.oasis.opendocument.formula-template": {
+        source: "iana",
+        extensions: ["odft"]
+      },
+      "application/vnd.oasis.opendocument.graphics": {
+        source: "iana",
+        compressible: false,
+        extensions: ["odg"]
+      },
+      "application/vnd.oasis.opendocument.graphics-template": {
+        source: "iana",
+        extensions: ["otg"]
+      },
+      "application/vnd.oasis.opendocument.image": {
+        source: "iana",
+        extensions: ["odi"]
+      },
+      "application/vnd.oasis.opendocument.image-template": {
+        source: "iana",
+        extensions: ["oti"]
+      },
+      "application/vnd.oasis.opendocument.presentation": {
+        source: "iana",
+        compressible: false,
+        extensions: ["odp"]
+      },
+      "application/vnd.oasis.opendocument.presentation-template": {
+        source: "iana",
+        extensions: ["otp"]
+      },
+      "application/vnd.oasis.opendocument.spreadsheet": {
+        source: "iana",
+        compressible: false,
+        extensions: ["ods"]
+      },
+      "application/vnd.oasis.opendocument.spreadsheet-template": {
+        source: "iana",
+        extensions: ["ots"]
+      },
+      "application/vnd.oasis.opendocument.text": {
+        source: "iana",
+        compressible: false,
+        extensions: ["odt"]
+      },
+      "application/vnd.oasis.opendocument.text-master": {
+        source: "iana",
+        extensions: ["odm"]
+      },
+      "application/vnd.oasis.opendocument.text-template": {
+        source: "iana",
+        extensions: ["ott"]
+      },
+      "application/vnd.oasis.opendocument.text-web": {
+        source: "iana",
+        extensions: ["oth"]
+      },
+      "application/vnd.obn": {
+        source: "iana"
+      },
+      "application/vnd.ocf+cbor": {
+        source: "iana"
+      },
+      "application/vnd.oci.image.manifest.v1+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oftn.l10n+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.contentaccessdownload+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.contentaccessstreaming+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.cspg-hexbinary": {
+        source: "iana"
+      },
+      "application/vnd.oipf.dae.svg+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.dae.xhtml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.mippvcontrolmessage+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.pae.gem": {
+        source: "iana"
+      },
+      "application/vnd.oipf.spdiscovery+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.spdlist+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.ueprofile+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oipf.userprofile+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.olpc-sugar": {
+        source: "iana",
+        extensions: ["xo"]
+      },
+      "application/vnd.oma-scws-config": {
+        source: "iana"
+      },
+      "application/vnd.oma-scws-http-request": {
+        source: "iana"
+      },
+      "application/vnd.oma-scws-http-response": {
+        source: "iana"
+      },
+      "application/vnd.oma.bcast.associated-procedure-parameter+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.bcast.drm-trigger+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.bcast.imd+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.bcast.ltkm": {
+        source: "iana"
+      },
+      "application/vnd.oma.bcast.notification+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.bcast.provisioningtrigger": {
+        source: "iana"
+      },
+      "application/vnd.oma.bcast.sgboot": {
+        source: "iana"
+      },
+      "application/vnd.oma.bcast.sgdd+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.bcast.sgdu": {
+        source: "iana"
+      },
+      "application/vnd.oma.bcast.simple-symbol-container": {
+        source: "iana"
+      },
+      "application/vnd.oma.bcast.smartcard-trigger+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.bcast.sprov+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.bcast.stkm": {
+        source: "iana"
+      },
+      "application/vnd.oma.cab-address-book+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.cab-feature-handler+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.cab-pcc+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.cab-subs-invite+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.cab-user-prefs+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.dcd": {
+        source: "iana"
+      },
+      "application/vnd.oma.dcdc": {
+        source: "iana"
+      },
+      "application/vnd.oma.dd2+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["dd2"]
+      },
+      "application/vnd.oma.drm.risd+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.group-usage-list+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.lwm2m+cbor": {
+        source: "iana"
+      },
+      "application/vnd.oma.lwm2m+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.lwm2m+tlv": {
+        source: "iana"
+      },
+      "application/vnd.oma.pal+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.poc.detailed-progress-report+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.poc.final-report+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.poc.groups+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.poc.invocation-descriptor+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.poc.optimized-progress-report+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.push": {
+        source: "iana"
+      },
+      "application/vnd.oma.scidm.messages+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oma.xcap-directory+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.omads-email+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/vnd.omads-file+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/vnd.omads-folder+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/vnd.omaloc-supl-init": {
+        source: "iana"
+      },
+      "application/vnd.onepager": {
+        source: "iana"
+      },
+      "application/vnd.onepagertamp": {
+        source: "iana"
+      },
+      "application/vnd.onepagertamx": {
+        source: "iana"
+      },
+      "application/vnd.onepagertat": {
+        source: "iana"
+      },
+      "application/vnd.onepagertatp": {
+        source: "iana"
+      },
+      "application/vnd.onepagertatx": {
+        source: "iana"
+      },
+      "application/vnd.openblox.game+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["obgx"]
+      },
+      "application/vnd.openblox.game-binary": {
+        source: "iana"
+      },
+      "application/vnd.openeye.oeb": {
+        source: "iana"
+      },
+      "application/vnd.openofficeorg.extension": {
+        source: "apache",
+        extensions: ["oxt"]
+      },
+      "application/vnd.openstreetmap.data+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["osm"]
+      },
+      "application/vnd.opentimestamps.ots": {
+        source: "iana"
+      },
+      "application/vnd.openxmlformats-officedocument.custom-properties+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.customxmlproperties+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.drawing+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.drawingml.chart+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.drawingml.diagramcolors+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.drawingml.diagramdata+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.drawingml.diagramlayout+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.drawingml.diagramstyle+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.extended-properties+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.commentauthors+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.comments+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.handoutmaster+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.notesmaster+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.notesslide+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation": {
+        source: "iana",
+        compressible: false,
+        extensions: ["pptx"]
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.presprops+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.slide": {
+        source: "iana",
+        extensions: ["sldx"]
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.slide+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.slidelayout+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.slidemaster+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.slideshow": {
+        source: "iana",
+        extensions: ["ppsx"]
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.slideshow.main+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.slideupdateinfo+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.tablestyles+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.tags+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.template": {
+        source: "iana",
+        extensions: ["potx"]
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.template.main+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.presentationml.viewprops+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.calcchain+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.chartsheet+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.connections+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.dialogsheet+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.externallink+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotcachedefinition+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotcacherecords+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.pivottable+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.querytable+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.revisionheaders+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.revisionlog+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedstrings+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+        source: "iana",
+        compressible: false,
+        extensions: ["xlsx"]
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheetmetadata+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.tablesinglecells+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.template": {
+        source: "iana",
+        extensions: ["xltx"]
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.template.main+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.usernames+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.volatiledependencies+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.theme+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.themeoverride+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.vmldrawing": {
+        source: "iana"
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.comments+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+        source: "iana",
+        compressible: false,
+        extensions: ["docx"]
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document.glossary+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.endnotes+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.fonttable+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.template": {
+        source: "iana",
+        extensions: ["dotx"]
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.template.main+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.websettings+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-package.core-properties+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.openxmlformats-package.relationships+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oracle.resource+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.orange.indata": {
+        source: "iana"
+      },
+      "application/vnd.osa.netdeploy": {
+        source: "iana"
+      },
+      "application/vnd.osgeo.mapguide.package": {
+        source: "iana",
+        extensions: ["mgp"]
+      },
+      "application/vnd.osgi.bundle": {
+        source: "iana"
+      },
+      "application/vnd.osgi.dp": {
+        source: "iana",
+        extensions: ["dp"]
+      },
+      "application/vnd.osgi.subsystem": {
+        source: "iana",
+        extensions: ["esa"]
+      },
+      "application/vnd.otps.ct-kip+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.oxli.countgraph": {
+        source: "iana"
+      },
+      "application/vnd.pagerduty+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.palm": {
+        source: "iana",
+        extensions: ["pdb", "pqa", "oprc"]
+      },
+      "application/vnd.panoply": {
+        source: "iana"
+      },
+      "application/vnd.paos.xml": {
+        source: "iana"
+      },
+      "application/vnd.patentdive": {
+        source: "iana"
+      },
+      "application/vnd.patientecommsdoc": {
+        source: "iana"
+      },
+      "application/vnd.pawaafile": {
+        source: "iana",
+        extensions: ["paw"]
+      },
+      "application/vnd.pcos": {
+        source: "iana"
+      },
+      "application/vnd.pg.format": {
+        source: "iana",
+        extensions: ["str"]
+      },
+      "application/vnd.pg.osasli": {
+        source: "iana",
+        extensions: ["ei6"]
+      },
+      "application/vnd.piaccess.application-licence": {
+        source: "iana"
+      },
+      "application/vnd.picsel": {
+        source: "iana",
+        extensions: ["efif"]
+      },
+      "application/vnd.pmi.widget": {
+        source: "iana",
+        extensions: ["wg"]
+      },
+      "application/vnd.poc.group-advertisement+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.pocketlearn": {
+        source: "iana",
+        extensions: ["plf"]
+      },
+      "application/vnd.powerbuilder6": {
+        source: "iana",
+        extensions: ["pbd"]
+      },
+      "application/vnd.powerbuilder6-s": {
+        source: "iana"
+      },
+      "application/vnd.powerbuilder7": {
+        source: "iana"
+      },
+      "application/vnd.powerbuilder7-s": {
+        source: "iana"
+      },
+      "application/vnd.powerbuilder75": {
+        source: "iana"
+      },
+      "application/vnd.powerbuilder75-s": {
+        source: "iana"
+      },
+      "application/vnd.preminet": {
+        source: "iana"
+      },
+      "application/vnd.previewsystems.box": {
+        source: "iana",
+        extensions: ["box"]
+      },
+      "application/vnd.proteus.magazine": {
+        source: "iana",
+        extensions: ["mgz"]
+      },
+      "application/vnd.psfs": {
+        source: "iana"
+      },
+      "application/vnd.publishare-delta-tree": {
+        source: "iana",
+        extensions: ["qps"]
+      },
+      "application/vnd.pvi.ptid1": {
+        source: "iana",
+        extensions: ["ptid"]
+      },
+      "application/vnd.pwg-multiplexed": {
+        source: "iana"
+      },
+      "application/vnd.pwg-xhtml-print+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.qualcomm.brew-app-res": {
+        source: "iana"
+      },
+      "application/vnd.quarantainenet": {
+        source: "iana"
+      },
+      "application/vnd.quark.quarkxpress": {
+        source: "iana",
+        extensions: ["qxd", "qxt", "qwd", "qwt", "qxl", "qxb"]
+      },
+      "application/vnd.quobject-quoxdocument": {
+        source: "iana"
+      },
+      "application/vnd.radisys.moml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-audit+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-audit-conf+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-audit-conn+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-audit-dialog+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-audit-stream+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-conf+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-dialog+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-dialog-base+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-dialog-fax-detect+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-dialog-fax-sendrecv+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-dialog-group+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-dialog-speech+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.radisys.msml-dialog-transform+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.rainstor.data": {
+        source: "iana"
+      },
+      "application/vnd.rapid": {
+        source: "iana"
+      },
+      "application/vnd.rar": {
+        source: "iana",
+        extensions: ["rar"]
+      },
+      "application/vnd.realvnc.bed": {
+        source: "iana",
+        extensions: ["bed"]
+      },
+      "application/vnd.recordare.musicxml": {
+        source: "iana",
+        extensions: ["mxl"]
+      },
+      "application/vnd.recordare.musicxml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["musicxml"]
+      },
+      "application/vnd.renlearn.rlprint": {
+        source: "iana"
+      },
+      "application/vnd.resilient.logic": {
+        source: "iana"
+      },
+      "application/vnd.restful+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.rig.cryptonote": {
+        source: "iana",
+        extensions: ["cryptonote"]
+      },
+      "application/vnd.rim.cod": {
+        source: "apache",
+        extensions: ["cod"]
+      },
+      "application/vnd.rn-realmedia": {
+        source: "apache",
+        extensions: ["rm"]
+      },
+      "application/vnd.rn-realmedia-vbr": {
+        source: "apache",
+        extensions: ["rmvb"]
+      },
+      "application/vnd.route66.link66+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["link66"]
+      },
+      "application/vnd.rs-274x": {
+        source: "iana"
+      },
+      "application/vnd.ruckus.download": {
+        source: "iana"
+      },
+      "application/vnd.s3sms": {
+        source: "iana"
+      },
+      "application/vnd.sailingtracker.track": {
+        source: "iana",
+        extensions: ["st"]
+      },
+      "application/vnd.sar": {
+        source: "iana"
+      },
+      "application/vnd.sbm.cid": {
+        source: "iana"
+      },
+      "application/vnd.sbm.mid2": {
+        source: "iana"
+      },
+      "application/vnd.scribus": {
+        source: "iana"
+      },
+      "application/vnd.sealed.3df": {
+        source: "iana"
+      },
+      "application/vnd.sealed.csf": {
+        source: "iana"
+      },
+      "application/vnd.sealed.doc": {
+        source: "iana"
+      },
+      "application/vnd.sealed.eml": {
+        source: "iana"
+      },
+      "application/vnd.sealed.mht": {
+        source: "iana"
+      },
+      "application/vnd.sealed.net": {
+        source: "iana"
+      },
+      "application/vnd.sealed.ppt": {
+        source: "iana"
+      },
+      "application/vnd.sealed.tiff": {
+        source: "iana"
+      },
+      "application/vnd.sealed.xls": {
+        source: "iana"
+      },
+      "application/vnd.sealedmedia.softseal.html": {
+        source: "iana"
+      },
+      "application/vnd.sealedmedia.softseal.pdf": {
+        source: "iana"
+      },
+      "application/vnd.seemail": {
+        source: "iana",
+        extensions: ["see"]
+      },
+      "application/vnd.seis+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.sema": {
+        source: "iana",
+        extensions: ["sema"]
+      },
+      "application/vnd.semd": {
+        source: "iana",
+        extensions: ["semd"]
+      },
+      "application/vnd.semf": {
+        source: "iana",
+        extensions: ["semf"]
+      },
+      "application/vnd.shade-save-file": {
+        source: "iana"
+      },
+      "application/vnd.shana.informed.formdata": {
+        source: "iana",
+        extensions: ["ifm"]
+      },
+      "application/vnd.shana.informed.formtemplate": {
+        source: "iana",
+        extensions: ["itp"]
+      },
+      "application/vnd.shana.informed.interchange": {
+        source: "iana",
+        extensions: ["iif"]
+      },
+      "application/vnd.shana.informed.package": {
+        source: "iana",
+        extensions: ["ipk"]
+      },
+      "application/vnd.shootproof+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.shopkick+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.shp": {
+        source: "iana"
+      },
+      "application/vnd.shx": {
+        source: "iana"
+      },
+      "application/vnd.sigrok.session": {
+        source: "iana"
+      },
+      "application/vnd.simtech-mindmapper": {
+        source: "iana",
+        extensions: ["twd", "twds"]
+      },
+      "application/vnd.siren+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.smaf": {
+        source: "iana",
+        extensions: ["mmf"]
+      },
+      "application/vnd.smart.notebook": {
+        source: "iana"
+      },
+      "application/vnd.smart.teacher": {
+        source: "iana",
+        extensions: ["teacher"]
+      },
+      "application/vnd.snesdev-page-table": {
+        source: "iana"
+      },
+      "application/vnd.software602.filler.form+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["fo"]
+      },
+      "application/vnd.software602.filler.form-xml-zip": {
+        source: "iana"
+      },
+      "application/vnd.solent.sdkm+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["sdkm", "sdkd"]
+      },
+      "application/vnd.spotfire.dxp": {
+        source: "iana",
+        extensions: ["dxp"]
+      },
+      "application/vnd.spotfire.sfs": {
+        source: "iana",
+        extensions: ["sfs"]
+      },
+      "application/vnd.sqlite3": {
+        source: "iana"
+      },
+      "application/vnd.sss-cod": {
+        source: "iana"
+      },
+      "application/vnd.sss-dtf": {
+        source: "iana"
+      },
+      "application/vnd.sss-ntf": {
+        source: "iana"
+      },
+      "application/vnd.stardivision.calc": {
+        source: "apache",
+        extensions: ["sdc"]
+      },
+      "application/vnd.stardivision.draw": {
+        source: "apache",
+        extensions: ["sda"]
+      },
+      "application/vnd.stardivision.impress": {
+        source: "apache",
+        extensions: ["sdd"]
+      },
+      "application/vnd.stardivision.math": {
+        source: "apache",
+        extensions: ["smf"]
+      },
+      "application/vnd.stardivision.writer": {
+        source: "apache",
+        extensions: ["sdw", "vor"]
+      },
+      "application/vnd.stardivision.writer-global": {
+        source: "apache",
+        extensions: ["sgl"]
+      },
+      "application/vnd.stepmania.package": {
+        source: "iana",
+        extensions: ["smzip"]
+      },
+      "application/vnd.stepmania.stepchart": {
+        source: "iana",
+        extensions: ["sm"]
+      },
+      "application/vnd.street-stream": {
+        source: "iana"
+      },
+      "application/vnd.sun.wadl+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["wadl"]
+      },
+      "application/vnd.sun.xml.calc": {
+        source: "apache",
+        extensions: ["sxc"]
+      },
+      "application/vnd.sun.xml.calc.template": {
+        source: "apache",
+        extensions: ["stc"]
+      },
+      "application/vnd.sun.xml.draw": {
+        source: "apache",
+        extensions: ["sxd"]
+      },
+      "application/vnd.sun.xml.draw.template": {
+        source: "apache",
+        extensions: ["std"]
+      },
+      "application/vnd.sun.xml.impress": {
+        source: "apache",
+        extensions: ["sxi"]
+      },
+      "application/vnd.sun.xml.impress.template": {
+        source: "apache",
+        extensions: ["sti"]
+      },
+      "application/vnd.sun.xml.math": {
+        source: "apache",
+        extensions: ["sxm"]
+      },
+      "application/vnd.sun.xml.writer": {
+        source: "apache",
+        extensions: ["sxw"]
+      },
+      "application/vnd.sun.xml.writer.global": {
+        source: "apache",
+        extensions: ["sxg"]
+      },
+      "application/vnd.sun.xml.writer.template": {
+        source: "apache",
+        extensions: ["stw"]
+      },
+      "application/vnd.sus-calendar": {
+        source: "iana",
+        extensions: ["sus", "susp"]
+      },
+      "application/vnd.svd": {
+        source: "iana",
+        extensions: ["svd"]
+      },
+      "application/vnd.swiftview-ics": {
+        source: "iana"
+      },
+      "application/vnd.sycle+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.syft+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.symbian.install": {
+        source: "apache",
+        extensions: ["sis", "sisx"]
+      },
+      "application/vnd.syncml+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["xsm"]
+      },
+      "application/vnd.syncml.dm+wbxml": {
+        source: "iana",
+        charset: "UTF-8",
+        extensions: ["bdm"]
+      },
+      "application/vnd.syncml.dm+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["xdm"]
+      },
+      "application/vnd.syncml.dm.notification": {
+        source: "iana"
+      },
+      "application/vnd.syncml.dmddf+wbxml": {
+        source: "iana"
+      },
+      "application/vnd.syncml.dmddf+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["ddf"]
+      },
+      "application/vnd.syncml.dmtnds+wbxml": {
+        source: "iana"
+      },
+      "application/vnd.syncml.dmtnds+xml": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true
+      },
+      "application/vnd.syncml.ds.notification": {
+        source: "iana"
+      },
+      "application/vnd.tableschema+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.tao.intent-module-archive": {
+        source: "iana",
+        extensions: ["tao"]
+      },
+      "application/vnd.tcpdump.pcap": {
+        source: "iana",
+        extensions: ["pcap", "cap", "dmp"]
+      },
+      "application/vnd.think-cell.ppttc+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.tmd.mediaflex.api+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.tml": {
+        source: "iana"
+      },
+      "application/vnd.tmobile-livetv": {
+        source: "iana",
+        extensions: ["tmo"]
+      },
+      "application/vnd.tri.onesource": {
+        source: "iana"
+      },
+      "application/vnd.trid.tpt": {
+        source: "iana",
+        extensions: ["tpt"]
+      },
+      "application/vnd.triscape.mxs": {
+        source: "iana",
+        extensions: ["mxs"]
+      },
+      "application/vnd.trueapp": {
+        source: "iana",
+        extensions: ["tra"]
+      },
+      "application/vnd.truedoc": {
+        source: "iana"
+      },
+      "application/vnd.ubisoft.webplayer": {
+        source: "iana"
+      },
+      "application/vnd.ufdl": {
+        source: "iana",
+        extensions: ["ufd", "ufdl"]
+      },
+      "application/vnd.uiq.theme": {
+        source: "iana",
+        extensions: ["utz"]
+      },
+      "application/vnd.umajin": {
+        source: "iana",
+        extensions: ["umj"]
+      },
+      "application/vnd.unity": {
+        source: "iana",
+        extensions: ["unityweb"]
+      },
+      "application/vnd.uoml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["uoml"]
+      },
+      "application/vnd.uplanet.alert": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.alert-wbxml": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.bearer-choice": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.bearer-choice-wbxml": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.cacheop": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.cacheop-wbxml": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.channel": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.channel-wbxml": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.list": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.list-wbxml": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.listcmd": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.listcmd-wbxml": {
+        source: "iana"
+      },
+      "application/vnd.uplanet.signal": {
+        source: "iana"
+      },
+      "application/vnd.uri-map": {
+        source: "iana"
+      },
+      "application/vnd.valve.source.material": {
+        source: "iana"
+      },
+      "application/vnd.vcx": {
+        source: "iana",
+        extensions: ["vcx"]
+      },
+      "application/vnd.vd-study": {
+        source: "iana"
+      },
+      "application/vnd.vectorworks": {
+        source: "iana"
+      },
+      "application/vnd.vel+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.verimatrix.vcas": {
+        source: "iana"
+      },
+      "application/vnd.veritone.aion+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.veryant.thin": {
+        source: "iana"
+      },
+      "application/vnd.ves.encrypted": {
+        source: "iana"
+      },
+      "application/vnd.vidsoft.vidconference": {
+        source: "iana"
+      },
+      "application/vnd.visio": {
+        source: "iana",
+        extensions: ["vsd", "vst", "vss", "vsw"]
+      },
+      "application/vnd.visionary": {
+        source: "iana",
+        extensions: ["vis"]
+      },
+      "application/vnd.vividence.scriptfile": {
+        source: "iana"
+      },
+      "application/vnd.vsf": {
+        source: "iana",
+        extensions: ["vsf"]
+      },
+      "application/vnd.wap.sic": {
+        source: "iana"
+      },
+      "application/vnd.wap.slc": {
+        source: "iana"
+      },
+      "application/vnd.wap.wbxml": {
+        source: "iana",
+        charset: "UTF-8",
+        extensions: ["wbxml"]
+      },
+      "application/vnd.wap.wmlc": {
+        source: "iana",
+        extensions: ["wmlc"]
+      },
+      "application/vnd.wap.wmlscriptc": {
+        source: "iana",
+        extensions: ["wmlsc"]
+      },
+      "application/vnd.webturbo": {
+        source: "iana",
+        extensions: ["wtb"]
+      },
+      "application/vnd.wfa.dpp": {
+        source: "iana"
+      },
+      "application/vnd.wfa.p2p": {
+        source: "iana"
+      },
+      "application/vnd.wfa.wsc": {
+        source: "iana"
+      },
+      "application/vnd.windows.devicepairing": {
+        source: "iana"
+      },
+      "application/vnd.wmc": {
+        source: "iana"
+      },
+      "application/vnd.wmf.bootstrap": {
+        source: "iana"
+      },
+      "application/vnd.wolfram.mathematica": {
+        source: "iana"
+      },
+      "application/vnd.wolfram.mathematica.package": {
+        source: "iana"
+      },
+      "application/vnd.wolfram.player": {
+        source: "iana",
+        extensions: ["nbp"]
+      },
+      "application/vnd.wordperfect": {
+        source: "iana",
+        extensions: ["wpd"]
+      },
+      "application/vnd.wqd": {
+        source: "iana",
+        extensions: ["wqd"]
+      },
+      "application/vnd.wrq-hp3000-labelled": {
+        source: "iana"
+      },
+      "application/vnd.wt.stf": {
+        source: "iana",
+        extensions: ["stf"]
+      },
+      "application/vnd.wv.csp+wbxml": {
+        source: "iana"
+      },
+      "application/vnd.wv.csp+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.wv.ssp+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.xacml+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.xara": {
+        source: "iana",
+        extensions: ["xar"]
+      },
+      "application/vnd.xfdl": {
+        source: "iana",
+        extensions: ["xfdl"]
+      },
+      "application/vnd.xfdl.webform": {
+        source: "iana"
+      },
+      "application/vnd.xmi+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vnd.xmpie.cpkg": {
+        source: "iana"
+      },
+      "application/vnd.xmpie.dpkg": {
+        source: "iana"
+      },
+      "application/vnd.xmpie.plan": {
+        source: "iana"
+      },
+      "application/vnd.xmpie.ppkg": {
+        source: "iana"
+      },
+      "application/vnd.xmpie.xlim": {
+        source: "iana"
+      },
+      "application/vnd.yamaha.hv-dic": {
+        source: "iana",
+        extensions: ["hvd"]
+      },
+      "application/vnd.yamaha.hv-script": {
+        source: "iana",
+        extensions: ["hvs"]
+      },
+      "application/vnd.yamaha.hv-voice": {
+        source: "iana",
+        extensions: ["hvp"]
+      },
+      "application/vnd.yamaha.openscoreformat": {
+        source: "iana",
+        extensions: ["osf"]
+      },
+      "application/vnd.yamaha.openscoreformat.osfpvg+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["osfpvg"]
+      },
+      "application/vnd.yamaha.remote-setup": {
+        source: "iana"
+      },
+      "application/vnd.yamaha.smaf-audio": {
+        source: "iana",
+        extensions: ["saf"]
+      },
+      "application/vnd.yamaha.smaf-phrase": {
+        source: "iana",
+        extensions: ["spf"]
+      },
+      "application/vnd.yamaha.through-ngn": {
+        source: "iana"
+      },
+      "application/vnd.yamaha.tunnel-udpencap": {
+        source: "iana"
+      },
+      "application/vnd.yaoweme": {
+        source: "iana"
+      },
+      "application/vnd.yellowriver-custom-menu": {
+        source: "iana",
+        extensions: ["cmp"]
+      },
+      "application/vnd.youtube.yt": {
+        source: "iana"
+      },
+      "application/vnd.zul": {
+        source: "iana",
+        extensions: ["zir", "zirz"]
+      },
+      "application/vnd.zzazz.deck+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["zaz"]
+      },
+      "application/voicexml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["vxml"]
+      },
+      "application/voucher-cms+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/vq-rtcpxr": {
+        source: "iana"
+      },
+      "application/wasm": {
+        source: "iana",
+        compressible: true,
+        extensions: ["wasm"]
+      },
+      "application/watcherinfo+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["wif"]
+      },
+      "application/webpush-options+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/whoispp-query": {
+        source: "iana"
+      },
+      "application/whoispp-response": {
+        source: "iana"
+      },
+      "application/widget": {
+        source: "iana",
+        extensions: ["wgt"]
+      },
+      "application/winhlp": {
+        source: "apache",
+        extensions: ["hlp"]
+      },
+      "application/wita": {
+        source: "iana"
+      },
+      "application/wordperfect5.1": {
+        source: "iana"
+      },
+      "application/wsdl+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["wsdl"]
+      },
+      "application/wspolicy+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["wspolicy"]
+      },
+      "application/x-7z-compressed": {
+        source: "apache",
+        compressible: false,
+        extensions: ["7z"]
+      },
+      "application/x-abiword": {
+        source: "apache",
+        extensions: ["abw"]
+      },
+      "application/x-ace-compressed": {
+        source: "apache",
+        extensions: ["ace"]
+      },
+      "application/x-amf": {
+        source: "apache"
+      },
+      "application/x-apple-diskimage": {
+        source: "apache",
+        extensions: ["dmg"]
+      },
+      "application/x-arj": {
+        compressible: false,
+        extensions: ["arj"]
+      },
+      "application/x-authorware-bin": {
+        source: "apache",
+        extensions: ["aab", "x32", "u32", "vox"]
+      },
+      "application/x-authorware-map": {
+        source: "apache",
+        extensions: ["aam"]
+      },
+      "application/x-authorware-seg": {
+        source: "apache",
+        extensions: ["aas"]
+      },
+      "application/x-bcpio": {
+        source: "apache",
+        extensions: ["bcpio"]
+      },
+      "application/x-bdoc": {
+        compressible: false,
+        extensions: ["bdoc"]
+      },
+      "application/x-bittorrent": {
+        source: "apache",
+        extensions: ["torrent"]
+      },
+      "application/x-blorb": {
+        source: "apache",
+        extensions: ["blb", "blorb"]
+      },
+      "application/x-bzip": {
+        source: "apache",
+        compressible: false,
+        extensions: ["bz"]
+      },
+      "application/x-bzip2": {
+        source: "apache",
+        compressible: false,
+        extensions: ["bz2", "boz"]
+      },
+      "application/x-cbr": {
+        source: "apache",
+        extensions: ["cbr", "cba", "cbt", "cbz", "cb7"]
+      },
+      "application/x-cdlink": {
+        source: "apache",
+        extensions: ["vcd"]
+      },
+      "application/x-cfs-compressed": {
+        source: "apache",
+        extensions: ["cfs"]
+      },
+      "application/x-chat": {
+        source: "apache",
+        extensions: ["chat"]
+      },
+      "application/x-chess-pgn": {
+        source: "apache",
+        extensions: ["pgn"]
+      },
+      "application/x-chrome-extension": {
+        extensions: ["crx"]
+      },
+      "application/x-cocoa": {
+        source: "nginx",
+        extensions: ["cco"]
+      },
+      "application/x-compress": {
+        source: "apache"
+      },
+      "application/x-conference": {
+        source: "apache",
+        extensions: ["nsc"]
+      },
+      "application/x-cpio": {
+        source: "apache",
+        extensions: ["cpio"]
+      },
+      "application/x-csh": {
+        source: "apache",
+        extensions: ["csh"]
+      },
+      "application/x-deb": {
+        compressible: false
+      },
+      "application/x-debian-package": {
+        source: "apache",
+        extensions: ["deb", "udeb"]
+      },
+      "application/x-dgc-compressed": {
+        source: "apache",
+        extensions: ["dgc"]
+      },
+      "application/x-director": {
+        source: "apache",
+        extensions: ["dir", "dcr", "dxr", "cst", "cct", "cxt", "w3d", "fgd", "swa"]
+      },
+      "application/x-doom": {
+        source: "apache",
+        extensions: ["wad"]
+      },
+      "application/x-dtbncx+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["ncx"]
+      },
+      "application/x-dtbook+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["dtb"]
+      },
+      "application/x-dtbresource+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["res"]
+      },
+      "application/x-dvi": {
+        source: "apache",
+        compressible: false,
+        extensions: ["dvi"]
+      },
+      "application/x-envoy": {
+        source: "apache",
+        extensions: ["evy"]
+      },
+      "application/x-eva": {
+        source: "apache",
+        extensions: ["eva"]
+      },
+      "application/x-font-bdf": {
+        source: "apache",
+        extensions: ["bdf"]
+      },
+      "application/x-font-dos": {
+        source: "apache"
+      },
+      "application/x-font-framemaker": {
+        source: "apache"
+      },
+      "application/x-font-ghostscript": {
+        source: "apache",
+        extensions: ["gsf"]
+      },
+      "application/x-font-libgrx": {
+        source: "apache"
+      },
+      "application/x-font-linux-psf": {
+        source: "apache",
+        extensions: ["psf"]
+      },
+      "application/x-font-pcf": {
+        source: "apache",
+        extensions: ["pcf"]
+      },
+      "application/x-font-snf": {
+        source: "apache",
+        extensions: ["snf"]
+      },
+      "application/x-font-speedo": {
+        source: "apache"
+      },
+      "application/x-font-sunos-news": {
+        source: "apache"
+      },
+      "application/x-font-type1": {
+        source: "apache",
+        extensions: ["pfa", "pfb", "pfm", "afm"]
+      },
+      "application/x-font-vfont": {
+        source: "apache"
+      },
+      "application/x-freearc": {
+        source: "apache",
+        extensions: ["arc"]
+      },
+      "application/x-futuresplash": {
+        source: "apache",
+        extensions: ["spl"]
+      },
+      "application/x-gca-compressed": {
+        source: "apache",
+        extensions: ["gca"]
+      },
+      "application/x-glulx": {
+        source: "apache",
+        extensions: ["ulx"]
+      },
+      "application/x-gnumeric": {
+        source: "apache",
+        extensions: ["gnumeric"]
+      },
+      "application/x-gramps-xml": {
+        source: "apache",
+        extensions: ["gramps"]
+      },
+      "application/x-gtar": {
+        source: "apache",
+        extensions: ["gtar"]
+      },
+      "application/x-gzip": {
+        source: "apache"
+      },
+      "application/x-hdf": {
+        source: "apache",
+        extensions: ["hdf"]
+      },
+      "application/x-httpd-php": {
+        compressible: true,
+        extensions: ["php"]
+      },
+      "application/x-install-instructions": {
+        source: "apache",
+        extensions: ["install"]
+      },
+      "application/x-iso9660-image": {
+        source: "apache",
+        extensions: ["iso"]
+      },
+      "application/x-iwork-keynote-sffkey": {
+        extensions: ["key"]
+      },
+      "application/x-iwork-numbers-sffnumbers": {
+        extensions: ["numbers"]
+      },
+      "application/x-iwork-pages-sffpages": {
+        extensions: ["pages"]
+      },
+      "application/x-java-archive-diff": {
+        source: "nginx",
+        extensions: ["jardiff"]
+      },
+      "application/x-java-jnlp-file": {
+        source: "apache",
+        compressible: false,
+        extensions: ["jnlp"]
+      },
+      "application/x-javascript": {
+        compressible: true
+      },
+      "application/x-keepass2": {
+        extensions: ["kdbx"]
+      },
+      "application/x-latex": {
+        source: "apache",
+        compressible: false,
+        extensions: ["latex"]
+      },
+      "application/x-lua-bytecode": {
+        extensions: ["luac"]
+      },
+      "application/x-lzh-compressed": {
+        source: "apache",
+        extensions: ["lzh", "lha"]
+      },
+      "application/x-makeself": {
+        source: "nginx",
+        extensions: ["run"]
+      },
+      "application/x-mie": {
+        source: "apache",
+        extensions: ["mie"]
+      },
+      "application/x-mobipocket-ebook": {
+        source: "apache",
+        extensions: ["prc", "mobi"]
+      },
+      "application/x-mpegurl": {
+        compressible: false
+      },
+      "application/x-ms-application": {
+        source: "apache",
+        extensions: ["application"]
+      },
+      "application/x-ms-shortcut": {
+        source: "apache",
+        extensions: ["lnk"]
+      },
+      "application/x-ms-wmd": {
+        source: "apache",
+        extensions: ["wmd"]
+      },
+      "application/x-ms-wmz": {
+        source: "apache",
+        extensions: ["wmz"]
+      },
+      "application/x-ms-xbap": {
+        source: "apache",
+        extensions: ["xbap"]
+      },
+      "application/x-msaccess": {
+        source: "apache",
+        extensions: ["mdb"]
+      },
+      "application/x-msbinder": {
+        source: "apache",
+        extensions: ["obd"]
+      },
+      "application/x-mscardfile": {
+        source: "apache",
+        extensions: ["crd"]
+      },
+      "application/x-msclip": {
+        source: "apache",
+        extensions: ["clp"]
+      },
+      "application/x-msdos-program": {
+        extensions: ["exe"]
+      },
+      "application/x-msdownload": {
+        source: "apache",
+        extensions: ["exe", "dll", "com", "bat", "msi"]
+      },
+      "application/x-msmediaview": {
+        source: "apache",
+        extensions: ["mvb", "m13", "m14"]
+      },
+      "application/x-msmetafile": {
+        source: "apache",
+        extensions: ["wmf", "wmz", "emf", "emz"]
+      },
+      "application/x-msmoney": {
+        source: "apache",
+        extensions: ["mny"]
+      },
+      "application/x-mspublisher": {
+        source: "apache",
+        extensions: ["pub"]
+      },
+      "application/x-msschedule": {
+        source: "apache",
+        extensions: ["scd"]
+      },
+      "application/x-msterminal": {
+        source: "apache",
+        extensions: ["trm"]
+      },
+      "application/x-mswrite": {
+        source: "apache",
+        extensions: ["wri"]
+      },
+      "application/x-netcdf": {
+        source: "apache",
+        extensions: ["nc", "cdf"]
+      },
+      "application/x-ns-proxy-autoconfig": {
+        compressible: true,
+        extensions: ["pac"]
+      },
+      "application/x-nzb": {
+        source: "apache",
+        extensions: ["nzb"]
+      },
+      "application/x-perl": {
+        source: "nginx",
+        extensions: ["pl", "pm"]
+      },
+      "application/x-pilot": {
+        source: "nginx",
+        extensions: ["prc", "pdb"]
+      },
+      "application/x-pkcs12": {
+        source: "apache",
+        compressible: false,
+        extensions: ["p12", "pfx"]
+      },
+      "application/x-pkcs7-certificates": {
+        source: "apache",
+        extensions: ["p7b", "spc"]
+      },
+      "application/x-pkcs7-certreqresp": {
+        source: "apache",
+        extensions: ["p7r"]
+      },
+      "application/x-pki-message": {
+        source: "iana"
+      },
+      "application/x-rar-compressed": {
+        source: "apache",
+        compressible: false,
+        extensions: ["rar"]
+      },
+      "application/x-redhat-package-manager": {
+        source: "nginx",
+        extensions: ["rpm"]
+      },
+      "application/x-research-info-systems": {
+        source: "apache",
+        extensions: ["ris"]
+      },
+      "application/x-sea": {
+        source: "nginx",
+        extensions: ["sea"]
+      },
+      "application/x-sh": {
+        source: "apache",
+        compressible: true,
+        extensions: ["sh"]
+      },
+      "application/x-shar": {
+        source: "apache",
+        extensions: ["shar"]
+      },
+      "application/x-shockwave-flash": {
+        source: "apache",
+        compressible: false,
+        extensions: ["swf"]
+      },
+      "application/x-silverlight-app": {
+        source: "apache",
+        extensions: ["xap"]
+      },
+      "application/x-sql": {
+        source: "apache",
+        extensions: ["sql"]
+      },
+      "application/x-stuffit": {
+        source: "apache",
+        compressible: false,
+        extensions: ["sit"]
+      },
+      "application/x-stuffitx": {
+        source: "apache",
+        extensions: ["sitx"]
+      },
+      "application/x-subrip": {
+        source: "apache",
+        extensions: ["srt"]
+      },
+      "application/x-sv4cpio": {
+        source: "apache",
+        extensions: ["sv4cpio"]
+      },
+      "application/x-sv4crc": {
+        source: "apache",
+        extensions: ["sv4crc"]
+      },
+      "application/x-t3vm-image": {
+        source: "apache",
+        extensions: ["t3"]
+      },
+      "application/x-tads": {
+        source: "apache",
+        extensions: ["gam"]
+      },
+      "application/x-tar": {
+        source: "apache",
+        compressible: true,
+        extensions: ["tar"]
+      },
+      "application/x-tcl": {
+        source: "apache",
+        extensions: ["tcl", "tk"]
+      },
+      "application/x-tex": {
+        source: "apache",
+        extensions: ["tex"]
+      },
+      "application/x-tex-tfm": {
+        source: "apache",
+        extensions: ["tfm"]
+      },
+      "application/x-texinfo": {
+        source: "apache",
+        extensions: ["texinfo", "texi"]
+      },
+      "application/x-tgif": {
+        source: "apache",
+        extensions: ["obj"]
+      },
+      "application/x-ustar": {
+        source: "apache",
+        extensions: ["ustar"]
+      },
+      "application/x-virtualbox-hdd": {
+        compressible: true,
+        extensions: ["hdd"]
+      },
+      "application/x-virtualbox-ova": {
+        compressible: true,
+        extensions: ["ova"]
+      },
+      "application/x-virtualbox-ovf": {
+        compressible: true,
+        extensions: ["ovf"]
+      },
+      "application/x-virtualbox-vbox": {
+        compressible: true,
+        extensions: ["vbox"]
+      },
+      "application/x-virtualbox-vbox-extpack": {
+        compressible: false,
+        extensions: ["vbox-extpack"]
+      },
+      "application/x-virtualbox-vdi": {
+        compressible: true,
+        extensions: ["vdi"]
+      },
+      "application/x-virtualbox-vhd": {
+        compressible: true,
+        extensions: ["vhd"]
+      },
+      "application/x-virtualbox-vmdk": {
+        compressible: true,
+        extensions: ["vmdk"]
+      },
+      "application/x-wais-source": {
+        source: "apache",
+        extensions: ["src"]
+      },
+      "application/x-web-app-manifest+json": {
+        compressible: true,
+        extensions: ["webapp"]
+      },
+      "application/x-www-form-urlencoded": {
+        source: "iana",
+        compressible: true
+      },
+      "application/x-x509-ca-cert": {
+        source: "iana",
+        extensions: ["der", "crt", "pem"]
+      },
+      "application/x-x509-ca-ra-cert": {
+        source: "iana"
+      },
+      "application/x-x509-next-ca-cert": {
+        source: "iana"
+      },
+      "application/x-xfig": {
+        source: "apache",
+        extensions: ["fig"]
+      },
+      "application/x-xliff+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["xlf"]
+      },
+      "application/x-xpinstall": {
+        source: "apache",
+        compressible: false,
+        extensions: ["xpi"]
+      },
+      "application/x-xz": {
+        source: "apache",
+        extensions: ["xz"]
+      },
+      "application/x-zmachine": {
+        source: "apache",
+        extensions: ["z1", "z2", "z3", "z4", "z5", "z6", "z7", "z8"]
+      },
+      "application/x400-bp": {
+        source: "iana"
+      },
+      "application/xacml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/xaml+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["xaml"]
+      },
+      "application/xcap-att+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xav"]
+      },
+      "application/xcap-caps+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xca"]
+      },
+      "application/xcap-diff+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xdf"]
+      },
+      "application/xcap-el+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xel"]
+      },
+      "application/xcap-error+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/xcap-ns+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xns"]
+      },
+      "application/xcon-conference-info+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/xcon-conference-info-diff+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/xenc+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xenc"]
+      },
+      "application/xhtml+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xhtml", "xht"]
+      },
+      "application/xhtml-voice+xml": {
+        source: "apache",
+        compressible: true
+      },
+      "application/xliff+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xlf"]
+      },
+      "application/xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xml", "xsl", "xsd", "rng"]
+      },
+      "application/xml-dtd": {
+        source: "iana",
+        compressible: true,
+        extensions: ["dtd"]
+      },
+      "application/xml-external-parsed-entity": {
+        source: "iana"
+      },
+      "application/xml-patch+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/xmpp+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/xop+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xop"]
+      },
+      "application/xproc+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["xpl"]
+      },
+      "application/xslt+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xsl", "xslt"]
+      },
+      "application/xspf+xml": {
+        source: "apache",
+        compressible: true,
+        extensions: ["xspf"]
+      },
+      "application/xv+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["mxml", "xhvml", "xvml", "xvm"]
+      },
+      "application/yang": {
+        source: "iana",
+        extensions: ["yang"]
+      },
+      "application/yang-data+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/yang-data+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/yang-patch+json": {
+        source: "iana",
+        compressible: true
+      },
+      "application/yang-patch+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "application/yin+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["yin"]
+      },
+      "application/zip": {
+        source: "iana",
+        compressible: false,
+        extensions: ["zip"]
+      },
+      "application/zlib": {
+        source: "iana"
+      },
+      "application/zstd": {
+        source: "iana"
+      },
+      "audio/1d-interleaved-parityfec": {
+        source: "iana"
+      },
+      "audio/32kadpcm": {
+        source: "iana"
+      },
+      "audio/3gpp": {
+        source: "iana",
+        compressible: false,
+        extensions: ["3gpp"]
+      },
+      "audio/3gpp2": {
+        source: "iana"
+      },
+      "audio/aac": {
+        source: "iana"
+      },
+      "audio/ac3": {
+        source: "iana"
+      },
+      "audio/adpcm": {
+        source: "apache",
+        extensions: ["adp"]
+      },
+      "audio/amr": {
+        source: "iana",
+        extensions: ["amr"]
+      },
+      "audio/amr-wb": {
+        source: "iana"
+      },
+      "audio/amr-wb+": {
+        source: "iana"
+      },
+      "audio/aptx": {
+        source: "iana"
+      },
+      "audio/asc": {
+        source: "iana"
+      },
+      "audio/atrac-advanced-lossless": {
+        source: "iana"
+      },
+      "audio/atrac-x": {
+        source: "iana"
+      },
+      "audio/atrac3": {
+        source: "iana"
+      },
+      "audio/basic": {
+        source: "iana",
+        compressible: false,
+        extensions: ["au", "snd"]
+      },
+      "audio/bv16": {
+        source: "iana"
+      },
+      "audio/bv32": {
+        source: "iana"
+      },
+      "audio/clearmode": {
+        source: "iana"
+      },
+      "audio/cn": {
+        source: "iana"
+      },
+      "audio/dat12": {
+        source: "iana"
+      },
+      "audio/dls": {
+        source: "iana"
+      },
+      "audio/dsr-es201108": {
+        source: "iana"
+      },
+      "audio/dsr-es202050": {
+        source: "iana"
+      },
+      "audio/dsr-es202211": {
+        source: "iana"
+      },
+      "audio/dsr-es202212": {
+        source: "iana"
+      },
+      "audio/dv": {
+        source: "iana"
+      },
+      "audio/dvi4": {
+        source: "iana"
+      },
+      "audio/eac3": {
+        source: "iana"
+      },
+      "audio/encaprtp": {
+        source: "iana"
+      },
+      "audio/evrc": {
+        source: "iana"
+      },
+      "audio/evrc-qcp": {
+        source: "iana"
+      },
+      "audio/evrc0": {
+        source: "iana"
+      },
+      "audio/evrc1": {
+        source: "iana"
+      },
+      "audio/evrcb": {
+        source: "iana"
+      },
+      "audio/evrcb0": {
+        source: "iana"
+      },
+      "audio/evrcb1": {
+        source: "iana"
+      },
+      "audio/evrcnw": {
+        source: "iana"
+      },
+      "audio/evrcnw0": {
+        source: "iana"
+      },
+      "audio/evrcnw1": {
+        source: "iana"
+      },
+      "audio/evrcwb": {
+        source: "iana"
+      },
+      "audio/evrcwb0": {
+        source: "iana"
+      },
+      "audio/evrcwb1": {
+        source: "iana"
+      },
+      "audio/evs": {
+        source: "iana"
+      },
+      "audio/flexfec": {
+        source: "iana"
+      },
+      "audio/fwdred": {
+        source: "iana"
+      },
+      "audio/g711-0": {
+        source: "iana"
+      },
+      "audio/g719": {
+        source: "iana"
+      },
+      "audio/g722": {
+        source: "iana"
+      },
+      "audio/g7221": {
+        source: "iana"
+      },
+      "audio/g723": {
+        source: "iana"
+      },
+      "audio/g726-16": {
+        source: "iana"
+      },
+      "audio/g726-24": {
+        source: "iana"
+      },
+      "audio/g726-32": {
+        source: "iana"
+      },
+      "audio/g726-40": {
+        source: "iana"
+      },
+      "audio/g728": {
+        source: "iana"
+      },
+      "audio/g729": {
+        source: "iana"
+      },
+      "audio/g7291": {
+        source: "iana"
+      },
+      "audio/g729d": {
+        source: "iana"
+      },
+      "audio/g729e": {
+        source: "iana"
+      },
+      "audio/gsm": {
+        source: "iana"
+      },
+      "audio/gsm-efr": {
+        source: "iana"
+      },
+      "audio/gsm-hr-08": {
+        source: "iana"
+      },
+      "audio/ilbc": {
+        source: "iana"
+      },
+      "audio/ip-mr_v2.5": {
+        source: "iana"
+      },
+      "audio/isac": {
+        source: "apache"
+      },
+      "audio/l16": {
+        source: "iana"
+      },
+      "audio/l20": {
+        source: "iana"
+      },
+      "audio/l24": {
+        source: "iana",
+        compressible: false
+      },
+      "audio/l8": {
+        source: "iana"
+      },
+      "audio/lpc": {
+        source: "iana"
+      },
+      "audio/melp": {
+        source: "iana"
+      },
+      "audio/melp1200": {
+        source: "iana"
+      },
+      "audio/melp2400": {
+        source: "iana"
+      },
+      "audio/melp600": {
+        source: "iana"
+      },
+      "audio/mhas": {
+        source: "iana"
+      },
+      "audio/midi": {
+        source: "apache",
+        extensions: ["mid", "midi", "kar", "rmi"]
+      },
+      "audio/mobile-xmf": {
+        source: "iana",
+        extensions: ["mxmf"]
+      },
+      "audio/mp3": {
+        compressible: false,
+        extensions: ["mp3"]
+      },
+      "audio/mp4": {
+        source: "iana",
+        compressible: false,
+        extensions: ["m4a", "mp4a"]
+      },
+      "audio/mp4a-latm": {
+        source: "iana"
+      },
+      "audio/mpa": {
+        source: "iana"
+      },
+      "audio/mpa-robust": {
+        source: "iana"
+      },
+      "audio/mpeg": {
+        source: "iana",
+        compressible: false,
+        extensions: ["mpga", "mp2", "mp2a", "mp3", "m2a", "m3a"]
+      },
+      "audio/mpeg4-generic": {
+        source: "iana"
+      },
+      "audio/musepack": {
+        source: "apache"
+      },
+      "audio/ogg": {
+        source: "iana",
+        compressible: false,
+        extensions: ["oga", "ogg", "spx", "opus"]
+      },
+      "audio/opus": {
+        source: "iana"
+      },
+      "audio/parityfec": {
+        source: "iana"
+      },
+      "audio/pcma": {
+        source: "iana"
+      },
+      "audio/pcma-wb": {
+        source: "iana"
+      },
+      "audio/pcmu": {
+        source: "iana"
+      },
+      "audio/pcmu-wb": {
+        source: "iana"
+      },
+      "audio/prs.sid": {
+        source: "iana"
+      },
+      "audio/qcelp": {
+        source: "iana"
+      },
+      "audio/raptorfec": {
+        source: "iana"
+      },
+      "audio/red": {
+        source: "iana"
+      },
+      "audio/rtp-enc-aescm128": {
+        source: "iana"
+      },
+      "audio/rtp-midi": {
+        source: "iana"
+      },
+      "audio/rtploopback": {
+        source: "iana"
+      },
+      "audio/rtx": {
+        source: "iana"
+      },
+      "audio/s3m": {
+        source: "apache",
+        extensions: ["s3m"]
+      },
+      "audio/scip": {
+        source: "iana"
+      },
+      "audio/silk": {
+        source: "apache",
+        extensions: ["sil"]
+      },
+      "audio/smv": {
+        source: "iana"
+      },
+      "audio/smv-qcp": {
+        source: "iana"
+      },
+      "audio/smv0": {
+        source: "iana"
+      },
+      "audio/sofa": {
+        source: "iana"
+      },
+      "audio/sp-midi": {
+        source: "iana"
+      },
+      "audio/speex": {
+        source: "iana"
+      },
+      "audio/t140c": {
+        source: "iana"
+      },
+      "audio/t38": {
+        source: "iana"
+      },
+      "audio/telephone-event": {
+        source: "iana"
+      },
+      "audio/tetra_acelp": {
+        source: "iana"
+      },
+      "audio/tetra_acelp_bb": {
+        source: "iana"
+      },
+      "audio/tone": {
+        source: "iana"
+      },
+      "audio/tsvcis": {
+        source: "iana"
+      },
+      "audio/uemclip": {
+        source: "iana"
+      },
+      "audio/ulpfec": {
+        source: "iana"
+      },
+      "audio/usac": {
+        source: "iana"
+      },
+      "audio/vdvi": {
+        source: "iana"
+      },
+      "audio/vmr-wb": {
+        source: "iana"
+      },
+      "audio/vnd.3gpp.iufp": {
+        source: "iana"
+      },
+      "audio/vnd.4sb": {
+        source: "iana"
+      },
+      "audio/vnd.audiokoz": {
+        source: "iana"
+      },
+      "audio/vnd.celp": {
+        source: "iana"
+      },
+      "audio/vnd.cisco.nse": {
+        source: "iana"
+      },
+      "audio/vnd.cmles.radio-events": {
+        source: "iana"
+      },
+      "audio/vnd.cns.anp1": {
+        source: "iana"
+      },
+      "audio/vnd.cns.inf1": {
+        source: "iana"
+      },
+      "audio/vnd.dece.audio": {
+        source: "iana",
+        extensions: ["uva", "uvva"]
+      },
+      "audio/vnd.digital-winds": {
+        source: "iana",
+        extensions: ["eol"]
+      },
+      "audio/vnd.dlna.adts": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.heaac.1": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.heaac.2": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.mlp": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.mps": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.pl2": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.pl2x": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.pl2z": {
+        source: "iana"
+      },
+      "audio/vnd.dolby.pulse.1": {
+        source: "iana"
+      },
+      "audio/vnd.dra": {
+        source: "iana",
+        extensions: ["dra"]
+      },
+      "audio/vnd.dts": {
+        source: "iana",
+        extensions: ["dts"]
+      },
+      "audio/vnd.dts.hd": {
+        source: "iana",
+        extensions: ["dtshd"]
+      },
+      "audio/vnd.dts.uhd": {
+        source: "iana"
+      },
+      "audio/vnd.dvb.file": {
+        source: "iana"
+      },
+      "audio/vnd.everad.plj": {
+        source: "iana"
+      },
+      "audio/vnd.hns.audio": {
+        source: "iana"
+      },
+      "audio/vnd.lucent.voice": {
+        source: "iana",
+        extensions: ["lvp"]
+      },
+      "audio/vnd.ms-playready.media.pya": {
+        source: "iana",
+        extensions: ["pya"]
+      },
+      "audio/vnd.nokia.mobile-xmf": {
+        source: "iana"
+      },
+      "audio/vnd.nortel.vbk": {
+        source: "iana"
+      },
+      "audio/vnd.nuera.ecelp4800": {
+        source: "iana",
+        extensions: ["ecelp4800"]
+      },
+      "audio/vnd.nuera.ecelp7470": {
+        source: "iana",
+        extensions: ["ecelp7470"]
+      },
+      "audio/vnd.nuera.ecelp9600": {
+        source: "iana",
+        extensions: ["ecelp9600"]
+      },
+      "audio/vnd.octel.sbc": {
+        source: "iana"
+      },
+      "audio/vnd.presonus.multitrack": {
+        source: "iana"
+      },
+      "audio/vnd.qcelp": {
+        source: "iana"
+      },
+      "audio/vnd.rhetorex.32kadpcm": {
+        source: "iana"
+      },
+      "audio/vnd.rip": {
+        source: "iana",
+        extensions: ["rip"]
+      },
+      "audio/vnd.rn-realaudio": {
+        compressible: false
+      },
+      "audio/vnd.sealedmedia.softseal.mpeg": {
+        source: "iana"
+      },
+      "audio/vnd.vmx.cvsd": {
+        source: "iana"
+      },
+      "audio/vnd.wave": {
+        compressible: false
+      },
+      "audio/vorbis": {
+        source: "iana",
+        compressible: false
+      },
+      "audio/vorbis-config": {
+        source: "iana"
+      },
+      "audio/wav": {
+        compressible: false,
+        extensions: ["wav"]
+      },
+      "audio/wave": {
+        compressible: false,
+        extensions: ["wav"]
+      },
+      "audio/webm": {
+        source: "apache",
+        compressible: false,
+        extensions: ["weba"]
+      },
+      "audio/x-aac": {
+        source: "apache",
+        compressible: false,
+        extensions: ["aac"]
+      },
+      "audio/x-aiff": {
+        source: "apache",
+        extensions: ["aif", "aiff", "aifc"]
+      },
+      "audio/x-caf": {
+        source: "apache",
+        compressible: false,
+        extensions: ["caf"]
+      },
+      "audio/x-flac": {
+        source: "apache",
+        extensions: ["flac"]
+      },
+      "audio/x-m4a": {
+        source: "nginx",
+        extensions: ["m4a"]
+      },
+      "audio/x-matroska": {
+        source: "apache",
+        extensions: ["mka"]
+      },
+      "audio/x-mpegurl": {
+        source: "apache",
+        extensions: ["m3u"]
+      },
+      "audio/x-ms-wax": {
+        source: "apache",
+        extensions: ["wax"]
+      },
+      "audio/x-ms-wma": {
+        source: "apache",
+        extensions: ["wma"]
+      },
+      "audio/x-pn-realaudio": {
+        source: "apache",
+        extensions: ["ram", "ra"]
+      },
+      "audio/x-pn-realaudio-plugin": {
+        source: "apache",
+        extensions: ["rmp"]
+      },
+      "audio/x-realaudio": {
+        source: "nginx",
+        extensions: ["ra"]
+      },
+      "audio/x-tta": {
+        source: "apache"
+      },
+      "audio/x-wav": {
+        source: "apache",
+        extensions: ["wav"]
+      },
+      "audio/xm": {
+        source: "apache",
+        extensions: ["xm"]
+      },
+      "chemical/x-cdx": {
+        source: "apache",
+        extensions: ["cdx"]
+      },
+      "chemical/x-cif": {
+        source: "apache",
+        extensions: ["cif"]
+      },
+      "chemical/x-cmdf": {
+        source: "apache",
+        extensions: ["cmdf"]
+      },
+      "chemical/x-cml": {
+        source: "apache",
+        extensions: ["cml"]
+      },
+      "chemical/x-csml": {
+        source: "apache",
+        extensions: ["csml"]
+      },
+      "chemical/x-pdb": {
+        source: "apache"
+      },
+      "chemical/x-xyz": {
+        source: "apache",
+        extensions: ["xyz"]
+      },
+      "font/collection": {
+        source: "iana",
+        extensions: ["ttc"]
+      },
+      "font/otf": {
+        source: "iana",
+        compressible: true,
+        extensions: ["otf"]
+      },
+      "font/sfnt": {
+        source: "iana"
+      },
+      "font/ttf": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ttf"]
+      },
+      "font/woff": {
+        source: "iana",
+        extensions: ["woff"]
+      },
+      "font/woff2": {
+        source: "iana",
+        extensions: ["woff2"]
+      },
+      "image/aces": {
+        source: "iana",
+        extensions: ["exr"]
+      },
+      "image/apng": {
+        compressible: false,
+        extensions: ["apng"]
+      },
+      "image/avci": {
+        source: "iana",
+        extensions: ["avci"]
+      },
+      "image/avcs": {
+        source: "iana",
+        extensions: ["avcs"]
+      },
+      "image/avif": {
+        source: "iana",
+        compressible: false,
+        extensions: ["avif"]
+      },
+      "image/bmp": {
+        source: "iana",
+        compressible: true,
+        extensions: ["bmp"]
+      },
+      "image/cgm": {
+        source: "iana",
+        extensions: ["cgm"]
+      },
+      "image/dicom-rle": {
+        source: "iana",
+        extensions: ["drle"]
+      },
+      "image/emf": {
+        source: "iana",
+        extensions: ["emf"]
+      },
+      "image/fits": {
+        source: "iana",
+        extensions: ["fits"]
+      },
+      "image/g3fax": {
+        source: "iana",
+        extensions: ["g3"]
+      },
+      "image/gif": {
+        source: "iana",
+        compressible: false,
+        extensions: ["gif"]
+      },
+      "image/heic": {
+        source: "iana",
+        extensions: ["heic"]
+      },
+      "image/heic-sequence": {
+        source: "iana",
+        extensions: ["heics"]
+      },
+      "image/heif": {
+        source: "iana",
+        extensions: ["heif"]
+      },
+      "image/heif-sequence": {
+        source: "iana",
+        extensions: ["heifs"]
+      },
+      "image/hej2k": {
+        source: "iana",
+        extensions: ["hej2"]
+      },
+      "image/hsj2": {
+        source: "iana",
+        extensions: ["hsj2"]
+      },
+      "image/ief": {
+        source: "iana",
+        extensions: ["ief"]
+      },
+      "image/jls": {
+        source: "iana",
+        extensions: ["jls"]
+      },
+      "image/jp2": {
+        source: "iana",
+        compressible: false,
+        extensions: ["jp2", "jpg2"]
+      },
+      "image/jpeg": {
+        source: "iana",
+        compressible: false,
+        extensions: ["jpeg", "jpg", "jpe"]
+      },
+      "image/jph": {
+        source: "iana",
+        extensions: ["jph"]
+      },
+      "image/jphc": {
+        source: "iana",
+        extensions: ["jhc"]
+      },
+      "image/jpm": {
+        source: "iana",
+        compressible: false,
+        extensions: ["jpm"]
+      },
+      "image/jpx": {
+        source: "iana",
+        compressible: false,
+        extensions: ["jpx", "jpf"]
+      },
+      "image/jxr": {
+        source: "iana",
+        extensions: ["jxr"]
+      },
+      "image/jxra": {
+        source: "iana",
+        extensions: ["jxra"]
+      },
+      "image/jxrs": {
+        source: "iana",
+        extensions: ["jxrs"]
+      },
+      "image/jxs": {
+        source: "iana",
+        extensions: ["jxs"]
+      },
+      "image/jxsc": {
+        source: "iana",
+        extensions: ["jxsc"]
+      },
+      "image/jxsi": {
+        source: "iana",
+        extensions: ["jxsi"]
+      },
+      "image/jxss": {
+        source: "iana",
+        extensions: ["jxss"]
+      },
+      "image/ktx": {
+        source: "iana",
+        extensions: ["ktx"]
+      },
+      "image/ktx2": {
+        source: "iana",
+        extensions: ["ktx2"]
+      },
+      "image/naplps": {
+        source: "iana"
+      },
+      "image/pjpeg": {
+        compressible: false
+      },
+      "image/png": {
+        source: "iana",
+        compressible: false,
+        extensions: ["png"]
+      },
+      "image/prs.btif": {
+        source: "iana",
+        extensions: ["btif"]
+      },
+      "image/prs.pti": {
+        source: "iana",
+        extensions: ["pti"]
+      },
+      "image/pwg-raster": {
+        source: "iana"
+      },
+      "image/sgi": {
+        source: "apache",
+        extensions: ["sgi"]
+      },
+      "image/svg+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["svg", "svgz"]
+      },
+      "image/t38": {
+        source: "iana",
+        extensions: ["t38"]
+      },
+      "image/tiff": {
+        source: "iana",
+        compressible: false,
+        extensions: ["tif", "tiff"]
+      },
+      "image/tiff-fx": {
+        source: "iana",
+        extensions: ["tfx"]
+      },
+      "image/vnd.adobe.photoshop": {
+        source: "iana",
+        compressible: true,
+        extensions: ["psd"]
+      },
+      "image/vnd.airzip.accelerator.azv": {
+        source: "iana",
+        extensions: ["azv"]
+      },
+      "image/vnd.cns.inf2": {
+        source: "iana"
+      },
+      "image/vnd.dece.graphic": {
+        source: "iana",
+        extensions: ["uvi", "uvvi", "uvg", "uvvg"]
+      },
+      "image/vnd.djvu": {
+        source: "iana",
+        extensions: ["djvu", "djv"]
+      },
+      "image/vnd.dvb.subtitle": {
+        source: "iana",
+        extensions: ["sub"]
+      },
+      "image/vnd.dwg": {
+        source: "iana",
+        extensions: ["dwg"]
+      },
+      "image/vnd.dxf": {
+        source: "iana",
+        extensions: ["dxf"]
+      },
+      "image/vnd.fastbidsheet": {
+        source: "iana",
+        extensions: ["fbs"]
+      },
+      "image/vnd.fpx": {
+        source: "iana",
+        extensions: ["fpx"]
+      },
+      "image/vnd.fst": {
+        source: "iana",
+        extensions: ["fst"]
+      },
+      "image/vnd.fujixerox.edmics-mmr": {
+        source: "iana",
+        extensions: ["mmr"]
+      },
+      "image/vnd.fujixerox.edmics-rlc": {
+        source: "iana",
+        extensions: ["rlc"]
+      },
+      "image/vnd.globalgraphics.pgb": {
+        source: "iana"
+      },
+      "image/vnd.microsoft.icon": {
+        source: "iana",
+        compressible: true,
+        extensions: ["ico"]
+      },
+      "image/vnd.mix": {
+        source: "iana"
+      },
+      "image/vnd.mozilla.apng": {
+        source: "iana"
+      },
+      "image/vnd.ms-dds": {
+        compressible: true,
+        extensions: ["dds"]
+      },
+      "image/vnd.ms-modi": {
+        source: "iana",
+        extensions: ["mdi"]
+      },
+      "image/vnd.ms-photo": {
+        source: "apache",
+        extensions: ["wdp"]
+      },
+      "image/vnd.net-fpx": {
+        source: "iana",
+        extensions: ["npx"]
+      },
+      "image/vnd.pco.b16": {
+        source: "iana",
+        extensions: ["b16"]
+      },
+      "image/vnd.radiance": {
+        source: "iana"
+      },
+      "image/vnd.sealed.png": {
+        source: "iana"
+      },
+      "image/vnd.sealedmedia.softseal.gif": {
+        source: "iana"
+      },
+      "image/vnd.sealedmedia.softseal.jpg": {
+        source: "iana"
+      },
+      "image/vnd.svf": {
+        source: "iana"
+      },
+      "image/vnd.tencent.tap": {
+        source: "iana",
+        extensions: ["tap"]
+      },
+      "image/vnd.valve.source.texture": {
+        source: "iana",
+        extensions: ["vtf"]
+      },
+      "image/vnd.wap.wbmp": {
+        source: "iana",
+        extensions: ["wbmp"]
+      },
+      "image/vnd.xiff": {
+        source: "iana",
+        extensions: ["xif"]
+      },
+      "image/vnd.zbrush.pcx": {
+        source: "iana",
+        extensions: ["pcx"]
+      },
+      "image/webp": {
+        source: "apache",
+        extensions: ["webp"]
+      },
+      "image/wmf": {
+        source: "iana",
+        extensions: ["wmf"]
+      },
+      "image/x-3ds": {
+        source: "apache",
+        extensions: ["3ds"]
+      },
+      "image/x-cmu-raster": {
+        source: "apache",
+        extensions: ["ras"]
+      },
+      "image/x-cmx": {
+        source: "apache",
+        extensions: ["cmx"]
+      },
+      "image/x-freehand": {
+        source: "apache",
+        extensions: ["fh", "fhc", "fh4", "fh5", "fh7"]
+      },
+      "image/x-icon": {
+        source: "apache",
+        compressible: true,
+        extensions: ["ico"]
+      },
+      "image/x-jng": {
+        source: "nginx",
+        extensions: ["jng"]
+      },
+      "image/x-mrsid-image": {
+        source: "apache",
+        extensions: ["sid"]
+      },
+      "image/x-ms-bmp": {
+        source: "nginx",
+        compressible: true,
+        extensions: ["bmp"]
+      },
+      "image/x-pcx": {
+        source: "apache",
+        extensions: ["pcx"]
+      },
+      "image/x-pict": {
+        source: "apache",
+        extensions: ["pic", "pct"]
+      },
+      "image/x-portable-anymap": {
+        source: "apache",
+        extensions: ["pnm"]
+      },
+      "image/x-portable-bitmap": {
+        source: "apache",
+        extensions: ["pbm"]
+      },
+      "image/x-portable-graymap": {
+        source: "apache",
+        extensions: ["pgm"]
+      },
+      "image/x-portable-pixmap": {
+        source: "apache",
+        extensions: ["ppm"]
+      },
+      "image/x-rgb": {
+        source: "apache",
+        extensions: ["rgb"]
+      },
+      "image/x-tga": {
+        source: "apache",
+        extensions: ["tga"]
+      },
+      "image/x-xbitmap": {
+        source: "apache",
+        extensions: ["xbm"]
+      },
+      "image/x-xcf": {
+        compressible: false
+      },
+      "image/x-xpixmap": {
+        source: "apache",
+        extensions: ["xpm"]
+      },
+      "image/x-xwindowdump": {
+        source: "apache",
+        extensions: ["xwd"]
+      },
+      "message/cpim": {
+        source: "iana"
+      },
+      "message/delivery-status": {
+        source: "iana"
+      },
+      "message/disposition-notification": {
+        source: "iana",
+        extensions: [
+          "disposition-notification"
+        ]
+      },
+      "message/external-body": {
+        source: "iana"
+      },
+      "message/feedback-report": {
+        source: "iana"
+      },
+      "message/global": {
+        source: "iana",
+        extensions: ["u8msg"]
+      },
+      "message/global-delivery-status": {
+        source: "iana",
+        extensions: ["u8dsn"]
+      },
+      "message/global-disposition-notification": {
+        source: "iana",
+        extensions: ["u8mdn"]
+      },
+      "message/global-headers": {
+        source: "iana",
+        extensions: ["u8hdr"]
+      },
+      "message/http": {
+        source: "iana",
+        compressible: false
+      },
+      "message/imdn+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "message/news": {
+        source: "iana"
+      },
+      "message/partial": {
+        source: "iana",
+        compressible: false
+      },
+      "message/rfc822": {
+        source: "iana",
+        compressible: true,
+        extensions: ["eml", "mime"]
+      },
+      "message/s-http": {
+        source: "iana"
+      },
+      "message/sip": {
+        source: "iana"
+      },
+      "message/sipfrag": {
+        source: "iana"
+      },
+      "message/tracking-status": {
+        source: "iana"
+      },
+      "message/vnd.si.simp": {
+        source: "iana"
+      },
+      "message/vnd.wfa.wsc": {
+        source: "iana",
+        extensions: ["wsc"]
+      },
+      "model/3mf": {
+        source: "iana",
+        extensions: ["3mf"]
+      },
+      "model/e57": {
+        source: "iana"
+      },
+      "model/gltf+json": {
+        source: "iana",
+        compressible: true,
+        extensions: ["gltf"]
+      },
+      "model/gltf-binary": {
+        source: "iana",
+        compressible: true,
+        extensions: ["glb"]
+      },
+      "model/iges": {
+        source: "iana",
+        compressible: false,
+        extensions: ["igs", "iges"]
+      },
+      "model/mesh": {
+        source: "iana",
+        compressible: false,
+        extensions: ["msh", "mesh", "silo"]
+      },
+      "model/mtl": {
+        source: "iana",
+        extensions: ["mtl"]
+      },
+      "model/obj": {
+        source: "iana",
+        extensions: ["obj"]
+      },
+      "model/step": {
+        source: "iana"
+      },
+      "model/step+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["stpx"]
+      },
+      "model/step+zip": {
+        source: "iana",
+        compressible: false,
+        extensions: ["stpz"]
+      },
+      "model/step-xml+zip": {
+        source: "iana",
+        compressible: false,
+        extensions: ["stpxz"]
+      },
+      "model/stl": {
+        source: "iana",
+        extensions: ["stl"]
+      },
+      "model/vnd.collada+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["dae"]
+      },
+      "model/vnd.dwf": {
+        source: "iana",
+        extensions: ["dwf"]
+      },
+      "model/vnd.flatland.3dml": {
+        source: "iana"
+      },
+      "model/vnd.gdl": {
+        source: "iana",
+        extensions: ["gdl"]
+      },
+      "model/vnd.gs-gdl": {
+        source: "apache"
+      },
+      "model/vnd.gs.gdl": {
+        source: "iana"
+      },
+      "model/vnd.gtw": {
+        source: "iana",
+        extensions: ["gtw"]
+      },
+      "model/vnd.moml+xml": {
+        source: "iana",
+        compressible: true
+      },
+      "model/vnd.mts": {
+        source: "iana",
+        extensions: ["mts"]
+      },
+      "model/vnd.opengex": {
+        source: "iana",
+        extensions: ["ogex"]
+      },
+      "model/vnd.parasolid.transmit.binary": {
+        source: "iana",
+        extensions: ["x_b"]
+      },
+      "model/vnd.parasolid.transmit.text": {
+        source: "iana",
+        extensions: ["x_t"]
+      },
+      "model/vnd.pytha.pyox": {
+        source: "iana"
+      },
+      "model/vnd.rosette.annotated-data-model": {
+        source: "iana"
+      },
+      "model/vnd.sap.vds": {
+        source: "iana",
+        extensions: ["vds"]
+      },
+      "model/vnd.usdz+zip": {
+        source: "iana",
+        compressible: false,
+        extensions: ["usdz"]
+      },
+      "model/vnd.valve.source.compiled-map": {
+        source: "iana",
+        extensions: ["bsp"]
+      },
+      "model/vnd.vtu": {
+        source: "iana",
+        extensions: ["vtu"]
+      },
+      "model/vrml": {
+        source: "iana",
+        compressible: false,
+        extensions: ["wrl", "vrml"]
+      },
+      "model/x3d+binary": {
+        source: "apache",
+        compressible: false,
+        extensions: ["x3db", "x3dbz"]
+      },
+      "model/x3d+fastinfoset": {
+        source: "iana",
+        extensions: ["x3db"]
+      },
+      "model/x3d+vrml": {
+        source: "apache",
+        compressible: false,
+        extensions: ["x3dv", "x3dvz"]
+      },
+      "model/x3d+xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["x3d", "x3dz"]
+      },
+      "model/x3d-vrml": {
+        source: "iana",
+        extensions: ["x3dv"]
+      },
+      "multipart/alternative": {
+        source: "iana",
+        compressible: false
+      },
+      "multipart/appledouble": {
+        source: "iana"
+      },
+      "multipart/byteranges": {
+        source: "iana"
+      },
+      "multipart/digest": {
+        source: "iana"
+      },
+      "multipart/encrypted": {
+        source: "iana",
+        compressible: false
+      },
+      "multipart/form-data": {
+        source: "iana",
+        compressible: false
+      },
+      "multipart/header-set": {
+        source: "iana"
+      },
+      "multipart/mixed": {
+        source: "iana"
+      },
+      "multipart/multilingual": {
+        source: "iana"
+      },
+      "multipart/parallel": {
+        source: "iana"
+      },
+      "multipart/related": {
+        source: "iana",
+        compressible: false
+      },
+      "multipart/report": {
+        source: "iana"
+      },
+      "multipart/signed": {
+        source: "iana",
+        compressible: false
+      },
+      "multipart/vnd.bint.med-plus": {
+        source: "iana"
+      },
+      "multipart/voice-message": {
+        source: "iana"
+      },
+      "multipart/x-mixed-replace": {
+        source: "iana"
+      },
+      "text/1d-interleaved-parityfec": {
+        source: "iana"
+      },
+      "text/cache-manifest": {
+        source: "iana",
+        compressible: true,
+        extensions: ["appcache", "manifest"]
+      },
+      "text/calendar": {
+        source: "iana",
+        extensions: ["ics", "ifb"]
+      },
+      "text/calender": {
+        compressible: true
+      },
+      "text/cmd": {
+        compressible: true
+      },
+      "text/coffeescript": {
+        extensions: ["coffee", "litcoffee"]
+      },
+      "text/cql": {
+        source: "iana"
+      },
+      "text/cql-expression": {
+        source: "iana"
+      },
+      "text/cql-identifier": {
+        source: "iana"
+      },
+      "text/css": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["css"]
+      },
+      "text/csv": {
+        source: "iana",
+        compressible: true,
+        extensions: ["csv"]
+      },
+      "text/csv-schema": {
+        source: "iana"
+      },
+      "text/directory": {
+        source: "iana"
+      },
+      "text/dns": {
+        source: "iana"
+      },
+      "text/ecmascript": {
+        source: "iana"
+      },
+      "text/encaprtp": {
+        source: "iana"
+      },
+      "text/enriched": {
+        source: "iana"
+      },
+      "text/fhirpath": {
+        source: "iana"
+      },
+      "text/flexfec": {
+        source: "iana"
+      },
+      "text/fwdred": {
+        source: "iana"
+      },
+      "text/gff3": {
+        source: "iana"
+      },
+      "text/grammar-ref-list": {
+        source: "iana"
+      },
+      "text/html": {
+        source: "iana",
+        compressible: true,
+        extensions: ["html", "htm", "shtml"]
+      },
+      "text/jade": {
+        extensions: ["jade"]
+      },
+      "text/javascript": {
+        source: "iana",
+        compressible: true
+      },
+      "text/jcr-cnd": {
+        source: "iana"
+      },
+      "text/jsx": {
+        compressible: true,
+        extensions: ["jsx"]
+      },
+      "text/less": {
+        compressible: true,
+        extensions: ["less"]
+      },
+      "text/markdown": {
+        source: "iana",
+        compressible: true,
+        extensions: ["markdown", "md"]
+      },
+      "text/mathml": {
+        source: "nginx",
+        extensions: ["mml"]
+      },
+      "text/mdx": {
+        compressible: true,
+        extensions: ["mdx"]
+      },
+      "text/mizar": {
+        source: "iana"
+      },
+      "text/n3": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["n3"]
+      },
+      "text/parameters": {
+        source: "iana",
+        charset: "UTF-8"
+      },
+      "text/parityfec": {
+        source: "iana"
+      },
+      "text/plain": {
+        source: "iana",
+        compressible: true,
+        extensions: ["txt", "text", "conf", "def", "list", "log", "in", "ini"]
+      },
+      "text/provenance-notation": {
+        source: "iana",
+        charset: "UTF-8"
+      },
+      "text/prs.fallenstein.rst": {
+        source: "iana"
+      },
+      "text/prs.lines.tag": {
+        source: "iana",
+        extensions: ["dsc"]
+      },
+      "text/prs.prop.logic": {
+        source: "iana"
+      },
+      "text/raptorfec": {
+        source: "iana"
+      },
+      "text/red": {
+        source: "iana"
+      },
+      "text/rfc822-headers": {
+        source: "iana"
+      },
+      "text/richtext": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rtx"]
+      },
+      "text/rtf": {
+        source: "iana",
+        compressible: true,
+        extensions: ["rtf"]
+      },
+      "text/rtp-enc-aescm128": {
+        source: "iana"
+      },
+      "text/rtploopback": {
+        source: "iana"
+      },
+      "text/rtx": {
+        source: "iana"
+      },
+      "text/sgml": {
+        source: "iana",
+        extensions: ["sgml", "sgm"]
+      },
+      "text/shaclc": {
+        source: "iana"
+      },
+      "text/shex": {
+        source: "iana",
+        extensions: ["shex"]
+      },
+      "text/slim": {
+        extensions: ["slim", "slm"]
+      },
+      "text/spdx": {
+        source: "iana",
+        extensions: ["spdx"]
+      },
+      "text/strings": {
+        source: "iana"
+      },
+      "text/stylus": {
+        extensions: ["stylus", "styl"]
+      },
+      "text/t140": {
+        source: "iana"
+      },
+      "text/tab-separated-values": {
+        source: "iana",
+        compressible: true,
+        extensions: ["tsv"]
+      },
+      "text/troff": {
+        source: "iana",
+        extensions: ["t", "tr", "roff", "man", "me", "ms"]
+      },
+      "text/turtle": {
+        source: "iana",
+        charset: "UTF-8",
+        extensions: ["ttl"]
+      },
+      "text/ulpfec": {
+        source: "iana"
+      },
+      "text/uri-list": {
+        source: "iana",
+        compressible: true,
+        extensions: ["uri", "uris", "urls"]
+      },
+      "text/vcard": {
+        source: "iana",
+        compressible: true,
+        extensions: ["vcard"]
+      },
+      "text/vnd.a": {
+        source: "iana"
+      },
+      "text/vnd.abc": {
+        source: "iana"
+      },
+      "text/vnd.ascii-art": {
+        source: "iana"
+      },
+      "text/vnd.curl": {
+        source: "iana",
+        extensions: ["curl"]
+      },
+      "text/vnd.curl.dcurl": {
+        source: "apache",
+        extensions: ["dcurl"]
+      },
+      "text/vnd.curl.mcurl": {
+        source: "apache",
+        extensions: ["mcurl"]
+      },
+      "text/vnd.curl.scurl": {
+        source: "apache",
+        extensions: ["scurl"]
+      },
+      "text/vnd.debian.copyright": {
+        source: "iana",
+        charset: "UTF-8"
+      },
+      "text/vnd.dmclientscript": {
+        source: "iana"
+      },
+      "text/vnd.dvb.subtitle": {
+        source: "iana",
+        extensions: ["sub"]
+      },
+      "text/vnd.esmertec.theme-descriptor": {
+        source: "iana",
+        charset: "UTF-8"
+      },
+      "text/vnd.familysearch.gedcom": {
+        source: "iana",
+        extensions: ["ged"]
+      },
+      "text/vnd.ficlab.flt": {
+        source: "iana"
+      },
+      "text/vnd.fly": {
+        source: "iana",
+        extensions: ["fly"]
+      },
+      "text/vnd.fmi.flexstor": {
+        source: "iana",
+        extensions: ["flx"]
+      },
+      "text/vnd.gml": {
+        source: "iana"
+      },
+      "text/vnd.graphviz": {
+        source: "iana",
+        extensions: ["gv"]
+      },
+      "text/vnd.hans": {
+        source: "iana"
+      },
+      "text/vnd.hgl": {
+        source: "iana"
+      },
+      "text/vnd.in3d.3dml": {
+        source: "iana",
+        extensions: ["3dml"]
+      },
+      "text/vnd.in3d.spot": {
+        source: "iana",
+        extensions: ["spot"]
+      },
+      "text/vnd.iptc.newsml": {
+        source: "iana"
+      },
+      "text/vnd.iptc.nitf": {
+        source: "iana"
+      },
+      "text/vnd.latex-z": {
+        source: "iana"
+      },
+      "text/vnd.motorola.reflex": {
+        source: "iana"
+      },
+      "text/vnd.ms-mediapackage": {
+        source: "iana"
+      },
+      "text/vnd.net2phone.commcenter.command": {
+        source: "iana"
+      },
+      "text/vnd.radisys.msml-basic-layout": {
+        source: "iana"
+      },
+      "text/vnd.senx.warpscript": {
+        source: "iana"
+      },
+      "text/vnd.si.uricatalogue": {
+        source: "iana"
+      },
+      "text/vnd.sosi": {
+        source: "iana"
+      },
+      "text/vnd.sun.j2me.app-descriptor": {
+        source: "iana",
+        charset: "UTF-8",
+        extensions: ["jad"]
+      },
+      "text/vnd.trolltech.linguist": {
+        source: "iana",
+        charset: "UTF-8"
+      },
+      "text/vnd.wap.si": {
+        source: "iana"
+      },
+      "text/vnd.wap.sl": {
+        source: "iana"
+      },
+      "text/vnd.wap.wml": {
+        source: "iana",
+        extensions: ["wml"]
+      },
+      "text/vnd.wap.wmlscript": {
+        source: "iana",
+        extensions: ["wmls"]
+      },
+      "text/vtt": {
+        source: "iana",
+        charset: "UTF-8",
+        compressible: true,
+        extensions: ["vtt"]
+      },
+      "text/x-asm": {
+        source: "apache",
+        extensions: ["s", "asm"]
+      },
+      "text/x-c": {
+        source: "apache",
+        extensions: ["c", "cc", "cxx", "cpp", "h", "hh", "dic"]
+      },
+      "text/x-component": {
+        source: "nginx",
+        extensions: ["htc"]
+      },
+      "text/x-fortran": {
+        source: "apache",
+        extensions: ["f", "for", "f77", "f90"]
+      },
+      "text/x-gwt-rpc": {
+        compressible: true
+      },
+      "text/x-handlebars-template": {
+        extensions: ["hbs"]
+      },
+      "text/x-java-source": {
+        source: "apache",
+        extensions: ["java"]
+      },
+      "text/x-jquery-tmpl": {
+        compressible: true
+      },
+      "text/x-lua": {
+        extensions: ["lua"]
+      },
+      "text/x-markdown": {
+        compressible: true,
+        extensions: ["mkd"]
+      },
+      "text/x-nfo": {
+        source: "apache",
+        extensions: ["nfo"]
+      },
+      "text/x-opml": {
+        source: "apache",
+        extensions: ["opml"]
+      },
+      "text/x-org": {
+        compressible: true,
+        extensions: ["org"]
+      },
+      "text/x-pascal": {
+        source: "apache",
+        extensions: ["p", "pas"]
+      },
+      "text/x-processing": {
+        compressible: true,
+        extensions: ["pde"]
+      },
+      "text/x-sass": {
+        extensions: ["sass"]
+      },
+      "text/x-scss": {
+        extensions: ["scss"]
+      },
+      "text/x-setext": {
+        source: "apache",
+        extensions: ["etx"]
+      },
+      "text/x-sfv": {
+        source: "apache",
+        extensions: ["sfv"]
+      },
+      "text/x-suse-ymp": {
+        compressible: true,
+        extensions: ["ymp"]
+      },
+      "text/x-uuencode": {
+        source: "apache",
+        extensions: ["uu"]
+      },
+      "text/x-vcalendar": {
+        source: "apache",
+        extensions: ["vcs"]
+      },
+      "text/x-vcard": {
+        source: "apache",
+        extensions: ["vcf"]
+      },
+      "text/xml": {
+        source: "iana",
+        compressible: true,
+        extensions: ["xml"]
+      },
+      "text/xml-external-parsed-entity": {
+        source: "iana"
+      },
+      "text/yaml": {
+        compressible: true,
+        extensions: ["yaml", "yml"]
+      },
+      "video/1d-interleaved-parityfec": {
+        source: "iana"
+      },
+      "video/3gpp": {
+        source: "iana",
+        extensions: ["3gp", "3gpp"]
+      },
+      "video/3gpp-tt": {
+        source: "iana"
+      },
+      "video/3gpp2": {
+        source: "iana",
+        extensions: ["3g2"]
+      },
+      "video/av1": {
+        source: "iana"
+      },
+      "video/bmpeg": {
+        source: "iana"
+      },
+      "video/bt656": {
+        source: "iana"
+      },
+      "video/celb": {
+        source: "iana"
+      },
+      "video/dv": {
+        source: "iana"
+      },
+      "video/encaprtp": {
+        source: "iana"
+      },
+      "video/ffv1": {
+        source: "iana"
+      },
+      "video/flexfec": {
+        source: "iana"
+      },
+      "video/h261": {
+        source: "iana",
+        extensions: ["h261"]
+      },
+      "video/h263": {
+        source: "iana",
+        extensions: ["h263"]
+      },
+      "video/h263-1998": {
+        source: "iana"
+      },
+      "video/h263-2000": {
+        source: "iana"
+      },
+      "video/h264": {
+        source: "iana",
+        extensions: ["h264"]
+      },
+      "video/h264-rcdo": {
+        source: "iana"
+      },
+      "video/h264-svc": {
+        source: "iana"
+      },
+      "video/h265": {
+        source: "iana"
+      },
+      "video/iso.segment": {
+        source: "iana",
+        extensions: ["m4s"]
+      },
+      "video/jpeg": {
+        source: "iana",
+        extensions: ["jpgv"]
+      },
+      "video/jpeg2000": {
+        source: "iana"
+      },
+      "video/jpm": {
+        source: "apache",
+        extensions: ["jpm", "jpgm"]
+      },
+      "video/jxsv": {
+        source: "iana"
+      },
+      "video/mj2": {
+        source: "iana",
+        extensions: ["mj2", "mjp2"]
+      },
+      "video/mp1s": {
+        source: "iana"
+      },
+      "video/mp2p": {
+        source: "iana"
+      },
+      "video/mp2t": {
+        source: "iana",
+        extensions: ["ts"]
+      },
+      "video/mp4": {
+        source: "iana",
+        compressible: false,
+        extensions: ["mp4", "mp4v", "mpg4"]
+      },
+      "video/mp4v-es": {
+        source: "iana"
+      },
+      "video/mpeg": {
+        source: "iana",
+        compressible: false,
+        extensions: ["mpeg", "mpg", "mpe", "m1v", "m2v"]
+      },
+      "video/mpeg4-generic": {
+        source: "iana"
+      },
+      "video/mpv": {
+        source: "iana"
+      },
+      "video/nv": {
+        source: "iana"
+      },
+      "video/ogg": {
+        source: "iana",
+        compressible: false,
+        extensions: ["ogv"]
+      },
+      "video/parityfec": {
+        source: "iana"
+      },
+      "video/pointer": {
+        source: "iana"
+      },
+      "video/quicktime": {
+        source: "iana",
+        compressible: false,
+        extensions: ["qt", "mov"]
+      },
+      "video/raptorfec": {
+        source: "iana"
+      },
+      "video/raw": {
+        source: "iana"
+      },
+      "video/rtp-enc-aescm128": {
+        source: "iana"
+      },
+      "video/rtploopback": {
+        source: "iana"
+      },
+      "video/rtx": {
+        source: "iana"
+      },
+      "video/scip": {
+        source: "iana"
+      },
+      "video/smpte291": {
+        source: "iana"
+      },
+      "video/smpte292m": {
+        source: "iana"
+      },
+      "video/ulpfec": {
+        source: "iana"
+      },
+      "video/vc1": {
+        source: "iana"
+      },
+      "video/vc2": {
+        source: "iana"
+      },
+      "video/vnd.cctv": {
+        source: "iana"
+      },
+      "video/vnd.dece.hd": {
+        source: "iana",
+        extensions: ["uvh", "uvvh"]
+      },
+      "video/vnd.dece.mobile": {
+        source: "iana",
+        extensions: ["uvm", "uvvm"]
+      },
+      "video/vnd.dece.mp4": {
+        source: "iana"
+      },
+      "video/vnd.dece.pd": {
+        source: "iana",
+        extensions: ["uvp", "uvvp"]
+      },
+      "video/vnd.dece.sd": {
+        source: "iana",
+        extensions: ["uvs", "uvvs"]
+      },
+      "video/vnd.dece.video": {
+        source: "iana",
+        extensions: ["uvv", "uvvv"]
+      },
+      "video/vnd.directv.mpeg": {
+        source: "iana"
+      },
+      "video/vnd.directv.mpeg-tts": {
+        source: "iana"
+      },
+      "video/vnd.dlna.mpeg-tts": {
+        source: "iana"
+      },
+      "video/vnd.dvb.file": {
+        source: "iana",
+        extensions: ["dvb"]
+      },
+      "video/vnd.fvt": {
+        source: "iana",
+        extensions: ["fvt"]
+      },
+      "video/vnd.hns.video": {
+        source: "iana"
+      },
+      "video/vnd.iptvforum.1dparityfec-1010": {
+        source: "iana"
+      },
+      "video/vnd.iptvforum.1dparityfec-2005": {
+        source: "iana"
+      },
+      "video/vnd.iptvforum.2dparityfec-1010": {
+        source: "iana"
+      },
+      "video/vnd.iptvforum.2dparityfec-2005": {
+        source: "iana"
+      },
+      "video/vnd.iptvforum.ttsavc": {
+        source: "iana"
+      },
+      "video/vnd.iptvforum.ttsmpeg2": {
+        source: "iana"
+      },
+      "video/vnd.motorola.video": {
+        source: "iana"
+      },
+      "video/vnd.motorola.videop": {
+        source: "iana"
+      },
+      "video/vnd.mpegurl": {
+        source: "iana",
+        extensions: ["mxu", "m4u"]
+      },
+      "video/vnd.ms-playready.media.pyv": {
+        source: "iana",
+        extensions: ["pyv"]
+      },
+      "video/vnd.nokia.interleaved-multimedia": {
+        source: "iana"
+      },
+      "video/vnd.nokia.mp4vr": {
+        source: "iana"
+      },
+      "video/vnd.nokia.videovoip": {
+        source: "iana"
+      },
+      "video/vnd.objectvideo": {
+        source: "iana"
+      },
+      "video/vnd.radgamettools.bink": {
+        source: "iana"
+      },
+      "video/vnd.radgamettools.smacker": {
+        source: "iana"
+      },
+      "video/vnd.sealed.mpeg1": {
+        source: "iana"
+      },
+      "video/vnd.sealed.mpeg4": {
+        source: "iana"
+      },
+      "video/vnd.sealed.swf": {
+        source: "iana"
+      },
+      "video/vnd.sealedmedia.softseal.mov": {
+        source: "iana"
+      },
+      "video/vnd.uvvu.mp4": {
+        source: "iana",
+        extensions: ["uvu", "uvvu"]
+      },
+      "video/vnd.vivo": {
+        source: "iana",
+        extensions: ["viv"]
+      },
+      "video/vnd.youtube.yt": {
+        source: "iana"
+      },
+      "video/vp8": {
+        source: "iana"
+      },
+      "video/vp9": {
+        source: "iana"
+      },
+      "video/webm": {
+        source: "apache",
+        compressible: false,
+        extensions: ["webm"]
+      },
+      "video/x-f4v": {
+        source: "apache",
+        extensions: ["f4v"]
+      },
+      "video/x-fli": {
+        source: "apache",
+        extensions: ["fli"]
+      },
+      "video/x-flv": {
+        source: "apache",
+        compressible: false,
+        extensions: ["flv"]
+      },
+      "video/x-m4v": {
+        source: "apache",
+        extensions: ["m4v"]
+      },
+      "video/x-matroska": {
+        source: "apache",
+        compressible: false,
+        extensions: ["mkv", "mk3d", "mks"]
+      },
+      "video/x-mng": {
+        source: "apache",
+        extensions: ["mng"]
+      },
+      "video/x-ms-asf": {
+        source: "apache",
+        extensions: ["asf", "asx"]
+      },
+      "video/x-ms-vob": {
+        source: "apache",
+        extensions: ["vob"]
+      },
+      "video/x-ms-wm": {
+        source: "apache",
+        extensions: ["wm"]
+      },
+      "video/x-ms-wmv": {
+        source: "apache",
+        compressible: false,
+        extensions: ["wmv"]
+      },
+      "video/x-ms-wmx": {
+        source: "apache",
+        extensions: ["wmx"]
+      },
+      "video/x-ms-wvx": {
+        source: "apache",
+        extensions: ["wvx"]
+      },
+      "video/x-msvideo": {
+        source: "apache",
+        extensions: ["avi"]
+      },
+      "video/x-sgi-movie": {
+        source: "apache",
+        extensions: ["movie"]
+      },
+      "video/x-smv": {
+        source: "apache",
+        extensions: ["smv"]
+      },
+      "x-conference/x-cooltalk": {
+        source: "apache",
+        extensions: ["ice"]
+      },
+      "x-shader/x-fragment": {
+        compressible: true
+      },
+      "x-shader/x-vertex": {
+        compressible: true
+      }
+    };
+  }
+});
+
+// backend/node_modules/mime-db/index.js
+var require_mime_db = __commonJS({
+  "backend/node_modules/mime-db/index.js"(exports2, module2) {
+    module2.exports = require_db2();
+  }
+});
+
+// backend/node_modules/mime-types/index.js
+var require_mime_types = __commonJS({
+  "backend/node_modules/mime-types/index.js"(exports2) {
+    "use strict";
+    var db = require_mime_db();
+    var extname = require("path").extname;
+    var EXTRACT_TYPE_REGEXP = /^\s*([^;\s]*)(?:;|\s|$)/;
+    var TEXT_TYPE_REGEXP = /^text\//i;
+    exports2.charset = charset;
+    exports2.charsets = { lookup: charset };
+    exports2.contentType = contentType;
+    exports2.extension = extension;
+    exports2.extensions = /* @__PURE__ */ Object.create(null);
+    exports2.lookup = lookup;
+    exports2.types = /* @__PURE__ */ Object.create(null);
+    populateMaps(exports2.extensions, exports2.types);
+    function charset(type) {
+      if (!type || typeof type !== "string") {
+        return false;
+      }
+      var match = EXTRACT_TYPE_REGEXP.exec(type);
+      var mime = match && db[match[1].toLowerCase()];
+      if (mime && mime.charset) {
+        return mime.charset;
+      }
+      if (match && TEXT_TYPE_REGEXP.test(match[1])) {
+        return "UTF-8";
+      }
+      return false;
+    }
+    function contentType(str) {
+      if (!str || typeof str !== "string") {
+        return false;
+      }
+      var mime = str.indexOf("/") === -1 ? exports2.lookup(str) : str;
+      if (!mime) {
+        return false;
+      }
+      if (mime.indexOf("charset") === -1) {
+        var charset2 = exports2.charset(mime);
+        if (charset2)
+          mime += "; charset=" + charset2.toLowerCase();
+      }
+      return mime;
+    }
+    function extension(type) {
+      if (!type || typeof type !== "string") {
+        return false;
+      }
+      var match = EXTRACT_TYPE_REGEXP.exec(type);
+      var exts = match && exports2.extensions[match[1].toLowerCase()];
+      if (!exts || !exts.length) {
+        return false;
+      }
+      return exts[0];
+    }
+    function lookup(path) {
+      if (!path || typeof path !== "string") {
+        return false;
+      }
+      var extension2 = extname("x." + path).toLowerCase().substr(1);
+      if (!extension2) {
+        return false;
+      }
+      return exports2.types[extension2] || false;
+    }
+    function populateMaps(extensions, types) {
+      var preference = ["nginx", "apache", void 0, "iana"];
+      Object.keys(db).forEach(function forEachMimeType(type) {
+        var mime = db[type];
+        var exts = mime.extensions;
+        if (!exts || !exts.length) {
+          return;
+        }
+        extensions[type] = exts;
+        for (var i = 0; i < exts.length; i++) {
+          var extension2 = exts[i];
+          if (types[extension2]) {
+            var from = preference.indexOf(db[types[extension2]].source);
+            var to = preference.indexOf(mime.source);
+            if (types[extension2] !== "application/octet-stream" && (from > to || from === to && types[extension2].substr(0, 12) === "application/")) {
+              continue;
+            }
+          }
+          types[extension2] = type;
+        }
+      });
+    }
+  }
+});
+
+// backend/node_modules/asynckit/lib/defer.js
+var require_defer = __commonJS({
+  "backend/node_modules/asynckit/lib/defer.js"(exports2, module2) {
+    module2.exports = defer;
+    function defer(fn) {
+      var nextTick = typeof setImmediate == "function" ? setImmediate : typeof process == "object" && typeof process.nextTick == "function" ? process.nextTick : null;
+      if (nextTick) {
+        nextTick(fn);
+      } else {
+        setTimeout(fn, 0);
+      }
+    }
+  }
+});
+
+// backend/node_modules/asynckit/lib/async.js
+var require_async = __commonJS({
+  "backend/node_modules/asynckit/lib/async.js"(exports2, module2) {
+    var defer = require_defer();
+    module2.exports = async;
+    function async(callback2) {
+      var isAsync = false;
+      defer(function() {
+        isAsync = true;
+      });
+      return function async_callback(err, result) {
+        if (isAsync) {
+          callback2(err, result);
+        } else {
+          defer(function nextTick_callback() {
+            callback2(err, result);
+          });
+        }
+      };
+    }
+  }
+});
+
+// backend/node_modules/asynckit/lib/abort.js
+var require_abort = __commonJS({
+  "backend/node_modules/asynckit/lib/abort.js"(exports2, module2) {
+    module2.exports = abort;
+    function abort(state) {
+      Object.keys(state.jobs).forEach(clean.bind(state));
+      state.jobs = {};
+    }
+    function clean(key) {
+      if (typeof this.jobs[key] == "function") {
+        this.jobs[key]();
+      }
+    }
+  }
+});
+
+// backend/node_modules/asynckit/lib/iterate.js
+var require_iterate = __commonJS({
+  "backend/node_modules/asynckit/lib/iterate.js"(exports2, module2) {
+    var async = require_async();
+    var abort = require_abort();
+    module2.exports = iterate;
+    function iterate(list, iterator, state, callback2) {
+      var key = state["keyedList"] ? state["keyedList"][state.index] : state.index;
+      state.jobs[key] = runJob(iterator, key, list[key], function(error, output) {
+        if (!(key in state.jobs)) {
+          return;
+        }
+        delete state.jobs[key];
+        if (error) {
+          abort(state);
+        } else {
+          state.results[key] = output;
+        }
+        callback2(error, state.results);
+      });
+    }
+    function runJob(iterator, key, item, callback2) {
+      var aborter;
+      if (iterator.length == 2) {
+        aborter = iterator(item, async(callback2));
+      } else {
+        aborter = iterator(item, key, async(callback2));
+      }
+      return aborter;
+    }
+  }
+});
+
+// backend/node_modules/asynckit/lib/state.js
+var require_state = __commonJS({
+  "backend/node_modules/asynckit/lib/state.js"(exports2, module2) {
+    module2.exports = state;
+    function state(list, sortMethod) {
+      var isNamedList = !Array.isArray(list), initState = {
+        index: 0,
+        keyedList: isNamedList || sortMethod ? Object.keys(list) : null,
+        jobs: {},
+        results: isNamedList ? {} : [],
+        size: isNamedList ? Object.keys(list).length : list.length
+      };
+      if (sortMethod) {
+        initState.keyedList.sort(isNamedList ? sortMethod : function(a, b) {
+          return sortMethod(list[a], list[b]);
+        });
+      }
+      return initState;
+    }
+  }
+});
+
+// backend/node_modules/asynckit/lib/terminator.js
+var require_terminator = __commonJS({
+  "backend/node_modules/asynckit/lib/terminator.js"(exports2, module2) {
+    var abort = require_abort();
+    var async = require_async();
+    module2.exports = terminator;
+    function terminator(callback2) {
+      if (!Object.keys(this.jobs).length) {
+        return;
+      }
+      this.index = this.size;
+      abort(this);
+      async(callback2)(null, this.results);
+    }
+  }
+});
+
+// backend/node_modules/asynckit/parallel.js
+var require_parallel = __commonJS({
+  "backend/node_modules/asynckit/parallel.js"(exports2, module2) {
+    var iterate = require_iterate();
+    var initState = require_state();
+    var terminator = require_terminator();
+    module2.exports = parallel;
+    function parallel(list, iterator, callback2) {
+      var state = initState(list);
+      while (state.index < (state["keyedList"] || list).length) {
+        iterate(list, iterator, state, function(error, result) {
+          if (error) {
+            callback2(error, result);
+            return;
+          }
+          if (Object.keys(state.jobs).length === 0) {
+            callback2(null, state.results);
+            return;
+          }
+        });
+        state.index++;
+      }
+      return terminator.bind(state, callback2);
+    }
+  }
+});
+
+// backend/node_modules/asynckit/serialOrdered.js
+var require_serialOrdered = __commonJS({
+  "backend/node_modules/asynckit/serialOrdered.js"(exports2, module2) {
+    var iterate = require_iterate();
+    var initState = require_state();
+    var terminator = require_terminator();
+    module2.exports = serialOrdered;
+    module2.exports.ascending = ascending;
+    module2.exports.descending = descending;
+    function serialOrdered(list, iterator, sortMethod, callback2) {
+      var state = initState(list, sortMethod);
+      iterate(list, iterator, state, function iteratorHandler(error, result) {
+        if (error) {
+          callback2(error, result);
+          return;
+        }
+        state.index++;
+        if (state.index < (state["keyedList"] || list).length) {
+          iterate(list, iterator, state, iteratorHandler);
+          return;
+        }
+        callback2(null, state.results);
+      });
+      return terminator.bind(state, callback2);
+    }
+    function ascending(a, b) {
+      return a < b ? -1 : a > b ? 1 : 0;
+    }
+    function descending(a, b) {
+      return -1 * ascending(a, b);
+    }
+  }
+});
+
+// backend/node_modules/asynckit/serial.js
+var require_serial = __commonJS({
+  "backend/node_modules/asynckit/serial.js"(exports2, module2) {
+    var serialOrdered = require_serialOrdered();
+    module2.exports = serial;
+    function serial(list, iterator, callback2) {
+      return serialOrdered(list, iterator, null, callback2);
+    }
+  }
+});
+
+// backend/node_modules/asynckit/index.js
+var require_asynckit = __commonJS({
+  "backend/node_modules/asynckit/index.js"(exports2, module2) {
+    module2.exports = {
+      parallel: require_parallel(),
+      serial: require_serial(),
+      serialOrdered: require_serialOrdered()
+    };
+  }
+});
+
+// backend/node_modules/form-data/lib/populate.js
+var require_populate = __commonJS({
+  "backend/node_modules/form-data/lib/populate.js"(exports2, module2) {
+    module2.exports = function(dst, src) {
+      Object.keys(src).forEach(function(prop) {
+        dst[prop] = dst[prop] || src[prop];
+      });
+      return dst;
+    };
+  }
+});
+
+// backend/node_modules/form-data/lib/form_data.js
+var require_form_data = __commonJS({
+  "backend/node_modules/form-data/lib/form_data.js"(exports2, module2) {
+    var CombinedStream = require_combined_stream();
+    var util2 = require("util");
+    var path = require("path");
+    var http2 = require("http");
+    var https2 = require("https");
+    var parseUrl = require("url").parse;
+    var fs = require("fs");
+    var Stream = require("stream").Stream;
+    var mime = require_mime_types();
+    var asynckit = require_asynckit();
+    var populate = require_populate();
+    module2.exports = FormData3;
+    util2.inherits(FormData3, CombinedStream);
+    function FormData3(options) {
+      if (!(this instanceof FormData3)) {
+        return new FormData3(options);
+      }
+      this._overheadLength = 0;
+      this._valueLength = 0;
+      this._valuesToMeasure = [];
+      CombinedStream.call(this);
+      options = options || {};
+      for (var option in options) {
+        this[option] = options[option];
+      }
+    }
+    FormData3.LINE_BREAK = "\r\n";
+    FormData3.DEFAULT_CONTENT_TYPE = "application/octet-stream";
+    FormData3.prototype.append = function(field, value, options) {
+      options = options || {};
+      if (typeof options == "string") {
+        options = { filename: options };
+      }
+      var append2 = CombinedStream.prototype.append.bind(this);
+      if (typeof value == "number") {
+        value = "" + value;
+      }
+      if (util2.isArray(value)) {
+        this._error(new Error("Arrays are not supported."));
+        return;
+      }
+      var header = this._multiPartHeader(field, value, options);
+      var footer = this._multiPartFooter();
+      append2(header);
+      append2(value);
+      append2(footer);
+      this._trackLength(header, value, options);
+    };
+    FormData3.prototype._trackLength = function(header, value, options) {
+      var valueLength = 0;
+      if (options.knownLength != null) {
+        valueLength += +options.knownLength;
+      } else if (Buffer.isBuffer(value)) {
+        valueLength = value.length;
+      } else if (typeof value === "string") {
+        valueLength = Buffer.byteLength(value);
+      }
+      this._valueLength += valueLength;
+      this._overheadLength += Buffer.byteLength(header) + FormData3.LINE_BREAK.length;
+      if (!value || !value.path && !(value.readable && value.hasOwnProperty("httpVersion")) && !(value instanceof Stream)) {
+        return;
+      }
+      if (!options.knownLength) {
+        this._valuesToMeasure.push(value);
+      }
+    };
+    FormData3.prototype._lengthRetriever = function(value, callback2) {
+      if (value.hasOwnProperty("fd")) {
+        if (value.end != void 0 && value.end != Infinity && value.start != void 0) {
+          callback2(null, value.end + 1 - (value.start ? value.start : 0));
+        } else {
+          fs.stat(value.path, function(err, stat) {
+            var fileSize;
+            if (err) {
+              callback2(err);
+              return;
+            }
+            fileSize = stat.size - (value.start ? value.start : 0);
+            callback2(null, fileSize);
+          });
+        }
+      } else if (value.hasOwnProperty("httpVersion")) {
+        callback2(null, +value.headers["content-length"]);
+      } else if (value.hasOwnProperty("httpModule")) {
+        value.on("response", function(response) {
+          value.pause();
+          callback2(null, +response.headers["content-length"]);
+        });
+        value.resume();
+      } else {
+        callback2("Unknown stream");
+      }
+    };
+    FormData3.prototype._multiPartHeader = function(field, value, options) {
+      if (typeof options.header == "string") {
+        return options.header;
+      }
+      var contentDisposition = this._getContentDisposition(value, options);
+      var contentType = this._getContentType(value, options);
+      var contents = "";
+      var headers = {
+        // add custom disposition as third element or keep it two elements if not
+        "Content-Disposition": ["form-data", 'name="' + field + '"'].concat(contentDisposition || []),
+        // if no content type. allow it to be empty array
+        "Content-Type": [].concat(contentType || [])
+      };
+      if (typeof options.header == "object") {
+        populate(headers, options.header);
+      }
+      var header;
+      for (var prop in headers) {
+        if (!headers.hasOwnProperty(prop))
+          continue;
+        header = headers[prop];
+        if (header == null) {
+          continue;
+        }
+        if (!Array.isArray(header)) {
+          header = [header];
+        }
+        if (header.length) {
+          contents += prop + ": " + header.join("; ") + FormData3.LINE_BREAK;
+        }
+      }
+      return "--" + this.getBoundary() + FormData3.LINE_BREAK + contents + FormData3.LINE_BREAK;
+    };
+    FormData3.prototype._getContentDisposition = function(value, options) {
+      var filename, contentDisposition;
+      if (typeof options.filepath === "string") {
+        filename = path.normalize(options.filepath).replace(/\\/g, "/");
+      } else if (options.filename || value.name || value.path) {
+        filename = path.basename(options.filename || value.name || value.path);
+      } else if (value.readable && value.hasOwnProperty("httpVersion")) {
+        filename = path.basename(value.client._httpMessage.path || "");
+      }
+      if (filename) {
+        contentDisposition = 'filename="' + filename + '"';
+      }
+      return contentDisposition;
+    };
+    FormData3.prototype._getContentType = function(value, options) {
+      var contentType = options.contentType;
+      if (!contentType && value.name) {
+        contentType = mime.lookup(value.name);
+      }
+      if (!contentType && value.path) {
+        contentType = mime.lookup(value.path);
+      }
+      if (!contentType && value.readable && value.hasOwnProperty("httpVersion")) {
+        contentType = value.headers["content-type"];
+      }
+      if (!contentType && (options.filepath || options.filename)) {
+        contentType = mime.lookup(options.filepath || options.filename);
+      }
+      if (!contentType && typeof value == "object") {
+        contentType = FormData3.DEFAULT_CONTENT_TYPE;
+      }
+      return contentType;
+    };
+    FormData3.prototype._multiPartFooter = function() {
+      return function(next) {
+        var footer = FormData3.LINE_BREAK;
+        var lastPart = this._streams.length === 0;
+        if (lastPart) {
+          footer += this._lastBoundary();
+        }
+        next(footer);
+      }.bind(this);
+    };
+    FormData3.prototype._lastBoundary = function() {
+      return "--" + this.getBoundary() + "--" + FormData3.LINE_BREAK;
+    };
+    FormData3.prototype.getHeaders = function(userHeaders) {
+      var header;
+      var formHeaders = {
+        "content-type": "multipart/form-data; boundary=" + this.getBoundary()
+      };
+      for (header in userHeaders) {
+        if (userHeaders.hasOwnProperty(header)) {
+          formHeaders[header.toLowerCase()] = userHeaders[header];
+        }
+      }
+      return formHeaders;
+    };
+    FormData3.prototype.setBoundary = function(boundary) {
+      this._boundary = boundary;
+    };
+    FormData3.prototype.getBoundary = function() {
+      if (!this._boundary) {
+        this._generateBoundary();
+      }
+      return this._boundary;
+    };
+    FormData3.prototype.getBuffer = function() {
+      var dataBuffer = new Buffer.alloc(0);
+      var boundary = this.getBoundary();
+      for (var i = 0, len = this._streams.length; i < len; i++) {
+        if (typeof this._streams[i] !== "function") {
+          if (Buffer.isBuffer(this._streams[i])) {
+            dataBuffer = Buffer.concat([dataBuffer, this._streams[i]]);
+          } else {
+            dataBuffer = Buffer.concat([dataBuffer, Buffer.from(this._streams[i])]);
+          }
+          if (typeof this._streams[i] !== "string" || this._streams[i].substring(2, boundary.length + 2) !== boundary) {
+            dataBuffer = Buffer.concat([dataBuffer, Buffer.from(FormData3.LINE_BREAK)]);
+          }
+        }
+      }
+      return Buffer.concat([dataBuffer, Buffer.from(this._lastBoundary())]);
+    };
+    FormData3.prototype._generateBoundary = function() {
+      var boundary = "--------------------------";
+      for (var i = 0; i < 24; i++) {
+        boundary += Math.floor(Math.random() * 10).toString(16);
+      }
+      this._boundary = boundary;
+    };
+    FormData3.prototype.getLengthSync = function() {
+      var knownLength = this._overheadLength + this._valueLength;
+      if (this._streams.length) {
+        knownLength += this._lastBoundary().length;
+      }
+      if (!this.hasKnownLength()) {
+        this._error(new Error("Cannot calculate proper length in synchronous way."));
+      }
+      return knownLength;
+    };
+    FormData3.prototype.hasKnownLength = function() {
+      var hasKnownLength = true;
+      if (this._valuesToMeasure.length) {
+        hasKnownLength = false;
+      }
+      return hasKnownLength;
+    };
+    FormData3.prototype.getLength = function(cb) {
+      var knownLength = this._overheadLength + this._valueLength;
+      if (this._streams.length) {
+        knownLength += this._lastBoundary().length;
+      }
+      if (!this._valuesToMeasure.length) {
+        process.nextTick(cb.bind(this, null, knownLength));
+        return;
+      }
+      asynckit.parallel(this._valuesToMeasure, this._lengthRetriever, function(err, values) {
+        if (err) {
+          cb(err);
+          return;
+        }
+        values.forEach(function(length) {
+          knownLength += length;
+        });
+        cb(null, knownLength);
+      });
+    };
+    FormData3.prototype.submit = function(params, cb) {
+      var request, options, defaults2 = { method: "post" };
+      if (typeof params == "string") {
+        params = parseUrl(params);
+        options = populate({
+          port: params.port,
+          path: params.pathname,
+          host: params.hostname,
+          protocol: params.protocol
+        }, defaults2);
+      } else {
+        options = populate(params, defaults2);
+        if (!options.port) {
+          options.port = options.protocol == "https:" ? 443 : 80;
+        }
+      }
+      options.headers = this.getHeaders(params.headers);
+      if (options.protocol == "https:") {
+        request = https2.request(options);
+      } else {
+        request = http2.request(options);
+      }
+      this.getLength(function(err, length) {
+        if (err && err !== "Unknown stream") {
+          this._error(err);
+          return;
+        }
+        if (length) {
+          request.setHeader("Content-Length", length);
+        }
+        this.pipe(request);
+        if (cb) {
+          var onResponse;
+          var callback2 = function(error, responce) {
+            request.removeListener("error", callback2);
+            request.removeListener("response", onResponse);
+            return cb.call(this, error, responce);
+          };
+          onResponse = callback2.bind(this, null);
+          request.on("error", callback2);
+          request.on("response", onResponse);
+        }
+      }.bind(this));
+      return request;
+    };
+    FormData3.prototype._error = function(err) {
+      if (!this.error) {
+        this.error = err;
+        this.pause();
+        this.emit("error", err);
+      }
+    };
+    FormData3.prototype.toString = function() {
+      return "[object FormData]";
+    };
+  }
+});
+
+// backend/node_modules/proxy-from-env/index.js
+var require_proxy_from_env = __commonJS({
+  "backend/node_modules/proxy-from-env/index.js"(exports2) {
+    "use strict";
+    var parseUrl = require("url").parse;
+    var DEFAULT_PORTS = {
+      ftp: 21,
+      gopher: 70,
+      http: 80,
+      https: 443,
+      ws: 80,
+      wss: 443
+    };
+    var stringEndsWith = String.prototype.endsWith || function(s) {
+      return s.length <= this.length && this.indexOf(s, this.length - s.length) !== -1;
+    };
+    function getProxyForUrl2(url2) {
+      var parsedUrl = typeof url2 === "string" ? parseUrl(url2) : url2 || {};
+      var proto = parsedUrl.protocol;
+      var hostname = parsedUrl.host;
+      var port = parsedUrl.port;
+      if (typeof hostname !== "string" || !hostname || typeof proto !== "string") {
+        return "";
+      }
+      proto = proto.split(":", 1)[0];
+      hostname = hostname.replace(/:\d*$/, "");
+      port = parseInt(port) || DEFAULT_PORTS[proto] || 0;
+      if (!shouldProxy(hostname, port)) {
+        return "";
+      }
+      var proxy = getEnv("npm_config_" + proto + "_proxy") || getEnv(proto + "_proxy") || getEnv("npm_config_proxy") || getEnv("all_proxy");
+      if (proxy && proxy.indexOf("://") === -1) {
+        proxy = proto + "://" + proxy;
+      }
+      return proxy;
+    }
+    function shouldProxy(hostname, port) {
+      var NO_PROXY = (getEnv("npm_config_no_proxy") || getEnv("no_proxy")).toLowerCase();
+      if (!NO_PROXY) {
+        return true;
+      }
+      if (NO_PROXY === "*") {
+        return false;
+      }
+      return NO_PROXY.split(/[,\s]/).every(function(proxy) {
+        if (!proxy) {
+          return true;
+        }
+        var parsedProxy = proxy.match(/^(.+):(\d+)$/);
+        var parsedProxyHostname = parsedProxy ? parsedProxy[1] : proxy;
+        var parsedProxyPort = parsedProxy ? parseInt(parsedProxy[2]) : 0;
+        if (parsedProxyPort && parsedProxyPort !== port) {
+          return true;
+        }
+        if (!/^[.*]/.test(parsedProxyHostname)) {
+          return hostname !== parsedProxyHostname;
+        }
+        if (parsedProxyHostname.charAt(0) === "*") {
+          parsedProxyHostname = parsedProxyHostname.slice(1);
+        }
+        return !stringEndsWith.call(hostname, parsedProxyHostname);
+      });
+    }
+    function getEnv(key) {
+      return process.env[key.toLowerCase()] || process.env[key.toUpperCase()] || "";
+    }
+    exports2.getProxyForUrl = getProxyForUrl2;
+  }
+});
+
+// backend/node_modules/follow-redirects/debug.js
+var require_debug = __commonJS({
+  "backend/node_modules/follow-redirects/debug.js"(exports2, module2) {
+    var debug;
+    module2.exports = function() {
+      if (!debug) {
+        try {
+          debug = require_src()("follow-redirects");
+        } catch (error) {
+        }
+        if (typeof debug !== "function") {
+          debug = function() {
+          };
+        }
+      }
+      debug.apply(null, arguments);
+    };
+  }
+});
+
+// backend/node_modules/follow-redirects/index.js
+var require_follow_redirects = __commonJS({
+  "backend/node_modules/follow-redirects/index.js"(exports2, module2) {
+    var url2 = require("url");
+    var URL2 = url2.URL;
+    var http2 = require("http");
+    var https2 = require("https");
+    var Writable = require("stream").Writable;
+    var assert = require("assert");
+    var debug = require_debug();
+    var useNativeURL = false;
+    try {
+      assert(new URL2());
+    } catch (error) {
+      useNativeURL = error.code === "ERR_INVALID_URL";
+    }
+    var preservedUrlFields = [
+      "auth",
+      "host",
+      "hostname",
+      "href",
+      "path",
+      "pathname",
+      "port",
+      "protocol",
+      "query",
+      "search",
+      "hash"
+    ];
+    var events = ["abort", "aborted", "connect", "error", "socket", "timeout"];
+    var eventHandlers = /* @__PURE__ */ Object.create(null);
+    events.forEach(function(event) {
+      eventHandlers[event] = function(arg1, arg2, arg3) {
+        this._redirectable.emit(event, arg1, arg2, arg3);
+      };
+    });
+    var InvalidUrlError = createErrorType(
+      "ERR_INVALID_URL",
+      "Invalid URL",
+      TypeError
+    );
+    var RedirectionError = createErrorType(
+      "ERR_FR_REDIRECTION_FAILURE",
+      "Redirected request failed"
+    );
+    var TooManyRedirectsError = createErrorType(
+      "ERR_FR_TOO_MANY_REDIRECTS",
+      "Maximum number of redirects exceeded",
+      RedirectionError
+    );
+    var MaxBodyLengthExceededError = createErrorType(
+      "ERR_FR_MAX_BODY_LENGTH_EXCEEDED",
+      "Request body larger than maxBodyLength limit"
+    );
+    var WriteAfterEndError = createErrorType(
+      "ERR_STREAM_WRITE_AFTER_END",
+      "write after end"
+    );
+    var destroy = Writable.prototype.destroy || noop2;
+    function RedirectableRequest(options, responseCallback) {
+      Writable.call(this);
+      this._sanitizeOptions(options);
+      this._options = options;
+      this._ended = false;
+      this._ending = false;
+      this._redirectCount = 0;
+      this._redirects = [];
+      this._requestBodyLength = 0;
+      this._requestBodyBuffers = [];
+      if (responseCallback) {
+        this.on("response", responseCallback);
+      }
+      var self2 = this;
+      this._onNativeResponse = function(response) {
+        try {
+          self2._processResponse(response);
+        } catch (cause) {
+          self2.emit("error", cause instanceof RedirectionError ? cause : new RedirectionError({ cause }));
+        }
+      };
+      this._performRequest();
+    }
+    RedirectableRequest.prototype = Object.create(Writable.prototype);
+    RedirectableRequest.prototype.abort = function() {
+      destroyRequest(this._currentRequest);
+      this._currentRequest.abort();
+      this.emit("abort");
+    };
+    RedirectableRequest.prototype.destroy = function(error) {
+      destroyRequest(this._currentRequest, error);
+      destroy.call(this, error);
+      return this;
+    };
+    RedirectableRequest.prototype.write = function(data, encoding, callback2) {
+      if (this._ending) {
+        throw new WriteAfterEndError();
+      }
+      if (!isString2(data) && !isBuffer2(data)) {
+        throw new TypeError("data should be a string, Buffer or Uint8Array");
+      }
+      if (isFunction2(encoding)) {
+        callback2 = encoding;
+        encoding = null;
+      }
+      if (data.length === 0) {
+        if (callback2) {
+          callback2();
+        }
+        return;
+      }
+      if (this._requestBodyLength + data.length <= this._options.maxBodyLength) {
+        this._requestBodyLength += data.length;
+        this._requestBodyBuffers.push({ data, encoding });
+        this._currentRequest.write(data, encoding, callback2);
+      } else {
+        this.emit("error", new MaxBodyLengthExceededError());
+        this.abort();
+      }
+    };
+    RedirectableRequest.prototype.end = function(data, encoding, callback2) {
+      if (isFunction2(data)) {
+        callback2 = data;
+        data = encoding = null;
+      } else if (isFunction2(encoding)) {
+        callback2 = encoding;
+        encoding = null;
+      }
+      if (!data) {
+        this._ended = this._ending = true;
+        this._currentRequest.end(null, null, callback2);
+      } else {
+        var self2 = this;
+        var currentRequest = this._currentRequest;
+        this.write(data, encoding, function() {
+          self2._ended = true;
+          currentRequest.end(null, null, callback2);
+        });
+        this._ending = true;
+      }
+    };
+    RedirectableRequest.prototype.setHeader = function(name, value) {
+      this._options.headers[name] = value;
+      this._currentRequest.setHeader(name, value);
+    };
+    RedirectableRequest.prototype.removeHeader = function(name) {
+      delete this._options.headers[name];
+      this._currentRequest.removeHeader(name);
+    };
+    RedirectableRequest.prototype.setTimeout = function(msecs, callback2) {
+      var self2 = this;
+      function destroyOnTimeout(socket) {
+        socket.setTimeout(msecs);
+        socket.removeListener("timeout", socket.destroy);
+        socket.addListener("timeout", socket.destroy);
+      }
+      function startTimer(socket) {
+        if (self2._timeout) {
+          clearTimeout(self2._timeout);
+        }
+        self2._timeout = setTimeout(function() {
+          self2.emit("timeout");
+          clearTimer();
+        }, msecs);
+        destroyOnTimeout(socket);
+      }
+      function clearTimer() {
+        if (self2._timeout) {
+          clearTimeout(self2._timeout);
+          self2._timeout = null;
+        }
+        self2.removeListener("abort", clearTimer);
+        self2.removeListener("error", clearTimer);
+        self2.removeListener("response", clearTimer);
+        self2.removeListener("close", clearTimer);
+        if (callback2) {
+          self2.removeListener("timeout", callback2);
+        }
+        if (!self2.socket) {
+          self2._currentRequest.removeListener("socket", startTimer);
+        }
+      }
+      if (callback2) {
+        this.on("timeout", callback2);
+      }
+      if (this.socket) {
+        startTimer(this.socket);
+      } else {
+        this._currentRequest.once("socket", startTimer);
+      }
+      this.on("socket", destroyOnTimeout);
+      this.on("abort", clearTimer);
+      this.on("error", clearTimer);
+      this.on("response", clearTimer);
+      this.on("close", clearTimer);
+      return this;
+    };
+    [
+      "flushHeaders",
+      "getHeader",
+      "setNoDelay",
+      "setSocketKeepAlive"
+    ].forEach(function(method) {
+      RedirectableRequest.prototype[method] = function(a, b) {
+        return this._currentRequest[method](a, b);
+      };
+    });
+    ["aborted", "connection", "socket"].forEach(function(property) {
+      Object.defineProperty(RedirectableRequest.prototype, property, {
+        get: function() {
+          return this._currentRequest[property];
+        }
+      });
+    });
+    RedirectableRequest.prototype._sanitizeOptions = function(options) {
+      if (!options.headers) {
+        options.headers = {};
+      }
+      if (options.host) {
+        if (!options.hostname) {
+          options.hostname = options.host;
+        }
+        delete options.host;
+      }
+      if (!options.pathname && options.path) {
+        var searchPos = options.path.indexOf("?");
+        if (searchPos < 0) {
+          options.pathname = options.path;
+        } else {
+          options.pathname = options.path.substring(0, searchPos);
+          options.search = options.path.substring(searchPos);
+        }
+      }
+    };
+    RedirectableRequest.prototype._performRequest = function() {
+      var protocol = this._options.protocol;
+      var nativeProtocol = this._options.nativeProtocols[protocol];
+      if (!nativeProtocol) {
+        throw new TypeError("Unsupported protocol " + protocol);
+      }
+      if (this._options.agents) {
+        var scheme = protocol.slice(0, -1);
+        this._options.agent = this._options.agents[scheme];
+      }
+      var request = this._currentRequest = nativeProtocol.request(this._options, this._onNativeResponse);
+      request._redirectable = this;
+      for (var event of events) {
+        request.on(event, eventHandlers[event]);
+      }
+      this._currentUrl = /^\//.test(this._options.path) ? url2.format(this._options) : (
+        // When making a request to a proxy, […]
+        // a client MUST send the target URI in absolute-form […].
+        this._options.path
+      );
+      if (this._isRedirect) {
+        var i = 0;
+        var self2 = this;
+        var buffers = this._requestBodyBuffers;
+        (function writeNext(error) {
+          if (request === self2._currentRequest) {
+            if (error) {
+              self2.emit("error", error);
+            } else if (i < buffers.length) {
+              var buffer = buffers[i++];
+              if (!request.finished) {
+                request.write(buffer.data, buffer.encoding, writeNext);
+              }
+            } else if (self2._ended) {
+              request.end();
+            }
+          }
+        })();
+      }
+    };
+    RedirectableRequest.prototype._processResponse = function(response) {
+      var statusCode = response.statusCode;
+      if (this._options.trackRedirects) {
+        this._redirects.push({
+          url: this._currentUrl,
+          headers: response.headers,
+          statusCode
+        });
+      }
+      var location = response.headers.location;
+      if (!location || this._options.followRedirects === false || statusCode < 300 || statusCode >= 400) {
+        response.responseUrl = this._currentUrl;
+        response.redirects = this._redirects;
+        this.emit("response", response);
+        this._requestBodyBuffers = [];
+        return;
+      }
+      destroyRequest(this._currentRequest);
+      response.destroy();
+      if (++this._redirectCount > this._options.maxRedirects) {
+        throw new TooManyRedirectsError();
+      }
+      var requestHeaders;
+      var beforeRedirect = this._options.beforeRedirect;
+      if (beforeRedirect) {
+        requestHeaders = Object.assign({
+          // The Host header was set by nativeProtocol.request
+          Host: response.req.getHeader("host")
+        }, this._options.headers);
+      }
+      var method = this._options.method;
+      if ((statusCode === 301 || statusCode === 302) && this._options.method === "POST" || // RFC7231§6.4.4: The 303 (See Other) status code indicates that
+      // the server is redirecting the user agent to a different resource […]
+      // A user agent can perform a retrieval request targeting that URI
+      // (a GET or HEAD request if using HTTP) […]
+      statusCode === 303 && !/^(?:GET|HEAD)$/.test(this._options.method)) {
+        this._options.method = "GET";
+        this._requestBodyBuffers = [];
+        removeMatchingHeaders(/^content-/i, this._options.headers);
+      }
+      var currentHostHeader = removeMatchingHeaders(/^host$/i, this._options.headers);
+      var currentUrlParts = parseUrl(this._currentUrl);
+      var currentHost = currentHostHeader || currentUrlParts.host;
+      var currentUrl = /^\w+:/.test(location) ? this._currentUrl : url2.format(Object.assign(currentUrlParts, { host: currentHost }));
+      var redirectUrl = resolveUrl(location, currentUrl);
+      debug("redirecting to", redirectUrl.href);
+      this._isRedirect = true;
+      spreadUrlObject(redirectUrl, this._options);
+      if (redirectUrl.protocol !== currentUrlParts.protocol && redirectUrl.protocol !== "https:" || redirectUrl.host !== currentHost && !isSubdomain(redirectUrl.host, currentHost)) {
+        removeMatchingHeaders(/^(?:(?:proxy-)?authorization|cookie)$/i, this._options.headers);
+      }
+      if (isFunction2(beforeRedirect)) {
+        var responseDetails = {
+          headers: response.headers,
+          statusCode
+        };
+        var requestDetails = {
+          url: currentUrl,
+          method,
+          headers: requestHeaders
+        };
+        beforeRedirect(this._options, responseDetails, requestDetails);
+        this._sanitizeOptions(this._options);
+      }
+      this._performRequest();
+    };
+    function wrap(protocols) {
+      var exports3 = {
+        maxRedirects: 21,
+        maxBodyLength: 10 * 1024 * 1024
+      };
+      var nativeProtocols = {};
+      Object.keys(protocols).forEach(function(scheme) {
+        var protocol = scheme + ":";
+        var nativeProtocol = nativeProtocols[protocol] = protocols[scheme];
+        var wrappedProtocol = exports3[scheme] = Object.create(nativeProtocol);
+        function request(input, options, callback2) {
+          if (isURL(input)) {
+            input = spreadUrlObject(input);
+          } else if (isString2(input)) {
+            input = spreadUrlObject(parseUrl(input));
+          } else {
+            callback2 = options;
+            options = validateUrl(input);
+            input = { protocol };
+          }
+          if (isFunction2(options)) {
+            callback2 = options;
+            options = null;
+          }
+          options = Object.assign({
+            maxRedirects: exports3.maxRedirects,
+            maxBodyLength: exports3.maxBodyLength
+          }, input, options);
+          options.nativeProtocols = nativeProtocols;
+          if (!isString2(options.host) && !isString2(options.hostname)) {
+            options.hostname = "::1";
+          }
+          assert.equal(options.protocol, protocol, "protocol mismatch");
+          debug("options", options);
+          return new RedirectableRequest(options, callback2);
+        }
+        function get(input, options, callback2) {
+          var wrappedRequest = wrappedProtocol.request(input, options, callback2);
+          wrappedRequest.end();
+          return wrappedRequest;
+        }
+        Object.defineProperties(wrappedProtocol, {
+          request: { value: request, configurable: true, enumerable: true, writable: true },
+          get: { value: get, configurable: true, enumerable: true, writable: true }
+        });
+      });
+      return exports3;
+    }
+    function noop2() {
+    }
+    function parseUrl(input) {
+      var parsed;
+      if (useNativeURL) {
+        parsed = new URL2(input);
+      } else {
+        parsed = validateUrl(url2.parse(input));
+        if (!isString2(parsed.protocol)) {
+          throw new InvalidUrlError({ input });
+        }
+      }
+      return parsed;
+    }
+    function resolveUrl(relative, base) {
+      return useNativeURL ? new URL2(relative, base) : parseUrl(url2.resolve(base, relative));
+    }
+    function validateUrl(input) {
+      if (/^\[/.test(input.hostname) && !/^\[[:0-9a-f]+\]$/i.test(input.hostname)) {
+        throw new InvalidUrlError({ input: input.href || input });
+      }
+      if (/^\[/.test(input.host) && !/^\[[:0-9a-f]+\](:\d+)?$/i.test(input.host)) {
+        throw new InvalidUrlError({ input: input.href || input });
+      }
+      return input;
+    }
+    function spreadUrlObject(urlObject, target) {
+      var spread3 = target || {};
+      for (var key of preservedUrlFields) {
+        spread3[key] = urlObject[key];
+      }
+      if (spread3.hostname.startsWith("[")) {
+        spread3.hostname = spread3.hostname.slice(1, -1);
+      }
+      if (spread3.port !== "") {
+        spread3.port = Number(spread3.port);
+      }
+      spread3.path = spread3.search ? spread3.pathname + spread3.search : spread3.pathname;
+      return spread3;
+    }
+    function removeMatchingHeaders(regex, headers) {
+      var lastValue;
+      for (var header in headers) {
+        if (regex.test(header)) {
+          lastValue = headers[header];
+          delete headers[header];
+        }
+      }
+      return lastValue === null || typeof lastValue === "undefined" ? void 0 : String(lastValue).trim();
+    }
+    function createErrorType(code, message, baseClass) {
+      function CustomError(properties) {
+        Error.captureStackTrace(this, this.constructor);
+        Object.assign(this, properties || {});
+        this.code = code;
+        this.message = this.cause ? message + ": " + this.cause.message : message;
+      }
+      CustomError.prototype = new (baseClass || Error)();
+      Object.defineProperties(CustomError.prototype, {
+        constructor: {
+          value: CustomError,
+          enumerable: false
+        },
+        name: {
+          value: "Error [" + code + "]",
+          enumerable: false
+        }
+      });
+      return CustomError;
+    }
+    function destroyRequest(request, error) {
+      for (var event of events) {
+        request.removeListener(event, eventHandlers[event]);
+      }
+      request.on("error", noop2);
+      request.destroy(error);
+    }
+    function isSubdomain(subdomain, domain) {
+      assert(isString2(subdomain) && isString2(domain));
+      var dot = subdomain.length - domain.length - 1;
+      return dot > 0 && subdomain[dot] === "." && subdomain.endsWith(domain);
+    }
+    function isString2(value) {
+      return typeof value === "string" || value instanceof String;
+    }
+    function isFunction2(value) {
+      return typeof value === "function";
+    }
+    function isBuffer2(value) {
+      return typeof value === "object" && "length" in value;
+    }
+    function isURL(value) {
+      return URL2 && value instanceof URL2;
+    }
+    module2.exports = wrap({ http: http2, https: https2 });
+    module2.exports.wrap = wrap;
+  }
+});
+
 // backend/functions/data.js
 var import_mongoose3 = __toESM(require_mongoose2(), 1);
 var import_moment = __toESM(require_moment(), 1);
+
+// backend/node_modules/axios/lib/helpers/bind.js
+function bind(fn, thisArg) {
+  return function wrap() {
+    return fn.apply(thisArg, arguments);
+  };
+}
+
+// backend/node_modules/axios/lib/utils.js
+var { toString } = Object.prototype;
+var { getPrototypeOf } = Object;
+var kindOf = /* @__PURE__ */ ((cache) => (thing) => {
+  const str = toString.call(thing);
+  return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
+})(/* @__PURE__ */ Object.create(null));
+var kindOfTest = (type) => {
+  type = type.toLowerCase();
+  return (thing) => kindOf(thing) === type;
+};
+var typeOfTest = (type) => (thing) => typeof thing === type;
+var { isArray } = Array;
+var isUndefined = typeOfTest("undefined");
+function isBuffer(val) {
+  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor) && isFunction(val.constructor.isBuffer) && val.constructor.isBuffer(val);
+}
+var isArrayBuffer = kindOfTest("ArrayBuffer");
+function isArrayBufferView(val) {
+  let result;
+  if (typeof ArrayBuffer !== "undefined" && ArrayBuffer.isView) {
+    result = ArrayBuffer.isView(val);
+  } else {
+    result = val && val.buffer && isArrayBuffer(val.buffer);
+  }
+  return result;
+}
+var isString = typeOfTest("string");
+var isFunction = typeOfTest("function");
+var isNumber = typeOfTest("number");
+var isObject = (thing) => thing !== null && typeof thing === "object";
+var isBoolean = (thing) => thing === true || thing === false;
+var isPlainObject = (val) => {
+  if (kindOf(val) !== "object") {
+    return false;
+  }
+  const prototype3 = getPrototypeOf(val);
+  return (prototype3 === null || prototype3 === Object.prototype || Object.getPrototypeOf(prototype3) === null) && !(Symbol.toStringTag in val) && !(Symbol.iterator in val);
+};
+var isDate = kindOfTest("Date");
+var isFile = kindOfTest("File");
+var isBlob = kindOfTest("Blob");
+var isFileList = kindOfTest("FileList");
+var isStream = (val) => isObject(val) && isFunction(val.pipe);
+var isFormData = (thing) => {
+  let kind;
+  return thing && (typeof FormData === "function" && thing instanceof FormData || isFunction(thing.append) && ((kind = kindOf(thing)) === "formdata" || // detect form-data instance
+  kind === "object" && isFunction(thing.toString) && thing.toString() === "[object FormData]"));
+};
+var isURLSearchParams = kindOfTest("URLSearchParams");
+var [isReadableStream, isRequest, isResponse, isHeaders] = ["ReadableStream", "Request", "Response", "Headers"].map(kindOfTest);
+var trim = (str) => str.trim ? str.trim() : str.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
+function forEach(obj, fn, { allOwnKeys = false } = {}) {
+  if (obj === null || typeof obj === "undefined") {
+    return;
+  }
+  let i;
+  let l;
+  if (typeof obj !== "object") {
+    obj = [obj];
+  }
+  if (isArray(obj)) {
+    for (i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    const keys = allOwnKeys ? Object.getOwnPropertyNames(obj) : Object.keys(obj);
+    const len = keys.length;
+    let key;
+    for (i = 0; i < len; i++) {
+      key = keys[i];
+      fn.call(null, obj[key], key, obj);
+    }
+  }
+}
+function findKey(obj, key) {
+  key = key.toLowerCase();
+  const keys = Object.keys(obj);
+  let i = keys.length;
+  let _key;
+  while (i-- > 0) {
+    _key = keys[i];
+    if (key === _key.toLowerCase()) {
+      return _key;
+    }
+  }
+  return null;
+}
+var _global = (() => {
+  if (typeof globalThis !== "undefined")
+    return globalThis;
+  return typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : global;
+})();
+var isContextDefined = (context) => !isUndefined(context) && context !== _global;
+function merge() {
+  const { caseless } = isContextDefined(this) && this || {};
+  const result = {};
+  const assignValue = (val, key) => {
+    const targetKey = caseless && findKey(result, key) || key;
+    if (isPlainObject(result[targetKey]) && isPlainObject(val)) {
+      result[targetKey] = merge(result[targetKey], val);
+    } else if (isPlainObject(val)) {
+      result[targetKey] = merge({}, val);
+    } else if (isArray(val)) {
+      result[targetKey] = val.slice();
+    } else {
+      result[targetKey] = val;
+    }
+  };
+  for (let i = 0, l = arguments.length; i < l; i++) {
+    arguments[i] && forEach(arguments[i], assignValue);
+  }
+  return result;
+}
+var extend = (a, b, thisArg, { allOwnKeys } = {}) => {
+  forEach(b, (val, key) => {
+    if (thisArg && isFunction(val)) {
+      a[key] = bind(val, thisArg);
+    } else {
+      a[key] = val;
+    }
+  }, { allOwnKeys });
+  return a;
+};
+var stripBOM = (content) => {
+  if (content.charCodeAt(0) === 65279) {
+    content = content.slice(1);
+  }
+  return content;
+};
+var inherits = (constructor, superConstructor, props, descriptors2) => {
+  constructor.prototype = Object.create(superConstructor.prototype, descriptors2);
+  constructor.prototype.constructor = constructor;
+  Object.defineProperty(constructor, "super", {
+    value: superConstructor.prototype
+  });
+  props && Object.assign(constructor.prototype, props);
+};
+var toFlatObject = (sourceObj, destObj, filter2, propFilter) => {
+  let props;
+  let i;
+  let prop;
+  const merged = {};
+  destObj = destObj || {};
+  if (sourceObj == null)
+    return destObj;
+  do {
+    props = Object.getOwnPropertyNames(sourceObj);
+    i = props.length;
+    while (i-- > 0) {
+      prop = props[i];
+      if ((!propFilter || propFilter(prop, sourceObj, destObj)) && !merged[prop]) {
+        destObj[prop] = sourceObj[prop];
+        merged[prop] = true;
+      }
+    }
+    sourceObj = filter2 !== false && getPrototypeOf(sourceObj);
+  } while (sourceObj && (!filter2 || filter2(sourceObj, destObj)) && sourceObj !== Object.prototype);
+  return destObj;
+};
+var endsWith = (str, searchString, position) => {
+  str = String(str);
+  if (position === void 0 || position > str.length) {
+    position = str.length;
+  }
+  position -= searchString.length;
+  const lastIndex = str.indexOf(searchString, position);
+  return lastIndex !== -1 && lastIndex === position;
+};
+var toArray = (thing) => {
+  if (!thing)
+    return null;
+  if (isArray(thing))
+    return thing;
+  let i = thing.length;
+  if (!isNumber(i))
+    return null;
+  const arr = new Array(i);
+  while (i-- > 0) {
+    arr[i] = thing[i];
+  }
+  return arr;
+};
+var isTypedArray = /* @__PURE__ */ ((TypedArray) => {
+  return (thing) => {
+    return TypedArray && thing instanceof TypedArray;
+  };
+})(typeof Uint8Array !== "undefined" && getPrototypeOf(Uint8Array));
+var forEachEntry = (obj, fn) => {
+  const generator = obj && obj[Symbol.iterator];
+  const iterator = generator.call(obj);
+  let result;
+  while ((result = iterator.next()) && !result.done) {
+    const pair = result.value;
+    fn.call(obj, pair[0], pair[1]);
+  }
+};
+var matchAll = (regExp, str) => {
+  let matches;
+  const arr = [];
+  while ((matches = regExp.exec(str)) !== null) {
+    arr.push(matches);
+  }
+  return arr;
+};
+var isHTMLForm = kindOfTest("HTMLFormElement");
+var toCamelCase = (str) => {
+  return str.toLowerCase().replace(
+    /[-_\s]([a-z\d])(\w*)/g,
+    function replacer(m, p1, p2) {
+      return p1.toUpperCase() + p2;
+    }
+  );
+};
+var hasOwnProperty = (({ hasOwnProperty: hasOwnProperty2 }) => (obj, prop) => hasOwnProperty2.call(obj, prop))(Object.prototype);
+var isRegExp = kindOfTest("RegExp");
+var reduceDescriptors = (obj, reducer) => {
+  const descriptors2 = Object.getOwnPropertyDescriptors(obj);
+  const reducedDescriptors = {};
+  forEach(descriptors2, (descriptor, name) => {
+    let ret;
+    if ((ret = reducer(descriptor, name, obj)) !== false) {
+      reducedDescriptors[name] = ret || descriptor;
+    }
+  });
+  Object.defineProperties(obj, reducedDescriptors);
+};
+var freezeMethods = (obj) => {
+  reduceDescriptors(obj, (descriptor, name) => {
+    if (isFunction(obj) && ["arguments", "caller", "callee"].indexOf(name) !== -1) {
+      return false;
+    }
+    const value = obj[name];
+    if (!isFunction(value))
+      return;
+    descriptor.enumerable = false;
+    if ("writable" in descriptor) {
+      descriptor.writable = false;
+      return;
+    }
+    if (!descriptor.set) {
+      descriptor.set = () => {
+        throw Error("Can not rewrite read-only method '" + name + "'");
+      };
+    }
+  });
+};
+var toObjectSet = (arrayOrString, delimiter) => {
+  const obj = {};
+  const define2 = (arr) => {
+    arr.forEach((value) => {
+      obj[value] = true;
+    });
+  };
+  isArray(arrayOrString) ? define2(arrayOrString) : define2(String(arrayOrString).split(delimiter));
+  return obj;
+};
+var noop = () => {
+};
+var toFiniteNumber = (value, defaultValue) => {
+  return value != null && Number.isFinite(value = +value) ? value : defaultValue;
+};
+var ALPHA = "abcdefghijklmnopqrstuvwxyz";
+var DIGIT = "0123456789";
+var ALPHABET = {
+  DIGIT,
+  ALPHA,
+  ALPHA_DIGIT: ALPHA + ALPHA.toUpperCase() + DIGIT
+};
+var generateString = (size = 16, alphabet = ALPHABET.ALPHA_DIGIT) => {
+  let str = "";
+  const { length } = alphabet;
+  while (size--) {
+    str += alphabet[Math.random() * length | 0];
+  }
+  return str;
+};
+function isSpecCompliantForm(thing) {
+  return !!(thing && isFunction(thing.append) && thing[Symbol.toStringTag] === "FormData" && thing[Symbol.iterator]);
+}
+var toJSONObject = (obj) => {
+  const stack = new Array(10);
+  const visit = (source, i) => {
+    if (isObject(source)) {
+      if (stack.indexOf(source) >= 0) {
+        return;
+      }
+      if (!("toJSON" in source)) {
+        stack[i] = source;
+        const target = isArray(source) ? [] : {};
+        forEach(source, (value, key) => {
+          const reducedValue = visit(value, i + 1);
+          !isUndefined(reducedValue) && (target[key] = reducedValue);
+        });
+        stack[i] = void 0;
+        return target;
+      }
+    }
+    return source;
+  };
+  return visit(obj, 0);
+};
+var isAsyncFn = kindOfTest("AsyncFunction");
+var isThenable = (thing) => thing && (isObject(thing) || isFunction(thing)) && isFunction(thing.then) && isFunction(thing.catch);
+var utils_default = {
+  isArray,
+  isArrayBuffer,
+  isBuffer,
+  isFormData,
+  isArrayBufferView,
+  isString,
+  isNumber,
+  isBoolean,
+  isObject,
+  isPlainObject,
+  isReadableStream,
+  isRequest,
+  isResponse,
+  isHeaders,
+  isUndefined,
+  isDate,
+  isFile,
+  isBlob,
+  isRegExp,
+  isFunction,
+  isStream,
+  isURLSearchParams,
+  isTypedArray,
+  isFileList,
+  forEach,
+  merge,
+  extend,
+  trim,
+  stripBOM,
+  inherits,
+  toFlatObject,
+  kindOf,
+  kindOfTest,
+  endsWith,
+  toArray,
+  forEachEntry,
+  matchAll,
+  isHTMLForm,
+  hasOwnProperty,
+  hasOwnProp: hasOwnProperty,
+  // an alias to avoid ESLint no-prototype-builtins detection
+  reduceDescriptors,
+  freezeMethods,
+  toObjectSet,
+  toCamelCase,
+  noop,
+  toFiniteNumber,
+  findKey,
+  global: _global,
+  isContextDefined,
+  ALPHABET,
+  generateString,
+  isSpecCompliantForm,
+  toJSONObject,
+  isAsyncFn,
+  isThenable
+};
+
+// backend/node_modules/axios/lib/core/AxiosError.js
+function AxiosError(message, code, config, request, response) {
+  Error.call(this);
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(this, this.constructor);
+  } else {
+    this.stack = new Error().stack;
+  }
+  this.message = message;
+  this.name = "AxiosError";
+  code && (this.code = code);
+  config && (this.config = config);
+  request && (this.request = request);
+  response && (this.response = response);
+}
+utils_default.inherits(AxiosError, Error, {
+  toJSON: function toJSON() {
+    return {
+      // Standard
+      message: this.message,
+      name: this.name,
+      // Microsoft
+      description: this.description,
+      number: this.number,
+      // Mozilla
+      fileName: this.fileName,
+      lineNumber: this.lineNumber,
+      columnNumber: this.columnNumber,
+      stack: this.stack,
+      // Axios
+      config: utils_default.toJSONObject(this.config),
+      code: this.code,
+      status: this.response && this.response.status ? this.response.status : null
+    };
+  }
+});
+var prototype = AxiosError.prototype;
+var descriptors = {};
+[
+  "ERR_BAD_OPTION_VALUE",
+  "ERR_BAD_OPTION",
+  "ECONNABORTED",
+  "ETIMEDOUT",
+  "ERR_NETWORK",
+  "ERR_FR_TOO_MANY_REDIRECTS",
+  "ERR_DEPRECATED",
+  "ERR_BAD_RESPONSE",
+  "ERR_BAD_REQUEST",
+  "ERR_CANCELED",
+  "ERR_NOT_SUPPORT",
+  "ERR_INVALID_URL"
+  // eslint-disable-next-line func-names
+].forEach((code) => {
+  descriptors[code] = { value: code };
+});
+Object.defineProperties(AxiosError, descriptors);
+Object.defineProperty(prototype, "isAxiosError", { value: true });
+AxiosError.from = (error, code, config, request, response, customProps) => {
+  const axiosError = Object.create(prototype);
+  utils_default.toFlatObject(error, axiosError, function filter2(obj) {
+    return obj !== Error.prototype;
+  }, (prop) => {
+    return prop !== "isAxiosError";
+  });
+  AxiosError.call(axiosError, error.message, code, config, request, response);
+  axiosError.cause = error;
+  axiosError.name = error.name;
+  customProps && Object.assign(axiosError, customProps);
+  return axiosError;
+};
+var AxiosError_default = AxiosError;
+
+// backend/node_modules/axios/lib/platform/node/classes/FormData.js
+var import_form_data = __toESM(require_form_data(), 1);
+var FormData_default = import_form_data.default;
+
+// backend/node_modules/axios/lib/helpers/toFormData.js
+function isVisitable(thing) {
+  return utils_default.isPlainObject(thing) || utils_default.isArray(thing);
+}
+function removeBrackets(key) {
+  return utils_default.endsWith(key, "[]") ? key.slice(0, -2) : key;
+}
+function renderKey(path, key, dots) {
+  if (!path)
+    return key;
+  return path.concat(key).map(function each(token, i) {
+    token = removeBrackets(token);
+    return !dots && i ? "[" + token + "]" : token;
+  }).join(dots ? "." : "");
+}
+function isFlatArray(arr) {
+  return utils_default.isArray(arr) && !arr.some(isVisitable);
+}
+var predicates = utils_default.toFlatObject(utils_default, {}, null, function filter(prop) {
+  return /^is[A-Z]/.test(prop);
+});
+function toFormData(obj, formData, options) {
+  if (!utils_default.isObject(obj)) {
+    throw new TypeError("target must be an object");
+  }
+  formData = formData || new (FormData_default || FormData)();
+  options = utils_default.toFlatObject(options, {
+    metaTokens: true,
+    dots: false,
+    indexes: false
+  }, false, function defined(option, source) {
+    return !utils_default.isUndefined(source[option]);
+  });
+  const metaTokens = options.metaTokens;
+  const visitor = options.visitor || defaultVisitor;
+  const dots = options.dots;
+  const indexes = options.indexes;
+  const _Blob = options.Blob || typeof Blob !== "undefined" && Blob;
+  const useBlob = _Blob && utils_default.isSpecCompliantForm(formData);
+  if (!utils_default.isFunction(visitor)) {
+    throw new TypeError("visitor must be a function");
+  }
+  function convertValue(value) {
+    if (value === null)
+      return "";
+    if (utils_default.isDate(value)) {
+      return value.toISOString();
+    }
+    if (!useBlob && utils_default.isBlob(value)) {
+      throw new AxiosError_default("Blob is not supported. Use a Buffer instead.");
+    }
+    if (utils_default.isArrayBuffer(value) || utils_default.isTypedArray(value)) {
+      return useBlob && typeof Blob === "function" ? new Blob([value]) : Buffer.from(value);
+    }
+    return value;
+  }
+  function defaultVisitor(value, key, path) {
+    let arr = value;
+    if (value && !path && typeof value === "object") {
+      if (utils_default.endsWith(key, "{}")) {
+        key = metaTokens ? key : key.slice(0, -2);
+        value = JSON.stringify(value);
+      } else if (utils_default.isArray(value) && isFlatArray(value) || (utils_default.isFileList(value) || utils_default.endsWith(key, "[]")) && (arr = utils_default.toArray(value))) {
+        key = removeBrackets(key);
+        arr.forEach(function each(el, index) {
+          !(utils_default.isUndefined(el) || el === null) && formData.append(
+            // eslint-disable-next-line no-nested-ternary
+            indexes === true ? renderKey([key], index, dots) : indexes === null ? key : key + "[]",
+            convertValue(el)
+          );
+        });
+        return false;
+      }
+    }
+    if (isVisitable(value)) {
+      return true;
+    }
+    formData.append(renderKey(path, key, dots), convertValue(value));
+    return false;
+  }
+  const stack = [];
+  const exposedHelpers = Object.assign(predicates, {
+    defaultVisitor,
+    convertValue,
+    isVisitable
+  });
+  function build(value, path) {
+    if (utils_default.isUndefined(value))
+      return;
+    if (stack.indexOf(value) !== -1) {
+      throw Error("Circular reference detected in " + path.join("."));
+    }
+    stack.push(value);
+    utils_default.forEach(value, function each(el, key) {
+      const result = !(utils_default.isUndefined(el) || el === null) && visitor.call(
+        formData,
+        el,
+        utils_default.isString(key) ? key.trim() : key,
+        path,
+        exposedHelpers
+      );
+      if (result === true) {
+        build(el, path ? path.concat(key) : [key]);
+      }
+    });
+    stack.pop();
+  }
+  if (!utils_default.isObject(obj)) {
+    throw new TypeError("data must be an object");
+  }
+  build(obj);
+  return formData;
+}
+var toFormData_default = toFormData;
+
+// backend/node_modules/axios/lib/helpers/AxiosURLSearchParams.js
+function encode(str) {
+  const charMap = {
+    "!": "%21",
+    "'": "%27",
+    "(": "%28",
+    ")": "%29",
+    "~": "%7E",
+    "%20": "+",
+    "%00": "\0"
+  };
+  return encodeURIComponent(str).replace(/[!'()~]|%20|%00/g, function replacer(match) {
+    return charMap[match];
+  });
+}
+function AxiosURLSearchParams(params, options) {
+  this._pairs = [];
+  params && toFormData_default(params, this, options);
+}
+var prototype2 = AxiosURLSearchParams.prototype;
+prototype2.append = function append(name, value) {
+  this._pairs.push([name, value]);
+};
+prototype2.toString = function toString2(encoder) {
+  const _encode = encoder ? function(value) {
+    return encoder.call(this, value, encode);
+  } : encode;
+  return this._pairs.map(function each(pair) {
+    return _encode(pair[0]) + "=" + _encode(pair[1]);
+  }, "").join("&");
+};
+var AxiosURLSearchParams_default = AxiosURLSearchParams;
+
+// backend/node_modules/axios/lib/helpers/buildURL.js
+function encode2(val) {
+  return encodeURIComponent(val).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
+}
+function buildURL(url2, params, options) {
+  if (!params) {
+    return url2;
+  }
+  const _encode = options && options.encode || encode2;
+  const serializeFn = options && options.serialize;
+  let serializedParams;
+  if (serializeFn) {
+    serializedParams = serializeFn(params, options);
+  } else {
+    serializedParams = utils_default.isURLSearchParams(params) ? params.toString() : new AxiosURLSearchParams_default(params, options).toString(_encode);
+  }
+  if (serializedParams) {
+    const hashmarkIndex = url2.indexOf("#");
+    if (hashmarkIndex !== -1) {
+      url2 = url2.slice(0, hashmarkIndex);
+    }
+    url2 += (url2.indexOf("?") === -1 ? "?" : "&") + serializedParams;
+  }
+  return url2;
+}
+
+// backend/node_modules/axios/lib/core/InterceptorManager.js
+var InterceptorManager = class {
+  constructor() {
+    this.handlers = [];
+  }
+  /**
+   * Add a new interceptor to the stack
+   *
+   * @param {Function} fulfilled The function to handle `then` for a `Promise`
+   * @param {Function} rejected The function to handle `reject` for a `Promise`
+   *
+   * @return {Number} An ID used to remove interceptor later
+   */
+  use(fulfilled, rejected, options) {
+    this.handlers.push({
+      fulfilled,
+      rejected,
+      synchronous: options ? options.synchronous : false,
+      runWhen: options ? options.runWhen : null
+    });
+    return this.handlers.length - 1;
+  }
+  /**
+   * Remove an interceptor from the stack
+   *
+   * @param {Number} id The ID that was returned by `use`
+   *
+   * @returns {Boolean} `true` if the interceptor was removed, `false` otherwise
+   */
+  eject(id) {
+    if (this.handlers[id]) {
+      this.handlers[id] = null;
+    }
+  }
+  /**
+   * Clear all interceptors from the stack
+   *
+   * @returns {void}
+   */
+  clear() {
+    if (this.handlers) {
+      this.handlers = [];
+    }
+  }
+  /**
+   * Iterate over all the registered interceptors
+   *
+   * This method is particularly useful for skipping over any
+   * interceptors that may have become `null` calling `eject`.
+   *
+   * @param {Function} fn The function to call for each interceptor
+   *
+   * @returns {void}
+   */
+  forEach(fn) {
+    utils_default.forEach(this.handlers, function forEachHandler(h) {
+      if (h !== null) {
+        fn(h);
+      }
+    });
+  }
+};
+var InterceptorManager_default = InterceptorManager;
+
+// backend/node_modules/axios/lib/defaults/transitional.js
+var transitional_default = {
+  silentJSONParsing: true,
+  forcedJSONParsing: true,
+  clarifyTimeoutError: false
+};
+
+// backend/node_modules/axios/lib/platform/node/classes/URLSearchParams.js
+var import_url = __toESM(require("url"), 1);
+var URLSearchParams_default = import_url.default.URLSearchParams;
+
+// backend/node_modules/axios/lib/platform/node/index.js
+var node_default = {
+  isNode: true,
+  classes: {
+    URLSearchParams: URLSearchParams_default,
+    FormData: FormData_default,
+    Blob: typeof Blob !== "undefined" && Blob || null
+  },
+  protocols: ["http", "https", "file", "data"]
+};
+
+// backend/node_modules/axios/lib/platform/common/utils.js
+var utils_exports = {};
+__export(utils_exports, {
+  hasBrowserEnv: () => hasBrowserEnv,
+  hasStandardBrowserEnv: () => hasStandardBrowserEnv,
+  hasStandardBrowserWebWorkerEnv: () => hasStandardBrowserWebWorkerEnv,
+  origin: () => origin
+});
+var hasBrowserEnv = typeof window !== "undefined" && typeof document !== "undefined";
+var hasStandardBrowserEnv = ((product) => {
+  return hasBrowserEnv && ["ReactNative", "NativeScript", "NS"].indexOf(product) < 0;
+})(typeof navigator !== "undefined" && navigator.product);
+var hasStandardBrowserWebWorkerEnv = (() => {
+  return typeof WorkerGlobalScope !== "undefined" && // eslint-disable-next-line no-undef
+  self instanceof WorkerGlobalScope && typeof self.importScripts === "function";
+})();
+var origin = hasBrowserEnv && window.location.href || "http://localhost";
+
+// backend/node_modules/axios/lib/platform/index.js
+var platform_default = {
+  ...utils_exports,
+  ...node_default
+};
+
+// backend/node_modules/axios/lib/helpers/toURLEncodedForm.js
+function toURLEncodedForm(data, options) {
+  return toFormData_default(data, new platform_default.classes.URLSearchParams(), Object.assign({
+    visitor: function(value, key, path, helpers) {
+      if (platform_default.isNode && utils_default.isBuffer(value)) {
+        this.append(key, value.toString("base64"));
+        return false;
+      }
+      return helpers.defaultVisitor.apply(this, arguments);
+    }
+  }, options));
+}
+
+// backend/node_modules/axios/lib/helpers/formDataToJSON.js
+function parsePropPath(name) {
+  return utils_default.matchAll(/\w+|\[(\w*)]/g, name).map((match) => {
+    return match[0] === "[]" ? "" : match[1] || match[0];
+  });
+}
+function arrayToObject(arr) {
+  const obj = {};
+  const keys = Object.keys(arr);
+  let i;
+  const len = keys.length;
+  let key;
+  for (i = 0; i < len; i++) {
+    key = keys[i];
+    obj[key] = arr[key];
+  }
+  return obj;
+}
+function formDataToJSON(formData) {
+  function buildPath(path, value, target, index) {
+    let name = path[index++];
+    if (name === "__proto__")
+      return true;
+    const isNumericKey = Number.isFinite(+name);
+    const isLast = index >= path.length;
+    name = !name && utils_default.isArray(target) ? target.length : name;
+    if (isLast) {
+      if (utils_default.hasOwnProp(target, name)) {
+        target[name] = [target[name], value];
+      } else {
+        target[name] = value;
+      }
+      return !isNumericKey;
+    }
+    if (!target[name] || !utils_default.isObject(target[name])) {
+      target[name] = [];
+    }
+    const result = buildPath(path, value, target[name], index);
+    if (result && utils_default.isArray(target[name])) {
+      target[name] = arrayToObject(target[name]);
+    }
+    return !isNumericKey;
+  }
+  if (utils_default.isFormData(formData) && utils_default.isFunction(formData.entries)) {
+    const obj = {};
+    utils_default.forEachEntry(formData, (name, value) => {
+      buildPath(parsePropPath(name), value, obj, 0);
+    });
+    return obj;
+  }
+  return null;
+}
+var formDataToJSON_default = formDataToJSON;
+
+// backend/node_modules/axios/lib/defaults/index.js
+function stringifySafely(rawValue, parser, encoder) {
+  if (utils_default.isString(rawValue)) {
+    try {
+      (parser || JSON.parse)(rawValue);
+      return utils_default.trim(rawValue);
+    } catch (e) {
+      if (e.name !== "SyntaxError") {
+        throw e;
+      }
+    }
+  }
+  return (encoder || JSON.stringify)(rawValue);
+}
+var defaults = {
+  transitional: transitional_default,
+  adapter: ["xhr", "http", "fetch"],
+  transformRequest: [function transformRequest(data, headers) {
+    const contentType = headers.getContentType() || "";
+    const hasJSONContentType = contentType.indexOf("application/json") > -1;
+    const isObjectPayload = utils_default.isObject(data);
+    if (isObjectPayload && utils_default.isHTMLForm(data)) {
+      data = new FormData(data);
+    }
+    const isFormData2 = utils_default.isFormData(data);
+    if (isFormData2) {
+      return hasJSONContentType ? JSON.stringify(formDataToJSON_default(data)) : data;
+    }
+    if (utils_default.isArrayBuffer(data) || utils_default.isBuffer(data) || utils_default.isStream(data) || utils_default.isFile(data) || utils_default.isBlob(data) || utils_default.isReadableStream(data)) {
+      return data;
+    }
+    if (utils_default.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils_default.isURLSearchParams(data)) {
+      headers.setContentType("application/x-www-form-urlencoded;charset=utf-8", false);
+      return data.toString();
+    }
+    let isFileList2;
+    if (isObjectPayload) {
+      if (contentType.indexOf("application/x-www-form-urlencoded") > -1) {
+        return toURLEncodedForm(data, this.formSerializer).toString();
+      }
+      if ((isFileList2 = utils_default.isFileList(data)) || contentType.indexOf("multipart/form-data") > -1) {
+        const _FormData = this.env && this.env.FormData;
+        return toFormData_default(
+          isFileList2 ? { "files[]": data } : data,
+          _FormData && new _FormData(),
+          this.formSerializer
+        );
+      }
+    }
+    if (isObjectPayload || hasJSONContentType) {
+      headers.setContentType("application/json", false);
+      return stringifySafely(data);
+    }
+    return data;
+  }],
+  transformResponse: [function transformResponse(data) {
+    const transitional2 = this.transitional || defaults.transitional;
+    const forcedJSONParsing = transitional2 && transitional2.forcedJSONParsing;
+    const JSONRequested = this.responseType === "json";
+    if (utils_default.isResponse(data) || utils_default.isReadableStream(data)) {
+      return data;
+    }
+    if (data && utils_default.isString(data) && (forcedJSONParsing && !this.responseType || JSONRequested)) {
+      const silentJSONParsing = transitional2 && transitional2.silentJSONParsing;
+      const strictJSONParsing = !silentJSONParsing && JSONRequested;
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        if (strictJSONParsing) {
+          if (e.name === "SyntaxError") {
+            throw AxiosError_default.from(e, AxiosError_default.ERR_BAD_RESPONSE, this, null, this.response);
+          }
+          throw e;
+        }
+      }
+    }
+    return data;
+  }],
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
+  maxContentLength: -1,
+  maxBodyLength: -1,
+  env: {
+    FormData: platform_default.classes.FormData,
+    Blob: platform_default.classes.Blob
+  },
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  },
+  headers: {
+    common: {
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": void 0
+    }
+  }
+};
+utils_default.forEach(["delete", "get", "head", "post", "put", "patch"], (method) => {
+  defaults.headers[method] = {};
+});
+var defaults_default = defaults;
+
+// backend/node_modules/axios/lib/helpers/parseHeaders.js
+var ignoreDuplicateOf = utils_default.toObjectSet([
+  "age",
+  "authorization",
+  "content-length",
+  "content-type",
+  "etag",
+  "expires",
+  "from",
+  "host",
+  "if-modified-since",
+  "if-unmodified-since",
+  "last-modified",
+  "location",
+  "max-forwards",
+  "proxy-authorization",
+  "referer",
+  "retry-after",
+  "user-agent"
+]);
+var parseHeaders_default = (rawHeaders) => {
+  const parsed = {};
+  let key;
+  let val;
+  let i;
+  rawHeaders && rawHeaders.split("\n").forEach(function parser(line) {
+    i = line.indexOf(":");
+    key = line.substring(0, i).trim().toLowerCase();
+    val = line.substring(i + 1).trim();
+    if (!key || parsed[key] && ignoreDuplicateOf[key]) {
+      return;
+    }
+    if (key === "set-cookie") {
+      if (parsed[key]) {
+        parsed[key].push(val);
+      } else {
+        parsed[key] = [val];
+      }
+    } else {
+      parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
+    }
+  });
+  return parsed;
+};
+
+// backend/node_modules/axios/lib/core/AxiosHeaders.js
+var $internals = Symbol("internals");
+function normalizeHeader(header) {
+  return header && String(header).trim().toLowerCase();
+}
+function normalizeValue(value) {
+  if (value === false || value == null) {
+    return value;
+  }
+  return utils_default.isArray(value) ? value.map(normalizeValue) : String(value);
+}
+function parseTokens(str) {
+  const tokens = /* @__PURE__ */ Object.create(null);
+  const tokensRE = /([^\s,;=]+)\s*(?:=\s*([^,;]+))?/g;
+  let match;
+  while (match = tokensRE.exec(str)) {
+    tokens[match[1]] = match[2];
+  }
+  return tokens;
+}
+var isValidHeaderName = (str) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(str.trim());
+function matchHeaderValue(context, value, header, filter2, isHeaderNameFilter) {
+  if (utils_default.isFunction(filter2)) {
+    return filter2.call(this, value, header);
+  }
+  if (isHeaderNameFilter) {
+    value = header;
+  }
+  if (!utils_default.isString(value))
+    return;
+  if (utils_default.isString(filter2)) {
+    return value.indexOf(filter2) !== -1;
+  }
+  if (utils_default.isRegExp(filter2)) {
+    return filter2.test(value);
+  }
+}
+function formatHeader(header) {
+  return header.trim().toLowerCase().replace(/([a-z\d])(\w*)/g, (w, char, str) => {
+    return char.toUpperCase() + str;
+  });
+}
+function buildAccessors(obj, header) {
+  const accessorName = utils_default.toCamelCase(" " + header);
+  ["get", "set", "has"].forEach((methodName) => {
+    Object.defineProperty(obj, methodName + accessorName, {
+      value: function(arg1, arg2, arg3) {
+        return this[methodName].call(this, header, arg1, arg2, arg3);
+      },
+      configurable: true
+    });
+  });
+}
+var AxiosHeaders = class {
+  constructor(headers) {
+    headers && this.set(headers);
+  }
+  set(header, valueOrRewrite, rewrite) {
+    const self2 = this;
+    function setHeader(_value, _header, _rewrite) {
+      const lHeader = normalizeHeader(_header);
+      if (!lHeader) {
+        throw new Error("header name must be a non-empty string");
+      }
+      const key = utils_default.findKey(self2, lHeader);
+      if (!key || self2[key] === void 0 || _rewrite === true || _rewrite === void 0 && self2[key] !== false) {
+        self2[key || _header] = normalizeValue(_value);
+      }
+    }
+    const setHeaders = (headers, _rewrite) => utils_default.forEach(headers, (_value, _header) => setHeader(_value, _header, _rewrite));
+    if (utils_default.isPlainObject(header) || header instanceof this.constructor) {
+      setHeaders(header, valueOrRewrite);
+    } else if (utils_default.isString(header) && (header = header.trim()) && !isValidHeaderName(header)) {
+      setHeaders(parseHeaders_default(header), valueOrRewrite);
+    } else if (utils_default.isHeaders(header)) {
+      for (const [key, value] of header.entries()) {
+        setHeader(value, key, rewrite);
+      }
+    } else {
+      header != null && setHeader(valueOrRewrite, header, rewrite);
+    }
+    return this;
+  }
+  get(header, parser) {
+    header = normalizeHeader(header);
+    if (header) {
+      const key = utils_default.findKey(this, header);
+      if (key) {
+        const value = this[key];
+        if (!parser) {
+          return value;
+        }
+        if (parser === true) {
+          return parseTokens(value);
+        }
+        if (utils_default.isFunction(parser)) {
+          return parser.call(this, value, key);
+        }
+        if (utils_default.isRegExp(parser)) {
+          return parser.exec(value);
+        }
+        throw new TypeError("parser must be boolean|regexp|function");
+      }
+    }
+  }
+  has(header, matcher) {
+    header = normalizeHeader(header);
+    if (header) {
+      const key = utils_default.findKey(this, header);
+      return !!(key && this[key] !== void 0 && (!matcher || matchHeaderValue(this, this[key], key, matcher)));
+    }
+    return false;
+  }
+  delete(header, matcher) {
+    const self2 = this;
+    let deleted = false;
+    function deleteHeader(_header) {
+      _header = normalizeHeader(_header);
+      if (_header) {
+        const key = utils_default.findKey(self2, _header);
+        if (key && (!matcher || matchHeaderValue(self2, self2[key], key, matcher))) {
+          delete self2[key];
+          deleted = true;
+        }
+      }
+    }
+    if (utils_default.isArray(header)) {
+      header.forEach(deleteHeader);
+    } else {
+      deleteHeader(header);
+    }
+    return deleted;
+  }
+  clear(matcher) {
+    const keys = Object.keys(this);
+    let i = keys.length;
+    let deleted = false;
+    while (i--) {
+      const key = keys[i];
+      if (!matcher || matchHeaderValue(this, this[key], key, matcher, true)) {
+        delete this[key];
+        deleted = true;
+      }
+    }
+    return deleted;
+  }
+  normalize(format) {
+    const self2 = this;
+    const headers = {};
+    utils_default.forEach(this, (value, header) => {
+      const key = utils_default.findKey(headers, header);
+      if (key) {
+        self2[key] = normalizeValue(value);
+        delete self2[header];
+        return;
+      }
+      const normalized = format ? formatHeader(header) : String(header).trim();
+      if (normalized !== header) {
+        delete self2[header];
+      }
+      self2[normalized] = normalizeValue(value);
+      headers[normalized] = true;
+    });
+    return this;
+  }
+  concat(...targets) {
+    return this.constructor.concat(this, ...targets);
+  }
+  toJSON(asStrings) {
+    const obj = /* @__PURE__ */ Object.create(null);
+    utils_default.forEach(this, (value, header) => {
+      value != null && value !== false && (obj[header] = asStrings && utils_default.isArray(value) ? value.join(", ") : value);
+    });
+    return obj;
+  }
+  [Symbol.iterator]() {
+    return Object.entries(this.toJSON())[Symbol.iterator]();
+  }
+  toString() {
+    return Object.entries(this.toJSON()).map(([header, value]) => header + ": " + value).join("\n");
+  }
+  get [Symbol.toStringTag]() {
+    return "AxiosHeaders";
+  }
+  static from(thing) {
+    return thing instanceof this ? thing : new this(thing);
+  }
+  static concat(first, ...targets) {
+    const computed = new this(first);
+    targets.forEach((target) => computed.set(target));
+    return computed;
+  }
+  static accessor(header) {
+    const internals = this[$internals] = this[$internals] = {
+      accessors: {}
+    };
+    const accessors = internals.accessors;
+    const prototype3 = this.prototype;
+    function defineAccessor(_header) {
+      const lHeader = normalizeHeader(_header);
+      if (!accessors[lHeader]) {
+        buildAccessors(prototype3, _header);
+        accessors[lHeader] = true;
+      }
+    }
+    utils_default.isArray(header) ? header.forEach(defineAccessor) : defineAccessor(header);
+    return this;
+  }
+};
+AxiosHeaders.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
+utils_default.reduceDescriptors(AxiosHeaders.prototype, ({ value }, key) => {
+  let mapped = key[0].toUpperCase() + key.slice(1);
+  return {
+    get: () => value,
+    set(headerValue) {
+      this[mapped] = headerValue;
+    }
+  };
+});
+utils_default.freezeMethods(AxiosHeaders);
+var AxiosHeaders_default = AxiosHeaders;
+
+// backend/node_modules/axios/lib/core/transformData.js
+function transformData(fns, response) {
+  const config = this || defaults_default;
+  const context = response || config;
+  const headers = AxiosHeaders_default.from(context.headers);
+  let data = context.data;
+  utils_default.forEach(fns, function transform(fn) {
+    data = fn.call(config, data, headers.normalize(), response ? response.status : void 0);
+  });
+  headers.normalize();
+  return data;
+}
+
+// backend/node_modules/axios/lib/cancel/isCancel.js
+function isCancel(value) {
+  return !!(value && value.__CANCEL__);
+}
+
+// backend/node_modules/axios/lib/cancel/CanceledError.js
+function CanceledError(message, config, request) {
+  AxiosError_default.call(this, message == null ? "canceled" : message, AxiosError_default.ERR_CANCELED, config, request);
+  this.name = "CanceledError";
+}
+utils_default.inherits(CanceledError, AxiosError_default, {
+  __CANCEL__: true
+});
+var CanceledError_default = CanceledError;
+
+// backend/node_modules/axios/lib/core/settle.js
+function settle(resolve, reject, response) {
+  const validateStatus2 = response.config.validateStatus;
+  if (!response.status || !validateStatus2 || validateStatus2(response.status)) {
+    resolve(response);
+  } else {
+    reject(new AxiosError_default(
+      "Request failed with status code " + response.status,
+      [AxiosError_default.ERR_BAD_REQUEST, AxiosError_default.ERR_BAD_RESPONSE][Math.floor(response.status / 100) - 4],
+      response.config,
+      response.request,
+      response
+    ));
+  }
+}
+
+// backend/node_modules/axios/lib/helpers/isAbsoluteURL.js
+function isAbsoluteURL(url2) {
+  return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url2);
+}
+
+// backend/node_modules/axios/lib/helpers/combineURLs.js
+function combineURLs(baseURL, relativeURL) {
+  return relativeURL ? baseURL.replace(/\/?\/$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
+}
+
+// backend/node_modules/axios/lib/core/buildFullPath.js
+function buildFullPath(baseURL, requestedURL) {
+  if (baseURL && !isAbsoluteURL(requestedURL)) {
+    return combineURLs(baseURL, requestedURL);
+  }
+  return requestedURL;
+}
+
+// backend/node_modules/axios/lib/adapters/http.js
+var import_proxy_from_env = __toESM(require_proxy_from_env(), 1);
+var import_http = __toESM(require("http"), 1);
+var import_https = __toESM(require("https"), 1);
+var import_util2 = __toESM(require("util"), 1);
+var import_follow_redirects = __toESM(require_follow_redirects(), 1);
+var import_zlib = __toESM(require("zlib"), 1);
+
+// backend/node_modules/axios/lib/env/data.js
+var VERSION = "1.7.2";
+
+// backend/node_modules/axios/lib/helpers/parseProtocol.js
+function parseProtocol(url2) {
+  const match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url2);
+  return match && match[1] || "";
+}
+
+// backend/node_modules/axios/lib/helpers/fromDataURI.js
+var DATA_URL_PATTERN = /^(?:([^;]+);)?(?:[^;]+;)?(base64|),([\s\S]*)$/;
+function fromDataURI(uri, asBlob, options) {
+  const _Blob = options && options.Blob || platform_default.classes.Blob;
+  const protocol = parseProtocol(uri);
+  if (asBlob === void 0 && _Blob) {
+    asBlob = true;
+  }
+  if (protocol === "data") {
+    uri = protocol.length ? uri.slice(protocol.length + 1) : uri;
+    const match = DATA_URL_PATTERN.exec(uri);
+    if (!match) {
+      throw new AxiosError_default("Invalid URL", AxiosError_default.ERR_INVALID_URL);
+    }
+    const mime = match[1];
+    const isBase64 = match[2];
+    const body = match[3];
+    const buffer = Buffer.from(decodeURIComponent(body), isBase64 ? "base64" : "utf8");
+    if (asBlob) {
+      if (!_Blob) {
+        throw new AxiosError_default("Blob is not supported", AxiosError_default.ERR_NOT_SUPPORT);
+      }
+      return new _Blob([buffer], { type: mime });
+    }
+    return buffer;
+  }
+  throw new AxiosError_default("Unsupported protocol " + protocol, AxiosError_default.ERR_NOT_SUPPORT);
+}
+
+// backend/node_modules/axios/lib/adapters/http.js
+var import_stream4 = __toESM(require("stream"), 1);
+
+// backend/node_modules/axios/lib/helpers/AxiosTransformStream.js
+var import_stream = __toESM(require("stream"), 1);
+
+// backend/node_modules/axios/lib/helpers/throttle.js
+function throttle(fn, freq) {
+  let timestamp = 0;
+  const threshold = 1e3 / freq;
+  let timer = null;
+  return function throttled() {
+    const force = this === true;
+    const now = Date.now();
+    if (force || now - timestamp > threshold) {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      timestamp = now;
+      return fn.apply(null, arguments);
+    }
+    if (!timer) {
+      timer = setTimeout(() => {
+        timer = null;
+        timestamp = Date.now();
+        return fn.apply(null, arguments);
+      }, threshold - (now - timestamp));
+    }
+  };
+}
+var throttle_default = throttle;
+
+// backend/node_modules/axios/lib/helpers/speedometer.js
+function speedometer(samplesCount, min) {
+  samplesCount = samplesCount || 10;
+  const bytes = new Array(samplesCount);
+  const timestamps = new Array(samplesCount);
+  let head = 0;
+  let tail = 0;
+  let firstSampleTS;
+  min = min !== void 0 ? min : 1e3;
+  return function push(chunkLength) {
+    const now = Date.now();
+    const startedAt = timestamps[tail];
+    if (!firstSampleTS) {
+      firstSampleTS = now;
+    }
+    bytes[head] = chunkLength;
+    timestamps[head] = now;
+    let i = tail;
+    let bytesCount = 0;
+    while (i !== head) {
+      bytesCount += bytes[i++];
+      i = i % samplesCount;
+    }
+    head = (head + 1) % samplesCount;
+    if (head === tail) {
+      tail = (tail + 1) % samplesCount;
+    }
+    if (now - firstSampleTS < min) {
+      return;
+    }
+    const passed = startedAt && now - startedAt;
+    return passed ? Math.round(bytesCount * 1e3 / passed) : void 0;
+  };
+}
+var speedometer_default = speedometer;
+
+// backend/node_modules/axios/lib/helpers/AxiosTransformStream.js
+var kInternals = Symbol("internals");
+var AxiosTransformStream = class extends import_stream.default.Transform {
+  constructor(options) {
+    options = utils_default.toFlatObject(options, {
+      maxRate: 0,
+      chunkSize: 64 * 1024,
+      minChunkSize: 100,
+      timeWindow: 500,
+      ticksRate: 2,
+      samplesCount: 15
+    }, null, (prop, source) => {
+      return !utils_default.isUndefined(source[prop]);
+    });
+    super({
+      readableHighWaterMark: options.chunkSize
+    });
+    const self2 = this;
+    const internals = this[kInternals] = {
+      length: options.length,
+      timeWindow: options.timeWindow,
+      ticksRate: options.ticksRate,
+      chunkSize: options.chunkSize,
+      maxRate: options.maxRate,
+      minChunkSize: options.minChunkSize,
+      bytesSeen: 0,
+      isCaptured: false,
+      notifiedBytesLoaded: 0,
+      ts: Date.now(),
+      bytes: 0,
+      onReadCallback: null
+    };
+    const _speedometer = speedometer_default(internals.ticksRate * options.samplesCount, internals.timeWindow);
+    this.on("newListener", (event) => {
+      if (event === "progress") {
+        if (!internals.isCaptured) {
+          internals.isCaptured = true;
+        }
+      }
+    });
+    let bytesNotified = 0;
+    internals.updateProgress = throttle_default(function throttledHandler() {
+      const totalBytes = internals.length;
+      const bytesTransferred = internals.bytesSeen;
+      const progressBytes = bytesTransferred - bytesNotified;
+      if (!progressBytes || self2.destroyed)
+        return;
+      const rate = _speedometer(progressBytes);
+      bytesNotified = bytesTransferred;
+      process.nextTick(() => {
+        self2.emit("progress", {
+          loaded: bytesTransferred,
+          total: totalBytes,
+          progress: totalBytes ? bytesTransferred / totalBytes : void 0,
+          bytes: progressBytes,
+          rate: rate ? rate : void 0,
+          estimated: rate && totalBytes && bytesTransferred <= totalBytes ? (totalBytes - bytesTransferred) / rate : void 0,
+          lengthComputable: totalBytes != null
+        });
+      });
+    }, internals.ticksRate);
+    const onFinish = () => {
+      internals.updateProgress.call(true);
+    };
+    this.once("end", onFinish);
+    this.once("error", onFinish);
+  }
+  _read(size) {
+    const internals = this[kInternals];
+    if (internals.onReadCallback) {
+      internals.onReadCallback();
+    }
+    return super._read(size);
+  }
+  _transform(chunk, encoding, callback2) {
+    const self2 = this;
+    const internals = this[kInternals];
+    const maxRate = internals.maxRate;
+    const readableHighWaterMark = this.readableHighWaterMark;
+    const timeWindow = internals.timeWindow;
+    const divider = 1e3 / timeWindow;
+    const bytesThreshold = maxRate / divider;
+    const minChunkSize = internals.minChunkSize !== false ? Math.max(internals.minChunkSize, bytesThreshold * 0.01) : 0;
+    function pushChunk(_chunk, _callback) {
+      const bytes = Buffer.byteLength(_chunk);
+      internals.bytesSeen += bytes;
+      internals.bytes += bytes;
+      if (internals.isCaptured) {
+        internals.updateProgress();
+      }
+      if (self2.push(_chunk)) {
+        process.nextTick(_callback);
+      } else {
+        internals.onReadCallback = () => {
+          internals.onReadCallback = null;
+          process.nextTick(_callback);
+        };
+      }
+    }
+    const transformChunk = (_chunk, _callback) => {
+      const chunkSize = Buffer.byteLength(_chunk);
+      let chunkRemainder = null;
+      let maxChunkSize = readableHighWaterMark;
+      let bytesLeft;
+      let passed = 0;
+      if (maxRate) {
+        const now = Date.now();
+        if (!internals.ts || (passed = now - internals.ts) >= timeWindow) {
+          internals.ts = now;
+          bytesLeft = bytesThreshold - internals.bytes;
+          internals.bytes = bytesLeft < 0 ? -bytesLeft : 0;
+          passed = 0;
+        }
+        bytesLeft = bytesThreshold - internals.bytes;
+      }
+      if (maxRate) {
+        if (bytesLeft <= 0) {
+          return setTimeout(() => {
+            _callback(null, _chunk);
+          }, timeWindow - passed);
+        }
+        if (bytesLeft < maxChunkSize) {
+          maxChunkSize = bytesLeft;
+        }
+      }
+      if (maxChunkSize && chunkSize > maxChunkSize && chunkSize - maxChunkSize > minChunkSize) {
+        chunkRemainder = _chunk.subarray(maxChunkSize);
+        _chunk = _chunk.subarray(0, maxChunkSize);
+      }
+      pushChunk(_chunk, chunkRemainder ? () => {
+        process.nextTick(_callback, null, chunkRemainder);
+      } : _callback);
+    };
+    transformChunk(chunk, function transformNextChunk(err, _chunk) {
+      if (err) {
+        return callback2(err);
+      }
+      if (_chunk) {
+        transformChunk(_chunk, transformNextChunk);
+      } else {
+        callback2(null);
+      }
+    });
+  }
+  setLength(length) {
+    this[kInternals].length = +length;
+    return this;
+  }
+};
+var AxiosTransformStream_default = AxiosTransformStream;
+
+// backend/node_modules/axios/lib/adapters/http.js
+var import_events = require("events");
+
+// backend/node_modules/axios/lib/helpers/formDataToStream.js
+var import_util = require("util");
+var import_stream2 = require("stream");
+
+// backend/node_modules/axios/lib/helpers/readBlob.js
+var { asyncIterator } = Symbol;
+var readBlob = async function* (blob) {
+  if (blob.stream) {
+    yield* blob.stream();
+  } else if (blob.arrayBuffer) {
+    yield await blob.arrayBuffer();
+  } else if (blob[asyncIterator]) {
+    yield* blob[asyncIterator]();
+  } else {
+    yield blob;
+  }
+};
+var readBlob_default = readBlob;
+
+// backend/node_modules/axios/lib/helpers/formDataToStream.js
+var BOUNDARY_ALPHABET = utils_default.ALPHABET.ALPHA_DIGIT + "-_";
+var textEncoder = new import_util.TextEncoder();
+var CRLF = "\r\n";
+var CRLF_BYTES = textEncoder.encode(CRLF);
+var CRLF_BYTES_COUNT = 2;
+var FormDataPart = class {
+  constructor(name, value) {
+    const { escapeName } = this.constructor;
+    const isStringValue = utils_default.isString(value);
+    let headers = `Content-Disposition: form-data; name="${escapeName(name)}"${!isStringValue && value.name ? `; filename="${escapeName(value.name)}"` : ""}${CRLF}`;
+    if (isStringValue) {
+      value = textEncoder.encode(String(value).replace(/\r?\n|\r\n?/g, CRLF));
+    } else {
+      headers += `Content-Type: ${value.type || "application/octet-stream"}${CRLF}`;
+    }
+    this.headers = textEncoder.encode(headers + CRLF);
+    this.contentLength = isStringValue ? value.byteLength : value.size;
+    this.size = this.headers.byteLength + this.contentLength + CRLF_BYTES_COUNT;
+    this.name = name;
+    this.value = value;
+  }
+  async *encode() {
+    yield this.headers;
+    const { value } = this;
+    if (utils_default.isTypedArray(value)) {
+      yield value;
+    } else {
+      yield* readBlob_default(value);
+    }
+    yield CRLF_BYTES;
+  }
+  static escapeName(name) {
+    return String(name).replace(/[\r\n"]/g, (match) => ({
+      "\r": "%0D",
+      "\n": "%0A",
+      '"': "%22"
+    })[match]);
+  }
+};
+var formDataToStream = (form, headersHandler, options) => {
+  const {
+    tag = "form-data-boundary",
+    size = 25,
+    boundary = tag + "-" + utils_default.generateString(size, BOUNDARY_ALPHABET)
+  } = options || {};
+  if (!utils_default.isFormData(form)) {
+    throw TypeError("FormData instance required");
+  }
+  if (boundary.length < 1 || boundary.length > 70) {
+    throw Error("boundary must be 10-70 characters long");
+  }
+  const boundaryBytes = textEncoder.encode("--" + boundary + CRLF);
+  const footerBytes = textEncoder.encode("--" + boundary + "--" + CRLF + CRLF);
+  let contentLength = footerBytes.byteLength;
+  const parts = Array.from(form.entries()).map(([name, value]) => {
+    const part = new FormDataPart(name, value);
+    contentLength += part.size;
+    return part;
+  });
+  contentLength += boundaryBytes.byteLength * parts.length;
+  contentLength = utils_default.toFiniteNumber(contentLength);
+  const computedHeaders = {
+    "Content-Type": `multipart/form-data; boundary=${boundary}`
+  };
+  if (Number.isFinite(contentLength)) {
+    computedHeaders["Content-Length"] = contentLength;
+  }
+  headersHandler && headersHandler(computedHeaders);
+  return import_stream2.Readable.from(async function* () {
+    for (const part of parts) {
+      yield boundaryBytes;
+      yield* part.encode();
+    }
+    yield footerBytes;
+  }());
+};
+var formDataToStream_default = formDataToStream;
+
+// backend/node_modules/axios/lib/helpers/ZlibHeaderTransformStream.js
+var import_stream3 = __toESM(require("stream"), 1);
+var ZlibHeaderTransformStream = class extends import_stream3.default.Transform {
+  __transform(chunk, encoding, callback2) {
+    this.push(chunk);
+    callback2();
+  }
+  _transform(chunk, encoding, callback2) {
+    if (chunk.length !== 0) {
+      this._transform = this.__transform;
+      if (chunk[0] !== 120) {
+        const header = Buffer.alloc(2);
+        header[0] = 120;
+        header[1] = 156;
+        this.push(header, encoding);
+      }
+    }
+    this.__transform(chunk, encoding, callback2);
+  }
+};
+var ZlibHeaderTransformStream_default = ZlibHeaderTransformStream;
+
+// backend/node_modules/axios/lib/helpers/callbackify.js
+var callbackify = (fn, reducer) => {
+  return utils_default.isAsyncFn(fn) ? function(...args) {
+    const cb = args.pop();
+    fn.apply(this, args).then((value) => {
+      try {
+        reducer ? cb(null, ...reducer(value)) : cb(null, value);
+      } catch (err) {
+        cb(err);
+      }
+    }, cb);
+  } : fn;
+};
+var callbackify_default = callbackify;
+
+// backend/node_modules/axios/lib/adapters/http.js
+var zlibOptions = {
+  flush: import_zlib.default.constants.Z_SYNC_FLUSH,
+  finishFlush: import_zlib.default.constants.Z_SYNC_FLUSH
+};
+var brotliOptions = {
+  flush: import_zlib.default.constants.BROTLI_OPERATION_FLUSH,
+  finishFlush: import_zlib.default.constants.BROTLI_OPERATION_FLUSH
+};
+var isBrotliSupported = utils_default.isFunction(import_zlib.default.createBrotliDecompress);
+var { http: httpFollow, https: httpsFollow } = import_follow_redirects.default;
+var isHttps = /https:?/;
+var supportedProtocols = platform_default.protocols.map((protocol) => {
+  return protocol + ":";
+});
+function dispatchBeforeRedirect(options, responseDetails) {
+  if (options.beforeRedirects.proxy) {
+    options.beforeRedirects.proxy(options);
+  }
+  if (options.beforeRedirects.config) {
+    options.beforeRedirects.config(options, responseDetails);
+  }
+}
+function setProxy(options, configProxy, location) {
+  let proxy = configProxy;
+  if (!proxy && proxy !== false) {
+    const proxyUrl = (0, import_proxy_from_env.getProxyForUrl)(location);
+    if (proxyUrl) {
+      proxy = new URL(proxyUrl);
+    }
+  }
+  if (proxy) {
+    if (proxy.username) {
+      proxy.auth = (proxy.username || "") + ":" + (proxy.password || "");
+    }
+    if (proxy.auth) {
+      if (proxy.auth.username || proxy.auth.password) {
+        proxy.auth = (proxy.auth.username || "") + ":" + (proxy.auth.password || "");
+      }
+      const base64 = Buffer.from(proxy.auth, "utf8").toString("base64");
+      options.headers["Proxy-Authorization"] = "Basic " + base64;
+    }
+    options.headers.host = options.hostname + (options.port ? ":" + options.port : "");
+    const proxyHost = proxy.hostname || proxy.host;
+    options.hostname = proxyHost;
+    options.host = proxyHost;
+    options.port = proxy.port;
+    options.path = location;
+    if (proxy.protocol) {
+      options.protocol = proxy.protocol.includes(":") ? proxy.protocol : `${proxy.protocol}:`;
+    }
+  }
+  options.beforeRedirects.proxy = function beforeRedirect(redirectOptions) {
+    setProxy(redirectOptions, configProxy, redirectOptions.href);
+  };
+}
+var isHttpAdapterSupported = typeof process !== "undefined" && utils_default.kindOf(process) === "process";
+var wrapAsync = (asyncExecutor) => {
+  return new Promise((resolve, reject) => {
+    let onDone;
+    let isDone;
+    const done = (value, isRejected) => {
+      if (isDone)
+        return;
+      isDone = true;
+      onDone && onDone(value, isRejected);
+    };
+    const _resolve = (value) => {
+      done(value);
+      resolve(value);
+    };
+    const _reject = (reason) => {
+      done(reason, true);
+      reject(reason);
+    };
+    asyncExecutor(_resolve, _reject, (onDoneHandler) => onDone = onDoneHandler).catch(_reject);
+  });
+};
+var resolveFamily = ({ address, family }) => {
+  if (!utils_default.isString(address)) {
+    throw TypeError("address must be a string");
+  }
+  return {
+    address,
+    family: family || (address.indexOf(".") < 0 ? 6 : 4)
+  };
+};
+var buildAddressEntry = (address, family) => resolveFamily(utils_default.isObject(address) ? address : { address, family });
+var http_default = isHttpAdapterSupported && function httpAdapter(config) {
+  return wrapAsync(async function dispatchHttpRequest(resolve, reject, onDone) {
+    let { data, lookup, family } = config;
+    const { responseType, responseEncoding } = config;
+    const method = config.method.toUpperCase();
+    let isDone;
+    let rejected = false;
+    let req;
+    if (lookup) {
+      const _lookup = callbackify_default(lookup, (value) => utils_default.isArray(value) ? value : [value]);
+      lookup = (hostname, opt, cb) => {
+        _lookup(hostname, opt, (err, arg0, arg1) => {
+          if (err) {
+            return cb(err);
+          }
+          const addresses = utils_default.isArray(arg0) ? arg0.map((addr) => buildAddressEntry(addr)) : [buildAddressEntry(arg0, arg1)];
+          opt.all ? cb(err, addresses) : cb(err, addresses[0].address, addresses[0].family);
+        });
+      };
+    }
+    const emitter = new import_events.EventEmitter();
+    const onFinished = () => {
+      if (config.cancelToken) {
+        config.cancelToken.unsubscribe(abort);
+      }
+      if (config.signal) {
+        config.signal.removeEventListener("abort", abort);
+      }
+      emitter.removeAllListeners();
+    };
+    onDone((value, isRejected) => {
+      isDone = true;
+      if (isRejected) {
+        rejected = true;
+        onFinished();
+      }
+    });
+    function abort(reason) {
+      emitter.emit("abort", !reason || reason.type ? new CanceledError_default(null, config, req) : reason);
+    }
+    emitter.once("abort", reject);
+    if (config.cancelToken || config.signal) {
+      config.cancelToken && config.cancelToken.subscribe(abort);
+      if (config.signal) {
+        config.signal.aborted ? abort() : config.signal.addEventListener("abort", abort);
+      }
+    }
+    const fullPath = buildFullPath(config.baseURL, config.url);
+    const parsed = new URL(fullPath, "http://localhost");
+    const protocol = parsed.protocol || supportedProtocols[0];
+    if (protocol === "data:") {
+      let convertedData;
+      if (method !== "GET") {
+        return settle(resolve, reject, {
+          status: 405,
+          statusText: "method not allowed",
+          headers: {},
+          config
+        });
+      }
+      try {
+        convertedData = fromDataURI(config.url, responseType === "blob", {
+          Blob: config.env && config.env.Blob
+        });
+      } catch (err) {
+        throw AxiosError_default.from(err, AxiosError_default.ERR_BAD_REQUEST, config);
+      }
+      if (responseType === "text") {
+        convertedData = convertedData.toString(responseEncoding);
+        if (!responseEncoding || responseEncoding === "utf8") {
+          convertedData = utils_default.stripBOM(convertedData);
+        }
+      } else if (responseType === "stream") {
+        convertedData = import_stream4.default.Readable.from(convertedData);
+      }
+      return settle(resolve, reject, {
+        data: convertedData,
+        status: 200,
+        statusText: "OK",
+        headers: new AxiosHeaders_default(),
+        config
+      });
+    }
+    if (supportedProtocols.indexOf(protocol) === -1) {
+      return reject(new AxiosError_default(
+        "Unsupported protocol " + protocol,
+        AxiosError_default.ERR_BAD_REQUEST,
+        config
+      ));
+    }
+    const headers = AxiosHeaders_default.from(config.headers).normalize();
+    headers.set("User-Agent", "axios/" + VERSION, false);
+    const onDownloadProgress = config.onDownloadProgress;
+    const onUploadProgress = config.onUploadProgress;
+    const maxRate = config.maxRate;
+    let maxUploadRate = void 0;
+    let maxDownloadRate = void 0;
+    if (utils_default.isSpecCompliantForm(data)) {
+      const userBoundary = headers.getContentType(/boundary=([-_\w\d]{10,70})/i);
+      data = formDataToStream_default(data, (formHeaders) => {
+        headers.set(formHeaders);
+      }, {
+        tag: `axios-${VERSION}-boundary`,
+        boundary: userBoundary && userBoundary[1] || void 0
+      });
+    } else if (utils_default.isFormData(data) && utils_default.isFunction(data.getHeaders)) {
+      headers.set(data.getHeaders());
+      if (!headers.hasContentLength()) {
+        try {
+          const knownLength = await import_util2.default.promisify(data.getLength).call(data);
+          Number.isFinite(knownLength) && knownLength >= 0 && headers.setContentLength(knownLength);
+        } catch (e) {
+        }
+      }
+    } else if (utils_default.isBlob(data)) {
+      data.size && headers.setContentType(data.type || "application/octet-stream");
+      headers.setContentLength(data.size || 0);
+      data = import_stream4.default.Readable.from(readBlob_default(data));
+    } else if (data && !utils_default.isStream(data)) {
+      if (Buffer.isBuffer(data)) {
+      } else if (utils_default.isArrayBuffer(data)) {
+        data = Buffer.from(new Uint8Array(data));
+      } else if (utils_default.isString(data)) {
+        data = Buffer.from(data, "utf-8");
+      } else {
+        return reject(new AxiosError_default(
+          "Data after transformation must be a string, an ArrayBuffer, a Buffer, or a Stream",
+          AxiosError_default.ERR_BAD_REQUEST,
+          config
+        ));
+      }
+      headers.setContentLength(data.length, false);
+      if (config.maxBodyLength > -1 && data.length > config.maxBodyLength) {
+        return reject(new AxiosError_default(
+          "Request body larger than maxBodyLength limit",
+          AxiosError_default.ERR_BAD_REQUEST,
+          config
+        ));
+      }
+    }
+    const contentLength = utils_default.toFiniteNumber(headers.getContentLength());
+    if (utils_default.isArray(maxRate)) {
+      maxUploadRate = maxRate[0];
+      maxDownloadRate = maxRate[1];
+    } else {
+      maxUploadRate = maxDownloadRate = maxRate;
+    }
+    if (data && (onUploadProgress || maxUploadRate)) {
+      if (!utils_default.isStream(data)) {
+        data = import_stream4.default.Readable.from(data, { objectMode: false });
+      }
+      data = import_stream4.default.pipeline([data, new AxiosTransformStream_default({
+        length: contentLength,
+        maxRate: utils_default.toFiniteNumber(maxUploadRate)
+      })], utils_default.noop);
+      onUploadProgress && data.on("progress", (progress) => {
+        onUploadProgress(Object.assign(progress, {
+          upload: true
+        }));
+      });
+    }
+    let auth = void 0;
+    if (config.auth) {
+      const username = config.auth.username || "";
+      const password = config.auth.password || "";
+      auth = username + ":" + password;
+    }
+    if (!auth && parsed.username) {
+      const urlUsername = parsed.username;
+      const urlPassword = parsed.password;
+      auth = urlUsername + ":" + urlPassword;
+    }
+    auth && headers.delete("authorization");
+    let path;
+    try {
+      path = buildURL(
+        parsed.pathname + parsed.search,
+        config.params,
+        config.paramsSerializer
+      ).replace(/^\?/, "");
+    } catch (err) {
+      const customErr = new Error(err.message);
+      customErr.config = config;
+      customErr.url = config.url;
+      customErr.exists = true;
+      return reject(customErr);
+    }
+    headers.set(
+      "Accept-Encoding",
+      "gzip, compress, deflate" + (isBrotliSupported ? ", br" : ""),
+      false
+    );
+    const options = {
+      path,
+      method,
+      headers: headers.toJSON(),
+      agents: { http: config.httpAgent, https: config.httpsAgent },
+      auth,
+      protocol,
+      family,
+      beforeRedirect: dispatchBeforeRedirect,
+      beforeRedirects: {}
+    };
+    !utils_default.isUndefined(lookup) && (options.lookup = lookup);
+    if (config.socketPath) {
+      options.socketPath = config.socketPath;
+    } else {
+      options.hostname = parsed.hostname;
+      options.port = parsed.port;
+      setProxy(options, config.proxy, protocol + "//" + parsed.hostname + (parsed.port ? ":" + parsed.port : "") + options.path);
+    }
+    let transport;
+    const isHttpsRequest = isHttps.test(options.protocol);
+    options.agent = isHttpsRequest ? config.httpsAgent : config.httpAgent;
+    if (config.transport) {
+      transport = config.transport;
+    } else if (config.maxRedirects === 0) {
+      transport = isHttpsRequest ? import_https.default : import_http.default;
+    } else {
+      if (config.maxRedirects) {
+        options.maxRedirects = config.maxRedirects;
+      }
+      if (config.beforeRedirect) {
+        options.beforeRedirects.config = config.beforeRedirect;
+      }
+      transport = isHttpsRequest ? httpsFollow : httpFollow;
+    }
+    if (config.maxBodyLength > -1) {
+      options.maxBodyLength = config.maxBodyLength;
+    } else {
+      options.maxBodyLength = Infinity;
+    }
+    if (config.insecureHTTPParser) {
+      options.insecureHTTPParser = config.insecureHTTPParser;
+    }
+    req = transport.request(options, function handleResponse(res) {
+      if (req.destroyed)
+        return;
+      const streams = [res];
+      const responseLength = +res.headers["content-length"];
+      if (onDownloadProgress) {
+        const transformStream = new AxiosTransformStream_default({
+          length: utils_default.toFiniteNumber(responseLength),
+          maxRate: utils_default.toFiniteNumber(maxDownloadRate)
+        });
+        onDownloadProgress && transformStream.on("progress", (progress) => {
+          onDownloadProgress(Object.assign(progress, {
+            download: true
+          }));
+        });
+        streams.push(transformStream);
+      }
+      let responseStream = res;
+      const lastRequest = res.req || req;
+      if (config.decompress !== false && res.headers["content-encoding"]) {
+        if (method === "HEAD" || res.statusCode === 204) {
+          delete res.headers["content-encoding"];
+        }
+        switch ((res.headers["content-encoding"] || "").toLowerCase()) {
+          case "gzip":
+          case "x-gzip":
+          case "compress":
+          case "x-compress":
+            streams.push(import_zlib.default.createUnzip(zlibOptions));
+            delete res.headers["content-encoding"];
+            break;
+          case "deflate":
+            streams.push(new ZlibHeaderTransformStream_default());
+            streams.push(import_zlib.default.createUnzip(zlibOptions));
+            delete res.headers["content-encoding"];
+            break;
+          case "br":
+            if (isBrotliSupported) {
+              streams.push(import_zlib.default.createBrotliDecompress(brotliOptions));
+              delete res.headers["content-encoding"];
+            }
+        }
+      }
+      responseStream = streams.length > 1 ? import_stream4.default.pipeline(streams, utils_default.noop) : streams[0];
+      const offListeners = import_stream4.default.finished(responseStream, () => {
+        offListeners();
+        onFinished();
+      });
+      const response = {
+        status: res.statusCode,
+        statusText: res.statusMessage,
+        headers: new AxiosHeaders_default(res.headers),
+        config,
+        request: lastRequest
+      };
+      if (responseType === "stream") {
+        response.data = responseStream;
+        settle(resolve, reject, response);
+      } else {
+        const responseBuffer = [];
+        let totalResponseBytes = 0;
+        responseStream.on("data", function handleStreamData(chunk) {
+          responseBuffer.push(chunk);
+          totalResponseBytes += chunk.length;
+          if (config.maxContentLength > -1 && totalResponseBytes > config.maxContentLength) {
+            rejected = true;
+            responseStream.destroy();
+            reject(new AxiosError_default(
+              "maxContentLength size of " + config.maxContentLength + " exceeded",
+              AxiosError_default.ERR_BAD_RESPONSE,
+              config,
+              lastRequest
+            ));
+          }
+        });
+        responseStream.on("aborted", function handlerStreamAborted() {
+          if (rejected) {
+            return;
+          }
+          const err = new AxiosError_default(
+            "maxContentLength size of " + config.maxContentLength + " exceeded",
+            AxiosError_default.ERR_BAD_RESPONSE,
+            config,
+            lastRequest
+          );
+          responseStream.destroy(err);
+          reject(err);
+        });
+        responseStream.on("error", function handleStreamError(err) {
+          if (req.destroyed)
+            return;
+          reject(AxiosError_default.from(err, null, config, lastRequest));
+        });
+        responseStream.on("end", function handleStreamEnd() {
+          try {
+            let responseData = responseBuffer.length === 1 ? responseBuffer[0] : Buffer.concat(responseBuffer);
+            if (responseType !== "arraybuffer") {
+              responseData = responseData.toString(responseEncoding);
+              if (!responseEncoding || responseEncoding === "utf8") {
+                responseData = utils_default.stripBOM(responseData);
+              }
+            }
+            response.data = responseData;
+          } catch (err) {
+            return reject(AxiosError_default.from(err, null, config, response.request, response));
+          }
+          settle(resolve, reject, response);
+        });
+      }
+      emitter.once("abort", (err) => {
+        if (!responseStream.destroyed) {
+          responseStream.emit("error", err);
+          responseStream.destroy();
+        }
+      });
+    });
+    emitter.once("abort", (err) => {
+      reject(err);
+      req.destroy(err);
+    });
+    req.on("error", function handleRequestError(err) {
+      reject(AxiosError_default.from(err, null, config, req));
+    });
+    req.on("socket", function handleRequestSocket(socket) {
+      socket.setKeepAlive(true, 1e3 * 60);
+    });
+    if (config.timeout) {
+      const timeout = parseInt(config.timeout, 10);
+      if (Number.isNaN(timeout)) {
+        reject(new AxiosError_default(
+          "error trying to parse `config.timeout` to int",
+          AxiosError_default.ERR_BAD_OPTION_VALUE,
+          config,
+          req
+        ));
+        return;
+      }
+      req.setTimeout(timeout, function handleRequestTimeout() {
+        if (isDone)
+          return;
+        let timeoutErrorMessage = config.timeout ? "timeout of " + config.timeout + "ms exceeded" : "timeout exceeded";
+        const transitional2 = config.transitional || transitional_default;
+        if (config.timeoutErrorMessage) {
+          timeoutErrorMessage = config.timeoutErrorMessage;
+        }
+        reject(new AxiosError_default(
+          timeoutErrorMessage,
+          transitional2.clarifyTimeoutError ? AxiosError_default.ETIMEDOUT : AxiosError_default.ECONNABORTED,
+          config,
+          req
+        ));
+        abort();
+      });
+    }
+    if (utils_default.isStream(data)) {
+      let ended = false;
+      let errored = false;
+      data.on("end", () => {
+        ended = true;
+      });
+      data.once("error", (err) => {
+        errored = true;
+        req.destroy(err);
+      });
+      data.on("close", () => {
+        if (!ended && !errored) {
+          abort(new CanceledError_default("Request stream has been aborted", config, req));
+        }
+      });
+      data.pipe(req);
+    } else {
+      req.end(data);
+    }
+  });
+};
+
+// backend/node_modules/axios/lib/helpers/progressEventReducer.js
+var progressEventReducer_default = (listener, isDownloadStream, freq = 3) => {
+  let bytesNotified = 0;
+  const _speedometer = speedometer_default(50, 250);
+  return throttle_default((e) => {
+    const loaded = e.loaded;
+    const total = e.lengthComputable ? e.total : void 0;
+    const progressBytes = loaded - bytesNotified;
+    const rate = _speedometer(progressBytes);
+    const inRange = loaded <= total;
+    bytesNotified = loaded;
+    const data = {
+      loaded,
+      total,
+      progress: total ? loaded / total : void 0,
+      bytes: progressBytes,
+      rate: rate ? rate : void 0,
+      estimated: rate && total && inRange ? (total - loaded) / rate : void 0,
+      event: e,
+      lengthComputable: total != null
+    };
+    data[isDownloadStream ? "download" : "upload"] = true;
+    listener(data);
+  }, freq);
+};
+
+// backend/node_modules/axios/lib/helpers/isURLSameOrigin.js
+var isURLSameOrigin_default = platform_default.hasStandardBrowserEnv ? (
+  // Standard browser envs have full support of the APIs needed to test
+  // whether the request URL is of the same origin as current location.
+  function standardBrowserEnv() {
+    const msie = /(msie|trident)/i.test(navigator.userAgent);
+    const urlParsingNode = document.createElement("a");
+    let originURL;
+    function resolveURL(url2) {
+      let href = url2;
+      if (msie) {
+        urlParsingNode.setAttribute("href", href);
+        href = urlParsingNode.href;
+      }
+      urlParsingNode.setAttribute("href", href);
+      return {
+        href: urlParsingNode.href,
+        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, "") : "",
+        host: urlParsingNode.host,
+        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, "") : "",
+        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, "") : "",
+        hostname: urlParsingNode.hostname,
+        port: urlParsingNode.port,
+        pathname: urlParsingNode.pathname.charAt(0) === "/" ? urlParsingNode.pathname : "/" + urlParsingNode.pathname
+      };
+    }
+    originURL = resolveURL(window.location.href);
+    return function isURLSameOrigin(requestURL) {
+      const parsed = utils_default.isString(requestURL) ? resolveURL(requestURL) : requestURL;
+      return parsed.protocol === originURL.protocol && parsed.host === originURL.host;
+    };
+  }()
+) : (
+  // Non standard browser envs (web workers, react-native) lack needed support.
+  /* @__PURE__ */ function nonStandardBrowserEnv() {
+    return function isURLSameOrigin() {
+      return true;
+    };
+  }()
+);
+
+// backend/node_modules/axios/lib/helpers/cookies.js
+var cookies_default = platform_default.hasStandardBrowserEnv ? (
+  // Standard browser envs support document.cookie
+  {
+    write(name, value, expires, path, domain, secure) {
+      const cookie = [name + "=" + encodeURIComponent(value)];
+      utils_default.isNumber(expires) && cookie.push("expires=" + new Date(expires).toGMTString());
+      utils_default.isString(path) && cookie.push("path=" + path);
+      utils_default.isString(domain) && cookie.push("domain=" + domain);
+      secure === true && cookie.push("secure");
+      document.cookie = cookie.join("; ");
+    },
+    read(name) {
+      const match = document.cookie.match(new RegExp("(^|;\\s*)(" + name + ")=([^;]*)"));
+      return match ? decodeURIComponent(match[3]) : null;
+    },
+    remove(name) {
+      this.write(name, "", Date.now() - 864e5);
+    }
+  }
+) : (
+  // Non-standard browser env (web workers, react-native) lack needed support.
+  {
+    write() {
+    },
+    read() {
+      return null;
+    },
+    remove() {
+    }
+  }
+);
+
+// backend/node_modules/axios/lib/core/mergeConfig.js
+var headersToObject = (thing) => thing instanceof AxiosHeaders_default ? { ...thing } : thing;
+function mergeConfig(config1, config2) {
+  config2 = config2 || {};
+  const config = {};
+  function getMergedValue(target, source, caseless) {
+    if (utils_default.isPlainObject(target) && utils_default.isPlainObject(source)) {
+      return utils_default.merge.call({ caseless }, target, source);
+    } else if (utils_default.isPlainObject(source)) {
+      return utils_default.merge({}, source);
+    } else if (utils_default.isArray(source)) {
+      return source.slice();
+    }
+    return source;
+  }
+  function mergeDeepProperties(a, b, caseless) {
+    if (!utils_default.isUndefined(b)) {
+      return getMergedValue(a, b, caseless);
+    } else if (!utils_default.isUndefined(a)) {
+      return getMergedValue(void 0, a, caseless);
+    }
+  }
+  function valueFromConfig2(a, b) {
+    if (!utils_default.isUndefined(b)) {
+      return getMergedValue(void 0, b);
+    }
+  }
+  function defaultToConfig2(a, b) {
+    if (!utils_default.isUndefined(b)) {
+      return getMergedValue(void 0, b);
+    } else if (!utils_default.isUndefined(a)) {
+      return getMergedValue(void 0, a);
+    }
+  }
+  function mergeDirectKeys(a, b, prop) {
+    if (prop in config2) {
+      return getMergedValue(a, b);
+    } else if (prop in config1) {
+      return getMergedValue(void 0, a);
+    }
+  }
+  const mergeMap = {
+    url: valueFromConfig2,
+    method: valueFromConfig2,
+    data: valueFromConfig2,
+    baseURL: defaultToConfig2,
+    transformRequest: defaultToConfig2,
+    transformResponse: defaultToConfig2,
+    paramsSerializer: defaultToConfig2,
+    timeout: defaultToConfig2,
+    timeoutMessage: defaultToConfig2,
+    withCredentials: defaultToConfig2,
+    withXSRFToken: defaultToConfig2,
+    adapter: defaultToConfig2,
+    responseType: defaultToConfig2,
+    xsrfCookieName: defaultToConfig2,
+    xsrfHeaderName: defaultToConfig2,
+    onUploadProgress: defaultToConfig2,
+    onDownloadProgress: defaultToConfig2,
+    decompress: defaultToConfig2,
+    maxContentLength: defaultToConfig2,
+    maxBodyLength: defaultToConfig2,
+    beforeRedirect: defaultToConfig2,
+    transport: defaultToConfig2,
+    httpAgent: defaultToConfig2,
+    httpsAgent: defaultToConfig2,
+    cancelToken: defaultToConfig2,
+    socketPath: defaultToConfig2,
+    responseEncoding: defaultToConfig2,
+    validateStatus: mergeDirectKeys,
+    headers: (a, b) => mergeDeepProperties(headersToObject(a), headersToObject(b), true)
+  };
+  utils_default.forEach(Object.keys(Object.assign({}, config1, config2)), function computeConfigValue(prop) {
+    const merge2 = mergeMap[prop] || mergeDeepProperties;
+    const configValue = merge2(config1[prop], config2[prop], prop);
+    utils_default.isUndefined(configValue) && merge2 !== mergeDirectKeys || (config[prop] = configValue);
+  });
+  return config;
+}
+
+// backend/node_modules/axios/lib/helpers/resolveConfig.js
+var resolveConfig_default = (config) => {
+  const newConfig = mergeConfig({}, config);
+  let { data, withXSRFToken, xsrfHeaderName, xsrfCookieName, headers, auth } = newConfig;
+  newConfig.headers = headers = AxiosHeaders_default.from(headers);
+  newConfig.url = buildURL(buildFullPath(newConfig.baseURL, newConfig.url), config.params, config.paramsSerializer);
+  if (auth) {
+    headers.set(
+      "Authorization",
+      "Basic " + btoa((auth.username || "") + ":" + (auth.password ? unescape(encodeURIComponent(auth.password)) : ""))
+    );
+  }
+  let contentType;
+  if (utils_default.isFormData(data)) {
+    if (platform_default.hasStandardBrowserEnv || platform_default.hasStandardBrowserWebWorkerEnv) {
+      headers.setContentType(void 0);
+    } else if ((contentType = headers.getContentType()) !== false) {
+      const [type, ...tokens] = contentType ? contentType.split(";").map((token) => token.trim()).filter(Boolean) : [];
+      headers.setContentType([type || "multipart/form-data", ...tokens].join("; "));
+    }
+  }
+  if (platform_default.hasStandardBrowserEnv) {
+    withXSRFToken && utils_default.isFunction(withXSRFToken) && (withXSRFToken = withXSRFToken(newConfig));
+    if (withXSRFToken || withXSRFToken !== false && isURLSameOrigin_default(newConfig.url)) {
+      const xsrfValue = xsrfHeaderName && xsrfCookieName && cookies_default.read(xsrfCookieName);
+      if (xsrfValue) {
+        headers.set(xsrfHeaderName, xsrfValue);
+      }
+    }
+  }
+  return newConfig;
+};
+
+// backend/node_modules/axios/lib/adapters/xhr.js
+var isXHRAdapterSupported = typeof XMLHttpRequest !== "undefined";
+var xhr_default = isXHRAdapterSupported && function(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    const _config = resolveConfig_default(config);
+    let requestData = _config.data;
+    const requestHeaders = AxiosHeaders_default.from(_config.headers).normalize();
+    let { responseType } = _config;
+    let onCanceled;
+    function done() {
+      if (_config.cancelToken) {
+        _config.cancelToken.unsubscribe(onCanceled);
+      }
+      if (_config.signal) {
+        _config.signal.removeEventListener("abort", onCanceled);
+      }
+    }
+    let request = new XMLHttpRequest();
+    request.open(_config.method.toUpperCase(), _config.url, true);
+    request.timeout = _config.timeout;
+    function onloadend() {
+      if (!request) {
+        return;
+      }
+      const responseHeaders = AxiosHeaders_default.from(
+        "getAllResponseHeaders" in request && request.getAllResponseHeaders()
+      );
+      const responseData = !responseType || responseType === "text" || responseType === "json" ? request.responseText : request.response;
+      const response = {
+        data: responseData,
+        status: request.status,
+        statusText: request.statusText,
+        headers: responseHeaders,
+        config,
+        request
+      };
+      settle(function _resolve(value) {
+        resolve(value);
+        done();
+      }, function _reject(err) {
+        reject(err);
+        done();
+      }, response);
+      request = null;
+    }
+    if ("onloadend" in request) {
+      request.onloadend = onloadend;
+    } else {
+      request.onreadystatechange = function handleLoad() {
+        if (!request || request.readyState !== 4) {
+          return;
+        }
+        if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf("file:") === 0)) {
+          return;
+        }
+        setTimeout(onloadend);
+      };
+    }
+    request.onabort = function handleAbort() {
+      if (!request) {
+        return;
+      }
+      reject(new AxiosError_default("Request aborted", AxiosError_default.ECONNABORTED, _config, request));
+      request = null;
+    };
+    request.onerror = function handleError() {
+      reject(new AxiosError_default("Network Error", AxiosError_default.ERR_NETWORK, _config, request));
+      request = null;
+    };
+    request.ontimeout = function handleTimeout() {
+      let timeoutErrorMessage = _config.timeout ? "timeout of " + _config.timeout + "ms exceeded" : "timeout exceeded";
+      const transitional2 = _config.transitional || transitional_default;
+      if (_config.timeoutErrorMessage) {
+        timeoutErrorMessage = _config.timeoutErrorMessage;
+      }
+      reject(new AxiosError_default(
+        timeoutErrorMessage,
+        transitional2.clarifyTimeoutError ? AxiosError_default.ETIMEDOUT : AxiosError_default.ECONNABORTED,
+        _config,
+        request
+      ));
+      request = null;
+    };
+    requestData === void 0 && requestHeaders.setContentType(null);
+    if ("setRequestHeader" in request) {
+      utils_default.forEach(requestHeaders.toJSON(), function setRequestHeader(val, key) {
+        request.setRequestHeader(key, val);
+      });
+    }
+    if (!utils_default.isUndefined(_config.withCredentials)) {
+      request.withCredentials = !!_config.withCredentials;
+    }
+    if (responseType && responseType !== "json") {
+      request.responseType = _config.responseType;
+    }
+    if (typeof _config.onDownloadProgress === "function") {
+      request.addEventListener("progress", progressEventReducer_default(_config.onDownloadProgress, true));
+    }
+    if (typeof _config.onUploadProgress === "function" && request.upload) {
+      request.upload.addEventListener("progress", progressEventReducer_default(_config.onUploadProgress));
+    }
+    if (_config.cancelToken || _config.signal) {
+      onCanceled = (cancel) => {
+        if (!request) {
+          return;
+        }
+        reject(!cancel || cancel.type ? new CanceledError_default(null, config, request) : cancel);
+        request.abort();
+        request = null;
+      };
+      _config.cancelToken && _config.cancelToken.subscribe(onCanceled);
+      if (_config.signal) {
+        _config.signal.aborted ? onCanceled() : _config.signal.addEventListener("abort", onCanceled);
+      }
+    }
+    const protocol = parseProtocol(_config.url);
+    if (protocol && platform_default.protocols.indexOf(protocol) === -1) {
+      reject(new AxiosError_default("Unsupported protocol " + protocol + ":", AxiosError_default.ERR_BAD_REQUEST, config));
+      return;
+    }
+    request.send(requestData || null);
+  });
+};
+
+// backend/node_modules/axios/lib/helpers/composeSignals.js
+var composeSignals = (signals, timeout) => {
+  let controller = new AbortController();
+  let aborted;
+  const onabort = function(cancel) {
+    if (!aborted) {
+      aborted = true;
+      unsubscribe();
+      const err = cancel instanceof Error ? cancel : this.reason;
+      controller.abort(err instanceof AxiosError_default ? err : new CanceledError_default(err instanceof Error ? err.message : err));
+    }
+  };
+  let timer = timeout && setTimeout(() => {
+    onabort(new AxiosError_default(`timeout ${timeout} of ms exceeded`, AxiosError_default.ETIMEDOUT));
+  }, timeout);
+  const unsubscribe = () => {
+    if (signals) {
+      timer && clearTimeout(timer);
+      timer = null;
+      signals.forEach((signal2) => {
+        signal2 && (signal2.removeEventListener ? signal2.removeEventListener("abort", onabort) : signal2.unsubscribe(onabort));
+      });
+      signals = null;
+    }
+  };
+  signals.forEach((signal2) => signal2 && signal2.addEventListener && signal2.addEventListener("abort", onabort));
+  const { signal } = controller;
+  signal.unsubscribe = unsubscribe;
+  return [signal, () => {
+    timer && clearTimeout(timer);
+    timer = null;
+  }];
+};
+var composeSignals_default = composeSignals;
+
+// backend/node_modules/axios/lib/helpers/trackStream.js
+var streamChunk = function* (chunk, chunkSize) {
+  let len = chunk.byteLength;
+  if (!chunkSize || len < chunkSize) {
+    yield chunk;
+    return;
+  }
+  let pos = 0;
+  let end;
+  while (pos < len) {
+    end = pos + chunkSize;
+    yield chunk.slice(pos, end);
+    pos = end;
+  }
+};
+var readBytes = async function* (iterable, chunkSize, encode3) {
+  for await (const chunk of iterable) {
+    yield* streamChunk(ArrayBuffer.isView(chunk) ? chunk : await encode3(String(chunk)), chunkSize);
+  }
+};
+var trackStream = (stream4, chunkSize, onProgress, onFinish, encode3) => {
+  const iterator = readBytes(stream4, chunkSize, encode3);
+  let bytes = 0;
+  return new ReadableStream({
+    type: "bytes",
+    async pull(controller) {
+      const { done, value } = await iterator.next();
+      if (done) {
+        controller.close();
+        onFinish();
+        return;
+      }
+      let len = value.byteLength;
+      onProgress && onProgress(bytes += len);
+      controller.enqueue(new Uint8Array(value));
+    },
+    cancel(reason) {
+      onFinish(reason);
+      return iterator.return();
+    }
+  }, {
+    highWaterMark: 2
+  });
+};
+
+// backend/node_modules/axios/lib/adapters/fetch.js
+var fetchProgressDecorator = (total, fn) => {
+  const lengthComputable = total != null;
+  return (loaded) => setTimeout(() => fn({
+    lengthComputable,
+    total,
+    loaded
+  }));
+};
+var isFetchSupported = typeof fetch === "function" && typeof Request === "function" && typeof Response === "function";
+var isReadableStreamSupported = isFetchSupported && typeof ReadableStream === "function";
+var encodeText = isFetchSupported && (typeof TextEncoder === "function" ? /* @__PURE__ */ ((encoder) => (str) => encoder.encode(str))(new TextEncoder()) : async (str) => new Uint8Array(await new Response(str).arrayBuffer()));
+var supportsRequestStream = isReadableStreamSupported && (() => {
+  let duplexAccessed = false;
+  const hasContentType = new Request(platform_default.origin, {
+    body: new ReadableStream(),
+    method: "POST",
+    get duplex() {
+      duplexAccessed = true;
+      return "half";
+    }
+  }).headers.has("Content-Type");
+  return duplexAccessed && !hasContentType;
+})();
+var DEFAULT_CHUNK_SIZE = 64 * 1024;
+var supportsResponseStream = isReadableStreamSupported && !!(() => {
+  try {
+    return utils_default.isReadableStream(new Response("").body);
+  } catch (err) {
+  }
+})();
+var resolvers = {
+  stream: supportsResponseStream && ((res) => res.body)
+};
+isFetchSupported && ((res) => {
+  ["text", "arrayBuffer", "blob", "formData", "stream"].forEach((type) => {
+    !resolvers[type] && (resolvers[type] = utils_default.isFunction(res[type]) ? (res2) => res2[type]() : (_, config) => {
+      throw new AxiosError_default(`Response type '${type}' is not supported`, AxiosError_default.ERR_NOT_SUPPORT, config);
+    });
+  });
+})(new Response());
+var getBodyLength = async (body) => {
+  if (body == null) {
+    return 0;
+  }
+  if (utils_default.isBlob(body)) {
+    return body.size;
+  }
+  if (utils_default.isSpecCompliantForm(body)) {
+    return (await new Request(body).arrayBuffer()).byteLength;
+  }
+  if (utils_default.isArrayBufferView(body)) {
+    return body.byteLength;
+  }
+  if (utils_default.isURLSearchParams(body)) {
+    body = body + "";
+  }
+  if (utils_default.isString(body)) {
+    return (await encodeText(body)).byteLength;
+  }
+};
+var resolveBodyLength = async (headers, body) => {
+  const length = utils_default.toFiniteNumber(headers.getContentLength());
+  return length == null ? getBodyLength(body) : length;
+};
+var fetch_default = isFetchSupported && (async (config) => {
+  let {
+    url: url2,
+    method,
+    data,
+    signal,
+    cancelToken,
+    timeout,
+    onDownloadProgress,
+    onUploadProgress,
+    responseType,
+    headers,
+    withCredentials = "same-origin",
+    fetchOptions
+  } = resolveConfig_default(config);
+  responseType = responseType ? (responseType + "").toLowerCase() : "text";
+  let [composedSignal, stopTimeout] = signal || cancelToken || timeout ? composeSignals_default([signal, cancelToken], timeout) : [];
+  let finished, request;
+  const onFinish = () => {
+    !finished && setTimeout(() => {
+      composedSignal && composedSignal.unsubscribe();
+    });
+    finished = true;
+  };
+  let requestContentLength;
+  try {
+    if (onUploadProgress && supportsRequestStream && method !== "get" && method !== "head" && (requestContentLength = await resolveBodyLength(headers, data)) !== 0) {
+      let _request = new Request(url2, {
+        method: "POST",
+        body: data,
+        duplex: "half"
+      });
+      let contentTypeHeader;
+      if (utils_default.isFormData(data) && (contentTypeHeader = _request.headers.get("content-type"))) {
+        headers.setContentType(contentTypeHeader);
+      }
+      if (_request.body) {
+        data = trackStream(_request.body, DEFAULT_CHUNK_SIZE, fetchProgressDecorator(
+          requestContentLength,
+          progressEventReducer_default(onUploadProgress)
+        ), null, encodeText);
+      }
+    }
+    if (!utils_default.isString(withCredentials)) {
+      withCredentials = withCredentials ? "cors" : "omit";
+    }
+    request = new Request(url2, {
+      ...fetchOptions,
+      signal: composedSignal,
+      method: method.toUpperCase(),
+      headers: headers.normalize().toJSON(),
+      body: data,
+      duplex: "half",
+      withCredentials
+    });
+    let response = await fetch(request);
+    const isStreamResponse = supportsResponseStream && (responseType === "stream" || responseType === "response");
+    if (supportsResponseStream && (onDownloadProgress || isStreamResponse)) {
+      const options = {};
+      ["status", "statusText", "headers"].forEach((prop) => {
+        options[prop] = response[prop];
+      });
+      const responseContentLength = utils_default.toFiniteNumber(response.headers.get("content-length"));
+      response = new Response(
+        trackStream(response.body, DEFAULT_CHUNK_SIZE, onDownloadProgress && fetchProgressDecorator(
+          responseContentLength,
+          progressEventReducer_default(onDownloadProgress, true)
+        ), isStreamResponse && onFinish, encodeText),
+        options
+      );
+    }
+    responseType = responseType || "text";
+    let responseData = await resolvers[utils_default.findKey(resolvers, responseType) || "text"](response, config);
+    !isStreamResponse && onFinish();
+    stopTimeout && stopTimeout();
+    return await new Promise((resolve, reject) => {
+      settle(resolve, reject, {
+        data: responseData,
+        headers: AxiosHeaders_default.from(response.headers),
+        status: response.status,
+        statusText: response.statusText,
+        config,
+        request
+      });
+    });
+  } catch (err) {
+    onFinish();
+    if (err && err.name === "TypeError" && /fetch/i.test(err.message)) {
+      throw Object.assign(
+        new AxiosError_default("Network Error", AxiosError_default.ERR_NETWORK, config, request),
+        {
+          cause: err.cause || err
+        }
+      );
+    }
+    throw AxiosError_default.from(err, err && err.code, config, request);
+  }
+});
+
+// backend/node_modules/axios/lib/adapters/adapters.js
+var knownAdapters = {
+  http: http_default,
+  xhr: xhr_default,
+  fetch: fetch_default
+};
+utils_default.forEach(knownAdapters, (fn, value) => {
+  if (fn) {
+    try {
+      Object.defineProperty(fn, "name", { value });
+    } catch (e) {
+    }
+    Object.defineProperty(fn, "adapterName", { value });
+  }
+});
+var renderReason = (reason) => `- ${reason}`;
+var isResolvedHandle = (adapter) => utils_default.isFunction(adapter) || adapter === null || adapter === false;
+var adapters_default = {
+  getAdapter: (adapters) => {
+    adapters = utils_default.isArray(adapters) ? adapters : [adapters];
+    const { length } = adapters;
+    let nameOrAdapter;
+    let adapter;
+    const rejectedReasons = {};
+    for (let i = 0; i < length; i++) {
+      nameOrAdapter = adapters[i];
+      let id;
+      adapter = nameOrAdapter;
+      if (!isResolvedHandle(nameOrAdapter)) {
+        adapter = knownAdapters[(id = String(nameOrAdapter)).toLowerCase()];
+        if (adapter === void 0) {
+          throw new AxiosError_default(`Unknown adapter '${id}'`);
+        }
+      }
+      if (adapter) {
+        break;
+      }
+      rejectedReasons[id || "#" + i] = adapter;
+    }
+    if (!adapter) {
+      const reasons = Object.entries(rejectedReasons).map(
+        ([id, state]) => `adapter ${id} ` + (state === false ? "is not supported by the environment" : "is not available in the build")
+      );
+      let s = length ? reasons.length > 1 ? "since :\n" + reasons.map(renderReason).join("\n") : " " + renderReason(reasons[0]) : "as no adapter specified";
+      throw new AxiosError_default(
+        `There is no suitable adapter to dispatch the request ` + s,
+        "ERR_NOT_SUPPORT"
+      );
+    }
+    return adapter;
+  },
+  adapters: knownAdapters
+};
+
+// backend/node_modules/axios/lib/core/dispatchRequest.js
+function throwIfCancellationRequested(config) {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested();
+  }
+  if (config.signal && config.signal.aborted) {
+    throw new CanceledError_default(null, config);
+  }
+}
+function dispatchRequest(config) {
+  throwIfCancellationRequested(config);
+  config.headers = AxiosHeaders_default.from(config.headers);
+  config.data = transformData.call(
+    config,
+    config.transformRequest
+  );
+  if (["post", "put", "patch"].indexOf(config.method) !== -1) {
+    config.headers.setContentType("application/x-www-form-urlencoded", false);
+  }
+  const adapter = adapters_default.getAdapter(config.adapter || defaults_default.adapter);
+  return adapter(config).then(function onAdapterResolution(response) {
+    throwIfCancellationRequested(config);
+    response.data = transformData.call(
+      config,
+      config.transformResponse,
+      response
+    );
+    response.headers = AxiosHeaders_default.from(response.headers);
+    return response;
+  }, function onAdapterRejection(reason) {
+    if (!isCancel(reason)) {
+      throwIfCancellationRequested(config);
+      if (reason && reason.response) {
+        reason.response.data = transformData.call(
+          config,
+          config.transformResponse,
+          reason.response
+        );
+        reason.response.headers = AxiosHeaders_default.from(reason.response.headers);
+      }
+    }
+    return Promise.reject(reason);
+  });
+}
+
+// backend/node_modules/axios/lib/helpers/validator.js
+var validators = {};
+["object", "boolean", "number", "function", "string", "symbol"].forEach((type, i) => {
+  validators[type] = function validator(thing) {
+    return typeof thing === type || "a" + (i < 1 ? "n " : " ") + type;
+  };
+});
+var deprecatedWarnings = {};
+validators.transitional = function transitional(validator, version, message) {
+  function formatMessage(opt, desc) {
+    return "[Axios v" + VERSION + "] Transitional option '" + opt + "'" + desc + (message ? ". " + message : "");
+  }
+  return (value, opt, opts) => {
+    if (validator === false) {
+      throw new AxiosError_default(
+        formatMessage(opt, " has been removed" + (version ? " in " + version : "")),
+        AxiosError_default.ERR_DEPRECATED
+      );
+    }
+    if (version && !deprecatedWarnings[opt]) {
+      deprecatedWarnings[opt] = true;
+      console.warn(
+        formatMessage(
+          opt,
+          " has been deprecated since v" + version + " and will be removed in the near future"
+        )
+      );
+    }
+    return validator ? validator(value, opt, opts) : true;
+  };
+};
+function assertOptions(options, schema, allowUnknown) {
+  if (typeof options !== "object") {
+    throw new AxiosError_default("options must be an object", AxiosError_default.ERR_BAD_OPTION_VALUE);
+  }
+  const keys = Object.keys(options);
+  let i = keys.length;
+  while (i-- > 0) {
+    const opt = keys[i];
+    const validator = schema[opt];
+    if (validator) {
+      const value = options[opt];
+      const result = value === void 0 || validator(value, opt, options);
+      if (result !== true) {
+        throw new AxiosError_default("option " + opt + " must be " + result, AxiosError_default.ERR_BAD_OPTION_VALUE);
+      }
+      continue;
+    }
+    if (allowUnknown !== true) {
+      throw new AxiosError_default("Unknown option " + opt, AxiosError_default.ERR_BAD_OPTION);
+    }
+  }
+}
+var validator_default = {
+  assertOptions,
+  validators
+};
+
+// backend/node_modules/axios/lib/core/Axios.js
+var validators2 = validator_default.validators;
+var Axios = class {
+  constructor(instanceConfig) {
+    this.defaults = instanceConfig;
+    this.interceptors = {
+      request: new InterceptorManager_default(),
+      response: new InterceptorManager_default()
+    };
+  }
+  /**
+   * Dispatch a request
+   *
+   * @param {String|Object} configOrUrl The config specific for this request (merged with this.defaults)
+   * @param {?Object} config
+   *
+   * @returns {Promise} The Promise to be fulfilled
+   */
+  async request(configOrUrl, config) {
+    try {
+      return await this._request(configOrUrl, config);
+    } catch (err) {
+      if (err instanceof Error) {
+        let dummy;
+        Error.captureStackTrace ? Error.captureStackTrace(dummy = {}) : dummy = new Error();
+        const stack = dummy.stack ? dummy.stack.replace(/^.+\n/, "") : "";
+        try {
+          if (!err.stack) {
+            err.stack = stack;
+          } else if (stack && !String(err.stack).endsWith(stack.replace(/^.+\n.+\n/, ""))) {
+            err.stack += "\n" + stack;
+          }
+        } catch (e) {
+        }
+      }
+      throw err;
+    }
+  }
+  _request(configOrUrl, config) {
+    if (typeof configOrUrl === "string") {
+      config = config || {};
+      config.url = configOrUrl;
+    } else {
+      config = configOrUrl || {};
+    }
+    config = mergeConfig(this.defaults, config);
+    const { transitional: transitional2, paramsSerializer, headers } = config;
+    if (transitional2 !== void 0) {
+      validator_default.assertOptions(transitional2, {
+        silentJSONParsing: validators2.transitional(validators2.boolean),
+        forcedJSONParsing: validators2.transitional(validators2.boolean),
+        clarifyTimeoutError: validators2.transitional(validators2.boolean)
+      }, false);
+    }
+    if (paramsSerializer != null) {
+      if (utils_default.isFunction(paramsSerializer)) {
+        config.paramsSerializer = {
+          serialize: paramsSerializer
+        };
+      } else {
+        validator_default.assertOptions(paramsSerializer, {
+          encode: validators2.function,
+          serialize: validators2.function
+        }, true);
+      }
+    }
+    config.method = (config.method || this.defaults.method || "get").toLowerCase();
+    let contextHeaders = headers && utils_default.merge(
+      headers.common,
+      headers[config.method]
+    );
+    headers && utils_default.forEach(
+      ["delete", "get", "head", "post", "put", "patch", "common"],
+      (method) => {
+        delete headers[method];
+      }
+    );
+    config.headers = AxiosHeaders_default.concat(contextHeaders, headers);
+    const requestInterceptorChain = [];
+    let synchronousRequestInterceptors = true;
+    this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+      if (typeof interceptor.runWhen === "function" && interceptor.runWhen(config) === false) {
+        return;
+      }
+      synchronousRequestInterceptors = synchronousRequestInterceptors && interceptor.synchronous;
+      requestInterceptorChain.unshift(interceptor.fulfilled, interceptor.rejected);
+    });
+    const responseInterceptorChain = [];
+    this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+      responseInterceptorChain.push(interceptor.fulfilled, interceptor.rejected);
+    });
+    let promise;
+    let i = 0;
+    let len;
+    if (!synchronousRequestInterceptors) {
+      const chain = [dispatchRequest.bind(this), void 0];
+      chain.unshift.apply(chain, requestInterceptorChain);
+      chain.push.apply(chain, responseInterceptorChain);
+      len = chain.length;
+      promise = Promise.resolve(config);
+      while (i < len) {
+        promise = promise.then(chain[i++], chain[i++]);
+      }
+      return promise;
+    }
+    len = requestInterceptorChain.length;
+    let newConfig = config;
+    i = 0;
+    while (i < len) {
+      const onFulfilled = requestInterceptorChain[i++];
+      const onRejected = requestInterceptorChain[i++];
+      try {
+        newConfig = onFulfilled(newConfig);
+      } catch (error) {
+        onRejected.call(this, error);
+        break;
+      }
+    }
+    try {
+      promise = dispatchRequest.call(this, newConfig);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+    i = 0;
+    len = responseInterceptorChain.length;
+    while (i < len) {
+      promise = promise.then(responseInterceptorChain[i++], responseInterceptorChain[i++]);
+    }
+    return promise;
+  }
+  getUri(config) {
+    config = mergeConfig(this.defaults, config);
+    const fullPath = buildFullPath(config.baseURL, config.url);
+    return buildURL(fullPath, config.params, config.paramsSerializer);
+  }
+};
+utils_default.forEach(["delete", "get", "head", "options"], function forEachMethodNoData(method) {
+  Axios.prototype[method] = function(url2, config) {
+    return this.request(mergeConfig(config || {}, {
+      method,
+      url: url2,
+      data: (config || {}).data
+    }));
+  };
+});
+utils_default.forEach(["post", "put", "patch"], function forEachMethodWithData(method) {
+  function generateHTTPMethod(isForm) {
+    return function httpMethod(url2, data, config) {
+      return this.request(mergeConfig(config || {}, {
+        method,
+        headers: isForm ? {
+          "Content-Type": "multipart/form-data"
+        } : {},
+        url: url2,
+        data
+      }));
+    };
+  }
+  Axios.prototype[method] = generateHTTPMethod();
+  Axios.prototype[method + "Form"] = generateHTTPMethod(true);
+});
+var Axios_default = Axios;
+
+// backend/node_modules/axios/lib/cancel/CancelToken.js
+var CancelToken = class _CancelToken {
+  constructor(executor) {
+    if (typeof executor !== "function") {
+      throw new TypeError("executor must be a function.");
+    }
+    let resolvePromise;
+    this.promise = new Promise(function promiseExecutor(resolve) {
+      resolvePromise = resolve;
+    });
+    const token = this;
+    this.promise.then((cancel) => {
+      if (!token._listeners)
+        return;
+      let i = token._listeners.length;
+      while (i-- > 0) {
+        token._listeners[i](cancel);
+      }
+      token._listeners = null;
+    });
+    this.promise.then = (onfulfilled) => {
+      let _resolve;
+      const promise = new Promise((resolve) => {
+        token.subscribe(resolve);
+        _resolve = resolve;
+      }).then(onfulfilled);
+      promise.cancel = function reject() {
+        token.unsubscribe(_resolve);
+      };
+      return promise;
+    };
+    executor(function cancel(message, config, request) {
+      if (token.reason) {
+        return;
+      }
+      token.reason = new CanceledError_default(message, config, request);
+      resolvePromise(token.reason);
+    });
+  }
+  /**
+   * Throws a `CanceledError` if cancellation has been requested.
+   */
+  throwIfRequested() {
+    if (this.reason) {
+      throw this.reason;
+    }
+  }
+  /**
+   * Subscribe to the cancel signal
+   */
+  subscribe(listener) {
+    if (this.reason) {
+      listener(this.reason);
+      return;
+    }
+    if (this._listeners) {
+      this._listeners.push(listener);
+    } else {
+      this._listeners = [listener];
+    }
+  }
+  /**
+   * Unsubscribe from the cancel signal
+   */
+  unsubscribe(listener) {
+    if (!this._listeners) {
+      return;
+    }
+    const index = this._listeners.indexOf(listener);
+    if (index !== -1) {
+      this._listeners.splice(index, 1);
+    }
+  }
+  /**
+   * Returns an object that contains a new `CancelToken` and a function that, when called,
+   * cancels the `CancelToken`.
+   */
+  static source() {
+    let cancel;
+    const token = new _CancelToken(function executor(c) {
+      cancel = c;
+    });
+    return {
+      token,
+      cancel
+    };
+  }
+};
+var CancelToken_default = CancelToken;
+
+// backend/node_modules/axios/lib/helpers/spread.js
+function spread(callback2) {
+  return function wrap(arr) {
+    return callback2.apply(null, arr);
+  };
+}
+
+// backend/node_modules/axios/lib/helpers/isAxiosError.js
+function isAxiosError(payload) {
+  return utils_default.isObject(payload) && payload.isAxiosError === true;
+}
+
+// backend/node_modules/axios/lib/helpers/HttpStatusCode.js
+var HttpStatusCode = {
+  Continue: 100,
+  SwitchingProtocols: 101,
+  Processing: 102,
+  EarlyHints: 103,
+  Ok: 200,
+  Created: 201,
+  Accepted: 202,
+  NonAuthoritativeInformation: 203,
+  NoContent: 204,
+  ResetContent: 205,
+  PartialContent: 206,
+  MultiStatus: 207,
+  AlreadyReported: 208,
+  ImUsed: 226,
+  MultipleChoices: 300,
+  MovedPermanently: 301,
+  Found: 302,
+  SeeOther: 303,
+  NotModified: 304,
+  UseProxy: 305,
+  Unused: 306,
+  TemporaryRedirect: 307,
+  PermanentRedirect: 308,
+  BadRequest: 400,
+  Unauthorized: 401,
+  PaymentRequired: 402,
+  Forbidden: 403,
+  NotFound: 404,
+  MethodNotAllowed: 405,
+  NotAcceptable: 406,
+  ProxyAuthenticationRequired: 407,
+  RequestTimeout: 408,
+  Conflict: 409,
+  Gone: 410,
+  LengthRequired: 411,
+  PreconditionFailed: 412,
+  PayloadTooLarge: 413,
+  UriTooLong: 414,
+  UnsupportedMediaType: 415,
+  RangeNotSatisfiable: 416,
+  ExpectationFailed: 417,
+  ImATeapot: 418,
+  MisdirectedRequest: 421,
+  UnprocessableEntity: 422,
+  Locked: 423,
+  FailedDependency: 424,
+  TooEarly: 425,
+  UpgradeRequired: 426,
+  PreconditionRequired: 428,
+  TooManyRequests: 429,
+  RequestHeaderFieldsTooLarge: 431,
+  UnavailableForLegalReasons: 451,
+  InternalServerError: 500,
+  NotImplemented: 501,
+  BadGateway: 502,
+  ServiceUnavailable: 503,
+  GatewayTimeout: 504,
+  HttpVersionNotSupported: 505,
+  VariantAlsoNegotiates: 506,
+  InsufficientStorage: 507,
+  LoopDetected: 508,
+  NotExtended: 510,
+  NetworkAuthenticationRequired: 511
+};
+Object.entries(HttpStatusCode).forEach(([key, value]) => {
+  HttpStatusCode[value] = key;
+});
+var HttpStatusCode_default = HttpStatusCode;
+
+// backend/node_modules/axios/lib/axios.js
+function createInstance(defaultConfig) {
+  const context = new Axios_default(defaultConfig);
+  const instance = bind(Axios_default.prototype.request, context);
+  utils_default.extend(instance, Axios_default.prototype, context, { allOwnKeys: true });
+  utils_default.extend(instance, context, null, { allOwnKeys: true });
+  instance.create = function create(instanceConfig) {
+    return createInstance(mergeConfig(defaultConfig, instanceConfig));
+  };
+  return instance;
+}
+var axios = createInstance(defaults_default);
+axios.Axios = Axios_default;
+axios.CanceledError = CanceledError_default;
+axios.CancelToken = CancelToken_default;
+axios.isCancel = isCancel;
+axios.VERSION = VERSION;
+axios.toFormData = toFormData_default;
+axios.AxiosError = AxiosError_default;
+axios.Cancel = axios.CanceledError;
+axios.all = function all(promises) {
+  return Promise.all(promises);
+};
+axios.spread = spread;
+axios.isAxiosError = isAxiosError;
+axios.mergeConfig = mergeConfig;
+axios.AxiosHeaders = AxiosHeaders_default;
+axios.formToJSON = (thing) => formDataToJSON_default(utils_default.isHTMLForm(thing) ? new FormData(thing) : thing);
+axios.getAdapter = adapters_default.getAdapter;
+axios.HttpStatusCode = HttpStatusCode_default;
+axios.default = axios;
+var axios_default = axios;
+
+// backend/node_modules/axios/index.js
+var {
+  Axios: Axios2,
+  AxiosError: AxiosError2,
+  CanceledError: CanceledError2,
+  isCancel: isCancel2,
+  CancelToken: CancelToken2,
+  VERSION: VERSION2,
+  all: all2,
+  Cancel,
+  isAxiosError: isAxiosError2,
+  spread: spread2,
+  toFormData: toFormData2,
+  AxiosHeaders: AxiosHeaders2,
+  HttpStatusCode: HttpStatusCode2,
+  formToJSON,
+  getAdapter,
+  mergeConfig: mergeConfig2
+} = axios_default;
 
 // backend/Database Schema/Stock.js
 var import_mongoose = __toESM(require_mongoose2(), 1);
@@ -64809,7 +78054,8 @@ var StockSchema = new import_mongoose.default.Schema({
   date: { type: String, require: true },
   timeStamp: { type: Number }
 });
-var StockPrice = import_mongoose.default.model("user", StockSchema);
+var StockPrice = import_mongoose.default.model("StockPrice", StockSchema);
+var Stock_default = StockPrice;
 
 // backend/Database Schema/Crypto.js
 var import_mongoose2 = __toESM(require_mongoose2(), 1);
@@ -64825,10 +78071,98 @@ var CryptoSchema = new import_mongoose2.default.Schema({
   date: { type: Date, required: true }
 });
 var CryptoCurrency = import_mongoose2.default.model("CryptoCurrency", CryptoSchema);
+var Crypto_default = CryptoCurrency;
 
 // backend/functions/data.js
+var apiKey = "CKMO3Q3NLK0OOSZG";
+import_mongoose3.default.connect("mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {}).then(() => console.log("Connected to MongoDB")).catch((err) => console.error("Could not connect to MongoDB", err));
+autoGetPrice();
+async function autoGetPrice() {
+  var todayDate = await resetToMidNight(/* @__PURE__ */ new Date());
+  const latestDateInStockDB = await getLatestDate(Stock_default);
+  const latestDateInCryptoDB = await getLatestDate(Crypto_default);
+  console.log("Latest date in Crypto DB:", new Date(latestDateInCryptoDB));
+  console.log("today Date:", new Date(todayDate));
+  if (new Date(todayDate) > new Date(latestDateInCryptoDB)) {
+    await getCryptoPrice();
+  } else {
+    console.log("Today Date is equal to the latest Date in Crypto, so no need to update DB");
+  }
+}
 var firstofFebuary = (0, import_moment.default)("2024-02-01", "YYYY-MM-DD").toDate();
-import_mongoose3.default.connect(process.env.MONGO_URI, {}).then(() => console.log("Connected to MongoDB")).catch((err) => console.error("Could not connect to MongoDB", err));
+async function resetToMidNight(date) {
+  date.setUTCDate(date.getUTCDate() - 1);
+  date.setUTCHours(0, 0, 0, 0);
+  return date;
+}
+async function getCryptoPrice() {
+  const listOfCryptos = ["BTC", "ETH", "BNB", "ADA", "XRP", "SOL", "DOT", "DOGE", "LUNA", "LINK", "AVAX", "MATIC", "ALGO", "ATOM", "UNI", "ICP", "FTT", "VET", "AAVE", "XTZ"];
+  try {
+    const requests = listOfCryptos.map((symbol) => fetchCryptoPrice(symbol));
+    const responses = await Promise.all(requests);
+    console.log("Crypto responses:", responses);
+    const latestDateInDB = await getLatestDate(Crypto_default);
+    responses.forEach((response) => {
+      if (!response)
+        return;
+      const metaData = response["Meta Data"];
+      const listOfPrice = response["Time Series (Digital Currency Daily)"];
+      if (!metaData || !listOfPrice) {
+        console.log("Missing metadata or time series data:", response);
+        return;
+      }
+      console.log("latestDateInDB: ", latestDateInDB);
+      console.log("firstofFebuary: ", firstofFebuary);
+      for (const [date, data] of Object.entries(listOfPrice)) {
+        const recordDate = (0, import_moment.default)(date, "YYYY-MM-DD").toDate();
+        console.log("recordDate:", recordDate);
+        if ((!latestDateInDB || new Date(recordDate) > new Date(latestDateInDB)) && new Date(recordDate) > new Date(firstofFebuary)) {
+          console.log(`Saving data for ${metaData["2. Digital Currency Code"]} for date ${recordDate}`);
+          saveNewCrypto(metaData, data, recordDate);
+        }
+      }
+      console.log("Saving Crypto complete!");
+    });
+  } catch (error) {
+    console.log("Error in getCryptoPrice:", error);
+  }
+}
+async function fetchCryptoPrice(cryptoSymbol) {
+  const urlCrypto = `https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=${cryptoSymbol}&market=EUR&apikey=${apiKey}`;
+  try {
+    const res = await axios_default.get(urlCrypto, {
+      headers: { "User-Agent": "request" }
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+async function getLatestDate(dataBaseName) {
+  const latestEntry = await dataBaseName.findOne().sort({ date: -1 }).exec();
+  if (latestEntry) {
+    return latestEntry.date;
+  } else {
+    return null;
+  }
+}
+async function saveNewCrypto(metaData, data, recordDate) {
+  const newCrypto = new Crypto_default({
+    cryptoName: metaData["3. Digital Currency Name"],
+    symbol: metaData["2. Digital Currency Code"],
+    open: data["1. open"],
+    high: data["2. high"],
+    close: data["4. close"],
+    volume: data["5. volume"],
+    date: recordDate
+  });
+  try {
+    const savedCrypto = await newCrypto.save();
+    console.log("Crypto dave succesfully", metaData["2. Digital Currency Code"]);
+  } catch (error) {
+    console.log("Error saving new Crypto", error);
+  }
+}
 /*! Bundled license information:
 
 mongoose/lib/connectionState.js:
@@ -65869,5 +79203,21 @@ moment/moment.js:
   (*! authors : Tim Wood, Iskren Chernev, Moment.js contributors *)
   (*! license : MIT *)
   (*! momentjs.com *)
+
+mime-db/index.js:
+  (*!
+   * mime-db
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2015-2022 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
+
+mime-types/index.js:
+  (*!
+   * mime-types
+   * Copyright(c) 2014 Jonathan Ong
+   * Copyright(c) 2015 Douglas Christopher Wilson
+   * MIT Licensed
+   *)
 */
 //# sourceMappingURL=data.js.map
