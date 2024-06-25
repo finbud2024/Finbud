@@ -43,6 +43,7 @@
 
 <script>
 import authStore from '@/authStore';
+import axios from 'axios'
 
 export default {
   name: 'NavBar',
@@ -70,11 +71,30 @@ export default {
     closeDropdownMobile() {
       this.isDropdownOpenMobile = false;
     },
-    logout() {
+    async logout() {
       authStore.logout();
+      try{
+        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+        URL += "/.netlify/functions/server"
+        const response = await axios.get(`${URL}/auth/logout`);
+      }catch(err){
+        console.log("After logout with err: " + err);
+      }
       this.$router.push('/login');
     },
   },
+  async mounted(){
+    try{
+      let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+      URL += "/.netlify/functions/server"
+      const response = await axios.get(`${URL}/auth/test`);
+      if(response.data.isAuthenticated){
+        authStore.login(response.data.user._id) 
+      }
+    }catch(err){
+      console.log("After Sign in with google err: " + err);
+    }
+  }
 };
 </script>
 

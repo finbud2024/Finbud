@@ -18,7 +18,6 @@ const userRoute = express.Router();
         }
     });
 
-
     //PUT: update user with given id
     userRoute.put("/users/:userId",async(req, res) => {
         const userId = req.params.userId;
@@ -68,7 +67,6 @@ const userRoute = express.Router();
         }
     });
 
-
     //GET: get all user from database
     userRoute.get("/users",async(req, res) => {
             const data = req.query;
@@ -110,42 +108,23 @@ const userRoute = express.Router();
                 return res.status(400).send("Username: "+ req.body.accountData.username + " already existed in databsae");
             }
             //user has not been used. Good to add
-            let newUser = await new User({
-                accountData:{
-                    username: req.body.accountData.username,
-                    password: req.body.accountData.password,
-                    priviledge: req.body.accountData.priviledge,
-                    securityQuestion: req.body.accountData.securityQuestion,
-                    securityAnswer: req.body.accountData.securityAnswer
-                },
-                identityData:{
-                    firstName: req.body.identityData.firstName,
-                    lastName: req.body.identityData.lastName,
-                    displayName:req.body.identityData.displayName,
+            let newUserData = {}
+            if(req.body.accountData){
+                for(const key in req.body.accountData){
+                    newUserData[`accountData.${key}`] = req.body.accountData[key];
                 }
-            }).save();
+            }
+            if(req.body.identityData){
+                for(const key in req.body.identityData){
+                    newUserData[`identityData.${key}`] = req.body.identityData[key];
+                }
+            }
+            let newUser = await new User(newUserData).save();
             return res.status(200).json(newUser);
         }catch(err){
             console.log(err);
             return res.status(500).send("Unexpected error occured when saving user to database: "+ err);
         }
     })
-    //GET: get user with given username and password
-    // userRoute.get("/users",async(req, res) => {
-    //     const data = req.query;
-    //     const {username, password} = data;
-    //     console.log('in /users Route (GET) user with username and password:' + JSON.stringify(data));
-    //     try{
-    //         const user = await User.find({username: username, password: password});
-    //         if(!user){
-    //             return res.status(404).send('Wrong username or password, please..!');
-    //         }
-
-    //         return res.status(200).send("Login successful!");
-
-    //     }catch(err){
-    //         return res.status(501).send('Internal sever error' + err);
-    //     }
-    // })
 
 export default userRoute;

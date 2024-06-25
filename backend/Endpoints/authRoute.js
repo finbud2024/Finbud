@@ -17,21 +17,51 @@ authRoute.get('/auth/google', passport.authenticate('google', {
 //CALLBACK route:  GitHub will call this route after the
 //OAuth authentication process is complete.
 //req.isAuthenticated() tells us whether authentication was successful.
-authRoute.get('/auth/google/callback', passport.authenticate( 'google', { failureRedirect: '/' }),
-  (req, res) => {
-    console.log("auth/google/callback reached.");
-    res.redirect('/'); //sends user back to login screen; 
-                      //req.isAuthenticated() indicates status
+authRoute.get('/auth/google/callback', 
+  (req, res, next) => {
+    passport.authenticate('google', (err, user, info) => {
+      console.log("in google authenticate callback")
+      if (err) { console.error(err); return next(err); }
+      if (!user) { console.log('No user found'); return res.redirect('/login'); }
+      req.logIn(user, (err) => {
+        if (err) { console.error(err); return next(err); }
+        console.log('User logged in');
+        return res.redirect('/');
+      });
+    })(req, res, next); 
   }
 );
+
+
+//lOGIN ROUTE FOR LOCAL USER
+authRoute.post('/auth/login', passport.authenticate('local', { failWithError: true }),
+  (req, res) => {
+    console.log("/login route reached: successful authentication.");
+    //Redirect to app's main page; the /auth/test route should return true
+    res.status(200).send("Login successful");
+  },
+  (err, req, res, next) => {
+    console.log("/login route reached: unsuccessful authentication");
+    console.log(err)
+    if (req.authError) {
+      console.log("req.authError: " + req.authError); 
+      res.status(401).send(req.authError);
+    } else {
+      res.status(401).send("Unexpected error occurred when attempting to authenticate. Please try again.");
+    }
+  });
 
 //LOGOUT route: Use passport's req.logout() method to log the user out and
 //redirect the user to the main app page. req.isAuthenticated() is toggled to false.
 authRoute.get('/auth/logout', (req, res, next) => {
     console.log('/auth/logout reached. Logging out');
-    req.logout(err => {
+    req.logout((err) => {
       if (err) { return next(err); }
-      res.redirect('/');
+      req.session.destroy((err) => {
+        if (err) { return next(err); }
+        res.clearCookie('connect.sid');
+        res.redirect('/login');
+      });
     });
   });
 

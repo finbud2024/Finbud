@@ -1,5 +1,5 @@
 import express from 'express';
-import {Thread} from '../Database Schema/Thread.js';
+import Thread from '../Database Schema/Thread.js';
 
 const threadRoute = express.Router();
 
@@ -87,16 +87,33 @@ threadRoute.route('/threads')
 			return res.status(500).send("Unable to save thread to database due to missing userId");
 		}
 		try{
+			const newThread = {};
+			if(req.body){
+				for(const key in req.body){
+					newThread[key] = req.body[key];
+				}
+			}
 			let thread = await new Thread({
-				prompt: req.body.prompt,
-				response: req.body.response,
-				userId: req.body.userId,
-				createdDate: new Date()
+				creationDate: newThread.creationDate,
+				userId: newThread.userId
 			}).save();
 			return res.status(200).json(thread).send("Successfully save thread to DB. Thread Id: "+ thread._id);
 		}catch(err){
 			return res.status(500).send("Unexpected error occured when saving thread to database: "+ err);
 		}
 	})
+	//DELETE: delete all threads
+	.delete(async(req,res)=>{
+		console.log('In /threads Route (DELETE) for all threads');
+		try{
+			let threads = await Thread.deleteMany();
+			if(!threads){
+				return res.status(404).send("No threads existed in database");
+			}
+			return res.status(200).send("All threads deleted successfully");
+		}catch(err){
+			return res.status(500).send("Unexpected error occured when deleting all threads from database: "+ err);
+		}
+	});
 
 export default threadRoute;
