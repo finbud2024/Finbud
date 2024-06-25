@@ -235,6 +235,7 @@ export default {
     }
   },
   mounted() {
+    array.length = 0
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);

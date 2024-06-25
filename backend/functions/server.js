@@ -3,7 +3,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import serverless from 'serverless-http';
 import passportConfig from '../Passport/config.js';
 //routes for processing users request
@@ -14,7 +13,6 @@ import authRoute from '../Endpoints/authRoute.js';
 //--------------------
 
 // Load environment variables from .env
-dotenv.config();
 const mongoURI = process.env.MONGO_URI;
 const app = express();
 
