@@ -23747,13 +23747,13 @@ var require_lib3 = __commonJS({
             if (err) {
               next(err);
             } else {
-              var corsOptions2 = assign({}, defaults2, options);
+              var corsOptions = assign({}, defaults2, options);
               var originCallback = null;
-              if (corsOptions2.origin && typeof corsOptions2.origin === "function") {
-                originCallback = corsOptions2.origin;
-              } else if (corsOptions2.origin) {
+              if (corsOptions.origin && typeof corsOptions.origin === "function") {
+                originCallback = corsOptions.origin;
+              } else if (corsOptions.origin) {
                 originCallback = function(origin2, cb) {
-                  cb(null, corsOptions2.origin);
+                  cb(null, corsOptions.origin);
                 };
               }
               if (originCallback) {
@@ -23761,8 +23761,8 @@ var require_lib3 = __commonJS({
                   if (err2 || !origin2) {
                     next(err2);
                   } else {
-                    corsOptions2.origin = origin2;
-                    cors2(corsOptions2, req, res, next);
+                    corsOptions.origin = origin2;
+                    cors2(corsOptions, req, res, next);
                   }
                 });
               } else {
@@ -35379,19 +35379,19 @@ var require_abstract_cursor = __commonJS({
       async [kInit]() {
         try {
           const state = await this._initialize(this[kSession]);
-          const response = state.response;
+          const response2 = state.response;
           this[kServer] = state.server;
-          if (responses_1.CursorResponse.is(response)) {
-            this[kId] = response.id;
-            if (response.ns)
-              this[kNamespace] = response.ns;
-            this[kDocuments] = response;
-          } else if (response.cursor) {
-            this[kId] = typeof response.cursor.id === "number" ? bson_1.Long.fromNumber(response.cursor.id) : typeof response.cursor.id === "bigint" ? bson_1.Long.fromBigInt(response.cursor.id) : response.cursor.id;
-            if (response.cursor.ns) {
-              this[kNamespace] = (0, utils_1.ns)(response.cursor.ns);
+          if (responses_1.CursorResponse.is(response2)) {
+            this[kId] = response2.id;
+            if (response2.ns)
+              this[kNamespace] = response2.ns;
+            this[kDocuments] = response2;
+          } else if (response2.cursor) {
+            this[kId] = typeof response2.cursor.id === "number" ? bson_1.Long.fromNumber(response2.cursor.id) : typeof response2.cursor.id === "bigint" ? bson_1.Long.fromBigInt(response2.cursor.id) : response2.cursor.id;
+            if (response2.cursor.ns) {
+              this[kNamespace] = (0, utils_1.ns)(response2.cursor.ns);
             }
-            this[kDocuments].pushMany(response.cursor.firstBatch);
+            this[kDocuments].pushMany(response2.cursor.firstBatch);
           }
           if (this[kId] == null) {
             this[kId] = bson_1.Long.ZERO;
@@ -35447,13 +35447,13 @@ var require_abstract_cursor = __commonJS({
         }
         const batchSize = cursor[kOptions].batchSize || 1e3;
         try {
-          const response = await cursor.getMore(batchSize);
-          if (responses_1.CursorResponse.is(response)) {
-            cursor[kId] = response.id;
-            cursor[kDocuments] = response;
-          } else if (response) {
-            const cursorId = typeof response.cursor.id === "number" ? bson_1.Long.fromNumber(response.cursor.id) : typeof response.cursor.id === "bigint" ? bson_1.Long.fromBigInt(response.cursor.id) : response.cursor.id;
-            cursor[kDocuments].pushMany(response.cursor.nextBatch);
+          const response2 = await cursor.getMore(batchSize);
+          if (responses_1.CursorResponse.is(response2)) {
+            cursor[kId] = response2.id;
+            cursor[kDocuments] = response2;
+          } else if (response2) {
+            const cursorId = typeof response2.cursor.id === "number" ? bson_1.Long.fromNumber(response2.cursor.id) : typeof response2.cursor.id === "bigint" ? bson_1.Long.fromBigInt(response2.cursor.id) : response2.cursor.id;
+            cursor[kDocuments].pushMany(response2.cursor.nextBatch);
             cursor[kId] = cursorId;
           }
         } catch (error) {
@@ -35627,8 +35627,8 @@ var require_aggregation_cursor = __commonJS({
           ...this.cursorOptions,
           session: session2
         });
-        const response = await (0, execute_operation_1.executeOperation)(this.client, aggregateOperation);
-        return { server: aggregateOperation.server, session: session2, response };
+        const response2 = await (0, execute_operation_1.executeOperation)(this.client, aggregateOperation);
+        return { server: aggregateOperation.server, session: session2, response: response2 };
       }
       /** Execute the explain for the cursor */
       async explain(verbosity) {
@@ -36068,13 +36068,13 @@ var require_find_cursor = __commonJS({
           ...this.cursorOptions,
           session: session2
         });
-        const response = await (0, execute_operation_1.executeOperation)(this.client, findOperation);
-        if (responses_1.CursorResponse.is(response)) {
-          this[kNumReturned] = response.batchSize;
+        const response2 = await (0, execute_operation_1.executeOperation)(this.client, findOperation);
+        if (responses_1.CursorResponse.is(response2)) {
+          this[kNumReturned] = response2.batchSize;
         } else {
-          this[kNumReturned] = this[kNumReturned] + (response?.cursor?.firstBatch?.length ?? 0);
+          this[kNumReturned] = this[kNumReturned] + (response2?.cursor?.firstBatch?.length ?? 0);
         }
-        return { server: findOperation.server, session: session2, response };
+        return { server: findOperation.server, session: session2, response: response2 };
       }
       /** @internal */
       async getMore(batchSize) {
@@ -36091,13 +36091,13 @@ var require_find_cursor = __commonJS({
             return responses_1.CursorResponse.emptyGetMore;
           }
         }
-        const response = await super.getMore(batchSize, false);
-        if (responses_1.CursorResponse.is(response)) {
-          this[kNumReturned] = this[kNumReturned] + response.batchSize;
+        const response2 = await super.getMore(batchSize, false);
+        if (responses_1.CursorResponse.is(response2)) {
+          this[kNumReturned] = this[kNumReturned] + response2.batchSize;
         } else {
-          this[kNumReturned] = this[kNumReturned] + (response?.cursor?.nextBatch?.length ?? 0);
+          this[kNumReturned] = this[kNumReturned] + (response2?.cursor?.nextBatch?.length ?? 0);
         }
-        return response;
+        return response2;
       }
       /**
        * Get the count of documents for this cursor
@@ -36579,8 +36579,8 @@ var require_list_indexes_cursor = __commonJS({
           ...this.options,
           session: session2
         });
-        const response = await (0, execute_operation_1.executeOperation)(this.parent.client, operation);
-        return { server: operation.server, session: session2, response };
+        const response2 = await (0, execute_operation_1.executeOperation)(this.parent.client, operation);
+        return { server: operation.server, session: session2, response: response2 };
       }
     };
     exports2.ListIndexesCursor = ListIndexesCursor;
@@ -36627,11 +36627,11 @@ var require_count_documents = __commonJS({
       }
       async execute(server, session2) {
         const result = await super.execute(server, session2);
-        const response = result;
-        if (response.cursor == null || response.cursor.firstBatch == null) {
+        const response2 = result;
+        if (response2.cursor == null || response2.cursor.firstBatch == null) {
           return 0;
         }
-        const docs = response.cursor.firstBatch;
+        const docs = response2.cursor.firstBatch;
         return docs.length ? docs[0].n : 0;
       }
     };
@@ -36789,8 +36789,8 @@ var require_estimated_document_count = __commonJS({
         if (this.options.comment !== void 0) {
           cmd.comment = this.options.comment;
         }
-        const response = await super.executeCommand(server, session2, cmd);
-        return response?.n || 0;
+        const response2 = await super.executeCommand(server, session2, cmd);
+        return response2?.n || 0;
       }
     };
     exports2.EstimatedDocumentCountOperation = EstimatedDocumentCountOperation;
@@ -37804,11 +37804,11 @@ var require_change_stream_cursor = __commonJS({
         }
         this.hasReceived = true;
       }
-      _processBatch(response) {
-        const cursor = response.cursor;
+      _processBatch(response2) {
+        const cursor = response2.cursor;
         if (cursor.postBatchResumeToken) {
-          this.postBatchResumeToken = response.cursor.postBatchResumeToken;
-          const batch = "firstBatch" in response.cursor ? response.cursor.firstBatch : response.cursor.nextBatch;
+          this.postBatchResumeToken = response2.cursor.postBatchResumeToken;
+          const batch = "firstBatch" in response2.cursor ? response2.cursor.firstBatch : response2.cursor.nextBatch;
           if (batch.length === 0) {
             this.resumeToken = cursor.postBatchResumeToken;
           }
@@ -37825,24 +37825,24 @@ var require_change_stream_cursor = __commonJS({
           ...this.options,
           session: session2
         });
-        const response = await (0, execute_operation_1.executeOperation)(session2.client, aggregateOperation);
+        const response2 = await (0, execute_operation_1.executeOperation)(session2.client, aggregateOperation);
         const server = aggregateOperation.server;
         this.maxWireVersion = (0, utils_1.maxWireVersion)(server);
         if (this.startAtOperationTime == null && this.resumeAfter == null && this.startAfter == null && this.maxWireVersion >= 7) {
-          this.startAtOperationTime = response.operationTime;
+          this.startAtOperationTime = response2.operationTime;
         }
-        this._processBatch(response);
-        this.emit(constants_1.INIT, response);
+        this._processBatch(response2);
+        this.emit(constants_1.INIT, response2);
         this.emit(constants_1.RESPONSE);
-        return { server, session: session2, response };
+        return { server, session: session2, response: response2 };
       }
       async getMore(batchSize) {
-        const response = await super.getMore(batchSize);
+        const response2 = await super.getMore(batchSize);
         this.maxWireVersion = (0, utils_1.maxWireVersion)(this.server);
-        this._processBatch(response);
-        this.emit(change_stream_1.ChangeStream.MORE, response);
+        this._processBatch(response2);
+        this.emit(change_stream_1.ChangeStream.MORE, response2);
         this.emit(change_stream_1.ChangeStream.RESPONSE);
-        return response;
+        return response2;
       }
     };
     exports2.ChangeStreamCursor = ChangeStreamCursor;
@@ -37930,8 +37930,8 @@ var require_list_collections_cursor = __commonJS({
           ...this.options,
           session: session2
         });
-        const response = await (0, execute_operation_1.executeOperation)(this.parent.client, operation);
-        return { server: operation.server, session: session2, response };
+        const response2 = await (0, execute_operation_1.executeOperation)(this.parent.client, operation);
+        return { server: operation.server, session: session2, response: response2 };
       }
     };
     exports2.ListCollectionsCursor = ListCollectionsCursor;
@@ -38009,14 +38009,14 @@ var require_run_command_cursor = __commonJS({
           session: session2,
           readPreference: this.cursorOptions.readPreference
         });
-        const response = await (0, execute_operation_1.executeOperation)(this.client, operation);
-        if (response.cursor == null) {
+        const response2 = await (0, execute_operation_1.executeOperation)(this.client, operation);
+        if (response2.cursor == null) {
           throw new error_1.MongoUnexpectedServerResponseError("Expected server to respond with cursor");
         }
         return {
           server: operation.server,
           session: session2,
-          response
+          response: response2
         };
       }
       /** @internal */
@@ -38774,8 +38774,8 @@ var require_gssapi = __commonJS({
       forwardAndReverse: "forwardAndReverse"
     });
     async function externalCommand(connection, command) {
-      const response = await connection.command((0, utils_1.ns)("$external.$cmd"), command);
-      return response;
+      const response2 = await connection.command((0, utils_1.ns)("$external.$cmd"), command);
+      return response2;
     }
     var krb;
     var GSSAPI = class extends auth_provider_1.AuthProvider {
@@ -38842,8 +38842,8 @@ var require_gssapi = __commonJS({
     }
     async function negotiate(client, retries, payload) {
       try {
-        const response = await client.step(payload);
-        return response || "";
+        const response2 = await client.step(payload);
+        return response2 || "";
       } catch (error) {
         if (retries === 0) {
           throw error;
@@ -38852,8 +38852,8 @@ var require_gssapi = __commonJS({
       }
     }
     async function finalize(client, user, payload) {
-      const response = await client.unwrap(payload);
-      return await client.wrap(response || "", { user });
+      const response2 = await client.unwrap(payload);
+      return await client.wrap(response2 || "", { user });
     }
     async function performGSSAPICanonicalizeHostName(host, mechanismProperties) {
       const mode = mechanismProperties.CANONICALIZE_HOST_NAME;
@@ -44214,13 +44214,13 @@ var require_utils5 = __commonJS({
     function get(url2, options = {}) {
       return new Promise((resolve, reject) => {
         let timeoutId;
-        const request = http2.get(url2, options, (response) => {
-          response.setEncoding("utf8");
+        const request = http2.get(url2, options, (response2) => {
+          response2.setEncoding("utf8");
           let body = "";
-          response.on("data", (chunk) => body += chunk);
-          response.on("end", () => {
+          response2.on("data", (chunk) => body += chunk);
+          response2.on("end", () => {
             (0, timers_1.clearTimeout)(timeoutId);
-            resolve({ status: response.statusCode, body });
+            resolve({ status: response2.statusCode, body });
           });
         }).on("error", (error) => {
           (0, timers_1.clearTimeout)(timeoutId);
@@ -44273,8 +44273,8 @@ var require_azure = __commonJS({
     };
     exports2.AzureCredentialCache = AzureCredentialCache;
     exports2.tokenCache = new AzureCredentialCache();
-    async function parseResponse(response) {
-      const { status, body: rawBody } = response;
+    async function parseResponse(response2) {
+      const { status, body: rawBody } = response2;
       const body = (() => {
         try {
           return JSON.parse(rawBody);
@@ -44311,8 +44311,8 @@ var require_azure = __commonJS({
     async function fetchAzureKMSToken(options = {}) {
       const { headers, url: url2 } = prepareRequest(options);
       try {
-        const response = await (0, utils_1.get)(url2, { headers });
-        return await parseResponse(response);
+        const response2 = await (0, utils_1.get)(url2, { headers });
+        return await parseResponse(response2);
       } catch (error) {
         if (error instanceof errors_1.MongoCryptKMSRequestNetworkTimeoutError) {
           throw new errors_1.MongoCryptAzureKMSRequestError(`[Azure KMS] ${error.message}`);
@@ -44694,8 +44694,8 @@ var require_state_machine = __commonJS({
         const options = { promoteLongs: false, promoteValues: false };
         const { db } = utils_1.MongoDBCollectionNamespace.fromString(ns);
         const rawCommand = (0, bson_1.deserialize)(command, options);
-        const response = await client.db(db).command(rawCommand, options);
-        return (0, bson_1.serialize)(response, this.bsonOptions);
+        const response2 = await client.db(db).command(rawCommand, options);
+        return (0, bson_1.serialize)(response2, this.bsonOptions);
       }
       /**
        * Requests keys from the keyVault collection on the topology.
@@ -44907,8 +44907,8 @@ var require_auto_encrypter = __commonJS({
       /**
        * Decrypt a command response
        */
-      async decrypt(response, options = {}) {
-        const buffer = Buffer.isBuffer(response) ? response : (0, bson_1.serialize)(response, options);
+      async decrypt(response2, options = {}) {
+        const buffer = Buffer.isBuffer(response2) ? response2 : (0, bson_1.serialize)(response2, options);
         const context = this._mongocrypt.makeDecryptionContext(buffer);
         context.id = this._contextCounter++;
         const stateMachine = new state_machine_1.StateMachine({
@@ -44919,7 +44919,7 @@ var require_auto_encrypter = __commonJS({
         const decorateResult = this[kDecorateResult];
         const result = await stateMachine.execute(this, context);
         if (decorateResult) {
-          decorateDecryptionResult(result, response);
+          decorateDecryptionResult(result, response2);
         }
         return result;
       }
@@ -45345,27 +45345,27 @@ var require_stream_description = __commonJS({
         this.compressors = options && options.compressors && Array.isArray(options.compressors) ? options.compressors : [];
         this.serverConnectionId = null;
       }
-      receiveResponse(response) {
-        if (response == null) {
+      receiveResponse(response2) {
+        if (response2 == null) {
           return;
         }
-        this.hello = response;
-        this.type = (0, server_description_1.parseServerType)(response);
-        if ("connectionId" in response) {
-          this.serverConnectionId = this.parseServerConnectionID(response.connectionId);
+        this.hello = response2;
+        this.type = (0, server_description_1.parseServerType)(response2);
+        if ("connectionId" in response2) {
+          this.serverConnectionId = this.parseServerConnectionID(response2.connectionId);
         } else {
           this.serverConnectionId = null;
         }
         for (const field of RESPONSE_FIELDS) {
-          if (response[field] != null) {
-            this[field] = response[field];
+          if (response2[field] != null) {
+            this[field] = response2[field];
           }
-          if ("__nodejs_mock_server__" in response) {
-            this.__nodejs_mock_server__ = response["__nodejs_mock_server__"];
+          if ("__nodejs_mock_server__" in response2) {
+            this.__nodejs_mock_server__ = response2["__nodejs_mock_server__"];
           }
         }
-        if (response.compression) {
-          this.compressor = this.compressors.filter((c) => response.compression?.includes(c))[0];
+        if (response2.compression) {
+          this.compressor = this.compressors.filter((c) => response2.compression?.includes(c))[0];
         }
       }
       /* @internal */
@@ -45520,8 +45520,8 @@ var require_connection = __commonJS({
         return this.description.hello;
       }
       // the `connect` method stores the result of the handshake hello on the connection
-      set hello(response) {
-        this.description.receiveResponse(response);
+      set hello(response2) {
+        this.description.receiveResponse(response2);
         Object.freeze(this.description);
       }
       get serviceId() {
@@ -45652,9 +45652,9 @@ var require_connection = __commonJS({
             return;
           }
           this.throwIfAborted();
-          for await (const response of this.readMany()) {
+          for await (const response2 of this.readMany()) {
             this.socket.setTimeout(0);
-            const bson = response.parse();
+            const bson = response2.parse();
             const document2 = responseType == null ? new responses_1.MongoDBResponse(bson) : (0, responses_1.isErrorResponse)(bson) ? new responses_1.MongoDBResponse(bson) : new responseType(bson);
             yield document2;
             this.throwIfAborted();
@@ -45772,9 +45772,9 @@ var require_connection = __commonJS({
         try {
           this.dataEvents = (0, on_data_1.onData)(this.messageStream);
           for await (const message of this.dataEvents) {
-            const response = await (0, compression_1.decompressResponse)(message);
-            yield response;
-            if (!response.moreToCome) {
+            const response2 = await (0, compression_1.decompressResponse)(message);
+            yield response2;
+            if (!response2.moreToCome) {
               return;
             }
           }
@@ -45849,8 +45849,8 @@ var require_connection = __commonJS({
             encrypted.indexes[offset].key = index;
           }
         }
-        const response = await super.command(ns, encrypted, options, void 0);
-        return await autoEncrypter.decrypt(response, options);
+        const response2 = await super.command(ns, encrypted, options, void 0);
+        return await autoEncrypter.decrypt(response2, options);
       }
     };
     exports2.CryptoConnection = CryptoConnection;
@@ -45924,27 +45924,27 @@ var require_connect = __commonJS({
         handshakeOptions.socketTimeoutMS = options.connectTimeoutMS;
       }
       const start = (/* @__PURE__ */ new Date()).getTime();
-      const response = await conn.command((0, utils_1.ns)("admin.$cmd"), handshakeDoc, handshakeOptions);
-      if (!("isWritablePrimary" in response)) {
-        response.isWritablePrimary = response[constants_1.LEGACY_HELLO_COMMAND];
+      const response2 = await conn.command((0, utils_1.ns)("admin.$cmd"), handshakeDoc, handshakeOptions);
+      if (!("isWritablePrimary" in response2)) {
+        response2.isWritablePrimary = response2[constants_1.LEGACY_HELLO_COMMAND];
       }
-      if (response.helloOk) {
+      if (response2.helloOk) {
         conn.helloOk = true;
       }
-      const supportedServerErr = checkSupportedServer(response, options);
+      const supportedServerErr = checkSupportedServer(response2, options);
       if (supportedServerErr) {
         throw supportedServerErr;
       }
       if (options.loadBalanced) {
-        if (!response.serviceId) {
+        if (!response2.serviceId) {
           throw new error_1.MongoCompatibilityError("Driver attempted to initialize in load balancing mode, but the server does not support this mode.");
         }
       }
-      conn.hello = response;
+      conn.hello = response2;
       conn.lastHelloMS = (/* @__PURE__ */ new Date()).getTime() - start;
-      if (!response.arbiterOnly && credentials) {
-        authContext.response = response;
-        const resolvedCredentials = credentials.resolveAuthMechanism(response);
+      if (!response2.arbiterOnly && credentials) {
+        authContext.response = response2;
+        const resolvedCredentials = credentials.resolveAuthMechanism(response2);
         const provider = options.authProviders.getOrCreateProvider(resolvedCredentials.mechanism);
         if (!provider) {
           throw new error_1.MongoInvalidArgumentError(`No AuthProvider for ${resolvedCredentials.mechanism} defined.`);
@@ -45954,7 +45954,7 @@ var require_connect = __commonJS({
         } catch (error) {
           if (error instanceof error_1.MongoError) {
             error.addErrorLabel(error_1.MongoErrorLabel.HandshakeError);
-            if ((0, error_1.needsRetryableWriteLabel)(error, response.maxWireVersion)) {
+            if ((0, error_1.needsRetryableWriteLabel)(error, response2.maxWireVersion)) {
               error.addErrorLabel(error_1.MongoErrorLabel.RetryableWriteError);
             }
           }
@@ -49254,12 +49254,12 @@ var require_azure_service_workflow = __commonJS({
           token = entry.token;
         } else {
           this.cache.deleteEntry(tokenAudience);
-          const response = await getAzureTokenData(tokenAudience);
-          if (!isEndpointResultValid(response)) {
+          const response2 = await getAzureTokenData(tokenAudience);
+          if (!isEndpointResultValid(response2)) {
             throw new error_1.MongoAzureError(ENDPOINT_RESULT_ERROR);
           }
-          this.cache.addEntry(tokenAudience, response);
-          token = response.access_token;
+          this.cache.addEntry(tokenAudience, response2);
+          token = response2.access_token;
         }
         return token;
       }
@@ -49456,17 +49456,17 @@ var require_callback_workflow = __commonJS({
       /**
        * Execute the OIDC callback workflow.
        */
-      async execute(connection, credentials, reauthenticating, response) {
+      async execute(connection, credentials, reauthenticating, response2) {
         const { requestCallback, refreshCallback, callbackHash } = this.callbackCache.getEntry(connection, credentials);
         const entry = this.cache.getEntry(connection.address, credentials.username, callbackHash);
         let result;
         if (entry) {
           if (entry.isValid() && !reauthenticating) {
-            result = await this.finishAuthentication(connection, credentials, entry.tokenResult, response?.speculativeAuthenticate?.conversationId);
+            result = await this.finishAuthentication(connection, credentials, entry.tokenResult, response2?.speculativeAuthenticate?.conversationId);
           } else {
             const tokenResult = await this.fetchAccessToken(connection, credentials, entry.serverInfo, reauthenticating, callbackHash, requestCallback, refreshCallback);
             try {
-              result = await this.finishAuthentication(connection, credentials, tokenResult, reauthenticating ? void 0 : response?.speculativeAuthenticate?.conversationId);
+              result = await this.finishAuthentication(connection, credentials, tokenResult, reauthenticating ? void 0 : response2?.speculativeAuthenticate?.conversationId);
             } catch (error) {
               if (reauthenticating && error instanceof error_1.MongoError && error.code === error_1.MONGODB_ERROR_CODES.Reauthenticate) {
                 this.cache.deleteEntry(connection.address, credentials.username, callbackHash);
@@ -49477,7 +49477,7 @@ var require_callback_workflow = __commonJS({
             }
           }
         } else {
-          const startDocument = await this.startAuthentication(connection, credentials, reauthenticating, response);
+          const startDocument = await this.startAuthentication(connection, credentials, reauthenticating, response2);
           const conversationId = startDocument.conversationId;
           const serverResult = bson_1.BSON.deserialize(startDocument.payload.buffer);
           const tokenResult = await this.fetchAccessToken(connection, credentials, serverResult, reauthenticating, callbackHash, requestCallback, refreshCallback);
@@ -49490,10 +49490,10 @@ var require_callback_workflow = __commonJS({
        * authentication document from the initial handshake, then we will use that
        * value to get the issuer, otherwise we will send the saslStart command.
        */
-      async startAuthentication(connection, credentials, reauthenticating, response) {
+      async startAuthentication(connection, credentials, reauthenticating, response2) {
         let result;
-        if (!reauthenticating && response?.speculativeAuthenticate) {
-          result = response.speculativeAuthenticate;
+        if (!reauthenticating && response2?.speculativeAuthenticate) {
+          result = response2.speculativeAuthenticate;
         } else {
           result = await connection.command((0, utils_1.ns)(credentials.source), startCommandDocument(credentials), void 0);
         }
@@ -49600,10 +49600,10 @@ var require_mongodb_oidc = __commonJS({
        * Authenticate using OIDC
        */
       async auth(authContext) {
-        const { connection, reauthenticating, response } = authContext;
+        const { connection, reauthenticating, response: response2 } = authContext;
         const credentials = getCredentials(authContext);
         const workflow = getWorkflow(credentials);
-        await workflow.execute(connection, credentials, reauthenticating, response);
+        await workflow.execute(connection, credentials, reauthenticating, response2);
       }
       /**
        * Add the speculative auth for the initial handshake.
@@ -50067,9 +50067,9 @@ var require_scram = __commonJS({
         return request;
       }
       async auth(authContext) {
-        const { reauthenticating, response } = authContext;
-        if (response?.speculativeAuthenticate && !reauthenticating) {
-          return await continueScramConversation(this.cryptoMethod, response.speculativeAuthenticate, authContext);
+        const { reauthenticating, response: response2 } = authContext;
+        if (response2?.speculativeAuthenticate && !reauthenticating) {
+          return await continueScramConversation(this.cryptoMethod, response2.speculativeAuthenticate, authContext);
         }
         return await executeScram(this.cryptoMethod, authContext);
       }
@@ -50107,10 +50107,10 @@ var require_scram = __commonJS({
       const nonce = authContext.nonce;
       const db = credentials.source;
       const saslStartCmd = makeFirstMessage(cryptoMethod, credentials, nonce);
-      const response = await connection.command((0, utils_1.ns)(`${db}.$cmd`), saslStartCmd, void 0);
-      await continueScramConversation(cryptoMethod, response, authContext);
+      const response2 = await connection.command((0, utils_1.ns)(`${db}.$cmd`), saslStartCmd, void 0);
+      await continueScramConversation(cryptoMethod, response2, authContext);
     }
-    async function continueScramConversation(cryptoMethod, response, authContext) {
+    async function continueScramConversation(cryptoMethod, response2, authContext) {
       const connection = authContext.connection;
       const credentials = authContext.credentials;
       if (!credentials) {
@@ -50124,7 +50124,7 @@ var require_scram = __commonJS({
       const username = cleanUsername(credentials.username);
       const password = credentials.password;
       const processedPassword = cryptoMethod === "sha256" ? (0, saslprep_1.saslprep)(password) : passwordDigest(username, password);
-      const payload = Buffer.isBuffer(response.payload) ? new bson_1.Binary(response.payload) : response.payload;
+      const payload = Buffer.isBuffer(response2.payload) ? new bson_1.Binary(response2.payload) : response2.payload;
       const dict = parsePayload(payload);
       const iterations = parseInt(dict.i, 10);
       if (iterations && iterations < 4096) {
@@ -50151,7 +50151,7 @@ var require_scram = __commonJS({
       const serverSignature = HMAC(cryptoMethod, serverKey, authMessage);
       const saslContinueCmd = {
         saslContinue: 1,
-        conversationId: response.conversationId,
+        conversationId: response2.conversationId,
         payload: new bson_1.Binary(Buffer.from(clientFinal))
       };
       const r = await connection.command((0, utils_1.ns)(`${db}.$cmd`), saslContinueCmd, void 0);
@@ -50295,8 +50295,8 @@ var require_x509 = __commonJS({
         if (!credentials) {
           throw new error_1.MongoMissingCredentialsError("AuthContext must provide credentials.");
         }
-        const response = authContext.response;
-        if (response?.speculativeAuthenticate) {
+        const response2 = authContext.response;
+        if (response2?.speculativeAuthenticate) {
           return;
         }
         await connection.command((0, utils_1.ns)("$external.$cmd"), x509AuthenticateCommand(credentials), void 0);
@@ -70386,10 +70386,10 @@ var require_connection2 = __commonJS({
         });
       });
     };
-    async function _wrapUserTransaction(fn, session2, mongoose5) {
+    async function _wrapUserTransaction(fn, session2, mongoose6) {
       try {
-        const res = mongoose5.transactionAsyncLocalStorage == null ? await fn(session2) : await new Promise((resolve) => {
-          mongoose5.transactionAsyncLocalStorage.run(
+        const res = mongoose6.transactionAsyncLocalStorage == null ? await fn(session2) : await new Promise((resolve) => {
+          mongoose6.transactionAsyncLocalStorage.run(
             { session: session2 },
             () => resolve(fn(session2))
           );
@@ -84162,7 +84162,7 @@ var require_mongoose = __commonJS({
     Mongoose.prototype.ConnectionStates = STATES;
     Mongoose.prototype.driver = driver;
     Mongoose.prototype.setDriver = function setDriver(driver2) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       if (_mongoose.__driver === driver2) {
         return _mongoose;
       }
@@ -84188,7 +84188,7 @@ var require_mongoose = __commonJS({
       return _mongoose;
     };
     Mongoose.prototype.set = function(key, value) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       if (arguments.length === 1 && typeof key !== "object") {
         if (VALID_OPTIONS.indexOf(key) === -1) {
           const error2 = new SetOptionError();
@@ -84241,7 +84241,7 @@ var require_mongoose = __commonJS({
     };
     Mongoose.prototype.get = Mongoose.prototype.set;
     Mongoose.prototype.createConnection = function(uri, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       const Connection = _mongoose.__driver.Connection;
       const conn = new Connection(_mongoose);
       _mongoose.connections.push(conn);
@@ -84256,7 +84256,7 @@ var require_mongoose = __commonJS({
       if (typeof options === "function" || arguments.length >= 3 && typeof arguments[2] === "function") {
         throw new MongooseError("Mongoose.prototype.connect() no longer accepts a callback");
       }
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       const conn = _mongoose.connection;
       return conn.openUri(uri, options).then(() => _mongoose);
     };
@@ -84264,7 +84264,7 @@ var require_mongoose = __commonJS({
       if (arguments.length >= 1 && typeof arguments[0] === "function") {
         throw new MongooseError("Mongoose.prototype.disconnect() no longer accepts a callback");
       }
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       const remaining = _mongoose.connections.length;
       if (remaining <= 0) {
         return;
@@ -84272,18 +84272,18 @@ var require_mongoose = __commonJS({
       await Promise.all(_mongoose.connections.map((conn) => conn.close()));
     };
     Mongoose.prototype.startSession = function() {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       return _mongoose.connection.startSession.apply(_mongoose.connection, arguments);
     };
     Mongoose.prototype.pluralize = function(fn) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       if (arguments.length > 0) {
         _mongoose._pluralize = fn;
       }
       return _mongoose._pluralize;
     };
     Mongoose.prototype.model = function(name, schema, collection, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       if (typeof schema === "string") {
         collection = schema;
         schema = false;
@@ -84331,7 +84331,7 @@ var require_mongoose = __commonJS({
       return model;
     };
     Mongoose.prototype._model = function(name, schema, collection, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       let model;
       if (typeof name === "function") {
         model = name;
@@ -84370,25 +84370,25 @@ var require_mongoose = __commonJS({
       return model;
     };
     Mongoose.prototype.deleteModel = function(name) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       _mongoose.connection.deleteModel(name);
       delete _mongoose.models[name];
       return _mongoose;
     };
     Mongoose.prototype.modelNames = function() {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       const names = Object.keys(_mongoose.models);
       return names;
     };
     Mongoose.prototype._applyPlugins = function(schema, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       options = options || {};
       options.applyPluginsToDiscriminators = _mongoose.options && _mongoose.options.applyPluginsToDiscriminators || false;
       options.applyPluginsToChildSchemas = typeof (_mongoose.options && _mongoose.options.applyPluginsToChildSchemas) === "boolean" ? _mongoose.options.applyPluginsToChildSchemas : true;
       applyPlugins(schema, _mongoose.plugins, options, "$globalPluginsApplied");
     };
     Mongoose.prototype.plugin = function(fn, opts) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       _mongoose.plugins.push([fn, opts]);
       return _mongoose;
     };
@@ -84436,14 +84436,14 @@ var require_mongoose = __commonJS({
     Mongoose.prototype.DocumentProvider = require_documentProvider();
     Mongoose.prototype.ObjectId = SchemaTypes.ObjectId;
     Mongoose.prototype.isValidObjectId = function(v) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       return _mongoose.Types.ObjectId.isValid(v);
     };
     Mongoose.prototype.isObjectIdOrHexString = function(v) {
       return isBsonType(v, "ObjectId") || typeof v === "string" && objectIdHexRegexp.test(v);
     };
     Mongoose.prototype.syncIndexes = function(options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose5;
+      const _mongoose = this instanceof Mongoose ? this : mongoose6;
       return _mongoose.connection.syncIndexes(options);
     };
     Mongoose.prototype.Decimal128 = SchemaTypes.Decimal128;
@@ -84463,7 +84463,7 @@ var require_mongoose = __commonJS({
     Mongoose.prototype.skipMiddlewareFunction = Kareem.skipWrappedFunction;
     Mongoose.prototype.overwriteMiddlewareResult = Kareem.overwriteResult;
     Mongoose.prototype.omitUndefined = require_omitUndefined();
-    var mongoose5 = module2.exports = exports2 = new Mongoose({
+    var mongoose6 = module2.exports = exports2 = new Mongoose({
       [defaultMongooseSymbol]: true
     });
   }
@@ -84475,10 +84475,10 @@ var require_lib9 = __commonJS({
     "use strict";
     var mongodbDriver = require_node_mongodb_native();
     require_driver().set(mongodbDriver);
-    var mongoose5 = require_mongoose();
-    mongoose5.setDriver(mongodbDriver);
-    mongoose5.Mongoose.prototype.mongo = require_lib6();
-    module2.exports = mongoose5;
+    var mongoose6 = require_mongoose();
+    mongoose6.setDriver(mongodbDriver);
+    mongoose6.Mongoose.prototype.mongo = require_lib6();
+    module2.exports = mongoose6;
   }
 });
 
@@ -84486,54 +84486,54 @@ var require_lib9 = __commonJS({
 var require_mongoose2 = __commonJS({
   "backend/node_modules/mongoose/index.js"(exports2, module2) {
     "use strict";
-    var mongoose5 = require_lib9();
-    module2.exports = mongoose5;
-    module2.exports.default = mongoose5;
-    module2.exports.mongoose = mongoose5;
-    module2.exports.cast = mongoose5.cast;
-    module2.exports.STATES = mongoose5.STATES;
-    module2.exports.setDriver = mongoose5.setDriver;
-    module2.exports.set = mongoose5.set;
-    module2.exports.get = mongoose5.get;
-    module2.exports.createConnection = mongoose5.createConnection;
-    module2.exports.connect = mongoose5.connect;
-    module2.exports.disconnect = mongoose5.disconnect;
-    module2.exports.startSession = mongoose5.startSession;
-    module2.exports.pluralize = mongoose5.pluralize;
-    module2.exports.model = mongoose5.model;
-    module2.exports.deleteModel = mongoose5.deleteModel;
-    module2.exports.modelNames = mongoose5.modelNames;
-    module2.exports.plugin = mongoose5.plugin;
-    module2.exports.connections = mongoose5.connections;
-    module2.exports.version = mongoose5.version;
-    module2.exports.Mongoose = mongoose5.Mongoose;
-    module2.exports.Schema = mongoose5.Schema;
-    module2.exports.SchemaType = mongoose5.SchemaType;
-    module2.exports.SchemaTypes = mongoose5.SchemaTypes;
-    module2.exports.VirtualType = mongoose5.VirtualType;
-    module2.exports.Types = mongoose5.Types;
-    module2.exports.Query = mongoose5.Query;
-    module2.exports.Model = mongoose5.Model;
-    module2.exports.Document = mongoose5.Document;
-    module2.exports.ObjectId = mongoose5.ObjectId;
-    module2.exports.isValidObjectId = mongoose5.isValidObjectId;
-    module2.exports.isObjectIdOrHexString = mongoose5.isObjectIdOrHexString;
-    module2.exports.syncIndexes = mongoose5.syncIndexes;
-    module2.exports.Decimal128 = mongoose5.Decimal128;
-    module2.exports.Mixed = mongoose5.Mixed;
-    module2.exports.Date = mongoose5.Date;
-    module2.exports.Number = mongoose5.Number;
-    module2.exports.Error = mongoose5.Error;
-    module2.exports.MongooseError = mongoose5.MongooseError;
-    module2.exports.now = mongoose5.now;
-    module2.exports.CastError = mongoose5.CastError;
-    module2.exports.SchemaTypeOptions = mongoose5.SchemaTypeOptions;
-    module2.exports.mongo = mongoose5.mongo;
-    module2.exports.mquery = mongoose5.mquery;
-    module2.exports.sanitizeFilter = mongoose5.sanitizeFilter;
-    module2.exports.trusted = mongoose5.trusted;
-    module2.exports.skipMiddlewareFunction = mongoose5.skipMiddlewareFunction;
-    module2.exports.overwriteMiddlewareResult = mongoose5.overwriteMiddlewareResult;
+    var mongoose6 = require_lib9();
+    module2.exports = mongoose6;
+    module2.exports.default = mongoose6;
+    module2.exports.mongoose = mongoose6;
+    module2.exports.cast = mongoose6.cast;
+    module2.exports.STATES = mongoose6.STATES;
+    module2.exports.setDriver = mongoose6.setDriver;
+    module2.exports.set = mongoose6.set;
+    module2.exports.get = mongoose6.get;
+    module2.exports.createConnection = mongoose6.createConnection;
+    module2.exports.connect = mongoose6.connect;
+    module2.exports.disconnect = mongoose6.disconnect;
+    module2.exports.startSession = mongoose6.startSession;
+    module2.exports.pluralize = mongoose6.pluralize;
+    module2.exports.model = mongoose6.model;
+    module2.exports.deleteModel = mongoose6.deleteModel;
+    module2.exports.modelNames = mongoose6.modelNames;
+    module2.exports.plugin = mongoose6.plugin;
+    module2.exports.connections = mongoose6.connections;
+    module2.exports.version = mongoose6.version;
+    module2.exports.Mongoose = mongoose6.Mongoose;
+    module2.exports.Schema = mongoose6.Schema;
+    module2.exports.SchemaType = mongoose6.SchemaType;
+    module2.exports.SchemaTypes = mongoose6.SchemaTypes;
+    module2.exports.VirtualType = mongoose6.VirtualType;
+    module2.exports.Types = mongoose6.Types;
+    module2.exports.Query = mongoose6.Query;
+    module2.exports.Model = mongoose6.Model;
+    module2.exports.Document = mongoose6.Document;
+    module2.exports.ObjectId = mongoose6.ObjectId;
+    module2.exports.isValidObjectId = mongoose6.isValidObjectId;
+    module2.exports.isObjectIdOrHexString = mongoose6.isObjectIdOrHexString;
+    module2.exports.syncIndexes = mongoose6.syncIndexes;
+    module2.exports.Decimal128 = mongoose6.Decimal128;
+    module2.exports.Mixed = mongoose6.Mixed;
+    module2.exports.Date = mongoose6.Date;
+    module2.exports.Number = mongoose6.Number;
+    module2.exports.Error = mongoose6.Error;
+    module2.exports.MongooseError = mongoose6.MongooseError;
+    module2.exports.now = mongoose6.now;
+    module2.exports.CastError = mongoose6.CastError;
+    module2.exports.SchemaTypeOptions = mongoose6.SchemaTypeOptions;
+    module2.exports.mongo = mongoose6.mongo;
+    module2.exports.mquery = mongoose6.mquery;
+    module2.exports.sanitizeFilter = mongoose6.sanitizeFilter;
+    module2.exports.trusted = mongoose6.trusted;
+    module2.exports.skipMiddlewareFunction = mongoose6.skipMiddlewareFunction;
+    module2.exports.overwriteMiddlewareResult = mongoose6.overwriteMiddlewareResult;
   }
 });
 
@@ -86128,9 +86128,9 @@ var require_form_data = __commonJS({
       } else if (value.hasOwnProperty("httpVersion")) {
         callback2(null, +value.headers["content-length"]);
       } else if (value.hasOwnProperty("httpModule")) {
-        value.on("response", function(response) {
+        value.on("response", function(response2) {
           value.pause();
-          callback2(null, +response.headers["content-length"]);
+          callback2(null, +response2.headers["content-length"]);
         });
         value.resume();
       } else {
@@ -86519,9 +86519,9 @@ var require_follow_redirects = __commonJS({
         this.on("response", responseCallback);
       }
       var self2 = this;
-      this._onNativeResponse = function(response) {
+      this._onNativeResponse = function(response2) {
         try {
-          self2._processResponse(response);
+          self2._processResponse(response2);
         } catch (cause) {
           self2.emit("error", cause instanceof RedirectionError ? cause : new RedirectionError({ cause }));
         }
@@ -86719,25 +86719,25 @@ var require_follow_redirects = __commonJS({
         })();
       }
     };
-    RedirectableRequest.prototype._processResponse = function(response) {
-      var statusCode = response.statusCode;
+    RedirectableRequest.prototype._processResponse = function(response2) {
+      var statusCode = response2.statusCode;
       if (this._options.trackRedirects) {
         this._redirects.push({
           url: this._currentUrl,
-          headers: response.headers,
+          headers: response2.headers,
           statusCode
         });
       }
-      var location = response.headers.location;
+      var location = response2.headers.location;
       if (!location || this._options.followRedirects === false || statusCode < 300 || statusCode >= 400) {
-        response.responseUrl = this._currentUrl;
-        response.redirects = this._redirects;
-        this.emit("response", response);
+        response2.responseUrl = this._currentUrl;
+        response2.redirects = this._redirects;
+        this.emit("response", response2);
         this._requestBodyBuffers = [];
         return;
       }
       destroyRequest(this._currentRequest);
-      response.destroy();
+      response2.destroy();
       if (++this._redirectCount > this._options.maxRedirects) {
         throw new TooManyRedirectsError();
       }
@@ -86746,7 +86746,7 @@ var require_follow_redirects = __commonJS({
       if (beforeRedirect) {
         requestHeaders = Object.assign({
           // The Host header was set by nativeProtocol.request
-          Host: response.req.getHeader("host")
+          Host: response2.req.getHeader("host")
         }, this._options.headers);
       }
       var method = this._options.method;
@@ -86772,7 +86772,7 @@ var require_follow_redirects = __commonJS({
       }
       if (isFunction2(beforeRedirect)) {
         var responseDetails = {
-          headers: response.headers,
+          headers: response2.headers,
           statusCode
         };
         var requestDetails = {
@@ -86997,12 +86997,12 @@ var require_response2 = __commonJS({
     }
     module2.exports = class ServerlessResponse extends http2.ServerResponse {
       static from(res) {
-        const response = new ServerlessResponse(res);
-        response.statusCode = res.statusCode;
-        response[HEADERS] = res.headers;
-        response[BODY] = [Buffer.from(res.body)];
-        response.end();
-        return response;
+        const response2 = new ServerlessResponse(res);
+        response2.statusCode = res.statusCode;
+        response2[HEADERS] = res.headers;
+        response2[BODY] = [Buffer.from(res.body)];
+        response2.end();
+        return response2;
       }
       static body(res) {
         return Buffer.concat(res[BODY]);
@@ -87085,35 +87085,35 @@ var require_get_framework = __commonJS({
     var Response2 = require_response2();
     function common(cb) {
       return (request) => {
-        const response = new Response2(request);
-        cb(request, response);
-        return response;
+        const response2 = new Response2(request);
+        cb(request, response2);
+        return response2;
       };
     }
     module2.exports = function getFramework(app2) {
       if (app2 instanceof http2.Server) {
         return (request) => {
-          const response = new Response2(request);
-          app2.emit("request", request, response);
-          return response;
+          const response2 = new Response2(request);
+          app2.emit("request", request, response2);
+          return response2;
         };
       }
       if (typeof app2.callback === "function") {
         return common(app2.callback());
       }
       if (typeof app2.handle === "function") {
-        return common((request, response) => {
-          app2.handle(request, response);
+        return common((request, response2) => {
+          app2.handle(request, response2);
         });
       }
       if (typeof app2.handler === "function") {
-        return common((request, response) => {
-          app2.handler(request, response);
+        return common((request, response2) => {
+          app2.handler(request, response2);
         });
       }
       if (typeof app2._onRequest === "function") {
-        return common((request, response) => {
-          app2._onRequest(request, response);
+        return common((request, response2) => {
+          app2._onRequest(request, response2);
         });
       }
       if (typeof app2 === "function") {
@@ -87421,18 +87421,18 @@ var require_format_response = __commonJS({
     var isBinary = require_is_binary();
     var Response2 = require_response2();
     var sanitizeHeaders = require_sanitize_headers();
-    module2.exports = (event, response, options) => {
-      const { statusCode } = response;
-      const { headers, multiValueHeaders } = sanitizeHeaders(Response2.headers(response));
+    module2.exports = (event, response2, options) => {
+      const { statusCode } = response2;
+      const { headers, multiValueHeaders } = sanitizeHeaders(Response2.headers(response2));
       let cookies = [];
       if (multiValueHeaders["set-cookie"]) {
         cookies = multiValueHeaders["set-cookie"];
       }
       const isBase64Encoded = isBinary(headers, options);
       const encoding = isBase64Encoded ? "base64" : "utf8";
-      let body = Response2.body(response).toString(encoding);
-      if (headers["transfer-encoding"] === "chunked" || response.chunkedEncoding) {
-        const raw = Response2.body(response).toString().split("\r\n");
+      let body = Response2.body(response2).toString(encoding);
+      if (headers["transfer-encoding"] === "chunked" || response2.chunkedEncoding) {
+        const raw = Response2.body(response2).toString().split("\r\n");
         const parsed = [];
         for (let i = 0; i < raw.length; i += 2) {
           const size = parseInt(raw[i], 16);
@@ -87465,8 +87465,8 @@ var require_aws2 = __commonJS({
       return (getResponse) => async (event_, context = {}) => {
         const event = cleanUpEvent(event_, options);
         const request = createRequest(event, context, options);
-        const response = await getResponse(request, event, context);
-        return formatResponse(event, response, options);
+        const response2 = await getResponse(request, event, context);
+        return formatResponse(event, response2, options);
       };
     };
   }
@@ -87630,15 +87630,15 @@ var require_format_response2 = __commonJS({
     var isBinary = require_is_binary2();
     var Response2 = require_response2();
     var sanitizeHeaders = require_sanitize_headers2();
-    module2.exports = (response, options) => {
-      const { statusCode } = response;
-      const headers = sanitizeHeaders(Response2.headers(response));
-      if (headers["transfer-encoding"] === "chunked" || response.chunkedEncoding) {
+    module2.exports = (response2, options) => {
+      const { statusCode } = response2;
+      const headers = sanitizeHeaders(Response2.headers(response2));
+      if (headers["transfer-encoding"] === "chunked" || response2.chunkedEncoding) {
         throw new Error("chunked encoding not supported");
       }
       const isBase64Encoded = isBinary(headers, options);
       const encoding = isBase64Encoded ? "base64" : "utf8";
-      const body = Response2.body(response).toString(encoding);
+      const body = Response2.body(response2).toString(encoding);
       return { status: statusCode, headers, isBase64Encoded, body };
     };
   }
@@ -87654,9 +87654,9 @@ var require_azure2 = __commonJS({
       return (getResponse) => async (context, req) => {
         const event = cleanupRequest(req, options);
         const request = createRequest(event, options);
-        const response = await getResponse(request, context, event);
-        context.log(response);
-        return formatResponse(response, options);
+        const response2 = await getResponse(request, context, event);
+        context.log(response2);
+        return formatResponse(response2, options);
       };
     };
   }
@@ -87697,9 +87697,9 @@ var require_serverless_http = __commonJS({
       const provider = getProvider(options);
       return provider(async (request, ...context) => {
         await finish(request, options.request, ...context);
-        const response = await framework(request);
-        await finish(response, options.response, ...context);
-        return response;
+        const response2 = await framework(request);
+        await finish(response2, options.response, ...context);
+        return response2;
       });
     };
   }
@@ -89677,31 +89677,31 @@ var require_oauth = __commonJS({
         var self2 = this;
         var allowEarlyClose = OAuthUtils.isAnEarlyCloseHost(parsedUrl.hostname);
         var callbackCalled = false;
-        var passBackControl = function(response) {
+        var passBackControl = function(response2) {
           if (!callbackCalled) {
             callbackCalled = true;
-            if (response.statusCode >= 200 && response.statusCode <= 299) {
-              callback2(null, data, response);
+            if (response2.statusCode >= 200 && response2.statusCode <= 299) {
+              callback2(null, data, response2);
             } else {
-              if ((response.statusCode == 301 || response.statusCode == 302) && clientOptions.followRedirects && response.headers && response.headers.location) {
-                self2._performSecureRequest(oauth_token, oauth_token_secret, method, response.headers.location, extra_params, post_body, post_content_type, callback2);
+              if ((response2.statusCode == 301 || response2.statusCode == 302) && clientOptions.followRedirects && response2.headers && response2.headers.location) {
+                self2._performSecureRequest(oauth_token, oauth_token_secret, method, response2.headers.location, extra_params, post_body, post_content_type, callback2);
               } else {
-                callback2({ statusCode: response.statusCode, data }, data, response);
+                callback2({ statusCode: response2.statusCode, data }, data, response2);
               }
             }
           }
         };
-        request.on("response", function(response) {
-          response.setEncoding("utf8");
-          response.on("data", function(chunk) {
+        request.on("response", function(response2) {
+          response2.setEncoding("utf8");
+          response2.on("data", function(chunk) {
             data += chunk;
           });
-          response.on("end", function() {
-            passBackControl(response);
+          response2.on("end", function() {
+            passBackControl(response2);
           });
-          response.on("close", function() {
+          response2.on("close", function() {
             if (allowEarlyClose) {
-              passBackControl(response);
+              passBackControl(response2);
             }
           });
         });
@@ -89741,7 +89741,7 @@ var require_oauth = __commonJS({
       } else {
         extraParams.oauth_verifier = oauth_verifier;
       }
-      this._performSecureRequest(oauth_token, oauth_token_secret, this._clientOptions.accessTokenHttpMethod, this._accessUrl, extraParams, null, null, function(error, data, response) {
+      this._performSecureRequest(oauth_token, oauth_token_secret, this._clientOptions.accessTokenHttpMethod, this._accessUrl, extraParams, null, null, function(error, data, response2) {
         if (error)
           callback2(error);
         else {
@@ -89790,7 +89790,7 @@ var require_oauth = __commonJS({
       if (this._authorize_callback) {
         extraParams["oauth_callback"] = this._authorize_callback;
       }
-      this._performSecureRequest(null, null, this._clientOptions.requestTokenHttpMethod, this._requestUrl, extraParams, null, null, function(error, data, response) {
+      this._performSecureRequest(null, null, this._clientOptions.requestTokenHttpMethod, this._requestUrl, extraParams, null, null, function(error, data, response2) {
         if (error)
           callback2(error);
         else {
@@ -89920,13 +89920,13 @@ var require_oauth2 = __commonJS({
     exports2.OAuth2.prototype._executeRequest = function(http_library, options, post_body, callback2) {
       var allowEarlyClose = OAuthUtils.isAnEarlyCloseHost(options.host);
       var callbackCalled = false;
-      function passBackControl(response, result2) {
+      function passBackControl(response2, result2) {
         if (!callbackCalled) {
           callbackCalled = true;
-          if (!(response.statusCode >= 200 && response.statusCode <= 299) && response.statusCode != 301 && response.statusCode != 302) {
-            callback2({ statusCode: response.statusCode, data: result2 });
+          if (!(response2.statusCode >= 200 && response2.statusCode <= 299) && response2.statusCode != 301 && response2.statusCode != 302) {
+            callback2({ statusCode: response2.statusCode, data: result2 });
           } else {
-            callback2(null, result2, response);
+            callback2(null, result2, response2);
           }
         }
       }
@@ -89935,17 +89935,17 @@ var require_oauth2 = __commonJS({
         options.agent = this._agent;
       }
       var request = http_library.request(options);
-      request.on("response", function(response) {
-        response.on("data", function(chunk) {
+      request.on("response", function(response2) {
+        response2.on("data", function(chunk) {
           result += chunk;
         });
-        response.on("close", function(err) {
+        response2.on("close", function(err) {
           if (allowEarlyClose) {
-            passBackControl(response, result);
+            passBackControl(response2, result);
           }
         });
-        response.addListener("end", function() {
-          passBackControl(response, result);
+        response2.addListener("end", function() {
+          passBackControl(response2, result);
         });
       });
       request.on("error", function(e) {
@@ -89974,7 +89974,7 @@ var require_oauth2 = __commonJS({
       var post_headers = {
         "Content-Type": "application/x-www-form-urlencoded"
       };
-      this._request("POST", this._getAccessTokenUrl(), post_headers, post_data, null, function(error, data, response) {
+      this._request("POST", this._getAccessTokenUrl(), post_headers, post_data, null, function(error, data, response2) {
         if (error)
           callback2(error);
         else {
@@ -90708,16 +90708,101 @@ var require_oauth22 = __commonJS({
   }
 });
 
+// backend/node_modules/passport-local/lib/utils.js
+var require_utils10 = __commonJS({
+  "backend/node_modules/passport-local/lib/utils.js"(exports2) {
+    exports2.lookup = function(obj, field) {
+      if (!obj) {
+        return null;
+      }
+      var chain = field.split("]").join("").split("[");
+      for (var i = 0, len = chain.length; i < len; i++) {
+        var prop = obj[chain[i]];
+        if (typeof prop === "undefined") {
+          return null;
+        }
+        if (typeof prop !== "object") {
+          return prop;
+        }
+        obj = prop;
+      }
+      return null;
+    };
+  }
+});
+
+// backend/node_modules/passport-local/lib/strategy.js
+var require_strategy3 = __commonJS({
+  "backend/node_modules/passport-local/lib/strategy.js"(exports2, module2) {
+    var passport3 = require_lib10();
+    var util2 = require("util");
+    var lookup = require_utils10().lookup;
+    function Strategy(options, verify) {
+      if (typeof options == "function") {
+        verify = options;
+        options = {};
+      }
+      if (!verify) {
+        throw new TypeError("LocalStrategy requires a verify callback");
+      }
+      this._usernameField = options.usernameField || "username";
+      this._passwordField = options.passwordField || "password";
+      passport3.Strategy.call(this);
+      this.name = "local";
+      this._verify = verify;
+      this._passReqToCallback = options.passReqToCallback;
+    }
+    util2.inherits(Strategy, passport3.Strategy);
+    Strategy.prototype.authenticate = function(req, options) {
+      options = options || {};
+      var username = lookup(req.body, this._usernameField) || lookup(req.query, this._usernameField);
+      var password = lookup(req.body, this._passwordField) || lookup(req.query, this._passwordField);
+      if (!username || !password) {
+        return this.fail({ message: options.badRequestMessage || "Missing credentials" }, 400);
+      }
+      var self2 = this;
+      function verified(err, user, info) {
+        if (err) {
+          return self2.error(err);
+        }
+        if (!user) {
+          return self2.fail(info);
+        }
+        self2.success(user, info);
+      }
+      try {
+        if (self2._passReqToCallback) {
+          this._verify(req, username, password, verified);
+        } else {
+          this._verify(username, password, verified);
+        }
+      } catch (ex) {
+        return self2.error(ex);
+      }
+    };
+    module2.exports = Strategy;
+  }
+});
+
+// backend/node_modules/passport-local/lib/index.js
+var require_lib13 = __commonJS({
+  "backend/node_modules/passport-local/lib/index.js"(exports2, module2) {
+    var Strategy = require_strategy3();
+    exports2 = module2.exports = Strategy;
+    exports2.Strategy = Strategy;
+  }
+});
+
 // backend/functions/server.js
 var server_exports = {};
 __export(server_exports, {
   handler: () => handler
 });
 module.exports = __toCommonJS(server_exports);
-var import_express6 = __toESM(require_express2(), 1);
+var import_express8 = __toESM(require_express2(), 1);
 var import_body_parser = __toESM(require_body_parser(), 1);
 var import_cors = __toESM(require_lib3(), 1);
-var import_mongoose4 = __toESM(require_mongoose2(), 1);
+var import_mongoose5 = __toESM(require_mongoose2(), 1);
 var import_dotenv2 = __toESM(require_main(), 1);
 
 // backend/Endpoints/authRoute.js
@@ -90731,10 +90816,44 @@ authRoute.get("/auth/google", import_passport.default.authenticate("google", {
 }));
 authRoute.get(
   "/auth/google/callback",
-  import_passport.default.authenticate("google", { failureRedirect: "/" }),
+  (req, res, next) => {
+    import_passport.default.authenticate("google", (err, user, info) => {
+      console.log("in google authenticate callback");
+      if (err) {
+        console.error(err);
+        return next(err);
+      }
+      if (!user) {
+        console.log("No user found");
+        return res.redirect("/login");
+      }
+      req.logIn(user, (err2) => {
+        if (err2) {
+          console.error(err2);
+          return next(err2);
+        }
+        console.log("User logged in");
+        return res.redirect("/");
+      });
+    })(req, res, next);
+  }
+);
+authRoute.post(
+  "/auth/login",
+  import_passport.default.authenticate("local", { failWithError: true }),
   (req, res) => {
-    console.log("auth/google/callback reached.");
-    res.redirect("/");
+    console.log("/login route reached: successful authentication.");
+    res.status(200).send("Login successful");
+  },
+  (err, req, res, next) => {
+    console.log("/login route reached: unsuccessful authentication");
+    console.log(err);
+    if (req.authError) {
+      console.log("req.authError: " + req.authError);
+      res.status(401).send(req.authError);
+    } else {
+      res.status(401).send("Unexpected error occurred when attempting to authenticate. Please try again.");
+    }
   }
 );
 authRoute.get("/auth/logout", (req, res, next) => {
@@ -90743,7 +90862,13 @@ authRoute.get("/auth/logout", (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.redirect("/");
+    req.session.destroy((err2) => {
+      if (err2) {
+        return next(err2);
+      }
+      res.clearCookie("connect.sid");
+      res.redirect("/login");
+    });
   });
 });
 authRoute.get("/auth/test", (req, res) => {
@@ -90765,16 +90890,19 @@ var import_express2 = __toESM(require_express2(), 1);
 // backend/Database Schema/Thread.js
 var import_mongoose = __toESM(require_mongoose2(), 1);
 var ThreadSchema = new import_mongoose.default.Schema({
-  prompt: [String],
-  response: [String],
-  createdDate: Date
-  // userId:{
-  //     type: mongoose.Types.ObjectId,
-  //     ref: 'users',
-  //     require: true
-  // }
+  creationDate: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
+  userId: {
+    type: import_mongoose.default.Schema.Types.ObjectId,
+    ref: "users",
+    require: true
+  }
 });
-var Thread = import_mongoose.default.model("Thread", ThreadSchema);
+var Thread = import_mongoose.default.model("thread", ThreadSchema);
+var Thread_default = Thread;
 
 // backend/Endpoints/threadRoute.js
 var threadRoute = import_express2.default.Router();
@@ -90782,7 +90910,7 @@ threadRoute.route("/threads/:threadId").get(async (req, res) => {
   const threadId = req.params.threadId;
   console.log("in /threads/:threadId Route (GET) thread with ID:" + JSON.stringify(threadId));
   try {
-    let thread = await Thread.findOne({ "_id": threadId });
+    let thread = await Thread_default.findOne({ "_id": threadId });
     if (!thread) {
       return res.status(404).send("No thread with id: " + JSON.stringify(threadId) + "existed in database");
     }
@@ -90795,7 +90923,7 @@ threadRoute.route("/threads/:threadId").get(async (req, res) => {
   const threadId = req.params.threadId;
   console.log("In /threads Route (DELETE) for thread with ID: " + threadId);
   try {
-    let thread = await Thread.findOneAndDelete({ _id: threadId });
+    let thread = await Thread_default.findOneAndDelete({ _id: threadId });
     if (!thread) {
       return res.status(404).send("No thread with ID: " + threadId + " exists in the database.");
     }
@@ -90809,7 +90937,7 @@ threadRoute.route("/threads").get(async (req, res) => {
   try {
     if (userid) {
       console.log("in /theads route (GET) threads that belongto user with Id: " + userid);
-      let threads = await Thread.find({ "_id": userid });
+      let threads = await Thread_default.find({ "_id": userid });
       if (threads) {
         return res.status(200).json(threads).send("Successfully return all threads from user with id: " + userid);
       } else {
@@ -90817,7 +90945,7 @@ threadRoute.route("/threads").get(async (req, res) => {
       }
     } else {
       console.log("in /theads route (GET) ALL threads from database");
-      let threads = await Thread.find();
+      let threads = await Thread_default.find();
       return res.status(200).json(threads);
     }
   } catch (err) {
@@ -90829,15 +90957,30 @@ threadRoute.route("/threads").get(async (req, res) => {
     return res.status(500).send("Unable to save thread to database due to missing userId");
   }
   try {
-    let thread = await new Thread({
-      prompt: req.body.prompt,
-      response: req.body.response,
-      userId: req.body.userId,
-      createdDate: /* @__PURE__ */ new Date()
+    const newThread = {};
+    if (req.body) {
+      for (const key in req.body) {
+        newThread[key] = req.body[key];
+      }
+    }
+    let thread = await new Thread_default({
+      creationDate: newThread.creationDate,
+      userId: newThread.userId
     }).save();
     return res.status(200).json(thread).send("Successfully save thread to DB. Thread Id: " + thread._id);
   } catch (err) {
     return res.status(500).send("Unexpected error occured when saving thread to database: " + err);
+  }
+}).delete(async (req, res) => {
+  console.log("In /threads Route (DELETE) for all threads");
+  try {
+    let threads = await Thread_default.deleteMany();
+    if (!threads) {
+      return res.status(404).send("No threads existed in database");
+    }
+    return res.status(200).send("All threads deleted successfully");
+  } catch (err) {
+    return res.status(500).send("Unexpected error occured when deleting all threads from database: " + err);
   }
 });
 var threadRoute_default = threadRoute;
@@ -90854,10 +90997,7 @@ var userSchema = new import_mongoose2.default.Schema({
       required: true,
       unique: true
     },
-    password: {
-      type: String,
-      required: true
-    },
+    password: String,
     priviledge: {
       type: String,
       enum: ["admin", "user"],
@@ -90966,20 +91106,18 @@ userRoute.post("/users", async (req, res) => {
     if (user) {
       return res.status(400).send("Username: " + req.body.accountData.username + " already existed in databsae");
     }
-    let newUser = await new User_default({
-      accountData: {
-        username: req.body.accountData.username,
-        password: req.body.accountData.password,
-        priviledge: req.body.accountData.priviledge,
-        securityQuestion: req.body.accountData.securityQuestion,
-        securityAnswer: req.body.accountData.securityAnswer
-      },
-      identityData: {
-        firstName: req.body.identityData.firstName,
-        lastName: req.body.identityData.lastName,
-        displayName: req.body.identityData.displayName
+    let newUserData = {};
+    if (req.body.accountData) {
+      for (const key in req.body.accountData) {
+        newUserData[`accountData.${key}`] = req.body.accountData[key];
       }
-    }).save();
+    }
+    if (req.body.identityData) {
+      for (const key in req.body.identityData) {
+        newUserData[`identityData.${key}`] = req.body.identityData[key];
+      }
+    }
+    let newUser = await new User_default(newUserData).save();
     return res.status(200).json(newUser);
   } catch (err) {
     console.log(err);
@@ -91362,7 +91500,7 @@ var utils_default = {
 };
 
 // backend/node_modules/axios/lib/core/AxiosError.js
-function AxiosError(message, code, config, request, response) {
+function AxiosError(message, code, config, request, response2) {
   Error.call(this);
   if (Error.captureStackTrace) {
     Error.captureStackTrace(this, this.constructor);
@@ -91374,7 +91512,7 @@ function AxiosError(message, code, config, request, response) {
   code && (this.code = code);
   config && (this.config = config);
   request && (this.request = request);
-  response && (this.response = response);
+  response2 && (this.response = response2);
 }
 utils_default.inherits(AxiosError, Error, {
   toJSON: function toJSON() {
@@ -91418,14 +91556,14 @@ var descriptors = {};
 });
 Object.defineProperties(AxiosError, descriptors);
 Object.defineProperty(prototype, "isAxiosError", { value: true });
-AxiosError.from = (error, code, config, request, response, customProps) => {
+AxiosError.from = (error, code, config, request, response2, customProps) => {
   const axiosError = Object.create(prototype);
   utils_default.toFlatObject(error, axiosError, function filter2(obj) {
     return obj !== Error.prototype;
   }, (prop) => {
     return prop !== "isAxiosError";
   });
-  AxiosError.call(axiosError, error.message, code, config, request, response);
+  AxiosError.call(axiosError, error.message, code, config, request, response2);
   axiosError.cause = error;
   axiosError.name = error.name;
   customProps && Object.assign(axiosError, customProps);
@@ -92165,13 +92303,13 @@ utils_default.freezeMethods(AxiosHeaders);
 var AxiosHeaders_default = AxiosHeaders;
 
 // backend/node_modules/axios/lib/core/transformData.js
-function transformData(fns, response) {
+function transformData(fns, response2) {
   const config = this || defaults_default;
-  const context = response || config;
+  const context = response2 || config;
   const headers = AxiosHeaders_default.from(context.headers);
   let data = context.data;
   utils_default.forEach(fns, function transform(fn) {
-    data = fn.call(config, data, headers.normalize(), response ? response.status : void 0);
+    data = fn.call(config, data, headers.normalize(), response2 ? response2.status : void 0);
   });
   headers.normalize();
   return data;
@@ -92193,17 +92331,17 @@ utils_default.inherits(CanceledError, AxiosError_default, {
 var CanceledError_default = CanceledError;
 
 // backend/node_modules/axios/lib/core/settle.js
-function settle(resolve, reject, response) {
-  const validateStatus2 = response.config.validateStatus;
-  if (!response.status || !validateStatus2 || validateStatus2(response.status)) {
-    resolve(response);
+function settle(resolve, reject, response2) {
+  const validateStatus2 = response2.config.validateStatus;
+  if (!response2.status || !validateStatus2 || validateStatus2(response2.status)) {
+    resolve(response2);
   } else {
     reject(new AxiosError_default(
-      "Request failed with status code " + response.status,
-      [AxiosError_default.ERR_BAD_REQUEST, AxiosError_default.ERR_BAD_RESPONSE][Math.floor(response.status / 100) - 4],
-      response.config,
-      response.request,
-      response
+      "Request failed with status code " + response2.status,
+      [AxiosError_default.ERR_BAD_REQUEST, AxiosError_default.ERR_BAD_RESPONSE][Math.floor(response2.status / 100) - 4],
+      response2.config,
+      response2.request,
+      response2
     ));
   }
 }
@@ -93001,7 +93139,7 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
         offListeners();
         onFinished();
       });
-      const response = {
+      const response2 = {
         status: res.statusCode,
         statusText: res.statusMessage,
         headers: new AxiosHeaders_default(res.headers),
@@ -93009,8 +93147,8 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
         request: lastRequest
       };
       if (responseType === "stream") {
-        response.data = responseStream;
-        settle(resolve, reject, response);
+        response2.data = responseStream;
+        settle(resolve, reject, response2);
       } else {
         const responseBuffer = [];
         let totalResponseBytes = 0;
@@ -93055,11 +93193,11 @@ var http_default = isHttpAdapterSupported && function httpAdapter(config) {
                 responseData = utils_default.stripBOM(responseData);
               }
             }
-            response.data = responseData;
+            response2.data = responseData;
           } catch (err) {
-            return reject(AxiosError_default.from(err, null, config, response.request, response));
+            return reject(AxiosError_default.from(err, null, config, response2.request, response2));
           }
-          settle(resolve, reject, response);
+          settle(resolve, reject, response2);
         });
       }
       emitter.once("abort", (err) => {
@@ -93370,7 +93508,7 @@ var xhr_default = isXHRAdapterSupported && function(config) {
         "getAllResponseHeaders" in request && request.getAllResponseHeaders()
       );
       const responseData = !responseType || responseType === "text" || responseType === "json" ? request.responseText : request.response;
-      const response = {
+      const response2 = {
         data: responseData,
         status: request.status,
         statusText: request.statusText,
@@ -93384,7 +93522,7 @@ var xhr_default = isXHRAdapterSupported && function(config) {
       }, function _reject(err) {
         reject(err);
         done();
-      }, response);
+      }, response2);
       request = null;
     }
     if ("onloadend" in request) {
@@ -93666,16 +93804,16 @@ var fetch_default = isFetchSupported && (async (config) => {
       duplex: "half",
       withCredentials
     });
-    let response = await fetch(request);
+    let response2 = await fetch(request);
     const isStreamResponse = supportsResponseStream && (responseType === "stream" || responseType === "response");
     if (supportsResponseStream && (onDownloadProgress || isStreamResponse)) {
       const options = {};
       ["status", "statusText", "headers"].forEach((prop) => {
-        options[prop] = response[prop];
+        options[prop] = response2[prop];
       });
-      const responseContentLength = utils_default.toFiniteNumber(response.headers.get("content-length"));
-      response = new Response(
-        trackStream(response.body, DEFAULT_CHUNK_SIZE, onDownloadProgress && fetchProgressDecorator(
+      const responseContentLength = utils_default.toFiniteNumber(response2.headers.get("content-length"));
+      response2 = new Response(
+        trackStream(response2.body, DEFAULT_CHUNK_SIZE, onDownloadProgress && fetchProgressDecorator(
           responseContentLength,
           progressEventReducer_default(onDownloadProgress, true)
         ), isStreamResponse && onFinish, encodeText),
@@ -93683,15 +93821,15 @@ var fetch_default = isFetchSupported && (async (config) => {
       );
     }
     responseType = responseType || "text";
-    let responseData = await resolvers[utils_default.findKey(resolvers, responseType) || "text"](response, config);
+    let responseData = await resolvers[utils_default.findKey(resolvers, responseType) || "text"](response2, config);
     !isStreamResponse && onFinish();
     stopTimeout && stopTimeout();
     return await new Promise((resolve, reject) => {
       settle(resolve, reject, {
         data: responseData,
-        headers: AxiosHeaders_default.from(response.headers),
-        status: response.status,
-        statusText: response.statusText,
+        headers: AxiosHeaders_default.from(response2.headers),
+        status: response2.status,
+        statusText: response2.statusText,
         config,
         request
       });
@@ -93784,15 +93922,15 @@ function dispatchRequest(config) {
     config.headers.setContentType("application/x-www-form-urlencoded", false);
   }
   const adapter = adapters_default.getAdapter(config.adapter || defaults_default.adapter);
-  return adapter(config).then(function onAdapterResolution(response) {
+  return adapter(config).then(function onAdapterResolution(response2) {
     throwIfCancellationRequested(config);
-    response.data = transformData.call(
+    response2.data = transformData.call(
       config,
       config.transformResponse,
-      response
+      response2
     );
-    response.headers = AxiosHeaders_default.from(response.headers);
-    return response;
+    response2.headers = AxiosHeaders_default.from(response2.headers);
+    return response2;
   }, function onAdapterRejection(reason) {
     if (!isCancel(reason)) {
       throwIfCancellationRequested(config);
@@ -94274,9 +94412,9 @@ newsRoute.post("/check-urls", async (req, res) => {
     const validArticles = [];
     for (const article of articles) {
       try {
-        const response = await axios_default.get(article.url);
-        const xFrameOptions = response.headers["x-frame-options"];
-        const contentSecurityPolicy = response.headers["content-security-policy"];
+        const response2 = await axios_default.get(article.url);
+        const xFrameOptions = response2.headers["x-frame-options"];
+        const contentSecurityPolicy = response2.headers["content-security-policy"];
         console.log(`Headers for ${article.url}:`, {
           xFrameOptions,
           contentSecurityPolicy
@@ -94309,12 +94447,139 @@ newsRoute.post("/check-urls", async (req, res) => {
 });
 var newsRoute_default = newsRoute;
 
-// backend/Endpoints/displayCrypto.js
+// backend/Endpoints/chatRoute.js
+var import_express6 = __toESM(require_express2(), 1);
+
+// backend/Database Schema/Chat.js
 var import_express5 = __toESM(require_express2(), 1);
+var import_mongoose3 = __toESM(require_mongoose2(), 1);
+var ChatSchema = new import_mongoose3.default.Schema({
+  prompt: String,
+  response: [String],
+  creationDate: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
+  threadId: {
+    type: import_mongoose3.default.Schema.Types.ObjectId,
+    ref: "threads",
+    require: true
+  }
+});
+var Chat = import_mongoose3.default.model("chat", ChatSchema);
+var Chat_default = Chat;
+
+// backend/Endpoints/chatRoute.js
+var chatRoute = import_express6.default.Router();
+chatRoute.get("/chats", async (req, res) => {
+  console.log("in /chats Route (GET) all chats");
+  try {
+    const chats = await Chat_default.find();
+    return res.status(200).send(chats);
+  } catch (err) {
+    return res.status(501).send("Internal error: " + err);
+  }
+});
+chatRoute.delete("/chats", async (req, res) => {
+  console.log("in /chats Route (DELETE) all chats");
+  try {
+    await Chat_default.deleteMany();
+    return res.status(200).send("All chats deleted successfully");
+  } catch (err) {
+    return res.status(501).send("Internal error: " + err);
+  }
+});
+chatRoute.post("/chats", async (req, res) => {
+  console.log(req.body);
+  if (!req.body.prompt || !req.body.response || !req.body.threadId) {
+    return res.status(400).send("Prompt, response and threadId are required");
+  }
+  console.log("in /chats Route (POST) new chat to database");
+  try {
+    const chat = {};
+    if (req.body) {
+      for (const key in req.body) {
+        newChat[key] = req.body[key];
+      }
+    }
+    const newChat = new Chat_default({
+      prompt: chat.prompt,
+      response: chat.response,
+      threadId: chat.threadId
+    });
+    await newChat.save();
+    return res.status(200).send(newChat);
+  } catch (err) {
+    return res.status(501).send("Internal error e" + err);
+  }
+});
+chatRoute.put("/chats/:chatId", async (req, res) => {
+  const chatId2 = req.params.chatId;
+  console.log("in /chats/:chatId Route (PUT) chat with ID:" + chatId2);
+  try {
+    const filter2 = { "_id": chatId2 };
+    const updatedChat = {};
+    if (req.body) {
+      for (const key in req.body) {
+        updatedChat[key] = req.body[key];
+      }
+    }
+    const chat = await Chat_default.updateOne(filter2, updatedChat, {
+      new: true
+    });
+    if (!chat.modifiedCount) {
+      return res.status(404).send(`Cannot find chat with chat ID : ${chatId2} in database`);
+    }
+    return res.status(200).send({ message: `Chat updated successfully`, updatedChat: chat });
+  } catch (err) {
+    return res.status(501).send("Internal error e" + err);
+  }
+});
+chatRoute.delete("/chats/:chatId", async (req, res) => {
+  const chatId2 = req.params.chatId;
+  console.log("In /chats/:chatId Route (DELETE) for chat with ID: " + chatId2);
+  try {
+    const chat = await Chat_default.findOneAndDelete({ _id: chatId2 });
+    if (!chat) {
+      return res.status(404).send(`Cannot find chat in db with chat ID is: ${chatId2}`);
+    }
+    return res.status(200).send("Chat deleted successfully");
+  } catch (err) {
+    return res.status(500).send("Internal sever error" + err);
+  }
+});
+chatRoute.get("/chats/t/:threadId", async (req, res) => {
+  const threadId = req.params.threadId;
+  console.log("in /chats/:threadId Route (GET) chat with thread ID:" + JSON.stringify(chatId));
+  try {
+    const chats = await Chat_default.find({ threadId });
+    if (!chats) {
+      return res.status(404).send(`Cannot find chat in db with thread ID is: ${threadId}`);
+    }
+    return res.status(200).send(chats);
+  } catch (err) {
+    return res.status(501).send("Internal error e" + err);
+  }
+});
+chatRoute.delete("/chats/t/:threadId", async (req, res) => {
+  const threadId = req.params.threadId;
+  console.log("In /chats/t/:threadId Route (DELETE) for chat with thread ID: " + threadId);
+  try {
+    await Chat_default.deleteMany({ threadId });
+    return res.status(200).send("All chats with thread ID: " + threadId + " deleted successfully");
+  } catch (err) {
+    return res.status(501).send("Internal error: " + err);
+  }
+});
+var chatRoute_default = chatRoute;
+
+// backend/Endpoints/displayCrypto.js
+var import_express7 = __toESM(require_express2(), 1);
 
 // backend/Database Schema/Crypto.js
-var import_mongoose3 = __toESM(require_mongoose2(), 1);
-var CryptoSchema = new import_mongoose3.default.Schema({
+var import_mongoose4 = __toESM(require_mongoose2(), 1);
+var CryptoSchema = new import_mongoose4.default.Schema({
   cryptoName: { type: String, required: true },
   symbol: { type: String, required: true },
   open: { type: Number, required: true },
@@ -94325,11 +94590,11 @@ var CryptoSchema = new import_mongoose3.default.Schema({
   //lastTradingDay: { type: Date }, // Optional field for the last trading day
   date: { type: Date, required: true }
 });
-var CryptoCurrency = import_mongoose3.default.model("CryptoCurrency", CryptoSchema);
+var CryptoCurrency = import_mongoose4.default.model("CryptoCurrency", CryptoSchema);
 var Crypto_default = CryptoCurrency;
 
 // backend/Endpoints/displayCrypto.js
-var displayCrypto = import_express5.default.Router();
+var displayCrypto = import_express7.default.Router();
 displayCrypto.post("/displayCrypto", async (req, res) => {
   console.log("From displayCrypto.js: ", req.body["symbol"], req.body["startDate"], req.body["endDate"]);
   const symbol = req.body["symbol"];
@@ -94380,8 +94645,39 @@ var googleStrategy = new import_passport_google_oauth2.default.Strategy(
 );
 var googleStrategy_default = googleStrategy;
 
+// backend/Passport/localStrategy.js
+var import_passport_local = __toESM(require_lib13(), 1);
+var localStrategy = new import_passport_local.default.Strategy(
+  { passReqToCallback: true },
+  async (req, username, password, done) => {
+    let thisUser;
+    console.log("Inside local strategy authenticating by passport");
+    try {
+      thisUser = await User_default.findOne({ "accountData.username": username });
+      if (thisUser) {
+        const match = password === thisUser.accountData.password;
+        if (match) {
+          return done(null, thisUser);
+        } else {
+          console.log(`provided password is incorrect`);
+          req.authError = "The password is incorrect. Please try again or reset your password.";
+          return done(null, false);
+        }
+      } else {
+        console.log(`user with username: ${username} not found in Database`);
+        req.authError = "There is no account with email " + username + ". Please try again.";
+        return done(null, false);
+      }
+    } catch (err) {
+      return done(err);
+    }
+  }
+);
+var localStrategy_default = localStrategy;
+
 // backend/Passport/config.js
 var passportConfig = (app2) => {
+  import_passport2.default.use(localStrategy_default);
   import_passport2.default.use(googleStrategy_default);
   import_passport2.default.serializeUser((user, done) => {
     console.log("In serializeUser.");
@@ -94409,34 +94705,37 @@ var passportConfig = (app2) => {
 var config_default = passportConfig;
 
 // backend/functions/server.js
-import_dotenv2.default.config();
 var mongoURI = process.env.MONGO_URI;
-var app = (0, import_express6.default)();
+var app = (0, import_express8.default)();
 if (!mongoURI) {
   console.error("MONGO_URI is not defined in the environment variables");
   process.exit(1);
 }
-import_mongoose4.default.connect(mongoURI).then(() => console.log("MongoDB connected")).catch((err) => {
+import_mongoose5.default.connect(mongoURI).then(() => console.log("MongoDB connected")).catch((err) => {
   console.error("Error connecting to MongoDB:", err.message);
   process.exit(1);
 });
 config_default(app);
-var corsOptions = {
-  origin: "*",
-  // Ensure this environment variable is set
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "X-XSRF-TOKEN", "Accept", "Origin"],
-  credentials: true,
-  optionsSuccessStatus: 200
-  // Some legacy browsers choke on a 204 status
-};
-app.options("*", (0, import_cors.default)(corsOptions));
 app.use(import_body_parser.default.urlencoded({ extended: true }));
 app.use(import_body_parser.default.json());
-app.use((0, import_cors.default)(corsOptions));
-app.use("/.netlify/functions/server", threadRoute_default);
+app.use((0, import_cors.default)());
+app.post("/analyzeRisk", async (req, res) => {
+  console.log("Request from server.js:", req.body);
+  try {
+    const response2 = await analyzeRisk(req);
+    console.log("Response from analyzeRisk:", response2);
+    console.log("Type of response.body:", typeof response2.body);
+    const responseBody = JSON.parse(response2.body);
+    res.status(response2.statusCode).json(responseBody);
+  } catch (error) {
+    console.error("Error in /analyzeRisk endpoint:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.use("/.netlify/functions/server", userRoute_default);
+app.use("/.netlify/functions/server", threadRoute_default);
 app.use("/.netlify/functions/server", newsRoute_default);
+app.use("/.netlify/functions/server", chatRoute_default);
 app.use("/.netlify/functions/server", authRoute_default);
 app.use("/.netlify/functions/server", displayCrypto_default);
 var handler = (0, import_serverless_http.default)(app);

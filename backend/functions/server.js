@@ -7,6 +7,7 @@ import authRoute from '../Endpoints/authRoute.js';
 import threadRoute from '../Endpoints/threadRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
 import newsRoute from '../Endpoints/newsRoute.js';
+import chatRoute from '../Endpoints/chatRoute.js';
 import displayCrypto from '../Endpoints/displayCrypto.js';
 import serverless from 'serverless-http';
 import passportConfig from '../Passport/config.js';
