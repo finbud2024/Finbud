@@ -48,7 +48,7 @@ export default {
         },
         params: {
           referenceCurrencyUuid: 'yhjMzLPhuIDl', // Assuming USD as the reference currency
-          timePeriod: '30d' // Fetch data for the last month
+          timePeriod: '1y' // Fetch data for the last month
         }
       });
 
@@ -84,7 +84,7 @@ export default {
           },
           params: {
             referenceCurrencyUuid: 'yhjMzLPhuIDl',
-            timePeriod: '1h' // Fetch the last hour to get real-time updates
+            timePeriod: '1d' // Fetch the last hour to get real-time updates
           }
         });
 
