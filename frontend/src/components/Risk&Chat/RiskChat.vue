@@ -14,6 +14,7 @@
         </div>
         <News :keyword="keyword" />
     </div>
+    <DisplayCrypto/>
 </template>
 
 <script>
@@ -23,6 +24,7 @@ import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
 import UserInput from './UserInput.vue';
 import News from '../Risk&Chat/News.vue'
+import DisplayCrypto from './DisplayCrypto.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.VUE_APP_GEMINI_API_KEY);
 export default {
@@ -33,6 +35,7 @@ export default {
         UserInput,
         ChatHeader,
         News,
+        DisplayCrypto,
     },
     data() {
         return {
@@ -225,9 +228,6 @@ export default {
     width: 45%;
     height: 90vh;
     background-image: linear-gradient(to bottom,#7BDBBF, #e0dede);
-    
-    
-
 }
 
 .toggle-sidebar-btn {

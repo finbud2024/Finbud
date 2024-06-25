@@ -70386,10 +70386,10 @@ var require_connection2 = __commonJS({
         });
       });
     };
-    async function _wrapUserTransaction(fn, session2, mongoose4) {
+    async function _wrapUserTransaction(fn, session2, mongoose5) {
       try {
-        const res = mongoose4.transactionAsyncLocalStorage == null ? await fn(session2) : await new Promise((resolve) => {
-          mongoose4.transactionAsyncLocalStorage.run(
+        const res = mongoose5.transactionAsyncLocalStorage == null ? await fn(session2) : await new Promise((resolve) => {
+          mongoose5.transactionAsyncLocalStorage.run(
             { session: session2 },
             () => resolve(fn(session2))
           );
@@ -84162,7 +84162,7 @@ var require_mongoose = __commonJS({
     Mongoose.prototype.ConnectionStates = STATES;
     Mongoose.prototype.driver = driver;
     Mongoose.prototype.setDriver = function setDriver(driver2) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       if (_mongoose.__driver === driver2) {
         return _mongoose;
       }
@@ -84188,7 +84188,7 @@ var require_mongoose = __commonJS({
       return _mongoose;
     };
     Mongoose.prototype.set = function(key, value) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       if (arguments.length === 1 && typeof key !== "object") {
         if (VALID_OPTIONS.indexOf(key) === -1) {
           const error2 = new SetOptionError();
@@ -84241,7 +84241,7 @@ var require_mongoose = __commonJS({
     };
     Mongoose.prototype.get = Mongoose.prototype.set;
     Mongoose.prototype.createConnection = function(uri, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       const Connection = _mongoose.__driver.Connection;
       const conn = new Connection(_mongoose);
       _mongoose.connections.push(conn);
@@ -84256,7 +84256,7 @@ var require_mongoose = __commonJS({
       if (typeof options === "function" || arguments.length >= 3 && typeof arguments[2] === "function") {
         throw new MongooseError("Mongoose.prototype.connect() no longer accepts a callback");
       }
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       const conn = _mongoose.connection;
       return conn.openUri(uri, options).then(() => _mongoose);
     };
@@ -84264,7 +84264,7 @@ var require_mongoose = __commonJS({
       if (arguments.length >= 1 && typeof arguments[0] === "function") {
         throw new MongooseError("Mongoose.prototype.disconnect() no longer accepts a callback");
       }
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       const remaining = _mongoose.connections.length;
       if (remaining <= 0) {
         return;
@@ -84272,18 +84272,18 @@ var require_mongoose = __commonJS({
       await Promise.all(_mongoose.connections.map((conn) => conn.close()));
     };
     Mongoose.prototype.startSession = function() {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       return _mongoose.connection.startSession.apply(_mongoose.connection, arguments);
     };
     Mongoose.prototype.pluralize = function(fn) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       if (arguments.length > 0) {
         _mongoose._pluralize = fn;
       }
       return _mongoose._pluralize;
     };
     Mongoose.prototype.model = function(name, schema, collection, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       if (typeof schema === "string") {
         collection = schema;
         schema = false;
@@ -84331,7 +84331,7 @@ var require_mongoose = __commonJS({
       return model;
     };
     Mongoose.prototype._model = function(name, schema, collection, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       let model;
       if (typeof name === "function") {
         model = name;
@@ -84370,25 +84370,25 @@ var require_mongoose = __commonJS({
       return model;
     };
     Mongoose.prototype.deleteModel = function(name) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       _mongoose.connection.deleteModel(name);
       delete _mongoose.models[name];
       return _mongoose;
     };
     Mongoose.prototype.modelNames = function() {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       const names = Object.keys(_mongoose.models);
       return names;
     };
     Mongoose.prototype._applyPlugins = function(schema, options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       options = options || {};
       options.applyPluginsToDiscriminators = _mongoose.options && _mongoose.options.applyPluginsToDiscriminators || false;
       options.applyPluginsToChildSchemas = typeof (_mongoose.options && _mongoose.options.applyPluginsToChildSchemas) === "boolean" ? _mongoose.options.applyPluginsToChildSchemas : true;
       applyPlugins(schema, _mongoose.plugins, options, "$globalPluginsApplied");
     };
     Mongoose.prototype.plugin = function(fn, opts) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       _mongoose.plugins.push([fn, opts]);
       return _mongoose;
     };
@@ -84436,14 +84436,14 @@ var require_mongoose = __commonJS({
     Mongoose.prototype.DocumentProvider = require_documentProvider();
     Mongoose.prototype.ObjectId = SchemaTypes.ObjectId;
     Mongoose.prototype.isValidObjectId = function(v) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       return _mongoose.Types.ObjectId.isValid(v);
     };
     Mongoose.prototype.isObjectIdOrHexString = function(v) {
       return isBsonType(v, "ObjectId") || typeof v === "string" && objectIdHexRegexp.test(v);
     };
     Mongoose.prototype.syncIndexes = function(options) {
-      const _mongoose = this instanceof Mongoose ? this : mongoose4;
+      const _mongoose = this instanceof Mongoose ? this : mongoose5;
       return _mongoose.connection.syncIndexes(options);
     };
     Mongoose.prototype.Decimal128 = SchemaTypes.Decimal128;
@@ -84463,7 +84463,7 @@ var require_mongoose = __commonJS({
     Mongoose.prototype.skipMiddlewareFunction = Kareem.skipWrappedFunction;
     Mongoose.prototype.overwriteMiddlewareResult = Kareem.overwriteResult;
     Mongoose.prototype.omitUndefined = require_omitUndefined();
-    var mongoose4 = module2.exports = exports2 = new Mongoose({
+    var mongoose5 = module2.exports = exports2 = new Mongoose({
       [defaultMongooseSymbol]: true
     });
   }
@@ -84475,10 +84475,10 @@ var require_lib9 = __commonJS({
     "use strict";
     var mongodbDriver = require_node_mongodb_native();
     require_driver().set(mongodbDriver);
-    var mongoose4 = require_mongoose();
-    mongoose4.setDriver(mongodbDriver);
-    mongoose4.Mongoose.prototype.mongo = require_lib6();
-    module2.exports = mongoose4;
+    var mongoose5 = require_mongoose();
+    mongoose5.setDriver(mongodbDriver);
+    mongoose5.Mongoose.prototype.mongo = require_lib6();
+    module2.exports = mongoose5;
   }
 });
 
@@ -84486,54 +84486,54 @@ var require_lib9 = __commonJS({
 var require_mongoose2 = __commonJS({
   "backend/node_modules/mongoose/index.js"(exports2, module2) {
     "use strict";
-    var mongoose4 = require_lib9();
-    module2.exports = mongoose4;
-    module2.exports.default = mongoose4;
-    module2.exports.mongoose = mongoose4;
-    module2.exports.cast = mongoose4.cast;
-    module2.exports.STATES = mongoose4.STATES;
-    module2.exports.setDriver = mongoose4.setDriver;
-    module2.exports.set = mongoose4.set;
-    module2.exports.get = mongoose4.get;
-    module2.exports.createConnection = mongoose4.createConnection;
-    module2.exports.connect = mongoose4.connect;
-    module2.exports.disconnect = mongoose4.disconnect;
-    module2.exports.startSession = mongoose4.startSession;
-    module2.exports.pluralize = mongoose4.pluralize;
-    module2.exports.model = mongoose4.model;
-    module2.exports.deleteModel = mongoose4.deleteModel;
-    module2.exports.modelNames = mongoose4.modelNames;
-    module2.exports.plugin = mongoose4.plugin;
-    module2.exports.connections = mongoose4.connections;
-    module2.exports.version = mongoose4.version;
-    module2.exports.Mongoose = mongoose4.Mongoose;
-    module2.exports.Schema = mongoose4.Schema;
-    module2.exports.SchemaType = mongoose4.SchemaType;
-    module2.exports.SchemaTypes = mongoose4.SchemaTypes;
-    module2.exports.VirtualType = mongoose4.VirtualType;
-    module2.exports.Types = mongoose4.Types;
-    module2.exports.Query = mongoose4.Query;
-    module2.exports.Model = mongoose4.Model;
-    module2.exports.Document = mongoose4.Document;
-    module2.exports.ObjectId = mongoose4.ObjectId;
-    module2.exports.isValidObjectId = mongoose4.isValidObjectId;
-    module2.exports.isObjectIdOrHexString = mongoose4.isObjectIdOrHexString;
-    module2.exports.syncIndexes = mongoose4.syncIndexes;
-    module2.exports.Decimal128 = mongoose4.Decimal128;
-    module2.exports.Mixed = mongoose4.Mixed;
-    module2.exports.Date = mongoose4.Date;
-    module2.exports.Number = mongoose4.Number;
-    module2.exports.Error = mongoose4.Error;
-    module2.exports.MongooseError = mongoose4.MongooseError;
-    module2.exports.now = mongoose4.now;
-    module2.exports.CastError = mongoose4.CastError;
-    module2.exports.SchemaTypeOptions = mongoose4.SchemaTypeOptions;
-    module2.exports.mongo = mongoose4.mongo;
-    module2.exports.mquery = mongoose4.mquery;
-    module2.exports.sanitizeFilter = mongoose4.sanitizeFilter;
-    module2.exports.trusted = mongoose4.trusted;
-    module2.exports.skipMiddlewareFunction = mongoose4.skipMiddlewareFunction;
-    module2.exports.overwriteMiddlewareResult = mongoose4.overwriteMiddlewareResult;
+    var mongoose5 = require_lib9();
+    module2.exports = mongoose5;
+    module2.exports.default = mongoose5;
+    module2.exports.mongoose = mongoose5;
+    module2.exports.cast = mongoose5.cast;
+    module2.exports.STATES = mongoose5.STATES;
+    module2.exports.setDriver = mongoose5.setDriver;
+    module2.exports.set = mongoose5.set;
+    module2.exports.get = mongoose5.get;
+    module2.exports.createConnection = mongoose5.createConnection;
+    module2.exports.connect = mongoose5.connect;
+    module2.exports.disconnect = mongoose5.disconnect;
+    module2.exports.startSession = mongoose5.startSession;
+    module2.exports.pluralize = mongoose5.pluralize;
+    module2.exports.model = mongoose5.model;
+    module2.exports.deleteModel = mongoose5.deleteModel;
+    module2.exports.modelNames = mongoose5.modelNames;
+    module2.exports.plugin = mongoose5.plugin;
+    module2.exports.connections = mongoose5.connections;
+    module2.exports.version = mongoose5.version;
+    module2.exports.Mongoose = mongoose5.Mongoose;
+    module2.exports.Schema = mongoose5.Schema;
+    module2.exports.SchemaType = mongoose5.SchemaType;
+    module2.exports.SchemaTypes = mongoose5.SchemaTypes;
+    module2.exports.VirtualType = mongoose5.VirtualType;
+    module2.exports.Types = mongoose5.Types;
+    module2.exports.Query = mongoose5.Query;
+    module2.exports.Model = mongoose5.Model;
+    module2.exports.Document = mongoose5.Document;
+    module2.exports.ObjectId = mongoose5.ObjectId;
+    module2.exports.isValidObjectId = mongoose5.isValidObjectId;
+    module2.exports.isObjectIdOrHexString = mongoose5.isObjectIdOrHexString;
+    module2.exports.syncIndexes = mongoose5.syncIndexes;
+    module2.exports.Decimal128 = mongoose5.Decimal128;
+    module2.exports.Mixed = mongoose5.Mixed;
+    module2.exports.Date = mongoose5.Date;
+    module2.exports.Number = mongoose5.Number;
+    module2.exports.Error = mongoose5.Error;
+    module2.exports.MongooseError = mongoose5.MongooseError;
+    module2.exports.now = mongoose5.now;
+    module2.exports.CastError = mongoose5.CastError;
+    module2.exports.SchemaTypeOptions = mongoose5.SchemaTypeOptions;
+    module2.exports.mongo = mongoose5.mongo;
+    module2.exports.mquery = mongoose5.mquery;
+    module2.exports.sanitizeFilter = mongoose5.sanitizeFilter;
+    module2.exports.trusted = mongoose5.trusted;
+    module2.exports.skipMiddlewareFunction = mongoose5.skipMiddlewareFunction;
+    module2.exports.overwriteMiddlewareResult = mongoose5.overwriteMiddlewareResult;
   }
 });
 
@@ -84872,6 +84872,689 @@ var require_main = __commonJS({
     module2.exports.parse = DotenvModule.parse;
     module2.exports.populate = DotenvModule.populate;
     module2.exports = DotenvModule;
+  }
+});
+
+// backend/node_modules/pause/index.js
+var require_pause = __commonJS({
+  "backend/node_modules/pause/index.js"(exports2, module2) {
+    module2.exports = function(obj) {
+      var onData, onEnd, events = [];
+      obj.on("data", onData = function(data, encoding) {
+        events.push(["data", data, encoding]);
+      });
+      obj.on("end", onEnd = function(data, encoding) {
+        events.push(["end", data, encoding]);
+      });
+      return {
+        end: function() {
+          obj.removeListener("data", onData);
+          obj.removeListener("end", onEnd);
+        },
+        resume: function() {
+          this.end();
+          for (var i = 0, len = events.length; i < len; ++i) {
+            obj.emit.apply(obj, events[i]);
+          }
+        }
+      };
+    };
+  }
+});
+
+// backend/node_modules/passport-strategy/lib/strategy.js
+var require_strategy = __commonJS({
+  "backend/node_modules/passport-strategy/lib/strategy.js"(exports2, module2) {
+    function Strategy() {
+    }
+    Strategy.prototype.authenticate = function(req, options) {
+      throw new Error("Strategy#authenticate must be overridden by subclass");
+    };
+    module2.exports = Strategy;
+  }
+});
+
+// backend/node_modules/passport-strategy/lib/index.js
+var require_lib10 = __commonJS({
+  "backend/node_modules/passport-strategy/lib/index.js"(exports2, module2) {
+    var Strategy = require_strategy();
+    exports2 = module2.exports = Strategy;
+    exports2.Strategy = Strategy;
+  }
+});
+
+// backend/node_modules/passport/lib/strategies/session.js
+var require_session = __commonJS({
+  "backend/node_modules/passport/lib/strategies/session.js"(exports2, module2) {
+    var pause = require_pause();
+    var util2 = require("util");
+    var Strategy = require_lib10();
+    function SessionStrategy(options, deserializeUser) {
+      if (typeof options == "function") {
+        deserializeUser = options;
+        options = void 0;
+      }
+      options = options || {};
+      Strategy.call(this);
+      this.name = "session";
+      this._key = options.key || "passport";
+      this._deserializeUser = deserializeUser;
+    }
+    util2.inherits(SessionStrategy, Strategy);
+    SessionStrategy.prototype.authenticate = function(req, options) {
+      if (!req.session) {
+        return this.error(new Error("Login sessions require session support. Did you forget to use `express-session` middleware?"));
+      }
+      options = options || {};
+      var self2 = this, su;
+      if (req.session[this._key]) {
+        su = req.session[this._key].user;
+      }
+      if (su || su === 0) {
+        var paused = options.pauseStream ? pause(req) : null;
+        this._deserializeUser(su, req, function(err, user) {
+          if (err) {
+            return self2.error(err);
+          }
+          if (!user) {
+            delete req.session[self2._key].user;
+          } else {
+            var property = req._userProperty || "user";
+            req[property] = user;
+          }
+          self2.pass();
+          if (paused) {
+            paused.resume();
+          }
+        });
+      } else {
+        self2.pass();
+      }
+    };
+    module2.exports = SessionStrategy;
+  }
+});
+
+// backend/node_modules/passport/lib/sessionmanager.js
+var require_sessionmanager = __commonJS({
+  "backend/node_modules/passport/lib/sessionmanager.js"(exports2, module2) {
+    var merge2 = require_utils_merge();
+    function SessionManager(options, serializeUser) {
+      if (typeof options == "function") {
+        serializeUser = options;
+        options = void 0;
+      }
+      options = options || {};
+      this._key = options.key || "passport";
+      this._serializeUser = serializeUser;
+    }
+    SessionManager.prototype.logIn = function(req, user, options, cb) {
+      if (typeof options == "function") {
+        cb = options;
+        options = {};
+      }
+      options = options || {};
+      if (!req.session) {
+        return cb(new Error("Login sessions require session support. Did you forget to use `express-session` middleware?"));
+      }
+      var self2 = this;
+      var prevSession = req.session;
+      req.session.regenerate(function(err) {
+        if (err) {
+          return cb(err);
+        }
+        self2._serializeUser(user, req, function(err2, obj) {
+          if (err2) {
+            return cb(err2);
+          }
+          if (options.keepSessionInfo) {
+            merge2(req.session, prevSession);
+          }
+          if (!req.session[self2._key]) {
+            req.session[self2._key] = {};
+          }
+          req.session[self2._key].user = obj;
+          req.session.save(function(err3) {
+            if (err3) {
+              return cb(err3);
+            }
+            cb();
+          });
+        });
+      });
+    };
+    SessionManager.prototype.logOut = function(req, options, cb) {
+      if (typeof options == "function") {
+        cb = options;
+        options = {};
+      }
+      options = options || {};
+      if (!req.session) {
+        return cb(new Error("Login sessions require session support. Did you forget to use `express-session` middleware?"));
+      }
+      var self2 = this;
+      if (req.session[this._key]) {
+        delete req.session[this._key].user;
+      }
+      var prevSession = req.session;
+      req.session.save(function(err) {
+        if (err) {
+          return cb(err);
+        }
+        req.session.regenerate(function(err2) {
+          if (err2) {
+            return cb(err2);
+          }
+          if (options.keepSessionInfo) {
+            merge2(req.session, prevSession);
+          }
+          cb();
+        });
+      });
+    };
+    module2.exports = SessionManager;
+  }
+});
+
+// backend/node_modules/passport/lib/http/request.js
+var require_request2 = __commonJS({
+  "backend/node_modules/passport/lib/http/request.js"(exports2, module2) {
+    var req = exports2 = module2.exports = {};
+    req.login = req.logIn = function(user, options, done) {
+      if (typeof options == "function") {
+        done = options;
+        options = {};
+      }
+      options = options || {};
+      var property = this._userProperty || "user";
+      var session2 = options.session === void 0 ? true : options.session;
+      this[property] = user;
+      if (session2 && this._sessionManager) {
+        if (typeof done != "function") {
+          throw new Error("req#login requires a callback function");
+        }
+        var self2 = this;
+        this._sessionManager.logIn(this, user, options, function(err) {
+          if (err) {
+            self2[property] = null;
+            return done(err);
+          }
+          done();
+        });
+      } else {
+        done && done();
+      }
+    };
+    req.logout = req.logOut = function(options, done) {
+      if (typeof options == "function") {
+        done = options;
+        options = {};
+      }
+      options = options || {};
+      var property = this._userProperty || "user";
+      this[property] = null;
+      if (this._sessionManager) {
+        if (typeof done != "function") {
+          throw new Error("req#logout requires a callback function");
+        }
+        this._sessionManager.logOut(this, options, done);
+      } else {
+        done && done();
+      }
+    };
+    req.isAuthenticated = function() {
+      var property = this._userProperty || "user";
+      return this[property] ? true : false;
+    };
+    req.isUnauthenticated = function() {
+      return !this.isAuthenticated();
+    };
+  }
+});
+
+// backend/node_modules/passport/lib/middleware/initialize.js
+var require_initialize = __commonJS({
+  "backend/node_modules/passport/lib/middleware/initialize.js"(exports2, module2) {
+    var IncomingMessageExt = require_request2();
+    module2.exports = function initialize(passport3, options) {
+      options = options || {};
+      return function initialize2(req, res, next) {
+        req.login = req.logIn = req.logIn || IncomingMessageExt.logIn;
+        req.logout = req.logOut = req.logOut || IncomingMessageExt.logOut;
+        req.isAuthenticated = req.isAuthenticated || IncomingMessageExt.isAuthenticated;
+        req.isUnauthenticated = req.isUnauthenticated || IncomingMessageExt.isUnauthenticated;
+        req._sessionManager = passport3._sm;
+        if (options.userProperty) {
+          req._userProperty = options.userProperty;
+        }
+        var compat = options.compat === void 0 ? true : options.compat;
+        if (compat) {
+          passport3._userProperty = options.userProperty || "user";
+          req._passport = {};
+          req._passport.instance = passport3;
+        }
+        next();
+      };
+    };
+  }
+});
+
+// backend/node_modules/passport/lib/errors/authenticationerror.js
+var require_authenticationerror = __commonJS({
+  "backend/node_modules/passport/lib/errors/authenticationerror.js"(exports2, module2) {
+    function AuthenticationError(message, status) {
+      Error.call(this);
+      Error.captureStackTrace(this, arguments.callee);
+      this.name = "AuthenticationError";
+      this.message = message;
+      this.status = status || 401;
+    }
+    AuthenticationError.prototype.__proto__ = Error.prototype;
+    module2.exports = AuthenticationError;
+  }
+});
+
+// backend/node_modules/passport/lib/middleware/authenticate.js
+var require_authenticate = __commonJS({
+  "backend/node_modules/passport/lib/middleware/authenticate.js"(exports2, module2) {
+    var http2 = require("http");
+    var IncomingMessageExt = require_request2();
+    var AuthenticationError = require_authenticationerror();
+    module2.exports = function authenticate(passport3, name, options, callback2) {
+      if (typeof options == "function") {
+        callback2 = options;
+        options = {};
+      }
+      options = options || {};
+      var multi = true;
+      if (!Array.isArray(name)) {
+        name = [name];
+        multi = false;
+      }
+      return function authenticate2(req, res, next) {
+        req.login = req.logIn = req.logIn || IncomingMessageExt.logIn;
+        req.logout = req.logOut = req.logOut || IncomingMessageExt.logOut;
+        req.isAuthenticated = req.isAuthenticated || IncomingMessageExt.isAuthenticated;
+        req.isUnauthenticated = req.isUnauthenticated || IncomingMessageExt.isUnauthenticated;
+        req._sessionManager = passport3._sm;
+        var failures = [];
+        function allFailed() {
+          if (callback2) {
+            if (!multi) {
+              return callback2(null, false, failures[0].challenge, failures[0].status);
+            } else {
+              var challenges = failures.map(function(f) {
+                return f.challenge;
+              });
+              var statuses = failures.map(function(f) {
+                return f.status;
+              });
+              return callback2(null, false, challenges, statuses);
+            }
+          }
+          var failure = failures[0] || {}, challenge = failure.challenge || {}, msg;
+          if (options.failureFlash) {
+            var flash = options.failureFlash;
+            if (typeof flash == "string") {
+              flash = { type: "error", message: flash };
+            }
+            flash.type = flash.type || "error";
+            var type = flash.type || challenge.type || "error";
+            msg = flash.message || challenge.message || challenge;
+            if (typeof msg == "string") {
+              req.flash(type, msg);
+            }
+          }
+          if (options.failureMessage) {
+            msg = options.failureMessage;
+            if (typeof msg == "boolean") {
+              msg = challenge.message || challenge;
+            }
+            if (typeof msg == "string") {
+              req.session.messages = req.session.messages || [];
+              req.session.messages.push(msg);
+            }
+          }
+          if (options.failureRedirect) {
+            return res.redirect(options.failureRedirect);
+          }
+          var rchallenge = [], rstatus, status;
+          for (var j = 0, len = failures.length; j < len; j++) {
+            failure = failures[j];
+            challenge = failure.challenge;
+            status = failure.status;
+            rstatus = rstatus || status;
+            if (typeof challenge == "string") {
+              rchallenge.push(challenge);
+            }
+          }
+          res.statusCode = rstatus || 401;
+          if (res.statusCode == 401 && rchallenge.length) {
+            res.setHeader("WWW-Authenticate", rchallenge);
+          }
+          if (options.failWithError) {
+            return next(new AuthenticationError(http2.STATUS_CODES[res.statusCode], rstatus));
+          }
+          res.end(http2.STATUS_CODES[res.statusCode]);
+        }
+        (function attempt(i) {
+          var layer = name[i];
+          if (!layer) {
+            return allFailed();
+          }
+          var strategy, prototype3;
+          if (typeof layer.authenticate == "function") {
+            strategy = layer;
+          } else {
+            prototype3 = passport3._strategy(layer);
+            if (!prototype3) {
+              return next(new Error('Unknown authentication strategy "' + layer + '"'));
+            }
+            strategy = Object.create(prototype3);
+          }
+          strategy.success = function(user, info) {
+            if (callback2) {
+              return callback2(null, user, info);
+            }
+            info = info || {};
+            var msg;
+            if (options.successFlash) {
+              var flash = options.successFlash;
+              if (typeof flash == "string") {
+                flash = { type: "success", message: flash };
+              }
+              flash.type = flash.type || "success";
+              var type = flash.type || info.type || "success";
+              msg = flash.message || info.message || info;
+              if (typeof msg == "string") {
+                req.flash(type, msg);
+              }
+            }
+            if (options.successMessage) {
+              msg = options.successMessage;
+              if (typeof msg == "boolean") {
+                msg = info.message || info;
+              }
+              if (typeof msg == "string") {
+                req.session.messages = req.session.messages || [];
+                req.session.messages.push(msg);
+              }
+            }
+            if (options.assignProperty) {
+              req[options.assignProperty] = user;
+              if (options.authInfo !== false) {
+                passport3.transformAuthInfo(info, req, function(err, tinfo) {
+                  if (err) {
+                    return next(err);
+                  }
+                  req.authInfo = tinfo;
+                  next();
+                });
+              } else {
+                next();
+              }
+              return;
+            }
+            req.logIn(user, options, function(err) {
+              if (err) {
+                return next(err);
+              }
+              function complete() {
+                if (options.successReturnToOrRedirect) {
+                  var url2 = options.successReturnToOrRedirect;
+                  if (req.session && req.session.returnTo) {
+                    url2 = req.session.returnTo;
+                    delete req.session.returnTo;
+                  }
+                  return res.redirect(url2);
+                }
+                if (options.successRedirect) {
+                  return res.redirect(options.successRedirect);
+                }
+                next();
+              }
+              if (options.authInfo !== false) {
+                passport3.transformAuthInfo(info, req, function(err2, tinfo) {
+                  if (err2) {
+                    return next(err2);
+                  }
+                  req.authInfo = tinfo;
+                  complete();
+                });
+              } else {
+                complete();
+              }
+            });
+          };
+          strategy.fail = function(challenge, status) {
+            if (typeof challenge == "number") {
+              status = challenge;
+              challenge = void 0;
+            }
+            failures.push({ challenge, status });
+            attempt(i + 1);
+          };
+          strategy.redirect = function(url2, status) {
+            res.statusCode = status || 302;
+            res.setHeader("Location", url2);
+            res.setHeader("Content-Length", "0");
+            res.end();
+          };
+          strategy.pass = function() {
+            next();
+          };
+          strategy.error = function(err) {
+            if (callback2) {
+              return callback2(err);
+            }
+            next(err);
+          };
+          strategy.authenticate(req, options);
+        })(0);
+      };
+    };
+  }
+});
+
+// backend/node_modules/passport/lib/framework/connect.js
+var require_connect2 = __commonJS({
+  "backend/node_modules/passport/lib/framework/connect.js"(exports2, module2) {
+    var initialize = require_initialize();
+    var authenticate = require_authenticate();
+    exports2 = module2.exports = function() {
+      return {
+        initialize,
+        authenticate
+      };
+    };
+  }
+});
+
+// backend/node_modules/passport/lib/authenticator.js
+var require_authenticator = __commonJS({
+  "backend/node_modules/passport/lib/authenticator.js"(exports2, module2) {
+    var SessionStrategy = require_session();
+    var SessionManager = require_sessionmanager();
+    function Authenticator() {
+      this._key = "passport";
+      this._strategies = {};
+      this._serializers = [];
+      this._deserializers = [];
+      this._infoTransformers = [];
+      this._framework = null;
+      this.init();
+    }
+    Authenticator.prototype.init = function() {
+      this.framework(require_connect2()());
+      this.use(new SessionStrategy({ key: this._key }, this.deserializeUser.bind(this)));
+      this._sm = new SessionManager({ key: this._key }, this.serializeUser.bind(this));
+    };
+    Authenticator.prototype.use = function(name, strategy) {
+      if (!strategy) {
+        strategy = name;
+        name = strategy.name;
+      }
+      if (!name) {
+        throw new Error("Authentication strategies must have a name");
+      }
+      this._strategies[name] = strategy;
+      return this;
+    };
+    Authenticator.prototype.unuse = function(name) {
+      delete this._strategies[name];
+      return this;
+    };
+    Authenticator.prototype.framework = function(fw) {
+      this._framework = fw;
+      return this;
+    };
+    Authenticator.prototype.initialize = function(options) {
+      options = options || {};
+      return this._framework.initialize(this, options);
+    };
+    Authenticator.prototype.authenticate = function(strategy, options, callback2) {
+      return this._framework.authenticate(this, strategy, options, callback2);
+    };
+    Authenticator.prototype.authorize = function(strategy, options, callback2) {
+      options = options || {};
+      options.assignProperty = "account";
+      var fn = this._framework.authorize || this._framework.authenticate;
+      return fn(this, strategy, options, callback2);
+    };
+    Authenticator.prototype.session = function(options) {
+      return this.authenticate("session", options);
+    };
+    Authenticator.prototype.serializeUser = function(fn, req, done) {
+      if (typeof fn === "function") {
+        return this._serializers.push(fn);
+      }
+      var user = fn;
+      if (typeof req === "function") {
+        done = req;
+        req = void 0;
+      }
+      var stack = this._serializers;
+      (function pass(i, err, obj) {
+        if ("pass" === err) {
+          err = void 0;
+        }
+        if (err || obj || obj === 0) {
+          return done(err, obj);
+        }
+        var layer = stack[i];
+        if (!layer) {
+          return done(new Error("Failed to serialize user into session"));
+        }
+        function serialized(e, o) {
+          pass(i + 1, e, o);
+        }
+        try {
+          var arity = layer.length;
+          if (arity == 3) {
+            layer(req, user, serialized);
+          } else {
+            layer(user, serialized);
+          }
+        } catch (e) {
+          return done(e);
+        }
+      })(0);
+    };
+    Authenticator.prototype.deserializeUser = function(fn, req, done) {
+      if (typeof fn === "function") {
+        return this._deserializers.push(fn);
+      }
+      var obj = fn;
+      if (typeof req === "function") {
+        done = req;
+        req = void 0;
+      }
+      var stack = this._deserializers;
+      (function pass(i, err, user) {
+        if ("pass" === err) {
+          err = void 0;
+        }
+        if (err || user) {
+          return done(err, user);
+        }
+        if (user === null || user === false) {
+          return done(null, false);
+        }
+        var layer = stack[i];
+        if (!layer) {
+          return done(new Error("Failed to deserialize user out of session"));
+        }
+        function deserialized(e, u) {
+          pass(i + 1, e, u);
+        }
+        try {
+          var arity = layer.length;
+          if (arity == 3) {
+            layer(req, obj, deserialized);
+          } else {
+            layer(obj, deserialized);
+          }
+        } catch (e) {
+          return done(e);
+        }
+      })(0);
+    };
+    Authenticator.prototype.transformAuthInfo = function(fn, req, done) {
+      if (typeof fn === "function") {
+        return this._infoTransformers.push(fn);
+      }
+      var info = fn;
+      if (typeof req === "function") {
+        done = req;
+        req = void 0;
+      }
+      var stack = this._infoTransformers;
+      (function pass(i, err, tinfo) {
+        if ("pass" === err) {
+          err = void 0;
+        }
+        if (err || tinfo) {
+          return done(err, tinfo);
+        }
+        var layer = stack[i];
+        if (!layer) {
+          return done(null, info);
+        }
+        function transformed(e, t2) {
+          pass(i + 1, e, t2);
+        }
+        try {
+          var arity = layer.length;
+          if (arity == 1) {
+            var t = layer(info);
+            transformed(null, t);
+          } else if (arity == 3) {
+            layer(req, info, transformed);
+          } else {
+            layer(info, transformed);
+          }
+        } catch (e) {
+          return done(e);
+        }
+      })(0);
+    };
+    Authenticator.prototype._strategy = function(name) {
+      return this._strategies[name];
+    };
+    module2.exports = Authenticator;
+  }
+});
+
+// backend/node_modules/passport/lib/index.js
+var require_lib11 = __commonJS({
+  "backend/node_modules/passport/lib/index.js"(exports2, module2) {
+    var Passport = require_authenticator();
+    var SessionStrategy = require_session();
+    exports2 = module2.exports = new Passport();
+    exports2.Passport = exports2.Authenticator = Passport;
+    exports2.Strategy = require_lib10();
+    exports2.strategies = {};
+    exports2.strategies.SessionStrategy = SessionStrategy;
   }
 });
 
@@ -86536,7 +87219,7 @@ var require_clean_up_event = __commonJS({
 });
 
 // backend/node_modules/serverless-http/lib/request.js
-var require_request2 = __commonJS({
+var require_request3 = __commonJS({
   "backend/node_modules/serverless-http/lib/request.js"(exports2, module2) {
     "use strict";
     var http2 = require("http");
@@ -86578,7 +87261,7 @@ var require_create_request = __commonJS({
   "backend/node_modules/serverless-http/lib/provider/aws/create-request.js"(exports2, module2) {
     "use strict";
     var URL2 = require("url");
-    var Request2 = require_request2();
+    var Request2 = require_request3();
     function requestMethod(event) {
       if (event.version === "2.0") {
         return event.requestContext.http.method;
@@ -86833,7 +87516,7 @@ var require_create_request2 = __commonJS({
   "backend/node_modules/serverless-http/lib/provider/azure/create-request.js"(exports2, module2) {
     "use strict";
     var url2 = require("url");
-    var Request2 = require_request2();
+    var Request2 = require_request3();
     function requestHeaders(request) {
       return Object.keys(request.headers).reduce((headers, key) => {
         headers[key.toLowerCase()] = request.headers[key];
@@ -87019,689 +87702,6 @@ var require_serverless_http = __commonJS({
         return response;
       });
     };
-  }
-});
-
-// backend/node_modules/pause/index.js
-var require_pause = __commonJS({
-  "backend/node_modules/pause/index.js"(exports2, module2) {
-    module2.exports = function(obj) {
-      var onData, onEnd, events = [];
-      obj.on("data", onData = function(data, encoding) {
-        events.push(["data", data, encoding]);
-      });
-      obj.on("end", onEnd = function(data, encoding) {
-        events.push(["end", data, encoding]);
-      });
-      return {
-        end: function() {
-          obj.removeListener("data", onData);
-          obj.removeListener("end", onEnd);
-        },
-        resume: function() {
-          this.end();
-          for (var i = 0, len = events.length; i < len; ++i) {
-            obj.emit.apply(obj, events[i]);
-          }
-        }
-      };
-    };
-  }
-});
-
-// backend/node_modules/passport-strategy/lib/strategy.js
-var require_strategy = __commonJS({
-  "backend/node_modules/passport-strategy/lib/strategy.js"(exports2, module2) {
-    function Strategy() {
-    }
-    Strategy.prototype.authenticate = function(req, options) {
-      throw new Error("Strategy#authenticate must be overridden by subclass");
-    };
-    module2.exports = Strategy;
-  }
-});
-
-// backend/node_modules/passport-strategy/lib/index.js
-var require_lib10 = __commonJS({
-  "backend/node_modules/passport-strategy/lib/index.js"(exports2, module2) {
-    var Strategy = require_strategy();
-    exports2 = module2.exports = Strategy;
-    exports2.Strategy = Strategy;
-  }
-});
-
-// backend/node_modules/passport/lib/strategies/session.js
-var require_session = __commonJS({
-  "backend/node_modules/passport/lib/strategies/session.js"(exports2, module2) {
-    var pause = require_pause();
-    var util2 = require("util");
-    var Strategy = require_lib10();
-    function SessionStrategy(options, deserializeUser) {
-      if (typeof options == "function") {
-        deserializeUser = options;
-        options = void 0;
-      }
-      options = options || {};
-      Strategy.call(this);
-      this.name = "session";
-      this._key = options.key || "passport";
-      this._deserializeUser = deserializeUser;
-    }
-    util2.inherits(SessionStrategy, Strategy);
-    SessionStrategy.prototype.authenticate = function(req, options) {
-      if (!req.session) {
-        return this.error(new Error("Login sessions require session support. Did you forget to use `express-session` middleware?"));
-      }
-      options = options || {};
-      var self2 = this, su;
-      if (req.session[this._key]) {
-        su = req.session[this._key].user;
-      }
-      if (su || su === 0) {
-        var paused = options.pauseStream ? pause(req) : null;
-        this._deserializeUser(su, req, function(err, user) {
-          if (err) {
-            return self2.error(err);
-          }
-          if (!user) {
-            delete req.session[self2._key].user;
-          } else {
-            var property = req._userProperty || "user";
-            req[property] = user;
-          }
-          self2.pass();
-          if (paused) {
-            paused.resume();
-          }
-        });
-      } else {
-        self2.pass();
-      }
-    };
-    module2.exports = SessionStrategy;
-  }
-});
-
-// backend/node_modules/passport/lib/sessionmanager.js
-var require_sessionmanager = __commonJS({
-  "backend/node_modules/passport/lib/sessionmanager.js"(exports2, module2) {
-    var merge2 = require_utils_merge();
-    function SessionManager(options, serializeUser) {
-      if (typeof options == "function") {
-        serializeUser = options;
-        options = void 0;
-      }
-      options = options || {};
-      this._key = options.key || "passport";
-      this._serializeUser = serializeUser;
-    }
-    SessionManager.prototype.logIn = function(req, user, options, cb) {
-      if (typeof options == "function") {
-        cb = options;
-        options = {};
-      }
-      options = options || {};
-      if (!req.session) {
-        return cb(new Error("Login sessions require session support. Did you forget to use `express-session` middleware?"));
-      }
-      var self2 = this;
-      var prevSession = req.session;
-      req.session.regenerate(function(err) {
-        if (err) {
-          return cb(err);
-        }
-        self2._serializeUser(user, req, function(err2, obj) {
-          if (err2) {
-            return cb(err2);
-          }
-          if (options.keepSessionInfo) {
-            merge2(req.session, prevSession);
-          }
-          if (!req.session[self2._key]) {
-            req.session[self2._key] = {};
-          }
-          req.session[self2._key].user = obj;
-          req.session.save(function(err3) {
-            if (err3) {
-              return cb(err3);
-            }
-            cb();
-          });
-        });
-      });
-    };
-    SessionManager.prototype.logOut = function(req, options, cb) {
-      if (typeof options == "function") {
-        cb = options;
-        options = {};
-      }
-      options = options || {};
-      if (!req.session) {
-        return cb(new Error("Login sessions require session support. Did you forget to use `express-session` middleware?"));
-      }
-      var self2 = this;
-      if (req.session[this._key]) {
-        delete req.session[this._key].user;
-      }
-      var prevSession = req.session;
-      req.session.save(function(err) {
-        if (err) {
-          return cb(err);
-        }
-        req.session.regenerate(function(err2) {
-          if (err2) {
-            return cb(err2);
-          }
-          if (options.keepSessionInfo) {
-            merge2(req.session, prevSession);
-          }
-          cb();
-        });
-      });
-    };
-    module2.exports = SessionManager;
-  }
-});
-
-// backend/node_modules/passport/lib/http/request.js
-var require_request3 = __commonJS({
-  "backend/node_modules/passport/lib/http/request.js"(exports2, module2) {
-    var req = exports2 = module2.exports = {};
-    req.login = req.logIn = function(user, options, done) {
-      if (typeof options == "function") {
-        done = options;
-        options = {};
-      }
-      options = options || {};
-      var property = this._userProperty || "user";
-      var session2 = options.session === void 0 ? true : options.session;
-      this[property] = user;
-      if (session2 && this._sessionManager) {
-        if (typeof done != "function") {
-          throw new Error("req#login requires a callback function");
-        }
-        var self2 = this;
-        this._sessionManager.logIn(this, user, options, function(err) {
-          if (err) {
-            self2[property] = null;
-            return done(err);
-          }
-          done();
-        });
-      } else {
-        done && done();
-      }
-    };
-    req.logout = req.logOut = function(options, done) {
-      if (typeof options == "function") {
-        done = options;
-        options = {};
-      }
-      options = options || {};
-      var property = this._userProperty || "user";
-      this[property] = null;
-      if (this._sessionManager) {
-        if (typeof done != "function") {
-          throw new Error("req#logout requires a callback function");
-        }
-        this._sessionManager.logOut(this, options, done);
-      } else {
-        done && done();
-      }
-    };
-    req.isAuthenticated = function() {
-      var property = this._userProperty || "user";
-      return this[property] ? true : false;
-    };
-    req.isUnauthenticated = function() {
-      return !this.isAuthenticated();
-    };
-  }
-});
-
-// backend/node_modules/passport/lib/middleware/initialize.js
-var require_initialize = __commonJS({
-  "backend/node_modules/passport/lib/middleware/initialize.js"(exports2, module2) {
-    var IncomingMessageExt = require_request3();
-    module2.exports = function initialize(passport3, options) {
-      options = options || {};
-      return function initialize2(req, res, next) {
-        req.login = req.logIn = req.logIn || IncomingMessageExt.logIn;
-        req.logout = req.logOut = req.logOut || IncomingMessageExt.logOut;
-        req.isAuthenticated = req.isAuthenticated || IncomingMessageExt.isAuthenticated;
-        req.isUnauthenticated = req.isUnauthenticated || IncomingMessageExt.isUnauthenticated;
-        req._sessionManager = passport3._sm;
-        if (options.userProperty) {
-          req._userProperty = options.userProperty;
-        }
-        var compat = options.compat === void 0 ? true : options.compat;
-        if (compat) {
-          passport3._userProperty = options.userProperty || "user";
-          req._passport = {};
-          req._passport.instance = passport3;
-        }
-        next();
-      };
-    };
-  }
-});
-
-// backend/node_modules/passport/lib/errors/authenticationerror.js
-var require_authenticationerror = __commonJS({
-  "backend/node_modules/passport/lib/errors/authenticationerror.js"(exports2, module2) {
-    function AuthenticationError(message, status) {
-      Error.call(this);
-      Error.captureStackTrace(this, arguments.callee);
-      this.name = "AuthenticationError";
-      this.message = message;
-      this.status = status || 401;
-    }
-    AuthenticationError.prototype.__proto__ = Error.prototype;
-    module2.exports = AuthenticationError;
-  }
-});
-
-// backend/node_modules/passport/lib/middleware/authenticate.js
-var require_authenticate = __commonJS({
-  "backend/node_modules/passport/lib/middleware/authenticate.js"(exports2, module2) {
-    var http2 = require("http");
-    var IncomingMessageExt = require_request3();
-    var AuthenticationError = require_authenticationerror();
-    module2.exports = function authenticate(passport3, name, options, callback2) {
-      if (typeof options == "function") {
-        callback2 = options;
-        options = {};
-      }
-      options = options || {};
-      var multi = true;
-      if (!Array.isArray(name)) {
-        name = [name];
-        multi = false;
-      }
-      return function authenticate2(req, res, next) {
-        req.login = req.logIn = req.logIn || IncomingMessageExt.logIn;
-        req.logout = req.logOut = req.logOut || IncomingMessageExt.logOut;
-        req.isAuthenticated = req.isAuthenticated || IncomingMessageExt.isAuthenticated;
-        req.isUnauthenticated = req.isUnauthenticated || IncomingMessageExt.isUnauthenticated;
-        req._sessionManager = passport3._sm;
-        var failures = [];
-        function allFailed() {
-          if (callback2) {
-            if (!multi) {
-              return callback2(null, false, failures[0].challenge, failures[0].status);
-            } else {
-              var challenges = failures.map(function(f) {
-                return f.challenge;
-              });
-              var statuses = failures.map(function(f) {
-                return f.status;
-              });
-              return callback2(null, false, challenges, statuses);
-            }
-          }
-          var failure = failures[0] || {}, challenge = failure.challenge || {}, msg;
-          if (options.failureFlash) {
-            var flash = options.failureFlash;
-            if (typeof flash == "string") {
-              flash = { type: "error", message: flash };
-            }
-            flash.type = flash.type || "error";
-            var type = flash.type || challenge.type || "error";
-            msg = flash.message || challenge.message || challenge;
-            if (typeof msg == "string") {
-              req.flash(type, msg);
-            }
-          }
-          if (options.failureMessage) {
-            msg = options.failureMessage;
-            if (typeof msg == "boolean") {
-              msg = challenge.message || challenge;
-            }
-            if (typeof msg == "string") {
-              req.session.messages = req.session.messages || [];
-              req.session.messages.push(msg);
-            }
-          }
-          if (options.failureRedirect) {
-            return res.redirect(options.failureRedirect);
-          }
-          var rchallenge = [], rstatus, status;
-          for (var j = 0, len = failures.length; j < len; j++) {
-            failure = failures[j];
-            challenge = failure.challenge;
-            status = failure.status;
-            rstatus = rstatus || status;
-            if (typeof challenge == "string") {
-              rchallenge.push(challenge);
-            }
-          }
-          res.statusCode = rstatus || 401;
-          if (res.statusCode == 401 && rchallenge.length) {
-            res.setHeader("WWW-Authenticate", rchallenge);
-          }
-          if (options.failWithError) {
-            return next(new AuthenticationError(http2.STATUS_CODES[res.statusCode], rstatus));
-          }
-          res.end(http2.STATUS_CODES[res.statusCode]);
-        }
-        (function attempt(i) {
-          var layer = name[i];
-          if (!layer) {
-            return allFailed();
-          }
-          var strategy, prototype3;
-          if (typeof layer.authenticate == "function") {
-            strategy = layer;
-          } else {
-            prototype3 = passport3._strategy(layer);
-            if (!prototype3) {
-              return next(new Error('Unknown authentication strategy "' + layer + '"'));
-            }
-            strategy = Object.create(prototype3);
-          }
-          strategy.success = function(user, info) {
-            if (callback2) {
-              return callback2(null, user, info);
-            }
-            info = info || {};
-            var msg;
-            if (options.successFlash) {
-              var flash = options.successFlash;
-              if (typeof flash == "string") {
-                flash = { type: "success", message: flash };
-              }
-              flash.type = flash.type || "success";
-              var type = flash.type || info.type || "success";
-              msg = flash.message || info.message || info;
-              if (typeof msg == "string") {
-                req.flash(type, msg);
-              }
-            }
-            if (options.successMessage) {
-              msg = options.successMessage;
-              if (typeof msg == "boolean") {
-                msg = info.message || info;
-              }
-              if (typeof msg == "string") {
-                req.session.messages = req.session.messages || [];
-                req.session.messages.push(msg);
-              }
-            }
-            if (options.assignProperty) {
-              req[options.assignProperty] = user;
-              if (options.authInfo !== false) {
-                passport3.transformAuthInfo(info, req, function(err, tinfo) {
-                  if (err) {
-                    return next(err);
-                  }
-                  req.authInfo = tinfo;
-                  next();
-                });
-              } else {
-                next();
-              }
-              return;
-            }
-            req.logIn(user, options, function(err) {
-              if (err) {
-                return next(err);
-              }
-              function complete() {
-                if (options.successReturnToOrRedirect) {
-                  var url2 = options.successReturnToOrRedirect;
-                  if (req.session && req.session.returnTo) {
-                    url2 = req.session.returnTo;
-                    delete req.session.returnTo;
-                  }
-                  return res.redirect(url2);
-                }
-                if (options.successRedirect) {
-                  return res.redirect(options.successRedirect);
-                }
-                next();
-              }
-              if (options.authInfo !== false) {
-                passport3.transformAuthInfo(info, req, function(err2, tinfo) {
-                  if (err2) {
-                    return next(err2);
-                  }
-                  req.authInfo = tinfo;
-                  complete();
-                });
-              } else {
-                complete();
-              }
-            });
-          };
-          strategy.fail = function(challenge, status) {
-            if (typeof challenge == "number") {
-              status = challenge;
-              challenge = void 0;
-            }
-            failures.push({ challenge, status });
-            attempt(i + 1);
-          };
-          strategy.redirect = function(url2, status) {
-            res.statusCode = status || 302;
-            res.setHeader("Location", url2);
-            res.setHeader("Content-Length", "0");
-            res.end();
-          };
-          strategy.pass = function() {
-            next();
-          };
-          strategy.error = function(err) {
-            if (callback2) {
-              return callback2(err);
-            }
-            next(err);
-          };
-          strategy.authenticate(req, options);
-        })(0);
-      };
-    };
-  }
-});
-
-// backend/node_modules/passport/lib/framework/connect.js
-var require_connect2 = __commonJS({
-  "backend/node_modules/passport/lib/framework/connect.js"(exports2, module2) {
-    var initialize = require_initialize();
-    var authenticate = require_authenticate();
-    exports2 = module2.exports = function() {
-      return {
-        initialize,
-        authenticate
-      };
-    };
-  }
-});
-
-// backend/node_modules/passport/lib/authenticator.js
-var require_authenticator = __commonJS({
-  "backend/node_modules/passport/lib/authenticator.js"(exports2, module2) {
-    var SessionStrategy = require_session();
-    var SessionManager = require_sessionmanager();
-    function Authenticator() {
-      this._key = "passport";
-      this._strategies = {};
-      this._serializers = [];
-      this._deserializers = [];
-      this._infoTransformers = [];
-      this._framework = null;
-      this.init();
-    }
-    Authenticator.prototype.init = function() {
-      this.framework(require_connect2()());
-      this.use(new SessionStrategy({ key: this._key }, this.deserializeUser.bind(this)));
-      this._sm = new SessionManager({ key: this._key }, this.serializeUser.bind(this));
-    };
-    Authenticator.prototype.use = function(name, strategy) {
-      if (!strategy) {
-        strategy = name;
-        name = strategy.name;
-      }
-      if (!name) {
-        throw new Error("Authentication strategies must have a name");
-      }
-      this._strategies[name] = strategy;
-      return this;
-    };
-    Authenticator.prototype.unuse = function(name) {
-      delete this._strategies[name];
-      return this;
-    };
-    Authenticator.prototype.framework = function(fw) {
-      this._framework = fw;
-      return this;
-    };
-    Authenticator.prototype.initialize = function(options) {
-      options = options || {};
-      return this._framework.initialize(this, options);
-    };
-    Authenticator.prototype.authenticate = function(strategy, options, callback2) {
-      return this._framework.authenticate(this, strategy, options, callback2);
-    };
-    Authenticator.prototype.authorize = function(strategy, options, callback2) {
-      options = options || {};
-      options.assignProperty = "account";
-      var fn = this._framework.authorize || this._framework.authenticate;
-      return fn(this, strategy, options, callback2);
-    };
-    Authenticator.prototype.session = function(options) {
-      return this.authenticate("session", options);
-    };
-    Authenticator.prototype.serializeUser = function(fn, req, done) {
-      if (typeof fn === "function") {
-        return this._serializers.push(fn);
-      }
-      var user = fn;
-      if (typeof req === "function") {
-        done = req;
-        req = void 0;
-      }
-      var stack = this._serializers;
-      (function pass(i, err, obj) {
-        if ("pass" === err) {
-          err = void 0;
-        }
-        if (err || obj || obj === 0) {
-          return done(err, obj);
-        }
-        var layer = stack[i];
-        if (!layer) {
-          return done(new Error("Failed to serialize user into session"));
-        }
-        function serialized(e, o) {
-          pass(i + 1, e, o);
-        }
-        try {
-          var arity = layer.length;
-          if (arity == 3) {
-            layer(req, user, serialized);
-          } else {
-            layer(user, serialized);
-          }
-        } catch (e) {
-          return done(e);
-        }
-      })(0);
-    };
-    Authenticator.prototype.deserializeUser = function(fn, req, done) {
-      if (typeof fn === "function") {
-        return this._deserializers.push(fn);
-      }
-      var obj = fn;
-      if (typeof req === "function") {
-        done = req;
-        req = void 0;
-      }
-      var stack = this._deserializers;
-      (function pass(i, err, user) {
-        if ("pass" === err) {
-          err = void 0;
-        }
-        if (err || user) {
-          return done(err, user);
-        }
-        if (user === null || user === false) {
-          return done(null, false);
-        }
-        var layer = stack[i];
-        if (!layer) {
-          return done(new Error("Failed to deserialize user out of session"));
-        }
-        function deserialized(e, u) {
-          pass(i + 1, e, u);
-        }
-        try {
-          var arity = layer.length;
-          if (arity == 3) {
-            layer(req, obj, deserialized);
-          } else {
-            layer(obj, deserialized);
-          }
-        } catch (e) {
-          return done(e);
-        }
-      })(0);
-    };
-    Authenticator.prototype.transformAuthInfo = function(fn, req, done) {
-      if (typeof fn === "function") {
-        return this._infoTransformers.push(fn);
-      }
-      var info = fn;
-      if (typeof req === "function") {
-        done = req;
-        req = void 0;
-      }
-      var stack = this._infoTransformers;
-      (function pass(i, err, tinfo) {
-        if ("pass" === err) {
-          err = void 0;
-        }
-        if (err || tinfo) {
-          return done(err, tinfo);
-        }
-        var layer = stack[i];
-        if (!layer) {
-          return done(null, info);
-        }
-        function transformed(e, t2) {
-          pass(i + 1, e, t2);
-        }
-        try {
-          var arity = layer.length;
-          if (arity == 1) {
-            var t = layer(info);
-            transformed(null, t);
-          } else if (arity == 3) {
-            layer(req, info, transformed);
-          } else {
-            layer(info, transformed);
-          }
-        } catch (e) {
-          return done(e);
-        }
-      })(0);
-    };
-    Authenticator.prototype._strategy = function(name) {
-      return this._strategies[name];
-    };
-    module2.exports = Authenticator;
-  }
-});
-
-// backend/node_modules/passport/lib/index.js
-var require_lib11 = __commonJS({
-  "backend/node_modules/passport/lib/index.js"(exports2, module2) {
-    var Passport = require_authenticator();
-    var SessionStrategy = require_session();
-    exports2 = module2.exports = new Passport();
-    exports2.Passport = exports2.Authenticator = Passport;
-    exports2.Strategy = require_lib10();
-    exports2.strategies = {};
-    exports2.strategies.SessionStrategy = SessionStrategy;
   }
 });
 
@@ -90714,14 +90714,53 @@ __export(server_exports, {
   handler: () => handler
 });
 module.exports = __toCommonJS(server_exports);
-var import_express5 = __toESM(require_express2(), 1);
+var import_express6 = __toESM(require_express2(), 1);
 var import_body_parser = __toESM(require_body_parser(), 1);
 var import_cors = __toESM(require_lib3(), 1);
-var import_mongoose3 = __toESM(require_mongoose2(), 1);
+var import_mongoose4 = __toESM(require_mongoose2(), 1);
 var import_dotenv2 = __toESM(require_main(), 1);
 
-// backend/Endpoints/threadRoute.js
+// backend/Endpoints/authRoute.js
+var import_passport = __toESM(require_lib11(), 1);
 var import_express = __toESM(require_express2(), 1);
+var authRoute = import_express.default.Router();
+authRoute.get("/auth/google", import_passport.default.authenticate("google", {
+  scope: ["email", "profile"],
+  prompt: "select_account",
+  state: true
+}));
+authRoute.get(
+  "/auth/google/callback",
+  import_passport.default.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    console.log("auth/google/callback reached.");
+    res.redirect("/");
+  }
+);
+authRoute.get("/auth/logout", (req, res, next) => {
+  console.log("/auth/logout reached. Logging out");
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
+authRoute.get("/auth/test", (req, res) => {
+  console.log("auth/test reached.");
+  const isAuth = req.isAuthenticated();
+  if (isAuth) {
+    console.log("User is authenticated");
+    console.log("User record tied to session: " + JSON.stringify(req.user));
+  } else {
+    console.log("User is not authenticated");
+  }
+  res.json({ isAuthenticated: isAuth, user: req.user });
+});
+var authRoute_default = authRoute;
+
+// backend/Endpoints/threadRoute.js
+var import_express2 = __toESM(require_express2(), 1);
 
 // backend/Database Schema/Thread.js
 var import_mongoose = __toESM(require_mongoose2(), 1);
@@ -90738,7 +90777,7 @@ var ThreadSchema = new import_mongoose.default.Schema({
 var Thread = import_mongoose.default.model("Thread", ThreadSchema);
 
 // backend/Endpoints/threadRoute.js
-var threadRoute = import_express.default.Router();
+var threadRoute = import_express2.default.Router();
 threadRoute.route("/threads/:threadId").get(async (req, res) => {
   const threadId = req.params.threadId;
   console.log("in /threads/:threadId Route (GET) thread with ID:" + JSON.stringify(threadId));
@@ -90804,7 +90843,7 @@ threadRoute.route("/threads").get(async (req, res) => {
 var threadRoute_default = threadRoute;
 
 // backend/Endpoints/userRoute.js
-var import_express2 = __toESM(require_express2(), 1);
+var import_express3 = __toESM(require_express2(), 1);
 
 // backend/Database Schema/User.js
 var import_mongoose2 = __toESM(require_mongoose2(), 1);
@@ -90838,7 +90877,7 @@ var User = import_mongoose2.default.model("user", userSchema);
 var User_default = User;
 
 // backend/Endpoints/userRoute.js
-var userRoute = import_express2.default.Router();
+var userRoute = import_express3.default.Router();
 userRoute.get("/users/:userId", async (req, res) => {
   const userId = req.params.userId;
   console.log("in /users/:userId Route (GET) user with ID:" + JSON.stringify(userId));
@@ -90950,7 +90989,7 @@ userRoute.post("/users", async (req, res) => {
 var userRoute_default = userRoute;
 
 // backend/Endpoints/newsRoute.js
-var import_express3 = __toESM(require_express2(), 1);
+var import_express4 = __toESM(require_express2(), 1);
 
 // backend/node_modules/axios/lib/helpers/bind.js
 function bind(fn, thisArg) {
@@ -94220,7 +94259,7 @@ var {
 // backend/Endpoints/newsRoute.js
 var import_dotenv = __toESM(require_main(), 1);
 import_dotenv.default.config();
-var newsRoute = import_express3.default.Router();
+var newsRoute = import_express4.default.Router();
 newsRoute.post("/check-urls", async (req, res) => {
   const { articles } = req.body;
   const corsHeaders = {
@@ -94270,11 +94309,52 @@ newsRoute.post("/check-urls", async (req, res) => {
 });
 var newsRoute_default = newsRoute;
 
+// backend/Endpoints/displayCrypto.js
+var import_express5 = __toESM(require_express2(), 1);
+
+// backend/Database Schema/Crypto.js
+var import_mongoose3 = __toESM(require_mongoose2(), 1);
+var CryptoSchema = new import_mongoose3.default.Schema({
+  cryptoName: { type: String, required: true },
+  symbol: { type: String, required: true },
+  open: { type: Number, required: true },
+  high: { type: Number },
+  close: { type: Number, required: true },
+  change: { type: Number },
+  volume: { type: Number },
+  //lastTradingDay: { type: Date }, // Optional field for the last trading day
+  date: { type: Date, required: true }
+});
+var CryptoCurrency = import_mongoose3.default.model("CryptoCurrency", CryptoSchema);
+var Crypto_default = CryptoCurrency;
+
+// backend/Endpoints/displayCrypto.js
+var displayCrypto = import_express5.default.Router();
+displayCrypto.post("/displayCrypto", async (req, res) => {
+  console.log("From displayCrypto.js: ", req.body["symbol"], req.body["startDate"], req.body["endDate"]);
+  const symbol = req.body["symbol"];
+  try {
+    const cryptoData = await Crypto_default.find().where({ symbol, date: {
+      $gte: new Date(req.body["startDate"]),
+      $lte: new Date(req.body["endDate"])
+    } }).sort({ "date": -1 });
+    if (cryptoData.length > 0) {
+      console.log(`Stock data for ${symbol}:`, cryptoData);
+      return res.status(200).json(cryptoData);
+    } else {
+      console.log(`No Crypto data found for ${symbol}`);
+    }
+  } catch (err) {
+    return res.status(501).send("Internal sever error from js", err);
+  }
+});
+var displayCrypto_default = displayCrypto;
+
 // backend/functions/server.js
 var import_serverless_http = __toESM(require_serverless_http(), 1);
 
 // backend/Passport/config.js
-var import_passport = __toESM(require_lib11(), 1);
+var import_passport2 = __toESM(require_lib11(), 1);
 var import_express_session = __toESM(require_express_session(), 1);
 
 // backend/Passport/googleStrategy.js
@@ -94302,12 +94382,12 @@ var googleStrategy_default = googleStrategy;
 
 // backend/Passport/config.js
 var passportConfig = (app2) => {
-  import_passport.default.use(googleStrategy_default);
-  import_passport.default.serializeUser((user, done) => {
+  import_passport2.default.use(googleStrategy_default);
+  import_passport2.default.serializeUser((user, done) => {
     console.log("In serializeUser.");
     done(null, user._id);
   });
-  import_passport.default.deserializeUser(async (userId, done) => {
+  import_passport2.default.deserializeUser(async (userId, done) => {
     console.log("In deserializeUser.");
     let thisUser;
     try {
@@ -94324,58 +94404,19 @@ var passportConfig = (app2) => {
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1e3 * 60 }
-  })).use(import_passport.default.initialize()).use(import_passport.default.session());
+  })).use(import_passport2.default.initialize()).use(import_passport2.default.session());
 };
 var config_default = passportConfig;
-
-// backend/Endpoints/authRoute.js
-var import_passport2 = __toESM(require_lib11(), 1);
-var import_express4 = __toESM(require_express2(), 1);
-var authRoute = import_express4.default.Router();
-authRoute.get("/auth/google", import_passport2.default.authenticate("google", {
-  scope: ["email", "profile"],
-  prompt: "select_account",
-  state: true
-}));
-authRoute.get(
-  "/auth/google/callback",
-  import_passport2.default.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    console.log("auth/google/callback reached.");
-    res.redirect("/");
-  }
-);
-authRoute.get("/auth/logout", (req, res, next) => {
-  console.log("/auth/logout reached. Logging out");
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
-});
-authRoute.get("/auth/test", (req, res) => {
-  console.log("auth/test reached.");
-  const isAuth = req.isAuthenticated();
-  if (isAuth) {
-    console.log("User is authenticated");
-    console.log("User record tied to session: " + JSON.stringify(req.user));
-  } else {
-    console.log("User is not authenticated");
-  }
-  res.json({ isAuthenticated: isAuth, user: req.user });
-});
-var authRoute_default = authRoute;
 
 // backend/functions/server.js
 import_dotenv2.default.config();
 var mongoURI = process.env.MONGO_URI;
-var app = (0, import_express5.default)();
+var app = (0, import_express6.default)();
 if (!mongoURI) {
   console.error("MONGO_URI is not defined in the environment variables");
   process.exit(1);
 }
-import_mongoose3.default.connect(mongoURI).then(() => console.log("MongoDB connected")).catch((err) => {
+import_mongoose4.default.connect(mongoURI).then(() => console.log("MongoDB connected")).catch((err) => {
   console.error("Error connecting to MongoDB:", err.message);
   process.exit(1);
 });
@@ -94397,6 +94438,7 @@ app.use("/.netlify/functions/server", threadRoute_default);
 app.use("/.netlify/functions/server", userRoute_default);
 app.use("/.netlify/functions/server", newsRoute_default);
 app.use("/.netlify/functions/server", authRoute_default);
+app.use("/.netlify/functions/server", displayCrypto_default);
 var handler = (0, import_serverless_http.default)(app);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

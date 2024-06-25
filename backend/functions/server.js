@@ -4,15 +4,13 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import authRoute from '../Endpoints/authRoute.js';
 import threadRoute from '../Endpoints/threadRoute.js';
 import userRoute from '../Endpoints/userRoute.js';
 import newsRoute from '../Endpoints/newsRoute.js';
+import displayCrypto from '../Endpoints/displayCrypto.js';
 import serverless from 'serverless-http';
 import passportConfig from '../Passport/config.js';
-//routes for processing users request
-import authRoute from '../Endpoints/authRoute.js';
-//--------------------
-
 // Load environment variables from .env
 dotenv.config();
 const mongoURI = process.env.MONGO_URI;
@@ -53,6 +51,7 @@ app.use('/.netlify/functions/server', threadRoute)
 app.use('/.netlify/functions/server', userRoute);
 app.use('/.netlify/functions/server', newsRoute);
 app.use('/.netlify/functions/server', authRoute);
+app.use('/.netlify/functions/server', displayCrypto);
 
 const handler = serverless(app);
 export { handler };

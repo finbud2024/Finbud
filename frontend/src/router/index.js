@@ -15,6 +15,7 @@ import GoalPage from '@/views/GoalPage.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
+import DisplayCrypto from '@/components/Risk&Chat/DisplayCrypto.vue'
 
 const routes = [
   {
@@ -63,6 +64,11 @@ const routes = [
     path: '/riskchat',
     name: 'RiskChat',
     component: RiskChat,
+  },
+  {
+    path: '/displaycrypto',
+    name: 'DisplayCrypto',
+    component: DisplayCrypto,
   },
   {
     path: '/quant-analysis',
