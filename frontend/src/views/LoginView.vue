@@ -60,7 +60,6 @@ export default {
         let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
         URL += "/.netlify/functions/server"
         const api = `${URL}/auth/google`
-        alert(api)
         window.location.href = api;
     }
   },
