@@ -11,7 +11,7 @@ const ChatSchema = new mongoose.Schema({
         required: true
     },
     threadId:{
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'threads',
         require: true
     }

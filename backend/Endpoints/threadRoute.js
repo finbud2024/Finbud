@@ -1,5 +1,5 @@
 import express from 'express';
-import {Thread} from '../Database Schema/Thread.js';
+import Thread from '../Database Schema/Thread.js';
 
 const threadRoute = express.Router();
 

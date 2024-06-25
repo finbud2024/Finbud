@@ -8,7 +8,7 @@ const ThreadSchema = new mongoose.Schema({
         required: true
     },
     userId:{
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         require: true
     }
