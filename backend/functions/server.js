@@ -54,5 +54,6 @@ app.use('/.netlify/functions/server', userRoute);
 app.use('/.netlify/functions/server', newsRoute);
 app.use('/.netlify/functions/server', authRoute);
 
+
 const handler = serverless(app);
 export { handler };

@@ -22,6 +22,8 @@
 import axios from 'axios';
 import Modal from '../marketPage/Modal.vue';
 
+const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions' : 'https://finbud-ai.netlify.app/.netlify/functions';
+
 export default {
   name: 'NewsSection',
   components: {
@@ -39,21 +41,14 @@ export default {
     };
   },
   mounted() {
+    //alert(process.env.NODE_ENV)
     this.fetchNews();
   },
   methods: {
     async fetchNews() {
-      //console.log("Hello API NEWS");
       try {
-        const response = await axios.get('https://newsapi.org/v2/top-headlines', {
-          params: {
-            apiKey: process.env.VUE_APP_NEWS_API_KEY,
-            category: 'business',
-            country: 'us',
-          },
-        });
-        
-        this.newsList = response.data.articles.filter(news => news.title && news.urlToImage);
+        const response = await axios.get(`${apiUrl}/server/news`);
+        this.newsList = response.data.articles;
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
