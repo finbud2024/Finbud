@@ -1,0 +1,41 @@
+* 
+.container {
+  width: 100%;
+  max-width: 1200px; /* Increase the maximum width for larger screens */
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.Navigation h1 {
+    font-size: 3rem; /* Increase the size of the main heading */
+    margin-bottom: 20px;
+    color: #FFF;
+}
+
+.Navigation h6 {
+    font-size: 1.5rem; /* Increase the size of the dropdown labels */
+    color: #FFF;
+}
+
+.dcc-dropdown {
+    font-size: 1.2rem; /* Increase the size of the dropdown text */
+}
+
+.dcc-dropdown .Select-control {
+    height: 50px; /* Increase the height of the dropdown */
+}
+
+.panel .dcc-Graph {
+    height: 600px !important; /* Make the graph taller */
+}
+
+html {
+    font-size: 18px; /* Increase the base font size */
+}
+
+body {
+    font-size: 1.2em; /* Increase the overall text size */
+    background-color: #000; /* Set background color for better contrast */
+    color: #FFF; /* Set text color to white for better contrast */
+}
