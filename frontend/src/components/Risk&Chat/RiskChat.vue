@@ -14,8 +14,8 @@
         </div>
         <News :keyword="keyword" />
     </div>
-    <!-- <DisplayCrypto/>
-    <DisplayStock/> -->
+    <DisplayCrypto/>
+    <DisplayStock/>
 </template>
 
 <script>
