@@ -15,6 +15,7 @@
         <News :keyword="keyword" />
     </div>
     <DisplayCrypto/>
+    <DisplayStock/>
 </template>
 
 <script>
@@ -25,6 +26,7 @@ import ChatFrame from './ChatFrame.vue';
 import UserInput from './UserInput.vue';
 import News from '../Risk&Chat/News.vue'
 import DisplayCrypto from './DisplayCrypto.vue';
+import DisplayStock from './DisplayStock.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.VUE_APP_GEMINI_API_KEY);
 export default {
@@ -36,12 +38,13 @@ export default {
         ChatHeader,
         News,
         DisplayCrypto,
+        DisplayStock,
     },
     data() {
         return {
             newMessage: '',
             messages: [],
-            userAvatar: require('@/assets/tri.jpeg'),
+            userAvatar: require('@/assets/khoi.jpg'),
             botAvatar: require('@/assets/bot.png'),
             currentThread: {},
             threads: [],
