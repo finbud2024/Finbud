@@ -40,25 +40,26 @@ export default {
   methods: {
     async onLogin() {
       try {
-        const username = this.username;
-        const password = this.password;
-        const apiUrl = `${process.env.DEPLOYED_URL}/users?username=${username}&password=${password}`
-        const response = await axios.get(apiUrl);
-        
-        console.log('Login successful!');
-        console.log(response.data.token);
+        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+        URL += "/.netlify/functions/server"
+        const api = `${URL}/auth/login`
+        const reqBody = {
+          "username": this.username,
+          "password": this.password
+        }
+        const response = await axios.post(api,reqBody);
         authStore.login(response.data._id);
         this.$router.push('/'); // Redirect to the main page after login
       } catch (err) {
         console.error('Login Error:', err.response ? err.response.data : err.message);
         document.getElementById('errorMessage').classList.remove('wrong-password');
-        //alert('Invalid username or password!');
       }
 
     },
-    async signInWithGoogle(){
-        const api = `https://finbud-ai.netlify.app/.netlify/functions/server/auth/google`
-        // const api = `http://localhost:8888/.netlify/functions/server/auth/google`
+    signInWithGoogle(){
+        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+        URL += "/.netlify/functions/server"
+        const api = `${URL}/auth/google`
         window.location.href = api;
     }
   },
