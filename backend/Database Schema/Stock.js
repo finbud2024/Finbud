@@ -10,5 +10,5 @@ const StockSchema = new mongoose.Schema({
     timeStamp : {type: Number},
 })
 
-const StockPrice = mongoose.model('stock', StockSchema);
+const StockPrice = mongoose.model('StockPrice', StockSchema);
 export default StockPrice;

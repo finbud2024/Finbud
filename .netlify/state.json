@@ -1,0 +1,20 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Hanoi",
+			"country": {
+				"code": "VN",
+				"name": "Vietnam"
+			},
+			"subdivision": {
+				"code": "HN",
+				"name": "Hanoi"
+			},
+			"timezone": "Asia/Bangkok",
+			"latitude": 21.0292,
+			"longitude": 105.8526
+		},
+		"timestamp": 1719375880452
+	},
+	"siteId": "4baa0252-2c32-490f-a936-403489533982"
+}

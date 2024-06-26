@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+#!/Users/buidinhtri/Desktop/Finbud/data/venv/bin/python3.12
+=======
 #!/Users/buidinhtri/Desktop/Finbud/data/venv/bin/python
+>>>>>>> f61d7f202a65146732b75e97455cad58e9ca619b
 
 import datetime
 import os
