@@ -1,5 +1,5 @@
 import express from 'express';
-import {Thread} from '../Database Schema/Thread.js';
+import Thread from '../Database Schema/Thread.js';
 
 const threadRoute = express.Router();
 
@@ -82,9 +82,9 @@ threadRoute.route('/threads')
 	})
 	//POST: saving a new thread into database
 	.post(async(req,res)=>{
-		console.log(console.log('in /threads Route (POST) new thread to database'))
+		console.log('in /threads Route (POST) new thread to database')
 		if(!req.body.userId){
-			return res.status(500).send("Unable to save thread to database due to missing userId");
+			return res.status(501).send("Unable to save thread to database due to missing userId");
 		}
 		try{
 			const newThread = {};
@@ -93,11 +93,13 @@ threadRoute.route('/threads')
 					newThread[key] = req.body[key];
 				}
 			}
-			let thread = await new Thread({
-				creationDate: newThread.creationDate,
+			const thread = new Thread({
+				creationDate: Date.now(),
 				userId: newThread.userId
-			}).save();
-			return res.status(200).json(thread).send("Successfully save thread to DB. Thread Id: "+ thread._id);
+			});
+
+			await thread.save();
+			return res.status(200).json(thread);
 		}catch(err){
 			return res.status(500).send("Unexpected error occured when saving thread to database: "+ err);
 		}

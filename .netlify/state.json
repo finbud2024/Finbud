@@ -1,20 +1,20 @@
 {
 	"geolocation": {
 		"data": {
-			"city": "Valdosta",
+			"city": "Greencastle",
 			"country": {
 				"code": "US",
 				"name": "United States"
 			},
 			"subdivision": {
-				"code": "GA",
-				"name": "Georgia"
+				"code": "IN",
+				"name": "Indiana"
 			},
-			"timezone": "America/New_York",
-			"latitude": 30.8936,
-			"longitude": -83.3235
+			"timezone": "America/Indiana/Indianapolis",
+			"latitude": 39.6509,
+			"longitude": -86.8837
 		},
-		"timestamp": 1719080512433
+		"timestamp": 1719292024060
 	},
 	"siteId": "4baa0252-2c32-490f-a936-403489533982"
 }

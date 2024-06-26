@@ -8,8 +8,8 @@ const ThreadSchema = new mongoose.Schema({
         required: true
     },
     userId:{
-        type: mongoose.Types.ObjectId,
-        ref: 'users',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
         require: true
     }
 })

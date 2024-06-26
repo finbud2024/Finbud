@@ -36,18 +36,19 @@ const chatRoute = express.Router();
             const chat = {};
             if(req.body){
                 for(const key in req.body){
-                    newChat[key] = req.body[key];
+                    chat[key] = req.body[key];
                 }
             }
-            const newChat = new Chat({
+            const newChat = await new Chat({
                 prompt: chat.prompt,
                 response: chat.response,
                 threadId: chat.threadId
             });
+            console.log(newChat);
             await newChat.save();
             return res.status(200).send(newChat);
         }catch(err){
-            return res.status(501).send("Internal error e" + err);
+            return res.status(502).send("Internal error e" + err);
         }
     });
 
@@ -97,7 +98,7 @@ const chatRoute = express.Router();
     //GET: retrieve chats with given thread id
     chatRoute.get("/chats/t/:threadId",async(req, res)=>{
         const threadId = req.params.threadId;
-        console.log('in /chats/:threadId Route (GET) chat with thread ID:' + JSON.stringify(chatId));
+        console.log('in /chats/:threadId Route (GET) chat with thread ID:' + JSON.stringify(threadId));
         try{
             const chats = await Chat.find({threadId: threadId});
             if(!chats){
