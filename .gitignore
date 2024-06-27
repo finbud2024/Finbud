@@ -23,10 +23,3 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
-.env
-node_modules
-
-
-# Virtual environment
-venv/
-env/
