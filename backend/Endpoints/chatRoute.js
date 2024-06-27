@@ -39,7 +39,7 @@ const chatRoute = express.Router();
                     chat[key] = req.body[key];
                 }
             }
-            const newChat = await new Chat({
+            const newChat = new Chat({
                 prompt: chat.prompt,
                 response: chat.response,
                 threadId: chat.threadId
