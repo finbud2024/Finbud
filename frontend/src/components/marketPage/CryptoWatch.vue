@@ -41,9 +41,9 @@
 
 <script>
 import axios from 'axios';
-import CryptoPopup from './CryptoPopup.vue';
+import CryptoPopup from '../marketPage/CryptoPopup.vue';
 
-const API_KEY = 'coinranking687d4cc37a39468baeffcc6c0546f518c3c54b2b87e4f73a';
+const API_KEY = process.env.VUE_APP_CRYPTO_KEY;
 
 export default {
   name: 'CryptoWatch',
@@ -114,6 +114,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  overflow: hidden;
 }
 
 .header {
@@ -126,6 +127,8 @@ body {
 
 .crypto-table-wrapper {
   overflow-x: auto;
+  overflow-y: hidden; /* Hide vertical overflow */
+  white-space: nowrap; 
 }
 
 .crypto-table {
@@ -143,11 +146,14 @@ body {
   display: flex;
   border: 1px solid transparent;
   padding: 8px;
-  min-width: 363px;
+  width: 350px; /* Set a fixed width for each item */
   margin-right: 10px;
   position: relative;
   cursor: pointer;
   transition: box-shadow 0.3s, transform 0.3s;
+  white-space: normal; /* Ensure text wraps within the item */
+  overflow: hidden; /* Prevent overflow */
+  word-wrap: break-word; /* Break words that are too long */
 }
 
 .crypto-item:hover {
@@ -183,11 +189,12 @@ body {
   flex: 1; /* Take all the available space on the left */
   display: flex;
   flex-direction: column;
+  word-wrap: break-word; /* Ensure long words break to the next line */
 }
 
 .crypto-symbol h3 {
   margin: 0;
-  font-size: 1.2em;
+  font-size: 1.0em;
   font-weight: bold;
 }
 
@@ -195,15 +202,17 @@ body {
   margin: 0;
   font-size: 0.9em;
   color: #666;
+  word-wrap: break-word; /* Ensure long words break to the next line */
+  white-space: normal; /* Ensure text wraps */
+  overflow-wrap: break-word; /* Ensure text wraps */
 }
-
 .crypto-price {
   flex-shrink: 0; /* Prevent shrinking */
   text-align: center; /* Center align the text */
+  font-size: 0.9em;
 }
 
 .crypto-price .price {
-  font-size: 1em;
   font-weight: bold;
 }
 
@@ -212,6 +221,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-end; /* Align to the right */
+  font-size: 0.9em;
 }
 
 .crypto-change p {
@@ -253,5 +263,3 @@ body {
 }
 
 </style>
-
-

@@ -1,21 +1,51 @@
 <template>
   <div class="map-container">
-    <select v-model="selectedLocation" @change="zoomToLocation" class="location-dropdown">
-      <option v-for="location in locations" :key="location.name" :value="location">
-        {{ location.name }}
-      </option>
-    </select>
+    <div class="controls">
+      <select v-model="selectedLocation" @change="zoomToLocation" class="location-dropdown">
+        <option v-for="location in locations" :key="location.name" :value="location">
+          {{ location.name }}
+        </option>
+      </select>
+    </div>
     <div id="map"></div>
+    <table v-if="displayedProperties.length" class="property-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Type</th>
+          <th>Address</th>
+          <th>Price</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="property in displayedProperties" :key="property.zpid">
+          <td><img :src="property.imgSrc" alt="Property Image" class="property-table-img"></td>
+          <td>{{ property.propertyType }}</td>
+          <td>{{ property.address }}</td>
+          <td>${{ property.price }}</td>
+          <td>{{ property.listingStatus }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="buttons">
+      <button v-if="displayedProperties.length < properties.length" @click="showMore" class="show-more-button">
+        Show More
+      </button>
+      <button v-if="displayedProperties.length >= properties.length && properties.length > 10" @click="showLess" class="show-less-button">
+        Show Less
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
-import { onMounted, onBeforeUnmount, shallowRef } from 'vue';
+import { onMounted, onBeforeUnmount, shallowRef, ref } from 'vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 
-const API_KEY = 'fb8014529amshef5d8cf3b76076dp119133jsn509e8cab2c26';
+const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
 const BASE_URL = 'https://zillow-com1.p.rapidapi.com/propertyExtendedSearch';
 
 const getPropertyData = async (location) => {
@@ -39,14 +69,17 @@ export default {
     const map = shallowRef(null);
     const markers = shallowRef([]);
     const popupOpen = shallowRef(false);
-    const locations = shallowRef([
+    const properties = ref([]);
+    const displayedProperties = ref([]);
+    const locations = ref([
       { name: 'Mountain View, CA', lat: 37.3861, lng: -122.0839 },
       { name: 'Cupertino, CA', lat: 37.322, lng: -122.0322 },
       { name: 'New York, NY', lat: 40.7128, lng: -74.006 },
       { name: 'Washington, DC', lat: 38.9072, lng: -77.0369 },
       { name: 'Austin, TX', lat: 30.2672, lng: -97.7431 }
     ]);
-    const selectedLocation = shallowRef(locations.value[0]);
+    const selectedLocation = ref(locations.value[0]);
+    const propertiesToShow = ref(10);
 
     onMounted(async () => {
       map.value = L.map('map').setView([selectedLocation.value.lat, selectedLocation.value.lng], 10);
@@ -75,11 +108,13 @@ export default {
         return;
       }
 
-      const properties = data.props.filter(
+      properties.value = data.props.filter(
         (property) => property.latitude && property.longitude
       );
 
-      properties.forEach((property) => {
+      updateDisplayedProperties();
+
+      properties.value.forEach((property) => {
         const { latitude, longitude, price, propertyType, address, listingStatus, imgSrc } = property;
 
         const icon = L.divIcon({
@@ -109,6 +144,20 @@ export default {
 
         markers.value.push(marker);
       });
+    };
+
+    const updateDisplayedProperties = () => {
+      displayedProperties.value = properties.value.slice(0, propertiesToShow.value);
+    };
+
+    const showMore = () => {
+      propertiesToShow.value += 10;
+      updateDisplayedProperties();
+    };
+
+    const showLess = () => {
+      propertiesToShow.value = 10;
+      updateDisplayedProperties();
     };
 
     const zoomToLocation = async () => {
@@ -145,6 +194,11 @@ export default {
       locations,
       selectedLocation,
       zoomToLocation,
+      properties,
+      displayedProperties,
+      showMore,
+      showLess,
+      propertiesToShow,
     };
   },
 };
@@ -154,6 +208,7 @@ export default {
 .map-container {
   position: relative;
   z-index: 1;
+  padding: 10px;
 }
 
 #map {
@@ -163,12 +218,47 @@ export default {
   z-index: 1;
 }
 
+.controls {
+  display: flex;
+
+  margin-bottom: 1rem;
+}
+
 .location-dropdown {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 5px;
-  z-index: 1000; /* Ensure it appears above the map */
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.location-dropdown:hover {
+  background-color: #0056b3;
+}
+
+.property-table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+.property-table th, .property-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.property-table-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .custom-icon img {
@@ -176,5 +266,51 @@ export default {
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.show-more-button,
+.show-less-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.show-more-button:hover,
+.show-less-button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .property-table {
+    font-size: 12px;
+  }
+
+  .property-table th, .property-table td {
+    padding: 6px;
+  }
+
+  .property-table-img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 576px) {
+  .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
 }
 </style>

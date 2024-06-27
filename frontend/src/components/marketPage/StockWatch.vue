@@ -18,7 +18,7 @@
                 <div class="stock-info">
                   <div class="stock-symbol">
                     <h3>{{ stock['01. symbol'] }}</h3>
-                    <p>{{ stock['05. price'] }}</p>
+                    <p>{{ stock['name'] }}</p> <!-- Display stock name here -->
                   </div>
                   <div class="stock-price">
                     <p class="price">${{ stock['05. price'] }}</p>
@@ -28,7 +28,7 @@
                       {{ parseFloat(stock['10. change percent']) > 0 ? '+' : '' }}{{ parseFloat(stock['10. change percent']).toFixed(2) }}%
                     </p>
                     <p :class="{'positive': parseFloat(stock['09. change']) > 0, 'negative': parseFloat(stock['09. change']) < 0}">
-                      {{ parseFloat(stock['09. change']) > 0 ? '+' : '' }}{{ parseFloat(stock['09. change']).toFixed(2) }}
+                      {{ parseFloat(stock['09. change']).toFixed(2) }}
                     </p>
                   </div>
                 </div>
@@ -47,7 +47,7 @@
 import axios from 'axios';
 import StockPopup from './StockPopup.vue';
 
-const apiKey = 'BS4H8D1PZ63W5IC0';
+const apiKey = process.env.VUE_APP_STOCK_KEY;
 
 export default {
   name: 'StockWatch',
@@ -70,7 +70,7 @@ export default {
   methods: {
     async fetchStockQuote() {
       const symbols = [
-        'IBM', 'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NFLX', 'NVDA', 
+        'IBM', 'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META', 'TSLA', 'NFLX', 'NVDA', 
         'INTC', 'CSCO', 'ORCL', 'ADBE', 'CRM', 'PYPL', 'AMD', 'QCOM', 'TXN', 
         'AVGO', 'SHOP'
       ];
@@ -84,6 +84,7 @@ export default {
         this.stockQuotes = responses.map(response => {
           const quote = response.data['Global Quote'];
           if (quote && Object.keys(quote).length > 0) {
+            quote['name'] = symbols.find(sym => sym === quote['01. symbol']); // Add stock name
             return quote;
           } else {
             return null; 
@@ -122,6 +123,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  overflow: hidden;
 }
 
 .header {
@@ -134,6 +136,8 @@ body {
 
 .stock-table-wrapper {
   overflow-x: auto;
+  overflow-y: hidden; /* Hide vertical overflow */
+  white-space: nowrap; 
 }
 
 .stock-table {
@@ -151,11 +155,14 @@ body {
   display: flex;
   border: 1px solid transparent;
   padding: 8px;
-  min-width: 363px;
+  width: 350px; /* Set a fixed width for each item */
   margin-right: 10px;
   position: relative;
   cursor: pointer;
   transition: box-shadow 0.3s, transform 0.3s;
+  white-space: normal; /* Ensure text wraps within the item */
+  overflow: hidden; /* Prevent overflow */
+  word-wrap: break-word; /* Break words that are too long */
 }
 
 .stock-item:hover {
@@ -195,7 +202,7 @@ body {
 
 .stock-symbol h3 {
   margin: 0;
-  font-size: 1.2em;
+  font-size: 1.0em;
   font-weight: bold;
 }
 
@@ -203,15 +210,18 @@ body {
   margin: 0;
   font-size: 0.9em;
   color: #666;
+  word-wrap: break-word; /* Ensure long words break to the next line */
+  white-space: normal; /* Ensure text wraps */
+  overflow-wrap: break-word; /* Ensure text wraps */
 }
 
 .stock-price {
   flex-shrink: 0; /* Prevent shrinking */
   text-align: center; /* Center align the text */
+  font-size: 0.9em;
 }
 
 .stock-price .price {
-  font-size: 1em;
   font-weight: bold;
 }
 
@@ -220,6 +230,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-end; /* Align to the right */
+  font-size: 0.9em;
 }
 
 .stock-change p {
@@ -240,4 +251,24 @@ body {
   width: 100%; /* Ensure the divider spans the entire width of the scrolling area */
   margin: 10px 0;
 }
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .stock-item {
+    width: 363px;
+  }
+}
+
+@media (max-width: 992px) {
+  .stock-item {
+    width: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stock-item {
+    width: 350px;
+  }
+}
+
 </style>

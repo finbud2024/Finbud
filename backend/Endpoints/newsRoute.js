@@ -2,64 +2,47 @@ import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
-
 dotenv.config();
 const newsRoute = express.Router();
 
-
-newsRoute.post('/check-urls', async (req, res) => {
-  const { articles } = req.body;
-
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
-  };
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).json({ message: 'CORS preflight request success' });
-  }
+newsRoute.get('/news', async (req, res) => {
+  const newsApiKey = process.env.VUE_APP_NEWS_API_KEY;
+  const newsApiUrl = `https://newsapi.org/v2/top-headlines?category=business&country=us&apiKey=${newsApiKey}`;
 
   try {
-    const validArticles = [];
+    const newsResponse = await axios.get(newsApiUrl);
+    const articles = newsResponse.data.articles;
 
-    for (const article of articles) {
+    const checkArticlePromises = articles.map(async (article) => {
       try {
         const response = await axios.get(article.url);
         const xFrameOptions = response.headers['x-frame-options'];
         const contentSecurityPolicy = response.headers['content-security-policy'];
 
-        console.log(`Headers for ${article.url}:`, {
-          xFrameOptions,
-          contentSecurityPolicy,
-        });
-
         let canDisplay = true;
 
-        // Check for X-Frame-Options header
         if (xFrameOptions) {
           canDisplay = false;
         } else if (contentSecurityPolicy) {
-          // Split the CSP by both colon and semicolon
           const cspDirectives = contentSecurityPolicy.split(/[:;]/).map(d => d.trim());
           const frameAncestorsDirective = cspDirectives.find(d => d.startsWith('frame-ancestors'));
 
           if (frameAncestorsDirective) {
-            // Extract the frame-ancestors values
             const frameAncestorsValues = frameAncestorsDirective.split(' ').slice(1);
-            if (frameAncestorsValues.includes("'self'") || frameAncestorsValues.some(value => value !== "'none'")) {
+            if (frameAncestorsValues.includes("'none'") || frameAncestorsValues.includes("'self'")) {
               canDisplay = false;
             }
           }
         }
 
-        if (canDisplay) {
-          validArticles.push(article);
-        }
+        return canDisplay ? article : null;
       } catch (error) {
         console.error('Error checking article URL:', article.url, error.message);
+        return null;
       }
-    }
+    });
+
+    const validArticles = (await Promise.all(checkArticlePromises)).filter(article => article !== null);
 
     return res.status(200).json({ articles: validArticles });
   } catch (error) {

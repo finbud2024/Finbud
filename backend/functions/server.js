@@ -62,5 +62,6 @@ app.use('/.netlify/functions/server', chatRoute);
 app.use('/.netlify/functions/server', authRoute);
 app.use('/.netlify/functions/server', cryptoRoute);
 
+
 const handler = serverless(app);
 export { handler };
