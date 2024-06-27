@@ -12,10 +12,10 @@ const ChatSchema = new mongoose.Schema({
     },
     threadId:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'threads',
+        ref: 'Thread',
         require: true
     }
 });
 
-const Chat = mongoose.model('chat', ChatSchema);
+const Chat = mongoose.model('Chat', ChatSchema);
 export default Chat;
