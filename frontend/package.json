@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@vue/cli-service": "^5.0.8",
+    "@vuepic/vue-datepicker": "^8.8.0",
     "dotenv-webpack": "^8.1.0",
     "eslint-plugin-vue": "^7.0.0",
     "mongoose": "^8.4.1"

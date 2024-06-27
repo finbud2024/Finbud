@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const CryptoSchema = new mongoose.Schema({
-    cryptoName: [String],
-    symbol: String,
+    cryptoName: { type: String, required: true },
+    symbol: { type: String, required: true },
     open: { type: Number, required: true },
-    high: Numbers,
+    high: { type: Number},
     close: { type: Number, required: true },
-    change: Numbers,
-    volume: Numbers,
+    change: { type: Number},
+    volume: { type: Number},
     //lastTradingDay: { type: Date }, // Optional field for the last trading day
     date: { type: Date, required: true}
 });
