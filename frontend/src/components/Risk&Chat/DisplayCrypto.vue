@@ -58,7 +58,7 @@ import { ref } from 'vue';
 import Pagination from './Pagination.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server';
+
 export default {
     name: 'DisplayCrypto',
     components: {
@@ -107,7 +107,9 @@ export default {
         async queryDate() {
             try {
                 const send = this.selected;
-                const responses = await axios.post(`${apiUrl}/cryptoRoute`, { "symbol": this.selected, "startDate": this.startDate, "endDate": this.endDate });
+                const URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+                URL += "/.netlify/functions/server"
+                const responses = await axios.post(`${URL}/cryptoRoute`, { "symbol": this.selected, "startDate": this.startDate, "endDate": this.endDate });
                 console.log("from DisplayCrypto Page:", responses.data);
                 this.cryptoList = responses.data;
                 this.loading = false;
