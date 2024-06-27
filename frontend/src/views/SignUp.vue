@@ -47,20 +47,18 @@ export default {
             this.errorMessage = "Passwords do not match!";
             return;
           }
-
-          const apiUrl = `${process.env.DEPLOYED_URL}/users`;
-          const response = await axios.post(apiUrl, {
+          let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+          URL += "/.netlify/functions/server"
+          const api = `${URL}/users`
+          const response = await axios.post(api, {
             accountData: {
               username: this.email,
               password: this.password
-            }, identityData: {
-              
             }
           });
 
           //alert('Registration successful!');
           // Store token and redirect to login or dashboard
-          localStorage.setItem('token', response.data.token);
           this.$router.push('/login');
         } catch (err) {
           console.log(err);

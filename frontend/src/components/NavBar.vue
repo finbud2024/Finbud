@@ -8,7 +8,7 @@
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
         <li><router-link to="/quant-analysis" class="home">Quant</router-link></li>
-        <li v-if="!authStore.isAuthenticated" class="dropdown">
+        <li v-if="authStore.isAuthenticated" class="dropdown">
           <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
@@ -43,6 +43,7 @@
 
 <script>
 import authStore from '@/authStore';
+import axios from 'axios'
 
 export default {
   name: 'NavBar',
@@ -70,11 +71,30 @@ export default {
     closeDropdownMobile() {
       this.isDropdownOpenMobile = false;
     },
-    logout() {
+    async logout() {
       authStore.logout();
+      try{
+        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+        URL += "/.netlify/functions/server"
+        const response = await axios.get(`${URL}/auth/logout`);
+      }catch(err){
+        console.log("After logout with err: " + err);
+      }
       this.$router.push('/login');
     },
   },
+  async mounted(){
+    try{
+      let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
+      URL += "/.netlify/functions/server"
+      const response = await axios.get(`${URL}/auth/test`);
+      if(response.data.isAuthenticated){
+        authStore.login(response.data.user._id) 
+      }
+    }catch(err){
+      console.log("After Sign in with google err: " + err);
+    }
+  }
 };
 </script>
 

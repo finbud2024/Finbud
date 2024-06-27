@@ -2,15 +2,20 @@ import mongoose from "mongoose";
 
 //define Thread Schema
 const ThreadSchema = new mongoose.Schema({
-    prompt:[String],
-    response:[String],
-    createdDate: Date,
-    // userId:{
-    //     type: mongoose.Types.ObjectId,
-    //     ref: 'users',
-    //     require: true
-    // }
+    title: {
+        type: String,
+        default: 'New Chat'
+    },
+    creationDate : {
+        type: Date,
+        default: Date.now,
+    },
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        require: true
+    }
 })
 
 const Thread = mongoose.model('Thread', ThreadSchema);
-export {ThreadSchema,Thread};
+export default Thread;
