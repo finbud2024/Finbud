@@ -12,6 +12,7 @@ import newsRoute from '../Endpoints/newsRoute.js';
 import chatRoute from '../Endpoints/chatRoute.js';
 import authRoute from '../Endpoints/authRoute.js';
 import cryptoRoute from '../Endpoints/cryptoRoute.js';
+import updateStockDB from '../Endpoints/updateStockDB.js';
 
 // Load environment variables from .env
 const mongoURI = process.env.MONGO_URI;
@@ -61,6 +62,7 @@ app.use('/.netlify/functions/server', newsRoute);
 app.use('/.netlify/functions/server', chatRoute);
 app.use('/.netlify/functions/server', authRoute);
 app.use('/.netlify/functions/server', cryptoRoute);
+app.use('/.netlify/functions/server', updateStockDB);
 
 const handler = serverless(app);
 export { handler };

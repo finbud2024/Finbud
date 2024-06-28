@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import axios from 'axios';
 // import dotenv from 'dotenv';
-import StockPrice from '..//Database Schema/Stock.js';
+import StockPrice from '../Database Schema/Stock.js';
 import CryptoCurrency from '../Database Schema/Crypto.js'
 //MongoDB connect
 const apiKey = 'CKMO3Q3NLK0OOSZG';
