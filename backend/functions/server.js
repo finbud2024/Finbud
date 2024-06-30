@@ -13,18 +13,10 @@ import chatRoute from '../Endpoints/chatRoute.js';
 import authRoute from '../Endpoints/authRoute.js';
 import cryptoRoute from '../Endpoints/cryptoRoute.js';
 
-// Load environment variables from .env
-const mongoURI = process.env.MONGO_URI;
 const app = express();
 
-
-if (!mongoURI) {
-  console.error('MONGO_URI is not defined in the environment variables');
-  process.exit(1);
-}
-
 // Connect to MongoDB
-mongoose.connect(mongoURI)
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('MongoDB connected'))
 .catch((err) => {
   console.error('Error connecting to MongoDB:', err.message);
