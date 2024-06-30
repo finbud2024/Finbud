@@ -26,7 +26,8 @@ import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import SideBar from '../components/SideBar.vue';
 
-const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY
+const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
+const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
 
 export default {
   name: 'ChatView',
