@@ -119,3 +119,4 @@ Khi đã sẵn sàng để triển khai ứng dụng lên Netlify, thực hiện
 - **Cài đặt môi trường**: Đảm bảo đã cấu hình đầy đủ tệp `.env` cho cả frontend và backend trên local.
 - **Kiểm tra cấu hình server**: Đảm bảo rằng tất cả các endpoint API đều hoạt động bình thường trước khi triển khai.
 - **Kiểm tra giao diện**: Kiểm tra kỹ lưỡng giao diện người dùng trên các trình duyệt khác nhau để đảm bảo tính tương thích.
+
