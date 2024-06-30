@@ -1,7 +1,11 @@
+# macOS
 .DS_Store
-*node_modules
-/dist
 
+# Node modules
+node_modules
+
+# Distribution directory
+/dist
 
 # local env files
 .env*
