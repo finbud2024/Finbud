@@ -26,13 +26,6 @@ import UserInput from '../components/UserInput.vue';
 import { fetchStockPrice } from '@/services/stockServices';
 import SideBar from '../components/SideBar.vue';
 
-
-const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://finbud-ai.netlify.app/.netlify/functions';
-
-const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-alert(OPENAI_API_KEY);
-
 export default {
   name: 'ChatView',
   props: ['threadId'],
