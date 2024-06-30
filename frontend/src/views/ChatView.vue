@@ -23,8 +23,8 @@ import ChatHeader from '../components/ChatHeader.vue';
 import ChatFrame from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
-import { fetchStockPrice } from '@/services/stockServices';
 import SideBar from '../components/SideBar.vue';
+import { gptResponse } from '../services/gptResponse.js';
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
@@ -142,19 +142,8 @@ export default {
       //const response = await axios.post(`${apiUrl}/defineTerm`, { term });
       try {
         const prompt = `Explain ${term} to me as if I'm 15.`;
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.7
-        }, {
-          headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        });
 
-        const responseData = response.data;
-        const answer = responseData.choices[0]?.message?.content || "";
+        const answer = await gptResponse(prompt);
         this.addTypingResponse(answer, false);
 
       } catch (err) {
@@ -175,38 +164,15 @@ export default {
 
       //openai api
       const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7
-        }, {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const responseData = response.data;
-      const answer = responseData.choices[0]?.message?.content || "";
+      const answer = await gptResponse(prompt);
 
       this.addTypingResponse(answer, false);
     },
 
     async handleGeneralMessage(userMessage) {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: userMessage }],
-            temperature: 0.7
-        }, {
-            headers: {
-                'Authorization': `Bearer ${OPENAI_API_KEY}`,
-                'Content-Type': 'application/json'
-            }
-        });
+      const prompt = userMessage;
 
-      const responseData = response.data;
-      const answer = responseData.choices[0]?.message?.content || "";
-      
+      const answer = await gptResponse(prompt);
       this.addTypingResponse(answer, false);
     },
 
