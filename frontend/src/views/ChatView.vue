@@ -82,21 +82,14 @@ export default {
     },
     async addThread(newThread) {
       try{
-        // newThread.id = this.threads.length + 1;
-        // this.threads.push(newThread);
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
         const reqBody = {
           userId: '667dc7c29bed62c692d90645'
         }
         const thread = await axios.post(api, reqBody);
-        const newwThread = {
-          id: thread._id,
-          name: newThread.name,
-          editing: newThread.editing,
-          editedName: newThread.editedName,
-          messages: newThread.messages
-        }
-        this.threads.push(newwThread);
+
+        newThread.id = thread._id;
+        this.threads.push(newThread);
       }catch(err){
         console.error('Error:', err);
       }
