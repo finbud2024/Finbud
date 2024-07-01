@@ -12,7 +12,7 @@ import newsRoute from '../Endpoints/newsRoute.js';
 import chatRoute from '../Endpoints/chatRoute.js';
 import authRoute from '../Endpoints/authRoute.js';
 import cryptoRoute from '../Endpoints/cryptoRoute.js';
-import updateStockDB from '../Endpoints/updateStockDB.js';
+import stockRoute from '../Endpoints/stockRoute.js';
 
 const app = express();
 
@@ -54,7 +54,7 @@ app.use('/.netlify/functions/server', newsRoute);
 app.use('/.netlify/functions/server', chatRoute);
 app.use('/.netlify/functions/server', authRoute);
 app.use('/.netlify/functions/server', cryptoRoute);
-app.use('/.netlify/functions/server', updateStockDB);
+app.use('/.netlify/functions/server', stockRoute);
 
 
 const handler = serverless(app);
