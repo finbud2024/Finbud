@@ -85,13 +85,6 @@ export default {
       //   this.messages = thread.messages || [];
       // }
       try{
-        const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${currentThreadId}`;
-        const thread = await axios.get(threadApi);
-        if(!thread){
-          console.error('Thread not found');
-          return;
-        }
-
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
         const chats = await axios.get(chatApi);
         console.log('chats:', chats);
@@ -109,7 +102,7 @@ export default {
         }
         const thread = await axios.post(api, reqBody);
 
-        newThread.id = thread._id;
+        newThread.id = thread.data._id;
         this.threads.push(newThread);
       }catch(err){
         console.error('Error on adding new thread:', err);
