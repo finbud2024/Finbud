@@ -1,21 +1,23 @@
 <template>
-    <div class="home-container">
-        <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
-        <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-        <div class="chat-container">
-            <ChatFrame>
-                <ChatHeader :threadId="currentThread.id" />
-                <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
-                    :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
-                    :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
-                    :avatar-src="message.isUser ? userAvatar : botAvatar" />
-            </ChatFrame>
-            <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
+    <div class="big-container">
+        <div class="home-container">
+            <div class="chat-container">
+                <ChatFrame>
+                    <ChatHeader :threadId="currentThread.id" />
+                    <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
+                        :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
+                        :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
+                        :avatar-src="message.isUser ? userAvatar : botAvatar" />
+                </ChatFrame>
+                <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
+            </div>
         </div>
+
         <News :keyword="keyword" />
     </div>
-    <DisplayCrypto/>
-    <DisplayStock/>
+
+    <DisplayCrypto />
+    <DisplayStock />
 </template>
 
 <script>
@@ -28,7 +30,8 @@ import News from '../Risk&Chat/News.vue'
 import DisplayCrypto from './DisplayCrypto.vue';
 import DisplayStock from './DisplayStock.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-const genAI = new GoogleGenerativeAI(process.env.VUE_APP_GEMINI_API_KEY);
+const apiKey = process.env.VUE_APP_GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey);
 export default {
     name: 'RiskChat',
     components: {
@@ -226,30 +229,17 @@ export default {
 </script>
 
 <style scoped>
+.big-container {
+    display: flex;
+}
+
 .home-container {
     display: flex;
     width: 45%;
     height: 90vh;
-    background-image: linear-gradient(to bottom,#7BDBBF, #e0dede);
-}
-
-.toggle-sidebar-btn {
-    display: none;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1000;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 10px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.toggle-sidebar-btn:hover {
-    background-color: #2980b9;
+    margin-left: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-image: linear-gradient(to bottom, #7BDBBF, #e0dede);
 }
 
 .chat-container {
@@ -259,14 +249,6 @@ export default {
 }
 
 @media (max-width: 768px) {
-    .side-bar {
-        display: none;
-    }
-
-    .toggle-sidebar-btn {
-        display: block;
-    }
-
     .chat-header {
         font-size: 1rem;
         padding: 10px;
@@ -284,20 +266,22 @@ export default {
     z-index: 1000;
 }
 
-.side-bar.is-visible {
-    display: block;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 60%;
-    height: 100%;
-    background-color: #f9f3f3;
-    z-index: 1001;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
+
+@media (max-width: 815px) {
+    .home-container {
+        width: 90%;
+    }
+
+    .big-container {
+        flex-direction: column;
+    }
 }
 
-.side-bar.is-visible {
-    transform: translateX(0);
+@media (max-width: 768px) {
+
+    .chat-header {
+        font-size: 1rem;
+        padding: 10px;
+    }
 }
 </style>

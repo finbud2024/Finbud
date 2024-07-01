@@ -1,7 +1,7 @@
 import express from 'express';
 
-const updateStockDB = express.Router();
-updateStockDB.post("/updateStockDB", async (req, res) => {
+const stockRoute = express.Router();
+stockRoute.post("/updateStockDB", async (req, res) => {
     console.log("From updateStockDB.js: ", req.body);
     return res.status(200)
     // try {
@@ -20,4 +20,4 @@ updateStockDB.post("/updateStockDB", async (req, res) => {
     // }
 });  
 
-export default updateStockDB;
+export default stockRoute;

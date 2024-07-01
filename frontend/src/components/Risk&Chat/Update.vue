@@ -206,12 +206,8 @@ export default {
         },
         async getStockPrice() {
             // const listOfStocks = ['IBM', 'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB', 'TSLA', 'BRK.B', 'NVDA', 'JNJ', 'WMT', 'JPM', 'PG', 'DIS', 'MA', 'NFLX', 'ADBE', 'PYPL', 'INTC', 'CSCO'];
-            const listOfStocks = ['INTC'];
+            const listOfStocks = ['INTC','CSCO'];
             try {
-                // const requests = listOfStocks.map(symbol => this.fetchStockPrice(symbol));
-                // const responses = await Promise.all(requests);
-                // console.log('Stock responses:', responses);
-                // console.log("Fetching Stock complete!")
                 for (const symbol of listOfStocks){
                     const fetchedData = await this.fetchStockPrice(symbol);
                     const data = fetchedData.data
@@ -223,7 +219,7 @@ export default {
         }
     },
     async fetchStockPrice(stockSymbol) {
-        const urlStock = `https://api.stockdata.org/v1/data/eod?symbols=${stockSymbol}&api_token=${stockApiKey}&date_from=2024-02-01`;
+        const urlStock = `https://api.stockdata.org/v1/data/eod?symbols=${stockSymbol}&api_token=${stockApiKey}&date_from=2024-06-25`;
         try {
             const res = await axios.get(urlStock)
             return res.data;
