@@ -21,7 +21,6 @@
 </template>
 
 <script>
-const apiUrl = process.env.NODE_ENV === 'development' ? 'localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server'
 import ChatHeader from './ChatHeader.vue';
 import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';

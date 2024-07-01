@@ -22,8 +22,6 @@
 import axios from 'axios';
 import Modal from '../marketPage/Modal.vue';
 
-const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions' : 'https://finbud-ai.netlify.app/.netlify/functions';
-
 export default {
   name: 'NewsSection',
   components: {
@@ -47,7 +45,7 @@ export default {
   methods: {
     async fetchNews() {
       try {
-        const response = await axios.get(`${apiUrl}/server/news`);
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/news`);
         this.newsList = response.data.articles;
       } catch (error) {
         console.error('Error fetching news:', error);
