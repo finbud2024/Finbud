@@ -30,7 +30,7 @@ import ChatFrame from '../components/ChatFrame.vue';
 import UserInput from '../components/UserInput.vue';
 // import SideBar from '../components/SideBar.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-// const gemini_api = process.env.VUE_APP_GEMINI_API_KEY;
+const gemini_api = process.env.VUE_APP_GEMINI_API_KEY;
 // const genAI = new GoogleGenerativeAI(gemini_api);
 const genAI = new GoogleGenerativeAI('AIzaSyBoqZUePAhe5n5INyoApGlytjx57t8-UYI');
 export default {
