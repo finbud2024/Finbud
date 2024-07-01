@@ -102,8 +102,10 @@ export default {
     async addThread(newThread) {
       try{
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+
+        const userId = localStorage.getItem('token');
         const reqBody = {
-          userId: '667dc7c29bed62c692d90645'
+          userId: userId
         }
         const thread = await axios.post(api, reqBody);
 
