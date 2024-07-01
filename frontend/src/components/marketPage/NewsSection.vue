@@ -1,14 +1,16 @@
 <template>
-  <div class="news-section animate__animated animate__fadeIn" :class="{ 'no-interaction': disableClicks }">
-    <div class="news-header">
-      <h2>Most Popular</h2>
-    </div>
-    <div v-if="loading" class="loading">Loading...</div>
-    <div v-else class="news-container">
-      <div class="news-item animate__animated animate__zoomIn" v-for="news in newsList" :key="news.url" @click="openArticle(news.url)">
-        <img :src="news.urlToImage" alt="news image" class="news-image">
-        <div class="news-title">
-          <p>{{ news.title }}</p>
+  <div>
+    <div class="news-section animate__animated animate__fadeIn" :class="{ 'no-interaction': disableClicks }">
+      <div class="news-header">
+        <h2>Most Popular</h2>
+      </div>
+      <div v-if="loading" class="loading">Loading...</div>
+      <div v-else class="news-container">
+        <div class="news-item animate__animated animate__zoomIn" v-for="news in newsList" :key="news.url" @click="openArticle(news.url)">
+          <img :src="news.urlToImage" alt="news image" class="news-image">
+          <div class="news-title">
+            <p>{{ news.title }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -18,7 +20,9 @@
 
 <script>
 import axios from 'axios';
-import Modal from './Modal.vue';
+import Modal from '../marketPage/Modal.vue';
+
+const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions' : 'https://finbud-ai.netlify.app/.netlify/functions';
 
 export default {
   name: 'NewsSection',
@@ -37,21 +41,14 @@ export default {
     };
   },
   mounted() {
+    //alert(process.env.NODE_ENV)
     this.fetchNews();
   },
   methods: {
     async fetchNews() {
-      console.log("Hello API NEWS");
       try {
-        const response = await axios.get('https://newsapi.org/v2/top-headlines', {
-          params: {
-            apiKey: process.env.VUE_APP_NEWS_API_KEY,
-            category: 'business',
-            country: 'us',
-          },
-        });
-        
-        this.newsList = response.data.articles.filter(news => news.title && news.urlToImage);
+        const response = await axios.get(`${apiUrl}/server/news`);
+        this.newsList = response.data.articles;
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
@@ -153,5 +150,44 @@ export default {
 .no-interaction {
   pointer-events: none;
   opacity: 0.5;
+}
+@media (max-width: 1200px) {
+  .news-item {
+    flex: 0 0 25%;
+  }
+}
+
+@media (max-width: 992px) {
+  .news-item {
+    flex: 0 0 33.33%;
+  }
+}
+
+@media (max-width: 768px) {
+  .news-item {
+    flex: 0 0 50%;
+  }
+
+  .news-header h2 {
+    font-size: 1.7rem;
+  }
+
+  .news-title p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .news-item {
+    flex: 0 0 100%;
+  }
+
+  .news-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .news-title p {
+    font-size: 1rem;
+  }
 }
 </style>

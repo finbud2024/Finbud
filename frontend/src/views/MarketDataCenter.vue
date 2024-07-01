@@ -1,27 +1,34 @@
 <template>
-  <div>
-    <!--<MarketHeader />-->
-    <h1 class="headtitle">Market Data Center</h1>
-    <div class="market-data-center"> 
-      <div class="market-section">
-        <div class="section-title">CRYPTOCURRENCY</div>
-        <CryptoWatch class="CryptoArea" />
-        <div class="section-title">STOCK</div>
-        <StockWatch class="StockArea" />
-        <div class="section-title">REAL ESTATE</div>
-        <RealEstateMap class="RealEstate" />
+  <section class="content">
+    <div>
+      <!--<MarketHeader />-->
+      <h1 class="headtitle">Market Data Center</h1>
+      <div class="market-data-center"> 
+        <div class="market-section">
+          <div class="section-title">CRYPTOCURRENCY</div>
+          <div class="margin-box">
+            <CryptoWatch class="margin-box-content" />
+          </div>
+          <div class="section-title">STOCK</div>
+          <div class="margin-box">
+            <StockWatch class="margin-box-content" />
+          </div>
+          <div class="section-title">REAL ESTATE</div>
+          <RealEstateMap class="margin-box" />
+        </div>
       </div>
+      <NewsSection :disableClicks="showPopup" />
     </div>
-    <NewsSection :disableClicks="showPopup" />
-  </div>
+</section>
 </template>
+
 
 <script>
 //import MarketHeader from '../components/MarketHeader.vue';
-import NewsSection from '../components/NewsSection.vue';
-import CryptoWatch from '@/components/CryptoWatch.vue';
-import StockWatch from '@/components/StockWatch.vue';
-import RealEstateMap from '@/components/RealEstateMap.vue'; 
+import NewsSection from '../components/marketPage/NewsSection.vue';
+import CryptoWatch from '@/components/marketPage/CryptoWatch.vue';
+import StockWatch from '@/components/marketPage/StockWatch.vue';
+import RealEstateMap from '@/components/marketPage/RealEstateMap.vue'; 
 
 export default {
   name: 'MarketDataCenter',
@@ -36,13 +43,10 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap');
 
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background-color: #f0f2f5;
-  margin: 0;
-  padding: 0;
+
+.content{
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .market-data-center {
@@ -79,12 +83,16 @@ body {
   padding-bottom: 0.5rem;
 }
 
-.CryptoArea, .StockArea, .RealEstate {
-  background: #fff;
+.margin-box {
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
+  position: relative; /* Added to allow content alignment */
+}
+
+.margin-box-content {
+  margin-right: 40px; /* Align content 10px from the left */
 }
 
 /* Responsive design */
@@ -95,14 +103,33 @@ body {
   }
 
   .headtitle {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .margin-box {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .market-data-center {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .headtitle {
     font-size: 1.75rem;
   }
 
   .section-title {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
   }
 
-  .CryptoArea, .StockArea, .RealEstate {
+  .margin-box {
     padding: 0.75rem;
   }
 }
@@ -114,33 +141,33 @@ body {
   }
 
   .headtitle {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 
   .section-title {
-    font-size: 1rem;
+    font-size: 1.3rem;
   }
 
-  .CryptoArea, .StockArea, .RealEstate {
+  .margin-box {
     padding: 0.5rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
   .market-data-center {
     padding: 0.5rem;
     margin: 0.5rem auto;
   }
 
   .headtitle {
-    font-size: 1.25rem;
+    font-size: 1.75rem;
   }
 
   .section-title {
-    font-size: 0.875rem;
+    font-size: 1.2rem;
   }
 
-  .CryptoArea, .StockArea, .RealEstate {
+  .margin-box {
     padding: 0.25rem;
   }
 }

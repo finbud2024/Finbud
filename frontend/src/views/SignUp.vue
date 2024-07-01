@@ -15,7 +15,7 @@
       </div>
       <div class="form-group">
         <label for="confirmPassword"> Re-enter your password</label>
-        <input id="confirmPassword" type="password" v-model="confirmPassword" placeholder="re-enter your password"required>
+        <input id="confirmPassword" type="password" v-model="confirmPassword" placeholder="re-enter your password" required>
         <span v-if="!password" class="error-text">Confirm Password is required</span>
       </div>
       <button type="submit" class="register-button">Register</button>

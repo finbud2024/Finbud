@@ -31,6 +31,7 @@ const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' 
 
 const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// alert(OPENAI_API_KEY);
 
 export default {
   name: 'ChatView',
@@ -236,7 +237,6 @@ export default {
     }
   },
   mounted() {
-    array.length = 0
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);

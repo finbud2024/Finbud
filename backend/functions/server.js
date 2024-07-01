@@ -64,5 +64,6 @@ app.use('/.netlify/functions/server', authRoute);
 app.use('/.netlify/functions/server', cryptoRoute);
 app.use('/.netlify/functions/server', updateStockDB);
 
+
 const handler = serverless(app);
 export { handler };
