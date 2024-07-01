@@ -52,7 +52,7 @@ export default {
       try {
         const response = await axios.get('https://newsapi.org/v2/everything', {
           params: {
-            apiKey: process.env.NEWS_API_KEY,
+            apiKey: process.env.VUE_APP_NEWS_API_KEY,
             q: keyword,
           },
         });

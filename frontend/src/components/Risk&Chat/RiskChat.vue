@@ -30,7 +30,8 @@ import News from '../Risk&Chat/News.vue'
 import DisplayCrypto from './DisplayCrypto.vue';
 import DisplayStock from './DisplayStock.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-const genAI = new GoogleGenerativeAI(process.env.VUE_APP_GEMINI_API_KEY);
+const apiKey = process.env.VUE_APP_GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey);
 export default {
     name: 'RiskChat',
     components: {
