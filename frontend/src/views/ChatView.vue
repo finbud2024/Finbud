@@ -29,6 +29,8 @@ import SideBar from '../components/SideBar.vue';
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
 
+const URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server';
+
 export default {
   name: 'ChatView',
   props: ['threadId'],
@@ -113,13 +115,20 @@ export default {
         if (userMessage.toLowerCase().includes("define")) {
           await this.handleDefineMessage(userMessage);
           // if prompt contains "buy"
-        } else if (userMessage.toLowerCase().includes("buy")) {
-          this.handleBuyMessage(userMessage);
-          // if prompt contains "sell"
-        } else if (userMessage.toLowerCase().includes("sell")) {
-          this.handleSellMessage(userMessage);
-          //Possible to break code here ***** FIX ******
-        } else {
+        } 
+
+        // else if (userMessage.toLowerCase().includes("buy")) {
+        //   this.handleBuyMessage(userMessage);
+        // } 
+
+        // else if (userMessage.toLowerCase().includes("sell")) {
+        //   this.handleSellMessage(userMessage);
+        // } 
+        
+        else if (userMessage.toLowerCase().includes("#tran")) {
+          await this.handleAddTransaction(userMessage);
+        }
+        else {
           const stockCode = this.extractStockCode(userMessage);
           if (stockCode.length > 0) {
             await this.handleStockMessage(stockCode[0]);
@@ -210,6 +219,33 @@ export default {
       this.addTypingResponse(answer, false);
     },
 
+  async handleAddTransaction(userMessage) {
+    const match = userMessage.match(/#tran\s+(\w+)\s+(\d+)/i);
+    if (match) {
+      const description = match[1];
+      const amount = parseInt(match[2], 10);
+
+      // Call the function to add the transaction
+      await this.addTransaction(description, amount);
+    } else {
+      this.addTypingResponse('Please specify the description and amount you want to add.', false);
+    }
+  },
+
+  async addTransaction(description, amount) {
+    try {
+      const response = await axios.post(`${URL}/transactions`, {
+        description,
+        amount,
+        date: new Date().toISOString() // Save the detailed date format
+      });
+      this.addTypingResponse(`Transaction added: ${description}, $${amount}.`, false);
+    } catch (error) {
+      console.error('Error adding transaction:', error);
+      this.addTypingResponse('Error adding transaction.', false);
+    }
+  },
+
     addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
@@ -243,6 +279,7 @@ export default {
     1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
     2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
     3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+    4. Add your transaction management: Use prompt '#tran your_description your_amount' (e.g., "#tran Shopping 125")
   `;
 
     if (!this.messages) {
