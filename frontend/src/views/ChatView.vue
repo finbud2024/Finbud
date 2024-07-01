@@ -1,10 +1,12 @@
   <template>
   <div class="home-container">
-    <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
-    <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-    <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
-      @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
-      @select-thread="selectThread" />
+    <div v-if="authStore.isAuthenticated" class="sidebar-container">
+      <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
+      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
+      <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
+        @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
+        @select-thread="selectThread" />
+    </div>
     <div class="chat-container">
       <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
@@ -25,6 +27,7 @@ import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import SideBar from '../components/SideBar.vue';
 import { gptResponse } from '../services/gptResponse.js';
+import authStore from '@/authStore';
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
@@ -50,6 +53,11 @@ export default {
       isSidebarVisible: false
     };
   },
+  computed:{
+    authStore(){
+      return authStore;
+    }
+  },
   watch: {
     threadId: {
       immediate: true,
@@ -70,14 +78,25 @@ export default {
     closeSidebar() {
       this.isSidebarVisible = false;
     },
-    updateCurrentThread(newThreadId) {
-      const thread = this.threads.find(thread => thread.id.toString() === newThreadId);
-      if (thread) {
-        this.currentThread = thread;
-        this.messages = thread.messages || [];
-      } else {
-        this.currentThread = {};
-        this.messages = [];
+    async updateCurrentThread(currentThreadId) {
+      //const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
+      // if (thread) {
+      //   this.currentThread = thread.currentThread || {};
+      //   this.messages = thread.messages || [];
+      // }
+      try{
+        const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${currentThreadId}`;
+        const thread = await axios.get(threadApi);
+        if(!thread){
+          console.error('Thread not found');
+          return;
+        }
+
+        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
+        const chats = await axios.get(chatApi);
+        console.log('chats:', chats);
+      } catch(err){
+        console.error('Error on updating to current thread:', err);
       }
     },
     async addThread(newThread) {
@@ -91,7 +110,7 @@ export default {
         newThread.id = thread._id;
         this.threads.push(newThread);
       }catch(err){
-        console.error('Error:', err);
+        console.error('Error on adding new thread:', err);
       }
     },
     editThread(index) {
@@ -105,7 +124,7 @@ export default {
       this.threads[index].editing = false;
     },
     selectThread(index) {
-      this.updateCurrentThread(this.threads[index].id.toString());
+      this.updateCurrentThread(this.threads[index].id);
     },
     async sendMessage(newMessage) {
       this.messages.push({
