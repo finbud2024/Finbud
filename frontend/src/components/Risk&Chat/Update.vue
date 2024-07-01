@@ -27,7 +27,6 @@ import moment from 'moment';
 import axios from 'axios';
 const cryptoApiKey = 'CKMO3Q3NLK0OOSZG'; // alphavantage
 const stockApiKey = 'ZkYvEJRJsmC1R51bmmHB9S3Kysuv56sVNJoFVDZu'; //stockdata.org 
-const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server';
 export default {
     name: 'Update',
     components: {
@@ -211,7 +210,7 @@ export default {
                 for (const symbol of listOfStocks){
                     const fetchedData = await this.fetchStockPrice(symbol);
                     const data = fetchedData.data
-                    const response = await axios.post(`${apiUrl}/updateStockDB`, {"symbol": symbol, "data": data});
+                    const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/updateStockDB`, {"symbol": symbol, "data": data});
                     console.log(response.data);
                 }
             } catch(error) {
