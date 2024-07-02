@@ -15,7 +15,7 @@
           :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar" />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
-    </div>
+    </div>3
   </div>
 </template>
 
@@ -251,7 +251,7 @@ export default {
       return matches;
     }
   },
-  mounted() {
+  async mounted() {
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
@@ -268,6 +268,26 @@ export default {
       this.messages = [];
     }
     this.addTypingResponse(guidanceMessage.trim(), false);
+
+    //load threads
+    const userId = localStorage.getItem('token');
+    console.log(userId);
+    const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+
+    const historyThreads = await axios.get(threadApi);
+    const historyThreadsData = historyThreads.data;
+    //console.log("history: ", historyThreadsData);
+    historyThreadsData.forEach(threadData => {
+      const thread = {
+        id: threadData._id,
+        name: threadData.title,
+        editing: false,
+        editedName: threadData.title,
+        messages: []
+      };
+      this.threads.push(thread);
+    });
+
   }
 };
 </script>
