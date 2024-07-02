@@ -50,15 +50,10 @@ export default {
     async fetchNews(keyword) {
       console.log("Keyword from AI:", keyword);
       try {
-        const response = await axios.get('https://newsapi.org/v2/everything', {
-          params: {
-            apiKey: process.env.VUE_APP_NEWS_API_KEY,
-            q: keyword,
-          },
-        });
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/news`, {"keyword": keyword});
         console.log("Fetch complete!")
         // console.log(response.data.articles)
-        this.newsList = response.data.articles.filter(news => news.title && news.urlToImage);
+        this.newsList = response.data.articles;
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {

@@ -142,6 +142,7 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    margin: 10px;
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-radius: 8px;

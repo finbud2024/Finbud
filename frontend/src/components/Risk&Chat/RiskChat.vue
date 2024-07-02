@@ -46,7 +46,7 @@ export default {
         return {
             newMessage: '',
             messages: [],
-            userAvatar: require('@/assets/tri.jpeg'),
+            userAvatar: require('@/assets/khoi.jpg'),
             botAvatar: require('@/assets/bot.png'),
             currentThread: {},
             threads: [],
@@ -128,9 +128,6 @@ export default {
                 const response = await this.getGeminiPrompt(userMessage);
                 const keyword = await this.getGeminiKeyword(userMessage);
                 this.keyword = keyword;
-                // console.log("API response:", response);
-                console.log("API keyword response:", this.keyword);
-                // console.log("Type of response data:", typeof (response.data)
                 await this.addTypingResponse(response, false);
             } catch (error) {
                 console.error('Error in handleMessage:', error);

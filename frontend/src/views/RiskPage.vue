@@ -143,32 +143,6 @@ const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' 
         }
       }, 
       
-      async fetchCryptoQuote() {
-        const symbols = ['BTC', 'ETH', 'BNB', 'ADA', 'XRP', 'SOL', 'DOT', 'DOGE', 'LUNA', 'LINK', 'AVAX', 'MATIC', 'ALGO', 'ATOM', 'UNI', 'ICP', 'FTT', 'VET', 'AAVE', 'XTZ'];
-        try {
-          const requests = symbols.map(symbol => {
-            const url = `www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${symbol}&to_currency=EUR&apikey=${apiKey}`;
-            return axios.get(url);
-          });
-          const responses = await Promise.all(requests);
-          console.log('Crypto from Alpha vantage responses:', responses);
-          this.cryptoQuotes = responses.map(response => {
-            const quote = response.data['Global Quote'];
-            if (quote && Object.keys(quote).length > 0) {
-              return quote;
-            } else {
-              return null; 
-            }
-          }).filter(quote => quote !== null);
-          console.log('Final cryptoQuotes:', this.cryptoQuotes);
-          
-          // await this.saveCryptoToDB(this.cryptoQuotes);
-        } catch (error) {
-          this.error = 'Failed to fetch crypto quotes';
-          console.error('Error:', error);
-          this.loading = false;
-        }
-      }, 
       async getCryptoPrice() {
         const url = "https://api.coinranking.com/v2/coins?timePeriod=7d";
         try {
@@ -201,47 +175,6 @@ const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' 
         return x.toFixed(2); 
       },
       
-      // Hangle saving Stock to database 
-      async fetchCryptoQuote() {
-        const symbols = ['BTC', 'ETH', 'BNB', 'ADA', 'XRP', 'SOL', 'DOT', 'DOGE', 'LUNA', 'LINK', 'AVAX', 'MATIC', 'ALGO', 'ATOM', 'UNI', 'ICP', 'FTT', 'VET', 'AAVE', 'XTZ'];
-        try {
-          const requests = symbols.map(symbol => {
-            const url = `www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${symbol}&to_currency=EUR&apikey=${apiKey}`;
-            return axios.get(url);
-          });
-          const responses = await Promise.all(requests);
-          console.log('Crypto from Alpha vantage responses:', responses);
-          this.cryptoQuotes = responses.map(response => {
-            const quote = response.data['Global Quote'];
-            if (quote && Object.keys(quote).length > 0) {
-              return quote;
-            } else {
-              return null; 
-            }
-          }).filter(quote => quote !== null);
-          console.log('Final cryptoQuotes:', this.cryptoQuotes);
-        } catch (error) {
-          this.error = 'Failed to fetch crypto quotes';
-          console.error('Error:', error);
-          this.loading = false;
-        }
-      },
-      async saveStockToDB(stockQuotes){
-        try{
-          const response = await axios.post(`${apiUrl}/saveStockToDB`, this.stockQuotes);
-          console.log(response)
-        }catch (error){
-          console.log("Error saving Stock from RiskPage.vue", error);
-        }
-      },
-      async saveCryptoToDB(cryptoQuotes){
-        try{
-          const response = await axios.post(`${apiUrl}/saveCryptoToDB`, this.cryptoQuotes);
-          console.log(response)
-        }catch (error){
-          console.log("Error saving Cryto from RiskPage.vue", error);
-        }
-      },
   
     },
   

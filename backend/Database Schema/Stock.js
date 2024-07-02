@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 
 const StockSchema = new mongoose.Schema({
-    symbol : {type: String, require: true},
-    price : {type:  Number, require: true},
-    volume: {type:  Number, require: true},
-    change : {type:  Number, require: true},
-    percentChange : {type:  Number},
-    date : { type: String, require: true},
-    timeStamp : {type: Number},
+    symbol: { type: String, required: true },
+    open: { type: Number, required: true },
+    high: { type: Number},
+    low : {type: Number},
+    close: { type: Number, },
+    change: { type: Number},
+    volume: { type: Number},
+    date: { type: Date, required: true}
 })
 
 const StockPrice = mongoose.model('StockPrice', StockSchema);
