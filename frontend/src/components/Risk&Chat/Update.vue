@@ -43,8 +43,7 @@ export default {
 
         // CRYPTO FUNCTION 
         async getCryptoPrice() {
-            // const symbols = ['BTC', 'ETH', 'BNB', 'ADA', 'XRP', 'SOL', 'DOT', 'DOGE', 'LUNA', 'LINK', 'AVAX', 'MATIC', 'ALGO', 'ATOM', 'UNI', 'ICP', 'FTT', 'VET', 'AAVE', 'XTZ'];
-            const symbols = ['BTC'];
+            const symbols = ['BTC', 'ETH', 'BNB', 'ADA', 'XRP', 'SOL', 'DOT', 'DOGE', 'LUNA', 'LINK', 'AVAX', 'MATIC', 'ALGO', 'ATOM', 'UNI', 'ICP', 'FTT', 'VET', 'AAVE', 'XTZ'];
             try {
                 const requests = symbols.map(symbol => {
                     return this.fetchCryptoPrice(symbol);
