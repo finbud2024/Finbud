@@ -80,6 +80,8 @@ export default {
     },
     async updateCurrentThread(currentThreadId) {
       try{
+        this.messages = [];
+
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
         if (thread) {
           this.currentThread = thread;
@@ -88,8 +90,32 @@ export default {
 
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
         const chats = await axios.get(chatApi);
+        console.log(chats);
+        const chatsData = chats.data;
+        chatsData.forEach(chat => {
+          console.log("hahaha:", chat);
+          const prompt = {
+            text: chat.prompt.toString(),
+            isUser: true,
+            typing: true,
+            timestamp: chat.creationDate,
+          };
+
+          console.log("prompt:", prompt)
+          this.messages.push(prompt);
+          const responses = chat.response;
+          responses.forEach(responseData => {
+            const response = {
+              text: responseData,
+              isUser: false,
+              typing: true,
+              timestamp: chat.creationDate,
+            };
+            this.messages.push(response);
+          });
+        });
         console.log('chats:', chats);
-      } catch(err){
+      }catch(err){
         console.error('Error on updating to current thread:', err);
       }
     },
