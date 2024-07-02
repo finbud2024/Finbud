@@ -79,12 +79,13 @@ export default {
       this.isSidebarVisible = false;
     },
     async updateCurrentThread(currentThreadId) {
-      //const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
-      // if (thread) {
-      //   this.currentThread = thread.currentThread || {};
-      //   this.messages = thread.messages || [];
-      // }
       try{
+        const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
+        if (thread) {
+          this.currentThread = thread;
+        }
+        console.log(this.currentThread.id);
+
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
         const chats = await axios.get(chatApi);
         console.log('chats:', chats);
@@ -129,26 +130,26 @@ export default {
         timestamp: new Date().toLocaleTimeString()
       });
 
-      this.newMessage = '';
-
-      const userMessage = this.messages[this.messages.length - 1].text;
+      const userMessage = newMessage.trim();
+      console.log('User message:', userMessage);
+      let answers = [];
 
       try {
         if (userMessage.toLowerCase().includes("define")) {
-          await this.handleDefineMessage(userMessage);
+          answers = await this.handleDefineMessage(userMessage);
           // if prompt contains "buy"
         } else if (userMessage.toLowerCase().includes("buy")) {
-          this.handleBuyMessage(userMessage);
+          answers = this.handleBuyMessage(userMessage);
           // if prompt contains "sell"
         } else if (userMessage.toLowerCase().includes("sell")) {
-          this.handleSellMessage(userMessage);
+          answers = this.handleSellMessage(userMessage);
           //Possible to break code here ***** FIX ******
         } else {
           const stockCode = this.extractStockCode(userMessage);
           if (stockCode.length > 0) {
-            await this.handleStockMessage(stockCode[0]);
+            answers = await this.handleStockMessage(stockCode[0]);
           } else {
-            await this.handleGeneralMessage(userMessage);
+            answers = await this.handleGeneralMessage(userMessage);
           }
         }
       } catch (error) {
@@ -159,17 +160,37 @@ export default {
           timestamp: new Date().toLocaleTimeString()
         });
       }
+
+      answers.forEach(answer => {
+        this.addTypingResponse(answer, false);
+      })
+
+      //save chat to backend
+      try{
+        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+        const reqBody = {
+          prompt: userMessage,
+          response: answers,
+          threadId: this.currentThread.id,
+        };
+        const chat = await axios.post(chatApi, reqBody);
+      }catch(err){
+        console.error('Error on saving chat:', err);
+      }
     },
 
     async handleDefineMessage(userMessage) {
       const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
       //const response = await axios.post(`${apiUrl}/defineTerm`, { term });
       try {
+        const answers = [];
+    
         const prompt = `Explain ${term} to me as if I'm 15.`;
-
         const answer = await gptResponse(prompt);
-        this.addTypingResponse(answer, false);
 
+        answers.push(answer);
+        return answers;
+        //this.addTypingResponse(answer, false);
       } catch (err) {
         console.log(err);
       }
@@ -177,6 +198,7 @@ export default {
 
 
     async handleStockMessage(stockCode) {
+      const answers = [];
       //alpha vantage api      
       const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${ALPHA_VANTAGE_API_KEY}`);
       const stockData = stockResponse.data;
@@ -184,20 +206,26 @@ export default {
       const timeStamp = new Date().toLocaleTimeString();
 
       let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-      this.addTypingResponse(responseText, false);
+      answers.push(responseText);
+      //this.addTypingResponse(responseText, false);
 
       //openai api
       const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
       const answer = await gptResponse(prompt);
 
-      this.addTypingResponse(answer, false);
+      answers.push(answer);
+      //this.addTypingResponse(answer, false);
+      return answers;
     },
 
     async handleGeneralMessage(userMessage) {
-      const prompt = userMessage;
+      const answers = [];
 
+      const prompt = userMessage;
       const answer = await gptResponse(prompt);
-      this.addTypingResponse(answer, false);
+      answers.push(answer);
+      //this.addTypingResponse(answer, false);
+      return answers;
     },
 
     addTypingResponse(text, isUser) {
@@ -210,6 +238,7 @@ export default {
       };
 
       this.messages.push(typingMessage);
+      //console.log(typingMessage);
       setTimeout(() => {
         typingMessage.typing = false;
         this.$forceUpdate();
