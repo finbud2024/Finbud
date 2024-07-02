@@ -290,7 +290,7 @@ export default {
     1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
     2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
     3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
-    4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
+    4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#receive Shopping 125")
     5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
   `;
     if (!this.messages) {

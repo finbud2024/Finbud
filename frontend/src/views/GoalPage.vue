@@ -194,6 +194,11 @@ export default {
     };
   },
   methods: {
+    showGoalProgress(title, progress) {
+      this.goalTitle = title;
+      this.goalProgress = progress;
+      this.showModal = true;
+    },
     async fetchTransactions() {
       try {
         const response = await axios.get(`${URL}/transactions`);

@@ -13,18 +13,14 @@ import newsRoute from '../Endpoints/newsRoute.js';
 import chatRoute from '../Endpoints/chatRoute.js';
 import authRoute from '../Endpoints/authRoute.js';
 import cryptoRoute from '../Endpoints/cryptoRoute.js';
-<<<<<<< HEAD
 import stockRoute from '../Endpoints/stockRoute.js';
-=======
 import transactionRoute from '../Endpoints/transactionRoute.js';
->>>>>>> ee366c64c (update Goal & Chat)
 
 
 // Load environment variables from .env
 const mongoURI = process.env.MONGO_URI;
 const sessionSecret = process.env.SESSION_SECRET;
 const app = express();
-
 
 
 
@@ -93,13 +89,10 @@ app.use('/.netlify/functions/server', newsRoute);
 app.use('/.netlify/functions/server', chatRoute);
 app.use('/.netlify/functions/server', authRoute);
 app.use('/.netlify/functions/server', cryptoRoute);
-<<<<<<< HEAD
 app.use('/.netlify/functions/server', stockRoute);
-=======
 app.use('/.netlify/functions/server', transactionRoute);
 
 
->>>>>>> ee366c64c (update Goal & Chat)
 
 
 const handler = serverless(app);
