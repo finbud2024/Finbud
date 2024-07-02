@@ -35,7 +35,15 @@
             </li>
           </ul>
           <input type="number" placeholder="Amount" v-model="transaction.amount">
-          <button @click="addTransaction">Add Transaction</button>
+          <div class="balance-and-button">
+            <button @click="addTransaction">Add Transaction</button>
+            <div class="balance">
+              Account Balance: {{ accountBalance.toFixed(2) }}$
+            </div>
+            <button @click="handleBalanceButtonClick">
+              {{ initialBalanceSet ? 'Reset Account Balance' : 'Set Your Account Balance' }}
+            </button>
+          </div>
         </div>
         <div class="transaction-list">
           <table>
@@ -44,14 +52,16 @@
                 <th>Date</th>
                 <th>Description</th>
                 <th>Amount</th>
+                <th>Transaction</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="trans in transactions" :key="trans._id" :class="{ 'high-spending': trans.amount > 100 }">
+              <tr v-for="trans in transactions" :key="trans._id" :class="{ 'receiving': trans.amount > 0, 'spending': trans.amount < 0 }">
                 <td>{{ formatDate(trans.date) }}</td>
                 <td>{{ trans.description }}</td>
                 <td>{{ trans.amount }}</td>
+                <td>{{ trans.amount > 0 ? 'Receiving' : 'Spending' }}</td>
                 <td>
                   <button @click="editTransaction(trans)">Edit</button>
                   <button @click="removeTransaction(trans._id)">Remove</button>
@@ -62,8 +72,15 @@
         </div>
       </div>
     </section>
+    <div class="chart-toggle-buttons">
+        <button @click="showLineChart = true" :class="{ active: showLineChart }">Line Chart</button>
+        <button @click="showLineChart = false" :class="{ active: !showLineChart }">Bar Chart</button>
+      </div>
     <section class="transaction-chart">
-      <div ref="chartContainer" class="chart-container"></div>
+      <div class="chart-container">
+        <TransactionLine v-if="showLineChart" :transactions="transactions" />
+        <TransactionBar v-else :transactions="transactions" />
+      </div>
     </section>
     <section class="financial-goals">
       <h2>Your Financial Goals</h2>
@@ -102,23 +119,45 @@
         <button @click="updateTransaction">Update Transaction</button>
       </div>
     </div>
+    <div v-if="showSetBalanceModal" class="modal" @click="showSetBalanceModal = false">
+      <div class="modal-content" @click.stop>
+        <h3>Set Initial Balance</h3>
+        <input type="number" placeholder="Initial Balance" v-model="initialBalance">
+        <button @click="setInitialBalance">Set Balance</button>
+      </div>
+    </div>
+    <div v-if="showResetConfirmationModal" class="modal" @click="showResetConfirmationModal = false">
+      <div class="modal-content" @click.stop>
+        <h3>Reset Account Balance</h3>
+        <p>Are you sure you want to reset your account balance? This action will delete all your transactions.</p>
+        <button @click="resetAccountBalance">Yes</button>
+        <button @click="showResetConfirmationModal = false">No</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import moment from 'moment-timezone';
-import { createChart } from 'lightweight-charts';
+import TransactionLine from '../components/goalPage/TransactionLine.vue';
+import TransactionBar from '../components/goalPage/TransactionBar.vue';
 
 const URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server';
 
 export default {
   name: 'GoalPage',
+  components: {
+    TransactionLine,
+    TransactionBar
+  },
   data() {
     return {
       showModal: false,
       showAddGoalModal: false,
       showEditTransactionModal: false,
+      showSetBalanceModal: false,
+      showResetConfirmationModal: false,
       goalTitle: '',
       goalProgress: 0,
       transaction: {
@@ -148,8 +187,10 @@ export default {
         totalMoney: '',
         moneyHave: 0,
       },
-      chart: null,
-      lineSeries: null,
+      initialBalance: null,
+      accountBalance: 0,
+      initialBalanceSet: false, // New state to track if initial balance is set
+      showLineChart: true, // New state to toggle between line and bar chart
     };
   },
   methods: {
@@ -157,27 +198,79 @@ export default {
       try {
         const response = await axios.get(`${URL}/transactions`);
         this.transactions = response.data;
-        this.createChart(); // Call createChart after fetching transactions
+        if (this.transactions.length > 0) {
+          this.accountBalance = this.transactions[this.transactions.length - 1].balance;
+          this.initialBalanceSet = true; // If there are transactions, initial balance is set
+        }
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
     },
     async addTransaction() {
-      if (this.transaction.description && this.transaction.amount) {
+      if (this.transaction.description && this.transaction.amount !== null) {
         try {
+          // Fetch the last transaction to get the latest balance
+          const latestTransaction = this.transactions.length > 0 ? this.transactions[this.transactions.length - 1] : null;
+          const latestBalance = latestTransaction ? latestTransaction.balance : 0;
+
+          // Calculate the new balance
+          const newBalance = latestBalance + this.transaction.amount;
+
           const response = await axios.post(`${URL}/transactions`, {
             ...this.transaction,
             date: moment().tz("America/New_York").format(), // Save the date in UTC-4
+            balance: newBalance // Add the balance field
           });
+
           this.transactions.push(response.data);
+          this.accountBalance = newBalance; // Update account balance
           this.transaction.description = '';
           this.transaction.amount = null;
-          this.createChart();
         } catch (error) {
           console.error('Error adding transaction:', error);
         }
       } else {
         console.error('Transaction description and amount are required');
+      }
+    },
+    async setInitialBalance() {
+      if (this.initialBalance !== null) {
+        try {
+          const response = await axios.post(`${URL}/transactions`, {
+            description: 'Initial Balance',
+            amount: this.initialBalance,
+            date: moment().tz("America/New_York").format(), // Save the date in UTC-4
+            balance: this.initialBalance
+          });
+
+          this.transactions.push(response.data);
+          this.accountBalance = this.initialBalance; // Set the initial balance
+          this.initialBalance = null;
+          this.showSetBalanceModal = false;
+          this.initialBalanceSet = true; // Mark initial balance as set
+        } catch (error) {
+          console.error('Error setting initial balance:', error);
+        }
+      } else {
+        console.error('Initial balance is required');
+      }
+    },
+    handleBalanceButtonClick() {
+      if (this.initialBalanceSet) {
+        this.showResetConfirmationModal = true;
+      } else {
+        this.showSetBalanceModal = true;
+      }
+    },
+    async resetAccountBalance() {
+      try {
+        await axios.delete(`${URL}/transactions/reset`);
+        this.transactions = [];
+        this.accountBalance = 0;
+        this.initialBalanceSet = false;
+        this.showResetConfirmationModal = false;
+      } catch (error) {
+        console.error('Error resetting account balance:', error);
       }
     },
     editTransaction(trans) {
@@ -191,7 +284,7 @@ export default {
         if (index !== -1) {
           this.transactions.splice(index, 1, response.data);
           this.showEditTransactionModal = false;
-          this.createChart();
+          this.recalculateBalances();
         }
       } catch (error) {
         console.error('Error updating transaction:', error);
@@ -201,10 +294,18 @@ export default {
       try {
         await axios.delete(`${URL}/transactions/${id}`);
         this.transactions = this.transactions.filter(trans => trans._id !== id);
-        this.createChart();
+        this.recalculateBalances();
       } catch (error) {
         console.error('Error removing transaction:', error);
       }
+    },
+    recalculateBalances() {
+      let balance = 0;
+      for (let transaction of this.transactions) {
+        balance += transaction.amount;
+        transaction.balance = balance;
+      }
+      this.accountBalance = balance;
     },
     goalStyle(progress) {
       const green = Math.min(255, (progress / 100) * 255);
@@ -234,10 +335,7 @@ export default {
     },
     formatDate(dateString) {
       const date = moment(dateString).tz("America/New_York"); // Convert to Washington D.C. time zone
-      const year = date.year();
-      const month = String(date.month() + 1).padStart(2, '0');
-      const day = String(date.date()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+      return date.format("YYYY-MM-DD HH:mm");
     },
     async processURLParams() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -279,95 +377,6 @@ export default {
         this.recommendationsVisible = false;
       }, 100); //delay
     },
-    createChart() {
-      if (this.chart) {
-        this.chart.remove();
-      }
-
-      const chartData = this.transactions.map(trans => ({
-        time: moment(trans.date).unix(), // Convert date to Unix timestamp
-        value: trans.amount,
-        description: trans.description
-      }));
-
-      this.chart = createChart(this.$refs.chartContainer, {
-        width: this.$refs.chartContainer.clientWidth,
-        height: 400,
-        layout: {
-          backgroundColor: '#FFFFFF',
-          textColor: '#333',
-        },
-        grid: {
-          vertLines: {
-            color: '#eee',
-          },
-          horzLines: {
-            color: '#eee',
-          },
-        },
-        timeScale: {
-          timeVisible: true,
-          secondsVisible: false,
-        },
-      });
-
-      this.lineSeries = this.chart.addLineSeries({
-        color: '#4caf50',
-        lineWidth: 2,
-        crossHairMarkerVisible: true,
-        crossHairMarkerRadius: 6,
-      });
-
-      this.lineSeries.setData(chartData);
-
-      this.chart.subscribeCrosshairMove((param) => {
-        if (!param || !param.time) {
-          this.removeTooltip();
-          return;
-        }
-
-        const point = chartData.find(item => item.time === param.time);
-        if (point) {
-          this.showTooltip(point, param);
-        }
-      });
-
-      // Resize the chart when the window size changes
-      window.addEventListener('resize', this.resizeChart);
-    },
-    resizeChart() {
-      if (this.chart) {
-        this.chart.resize(this.$refs.chartContainer.clientWidth, 400);
-      }
-    },
-    showTooltip(point, param) {
-        let date = moment.unix(point.time).tz("America/New_York");
-        let dateString = date.format("YYYY-MM-DD");
-        let timeString = date.format("HH:mm");
-
-        let tooltip = document.querySelector('.tooltip');
-        if (!tooltip) {
-          tooltip = document.createElement('div');
-          tooltip.className = 'tooltip';
-          this.$refs.chartContainer.appendChild(tooltip);
-        }
-
-        tooltip.innerHTML = `
-          <div>Description: ${point.description}</div>
-          <div>Amount: ${point.value.toFixed(2)}$</div>
-          <div>Time: ${timeString} ${dateString}</div>
-        `;
-        tooltip.style.left = (param.point.x) + 'px';
-        tooltip.style.top = (param.point.y) + 'px'; // Adjust position below the point
-        tooltip.style.display = 'block';
-    },
-
-    removeTooltip() {
-      let tooltip = document.querySelector('.tooltip');
-      if (tooltip) {
-        tooltip.style.display = 'none';
-      }
-    },
   },
   mounted() {
     this.fetchTransactions();
@@ -377,7 +386,6 @@ export default {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
     }
-    window.removeEventListener('resize', this.resizeChart);
   }
 };
 </script>
@@ -492,6 +500,18 @@ export default {
   box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
+.balance-and-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.balance {
+  margin-left: 20px;
+  font-size: 1.2em;
+}
+
 .transaction-box button {
   padding: 10px 20px;
   background-color: #003366;
@@ -555,32 +575,74 @@ export default {
   background-color: #f2f2f2;
 }
 
-.high-spending {
-  background-color: #ffcccc;
+.spending {
+  background-color: rgba(255, 0, 0, 0.5);
 }
 
-/* Transaction chart section */
-/* Transaction chart section */
+.receiving {
+  background-color: rgba(0, 255, 0, 0.5);
+}
+
 .transaction-chart {
-  margin-top: 40px;
+  margin-top: 30px;
   text-align: center;
   border: 2px solid #1e06fb;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  display: flex;
   align-items: center;
   justify-content: center;
-  display: flex;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  box-sizing: border-box;
 }
 
 .chart-container {
   width: 100%;
-  height: 400px;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  display: flex;
+  height: 100%;
+  /* max-height: 800px;  */
+  box-sizing: border-box;
 }
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-toggle-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.chart-toggle-buttons button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chart-toggle-buttons button:hover {
+  background-color: #005bb5;
+}
+
+.chart-toggle-buttons button.active {
+  background-color: #005bb5;
+}
+
 
 /* Financial goals */
 .financial-goals {
@@ -751,44 +813,17 @@ export default {
     flex-direction: column;
   }
 
-  /* .transaction-box, .transaction-list {
-    width: 89%;
-    padding: 5%;
-  } */
-
   .goal {
     flex: 1 1 100%;
+  }
+
+  .transaction-chart {
+    padding: 10px;
+  }
+
+  .chart-wrapper {
+    height: auto;
   }
 }
 </style>
 
-
-<style>
-.tooltip {
-  position: absolute;
-  background-color: #007bff;
-  color: white;
-  width: 200px;
-  padding: 10px;
-  border-radius: 5px;
-  pointer-events: none;
-  display: none;
-  transform: translate(-50%, 10px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  text-align: left;
-}
-
-.tooltip::after {
-  content: '';
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #007bff;
-}
-</style>
