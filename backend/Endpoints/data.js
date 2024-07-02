@@ -9,18 +9,18 @@ import CryptoCurrency from '../Database Schema/Crypto.js'
 const apiKey = 'CKMO3Q3NLK0OOSZG';
 
 // console.log(todayDate);
-autoGetPrice();
+// autoGetPrice();
 async function autoGetPrice(){
     var todayDate = await resetToMidNight(new Date());
     const latestDateInStockDB = await getLatestDate(StockPrice);
     const latestDateInCryptoDB = await getLatestDate(CryptoCurrency);
-    // console.log("Latest date in Stock DB:",new Date(latestDateInStockDB));
-    // console.log("Latest date :",new Date(todayDate));
-    // if(new Date(todayDate) > new Date(latestDateInStockDB)){
-    //     getStockPrice();
-    // }else{
-    //     console.log("Today Date is equal to the latest Date in Stock, so no need to update DB");
-    // }
+    console.log("Latest date in Stock DB:",new Date(latestDateInStockDB));
+    console.log("Latest date :",new Date(todayDate));
+    if(new Date(todayDate) > new Date(latestDateInStockDB)){
+        getStockPrice();
+    }else{
+        console.log("Today Date is equal to the latest Date in Stock, so no need to update DB");
+    }
     console.log("Latest date in Crypto DB:", new Date(latestDateInCryptoDB));
     console.log("today Date:", new Date(todayDate));
     if(new Date(todayDate) > new Date(latestDateInCryptoDB)){
@@ -94,7 +94,7 @@ async function saveNewStock(metaData, data, recordDate) {
         date: recordDate,
     })
     try {
-        const savedCrypto = newStock.save();
+        const savedStock= newStock.save();
         console.log("Stock saved Successfully", metaData['2. Symbol']);
     } catch (error) {
         console.log("Error saving new stock", error);
