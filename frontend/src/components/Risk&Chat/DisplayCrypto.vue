@@ -107,7 +107,7 @@ export default {
         async queryDate() {
             try {
                 const send = this.selected;
-                const responses = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/cryptoRoute`, { "symbol": this.selected, "startDate": this.startDate, "endDate": this.endDate });
+                const responses = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/queryRoute`, { "symbol": this.selected, "startDate": this.startDate, "endDate": this.endDate });
                 console.log("from DisplayCrypto Page:", responses.data);
                 this.cryptoList = responses.data;
                 this.loading = false;
