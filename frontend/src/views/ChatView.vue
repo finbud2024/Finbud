@@ -40,7 +40,6 @@ import SideBar from '../components/SideBar.vue';
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
-const URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server';
 
 export default {
   name: 'ChatView',
@@ -232,7 +231,7 @@ export default {
     },
     async addTransaction(description, amount, balance) {
       try {
-        const response = await axios.post(`${URL}/transactions`, {
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
           description,
           amount,
           balance,
@@ -250,7 +249,7 @@ export default {
     },
     async calculateNewBalance(amount) {
       try {
-        const response = await axios.get(`${URL}/transactions`);
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions`);
         const transactions = response.data;
         const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
         return currentBalance + amount;
