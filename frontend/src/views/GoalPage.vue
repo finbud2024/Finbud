@@ -143,8 +143,6 @@ import moment from 'moment-timezone';
 import TransactionLine from '../components/goalPage/TransactionLine.vue';
 import TransactionBar from '../components/goalPage/TransactionBar.vue';
 
-const URL = process.env.NODE_ENV === 'development' ? 'http://localhost:8888/.netlify/functions/server' : 'https://finbud-ai.netlify.app/.netlify/functions/server';
-
 export default {
   name: 'GoalPage',
   components: {
@@ -201,7 +199,7 @@ export default {
     },
     async fetchTransactions() {
       try {
-        const response = await axios.get(`${URL}/transactions`);
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions`);
         this.transactions = response.data;
         if (this.transactions.length > 0) {
           this.accountBalance = this.transactions[this.transactions.length - 1].balance;
@@ -221,7 +219,7 @@ export default {
           // Calculate the new balance
           const newBalance = latestBalance + this.transaction.amount;
 
-          const response = await axios.post(`${URL}/transactions`, {
+          const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
             ...this.transaction,
             date: moment().tz("America/New_York").format(), // Save the date in UTC-4
             balance: newBalance // Add the balance field
@@ -241,7 +239,7 @@ export default {
     async setInitialBalance() {
       if (this.initialBalance !== null) {
         try {
-          const response = await axios.post(`${URL}/transactions`, {
+          const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
             description: 'Initial Balance',
             amount: this.initialBalance,
             date: moment().tz("America/New_York").format(), // Save the date in UTC-4
@@ -269,7 +267,7 @@ export default {
     },
     async resetAccountBalance() {
       try {
-        await axios.delete(`${URL}/transactions/reset`);
+        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/reset`);
         this.transactions = [];
         this.accountBalance = 0;
         this.initialBalanceSet = false;
@@ -284,7 +282,7 @@ export default {
     },
     async updateTransaction() {
       try {
-        const response = await axios.put(`${URL}/transactions/${this.editTransactionData._id}`, this.editTransactionData);
+        const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/transactions/${this.editTransactionData._id}`, this.editTransactionData);
         const index = this.transactions.findIndex(t => t._id === this.editTransactionData._id);
         if (index !== -1) {
           this.transactions.splice(index, 1, response.data);
@@ -297,7 +295,7 @@ export default {
     },
     async removeTransaction(id) {
       try {
-        await axios.delete(`${URL}/transactions/${id}`);
+        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/${id}`);
         this.transactions = this.transactions.filter(trans => trans._id !== id);
         this.recalculateBalances();
       } catch (error) {
