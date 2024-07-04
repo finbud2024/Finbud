@@ -107,9 +107,7 @@ export default {
         async queryDate() {
             try {
                 const send = this.selected;
-                let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
-                URL += "/.netlify/functions/server"
-                const responses = await axios.post(`${URL}/cryptoRoute`, { "symbol": this.selected, "startDate": this.startDate, "endDate": this.endDate });
+                const responses = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/queryRoute`, { "symbol": this.selected, "startDate": this.startDate, "endDate": this.endDate });
                 console.log("from DisplayCrypto Page:", responses.data);
                 this.cryptoList = responses.data;
                 this.loading = false;
