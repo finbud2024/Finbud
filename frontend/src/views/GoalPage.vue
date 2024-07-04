@@ -28,9 +28,22 @@
       <h2>Daily Transactions</h2>
       <div class="transaction-container">
         <div class="transaction-box">
-          <input type="text" placeholder="Description" v-model="transaction.description">
+          <input type="text" placeholder="Description" v-model="transaction.description" @input="generateRecommendations" @keydown="generateRecommendations" @focus="showRecommendations" @blur="hideRecommendations">
+          <ul v-if="recommendations.length && recommendationsVisible" class="recommendation-list" @mousedown.prevent>
+            <li v-for="(recommendation, index) in recommendations" :key="index" @click="selectRecommendation(recommendation)" :class="{ highlighted: index === highlightedIndex }">
+              {{ recommendation }}
+            </li>
+          </ul>
           <input type="number" placeholder="Amount" v-model="transaction.amount">
-          <button @click="addTransaction">Add Transaction</button>
+          <div class="balance-and-button">
+            <button @click="addTransaction">Add Transaction</button>
+            <div class="balance">
+              Account Balance: {{ accountBalance.toFixed(2) }}$
+            </div>
+            <button @click="handleBalanceButtonClick">
+              {{ initialBalanceSet ? 'Reset Account Balance' : 'Set Your Account Balance' }}
+            </button>
+          </div>
         </div>
         <div class="transaction-list">
           <table>
@@ -39,22 +52,34 @@
                 <th>Date</th>
                 <th>Description</th>
                 <th>Amount</th>
+                <th>Transaction</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="trans in transactions" :key="trans.id" :class="{ 'high-spending': trans.amount > 100 }">
-                <td>{{ trans.date }}</td>
+              <tr v-for="trans in transactions" :key="trans._id" :class="{ 'receiving': trans.amount > 0, 'spending': trans.amount < 0 }">
+                <td>{{ formatDate(trans.date) }}</td>
                 <td>{{ trans.description }}</td>
                 <td>{{ trans.amount }}</td>
+                <td>{{ trans.amount > 0 ? 'Receiving' : 'Spending' }}</td>
                 <td>
                   <button @click="editTransaction(trans)">Edit</button>
-                  <button @click="removeTransaction(trans.id)">Remove</button>
+                  <button @click="removeTransaction(trans._id)">Remove</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
+    </section>
+    <div class="chart-toggle-buttons">
+        <button @click="showLineChart = true" :class="{ active: showLineChart }">Line Chart</button>
+        <button @click="showLineChart = false" :class="{ active: !showLineChart }">Bar Chart</button>
+      </div>
+    <section class="transaction-chart">
+      <div class="chart-container">
+        <TransactionLine v-if="showLineChart" :transactions="transactions" />
+        <TransactionBar v-else :transactions="transactions" />
       </div>
     </section>
     <section class="financial-goals">
@@ -94,17 +119,43 @@
         <button @click="updateTransaction">Update Transaction</button>
       </div>
     </div>
+    <div v-if="showSetBalanceModal" class="modal" @click="showSetBalanceModal = false">
+      <div class="modal-content" @click.stop>
+        <h3>Set Initial Balance</h3>
+        <input type="number" placeholder="Initial Balance" v-model="initialBalance">
+        <button @click="setInitialBalance">Set Balance</button>
+      </div>
+    </div>
+    <div v-if="showResetConfirmationModal" class="modal" @click="showResetConfirmationModal = false">
+      <div class="modal-content" @click.stop>
+        <h3>Reset Account Balance</h3>
+        <p>Are you sure you want to reset your account balance? This action will delete all your transactions.</p>
+        <button @click="resetAccountBalance">Yes</button>
+        <button @click="showResetConfirmationModal = false">No</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+import moment from 'moment-timezone';
+import TransactionLine from '../components/goalPage/TransactionLine.vue';
+import TransactionBar from '../components/goalPage/TransactionBar.vue';
+
 export default {
-  name: 'HomePage',
+  name: 'GoalPage',
+  components: {
+    TransactionLine,
+    TransactionBar
+  },
   data() {
     return {
       showModal: false,
       showAddGoalModal: false,
       showEditTransactionModal: false,
+      showSetBalanceModal: false,
+      showResetConfirmationModal: false,
       goalTitle: '',
       goalProgress: 0,
       transaction: {
@@ -116,23 +167,13 @@ export default {
         description: '',
         amount: null,
       },
-      transactions: [
-        { id: 1, date: '2024-05-22', description: 'Groceries', amount: 120 },
-        { id: 2, date: '2024-05-22', description: 'Transport', amount: 45 },
-        { id: 3, date: '2024-05-21', description: 'Utilities', amount: 80 },
-        { id: 4, date: '2024-05-21', description: 'Dining', amount: 60 },
-        { id: 5, date: '2024-05-20', description: 'Subscription', amount: 15 },
-        { id: 6, date: '2024-05-20', description: 'Coffee', amount: 5 },
-        { id: 7, date: '2024-05-20', description: 'Shopping', amount: 150 },
-        { id: 8, date: '2024-05-19', description: 'Rent', amount: 1000 },
-        { id: 9, date: '2024-05-19', description: 'Gym', amount: 50 },
-        { id: 10, date: '2024-05-19', description: 'Insurance', amount: 200 },
-        { id: 11, date: '2024-05-19', description: 'Electronics', amount: 300 },
-        { id: 12, date: '2024-05-19', description: 'Books', amount: 40 },
-        { id: 13, date: '2024-05-19', description: 'Medical', amount: 100 },
-        { id: 14, date: '2024-05-19', description: 'Parking', amount: 20 },
-        { id: 15, date: '2024-05-19', description: 'Snacks', amount: 10 },
-      ],
+      transactions: [], // Initialize transactions as an empty array
+      recommendations: [],
+      recommendationsVisible: false,
+      highlightedIndex: -1,
+      possibleRecommendations: ['Groceries', 'Utilities', 'Subscription', 'Transport', 'Dining', 
+      'Shopping', 'Insurance', 'Entertainment', 'Healthcare', 'Education', 'Coffee', 'Medical', 'Rent', 'Electronics', 
+      'Gym', 'Books', 'Snacks', 'Meal', 'Bill', 'Travel'],
       goals: [
         { id: 1, name: 'Home Renovation', icon: 'fas fa-home', totalMoney: '300-350 million', moneyHave: '150 million', progress: 50 },
         { id: 2, name: 'New Sofa', icon: 'fas fa-couch', totalMoney: '56-75 million', moneyHave: '22 million', progress: 30 },
@@ -144,6 +185,10 @@ export default {
         totalMoney: '',
         moneyHave: 0,
       },
+      initialBalance: null,
+      accountBalance: 0,
+      initialBalanceSet: false, // New state to track if initial balance is set
+      showLineChart: true, // New state to toggle between line and bar chart
     };
   },
   methods: {
@@ -152,31 +197,118 @@ export default {
       this.goalProgress = progress;
       this.showModal = true;
     },
-    addTransaction() {
-      if (this.transaction.description && this.transaction.amount) {
-        this.transactions.push({
-          id: this.transactions.length + 1,
-          date: new Date().toISOString().split('T')[0],
-          description: this.transaction.description,
-          amount: this.transaction.amount,
-        });
-        this.transaction.description = '';
-        this.transaction.amount = null;
+    async fetchTransactions() {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions`);
+        this.transactions = response.data;
+        if (this.transactions.length > 0) {
+          this.accountBalance = this.transactions[this.transactions.length - 1].balance;
+          this.initialBalanceSet = true; // If there are transactions, initial balance is set
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    },
+    async addTransaction() {
+      if (this.transaction.description && this.transaction.amount !== null) {
+        try {
+          // Fetch the last transaction to get the latest balance
+          const latestTransaction = this.transactions.length > 0 ? this.transactions[this.transactions.length - 1] : null;
+          const latestBalance = latestTransaction ? latestTransaction.balance : 0;
+
+          // Calculate the new balance
+          const newBalance = latestBalance + this.transaction.amount;
+
+          const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+            ...this.transaction,
+            date: moment().tz("America/New_York").format(), // Save the date in UTC-4
+            balance: newBalance // Add the balance field
+          });
+
+          this.transactions.push(response.data);
+          this.accountBalance = newBalance; // Update account balance
+          this.transaction.description = '';
+          this.transaction.amount = null;
+        } catch (error) {
+          console.error('Error adding transaction:', error);
+        }
+      } else {
+        console.error('Transaction description and amount are required');
+      }
+    },
+    async setInitialBalance() {
+      if (this.initialBalance !== null) {
+        try {
+          const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+            description: 'Initial Balance',
+            amount: this.initialBalance,
+            date: moment().tz("America/New_York").format(), // Save the date in UTC-4
+            balance: this.initialBalance
+          });
+
+          this.transactions.push(response.data);
+          this.accountBalance = this.initialBalance; // Set the initial balance
+          this.initialBalance = null;
+          this.showSetBalanceModal = false;
+          this.initialBalanceSet = true; // Mark initial balance as set
+        } catch (error) {
+          console.error('Error setting initial balance:', error);
+        }
+      } else {
+        console.error('Initial balance is required');
+      }
+    },
+    handleBalanceButtonClick() {
+      if (this.initialBalanceSet) {
+        this.showResetConfirmationModal = true;
+      } else {
+        this.showSetBalanceModal = true;
+      }
+    },
+    async resetAccountBalance() {
+      try {
+        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/reset`);
+        this.transactions = [];
+        this.accountBalance = 0;
+        this.initialBalanceSet = false;
+        this.showResetConfirmationModal = false;
+      } catch (error) {
+        console.error('Error resetting account balance:', error);
       }
     },
     editTransaction(trans) {
       this.editTransactionData = { ...trans };
       this.showEditTransactionModal = true;
     },
-    updateTransaction() {
-      const index = this.transactions.findIndex(t => t.id === this.editTransactionData.id);
-      if (index !== -1) {
-        this.transactions.splice(index, 1, { ...this.editTransactionData });
-        this.showEditTransactionModal = false;
+    async updateTransaction() {
+      try {
+        const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/transactions/${this.editTransactionData._id}`, this.editTransactionData);
+        const index = this.transactions.findIndex(t => t._id === this.editTransactionData._id);
+        if (index !== -1) {
+          this.transactions.splice(index, 1, response.data);
+          this.showEditTransactionModal = false;
+          this.recalculateBalances();
+        }
+      } catch (error) {
+        console.error('Error updating transaction:', error);
       }
     },
-    removeTransaction(id) {
-      this.transactions = this.transactions.filter(trans => trans.id !== id);
+    async removeTransaction(id) {
+      try {
+        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/${id}`);
+        this.transactions = this.transactions.filter(trans => trans._id !== id);
+        this.recalculateBalances();
+      } catch (error) {
+        console.error('Error removing transaction:', error);
+      }
+    },
+    recalculateBalances() {
+      let balance = 0;
+      for (let transaction of this.transactions) {
+        balance += transaction.amount;
+        transaction.balance = balance;
+      }
+      this.accountBalance = balance;
     },
     goalStyle(progress) {
       const green = Math.min(255, (progress / 100) * 255);
@@ -204,7 +336,60 @@ export default {
         moneyHave: 0,
       };
     },
+    formatDate(dateString) {
+      const date = moment(dateString).tz("America/New_York"); // Convert to Washington D.C. time zone
+      return date.format("YYYY-MM-DD HH:mm");
+    },
+    async processURLParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const description = urlParams.get('description');
+      const amount = urlParams.get('amount');
+      const action = urlParams.get('action');
+
+      if (description && amount && action === 'add') {
+        this.transaction.description = description;
+        this.transaction.amount = parseInt(amount, 10);
+        await this.addTransaction();
+      }
+    },
+    generateRecommendations(event) {
+      const input = this.transaction.description.toLowerCase();
+      if (input.length === 0) {
+        this.recommendations = [];
+        return;
+      }
+      this.recommendations = this.possibleRecommendations.filter(item => item.toLowerCase().includes(input));
+      if (event.key === 'ArrowDown' && this.highlightedIndex < this.recommendations.length - 1) {
+        this.highlightedIndex++;
+      } else if (event.key === 'ArrowUp' && this.highlightedIndex > 0) {
+        this.highlightedIndex--;
+      } else if (event.key === 'Enter' && this.highlightedIndex >= 0) {
+        this.selectRecommendation(this.recommendations[this.highlightedIndex]);
+      }
+    },
+    selectRecommendation(recommendation) {
+      this.transaction.description = recommendation;
+      this.recommendations = [];
+      this.highlightedIndex = -1;
+    },
+    showRecommendations() {
+      this.recommendationsVisible = true;
+    },
+    hideRecommendations() {
+      setTimeout(() => {
+        this.recommendationsVisible = false;
+      }, 100); //delay
+    },
   },
+  mounted() {
+    this.fetchTransactions();
+    this.processURLParams();
+  },
+  beforeUnmount() {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+  }
 };
 </script>
 
@@ -304,6 +489,9 @@ export default {
   margin-right: 20px;
   width: 100%;
   margin-bottom: 20px;
+  position: relative;
+  border-radius: 5px;
+  max-height: 300px;
 }
 
 .transaction-box input {
@@ -311,7 +499,20 @@ export default {
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 98%;
+  width: 100%; /* Set to 100% width */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.balance-and-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.balance {
+  margin-left: 20px;
+  font-size: 1.2em;
 }
 
 .transaction-box button {
@@ -326,6 +527,32 @@ export default {
 
 .transaction-box button:hover {
   background-color: #005bb5;
+}
+
+.recommendation-list {
+  position: absolute;
+  top: 50px; /* Adjust this value based on your input field height */
+  left: 0;
+  right: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.recommendation-list li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.recommendation-list li:hover,
+.recommendation-list li.highlighted {
+  background-color: #f0f0f0;
 }
 
 .transaction-list {
@@ -351,9 +578,74 @@ export default {
   background-color: #f2f2f2;
 }
 
-.high-spending {
-  background-color: #ffcccc;
+.spending {
+  background-color: rgba(255, 0, 0, 0.5);
 }
+
+.receiving {
+  background-color: rgba(0, 255, 0, 0.5);
+}
+
+.transaction-chart {
+  margin-top: 30px;
+  text-align: center;
+  border: 2px solid #1e06fb;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  box-sizing: border-box;
+}
+
+.chart-container {
+  width: 100%;
+  height: 100%;
+  /* max-height: 800px;  */
+  box-sizing: border-box;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-toggle-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.chart-toggle-buttons button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chart-toggle-buttons button:hover {
+  background-color: #005bb5;
+}
+
+.chart-toggle-buttons button.active {
+  background-color: #005bb5;
+}
+
 
 /* Financial goals */
 .financial-goals {
@@ -413,6 +705,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 20;
 }
 
 .modal-content {
@@ -523,13 +816,17 @@ export default {
     flex-direction: column;
   }
 
-  .transaction-box, .transaction-list {
-    width: 89%;
-    padding: 5%;
-  }
-
   .goal {
     flex: 1 1 100%;
   }
+
+  .transaction-chart {
+    padding: 10px;
+  }
+
+  .chart-wrapper {
+    height: auto;
+  }
 }
 </style>
+
