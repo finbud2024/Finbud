@@ -1,4 +1,4 @@
-  <template>
+<template>
   <div class="home-container">
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
       <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
@@ -10,9 +10,16 @@
     <div class="chat-container">
       <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
-        <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
-          :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
-          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar" />
+        <MessageComponent 
+          v-for="(message, index) in messages" 
+          :key="index" 
+          :is-user="message.isUser"
+          :text="message.text" 
+          :typing="message.typing" 
+          :timestamp="message.timestamp"
+          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" 
+          :avatar-src="message.isUser ? userAvatar : botAvatar" 
+        />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>3
@@ -26,8 +33,8 @@ import ChatFrame from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import SideBar from '../components/SideBar.vue';
-import { gptResponse } from '../services/gptResponse.js';
 import authStore from '@/authStore';
+import gptResponse from '../services/gptResponse.js';
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
@@ -45,11 +52,11 @@ export default {
   data() {
     return {
       newMessage: '',
-      messages: [], //list of message per threads
+      messages: [], 
       userAvatar: require('@/assets/tri.jpeg'),
       botAvatar: require('@/assets/bot.png'),
       currentThread: {},
-      threads: [], // list of threads per user 
+      threads: [], 
       isSidebarVisible: false
     };
   },
@@ -204,10 +211,8 @@ export default {
         console.error('Error on saving chat:', err);
       }
     },
-
     async handleDefineMessage(userMessage) {
       const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-      //const response = await axios.post(`${apiUrl}/defineTerm`, { term });
       try {
         const answers = [];
     
@@ -221,8 +226,6 @@ export default {
         console.log(err);
       }
     },
-
-
     async handleStockMessage(stockCode) {
       const answers = [];
       //alpha vantage api      
@@ -235,7 +238,6 @@ export default {
       answers.push(responseText);
       //this.addTypingResponse(responseText, false);
 
-      //openai api
       const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
       const answer = await gptResponse(prompt);
 
@@ -243,7 +245,6 @@ export default {
       //this.addTypingResponse(answer, false);
       return answers;
     },
-
     async handleGeneralMessage(userMessage) {
       const answers = [];
 
@@ -253,7 +254,57 @@ export default {
       //this.addTypingResponse(answer, false);
       return answers;
     },
-
+    async handleAddTransaction(userMessage) {
+      const match = userMessage.match(/#receive\s+(\w+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1];
+        const amount = parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+      } else {
+        this.addTypingResponse('Please specify the description and amount you want to add.', false);
+      }
+    },
+    async handleSpendTransaction(userMessage) {
+      const match = userMessage.match(/#spend\s+(\w+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1];
+        const amount = -parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+      } else {
+        this.addTypingResponse('Please specify the description and amount you want to spend.', false);
+      }
+    },
+    async addTransaction(description, amount, balance) {
+      try {
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+          description,
+          amount,
+          balance,
+          date: new Date().toISOString()
+        });
+        if (amount < 0) {
+          this.addTypingResponse(`Transaction spent: ${description}, $${Math.abs(amount)}.`, false);
+        } else {
+          this.addTypingResponse(`Transaction received: ${description}, $${amount}.`, false);
+        }
+      } catch (error) {
+        console.error('Error adding transaction:', error);
+        this.addTypingResponse('Error adding transaction.', false);
+      }
+    },
+    async calculateNewBalance(amount) {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions`);
+        const transactions = response.data;
+        const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+        return currentBalance + amount;
+      } catch (error) {
+        console.error('Error calculating new balance:', error);
+        throw error;
+      }
+    },
     addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
@@ -262,7 +313,6 @@ export default {
         timestamp: new Date().toLocaleTimeString(),
         username: isUser ? 'You' : 'FinBud Bot'
       };
-
       this.messages.push(typingMessage);
       //console.log(typingMessage);
       setTimeout(() => {
@@ -270,7 +320,6 @@ export default {
         this.$forceUpdate();
       }, 1000);
     },
-
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
       const matches = message.match(pattern) || [];
@@ -288,8 +337,9 @@ export default {
     1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
     2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
     3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+    4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#receive Shopping 125")
+    5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
   `;
-
     if (!this.messages) {
       this.messages = [];
     }
