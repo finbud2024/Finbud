@@ -2,7 +2,7 @@
   <aside class="side-bar">
     <div class="sidebar-header">
       <span>Chat Threads</span>
-      <button class="add-thread-btn" @click="addThread">+</button>
+      <button class="add-thread-btn" @click="addThread()">+</button>
     </div>
     <ul class="thread-list">
       <li v-for="(thread, index) in threads" :key="index" @click="selectThread(index)">

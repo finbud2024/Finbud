@@ -3,82 +3,182 @@ import Transaction from '../Database Schema/Transaction.js';
 
 const transactionRoute = express.Router();
 
-// GET all transactions
-transactionRoute.get('/transactions', async (req, res) => {
-  try {
-    const transactions = await Transaction.find();
-    res.status(200).json(transactions);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// CRUD operations on /transactions/:transactionId
+transactionRoute.route('/transactions/:transactionId')
+  // GET a transaction by ID
+  .get(async (req, res) => {
+    const transactionId = req.params.transactionId;
+    console.log('in /transactions/:transactionId Route (GET) transaction with ID: ' + JSON.stringify(transactionId));
+    try {
+      let transaction = await Transaction.findById(transactionId);
+      if (!transaction) {
+        return res.status(404).send(`No transaction with ID: ${transactionId} exists in the database.`);
+      }
+      return res.status(200).json(transaction);
+    } catch (err) {
+      return res.status(501).send(`Unexpected error occurred when looking for transaction with ID: ${transactionId} in database: ${err}`);
+    }
+  })
 
-// POST a new transaction
-transactionRoute.post('/transactions', async (req, res) => {
-  const { description, amount, balance } = req.body;
+  // PUT: update a transaction with a given ID
+  .put(async (req, res) => {
+    const { description, amount, userId } = req.body;
+    const transactionId = req.params.transactionId;
 
-  if (!description || amount === undefined || balance === undefined) {
-    return res.status(400).json({ message: 'Description, amount, and balance are required' });
-  }
+    if (!description || amount === undefined || !userId) {
+      return res.status(400).send("Description, amount, and userId are required");
+    }
 
-  const transactionType = amount > 0 ? 'receiving' : 'spending';
+    console.log('in /transactions/:transactionId Route (PUT) transaction with ID: ' + transactionId);
 
-  const transaction = new Transaction({
-    description,
-    amount,
-    balance,
-    transaction: transactionType
+    const transactionType = amount > 0 ? 'receiving' : 'spending';
+
+    try {
+      const oldTransaction = await Transaction.findById(transactionId);
+      if (!oldTransaction) {
+        return res.status(404).send(`Cannot find transaction with ID: ${transactionId}`);
+      }
+
+      const balanceDifference = amount - oldTransaction.amount;
+
+      const updatedTransaction = await Transaction.findByIdAndUpdate(
+        transactionId,
+        { userId, description, amount, transaction: transactionType },
+        { new: true }
+      );
+
+      if (!updatedTransaction) {
+        return res.status(404).send(`Cannot find transaction with ID: ${transactionId}`);
+      }
+
+      // Recalculate balances
+      const transactions = await Transaction.find({ userId }).sort({ date: 1 });
+      let newBalance = 0;
+      transactions.forEach(tx => {
+        newBalance += tx.amount;
+        tx.balance = newBalance;
+        tx.save();
+      });
+
+      console.log("Transaction updated: ", updatedTransaction);
+      return res.status(200).json({ message: 'Transaction updated successfully', updatedTransaction, transactions });
+    } catch (error) {
+      return res.status(501).send(`Unexpected error occurred when looking for transaction with ID: ${transactionId} in database: ${err}`);
+    }
+  })
+
+  // DELETE a transaction by ID
+  .delete(async (req, res) => {
+    const transactionId = req.params.transactionId;
+    console.log('In /transactions/:transactionId Route (DELETE) transaction with ID: ' + transactionId);
+
+    try {
+      const transaction = await Transaction.findByIdAndDelete(transactionId);
+      if (!transaction) {
+        return res.status(404).send(`No transaction with ID: ${transactionId} exists in the database.`);
+      }
+
+      // Recalculate balances
+      const transactions = await Transaction.find({ userId: transaction.userId }).sort({ date: 1 });
+      let newBalance = 0;
+      transactions.forEach(tx => {
+        newBalance += tx.amount;
+        tx.balance = newBalance;
+        tx.save();
+      });
+
+      console.log('Transaction deleted: ', transaction);
+      return res.status(204).send('Transaction deleted successfully');
+    } catch (error) {
+      return res.status(501).send(`Unexpected error occurred when looking for transaction with ID: ${transactionId} in database: ${err}`);
+    }
   });
 
-  try {
-    const savedTransaction = await transaction.save();
-    res.status(201).json(savedTransaction);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// CRUD operations on /transactions, all transactions in database
+transactionRoute.route('/transactions')
+  // GET all transactions
+  .get(async (req, res) => {
+    console.log("in /transactions route (GET) all transactions");
+    try {
+      const transactions = await Transaction.find();
+      return res.status(200).json(transactions);
+    } catch (error) {
+      return res.status(500).send("Internal server error: " + error);
+    }
+  })
 
-// PUT (to update) a transaction
-transactionRoute.put('/transactions/:id', async (req, res) => {
-  const { id } = req.params;
-  const { description, amount, balance } = req.body;
-  if (!description || amount === undefined || balance === undefined) {
-    return res.status(400).json({ message: 'Description, amount, and balance are required' });
-  }
+  // POST a new transaction
+  .post(async (req, res) => {
+		console.log('in /transactions Route (POST) new transaction to database')
+    const { description, amount, balance, userId } = req.body;
 
-  const transactionType = amount > 0 ? 'receiving' : 'spending';
+    if (!description || amount === undefined || balance === undefined || !userId) {
+      return res.status(400).send("Unable to save. Description, amount, balance, and userId are required");
+    }
 
-  try {
-    const updatedTransaction = await Transaction.findByIdAndUpdate(
-      id, 
-      { description, amount, balance, transaction: transactionType }, 
-      { new: true }
-    );
-    res.status(200).json(updatedTransaction);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+    const transactionType = amount > 0 ? 'receiving' : 'spending';
 
-// DELETE all transactions
-transactionRoute.delete('/transactions/reset', async (req, res) => {
-  try {
-    await Transaction.deleteMany({});
-    res.status(204).json({ message: 'All transactions deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+    const transaction = new Transaction({
+      userId: userId,
+      description: description,
+      amount: amount,
+      balance: balance,
+      transaction: transactionType
+    });
 
-// DELETE a transaction
-transactionRoute.delete('/transactions/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    await Transaction.findByIdAndDelete(id);
-    res.status(204).json({ message: 'Transaction deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+    try {
+      const savedTransaction = await transaction.save();
+      console.log("Transaction saved: ", savedTransaction);
+      return res.status(201).json(savedTransaction);
+    } catch (error) {
+      return res.status(500).send("Unexpected error occurred when saving transaction to database: " + error);
+    }
+  })
+
+  // DELETE all transactions
+  .delete(async (req, res) => {
+    console.log("in /transactions/reset route (DELETE) all transactions");
+    try {
+      await Transaction.deleteMany({});
+      return res.status(204).send('All transactions deleted successfully');
+    } catch (error) {
+      return res.status(500).send("Error deleting all transactions: " + error);
+    }
+  });
+
+// CRUD operations on /transactions/u/:userId, separated user's data
+transactionRoute.route('/transactions/u/:userId')
+  // GET all transactions for a specific userId, GET transaction of a specific data according to userId
+  .get(async (req, res) => {
+    const userId = req.params.userId;
+    console.log('in /transactions/u/:userId Route (GET) transactions with userId:' + JSON.stringify(userId));
+    try {
+      let transactions = await Transaction.find({ "userId": userId });
+      if (!transactions.length) {
+        return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      }
+      return res.status(200).json(transactions);
+    } catch (err) {
+      return res.status(501).send(`Unexpected error occurred when looking for transactions with userId: ${userId} in database: ${err}`);
+    }
+  })
+
+  // DELETE all transactions for a specific userId, RESET account balance of specific user
+  .delete(async (req, res) => {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res.status(400).send("Missing userId in request parameters");
+    }
+    console.log('In /transactions/u/:userId Route (DELETE) for transactions with userId: ' + userId);
+    try {
+      let transactions = await Transaction.deleteMany({ "userId": userId });
+      if (!transactions.deletedCount) {
+        return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      }
+      return res.status(200).send(`All transactions with userId: ${userId} deleted successfully`);
+    } catch (err) {
+      return res.status(501).send(`Unexpected error occurred when deleting transactions with userId: ${userId} from database: ${err}`);
+    }
+  });
 
 export default transactionRoute;

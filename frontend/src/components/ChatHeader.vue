@@ -23,7 +23,7 @@ export default {
 };
 </script>
 
-<<style scoped>
+<style scoped>
 .chat-header {
   background-image: linear-gradient(to right, #3541c9, #3340b2);
   color: #ecf0f1;

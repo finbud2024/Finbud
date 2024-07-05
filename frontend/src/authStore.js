@@ -9,7 +9,7 @@ const authStore = reactive({
   },
 
   logout() {
-    localStorage.removeItem('token');
+    localStorage.clear();
     this.isAuthenticated = false;
   },
 });
