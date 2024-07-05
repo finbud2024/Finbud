@@ -142,6 +142,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 import TransactionLine from '../components/goalPage/TransactionLine.vue';
 import TransactionBar from '../components/goalPage/TransactionBar.vue';
+import authStore from '@/authStore';
 
 export default {
   name: 'GoalPage',
@@ -158,12 +159,13 @@ export default {
       showResetConfirmationModal: false,
       goalTitle: '',
       goalProgress: 0,
+      userId: localStorage.getItem('token'),
       transaction: {
         description: '',
         amount: null,
       },
       editTransactionData: {
-        id: null,
+        _id: null,
         description: '',
         amount: null,
       },
@@ -197,9 +199,11 @@ export default {
       this.goalProgress = progress;
       this.showModal = true;
     },
+
+    // Get the transaction data of a specific user by using user's userId to display user's transaction
     async fetchTransactions() {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions`);
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`);
         this.transactions = response.data;
         if (this.transactions.length > 0) {
           this.accountBalance = this.transactions[this.transactions.length - 1].balance;
@@ -209,6 +213,8 @@ export default {
         console.error('Error fetching transactions:', error);
       }
     },
+
+    // add a transaction with userId to fetch by userId
     async addTransaction() {
       if (this.transaction.description && this.transaction.amount !== null) {
         try {
@@ -222,7 +228,8 @@ export default {
           const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
             ...this.transaction,
             date: moment().tz("America/New_York").format(), // Save the date in UTC-4
-            balance: newBalance // Add the balance field
+            balance: newBalance, // Add the balance field
+            userId: this.userId
           });
 
           this.transactions.push(response.data);
@@ -236,6 +243,8 @@ export default {
         console.error('Transaction description and amount are required');
       }
     },
+
+    // add a InitialBalance with userId to fetch by userId
     async setInitialBalance() {
       if (this.initialBalance !== null) {
         try {
@@ -243,7 +252,8 @@ export default {
             description: 'Initial Balance',
             amount: this.initialBalance,
             date: moment().tz("America/New_York").format(), // Save the date in UTC-4
-            balance: this.initialBalance
+            balance: this.initialBalance,
+            userId: this.userId
           });
 
           this.transactions.push(response.data);
@@ -265,9 +275,11 @@ export default {
         this.showSetBalanceModal = true;
       }
     },
+
+    // reset transaction of a specific user by deleting all data corresponding to userId
     async resetAccountBalance() {
       try {
-        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/reset`);
+        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`);
         this.transactions = [];
         this.accountBalance = 0;
         this.initialBalanceSet = false;
@@ -280,19 +292,24 @@ export default {
       this.editTransactionData = { ...trans };
       this.showEditTransactionModal = true;
     },
+
+    // edit a transaction by transactionId
     async updateTransaction() {
       try {
         const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/transactions/${this.editTransactionData._id}`, this.editTransactionData);
         const index = this.transactions.findIndex(t => t._id === this.editTransactionData._id);
         if (index !== -1) {
-          this.transactions.splice(index, 1, response.data);
-          this.showEditTransactionModal = false;
+          this.transactions.splice(index, 1, response.data.updatedTransaction);
+          this.transactions = response.data.transactions; // Update the entire transactions list with recalculated balances
           this.recalculateBalances();
+          this.showEditTransactionModal = false;
         }
       } catch (error) {
         console.error('Error updating transaction:', error);
       }
     },
+
+    // delete a transaction by transactionId
     async removeTransaction(id) {
       try {
         await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/${id}`);
@@ -382,8 +399,16 @@ export default {
     },
   },
   mounted() {
+    if (!authStore.isAuthenticated) {
+      this.$router.push('/');
+    }
     this.fetchTransactions();
     this.processURLParams();
+  },
+  computed: {
+    authStore(){
+      return authStore;
+    }
   },
   beforeUnmount() {
     if (this.updateInterval) {
@@ -829,4 +854,3 @@ export default {
   }
 }
 </style>
-

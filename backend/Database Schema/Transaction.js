@@ -5,8 +5,18 @@ const transactionSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   balance: { type: Number, required: true }, // Add balance field
   date: { type: Date, default: Date.now },
-  transaction: { type: String, required: true }
+  transaction: { type: String, required: true },
+  userId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    require: true
+  }
 });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
+
 export default Transaction;
+
+
+
+
