@@ -1,16 +1,12 @@
 <template>
   <div class="home-container">
-    <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
-    <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-    <SideBar 
-      :class="{ 'is-visible': isSidebarVisible }" 
-      :threads="threads" 
-      @add-thread="addThread"
-      @edit-thread="editThread" 
-      @save-thread-name="saveThreadName" 
-      @cancel-edit="cancelEdit"
-      @select-thread="selectThread" 
-    />
+    <div v-if="authStore.isAuthenticated" class="sidebar-container">
+      <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
+      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
+      <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
+        @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
+        @select-thread="selectThread" />
+    </div>
     <div class="chat-container">
       <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
@@ -37,6 +33,8 @@ import ChatFrame from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import SideBar from '../components/SideBar.vue';
+import authStore from '@/authStore';
+import gptResponse from '../services/gptResponse.js';
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
@@ -62,6 +60,11 @@ export default {
       isSidebarVisible: false
     };
   },
+  computed:{
+    authStore(){
+      return authStore;
+    }
+  },
   watch: {
     threadId: {
       immediate: true,
@@ -82,19 +85,56 @@ export default {
     closeSidebar() {
       this.isSidebarVisible = false;
     },
-    updateCurrentThread(newThreadId) {
-      const thread = this.threads.find(thread => thread.id.toString() === newThreadId);
-      if (thread) {
-        this.currentThread = thread;
-        this.messages = thread.messages || [];
-      } else {
-        this.currentThread = {};
+    async updateCurrentThread(currentThreadId) {
+      try{
         this.messages = [];
+
+        const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
+        if (thread) {
+          this.currentThread = thread;
+        }
+        //Load chats
+        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
+        const chats = await axios.get(chatApi);
+        const chatsData = chats.data;
+        chatsData.forEach(chat => {
+          const prompt = {
+            text: chat.prompt.toString(),
+            isUser: true,
+            typing: true,
+            timestamp: chat.creationDate,
+          };
+          //push into message to show on chat
+          this.messages.push(prompt);
+          const responses = chat.response;
+          responses.forEach(responseData => {
+            const response = {
+              text: responseData,
+              isUser: false,
+              typing: true,
+              timestamp: chat.creationDate,
+            };
+            this.messages.push(response);
+          });
+        });
+        console.log('chats:', chats);
+      }catch(err){
+        console.error('Error on updating to current thread:', err);
       }
     },
-    addThread(newThread) {
-      newThread.id = this.threads.length + 1;
-      this.threads.push(newThread);
+    async addThread(newThread) {
+      try{
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+        const userId = localStorage.getItem('token');
+        const reqBody = {
+          userId: userId
+        }
+        const thread = await axios.post(api, reqBody);
+        newThread.id = thread.data._id;
+        this.threads.push(newThread);
+      }catch(err){
+        console.error('Error on adding new thread:', err);
+      }
     },
     editThread(index) {
       this.threads[index].editing = true;
@@ -107,7 +147,7 @@ export default {
       this.threads[index].editing = false;
     },
     selectThread(index) {
-      this.updateCurrentThread(this.threads[index].id.toString());
+      this.updateCurrentThread(this.threads[index].id);
     },
     async sendMessage(newMessage) {
       this.messages.push({
@@ -117,23 +157,25 @@ export default {
         timestamp: new Date().toLocaleTimeString()
       });
 
-      this.newMessage = '';
-      const userMessage = this.messages[this.messages.length - 1].text;
+      const userMessage = newMessage.trim();
+      console.log('User message:', userMessage);
+      let answers = [];
 
       try {
-        if (userMessage.toLowerCase().includes("define")) {
-          await this.handleDefineMessage(userMessage);
-        } else if (userMessage.toLowerCase().includes("#receive")) {
-          await this.handleAddTransaction(userMessage);
-        } else if (userMessage.toLowerCase().includes("#spend")) {
-          await this.handleSpendTransaction(userMessage);
+        if (userMessage.toLowerCase().includes("define")) { //HANDLE DEFINE
+          answers = await this.handleDefineMessage(userMessage);
+        } else if (userMessage.toLowerCase().includes("buy")) { //HANDLE BUY
+          answers = this.handleBuyMessage(userMessage);
+        } else if (userMessage.toLowerCase().includes("sell")) { //HANDLE SELL
+          answers = this.handleSellMessage(userMessage);
+        } else if (userMessage.toLowerCase().includes("#add")) {
+          //TODO: add transaction
+        } else if (userMessage.toLowerCase().includes("#spend")) { 
+          //TODO: spend transaction
+        } else if(this.extractStockCode(userMessage)){ //HANDLE STOCK
+          answers = await this.handleStockMessage(this.extractStockCode(userMessage)[0]);
         } else {
-          const stockCode = this.extractStockCode(userMessage);
-          if (stockCode.length > 0) {
-            await this.handleStockMessage(stockCode[0]);
-          } else {
-            await this.handleGeneralMessage(userMessage);
-          }
+          answers = await this.handleGeneralMessage(userMessage);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -143,69 +185,60 @@ export default {
           timestamp: new Date().toLocaleTimeString()
         });
       }
+      answers.forEach(answer => {
+        this.addTypingResponse(answer, false);
+      })
+      //save chat to backend
+      try{
+        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+        const reqBody = {
+          prompt: userMessage,
+          response: answers,
+          threadId: this.currentThread.id,
+        };
+        const chat = await axios.post(chatApi, reqBody);
+      }catch(err){
+        console.error('Error on saving chat:', err);
+      }
     },
     async handleDefineMessage(userMessage) {
       const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
       try {
+        const answers = [];
+    
         const prompt = `Explain ${term} to me as if I'm 15.`;
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.7
-        }, {
-          headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        const responseData = response.data;
-        const answer = responseData.choices[0]?.message?.content || "";
-        this.addTypingResponse(answer, false);
+        const answer = await gptResponse(prompt);
+        answers.push(answer);
+        return answers;
+        //this.addTypingResponse(answer, false);
       } catch (err) {
         console.log(err);
       }
     },
     async handleStockMessage(stockCode) {
+      const answers = [];
+      //alpha vantage api      
       const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${ALPHA_VANTAGE_API_KEY}`);
       const stockData = stockResponse.data;
       const price = stockData['Global Quote']['05. price'];
       const timeStamp = new Date().toLocaleTimeString();
 
       let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-      this.addTypingResponse(responseText, false);
+      answers.push(responseText);
+      //this.addTypingResponse(responseText, false);
 
       const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7
-        }, {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const responseData = response.data;
-      const answer = responseData.choices[0]?.message?.content || "";
-      this.addTypingResponse(answer, false);
+      const answer = await gptResponse(prompt);
+      answers.push(answer);
+      return answers;
     },
     async handleGeneralMessage(userMessage) {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: userMessage }],
-        temperature: 0.7
-      }, {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const answers = [];
 
-      const responseData = response.data;
-      const answer = responseData.choices[0]?.message?.content || "";
-      this.addTypingResponse(answer, false);
+      const prompt = userMessage;
+      const answer = await gptResponse(prompt);
+      answers.push(answer);
+      return answers;
     },
     async handleAddTransaction(userMessage) {
       const match = userMessage.match(/#receive\s+(\w+)\s+(\d+)/i);
@@ -267,6 +300,7 @@ export default {
         username: isUser ? 'You' : 'FinBud Bot'
       };
       this.messages.push(typingMessage);
+      //console.log(typingMessage);
       setTimeout(() => {
         typingMessage.typing = false;
         this.$forceUpdate();
@@ -274,11 +308,11 @@ export default {
     },
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
-      const matches = message.match(pattern) || [];
+      const matches = message.match(pattern);
       return matches;
     }
   },
-  mounted() {
+  async mounted() {
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
@@ -296,6 +330,26 @@ export default {
       this.messages = [];
     }
     this.addTypingResponse(guidanceMessage.trim(), false);
+
+    //load threads
+    const userId = localStorage.getItem('token');
+    console.log(userId);
+    const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+
+    const historyThreads = await axios.get(threadApi);
+    const historyThreadsData = historyThreads.data;
+    //console.log("history: ", historyThreadsData);
+    historyThreadsData.forEach(threadData => {
+      const thread = {
+        id: threadData._id,
+        name: threadData.title,
+        editing: false,
+        editedName: threadData.title,
+        messages: []
+      };
+      this.threads.push(thread);
+    });
+
   }
 };
 </script>
