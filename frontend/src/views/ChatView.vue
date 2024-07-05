@@ -22,7 +22,7 @@
         />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
-    </div>3
+    </div>
   </div>
 </template>
 
@@ -93,22 +93,18 @@ export default {
         if (thread) {
           this.currentThread = thread;
         }
-        console.log(this.currentThread.id);
-
+        //Load chats
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
         const chats = await axios.get(chatApi);
-        console.log(chats);
         const chatsData = chats.data;
         chatsData.forEach(chat => {
-          console.log("hahaha:", chat);
           const prompt = {
             text: chat.prompt.toString(),
             isUser: true,
             typing: true,
             timestamp: chat.creationDate,
           };
-
-          console.log("prompt:", prompt)
+          //push into message to show on chat
           this.messages.push(prompt);
           const responses = chat.response;
           responses.forEach(responseData => {
@@ -129,13 +125,11 @@ export default {
     async addThread(newThread) {
       try{
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-
         const userId = localStorage.getItem('token');
         const reqBody = {
           userId: userId
         }
         const thread = await axios.post(api, reqBody);
-
         newThread.id = thread.data._id;
         this.threads.push(newThread);
       }catch(err){
@@ -168,22 +162,20 @@ export default {
       let answers = [];
 
       try {
-        if (userMessage.toLowerCase().includes("define")) {
+        if (userMessage.toLowerCase().includes("define")) { //HANDLE DEFINE
           answers = await this.handleDefineMessage(userMessage);
-          // if prompt contains "buy"
-        } else if (userMessage.toLowerCase().includes("buy")) {
+        } else if (userMessage.toLowerCase().includes("buy")) { //HANDLE BUY
           answers = this.handleBuyMessage(userMessage);
-          // if prompt contains "sell"
-        } else if (userMessage.toLowerCase().includes("sell")) {
+        } else if (userMessage.toLowerCase().includes("sell")) { //HANDLE SELL
           answers = this.handleSellMessage(userMessage);
-          //Possible to break code here ***** FIX ******
+        } else if (userMessage.toLowerCase().includes("#add")) {
+          //TODO: add transaction
+        } else if (userMessage.toLowerCase().includes("#spend")) { 
+          //TODO: spend transaction
+        } else if(this.extractStockCode(userMessage)){ //HANDLE STOCK
+          answers = await this.handleStockMessage(this.extractStockCode(userMessage)[0]);
         } else {
-          const stockCode = this.extractStockCode(userMessage);
-          if (stockCode.length > 0) {
-            answers = await this.handleStockMessage(stockCode[0]);
-          } else {
-            answers = await this.handleGeneralMessage(userMessage);
-          }
+          answers = await this.handleGeneralMessage(userMessage);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -193,11 +185,9 @@ export default {
           timestamp: new Date().toLocaleTimeString()
         });
       }
-
       answers.forEach(answer => {
         this.addTypingResponse(answer, false);
       })
-
       //save chat to backend
       try{
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
@@ -218,7 +208,6 @@ export default {
     
         const prompt = `Explain ${term} to me as if I'm 15.`;
         const answer = await gptResponse(prompt);
-
         answers.push(answer);
         return answers;
         //this.addTypingResponse(answer, false);
@@ -239,19 +228,8 @@ export default {
       //this.addTypingResponse(responseText, false);
 
       const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7
-        }, {
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
+      const answer = await gptResponse(prompt);
       answers.push(answer);
-      //this.addTypingResponse(answer, false);
       return answers;
     },
     async handleGeneralMessage(userMessage) {
@@ -260,7 +238,6 @@ export default {
       const prompt = userMessage;
       const answer = await gptResponse(prompt);
       answers.push(answer);
-      //this.addTypingResponse(answer, false);
       return answers;
     },
     async handleAddTransaction(userMessage) {
@@ -331,7 +308,7 @@ export default {
     },
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
-      const matches = message.match(pattern) || [];
+      const matches = message.match(pattern);
       return matches;
     }
   },
