@@ -140,9 +140,10 @@ export default {
 
 .signup-button,
 .services-button,
-.login-button {
+.login-button,
+.logout-button {
   background-color: #45a049;
-  color: white; /* Ensure the text color is white */
+  color: white;
   border: none;
   border-radius: 8px;
   text-decoration: none;
@@ -154,7 +155,7 @@ export default {
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  min-width: 100px; /* Ensures the buttons have the same minimum width */
+  min-width: 100px;
 }
 
 .services-button {
@@ -168,23 +169,6 @@ export default {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid white;
-}
-
-.logout-button {
-  background-color: #45a049;
-  color: white; /* Ensure the text color is white */
-  border: none;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  margin-left: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 100px; /* Ensures the buttons have the same minimum width */
 }
 
 .signup-button:hover,
@@ -272,5 +256,25 @@ export default {
   .navbar-brand {
     margin-left: 50px;
   }
+
+  .login-button {
+    width: 22%;
+    margin-left: 20px;
+    text-align: center;
+    padding: 0.8rem;
+    font-size: 1.2em;
+    border-radius: 10px;
+  }
+  .logout-button {
+    width: 30%;
+    margin-left: 5;
+    text-align: center;
+    padding: 0.8rem;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
 }
+
 </style>
