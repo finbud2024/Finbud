@@ -1,18 +1,29 @@
-  <template>
+<template>
   <div class="home-container">
-    <div v-if="authStore.isAuthenticated" class="sidebar-container">
-      <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
-      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-      <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
-        @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
-        @select-thread="selectThread" />
-    </div>
+    <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
+    <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
+    <SideBar 
+      :class="{ 'is-visible': isSidebarVisible }" 
+      :threads="threads" 
+      @add-thread="addThread"
+      @edit-thread="editThread" 
+      @save-thread-name="saveThreadName" 
+      @cancel-edit="cancelEdit"
+      @select-thread="selectThread" 
+    />
     <div class="chat-container">
       <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
-        <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
-          :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
-          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar" />
+        <MessageComponent 
+          v-for="(message, index) in messages" 
+          :key="index" 
+          :is-user="message.isUser"
+          :text="message.text" 
+          :typing="message.typing" 
+          :timestamp="message.timestamp"
+          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" 
+          :avatar-src="message.isUser ? userAvatar : botAvatar" 
+        />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>3
@@ -45,11 +56,11 @@ export default {
   data() {
     return {
       newMessage: '',
-      messages: [], //list of message per threads
+      messages: [], 
       userAvatar: require('@/assets/tri.jpeg'),
       botAvatar: require('@/assets/bot.png'),
       currentThread: {},
-      threads: [], // list of threads per user 
+      threads: [], 
       isSidebarVisible: false
     };
   },
@@ -156,20 +167,16 @@ export default {
         timestamp: new Date().toLocaleTimeString()
       });
 
-      const userMessage = newMessage.trim();
-      console.log('User message:', userMessage);
-      let answers = [];
+      this.newMessage = '';
+      const userMessage = this.messages[this.messages.length - 1].text;
 
       try {
         if (userMessage.toLowerCase().includes("define")) {
-          answers = await this.handleDefineMessage(userMessage);
-          // if prompt contains "buy"
-        } else if (userMessage.toLowerCase().includes("buy")) {
-          answers = this.handleBuyMessage(userMessage);
-          // if prompt contains "sell"
-        } else if (userMessage.toLowerCase().includes("sell")) {
-          answers = this.handleSellMessage(userMessage);
-          //Possible to break code here ***** FIX ******
+          await this.handleDefineMessage(userMessage);
+        } else if (userMessage.toLowerCase().includes("#receive")) {
+          await this.handleAddTransaction(userMessage);
+        } else if (userMessage.toLowerCase().includes("#spend")) {
+          await this.handleSpendTransaction(userMessage);
         } else {
           const stockCode = this.extractStockCode(userMessage);
           if (stockCode.length > 0) {
@@ -204,28 +211,31 @@ export default {
         console.error('Error on saving chat:', err);
       }
     },
-
     async handleDefineMessage(userMessage) {
       const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-      //const response = await axios.post(`${apiUrl}/defineTerm`, { term });
       try {
         const answers = [];
     
         const prompt = `Explain ${term} to me as if I'm 15.`;
-        const answer = await gptResponse(prompt);
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.7
+        }, {
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-        answers.push(answer);
-        return answers;
-        //this.addTypingResponse(answer, false);
+        const responseData = response.data;
+        const answer = responseData.choices[0]?.message?.content || "";
+        this.addTypingResponse(answer, false);
       } catch (err) {
         console.log(err);
       }
     },
-
-
     async handleStockMessage(stockCode) {
-      const answers = [];
-      //alpha vantage api      
       const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${ALPHA_VANTAGE_API_KEY}`);
       const stockData = stockResponse.data;
       const price = stockData['Global Quote']['05. price'];
@@ -235,25 +245,89 @@ export default {
       answers.push(responseText);
       //this.addTypingResponse(responseText, false);
 
-      //openai api
       const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-      const answer = await gptResponse(prompt);
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7
+        }, {
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-      answers.push(answer);
-      //this.addTypingResponse(answer, false);
-      return answers;
+      const responseData = response.data;
+      const answer = responseData.choices[0]?.message?.content || "";
+      this.addTypingResponse(answer, false);
     },
-
     async handleGeneralMessage(userMessage) {
-      const answers = [];
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: userMessage }],
+        temperature: 0.7
+      }, {
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
 
-      const prompt = userMessage;
-      const answer = await gptResponse(prompt);
-      answers.push(answer);
-      //this.addTypingResponse(answer, false);
-      return answers;
+      const responseData = response.data;
+      const answer = responseData.choices[0]?.message?.content || "";
+      this.addTypingResponse(answer, false);
     },
-
+    async handleAddTransaction(userMessage) {
+      const match = userMessage.match(/#receive\s+(\w+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1];
+        const amount = parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+      } else {
+        this.addTypingResponse('Please specify the description and amount you want to add.', false);
+      }
+    },
+    async handleSpendTransaction(userMessage) {
+      const match = userMessage.match(/#spend\s+(\w+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1];
+        const amount = -parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+      } else {
+        this.addTypingResponse('Please specify the description and amount you want to spend.', false);
+      }
+    },
+    async addTransaction(description, amount, balance) {
+      try {
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+          description,
+          amount,
+          balance,
+          date: new Date().toISOString()
+        });
+        if (amount < 0) {
+          this.addTypingResponse(`Transaction spent: ${description}, $${Math.abs(amount)}.`, false);
+        } else {
+          this.addTypingResponse(`Transaction received: ${description}, $${amount}.`, false);
+        }
+      } catch (error) {
+        console.error('Error adding transaction:', error);
+        this.addTypingResponse('Error adding transaction.', false);
+      }
+    },
+    async calculateNewBalance(amount) {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions`);
+        const transactions = response.data;
+        const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+        return currentBalance + amount;
+      } catch (error) {
+        console.error('Error calculating new balance:', error);
+        throw error;
+      }
+    },
     addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
@@ -262,7 +336,6 @@ export default {
         timestamp: new Date().toLocaleTimeString(),
         username: isUser ? 'You' : 'FinBud Bot'
       };
-
       this.messages.push(typingMessage);
       //console.log(typingMessage);
       setTimeout(() => {
@@ -270,7 +343,6 @@ export default {
         this.$forceUpdate();
       }, 1000);
     },
-
     extractStockCode(message) {
       const pattern = /\b[A-Z]{3,5}\b/g;
       const matches = message.match(pattern) || [];
@@ -288,8 +360,9 @@ export default {
     1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
     2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
     3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+    4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#receive Shopping 125")
+    5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
   `;
-
     if (!this.messages) {
       this.messages = [];
     }
