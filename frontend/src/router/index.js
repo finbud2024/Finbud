@@ -15,7 +15,9 @@ import GoalPage from '@/views/GoalPage.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
-import Update from '@/components/Risk&Chat/Update.vue'
+import Update from '@/components/Risk&Chat/Update.vue';
+import UserProfile from '@/views/UserProfile.vue';
+
 
 const routes = [
   {
@@ -104,6 +106,11 @@ const routes = [
     path: '/update',
     name: 'Update',
     component: Update,
+  },
+  {
+    path: '/profile/:username',
+    name: 'UserProfile',
+    component: UserProfile,
   }
 ];
 

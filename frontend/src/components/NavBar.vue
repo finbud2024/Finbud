@@ -7,8 +7,8 @@
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <li><router-link to="/quant-analysis" class="home">Quant</router-link></li>
-        <li v-if="authStore.isAuthenticated" class="dropdown">
+        <li><router-link to="/quant-analysis" class="quant">Quant</router-link></li>
+        <li v-if="isAuthenticated" class="dropdown">
           <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
@@ -16,10 +16,14 @@
             <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
             <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
             <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+            <router-link v-if="username" :to="`/profile/${username}`" class="profile" @click="closeDropdown">Profile</router-link>
           </div>
         </li>
-        <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Log Out</button></li>
+        <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
+        <li v-if="isAuthenticated">
+          <router-link v-if="username" :to="`/profile/${username}`" class="profile-button">Profile</router-link>
+          <button @click="logout" class="logout-button">Log Out</button>
+        </li>
       </ul>
       <div class="dropdown mobile-only">
         <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
@@ -33,6 +37,7 @@
           <router-link to="/risk" class="risk" @click="closeDropdownMobile">Risk</router-link>
           <router-link to="/about" class="about" @click="closeDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="closeDropdownMobile">Technology</router-link>
+          <router-link v-if="username" :to="`/profile/${username}`" class="profile" @click="closeDropdownMobile">Profile</router-link>
           <router-link to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>
           <button @click="logout" class="logout-button">Sign Out</button>
         </div>
@@ -42,8 +47,7 @@
 </template>
 
 <script>
-import authStore from '@/authStore';
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   name: 'NavBar',
@@ -51,12 +55,9 @@ export default {
     return {
       isDropdownOpen: false,
       isDropdownOpenMobile: false,
+      isAuthenticated: false, // Add this line
+      username: '', // Add this line
     };
-  },
-  computed: {
-    authStore() {
-      return authStore;
-    },
   },
   methods: {
     closeDropdown() {
@@ -72,24 +73,38 @@ export default {
       this.isDropdownOpenMobile = false;
     },
     async logout() {
-      authStore.logout();
-      try{
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
-      }catch(err){
+      this.isAuthenticated = false;
+      this.username = '';
+      try {
+        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app";
+        URL += "/.netlify/functions/server";
+        await axios.get(`${URL}/auth/logout`);
+      } catch (err) {
         console.log("After logout with err: " + err);
       }
       this.$router.push('/login');
     },
-  },
-  async mounted(){
-    try{
-      const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
-      if(response.data.isAuthenticated){
-        authStore.login(response.data.user._id) 
+    async checkAuthentication() {
+      try {
+        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app";
+        URL += "/.netlify/functions/server";
+        const response = await axios.get(`${URL}/auth/test`);
+        if (response.data.isAuthenticated) {
+          this.isAuthenticated = true;
+          this.username = response.data.user.accountData.username; // Correctly set the username
+          console.log("Authenticated user:", this.username);
+        } else {
+          this.isAuthenticated = false;
+          this.username = '';
+        }
+      } catch (err) {
+        console.log("Error checking authentication:", err);
       }
-    }catch(err){
-      console.log("After Sign in with google err: " + err);
     }
+  },
+  async mounted() {
+    console.log("Mounted NavBar");
+    await this.checkAuthentication();
   }
 };
 </script>
@@ -127,11 +142,17 @@ export default {
   gap: 2rem;
 }
 
+.nav-items li {
+  display: flex;
+  align-items: center;
+}
+
 .nav-items li a {
   color: black;
   text-decoration: none;
   transition: color 0.3s ease;
   font-size: 1.2rem;
+  padding: 0.5rem 1rem;
 }
 
 .nav-items li a:hover {
@@ -142,19 +163,18 @@ export default {
 .services-button,
 .login-button {
   background-color: #45a049;
-  color: white; /* Ensure the text color is white */
+  color: white;
   border: none;
   border-radius: 8px;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  margin-left: 1.2rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  min-width: 100px; /* Ensures the buttons have the same minimum width */
+  min-width: 100px;
 }
 
 .services-button {
@@ -172,19 +192,18 @@ export default {
 
 .logout-button {
   background-color: #45a049;
-  color: white; /* Ensure the text color is white */
+  color: white;
   border: none;
   border-radius: 8px;
   font-size: 1.2rem;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  margin-left: 1.2rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 100px; /* Ensures the buttons have the same minimum width */
+  min-width: 100px;
 }
 
 .signup-button:hover,
