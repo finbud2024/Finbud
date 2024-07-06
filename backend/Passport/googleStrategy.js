@@ -4,7 +4,7 @@ import User from '../Database Schema/User.js';
 const googleStrategy = new GoogleStrategy.Strategy ({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.DEPLOYED_URL+"/.netlify/functions/server" + "/auth/google/callback"
+    callbackURL: process.env.VUE_APP_DEPLOY_URL + "/auth/google/callback"
   },
   async (accessToken, refreshToken, profile, done) => {
             console.log("User authenticated through Google. In Google Strategy.");

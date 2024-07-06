@@ -40,9 +40,7 @@ export default {
   methods: {
     async onLogin() {
       try {
-        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
-        URL += "/.netlify/functions/server"
-        const api = `${URL}/auth/login`
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`
         const reqBody = {
           "username": this.username,
           "password": this.password
@@ -57,9 +55,7 @@ export default {
 
     },
     signInWithGoogle(){
-        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
-        URL += "/.netlify/functions/server"
-        const api = `${URL}/auth/google`
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`
         window.location.href = api;
     }
   },

@@ -10,7 +10,7 @@
         <li><router-link to="/quant-analysis" class="home">Quant</router-link></li>
         <li v-if="authStore.isAuthenticated" class="dropdown">
           <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
-          <div class="dropdown-content" v-show="isDropdownOpen">
+          <div class="dropdown-content" v-show="isDropdownOpen" @mouseleave="closeDropdown">
             <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
@@ -21,20 +21,21 @@
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
         <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Log Out</button></li>
       </ul>
-      <div class="dropdown mobile-only">
+      <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
         <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
-        <div class="dropdown-content" v-show="isDropdownOpenMobile">
-          <router-link to="/" class="home" @click="closeDropdownMobile">Home</router-link>
-          <router-link to="/goal" class="goal" @click="closeDropdownMobile">Goal</router-link>
-          <router-link to="/stock-simulator" class="simulator" @click="closeDropdownMobile">Simulator</router-link>
-          <router-link to="/quizz" class="quizz" @click="closeDropdownMobile">Quiz</router-link>
-          <router-link to="/market" class="market" @click="closeDropdownMobile">Market</router-link>
-          <router-link to="/chat-view" class="chatview" @click="closeDropdownMobile">Chat</router-link>
-          <router-link to="/risk" class="risk" @click="closeDropdownMobile">Risk</router-link>
-          <router-link to="/about" class="about" @click="closeDropdownMobile">About</router-link>
-          <router-link to="/tech" class="technology" @click="closeDropdownMobile">Technology</router-link>
-          <router-link to="/login" class="login-button" @click="closeDropdownMobile">Log In</router-link>
-          <button @click="logout" class="logout-button">Sign Out</button>
+        <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
+          <router-link to="/" class="home" @click="toggleDropdownMobile">Home</router-link>
+          <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
+          <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
+          <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
+          <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link>
+          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
+          <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link>
+          <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
+          <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
+          <router-link to="/quant-analysis" class="home">Quant</router-link>
+          <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="toggleDropdownMobile">Log In</router-link>
+          <button v-if="authStore.isAuthenticated" @click="logout" class="logout-button">Log Out</button>
         </div>
       </div>
     </div>
@@ -43,7 +44,7 @@
 
 <script>
 import authStore from '@/authStore';
-import axios from 'axios'
+import axios from 'axios';
 
 export default {
   name: 'NavBar',
@@ -73,25 +74,21 @@ export default {
     },
     async logout() {
       authStore.logout();
-      try{
-        let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
-        URL += "/.netlify/functions/server"
-        const response = await axios.get(`${URL}/auth/logout`);
-      }catch(err){
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
+      } catch (err) {
         console.log("After logout with err: " + err);
       }
       this.$router.push('/login');
     },
   },
-  async mounted(){
-    try{
-      let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
-      URL += "/.netlify/functions/server"
-      const response = await axios.get(`${URL}/auth/test`);
-      if(response.data.isAuthenticated){
-        authStore.login(response.data.user._id) 
+  async mounted() {
+    try {
+      const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
+      if (response.data.isAuthenticated) {
+        authStore.login(response.data.user._id);
       }
-    }catch(err){
+    } catch (err) {
       console.log("After Sign in with google err: " + err);
     }
   }
@@ -144,9 +141,10 @@ export default {
 
 .signup-button,
 .services-button,
-.login-button {
+.login-button,
+.logout-button {
   background-color: #45a049;
-  color: white; /* Ensure the text color is white */
+  color: white;
   border: none;
   border-radius: 8px;
   text-decoration: none;
@@ -158,7 +156,7 @@ export default {
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  min-width: 100px; /* Ensures the buttons have the same minimum width */
+  min-width: 100px;
 }
 
 .services-button {
@@ -172,23 +170,6 @@ export default {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid white;
-}
-
-.logout-button {
-  background-color: #45a049;
-  color: white; /* Ensure the text color is white */
-  border: none;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  margin-left: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 100px; /* Ensures the buttons have the same minimum width */
 }
 
 .signup-button:hover,
@@ -222,7 +203,7 @@ export default {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
-  text-align: left;
+  margin-left: 10px;
 }
 
 .dropdown-content a:hover {
@@ -250,6 +231,12 @@ export default {
   display: none;
 }
 
+.dropdown.active .dropdown-content {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (max-width: 868px) {
   .nav-items {
     display: none;
@@ -262,10 +249,9 @@ export default {
   .dropdown-content {
     position: fixed;
     top: 60px;
-    left: 0;
+    left: 5px;
     width: 100%;
     flex-direction: column;
-    align-items: center;
   }
 
   .nav-bar {
@@ -275,6 +261,28 @@ export default {
 
   .navbar-brand {
     margin-left: 50px;
+  }
+
+  .login-button {
+    width: 20%;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-left: 10px;
+  }
+
+  .logout-button {
+    width: 30%;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    padding: 12px 16px;
+    margin-left: 10px;
   }
 }
 </style>

@@ -63,17 +63,16 @@
             @update:currentPage="updateCryptoCurrentPage" />
         </div>
       </div>
-      
-      <RiskChat/>
     </div>
+    <RiskChat/>
   </template>
   
   <script>
   import axios from 'axios';
-  import Pagination from '../components/Pagination.vue';
-  import RiskChat from '../components/RiskChat.vue';
-  const apiKey = 'BS4H8D1PZ63W5IC0';
-  const apiKeyCrypto = 'coinranking687d4cc37a39468baeffcc6c0546f518c3c54b2b87e4f73a';
+  import Pagination from '../components/Risk&Chat/Pagination.vue';
+  import RiskChat from '../components/Risk&Chat/RiskChat.vue';
+  const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
+  const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
   
   export default {
     name: 'StockQuote',
@@ -88,7 +87,8 @@
         stockQuotes: [],
         loadingCrypto: true,
         errorCrypto: null,
-        cryptoList: [],
+        cryptoList: [], // from coinranking contains update every seconds
+        cryptoQuotes:[],// from alpha vantage which only contain daily 
         currentStockPage: 1,
         currentCryptoPage: 1,
         itemsPerPage: 10,
@@ -122,7 +122,6 @@
             const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
             return axios.get(url);
           });
-  
           const responses = await Promise.all(requests);
           console.log('Stock responses:', responses);
           this.stockQuotes = responses.map(response => {
@@ -134,6 +133,7 @@
             }
           }).filter(quote => quote !== null);
           console.log('Final stockQuotes:', this.stockQuotes);
+          // await this.saveStockToDB(this.stockQuotes);
           this.loading = false;
         } catch (error) {
           this.error = 'Failed to fetch stock quotes';
@@ -141,8 +141,9 @@
           this.loading = false;
         }
       }, 
+      
       async getCryptoPrice() {
-        const url = "https://api.coinranking.com/v2/coins";
+        const url = "https://api.coinranking.com/v2/coins?timePeriod=7d";
         try {
           const res = await axios.get(url, {
             headers: {
@@ -172,6 +173,7 @@
         }
         return x.toFixed(2); 
       },
+      
   
     },
   

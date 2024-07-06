@@ -52,7 +52,7 @@
 <script>
 import axios from 'axios';
 
-const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY; 
+const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 
 export default {
   name: 'QuizComponent',
@@ -72,6 +72,9 @@ export default {
   },
   methods: {
     async generateQuiz() {
+      // Clear the existing timer before generating a new quiz
+      clearInterval(this.timer);
+
       try {
         const response = await axios.post('https://api.openai.com/v1/chat/completions', {
           model: "gpt-3.5-turbo",
@@ -89,16 +92,28 @@ export default {
           }
         });
 
-        const completion = response.data.choices[0].message.content.trim();
+        const completion = response.data.choices[0]?.message?.content?.trim();
+        console.log('API Response:', completion); // Debug log
+
+        if (!completion) {
+          throw new Error('No completion content returned from OpenAI');
+        }
+
         const quizData = this.parseQuizResponse(completion);
+        if (!quizData || !quizData.answers || quizData.answers.length < 4) {
+          throw new Error('Incomplete quiz data parsed from API response');
+        }
+
         this.question = quizData;
         this.selectedAnswer = null;
         this.isQuizStarted = true;
         this.attempts = 0;
         this.showIncorrect = false;
+
+        // Start the timer
         this.startTimer();
       } catch (error) {
-        console.error('Error generating quiz:', error);
+        console.error('Error generating quiz:', error.message);
       }
     },
     checkAnswer(index) {
@@ -159,6 +174,13 @@ export default {
     },
     parseQuizResponse(response) {
       const lines = response.split('\n').filter(line => line.trim() !== '');
+      console.log('Parsed lines:', lines); // Debug log
+
+      if (lines.length < 5) {
+        console.error('Unexpected response format:', response);
+        return null;
+      }
+
       const question = lines[0].replace('Question:', '').trim();
       const options = lines.slice(1).map(line => {
         const isCorrect = line.includes('*');
@@ -168,6 +190,11 @@ export default {
           correct: isCorrect
         };
       });
+
+      if (options.length < 4) {
+        console.error('Incomplete options parsed from response:', response);
+        return null;
+      }
 
       return {
         question,

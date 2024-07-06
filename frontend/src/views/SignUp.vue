@@ -15,7 +15,7 @@
       </div>
       <div class="form-group">
         <label for="confirmPassword"> Re-enter your password</label>
-        <input id="confirmPassword" type="password" v-model="confirmPassword" placeholder="re-enter your password"required>
+        <input id="confirmPassword" type="password" v-model="confirmPassword" placeholder="re-enter your password" required>
         <span v-if="!password" class="error-text">Confirm Password is required</span>
       </div>
       <button type="submit" class="register-button">Register</button>
@@ -47,9 +47,7 @@ export default {
             this.errorMessage = "Passwords do not match!";
             return;
           }
-          let URL = process.env.NODE_ENV === 'development' ? "http://localhost:8888" : "https://finbud-ai.netlify.app"
-          URL += "/.netlify/functions/server"
-          const api = `${URL}/users`
+          const api = `${process.env.VUE_APP_DEPLOY_URL}/users`
           const response = await axios.post(api, {
             accountData: {
               username: this.email,
