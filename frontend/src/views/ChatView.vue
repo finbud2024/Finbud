@@ -15,7 +15,8 @@
           :key="index" 
           :is-user="message.isUser"
           :text="message.text" 
-          :typing="message.typing" 
+          :typing="message.typing"
+          :htmlContent = "message.htmlContent"
           :timestamp="message.timestamp"
           :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" 
           :avatar-src="message.isUser ? userAvatar : botAvatar" 
@@ -235,6 +236,120 @@ export default {
           console.error('Error in stock message:', err);
         }
       }
+      //RETUNRS CRYPTO TABLE
+      else if(userMessage.toLowerCase().includes("#crypto")){
+        //FETCHING COIN DATA
+        let coinData = []
+        try {
+            const res = await axios.get("https://api.coinranking.com/v2/coins?timePeriod=7d", {
+            headers: {'x-access-token': process.env.VUE_APP_COINRANKING_KEY}
+            })
+          coinData = res.data.data.coins;
+        } catch (error) {
+          console.error('Failed to fetch cr quotes:', error);
+        }
+        //CONSTRUCTING TABLE TEMPLATE AS HTML MESSAGE
+
+        let tableTemplate = 
+        `
+        <div style="font-weight: 900; font-size: 30px"> Top 5 Ranking Coins </div>
+        <table>
+          <thead>
+            <tr>
+                <th>Name</th>
+                <th>Rank</th>
+                <th>Tier</th>
+                <th>Price</th>
+                <th>Symbol</th>
+                <th>Change</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="table-body">`
+        coinData.slice(0,5).map((item, index)=>{
+          tableTemplate += `
+            <tr>
+              <td><img style="width: 50px; aspect-ratio: 1;"src=${item.iconUrl} alt=${item.name}>${item.name}</td>
+              <td>${item.rank}</td>
+              <td>${item.tier}</td>
+              <td>${parseFloat(item.price).toFixed(2)}$</td>
+              <td>${item.symbol}</td>
+              <td>${item.change}</td>
+            </tr>
+          `
+        })
+        tableTemplate += `</tbody></table>`;
+        //ADDING BOT ANSWER TO CHAT FRAME
+        this.messages.push({
+          text:``,
+          htmlContent: tableTemplate,
+          isUser: false,
+          typing: true,
+          timestamp: new Date().toLocaleTimeString()
+        })
+      }
+      //RETURNS REALESTATE TABLE
+      else if(userMessage.toLowerCase().includes("#realestate") ){
+        //handling user input
+        let userInputToken = userMessage.toLowerCase().split(/\s+/)
+        let searchLocation;
+        if(userInputToken.length > 1){
+          userInputToken = userInputToken.slice(1,userInputToken.length)
+          searchLocation = userInputToken.join(' ')
+        }else{
+          searchLocation = "san jose"
+        }
+        //FETCHING REALESTATE DATA
+        let propertiesData = []
+        const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
+        const BASE_URL = 'https://zillow-com1.p.rapidapi.com/propertyExtendedSearch';
+        try {
+          const response = await axios.get(BASE_URL, {
+            params: { location: searchLocation},
+            headers: {
+              'X-RapidAPI-Key': API_KEY,
+              'X-RapidAPI-Host': 'zillow-com1.p.rapidapi.com',
+            },
+          });
+          propertiesData = response.data.props
+        } catch (error) {
+          console.error('Error fetching property data:', error);
+        }
+        //CONSTRUCTING TABLE TEMPLATE AS HTML MESSAGE
+        let tableTemplate = 
+        `
+        <div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
+        <table>
+          <thead>
+            <tr>
+                <th>Image</th>
+                <th>Type</th>
+                <th>Address</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="table-body">`
+        propertiesData.slice(0,5).map((item, index)=>{
+          tableTemplate += `
+            <tr>
+              <td><img style="width: 50px; aspect-ratio: 1;"src=${item.imgSrc} alt="propertyImage"></td>
+              <td>${item.propertyType}</td>
+              <td>${item.address}</td>
+              <td>${item.price}$</td>
+              <td>${item.listingStatus}</td>
+            </tr>
+          `
+        })
+        tableTemplate += `</tbody></table>`;
+        //ADDING BOT ANSWER TO CHAT FRAME
+        this.messages.push({
+          text:``,
+          htmlContent: tableTemplate,
+          isUser: false,
+          typing: true,
+          timestamp: new Date().toLocaleTimeString()
+        })
+      }
       //HANDLE GENERAL 
       else {
         try{
@@ -337,13 +452,15 @@ export default {
     }, 500);
 
     const guidanceMessage = `
-    Welcome to FinBud! Here are some tips to get started:
-    
-    1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
-    2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
-    3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
-    4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
-    5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
+      Welcome to FinBud! Here are some tips to get started:
+      
+      1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
+      2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
+      3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+      4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
+      5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
+      6. List of top 5 crypto coins: Use #crypto
+      7. Show 5 random listing of properties: Use #realestate area_name (e.g., #realestate new york). If no area is specified, then by default location will be san jose
     `;
     if (!this.messages) {
       this.messages = [];
@@ -371,79 +488,78 @@ export default {
 };
 </script>
 
-
 <style scoped>
-.home-container {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-}
-
-.toggle-sidebar-btn {
-  display: none;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 10px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.toggle-sidebar-btn:hover {
-  background-color: #2980b9;
-}
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-@media (max-width: 768px) {
-  .side-bar {
-    display: none;
+  .home-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
   }
 
   .toggle-sidebar-btn {
-    display: block;
-  }
-
-  .chat-header {
-    font-size: 1rem;
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    background-color: #3498db;
+    color: white;
+    border: none;
     padding: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
   }
-}
 
-.overlay {
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
+  .toggle-sidebar-btn:hover {
+    background-color: #2980b9;
+  }
 
-.side-bar.is-visible {
-  display: block;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 60%;
-  height: 100%;
-  background-color: #f9f3f3;
-  z-index: 1001;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-}
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 
-.side-bar.is-visible {
-  transform: translateX(0);
-}
+  @media (max-width: 768px) {
+    .side-bar {
+      display: none;
+    }
+
+    .toggle-sidebar-btn {
+      display: block;
+    }
+
+    .chat-header {
+      font-size: 1rem;
+      padding: 10px;
+    }
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+
+  .side-bar.is-visible {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    background-color: #f9f3f3;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .side-bar.is-visible {
+    transform: translateX(0);
+  }
 </style>

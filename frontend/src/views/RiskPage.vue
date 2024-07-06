@@ -74,7 +74,6 @@
   const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
   const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
   
-const apiUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://finbud-ai.netlify.app/.netlify/functions';
   export default {
     name: 'StockQuote',
     components: {
