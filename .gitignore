@@ -23,3 +23,12 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
+
+#------------------------- PYTHON INSIDE DATA FOLDER --------------------------
+#Ignore Python-related files and directories inside the data folder
+data/__pycache__/
+data/*.py[cod]
+
+# Ignore virtual environments
+venv/
+.env/
