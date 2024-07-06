@@ -15,7 +15,8 @@
           :key="index" 
           :is-user="message.isUser"
           :text="message.text" 
-          :typing="message.typing" 
+          :typing="message.typing"
+          :htmlContent = "message.htmlContent"
           :timestamp="message.timestamp"
           :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" 
           :avatar-src="message.isUser ? userAvatar : botAvatar" 
@@ -34,21 +35,12 @@ import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import SideBar from '../components/SideBar.vue';
 import authStore from '@/authStore';
-import gptResponse from '../services/gptResponse.js';
-
-const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
-const ALPHA_VANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
+import {gptServices} from '../services/gptServices.js';
 
 export default {
   name: 'ChatView',
   props: ['threadId'],
-  components: {
-    ChatHeader,
-    ChatFrame,
-    MessageComponent,
-    UserInput,
-    SideBar
-  },
+  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar},
   data() {
     return {
       newMessage: '',
@@ -76,349 +68,498 @@ export default {
     },
   },
   methods: {
-  clearMessage() {
-    this.newMessage = '';
-  },
-  toggleSidebar() {
-    this.isSidebarVisible = !this.isSidebarVisible;
-  },
-  closeSidebar() {
-    this.isSidebarVisible = false;
-  },
-  async updateCurrentThread(currentThreadId) {
-    try {
-      this.messages = [];
+    clearMessage() {
+      this.newMessage = '';
+    },
+    toggleSidebar() {
+      this.isSidebarVisible = !this.isSidebarVisible;
+    },
+    closeSidebar() {
+      this.isSidebarVisible = false;
+    },
+    async updateCurrentThread(currentThreadId) {
+      try {
+        this.messages = [];
 
-      const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
-      if (thread) {
-        this.currentThread = thread;
-      }
-      //Load chats
-      const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
-      const chats = await axios.get(chatApi);
-      const chatsData = chats.data;
-      chatsData.forEach(chat => {
-        const prompt = {
-          text: chat.prompt.toString(),
-          isUser: true,
-          typing: true,
-          timestamp: chat.creationDate,
-        };
-        //push into message to show on chat
-        this.messages.push(prompt);
-        const responses = chat.response;
-        responses.forEach(responseData => {
-          const response = {
-            text: responseData,
-            isUser: false,
+        const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
+        if (thread) {
+          this.currentThread = thread;
+        }
+        //Load chats
+        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
+        const chats = await axios.get(chatApi);
+        const chatsData = chats.data;
+        chatsData.forEach(chat => {
+          const prompt = {
+            text: chat.prompt.toString(),
+            isUser: true,
             typing: true,
             timestamp: chat.creationDate,
           };
-          this.messages.push(response);
+          //push into message to show on chat
+          this.messages.push(prompt);
+          const responses = chat.response;
+          responses.forEach(responseData => {
+            const response = {
+              text: responseData,
+              isUser: false,
+              typing: true,
+              timestamp: chat.creationDate,
+            };
+            this.messages.push(response);
+          });
         });
-      });
-      console.log('chats:', chats);
-    } catch (err) {
-      console.error('Error on updating to current thread:', err);
-    }
-  },
-  async addThread(newThread) {
-    try {
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-      const userId = localStorage.getItem('token');
-      const reqBody = {
-        userId: userId
+        console.log('chats:', chats);
+      } catch (err) {
+        console.error('Error on updating to current thread:', err);
       }
-      const thread = await axios.post(api, reqBody);
-      newThread.id = thread.data._id;
-      this.threads.push(newThread);
-    } catch (err) {
-      console.error('Error on adding new thread:', err);
-    }
-  },
-  editThread(index) {
-    this.threads[index].editing = true;
-  },
-  saveThreadName({ newName, index }) {
-    this.threads[index].name = newName;
-    this.threads[index].editing = false;
-  },
-  cancelEdit(index) {
-    this.threads[index].editing = false;
-  },
-  selectThread(index) {
-    this.updateCurrentThread(this.threads[index].id);
-  },
-  async sendMessage(newMessage) {
-    this.messages.push({
-      text: newMessage.trim(),
-      isUser: true,
-      typing: true,
-      timestamp: new Date().toLocaleTimeString()
-    });
-
-    const userMessage = newMessage.trim();
-    console.log('User message:', userMessage);
-    let answers = [];
-
-    try {
-      if (userMessage.toLowerCase().includes("define")) { //HANDLE DEFINE
-        answers = await this.handleDefineMessage(userMessage);
-      } else if (userMessage.toLowerCase().includes("buy")) { //HANDLE BUY
-        answers = this.handleBuyMessage(userMessage);
-      } else if (userMessage.toLowerCase().includes("sell")) { //HANDLE SELL
-        answers = this.handleSellMessage(userMessage);
-      } else if (userMessage.toLowerCase().includes("#add")) {
-        answers = await this.handleAddTransaction(userMessage);
-      } else if (userMessage.toLowerCase().includes("#spend")) { 
-        answers = await this.handleSpendTransaction(userMessage);
-      } else if(this.extractStockCode(userMessage)){ //HANDLE STOCK
-        answers = await this.handleStockMessage(this.extractStockCode(userMessage)[0]);
-      } else {
-        answers = await this.handleGeneralMessage(userMessage);
+    },
+    async addThread(newThread) {
+      try {
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+        const userId = localStorage.getItem('token');
+        const reqBody = {
+          userId: userId
+        }
+        const thread = await axios.post(api, reqBody);
+        newThread.id = thread.data._id;
+        this.threads.push(newThread);
+      } catch (err) {
+        console.error('Error on adding new thread:', err);
       }
-    } catch (error) {
-      console.error('Error:', error);
+    },
+    editThread(index) {
+      this.threads[index].editing = true;
+    },
+    saveThreadName({ newName, index }) {
+      this.threads[index].name = newName;
+      this.threads[index].editing = false;
+    },
+    cancelEdit(index) {
+      this.threads[index].editing = false;
+    },
+    selectThread(index) {
+      this.updateCurrentThread(this.threads[index].id);
+    },
+    async sendMessage(newMessage) {
       this.messages.push({
-        text: `Error processing your message.`,
-        isUser: false,
+        text: newMessage.trim(),
+        isUser: true,
+        typing: true,
         timestamp: new Date().toLocaleTimeString()
       });
-    }
-    answers.forEach(answer => {
-      this.addTypingResponse(answer, false);
-    })
-    //save chat to backend
-    try {
-      const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-      const reqBody = {
-        prompt: userMessage,
-        response: answers,
-        threadId: this.currentThread.id,
-      };
-      const chat = await axios.post(chatApi, reqBody);
-    } catch (err) {
-      console.error('Error on saving chat:', err);
-    }
-  },
-  async handleDefineMessage(userMessage) {
-    const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-    try {
+
+      const userMessage = newMessage.trim();
+      console.log('User message:', userMessage);
       const answers = [];
-      const prompt = `Explain ${term} to me as if I'm 15.`;
-      const answer = await gptResponse(prompt);
-      answers.push(answer);
-      return answers;
-    } catch (err) {
-      console.log(err);
-    }
-  },
-  async handleStockMessage(stockCode) {
-    const answers = [];
-    //alpha vantage api      
-    const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${ALPHA_VANTAGE_API_KEY}`);
-    const stockData = stockResponse.data;
-    const price = stockData['Global Quote']['05. price'];
-    const timeStamp = new Date().toLocaleTimeString();
+      //HANDLE DEFINE
+      if (userMessage.toLowerCase().includes("define")) {
+        try{
+          const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
+          const prompt = `Explain ${term} to me as if I'm 15.`;
+          const gptResponse = await gptServices(prompt);
+          answers.push(gptResponse);
+        }catch(err){
+          console.error('Error in define message:', error);
+        }
+      }
+      //HANDLE BUY
+      else if (userMessage.toLowerCase().includes("buy")) {
+        try{
+          //answers = this.handleBuyMessage(userMessage);
+          //TODO
+        }catch(err){
+          console.error('Error in buy message:', error);
+        }
+      }
+      //HANDLE SELL 
+      else if (userMessage.toLowerCase().includes("sell")) {
+        try{
+          //answers = this.handleSellMessage(userMessage);
+          //TODO
+        }catch(err){
+          console.error('Error in sell message:', error);
+        }
+      }
+      //HANDLE ADD TRANSACTION
+      else if (userMessage.toLowerCase().includes("#add")) {
+        try{
+          const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
+          if (match) {
+            const description = match[1].trim();
+            const amount = parseInt(match[2], 10);
+            const balance = await this.calculateNewBalance(amount);
+            await this.addTransaction(description, amount, balance);
+            answers.push([`Transaction added: ${description}, $${amount}. New balance: $${balance}.`]);
+          } else {
+            answers.push(['Please specify the description and amount you want to add.']);
+          }
+        }catch(err){
+          console.error('Error in add transaction:', err);
+        }
+      }
+      //HANDLE SPEND TRANSACTION
+      else if (userMessage.toLowerCase().includes("#spend")) {
+        try{
+          //answers = await this.handleSpendTransaction(userMessage);
+          const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
+          if (match) {
+            const description = match[1].trim();
+            const amount = -parseInt(match[2], 10);
+            const balance = await this.calculateNewBalance(amount);
+            await this.addTransaction(description, amount, balance);
+            answers.push([`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`]);
+          } else {
+            answers.push(['Please specify the description and amount you want to spend.']);
+          }
+        }catch(err){
+          console.error('Error in spend transaction:', err);
+        }
+      }
+      //HANDLE STOCK 
+      else if(this.extractStockCode(userMessage)){
+        try{
+          //extract stock code
+          const stockCode = this.extractStockCode(userMessage)[0];
+          //alpha vantage api
+          const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
+          const stockData = stockResponse.data;
+          const price = stockData['Global Quote']['05. price'];
+          const timeStamp = new Date().toLocaleTimeString();
+          let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+          answers.push(alphavantageResponse);
+          //chatgpt api
+          const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+          const gptResponse = await gptServices(prompt);
+          answers.push(gptResponse);
+        }catch(err){
+          console.error('Error in stock message:', err);
+        }
+      }
+      //RETUNRS CRYPTO TABLE
+      else if(userMessage.toLowerCase().includes("#crypto")){
+        //FETCHING COIN DATA
+        let coinData = []
+        try {
+            const res = await axios.get("https://api.coinranking.com/v2/coins?timePeriod=7d", {
+            headers: {'x-access-token': process.env.VUE_APP_COINRANKING_KEY}
+            })
+          coinData = res.data.data.coins;
+        } catch (error) {
+          console.error('Failed to fetch cr quotes:', error);
+        }
+        //CONSTRUCTING TABLE TEMPLATE AS HTML MESSAGE
 
-    let responseText = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-    answers.push(responseText);
+        let tableTemplate = 
+        `
+        <div style="font-weight: 900; font-size: 30px"> Top 5 Ranking Coins </div>
+        <table>
+          <thead>
+            <tr>
+                <th>Name</th>
+                <th>Rank</th>
+                <th>Tier</th>
+                <th>Price</th>
+                <th>Symbol</th>
+                <th>Change</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="table-body">`
+        coinData.slice(0,5).map((item, index)=>{
+          tableTemplate += `
+            <tr>
+              <td><img style="width: 50px; aspect-ratio: 1;"src=${item.iconUrl} alt=${item.name}>${item.name}</td>
+              <td>${item.rank}</td>
+              <td>${item.tier}</td>
+              <td>${parseFloat(item.price).toFixed(2)}$</td>
+              <td>${item.symbol}</td>
+              <td>${item.change}</td>
+            </tr>
+          `
+        })
+        tableTemplate += `</tbody></table>`;
+        //ADDING BOT ANSWER TO CHAT FRAME
+        this.messages.push({
+          text:``,
+          htmlContent: tableTemplate,
+          isUser: false,
+          typing: true,
+          timestamp: new Date().toLocaleTimeString()
+        })
+      }
+      //RETURNS REALESTATE TABLE
+      else if(userMessage.toLowerCase().includes("#realestate") ){
+        //handling user input
+        let userInputToken = userMessage.toLowerCase().split(/\s+/)
+        let searchLocation;
+        if(userInputToken.length > 1){
+          userInputToken = userInputToken.slice(1,userInputToken.length)
+          searchLocation = userInputToken.join(' ')
+        }else{
+          searchLocation = "san jose"
+        }
+        //FETCHING REALESTATE DATA
+        let propertiesData = []
+        const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
+        const BASE_URL = 'https://zillow-com1.p.rapidapi.com/propertyExtendedSearch';
+        try {
+          const response = await axios.get(BASE_URL, {
+            params: { location: searchLocation},
+            headers: {
+              'X-RapidAPI-Key': API_KEY,
+              'X-RapidAPI-Host': 'zillow-com1.p.rapidapi.com',
+            },
+          });
+          propertiesData = response.data.props
+        } catch (error) {
+          console.error('Error fetching property data:', error);
+        }
+        //CONSTRUCTING TABLE TEMPLATE AS HTML MESSAGE
+        let tableTemplate = 
+        `
+        <div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
+        <table>
+          <thead>
+            <tr>
+                <th>Image</th>
+                <th>Type</th>
+                <th>Address</th>
+                <th>Price</th>
+                <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="table-body">`
+        propertiesData.slice(0,5).map((item, index)=>{
+          tableTemplate += `
+            <tr>
+              <td><img style="width: 50px; aspect-ratio: 1;"src=${item.imgSrc} alt="propertyImage"></td>
+              <td>${item.propertyType}</td>
+              <td>${item.address}</td>
+              <td>${item.price}$</td>
+              <td>${item.listingStatus}</td>
+            </tr>
+          `
+        })
+        tableTemplate += `</tbody></table>`;
+        //ADDING BOT ANSWER TO CHAT FRAME
+        this.messages.push({
+          text:``,
+          htmlContent: tableTemplate,
+          isUser: false,
+          typing: true,
+          timestamp: new Date().toLocaleTimeString()
+        })
+      }
+      //HANDLE GENERAL 
+      else {
+        try{
+          const prompt = userMessage;
+          const gptResponse = await gptServices(prompt);
+          answers.push(gptResponse);
+        }catch(err){
+          console.error('Error in general message:', error);
+        }
+      }
+      answers.forEach(answer => {
+        this.addTypingResponse(answer, false);
+      })
+      //save chat to backend
+      // try {
+      //   const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+      //   const reqBody = {
+      //     prompt: userMessage,
+      //     response: answers,
+      //     threadId: this.currentThread.id,
+      //   };
+      //   const chat = await axios.post(chatApi, reqBody);
+      // } catch (err) {
+      //   console.error('Error on saving chat:', err);
+      // }
+    },
+    async handleAddTransaction(userMessage) {
+      const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1].trim();
+        const amount = parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+        return [`Transaction added: ${description}, $${amount}. New balance: $${balance}.`];
+      } else {
+        return ['Please specify the description and amount you want to add.'];
+      }
+    },
+    async handleSpendTransaction(userMessage) {
+      const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1].trim();
+        const amount = -parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+        return [`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`];
+      } else {
+        return ['Please specify the description and amount you want to spend.'];
+      }
+    },
+    async addTransaction(description, amount, balance) {
+      try {
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+          description,
+          amount,
+          balance,
+          date: new Date().toISOString(),
+          userId: localStorage.getItem('token')
+        });
+      } catch (error) {
+        console.error('Error adding transaction:', error);
+        this.addTypingResponse('Error adding transaction.', false);
+      }
+    },
+    async calculateNewBalance(amount) {
+      try {
+        const userId = localStorage.getItem('token');
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+        const transactions = response.data;
+        const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+        return currentBalance + amount;
+      } catch (error) {
+        console.error('Error calculating new balance:', error);
+        throw error;
+      }
+    },
+    extractStockCode(message) {
+      const pattern = /\b[A-Z]{3,5}\b/g;
+      const matches = message.match(pattern);
+      return matches;
+    },
+    addTypingResponse(text, isUser) {
+      const typingMessage = {
+        text: text,
+        isUser: isUser,
+        typing: true,
+        timestamp: new Date().toLocaleTimeString(),
+        username: isUser ? 'You' : 'FinBud Bot'
+      };
+      this.messages.push(typingMessage);
+      setTimeout(() => {
+        typingMessage.typing = false;
+        this.$forceUpdate();
+      }, 1000);
+    }
+  },
+  async mounted() {
+    setInterval(() => {
+      this.currentTime = new Date().toLocaleTimeString();
+    }, 500);
 
-    const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-    const answer = await gptResponse(prompt);
-    answers.push(answer);
-    return answers;
-  },
-  async handleGeneralMessage(userMessage) {
-    const answers = [];
-    const prompt = userMessage;
-    const answer = await gptResponse(prompt);
-    answers.push(answer);
-    return answers;
-  },
-  async handleAddTransaction(userMessage) {
-    const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
-    if (match) {
-      const description = match[1].trim();
-      const amount = parseInt(match[2], 10);
-      const balance = await this.calculateNewBalance(amount);
-      await this.addTransaction(description, amount, balance);
-      return [`Transaction added: ${description}, $${amount}. New balance: $${balance}.`];
-    } else {
-      return ['Please specify the description and amount you want to add.'];
+    const guidanceMessage = `
+      Welcome to FinBud! Here are some tips to get started:
+      
+      1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
+      2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
+      3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+      4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
+      5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
+      6. List of top 5 crypto coins: Use #crypto
+      7. Show 5 random listing of properties: Use #realestate area_name (e.g., #realestate new york). If no area is specified, then by default location will be san jose
+    `;
+    if (!this.messages) {
+      this.messages = [];
     }
-  },
-  async handleSpendTransaction(userMessage) {
-    const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
-    if (match) {
-      const description = match[1].trim();
-      const amount = -parseInt(match[2], 10);
-      const balance = await this.calculateNewBalance(amount);
-      await this.addTransaction(description, amount, balance);
-      return [`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`];
-    } else {
-      return ['Please specify the description and amount you want to spend.'];
-    }
-  },
-  async addTransaction(description, amount, balance) {
-    try {
-      const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
-        description,
-        amount,
-        balance,
-        date: new Date().toISOString(),
-        userId: localStorage.getItem('token')
-      });
-    } catch (error) {
-      console.error('Error adding transaction:', error);
-      this.addTypingResponse('Error adding transaction.', false);
-    }
-  },
-  async calculateNewBalance(amount) {
-    try {
-      const userId = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
-      const transactions = response.data;
-      const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
-      return currentBalance + amount;
-    } catch (error) {
-      console.error('Error calculating new balance:', error);
-      throw error;
-    }
-  },
-  addTypingResponse(text, isUser) {
-    const typingMessage = {
-      text: text,
-      isUser: isUser,
-      typing: true,
-      timestamp: new Date().toLocaleTimeString(),
-      username: isUser ? 'You' : 'FinBud Bot'
-    };
-    this.messages.push(typingMessage);
-    setTimeout(() => {
-      typingMessage.typing = false;
-      this.$forceUpdate();
-    }, 1000);
-  },
-  extractStockCode(message) {
-    const pattern = /\b[A-Z]{3,5}\b/g;
-    const matches = message.match(pattern);
-    return matches;
+    this.addTypingResponse(guidanceMessage.trim(), false);
+
+    //load threads
+    const userId = localStorage.getItem('token');
+    console.log(userId);
+    const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+
+    const historyThreads = await axios.get(threadApi);
+    const historyThreadsData = historyThreads.data;
+    historyThreadsData.forEach(threadData => {
+      const thread = {
+        id: threadData._id,
+        name: threadData.title,
+        editing: false,
+        editedName: threadData.title,
+        messages: []
+      };
+      this.threads.push(thread);
+    });
   }
-},
-async mounted() {
-  setInterval(() => {
-    this.currentTime = new Date().toLocaleTimeString();
-  }, 500);
-
-  const guidanceMessage = `
-  Welcome to FinBud! Here are some tips to get started:
-  
-  1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
-  2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
-  3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
-  4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
-  5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
-`;
-  if (!this.messages) {
-    this.messages = [];
-  }
-  this.addTypingResponse(guidanceMessage.trim(), false);
-
-  //load threads
-  const userId = localStorage.getItem('token');
-  console.log(userId);
-  const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-
-  const historyThreads = await axios.get(threadApi);
-  const historyThreadsData = historyThreads.data;
-  historyThreadsData.forEach(threadData => {
-    const thread = {
-      id: threadData._id,
-      name: threadData.title,
-      editing: false,
-      editedName: threadData.title,
-      messages: []
-    };
-    this.threads.push(thread);
-  });
-}
 };
 </script>
 
-
 <style scoped>
-.home-container {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-}
-
-.toggle-sidebar-btn {
-  display: none;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 10px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.toggle-sidebar-btn:hover {
-  background-color: #2980b9;
-}
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-@media (max-width: 768px) {
-  .side-bar {
-    display: none;
+  .home-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
   }
 
   .toggle-sidebar-btn {
-    display: block;
-  }
-
-  .chat-header {
-    font-size: 1rem;
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    background-color: #3498db;
+    color: white;
+    border: none;
     padding: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
   }
-}
 
-.overlay {
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
+  .toggle-sidebar-btn:hover {
+    background-color: #2980b9;
+  }
 
-.side-bar.is-visible {
-  display: block;
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 60%;
-  height: 100%;
-  background-color: #f9f3f3;
-  z-index: 1001;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-}
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 
-.side-bar.is-visible {
-  transform: translateX(0);
-}
+  @media (max-width: 768px) {
+    .side-bar {
+      display: none;
+    }
+
+    .toggle-sidebar-btn {
+      display: block;
+    }
+
+    .chat-header {
+      font-size: 1rem;
+      padding: 10px;
+    }
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+  }
+
+  .side-bar.is-visible {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    background-color: #f9f3f3;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .side-bar.is-visible {
+    transform: translateX(0);
+  }
 </style>
