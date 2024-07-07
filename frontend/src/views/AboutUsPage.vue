@@ -11,7 +11,7 @@
       <div class="team-container">
         <div class="team-member" v-for="member in teamMembers" :key="member.name">
           <div class="image-container">
-            <img :src="member.img" :alt="member.name" class="fade-in" />
+            <img :style="{ aspectRatio: '1', width: '50%' }" :src="member.img" :alt="member.name" class="fade-in" />
           </div>
           <h3>{{ member.name }}</h3>
           <p>{{ member.role }}</p>
@@ -73,7 +73,6 @@
 
         <button type="submit">Send message</button>
       </form>
-
       <div class="contact-info animate fade-in">
         <div class="info-block">
           <div class="icon">&#x2709;</div> <!-- Mail icon -->
@@ -99,17 +98,27 @@ export default {
         {
           name: 'Tri Bui',
           role: 'Founder & CEO',
-          intro: "I'm a senior at Macalester College, studying Quantitative Economics and Computer Science. I aim to create a startup that merges Finance, Tech, and Business to benefit young people in Vietnam.",
+          intro: "Bachelor of Quantitative Economics and Computer Science from Macslester College with passion creating a startup that merges Finance, Technology, and Business to benefit Vietnam community",
           img: require('@/assets/tri.jpeg'),
           socialIcons: [
-            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
-            { name: 'GitHub', link: 'https://www.github.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/tribuidinh/' },
+            { name: 'GitHub', link: 'https://github.com/tridinhbui' },
+          ],
+        },
+        {
+          name: 'Dung Hoang Le',
+          role: 'Project Manager',
+          intro: "Full Stack Software Developer with 2 years of experience at F5 Networks and SVB, holding a Bachelor of Science degree in Computer Science from Washington State University",
+          img: require('@/assets/Dung.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/lehoangdung2911/' },
+            { name: 'GitHub', link: 'https://github.com/DungLe2911' },
           ],
         },
         {
           name: 'Minh Nguyen',
           role: 'Chief Technology Officer (CTO)',
-          intro: "MCS, University of Iowa. BA in Computer Science and Economics & Minor in Statistics, Grinell College. Passionate about AI/ML, software engineering, and the intersection of technology and economics.",
+          intro: "Master Degree in Computer Science and Economics from University of Iowa with an addition of Bachelor os Science in Statistics at Grinell College. Passionate about AI/ML, software engineering, and the intersection of technology and economics.",
           img: require('@/assets/MinhNguyen_Photo.jpg'),
           socialIcons: [
             { name: 'LinkedIn', link: 'https://www.linkedin.com/in/minh~nguyen/' },
@@ -118,8 +127,8 @@ export default {
         },
         {
           name: 'Tung Nguyen',
-          role: 'Tech Lead',
-          intro: 'As a junior Computer Science major at Luther College, I am leading a team of 3 in developing the web app Finbud.',
+          role: 'FullStack Engineer',
+          intro: 'Junior Computer Science major at Luther College, leading a team of three in developing Finbud, an innovative financial management web app',
           img: require('@/assets/tung.jpg'),
           socialIcons: [
             { name: 'LinkedIn', link: 'https://www.linkedin.com' },
@@ -128,7 +137,7 @@ export default {
         },
         {
           name: 'Tran Binh Minh',
-          role: 'Lead Front-end',
+          role: 'Front-end Engineer',
           intro: 'My innovation endeavors aim to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy.',
           img: require('@/assets/BinhMinh.png'),
           socialIcons: [
@@ -138,7 +147,7 @@ export default {
         },
         {
           name: 'Truong Hoang Bach',
-          role: 'Back-end Developer',
+          role: 'Back-end Engineer',
           intro: 'A first year Computer Science student at VinUniversity',
           img: require('@/assets/bach.jpg'),
           socialIcons: [
