@@ -387,7 +387,7 @@ export default {
 
 <!-- -------------------TESTING SPACE-------------------- -->
 
-<template>
+<!-- <template>
   <div>
     <h1>Stock Dashboard</h1>
     <div>
