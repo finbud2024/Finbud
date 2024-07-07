@@ -31,6 +31,8 @@ export default {
   cursor: pointer;
   border-radius: 8px;
   box-shadow: 0 5px #e9e2e2;
+  width: 20%;
+  min-width: 100px
 }
 
 .big-green-button:hover {
