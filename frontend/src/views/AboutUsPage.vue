@@ -146,6 +146,16 @@ export default {
           ],
         },
         {
+          name: 'Khoi Anh Tran',
+          role: 'FullStack Engineer',
+          intro: 'Pursuing a Bachelor of Computer Science at the New Jersey Institute of Technology. Enthusiastic about applying my skills to innovative projects and exploring new opportunities in the tech industry',
+          img: require('@/assets/khoi.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/khoi-tran310/' },
+            { name: 'GitHub', link: 'https://github.com/AnhKhoi0310' },
+          ],
+        },
+        {
           name: 'Tung Nguyen',
           role: 'FullStack Engineer',
           intro: 'Junior Computer Science major at Luther College, leading a team of three in developing Finbud, an innovative financial management web app',
