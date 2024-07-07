@@ -5,7 +5,10 @@
       <button class="add-thread-btn" @click="addThread()">+</button>
     </div>
     <ul class="thread-list">
-      <li v-for="(thread, index) in threads" :key="index" @click="selectThread(index)">
+      <li v-for="(thread, index) in threads" 
+          :key="index" 
+          :class="['thread', {clicked: thread.clicked}]"
+          @click="selectThread(index)">
         <div v-if="!thread.editing" class="thread-item">
           {{ thread.name }}
           <button class="edit-btn" @click.stop="editThread(index)">Edit</button>
@@ -46,6 +49,11 @@ export default {
     },
     selectThread(index) {
       this.$emit('select-thread', index);
+      // Reset the clicked property of all threads
+      this.threads.forEach(thread => {
+        thread.clicked = false;
+      });
+      this.threads[index].clicked = true;
     }
   }
 };
@@ -119,5 +127,10 @@ export default {
   border-radius: 5px;
   background-color: #ecf0f1;
   color: #2c3e50;
+}
+
+.thread.clicked{
+  background-color: #34495e;
+  color: white;
 }
 </style>

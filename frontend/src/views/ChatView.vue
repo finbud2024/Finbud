@@ -16,7 +16,7 @@
           :is-user="message.isUser"
           :text="message.text" 
           :typing="message.typing"
-          :htmlContent = "message.htmlContent"
+          :htmlContent="message.htmlContent"
           :timestamp="message.timestamp"
           :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" 
           :avatar-src="message.isUser ? userAvatar : botAvatar" 
@@ -36,6 +36,18 @@ import UserInput from '../components/UserInput.vue';
 import SideBar from '../components/SideBar.vue';
 import authStore from '@/authStore';
 import {gptServices} from '../services/gptServices.js';
+
+const guidanceMessage = `
+    Welcome to FinBud! Here are some tips to get started:
+    
+    1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
+    2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
+    3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
+    4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
+    5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
+    6. List of top 5 crypto coins: Use #crypto
+    7. Show 5 random listing of properties: Use #realestate area_name (e.g., #realestate new york). If no area is specified, then by default location will be san jose
+  `;
 
 export default {
   name: 'ChatView',
@@ -80,6 +92,7 @@ export default {
     async updateCurrentThread(currentThreadId) {
       try {
         this.messages = [];
+        this.addTypingResponse(guidanceMessage.trim(), false);
 
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
         if (thread) {
@@ -140,6 +153,9 @@ export default {
     },
     selectThread(index) {
       this.updateCurrentThread(this.threads[index].id);
+      this.threads.forEach((thread, i) => {
+        thread.clicked = i === index;
+      });
     },
     async sendMessage(newMessage) {
       this.messages.push({
@@ -364,17 +380,17 @@ export default {
         this.addTypingResponse(answer, false);
       })
       //save chat to backend
-      // try {
-      //   const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-      //   const reqBody = {
-      //     prompt: userMessage,
-      //     response: answers,
-      //     threadId: this.currentThread.id,
-      //   };
-      //   const chat = await axios.post(chatApi, reqBody);
-      // } catch (err) {
-      //   console.error('Error on saving chat:', err);
-      // }
+      try {
+        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+        const reqBody = {
+          prompt: userMessage,
+          response: answers,
+          threadId: this.currentThread.id,
+        };
+        const chat = await axios.post(chatApi, reqBody);
+      } catch (err) {
+        console.error('Error on saving chat:', err);
+      }
     },
     async handleAddTransaction(userMessage) {
       const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
@@ -451,17 +467,6 @@ export default {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
 
-    const guidanceMessage = `
-      Welcome to FinBud! Here are some tips to get started:
-      
-      1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
-      2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
-      3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
-      4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
-      5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
-      6. List of top 5 crypto coins: Use #crypto
-      7. Show 5 random listing of properties: Use #realestate area_name (e.g., #realestate new york). If no area is specified, then by default location will be san jose
-    `;
     if (!this.messages) {
       this.messages = [];
     }
@@ -474,16 +479,28 @@ export default {
 
     const historyThreads = await axios.get(threadApi);
     const historyThreadsData = historyThreads.data;
-    historyThreadsData.forEach(threadData => {
-      const thread = {
-        id: threadData._id,
-        name: threadData.title,
+    console.log(historyThreadsData);
+    if(historyThreadsData.length == 0){
+      const newThread = {
+        name: 'New Thread',
         editing: false,
-        editedName: threadData.title,
+        editedName: 'New Chat',
         messages: []
       };
-      this.threads.push(thread);
-    });
+      await this.addThread(newThread);
+    }else{
+      historyThreadsData.forEach(threadData => {
+        const thread = {
+          id: threadData._id,
+          name: threadData.title,
+          editing: false,
+          editedName: threadData.title,
+          messages: []
+        };
+        this.threads.push(thread);
+      });
+    }
+    this.selectThread(0);
   }
 };
 </script>
