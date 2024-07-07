@@ -4,6 +4,7 @@
       <div class="intro-text">
         <div class="intro-text1">
           <li class="title animate fade-in">Making the most informed financial choices</li>
+          <li class="animate fade-in" :style="{ fontSize: '30px',fontWeight: 'bold', listStyleType: 'none' }">Sign in to see more services</li>
           <li class="description animate fade-in">With FinBud, you can ask for the best financial advice anytime,
             anywhere</li>
           <br>
