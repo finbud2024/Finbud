@@ -96,7 +96,7 @@ export default {
     return {
       teamMembers: [
         {
-          name: 'Tri Dinh Bui(done)',
+          name: 'Tri Dinh Bui',
           role: 'Founder & CEO',
           intro: "Bachelor of Quantitative Economics and Computer Science from Macslester College with passion creating a startup that merges Finance, Technology, and Business to benefit Vietnam community",
           img: require('@/assets/tri.jpeg'),
@@ -106,7 +106,7 @@ export default {
           ],
         },
         {
-          name: 'Dung Hoang Le(done)',
+          name: 'Dung Hoang Le',
           role: 'Project Manager',
           intro: "Full Stack Software Developer with 2 years of experience at F5 Networks and SVB, holding a Bachelor of Science degree in Computer Science from Washington State University",
           img: require('@/assets/Dung.jpg'),
@@ -116,7 +116,7 @@ export default {
           ],
         },
         {
-          name: 'Minh Nguyen(done)',
+          name: 'Minh Nguyen',
           role: 'Chief Technology Officer (CTO)',
           intro: "Master Degree in Computer Science and Economics from University of Iowa with an addition of Bachelor os Science in Statistics at Grinell College. Passionate about AI/ML, software engineering, and the intersection of technology and economics.",
           img: require('@/assets/MinhNguyen_Photo.jpg'),
@@ -126,7 +126,7 @@ export default {
           ],
         },
         {
-          name: 'Phu Tien(done)',
+          name: 'Phu Tien',
           role: 'Data Division Lead',
           intro: 'Honours Bachelor of Business & Marketing from IBD@NEU, focused on applying advanced analysis techniques and strategies in FinTech.',
           img: require('@/assets/tien.jpg'),
@@ -156,7 +156,7 @@ export default {
           ],
         },
         {
-          name: 'Minh Binh Tran(done)',
+          name: 'Minh Binh Tran',
           role: 'Front-end Engineer',
           intro: 'Bachelor of  Computer Science from VinUniversity with passion everage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy',
           img: require('@/assets/BinhMinh.png'),
@@ -166,7 +166,7 @@ export default {
           ],
         },
         {
-          name: 'Huy Quang Dao(done)',
+          name: 'Huy Quang Dao',
           role: 'Data Analysis Engineer',
           intro: 'Business Management at Foreign Trade University and participated in an Exchange Program in Statistics and Econometrics at Uppsala University',
           img: require('@/assets/QuangHuy.jpg'),
@@ -176,7 +176,7 @@ export default {
           ],
         },
         {
-          name: 'Khoa Dang Nguyen(done)',
+          name: 'Khoa Dang Nguyen',
           role: 'Artificial Inteligence(AI) Engineer',
           intro: "Applied LLM Developer with a Bachelor's degree in Data Science from the University of Rochester. Passionate about information retrieval and recommendation systems",
           img: require('@/assets/DangKhoa.png'),
@@ -186,7 +186,7 @@ export default {
           ],
         },
         {
-          name: 'Anh Tuan Nguyen(done)',
+          name: 'Anh Tuan Nguyen',
           role: 'Fullstack Engineer',
           intro: "Pursuing a major in Computer Science at the University of Science, actively developing features for Finbud, a financial management project. Passionate about AI/ML and software engineering.",
           img: require('@/assets/TuanAnh.png'),
@@ -196,7 +196,7 @@ export default {
           ],
         },
         {
-          name: 'Krystal Nguyen(done)',
+          name: 'Krystal Nguyen',
           role: 'Data Analytics/Data Scientist',
           intro: "Bachelor of Data Science student at Deakin University, dedicated to transforming data into impactful solutions. Passionate about addressing real-world challenges through data-driven approaches, always striving to make a meaningful difference.",
           img: require('@/assets/thu.jpg'),
@@ -206,7 +206,7 @@ export default {
           ],
         },
         {
-          name: 'Bach Hoang Truong(done)',
+          name: 'Bach Hoang Truong',
           role: 'Front-end Engineer',
           intro: 'Pursuing Computer Science Degree at VinUniversity',
           img: require('@/assets/bach.jpg'),
