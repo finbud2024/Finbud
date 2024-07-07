@@ -96,7 +96,7 @@ export default {
     return {
       teamMembers: [
         {
-          name: 'Tri Bui',
+          name: 'Tri Dinh Bui',
           role: 'Founder & CEO',
           intro: "Bachelor of Quantitative Economics and Computer Science from Macslester College with passion creating a startup that merges Finance, Technology, and Business to benefit Vietnam community",
           img: require('@/assets/tri.jpeg'),
@@ -126,6 +126,36 @@ export default {
           ],
         },
         {
+          name: 'Phu Tien',
+          role: 'Data Division Lead',
+          intro: 'Honours Bachelor of Business & Marketing from IBD@NEU, focused on applying advanced analysis techniques and strategies in FinTech.',
+          img: require('@/assets/tien.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/nguyen-tien-8482141ba/' },
+            { name: 'GitHub', link: 'https://github.com/tienfadepzai' },
+          ],
+        },
+        {
+          name: 'Huy Phung',
+          role: 'Front-end Engineer/Back-end Lead',
+          intro: 'Computer Scienctist and Mathematics from DePauw University. Dedicated full stack developer passionate about new technologies and solving complex problems, driven to innovate and create impactful solutions.',
+          img: require('@/assets/HuyPhung.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/huyphung2025/' },
+            { name: 'GitHub', link: 'https://github.com/hphng' },
+          ],
+        },
+        {
+          name: 'Khoi Anh Tran',
+          role: 'FullStack Engineer',
+          intro: 'Pursuing a Bachelor of Computer Science at the New Jersey Institute of Technology. Enthusiastic about applying my skills to innovative projects and exploring new opportunities in the tech industry',
+          img: require('@/assets/khoi.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/khoi-tran310/' },
+            { name: 'GitHub', link: 'https://github.com/AnhKhoi0310' },
+          ],
+        },
+        {
           name: 'Tung Nguyen',
           role: 'FullStack Engineer',
           intro: 'Junior Computer Science major at Luther College, leading a team of three in developing Finbud, an innovative financial management web app',
@@ -136,19 +166,59 @@ export default {
           ],
         },
         {
-          name: 'Tran Binh Minh',
+          name: 'Minh Binh Tran',
           role: 'Front-end Engineer',
-          intro: 'My innovation endeavors aim to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy.',
+          intro: 'Bachelor of  Computer Science from VinUniversity with passion everage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy',
           img: require('@/assets/BinhMinh.png'),
           socialIcons: [
-            { name: 'LinkedIn', link: 'https://www.linkedin.com' },
-            { name: 'GitHub', link: 'https://www.github.com' },
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/tr%E1%BA%A7n-b%C3%ACnh-minh-9b8b9a240/' },
+            { name: 'GitHub', link: 'https://github.com/tranbinhminh100105' },
           ],
         },
         {
-          name: 'Truong Hoang Bach',
-          role: 'Back-end Engineer',
-          intro: 'A first year Computer Science student at VinUniversity',
+          name: 'Huy Quang Dao',
+          role: 'Data Analysis Engineer',
+          intro: 'Business Management at Foreign Trade University and participated in an Exchange Program in Statistics and Econometrics at Uppsala University',
+          img: require('@/assets/QuangHuy.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/quang-huy-dao-4bb0a4237' },
+            { name: 'GitHub', link: 'https://github.com/HuyQuangOP' },
+          ],
+        },
+        {
+          name: 'Khoa Dang Nguyen',
+          role: 'Artificial Inteligence(AI) Engineer',
+          intro: "Applied LLM Developer with a Bachelor's degree in Data Science from the University of Rochester. Passionate about information retrieval and recommendation systems",
+          img: require('@/assets/DangKhoa.png'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/don-nguyen-854106228/' },
+            { name: 'GitHub', link: 'https://github.com/donkhoanguyen' },
+          ],
+        },
+        {
+          name: 'Anh Tuan Nguyen',
+          role: 'Fullstack Engineer',
+          intro: "Pursuing a major in Computer Science at the University of Science, actively developing features for Finbud, a financial management project. Passionate about AI/ML and software engineering.",
+          img: require('@/assets/TuanAnh.png'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/nguyen-tuan-anh-81a463242/' },
+            { name: 'GitHub', link: 'https://github.com/Anhnguyenk835' },
+          ],
+        },
+        {
+          name: 'Krystal Nguyen',
+          role: 'Data Analytics/Data Scientist',
+          intro: "Bachelor of Data Science student at Deakin University, dedicated to transforming data into impactful solutions. Passionate about addressing real-world challenges through data-driven approaches, always striving to make a meaningful difference.",
+          img: require('@/assets/thu.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/krystal-nguyen-63014b283' },
+            { name: 'GitHub', link: 'https://github.com/krystalcodess' },
+          ],
+        },
+        {
+          name: 'Bach Hoang Truong',
+          role: 'Front-end Engineer',
+          intro: 'Pursuing Computer Science Degree at VinUniversity',
           img: require('@/assets/bach.jpg'),
           socialIcons: [
             { name: 'LinkedIn', link: 'https://www.linkedin.com' },
