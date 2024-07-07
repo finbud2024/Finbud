@@ -13,7 +13,7 @@
         </div>
 
         <div class="photo">
-          <img src='@/assets/botrmbg.png' alt="placeholder">
+          <img style="aspect-ratio: 1; width: 100%" src='@/assets/botrmbg.png' alt="placeholder">
         </div>
       </div>
     </div>
@@ -133,7 +133,7 @@ export default {
   },
   methods: {
     learnMore() {
-      this.$router.push('/learn-more');
+      this.$router.push('/tech');
     },
     chatNow() {
       this.$router.push('/chat-view');
@@ -216,6 +216,7 @@ export default {
 
 .intro-text {
   display: flex;
+  flex-direction: row;
   width: auto;
   opacity: 1;
   animation: none;
@@ -223,7 +224,11 @@ export default {
 }
 
 .intro-text1 {
-  flex: 1;
+  width: 66%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 10%
 }
 
 .title {
@@ -309,6 +314,14 @@ export default {
   margin: auto;
   opacity: 1;
   animation: none;
+  width: 33%;
+  height: 100%;
+  right:0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-right: 8%;
 }
 
 /* Global settings and the main content area */
