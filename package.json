@@ -12,12 +12,24 @@
     "devDependencies": {
         "@vue/cli-service": "^5.0.8",
         "@vuepic/vue-datepicker": "^8.8.0",
+        "assert": "^2.1.0",
+        "browserify-zlib": "^0.2.0",
+        "crypto-browserify": "^3.12.0",
         "dotenv-webpack": "^8.1.0",
         "express-session": "^1.18.0",
+        "http-browserify": "^1.7.0",
+        "https-browserify": "^1.0.0",
+        "os-browserify": "^0.3.0",
         "passport": "^0.7.0",
         "passport-google-oauth2": "^0.2.0",
         "passport-local": "^1.0.0",
-        "serverless-http": "^3.2.0"
+        "path-browserify": "^1.0.1",
+        "querystring-es3": "^0.2.1",
+        "serverless-http": "^3.2.0",
+        "stream-browserify": "^3.0.0",
+        "stream-http": "^3.2.0",
+        "url": "^0.11.3",
+        "util": "^0.12.5"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.5.2",
@@ -44,6 +56,7 @@
         "vue-chartjs": "^5.3.1",
         "vue-router": "^4.3.3",
         "vue-template-compiler": "^2.7.16",
-        "vuex": "^4.1.0"
+        "vuex": "^4.1.0",
+        "yahoo-finance": "^0.3.8"
     }
 }

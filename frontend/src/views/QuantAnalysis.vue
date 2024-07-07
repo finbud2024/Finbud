@@ -1,4 +1,145 @@
 <template>
+  <div>
+    <h1>Stock Dashboard</h1>
+    <div>
+      <label for="stock-select">Select Stock:</label>
+      <select id="stock-select" v-model="selectedStock" @change="fetchStockData">
+        <option v-for="stock in stocks" :key="stock.value" :value="stock.value">{{ stock.label }}</option>
+      </select>
+    </div>
+    <StockChart v-if="stockData" :stockData="stockData" />
+  </div>
+</template>
+
+<script>
+import StockChart from '@/components/StockChart.vue';
+
+export default {
+  components: {
+    StockChart,
+  },
+  data() {
+    return {
+      selectedStock: 'AAPL',
+      stockData: null,
+      stocks: [
+        { label: 'Apple Inc.', value: 'AAPL' },
+        { label: 'Microsoft Corporation', value: 'MSFT' },
+        { label: 'Amazon.com Inc.', value: 'AMZN' },
+        { label: 'Tesla Inc.', value: 'TSLA' },
+        { label: 'Alphabet Inc. (Google)', value: 'GOOGL' },
+      ],
+    };
+  },
+  mounted() {
+    this.fetchStockData();
+  },
+  methods: {
+    fetchStockData() {
+      // Mock data for demonstration
+      const mockData = [
+        { date: '2023-01-01', close: 150 },
+        { date: '2023-01-02', close: 152 },
+        { date: '2023-01-03', close: 148 },
+        { date: '2023-01-04', close: 155 },
+        { date: '2023-01-05', close: 157 },
+      ];
+      this.stockData = {
+        dates: mockData.map(item => item.date),
+        prices: mockData.map(item => item.close),
+      };
+    },
+  },
+};
+</script>
+
+<style scoped>
+h1 {
+  text-align: center;
+}
+
+div {
+  margin: 20px;
+}
+</style>
+
+<!-- <script>
+// Import necessary modules
+const yahooFinance = require('yahoo-finance');
+const fs = require('fs');
+const path = require('path');
+
+export default {
+  name: 'YahooFinanceDownloader',
+  methods: {
+    async N50() {
+      const now = new Date();
+      const today345pm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 45, 0, 0);
+      
+      const benchmarkFile = 'benchmark.csv';
+      let beta_r = [];
+
+      try {
+        // Check if benchmark file exists
+        if (fs.existsSync(benchmarkFile)) {
+          // Read existing benchmark data
+          beta_r = JSON.parse(fs.readFileSync(benchmarkFile, 'utf8'));
+
+          // Check if data is not empty and update condition meets
+          if (beta_r.length > 0) {
+            const lastDate = beta_r[beta_r.length - 1].Date;
+            if (lastDate !== new Date().toISOString().slice(0, 10) && now > today345pm) {
+              // Download new data
+              const data = await yahooFinance.historical({
+                symbol: '^NSEI',
+                from: '2020-01-01',
+                to: new Date().toISOString().slice(0, 10)
+              });
+
+              // Append new data to existing
+              beta_r.push(...data);
+              fs.writeFileSync(benchmarkFile, JSON.stringify(beta_r, null, 2));
+            }
+          } else {
+            // Download data if empty
+            beta_r = await yahooFinance.historical({
+              symbol: '^NSEI',
+              from: '2020-01-01',
+              to: new Date().toISOString().slice(0, 10)
+            });
+
+            fs.writeFileSync(benchmarkFile, JSON.stringify(beta_r, null, 2));
+          }
+        } else {
+          // Download data if file doesn't exist
+          beta_r = await yahooFinance.historical({
+            symbol: '^NSEI',
+            from: '2020-01-01',
+            to: new Date().toISOString().slice(0, 10)
+          });
+
+          fs.writeFileSync(benchmarkFile, JSON.stringify(beta_r, null, 2));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+
+      return beta_r;
+    }
+  },
+  async mounted() {
+    // Call the N50 function on component mount
+    const data = await this.N50();
+    console.log('Downloaded data:', data);
+  }
+}
+</script>
+
+<style scoped>
+/* Your component-specific styles */
+</style> -->
+
+<!-- <template>
   <div class="container">
     <div class="Navigation" style="background-color: #2b2b2b; padding: 20px; border-radius: 10px;">
       <div class="animate__animated animate__fadeInLeft">
@@ -185,7 +326,7 @@ export default {
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
-</style>
+</style> -->
 
 
 
