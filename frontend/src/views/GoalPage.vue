@@ -400,7 +400,7 @@ export default {
   },
   mounted() {
     if (!authStore.isAuthenticated) {
-      this.$router.push('/');
+      this.$router.push('/login');
     }
     this.fetchTransactions();
     this.processURLParams();

@@ -29,6 +29,7 @@ import NewsSection from '../components/marketPage/NewsSection.vue';
 import CryptoWatch from '@/components/marketPage/CryptoWatch.vue';
 import StockWatch from '@/components/marketPage/StockWatch.vue';
 import RealEstateMap from '@/components/marketPage/RealEstateMap.vue'; 
+import authStore from '@/authStore';
 
 export default {
   name: 'MarketDataCenter',
@@ -38,6 +39,16 @@ export default {
     CryptoWatch,
     StockWatch,
     RealEstateMap
+  },
+  mounted() {
+    if (!authStore.isAuthenticated) {
+      this.$router.push('/login');
+    }
+  },
+  computed: {
+    authStore(){
+      return authStore;
+    }
   },
 };
 </script>
