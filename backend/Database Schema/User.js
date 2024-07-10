@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
 		firstName: String,
 		lastName: String,
 		displayName: String,
+		profilePicture: String,
 	}
 });
 

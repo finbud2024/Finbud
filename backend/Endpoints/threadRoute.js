@@ -20,20 +20,21 @@ threadRoute.route('/threads/:threadId')
 		}
 	})
 
-	//PUT thread: update a Thread with a given ID --- NEED DISCUSSION
+	//PUT thread: update a Thread with a given ID
 	.put(async (req, res) => {
 		const threadId = req.params.threadId;
 		console.log('In /threads Route (PUT) for thread with ID: ' + threadId);
+		if(req.body.userId){
+			return res.status(501).send("Cannot update User associate with Thread");
+		}
 		try{
 			const filter = {"_id": threadId};
 			const updatedThread = {};
 
-			if(req.body){
-				for(const key in req.body){
-					updatedThread[`${key}`] = req.body[key];
-				}
+			for(const key in req.body){
+				updatedThread[`${key}`] = req.body[key];
 			}
-			
+
 			const thread = await Thread.updateOne(filter, updatedThread, {
 				new: true
 			});
