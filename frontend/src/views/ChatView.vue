@@ -122,7 +122,7 @@ export default {
             this.messages.push(response);
           });
         });
-        console.log('chats:', chats);
+        //console.log('chats:', chats);
       } catch (err) {
         console.error('Error on updating to current thread:', err);
       }
@@ -144,12 +144,25 @@ export default {
     editThread(index) {
       this.threads[index].editing = true;
     },
-    saveThreadName({ newName, index }) {
+    async saveThreadName({ newName, index }) {
       this.threads[index].name = newName;
       this.threads[index].editing = false;
+      try{
+        console.log("save edit")
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${this.threads[index].id}`;
+        const reqBody = {
+          title: newName
+        };
+        const updatedThread = await axios.put(api, reqBody);
+        console.log(updatedThread);
+      }catch(err){
+        console.error('Error on saving thread name:', err);
+      }
     },
     cancelEdit(index) {
+      console.log("here: ", this.threads[index]);
       this.threads[index].editing = false;
+      console.log("cancel edit")
     },
     selectThread(index) {
       this.updateCurrentThread(this.threads[index].id);
