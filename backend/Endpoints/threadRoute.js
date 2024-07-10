@@ -22,7 +22,30 @@ threadRoute.route('/threads/:threadId')
 
 	//PUT thread: update a Thread with a given ID --- NEED DISCUSSION
 	.put(async (req, res) => {
-		return res.status(200).send("This operation is not supported yet");
+		const threadId = req.params.threadId;
+		console.log('In /threads Route (PUT) for thread with ID: ' + threadId);
+		try{
+			const filter = {"_id": threadId};
+			const updatedThread = {};
+
+			if(req.body){
+				for(const key in req.body){
+					updatedThread[`${key}`] = req.body[key];
+				}
+			}
+			
+			const thread = await Thread.updateOne(filter, updatedThread, {
+				new: true
+			});
+
+			if(!thread.modifiedCount){
+				return res.status(404).send(`Cannot find thread with thread ID: ${threadId} in database`);
+			}
+
+			return res.status(200).send({message: `Thread updated successfully`, updatedThread: thread});
+		}catch(err){
+			return res.status(501).send("Error while updating thread" + err);
+		}
 	})
 
 	//DELETE: removing a thread with a given id
