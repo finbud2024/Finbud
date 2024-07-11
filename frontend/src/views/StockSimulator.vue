@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-<<<<<<< HEAD
+
       <CompanyCard :companyName="this.bannerDisplayStock" :width='`80%`' />
-=======
+
       <h1>APPLE INC</h1>
       <h2>{{ SYMBOL }} <span class="market">Nasdaq Stock Market</span></h2>
       <div class="stock-prices">
@@ -18,7 +18,7 @@
         <span class="div-yield">{{ appleData.divYield }} DIV YIELD</span>
         <span class="pe-ratio">{{ appleData.peRatio }} P/E</span>
       </div>
->>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
+
     </header>
     <div class="main-content">
       <section class="key-statistics">
@@ -83,12 +83,12 @@
         </div>
       </div>
     </section>
-<<<<<<< HEAD
+
     <stockScreener @applyFilter="stockFilterHandler"/>
     <div class="stockDisplayContainer" v-if="count">
       <CompanyCard v-for="(item,idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
     </div>
-=======
+
     <stock-screener></stock-screener>
     <PreviewOrderModal 
       v-if="showModal" 
@@ -105,31 +105,31 @@
 </template>
 
 <script>
-<<<<<<< HEAD
+
 import StockScreener from '../components/StockScreener.vue'
 import CompanyCard from '@/components/CompanyCard.vue'
 import stockData from './hardcodeData/StockData.js'
-=======
+
 import StockScreener from '../components/StockScreener.vue';
 import axios from 'axios';
 import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue'
 
 const SYMBOL = 'AAPL'; // Define the constant symbol
->>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
+
 
 export default {
   name: 'StockDashboard',
   components: {
     StockScreener,
-<<<<<<< HEAD
-    CompanyCard
-=======
+
+    CompanyCard,
+
     PreviewOrderModal
->>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
+
   },
   data() {
     return {
-<<<<<<< HEAD
+
       bannerDisplayStock: "AAPL",
       displayStock: []
     }
@@ -160,7 +160,7 @@ export default {
     //make a copy of stockData and randomly sort then pick the first 10 elements
     const shuffledStock = stockData.slice().sort(()=>0.5-Math.random());
     this.displayStock = shuffledStock.slice(0,10);
-=======
+
       SYMBOL, // Bind the symbol to the template
       appleData: {
         price: '',
@@ -240,7 +240,6 @@ export default {
   },
   mounted() {
     this.fetchAppleData();
->>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
   }
 };
 </script>
