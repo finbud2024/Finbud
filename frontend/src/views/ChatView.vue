@@ -12,7 +12,7 @@
       <ChatFrame>
         <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
           :text="message.text" :typing="message.typing" :htmlContent="message.htmlContent"
-          :timestamp="message.timestamp" :username="message.isUser ? displayName : 'FinBud Bot'"
+          :timestamp="message.timestamp" :username="message.isUser ? displayName : 'FinBud Bot'" 
           :avatar-src="message.isUser ? userAvatar : botAvatar" />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
