@@ -1,9 +1,24 @@
-Here is the combined code:
-
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
+<<<<<<< HEAD
       <CompanyCard :companyName="this.bannerDisplayStock" :width='`80%`' />
+=======
+      <h1>APPLE INC</h1>
+      <h2>{{ SYMBOL }} <span class="market">Nasdaq Stock Market</span></h2>
+      <div class="stock-prices">
+        <span class="current-price">{{ appleData.price }} USD</span>
+        <span class="price-change">{{ appleData.priceChange }}</span>
+        <span class="post-market">{{ appleData.postMarket }}</span>
+      </div>
+      <div class="stock-info">
+
+        <span class="eps">{{ appleData.eps }} EPS</span>
+        <span class="market-cap">{{ appleData.marketCap }} MARKET CAP</span>
+        <span class="div-yield">{{ appleData.divYield }} DIV YIELD</span>
+        <span class="pe-ratio">{{ appleData.peRatio }} P/E</span>
+      </div>
+>>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
     </header>
     <div class="main-content">
       <section class="key-statistics">
@@ -38,11 +53,11 @@ Here is the combined code:
       <section class="actions">
         <h3>Actions</h3>
         <div class="action-form">
-          <input type="text" placeholder="Enter stock symbol" />
-          <input type="number" placeholder="Quantity" />
+          <input v-model="stockSymbol" type="text" placeholder="Enter stock symbol" />
+          <input v-model="quantity" type="number" placeholder="Quantity" />
           <div class="buttons">
             <button class="clear-btn">CLEAR</button>
-            <button class="preview-btn">PREVIEW ORDER</button>
+            <button class="preview-btn" @click="showModal = true">{{ previewButtonText }}</button>
           </div>
         </div>
       </section>
@@ -64,26 +79,53 @@ Here is the combined code:
         </div>
       </div>
     </section>
+<<<<<<< HEAD
     <stockScreener @applyFilter="stockFilterHandler"/>
     <div class="stockDisplayContainer">
       <CompanyCard v-for="(item,idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
     </div>
+=======
+    <stock-screener></stock-screener>
+    <PreviewOrderModal 
+      v-if="showModal" 
+      :stockSymbol="stockSymbol" 
+      :quantity="quantity" 
+      :estimatedPrice="estimatedPrice" 
+      :commissionPrice="commissionPrice" 
+      :estimatedTotal="estimatedTotal" 
+      @close="showModal = false" 
+      @clear-order="clearOrder"  
+      @submit-order="submitOrder" />
+>>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
   </div>
 </template>
 
 <script>
+<<<<<<< HEAD
 import StockScreener from '../components/StockScreener.vue'
 import CompanyCard from '@/components/CompanyCard.vue'
 import stockData from './hardcodeData/StockData.js'
+=======
+import StockScreener from '../components/StockScreener.vue';
+import axios from 'axios';
+import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue'
+
+const SYMBOL = 'AAPL'; // Define the constant symbol
+>>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
 
 export default {
   name: 'StockDashboard',
   components: {
     StockScreener,
+<<<<<<< HEAD
     CompanyCard
+=======
+    PreviewOrderModal
+>>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
   },
   data(){
     return {
+<<<<<<< HEAD
       bannerDisplayStock: "AAPL",
       displayStock: []
     }
@@ -109,6 +151,87 @@ export default {
     //make a copy of stockData and randomly sort then pick the first 10 elements
     const shuffledStock = stockData.slice().sort(()=>0.5-Math.random());
     this.displayStock = shuffledStock.slice(0,10);
+=======
+      SYMBOL, // Bind the symbol to the template
+      appleData: {
+        price: '',
+        open: '',
+        high: '',
+        low: '',
+        previousClose: '',
+        volume: '',
+        priceChange: '',
+        postMarket: '',
+        earningsDate: '',
+        eps: '',
+        marketCap: '',
+        divYield: '',
+        peRatio: ''
+      },
+      stockSymbol: this.$route.query.symbol || '', // pre-fill from chat command
+      quantity: this.$route.query.quantity || '', // pre-fill from chat command
+      showModal: false,
+
+      //temp: hard coded data for preview order 
+      estimatedPrice: 0, 
+      commissionPrice: 19.95, 
+      estimatedTotal: 0 
+    };
+  },
+  computed: {
+    previewButtonText() {
+      if (this.quantity === '' || this.quantity === 0) {
+        return 'PREVIEW ORDER';
+      } else if (this.quantity > 0) {
+        return 'PREVIEW BUY ORDER';
+      } else if (this.quantity < 0) {
+        return 'PREVIEW SELL ORDER';
+      }
+    }
+  },
+  methods: {
+    fetchAppleData() {
+      const apiKey = 'KAK6FUFDSN3RKLGT'; // Replace this with your actual Alpha Vantage API key
+      const SYMBOL = 'AAPL'; // Define the constant symbol
+      const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${SYMBOL}&apikey=${apiKey}`;
+      const earningsUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${SYMBOL}&apikey=${apiKey}`;
+
+      axios.get(url)
+        .then(response => {
+          if (response.data['Global Quote']) {
+            const quote = response.data['Global Quote'];
+            this.appleData.price = quote['05. price'];
+            this.appleData.open = quote['02. open'];
+            this.appleData.high = quote['03. high'];
+            this.appleData.low = quote['04. low'];
+            this.appleData.previousClose = quote['08. previous close'];
+            this.appleData.volume = quote['06. volume'];
+            this.appleData.priceChange = `${quote['09. change']} (${quote['10. change percent']})`;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching Apple data:', error);
+        });
+
+      axios.get(earningsUrl)
+        .then(response => {
+          if (response.data) {
+            const overview = response.data;
+            this.appleData.earningsDate = 'July 24'; // Replace with the actual date if available from the API
+            this.appleData.eps = overview.EPS;
+            this.appleData.marketCap = (overview.MarketCapitalization / 1e12).toFixed(3) + 'T';
+            this.appleData.divYield = (overview.DividendYield * 100).toFixed(2) + '%';
+            this.appleData.peRatio = overview.PERatio;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching Apple overview data:', error);
+        });
+    },
+  },
+  mounted() {
+    this.fetchAppleData();
+>>>>>>> b340fc9c4 (Chat #buy #sell command + preview order popup modal)
   }
 };
 </script>
