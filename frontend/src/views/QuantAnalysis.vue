@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <h1>Stock Dashboard</h1>
     <div>
@@ -61,7 +61,7 @@ h1 {
 div {
   margin: 20px;
 }
-</style>
+</style> -->
 
 <!-- <script>
 // Import necessary modules
@@ -139,117 +139,192 @@ export default {
 /* Your component-specific styles */
 </style> -->
 
+
+
+<!-- -------------------ORIGINAL REPRESENTATION BEFORE CONVERTING-------------------- -->
+
 <!-- <template>
+  <div class="dash-embed">
+    <iframe :src="dashUrl" frameborder="0" class="dash-iframe"></iframe>
+  </div>
+</template>
+
+<script>
+export default {
+   name: 'QuantAnalysis',
+  data() {
+    return {
+      dashUrl: "http://127.0.0.1:8054/" // Ensure this URL matches where your Dash app is running
+    };
+  }
+};
+</script>
+
+<style scoped>
+.dash-embed {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dash-iframe {
+  width: 100%;
+  height: 100vh; /* Adjust height as needed */
+  border: none;
+}
+</style> -->
+
+
+
+
+
+
+<!-- -------------------TESTING SPACE-------------------- -->
+
+<template>
   <div class="container">
-    <div class="Navigation" style="background-color: #2b2b2b; padding: 20px; border-radius: 10px;">
-      <div class="animate__animated animate__fadeInLeft">
-        <h1 class="start" style="text-align: center;">Dashboard</h1>
-        <h6 style="color: white;">Time Period</h6>
-        <select v-model="timePeriod">
-          <option value="6m">6 Months</option>
-          <option value="1y">1 year</option>
-          <option value="3y">3 years</option>
-          <option value="5y">5 years</option>
-        </select>
-        <br><br>
-        <h6 style="color: white;">Technical Indicators</h6>
-        <select v-model="indicator">
-          <option value="RSI">RSI</option>
-          <option value="SMA">SMA</option>
-          <option value="EMA">EMA</option>
-          <option value="MACD">MACD</option>
-          <option value="Bollinger Bands">Bollinger Bands</option>
-        </select>
-        <br><br>
-        <h6 style="color: white;">Returns</h6>
-        <select v-model="returns">
-          <option value="Daily Returns">Daily Returns</option>
-          <option value="Cumulative Returns">Cumulative Returns</option>
-        </select>
+    <div class="Navigation">
+      <div class="animated fadeInLeft">
+        <h1 class="start">Dashboard</h1>
+        <div class="form-group">
+          <label>Time Period</label>
+          <select v-model="timePeriod" class="dropdown">
+            <option value="6m">6 Months</option>
+            <option value="1y">1 year</option>
+            <option value="3y">3 years</option>
+            <option value="5y">5 years</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Technical Indicators</label>
+          <select v-model="indicator" class="dropdown">
+            <option value="RSI">RSI</option>
+            <option value="SMA">SMA</option>
+            <option value="EMA">EMA</option>
+            <option value="MACD">MACD</option>
+            <option value="Bollinger Bands">Bollinger Bands</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Returns</label>
+          <select v-model="returns" class="dropdown">
+            <option value="Daily Returns">Daily Returns</option>
+            <option value="Cumulative Returns">Cumulative Returns</option>
+          </select>
+        </div>
       </div>
     </div>
     <br><br>
-    <div class="Panel1" style="width: 48%; display: inline-block; vertical-align: top; margin: 0 1%;">
+    <div class="Panel-Frame">
       <div id="main-content" class="panel animate__animated animate__fadeInUp">
-        <select v-model="selectedStock1" style="width: 80%; margin: 0 auto;">
+        <select v-model="selectedStock1" class="stock-box">
           <option value="AAPL">Apple Inc.</option>
           <option value="MSFT">Microsoft Corporation</option>
           <option value="AMZN">Amazon.com Inc.</option>
           <option value="TSLA">Tesla Inc.</option>
           <option value="GOOGL">Alphabet Inc. (Google)</option>
         </select>
-        <div id="c_graph">{{ cGraph }}</div>
-        <div id="graphs">{{ graphs }}</div>
+        <div class="stock-value">
+          <div class="change-index" id="c_graph">{{ cGraph }}</div>
+          <div class="change-ratio" id="graphs">{{ graphs }}%</div>
+        </div>
         <br>
-        <h4 style="text-align: center;">Past Trend vs. Future Projections</h4>
-        <h5 style="text-align: center;">Closing Prices</h5>
-        <div id="gbm_graph">{{ gbmGraph }}</div>
+          <div class="stock-graph">
+              <div class="chart1">{{ chart1_1 }}</div>
+              <div class="chart2">{{ chart1_2 }}</div>
+
+              <div class="indicator-chart" id="indicator_graph">{{ IndicatorGraph1 }}</div>
+              <div class="return-chart" id="return_graph">{{ ReturnGraph1 }}</div>
+          </div>
         <br>
-        <h5 style="text-align: center;">Daily Volatility (%)</h5>
-        <div id="garch_graph">{{ garchGraph }}</div>
+        <div class="trend">
+          <h4>Past Trend vs. Future Projections</h4>
+          <div class="closing-price">
+            <h5>Closing Prices</h5>
+            <div id="gbm_graph">{{ gbmGraph }}</div>
+          </div>
+          <br>
+          <div class="daily-volatility">
+            <h5>Daily Volatility (%)</h5>
+            <div id="garch_graph">{{ garchGraph }}</div>
+          </div>
+        </div>
         <br>
-        <h4 style="text-align: center;">Risk Ratios</h4>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Alpha (NIFTY 50)</h6>
-          <div id="a_val">{{ alphaRatio }}</div>
-        </div>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Beta (NIFTY 50)</h6>
-          <div id="b_val">{{ betaRatio }}</div>
-        </div>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Sharpe Ratio</h6>
-          <div id="sr_val">{{ sharpeRatio }}</div>
-        </div>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Sortino Ratio</h6>
-          <div id="sor_val">{{ sortinoRatio }}</div>
-        </div>
-        <div>
-          <h6>Standard Deviation</h6>
-          <div id="sd_val">{{ stdDeviation }}</div>
+        <div class="Risk-Ratios">
+          <h4>Risk Ratios</h4>
+          <div class="Risk-info">
+            <div class="Risk-Block">
+              <div>Alpha (NIFTY 50)</div>
+              <p class="Risk-value" id="a_val">{{ alphaRatio }}</p>
+              <div>Sharpe Ratio</div>
+              <p class="Risk-value" id="sr_val">{{ sharpeRatio }}</p>
+            </div>
+            <div class="Risk-Block">
+              <div>Beta (NIFTY 50)</div>
+              <p class="Risk-value" id="b_val">{{ betaRatio }}</p>
+              <div>Sortino Ratio</div>
+              <p class="Risk-value" id="sor_val">{{ sortinoRatio }}</p>
+            </div>  
+            <div>Standard Deviation</div>
+            <p class="Risk-value" id="sd_val">{{ stdDeviation }}</p>
+          </div>
         </div>
       </div>
     </div>
-    <div class="Panel2" style="width: 48%; display: inline-block; vertical-align: top; margin: 0 1%;">
+
+    <div class="Panel-Frame">
       <div id="main-content2" class="panel animate__animated animate__fadeInUp">
-        <select v-model="selectedStock2" style="width: 80%; margin: 0 auto;">
+        <select v-model="selectedStock2" class="stock-box">
           <option value="AAPL">Apple Inc.</option>
           <option value="MSFT">Microsoft Corporation</option>
           <option value="AMZN">Amazon.com Inc.</option>
           <option value="TSLA">Tesla Inc.</option>
           <option value="GOOGL">Alphabet Inc. (Google)</option>
         </select>
-        <div id="c_graph2">{{ cGraph2 }}</div>
-        <div id="graphs2">{{ graphs2 }}</div>
+        <div class="stock-value">
+          <div class="change-index" id="c_graph">{{ cGraph2 }}</div>
+          <div class="change-ratio" id="graphs">{{ graphs2 }}%</div>
+        </div>
         <br>
-        <h4 style="text-align: center;">Past Trend vs. Future Projections</h4>
-        <h5 style="text-align: center;">Closing Prices</h5>
-        <div id="gbm_graph2">{{ gbmGraph2 }}</div>
+          <div class="stock-graph">
+              <div class="chart1">{{ chart2_1 }}</div>
+              <div class="chart2">{{ chart2_2 }}</div>
+              <div class="indicator-chart" id="indicator_graph">{{ IndicatorGraph2 }}</div>
+              <div class="return-chart" id="return_graph">{{ ReturnGraph2 }}</div>
+          </div>
         <br>
-        <h5 style="text-align: center;">Daily Volatility (%)</h5>
-        <div id="garch_graph2">{{ garchGraph2 }}</div>
+        <div class="trend">
+          <h4>Past Trend vs. Future Projections</h4>
+          <div class="closing-price">
+            <h5>Closing Prices</h5>
+            <div id="gbm_graph1">{{ gbmGraph2 }}</div>
+          </div>
+          <br>
+          <div class="daily-volatility">
+            <h5>Daily Volatility (%)</h5>
+            <div id="garch_graph">{{ garchGraph2 }}</div>
+          </div>
+        </div>
         <br>
-        <h4 style="text-align: center;">Risk Ratios</h4>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Alpha (NIFTY 50)</h6>
-          <div id="a_val2">{{ alphaRatio2 }}</div>
-        </div>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Beta (NIFTY 50)</h6>
-          <div id="b_val2">{{ betaRatio2 }}</div>
-        </div>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Sharpe Ratio</h6>
-          <div id="sr_val2">{{ sharpeRatio2 }}</div>
-        </div>
-        <div style="width: 49%; display: inline-block;">
-          <h6>Sortino Ratio</h6>
-          <div id="sor_val2">{{ sortinoRatio2 }}</div>
-        </div>
-        <div>
-          <h6>Standard Deviation</h6>
-          <div id="sd_val2">{{ stdDeviation2 }}</div>
+        <div class="Risk-Ratios">
+          <h4>Risk Ratios</h4>
+          <div class="Risk-info">
+            <div class="Risk-Block">
+              <div>Alpha (NIFTY 50)</div>
+              <p class="Risk-value" id="a_val">{{ alphaRatio2 }}</p>
+              <div>Sharpe Ratio</div>
+              <p class="Risk-value" id="sr_val">{{ sharpeRatio2 }}</p>
+            </div>
+            <div class="Risk-Block">
+              <div>Beta (NIFTY 50)</div>
+              <p class="Risk-value" id="b_val">{{ betaRatio2 }}</p>
+              <div>Sortino Ratio</div>
+              <p class="Risk-value" id="sor_val">{{ sortinoRatio2 }}</p>
+            </div>  
+            <div>Standard Deviation</div>
+            <p class="Risk-value" id="sd_val">{{ stdDeviation2 }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -273,17 +348,26 @@ export default {
       </ul>
     </div>
   </div>
+  <DashBoard />
 </template>
 
 <script>
+import DashBoard from '@/components/quant/DashBoard.vue';
+
+
+
 export default {
+  components: {
+    //MarketHeader,
+    DashBoard,
+  },
   data() {
     return {
       timePeriod: '1y',
       indicator: 'Bollinger Bands',
       returns: 'Daily Returns',
-      selectedStock1: 'AAPL',
-      selectedStock2: 'AAPL',
+      selectedStock1: '',
+      selectedStock2: '',
       cGraph: '',
       graphs: '',
       gbmGraph: '',
@@ -301,64 +385,217 @@ export default {
       betaRatio2: '',
       sharpeRatio2: '',
       sortinoRatio2: '',
-      stdDeviation2: ''
+      stdDeviation2: '',
+      chart1_1: '',
+      chart1_2: '',
+      chart2_1: '',
+      chart2_2: '',
+      IndicatorGraph1: '',
+      IndicatorGraph2: '',
+      ReturnGraph1: '',
+      ReturnGraph2: '',
     };
   },
   watch: {
-    timePeriod: 'fetchData',
+    timePeriod: 'updateBothData',
+    indicator: 'updateBothData',
+    returns: 'updateBothData',
     selectedStock1: 'fetchData',
-    indicator: 'fetchData',
-    returns: 'fetchData',
     selectedStock2: 'fetchData2'
   },
   methods: {
+    updateBothData() {
+      this.fetchData();
+      this.fetchData2();
+    },
     fetchData() {
-      // Implement the logic to fetch data based on selected options
-      // Need to adapt your Python functions to JavaScript equivalents
+      // Update data based on selected options
+      this.chart1_1 = `show chart 1 for ${this.selectedStock1}`;
+      this.chart1_2 = `show chart 2 for ${this.selectedStock1}`;
+      this.IndicatorGraph1 = `show indicator graph for ${this.selectedStock1}`;
+      this.ReturnGraph1 = `show return graph for ${this.selectedStock1}`;
+      this.cGraph = `478 for ${this.selectedStock1}`;
+      this.graphs = `0.98 for ${this.selectedStock1}`;
+      this.gbmGraph = `Updated GBM Graph for ${this.selectedStock1} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
+      this.garchGraph = `Updated GARCH Graph for ${this.selectedStock1} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
+      this.alphaRatio = `Updated Alpha Ratio for ${this.selectedStock1}`;
+      this.betaRatio = `Updated Beta Ratio for ${this.selectedStock1}`;
+      this.sharpeRatio = `Updated Sharpe Ratio for ${this.selectedStock1}`;
+      this.sortinoRatio = `Updated Sortino Ratio for ${this.selectedStock1}`;
+      this.stdDeviation = `Updated Standard Deviation for ${this.selectedStock1}`;
     },
     fetchData2() {
-      // Implement the logic to fetch data based on selected options for the second panel
-      // Need to adapt your Python functions to JavaScript equivalents
+      // Update data based on selected options for the second panel
+      this.chart2_1 = `show chart 1 for ${this.selectedStock2}`;
+      this.chart2_2 = `show chart 2 for ${this.selectedStock2}`;
+      this.IndicatorGraph2 = `show indicator graph for ${this.selectedStock2}`;
+      this.ReturnGraph2 = `show return graph for ${this.selectedStock2}`;
+      this.cGraph2 = `376 for ${this.selectedStock2}`;
+      this.graphs2 = `0.76 for ${this.selectedStock2}`;
+      this.gbmGraph2 = `Updated GBM Graph for ${this.selectedStock2} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
+      this.garchGraph2 = `Updated GARCH Graph for ${this.selectedStock2} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
+      this.alphaRatio2 = `Updated Alpha Ratio for ${this.selectedStock2}`;
+      this.betaRatio2 = `Updated Beta Ratio for ${this.selectedStock2}`;
+      this.sharpeRatio2 = `Updated Sharpe Ratio for ${this.selectedStock2}`;
+      this.sortinoRatio2 = `Updated Sortino Ratio for ${this.selectedStock2}`;
+      this.stdDeviation2 = `Updated Standard Deviation for ${this.selectedStock2}`;
     }
   }
 };
 </script>
 
 <style scoped>
-@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
-</style> -->
+.Navigation {
+  background-color: #2b2b2b;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 100%;
+  margin: 0 auto;
+}
 
+.animated {
+  animation-duration: 1s;
+}
 
-
-
-<!-- <template>
-  <div class="dash-embed">
-    <iframe :src="dashUrl" frameborder="0" class="dash-iframe"></iframe>
-  </div>
-</template>
-
-<script>
-export default {
-   name: 'QuantAnalysis',
-  data() {
-    return {
-      dashUrl: "http://127.0.0.1:8051/" // Ensure this URL matches where your Dash app is running
-    };
-  }
-};
-</script>
-
-<style scoped>
-.dash-embed {
+.dropdown {
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+}
+
+select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+h1 {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.1);
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 30px;
+}
+
+label {
+  display: block;
+  color: white;
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+
+.panel {
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.Panels {
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.Panel-Frame {
+  width: 48%; 
+  display: inline-block; 
+  vertical-align: top; 
+  margin: 0 1%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.stock-box {
+  width: 60%;
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 30px;
+}
+
+.stock-value {
+  text-align: center;
+}
+
+.change-index {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.change-ratio {
+  font-size: 1rem;
+  color: green;
+}
+
+h4 {
+  text-align: center;
+  font-size: 1.5rem;
+  /* margin-bottom: -5px; */
+}
+
+h5 {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.Risk-info {
+  margin-top: 0px;
+}
+
+.Risk-Block{
+  width: 49%;
+  display: inline-block;
+}
+
+.Risk-value {
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.stock-graph {
   align-items: center;
+  justify-content: center;
+  text-align: center;
 }
-.dash-iframe {
-  width: 100%;
-  height: 100vh; /* Adjust height as needed */
-  border: none;
+
+.trend {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
-</style> -->
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
