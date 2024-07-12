@@ -450,7 +450,7 @@ h1 {
 div {
   margin: 20px;
 }
-</style>
+</style> -->
 
 <!-- <script>
 // Import necessary modules
@@ -528,7 +528,50 @@ export default {
 /* Your component-specific styles */
 </style> -->
 
+
+
+<!-- -------------------ORIGINAL REPRESENTATION BEFORE CONVERTING-------------------- -->
+
 <!-- <template>
+  <div class="dash-embed">
+    <iframe :src="dashUrl" frameborder="0" class="dash-iframe"></iframe>
+  </div>
+</template>
+
+<script>
+export default {
+   name: 'QuantAnalysis',
+  data() {
+    return {
+      dashUrl: "http://127.0.0.1:8054/" // Ensure this URL matches where your Dash app is running
+    };
+  }
+};
+</script>
+
+<style scoped>
+.dash-embed {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dash-iframe {
+  width: 100%;
+  height: 100vh; /* Adjust height as needed */
+  border: none;
+}
+</style> -->
+
+
+
+
+
+
+<!-- -------------------TESTING SPACE-------------------- -->
+
+<template>
   <div class="container">
     <div class="Navigation">
       <div class="animated fadeInLeft">
