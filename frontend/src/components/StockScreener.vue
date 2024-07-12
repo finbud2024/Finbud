@@ -3,57 +3,98 @@
       <h3>All filters</h3>
       <div class="filter">
         <label for="eps">Earnings Per Share (EPS)</label>
-        <input type="range" id="eps" min="0" max="100" v-model="filters.eps">
+        <Vue3Slider id="eps" v-model="filters.eps" :min="0" :max="500" style="width:60%" />
       </div>
       <div class="filter">
         <label for="pe">Price To Earnings Ratio (P/E)</label>
-        <input type="range" id="pe" min="0" max="100" v-model="filters.pe">
+        <Vue3Slider id="pe" v-model="filters.pe" :min="0" :max="50" style="width:60%" />
       </div>
       <div class="filter">
         <label for="pbr">Price to Book Ratio</label>
-        <input type="range" id="pbr" min="0" max="100" v-model="filters.pbr">
+        <Vue3Slider id="pbr" v-model="filters.pbr" :min="0" :max="4" style="width:60%" />
       </div>
       <div class="filter">
         <label for="beta">Beta</label>
-        <input type="range" id="beta" min="0" max="100" v-model="filters.beta">
+        <Vue3Slider id="beta" v-model="filters.beta" :min="0" :max="2" style="width:60%" />
       </div>
       <div class="filter">
         <label for="regular-price">Regular Price</label>
-        <input type="range" id="regular-price" min="0" max="100" v-model="filters.regularPrice">
+        <Vue3Slider id="regular-price" v-model="filters.regularPrice" :min="0" :max="700" style="width:60%" />
       </div>
       <div class="filter">
         <label for="price-sales">Price to Sales</label>
-        <input type="range" id="price-sales" min="0" max="100" v-model="filters.priceSales">
+        <Vue3Slider id="price-sales" v-model="filters.priceSales" :min="0" :max="100" style="width:60%" />
       </div>
-      <button @click="applyFilters" class="filter-btn">Filter</button>
+      <div class="buttonsContainer">
+        <button @click="applyFilters" class="filter-btn">Filter</button>
+        <button @click="resetFilter" class="filter-btn">Reset</button>
+      </div>
     </div>
   </template>
   
   <script>
+  import Vue3Slider from 'vue-3-slider-component';
+
   export default {
     name: 'StockScreener',
+    components:{
+      Vue3Slider
+    },
     data() {
       return {
         filters: {
-          eps: 50,
-          pe: 50,
-          pbr: 50,
-          beta: 50,
-          regularPrice: 50,
-          priceSales: 50,
+          eps: [0, 500],
+          pe: [0, 50],
+          pbr: [0, 4],
+          beta: [0, 2],
+          regularPrice: [0, 700],
+          priceSales: [0, 100] 
         }
       };
     },
     methods: {
       applyFilters() {
-        console.log('Applied filters:', this.filters);
-        // Emit an event or call a method to apply the filters in the parent component
+        //data return to parent through appy Filter Event
+        this.$emit('applyFilter',{
+          eps: this.filters.eps,
+          pe: this.filters.pe,
+          pbr: this.filters.pbr,
+          beta: this.filters.beta,
+          regularPrice: this.filters.regularPrice,
+          priceSales: this.filters.priceSales,
+        })
+      },
+      resetFilter(){
+        this.filters.eps =  [0, 500]
+        this.filters.pe = [0, 50]
+        this.filters.pbr =  [0, 4]
+        this.filters.beta =  [0, 2]
+        this.filters.regularPrice = [0, 700]
+        this.filters.priceSales = [0, 100] 
+        this.$emit('applyFilter',{
+          eps: this.filters.eps,
+          pe: this.filters.pe,
+          pbr: this.filters.pbr,
+          beta: this.filters.beta,
+          regularPrice: this.filters.regularPrice,
+          priceSales: this.filters.priceSales,
+        })
       }
     }
   };
   </script>
   
   <style scoped>
+  .buttonsContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .buttonsContainer .filter-btn {
+    margin: 0 5px;
+  }
+
   .stock-screener {
     background-color: #fff;
     padding: 20px;
@@ -79,32 +120,7 @@
     flex: 1;
     margin-right: 10px;
   }
-  
-  .filter input[type="range"] {
-    flex: 2;
-    -webkit-appearance: none;
-    width: 100%;
-    height: 8px;
-    border-radius: 5px;
-    background: #ddd;
-    outline: none;
-    transition: background 0.3s;
-  }
-  
-  .filter input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #007bff;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .filter input[type="range"]::-webkit-slider-thumb:hover {
-    background: #0056b3;
-  }
-  
+    
   .filter-btn {
     padding: 10px 20px;
     background-color: #007bff;

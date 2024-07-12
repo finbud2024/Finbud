@@ -46,7 +46,7 @@ export default {
         return {
             newMessage: '',
             messages: [],
-            userAvatar: require('@/assets/khoi.jpg'),
+            userAvatar: require('@/assets/profile/khoi.jpg'),
             botAvatar: require('@/assets/bot.png'),
             currentThread: {},
             threads: [],

@@ -5,50 +5,33 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
-
 export default {
   name: 'CompanyCard',
   props: {
     companyName: {
       type: String,
       required: true,
+      default: 'AAPL'
     },
+    width:{
+      type: String,
+      required: true
+    }
   },
-  setup(props) {
-    const divRef = ref(null);
-
-    const loadTradingViewWidget = () => {
-      const width = divRef.value.clientWidth;
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
-      script.async = true;
-      script.innerHTML = JSON.stringify({
-        symbol: props.companyName,
-        width: width,
-        locale: 'en',
-        colorTheme: 'dark',
-        isTransparent: false,
-      });
-      script.className = 'componentCard';
-      divRef.value.appendChild(script);
-    };
-
-    onMounted(() => {
-      loadTradingViewWidget();
+  mounted() {
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js";
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      symbol: this.companyName,
+      width: this.width,
+      locale: "en",
+      colorTheme: "dark",
+      isTransparent: false,
     });
-
-    watch(() => [props.companyName], () => {
-      if (divRef.value) {
-        divRef.value.innerHTML = '';
-        loadTradingViewWidget();
-      }
-    });
-
-    return {
-      divRef,
-    };
-  },
+    script.className = "componentCard";
+    this.$refs.divRef.appendChild(script);
+  }
 };
 </script>
 

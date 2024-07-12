@@ -24,6 +24,7 @@ module.exports = {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        'vue$': 'vue/dist/vue.esm.js'
       },
       fallback: {
         "process": require.resolve("process/browser"),
@@ -33,6 +34,10 @@ module.exports = {
       new webpack.ProvidePlugin({
         process: 'process/browser',
         Buffer: ['buffer', 'Buffer']
+      }),
+      new webpack.DefinePlugin({
+        '__VUE_PROD_HYDRATION_MISMATCH_DETAILS__': false, // Ensure it's set to false for production
+        '__VUE_OPTIONS_API__': true,
       })
     ]
   }
