@@ -1,5 +1,5 @@
 {
-  "name": "finbud-frontend",
+  "name": "FinBud",
   "version": "1.0.0",
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -25,6 +25,8 @@
     "@vuepic/vue-datepicker": "^8.8.0",
     "dotenv-webpack": "^8.1.0",
     "eslint-plugin-vue": "^7.0.0",
-    "mongoose": "^8.4.1"
+    "mongoose": "^8.4.1",
+    "vue-3-slider-component": "^1.0.0",
+    "vue-slider-component": "^3.2.24"
   }
 }

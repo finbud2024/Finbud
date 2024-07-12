@@ -3,20 +3,7 @@ Here is the combined code:
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <h1>APPLE INC</h1>
-      <h2>{{ SYMBOL }} <span class="market">Nasdaq Stock Market</span></h2>
-      <div class="stock-prices">
-        <span class="current-price">{{ appleData.price }} USD</span>
-        <span class="price-change">{{ appleData.priceChange }}</span>
-        <span class="post-market">{{ appleData.postMarket }}</span>
-      </div>
-      <div class="stock-info">
-        
-        <span class="eps">{{ appleData.eps }} EPS</span>
-        <span class="market-cap">{{ appleData.marketCap }} MARKET CAP</span>
-        <span class="div-yield">{{ appleData.divYield }} DIV YIELD</span>
-        <span class="pe-ratio">{{ appleData.peRatio }} P/E</span>
-      </div>
+      <CompanyCard :companyName="this.bannerDisplayStock" :width='`80%`' />
     </header>
     <div class="main-content">
       <section class="key-statistics">
@@ -24,27 +11,27 @@ Here is the combined code:
         <div class="stats-grid">
           <div class="stat">
             <span class="label">Open:</span>
-            <span class="value">{{ appleData.open }}</span>
+            <span class="value">12345</span>
           </div>
           <div class="stat">
             <span class="label">Close:</span>
-            <span class="value">{{ appleData.previousClose }}</span>
+            <span class="value">12345</span>
           </div>
           <div class="stat">
             <span class="label">52 Week High:</span>
-            <span class="value">{{ appleData.high }}</span>
+            <span class="value">12345</span>
           </div>
           <div class="stat">
             <span class="label">52 Week Low:</span>
-            <span class="value">{{ appleData.low }}</span>
+            <span class="value">12345</span>
           </div>
           <div class="stat">
             <span class="label">Market Cap:</span>
-            <span class="value">{{ appleData.marketCap }}</span>
+            <span class="value">12345</span>
           </div>
           <div class="stat">
             <span class="label">Volume:</span>
-            <span class="value">{{ appleData.volume }}</span>
+            <span class="value">12345</span>
           </div>
         </div>
       </section>
@@ -77,104 +64,77 @@ Here is the combined code:
         </div>
       </div>
     </section>
-    <stock-screener></stock-screener>
+    <stockScreener @applyFilter="stockFilterHandler"/>
+    <div class="stockDisplayContainer">
+      <CompanyCard v-for="(item,idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
+    </div>
   </div>
 </template>
 
 <script>
-import StockScreener from '../components/StockScreener.vue';
-import axios from 'axios';
-
-const SYMBOL = 'AAPL'; // Define the constant symbol
+import StockScreener from '../components/StockScreener.vue'
+import CompanyCard from '@/components/CompanyCard.vue'
+import stockData from './hardcodeData/StockData.js'
 
 export default {
   name: 'StockDashboard',
   components: {
-    StockScreener
+    StockScreener,
+    CompanyCard
   },
-  data() {
+  data(){
     return {
-      SYMBOL, // Bind the symbol to the template
-      appleData: {
-        price: '',
-        open: '',
-        high: '',
-        low: '',
-        previousClose: '',
-        volume: '',
-        priceChange: '',
-        postMarket: '',
-        earningsDate: '',
-        eps: '',
-        marketCap: '',
-        divYield: '',
-        peRatio: ''
+      bannerDisplayStock: "AAPL",
+      displayStock: []
+    }
+  },
+  methods:{
+    stockFilterHandler(screenerFilter){
+      const appliedFilter = stockData
+      .filter((data) => data.eps && data.eps <= screenerFilter.eps[1] && data.eps >= screenerFilter.eps[0])
+      .filter((data) => data.pe && data.pe <= screenerFilter.pe[1] && data.pe >= screenerFilter.pe[0])
+      .filter((data) => data.pbr && data.pbr <= screenerFilter.pbr[1] && data.pbr >= screenerFilter.pbr[0])
+      .filter((data) => data.beta && data.beta <= screenerFilter.beta[1] && data.beta >= screenerFilter.beta[0])
+      .filter((data) => data.regularPrice && data.regularPrice <= screenerFilter.regularPrice[1] && data.regularPrice >= screenerFilter.regularPrice[0])
+      .filter((data) => data.priceSales && data.priceSales <= screenerFilter.priceSales[1] && data.priceSales >= screenerFilter.priceSales[0])
+      if(appliedFilter.length > 10){
+        let temp = appliedFilter.slice().sort(()=>0.5-Math.random());
+        this.displayStock = temp.slice(0,10)
+      }else{
+        this.displayStock = appliedFilter
       }
-    };
+    }
   },
-  methods: {
-    fetchAppleData() {
-      const apiKey = 'KAK6FUFDSN3RKLGT'; // Replace this with your actual Alpha Vantage API key
-      const SYMBOL = 'AAPL'; // Define the constant symbol
-      const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${SYMBOL}&apikey=${apiKey}`;
-      const earningsUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${SYMBOL}&apikey=${apiKey}`;
-
-      axios.get(url)
-        .then(response => {
-          if (response.data['Global Quote']) {
-            const quote = response.data['Global Quote'];
-            this.appleData.price = quote['05. price'];
-            this.appleData.open = quote['02. open'];
-            this.appleData.high = quote['03. high'];
-            this.appleData.low = quote['04. low'];
-            this.appleData.previousClose = quote['08. previous close'];
-            this.appleData.volume = quote['06. volume'];
-            this.appleData.priceChange = `${quote['09. change']} (${quote['10. change percent']})`;
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching Apple data:', error);
-        });
-
-      axios.get(earningsUrl)
-        .then(response => {
-          if (response.data) {
-            const overview = response.data;
-            this.appleData.earningsDate = 'July 24'; // Replace with the actual date if available from the API
-            this.appleData.eps = overview.EPS;
-            this.appleData.marketCap = (overview.MarketCapitalization / 1e12).toFixed(3) + 'T';
-            this.appleData.divYield = (overview.DividendYield * 100).toFixed(2) + '%';
-            this.appleData.peRatio = overview.PERatio;
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching Apple overview data:', error);
-        });
-    },
-  },
-  mounted() {
-    this.fetchAppleData();
+  mounted(){
+    //make a copy of stockData and randomly sort then pick the first 10 elements
+    const shuffledStock = stockData.slice().sort(()=>0.5-Math.random());
+    this.displayStock = shuffledStock.slice(0,10);
   }
 };
 </script>
 
 <style scoped>
+.stockDisplayContainer{
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .dashboard {
   font-family: 'Space Grotesk', sans-serif;
   color: #333;
 }
 
 .dashboard-header {
-  background-color: #1e06fb;
-  color: white;
   padding: 20px;
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
-
-.dashboard-header h1, .dashboard-header h2 {
-  margin: 0;
-}
-
 .market {
   font-size: 0.8rem;
   color: #00aaff;
