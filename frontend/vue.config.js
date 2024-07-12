@@ -59,5 +59,23 @@ module.exports = {
         ]
       })
     ]
-  }
+  },
+  configureWebpack: {
+    module: {
+      rules: [
+        {
+          test: /\.xlsx$/,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: '[name].[ext]',
+                outputPath: 'assets/files/',
+              },
+            },
+          ],
+        },
+      ],
+    },
+  },
 };
