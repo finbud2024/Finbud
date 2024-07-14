@@ -11,7 +11,7 @@
 
 <script>
 import btcDataCSV from "./assets/AAPL.csv";
-import CanvasJS from "@canvasjs/charts";
+import CanvasJS from "@canvasjs/stockcharts";
 console.log(btcDataCSV);
 
 export default {

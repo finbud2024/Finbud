@@ -1,6 +1,7 @@
 <script>
 import btcDataCSV from "./assets/AAPL.csv";
 import CanvasJS from "@canvasjs/stockcharts";
+console.log(btcDataCSV);
 
 export default {
   name: "StockPrice",
@@ -11,6 +12,7 @@ export default {
 
     // Skip the first row as it contains column names
     btcDataCSV.slice(1).forEach((data) => {
+      console.log(data["Date"], data["Open"]);
       // CSV loader will return an array for each row
       dps1.push({
         x: new Date(data["Date"]), // Date
@@ -81,7 +83,7 @@ export default {
             data: [
               {
                 showInLegend: true,
-                name: "Volume (BTC/USD)",
+                name: "Volume",
                 yValueFormatString: "$#,###.##",
                 dataPoints: dps2,
               },
