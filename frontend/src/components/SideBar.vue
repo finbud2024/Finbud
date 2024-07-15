@@ -8,7 +8,7 @@
       <li v-for="(thread, index) in threads" 
           :key="index" 
           :class="['thread', {clicked: thread.clicked}]"
-          @click="selectThread(index)">
+          @click="handleClick(index)">
         <div v-if="!thread.editing" class="thread-item">
           {{ thread.name }}
           <button class="edit-btn" @click.stop="editThread(index)">Edit</button>
@@ -16,8 +16,8 @@
         <input
           v-else
           v-model="thread.editedName"
-          @blur="saveThreadName(thread, index)"
           @keyup.enter="saveThreadName(thread, index)"
+          @blur="enterPressed? enterPressed = false: cancelEdit(index)"
         />
       </li>
     </ul>
@@ -28,6 +28,11 @@
 export default {
   name: 'SideBar',
   props: ['threads'],
+  data()  {
+    return{
+      enterPressed: false
+    };
+  },
   methods: {
     addThread() {
       this.$emit('add-thread', {
@@ -41,6 +46,8 @@ export default {
       this.$emit('edit-thread', index);
     },
     saveThreadName(thread, index) {
+      console.log(this.enterPressed);
+      this.enterPressed = true;
       if (thread.editedName.trim()) {
         this.$emit('save-thread-name', { newName: thread.editedName, index });
       } else {
@@ -54,8 +61,24 @@ export default {
         thread.clicked = false;
       });
       this.threads[index].clicked = true;
-    }
-  }
+    },
+    cancelEdit(index) {
+      this.enterPressed = false;
+      this.$emit('cancel-edit', index);
+    },
+    handleClick(index) {
+      if(event.detail == 1){
+        this.selectThread(index);
+      }
+
+      if(event.detail == 2){
+        this.threads.forEach(thread => {
+          thread.editing = false;
+        });
+        this.editThread(index);
+      }
+    },
+  },
 };
 </script>
 

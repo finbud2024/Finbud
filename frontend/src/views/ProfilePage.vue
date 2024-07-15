@@ -1,164 +1,287 @@
 <template>
-    <div class="profile-page">
-      <div class="header">
-        <h1>Hello Jesse</h1>
-        <p>This is your profile page. You can see the progress you’ve made with your work and manage your projects or assigned tasks</p>
-        <button class="edit-profile-btn">Edit profile</button>
+  <div class="profile-page">
+    <div class="balance-card border">
+      <div class="balance">
+        <div class="stock-simulator-container" v-for="item in financialData" :key="item.label">
+          <h3>{{ item.label }}</h3>
+          <h1>{{ item.value }}</h1>
+        </div>
       </div>
-      <div class="account-info">
-        <div class="user-info">
-          <h2>My account</h2>
-          <div class="info">
-            <div class="field">
-              <label>Username</label>
-              <input type="text" value="lucky.jesse" disabled>
-            </div>
-            <div class="field">
-              <label>Email address</label>
-              <input type="email" value="jesse@example.com" disabled>
-            </div>
-            <div class="field">
-              <label>First name</label>
-              <input type="text" value="Jesse" disabled>
-            </div>
-            <div class="field">
-              <label>Last name</label>
-              <input type="text" value="Doe" disabled>
-            </div>
-          </div>
-          <button class="settings-btn">Settings</button>
-        </div>
-        <div class="user-stats">
-          <img src="@/assets/advanced-cv.png" alt="User Photo" class="user-photo">
-          <div class="stats">
-            <div>22 Friends</div>
-            <div>10 Photos</div>
-            <div>89 Comments</div>
-          </div>
-          <div class="actions">
-            <button class="connect-btn">Connect</button>
-            <button class="message-btn">Message</button>
-          </div>
-        </div>
+      <div class="profile-image-container">
+        <img class="profile-image" src="../assets/tri.jpeg" alt="Profile Image">
+        <label for="file-upload" class="custom-file-upload">
+          <i class="fa fa-camera" ></i>
+        </label>
+        <input id="file-upload" type="file" @change="uploadImage"/>
       </div>
     </div>
-  </template>
+    <div class="info-card border">
+      <div class="info-body">
+        <form @submit.prevent="updateProfile">
+          <div class="section" v-for="(section, sectionIndex) in sections" :key="sectionIndex">
+            <div class="header-section border">User information</div>
+            <!-- <h3>{{ section.title }}</h3> -->
+              <div class="form-group" v-for="(field, fieldIndex) in section.fields" :key="fieldIndex">
+                <label :for="field.id">{{ field.label }}</label>
+                <input
+                  v-if="field.type !== 'textarea'"
+                  :type="field.type"
+                  :id="field.id"
+                  v-model="profile[field.model]"
+                  :placeholder="field.label"
+                />
+                <textarea
+                  v-else
+                  :id="field.id"
+                  v-model="profile[field.model]"
+                ></textarea>
+              </div>
+          </div>
+          <div class="btn-container">
+            <button @click="notifySave" type="submit" class="btn btn-save">Save</button>
+            <button class="btn btn-cancel">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
+export default {
+  data() {
+    return {
+      profile: {
+        username: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        // address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
+        // city: 'New York',
+        // country: 'United States',
+        // postalCode: '',
+      },
+      sections: [
+        {
+          title: 'User Information',
+          fields: [
+            { id: 'username', label: 'Username', type: 'text', model: 'username' },
+            { id: 'email', label: 'Email address', type: 'email', model: 'email' },
+            { id: 'firstName', label: 'First name', type: 'text', model: 'firstName' },
+            { id: 'lastName', label: 'Last name', type: 'text', model: 'lastName' }
+          ]
+        },
+        // {
+        //   title: 'Contact Information',
+        //   fields: [
+        //     { id: 'address', label: 'Address', type: 'text', model: 'address' },
+        //     { id: 'city', label: 'City', type: 'text', model: 'city' },
+        //     { id: 'country', label: 'Country', type: 'text', model: 'country' },
+        //     { id: 'postalCode', label: 'Postal code', type: 'text', model: 'postalCode' }
+        //   ]
+        // },
+      ],
+      financialData: [
+        { label: 'Account Value', value: '$23,196.00' },
+        { label: 'Buying Power', value: '$1,320.23' },
+        { label: 'Cash', value: '$-3,501.18' }
+      ]
+    };
+  },
+  methods: {
+    updateProfile() {
+      // Logic to update profile
+      console.log('Profile updated', this.profile);
+    },
+    notifySave() {
+      toast.success("Updated successfully!", {
+        autoClose: 1000,
+        collapsed: false,
+      })
+    },
+  },
+  mounted(){
+    const accountValue = document.querySelectorAll('.stock-simulator-container h1');
+    console.log(accountValue);
+    accountValue.forEach((value) => {
+      const v = parseFloat(value.textContent.replace('$', '').replace(',', ''));
+      if(v < 5000){
+        value.style.color = 'red';
+      } else {
+        value.style.color = 'green';
+      }
+    });
+  },
+};
+</script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
+.profile-page{
+  display: flex;
+  justify-content:space-evenly;
+  font-family: 'Space Grotesk', sans-serif;
   
-  <script>
-  export default {
-    name: 'ProfilePage'
-  }
-  </script>
-  
-  <style scoped>
-  .profile-page {
-    font-family: 'Arial', sans-serif;
-    color: #fff;
-    background: url('@/assets/advanced-cv.png') no-repeat center center/cover;
-    padding: 20px;
-    height: 100vh;
-  }
-  
-  .header {
-    text-align: center;
-  }
-  
-  .header h1 {
-    font-size: 2em;
-    margin: 0;
-  }
-  
-  .header p {
-    margin: 10px 0;
-  }
-  
-  .edit-profile-btn {
-    background-color: #00BFFF;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .account-info {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-  }
-  
-  .user-info {
-    background: rgba(244, 244, 244, 0.8);
-    padding: 20px;
-    border-radius: 10px;
-    color: #000;
-    width: 45%;
-  }
-  
-  .user-info h2 {
-    margin: 0 0 10px 0;
-  }
-  
-  .field {
-    margin-bottom: 10px;
-  }
-  
-  .field label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .field input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .settings-btn {
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
-  }
-  
-  .user-stats {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    color: #000;
-    width: 45%;
-    text-align: center;
-  }
-  
-  .user-photo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-  }
-  
-  .stats {
-    margin: 10px 0;
-  }
-  
-  .actions {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 10px;
-  }
-  
-  .connect-btn,
-  .message-btn {
-    background-color: #00BFFF;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  </style>
-  
+}
+
+.border{
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  background: rgb(248, 249, 254);
+}
+
+.info-card {
+  margin: 100px 100px 100px 50px;
+  position: relative;
+  flex: 2;
+  padding: 30px;
+}
+
+.balance-card {
+  margin: 100px 50px 100px 100px;
+  position: relative;
+  flex: 1;
+  padding: 30px;
+}
+
+.balance{
+  padding-top: 70px;
+  text-align: center;
+}
+
+.stock-simulator-container {
+  border-bottom: 1px solid #7e7a7a;
+  padding: 10px;
+}
+
+.stock-simulator-container h1{
+  line-height: 0.5;
+}
+
+.stock-simulator-container:last-child {
+  border-bottom: none;
+}
+
+.profile-image-container {
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.profile-image {
+  width: 150px;
+  height: 150px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+  border: 3px solid #ddd;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.custom-file-upload {
+  position: absolute;
+  cursor: pointer;
+  color: black;
+  font-size: 25px;
+  bottom: 10%;
+  left: 75%;
+  border: 1px solid black;
+  border-radius: 50%;
+  background-color: white;
+  height: 35px;
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#file-upload {
+  display: none;
+}
+
+.info-body {
+  padding: 0px 15px 15px;
+  background-color:  rgb(248, 249, 254);
+}
+
+.header-section {
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  position: absolute;
+  padding: 20px;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #007bff;
+  color:white;
+}
+
+.form-group {
+  flex: 1;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.form-group:nth-child(2) {
+  margin-top: 20px;
+}
+.form-group:last-child {
+  margin-bottom: 30px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: rgb(136, 152, 170);
+}
+.form-group input::placeholder{
+  color: rgb(136, 152, 170);
+}
+.form-group textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+.btn-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+  width: 100%;
+}
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  background: black;
+  margin: 0 10px 0px 10px;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 70px;
+}
+
+.btn-save:hover {
+  background: green;
+  transition: 0.3s linear;
+}
+.btn-cancel:hover {
+  background: red;
+  transition: 0.5s ease;
+}
+</style>
