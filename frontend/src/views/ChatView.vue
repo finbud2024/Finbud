@@ -193,21 +193,70 @@ export default {
         }
       }
       //HANDLE BUY
-      else if (userMessage.toLowerCase().includes("buy")) {
-        try{
-          //answers = this.handleBuyMessage(userMessage);
-          //TODO
-        }catch(err){
-          console.error('Error in buy message:', error);
+      if (userMessage.toLowerCase().includes("buy")) {
+        console.log('into stock buy \n');
+        try {
+          // Extract stock symbol and quantity
+          const buyRegex = /#buy\s+([A-Z]+)\s+(\d+)/i;
+          const match = userMessage.match(buyRegex);
+
+          if (match) {
+            const stockSymbol = match[1].toUpperCase(); // get stock symbol from regex
+            const quantity = parseInt(match[2], 10); // get quantity in base 10
+            if (stockSymbol && !isNaN(quantity)) {
+              const url = this.$router.resolve({
+                path: '/stock-simulator',
+                query: { symbol: stockSymbol, quantity: quantity }
+              }).href;
+              window.open(url, '_blank');
+            } else {
+              const msg = 'Invalid stock symbol or quantity'
+              setTimeout(() => {
+                this.addTypingResponse(msg.trim(), false);
+              }, 1000);
+            }
+          } else {
+            const msg = 'Invalid buy command format'
+            setTimeout(() => {
+              this.addTypingResponse(msg.trim(), false);
+            }, 1000);
+          }
+        } catch (err) {
+          console.error('Error in buy message:', err);
         }
       }
-      //HANDLE SELL 
+      // HANDLE SELL
       else if (userMessage.toLowerCase().includes("sell")) {
-        try{
-          //answers = this.handleSellMessage(userMessage);
-          //TODO
-        }catch(err){
-          console.error('Error in sell message:', error);
+        console.log('into stock sell \n');
+        try {
+          // Extract stock symbol and quantity
+          const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
+          const match = userMessage.match(sellRegex);
+
+          if (match) {
+            const stockSymbol = match[1].toUpperCase();
+            const quantity = parseInt(match[2], 10);
+
+            if (stockSymbol && !isNaN(quantity)) {
+              const url = this.$router.resolve({
+                path: '/stock-simulator',
+                query: { symbol: stockSymbol, quantity: -quantity } // Pass negative quantity for sell
+              }).href;
+              window.open(url, '_blank');
+            } else {
+              const msg = 'Invalid stock symbol or quantity'
+              setTimeout(() => {
+                this.addTypingResponse(msg.trim(), false);
+              }, 1000);
+            }
+          } else {
+            const msg = 'Invalid sell command format'
+              setTimeout(() => {
+                this.addTypingResponse(msg.trim(), false);
+              }, 1000);
+          }
+        } catch (err) {
+          console.error('Error in sell message:', err);
         }
       }
       //HANDLE ADD TRANSACTION
