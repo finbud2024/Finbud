@@ -27,6 +27,7 @@
     "eslint-plugin-vue": "^7.0.0",
     "mongoose": "^8.4.1",
     "vue-3-slider-component": "^1.0.0",
-    "vue-slider-component": "^3.2.24"
+    "vue-slider-component": "^3.2.24",
+    "vue3-toastify": "^0.2.2"
   }
 }

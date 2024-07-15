@@ -1,5 +1,3 @@
-Here is the combined code:
-
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
@@ -38,11 +36,11 @@ Here is the combined code:
       <section class="actions">
         <h3>Actions</h3>
         <div class="action-form">
-          <input type="text" placeholder="Enter stock symbol" />
-          <input type="number" placeholder="Quantity" />
+          <input v-model="stockSymbol" type="text" placeholder="Enter stock symbol" />
+          <input v-model="quantity" type="number" placeholder="Quantity" />
           <div class="buttons">
             <button class="clear-btn">CLEAR</button>
-            <button class="preview-btn">PREVIEW ORDER</button>
+            <button class="preview-btn" @click="showModal = true">{{ previewButtonText }}</button>
           </div>
         </div>
       </section>
@@ -68,6 +66,12 @@ Here is the combined code:
     <div class="stockDisplayContainer">
       <CompanyCard v-for="(item,idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
     </div>
+    <PreviewOrderModal 
+      v-if="showModal" 
+      :stockSymbol="stockSymbol" :quantity="quantity" :estimatedPrice="estimatedPrice" 
+      :commissionPrice="commissionPrice" 
+      :estimatedTotal="estimatedTotal" 
+      @close="showModal = false"  @clear-order="clearOrder"  @submit-order="submitOrder" />
   </div>
 </template>
 
@@ -75,18 +79,26 @@ Here is the combined code:
 import StockScreener from '../components/StockScreener.vue'
 import CompanyCard from '@/components/CompanyCard.vue'
 import stockData from './hardcodeData/StockData.js'
-
+import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue'
 export default {
   name: 'StockDashboard',
   components: {
     StockScreener,
-    CompanyCard
+    CompanyCard,
+    PreviewOrderModal
   },
   data(){
     return {
       bannerDisplayStock: "AAPL",
-      displayStock: []
-    }
+      displayStock: [],
+      stockSymbol: this.$route.query.symbol || '', // pre-fill from chat command
+      quantity: this.$route.query.quantity || '', // pre-fill from chat command
+      showModal: false,
+      //temp: hard coded data for preview order 
+      estimatedPrice: 0, 
+      commissionPrice: 19.95, 
+      estimatedTotal: 0 
+    };
   },
   methods:{
     stockFilterHandler(screenerFilter){
@@ -105,10 +117,28 @@ export default {
       }
     }
   },
+  computed: {
+    previewButtonText() {
+      if (this.quantity === '' || this.quantity === 0) {
+        return 'PREVIEW ORDER';
+      } else if (this.quantity > 0) {
+        return 'PREVIEW BUY ORDER';
+      } else if (this.quantity < 0) {
+        return 'PREVIEW SELL ORDER';
+      }
+    }
+  },
   mounted(){
     //make a copy of stockData and randomly sort then pick the first 10 elements
     const shuffledStock = stockData.slice().sort(()=>0.5-Math.random());
     this.displayStock = shuffledStock.slice(0,10);
+
+    //if statement to see if going direct or through chat command
+    if(this.$route.query){
+      alert("through chat view")
+    }else{
+      alert("direct")
+    }
   }
 };
 </script>
