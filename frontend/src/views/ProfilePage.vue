@@ -8,9 +8,9 @@
         </div>
       </div>
       <div class="profile-image-container">
-        <img class="profile-image" src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="Profile Image">
+        <img class="profile-image" src="../assets/tri.jpeg" alt="Profile Image">
         <label for="file-upload" class="custom-file-upload">
-          <i class="fa fa-camera"></i>
+          <i class="fa fa-camera" ></i>
         </label>
         <input id="file-upload" type="file" @change="uploadImage"/>
       </div>
@@ -38,7 +38,7 @@
               </div>
           </div>
           <div class="btn-container">
-            <button type="submit" class="btn btn-save">Save</button>
+            <button @click="notifySave" type="submit" class="btn btn-save">Save</button>
             <button class="btn btn-cancel">Cancel</button>
           </div>
         </form>
@@ -48,6 +48,9 @@
 </template>
 
 <script>
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
 export default {
   data() {
     return {
@@ -84,7 +87,7 @@ export default {
       financialData: [
         { label: 'Account Value', value: '$23,196.00' },
         { label: 'Buying Power', value: '$1,320.23' },
-        { label: 'Cash', value: '$3,501.18' }
+        { label: 'Cash', value: '$-3,501.18' }
       ]
     };
   },
@@ -92,8 +95,26 @@ export default {
     updateProfile() {
       // Logic to update profile
       console.log('Profile updated', this.profile);
-    }
-  }
+    },
+    notifySave() {
+      toast.success("Updated successfully!", {
+        autoClose: 1000,
+        collapsed: false,
+      })
+    },
+  },
+  mounted(){
+    const accountValue = document.querySelectorAll('.stock-simulator-container h1');
+    console.log(accountValue);
+    accountValue.forEach((value) => {
+      const v = parseFloat(value.textContent.replace('$', '').replace(',', ''));
+      if(v < 5000){
+        value.style.color = 'red';
+      } else {
+        value.style.color = 'green';
+      }
+    });
+  },
 };
 </script>
 
@@ -134,10 +155,15 @@ export default {
 
 .stock-simulator-container {
   border-bottom: 1px solid #7e7a7a;
+  padding: 10px;
 }
 
-.money h1{
+.stock-simulator-container h1{
   line-height: 0.5;
+}
+
+.stock-simulator-container:last-child {
+  border-bottom: none;
 }
 
 .profile-image-container {
@@ -151,9 +177,31 @@ export default {
   width: 150px;
   height: 150px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
-  border: 5px solid #ddd;
+  border: 3px solid #ddd;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.custom-file-upload {
+  position: absolute;
+  cursor: pointer;
+  color: black;
+  font-size: 25px;
+  bottom: 10%;
+  left: 75%;
+  border: 1px solid black;
+  border-radius: 50%;
+  background-color: white;
+  height: 35px;
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#file-upload {
+  display: none;
 }
 
 .info-body {
@@ -169,8 +217,10 @@ export default {
   position: absolute;
   padding: 20px;
   top: 0%;
-  left: 0%;
-  transform: translate(10%, -50%);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #007bff;
+  color:white;
 }
 
 .form-group {
@@ -227,11 +277,11 @@ export default {
 }
 
 .btn-save:hover {
-  background: #33b249;
+  background: green;
   transition: 0.3s linear;
 }
 .btn-cancel:hover {
-  background: #ff4d4d;
+  background: red;
   transition: 0.5s ease;
 }
 </style>
