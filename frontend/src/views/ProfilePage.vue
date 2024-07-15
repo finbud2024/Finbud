@@ -1,23 +1,26 @@
 <template>
   <div class="profile-page">
-    <div class="balance-card">
+    <div class="balance-card border">
       <div class="balance">
-        <h3>Account Value</h3>
-        <h1>$ 2,562.00</h1>
-        <h3>Buying Power</h3>
-        <h1>$ 99,770.35</h1>
-        <h3>Cash</h3>
-        <h1>$ 99,680.4</h1>
+        <div class="stock-simulator-container" v-for="item in financialData" :key="item.label">
+          <h3>{{ item.label }}</h3>
+          <h1>{{ item.value }}</h1>
+        </div>
       </div>
       <div class="profile-image-container">
         <img class="profile-image" src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="Profile Image">
+        <label for="file-upload" class="custom-file-upload">
+          <i class="fa fa-camera"></i>
+        </label>
+        <input id="file-upload" type="file" @change="uploadImage"/>
       </div>
     </div>
-    <div class="info-card">
+    <div class="info-card border">
       <div class="info-body">
         <form @submit.prevent="updateProfile">
           <div class="section" v-for="(section, sectionIndex) in sections" :key="sectionIndex">
-            <h3>{{ section.title }}</h3>
+            <div class="header-section border">User information</div>
+            <!-- <h3>{{ section.title }}</h3> -->
               <div class="form-group" v-for="(field, fieldIndex) in section.fields" :key="fieldIndex">
                 <label :for="field.id">{{ field.label }}</label>
                 <input
@@ -34,7 +37,10 @@
                 ></textarea>
               </div>
           </div>
-          <button type="submit" class="btn-save">Save</button>
+          <div class="btn-container">
+            <button type="submit" class="btn btn-save">Save</button>
+            <button class="btn btn-cancel">Cancel</button>
+          </div>
         </form>
       </div>
     </div>
@@ -46,15 +52,14 @@ export default {
   data() {
     return {
       profile: {
-        username: 'lucky.jesse',
-        firstName: 'Lucky',
-        lastName: 'Jesse',
-        email: 'jesse@example.com',
-        address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
-        city: 'New York',
-        country: 'United States',
-        postalCode: '',
-        aboutMe: 'A beautiful Dashboard for Bootstrap 4. It is Free and Open Source.'
+        username: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        // address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
+        // city: 'New York',
+        // country: 'United States',
+        // postalCode: '',
       },
       sections: [
         {
@@ -75,12 +80,11 @@ export default {
         //     { id: 'postalCode', label: 'Postal code', type: 'text', model: 'postalCode' }
         //   ]
         // },
-        // {
-        //   title: 'About Me',
-        //   fields: [
-        //     { id: 'aboutMe', label: 'About Me', type: 'textarea', model: 'aboutMe' }
-        //   ]
-        // }
+      ],
+      financialData: [
+        { label: 'Account Value', value: '$23,196.00' },
+        { label: 'Buying Power', value: '$1,320.23' },
+        { label: 'Cash', value: '$3,501.18' }
       ]
     };
   },
@@ -99,33 +103,41 @@ export default {
 .profile-page{
   display: flex;
   justify-content:space-evenly;
-  background: #f8f9fe;
+  font-family: 'Space Grotesk', sans-serif;
+  
 }
-.info-card {
-  width: 600px;
-  padding: 30px;
-  margin: 100px 100px 100px 0;
+
+.border{
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 15px;
   background: rgb(248, 249, 254);
-  font-family: 'Space Grotesk', sans-serif;
+}
+
+.info-card {
+  margin: 100px 100px 100px 50px;
   position: relative;
+  flex: 2;
+  padding: 30px;
 }
 
 .balance-card {
-  width: 300px;
-  padding: 30px;
-  margin: 100px -10px 100px 100px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-  border-radius: 15px;
-  background: rgb(248, 249, 254);
-  font-family: 'Space Grotesk', sans-serif;
+  margin: 100px 50px 100px 100px;
   position: relative;
+  flex: 1;
+  padding: 30px;
 }
 
 .balance{
   padding-top: 70px;
   text-align: center;
+}
+
+.stock-simulator-container {
+  border-bottom: 1px solid #7e7a7a;
+}
+
+.money h1{
+  line-height: 0.5;
 }
 
 .profile-image-container {
@@ -143,26 +155,34 @@ export default {
   border-radius: 50%;
   object-fit: cover;
 }
+
 .info-body {
   padding: 0px 15px 15px;
   background-color:  rgb(248, 249, 254);
 }
 
-.section h3 {
+.header-section {
   font-size: 20px;
-  margin-top: 0;
-  margin-bottom: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: bold;
+  position: absolute;
+  padding: 20px;
+  top: 0%;
+  left: 0%;
+  transform: translate(10%, -50%);
 }
 
-.form-group:last-child {
-  margin-bottom: 30px;
-}
 .form-group {
   flex: 1;
   margin-right: 10px;
   margin-bottom: 10px;
+}
+.form-group:nth-child(2) {
+  margin-top: 20px;
+}
+.form-group:last-child {
+  margin-bottom: 30px;
 }
 .form-group label {
   display: block;
@@ -186,16 +206,32 @@ export default {
   resize: vertical;
   height: 100px;
 }
-.btn-save {
+
+.btn-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+  width: 100%;
+}
+.btn {
   display: inline-block;
   padding: 10px 15px;
-  background: #007bff;
+  background: black;
+  margin: 0 10px 0px 10px;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
+  width: 70px;
 }
+
 .btn-save:hover {
-  background: #0056b3;
+  background: #33b249;
+  transition: 0.3s linear;
+}
+.btn-cancel:hover {
+  background: #ff4d4d;
+  transition: 0.5s ease;
 }
 </style>
