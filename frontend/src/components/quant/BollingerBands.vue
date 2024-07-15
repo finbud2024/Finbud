@@ -45,25 +45,28 @@
     methods: {
       async fetchStockData(stock) {
         this.loading = true;
-        const priceUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stock}&apikey=${this.apiKey}`;
+        const priceURL = `https://corsproxy.io/?https://query2.finance.yahoo.com/v8/finance/chart/${stock}?range=1y&interval=1d`;
         const bollingerUrl = `https://www.alphavantage.co/query?function=BBANDS&symbol=${stock}&interval=daily&time_period=20&series_type=close&apikey=${this.apiKey}`;
   
         try {
           // Fetch current price and today's change
-          const priceResponse = await fetch(priceUrl);
+          const priceResponse = await fetch(priceURL);
           const priceData = await priceResponse.json();
   
-          if (!priceData['Time Series (Daily)']) {
+          if (!priceData.chart.result[0]) {
             console.error('No time series data available:', priceData);
             throw new Error('No time series data available');
           }
   
-          const timeSeries = priceData['Time Series (Daily)'];
-          const dates = Object.keys(timeSeries).sort((a, b) => new Date(a) - new Date(b));
-          const latestDate = dates[dates.length - 1];
-          const previousDate = dates[dates.length - 2];
-          const latestPrice = parseFloat(timeSeries[latestDate]['4. close']);
-          const previousPrice = parseFloat(timeSeries[previousDate]['4. close']);
+          const timeSeries = priceData.chart.result[0];
+          const timestamps = timeSeries.timestamp;
+          const indicators = timeSeries.indicators.quote[0];
+          const yahooDates = timestamps.map(timestamp => {
+            const date = new Date(timestamp * 1000); // Convert to milliseconds
+            return date.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+          });
+          const latestPrice = indicators.close[indicators.close.length - 1];
+          const previousPrice = indicators.close[indicators.close.length - 2];
           const todayChange = ((latestPrice - previousPrice) / previousPrice * 100).toFixed(2);
   
           this.$emit('updatePrice', { stock, latestPrice, todayChange });
@@ -81,13 +84,14 @@
           const bbDates = Object.keys(bbands).sort((a, b) => new Date(a) - new Date(b));
   
           const bbSeries = bbDates.map(date => {
-            if (!timeSeries[date]) {
-              console.warn(`No time series data for date: ${date}`);
+            const index = yahooDates.indexOf(date);
+            if (index === -1) {
+              console.warn(`No matching date in Yahoo Finance data for date: ${date}`);
               return null;
             }
             return {
               x: date,
-              y: parseFloat(timeSeries[date]['4. close']),
+              y: indicators.close[index],
               upper: parseFloat(bbands[date]['Real Upper Band']),
               middle: parseFloat(bbands[date]['Real Middle Band']),
               lower: parseFloat(bbands[date]['Real Lower Band'])
