@@ -450,7 +450,7 @@ h1 {
 div {
   margin: 20px;
 }
-</style> -->
+</style> --> -->
 
 <!-- <script>
 // Import necessary modules
@@ -562,6 +562,600 @@ export default {
   height: 100vh; /* Adjust height as needed */
   border: none;
 }
+</style> -->
+
+
+
+
+
+
+<!-- -------------------ALPHAVANTAGE (S&P 500 NOT SUPPORTED)-------------------- -->
+<!-- <template>
+  <div>
+    <h1>Benchmark Data</h1>
+    <p v-if="error">{{ error }}</p>
+    <div v-else-if="benchmarkData">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Open</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Close</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(data, index) in benchmarkData" :key="index">
+            <td>{{ data.date }}</td>
+            <td>{{ data['1. open'] }}</td>
+            <td>{{ data['2. high'] }}</td>
+            <td>{{ data['3. low'] }}</td>
+            <td>{{ data['4. close'] }}</td>
+            <td>{{ data['5. volume'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+import alpha from 'alphavantage';
+
+const alphaInstance = alpha({ key: process.env.VUE_APP_STOCK_KEY });
+
+export default {
+  name: 'BenchmarkData',
+  data() {
+    return {
+      benchmarkData: null,
+      error: null,
+    };
+  },
+  methods: {
+    async fetchBenchmarkData() {
+      try {
+        const data = await this.downloadBenchmarkData();
+        if (data) {
+          this.saveBenchmarkData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+      }
+    },
+    async downloadBenchmarkData() {
+      try {
+        const response = await alphaInstance.data.daily('AMZN', 'full', 'json');
+        const timeSeries = response['Time Series (Daily)'];
+        const data = Object.keys(timeSeries).map(date => ({
+          date,
+          ...timeSeries[date],
+        }));
+        return data;
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+        return null;
+      }
+    },
+    saveBenchmarkData(data) {
+      if (data) {
+        localStorage.setItem('benchmarkData', JSON.stringify(data));
+        this.benchmarkData = data;
+      }
+    },
+    loadBenchmarkData() {
+      const storedData = localStorage.getItem('benchmarkData');
+      if (storedData) {
+        this.benchmarkData = JSON.parse(storedData);
+      }
+    },
+  },
+  created() {
+    this.loadBenchmarkData();
+    this.fetchBenchmarkData();
+  },
+};
+</script>
+
+<style scoped>
+/* Your component styles here */
+</style> -->
+
+
+
+<!-- -------------------YAHOO FINANCE (S&P 500 SUPPORTED)-------------------- -->
+<!-- <template>
+  <div>
+    <h1>Benchmark Data</h1>
+    <p v-if="error">{{ error }}</p>
+    <div v-else-if="benchmarkData">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Open</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Close</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(data, index) in benchmarkData" :key="index">
+            <td>{{ data.date }}</td>
+            <td>{{ data.open }}</td>
+            <td>{{ data.high }}</td>
+            <td>{{ data.low }}</td>
+            <td>{{ data.close }}</td>
+            <td>{{ data.volume }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'BenchmarkData',
+  data() {
+    return {
+      benchmarkData: null,
+      error: null,
+    };
+  },
+  methods: {
+    async fetchBenchmarkData() {
+      try {
+        const data = await this.downloadBenchmarkData();
+        if (data) {
+          this.saveBenchmarkData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+      }
+    },
+    async downloadBenchmarkData() {
+      const period1 = Math.floor(new Date('2020-01-01').getTime() / 1000);
+      const period2 = Math.floor(Date.now() / 1000);
+      const url = `https://query2.finance.yahoo.com/v8/finance/chart/%5EGSPC?period1=${period1}&period2=${period2}&interval=1d`;
+      const proxyUrl = 'https://corsproxy.io/?'; // CORS proxy URL
+
+      try {
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        const json = await response.json();
+        const timeSeries = json.chart.result[0];
+        const data = timeSeries.timestamp.map((timestamp, index) => ({
+          date: new Date(timestamp * 1000).toLocaleDateString(),
+          open: timeSeries.indicators.quote[0].open[index],
+          high: timeSeries.indicators.quote[0].high[index],
+          low: timeSeries.indicators.quote[0].low[index],
+          close: timeSeries.indicators.quote[0].close[index],
+          volume: timeSeries.indicators.quote[0].volume[index],
+        }));
+        return data;
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+        return null;
+      }
+    },
+    saveBenchmarkData(data) {
+      if (data) {
+        localStorage.setItem('benchmarkData', JSON.stringify(data));
+        this.benchmarkData = data;
+      }
+    },
+    loadBenchmarkData() {
+      const storedData = localStorage.getItem('benchmarkData');
+      if (storedData) {
+        this.benchmarkData = JSON.parse(storedData);
+      }
+    },
+  },
+  created() {
+    this.loadBenchmarkData();
+    this.fetchBenchmarkData();
+  },
+};
+</script>
+
+<style scoped>
+/* Your component styles here */
+</style> -->
+
+
+
+
+
+
+<!-- -------------------TESTING SPACE-------------------- -->
+
+<!-- <template>
+  <div>
+    <h1>Stock Dashboard</h1>
+    <div>
+      <label for="stock-select">Select Stock:</label>
+      <select id="stock-select" v-model="selectedStock" @change="fetchStockData">
+        <option v-for="stock in stocks" :key="stock.value" :value="stock.value">{{ stock.label }}</option>
+      </select>
+    </div>
+    <StockChart v-if="stockData" :stockData="stockData" />
+  </div>
+</template>
+
+<script>
+import StockChart from '@/components/StockChart.vue';
+
+export default {
+  components: {
+    StockChart,
+  },
+  data() {
+    return {
+      selectedStock: 'AAPL',
+      stockData: null,
+      stocks: [
+        { label: 'Apple Inc.', value: 'AAPL' },
+        { label: 'Microsoft Corporation', value: 'MSFT' },
+        { label: 'Amazon.com Inc.', value: 'AMZN' },
+        { label: 'Tesla Inc.', value: 'TSLA' },
+        { label: 'Alphabet Inc. (Google)', value: 'GOOGL' },
+      ],
+    };
+  },
+  mounted() {
+    this.fetchStockData();
+  },
+  methods: {
+    fetchStockData() {
+      // Mock data for demonstration
+      const mockData = [
+        { date: '2023-01-01', close: 150 },
+        { date: '2023-01-02', close: 152 },
+        { date: '2023-01-03', close: 148 },
+        { date: '2023-01-04', close: 155 },
+        { date: '2023-01-05', close: 157 },
+      ];
+      this.stockData = {
+        dates: mockData.map(item => item.date),
+        prices: mockData.map(item => item.close),
+      };
+    },
+  },
+};
+</script>
+
+<style scoped>
+h1 {
+  text-align: center;
+}
+
+div {
+  margin: 20px;
+}
+</style> --> -->
+
+<!-- <script>
+// Import necessary modules
+const yahooFinance = require('yahoo-finance');
+const fs = require('fs');
+const path = require('path');
+
+export default {
+  name: 'YahooFinanceDownloader',
+  methods: {
+    async N50() {
+      const now = new Date();
+      const today345pm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 45, 0, 0);
+      
+      const benchmarkFile = 'benchmark.csv';
+      let beta_r = [];
+
+      try {
+        // Check if benchmark file exists
+        if (fs.existsSync(benchmarkFile)) {
+          // Read existing benchmark data
+          beta_r = JSON.parse(fs.readFileSync(benchmarkFile, 'utf8'));
+
+          // Check if data is not empty and update condition meets
+          if (beta_r.length > 0) {
+            const lastDate = beta_r[beta_r.length - 1].Date;
+            if (lastDate !== new Date().toISOString().slice(0, 10) && now > today345pm) {
+              // Download new data
+              const data = await yahooFinance.historical({
+                symbol: '^NSEI',
+                from: '2020-01-01',
+                to: new Date().toISOString().slice(0, 10)
+              });
+
+              // Append new data to existing
+              beta_r.push(...data);
+              fs.writeFileSync(benchmarkFile, JSON.stringify(beta_r, null, 2));
+            }
+          } else {
+            // Download data if empty
+            beta_r = await yahooFinance.historical({
+              symbol: '^NSEI',
+              from: '2020-01-01',
+              to: new Date().toISOString().slice(0, 10)
+            });
+
+            fs.writeFileSync(benchmarkFile, JSON.stringify(beta_r, null, 2));
+          }
+        } else {
+          // Download data if file doesn't exist
+          beta_r = await yahooFinance.historical({
+            symbol: '^NSEI',
+            from: '2020-01-01',
+            to: new Date().toISOString().slice(0, 10)
+          });
+
+          fs.writeFileSync(benchmarkFile, JSON.stringify(beta_r, null, 2));
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+
+      return beta_r;
+    }
+  },
+  async mounted() {
+    // Call the N50 function on component mount
+    const data = await this.N50();
+    console.log('Downloaded data:', data);
+  }
+}
+</script>
+
+<style scoped>
+/* Your component-specific styles */
+</style> -->
+
+
+
+<!-- -------------------ORIGINAL REPRESENTATION BEFORE CONVERTING-------------------- -->
+
+<!-- <template>
+  <div class="dash-embed">
+    <iframe :src="dashUrl" frameborder="0" class="dash-iframe"></iframe>
+  </div>
+</template>
+
+<script>
+export default {
+   name: 'QuantAnalysis',
+  data() {
+    return {
+      dashUrl: "http://127.0.0.1:8054/" // Ensure this URL matches where your Dash app is running
+    };
+  }
+};
+</script>
+
+<style scoped>
+.dash-embed {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dash-iframe {
+  width: 100%;
+  height: 100vh; /* Adjust height as needed */
+  border: none;
+}
+</style> -->
+
+
+
+
+
+
+<!-- -------------------ALPHAVANTAGE (S&P 500 NOT SUPPORTED)-------------------- -->
+<!-- <template>
+  <div>
+    <h1>Benchmark Data</h1>
+    <p v-if="error">{{ error }}</p>
+    <div v-else-if="benchmarkData">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Open</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Close</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(data, index) in benchmarkData" :key="index">
+            <td>{{ data.date }}</td>
+            <td>{{ data['1. open'] }}</td>
+            <td>{{ data['2. high'] }}</td>
+            <td>{{ data['3. low'] }}</td>
+            <td>{{ data['4. close'] }}</td>
+            <td>{{ data['5. volume'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+import alpha from 'alphavantage';
+
+const alphaInstance = alpha({ key: process.env.VUE_APP_STOCK_KEY });
+
+export default {
+  name: 'BenchmarkData',
+  data() {
+    return {
+      benchmarkData: null,
+      error: null,
+    };
+  },
+  methods: {
+    async fetchBenchmarkData() {
+      try {
+        const data = await this.downloadBenchmarkData();
+        if (data) {
+          this.saveBenchmarkData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+      }
+    },
+    async downloadBenchmarkData() {
+      try {
+        const response = await alphaInstance.data.daily('AMZN', 'full', 'json');
+        const timeSeries = response['Time Series (Daily)'];
+        const data = Object.keys(timeSeries).map(date => ({
+          date,
+          ...timeSeries[date],
+        }));
+        return data;
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+        return null;
+      }
+    },
+    saveBenchmarkData(data) {
+      if (data) {
+        localStorage.setItem('benchmarkData', JSON.stringify(data));
+        this.benchmarkData = data;
+      }
+    },
+    loadBenchmarkData() {
+      const storedData = localStorage.getItem('benchmarkData');
+      if (storedData) {
+        this.benchmarkData = JSON.parse(storedData);
+      }
+    },
+  },
+  created() {
+    this.loadBenchmarkData();
+    this.fetchBenchmarkData();
+  },
+};
+</script>
+
+<style scoped>
+/* Your component styles here */
+</style> -->
+
+
+
+<!-- -------------------YAHOO FINANCE (S&P 500 SUPPORTED)-------------------- -->
+<!-- <template>
+  <div>
+    <h1>Benchmark Data</h1>
+    <p v-if="error">{{ error }}</p>
+    <div v-else-if="benchmarkData">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Open</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Close</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(data, index) in benchmarkData" :key="index">
+            <td>{{ data.date }}</td>
+            <td>{{ data.open }}</td>
+            <td>{{ data.high }}</td>
+            <td>{{ data.low }}</td>
+            <td>{{ data.close }}</td>
+            <td>{{ data.volume }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'BenchmarkData',
+  data() {
+    return {
+      benchmarkData: null,
+      error: null,
+    };
+  },
+  methods: {
+    async fetchBenchmarkData() {
+      try {
+        const data = await this.downloadBenchmarkData();
+        if (data) {
+          this.saveBenchmarkData(data);
+        }
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+      }
+    },
+    async downloadBenchmarkData() {
+      const period1 = Math.floor(new Date('2020-01-01').getTime() / 1000);
+      const period2 = Math.floor(Date.now() / 1000);
+      const url = `https://query2.finance.yahoo.com/v8/finance/chart/%5EGSPC?period1=${period1}&period2=${period2}&interval=1d`;
+      const proxyUrl = 'https://corsproxy.io/?'; // CORS proxy URL
+
+      try {
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        const json = await response.json();
+        const timeSeries = json.chart.result[0];
+        const data = timeSeries.timestamp.map((timestamp, index) => ({
+          date: new Date(timestamp * 1000).toLocaleDateString(),
+          open: timeSeries.indicators.quote[0].open[index],
+          high: timeSeries.indicators.quote[0].high[index],
+          low: timeSeries.indicators.quote[0].low[index],
+          close: timeSeries.indicators.quote[0].close[index],
+          volume: timeSeries.indicators.quote[0].volume[index],
+        }));
+        return data;
+      } catch (error) {
+        console.error('Error fetching benchmark data:', error);
+        this.error = 'Error fetching benchmark data. Please try again later.';
+        return null;
+      }
+    },
+    saveBenchmarkData(data) {
+      if (data) {
+        localStorage.setItem('benchmarkData', JSON.stringify(data));
+        this.benchmarkData = data;
+      }
+    },
+    loadBenchmarkData() {
+      const storedData = localStorage.getItem('benchmarkData');
+      if (storedData) {
+        this.benchmarkData = JSON.parse(storedData);
+      }
+    },
+  },
+  created() {
+    this.loadBenchmarkData();
+    this.fetchBenchmarkData();
+  },
+};
+</script>
+
+<style scoped>
+/* Your component styles here */
 </style> -->
 
 
