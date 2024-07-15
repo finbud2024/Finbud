@@ -21,7 +21,6 @@ export default {
   methods: {
     send() {
       this.$emit('send-message', this.messageText);
-      console.log("UserInput message - textMessage: ", this.messageText);
       this.messageText = "";
     },
     triggerFileInput() {
