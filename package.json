@@ -48,5 +48,6 @@
         "vue-template-compiler": "^2.7.16",
         "vue3-toastify": "^0.2.2",
         "vuex": "^4.1.0"
+        
     }
 }
