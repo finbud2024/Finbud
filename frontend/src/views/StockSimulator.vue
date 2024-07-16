@@ -81,7 +81,7 @@
     </section>
 <<<<<<< HEAD
     <stockScreener @applyFilter="stockFilterHandler"/>
-    <div class="stockDisplayContainer">
+    <div class="stockDisplayContainer" v-if="count">
       <CompanyCard v-for="(item,idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
     </div>
 =======
@@ -131,7 +131,7 @@ export default {
     }
   },
   methods:{
-    stockFilterHandler(screenerFilter){
+    async stockFilterHandler(screenerFilter){
       const appliedFilter = stockData
       .filter((data) => data.eps && data.eps <= screenerFilter.eps[1] && data.eps >= screenerFilter.eps[0])
       .filter((data) => data.pe && data.pe <= screenerFilter.pe[1] && data.pe >= screenerFilter.pe[0])
@@ -139,12 +139,15 @@ export default {
       .filter((data) => data.beta && data.beta <= screenerFilter.beta[1] && data.beta >= screenerFilter.beta[0])
       .filter((data) => data.regularPrice && data.regularPrice <= screenerFilter.regularPrice[1] && data.regularPrice >= screenerFilter.regularPrice[0])
       .filter((data) => data.priceSales && data.priceSales <= screenerFilter.priceSales[1] && data.priceSales >= screenerFilter.priceSales[0])
+      this.displayStock = [];
+      await new Promise(r => setTimeout(r, 500));
       if(appliedFilter.length > 10){
         let temp = appliedFilter.slice().sort(()=>0.5-Math.random());
         this.displayStock = temp.slice(0,10)
       }else{
         this.displayStock = appliedFilter
       }
+      this.count++;
     }
   },
   mounted(){
