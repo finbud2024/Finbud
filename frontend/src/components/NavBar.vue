@@ -26,7 +26,10 @@
               <img src="../assets/Dung.jpg" alt="User Image" class="inside-dropdown-user-image">
               <p>Dung Nguyen</p>
             </router-link>
-            <router-link to="#" class="logout" @click="logout">Log Out</router-link>
+            <router-link to="#" class="logout" @click="logout">
+              <i class="fa fa-camera icon" ></i>
+              <p>Log Out</p>
+            </router-link>
           </div>
         </li>
       </ul>
@@ -244,6 +247,12 @@ export default {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+  border-bottom: 1px solid rgb(226, 215, 215);
+}
+
+.dropdown-content a:last-child,
+.dropdown-profile a:last-child {
+  border-bottom: none;
 }
 
 .dropdown-content a:hover,
@@ -277,20 +286,21 @@ export default {
   transform: scale(1.05);
 }
 
-.inside-dropdown-user-image {
+.inside-dropdown-user-image,
+.icon {
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   margin-right: 10px;
   margin-left: 10px;
   cursor: pointer;
 }
 
-.profile p{
+.dropdown-profile p{
   margin-left: calc(50% - 70px);
   font-size: 1.2rem;
-  line-height: 5px;
+  line-height: 3px;
 }
 
 .arrow-down {
