@@ -18,9 +18,7 @@
     "vue": "^3.4.27",
     "vue-axios": "^3.5.2",
     "vue-cli": "^2.9.6",
-    "vue-router": "^4.3.2",
-    "vue-3-slider-component": "^1.0.0",
-    "vue3-toastify": "^0.2.2"
+    "vue-router": "^4.3.2"
   },
   "devDependencies": {
     "@vue/cli-service": "^5.0.8",
