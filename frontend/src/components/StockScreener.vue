@@ -3,30 +3,29 @@
       <h3>All filters</h3>
       <div class="filter">
         <label for="eps">Earnings Per Share (EPS)</label>
-        <Vue3Slider id="eps" v-model="filters.eps" :min="0" :max="500" style="width:60%" />
+        <Vue3Slider @change="applyFilters" id="eps" v-model="filters.eps" :min="0" :max="500" style="width:60%" />
       </div>
       <div class="filter">
         <label for="pe">Price To Earnings Ratio (P/E)</label>
-        <Vue3Slider id="pe" v-model="filters.pe" :min="0" :max="50" style="width:60%" />
+        <Vue3Slider @change="applyFilters" id="pe" v-model="filters.pe" :min="0" :max="50" style="width:60%" />
       </div>
       <div class="filter">
         <label for="pbr">Price to Book Ratio</label>
-        <Vue3Slider id="pbr" v-model="filters.pbr" :min="0" :max="4" style="width:60%" />
+        <Vue3Slider @change="applyFilters" id="pbr" v-model="filters.pbr" :min="0" :max="4" style="width:60%" />
       </div>
       <div class="filter">
         <label for="beta">Beta</label>
-        <Vue3Slider id="beta" v-model="filters.beta" :min="0" :max="2" style="width:60%" />
+        <Vue3Slider @change="applyFilters" id="beta" v-model="filters.beta" :min="0" :max="2" style="width:60%" />
       </div>
       <div class="filter">
         <label for="regular-price">Regular Price</label>
-        <Vue3Slider id="regular-price" v-model="filters.regularPrice" :min="0" :max="700" style="width:60%" />
+        <Vue3Slider @change="applyFilters" id="regular-price" v-model="filters.regularPrice" :min="0" :max="700" style="width:60%" />
       </div>
       <div class="filter">
         <label for="price-sales">Price to Sales</label>
-        <Vue3Slider id="price-sales" v-model="filters.priceSales" :min="0" :max="100" style="width:60%" />
+        <Vue3Slider @change="applyFilters" id="price-sales" v-model="filters.priceSales" :min="0" :max="100" style="width:60%" />
       </div>
       <div class="buttonsContainer">
-        <button @click="applyFilters" class="filter-btn">Filter</button>
         <button @click="resetFilter" class="filter-btn">Reset</button>
       </div>
     </div>
@@ -34,6 +33,7 @@
   
   <script>
   import Vue3Slider from 'vue-3-slider-component';
+  import debounce from 'lodash/debounce';
 
   export default {
     name: 'StockScreener',
@@ -53,7 +53,7 @@
       };
     },
     methods: {
-      applyFilters() {
+      applyFilters: debounce(function() {
         //data return to parent through appy Filter Event
         this.$emit('applyFilter',{
           eps: this.filters.eps,
@@ -63,7 +63,7 @@
           regularPrice: this.filters.regularPrice,
           priceSales: this.filters.priceSales,
         })
-      },
+      }, 300),
       resetFilter(){
         this.filters.eps =  [0, 500]
         this.filters.pe = [0, 50]

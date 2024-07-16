@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <CompanyCard :companyName="this.bannerDisplayStock" :width='`80%`' />
+      <CompanyCard :companyName="bannerDisplayStock" :width='`80%`' />
     </header>
     <div class="main-content">
       <section class="key-statistics">
@@ -63,7 +63,7 @@
       </div>
     </section>
     <stockScreener @applyFilter="stockFilterHandler"/>
-    <div class="stockDisplayContainer">
+    <div class="stockDisplayContainer" v-if="count">
       <CompanyCard v-for="(item,idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
     </div>
     <PreviewOrderModal 
@@ -91,8 +91,9 @@ export default {
     return {
       bannerDisplayStock: "AAPL",
       displayStock: [],
-      stockSymbol: this.$route.query.symbol || '', // pre-fill from chat command
-      quantity: this.$route.query.quantity || '', // pre-fill from chat command
+      count: 1,
+      stockSymbol: '', // pre-fill from chat command
+      quantity: '', // pre-fill from chat command
       showModal: false,
       //temp: hard coded data for preview order 
       estimatedPrice: 0, 
@@ -101,7 +102,7 @@ export default {
     };
   },
   methods:{
-    stockFilterHandler(screenerFilter){
+    async stockFilterHandler(screenerFilter){
       const appliedFilter = stockData
       .filter((data) => data.eps && data.eps <= screenerFilter.eps[1] && data.eps >= screenerFilter.eps[0])
       .filter((data) => data.pe && data.pe <= screenerFilter.pe[1] && data.pe >= screenerFilter.pe[0])
@@ -109,12 +110,15 @@ export default {
       .filter((data) => data.beta && data.beta <= screenerFilter.beta[1] && data.beta >= screenerFilter.beta[0])
       .filter((data) => data.regularPrice && data.regularPrice <= screenerFilter.regularPrice[1] && data.regularPrice >= screenerFilter.regularPrice[0])
       .filter((data) => data.priceSales && data.priceSales <= screenerFilter.priceSales[1] && data.priceSales >= screenerFilter.priceSales[0])
+      this.displayStock = [];
+      await new Promise(r => setTimeout(r, 500));
       if(appliedFilter.length > 10){
         let temp = appliedFilter.slice().sort(()=>0.5-Math.random());
         this.displayStock = temp.slice(0,10)
       }else{
         this.displayStock = appliedFilter
       }
+      this.count++;
     }
   },
   computed: {
@@ -128,14 +132,27 @@ export default {
       }
     }
   },
+  watch: {
+    '$route.query': {
+      immediate: true,
+      handler(newQuery) {
+        this.stockSymbol = newQuery.symbol || '';
+        this.quantity = newQuery.quantity || '';
+        this.bannerDisplayStock = newQuery.symbol || "AAPL";
+      }
+    },
+    displayStock(newVal){
+      console.log(newVal)
+    }
+  },
   mounted(){
     //make a copy of stockData and randomly sort then pick the first 10 elements
     const shuffledStock = stockData.slice().sort(()=>0.5-Math.random());
     this.displayStock = shuffledStock.slice(0,10);
 
     //if statement to see if going direct or through chat command
-    if(this.$route.query){
-      alert("through chat view")
+    if(this.$route.query.symbol && this.$route.query.quantity){
+      this.bannerDisplayStock = this.$route.query.symbol 
     }else{
       alert("direct")
     }
