@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="profile-image-container">
-        <img class="profile-image" src="../assets/tri.jpeg" alt="Profile Image">
+        <img class="profile-image" src="../assets/profile/tri.jpeg" alt="Profile Image">
         <label for="file-upload" class="custom-file-upload">
           <i class="fa fa-camera" ></i>
         </label>
