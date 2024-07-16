@@ -8,12 +8,8 @@ import * as faSolid from '@fortawesome/free-solid-svg-icons'
 import * as faRegular from '@fortawesome/free-regular-svg-icons'
 import * as faBrand from '@fortawesome/free-brands-svg-icons' 
 
-// Extract the icons from the imported objects
-const solidIcons = Object.values(faSolid).filter(icon => icon.prefix && icon.iconName);
-const regularIcons = Object.values(faRegular).filter(icon => icon.prefix && icon.iconName);
-const brandIcons = Object.values(faBrand).filter(icon => icon.prefix && icon.iconName);
-
-library.add(solidIcons, regularIcons, brandIcons);
+const icons = [ faSolid.faCamera, faSolid.faRightFromBracket ];
+library.add(icons);
 
 // Create the application and mount it with the router
 createApp(App)
