@@ -27,7 +27,7 @@
               <p>Dung Nguyen</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
-              <i class="fa fa-camera icon" ></i>
+              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon"/>
               <p>Log Out</p>
             </router-link>
           </div>
