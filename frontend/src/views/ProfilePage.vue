@@ -10,7 +10,7 @@
       <div class="profile-image-container">
         <img class="profile-image" src="../assets/tri.jpeg" alt="Profile Image">
         <label for="file-upload" class="custom-file-upload">
-          <i class="fa fa-camera" ></i>
+          <font-awesome-icon icon="fa-solid fa-camera" />
         </label>
         <input id="file-upload" type="file" @change="uploadImage"/>
       </div>
