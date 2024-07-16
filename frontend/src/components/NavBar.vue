@@ -246,8 +246,10 @@ export default {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
-  display: block;
-  border-bottom: 1px solid rgb(226, 215, 215);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px dotted rgb(226, 215, 215);
+  height: 40px;
 }
 
 .dropdown-content a:last-child,
@@ -289,8 +291,8 @@ export default {
 .inside-dropdown-user-image,
 .icon {
   position: absolute;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   margin-right: 10px;
   margin-left: 10px;
