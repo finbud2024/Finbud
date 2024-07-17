@@ -38,12 +38,10 @@ authRoute.post('/auth/login', passport.authenticate('local', { failWithError: tr
   (req, res) => {
     console.log("/login route reached: successful authentication.");
     //Redirect to app's main page; the /auth/test route should return true
-    console.log(req.user._id);
     res.status(200).send(req.user);
   },
   (err, req, res, next) => {
     console.log("/login route reached: unsuccessful authentication");
-    console.log(err)
     if (req.authError) {
       console.log("req.authError: " + req.authError); 
       res.status(401).send(req.authError);
@@ -58,11 +56,16 @@ authRoute.post('/auth/login', passport.authenticate('local', { failWithError: tr
 authRoute.get('/auth/logout', (req, res, next) => {
     console.log('/auth/logout reached. Logging out');
     req.logout((err) => {
-      if (err) { return next(err); }
+      if (err) { 
+        return next(err); 
+      }
       req.session.destroy((err) => {
-        if (err) { return next(err); }
+        if (err) { 
+          return next(err); 
+        }
         res.clearCookie('connect.sid');
         res.redirect('/login');
+        res.status(200);
       });
     });
   });

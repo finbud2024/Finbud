@@ -10,8 +10,6 @@ const passportConfig = (app) => {
 
     passport.serializeUser((user, done) => {
         console.log("In serializeUser.");
-        // console.log("Contents of user param: " + JSON.stringify(user));
-        console.log("[abc]: ", user._id);
         done(null,user._id);
     });
         

@@ -94,7 +94,7 @@ export default {
     async logout() {
       authStore.logout();
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
+        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
       } catch (err) {
         console.log("After logout with err: " + err);
       }
