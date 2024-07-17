@@ -38,7 +38,8 @@ authRoute.post('/auth/login', passport.authenticate('local', { failWithError: tr
   (req, res) => {
     console.log("/login route reached: successful authentication.");
     //Redirect to app's main page; the /auth/test route should return true
-    res.status(200).send("Login successful");
+    console.log(req.user._id);
+    res.status(200).send(req.user);
   },
   (err, req, res, next) => {
     console.log("/login route reached: unsuccessful authentication");
@@ -49,7 +50,8 @@ authRoute.post('/auth/login', passport.authenticate('local', { failWithError: tr
     } else {
       res.status(401).send("Unexpected error occurred when attempting to authenticate. Please try again.");
     }
-  });
+  }
+);
 
 //LOGOUT route: Use passport's req.logout() method to log the user out and
 //redirect the user to the main app page. req.isAuthenticated() is toggled to false.

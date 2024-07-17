@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="profile-image-container">
-        <img class="profile-image" src="../assets/tri.jpeg" alt="Profile Image">
+        <img class="profile-image" :src="profileImage" alt="Profile Image">
         <label for="file-upload" class="custom-file-upload">
           <font-awesome-icon icon="fa-solid fa-camera" />
         </label>
@@ -48,8 +48,10 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import defaultImage from '@/assets/anonymous.png';
 
 export default {
   data() {
@@ -59,10 +61,7 @@ export default {
         firstName: '',
         lastName: '',
         email: '',
-        // address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
-        // city: 'New York',
-        // country: 'United States',
-        // postalCode: '',
+        image: '',
       },
       sections: [
         {
@@ -91,8 +90,18 @@ export default {
       ]
     };
   },
+  computed: {
+    profileImage(){
+      return this.profile.image || defaultImage;
+    }
+  },
   methods: {
-    updateProfile() {
+    async updateProfile() {
+      try{
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/user/update`;
+      }catch(err){
+        console.log(err);
+      }
       // Logic to update profile
       console.log('Profile updated', this.profile);
     },
@@ -103,7 +112,8 @@ export default {
       })
     },
   },
-  mounted(){
+  async mounted(){
+    //Change color of balance based on value
     const accountValue = document.querySelectorAll('.stock-simulator-container h1');
     console.log(accountValue);
     accountValue.forEach((value) => {
@@ -114,6 +124,26 @@ export default {
         value.style.color = 'green';
       }
     });
+
+    //fetch user profile
+    try{
+      const userId = localStorage.getItem('token');
+      const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+      const response = await axios.get(api);
+      const profileData = response.data;
+      console.log(profileData);
+      this.profile = {
+        username: profileData.identityData.displayName,
+        firstName: profileData.identityData.firstName,
+        lastName: profileData.identityData.lastName,
+        email: profileData.accountData.username,
+        image: profileData.identityData.profilePicture
+      };
+      //get user image
+
+    }catch(err){
+      console.log(err);
+    }
   },
 };
 </script>
@@ -247,7 +277,7 @@ export default {
   border: 1px solid #ddd;
   border-radius: 10px;
   box-sizing: border-box;
-  color: rgb(136, 152, 170);
+  color: black;
 }
 .form-group input::placeholder{
   color: rgb(136, 152, 170);
