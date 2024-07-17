@@ -1,23 +1,27 @@
 <template>
-    <div class="big-container">
-        <div class="home-container">
-            <div class="chat-container">
+    <div class="container">
+        <div class="main-content">
+            <div class="chat-section">
                 <ChatFrame>
                     <ChatHeader :threadId="currentThread.id" />
-                    <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
-                        :text="message.text" :typing="message.typing" :timestamp="message.timestamp"
+                    <MessageComponent
+                        v-for="(message, index) in messages"
+                        :key="index"
+                        :is-user="message.isUser"
+                        :text="message.text"
+                        :typing="message.typing"
+                        :timestamp="message.timestamp"
                         :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
-                        :avatar-src="message.isUser ? userAvatar : botAvatar" />
+                        :avatar-src="message.isUser ? userAvatar : botAvatar"
+                    />
                 </ChatFrame>
                 <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
             </div>
         </div>
-
-        <News :keyword="keyword" />
+        <!-- <News :keyword="keyword" /> -->
+        <DisplayCrypto />
+        <DisplayStock />
     </div>
-
-    <DisplayCrypto />
-    <DisplayStock />
 </template>
 
 <script>
@@ -25,12 +29,14 @@ import ChatHeader from './ChatHeader.vue';
 import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
 import UserInput from './UserInput.vue';
-import News from '../Risk&Chat/News.vue'
+import News from '../Risk&Chat/News.vue';
 import DisplayCrypto from './DisplayCrypto.vue';
 import DisplayStock from './DisplayStock.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+
 const apiKey = process.env.VUE_APP_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
+
 export default {
     name: 'RiskChat',
     components: {
@@ -52,8 +58,9 @@ export default {
             threads: [],
             isSidebarVisible: false,
             keyword: '',
-        }
-    }, watch: {
+        };
+    },
+    watch: {
         threadId: {
             immediate: true,
             handler(newThreadId) {
@@ -98,7 +105,7 @@ export default {
         selectThread(index) {
             this.updateCurrentThread(this.threads[index].id.toString());
         },
-        // message functions
+        // Message functions
         clearMessage() {
             this.newMessage = '';
             this.keyword = '';
@@ -108,7 +115,7 @@ export default {
                 text: newMessage.trim(),
                 isUser: true,
                 typing: true,
-                timestamp: new Date().toLocaleTimeString()
+                timestamp: new Date().toLocaleTimeString(),
             });
             this.newMessage = '';
             const userMessage = this.messages[this.messages.length - 1].text;
@@ -117,9 +124,9 @@ export default {
             } catch (error) {
                 console.log('Error in step 1:', error);
                 this.messages.push({
-                    text: `Error processing your message.`,
+                    text: 'Error processing your message.',
                     isUser: false,
-                    timestamp: new Date().toLocaleTimeString()
+                    timestamp: new Date().toLocaleTimeString(),
                 });
             }
         },
@@ -132,33 +139,33 @@ export default {
             } catch (error) {
                 console.error('Error in handleMessage:', error);
                 if (error.response) {
-                    console.error("Response status:", error.response.status);
-                    console.error("Response data:", error.response.data);
+                    console.error('Response status:', error.response.status);
+                    console.error('Response data:', error.response.data);
                 } else if (error.request) {
-                    console.error("No response received:", error.request);
+                    console.error('No response received:', error.request);
                 } else {
-                    console.error("Error setting up the request:", error.message);
+                    console.error('Error setting up the request:', error.message);
                 }
                 // Update UI with error message
                 this.messages.push({
                     text: `Error processing your message: ${error.message}`,
                     isUser: false,
-                    timestamp: new Date().toLocaleTimeString()
+                    timestamp: new Date().toLocaleTimeString(),
                 });
             }
         },
         async getGeminiKeyword(prompt) {
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
             const chat = await model.startChat({
                 history: [
                     {
-                        role: "user",
+                        role: 'user',
                         parts: [{
                             text: `Given a sentence, extract and format the relevant keywords or phrases according to the following criteria: Must include: Keywords or phrases prepended with a + symbol. Exact match: Keywords or phrases surrounded by quotes ("). Logical operators: Use AND, OR, NOT to connect keywords or phrases. Group: Use parentheses to group logical operations if necessary.`
                         }],
                     },
                     {
-                        role: "user",
+                        role: 'user',
                         parts: [{ text: `Examples: My input: "Look up data on electric vehicles or hybrid cars and clean energy." Output: +electric vehicles OR +hybrid cars AND "clean energy"` }],
                     },
                 ],
@@ -168,20 +175,20 @@ export default {
             });
             const result = await chat.sendMessage(prompt);
             const response = await result.response;
-            const text = response.text();
+            const text = await response.text();
             return text;
         },
         async getGeminiPrompt(prompt) {
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
             const chat = await model.startChat({
                 history: [
                     {
-                        role: "user",
+                        role: 'user',
                         parts: [{ text: "I'm a 15 years old boy, from now on, answer me everything simply!" }],
                     },
                     {
-                        role: "model",
-                        parts: [{ text: "Great to meet you. What would you like to know?" }],
+                        role: 'model',
+                        parts: [{ text: 'Great to meet you. What would you like to know?' }],
                     },
                 ],
                 generationConfig: {
@@ -190,7 +197,7 @@ export default {
             });
             const result = await chat.sendMessage(prompt);
             const response = await result.response;
-            const text = response.text();
+            const text = await response.text();
             return text;
         },
         addTypingResponse(text, isUser) {
@@ -199,7 +206,7 @@ export default {
                 isUser: isUser,
                 typing: true,
                 timestamp: new Date().toLocaleTimeString(),
-                username: isUser ? 'You' : 'FinBud Bot'
+                username: isUser ? 'You' : 'FinBud Bot',
             };
 
             this.messages.push(typingMessage);
@@ -214,34 +221,41 @@ export default {
             this.currentTime = new Date().toLocaleTimeString();
         }, 500);
 
-        const guidanceMessage = `Welcome to FinBud! Ask me anything!`;
+        const guidanceMessage = 'Welcome to FinBud! Ask me anything!';
 
         if (!this.messages) {
             this.messages = [];
         }
         this.addTypingResponse(guidanceMessage.trim(), false);
-    }
-}
+    },
+};
 </script>
 
 <style scoped>
-.big-container {
+.container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
-.home-container {
+.main-content {
     display: flex;
-    width: 45%;
-    height: 90vh;
-    margin-left: 10px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    background-image: linear-gradient(to bottom, #7BDBBF, #e0dede);
+    background: linear-gradient(to bottom, #7BDBBF, #e0dede);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.chat-container {
+.chat-section {
+
     display: flex;
     flex-direction: column;
     flex: 1;
+    padding: 20px;
 }
 
 @media (max-width: 768px) {
@@ -251,30 +265,14 @@ export default {
     }
 }
 
-.overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-
-
-@media (max-width: 815px) {
-    .home-container {
-        width: 90%;
-    }
-
-    .big-container {
+@media (max-width: 768px) {
+    .main-content {
         flex-direction: column;
+        width: 90%;
     }
 }
 
 @media (max-width: 768px) {
-
     .chat-header {
         font-size: 1rem;
         padding: 10px;

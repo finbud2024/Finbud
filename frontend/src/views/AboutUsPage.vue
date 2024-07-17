@@ -8,21 +8,36 @@
     </div>
     <div class="team-section">
       <li class="title">Meet Our Team</li>
-      <div class="team-container">
-        <div class="team-member" v-for="member in teamMembers" :key="member.name">
-          <div class="image-container">
-            <img :style="{ aspectRatio: '1', width: '50%' }" :src="member.img" :alt="member.name" class="fade-in" />
+      <swiper 
+        :slidesPerView="3"
+        :spaceBetween="30"
+        :keyboard="{
+          enabled: true,
+        }"
+        :pagination="{
+          clickable: true,
+        }"
+        :navigation="true"
+        :modules="modules"
+        class="mySwiper"
+      >
+        <swiper-slide v-for="member in teamMembers" :key="member.name">
+          <div class="team-member">
+            <div class="image-container">
+              <img :src="member.img" :alt="member.name" class="fade-in" />
+            </div>
+            <h3>{{ member.name }}</h3>
+            <p>{{ member.role }}</p>
+            <h2>{{ member.intro }}</h2>
+            <div class="social-icons">
+              <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
+                {{ icon.name }}
+              </a>
+            </div>
           </div>
-          <h3>{{ member.name }}</h3>
-          <p>{{ member.role }}</p>
-          <h2>{{ member.intro }}</h2>
-          <div class="social-icons">
-            <a v-for="icon in member.socialIcons" :key="icon.name" :href="icon.link" target="_blank">
-              {{ icon.name }}
-            </a>
-          </div>
-        </div>
-      </div>
+        </swiper-slide>
+    
+    </swiper>
     </div>
     
     <!-- Testimonials Section -->
@@ -90,10 +105,25 @@
 </template>
 
 <script>
+import { Swiper, SwiperSlide } from 'swiper/vue';
+
+import 'swiper/css';
+
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
+import { Keyboard, Pagination, Navigation } from 'swiper/modules';
+
 export default {
   name: 'AboutUsPage',
+  components: {
+    Swiper,
+    SwiperSlide,
+  },
+
   data() {
     return {
+      modules: [Keyboard, Pagination, Navigation],
       teamMembers: [
         {
           name: 'Tri Dinh Bui',
@@ -153,6 +183,15 @@ export default {
           socialIcons: [
             { name: 'LinkedIn', link: 'https://www.linkedin.com/in/liam-ha/' },
             { name: 'GitHub', link: 'https://github.com/dlinh31' },
+          ],
+        }, {
+          name: 'Dung Pham',
+          role: 'Fullstack Engineer',
+          intro: 'Computer Science student at University of South Florida, skilled in fullstack web development and wanting to dive into the fields of AI/ML, Fintech and Cloud Computing',
+          img: require('@/assets/profile/dungpham.jpg'),
+          socialIcons: [
+            { name: 'LinkedIn', link: 'https://www.linkedin.com/in/dungap25/' },
+            { name: 'GitHub', link: 'https://github.com/dungpham2502' },
           ],
         },
         {
@@ -267,6 +306,8 @@ export default {
 </script>
 
 <style scoped>
+@import 'swiper/swiper-bundle.css';
+
 body {
   background: #f4f4f4;
   margin: 0;
