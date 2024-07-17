@@ -178,7 +178,7 @@ export default {
         {
           name: 'Linh Ha',
           role: 'Fullstack Engineer',
-          intro: "Computer Scienctist from University of South Florida, specializing in full-stack software development with a focus on scalability. Deeply passionate about software engineering and exploring its potential applications in AI.",
+          intro: "Computer Science student from University of South Florida, specializing in full-stack software development with a focus on scalability. Deeply passionate about software engineering and exploring its potential applications in AI.",
           img: require('@/assets/profile/linh.jpg'),
           socialIcons: [
             { name: 'LinkedIn', link: 'https://www.linkedin.com/in/liam-ha/' },
