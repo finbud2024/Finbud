@@ -82,18 +82,15 @@ export default {
     'authStore.isAuthenticated': async function() {
       if(authStore.isAuthenticated){
         try {
-          const userId = localStorage.getItem('token');
-          const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
-          const response = await axios.get(api);
-          const profileData = response.data;
+          const profileData = JSON.parse(localStorage.getItem('user'));
+          console.log(profileData);
           if(profileData.identityData){
-            this.image = profileData.identityData.profilePicture || '';
+            this.image = profileData.identityData.profilePicture;
+            this.name = profileData.identityData.displayName;
           } else{
             this.image = '';
+            this.name = 'User';
           }
-          console.log('[abc]', this.image);
-        //this.image = profileData.identityData.profilePicture||defaultImage;
-        // this.name = profileData.identityData.displayName;
         } catch (err) {
          console.log(err);
         }
@@ -134,23 +131,11 @@ export default {
       const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
       if (response.data.isAuthenticated) {
         authStore.login(response.data.user._id);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       }
     } catch (err) {
       console.log("After Sign in with google err: " + err);
     }
-    //fetch user image
-    // if(authStore.isAuthenticated){
-    //   try {
-    //     const userId = localStorage.getItem('token');
-    //     const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
-    //     const response = await axios.get(api);
-    //     const profileData = response.data;
-    //     this.image = profileData.identityData.profilePicture;
-    //     this.name = profileData.identityData.displayName;
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // }
   }
 };
 </script>

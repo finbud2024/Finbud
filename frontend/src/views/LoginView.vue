@@ -47,6 +47,7 @@ export default {
         }
         const response = await axios.post(api,reqBody);
         authStore.login(response.data._id);
+        localStorage.setItem('user', JSON.stringify(response.data));
         this.$router.push('/'); // Redirect to the main page after login
       } catch (err) {
         console.error('Login Error:', err.response ? err.response.data : err.message);

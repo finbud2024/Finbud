@@ -127,10 +127,10 @@ export default {
 
     //fetch user profile
     try{
-      const userId = localStorage.getItem('token');
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
-      const response = await axios.get(api);
-      const profileData = response.data;
+      // const userId = localStorage.getItem('token');
+      // const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+      // const response = await axios.get(api);
+      const profileData = JSON.parse(localStorage.getItem('user'));
       console.log(profileData);
       this.profile = {
         username: profileData.identityData.displayName,
