@@ -1,119 +1,200 @@
 <template>
   <div>
-    <h1>Monte Carlo Simulation of a Stock Portfolio</h1>
-    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <div id="chartContainer0" style="height: 300px; width: 100%"></div>
+    <div id="chartContainer1" style="height: 300px; width: 100%"></div>
+    <div id="chartContainer2" style="height: 300px; width: 100%"></div>
+    <div id="chartContainer3" style="height: 300px; width: 100%"></div>
+    <div id="chartContainer4" style="height: 300px; width: 100%"></div>
+    <div id="chartContainer5" style="height: 300px; width: 100%"></div>
   </div>
 </template>
 
 <script>
-import GOOGL from '../data/GOOGL.csv';
-import AAPL from '../data/AAPL.csv';
-import MSFT from '../data/MSFT.csv';
-import TSLA from '../data/TSLA.csv';
-import * as CanvasJS from 'canvasjs';
+import * as CanvasJS from '@canvasjs/charts';
+import csv from 'csvtojson';
+import AAPLData from '../../../../data/AAPL.csv';
+import AMZNData from '../../../../data/AMZN.csv';
+import MSFTData from '../../../../data/MSFT.csv';
+import TSLAData from '../../../../data/TSLA.csv';
 
 export default {
   name: 'MonteCarloChart',
   data() {
     return {
+      stockData: [],
+      returns: [],
+      meanReturns: [],
+      covMatrix: [],
+      weights: [],
       portfolioSims: [],
-      tickers: ['GOOGL', 'AAPL', 'MSFT', 'TSLA'],
-      stockData: {
-        GOOGL,
-        AAPL,
-        MSFT,
-        TSLA
-      }
+      VaR: 0,
+      CVaR: 0,
+      tickers: ['AAPL', 'AMZN', 'GOOG', 'MSFT', 'TSLA'],
+      csvData: [AAPLData, AMZNData, GOOGData, MSFTData, TSLAData],
     };
   },
   mounted() {
-    this.processData();
-    this.runMonteCarloSimulation();
-    this.renderChart();
+    window.CanvasJS = CanvasJS;
+    this.loadCSVData();
   },
   methods: {
+    async loadCSVData() {
+      try {
+        this.stockData = await Promise.all(this.csvData.map(file => this.parseCSV(file)));
+        this.processData();
+        this.monteCarloSimulation();
+        this.renderCharts();
+        this.calculateVaRCVaR();
+      } catch (error) {
+        console.error('Error loading CSV data:', error);
+      }
+    },
+    async parseCSV(file) {
+      const response = await fetch(file);
+      const csvText = await response.text();
+      return csv().fromString(csvText);
+    },
     processData() {
-      const stockData = Object.values(this.stockData).map(this.parseCSV);
+      // Flatten the stockData arrays into a single array
+      const flatStockData = this.stockData.flat();
+      const groupedData = this.groupByDate(flatStockData);
 
-      this.returns = this.calculateReturns(stockData);
-      this.meanReturns = this.returns.map(this.calculateMeanReturns);
+      this.returns = this.calculateReturns(groupedData);
+      this.meanReturns = this.calculateMeanReturns(this.returns);
       this.covMatrix = this.calculateCovMatrix(this.returns);
+      this.initializeWeights();
     },
-    parseCSV(data) {
-      return data.map(row => parseFloat(row.Close));
-    },
-    calculateReturns(data) {
-      return data.map(prices => {
-        const returns = [];
-        for (let i = 1; i < prices.length; i++) {
-          returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
+    groupByDate(data) {
+      return data.reduce((acc, val) => {
+        const date = new Date(val.date).toISOString().split('T')[0];
+        if (!acc[date]) {
+          acc[date] = [];
         }
-        return returns;
-      });
+        acc[date].push(val);
+        return acc;
+      }, {});
+    },
+    calculateReturns(groupedData) {
+      const dates = Object.keys(groupedData).sort();
+      let returns = [];
+      for (let i = 1; i < dates.length; i++) {
+        const previous = groupedData[dates[i - 1]].map(d => d.close);
+        const current = groupedData[dates[i]].map(d => d.close);
+        returns.push(current.map((c, idx) => (c - previous[idx]) / previous[idx]));
+      }
+      return returns;
     },
     calculateMeanReturns(returns) {
-      return returns.reduce((acc, r) => acc + r, 0) / returns.length;
+      const meanReturns = [];
+      const numAssets = returns[0].length;
+      for (let i = 0; i < numAssets; i++) {
+        let sum = 0;
+        for (let j = 0; j < returns.length; j++) {
+          sum += returns[j][i];
+        }
+        meanReturns.push(sum / returns.length);
+      }
+      return meanReturns;
     },
     calculateCovMatrix(returns) {
       const covMatrix = [];
-      for (let i = 0; i < returns.length; i++) {
-        covMatrix[i] = [];
-        for (let j = 0; j < returns.length; j++) {
-          const cov = returns[i].map((r, idx) => (r - this.meanReturns[i]) * (returns[j][idx] - this.meanReturns[j])).reduce((acc, r) => acc + r, 0) / (returns[i].length - 1);
-          covMatrix[i][j] = cov;
+      const numAssets = returns[0].length;
+      for (let i = 0; i < numAssets; i++) {
+        const row = [];
+        for (let j = 0; j < numAssets; j++) {
+          let sum = 0;
+          for (let k = 0; k < returns.length; k++) {
+            sum += (returns[k][i] - this.meanReturns[i]) * (returns[k][j] - this.meanReturns[j]);
+          }
+          row.push(sum / (returns.length - 1));
         }
+        covMatrix.push(row);
       }
       return covMatrix;
     },
-    runMonteCarloSimulation() {
-      const weights = Array(this.returns.length).fill(0).map(() => Math.random());
-      const sumWeights = weights.reduce((acc, w) => acc + w, 0);
-      weights.forEach((w, i, arr) => arr[i] = w / sumWeights);
-
-      const initialPortfolio = 10000;
+    initializeWeights() {
+      const numAssets = this.csvData.length;
+      this.weights = Array.from({ length: numAssets }, () => Math.random());
+      const sum = this.weights.reduce((acc, w) => acc + w, 0);
+      this.weights = this.weights.map(w => w / sum);
+    },
+    monteCarloSimulation() {
       const mc_sims = 400;
       const T = 100;
-      this.portfolioSims = [];
+      const meanM = Array(T).fill(this.meanReturns);
+      const portfolio_sims = Array(T).fill(Array(mc_sims).fill(0));
 
       for (let m = 0; m < mc_sims; m++) {
-        const dailyReturns = [];
+        let Z = Array(T).fill(Array(this.weights.length).fill(0)).map(row => row.map(() => math.randomNormal()));
+        let L = math.cholesky(this.covMatrix);
+        let dailyReturns = meanM.map((row, i) => math.add(row, math.multiply(L, Z[i])));
+        let cumReturns = Array(T).fill(0).map((_, i) => i === 0 ? 1 : dailyReturns[i - 1].reduce((acc, r, idx) => acc * (1 + r), 1));
         for (let t = 0; t < T; t++) {
-          const dailyReturn = weights.reduce((acc, w, i) => acc + w * this.returns[i][Math.floor(Math.random() * this.returns[i].length)], 0);
-          dailyReturns.push(dailyReturn);
+          portfolio_sims[t][m] = math.dot(this.weights, cumReturns[t]);
         }
-        let portfolioValue = initialPortfolio;
-        this.portfolioSims[m] = dailyReturns.map(r => portfolioValue *= (1 + r));
       }
+
+      this.portfolioSims = portfolio_sims;
     },
-    renderChart() {
-      const dataSeries = this.portfolioSims.map((sim, index) => ({
-        type: "line",
-        showInLegend: false,
-        dataPoints: sim.map((value, day) => ({ x: day, y: value }))
-      }));
+    calculateVaRCVaR() {
+      const finalValues = this.portfolioSims[this.portfolioSims.length - 1];
+      const initialPortfolio = 10000;
+      const portResults = finalValues.map(v => v * initialPortfolio);
 
-      const chart = new CanvasJS.Chart("chartContainer", {
-        title: {
-          text: "Monte Carlo Simulation of a Stock Portfolio"
+      const alpha = 5;
+      this.VaR = initialPortfolio - this.mcVaR(portResults, alpha);
+      this.CVaR = initialPortfolio - this.mcCVaR(portResults, alpha);
+    },
+    mcVaR(returns, alpha) {
+      return math.quantileSeq(returns, alpha / 100);
+    },
+    mcCVaR(returns, alpha) {
+      const VaR = this.mcVaR(returns, alpha);
+      const belowVaR = returns.filter(r => r <= VaR);
+      return math.mean(belowVaR);
+    },
+    renderCharts() {
+      const charts = [
+        {
+          title: "MC simulation of a stock portfolio",
+          data: [
+            {
+              type: "line",
+              name: "Portfolio Simulation",
+              dataPoints: this.portfolioSims.map((p, idx) => ({ x: idx, y: p.reduce((a, b) => a + b, 0) / p.length })),
+            },
+          ],
         },
-        axisY: {
-          title: "Portfolio Value ($)"
-        },
-        axisX: {
-          title: "Days"
-        },
-        data: dataSeries
+      ];
+
+      charts.forEach((chartData, index) => {
+        new window.CanvasJS.Chart(`chartContainer${index}`, {
+          animationEnabled: true,
+          theme: "light2",
+          title: { text: chartData.title },
+          axisX: { valueFormatString: "DD MMM" },
+          axisY: chartData.axisY || {},
+          toolTip: { shared: true },
+          legend: { cursor: "pointer", itemclick: this.toggleDataSeries },
+          data: chartData.data,
+        }).render();
       });
-
-      chart.render();
-    }
-  }
+    },
+    toggleDataSeries(e) {
+      if (typeof e.dataSeries.visible === "undefined" || e.dataSeries.visible) {
+        e.dataSeries.visible = false;
+      } else {
+        e.dataSeries.visible = true;
+      }
+      e.chart.render();
+    },
+  },
 };
 </script>
 
 <style scoped>
-#chartContainer {
-  height: 370px;
+#chartContainer0, #chartContainer1, #chartContainer2, #chartContainer3, #chartContainer4, #chartContainer5 {
+  height: 300px;
   width: 100%;
 }
 </style>
