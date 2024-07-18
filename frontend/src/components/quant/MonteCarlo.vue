@@ -6,7 +6,10 @@
 </template>
 
 <script>
-import axios from 'axios';
+import GOOGL from '../data/GOOGL.csv';
+import AAPL from '../data/AAPL.csv';
+import MSFT from '../data/MSFT.csv';
+import TSLA from '../data/TSLA.csv';
 import * as CanvasJS from 'canvasjs';
 
 export default {
@@ -15,31 +18,29 @@ export default {
     return {
       portfolioSims: [],
       tickers: ['GOOGL', 'AAPL', 'MSFT', 'TSLA'],
+      stockData: {
+        GOOGL,
+        AAPL,
+        MSFT,
+        TSLA
+      }
     };
   },
   mounted() {
-    this.loadData().then(() => {
-      this.runMonteCarloSimulation();
-      this.renderChart();
-    });
+    this.processData();
+    this.runMonteCarloSimulation();
+    this.renderChart();
   },
   methods: {
-    async loadData() {
-      const requests = this.tickers.map(ticker => axios.get(`/${ticker}.csv`));
-      const responses = await Promise.all(requests);
-      const stockData = responses.map(response => this.parseCSV(response.data));
-      
+    processData() {
+      const stockData = Object.values(this.stockData).map(this.parseCSV);
+
       this.returns = this.calculateReturns(stockData);
       this.meanReturns = this.returns.map(this.calculateMeanReturns);
       this.covMatrix = this.calculateCovMatrix(this.returns);
     },
     parseCSV(data) {
-      const lines = data.split('\n');
-      const headers = lines[0].split(',');
-      const rows = lines.slice(1).map(line => line.split(','));
-      const closeIndex = headers.indexOf('Close');
-
-      return rows.map(row => parseFloat(row[closeIndex]));
+      return data.map(row => parseFloat(row.Close));
     },
     calculateReturns(data) {
       return data.map(prices => {
