@@ -83,7 +83,7 @@ export default {
       if(authStore.isAuthenticated){
         try {
           const profileData = JSON.parse(localStorage.getItem('user'));
-          console.log(profileData);
+          // console.log(profileData);
           if(profileData.identityData){
             this.image = profileData.identityData.profilePicture;
             this.name = profileData.identityData.displayName;
