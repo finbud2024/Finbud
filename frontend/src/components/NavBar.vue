@@ -20,11 +20,11 @@
         </li>
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
         <li v-if="authStore.isAuthenticated" class="dropdown">
-          <img src="../assets/Dung.jpg" alt="User Image" class="user-image" @click="toggleProfileDropdown">
+          <img :src="profileImage" alt="User Image" class="user-image" @click="toggleProfileDropdown">
           <div class="dropdown-profile" v-show="isProfileDropdownOpen" @mouseleave="closeProfileDropdown">
             <router-link to="/profile" class="profile" @click="closeProfileDropdown">
-              <img src="../assets/Dung.jpg" alt="User Image" class="inside-dropdown-user-image">
-              <p>Dung Nguyen</p>
+              <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
+              <p>{{name}}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
               <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon"/>
@@ -57,6 +57,7 @@
 <script>
 import authStore from '@/authStore';
 import axios from 'axios';
+import defaultImage from '@/assets/anonymous.png';
 
 export default {
   name: 'NavBar',
@@ -65,11 +66,38 @@ export default {
       isDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
+      image: '',
+      name: 'User',
     };
   },
   computed: {
     authStore() {
       return authStore;
+    },
+    profileImage() {
+      return this.image || defaultImage;
+    },
+  },
+  watch: {
+    'authStore.isAuthenticated': async function() {
+      if(authStore.isAuthenticated){
+        try {
+          const userId = localStorage.getItem('token');
+          const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+          const response = await axios.get(api);
+          const profileData = response.data;
+          if(profileData.identityData){
+            this.image = profileData.identityData.profilePicture || '';
+          } else{
+            this.image = '';
+          }
+          console.log('[abc]', this.image);
+        //this.image = profileData.identityData.profilePicture||defaultImage;
+        // this.name = profileData.identityData.displayName;
+        } catch (err) {
+         console.log(err);
+        }
+    }
     },
   },
   methods: {
@@ -110,6 +138,19 @@ export default {
     } catch (err) {
       console.log("After Sign in with google err: " + err);
     }
+    //fetch user image
+    // if(authStore.isAuthenticated){
+    //   try {
+    //     const userId = localStorage.getItem('token');
+    //     const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+    //     const response = await axios.get(api);
+    //     const profileData = response.data;
+    //     this.image = profileData.identityData.profilePicture;
+    //     this.name = profileData.identityData.displayName;
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // }
   }
 };
 </script>
