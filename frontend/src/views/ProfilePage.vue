@@ -53,7 +53,6 @@ import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import defaultImage from '@/assets/anonymous.png';
-import { readonly } from 'vue';
 import authStore from '@/authStore';
 
 export default {
@@ -318,9 +317,15 @@ export default {
   resize: vertical;
   height: 100px;
 }
+
+.form-group input:focus{
+  outline: 2px solid #007bff;
+}
+
 .form-group input:read-only:focus {
   outline: none;
 }
+
 .btn-container{
   display: flex;
   justify-content: center;
