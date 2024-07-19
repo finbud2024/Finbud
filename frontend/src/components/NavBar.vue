@@ -94,7 +94,7 @@ export default {
         } catch (err) {
          console.log(err);
         }
-    }
+      }
     },
   },
   methods: {
@@ -136,6 +136,10 @@ export default {
     } catch (err) {
       console.log("After Sign in with google err: " + err);
     }
+
+    // const profileData = JSON.parse(localStorage.getItem('user'));
+    // this.image = profileData.identityData.profilePicture;
+    // this.name = profileData.identityData.displayName;
   }
 };
 </script>

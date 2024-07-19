@@ -11,6 +11,12 @@ const googleStrategy = new GoogleStrategy.Strategy ({
         //Our convention is to build userId from displayName and provider
         const userId = profile.email;
         console.log(profile);
+        const existingUser = await User.findOne({"accountData.username": userId});
+        if (existingUser) {
+            return done(null, existingUser);
+        } else {
+            console.log("User not found in database. Creating new user.");
+        }
         const update = {
             accountData: {
                 username: userId

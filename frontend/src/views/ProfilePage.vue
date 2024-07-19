@@ -29,6 +29,7 @@
                   :id="field.id"
                   v-model="profile[field.model]"
                   :placeholder="field.label"
+                  :readonly="field.id === 'email'"
                 />
                 <textarea
                   v-else
@@ -52,12 +53,13 @@ import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import defaultImage from '@/assets/anonymous.png';
+import { readonly } from 'vue';
 
 export default {
   data() {
     return {
       profile: {
-        username: '',
+        displayName: '',
         firstName: '',
         lastName: '',
         email: '',
@@ -67,7 +69,7 @@ export default {
         {
           title: 'User Information',
           fields: [
-            { id: 'username', label: 'Username', type: 'text', model: 'username' },
+            { id: 'displayName', label: 'Display name', type: 'text', model: 'displayName' },
             { id: 'email', label: 'Email address', type: 'email', model: 'email' },
             { id: 'firstName', label: 'First name', type: 'text', model: 'firstName' },
             { id: 'lastName', label: 'Last name', type: 'text', model: 'lastName' }
@@ -98,12 +100,28 @@ export default {
   methods: {
     async updateProfile() {
       try{
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/user/update`;
+        const newIdentityData = {
+          displayName: this.profile.displayName,
+          firstName: this.profile.firstName,
+          lastName: this.profile.lastName,
+          profilePicture: this.profile.image
+        };
+        //update in localStorage
+        const profileData = JSON.parse(localStorage.getItem('user'));
+        profileData.identityData = newIdentityData;
+        localStorage.setItem('user', JSON.stringify(profileData));
+        console.log('Profile updated in localStorage', profileData);
+        //update in database
+        const userId = localStorage.getItem('token');
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+        const response = await axios.put(api, {
+          identityData: newIdentityData
+        });
+        console.log('Profile updated', response.data);
       }catch(err){
         console.log(err);
       }
       // Logic to update profile
-      console.log('Profile updated', this.profile);
     },
     notifySave() {
       toast.success("Updated successfully!", {
@@ -115,7 +133,6 @@ export default {
   async mounted(){
     //Change color of balance based on value
     const accountValue = document.querySelectorAll('.stock-simulator-container h1');
-    console.log(accountValue);
     accountValue.forEach((value) => {
       const v = parseFloat(value.textContent.replace('$', '').replace(',', ''));
       if(v < 5000){
@@ -127,19 +144,15 @@ export default {
 
     //fetch user profile
     try{
-      // const userId = localStorage.getItem('token');
-      // const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
-      // const response = await axios.get(api);
       const profileData = JSON.parse(localStorage.getItem('user'));
-      console.log(profileData);
+      // console.log(profileData);
       this.profile = {
-        username: profileData.identityData.displayName,
+        displayName: profileData.identityData.displayName,
         firstName: profileData.identityData.firstName,
         lastName: profileData.identityData.lastName,
         email: profileData.accountData.username,
         image: profileData.identityData.profilePicture
       };
-      //get user image
 
     }catch(err){
       console.log(err);
@@ -155,7 +168,6 @@ export default {
   display: flex;
   justify-content:space-evenly;
   font-family: 'Space Grotesk', sans-serif;
-  
 }
 
 .border{
@@ -286,7 +298,9 @@ export default {
   resize: vertical;
   height: 100px;
 }
-
+.form-group input:read-only:focus {
+  outline: none;
+}
 .btn-container{
   display: flex;
   justify-content: center;

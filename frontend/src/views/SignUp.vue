@@ -1,7 +1,6 @@
 <template>
   <div class="form-container">
-    <h1 class="brand-name">FinBud</h1>
-    <h2>Register a new account</h2>
+    <h1 class="brand-name">Sign Up</h1>
     <form @submit.prevent="register">
       <!-- divide information into row -->
       <div class="full-name">
@@ -134,7 +133,7 @@ export default {
   max-width: 400px;
   margin: 100px auto;
   padding: 30px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 15px;
   background: rgb(248, 249, 254);
   text-align: center;
@@ -142,7 +141,8 @@ export default {
 }
 
 .brand-name {
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+  font-size: 40px;
 }
 
 .form-group {
