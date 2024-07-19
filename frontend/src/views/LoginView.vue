@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h1>Sign in to FinBud</h1>
+    <h1 class="brand-name">Sign in</h1>
     <button @click="signInWithGoogle" class="login-google">
       <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
       Sign in with Google
@@ -11,11 +11,11 @@
     <form @submit.prevent="onLogin">
       <div class="input-group">
         <label for="username">Username or Email:</label>
-        <input type="text" id="username" v-model="username" required>
+        <input type="text" id="username" v-model="username" placeholder="Username" required>
       </div>
       <div class="input-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required>
+        <input type="password" id="password" v-model="password" placeholder="Password" required>
         <p id="errorMessage" class="wrong-password"> wrong username or password!</p>
       </div>
       <div class="forgot-password"><a href="#">Forgot?</a></div>
@@ -71,11 +71,15 @@ export default {
   max-width: 400px;
   margin: 100px auto;
   padding: 30px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 15px;
-  background: white;
+  background: rgb(248, 249, 254);
   text-align: center;
   font-family: 'Space Grotesk', sans-serif;
+}
+
+.brand-name {
+  font-size: 40px;
 }
 
 h1 {
@@ -135,6 +139,10 @@ input[type="password"] {
   border: 1px solid #ddd;
   border-radius: 10px;
   box-sizing: border-box;
+}
+
+input::placeholder {
+  color: rgb(136, 152, 170);
 }
 
 .forgot-password {
