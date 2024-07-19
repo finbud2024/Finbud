@@ -1,6 +1,7 @@
 import { reactive } from 'vue';
 
 const authStore = reactive({
+  user: false,
   isAuthenticated: !!localStorage.getItem('token'),
 
   login(token) {

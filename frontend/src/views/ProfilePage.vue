@@ -39,7 +39,7 @@
               </div>
           </div>
           <div class="btn-container">
-            <button @click="notifySave" type="submit" class="btn btn-save">Save</button>
+            <button type="submit" class="btn btn-save">Save</button>
             <button class="btn btn-cancel">Cancel</button>
           </div>
         </form>
@@ -54,6 +54,7 @@ import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import defaultImage from '@/assets/anonymous.png';
 import { readonly } from 'vue';
+import authStore from '@/authStore';
 
 export default {
   data() {
@@ -95,6 +96,9 @@ export default {
   computed: {
     profileImage(){
       return this.profile.image || defaultImage;
+    },
+    authStore(){
+      return authStore;
     }
   },
   methods: {
@@ -106,28 +110,44 @@ export default {
           lastName: this.profile.lastName,
           profilePicture: this.profile.image
         };
-        //update in localStorage
         const profileData = JSON.parse(localStorage.getItem('user'));
+
+        console.log('profileData', profileData);
+        //check if user profile change or not
+        if(newIdentityData.displayName === profileData.identityData.displayName &&
+          newIdentityData.firstName === profileData.identityData.firstName &&
+          newIdentityData.lastName === profileData.identityData.lastName &&
+          newIdentityData.profilePicture === profileData.identityData.profilePicture
+        ){
+          toast.info("No changes detected!", {
+            autoClose: 1000,
+            collapsed: false,
+          })
+          return;
+        }
+        console.log('newIdentityData', newIdentityData);
+        //update in localStorage
         profileData.identityData = newIdentityData;
         localStorage.setItem('user', JSON.stringify(profileData));
-        console.log('Profile updated in localStorage', profileData);
         //update in database
         const userId = localStorage.getItem('token');
         const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
         const response = await axios.put(api, {
           identityData: newIdentityData
         });
+        authStore.user = !authStore.user;
+        toast.success("Updated successfully!", {
+          autoClose: 1000,
+          collapsed: false,
+        })
         console.log('Profile updated', response.data);
       }catch(err){
+        toast.error("Something wrong when updating", {
+          autoClose: 1000,
+          collapsed: false,
+        })
         console.log(err);
       }
-      // Logic to update profile
-    },
-    notifySave() {
-      toast.success("Updated successfully!", {
-        autoClose: 1000,
-        collapsed: false,
-      })
     },
   },
   async mounted(){

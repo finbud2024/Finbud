@@ -96,6 +96,24 @@ export default {
         }
       }
     },
+
+    'authStore.user': async function() {
+      if(authStore.isAuthenticated){
+        try {
+          const profileData = JSON.parse(localStorage.getItem('user'));
+          // console.log(profileData);
+          if(profileData.identityData){
+            this.image = profileData.identityData.profilePicture;
+            this.name = profileData.identityData.displayName;
+          } else{
+            this.image = '';
+            this.name = 'User';
+          }
+        } catch (err) {
+         console.log(err);
+        }
+      }
+    }
   },
   methods: {
     closeDropdown() {
@@ -137,6 +155,7 @@ export default {
       console.log("After Sign in with google err: " + err);
     }
 
+    authStore.user = !authStore.user;
     // const profileData = JSON.parse(localStorage.getItem('user'));
     // this.image = profileData.identityData.profilePicture;
     // this.name = profileData.identityData.displayName;
