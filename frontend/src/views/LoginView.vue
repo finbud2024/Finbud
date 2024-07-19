@@ -108,6 +108,7 @@ h1 {
 
 .login-google:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  outline: 2px solid #007bff;
 }
 
 .or-separator {
@@ -143,6 +144,10 @@ input[type="password"] {
 
 input::placeholder {
   color: rgb(136, 152, 170);
+}
+
+input:focus {
+  outline: 2px solid #007bff;
 }
 
 .forgot-password {

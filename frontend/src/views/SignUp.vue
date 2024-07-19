@@ -163,6 +163,10 @@ input {
   color: rgb(136, 152, 170);
 }
 
+.form-group input:focus {
+  outline: 2px solid #007bff;
+}
+
 .full-name {
   display: flex;
   justify-content: space-between;
@@ -177,7 +181,7 @@ input {
 }
 
 .error-border {
-  border: 2px solid red;
+  outline: 2px solid red;
 }
 
 .register-button:hover {
