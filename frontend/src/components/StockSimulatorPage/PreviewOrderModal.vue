@@ -4,10 +4,11 @@
       <h3>Preview Order</h3>
       <div class="order-details">
         <div class="detail"><span>Stock:</span><span>{{ stockSymbol }}</span></div>
-        <div class="detail"><span>Quantity</span><span>{{ quantity }}</span></div>
-        <div class="detail"><span>Estimated Price</span><span>{{ estimatedPrice }} USD</span></div>
-        <div class="detail"><span>Commission Price</span><span>{{ commissionPrice }} USD</span></div>
-        <div class="detail"><span>Estimated Total</span><span>{{ estimatedTotal }} USD</span></div>
+        <div class="detail"><span>Quantity:</span><span>{{ quantity }}</span></div>
+        <div class="detail"><span>Estimated Price:</span><span>{{ calculatedEstimatedPrice }} USD</span></div>
+        <div class="detail"><span>Commission:</span><span>{{ calculatedCommissionPrice }} USD</span></div>
+        <div class="detail"><span>Estimated Total:</span><span>{{ calculatedEstimatedTotal }} USD</span></div>
+        <div class="detail"><span>Remaining Cash Balance:</span><span>{{ remainingBalance }} USD</span></div>
       </div>
       <div class="modal-actions">
         <button @click="clearOrder" class="clear-btn">CLEAR ORDER</button>
@@ -22,9 +23,19 @@ export default {
   props: {
     stockSymbol: String,
     quantity: Number,
-    estimatedPrice: Number,
-    commissionPrice: Number,
-    estimatedTotal: Number,
+    estimatedPrice: Number, // Assume the base price is passed as a prop
+    remainingBalance: Number,
+  },
+  computed: {
+    calculatedEstimatedPrice() {
+      return (this.estimatedPrice * this.quantity).toFixed(2);
+    },
+    calculatedCommissionPrice() {
+      return (0.01 * this.estimatedPrice * this.quantity).toFixed(2);
+    },
+    calculatedEstimatedTotal() {
+      return (parseFloat(this.calculatedEstimatedPrice) + parseFloat(this.calculatedCommissionPrice)).toFixed(2);
+    }
   },
   methods: {
     closeModal() {
