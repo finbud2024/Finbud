@@ -10,6 +10,11 @@
         "dev": "dotenv -e .env netlify dev"
     },
     "devDependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.6.0",
+        "@fortawesome/free-brands-svg-icons": "^6.6.0",
+        "@fortawesome/free-regular-svg-icons": "^6.6.0",
+        "@fortawesome/free-solid-svg-icons": "^6.6.0",
+        "@fortawesome/vue-fontawesome": "^3.0.8",
         "@vue/cli-service": "^5.0.8",
         "@vuepic/vue-datepicker": "^8.8.0",
         "chartjs-adapter-date-fns": "^3.0.0",
@@ -17,6 +22,7 @@
         "chartjs-plugin-annotation": "^3.0.1",
         "chartjs-plugin-zoom": "^2.0.1",
         "moment-timezone": "^0.5.45",
+        "os-browserify": "^0.3.0",
         "passport": "^0.7.0",
         "passport-google-oauth2": "^0.2.0",
         "passport-local": "^1.0.0",
