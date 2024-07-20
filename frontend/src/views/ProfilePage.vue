@@ -8,9 +8,9 @@
         </div>
       </div>
       <div class="profile-image-container">
-        <img class="profile-image" src="../assets/profile/tri.jpeg" alt="Profile Image">
+        <img class="profile-image" :class="{ 'image-uploaded': imageUploaded }" :src="profileImage" alt="Profile Image">
         <label for="file-upload" class="custom-file-upload">
-          <i class="fa fa-camera" ></i>
+          <font-awesome-icon icon="fa-solid fa-camera" />
         </label>
         <input id="file-upload" type="file" @change="uploadImage"/>
       </div>
@@ -29,6 +29,7 @@
                   :id="field.id"
                   v-model="profile[field.model]"
                   :placeholder="field.label"
+                  :readonly="field.id === 'email'"
                 />
                 <textarea
                   v-else
@@ -38,8 +39,8 @@
               </div>
           </div>
           <div class="btn-container">
-            <button @click="notifySave" type="submit" class="btn btn-save">Save</button>
-            <button class="btn btn-cancel">Cancel</button>
+            <button type="submit" class="btn btn-save">Save</button>
+            <button type="button" @click="cancelChange" class="btn btn-cancel">Cancel</button>
           </div>
         </form>
       </div>
@@ -48,27 +49,28 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import defaultImage from '@/assets/anonymous.png';
+import authStore from '@/authStore';
 
 export default {
   data() {
     return {
+      imageUploaded: false,
       profile: {
-        username: '',
+        displayName: '',
         firstName: '',
         lastName: '',
         email: '',
-        // address: 'Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09',
-        // city: 'New York',
-        // country: 'United States',
-        // postalCode: '',
+        image: '',
       },
       sections: [
         {
           title: 'User Information',
           fields: [
-            { id: 'username', label: 'Username', type: 'text', model: 'username' },
+            { id: 'displayName', label: 'Display name', type: 'text', model: 'displayName' },
             { id: 'email', label: 'Email address', type: 'email', model: 'email' },
             { id: 'firstName', label: 'First name', type: 'text', model: 'firstName' },
             { id: 'lastName', label: 'Last name', type: 'text', model: 'lastName' }
@@ -91,21 +93,137 @@ export default {
       ]
     };
   },
-  methods: {
-    updateProfile() {
-      // Logic to update profile
-      console.log('Profile updated', this.profile);
+  computed: {
+    profileImage(){
+      return this.profile.image || defaultImage;
     },
-    notifySave() {
-      toast.success("Updated successfully!", {
+    authStore(){
+      return authStore;
+    }
+  },
+  methods: {
+    uploadImage(e){
+      const file = e.target.files[0];
+      //check file type
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if(!validImageTypes.includes(file.type)){
+        toast.error("Invalid file type", {
+          autoClose: 1000,
+          collapsed: false,
+        })
+        return;
+      }
+      //check file size
+      const maxSize = 1024 * 1024 * 5; //5MB
+      if(file.size > maxSize){
+        toast.error("File size exceed 5mb", {
+          autoClose: 1000,
+          collapsed: false,
+        })
+        return;
+      }
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const image = new Image();
+        image.src = reader.result;
+
+        image.onload = () => {
+          // Create a canvas and get its context
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Define new width and height
+          const newWidth = 5000; // Adjust as needed
+          const newHeight = (image.height / image.width) * newWidth;
+
+          // Set canvas dimensions
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+
+          // Draw the image on the canvas with the new dimensions
+          ctx.drawImage(image, 0, 0, newWidth, newHeight);
+
+          // Convert canvas to data URL and update resizedImage
+          this.profile.image = canvas.toDataURL('image/jpeg'); // 'image/jpeg' or 'image/png'
+        };
+      };
+      reader.readAsDataURL(file);
+      this.imageUploaded = true;
+      toast.info("Click the save button to store the image", {
         autoClose: 1000,
         collapsed: false,
       })
     },
+    async updateProfile() {
+      try{
+        const newIdentityData = {
+          displayName: this.profile.displayName,
+          firstName: this.profile.firstName,
+          lastName: this.profile.lastName,
+          profilePicture: this.profile.image
+        };
+        const profileData = JSON.parse(localStorage.getItem('user'));
+        //check if user profile change or not
+        if(newIdentityData.displayName === profileData.identityData.displayName &&
+          newIdentityData.firstName === profileData.identityData.firstName &&
+          newIdentityData.lastName === profileData.identityData.lastName &&
+          newIdentityData.profilePicture === profileData.identityData.profilePicture
+        ){
+          toast.info("No changes detected!", {
+            autoClose: 1000,
+            collapsed: false,
+          })
+          return;
+        }
+        //update in localStorage
+        profileData.identityData = newIdentityData;
+        localStorage.setItem('user', JSON.stringify(profileData));
+        //update in database
+        const userId = localStorage.getItem('token');
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+        const response = await axios.put(api, {
+          identityData: newIdentityData
+        });
+        authStore.userProfileChange = !authStore.userProfileChange;
+        //if image was updated, update to false
+        if(this.imageUploaded){
+          this.imageUploaded = false;
+        }
+        toast.success("Updated successfully!", {
+          autoClose: 1000,
+          collapsed: false,
+        })
+        console.log('Profile updated', response.data);
+      }catch(err){
+        toast.error("Something wrong when updating", {
+          autoClose: 1000,
+          collapsed: false,
+        })
+        console.log(err);
+      }
+    },
+    cancelChange(){
+      //reset profile data
+      const profileData = JSON.parse(localStorage.getItem('user'));
+      this.profile = {
+        displayName: profileData.identityData.displayName,
+        firstName: profileData.identityData.firstName,
+        lastName: profileData.identityData.lastName,
+        email: profileData.accountData.username,
+        image: profileData.identityData.profilePicture
+      };
+      //reset imageUploaded
+      this.imageUploaded = false;
+      toast.success("Changes canceled!", {
+        autoClose: 1000,
+        collapsed: false,
+      });
+    }
   },
-  mounted(){
+  async mounted(){
+    //Change color of balance based on value
     const accountValue = document.querySelectorAll('.stock-simulator-container h1');
-    console.log(accountValue);
     accountValue.forEach((value) => {
       const v = parseFloat(value.textContent.replace('$', '').replace(',', ''));
       if(v < 5000){
@@ -114,6 +232,21 @@ export default {
         value.style.color = 'green';
       }
     });
+
+    //fetch user profile
+    try{
+      const profileData = JSON.parse(localStorage.getItem('user'));
+      this.profile = {
+        displayName: profileData.identityData.displayName,
+        firstName: profileData.identityData.firstName,
+        lastName: profileData.identityData.lastName,
+        email: profileData.accountData.username,
+        image: profileData.identityData.profilePicture
+      };
+
+    }catch(err){
+      console.log(err);
+    }
   },
 };
 </script>
@@ -125,7 +258,6 @@ export default {
   display: flex;
   justify-content:space-evenly;
   font-family: 'Space Grotesk', sans-serif;
-  
 }
 
 .border{
@@ -180,6 +312,10 @@ export default {
   border: 3px solid #ddd;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.image-uploaded {
+  border: 3px solid #007bff;
 }
 
 .custom-file-upload {
@@ -247,7 +383,7 @@ export default {
   border: 1px solid #ddd;
   border-radius: 10px;
   box-sizing: border-box;
-  color: rgb(136, 152, 170);
+  color: black;
 }
 .form-group input::placeholder{
   color: rgb(136, 152, 170);
@@ -255,6 +391,14 @@ export default {
 .form-group textarea {
   resize: vertical;
   height: 100px;
+}
+
+.form-group input:focus{
+  outline: 2px solid #007bff;
+}
+
+.form-group input:read-only:focus {
+  outline: none;
 }
 
 .btn-container{
