@@ -123,10 +123,47 @@ export default {
         return;
       }
       //file is good to add
+      // const reader = new FileReader();
+      // reader.onload = () => {
+      //   this.profile.image = reader.result;
+      // };
+      // reader.readAsDataURL(file);
+
+      console.log('file', file.size);
+
       const reader = new FileReader();
-      reader.onload = () => {
-        this.profile.image = reader.result;
+
+      reader.onloadend = () => {
+        const image = new Image();
+        image.src = reader.result;
+
+        image.onload = () => {
+          // Create a canvas and get its context
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Define new width and height
+          const newWidth = 5000; // Adjust as needed
+          const newHeight = (image.height / image.width) * newWidth;
+
+          // Set canvas dimensions
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+
+          // Draw the image on the canvas with the new dimensions
+          ctx.drawImage(image, 0, 0, newWidth, newHeight);
+
+          // Convert canvas to data URL and update resizedImage
+          this.profile.image = canvas.toDataURL('image/jpeg'); // 'image/jpeg' or 'image/png'
+          //check file size
+          // canvas.toBlob((blob) => {
+          //   this.resizedImage = URL.createObjectURL(blob); // Create a URL for the image
+          //   console.log(blob.size);
+          // }, 'image/jpeg'); // You can also specify image quality here
+        };
       };
+
+      console.log(file.size);
       reader.readAsDataURL(file);
       this.imageUploaded = true;
       toast.info("Click the save button to store the image", {
