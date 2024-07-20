@@ -1,5 +1,6 @@
 import express from 'express';
 import Transaction from '../Database Schema/Transaction.js';
+import validateRequest from '../middleware/validateRequest.js';
 
 const transactionRoute = express.Router();
 
@@ -21,7 +22,7 @@ transactionRoute.route('/transactions/:transactionId')
   })
 
   // PUT: update a transaction with a given ID
-  .put(async (req, res) => {
+  .put(validateRequest(Transaction.schema), async (req, res) => {
     const { description, amount, userId } = req.body;
     const transactionId = req.params.transactionId;
 
@@ -108,8 +109,8 @@ transactionRoute.route('/transactions')
   })
 
   // POST a new transaction
-  .post(async (req, res) => {
-		console.log('in /transactions Route (POST) new transaction to database')
+  .post(validateRequest(Transaction.schema), async (req, res) => {
+    console.log('in /transactions Route (POST) new transaction to database');
     const { description, amount, balance, userId } = req.body;
 
     if (!description || amount === undefined || balance === undefined || !userId) {
