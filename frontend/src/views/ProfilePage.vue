@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="profile-image-container">
-        <img class="profile-image" :src="profileImage" alt="Profile Image">
+        <img class="profile-image" :class="{ 'image-uploaded': imageUploaded }" :src="profileImage" alt="Profile Image">
         <label for="file-upload" class="custom-file-upload">
           <font-awesome-icon icon="fa-solid fa-camera" />
         </label>
@@ -58,6 +58,7 @@ import authStore from '@/authStore';
 export default {
   data() {
     return {
+      imageUploaded: false,
       profile: {
         displayName: '',
         firstName: '',
@@ -101,6 +102,38 @@ export default {
     }
   },
   methods: {
+    uploadImage(e){
+      const file = e.target.files[0];
+      //check file type
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if(!validImageTypes.includes(file.type)){
+        toast.error("Invalid file type", {
+          autoClose: 1000,
+          collapsed: false,
+        })
+        return;
+      }
+      //check file size
+      const maxSize = 1024 * 1024 * 5; //5MB
+      if(file.size > maxSize){
+        toast.error("File size exceed 5mb", {
+          autoClose: 1000,
+          collapsed: false,
+        })
+        return;
+      }
+      //file is good to add
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.profile.image = reader.result;
+      };
+      reader.readAsDataURL(file);
+      this.imageUploaded = true;
+      toast.info("Click the save button to store the image", {
+        autoClose: 1000,
+        collapsed: false,
+      })
+    },
     async updateProfile() {
       try{
         const newIdentityData = {
@@ -124,7 +157,6 @@ export default {
           })
           return;
         }
-        console.log('newIdentityData', newIdentityData);
         //update in localStorage
         profileData.identityData = newIdentityData;
         localStorage.setItem('user', JSON.stringify(profileData));
@@ -134,7 +166,11 @@ export default {
         const response = await axios.put(api, {
           identityData: newIdentityData
         });
-        authStore.user = !authStore.user;
+        authStore.userProfileChange = !authStore.userProfileChange;
+        //if image was updated, update to false
+        if(this.imageUploaded){
+          this.imageUploaded = false;
+        }
         toast.success("Updated successfully!", {
           autoClose: 1000,
           collapsed: false,
@@ -164,7 +200,6 @@ export default {
     //fetch user profile
     try{
       const profileData = JSON.parse(localStorage.getItem('user'));
-      // console.log(profileData);
       this.profile = {
         displayName: profileData.identityData.displayName,
         firstName: profileData.identityData.firstName,
@@ -241,6 +276,10 @@ export default {
   border: 3px solid #ddd;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.image-uploaded {
+  border: 3px solid #007bff;
 }
 
 .custom-file-upload {

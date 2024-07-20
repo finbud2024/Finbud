@@ -35,8 +35,8 @@ mongoose.connect(mongoURI)
 passportConfig(app)
 
 // Set up Express middlewares
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
+app.use(bodyParser.json({limit: '10mb'}));
 app.use(cors())
 
 app.use('/.netlify/functions/server', userRoute);
