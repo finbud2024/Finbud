@@ -122,15 +122,6 @@ export default {
         })
         return;
       }
-      //file is good to add
-      // const reader = new FileReader();
-      // reader.onload = () => {
-      //   this.profile.image = reader.result;
-      // };
-      // reader.readAsDataURL(file);
-
-      console.log('file', file.size);
-
       const reader = new FileReader();
 
       reader.onloadend = () => {
@@ -155,15 +146,8 @@ export default {
 
           // Convert canvas to data URL and update resizedImage
           this.profile.image = canvas.toDataURL('image/jpeg'); // 'image/jpeg' or 'image/png'
-          //check file size
-          // canvas.toBlob((blob) => {
-          //   this.resizedImage = URL.createObjectURL(blob); // Create a URL for the image
-          //   console.log(blob.size);
-          // }, 'image/jpeg'); // You can also specify image quality here
         };
       };
-
-      console.log(file.size);
       reader.readAsDataURL(file);
       this.imageUploaded = true;
       toast.info("Click the save button to store the image", {
@@ -180,8 +164,6 @@ export default {
           profilePicture: this.profile.image
         };
         const profileData = JSON.parse(localStorage.getItem('user'));
-
-        console.log('profileData', profileData);
         //check if user profile change or not
         if(newIdentityData.displayName === profileData.identityData.displayName &&
           newIdentityData.firstName === profileData.identityData.firstName &&
