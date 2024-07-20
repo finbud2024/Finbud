@@ -83,7 +83,6 @@ export default {
       if(authStore.isAuthenticated){
         try {
           const profileData = JSON.parse(localStorage.getItem('user'));
-          // console.log(profileData);
           if(profileData.identityData){
             this.image = profileData.identityData.profilePicture;
             this.name = profileData.identityData.displayName;
@@ -101,7 +100,6 @@ export default {
       if(authStore.isAuthenticated){
         try {
           const profileData = JSON.parse(localStorage.getItem('user'));
-          // console.log(profileData);
           if(profileData.identityData){
             this.image = profileData.identityData.profilePicture;
             this.name = profileData.identityData.displayName;
@@ -157,9 +155,6 @@ export default {
     }
 
     authStore.userProfileChange = !authStore.userProfileChange;
-    // const profileData = JSON.parse(localStorage.getItem('user'));
-    // this.image = authStore.userImage;
-    // this.name = profileData.identityData.displayName;
   }
 };
 </script>
