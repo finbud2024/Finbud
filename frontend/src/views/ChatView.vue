@@ -24,6 +24,8 @@
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
+    <button class="guidance-btn" @click="showGuidance = true">Guidance</button>
+    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance"/>
   </div>
 </template>
 
@@ -34,25 +36,14 @@ import ChatFrame from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import SideBar from '../components/SideBar.vue';
+import GuidanceModal from '../components/GuidanceModal.vue';
 import authStore from '@/authStore';
-import {gptServices} from '../services/gptServices.js';
-
-const guidanceMessage = `
-    Welcome to FinBud! Here are some tips to get started:
-    
-    1. Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").
-    2. Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").
-    3. General Financial Concepts & Advices: For general inquiries, use descriptive terms.
-    4. Add your transaction management: Use prompt '#add your_description your_amount' (e.g., "#add Shopping 125")
-    5. Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")
-    6. List of top 5 crypto coins: Use #crypto
-    7. Show 5 random listing of properties: Use #realestate area_name (e.g., #realestate new york). If no area is specified, then by default location will be san jose
-  `;
+import { gptServices } from '../services/gptServices.js';
 
 export default {
   name: 'ChatView',
   props: ['threadId'],
-  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar},
+  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal },
   data() {
     return {
       newMessage: '',
@@ -61,11 +52,12 @@ export default {
       botAvatar: require('@/assets/bot.png'),
       currentThread: {},
       threads: [], 
-      isSidebarVisible: false
+      isSidebarVisible: false,
+      showGuidance: false // Add state for showing guidance modal
     };
   },
-  computed:{
-    authStore(){
+  computed: {
+    authStore() {
       return authStore;
     }
   },
@@ -92,13 +84,12 @@ export default {
     async updateCurrentThread(currentThreadId) {
       try {
         this.messages = [];
-        this.addTypingResponse(guidanceMessage.trim(), false);
+        this.addTypingResponse("Hello!", false);
 
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
         if (thread) {
           this.currentThread = thread;
         }
-        //Load chats
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
         const chats = await axios.get(chatApi);
         const chatsData = chats.data;
@@ -109,7 +100,6 @@ export default {
             typing: true,
             timestamp: chat.creationDate,
           };
-          //push into message to show on chat
           this.messages.push(prompt);
           const responses = chat.response;
           responses.forEach(responseData => {
@@ -122,7 +112,6 @@ export default {
             this.messages.push(response);
           });
         });
-        //console.log('chats:', chats);
       } catch (err) {
         console.error('Error on updating to current thread:', err);
       }
@@ -131,9 +120,7 @@ export default {
       try {
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
         const userId = localStorage.getItem('token');
-        const reqBody = {
-          userId: userId
-        }
+        const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
         newThread.id = thread.data._id;
         this.threads.push(newThread);
@@ -147,15 +134,13 @@ export default {
     async saveThreadName({ newName, index }) {
       this.threads[index].name = newName;
       this.threads[index].editing = false;
-      try{
+      try {
         console.log("save edit")
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${this.threads[index].id}`;
-        const reqBody = {
-          title: newName
-        };
+        const reqBody = { title: newName };
         const updatedThread = await axios.put(api, reqBody);
         console.log(updatedThread);
-      }catch(err){
+      } catch (err) {
         console.error('Error on saving thread name:', err);
       }
     },
@@ -181,45 +166,36 @@ export default {
       const userMessage = newMessage.trim();
       console.log('User message:', userMessage);
       const answers = [];
-      //HANDLE DEFINE
+      // HANDLE DEFINE
       if (userMessage.toLowerCase().includes("define")) {
-        try{
+        try {
           const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
           const prompt = `Explain ${term} to me as if I'm 15.`;
           const gptResponse = await gptServices(prompt);
           answers.push(gptResponse);
-        }catch(err){
+        } catch (err) {
           console.error('Error in define message:', error);
         }
       }
-      //HANDLE BUY
+      // HANDLE BUY
       if (userMessage.toLowerCase().includes("buy")) {
-        console.log('into stock buy \n');
         try {
-          // Extract stock symbol and quantity
           const buyRegex = /#buy\s+([A-Z]+)\s+(\d+)/i;
           const match = userMessage.match(buyRegex);
-
           if (match) {
-            const stockSymbol = match[1].toUpperCase(); // get stock symbol from regex
-            const quantity = parseInt(match[2], 10); // get quantity in base 10
+            const stockSymbol = match[1].toUpperCase();
+            const quantity = parseInt(match[2], 10);
             if (stockSymbol && !isNaN(quantity)) {
               const url = this.$router.resolve({
                 path: '/stock-simulator',
-                query: { symbol: stockSymbol, quantity: quantity }
+                query: { symbol: stockSymbol, quantity }
               }).href;
               window.open(url, '_blank');
             } else {
-              const msg = 'Invalid stock symbol or quantity'
-              setTimeout(() => {
-                this.addTypingResponse(msg.trim(), false);
-              }, 1000);
+              this.addTypingResponse('Invalid stock symbol or quantity', false);
             }
           } else {
-            const msg = 'Invalid buy command format'
-            setTimeout(() => {
-              this.addTypingResponse(msg.trim(), false);
-            }, 1000);
+            this.addTypingResponse('Invalid buy command format', false);
           }
         } catch (err) {
           console.error('Error in buy message:', err);
@@ -227,41 +203,31 @@ export default {
       }
       // HANDLE SELL
       else if (userMessage.toLowerCase().includes("sell")) {
-        console.log('into stock sell \n');
         try {
-          // Extract stock symbol and quantity
           const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
           const match = userMessage.match(sellRegex);
-
           if (match) {
             const stockSymbol = match[1].toUpperCase();
             const quantity = parseInt(match[2], 10);
-
             if (stockSymbol && !isNaN(quantity)) {
               const url = this.$router.resolve({
                 path: '/stock-simulator',
-                query: { symbol: stockSymbol, quantity: -quantity } // Pass negative quantity for sell
+                query: { symbol: stockSymbol, quantity: -quantity }
               }).href;
               window.open(url, '_blank');
             } else {
-              const msg = 'Invalid stock symbol or quantity'
-              setTimeout(() => {
-                this.addTypingResponse(msg.trim(), false);
-              }, 1000);
+              this.addTypingResponse('Invalid stock symbol or quantity', false);
             }
           } else {
-            const msg = 'Invalid sell command format'
-              setTimeout(() => {
-                this.addTypingResponse(msg.trim(), false);
-              }, 1000);
+            this.addTypingResponse('Invalid sell command format', false);
           }
         } catch (err) {
           console.error('Error in sell message:', err);
         }
       }
-      //HANDLE ADD TRANSACTION
+      // HANDLE ADD TRANSACTION
       else if (userMessage.toLowerCase().includes("#add")) {
-        try{
+        try {
           const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
           if (match) {
             const description = match[1].trim();
@@ -272,14 +238,13 @@ export default {
           } else {
             answers.push(['Please specify the description and amount you want to add.']);
           }
-        }catch(err){
+        } catch (err) {
           console.error('Error in add transaction:', err);
         }
       }
-      //HANDLE SPEND TRANSACTION
+      // HANDLE SPEND TRANSACTION
       else if (userMessage.toLowerCase().includes("#spend")) {
-        try{
-          //answers = await this.handleSpendTransaction(userMessage);
+        try {
           const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
           if (match) {
             const description = match[1].trim();
@@ -290,16 +255,14 @@ export default {
           } else {
             answers.push(['Please specify the description and amount you want to spend.']);
           }
-        }catch(err){
+        } catch (err) {
           console.error('Error in spend transaction:', err);
         }
       }
-      //HANDLE STOCK 
-      else if(this.extractStockCode(userMessage)){
-        try{
-          //extract stock code
+      // HANDLE STOCK 
+      else if (this.extractStockCode(userMessage)) {
+        try {
           const stockCode = this.extractStockCode(userMessage)[0];
-          //alpha vantage api
           const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
           const stockData = stockResponse.data;
           const price = stockData['Global Quote']['05. price'];
@@ -310,137 +273,128 @@ export default {
           const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
           const gptResponse = await gptServices(prompt);
           answers.push(gptResponse);
-        }catch(err){
+        } catch (err) {
           console.error('Error in stock message:', err);
         }
       }
-      //RETUNRS CRYPTO TABLE
-      else if(userMessage.toLowerCase().includes("#crypto")){
+      // RETURNS CRYPTO TABLE
+      else if (userMessage.toLowerCase().includes("#crypto")) {
         //FETCHING COIN DATA
-        let coinData = []
+
+        let coinData = [];
         try {
-            const res = await axios.get("https://api.coinranking.com/v2/coins?timePeriod=7d", {
-            headers: {'x-access-token': process.env.VUE_APP_COINRANKING_KEY}
-            })
+          const res = await axios.get("https://api.coinranking.com/v2/coins?timePeriod=7d", {
+            headers: { 'x-access-token': process.env.VUE_APP_COINRANKING_KEY }
+          });
           coinData = res.data.data.coins;
         } catch (error) {
           console.error('Failed to fetch cr quotes:', error);
         }
-        //CONSTRUCTING TABLE TEMPLATE AS HTML MESSAGE
-
-        let tableTemplate = 
-        `
+        let tableTemplate = `
         <div style="font-weight: 900; font-size: 30px"> Top 5 Ranking Coins </div>
         <table>
           <thead>
             <tr>
-                <th>Name</th>
-                <th>Rank</th>
-                <th>Tier</th>
-                <th>Price</th>
-                <th>Symbol</th>
-                <th>Change</th>
+              <th>Name</th>
+              <th>Rank</th>
+              <th>Tier</th>
+              <th>Price</th>
+              <th>Symbol</th>
+              <th>Change</th>
             </tr>
           </thead>
-          <tbody id="tableBody" class="table-body">`
-        coinData.slice(0,5).map((item, index)=>{
+          <tbody id="tableBody" class="table-body">`;
+        coinData.slice(0, 5).map((item) => {
           tableTemplate += `
             <tr>
-              <td><img style="width: 50px; aspect-ratio: 1;"src=${item.iconUrl} alt=${item.name}>${item.name}</td>
+              <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${item.name}>${item.name}</td>
               <td>${item.rank}</td>
               <td>${item.tier}</td>
               <td>${parseFloat(item.price).toFixed(2)}$</td>
               <td>${item.symbol}</td>
               <td>${item.change}</td>
             </tr>
-          `
-        })
+          `;
+        });
         tableTemplate += `</tbody></table>`;
-        //ADDING BOT ANSWER TO CHAT FRAME
         this.messages.push({
-          text:``,
+          text: ``,
           htmlContent: tableTemplate,
           isUser: false,
           typing: true,
           timestamp: new Date().toLocaleTimeString()
-        })
+        });
       }
-      //RETURNS REALESTATE TABLE
-      else if(userMessage.toLowerCase().includes("#realestate") ){
-        //handling user input
-        let userInputToken = userMessage.toLowerCase().split(/\s+/)
+      // RETURNS REALESTATE TABLE
+      else if (userMessage.toLowerCase().includes("#realestate")) {
+        let userInputToken = userMessage.toLowerCase().split(/\s+/);
         let searchLocation;
-        if(userInputToken.length > 1){
-          userInputToken = userInputToken.slice(1,userInputToken.length)
-          searchLocation = userInputToken.join(' ')
-        }else{
-          searchLocation = "san jose"
+        if (userInputToken.length > 1) {
+          userInputToken = userInputToken.slice(1, userInputToken.length);
+          searchLocation = userInputToken.join(' ');
+        } else {
+          searchLocation = "san jose";
         }
-        //FETCHING REALESTATE DATA
-        let propertiesData = []
+        let propertiesData = [];
         const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
         const BASE_URL = 'https://zillow-com1.p.rapidapi.com/propertyExtendedSearch';
         try {
           const response = await axios.get(BASE_URL, {
-            params: { location: searchLocation},
+            params: { location: searchLocation },
             headers: {
               'X-RapidAPI-Key': API_KEY,
               'X-RapidAPI-Host': 'zillow-com1.p.rapidapi.com',
             },
           });
-          propertiesData = response.data.props
+          propertiesData = response.data.props;
         } catch (error) {
           console.error('Error fetching property data:', error);
         }
-        //CONSTRUCTING TABLE TEMPLATE AS HTML MESSAGE
-        let tableTemplate = 
-        `
+        let tableTemplate = `
         <div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
         <table>
           <thead>
             <tr>
-                <th>Image</th>
-                <th>Type</th>
-                <th>Address</th>
-                <th>Price</th>
-                <th>Status</th>
+              <th>Image</th>
+              <th>Type</th>
+              <th>Address</th>
+              <th>Price</th>
+              <th>Status</th>
             </tr>
           </thead>
-          <tbody id="tableBody" class="table-body">`
-        propertiesData.slice(0,5).map((item, index)=>{
+          <tbody id="tableBody" class="table-body">`;
+        propertiesData.slice(0, 5).map((item) => {
           tableTemplate += `
             <tr>
-              <td><img style="width: 50px; aspect-ratio: 1;"src=${item.imgSrc} alt="propertyImage"></td>
+              <td><img style="width: 50px; aspect-ratio: 1;" src=${item.imgSrc} alt="propertyImage"></td>
               <td>${item.propertyType}</td>
               <td>${item.address}</td>
               <td>${item.price}$</td>
               <td>${item.listingStatus}</td>
-            </tr>
-          `
-        })
+            </tr>`;
+        });
         tableTemplate += `</tbody></table>`;
-        //ADDING BOT ANSWER TO CHAT FRAME
         this.messages.push({
-          text:``,
+          text: ``,
           htmlContent: tableTemplate,
           isUser: false,
           typing: true,
           timestamp: new Date().toLocaleTimeString()
-        })
+        });
       }
-      //HANDLE GENERAL 
+      // HANDLE GENERAL 
       else {
-        try{
+        try {
           const prompt = userMessage;
           const gptResponse = await gptServices(prompt);
           answers.push(gptResponse);
-        }catch(err){
+        } catch (err) {
           console.error('Error in general message:', error);
         }
       }
       answers.forEach(answer => {
         this.addTypingResponse(answer, false);
-      })
+      });
       //save chat to backend
       try {
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
@@ -532,9 +486,7 @@ export default {
     if (!this.messages) {
       this.messages = [];
     }
-    this.addTypingResponse(guidanceMessage.trim(), false);
 
-    //load threads
     const userId = localStorage.getItem('token');
     console.log(userId);
     const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
@@ -542,7 +494,7 @@ export default {
     const historyThreads = await axios.get(threadApi);
     const historyThreadsData = historyThreads.data;
     console.log(historyThreadsData);
-    if(historyThreadsData.length == 0){
+    if (historyThreadsData.length === 0) {
       const newThread = {
         name: 'New Thread',
         editing: false,
@@ -550,7 +502,7 @@ export default {
         messages: []
       };
       await this.addThread(newThread);
-    }else{
+    } else {
       historyThreadsData.forEach(threadData => {
         const thread = {
           id: threadData._id,
@@ -566,79 +518,147 @@ export default {
   }
 };
 </script>
-
 <style scoped>
-  .home-container {
-    display: flex;
-    width: 100%;
-    height: 100vh;
+.home-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.toggle-sidebar-btn {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-sidebar-btn:hover {
+  background-color: #2980b9;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .side-bar {
+    display: none;
   }
 
   .toggle-sidebar-btn {
-    display: none;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1000;
-    background-color: #3498db;
-    color: white;
-    border: none;
+    display: block;
+  }
+
+  .chat-header {
+    font-size: 1rem;
     padding: 10px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
   }
+}
 
-  .toggle-sidebar-btn:hover {
-    background-color: #2980b9;
-  }
+.overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
 
-  .chat-container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
+.side-bar.is-visible {
+  display: block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  background-color: #f9f3f3;
+  z-index: 1001;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
 
-  @media (max-width: 768px) {
-    .side-bar {
-      display: none;
-    }
+.side-bar.is-visible {
+  transform: translateX(0);
+}
 
-    .toggle-sidebar-btn {
-      display: block;
-    }
+.guidance-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-    .chat-header {
-      font-size: 1rem;
-      padding: 10px;
-    }
-  }
+.guidance-btn:hover {
+  background-color: #2980b9;
+}
 
-  .overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-  }
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.3s, opacity 0.3s ease-in-out;
+}
 
-  .side-bar.is-visible {
-    display: block;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 60%;
-    height: 100%;
-    background-color: #f9f3f3;
-    z-index: 1001;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-  }
+.sidebar-overlay.show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
 
-  .side-bar.is-visible {
-    transform: translateX(0);
-  }
+.sidebar-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px 0 0 8px;
+  max-width: 500px;
+  width: 80%;
+  height: 100%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-overlay.show .sidebar-content {
+  transform: translateX(0);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.guidance-text {
+  margin-top: 20px;
+}
 </style>
