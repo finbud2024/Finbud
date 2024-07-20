@@ -97,7 +97,7 @@ export default {
       }
     },
 
-    'authStore.user': async function() {
+    'authStore.userProfileChange': async function() {
       if(authStore.isAuthenticated){
         try {
           const profileData = JSON.parse(localStorage.getItem('user'));
@@ -148,6 +148,7 @@ export default {
     try {
       const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
       if (response.data.isAuthenticated) {
+        //put user info into localStorage
         authStore.login(response.data.user._id);
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
@@ -155,9 +156,9 @@ export default {
       console.log("After Sign in with google err: " + err);
     }
 
-    authStore.user = !authStore.user;
+    authStore.userProfileChange = !authStore.userProfileChange;
     // const profileData = JSON.parse(localStorage.getItem('user'));
-    // this.image = profileData.identityData.profilePicture;
+    // this.image = authStore.userImage;
     // this.name = profileData.identityData.displayName;
   }
 };

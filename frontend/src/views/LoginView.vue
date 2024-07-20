@@ -46,6 +46,7 @@ export default {
           "password": this.password
         }
         const response = await axios.post(api,reqBody);
+        //put user info into localStorage
         authStore.login(response.data._id);
         localStorage.setItem('user', JSON.stringify(response.data));
         this.$router.push('/'); // Redirect to the main page after login
