@@ -40,7 +40,7 @@
           </div>
           <div class="btn-container">
             <button type="submit" class="btn btn-save">Save</button>
-            <button class="btn btn-cancel">Cancel</button>
+            <button type="button" @click="cancelChange" class="btn btn-cancel">Cancel</button>
           </div>
         </form>
       </div>
@@ -203,6 +203,23 @@ export default {
         console.log(err);
       }
     },
+    cancelChange(){
+      //reset profile data
+      const profileData = JSON.parse(localStorage.getItem('user'));
+      this.profile = {
+        displayName: profileData.identityData.displayName,
+        firstName: profileData.identityData.firstName,
+        lastName: profileData.identityData.lastName,
+        email: profileData.accountData.username,
+        image: profileData.identityData.profilePicture
+      };
+      //reset imageUploaded
+      this.imageUploaded = false;
+      toast.success("Changes canceled!", {
+        autoClose: 1000,
+        collapsed: false,
+      });
+    }
   },
   async mounted(){
     //Change color of balance based on value
