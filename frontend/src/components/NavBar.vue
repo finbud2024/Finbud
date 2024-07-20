@@ -19,7 +19,19 @@
           </div>
         </li>
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="authStore.isAuthenticated"><button @click="logout" class="logout-button">Log Out</button></li>
+        <li v-if="authStore.isAuthenticated" class="dropdown">
+          <img :src="profileImage" alt="User Image" class="user-image" @click="toggleProfileDropdown">
+          <div class="dropdown-profile" v-show="isProfileDropdownOpen" @mouseleave="closeProfileDropdown">
+            <router-link to="/profile" class="profile" @click="closeProfileDropdown">
+              <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
+              <p>{{name}}</p>
+            </router-link>
+            <router-link to="#" class="logout" @click="logout">
+              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon"/>
+              <p>Log Out</p>
+            </router-link>
+          </div>
+        </li>
       </ul>
       <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
         <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
@@ -45,6 +57,7 @@
 <script>
 import authStore from '@/authStore';
 import axios from 'axios';
+import defaultImage from '@/assets/anonymous.png';
 
 export default {
   name: 'NavBar',
@@ -52,12 +65,53 @@ export default {
     return {
       isDropdownOpen: false,
       isDropdownOpenMobile: false,
+      isProfileDropdownOpen: false,
+      image: '',
+      name: 'User',
     };
   },
   computed: {
     authStore() {
       return authStore;
     },
+    profileImage() {
+      return this.image || defaultImage;
+    },
+  },
+  watch: {
+    'authStore.isAuthenticated': async function() {
+      if(authStore.isAuthenticated){
+        try {
+          const profileData = JSON.parse(localStorage.getItem('user'));
+          if(profileData.identityData){
+            this.image = profileData.identityData.profilePicture;
+            this.name = profileData.identityData.displayName;
+          } else{
+            this.image = '';
+            this.name = 'User';
+          }
+        } catch (err) {
+         console.log(err);
+        }
+      }
+    },
+
+    'authStore.userProfileChange': async function() {
+      if(authStore.isAuthenticated){
+        try {
+          const profileData = JSON.parse(localStorage.getItem('user'));
+          if(profileData.identityData){
+            this.image = profileData.identityData.profilePicture;
+            this.name = profileData.identityData.displayName;
+          } else{
+            this.image = '';
+            this.name = 'User';
+          }
+        } catch (err) {
+         console.log(err);
+        }
+      }
+    }
   },
   methods: {
     closeDropdown() {
@@ -65,6 +119,12 @@ export default {
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
+    },
+    closeProfileDropdown() {
+      this.isProfileDropdownOpen = false;
+    },
+    toggleProfileDropdown() {
+      this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
     },
     toggleDropdownMobile() {
       this.isDropdownOpenMobile = !this.isDropdownOpenMobile;
@@ -75,7 +135,7 @@ export default {
     async logout() {
       authStore.logout();
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
+        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
       } catch (err) {
         console.log("After logout with err: " + err);
       }
@@ -86,11 +146,15 @@ export default {
     try {
       const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
       if (response.data.isAuthenticated) {
+        //put user info into localStorage
         authStore.login(response.data.user._id);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       }
     } catch (err) {
       console.log("After Sign in with google err: " + err);
     }
+
+    authStore.userProfileChange = !authStore.userProfileChange;
   }
 };
 </script>
@@ -149,7 +213,6 @@ export default {
   border-radius: 8px;
   text-decoration: none;
   padding: 0.5rem 1rem;
-  margin-left: 1.2rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
   display: flex;
@@ -187,33 +250,104 @@ export default {
 }
 
 .dropdown-content {
-  display: none;
   position: absolute;
   background-color: white;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translate(-15px, 20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
+  border-radius: 15px;
 }
 
-.dropdown-content a {
+.dropdown-profile{
+  position: absolute;
+  background-color: white;
+  min-width: 300px;
+  box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
+  z-index: 1;
+  opacity: 0;
+  transform: translate(-250px, 20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  border-radius: 15px;
+  margin-right: 100px;
+}
+
+.dropdown-content a:first-child:hover,
+.dropdown-profile a:first-child:hover {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.dropdown-content a:last-child:hover,
+.dropdown-profile a:last-child:hover {
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+.dropdown-content a,
+.dropdown-profile a {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
-  display: block;
-  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px dotted rgb(226, 215, 215);
+  height: 40px;
 }
 
-.dropdown-content a:hover {
+.dropdown-content a:last-child,
+.dropdown-profile a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content a:hover,
+.dropdown-profile a:hover {
   background-color: #ddd;
 }
 
 .dropdown:hover .dropdown-content {
   display: block;
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-15px, 0px);
+}
+
+.dropdown:hover .dropdown-profile {
+  display: block;
+  opacity: 1;
+  transform: translate(-250px, 0px);
+}
+
+.user-image {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.user-image:hover{
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.inside-dropdown-user-image,
+.icon {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.dropdown-profile p{
+  margin-left: calc(50% - 70px);
+  font-size: 1.2rem;
+  line-height: 3px;
 }
 
 .arrow-down {
@@ -234,7 +368,7 @@ export default {
 .dropdown.active .dropdown-content {
   display: block;
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-15px, 0px);
 }
 
 @media (max-width: 868px) {
