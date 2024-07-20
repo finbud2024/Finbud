@@ -74,7 +74,6 @@
         "vuex": "^4.1.0",
         "xlsx": "^0.18.5",
         "yahoo-finance": "^0.3.8",
-        "yahoo-finance2": "^2.11.3",
-        "vue3-toastify": "^0.2.2"
+        "yahoo-finance2": "^2.11.3"
     }
 }
