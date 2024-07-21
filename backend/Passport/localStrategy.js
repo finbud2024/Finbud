@@ -4,10 +4,9 @@ import User from '../Database Schema/User.js';
 
 const localStrategy = new passportLocal.Strategy({passReqToCallback: true},
     async (req, username, password, done) => {
-      let thisUser;
       console.log("Inside local strategy authenticating by passport");
       try {
-        thisUser = await User.findOne({"accountData.username": username});
+        const thisUser = await User.findOne({"accountData.username": username});
         if (thisUser) {
         //   const match = await bcrypt.compare(password,thisUser.accountData.password);
             const match = (password === thisUser.accountData.password);

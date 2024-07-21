@@ -14,6 +14,7 @@ import authRoute from '../Endpoints/authRoute.js';
 import cryptoRoute from '../Endpoints/cryptoRoute.js';
 import stockRoute from '../Endpoints/stockRoute.js';
 import transactionRoute from '../Endpoints/transactionRoute.js';
+import stockTransactionRoute from '../Endpoints/stockTransactionRoute.js';
 
 // Load environment variables from .env
 const mongoURI = process.env.MONGO_URI;
@@ -35,8 +36,8 @@ mongoose.connect(mongoURI)
 passportConfig(app)
 
 // Set up Express middlewares
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
+app.use(bodyParser.json({limit: '10mb'}));
 app.use(cors())
 
 app.use('/.netlify/functions/server', userRoute);
@@ -47,6 +48,7 @@ app.use('/.netlify/functions/server', authRoute);
 app.use('/.netlify/functions/server', cryptoRoute);
 app.use('/.netlify/functions/server', stockRoute);
 app.use('/.netlify/functions/server', transactionRoute);
+app.use('/.netlify/functions/server', stockTransactionRoute);
 
 const handler = serverless(app);
 export {handler};
