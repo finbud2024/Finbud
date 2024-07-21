@@ -210,9 +210,7 @@ export default {
 
     if (this.$route.query.symbol && this.$route.query.quantity) {
       this.bannerDisplayStock = this.$route.query.symbol;
-    } else {
-      alert("direct");
-    }
+    } 
     this.fetchTransactions(); // Fetch transactions when the component is mounted
   }
 };
