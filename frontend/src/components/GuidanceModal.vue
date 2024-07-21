@@ -4,7 +4,7 @@
       <button class="close-btn" @click="close">X</button>
       <div class="guidance-text">
         <p>Welcome to FinBud! Here are some tips to get started:</p>
-        <ul>
+        <ol>
           <li>Stock Price Inquiry: Type the stock code in uppercase (e.g., "TSLA").</li>
           <li>Financial Term Definitions: Use "Define" followed by the term (e.g., "define IPO").</li>
           <li>General Financial Concepts & Advices: For general inquiries, use descriptive terms.</li>
@@ -12,7 +12,7 @@
           <li>Spend your transaction management: Use prompt '#spend your_description your_amount' (e.g., "#spend Shopping 125")</li>
           <li>List of top 5 crypto coins: Use #crypto</li>
           <li>Show 5 random listing of properties: Use #realestate area_name (e.g., "#realestate new york"). If no area is specified, then by default location will be san jose</li>
-        </ul>
+        </ol>
       </div>
     </div>
   </div>
