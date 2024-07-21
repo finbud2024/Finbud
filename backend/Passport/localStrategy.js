@@ -8,8 +8,7 @@ const localStrategy = new passportLocal.Strategy({passReqToCallback: true},
       try {
         const thisUser = await User.findOne({"accountData.username": username});
         if (thisUser) {
-        //   const match = await bcrypt.compare(password,thisUser.accountData.password);
-            const match = (password === thisUser.accountData.password);
+          const match = await thisUser.comparePassword(password);
           if (match) {
             return done(null, thisUser);
           } else {

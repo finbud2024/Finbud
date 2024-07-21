@@ -12,21 +12,64 @@
                   :placeholder="field.placeholder" 
                   :class="{'error-border': errors[field.name]}" 
                   @blur="validateField(field.name)"
+                  @focus="showPasswordRequirement = false"
                   :required="field.required" />
         </div>
       </div>
-      <!-- email and password -->
-      <div v-for="field in loginFields" :key="field.name">
+      <!-- username/email -->
+      <div class="email">
         <div class="form-group">
-          <label :for="field.name">{{ field.label }}</label>
-          <input :id="field.name"
-                  :type="field.type" 
-                  v-model="formData[field.name]" 
-                  :placeholder="field.placeholder" 
-                  :class="{'error-border': errors[field.name]}" 
-                  @blur="validateField(field.name)"
-                  :required="field.required" />
+          <label  for="email">Email Addresss</label>
+          <input  id="email"
+                  type="email" 
+                  v-model="formData.email" 
+                  placeholder="Email Address" 
+                  :class="{'error-border': errors.email}" 
+                  @blur="validateField('email')"
+                  required=true />
         </div>
+      </div>
+      <!-- password -->
+      <div class="password">
+        <div class="form-group">
+          <label  for="password">Password</label>
+          <input  id="password"
+                  :type="togglePassword? 'text' : 'password' " 
+                  v-model="formData.password" 
+                  placeholder="Password" 
+                  :class="{'error-border': errors.password}" 
+                  @blur="validateField('password')"
+                  @focus="showPasswordRequirement = true"
+                  required=true />
+          <!-- if password valid, checkmark animation will appear -->
+          <svg v-if="validPassword" class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+          <!-- password toggle invisibility -->
+          <font-awesome-icon  class="invis-toggle-icon" 
+                              :icon="togglePassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"
+                              @click="togglePassword = !togglePassword" />
+        </div>
+      </div>
+      <!-- Password requirements -->
+      <div v-if="showPasswordRequirement && !validPassword" class="password-requirement-container">
+        <p><b>Password must contain the following:</b></p>
+        <ul>
+          <li :class="{'valid': formData.password.length >= minLength}">
+            <span>{{formData.password.length >= minLength? "✓" : "✗"}}</span>
+            Minimum 8 characters
+          </li>
+          <li :class="{'valid': hasUppercaseLetter}">
+            <span>{{hasUppercaseLetter? "✓" : "✗"}}</span>
+            A capital (uppercase) letter
+          </li>
+          <li :class="{'valid': hasNumber}">
+            <span>{{hasNumber? "✓" : "✗"}}</span>
+            A number
+          </li>
+          <li :class="{'valid': hasSpecialCharacter}">
+            <span>{{hasSpecialCharacter? "✓" : "✗"}}</span>
+            A special character (!@#$%&*)
+          </li>
+        </ul>
       </div>
       <!-- confirm password -->
       <div class="form-group">
@@ -78,32 +121,47 @@ export default {
       infoFields: [
         { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'First Name', required: true },
         { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last Name', required: true },
-      ]
+      ],
+      showPasswordRequirement: false,
+      minLength: 8,
+      togglePassword: false
     };
+  },
+  computed: {
+    hasUppercaseLetter() {
+      return /[A-Z]/.test(this.formData.password);
+    },
+    hasNumber() {
+      return /[0-9]/.test(this.formData.password);
+    },
+    hasSpecialCharacter() {
+      return /[!@#$%&*]/.test(this.formData.password);
+    },
+    validPassword() {
+      return this.formData.password.length >= this.minLength && 
+      this.hasUppercaseLetter && 
+      this.hasNumber && 
+      this.hasSpecialCharacter;
+    }
   },
   methods: {
     validateField(field) {
-      if (!this.formData[field]) {
-        this.errors[field] = true;
+      if(field === 'email'){
+        this.errors.email = !validator.isEmail(this.formData[field]);
+      } else if(field === 'password'){
+        this.errors.password =  this.formData[field].length < this.minLength || !this.hasUppercaseLetter || !this.hasNumber || !this.hasSpecialCharacter;
+      } else if(field ==='confirmPassword'){
+        this.errors.confirmPassword = this.formData.password !== this.formData.confirmPassword;
       } else {
-        this.errors[field] = false;
+        this.errors[field] = !this.formData[field];
       }
     },
     async register() {
       this.infoFields.forEach(field => this.validateField(field.name));
       this.loginFields.forEach(field => this.validateField(field.name));
       this.validateField('confirmPassword');
-      //check email format
-      if (!validator.isEmail(this.formData.email)) {
-        console.log(validator.isEmail(this.formData.email));
-        this.errors.email = true;
-        this.errorMessage = "Invalid email format!";
-        return;
-      }
-      //check if password and confirm password match
-      if (this.formData.password !== this.formData.confirmPassword) {
-        this.errors.confirmPassword = true;
-        this.errorMessage = "Passwords do not match!";
+      if(this.errors.confirmPassword){
+        this.errorMessage = 'Password do not match!';
         return;
       }
       //check all value in errors object, if all false, then no error
@@ -130,7 +188,7 @@ export default {
         this.errorMessage = "Please fill in all required fields."
       }
     }
-  }
+  },
 }
 </script>
 
@@ -211,6 +269,110 @@ input {
   text-align: center;
   margin-top: 10px;
 }
+
+.password-requirement-container {
+  /* display: none; */
+  position: relative;
+  text-align: left;
+  font-size: 15px;
+}
+
+.password-requirement-container li {
+  list-style: none;
+  position: relative;
+  left: -35px;
+  color: red;
+}
+
+.password-requirement-container li span {
+  margin-right: 20px;
+}
+
+.password-requirement-container .valid {
+  color: green;
+}
+
+ /* .password{
+
+  */
+
+/* password invisibility toggle icon */
+.password{
+  position: relative;
+}
+
+.invis-toggle-icon {
+  position: absolute;
+  transform: translateY(-50%);
+  top: 70%;
+  right: 10px;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  line-height: 1;
+  color: black;
+}
+
+.invis-toggle-icon:hover {
+  color: #007bff;
+}
+
+/* start of check mark animation svg
+https://codepen.io/aurer/pen/jEGbA
+
+*/
+.checkmark {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  right: 40px;
+  bottom: 10%;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: green;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px #fff;
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: green;
+  fill: none;
+  animation: stroke .6s cubic-bezier(0.650, 0.000, 0.450, 1.000) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke .3s cubic-bezier(0.650, 0.000, 0.450, 1.000) .8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px #fff;
+  }
+}
+/* end of check mark animation svg*/
 
 .signin-text {
   margin-top: 20px;

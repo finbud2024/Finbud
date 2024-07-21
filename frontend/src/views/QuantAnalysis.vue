@@ -553,6 +553,7 @@ export default {
       </ul>
     </div>
   </div>
+  
   <DashBoard />
   <MonteCarloSimulation />
 </template>
