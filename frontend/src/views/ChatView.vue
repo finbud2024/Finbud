@@ -18,7 +18,7 @@
           :typing="message.typing"
           :htmlContent="message.htmlContent"
           :timestamp="message.timestamp"
-          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" 
+          :username="message.isUser ? displayName : 'FinBud Bot'" 
           :avatar-src="message.isUser ? userAvatar : botAvatar" 
         />
       </ChatFrame>
@@ -48,7 +48,8 @@ export default {
     return {
       newMessage: '',
       messages: [], 
-      userAvatar: require('@/assets/profile/tri.jpeg'),
+      displayName : JSON.parse(localStorage.getItem('user')).identityData.displayName,
+      userAvatar: JSON.parse(localStorage.getItem('user')).identityData.profilePicture,
       botAvatar: require('@/assets/bot.png'),
       currentThread: {},
       threads: [], 
