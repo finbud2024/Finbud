@@ -1335,7 +1335,7 @@ export default {
 </template>
 
 <script>
-import DashBoard from '@/frontend/src/components/quant/DashBoard.vue';
+import DashBoard from '@/components/quant/DashBoard.vue';
 
 
 
