@@ -737,7 +737,7 @@ export default {
       </ul>
     </div>
   </div>
-  <DashBoard />
+  <DashBoard /> 
 </template>
 
 <script>
