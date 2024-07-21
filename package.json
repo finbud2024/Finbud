@@ -16,6 +16,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.6.0",
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "@vue/cli-service": "^5.0.8",
+        "@vueform/multiselect": "^2.6.8",
         "@vuepic/vue-datepicker": "^8.8.0",
         "assert": "^2.1.0",
         "browserify-zlib": "^0.2.0",
@@ -40,7 +41,8 @@
         "stream-browserify": "^3.0.0",
         "stream-http": "^3.2.0",
         "url": "^0.11.3",
-        "util": "^0.12.5"
+        "util": "^0.12.5",
+        "vue-3-slider-component": "^1.0.0"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.5.2",
