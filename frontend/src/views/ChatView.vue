@@ -18,7 +18,7 @@
           :typing="message.typing"
           :htmlContent="message.htmlContent"
           :timestamp="message.timestamp"
-          :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'" 
+          :username="message.isUser ? displayName : 'FinBud Bot'" 
           :avatar-src="message.isUser ? userAvatar : botAvatar" 
         />
       </ChatFrame>
@@ -48,7 +48,8 @@ export default {
     return {
       newMessage: '',
       messages: [], 
-      userAvatar: require('@/assets/profile/tri.jpeg'),
+      displayName : JSON.parse(localStorage.getItem('user')).identityData.displayName,
+      userAvatar: JSON.parse(localStorage.getItem('user')).identityData.profilePicture,
       botAvatar: require('@/assets/bot.png'),
       currentThread: {},
       threads: [], 
@@ -84,7 +85,8 @@ export default {
     async updateCurrentThread(currentThreadId) {
       try {
         this.messages = [];
-        this.addTypingResponse("Hello!", false);
+        this.addTypingResponse(`Hello ${this.displayName}!`, false);
+        this.addTypingResponse(`Please check the guidance at right bottom of the corner to get started!`, false);
 
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
         if (thread) {
@@ -595,9 +597,9 @@ export default {
 
 .guidance-btn {
   position: fixed;
-  bottom: 20px;
+  bottom: calc(15%);
   right: 20px;
-  background-color: #3498db;
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 10px 20px;
