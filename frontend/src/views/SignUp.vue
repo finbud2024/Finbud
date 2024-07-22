@@ -51,6 +51,7 @@
 
 <script>
 import axios from 'axios';
+import validator from 'validator';
 
 export default {
   data() {
@@ -92,7 +93,14 @@ export default {
       this.infoFields.forEach(field => this.validateField(field.name));
       this.loginFields.forEach(field => this.validateField(field.name));
       this.validateField('confirmPassword');
-      
+      //check email format
+      if (!validator.isEmail(this.formData.email)) {
+        console.log(validator.isEmail(this.formData.email));
+        this.errors.email = true;
+        this.errorMessage = "Invalid email format!";
+        return;
+      }
+      //check if password and confirm password match
       if (this.formData.password !== this.formData.confirmPassword) {
         this.errors.confirmPassword = true;
         this.errorMessage = "Passwords do not match!";

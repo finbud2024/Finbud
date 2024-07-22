@@ -1,6 +1,6 @@
 import express from 'express';
 import Thread from '../Database Schema/Thread.js';
-import validateRequest from '../middleware/validateRequest.js';
+import validateRequest from '../utils/validateRequest.js';
 
 const threadRoute = express.Router();
 

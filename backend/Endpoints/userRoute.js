@@ -1,6 +1,6 @@
 import express from 'express';
 import User from '../Database Schema/User.js';
-import validateRequest from '../middleware/validateRequest.js';
+import validateRequest from '../utils/validateRequest.js';
 
 const userRoute = express.Router();
 

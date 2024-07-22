@@ -1,6 +1,6 @@
 import express from 'express';
 import Chat from '../Database Schema/Chat.js';
-import validateRequest from '../middleware/validateRequest.js';
+import validateRequest from '../utils/validateRequest.js';
 
 const chatRoute = express.Router();
 
