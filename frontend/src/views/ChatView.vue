@@ -48,8 +48,8 @@ export default {
     return {
       newMessage: '',
       messages: [], 
-      displayName : JSON.parse(localStorage.getItem('user')).identityData.displayName,
-      userAvatar: JSON.parse(localStorage.getItem('user')).identityData.profilePicture,
+      displayName : authStore.isAuthenticated?JSON.parse(localStorage.getItem('user')).identityData.displayName : 'User',
+      userAvatar: authStore.isAuthenticated?JSON.parse(localStorage.getItem('user')).identityData.profilePicture : require('@/assets/anonymous.png'),
       botAvatar: require('@/assets/bot.png'),
       currentThread: {},
       threads: [], 
@@ -85,8 +85,7 @@ export default {
     async updateCurrentThread(currentThreadId) {
       try {
         this.messages = [];
-        this.addTypingResponse(`Hello ${this.displayName}!`, false);
-        this.addTypingResponse(`Please check the guidance at right bottom of the corner to get started!`, false);
+        this.addTypingResponse(`Hello ${this.displayName}!\nPlease check the guidance at right bottom of the corner to get started!`, false);
 
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
         if (thread) {
@@ -398,7 +397,8 @@ export default {
         this.addTypingResponse(answer, false);
       });
       //save chat to backend
-      try {
+      if(authStore.isAuthenticated){
+        try {
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
         const reqBody = {
           prompt: userMessage,
@@ -406,8 +406,9 @@ export default {
           threadId: this.currentThread.id,
         };
         const chat = await axios.post(chatApi, reqBody);
-      } catch (err) {
-        console.error('Error on saving chat:', err);
+        } catch (err) {
+          console.error('Error on saving chat:', err);
+        }
       }
     },
     async handleAddTransaction(userMessage) {
@@ -489,34 +490,41 @@ export default {
       this.messages = [];
     }
 
-    const userId = localStorage.getItem('token');
-    console.log(userId);
-    const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+    if(authStore.isAuthenticated){
+      const userId = localStorage.getItem('token');
+      console.log(userId);
+      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
 
-    const historyThreads = await axios.get(threadApi);
-    const historyThreadsData = historyThreads.data;
-    console.log(historyThreadsData);
-    if (historyThreadsData.length === 0) {
-      const newThread = {
-        name: 'New Thread',
-        editing: false,
-        editedName: 'New Chat',
-        messages: []
-      };
-      await this.addThread(newThread);
-    } else {
-      historyThreadsData.forEach(threadData => {
-        const thread = {
-          id: threadData._id,
-          name: threadData.title,
+      const historyThreads = await axios.get(threadApi);
+      const historyThreadsData = historyThreads.data;
+      console.log(historyThreadsData);
+      if (historyThreadsData.length === 0) {
+        const newThread = {
+          name: 'New Thread',
           editing: false,
-          editedName: threadData.title,
+          editedName: 'New Chat',
           messages: []
         };
-        this.threads.push(thread);
-      });
+        await this.addThread(newThread);
+      } else {
+        historyThreadsData.forEach(threadData => {
+          const thread = {
+            id: threadData._id,
+            name: threadData.title,
+            editing: false,
+            editedName: threadData.title,
+            messages: []
+          };
+          this.threads.push(thread);
+        });
+      }
+      this.selectThread(0);
+    } else {
+      this.addTypingResponse(
+        `Hello! How can I help you?\nPlease check the guidance at right bottom of the corner to get started!`
+        , false);
+    
     }
-    this.selectThread(0);
   }
 };
 </script>
