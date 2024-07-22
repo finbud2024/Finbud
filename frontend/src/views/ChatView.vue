@@ -10,22 +10,15 @@
     <div class="chat-container">
       <ChatHeader :threadId="currentThread.id" />
       <ChatFrame>
-        <MessageComponent 
-          v-for="(message, index) in messages" 
-          :key="index" 
-          :is-user="message.isUser"
-          :text="message.text" 
-          :typing="message.typing"
-          :htmlContent="message.htmlContent"
-          :timestamp="message.timestamp"
-          :username="message.isUser ? displayName : 'FinBud Bot'" 
-          :avatar-src="message.isUser ? userAvatar : botAvatar" 
-        />
+        <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
+          :text="message.text" :typing="message.typing" :htmlContent="message.htmlContent"
+          :timestamp="message.timestamp" :username="message.isUser ? displayName : 'FinBud Bot'"
+          :avatar-src="message.isUser ? userAvatar : botAvatar" />
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
     <button class="guidance-btn" @click="showGuidance = true">Guidance</button>
-    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance"/>
+    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
 
@@ -47,12 +40,12 @@ export default {
   data() {
     return {
       newMessage: '',
-      messages: [], 
-      displayName : authStore.isAuthenticated?JSON.parse(localStorage.getItem('user')).identityData.displayName : 'User',
-      userAvatar: authStore.isAuthenticated?JSON.parse(localStorage.getItem('user')).identityData.profilePicture : require('@/assets/anonymous.png'),
+      messages: [],
+      displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.displayName : 'User',
+      userAvatar: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.profilePicture : require('@/assets/anonymous.png'),
       botAvatar: require('@/assets/bot.png'),
       currentThread: {},
-      threads: [], 
+      threads: [],
       isSidebarVisible: false,
       showGuidance: false // Add state for showing guidance modal
     };
@@ -85,7 +78,9 @@ export default {
     async updateCurrentThread(currentThreadId) {
       try {
         this.messages = [];
-        this.addTypingResponse(`Hello ${this.displayName}!\nPlease check the guidance at right bottom of the corner to get started!`, false);
+        const botInstruction = `Hello ${this.displayName}!
+Please click "Guidance" for detailed instructions on how to use the chatbot.`;
+        this.addTypingResponse(botInstruction, false);
 
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
         if (thread) {
@@ -397,15 +392,15 @@ export default {
         this.addTypingResponse(answer, false);
       });
       //save chat to backend
-      if(authStore.isAuthenticated){
+      if (authStore.isAuthenticated) {
         try {
-        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-        const reqBody = {
-          prompt: userMessage,
-          response: answers,
-          threadId: this.currentThread.id,
-        };
-        const chat = await axios.post(chatApi, reqBody);
+          const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+          const reqBody = {
+            prompt: userMessage,
+            response: answers,
+            threadId: this.currentThread.id,
+          };
+          const chat = await axios.post(chatApi, reqBody);
         } catch (err) {
           console.error('Error on saving chat:', err);
         }
@@ -490,7 +485,7 @@ export default {
       this.messages = [];
     }
 
-    if(authStore.isAuthenticated){
+    if (authStore.isAuthenticated) {
       const userId = localStorage.getItem('token');
       console.log(userId);
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
@@ -520,10 +515,12 @@ export default {
       }
       this.selectThread(0);
     } else {
-      this.addTypingResponse(
-        `Hello! How can I help you?\nPlease check the guidance at right bottom of the corner to get started!`
-        , false);
-    
+      const botInstruction = `Hello, Guest!
+Please click "Guidance" for detailed instructions on how to use the chatbot.
+
+Also, sign in to access the full functionality of Finbud!`;
+      this.addTypingResponse(botInstruction, false);
+
     }
   }
 };
