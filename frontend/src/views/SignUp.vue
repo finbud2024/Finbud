@@ -12,6 +12,7 @@
                   :placeholder="field.placeholder" 
                   :class="{'error-border': errors[field.name]}" 
                   @blur="validateField(field.name)"
+                  @focus="showPasswordRequirement = false"
                   :required="field.required" />
         </div>
       </div>
@@ -25,8 +26,32 @@
                   :placeholder="field.placeholder" 
                   :class="{'error-border': errors[field.name]}" 
                   @blur="validateField(field.name)"
+                  @focus="showPasswordRequirement = (field.name === 'password')"
                   :required="field.required" />
         </div>
+      </div>
+      <!-- Password requirements -->
+      <div v-if="showPasswordRequirement" class="password-requirement-container">
+        <p><b>Password must contain the following:</b></p>
+        <ul>
+          <li :class="{'valid': formData.password.length >= minLength}">
+            <span>{{formData.password.length >= minLength? "✓" : "✗"}}</span>
+            Minimum 8 characters
+          </li>
+          <!-- <p :class="{'valid': hasUppercaseLetter}">A <b>lowercase</b> letter</p> -->
+          <li :class="{'valid': hasUppercaseLetter}">
+            <span>{{hasUppercaseLetter? "✓" : "✗"}}</span>
+            A capital (uppercase) letter
+          </li>
+          <li :class="{'valid': hasNumber}">
+            <span>{{hasNumber? "✓" : "✗"}}</span>
+            A number
+          </li>
+          <li :class="{'valid': hasSpecialCharacter}">
+            <span>{{hasSpecialCharacter? "✓" : "✗"}}</span>
+            A special character (!@#$%&*)
+          </li>
+        </ul>
       </div>
       <!-- confirm password -->
       <div class="form-group">
@@ -78,34 +103,39 @@ export default {
       infoFields: [
         { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'First Name', required: true },
         { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last Name', required: true },
-      ]
+      ],
+      showPasswordRequirement: false,
+      minLength: 8,
     };
+  },
+  computed: {
+    hasUppercaseLetter() {
+      return /[A-Z]/.test(this.formData.password);
+    },
+    hasNumber() {
+      return /[0-9]/.test(this.formData.password);
+    },
+    hasSpecialCharacter() {
+      return /[!@#$%&*]/.test(this.formData.password);
+    }
   },
   methods: {
     validateField(field) {
-      if (!this.formData[field]) {
-        this.errors[field] = true;
+      if(field === 'email'){
+        this.errors.email = !validator.isEmail(this.formData[field]);
+      } else if(field === 'password'){
+        this.errors.password =  this.formData[field].length < this.minLength || !this.hasUppercaseLetter || !this.hasNumber || !this.hasSpecialCharacter;
+      } else if(field ==='confirmPassword'){
+        this.errors.confirmPassword = this.formData.password !== this.formData.confirmPassword;
+        this.errorMessage = 'Passowrd do not match!';
       } else {
-        this.errors[field] = false;
+        this.errors[field] = !this.formData[field];
       }
     },
     async register() {
       this.infoFields.forEach(field => this.validateField(field.name));
       this.loginFields.forEach(field => this.validateField(field.name));
       this.validateField('confirmPassword');
-      //check email format
-      if (!validator.isEmail(this.formData.email)) {
-        console.log(validator.isEmail(this.formData.email));
-        this.errors.email = true;
-        this.errorMessage = "Invalid email format!";
-        return;
-      }
-      //check if password and confirm password match
-      if (this.formData.password !== this.formData.confirmPassword) {
-        this.errors.confirmPassword = true;
-        this.errorMessage = "Passwords do not match!";
-        return;
-      }
       //check all value in errors object, if all false, then no error
       if (!Object.values(this.errors).some(error => error)) {
         try {
@@ -210,6 +240,28 @@ input {
   color: red;
   text-align: center;
   margin-top: 10px;
+}
+
+.password-requirement-container {
+  /* display: none; */
+  position: relative;
+  text-align: left;
+  font-size: 15px;
+}
+
+.password-requirement-container li {
+  list-style: none;
+  position: relative;
+  left: -35px;
+  color: red;
+}
+
+.password-requirement-container li span {
+  margin-right: 20px;
+}
+
+.password-requirement-container .valid {
+  color: green;
 }
 
 .signin-text {
