@@ -303,7 +303,6 @@ input {
 
 .invis-toggle-icon {
   position: absolute;
-  font-size: 20px;
   transform: translateY(-50%);
   top: 70%;
   right: 10px;
