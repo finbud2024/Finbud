@@ -13,9 +13,18 @@
         <label for="username">Username or Email:</label>
         <input type="text" id="username" v-model="username" placeholder="Username" required>
       </div>
-      <div class="input-group">
+      <div class="input-group password">
         <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" placeholder="Password" required>
+        <input 
+          :type="togglePassword? 'text' : 'password'" 
+          id="password" 
+          v-model="password" 
+          placeholder="Password" 
+          required >
+        <font-awesome-icon  
+          class="invis-toggle-icon" 
+          :icon="togglePassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"
+          @click="togglePassword = !togglePassword" />
         <p id="errorMessage" class="wrong-password"> wrong username or password!</p>
       </div>
       <div class="forgot-password"><a href="#">Forgot?</a></div>
@@ -35,6 +44,7 @@ export default {
     return {
       username: '',
       password: '',
+      togglePassword: false
     };
   },
   methods: {
@@ -149,6 +159,19 @@ input::placeholder {
 
 input:focus {
   outline: 2px solid #007bff;
+}
+
+.password {
+  position: relative;
+}
+
+.invis-toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 70%;
+  transform: translateY(-50%);
+  color: #007bff;
+  cursor: pointer;
 }
 
 .forgot-password {
