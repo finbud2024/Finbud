@@ -152,7 +152,6 @@ export default {
         this.errors.password =  this.formData[field].length < this.minLength || !this.hasUppercaseLetter || !this.hasNumber || !this.hasSpecialCharacter;
       } else if(field ==='confirmPassword'){
         this.errors.confirmPassword = this.formData.password !== this.formData.confirmPassword;
-        this.errorMessage = 'Passowrd do not match!';
       } else {
         this.errors[field] = !this.formData[field];
       }
@@ -161,6 +160,10 @@ export default {
       this.infoFields.forEach(field => this.validateField(field.name));
       this.loginFields.forEach(field => this.validateField(field.name));
       this.validateField('confirmPassword');
+      if(this.errors.confirmPassword){
+        this.errorMessage = 'Password do not match!';
+        return;
+      }
       //check all value in errors object, if all false, then no error
       if (!Object.values(this.errors).some(error => error)) {
         try {
