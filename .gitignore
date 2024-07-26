@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+
+# Node modules
+node_modules/
+
+# Distribution directory
+/dist
+
+# local env files
+.env*
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local Netlify folder
+
+# Local Netlify folder
+.netlify
+
+#------------------------- PYTHON INSIDE DATA FOLDER --------------------------
+#Ignore Python-related files and directories inside the data folder
+data/__pycache__/
+data/*.py[cod]
+
+# Ignore virtual environments
+venv/
+.env/
