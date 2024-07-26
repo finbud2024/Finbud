@@ -561,8 +561,6 @@ export default {
 import MonteCarloSimulation from "./MonteCarloSimulation.vue";
 import DashBoard from '@/components/quant/DashBoard.vue';
 
-
-
 export default {
   components: {
     //MarketHeader,
