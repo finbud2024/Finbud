@@ -29,6 +29,12 @@ module.exports = {
                 "process": require.resolve("process/browser"),
             }
         },
+        module: {
+            rules: [{
+                test: /\.csv$/,
+                use: 'raw-loader'
+            }]
+        },
         plugins: [
             new webpack.ProvidePlugin({
                 process: 'process/browser',
@@ -37,7 +43,8 @@ module.exports = {
             new webpack.DefinePlugin({
                 '__VUE_PROD_HYDRATION_MISMATCH_DETAILS__': false, // Ensure it's set to false for production
                 '__VUE_OPTIONS_API__': true,
-            })
+            }),
+            new Dotenv()
         ]
     }
 };

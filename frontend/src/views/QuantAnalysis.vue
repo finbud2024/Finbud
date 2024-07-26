@@ -554,12 +554,12 @@ export default {
     </div>
   </div>
   <DashBoard />
-  <MonteCarlo />
+  <MonteCarloSimulation />
 </template>
 
 <script>
+import MonteCarloSimulation from "./MonteCarloSimulation.vue";
 import DashBoard from '@/components/quant/DashBoard.vue';
-import MonteCarlo from '@/components/quant/MonteCarlo.vue';
 
 
 
@@ -567,7 +567,7 @@ export default {
   components: {
     //MarketHeader,
     DashBoard,
-    MonteCarlo
+    MonteCarloSimulation
   },
   data() {
     return {
