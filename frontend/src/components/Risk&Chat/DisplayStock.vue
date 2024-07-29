@@ -200,7 +200,7 @@ input.styled:active {
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
-    font-size: 16px;
+    font-size: 10px;
     color: #333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -211,8 +211,8 @@ input.styled:active {
 }
 
 .data-table {
-    padding: 20px;
     width: 40%;
+    padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin: 20px 0;
     border-radius: 10px;
@@ -231,7 +231,6 @@ thead {
 
 th,
 td {
-    padding: 8px;
     text-align: left;
     border: 1px solid #ddd;
 }
@@ -286,5 +285,14 @@ tr:hover {
     input.styled {
         font-size: 14px;
     }
+
+@media (max-width: 768px) {
+    th,td {
+        font-size: 8px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+}
+
 }
 </style>

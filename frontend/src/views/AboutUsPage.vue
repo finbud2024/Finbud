@@ -9,7 +9,7 @@
     <div class="team-section">
       <li class="title">Meet Our Team</li>
       <swiper 
-        :slidesPerView="3"
+        :slidesPerView="slidesPerView"
         :spaceBetween="30"
         :keyboard="{
           enabled: true,
@@ -124,6 +124,7 @@ export default {
   data() {
     return {
       modules: [Keyboard, Pagination, Navigation],
+      slidesPerView: window.innerWidth <= 768 ? 1 : 3,
       teamMembers: [
         {
           name: 'Tri Dinh Bui',
@@ -650,4 +651,5 @@ body {
 .slide-in-up.animate-visible {
   transform: translateY(0);
 }
+
 </style>
