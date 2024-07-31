@@ -45,7 +45,7 @@ html {
 }
 
 .content {
-  padding-top: 100px;
+  padding-top: 80px;
 }
 a {
   text-decoration: none;
