@@ -5,8 +5,13 @@
       <ul class="nav-items">
         <li><router-link to="/" class="home">Home</router-link></li>
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
-        <li><router-link to="/about" class="about">About</router-link></li>
-        <li><router-link to="/tech" class="technology">Technology</router-link></li>
+        <li class="dropdown" @mousenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
+          <div class="services-dropdown dropbtn">Overview <span class="arrow-down"></span></div>
+          <div class="dropdown-content">
+            <router-link to="/about" class="abiyt" @click="toggleAboutDropdown(false)">About</router-link>
+            <router-link to="/tech" class="technology"  @click="toggleAboutDropdown(false)">Technology</router-link>
+          </div>
+        </li>
         <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)" @mouseleave="toggleDropdown(false)">
           <div class="services-dropdown dropbtn" >Services <span class="arrow-down"></span></div>
           <div :class="[`dropdown-content`, {show: isDropdownOpen}]">
@@ -120,6 +125,9 @@ export default {
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;
     },
+    toggleAboutDropdown(open) {
+      this.isAboutDropdownOpen = open;
+    },
     toggleDropdownMobile() {
       this.isDropdownOpenMobile = !this.isDropdownOpenMobile;
     },
@@ -223,7 +231,6 @@ export default {
 .services-dropdown {
   cursor: pointer;
   position: relative;
-  border: 2px solid red;
 }
 
 .services-dropdown:hover {
