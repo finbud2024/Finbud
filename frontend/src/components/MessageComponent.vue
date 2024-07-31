@@ -93,30 +93,32 @@ export default {
     word-wrap: break-word;
   }
 
-  .chat-window {
-    height: 80vh;
-    /* Adjusted to 80% of viewport height */
-    border: 1px solid #e0e0e0;
-    background-color: #fff;
-    max-height: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    /* Enable scrolling if content exceeds window */
-  }
-
   .message-content-wrapper {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
-    max-width: 80%;
+    max-width: 60%;
+    line-height: 1.25rem;
     word-wrap: break-word;
   }
 
-  .avatar {
-    width: 60px;
-    height: 60px;
+  .bot .avatar {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     margin-left: 1%;
+  }
+
+  .user .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 1%;
+  }
+
+  .user {
+    display: flex;
+    flex-direction: row-reverse;
   }
 
   .message-content {
@@ -127,7 +129,9 @@ export default {
     margin: 4px 0;
     border-radius: 16px;
     background-color: #007bff;
-    color: #fff;
+    color: #fff; 
+    /* background-color: papayawhip;
+    color: black; */
     border: 1px solid transparent;
     text-align: left;
     white-space: pre-wrap; 

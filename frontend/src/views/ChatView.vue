@@ -43,7 +43,7 @@ export default {
       messages: [],
       displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.displayName : 'User',
       userAvatar: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.profilePicture : require('@/assets/anonymous.png'),
-      botAvatar: require('@/assets/bot.png'),
+      botAvatar: require('@/assets/botrmbg.png'),
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
@@ -561,6 +561,7 @@ Also, sign in to access the full functionality of Finbud!`;
   display: flex;
   flex-direction: column;
   flex: 1;
+  padding-top: 20px;
 }
 
 @media (max-width: 768px) {
