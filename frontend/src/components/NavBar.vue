@@ -7,22 +7,22 @@
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li><router-link to="/about" class="about">About</router-link></li>
         <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <li v-if="authStore.isAuthenticated" class="dropdown">
-          <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
-          <div class="dropdown-content" v-show="isDropdownOpen" @mouseleave="closeDropdown">
-            <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
-            <router-link to="/quant-analysis" class="home">Quant</router-link>
-            <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
-            <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
-            <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
-            <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+        <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)" @mouseleave="toggleDropdown(false)">
+          <div class="services-dropdown dropbtn" >Services <span class="arrow-down"></span></div>
+          <div :class="[`dropdown-content`, {show: isDropdownOpen}]">
+            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
+            <router-link to="/quant-analysis" class="home"  @click="toggleDropdown(false)">Quant</router-link>
+            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
+            <router-link to="/risk" class="risk" @click="toggleDropdown(false)">Risk</router-link>
+            <router-link to="/market" class="market" @click="toggleDropdown(false)">Market</router-link>
           </div>
         </li>
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="authStore.isAuthenticated" class="dropdown">
-          <img :src="profileImage" alt="User Image" class="user-image" @click="toggleProfileDropdown">
-          <div class="dropdown-profile" v-show="isProfileDropdownOpen" @mouseleave="closeProfileDropdown">
-            <router-link to="/profile" class="profile" @click="closeProfileDropdown">
+        <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)" @mouseleave="toggleProfileDropdown(false)">
+          <img :src="profileImage" alt="User Image" class="user-image">
+          <div class="dropdown-profile">
+            <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
               <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
               <p>{{name}}</p>
             </router-link>
@@ -114,17 +114,11 @@ export default {
     }
   },
   methods: {
-    closeDropdown() {
-      this.isDropdownOpen = false;
+    toggleDropdown(open) {
+      this.isDropdownOpen = open;
     },
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
-    },
-    closeProfileDropdown() {
-      this.isProfileDropdownOpen = false;
-    },
-    toggleProfileDropdown() {
-      this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
+    toggleProfileDropdown(open) {
+      this.isProfileDropdownOpen = open;
     },
     toggleDropdownMobile() {
       this.isDropdownOpenMobile = !this.isDropdownOpenMobile;
@@ -209,7 +203,6 @@ export default {
 }
 
 .signup-button,
-.services-button,
 .login-button,
 .logout-button {
   background-color: #45a049;
@@ -227,22 +220,25 @@ export default {
   min-width: 100px;
 }
 
-.services-button {
+.services-dropdown {
+  cursor: pointer;
   position: relative;
+  border: 2px solid red;
 }
 
-.services-button .arrow-down {
-  margin-left: 0.5rem;
+.services-dropdown:hover {
+  color: #007bff;
+}
+.services-dropdown .arrow-down {
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid white;
+  border-top: 5px solid black;
 }
 
 .signup-button:hover,
 .logout-button:hover,
-.services-button:hover,
 .login-button:hover {
   background-color: #3e8e41;
   color: #007bff;
@@ -261,7 +257,7 @@ export default {
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
   opacity: 0;
-  transform: translate(0px, 20px);
+  transform: translate(-10px, 20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
   border-radius: 15px;
   border: 1px solid #007bff;
@@ -316,7 +312,7 @@ export default {
 .dropdown:hover .dropdown-content {
   display: block;
   opacity: 1;
-  transform: translate(0px, 0px);
+  transform: translate(-10px, 0px);
 }
 
 .dropdown:hover .dropdown-profile {
