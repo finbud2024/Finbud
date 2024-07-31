@@ -532,6 +532,12 @@ Also, sign in to access the full functionality of Finbud!`;
   height: 100vh;
 }
 
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .toggle-sidebar-btn {
   display: none;
   position: absolute;
