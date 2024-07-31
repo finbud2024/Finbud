@@ -164,15 +164,19 @@ export default {
 
 .nav-bar {
   background-color: #FFFFFF;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 2rem;
+  padding: 0rem 2rem;
   font-family: 'Space Grotesk', sans-serif;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  position: fixed;
+  z-index: 1000;
 }
 
 .navbar-brand {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #007bff;
   cursor: pointer;
@@ -182,6 +186,7 @@ export default {
 .nav-right {
   display: flex;
   align-items: center;
+  margin-right: 3rem;
 }
 
 .nav-items {
@@ -196,7 +201,7 @@ export default {
   color: black;
   text-decoration: none;
   transition: color 0.3s ease;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .nav-items li a:hover {
@@ -218,7 +223,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1rem;
   min-width: 100px;
 }
 
@@ -252,26 +257,27 @@ export default {
 .dropdown-content {
   position: absolute;
   background-color: white;
-  min-width: 160px;
+  min-width: 100px;
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
   opacity: 0;
-  transform: translate(-15px, 20px);
+  transform: translate(0px, 20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
   border-radius: 15px;
+  border: 1px solid #007bff;
 }
 
 .dropdown-profile{
   position: absolute;
   background-color: white;
-  min-width: 300px;
+  min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
   opacity: 0;
-  transform: translate(-250px, 20px);
+  transform: translate(-160px, 20px);
   transition: opacity 0.3s ease, transform 0.3s ease;
   border-radius: 15px;
-  margin-right: 100px;
+  border: 1px solid #007bff;
 }
 
 .dropdown-content a:first-child:hover,
@@ -294,7 +300,7 @@ export default {
   display: flex;
   align-items: center;
   border-bottom: 1px dotted rgb(226, 215, 215);
-  height: 40px;
+  height: 20px;
 }
 
 .dropdown-content a:last-child,
@@ -310,19 +316,19 @@ export default {
 .dropdown:hover .dropdown-content {
   display: block;
   opacity: 1;
-  transform: translate(-15px, 0px);
+  transform: translate(0px, 0px);
 }
 
 .dropdown:hover .dropdown-profile {
   display: block;
   opacity: 1;
-  transform: translate(-250px, 0px);
+  transform: translate(-160px, 0px);
 }
 
 .user-image {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -336,8 +342,8 @@ export default {
 .inside-dropdown-user-image,
 .icon {
   position: absolute;
-  width: 35px;
-  height: 35px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   margin-right: 10px;
   margin-left: 10px;
@@ -345,8 +351,8 @@ export default {
 }
 
 .dropdown-profile p{
-  margin-left: calc(50% - 70px);
-  font-size: 1.2rem;
+  margin-left:50px;
+  font-size: 1rem;
   line-height: 3px;
 }
 

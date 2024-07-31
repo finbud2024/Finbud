@@ -28,10 +28,12 @@ export default {
 body {
   min-height: 100%;
   margin:0;
+  padding:0;
 }
 
 html { 
-  height: 100% 
+  height: 100%;
+  scrollbar-gutter: auto;
 }
 </style>
 
@@ -43,9 +45,8 @@ html {
 }
 
 .content {
-  margin-top: 20px;
+  padding-top: 100px;
 }
-
 a {
   text-decoration: none;
   color: blue;

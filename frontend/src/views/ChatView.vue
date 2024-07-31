@@ -8,7 +8,7 @@
         @select-thread="selectThread" />
     </div>
     <div class="chat-container">
-      <ChatHeader :threadId="currentThread.id" />
+      <!-- <ChatHeader :threadId="currentThread.id" /> -->
       <ChatFrame>
         <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
           :text="message.text" :typing="message.typing" :htmlContent="message.htmlContent"

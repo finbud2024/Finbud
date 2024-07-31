@@ -3,11 +3,11 @@
     <div :class="['message-wrapper', { 'user': isUser, 'bot': !isUser }]">
       <img :src="avatarSrc" class="avatar">
       <div class="message-content-wrapper">
-        <div class="username">{{ username }}</div>
+        <!-- <div class="username">{{ username }}</div> -->
         <div v-if="htmlContent" :class="['message-content']" v-html="htmlContent"></div>
         <div v-else  :class="['message-content', { 'typing': typing }]">{{ displayedText }}</div>
       </div>
-      <div class="timestamp">{{ timestamp }}</div>
+      <!-- <div class="timestamp">{{ timestamp }}</div> -->
     </div>
   </div>
 </template>
@@ -120,6 +120,7 @@ export default {
   }
 
   .message-content {
+    font-size: 0.9rem;
     display: flex;
     flex-direction:column;
     padding: 10px;
