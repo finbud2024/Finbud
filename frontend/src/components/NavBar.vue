@@ -211,6 +211,13 @@ export default {
   color: #007bff;
 }
 
+.nav-items li .chatview{
+  border-radius: 10px;
+  padding: 5px 10px;
+  background-color: rgb(47, 163, 47);
+  color: white;
+}
+
 .signup-button,
 .login-button,
 .logout-button {
@@ -407,16 +414,6 @@ export default {
   transform: translate(-15px, 0px);
 }
 
-.chatview{
-  border-radius: 10px;
-  padding: 5px 10px;
-  background-color: rgb(47, 163, 47);
-  color: white !important;
-}
-
-.chatview a{
-  color: white !important;
-}
 @media (max-width: 868px) {
   .nav-items {
     display: none;
