@@ -7,13 +7,12 @@
   </div>
   <!-- router-view will render the component associated with the current route -->
   <router-view />
-  <FooterBar />
+  <FooterBar ref="footerBar"/>
 </template>
 
 <script>
 import NavBar from './components/NavBar.vue';
 import FooterBar from './components/FooterBar.vue';
-
 
 export default {
   name: 'App',
@@ -21,6 +20,23 @@ export default {
     NavBar,
     FooterBar,
   },
+  mounted() {
+    this.updateFooterVisibility(this.$route.path);
+
+    this.$router.afterEach((to, from) => {
+      this.updateFooterVisibility(to.path);
+    });
+  },
+  methods: {
+    updateFooterVisibility(path) {
+      const footer = this.$refs.footerBar.$el;
+      if (path === '/chat-view') {
+        footer.style.display = 'none';
+      } else {
+        footer.style.display = 'flex';
+      }
+    }
+  }
 };
 </script>
 

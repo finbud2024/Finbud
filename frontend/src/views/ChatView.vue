@@ -480,7 +480,11 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
-
+    //set the height of chat-view page after delete footer
+    const navbarHeight = document.querySelector('.nav-actions').offsetHeight;
+    console.log("height: ", navbarHeight);
+    document.querySelector('.home-container').style.height = `calc(100vh - ${navbarHeight}px)`;
+    
     if (!this.messages) {
       this.messages = [];
     }
@@ -522,13 +526,6 @@ Also, sign in to access the full functionality of Finbud!`;
       this.addTypingResponse(botInstruction, false);
 
     }
-
-    const navbarHeight = document.querySelector('.nav-actions').offsetHeight;
-    console.log("height: ", navbarHeight);
-    document.querySelector('.home-container').style.height = `calc(100vh - ${navbarHeight}px)`;
-    const footer = document.querySelector('.footer-bar');
-    console.log(footer);
-    footer.style.display = 'none';
   }
 };
 </script>
