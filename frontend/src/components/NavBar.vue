@@ -5,16 +5,16 @@
       <ul class="nav-items">
         <li><router-link to="/" class="home">Home</router-link></li>
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
-        <li class="dropdown" @mousenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
+        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
           <div class="services-dropdown dropbtn">Overview <span class="arrow-down"></span></div>
-          <div class="dropdown-content">
-            <router-link to="/about" class="abiyt" @click="toggleAboutDropdown(false)">About</router-link>
+          <div class="dropdown-content" v-if="isAboutDropdownOpen">
+            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">About</router-link>
             <router-link to="/tech" class="technology"  @click="toggleAboutDropdown(false)">Technology</router-link>
           </div>
         </li>
         <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)" @mouseleave="toggleDropdown(false)">
           <div class="services-dropdown dropbtn" >Services <span class="arrow-down"></span></div>
-          <div :class="[`dropdown-content`, {show: isDropdownOpen}]">
+          <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
             <router-link to="/quant-analysis" class="home"  @click="toggleDropdown(false)">Quant</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
@@ -26,7 +26,7 @@
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
         <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)" @mouseleave="toggleProfileDropdown(false)">
           <img :src="profileImage" alt="User Image" class="user-image">
-          <div class="dropdown-profile">
+          <div class="dropdown-profile" v-show="isProfileDropdownOpen">
             <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
               <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
               <p>{{name}}</p>
@@ -69,6 +69,7 @@ export default {
   data() {
     return {
       isDropdownOpen: false,
+      isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
       image: '',
