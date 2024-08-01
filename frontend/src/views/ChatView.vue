@@ -482,9 +482,8 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
     }, 500);
     //set the height of chat-view page after delete footer
     const navbarHeight = document.querySelector('.nav-actions').offsetHeight;
-    console.log("height: ", navbarHeight);
     document.querySelector('.home-container').style.height = `calc(100vh - ${navbarHeight}px)`;
-    
+
     if (!this.messages) {
       this.messages = [];
     }
@@ -564,7 +563,6 @@ Also, sign in to access the full functionality of Finbud!`;
   display: flex;
   flex-direction: column;
   flex: 1;
-  padding-top: 20px;
 }
 
 @media (max-width: 768px) {

@@ -97,9 +97,24 @@ export default {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
-    max-width: 60%;
     line-height: 1.25rem;
     word-wrap: break-word;
+  }
+
+  .bot {
+    padding: 0 0 0 14%;
+  }
+
+  .user {
+    padding: 0 16% 0 0;
+  }
+
+  .bot .message-content-wrapper {
+    max-width: 67%;
+  }
+
+  .user .message-content-wrapper {
+    max-width: 50%;
   }
 
   .bot .avatar {
@@ -110,10 +125,11 @@ export default {
   }
 
   .user .avatar {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     margin-right: 1%;
+    margin-bottom: 10px;
   }
 
   .user {

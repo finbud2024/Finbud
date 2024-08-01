@@ -62,6 +62,7 @@ html {
 
 .content {
   padding-top: 80px;
+  flex: 1;
 }
 a {
   text-decoration: none;

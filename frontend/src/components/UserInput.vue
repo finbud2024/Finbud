@@ -51,12 +51,11 @@ export default {
 }
 
 .user-input {
-  width: 50%;
+  width: 60%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  padding: 15px 15px 30px 15px;
+  padding: 0px 15px 15px 15px;
   position: relative;
 }
 
@@ -80,21 +79,16 @@ export default {
   box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
 }
 
-.user-input button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-}
-
 .upload-btn {
   position: absolute;
-  left: 6%;
+  left: 30px;
   cursor: pointer;
   color: #007bff;
 }
 
 .send-btn {
   position: absolute;
-  right: 7%;
+  right: 40px;
   cursor: pointer;
   color: #007bff;
 }
