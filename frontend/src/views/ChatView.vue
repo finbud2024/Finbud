@@ -522,6 +522,13 @@ Also, sign in to access the full functionality of Finbud!`;
       this.addTypingResponse(botInstruction, false);
 
     }
+
+    const navbarHeight = document.querySelector('.nav-actions').offsetHeight;
+    console.log("height: ", navbarHeight);
+    document.querySelector('.home-container').style.height = `calc(100vh - ${navbarHeight}px)`;
+    const footer = document.querySelector('.footer-bar');
+    console.log(footer);
+    footer.style.display = 'none';
   }
 };
 </script>
@@ -529,7 +536,6 @@ Also, sign in to access the full functionality of Finbud!`;
 .home-container {
   display: flex;
   width: 100%;
-  height: 100vh;
 }
 
 .sidebar-container {

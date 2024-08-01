@@ -69,7 +69,7 @@ export default {
   thead {
     background-color: #f8f8f8;
   }
-  th,td {
+  th,td { 
     padding: 8px;
     text-align: left;
     border: 3px solid #000;

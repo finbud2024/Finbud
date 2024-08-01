@@ -259,16 +259,13 @@ export default {
 }
 
 .dropdown-content {
+  height: 0;
   position: absolute;
   background-color: white;
   min-width: 100px;
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
-  opacity: 0;
-  transform: translate(-10px, 20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
   border-radius: 15px;
-  border: 1px solid #007bff;
 }
 
 .dropdown-profile{
@@ -277,11 +274,8 @@ export default {
   min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
-  opacity: 0;
-  transform: translate(-160px, 20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translate(-160px, 0px);
   border-radius: 15px;
-  border: 1px solid #007bff;
 }
 
 .dropdown-content a:first-child:hover,
@@ -298,6 +292,7 @@ export default {
 
 .dropdown-content a,
 .dropdown-profile a {
+  background-color: white;
   color: black;
   padding: 12px 16px;
   text-decoration: none;
@@ -305,19 +300,50 @@ export default {
   align-items: center;
   border-bottom: 1px dotted rgb(226, 215, 215);
   height: 20px;
+  border-left: 2px solid #007bff;
+  border-right: 2px solid #007bff;
 }
 
+.dropdown-content a:nth-child(1),
+.dropdown-profile a:nth-child(1) {
+  border-top: 2px solid #007bff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
 .dropdown-content a:last-child,
 .dropdown-profile a:last-child {
-  border-bottom: none;
+  border-bottom: 2px solid #007bff;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
+
+
+.dropdown-content,
+.dropdown-profile {
+  animation-name: dropdown-animation;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes dropdown-animation {
+  0% {
+    opacity: 0;
+    height: 0;
+  }
+  100% {
+    opacity: 1;
+    height: fit-content;
+  }
+}
+
 
 .dropdown-content a:hover,
 .dropdown-profile a:hover {
   background-color: #ddd;
 }
 
-.dropdown:hover .dropdown-content {
+/* .dropdown:hover .dropdown-content {
   display: block;
   opacity: 1;
   transform: translate(-10px, 0px);
@@ -327,7 +353,7 @@ export default {
   display: block;
   opacity: 1;
   transform: translate(-160px, 0px);
-}
+} */
 
 .user-image {
   position: relative;
@@ -381,6 +407,16 @@ export default {
   transform: translate(-15px, 0px);
 }
 
+.chatview{
+  border-radius: 10px;
+  padding: 5px 10px;
+  background-color: rgb(47, 163, 47);
+  color: white !important;
+}
+
+.chatview a{
+  color: white !important;
+}
 @media (max-width: 868px) {
   .nav-items {
     display: none;
