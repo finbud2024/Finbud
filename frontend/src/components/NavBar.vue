@@ -3,7 +3,6 @@
     <router-link to="/" class="navbar-brand">FinBud</router-link>
     <div class="nav-right">
       <ul class="nav-items">
-        <li><router-link to="/" class="home">Home</router-link></li>
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
         <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
           <div class="services-dropdown dropbtn">Overview <span class="arrow-down"></span></div>
