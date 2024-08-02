@@ -5,31 +5,28 @@
       <div class="guidance-text">
         <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to help you get started:</p>
         <ol class="guidance-list">
-          <li> <span class="header-list"> Stock Price Inquiry: </span>
-            <br> Enter the stock code in uppercase (e.g., "TSLA").</li>
-          <li> <span class="header-list"> Financial Term Definitions: </span>
-            <br> <span class="command"> #define term </span> 
-            <br> (e.g., "#define IPO")</li>
-          <li> <span class="header-list"> List of Top 5 Cryptocurrencies: </span>
-            <br> <span class="command">#crypto</span></li>
-          <li> <span class="header-list"> Show 5 Properties in area: </span>
-              <br> <span class="command">#realestate area_name</span> 
-              <br> (e.g., "#realestate new york")
-              <br> If no area is specified, the default location will be San Jose.</li>
+          <!-- guidance for general users -->
+          <li v-for="(item, index) in generalGuidanceList" :key="index">
+            <span class="header-list">{{ item.header }}</span>
+            <div v-if="item.command" class="command-container">
+              <span class="command">{{ item.command }}</span>
+            </div>
+            <div v-if="item.instruction">{{ item.instruction }}.</div>
+            <div v-if="item.example">(e.g. "{{ item.example }}").</div>
+            <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
+          </li>
+          <!-- guidance for authenticated users -->
           <div v-if="authStore.isAuthenticated">
-            <li> <span class="header-list"> Add a Transaction: </span>
-              <br> <span class="command">#add description_amount</span> 
-              <br> (e.g., "#add Shopping 125")</li>
-            <li> <span class="header-list"> Track Spending: </span>
-              <br> <span class="command">#spend description_amount</span> 
-              <br> (e.g. "#spend Shopping 125")</li>
-            <li><span class="header-list"> Buy Stock: </span>
-              <br> <span class="command">#buy stock_name quantity</span> 
-              <br> (e.g., "#buy TSLA 10")</li>
-            <li> <span class="header-list"> Sell Stock: </span>
-              <br> <span class="command">#sell stock_name quantity</span> 
-              <br> (e.g., "#sell TSLA 10")</li>
+            <li v-for="(item, index) in userGuidanceList" :key="index">
+              <span class="header-list">{{ item.header }}</span>
+              <div v-if="item.command" class="command-container">
+                <span class="command">{{ item.command }}</span>
+              </div>
+              <div v-if="item.instruction">{{ item.instruction }}.</div>
+              <div v-if="item.example">(e.g. "{{ item.example }}").</div>
+            </li>
           </div>
+          <!-- this one always at last regardless of user status -->
           <li> <span class="header-list">General Financial Concepts & Advice:</span>
             <br> For general inquiries, use descriptive terms.</li>
         </ol>
@@ -47,6 +44,58 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  data() {
+    return {
+      generalGuidanceList: [
+        {
+          header: "Stock Price Inquiry",
+          command: null,
+          instruction: "Enter the stock code in uppercase",
+          example: "TSLA"
+        },
+        {
+          header: "Financial Term Definitions",
+          command: "#define term",
+          instruction: null,
+          example: "#define IPO"
+        },
+        {
+          header: "List of Top 5 Cryptocurrencies",
+          command: "#crypto",
+          instruction: null,
+          example: null
+        },
+        {
+          header: "Show 5 Properties in area",
+          command: "#realestate area_name",
+          example: "#realestate new york",
+          additionalInfo: "If no area is specified, the default location will be San Jose."
+        }
+      ],
+      userGuidanceList: [
+        {
+          header: "Add a Transaction",
+          command: "#add description_amount",
+          example: "#add Shopping 125"
+        },
+        {
+          header: "Track Spending",
+          command: "#spend description_amount",
+          example: "#spend Shopping 125"
+        },
+        {
+          header: "Buy Stock",
+          command: "#buy stock_name quantity",
+          example: "#buy TSLA 10"
+        },
+        {
+          header: "Sell Stock",
+          command: "#sell stock_name quantity",
+          example: "#sell TSLA 10"
+        }
+      ]
+    };
   },
   computed: {
     authStore() {
@@ -144,29 +193,38 @@ export default {
   color: #007bff;
 }
 
-/*
 .guidance-text ol{
-  list-style-type: string;
+  list-style-type: none;
   counter-reset: guidance-number;
 }
 
 
 .guidance-text ol li::before {
-  content: counter(guidance-number) ".";
+  content: counter(guidance-number) ". ";
   counter-increment: guidance-number;
+  font-weight: bold;
 }
-*/
+
+.guidance-text ol li:hover{
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
 
 .command {
   background-color: rgb(0, 123, 255, 0.7);
   padding: 2px 5px;
   border-radius: 5px;
-  line-height: 2;
+  line-height: normal;
   color: white;
+  text-align: center;
 }
 
 .header-list {
   font-weight: bold;
+}
+
+.command-container {
+  text-align: center;
+  margin: 10px 0;
 }
 /* ___________________________*/
 /* rgb 22 27 33 */
