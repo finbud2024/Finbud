@@ -3,7 +3,7 @@
     <div class="sidebar-content">
       <button class="close-btn" @click="close">x</button>
       <div class="guidance-text">
-        <p>Welcome to FinBud! Here are some <span class="command">commands</span> to help you get started:</p>
+        <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to help you get started:</p>
         <ol class="guidance-list">
           <li> <span class="header-list"> Stock Price Inquiry: </span>
             <br> Enter the stock code in uppercase (e.g., "TSLA").</li>
@@ -137,6 +137,11 @@ export default {
   font-size: 1.25rem;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+.brand-name {
+  font-weight: bolder;
+  color: #007bff;
 }
 
 /*
