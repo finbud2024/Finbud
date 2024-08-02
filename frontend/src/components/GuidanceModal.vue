@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-overlay" :class="{ 'show': showModal }" @click.self="close">
     <div class="sidebar-content">
-      <button class="close-btn" @click="close">X</button>
+      <button class="close-btn" @click="close">x</button>
       <div class="guidance-text">
         <p>Welcome to FinBud! Here are some tips to help you get started:</p>
         <ol>
@@ -72,8 +72,10 @@ export default {
   padding: 20px;
   border-radius: 8px 0 0 8px;
   max-width: 500px;
-  width: 80%;
+  width: 25%;
   height: 100%;
+  border: 3px solid #007bff;
+  overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transform: translateX(100%);
   transition: transform 0.3s ease-in-out;

@@ -19,8 +19,7 @@
     </div>
     <div 
       class="guidance-btn" 
-      @mouseenter="guidanceHover = true"
-      @mouseleave="guidanceHover = false"
+      :class="{ 'is-guidance-visible': showGuidance }"
       @click="showGuidance = true"
       >
       <div class="guidance-image-container">
@@ -58,7 +57,6 @@ export default {
       threads: [],
       isSidebarVisible: false,
       showGuidance: false, // Add state for showing guidance modal
-      guidanceHover: false
     };
   },
   computed: {
@@ -654,59 +652,12 @@ Also, sign in to access the full functionality of Finbud!`;
 
 .guidance-text {
   font-size: 1.25rem;
-  transform: translateY(-5px);
+  padding-top: 15px;
 }
 
+.is-guidance-visible {
+  right: calc(25% + 19px - 80px);
+}
 /*_____________________*/
 
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: flex-end;
-  z-index: 1000;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s 0.3s, opacity 0.3s ease-in-out;
-}
-
-.sidebar-overlay.show {
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.sidebar-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px 0 0 8px;
-  max-width: 500px;
-  width: 80%;
-  height: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transform: translateX(100%);
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar-overlay.show .sidebar-content {
-  transform: translateX(0);
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-}
-
-.guidance-text {
-  margin-top: 20px;
-}
 </style>
