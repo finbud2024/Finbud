@@ -45,23 +45,6 @@ export default {
 };
 </script>
 <style scoped>
-.guidance-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 1s ease;
-}
-
-.guidance-btn:hover {
-  background-color: #2980b9;
-}
 
 .sidebar-overlay {
   position: fixed;

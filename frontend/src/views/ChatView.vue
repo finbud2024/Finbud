@@ -17,7 +17,17 @@
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
-    <button class="guidance-btn" @click="showGuidance = true">Guidance</button>
+    <div 
+      class="guidance-btn" 
+      @mouseenter="guidanceHover = true"
+      @mouseleave="guidanceHover = false"
+      @click="showGuidance = true"
+      >
+      <div class="guidance-image-container">
+        <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud">
+      </div>
+      <span class="guidance-text">Guidance</span>
+    </div>
     <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
@@ -47,7 +57,8 @@ export default {
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
-      showGuidance: false // Add state for showing guidance modal
+      showGuidance: false, // Add state for showing guidance modal
+      guidanceHover: false
     };
   },
   computed: {
@@ -607,24 +618,46 @@ Also, sign in to access the full functionality of Finbud!`;
 .side-bar.is-visible {
   transform: translateX(0);
 }
+/*______________________*/
+/* Guidance CSS class*/
 
 .guidance-btn {
+  height: 50px;
+  width: 130px;
   position: fixed;
   bottom: calc(15%);
-  right: 20px;
+  right: -105px;
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
   font-size: 1rem;
-  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.3s ease;
+  display: flex;
 }
 
 .guidance-btn:hover {
-  background-color: #2980b9;
+  transform: translateX(-80px);
 }
+
+.guidance-image-container {
+  margin-left: -25px;
+  border-radius: 50%;
+  background-color: #007bff;
+}
+
+.guidance-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.guidance-text {
+  font-size: 1.25rem;
+  transform: translateY(-5px);
+}
+
+/*_____________________*/
 
 .sidebar-overlay {
   position: fixed;
