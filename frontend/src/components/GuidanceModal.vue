@@ -3,7 +3,7 @@
     <div class="sidebar-content">
       <button class="close-btn" @click="close">x</button>
       <div class="guidance-text">
-        <p>Welcome to FinBud! Here are some commands to help you get started:</p>
+        <p>Welcome to FinBud! Here are some <span class="command">commands</span> to help you get started:</p>
         <ol class="guidance-list">
           <li> <span class="header-list"> Stock Price Inquiry: </span>
             <br> Enter the stock code in uppercase (e.g., "TSLA").</li>
@@ -15,7 +15,7 @@
           <li> <span class="header-list"> Show 5 Properties in area: </span>
               <br> <span class="command">#realestate area_name</span> 
               <br> (e.g., "#realestate new york")
-              <br> If no area is specified, the default location will be San Jose</li>
+              <br> If no area is specified, the default location will be San Jose.</li>
           <div v-if="authStore.isAuthenticated">
             <li> <span class="header-list"> Add a Transaction: </span>
               <br> <span class="command">#add description_amount</span> 
@@ -31,7 +31,7 @@
               <br> (e.g., "#sell TSLA 10")</li>
           </div>
           <li> <span class="header-list">General Financial Concepts & Advice:</span>
-            <br> For general inquiries, use descriptive terms</li>
+            <br> For general inquiries, use descriptive terms.</li>
         </ol>
       </div>
     </div>
@@ -131,6 +131,12 @@ export default {
   border: 2px solid black;
   border-radius: 15px;
   margin: 10px;
+}
+
+.guidance-text p {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 /*
