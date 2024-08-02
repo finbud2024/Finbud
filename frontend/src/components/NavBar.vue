@@ -203,27 +203,26 @@ export default {
   color: black;
   text-decoration: none;
   transition: color 0.3s ease;
+  /* set all font in navbar to 1rem */
   font-size: 1rem;
-}
-
-.nav-items li a:hover {
-  color: #007bff;
 }
 
 .nav-items li .chatview{
   border-radius: 10px;
   padding: 5px 10px;
-  background-color: rgb(47, 163, 47);
+  background-color: #45a049;
   color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.signup-button,
-.login-button,
-.logout-button {
+.nav-items li .login-button {
   background-color: #45a049;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   text-decoration: none;
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -231,8 +230,16 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  min-width: 100px;
+  min-width: 70px;
+}
+
+.nav-items li a:not(.login-button):not(.chatview):hover {
+  color: #007bff;
+}
+
+.login-button:hover,
+.chatview:hover {
+  transform: scale(1.05);
 }
 
 .services-dropdown {
@@ -249,14 +256,6 @@ export default {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid black;
-}
-
-.signup-button:hover,
-.logout-button:hover,
-.login-button:hover {
-  background-color: #3e8e41;
-  color: #007bff;
-  transform: scale(1.05);
 }
 
 .dropdown {
@@ -437,28 +436,6 @@ export default {
 
   .navbar-brand {
     margin-left: 50px;
-  }
-
-  .login-button {
-    width: 20%;
-    padding: 0.5rem 1rem;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    margin-left: 10px;
-  }
-
-  .logout-button {
-    width: 30%;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    padding: 12px 16px;
-    margin-left: 10px;
   }
 }
 </style>
