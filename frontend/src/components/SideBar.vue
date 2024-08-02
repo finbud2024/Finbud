@@ -11,7 +11,9 @@
           @click="handleClick(index)">
         <div v-if="!thread.editing" class="thread-item">
           {{ thread.name }}
-          <button class="edit-btn" @click.stop="editThread(index)">...</button>
+          <div class="edit-btn" @click.stop="editThread(index)">
+            <font-awesome-icon icon="fa-solid fa-ellipsis" />
+          </div>
         </div>
         <input
           v-else
@@ -103,15 +105,6 @@ export default {
   font-size: 1rem;
 }
 
-.edit-btn {
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 0.7rem;
-}
-
 .add-thread-btn {
   cursor: pointer;
   padding: 5px 10px;
@@ -122,9 +115,18 @@ export default {
   transition: background-color 0.3s;
 }
 
-.add-thread-btn:hover,
-.edit-btn:hover {
+.add-thread-btn:hover {
   background-color: #2980b9;
+}
+
+.edit-btn {
+  color: white;
+}
+
+.edit-btn:hover {
+  cursor: pointer;
+  transition: transform 0.3s;
+  transform: scale(1.2);
 }
 
 .thread-list {
