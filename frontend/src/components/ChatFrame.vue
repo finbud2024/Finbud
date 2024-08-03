@@ -30,7 +30,6 @@ export default {
     width: 65%; /* Fixed width */
     overflow: auto;
     padding-bottom: 70px;
-    /* border: 1px solid #ccc;  */
 }
   
 </style>

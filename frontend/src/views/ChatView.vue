@@ -637,18 +637,23 @@ Also, sign in to access the full functionality of Finbud!`;
 }
 
 .guidance-btn:hover {
-  transform: translateX(-80px);
+  transform: translateX(-90px);
 }
 
 .guidance-image-container {
   margin-left: -25px;
+  width: 50px;
+  aspect-ratio: 1;
   border-radius: 50%;
   background-color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .guidance-image {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  aspect-ratio: 1;
   border-radius: 50%;
 }
 
