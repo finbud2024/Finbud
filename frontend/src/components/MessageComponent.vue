@@ -85,6 +85,7 @@ export default {
   }
 
   .message-wrapper {
+    padding: 0 15vw;
     display: flex;
     align-items: flex-end;
     gap: 10px;
@@ -142,7 +143,7 @@ export default {
   }
 
   .message-content {
-    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 5.6vw, 1.25rem); /*12px, x/3.2 vw, 20px ___ 1vw = 3.2px*/
     display: flex;
     flex-direction:column;
     padding: 10px;
@@ -154,6 +155,7 @@ export default {
     border: 1px solid transparent;
     text-align: left;
     white-space: pre-wrap; 
+    line-height: 1.2;
   }
 
   @keyframes typing {

@@ -24,10 +24,9 @@ export default {
 }
 
 .chat-frame {
-    height: 100%; /* Fixed height */
-    width: 65%; /* Fixed width */
-    overflow: auto;
-    padding-bottom: 70px;
+    height: 94%; /* Fixed height */
+    width: 100%; /* Fixed width */
+    overflow-y: auto;
 }
   
 </style>
