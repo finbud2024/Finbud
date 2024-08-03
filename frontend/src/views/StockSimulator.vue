@@ -54,15 +54,15 @@
       <div class="account-stats">
         <div class="account-stat">
           <span class="label">ACCOUNT BALANCE</span>
-          <span class="value">{{accountBalance}}</span>
+          <span class="value">${{accountBalance}}</span>
         </div>
         <div class="account-stat">
           <span class="label">CASH BALANCE</span>
-          <span class="value">{{cashBalance}}</span>
+          <span class="value">${{cash}}</span>
         </div>
         <div class="account-stat">
-          <span class="label">PORTFOLIO VALUE</span>
-          <span class="value">{{portfolioValue}}</span>
+          <span class="label">STOCK VALUE</span>
+          <span class="value">${{stockValue}}</span>
         </div>
       </div>
     </section>
@@ -112,8 +112,8 @@ export default {
       showModal: false,
       estimatedPrice: 15, 
       accountBalance: 0,
-      portfolioValue: 0,
-      cashBalance: 0,
+      stockValue: 0,
+      cash: 0,
       stockData: {
         open: '',
         close: '',
@@ -122,7 +122,7 @@ export default {
         marketCap: '',
         volume: ''
       },
-      fixedUserId: '66974fea75fa96762507ca06',
+      fixedUserId: localStorage.getItem('token'),
       action: 'buy' 
     };
   },
@@ -154,7 +154,7 @@ export default {
     },
     calculateRemainingBalance(action, price, quantity) {
       const total = this.calculateTotal(action, price, quantity);
-      return this.cashBalance - (action === 'buy' ? total : -total);
+      return this.cash - (action === 'buy' ? total : -total);
     },
     clearForm() {
       this.stockSymbol = '';
@@ -179,6 +179,22 @@ export default {
         .catch(error => {
           console.error('Error submitting order:', error);
         });
+
+      // //update for real user
+      // this.cash = this.calculateRemainingBalance(action, this.estimatedPrice, this.quantity); 
+      // this.stockValue = this.stockValue + this.calculateTotal(action, this.estimatedPrice, this.quantity);
+      // this.accountBalance = this.cash + this.stockValue;
+      // try {
+      //   axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.fixedUserId}`, {
+      //     bankingAccountData: {
+      //       accountBalance: this.accountBalance,
+      //       cash: this.cash,
+      //       stockValue: this.stockValue
+      //     }
+      //   });
+      // }catch(err){
+      //   console.log("error in updating account balance in user database", err);
+      // }
     },
     async fetchTransactions() {
       const userId = this.fixedUserId;
@@ -190,7 +206,12 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    // Calculate the total account balance by adding cash and stock value
+    accountBalance: function() {
+      return this.cash + this.stockValue;
+    } 
+  },
   watch: {
     '$route.query': {
       immediate: true,
@@ -210,8 +231,15 @@ export default {
 
     if (this.$route.query.symbol && this.$route.query.quantity) {
       this.bannerDisplayStock = this.$route.query.symbol;
-    } 
-    this.fetchTransactions(); // Fetch transactions when the component is mounted
+    }
+    // Fetch account balance data from local storage 
+    // dont need to check user authenticated
+    const userData = JSON.parse(localStorage.getItem('user'));
+    this.accountBalance = userData.bankingAccountData.accountBalance;
+    this.cash = userData.bankingAccountData.cash;
+    this.stockValue = userData.bankingAccountData.stockValue;
+    // Fetch transactions when the component is mounted
+    this.fetchTransactions();
   }
 };
 </script>

@@ -24,9 +24,23 @@ const userSchema = new mongoose.Schema({
 		lastName: String,
 		displayName: String,
 		profilePicture: String,
+	},
+	bankingAccountData:{
+		accountBalance:{
+			type: Number,
+			default: 0
+		},
+		stockValue:{
+			type: Number,
+			default: 0
+		},
+		cash:{
+			type: Number,
+			default: 1000
+		}
 	}
 });
-
+//NEED TO PRESAVE WITH ACCOUNT BALANCE = STOCK VALUE + CASH
 
 // // Hash password before saving user
 // userSchema.pre('save', async function (next) {
