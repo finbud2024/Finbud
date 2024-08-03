@@ -10,7 +10,7 @@ const validateRequest = (schema) => (req, res, next) => {
     for(let key in current){
       if(current.hasOwnProperty(key)){
         let newPath = path? `${path}.${key}`: key
-        if(typeof current[key] === 'object' && current[key] !== null){
+        if(typeof current[key] === 'object' && current[key] !== null && !Array.isArray(current[key])){
           queue.push({current: current[key], path: newPath});
         }
         else{

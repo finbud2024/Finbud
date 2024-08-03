@@ -3,26 +3,30 @@
     <router-link to="/" class="navbar-brand">FinBud</router-link>
     <div class="nav-right">
       <ul class="nav-items">
-        <li><router-link to="/" class="home">Home</router-link></li>
         <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
-        <li><router-link to="/about" class="about">About</router-link></li>
-        <li><router-link to="/tech" class="technology">Technology</router-link></li>
-        <li v-if="authStore.isAuthenticated" class="dropdown">
-          <button class="services-button dropbtn" @click="toggleDropdown">Services <span class="arrow-down"></span></button>
-          <div class="dropdown-content" v-show="isDropdownOpen" @mouseleave="closeDropdown">
-            <router-link to="/goal" class="goal" @click="closeDropdown">Goal</router-link>
-            <router-link to="/quant-analysis" class="home">Quant</router-link>
-            <router-link to="/stock-simulator" class="simulator" @click="closeDropdown">Simulator</router-link>
-            <router-link to="/quizz" class="quizz" @click="closeDropdown">Quiz</router-link>
-            <router-link to="/risk" class="risk" @click="closeDropdown">Risk</router-link>
-            <router-link to="/market" class="market" @click="closeDropdown">Market</router-link>
+        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
+          <div class="services-dropdown dropbtn">Overview <span class="arrow-down"></span></div>
+          <div class="dropdown-content" v-if="isAboutDropdownOpen">
+            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">About</router-link>
+            <router-link to="/tech" class="technology"  @click="toggleAboutDropdown(false)">Technology</router-link>
+          </div>
+        </li>
+        <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)" @mouseleave="toggleDropdown(false)">
+          <div class="services-dropdown dropbtn" >Services <span class="arrow-down"></span></div>
+          <div class="dropdown-content" v-show="isDropdownOpen">
+            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
+            <router-link to="/quant-analysis" class="home"  @click="toggleDropdown(false)">Quant</router-link>
+            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
+            <router-link to="/risk" class="risk" @click="toggleDropdown(false)">Risk</router-link>
+            <router-link to="/market" class="market" @click="toggleDropdown(false)">Market</router-link>
           </div>
         </li>
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="authStore.isAuthenticated" class="dropdown">
-          <img :src="profileImage" alt="User Image" class="user-image" @click="toggleProfileDropdown">
-          <div class="dropdown-profile" v-show="isProfileDropdownOpen" @mouseleave="closeProfileDropdown">
-            <router-link to="/profile" class="profile" @click="closeProfileDropdown">
+        <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)" @mouseleave="toggleProfileDropdown(false)">
+          <img :src="profileImage" alt="User Image" class="user-image">
+          <div class="dropdown-profile" v-show="isProfileDropdownOpen">
+            <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
               <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
               <p>{{name}}</p>
             </router-link>
@@ -64,6 +68,7 @@ export default {
   data() {
     return {
       isDropdownOpen: false,
+      isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
       image: '',
@@ -114,17 +119,14 @@ export default {
     }
   },
   methods: {
-    closeDropdown() {
-      this.isDropdownOpen = false;
+    toggleDropdown(open) {
+      this.isDropdownOpen = open;
     },
-    toggleDropdown() {
-      this.isDropdownOpen = !this.isDropdownOpen;
+    toggleProfileDropdown(open) {
+      this.isProfileDropdownOpen = open;
     },
-    closeProfileDropdown() {
-      this.isProfileDropdownOpen = false;
-    },
-    toggleProfileDropdown() {
-      this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
+    toggleAboutDropdown(open) {
+      this.isAboutDropdownOpen = open;
     },
     toggleDropdownMobile() {
       this.isDropdownOpenMobile = !this.isDropdownOpenMobile;
@@ -164,15 +166,19 @@ export default {
 
 .nav-bar {
   background-color: #FFFFFF;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 2rem;
+  padding: 0rem 2rem;
   font-family: 'Space Grotesk', sans-serif;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  position: fixed;
+  z-index: 1000;
 }
 
 .navbar-brand {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #007bff;
   cursor: pointer;
@@ -182,6 +188,7 @@ export default {
 .nav-right {
   display: flex;
   align-items: center;
+  margin-right: 3rem;
 }
 
 .nav-items {
@@ -196,21 +203,26 @@ export default {
   color: black;
   text-decoration: none;
   transition: color 0.3s ease;
-  font-size: 1.2rem;
+  /* set all font in navbar to 1rem */
+  font-size: 1rem;
 }
 
-.nav-items li a:hover {
-  color: #007bff;
+.nav-items li .chatview{
+  border-radius: 10px;
+  padding: 5px 10px;
+  background-color: #45a049;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.signup-button,
-.services-button,
-.login-button,
-.logout-button {
+.nav-items li .login-button {
   background-color: #45a049;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   text-decoration: none;
   padding: 0.5rem 1rem;
   cursor: pointer;
@@ -218,30 +230,32 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  min-width: 100px;
+  min-width: 70px;
 }
 
-.services-button {
+.nav-items li a:not(.login-button):not(.chatview):hover {
+  color: #007bff;
+}
+
+.login-button:hover,
+.chatview:hover {
+  transform: scale(1.05);
+}
+
+.services-dropdown {
+  cursor: pointer;
   position: relative;
 }
 
-.services-button .arrow-down {
-  margin-left: 0.5rem;
+.services-dropdown:hover {
+  color: #007bff;
+}
+.services-dropdown .arrow-down {
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid white;
-}
-
-.signup-button:hover,
-.logout-button:hover,
-.services-button:hover,
-.login-button:hover {
-  background-color: #3e8e41;
-  color: #007bff;
-  transform: scale(1.05);
+  border-top: 5px solid black;
 }
 
 .dropdown {
@@ -250,28 +264,23 @@ export default {
 }
 
 .dropdown-content {
+  height: 0;
   position: absolute;
   background-color: white;
-  min-width: 160px;
+  min-width: 100px;
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
-  opacity: 0;
-  transform: translate(-15px, 20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
   border-radius: 15px;
 }
 
 .dropdown-profile{
   position: absolute;
   background-color: white;
-  min-width: 300px;
+  min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
   z-index: 1;
-  opacity: 0;
-  transform: translate(-250px, 20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translate(-160px, 0px);
   border-radius: 15px;
-  margin-right: 100px;
 }
 
 .dropdown-content a:first-child:hover,
@@ -288,41 +297,73 @@ export default {
 
 .dropdown-content a,
 .dropdown-profile a {
+  background-color: white;
   color: black;
   padding: 12px 16px;
   text-decoration: none;
   display: flex;
   align-items: center;
   border-bottom: 1px dotted rgb(226, 215, 215);
-  height: 40px;
+  height: 20px;
+  border-left: 2px solid #007bff;
+  border-right: 2px solid #007bff;
 }
 
+.dropdown-content a:nth-child(1),
+.dropdown-profile a:nth-child(1) {
+  border-top: 2px solid #007bff;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
 .dropdown-content a:last-child,
 .dropdown-profile a:last-child {
-  border-bottom: none;
+  border-bottom: 2px solid #007bff;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
+
+
+.dropdown-content,
+.dropdown-profile {
+  animation-name: dropdown-animation;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes dropdown-animation {
+  0% {
+    opacity: 0;
+    height: 0;
+  }
+  100% {
+    opacity: 1;
+    height: fit-content;
+  }
+}
+
 
 .dropdown-content a:hover,
 .dropdown-profile a:hover {
   background-color: #ddd;
 }
 
-.dropdown:hover .dropdown-content {
+/* .dropdown:hover .dropdown-content {
   display: block;
   opacity: 1;
-  transform: translate(-15px, 0px);
+  transform: translate(-10px, 0px);
 }
 
 .dropdown:hover .dropdown-profile {
   display: block;
   opacity: 1;
-  transform: translate(-250px, 0px);
-}
+  transform: translate(-160px, 0px);
+} */
 
 .user-image {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -336,8 +377,8 @@ export default {
 .inside-dropdown-user-image,
 .icon {
   position: absolute;
-  width: 35px;
-  height: 35px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   margin-right: 10px;
   margin-left: 10px;
@@ -345,8 +386,8 @@ export default {
 }
 
 .dropdown-profile p{
-  margin-left: calc(50% - 70px);
-  font-size: 1.2rem;
+  margin-left:50px;
+  font-size: 1rem;
   line-height: 3px;
 }
 
@@ -395,28 +436,6 @@ export default {
 
   .navbar-brand {
     margin-left: 50px;
-  }
-
-  .login-button {
-    width: 20%;
-    padding: 0.5rem 1rem;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    margin-left: 10px;
-  }
-
-  .logout-button {
-    width: 30%;
-    font-size: 1.2rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    padding: 12px 16px;
-    margin-left: 10px;
   }
 }
 </style>

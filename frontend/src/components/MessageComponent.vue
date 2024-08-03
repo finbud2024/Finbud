@@ -3,11 +3,11 @@
     <div :class="['message-wrapper', { 'user': isUser, 'bot': !isUser }]">
       <img :src="avatarSrc" class="avatar">
       <div class="message-content-wrapper">
-        <div class="username">{{ username }}</div>
+        <!-- <div class="username">{{ username }}</div> -->
         <div v-if="htmlContent" :class="['message-content']" v-html="htmlContent"></div>
         <div v-else  :class="['message-content', { 'typing': typing }]">{{ displayedText }}</div>
       </div>
-      <div class="timestamp">{{ timestamp }}</div>
+      <!-- <div class="timestamp">{{ timestamp }}</div> -->
     </div>
   </div>
 </template>
@@ -69,7 +69,7 @@ export default {
   thead {
     background-color: #f8f8f8;
   }
-  th,td {
+  th,td { 
     padding: 8px;
     text-align: left;
     border: 3px solid #000;
@@ -93,40 +93,64 @@ export default {
     word-wrap: break-word;
   }
 
-  .chat-window {
-    height: 80vh;
-    /* Adjusted to 80% of viewport height */
-    border: 1px solid #e0e0e0;
-    background-color: #fff;
-    max-height: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    /* Enable scrolling if content exceeds window */
-  }
-
   .message-content-wrapper {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
-    max-width: 80%;
+    line-height: 1.25rem;
     word-wrap: break-word;
   }
 
-  .avatar {
-    width: 60px;
-    height: 60px;
+  /*
+  .bot {
+    padding: 0 0 0 14%;
+  }
+
+  .user {
+    padding: 0 16% 0 0;
+  }
+
+  */
+
+  .bot .message-content-wrapper {
+    max-width: 100%;
+    padding-right: calc(1% + 30px + 18px);
+  }
+
+  .user .message-content-wrapper {
+    max-width: 60%;
+  }
+
+  .bot .avatar {
+    width: 41px;
+    aspect-ratio: 1;
     border-radius: 50%;
     margin-left: 1%;
   }
 
+  .user .avatar {
+    width: 41px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin-right: 1%;
+  }
+
+  .user {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+  }
+
   .message-content {
+    font-size: 0.9rem;
     display: flex;
     flex-direction:column;
     padding: 10px;
-    margin: 4px 0;
     border-radius: 16px;
     background-color: #007bff;
-    color: #fff;
+    color: #fff; 
+    /* background-color: papayawhip;
+    color: black; */
     border: 1px solid transparent;
     text-align: left;
     white-space: pre-wrap; 

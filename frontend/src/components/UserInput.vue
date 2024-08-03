@@ -1,9 +1,15 @@
 <template>
-  <div class="user-input">
-    <input type="file" ref="fileInput" @change="handleImageUpload" style="display: none;" />
-    <button @click="triggerFileInput" class="upload-btn">📷</button>
-    <input type="text" v-model="messageText" @keyup.enter="send" placeholder="Type your message here..." />
-    <button @click="send" class="send-btn">Send</button>
+  <div class="user-input-container">
+    <div class="user-input">
+      <input type="file" ref="fileInput" @change="handleImageUpload" style="display: none;" />
+      <div @click="triggerFileInput" class="upload-btn">
+        <font-awesome-icon icon="fa-solid fa-paperclip" />
+      </div>
+      <input type="text" v-model="messageText" @keyup.enter="send" placeholder="Type your message here..." />
+      <div @click="send" class="send-btn">
+        <font-awesome-icon icon="fa-solid fa-chevron-up" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -38,26 +44,34 @@ export default {
 </script>
 
 <style scoped>
-.user-input {
+.user-input-container {
   display: flex;
+  justify-content: center;
   align-items: center;
-  background-color: #ffffff;
-  padding: 15px;
-  border-top: 2px solid #dee2e6;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
-.user-input:hover {
+.user-input {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 15px 15px 15px;
+  position: relative;
+}
+
+/* .user-input:hover {
   background-color: #f1f3f5;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
-}
+} */
 
 .user-input input[type="text"] {
   flex-grow: 1;
   margin-right: 10px;
-  padding: 10px;
-  border: 1px solid #ced4da;
+  padding: 10px 10px 10px 40px;
+  border: 2px solid black;
   border-radius: 20px;
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
@@ -68,30 +82,18 @@ export default {
   box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
 }
 
-.user-input button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-.user-input button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-}
-
 .upload-btn {
-  background: none;
-  border: none;
+  position: absolute;
+  left: 30px;
   cursor: pointer;
-  font-size: 1.5rem;
-  margin-right: 10px;
   color: #007bff;
-  transition: color 0.3s, transform 0.2s;
+}
+
+.send-btn {
+  position: absolute;
+  right: 40px;
+  cursor: pointer;
+  color: #007bff;
 }
 
 .upload-btn:hover {

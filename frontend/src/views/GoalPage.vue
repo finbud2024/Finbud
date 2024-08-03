@@ -7,7 +7,7 @@
           <i class="fas fa-bell"></i>
         </div>
         <div class="header-greeting">
-          <h1>Hello, Trí <span>👋</span></h1>
+          <h1>Hello, <span>{{firstName}}</span>👋</h1>
           <p>A step towards financial freedom before the age of 30!</p>
         </div>
       </div>
@@ -20,7 +20,7 @@
       <div class="assets-graph">
         <img src="@/assets/stockTri.png" alt="Assets Graph">
         <p class="assets-description">
-          At just 22 years old, Trí Bui from Vietnam has amassed an impressive $31,340.43 in assets. This remarkable achievement places him among the top 5% of his peers, demonstrating exceptional financial acumen and strategic foresight.
+          At just 22 years old, <span>{{displayName}}</span> from Vietnam has amassed an impressive $31,340.43 in assets. This remarkable achievement places him among the top 5% of his peers, demonstrating exceptional financial acumen and strategic foresight.
         </p>
       </div>
     </section>
@@ -152,6 +152,8 @@ export default {
   },
   data() {
     return {
+      firstName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.firstName : 'Guest',
+      displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.displayName : 'Guest',
       showModal: false,
       showAddGoalModal: false,
       showEditTransactionModal: false,
@@ -192,6 +194,11 @@ export default {
       initialBalanceSet: false, // New state to track if initial balance is set
       showLineChart: true, // New state to toggle between line and bar chart
     };
+  },
+  computed: {
+    authStore(){
+      return authStore;
+    }
   },
   methods: {
     showGoalProgress(title, progress) {

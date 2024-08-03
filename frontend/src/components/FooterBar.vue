@@ -50,6 +50,7 @@ export default {
   flex-wrap: wrap; /* Allows items to wrap as needed on smaller screens */
   font-family: 'Space Grotesk', sans-serif;
   height: auto;
+  font-size: 0.875rem;
 }
 
 .subscribe {
@@ -60,6 +61,7 @@ export default {
 .subscribe-box {
   margin-top: 5px;
   display: flex;
+  height: 40px;
 }
 
 .footer-content {
@@ -70,20 +72,20 @@ export default {
 }
 
 .footer-brand {
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: bold;
   cursor: pointer;
 }
 
 .description {
-  font-size: 15px;
+  font-size: 0.875rem;
   color: gray;
 }
 
 .footer-items {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 1rem;
   list-style: none;
   align-items: flex-start;
 }
@@ -105,7 +107,7 @@ export default {
     border: 1px solid #000;
     border-radius: 5px;
     padding: 10px 24px;
-    font-size: 16px;
+    font-size: 0.875rem;
 }
 
 .button.footer-form-button {

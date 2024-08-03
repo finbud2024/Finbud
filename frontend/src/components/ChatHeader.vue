@@ -25,17 +25,15 @@ export default {
 
 <style scoped>
 .chat-header {
-  background-image: linear-gradient(to right, #3541c9, #3340b2);
   color: #ecf0f1;
-  padding: 20px;
+  padding: 10px 0;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: clamp(1rem, 1.5rem, 2rem); 
   font-family: 'Space Grotesk', sans-serif;
   background-image: linear-gradient(to right, #4444c5, #2348db);
   color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-bottom: 3px solid #1e81b0;
-  padding: 20px 0;
   transition: background-image 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
 }
 
