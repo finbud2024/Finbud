@@ -1,9 +1,7 @@
 <template>
     <div class="chat-frame-container">
         <div class="chat-frame">
-            <div class="a">
-                <slot></slot> <!-- Content from parent component will be inserted here -->
-            </div>
+            <slot></slot> <!-- Content from parent component will be inserted here -->
         </div>
     </div>
 </template>
