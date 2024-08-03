@@ -101,6 +101,7 @@ export default {
     word-wrap: break-word;
   }
 
+  /*
   .bot {
     padding: 0 0 0 14%;
   }
@@ -109,32 +110,35 @@ export default {
     padding: 0 16% 0 0;
   }
 
+  */
+
   .bot .message-content-wrapper {
-    max-width: 67%;
+    max-width: 100%;
+    padding-right: calc(1% + 30px + 18px);
   }
 
   .user .message-content-wrapper {
-    max-width: 50%;
+    max-width: 60%;
   }
 
   .bot .avatar {
-    width: 50px;
-    height: 50px;
+    width: 41px;
+    aspect-ratio: 1;
     border-radius: 50%;
     margin-left: 1%;
   }
 
   .user .avatar {
-    width: 30px;
-    height: 30px;
+    width: 41px;
+    aspect-ratio: 1;
     border-radius: 50%;
     margin-right: 1%;
-    margin-bottom: 10px;
   }
 
   .user {
     display: flex;
     flex-direction: row-reverse;
+    align-items: flex-end;
   }
 
   .message-content {
@@ -142,7 +146,6 @@ export default {
     display: flex;
     flex-direction:column;
     padding: 10px;
-    margin: 4px 0;
     border-radius: 16px;
     background-color: #007bff;
     color: #fff; 

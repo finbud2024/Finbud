@@ -48,6 +48,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .user-input {
@@ -67,7 +70,7 @@ export default {
 .user-input input[type="text"] {
   flex-grow: 1;
   margin-right: 10px;
-  padding: 10px 10px 10px 8%;
+  padding: 10px 10px 10px 40px;
   border: 2px solid black;
   border-radius: 20px;
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;

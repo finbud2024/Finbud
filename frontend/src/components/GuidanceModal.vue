@@ -138,10 +138,11 @@ export default {
 .sidebar-content {
   background: white;
   padding: 20px;
-  border-radius: 40px 0 0 15px;
+  border-radius: 40px 0 0 40px;
   max-width: 500px;
   width: 25%;
-  height: 100%;
+  height: 80%;
+  margin-top: 7%;
   border: 3px solid #007bff;
   overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

@@ -570,8 +570,10 @@ Also, sign in to access the full functionality of Finbud!`;
 
 .chat-container {
   display: flex;
+  align-items: center;
   flex-direction: column;
   flex: 1;
+  position: relative;
 }
 
 @media (max-width: 768px) {
