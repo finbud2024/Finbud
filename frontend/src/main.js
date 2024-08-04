@@ -9,9 +9,11 @@ import * as faRegular from '@fortawesome/free-regular-svg-icons';
 import * as faBrand from '@fortawesome/free-brands-svg-icons';
 
 // Add specific icons to the library
-const icons = [faSolid.faCamera, faSolid.faRightFromBracket, 
+const icons = [ faSolid.faCamera, faSolid.faRightFromBracket, 
                 faSolid.faEye, faSolid.faEyeSlash, faSolid.faPaperclip,
-                faSolid.faChevronUp, faSolid.faChevronDown, faSolid.faEllipsis];
+                faSolid.faChevronUp, faSolid.faChevronDown, faSolid.faEllipsis,
+                faSolid.faBars
+            ];
 library.add(...icons); // Use the spread operator to add the icons
 
 // Create the application

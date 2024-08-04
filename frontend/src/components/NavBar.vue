@@ -181,7 +181,7 @@ export default {
 }
 
 .navbar-brand {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #007bff;
   cursor: pointer;
@@ -207,7 +207,7 @@ export default {
   text-decoration: none;
   transition: color 0.3s ease;
   /* set all font in navbar to 1rem */
-  font-size: 1rem;
+  font-size: clamp(0.75rem, 5.6vw, 1.25rem);
 }
 
 .nav-items li .chatview{
@@ -248,6 +248,7 @@ export default {
 .services-dropdown {
   cursor: pointer;
   position: relative;
+  font-size: clamp(0.75rem, 5.6vw, 1.25rem);
 }
 
 .services-dropdown:hover {
@@ -390,7 +391,6 @@ export default {
 
 .dropdown-profile p{
   margin-left:50px;
-  font-size: 1rem;
   line-height: 3px;
 }
 
@@ -416,7 +416,6 @@ export default {
 }
 
 @media (max-width: 768px) {
-
   .nav-bar {
     display: flex;
     flex-direction: row;

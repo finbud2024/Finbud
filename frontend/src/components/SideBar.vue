@@ -102,7 +102,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1rem;
+  font-size: 1.5rem;
 }
 
 .add-thread-btn {
@@ -145,7 +145,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.875rem;
 }
 
 .thread-list li:hover {

@@ -169,7 +169,6 @@ export default {
 .guidance-text {
   background-color: white;
   margin-bottom: 30px;
-  font-size: 0.875rem;
 }
 
 .guidance-list{
