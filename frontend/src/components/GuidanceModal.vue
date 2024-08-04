@@ -227,6 +227,14 @@ export default {
   text-align: center;
   margin: 10px 0;
 }
+
 /* ___________________________*/
-/* rgb 22 27 33 */
+/* Media queries */
+@media (max-width: 768px) {
+  .sidebar-content {
+    width: 80%;
+    position: absolute;
+    bottom: 6%;
+  }
+}
 </style>

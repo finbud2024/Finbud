@@ -38,7 +38,10 @@
         </li>
       </ul>
       <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
-        <button class="dropbtn" @click="toggleDropdownMobile">☰</button>
+        <div class="button-mobile dropbtn" @click="toggleDropdownMobile" >
+          <div class="brand-mobile">FinBud</div>
+          <font-awesome-icon icon="fa-solid fa-chevron-down" />
+        </div>
         <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
           <router-link to="/" class="home" @click="toggleDropdownMobile">Home</router-link>
           <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
@@ -51,7 +54,7 @@
           <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
           <router-link to="/quant-analysis" class="home">Quant</router-link>
           <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="toggleDropdownMobile">Log In</router-link>
-          <button v-if="authStore.isAuthenticated" @click="logout" class="logout-button">Log Out</button>
+          <router-link to="#" v-if="authStore.isAuthenticated" @click="logout" class="logout">Log Out</router-link>
         </div>
       </div>
     </div>
@@ -412,30 +415,56 @@ export default {
   transform: translate(-15px, 0px);
 }
 
-@media (max-width: 868px) {
+@media (max-width: 768px) {
+
+  .nav-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 7%;
+  }
+
+  .mobile-only {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .button-mobile {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .navbar-brand {
+    display: none;
+  }
+
+  .brand-mobile {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
   .nav-items {
     display: none;
   }
 
-  .dropdown.mobile-only {
-    display: inline-block;
-  }
-
   .dropdown-content {
-    position: fixed;
-    top: 60px;
-    left: 5px;
-    width: 100%;
+    top: 30px;
+    width: fit-content;
+    display: flex;
     flex-direction: column;
   }
 
-  .nav-bar {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .navbar-brand {
-    margin-left: 50px;
-  }
 }
 </style>

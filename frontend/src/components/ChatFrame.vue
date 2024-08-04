@@ -24,7 +24,7 @@ export default {
 }
 
 .chat-frame {
-    height: 94%; /* Fixed height */
+    height: calc(100% - 30px - 4px - 1rem); /* Fixed height */
     width: 100%; /* Fixed width */
     overflow-y: auto;
 }

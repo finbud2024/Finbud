@@ -172,4 +172,11 @@ export default {
     background-color: #f0f0f0;
     color: #000;
   }
+
+  /* Media queries */
+  @media (max-width: 768px) {
+    .message-wrapper {
+      padding: 0 5vw;
+    }
+  }
 </style>

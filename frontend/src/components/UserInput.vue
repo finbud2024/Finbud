@@ -105,4 +105,11 @@ export default {
   outline: none;
   box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
 }
+
+/* Media queries */
+@media (max-width: 768px) {
+  .user-input {
+    width: 100%;
+  }
+}
 </style>
