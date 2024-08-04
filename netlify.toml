@@ -1,12 +1,12 @@
 [build]
   functions = "backend/functions"
   publish = "frontend/dist"
-  command = "npm run build --prefix frontend"
+  command = "npm run build"
 
 [dev]
   port = 8888
   functions = "backend/functions"
-  framework= "vue"
+  framework = "#auto"
   command = "npm run client"
 
 [functions]
