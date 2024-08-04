@@ -49,8 +49,8 @@ export default {
   justify-content: center;
   align-items: center;
   position: absolute;
-  bottom: 0;
   width: 100%;
+  bottom: 0;
 }
 
 .user-input {
@@ -104,5 +104,12 @@ export default {
 .upload-btn:focus, .send-btn:focus {
   outline: none;
   box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .user-input {
+    width: 100%;
+  }
 }
 </style>

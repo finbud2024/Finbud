@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
-      <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
+      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
         @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
@@ -552,14 +552,11 @@ Also, sign in to access the full functionality of Finbud!`;
 .toggle-sidebar-btn {
   display: none;
   position: absolute;
-  top: 10px;
+  top: 15px;
   left: 10px;
   z-index: 1000;
-  background-color: #3498db;
-  color: white;
-  border: none;
+  color: black; 
   padding: 10px;
-  font-size: 1.5rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -609,7 +606,7 @@ Also, sign in to access the full functionality of Finbud!`;
   top: 0;
   width: 60%;
   height: 100%;
-  background-color: #f9f3f3;
+  background-color: rgb(248, 249, 254);
   z-index: 1001;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
@@ -630,7 +627,6 @@ Also, sign in to access the full functionality of Finbud!`;
   background-color: #007bff;
   color: white;
   border: none;
-  font-size: 1rem;
   cursor: pointer;
   transition: transform 0.3s ease;
   display: flex;
