@@ -1,6 +1,5 @@
 import passportLocal from 'passport-local'; 
 import User from '../Database Schema/User.js';
-// import bcrypt from 'bcrypt';
 
 const localStrategy = new passportLocal.Strategy({passReqToCallback: true},
     async (req, username, password, done) => {

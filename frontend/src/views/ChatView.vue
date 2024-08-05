@@ -1,14 +1,14 @@
 <template>
   <div class="home-container">
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
-      <button class="toggle-sidebar-btn" @click="toggleSidebar">☰</button>
+      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
         @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
         @select-thread="selectThread" />
     </div>
     <div class="chat-container">
-      <ChatHeader :threadId="currentThread.id" />
+      <!-- <ChatHeader :threadId="currentThread.id" /> -->
       <ChatFrame>
         <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
           :text="message.text" :typing="message.typing" :htmlContent="message.htmlContent"
@@ -17,7 +17,16 @@
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
-    <button class="guidance-btn" @click="showGuidance = true">Guidance</button>
+    <div 
+      class="guidance-btn" 
+      :class="{ 'is-guidance-visible': showGuidance }"
+      @click="showGuidance = true"
+      >
+      <div class="guidance-image-container">
+        <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud">
+      </div>
+      <span class="guidance-text">Guidance</span>
+    </div>
     <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
@@ -43,11 +52,11 @@ export default {
       messages: [],
       displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.displayName : 'User',
       userAvatar: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.profilePicture : require('@/assets/anonymous.png'),
-      botAvatar: require('@/assets/bot.png'),
+      botAvatar: require('@/assets/botrmbg.png'),
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
-      showGuidance: false // Add state for showing guidance modal
+      showGuidance: false, // Add state for showing guidance modal
     };
   },
   computed: {
@@ -480,6 +489,9 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
+    //set the height of chat-view page after delete footer
+    const navbarHeight = document.querySelector('.nav-actions').offsetHeight;
+    document.querySelector('.home-container').style.height = `calc(100vh - ${navbarHeight}px)`;
 
     if (!this.messages) {
       this.messages = [];
@@ -529,20 +541,22 @@ Also, sign in to access the full functionality of Finbud!`;
 .home-container {
   display: flex;
   width: 100%;
-  height: 100vh;
+}
+
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .toggle-sidebar-btn {
   display: none;
   position: absolute;
-  top: 10px;
+  top: 15px;
   left: 10px;
   z-index: 1000;
-  background-color: #3498db;
-  color: white;
-  border: none;
+  color: black; 
   padding: 10px;
-  font-size: 1.5rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -553,8 +567,10 @@ Also, sign in to access the full functionality of Finbud!`;
 
 .chat-container {
   display: flex;
+  align-items: center;
   flex-direction: column;
   flex: 1;
+  position: relative;
 }
 
 @media (max-width: 768px) {
@@ -590,7 +606,7 @@ Also, sign in to access the full functionality of Finbud!`;
   top: 0;
   width: 60%;
   height: 100%;
-  background-color: #f9f3f3;
+  background-color: rgb(248, 249, 254);
   z-index: 1001;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
@@ -599,73 +615,52 @@ Also, sign in to access the full functionality of Finbud!`;
 .side-bar.is-visible {
   transform: translateX(0);
 }
+/*______________________*/
+/* Guidance CSS class*/
 
 .guidance-btn {
+  height: 50px;
+  width: 130px;
   position: fixed;
   bottom: calc(15%);
-  right: 20px;
+  right: -105px;
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.3s ease;
+  display: flex;
 }
 
 .guidance-btn:hover {
-  background-color: #2980b9;
+  transform: translateX(-90px);
 }
 
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.6);
+.guidance-image-container {
+  margin-left: -25px;
+  width: 50px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: #007bff;
   display: flex;
-  justify-content: flex-end;
-  z-index: 1000;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s 0.3s, opacity 0.3s ease-in-out;
+  justify-content: center;
+  align-items: center;
 }
 
-.sidebar-overlay.show {
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.sidebar-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px 0 0 8px;
-  max-width: 500px;
-  width: 80%;
-  height: 100%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transform: translateX(100%);
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar-overlay.show .sidebar-content {
-  transform: translateX(0);
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
+.guidance-image {
+  width: 35px;
+  aspect-ratio: 1;
+  border-radius: 50%;
 }
 
 .guidance-text {
-  margin-top: 20px;
+  font-size: 1.25rem;
+  padding-top: 15px;
 }
+
+.is-guidance-visible {
+  right: calc(25% + 19px - 80px);
+}
+/*_____________________*/
+
 </style>
