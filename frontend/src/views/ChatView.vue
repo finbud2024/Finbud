@@ -40,6 +40,17 @@ import GuidanceModal    from '../components/GuidanceModal.vue';
 import ChatViewiFrame   from '../components/ChatViewiFrame.vue';
 import { gptServices }  from '../services/gptServices.js';
 
+let newWindow 
+
+function closeOnClickOutside(event) {
+  if (newWindow && !newWindow.closed) {
+    // If the new window is open and the click is outside, close the new window
+    newWindow.close();
+    // Remove the event listener after closing the window
+    window.removeEventListener('click', closeOnClickOutside);
+  }
+}
+
 export default {
   name: 'ChatView',
   props: ['threadId'],
@@ -206,7 +217,10 @@ export default {
                 const left = (screenWidth - width) / 2;
                 const top = (screenHeight - height) / 2;
 
-                window.open(url,'_blank', `toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
+                newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
+
+                // // Add event listener to detect clicks outside the new window
+                window.addEventListener('click', closeOnClickOutside);
               } else {
                 this.addTypingResponse('Invalid stock symbol or quantity', false);
               }
