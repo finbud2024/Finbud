@@ -1,6 +1,6 @@
 import express from 'express';
-import StockTransaction from '../Database Schema/StockTransaction';
-import validateRequest from '../utils/validateRequest';
+import StockTransaction from '../Database Schema/StockTransaction.js';
+import validateRequest from '../utils/validateRequest.js';
 
 const stockTransactionRoute = express.Router();
 
