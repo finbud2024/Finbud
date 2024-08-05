@@ -17,35 +17,33 @@
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
-    <div 
-      class="guidance-btn" 
-      :class="{ 'is-guidance-visible': showGuidance }"
-      @click="showGuidance = true"
-      >
+    <div class="guidance-btn" :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud">
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
+    <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
+    <ChatViewiFrame v-if="showIFrame"   @close="showIFrame = false" :showModal="showIFrame" :iFrame="iFrameContent"/>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import ChatHeader from '../components/ChatHeader.vue';
-import ChatFrame from '../components/ChatFrame.vue';
+import authStore        from '@/authStore';
+import axios            from 'axios';
+import ChatHeader       from '../components/ChatHeader.vue';
+import ChatFrame        from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
-import UserInput from '../components/UserInput.vue';
-import SideBar from '../components/SideBar.vue';
-import GuidanceModal from '../components/GuidanceModal.vue';
-import authStore from '@/authStore';
-import { gptServices } from '../services/gptServices.js';
+import UserInput        from '../components/UserInput.vue';
+import SideBar          from '../components/SideBar.vue';
+import GuidanceModal    from '../components/GuidanceModal.vue';
+import ChatViewiFrame   from '../components/ChatViewiFrame.vue';
+import { gptServices }  from '../services/gptServices.js';
 
 export default {
   name: 'ChatView',
   props: ['threadId'],
-  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal },
+  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal,  ChatViewiFrame},
   data() {
     return {
       newMessage: '',
@@ -56,7 +54,9 @@ export default {
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
-      showGuidance: false, // Add state for showing guidance modal
+      showGuidance: false, // State for showing guidance modal
+      showIFrame: false,
+      iFrameContent: '',
     };
   },
   computed: {
@@ -87,8 +87,7 @@ export default {
     async updateCurrentThread(currentThreadId) {
       try {
         this.messages = [];
-        const botInstruction = `Hello ${this.displayName}!
-Please click "Guidance" for detailed instructions on how to use the chatbot.`;
+        const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
         this.addTypingResponse(botInstruction, false);
 
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
@@ -161,257 +160,270 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
       });
     },
     async sendMessage(newMessage) {
-      this.messages.push({
-        text: newMessage.trim(),
-        isUser: true,
-        typing: true,
-        timestamp: new Date().toLocaleTimeString()
-      });
-
       const userMessage = newMessage.trim();
-      console.log('User message:', userMessage);
-      const answers = [];
-      // HANDLE DEFINE
-      if (userMessage.toLowerCase().includes("define")) {
-        try {
-          const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-          const prompt = `Explain ${term} to me as if I'm 15.`;
-          const gptResponse = await gptServices(prompt);
-          answers.push(gptResponse);
-        } catch (err) {
-          console.error('Error in define message:', error);
-        }
-      }
-      // HANDLE BUY
-      if (userMessage.toLowerCase().includes("buy")) {
-        try {
-          const buyRegex = /#buy\s+([A-Z]+)\s+(\d+)/i;
-          const match = userMessage.match(buyRegex);
-          if (match) {
-            const stockSymbol = match[1].toUpperCase();
-            const quantity = parseInt(match[2], 10);
-            if (stockSymbol && !isNaN(quantity)) {
-              const url = this.$router.resolve({
-                path: '/stock-simulator',
-                query: { symbol: stockSymbol, quantity }
-              }).href;
-              window.open(url, '_blank');
-            } else {
-              this.addTypingResponse('Invalid stock symbol or quantity', false);
-            }
-          } else {
-            this.addTypingResponse('Invalid buy command format', false);
+      //ONLY EXECUTE COMMAND/SHOW PROMPT IF THERE IS SOME MESSAGES IN THE USER INPUT
+      if(userMessage.length != 0){
+        this.messages.push({
+          text: userMessage,
+          isUser: true,
+          typing: true,
+          timestamp: new Date().toLocaleTimeString()
+        });
+        const answers = [];
+        // HANDLE DEFINE
+        if (userMessage.toLowerCase().includes("define")) {
+          try {
+            const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
+            const prompt = `Explain ${term} to me as if I'm 15.`;
+            const gptResponse = await gptServices(prompt);
+            answers.push(gptResponse);
+          } catch (err) {
+            console.error('Error in define message:', error);
           }
-        } catch (err) {
-          console.error('Error in buy message:', err);
         }
-      }
-      // HANDLE SELL
-      else if (userMessage.toLowerCase().includes("sell")) {
-        try {
-          const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
-          const match = userMessage.match(sellRegex);
-          if (match) {
-            const stockSymbol = match[1].toUpperCase();
-            const quantity = parseInt(match[2], 10);
-            if (stockSymbol && !isNaN(quantity)) {
-              const url = this.$router.resolve({
-                path: '/stock-simulator',
-                query: { symbol: stockSymbol, quantity: -quantity }
-              }).href;
-              window.open(url, '_blank');
-            } else {
-              this.addTypingResponse('Invalid stock symbol or quantity', false);
-            }
-          } else {
-            this.addTypingResponse('Invalid sell command format', false);
-          }
-        } catch (err) {
-          console.error('Error in sell message:', err);
-        }
-      }
-      // HANDLE ADD TRANSACTION
-      else if (userMessage.toLowerCase().includes("#add")) {
-        try {
-          const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
-          if (match) {
-            const description = match[1].trim();
-            const amount = parseInt(match[2], 10);
-            const balance = await this.calculateNewBalance(amount);
-            await this.addTransaction(description, amount, balance);
-            answers.push([`Transaction added: ${description}, $${amount}. New balance: $${balance}.`]);
-          } else {
-            answers.push(['Please specify the description and amount you want to add.']);
-          }
-        } catch (err) {
-          console.error('Error in add transaction:', err);
-        }
-      }
-      // HANDLE SPEND TRANSACTION
-      else if (userMessage.toLowerCase().includes("#spend")) {
-        try {
-          const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
-          if (match) {
-            const description = match[1].trim();
-            const amount = -parseInt(match[2], 10);
-            const balance = await this.calculateNewBalance(amount);
-            await this.addTransaction(description, amount, balance);
-            answers.push([`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`]);
-          } else {
-            answers.push(['Please specify the description and amount you want to spend.']);
-          }
-        } catch (err) {
-          console.error('Error in spend transaction:', err);
-        }
-      }
-      // HANDLE STOCK 
-      else if (this.extractStockCode(userMessage)) {
-        try {
-          const stockCode = this.extractStockCode(userMessage)[0];
-          const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
-          const stockData = stockResponse.data;
-          const price = stockData['Global Quote']['05. price'];
-          const timeStamp = new Date().toLocaleTimeString();
-          let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-          answers.push(alphavantageResponse);
-          //chatgpt api
-          const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-          const gptResponse = await gptServices(prompt);
-          answers.push(gptResponse);
-        } catch (err) {
-          console.error('Error in stock message:', err);
-        }
-      }
-      // RETURNS CRYPTO TABLE
-      else if (userMessage.toLowerCase().includes("#crypto")) {
-        //FETCHING COIN DATA
+        // HANDLE BUY (7)
+        if (userMessage.toLowerCase().includes("buy")) {
+          try {
+            const buyRegex = /#buy\s+([A-Z]+)\s+(\d+)/i;
+            const match = userMessage.match(buyRegex);
+            if (match) {
+              const stockSymbol = match[1].toUpperCase();
+              const quantity = parseInt(match[2], 10);
+              if (stockSymbol && !isNaN(quantity)) {
+                const url = this.$router.resolve({
+                  path: '/stock-simulator',
+                  query: { symbol: stockSymbol, quantity }
+                }).href;
 
-        let coinData = [];
-        try {
-          const res = await axios.get("https://api.coinranking.com/v2/coins?timePeriod=7d", {
-            headers: { 'x-access-token': process.env.VUE_APP_COINRANKING_KEY }
+                const screenWidth = window.screen.width;
+                const screenHeight = window.screen.height;
+                
+                // Calculate width and height as a percentage of screen dimensions
+                const width = screenWidth * 0.8; // 80% of screen width
+                const height = screenHeight * 0.8; // 80% of screen height
+
+                // Center the window
+                const left = (screenWidth - width) / 2;
+                const top = (screenHeight - height) / 2;
+
+                window.open(url,'_blank', `toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
+              } else {
+                this.addTypingResponse('Invalid stock symbol or quantity', false);
+              }
+            } else {
+              this.addTypingResponse('Invalid buy command format', false);
+            }
+          } catch (err) {
+            console.error('Error in buy message:', err);
+          }
+        }
+        // HANDLE SELL (8)
+        else if (userMessage.toLowerCase().includes("sell")) {
+          try {
+            const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
+            const match = userMessage.match(sellRegex);
+            if (match) {
+              const stockSymbol = match[1].toUpperCase();
+              const quantity = parseInt(match[2], 10);
+              if (stockSymbol && !isNaN(quantity)) {
+                const url = this.$router.resolve({
+                  path: '/stock-simulator',
+                  query: { symbol: stockSymbol, quantity: -quantity }
+                }).href;
+                window.open(url, '_blank');
+              } else {
+                this.addTypingResponse('Invalid stock symbol or quantity', false);
+              }
+            } else {
+              this.addTypingResponse('Invalid sell command format', false);
+            }
+          } catch (err) {
+            console.error('Error in sell message:', err);
+          }
+        }
+        // HANDLE ADD TRANSACTION (5)
+        else if (userMessage.toLowerCase().includes("#add")) {
+          try {
+            const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
+            if (match) {
+              const description = match[1].trim();
+              const amount = parseInt(match[2], 10);
+              const balance = await this.calculateNewBalance(amount);
+              await this.addTransaction(description, amount, balance);
+              answers.push([`Transaction added: ${description}, $${amount}. New balance: $${balance}.`]);
+            } else {
+              answers.push(['Please specify the description and amount you want to add.']);
+            }
+          } catch (err) {
+            console.error('Error in add transaction:', err);
+          }
+        }
+        // HANDLE SPEND TRANSACTION (6)
+        else if (userMessage.toLowerCase().includes("#spend")) {
+          try {
+            const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
+            if (match) {
+              const description = match[1].trim();
+              const amount = -parseInt(match[2], 10);
+              const balance = await this.calculateNewBalance(amount);
+              await this.addTransaction(description, amount, balance);
+              answers.push([`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`]);
+            } else {
+              answers.push(['Please specify the description and amount you want to spend.']);
+            }
+          } catch (err) {
+            console.error('Error in spend transaction:', err);
+          }
+        }
+        // HANDLE STOCK 
+        else if (this.extractStockCode(userMessage)) {
+          try {
+            const stockCode = this.extractStockCode(userMessage)[0];
+            const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
+            const stockData = stockResponse.data;
+            const price = stockData['Global Quote']['05. price'];
+            const timeStamp = new Date().toLocaleTimeString();
+            let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+            answers.push(alphavantageResponse);
+            //chatgpt api
+            const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+            const gptResponse = await gptServices(prompt);
+            answers.push(gptResponse);
+          } catch (err) {
+            console.error('Error in stock message:', err);
+          }
+        }
+        // RETURNS CRYPTO TABLE
+        else if (userMessage.toLowerCase().includes("#crypto")) {
+          //FETCHING COIN DATA
+
+          let coinData = [];
+          try {
+            const res = await axios.get("https://api.coinranking.com/v2/coins?timePeriod=7d", {
+              headers: { 'x-access-token': process.env.VUE_APP_COINRANKING_KEY }
+            });
+            coinData = res.data.data.coins;
+          } catch (error) {
+            console.error('Failed to fetch cr quotes:', error);
+          }
+          let tableTemplate = `
+          <div style="font-weight: 900; font-size: 30px"> Top 5 Ranking Coins </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Rank</th>
+                <th>Tier</th>
+                <th>Price</th>
+                <th>Symbol</th>
+                <th>Change</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="table-body">`;
+          coinData.slice(0, 5).map((item) => {
+            tableTemplate += `
+              <tr>
+                <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${item.name}>${item.name}</td>
+                <td>${item.rank}</td>
+                <td>${item.tier}</td>
+                <td>${parseFloat(item.price).toFixed(2)}$</td>
+                <td>${item.symbol}</td>
+                <td>${item.change}</td>
+              </tr>
+            `;
           });
-          coinData = res.data.data.coins;
-        } catch (error) {
-          console.error('Failed to fetch cr quotes:', error);
-        }
-        let tableTemplate = `
-        <div style="font-weight: 900; font-size: 30px"> Top 5 Ranking Coins </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Rank</th>
-              <th>Tier</th>
-              <th>Price</th>
-              <th>Symbol</th>
-              <th>Change</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody" class="table-body">`;
-        coinData.slice(0, 5).map((item) => {
-          tableTemplate += `
-            <tr>
-              <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${item.name}>${item.name}</td>
-              <td>${item.rank}</td>
-              <td>${item.tier}</td>
-              <td>${parseFloat(item.price).toFixed(2)}$</td>
-              <td>${item.symbol}</td>
-              <td>${item.change}</td>
-            </tr>
-          `;
-        });
-        tableTemplate += `</tbody></table>`;
-        this.messages.push({
-          text: ``,
-          htmlContent: tableTemplate,
-          isUser: false,
-          typing: true,
-          timestamp: new Date().toLocaleTimeString()
-        });
-      }
-      // RETURNS REALESTATE TABLE
-      else if (userMessage.toLowerCase().includes("#realestate")) {
-        let userInputToken = userMessage.toLowerCase().split(/\s+/);
-        let searchLocation;
-        if (userInputToken.length > 1) {
-          userInputToken = userInputToken.slice(1, userInputToken.length);
-          searchLocation = userInputToken.join(' ');
-        } else {
-          searchLocation = "san jose";
-        }
-        let propertiesData = [];
-        const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
-        const BASE_URL = 'https://zillow-com1.p.rapidapi.com/propertyExtendedSearch';
-        try {
-          const response = await axios.get(BASE_URL, {
-            params: { location: searchLocation },
-            headers: {
-              'X-RapidAPI-Key': API_KEY,
-              'X-RapidAPI-Host': 'zillow-com1.p.rapidapi.com',
-            },
+          tableTemplate += `</tbody></table>`;
+          this.messages.push({
+            text: ``,
+            htmlContent: tableTemplate,
+            isUser: false,
+            typing: true,
+            timestamp: new Date().toLocaleTimeString()
           });
-          propertiesData = response.data.props;
-        } catch (error) {
-          console.error('Error fetching property data:', error);
         }
-        let tableTemplate = `
-        <div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Type</th>
-              <th>Address</th>
-              <th>Price</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody" class="table-body">`;
-        propertiesData.slice(0, 5).map((item) => {
-          tableTemplate += `
-            <tr>
-              <td><img style="width: 50px; aspect-ratio: 1;" src=${item.imgSrc} alt="propertyImage"></td>
-              <td>${item.propertyType}</td>
-              <td>${item.address}</td>
-              <td>${item.price}$</td>
-              <td>${item.listingStatus}</td>
-            </tr>`;
-        });
-        tableTemplate += `</tbody></table>`;
-        this.messages.push({
-          text: ``,
-          htmlContent: tableTemplate,
-          isUser: false,
-          typing: true,
-          timestamp: new Date().toLocaleTimeString()
-        });
-      }
-      // HANDLE GENERAL 
-      else {
-        try {
-          const prompt = userMessage;
-          const gptResponse = await gptServices(prompt);
-          answers.push(gptResponse);
-        } catch (err) {
-          console.error('Error in general message:', error);
+        // RETURNS REALESTATE TABLE
+        else if (userMessage.toLowerCase().includes("#realestate")) {
+          let userInputToken = userMessage.toLowerCase().split(/\s+/);
+          let searchLocation;
+          if (userInputToken.length > 1) {
+            userInputToken = userInputToken.slice(1, userInputToken.length);
+            searchLocation = userInputToken.join(' ');
+          } else {
+            searchLocation = "san jose";
+          }
+          let propertiesData = [];
+          const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
+          const BASE_URL = 'https://zillow-com1.p.rapidapi.com/propertyExtendedSearch';
+          try {
+            const response = await axios.get(BASE_URL, {
+              params: { location: searchLocation },
+              headers: {
+                'X-RapidAPI-Key': API_KEY,
+                'X-RapidAPI-Host': 'zillow-com1.p.rapidapi.com',
+              },
+            });
+            propertiesData = response.data.props;
+          } catch (error) {
+            console.error('Error fetching property data:', error);
+          }
+          let tableTemplate = `
+          <div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Type</th>
+                <th>Address</th>
+                <th>Price</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody" class="table-body">`;
+          propertiesData.slice(0, 5).map((item) => {
+            tableTemplate += `
+              <tr>
+                <td><img style="width: 50px; aspect-ratio: 1;" src=${item.imgSrc} alt="propertyImage"></td>
+                <td>${item.propertyType}</td>
+                <td>${item.address}</td>
+                <td>${item.price}$</td>
+                <td>${item.listingStatus}</td>
+              </tr>`;
+          });
+          tableTemplate += `</tbody></table>`;
+          this.messages.push({
+            text: ``,
+            htmlContent: tableTemplate,
+            isUser: false,
+            typing: true,
+            timestamp: new Date().toLocaleTimeString()
+          });
         }
-      }
-      answers.forEach(answer => {
-        this.addTypingResponse(answer, false);
-      });
-      //save chat to backend
-      if (authStore.isAuthenticated) {
-        try {
-          const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-          const reqBody = {
-            prompt: userMessage,
-            response: answers,
-            threadId: this.currentThread.id,
-          };
-          const chat = await axios.post(chatApi, reqBody);
-        } catch (err) {
-          console.error('Error on saving chat:', err);
+        // HANDLE GENERAL 
+        else {
+          try {
+            const prompt = userMessage;
+            const gptResponse = await gptServices(prompt);
+            answers.push(gptResponse);
+          } catch (err) {
+            console.error('Error in general message:', error);
+          }
+        }
+        answers.forEach(answer => {
+          this.addTypingResponse(answer, false);
+        });
+        //save chat to backend
+        if (authStore.isAuthenticated) {
+          try {
+            const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+            const reqBody = {
+              prompt: userMessage,
+              response: answers,
+              threadId: this.currentThread.id,
+            };
+            const chat = await axios.post(chatApi, reqBody);
+          } catch (err) {
+            console.error('Error on saving chat:', err);
+          }
         }
       }
     },
@@ -527,12 +539,8 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
       }
       this.selectThread(0);
     } else {
-      const botInstruction = `Hello, Guest!
-Please click "Guidance" for detailed instructions on how to use the chatbot.
-
-Also, sign in to access the full functionality of Finbud!`;
+      const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
       this.addTypingResponse(botInstruction, false);
-
     }
   }
 };
