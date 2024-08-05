@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
 // // Hash password before saving user
 userSchema.pre('save', async function (next) {
 	try{
-		const salt = await bcryptjs.genSalt(1);
+		const salt = await bcryptjs.genSalt(10);
 		this.accountData.password = await bcryptjs.hash(this.accountData.password, salt);
 	}catch(err){
 		console.log('error in hashing password: ', err);
