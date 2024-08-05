@@ -5,16 +5,14 @@
         <div class="intro-text1">
           <li class="title animate fade-in">Making the most informed financial choices</li>
           <li class="animate fade-in" :style="{ fontSize: '30px',fontWeight: 'bold', listStyleType: 'none' }">Sign in to see more services</li>
-          <li class="description animate fade-in">With FinBud, you can ask for the best financial advice anytime,
+          <li class="description animate fade-in last-li">With FinBud, you can ask for the best financial advice anytime,
             anywhere</li>
-          <br>
-          <br>
-          <br>
+
           <BigGreenButton @click="chatNow">Chat Now!</BigGreenButton>
         </div>
 
         <div class="photo">
-          <img style="aspect-ratio: 1; width: 100%" src='@/assets/botrmbg.png' alt="placeholder">
+          <img  src='@/assets/botrmbg.png' alt="placeholder">
         </div>
       </div>
     </div>
@@ -223,15 +221,16 @@ export default {
   animation: none;
   padding: 2rem;
 }
-
 .intro-text1 {
   width: 66%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding-left: 10%
+  padding-left: 10%;
 }
-
+.last-li {
+  margin-bottom: 20px; 
+}
 .title {
   font-weight: bold;
   color: black;
@@ -311,6 +310,7 @@ export default {
 }
 
 .photo {
+  aspect-ratio: 1;
   text-align: center;
   margin: auto;
   opacity: 1;
@@ -589,18 +589,27 @@ img {
 
 /* Medium devices (tablets, 768px and up) */
 @media (max-width: 768px) {
+  #analytics-dashboard .dashboard-content{
+    align-items: center;
+  }
 
   .container,
   .dashboard-content,
   .real-time-insights .content-with-image {
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
+
     /* Distributes space between items */
   }
 
   .info-cards {
     text-align: center;
     width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   .stats-container {
@@ -614,14 +623,23 @@ img {
     width: 80%;
     margin-bottom: 20px;
   }
+  .text-content {
+    text-align: center;
+  }
+
 
   .text-content,
   .dashboard-visual,
   .real-time-insights .text-content,
-  .real-time-insights .image-container {
+  .real-time-insights {
     flex: 1 1 50%;
     /* Takes up half of the container width */
   }
+  #real-time-insights .image-container {
+    padding: 0;
+    width: 100%;
+  }
+
 
   .content-with-image {
     flex-wrap: wrap;
@@ -638,6 +656,7 @@ img {
     max-width: 1140px;
     /* Bootstrap's default container max-width for large screens */
     margin: auto;
+
   }
 
   .stat-item,
@@ -651,21 +670,32 @@ img {
     flex: 1 1 50%;
   }
 
+  
   .intro-text {
     flex-direction: column;
+
+    padding: 0;
+    align-items: center;
+    text-align: center;
+  }
+  .intro-text1 {
+    padding-left: 0;
+    gap: 10px;
+  }
+  .intro-text1 li {
+    text-align: center;
   }
 
   .photo {
-    padding-top: 1rem;
+    padding: 0;
+    padding-top: 2rem;
   }
 
   .photo img {
     width: 100%;
   }
 
-  #real-time-insights .text-content,
-  #real-time-insights .image-container {
-    width: 60%;
+  #real-time-insights .text-content{
     /* Text takes slightly more space */
     width: 35%;
     /* Image takes less space */
@@ -691,6 +721,7 @@ img {
   .real-time-insights .content-with-image {
     flex-direction: row;
     justify-content: space-between;
+
     /* Distributes space between items */
   }
 
@@ -738,8 +769,7 @@ img {
     flex: 1 1 50%;
   }
 
-  #real-time-insights .text-content,
-  #real-time-insights .image-container {
+  #real-time-insights .text-content {
     width: 60%;
     /* Text takes slightly more space */
     width: 35%;
