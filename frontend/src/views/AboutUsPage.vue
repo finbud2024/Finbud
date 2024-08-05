@@ -19,7 +19,22 @@
         }"
         :navigation="true"
         :modules="modules"
+        :autoplay="{ delay: 1000, disableOnInteraction: false }"
         class="mySwiper"
+        :breakpoints="{
+          0: {
+            slidesPerView: 1,
+            spaceBetween: 10,
+          },
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          }
+        }"
       >
         <swiper-slide v-for="member in teamMembers" :key="member.name">
           <div class="team-member">
@@ -36,7 +51,6 @@
             </div>
           </div>
         </swiper-slide>
-    
     </swiper>
     </div>
     
@@ -112,7 +126,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import { Keyboard, Pagination, Navigation } from 'swiper/modules';
+import { Keyboard, Pagination, Navigation, Autoplay } from 'swiper/modules';
 
 export default {
   name: 'AboutUsPage',
@@ -123,7 +137,7 @@ export default {
 
   data() {
     return {
-      modules: [Keyboard, Pagination, Navigation],
+      modules: [Keyboard, Pagination, Navigation, Autoplay],
       teamMembers: [
         {
           name: 'Tri Dinh Bui',
@@ -491,8 +505,14 @@ body {
 }
 
 @media (max-width: 768px) {
-  .team-member, .testimonial-card {
+  .testimonial-card {
     width: 100%;
+  }
+  .team-section{
+    align-items: center;
+  }
+  .team-member{
+    margin-bottom: 20px;
   }
 
   .team-container, .testimonials-container {
@@ -649,5 +669,24 @@ body {
 
 .slide-in-up.animate-visible {
   transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+
+  .testimonials-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .testimonial-card {
+    width: 100%; /* Ensure the testimonial card takes the full width */
+    height: 100%; /* Ensure the testimonial card takes the full height */
+    margin: 10px 0; /* Adjust as needed */
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+  
 }
 </style>
