@@ -5,6 +5,7 @@
 node_modules
 
 # Distribution directory
+dist
 frontend/dist
 
 # local env files
