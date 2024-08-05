@@ -1,7 +1,8 @@
-const webpack = require('webpack');
-const path = require('path');
+import webpack from 'webpack';
+import path from 'path';
+import Dotenv from 'dotenv-webpack';
 
-module.exports = {
+export default {
     transpileDependencies: [],
     devServer: {
         proxy: {
@@ -26,14 +27,16 @@ module.exports = {
                 'vue$': 'vue/dist/vue.esm.js'
             },
             fallback: {
-                "process": require.resolve("process/browser"),
+                process: 'process/browser',
             }
         },
         module: {
-            rules: [{
-                test: /\.csv$/,
-                use: 'raw-loader'
-            }]
+            rules: [
+                {
+                    test: /\.csv$/,
+                    use: 'raw-loader'
+                }
+            ]
         },
         plugins: [
             new webpack.ProvidePlugin({
