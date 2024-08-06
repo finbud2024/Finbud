@@ -24,7 +24,6 @@
       <span class="guidance-text">Guidance</span>
     </div>
     <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
-    <ChatViewiFrame v-if="showIFrame"   @close="showIFrame = false" :showModal="showIFrame" :iFrame="iFrameContent"/>
   </div>
 </template>
 
@@ -37,7 +36,6 @@ import MessageComponent from '../components/MessageComponent.vue';
 import UserInput        from '../components/UserInput.vue';
 import SideBar          from '../components/SideBar.vue';
 import GuidanceModal    from '../components/GuidanceModal.vue';
-import ChatViewiFrame   from '../components/ChatViewiFrame.vue';
 import { gptServices }  from '../services/gptServices.js';
 
 let newWindow 
@@ -54,7 +52,7 @@ function closeOnClickOutside(event) {
 export default {
   name: 'ChatView',
   props: ['threadId'],
-  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal,  ChatViewiFrame},
+  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal},
   data() {
     return {
       newMessage: '',
@@ -66,8 +64,6 @@ export default {
       threads: [],
       isSidebarVisible: false,
       showGuidance: false, // State for showing guidance modal
-      showIFrame: false,
-      iFrameContent: '',
     };
   },
   computed: {
