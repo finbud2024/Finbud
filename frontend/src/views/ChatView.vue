@@ -207,19 +207,13 @@ export default {
                 }).href;
 
                 const screenWidth = window.screen.width;
-                const screenHeight = window.screen.height;
-                
-                // Calculate width and height as a percentage of screen dimensions
+                const screenHeight = window.screen.height; 
                 const width = screenWidth * 0.8; // 80% of screen width
                 const height = screenHeight * 0.8; // 80% of screen height
-
-                // Center the window
                 const left = (screenWidth - width) / 2;
                 const top = (screenHeight - height) / 2;
-
                 newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
 
-                // // Add event listener to detect clicks outside the new window
                 window.addEventListener('click', closeOnClickOutside);
               } else {
                 this.addTypingResponse('Invalid stock symbol or quantity', false);
@@ -244,7 +238,16 @@ export default {
                   path: '/stock-simulator',
                   query: { symbol: stockSymbol, quantity: -quantity }
                 }).href;
-                window.open(url, '_blank');
+                
+                const screenWidth = window.screen.width;
+                const screenHeight = window.screen.height; 
+                const width = screenWidth * 0.8; // 80% of screen width
+                const height = screenHeight * 0.8; // 80% of screen height
+                const left = (screenWidth - width) / 2;
+                const top = (screenHeight - height) / 2;
+                newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
+
+                window.addEventListener('click', closeOnClickOutside);
               } else {
                 this.addTypingResponse('Invalid stock symbol or quantity', false);
               }
