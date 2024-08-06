@@ -21,25 +21,25 @@ export default {
     FooterBar,
   },
   mounted() {
-    this.updateFooterVisibility(this.$route.path);
-    this.updateHeaderVisibility(this.$route.path);
+    // this.updateFooterVisibility(this.$route.path);
+    // this.updateHeaderVisibility(this.$route.path);
     this.$router.afterEach((to, from) => {
-      this.updateFooterVisibility(to.path, to.params);
-      this.updateHeaderVisibility(to.path, to.params);
+      this.updateFooterVisibility(to.fullPath);
+      this.updateHeaderVisibility(to.fullPath);
     });
   },
   methods: {
-    updateFooterVisibility(path, params) {
+    updateFooterVisibility(path) {
       const footer = this.$refs.footerBar.$el;
-      if (path === '/chat-view'|| path === '/stock-simulator' && params !== undefined) {
+      if (path === '/chat-view'|| path.includes('/stock-simulator?')) {
         footer.style.display = 'none';
       } else {
         footer.style.display = 'flex';
       }
     },
-    updateHeaderVisibility(path, params) {
+    updateHeaderVisibility(path) {
       const header = this.$refs.headerBar.$el;
-      if (path === '/stock-simulator' && params !== undefined) {
+      if (path.includes('/stock-simulator?')) {
         header.style.display = 'none';
       } else {
         header.style.display = 'flex';
