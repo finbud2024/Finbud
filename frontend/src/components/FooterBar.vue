@@ -35,10 +35,6 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
-/* Existing styles */
-.gap {
-  gap: 10px;
-}
 
 .footer-bar {
   background-color: #0F1F3D;
@@ -47,28 +43,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 3rem;
-  flex-wrap: wrap; /* Allows items to wrap as needed on smaller screens */
+  flex-wrap: wrap;
   font-family: 'Space Grotesk', sans-serif;
   height: auto;
   font-size: 0.875rem;
 }
 
-.subscribe {
-  display: flex;
-  flex-direction: column;
-}
-
-.subscribe-box {
-  margin-top: 5px;
-  display: flex;
-  height: 40px;
-}
-
 .footer-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  margin-bottom: 1rem;
 }
 
 .footer-brand {
@@ -80,6 +66,20 @@ export default {
 .description {
   font-size: 0.875rem;
   color: gray;
+  text-align: center;
+}
+
+.subscribe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.subscribe-box {
+  margin-top: 5px;
+  display: flex;
+  height: 40px;
 }
 
 .footer-items {
@@ -101,26 +101,6 @@ export default {
   padding: 0.5rem 0;
 }
 
-.footer-text-field {
-    color: white;
-    background-color: rgba(255, 255, 255, .2);
-    border: 1px solid #000;
-    border-radius: 5px;
-    padding: 10px 24px;
-    font-size: 0.875rem;
-}
-
-.button.footer-form-button {
-    background-color: #145aff;
-    color: white;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-weight: 700;
-    line-height: 120%;
-    cursor: pointer;
-    border: none;
-}
-
 .footer-items li a {
   color: white;
   text-decoration: none;
@@ -132,20 +112,47 @@ export default {
   border-radius: 5px;
 }
 
+.footer-text-field {
+  color: white;
+  background-color: rgba(255, 255, 255, .2);
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 10px 24px;
+  font-size: 0.875rem;
+  margin-right: 0.5rem;
+}
+
+.button.footer-form-button {
+  background-color: #145aff;
+  color: white;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-weight: 700;
+  line-height: 120%;
+  cursor: pointer;
+  border: none;
+}
+
 /* Responsive adjustments */
-@media (max-width: 985px) {
-  .footer-content, .subscribe, .footer-items {
-    flex: 1 1 auto; /* Make each section full width */
+@media (max-width: 768px) {
+  .footer-bar {
+    padding: 20px;
+    flex-direction: column;
     text-align: center;
   }
 
-  .footer-brand, .description {
-    font-size: 24px; /* Slightly reduce the font size */
+  .footer-content, .subscribe, .footer-items {
+    flex: 1 1 auto;
+    text-align: center;
+    margin-bottom: 1rem;
   }
 
-  .subscribe-box {
-    flex-direction: column; /* Stack input and button vertically */
+  .footer-text-field, .button.footer-form-button {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    padding: 0;
   }
+
 
   .footer-items {
     justify-content: center;
@@ -155,30 +162,22 @@ export default {
   .footer-items2 {
     justify-content: center;
     text-align: center;
-    padding-inline-start: 0px;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer-bar {
-    padding: 20px; /* Increase padding slightly for smaller devices */
-  }
-
-  .footer-text-field, .button.footer-form-button {
-    width: auto; /* Full width for input and button */
-    margin-right: 0.2rem; /* Remove margin to fit full width */
+    padding-inline-start: 0;
   }
 }
 
 @media (max-width: 480px) {
   .footer-brand {
-    font-size: 20px; /* Further reduce the font size for small devices */
+    font-size: 1.5rem;
   }
 
   .description {
-    font-size: 14px; /* Reduce description font size for readability */
+    font-size: 0.75rem;
+  }
+
+  .footer-text-field, .button.footer-form-button {
+    font-size: 0.75rem;
+    padding: 8px 16px;
   }
 }
 </style>
-
-
