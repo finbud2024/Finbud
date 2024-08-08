@@ -54,7 +54,8 @@ export default {
       isSidebarVisible: false,
       showGuidance: false,   // State for showing guidance modal
       overlayEnabled: false, //overlay to darken the chat screen when new window popsup
-      newWindow: null        //new window to referrence to other pages
+      newWindow: null,        //new window to referrence to other 
+      windowCheckInterval: null
     };
   },
   computed: {
@@ -490,19 +491,34 @@ export default {
       const left = (screenWidth - width) / 2;
       const top = (screenHeight - height) / 2;
       this.newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
-      window.addEventListener('click', this.closeOnClickOutside);
-      this.overlayEnabled = true;
+      
+      if (this.newWindow) {
+        // Set up interval to check if the window has been closed
+        this.windowCheckInterval = setInterval(() => {
+          if (this.newWindow.closed) {
+            this.handleWindowClose();
+          }
+        }, 1000); // Check every second
+        window.addEventListener('click', this.closeOnClickOutside);
+        this.overlayEnabled = true;
+      }
     },
     //HANDLE THE ABILITY TO CHECK IF USER CLICKS OUTSIDE OF THE REFERENCED WINDOW
     closeOnClickOutside(event) {
       if (this.newWindow && !this.newWindow.closed) {
         this.newWindow.close();
-        window.removeEventListener('click', this.closeOnClickOutside);
-        this.overlayEnabled = false;
-        this.newWindow = null;
+        this.handleWindowClose();
       }
+    }, 
+    //HANDLE CLOSE WINDOW
+    handleWindowClose() {
+      if (this.windowCheckInterval) {
+        clearInterval(this.windowCheckInterval);
+      }
+      window.removeEventListener('click', this.closeOnClickOutside);
+      this.overlayEnabled = false;
+      this.newWindow = null;
     }
-
   },
   async mounted() {
     setInterval(() => {
