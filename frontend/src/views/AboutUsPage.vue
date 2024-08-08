@@ -19,7 +19,7 @@
         }"
         :navigation="true"
         :modules="modules"
-        :autoplay="{ delay: 1000, disableOnInteraction: false }"
+        
         class="mySwiper"
         :breakpoints="{
           0: {
@@ -376,6 +376,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  height: 100%; /* Make all team-member divs take full height of their container */
 }
 
 .image-container {
@@ -565,6 +566,20 @@ body {
   margin-bottom: 20px;
   text-align: left;
 }
+
+.mySwiper {
+  height: 550px; /* Set your custom height here */
+}
+.team-member {
+  height: 85%;
+}
+
+.swiper-slide {
+  display: flex;
+  align-items: stretch;
+  height: auto; /* Ensure slides take the height of their content */
+}
+
 
 .contact-form label {
   display: block;
