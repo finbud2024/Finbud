@@ -481,7 +481,7 @@ export default {
         this.$forceUpdate();
       }, 1000);
     },
-    //USED IN BUY/SELL/ADD/SPEND
+    //USED IN BUY/SELL/ADD/SPEND/(QUIZ?)
     openNewWindow(url){
       const screenWidth = window.screen.width;
       const screenHeight = window.screen.height; 
@@ -495,13 +495,13 @@ export default {
     },
     //HANDLE THE ABILITY TO CHECK IF USER CLICKS OUTSIDE OF THE REFERENCED WINDOW
     closeOnClickOutside(event) {
-    if (this.newWindow && !this.newWindow.closed) {
-      this.newWindow.close();
-      window.removeEventListener('click', this.closeOnClickOutside);
-      this.overlayEnabled = false;
-      this.newWindow = null;
+      if (this.newWindow && !this.newWindow.closed) {
+        this.newWindow.close();
+        window.removeEventListener('click', this.closeOnClickOutside);
+        this.overlayEnabled = false;
+        this.newWindow = null;
+      }
     }
-  }
 
   },
   async mounted() {
