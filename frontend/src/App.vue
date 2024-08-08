@@ -1,6 +1,6 @@
 <template>
   <div class="nav-actions">
-    <NavBar />
+    <NavBar ref="headerBar"/>
     <div class="content">
       <!-- Use router-link to navigate to the login page -->
     </div>
@@ -21,21 +21,31 @@ export default {
     FooterBar,
   },
   mounted() {
-    this.updateFooterVisibility(this.$route.path);
-
+    // this.updateFooterVisibility(this.$route.path);
+    // this.updateHeaderVisibility(this.$route.path);
     this.$router.afterEach((to, from) => {
-      this.updateFooterVisibility(to.path);
+      this.updateFooterVisibility(to.fullPath);
+      this.updateHeaderVisibility(to.fullPath);
     });
   },
   methods: {
     updateFooterVisibility(path) {
       const footer = this.$refs.footerBar.$el;
-      if (path === '/chat-view') {
+      if (path === '/chat-view'|| path.includes('/stock-simulator?')) {
         footer.style.display = 'none';
       } else {
         footer.style.display = 'flex';
       }
+    },
+    updateHeaderVisibility(path) {
+      const header = this.$refs.headerBar.$el;
+      if (path.includes('/stock-simulator?')) {
+        header.style.display = 'none';
+      } else {
+        header.style.display = 'flex';
+      }
     }
+
   }
 };
 </script>
