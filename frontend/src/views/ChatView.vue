@@ -1,5 +1,6 @@
 <template>
   <div class="home-container">
+    <div v-if="overlayEnabled" class="overlay"/>
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
       <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
@@ -8,7 +9,6 @@
         @select-thread="selectThread" />
     </div>
     <div class="chat-container">
-      <!-- <ChatHeader :threadId="currentThread.id" /> -->
       <ChatFrame>
         <MessageComponent v-for="(message, index) in messages" :key="index" :is-user="message.isUser"
           :text="message.text" :typing="message.typing" :htmlContent="message.htmlContent"
@@ -38,17 +38,6 @@ import SideBar          from '../components/SideBar.vue';
 import GuidanceModal    from '../components/GuidanceModal.vue';
 import { gptServices }  from '../services/gptServices.js';
 
-let newWindow 
-
-function closeOnClickOutside(event) {
-  if (newWindow && !newWindow.closed) {
-    // If the new window is open and the click is outside, close the new window
-    newWindow.close();
-    // Remove the event listener after closing the window
-    window.removeEventListener('click', closeOnClickOutside);
-  }
-}
-
 export default {
   name: 'ChatView',
   props: ['threadId'],
@@ -63,7 +52,9 @@ export default {
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
-      showGuidance: false, // State for showing guidance modal
+      showGuidance: false,   // State for showing guidance modal
+      overlayEnabled: false, //overlay to darken the chat screen when new window popsup
+      newWindow: null        //new window to referrence to other pages
     };
   },
   computed: {
@@ -146,19 +137,15 @@ export default {
       this.threads[index].name = newName;
       this.threads[index].editing = false;
       try {
-        console.log("save edit")
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${this.threads[index].id}`;
         const reqBody = { title: newName };
         const updatedThread = await axios.put(api, reqBody);
-        console.log(updatedThread);
       } catch (err) {
         console.error('Error on saving thread name:', err);
       }
     },
     cancelEdit(index) {
-      console.log("here: ", this.threads[index]);
       this.threads[index].editing = false;
-      console.log("cancel edit")
     },
     selectThread(index) {
       this.updateCurrentThread(this.threads[index].id);
@@ -201,16 +188,7 @@ export default {
                   path: '/stock-simulator',
                   query: { symbol: stockSymbol, quantity }
                 }).href;
-
-                const screenWidth = window.screen.width;
-                const screenHeight = window.screen.height; 
-                const width = screenWidth * 0.8; // 80% of screen width
-                const height = screenHeight * 0.8; // 80% of screen height
-                const left = (screenWidth - width) / 2;
-                const top = (screenHeight - height) / 2;
-                newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
-
-                window.addEventListener('click', closeOnClickOutside);
+                this.openNewWindow(url);
               } else {
                 this.addTypingResponse('Invalid stock symbol or quantity', false);
               }
@@ -234,16 +212,7 @@ export default {
                   path: '/stock-simulator',
                   query: { symbol: stockSymbol, quantity: -quantity }
                 }).href;
-                
-                const screenWidth = window.screen.width;
-                const screenHeight = window.screen.height; 
-                const width = screenWidth * 0.8; // 80% of screen width
-                const height = screenHeight * 0.8; // 80% of screen height
-                const left = (screenWidth - width) / 2;
-                const top = (screenHeight - height) / 2;
-                newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
-
-                window.addEventListener('click', closeOnClickOutside);
+                this.openNewWindow(url)
               } else {
                 this.addTypingResponse('Invalid stock symbol or quantity', false);
               }
@@ -263,9 +232,10 @@ export default {
               const amount = parseInt(match[2], 10);
               const balance = await this.calculateNewBalance(amount);
               await this.addTransaction(description, amount, balance);
-              answers.push([`Transaction added: ${description}, $${amount}. New balance: $${balance}.`]);
+              answers.push(`Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
+              this.openNewWindow('/goal')
             } else {
-              answers.push(['Please specify the description and amount you want to add.']);
+              answers.push('Please specify the description and amount you want to add.');
             }
           } catch (err) {
             console.error('Error in add transaction:', err);
@@ -280,9 +250,10 @@ export default {
               const amount = -parseInt(match[2], 10);
               const balance = await this.calculateNewBalance(amount);
               await this.addTransaction(description, amount, balance);
-              answers.push([`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`]);
+              answers.push(`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
+              this.openNewWindow('/goal')
             } else {
-              answers.push(['Please specify the description and amount you want to spend.']);
+              answers.push('Please specify the description and amount you want to spend.');
             }
           } catch (err) {
             console.error('Error in spend transaction:', err);
@@ -306,7 +277,7 @@ export default {
             console.error('Error in stock message:', err);
           }
         }
-        // RETURNS CRYPTO TABLE
+        // RETURNS CRYPTO TABLE (3)
         else if (userMessage.toLowerCase().includes("#crypto")) {
           //FETCHING COIN DATA
 
@@ -354,7 +325,7 @@ export default {
             timestamp: new Date().toLocaleTimeString()
           });
         }
-        // RETURNS REALESTATE TABLE
+        // RETURNS REALESTATE TABLE (4)
         else if (userMessage.toLowerCase().includes("#realestate")) {
           let userInputToken = userMessage.toLowerCase().split(/\s+/);
           let searchLocation;
@@ -421,10 +392,11 @@ export default {
             console.error('Error in general message:', error);
           }
         }
+        //ADD BOTH RESPONSE TO CHAT FRAME
         answers.forEach(answer => {
           this.addTypingResponse(answer, false);
         });
-        //save chat to backend
+        //SAVING CHAT PROMPT TO BACKEND
         if (authStore.isAuthenticated) {
           try {
             const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
@@ -508,7 +480,29 @@ export default {
         typingMessage.typing = false;
         this.$forceUpdate();
       }, 1000);
+    },
+    //USED IN BUY/SELL/ADD/SPEND
+    openNewWindow(url){
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height; 
+      const width = screenWidth * 0.7; // 80% of screen width
+      const height = screenHeight * 0.53; // 80% of screen height
+      const left = (screenWidth - width) / 2;
+      const top = (screenHeight - height) / 2;
+      this.newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
+      window.addEventListener('click', this.closeOnClickOutside);
+      this.overlayEnabled = true;
+    },
+    //HANDLE THE ABILITY TO CHECK IF USER CLICKS OUTSIDE OF THE REFERENCED WINDOW
+    closeOnClickOutside(event) {
+    if (this.newWindow && !this.newWindow.closed) {
+      this.newWindow.close();
+      window.removeEventListener('click', this.closeOnClickOutside);
+      this.overlayEnabled = false;
+      this.newWindow = null;
     }
+  }
+
   },
   async mounted() {
     setInterval(() => {
@@ -524,12 +518,10 @@ export default {
 
     if (authStore.isAuthenticated) {
       const userId = localStorage.getItem('token');
-      console.log(userId);
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
 
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
-      console.log(historyThreadsData);
       if (historyThreadsData.length === 0) {
         const newThread = {
           name: 'New Thread',
