@@ -20,7 +20,8 @@ export async function getSources(message) {
     const response = await axios.get(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(message)}&count=10`, {
       headers: {
         'Accept': 'application/json',
-        'X-Subscription-Token': BRAVE_SEARCH_API_KEY
+        'X-Subscription-Token': BRAVE_SEARCH_API_KEY,
+        'Access-Control-Allow-Origin': '*',
       }
     });
     const results = response.data.web.results.map(result => ({

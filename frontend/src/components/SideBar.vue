@@ -24,82 +24,93 @@
               <font-awesome-icon icon="fa-solid fa-ellipsis" />
             </div>
             <div v-if="isDropdownVisible(index)" class="dropdown-menu" ref="dropdowns">
+              <div class="dropdown-item" @click="confirmDelete(index)">Delete</div>
               <div class="dropdown-item" @click="editThread(index)">Rename</div>
-              <div class="dropdown-item" @click="deleteThread(index)">Delete</div>
             </div>
           </div>
         </div>
       </li>
     </ul>
+    <!-- Confirmation Popup -->
+    <div v-if="confirmDialogVisible" class="confirmation-popup">
+      <div class="popup-content">
+        <p>Are you sure you want to delete this thread?</p>
+        <button @click="deleteConfirmed">Yes</button>
+        <button @click="cancelDelete">No</button>
+      </div>
+    </div>
   </aside>
 </template>
 
 <script>
 export default {
-  name: 'SideBar',
-  props: ['threads'],
+  name: "SideBar",
+  props: ["threads"],
   data() {
     return {
       enterPressed: false,
-      visibleDropdownIndex: null, // Track which dropdown is visible
+      visibleDropdownIndex: null,
+      confirmDialogVisible: false,
+      threadToDelete: null,
     };
-  },
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
     addThread() {
-      this.$emit('add-thread', {
-        name: 'New Thread',
+      this.$emit("add-thread", {
+        name: "New Thread",
         editing: false,
-        editedName: 'New Thread',
-        messages: []
+        editedName: "New Thread",
+        messages: [],
       });
     },
     editThread(index) {
       this.threads[index].editing = true;
       this.visibleDropdownIndex = null;
       this.$nextTick(() => {
-        const input = this.$refs['threadInput-' + index][0];
+        const input = this.$refs["threadInput-" + index][0];
         if (input) {
           input.focus();
           const length = input.value.length;
-          input.setSelectionRange(length, length); // Set cursor at the end
+          input.setSelectionRange(length, length);
         }
       });
     },
     saveThreadName(thread, index) {
       this.enterPressed = true;
       if (thread.editedName.trim()) {
-        this.$emit('save-thread-name', { newName: thread.editedName, index });
+        this.$emit("save-thread-name", { newName: thread.editedName, index });
       } else {
-        this.$emit('cancel-edit', index);
+        this.$emit("cancel-edit", index);
       }
       thread.editing = false;
     },
     selectThread(index) {
-      this.$emit('select-thread', index);
-      this.threads.forEach(thread => {
+      this.$emit("select-thread", index);
+      this.threads.forEach((thread) => {
         thread.clicked = false;
       });
       this.threads[index].clicked = true;
       this.visibleDropdownIndex = null;
     },
-    cancelEdit(index) {
-      this.enterPressed = false;
-      this.threads[index].editing = false;
-    },
-    deleteThread(index) {
-      if (confirm('Are you sure you want to delete this thread?')) {
-        this.$emit('delete-thread', index);
-      }
+    confirmDelete(index) {
+      this.threadToDelete = index;
+      this.confirmDialogVisible = true;
       this.visibleDropdownIndex = null;
     },
+    deleteConfirmed() {
+      if (this.threadToDelete !== null) {
+        this.$emit("delete-thread", this.threadToDelete);
+        this.threadToDelete = null;
+      }
+      this.confirmDialogVisible = false;
+    },
+    cancelDelete() {
+      this.confirmDialogVisible = false;
+      this.threadToDelete = null;
+    },
     toggleDropdown(index) {
-      this.visibleDropdownIndex = this.visibleDropdownIndex === index ? null : index;
+      this.visibleDropdownIndex =
+        this.visibleDropdownIndex === index ? null : index;
     },
     isDropdownVisible(index) {
       return this.visibleDropdownIndex === index;
@@ -107,26 +118,12 @@ export default {
     closeDropdown() {
       this.visibleDropdownIndex = null;
     },
-    handleClickOutside(event) {
-      const dropdownElements = this.$refs.dropdowns;
-      if (dropdownElements) {
-        let clickedOutside = true;
-        dropdownElements.forEach((dropdown) => {
-          if (dropdown.contains(event.target)) {
-            clickedOutside = false;
-          }
-        });
-        if (clickedOutside) {
-          this.closeDropdown();
-        }
-      }
-    },
     handleBlur(thread, index) {
       if (!this.enterPressed) {
         this.cancelEdit(index);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -241,5 +238,45 @@ export default {
 .thread.clicked {
   background-color: #34495e;
   color: white;
+}
+
+/* Confirmation Popup */
+.confirmation-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.popup-content p {
+  margin-bottom: 20px;
+}
+
+.popup-content button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.popup-content button:hover {
+  background-color: #0056b3;
 }
 </style>
