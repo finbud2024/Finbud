@@ -115,6 +115,7 @@ export default {
             this.messages.push(response);
           });
         });
+        this.scrollChatFrameToBottom();
       } catch (err) {
         console.error('Error on updating to current thread:', err);
       }
@@ -411,6 +412,7 @@ export default {
             console.error('Error on saving chat:', err);
           }
         }
+        this.scrollChatFrameToBottom();
       }
     },
     async handleAddTransaction(userMessage) {
@@ -518,6 +520,14 @@ export default {
       window.removeEventListener('click', this.closeOnClickOutside);
       this.overlayEnabled = false;
       this.newWindow = null;
+    },
+    async scrollChatFrameToBottom(){
+      await new Promise(r => setTimeout(r, 200));
+      const chatFrame = document.querySelector(".chat-frame");
+      chatFrame.scrollTo({
+        top: chatFrame.scrollHeight,
+        behavior: 'smooth' // Smooth scrolling effect
+      });
     }
   },
   async mounted() {
