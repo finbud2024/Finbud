@@ -7,28 +7,20 @@
     <ul class="thread-list">
       <li v-for="(thread, index) in threads" 
           :key="index" 
-          :class="['thread', {clicked: thread.clicked}]">
-        <div class="thread-item">
-          <span v-if="!thread.editing" @click="selectThread(index)">
-            {{ thread.name }}
-          </span>
-          <input
-            v-else
-            v-model="thread.editedName"
-            :ref="'threadInput-' + index"
-            @keyup.enter="saveThreadName(thread, index)"
-            @blur="handleBlur(thread, index)"
-          />
-          <div class="thread-actions">
-            <div class="edit-btn" @click.stop="toggleDropdown(index)">
-              <font-awesome-icon icon="fa-solid fa-ellipsis" />
-            </div>
-            <div v-if="isDropdownVisible(index)" class="dropdown-menu" ref="dropdowns">
-              <div class="dropdown-item" @click="editThread(index)">Rename</div>
-              <div class="dropdown-item" @click="deleteThread(index)">Delete</div>
-            </div>
+          :class="['thread', {clicked: thread.clicked}]"
+          @click="handleClick(index)">
+        <div v-if="!thread.editing" class="thread-item">
+          {{ thread.name }}
+          <div class="edit-btn" @click.stop="editThread(index)">
+            <font-awesome-icon icon="fa-solid fa-ellipsis" />
           </div>
         </div>
+        <input
+          v-else
+          v-model="thread.editedName"
+          @keyup.enter="saveThreadName(thread, index)"
+          @blur="enterPressed? enterPressed = false: cancelEdit(index)"
+        />
       </li>
     </ul>
   </aside>
@@ -38,17 +30,10 @@
 export default {
   name: 'SideBar',
   props: ['threads'],
-  data() {
-    return {
-      enterPressed: false,
-      visibleDropdownIndex: null, // Track which dropdown is visible
+  data()  {
+    return{
+      enterPressed: false
     };
-  },
-  mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
     addThread() {
@@ -60,73 +45,42 @@ export default {
       });
     },
     editThread(index) {
-      this.threads[index].editing = true;
-      this.visibleDropdownIndex = null;
-      this.$nextTick(() => {
-        const input = this.$refs['threadInput-' + index][0];
-        if (input) {
-          input.focus();
-          const length = input.value.length;
-          input.setSelectionRange(length, length); // Set cursor at the end
-        }
-      });
+      this.$emit('edit-thread', index);
     },
     saveThreadName(thread, index) {
+      console.log(this.enterPressed);
       this.enterPressed = true;
       if (thread.editedName.trim()) {
         this.$emit('save-thread-name', { newName: thread.editedName, index });
       } else {
         this.$emit('cancel-edit', index);
       }
-      thread.editing = false;
     },
     selectThread(index) {
       this.$emit('select-thread', index);
+      // Reset the clicked property of all threads
       this.threads.forEach(thread => {
         thread.clicked = false;
       });
       this.threads[index].clicked = true;
-      this.visibleDropdownIndex = null;
     },
     cancelEdit(index) {
       this.enterPressed = false;
-      this.threads[index].editing = false;
+      this.$emit('cancel-edit', index);
     },
-    deleteThread(index) {
-      if (confirm('Are you sure you want to delete this thread?')) {
-        this.$emit('delete-thread', index);
+    handleClick(index) {
+      if(event.detail == 1){
+        this.selectThread(index);
       }
-      this.visibleDropdownIndex = null;
-    },
-    toggleDropdown(index) {
-      this.visibleDropdownIndex = this.visibleDropdownIndex === index ? null : index;
-    },
-    isDropdownVisible(index) {
-      return this.visibleDropdownIndex === index;
-    },
-    closeDropdown() {
-      this.visibleDropdownIndex = null;
-    },
-    handleClickOutside(event) {
-      const dropdownElements = this.$refs.dropdowns;
-      if (dropdownElements) {
-        let clickedOutside = true;
-        dropdownElements.forEach((dropdown) => {
-          if (dropdown.contains(event.target)) {
-            clickedOutside = false;
-          }
+
+      if(event.detail == 2){
+        this.threads.forEach(thread => {
+          thread.editing = false;
         });
-        if (clickedOutside) {
-          this.closeDropdown();
-        }
+        this.editThread(index);
       }
     },
-    handleBlur(thread, index) {
-      if (!this.enterPressed) {
-        this.cancelEdit(index);
-      }
-    }
-  }
+  },
 };
 </script>
 
@@ -165,44 +119,14 @@ export default {
   background-color: #2980b9;
 }
 
-.thread-actions {
-  display: flex;
-  align-items: center;
-  position: relative;
+.edit-btn {
+  color: white;
 }
 
-.edit-btn,
-.delete-btn {
-  color: black;
-  margin-left: 5px;
-}
-
-.edit-btn:hover,
-.delete-btn:hover {
+.edit-btn:hover {
   cursor: pointer;
   transition: transform 0.3s;
   transform: scale(1.2);
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  overflow: hidden;
-  z-index: 1000;
-}
-
-.dropdown-item {
-  color: black;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.dropdown-item:hover {
-  background-color: #f1f1f1;
 }
 
 .thread-list {
@@ -238,7 +162,7 @@ export default {
   color: #2c3e50;
 }
 
-.thread.clicked {
+.thread.clicked{
   background-color: #34495e;
   color: white;
 }

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h3 v-if="!isUser" class="response-header">Response</h3>
     <div :class="['message-wrapper', { 'user': isUser, 'bot': !isUser }]">
       <img :src="avatarSrc" class="avatar">
       <div class="message-content-wrapper">
@@ -16,7 +15,7 @@
 <script>
 export default {
   name: 'MessageComponent',
-  props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc', 'htmlContent'],
+  props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc','htmlContent'],
   data() {
     return {
       textProgress: 0, // Initial progress of the typing animation
@@ -85,12 +84,8 @@ export default {
     background-color: #fff;
   }
 
-  .response-header {
-    margin-bottom: 20px;
-    margin-left: 100px;
-  }
-
   .message-wrapper {
+    padding: 0 15vw;
     display: flex;
     align-items: flex-end;
     gap: 10px;
@@ -119,26 +114,26 @@ export default {
   */
 
   .bot .message-content-wrapper {
-    max-width: 80%;
+    max-width: 100%;
     padding-right: calc(1% + 30px + 18px);
   }
 
   .user .message-content-wrapper {
-    max-width: 80%;
+    max-width: 60%;
   }
 
   .bot .avatar {
     width: 41px;
     aspect-ratio: 1;
     border-radius: 50%;
-    margin-left: 40px; /* Adjusted margin */
+    margin-left: 1%;
   }
 
   .user .avatar {
     width: 41px;
     aspect-ratio: 1;
     border-radius: 50%;
-    margin-right: 40px; /* Adjusted margin */
+    margin-right: 1%;
   }
 
   .user {
@@ -155,6 +150,8 @@ export default {
     border-radius: 16px;
     background-color: #007bff;
     color: #fff; 
+    /* background-color: papayawhip;
+    color: black; */
     border: 1px solid transparent;
     text-align: left;
     white-space: pre-wrap; 
@@ -169,6 +166,7 @@ export default {
       width: 100%; /* Adjust to full width of the containing block */
     }
   }
+
 
   .message-container.is-user .message-content {
     background-color: #f0f0f0;
