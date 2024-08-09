@@ -29,6 +29,12 @@
             </div>
           </div>
         </div>
+        <input
+          v-else
+          v-model="thread.editedName"
+          @keyup.enter="saveThreadName(thread, index)"
+          @blur="enterPressed? enterPressed = false: cancelEdit(index)"
+        />
       </li>
     </ul>
     <!-- Confirmation Popup -->
@@ -76,13 +82,13 @@ export default {
       });
     },
     saveThreadName(thread, index) {
+      console.log(this.enterPressed);
       this.enterPressed = true;
       if (thread.editedName.trim()) {
         this.$emit("save-thread-name", { newName: thread.editedName, index });
       } else {
         this.$emit("cancel-edit", index);
       }
-      thread.editing = false;
     },
     selectThread(index) {
       this.$emit("select-thread", index);
@@ -90,7 +96,6 @@ export default {
         thread.clicked = false;
       });
       this.threads[index].clicked = true;
-      this.visibleDropdownIndex = null;
     },
     confirmDelete(index) {
       this.threadToDelete = index;
@@ -166,44 +171,14 @@ export default {
   background-color: #2980b9;
 }
 
-.thread-actions {
-  display: flex;
-  align-items: center;
-  position: relative;
+.edit-btn {
+  color: white;
 }
 
-.edit-btn,
-.delete-btn {
-  color: black;
-  margin-left: 5px;
-}
-
-.edit-btn:hover,
-.delete-btn:hover {
+.edit-btn:hover {
   cursor: pointer;
   transition: transform 0.3s;
   transform: scale(1.2);
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  overflow: hidden;
-  z-index: 1000;
-}
-
-.dropdown-item {
-  color: black;
-  padding: 10px;
-  cursor: pointer;
-}
-
-.dropdown-item:hover {
-  background-color: #f1f1f1;
 }
 
 .thread-list {
@@ -239,7 +214,7 @@ export default {
   color: #2c3e50;
 }
 
-.thread.clicked {
+.thread.clicked{
   background-color: #34495e;
   color: white;
 }

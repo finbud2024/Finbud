@@ -1,11 +1,12 @@
 <template>
   <div class="home-container">
+    <div v-if="overlayEnabled" class="overlay"/>
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
       <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
         @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
-        @select-thread="selectThread" @delete-thread="deleteThread" />
+        @select-thread="selectThread" />
     </div>
     <div class="chat-container">
       <ChatFrame>
@@ -59,14 +60,15 @@
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
+    <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import ChatHeader from '../components/ChatHeader.vue';
-import ChatFrame from '../components/ChatFrame.vue';
+import authStore        from '@/authStore';
+import axios            from 'axios';
+import ChatHeader       from '../components/ChatHeader.vue';
+import ChatFrame        from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
 import UserInput from '../components/UserInput.vue';
 import SideBar from '../components/SideBar.vue';
@@ -131,15 +133,10 @@ export default {
     closeSidebar() {
       this.isSidebarVisible = false;
     },
-    toggleVideos() {
-      this.showVideos = !this.showVideos;
-      this.showSearchVideosButton = false;
-    },
     async updateCurrentThread(currentThreadId) {
       try {
         this.messages = [];
-        const botInstruction = `Hello ${this.displayName}!
-Please click "Guidance" for detailed instructions on how to use the chatbot.`;
+        const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
         this.addTypingResponse(botInstruction, false);
 
         const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
@@ -202,14 +199,6 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
     },
     editThread(index) {
       this.threads[index].editing = true;
-      this.$nextTick(() => {
-        const input = this.$refs['threadInput-' + index][0];
-        if (input) {
-          input.focus();
-          const length = input.value.length;
-          input.setSelectionRange(length, length); // Set cursor at the end
-        }
-      });
     },
     async saveThreadName({ newName, index }) {
       this.threads[index].name = newName;
@@ -217,7 +206,7 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
       try {
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${this.threads[index].id}`;
         const reqBody = { title: newName };
-        await axios.put(api, reqBody);
+        const updatedThread = await axios.put(api, reqBody);
       } catch (err) {
         console.error('Error on saving thread name:', err);
       }
@@ -366,26 +355,119 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
         }
       }
     },
-    handleQuestionClick(question) {
-      const searchQuery = `#search ${question}`;
-      this.sendMessage(searchQuery);
+    async handleAddTransaction(userMessage) {
+      const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1].trim();
+        const amount = parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+        return [`Transaction added: ${description}, $${amount}. New balance: $${balance}.`];
+      } else {
+        return ['Please specify the description and amount you want to add.'];
+      }
     },
-    addTypingResponse(text, isUser, sources = [], videos = [], relevantQuestions = []) {
+    async handleSpendTransaction(userMessage) {
+      const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
+      if (match) {
+        const description = match[1].trim();
+        const amount = -parseInt(match[2], 10);
+        const balance = await this.calculateNewBalance(amount);
+        await this.addTransaction(description, amount, balance);
+        return [`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`];
+      } else {
+        return ['Please specify the description and amount you want to spend.'];
+      }
+    },
+    async addTransaction(description, amount, balance) {
+      try {
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+          description,
+          amount,
+          balance,
+          date: new Date().toISOString(),
+          userId: localStorage.getItem('token')
+        });
+      } catch (error) {
+        console.error('Error adding transaction:', error);
+        this.addTypingResponse('Error adding transaction.', false);
+      }
+    },
+    async calculateNewBalance(amount) {
+      try {
+        const userId = localStorage.getItem('token');
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+        const transactions = response.data;
+        const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+        return currentBalance + amount;
+      } catch (error) {
+        console.error('Error calculating new balance:', error);
+        throw error;
+      }
+    },
+    extractStockCode(message) {
+      const pattern = /\b[A-Z]{3,5}\b/g;
+      const matches = message.match(pattern);
+      return matches;
+    },
+    addTypingResponse(text, isUser) {
       const typingMessage = {
         text: text,
         isUser: isUser,
         typing: true,
         timestamp: new Date().toLocaleTimeString(),
-        username: isUser ? 'You' : 'FinBud Bot',
-        sources: sources,
-        videos: videos,
-        relevantQuestions: relevantQuestions
+        username: isUser ? 'You' : 'FinBud Bot'
       };
       this.messages.push(typingMessage);
       setTimeout(() => {
         typingMessage.typing = false;
         this.$forceUpdate();
       }, 1000);
+    },
+    //USED IN BUY/SELL/ADD/SPEND/(QUIZ?)
+    openNewWindow(url){
+      const screenWidth = window.screen.width;
+      const screenHeight = window.screen.height; 
+      const width = screenWidth * 0.7; // 80% of screen width
+      const height = screenHeight * 0.53; // 80% of screen height
+      const left = (screenWidth - width) / 2;
+      const top = (screenHeight - height) / 2;
+      this.newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
+      
+      if (this.newWindow) {
+        // Set up interval to check if the window has been closed
+        this.windowCheckInterval = setInterval(() => {
+          if (this.newWindow.closed) {
+            this.handleWindowClose();
+          }
+        }, 1000); // Check every second
+        window.addEventListener('click', this.closeOnClickOutside);
+        this.overlayEnabled = true;
+      }
+    },
+    //HANDLE THE ABILITY TO CHECK IF USER CLICKS OUTSIDE OF THE REFERENCED WINDOW
+    closeOnClickOutside(event) {
+      if (this.newWindow && !this.newWindow.closed) {
+        this.newWindow.close();
+        this.handleWindowClose();
+      }
+    }, 
+    //HANDLE CLOSE WINDOW
+    handleWindowClose() {
+      if (this.windowCheckInterval) {
+        clearInterval(this.windowCheckInterval);
+      }
+      window.removeEventListener('click', this.closeOnClickOutside);
+      this.overlayEnabled = false;
+      this.newWindow = null;
+    },
+    async scrollChatFrameToBottom(){
+      await new Promise(r => setTimeout(r, 200));
+      const chatFrame = document.querySelector(".chat-frame");
+      chatFrame.scrollTo({
+        top: chatFrame.scrollHeight,
+        behavior: 'smooth' // Smooth scrolling effect
+      });
     }
   },
   async mounted() {
@@ -405,7 +487,7 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
 
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
-      if (Array.isArray(historyThreadsData) && historyThreadsData.length === 0) {
+      if (historyThreadsData.length === 0) {
         const newThread = {
           name: 'New Thread',
           editing: false,
@@ -427,13 +509,12 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
       }
       this.selectThread(0);
     } else {
-      const botInstruction = `Hello, Guest! Please click "Guidance" for detailed instructions on how to use the chatbot. Also, sign in to access the full functionality of Finbud!`;
+      const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
       this.addTypingResponse(botInstruction, false);
     }
   }
 };
 </script>
-
 <style scoped>
 .home-container {
   display: flex;
@@ -512,6 +593,8 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
 .side-bar.is-visible {
   transform: translateX(0);
 }
+/*______________________*/
+/* Guidance CSS class*/
 
 .guidance-btn {
   height: 50px;
