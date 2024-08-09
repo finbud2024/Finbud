@@ -30,23 +30,26 @@ chatRoute.delete("/chats", async (req, res) => {
 chatRoute.post("/chats", validateRequest(Chat.schema), async (req, res) => {
   console.log(req.body);
   if (!req.body.prompt || !req.body.response || !req.body.threadId) {
-    return res.status(400).send("Prompt, response, and threadId are required");
+    return res.status(400).send("Prompt, response and threadId are required");
   }
   console.log('in /chats Route (POST) new chat to database');
   try {
+    const chat = {};
+    if (req.body) {
+      for (const key in req.body) {
+        chat[key] = req.body[key];
+      }
+    }
     const newChat = new Chat({
-      prompt: req.body.prompt,
-      response: req.body.response,
-      sources: req.body.sources || [],
-      videos: req.body.videos || [],
-      followUpQuestions: req.body.followUpQuestions || [],
-      threadId: req.body.threadId
+      prompt: chat.prompt,
+      response: chat.response,
+      threadId: chat.threadId
     });
     console.log(newChat);
     await newChat.save();
     return res.status(200).send(newChat);
   } catch (err) {
-    return res.status(502).send("Internal error: " + err);
+    return res.status(502).send("Internal error e" + err);
   }
 });
 
@@ -56,14 +59,13 @@ chatRoute.put("/chats/:chatId", validateRequest(Chat.schema), async (req, res) =
   console.log('in /chats/:chatId Route (PUT) chat with ID:' + chatId);
   try {
     const filter = { "_id": chatId };
-    const updatedChat = {
-      prompt: req.body.prompt,
-      response: req.body.response,
-      sources: req.body.sources,
-      videos: req.body.videos,
-      followUpQuestions: req.body.followUpQuestions,
-      threadId: req.body.threadId
-    };
+    const updatedChat = {};
+
+    if (req.body) {
+      for (const key in req.body) {
+        updatedChat[key] = req.body[key];
+      }
+    }
 
     const chat = await Chat.updateOne(filter, updatedChat, {
       new: true
@@ -75,7 +77,7 @@ chatRoute.put("/chats/:chatId", validateRequest(Chat.schema), async (req, res) =
 
     return res.status(200).send({ message: `Chat updated successfully`, updatedChat: chat });
   } catch (err) {
-    return res.status(501).send("Internal error: " + err);
+    return res.status(501).send("Internal error e" + err);
   }
 });
 
@@ -90,14 +92,14 @@ chatRoute.delete("/chats/:chatId", async (req, res) => {
     }
     return res.status(200).send('Chat deleted successfully');
   } catch (err) {
-    return res.status(500).send("Internal server error: " + err);
+    return res.status(500).send("Internal sever error" + err);
   }
 });
 
 // GET: retrieve chats with given thread id
 chatRoute.get("/chats/t/:threadId", async (req, res) => {
   const threadId = req.params.threadId;
-  console.log('in /chats/t/:threadId Route (GET) chat with thread ID:' + JSON.stringify(threadId));
+  console.log('in /chats/:threadId Route (GET) chat with thread ID:' + JSON.stringify(threadId));
   try {
     const chats = await Chat.find({ threadId: threadId });
     if (!chats) {
@@ -105,7 +107,7 @@ chatRoute.get("/chats/t/:threadId", async (req, res) => {
     }
     return res.status(200).send(chats);
   } catch (err) {
-    return res.status(501).send("Internal error: " + err);
+    return res.status(501).send("Internal error e" + err);
   }
 });
 
