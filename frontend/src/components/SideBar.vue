@@ -118,6 +118,10 @@ export default {
     closeDropdown() {
       this.visibleDropdownIndex = null;
     },
+    cancelEdit(index) {
+      this.enterPressed = false;
+      this.$emit('cancel-edit', index);
+    },
     handleBlur(thread, index) {
       if (!this.enterPressed) {
         this.cancelEdit(index);

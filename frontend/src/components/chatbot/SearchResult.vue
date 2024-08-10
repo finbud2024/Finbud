@@ -1,28 +1,28 @@
 <template>
   <h3>Sources</h3>
   <div class="sources-container">
-    <div class="horizontal-sources">
-      <div v-for="(source, idx) in sources.slice(0, 3)" :key="idx" class="source" @click="openSource(source.link)">
-        <p class="title">{{ source.title }}</p>
-        <div class="host-container">
-          <img :src="source.favicon" alt="favicon" class="favicon"/>
-          <p>{{ source.host }}</p>
-        </div>
-      </div>
-      <div v-if="remainingSourcesCount > 0" class="source view-more-frame" @click="openAllSources">
-        <div class="favicon-container">
-          <div class="favicon-row" v-for="(row, rowIndex) in faviconRows" :key="rowIndex">
-            <img v-for="(source, idx) in row" :key="idx" :src="source.favicon" alt="favicon" class="favicon"/>
+    <div class="scrollable-sources-frame">
+      <div class="scrollable-sources">
+        <div v-for="(source, idx) in sources.slice(0, 4)" :key="idx" class="source" @click="openSource(source.link)">
+          <p class="title">{{ source.title }}</p>
+          <div class="host-container">
+            <img :src="source.favicon" alt="favicon" class="favicon"/>
+            <p>{{ source.host }}</p>
           </div>
         </div>
-        <p class="view-more-button">View {{ remainingSourcesCount }} more</p>
+        <div v-if="remainingSourcesCount > 0" class="source view-more-frame" @click="openAllSources">
+          <div class="favicon-container">
+            <div class="favicon-row" v-for="(row, rowIndex) in faviconRows" :key="rowIndex">
+              <img v-for="(source, idx) in row" :key="idx" :src="source.favicon" alt="favicon" class="favicon"/>
+            </div>
+          </div>
+          <p class="view-more-button">View {{ remainingSourcesCount }} more</p>
+        </div>
       </div>
     </div>
     <SourcesModal v-if="showSourcesModal" :sources="sources" @close="showSourcesModal = false" />
   </div>
 </template>
-
-
 
 <script>
 import SourcesModal from './SourcesModal.vue';
@@ -66,19 +66,19 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 .sources-container {
-  display: flex;
-  flex-direction: column;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-.horizontal-sources {
-  display: flex;
+.scrollable-sources-frame {
+  width: 100%;
+}
+
+.scrollable-sources {
+  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: flex-start; /* Ensure items align properly */
 }
 
 .source {
@@ -87,14 +87,12 @@ export default {
   justify-content: space-between;
   border: 1px solid #ccc;
   padding: 10px;
-  margin-left: 5px;
-  flex: 1;
   cursor: pointer;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   border-radius: 8px;
   background-color: #f9f9f9;
-  width: 120px;
-  height: 100px; /* Ensure a consistent height for alignment */
+  width: 100%;/* Constrain width to prevent overflow */
+  margin-bottom: 10px;
 }
 
 .source:hover {
@@ -107,13 +105,14 @@ export default {
   font-weight: bold;
   color: #007bff;
   margin: 5px 0;
+  word-wrap: break-word;
 }
 
 .host-container {
   font-size: 0.7rem;
   display: flex;
   align-items: center;
-  margin-top: auto; /* Push the host-container to the bottom */
+  margin-top: auto;
 }
 
 .favicon {
@@ -126,8 +125,9 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-left: 5px;
   padding: 10px;
+  min-width: 150px;
+  max-width: 150px;
 }
 
 .favicon-container {
@@ -135,7 +135,7 @@ export default {
   flex-direction: column;
   gap: 5px;
   width: 100%;
-  margin-bottom: auto; /* Push the container to the top */
+  margin-bottom: auto;
   margin: 5px 0;
 }
 
@@ -152,11 +152,18 @@ export default {
   font-size: 0.7rem;
   cursor: pointer;
   transition: color 0.3s ease;
-  margin-top: auto; /* Aligns the text to the bottom */
+  margin-top: auto;
   margin-left: 0px;
 }
 
 .view-more-button:hover {
   color: #0056b3;
+}
+
+/* Media Query for Responsive Layout */
+@media (max-width: 768px) {
+  .scrollable-sources-frame {
+    width: 100%;
+  }
 }
 </style>

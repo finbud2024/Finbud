@@ -13,44 +13,38 @@
           <!-- Message Container -->
           <div v-if="message.isUser" class="message-container">
             <section class="chat-response">
-              <MessageComponent :is-user="message.isUser"
-                :text="message.text" :typing="message.typing" :htmlContent="message.htmlContent"
+              <MessageComponent 
+                :is-user="message.isUser"
+                :text="message.text" 
+                :typing="message.typing" 
+                :htmlContent="message.htmlContent"
                 :username="message.isUser ? displayName : 'FinBud Bot'"
-                :avatar-src="message.isUser ? userAvatar : botAvatar" />
+                :avatar-src="message.isUser ? userAvatar : botAvatar"
+                :sources="message.isUser ? [] : message.sources"
+                :videos="message.isUser ? [] : message.videos"
+                :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
+                @question-click="handleQuestionClick"
+              />
             </section>
           </div>
 
           <!-- Response Container -->
           <div v-if="!message.isUser" class="message-container">
             <section class="chat-response">
-              <MessageComponent :is-user="message.isUser"
-                :text="message.text" :typing="message.typing" :htmlContent="message.htmlContent"
+              <MessageComponent 
+                :is-user="message.isUser"
+                :text="message.text" 
+                :typing="message.typing" 
+                :htmlContent="message.htmlContent"
                 :username="message.isUser ? displayName : 'FinBud Bot'"
-                :avatar-src="message.isUser ? userAvatar : botAvatar" />
-              <div class="relevant-questions" v-if="message.relevantQuestions && message.relevantQuestions.length > 0">
-                <h3>Related</h3>
-                <ul>
-                  <li v-for="(question, i) in message.relevantQuestions" :key="i" @click="handleQuestionClick(question)">
-                    {{ question }}
-                  </li>
-                </ul>
-              </div>
+                :avatar-src="message.isUser ? userAvatar : botAvatar"
+                :sources="message.isUser ? [] : message.sources"
+                :videos="message.isUser ? [] : message.videos"
+                :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
+                @question-click="handleQuestionClick"
+              />
             </section>
-
-            <div v-if="message.sources || message.videos || message.relevantQuestions" class="additional-content">
-              <section class="sources" v-if="message.sources && message.sources.length > 0">
-                <SearchResult :sources="message.sources" />
-              </section>
-              <section class="videos">
-                <div class="videos-container" v-if="message.videos && message.videos.length > 0">
-                  <Video :videos="message.videos"/>
-                </div>
-              </section>
-            </div>
           </div>
-
-          <!-- Add Divider After Each Pair of Query and Response -->
-          <hr v-if="index === 0 || (index - 1) % 2 === 1 && index !== messages.length - 1" class="message-divider"/>
         </div>
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
@@ -59,7 +53,7 @@
       class="guidance-btn" 
       :class="{ 'is-guidance-visible': showGuidance }"
       @click="showGuidance = true"
-      >
+    >
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud">
       </div>
@@ -68,7 +62,6 @@
     <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -89,15 +82,12 @@ import { handleStock } from '../services/HandleStock.js';
 import { handleReturnCryptoTable } from '../services/HandleReturnCryptoTable.js';
 import { handleReturnRealEstateTable } from '../services/HandleReturnRealEstateTable.js';
 import { handleGeneral } from '../services/HandleGeneral.js';
-import SearchResult from '../components/chatbot/SearchResult.vue';
-import Video from '../components/chatbot/Video.vue';
-import SourcesModal from '../components/chatbot/SourcesModal.vue';
 import { getSources, getVideos, getRelevantQuestions } from '../services/serperService.js';
 
 export default {
   name: 'ChatView',
   props: ['threadId'],
-  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal, SearchResult, Video, SourcesModal, getSources },
+  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal },
   data() {
     return {
       newMessage: '',
@@ -108,12 +98,12 @@ export default {
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
-      showGuidance: false, // Add state for showing guidance modal
+      showGuidance: false,
       sources: [],
       videos: [],
       showVideos: false,
       showSearchVideosButton: false,
-      relevantQuestions: [] // Add state for storing relevant questions
+      relevantQuestions: []
     };
   },
   computed: {
@@ -190,6 +180,10 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
         } else {
           console.error('Error: chatsData is not an array');
         }
+
+        // Scroll to the bottom after loading messages
+        await this.scrollChatFrameToBottom();
+
       } catch (err) {
         console.error('Error on updating to current thread:', err);
       }
@@ -240,10 +234,18 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
     async deleteThread(index) {
       const threadId = this.threads[index].id;
       try {
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
-        await axios.delete(api);
+        // Step 1: delete all chats associated with this threadId
+        const deleteChatsApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`;
+        await axios.delete(deleteChatsApi);
+
+        // Step 2: delete the thread itself
+        const deleteThreadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
+        await axios.delete(deleteThreadApi);
+
+        // Remove the thread from the list in the UI
         this.threads.splice(index, 1);
-        // Optionally, you can update the currentThread to the first thread if any exist
+        
+        // If there are still threads left, select the first one; otherwise, clear the chat and thread state
         if (this.threads.length > 0) {
           this.selectThread(0);
         } else {
@@ -251,8 +253,16 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
           this.messages = [];
         }
       } catch (err) {
-        console.error('Error on deleting thread:', err);
+        console.error('Error on deleting thread or its associated chats:', err);
       }
+    },
+    async scrollChatFrameToBottom() {
+      await new Promise(r => setTimeout(r, 200));
+      const chatFrame = document.querySelector(".chat-frame");
+      chatFrame.scrollTo({
+        top: chatFrame.scrollHeight,
+        behavior: 'smooth'
+      });
     },
     async sendMessage(newMessage) {
       const userMessage = newMessage.trim();
@@ -276,21 +286,16 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
 
       try {
         if (userMessage.toLowerCase().startsWith('#search')) {
-          // Fetch search results from Serper API
           const searchResults = await getSources(userMessage);
           newSources = searchResults;
 
-          // Fetch videos
           newVideos = await getVideos(userMessage);
 
-          // Get relevant questions
           newRelevantQuestions = await getRelevantQuestions(searchResults);
 
-          // Combine search results with user query for GPT-3 response
           const gptResponse = await gptServices(userMessage);
           answers.push(gptResponse);
 
-          // Show the search videos button
           this.showSearchVideosButton = true;
         } else {
           this.showSearchVideosButton = false;
@@ -338,12 +343,12 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
       if (answers && answers.length > 0) {
         answers.forEach(answer => {
           this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions);
+          this.scrollChatFrameToBottom();
         });
       } else {
         console.warn('No answers were generated.');
       }
 
-      // Save chat to backend
       if (authStore.isAuthenticated) {
         try {
           const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
@@ -387,7 +392,6 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
-    // Set the height of chat-view page after delete footer
     const navbarHeight = document.querySelector('.nav-actions').offsetHeight;
     document.querySelector('.home-container').style.height = `calc(100vh - ${navbarHeight}px)`;
 
@@ -467,8 +471,17 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
 }
 
 @media (max-width: 768px) {
+  .side-bar {
+    display: none;
+  }
+
   .toggle-sidebar-btn {
     display: block;
+  }
+
+  .chat-header {
+    font-size: 1rem;
+    padding: 10px;
   }
 }
 
@@ -544,87 +557,4 @@ Please click "Guidance" for detailed instructions on how to use the chatbot.`;
   right: calc(25% + 19px - 80px);
 }
 
-.message-container {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.chat-response {
-  flex: 2;
-}
-
-.timestamp {
-  font-size: 0.75rem;
-  color: #888;
-  margin-top: 5px;
-}
-
-.additional-content {
-  display: flex;
-  flex-direction: column;
-  margin-right: 40px;
-  max-width: 35%;
-}
-
-.sources {
-  margin-bottom: 20px;
-}
-
-.search-videos-btn {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.search-videos-btn:hover {
-  background-color: #444;
-}
-
-.message-divider {
-  margin-left: 50px;
-  margin-right: 50px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border: 0;
-  border-top: 1px solid #ccc;
-}
-
-.relevant-questions {
-  margin-top: 40px;
-  width: 80%;
-}
-
-.relevant-questions h3 {
-  margin-left: 100px;
-  margin-bottom: 10px;
-  color: black;
-}
-
-.relevant-questions ul {
-  list-style-type: none;
-  margin-left: 60px;
-}
-
-.relevant-questions li {
-  padding: 10px;
-  background-color: #f8f9fa;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.relevant-questions li:hover {
-  background-color: #e9ecef;
-  transform: translateX(5px);
-}
-
-.relevant-questions li:active {
-  background-color: #dee2e6;
-}
 </style>

@@ -13,7 +13,6 @@
   </div>
 </template>
 
-
 <script>
 export default {
   props: {
@@ -46,7 +45,7 @@ export default {
 }
 
 .video img {
-  width: 100%;
+  width: 100%; /* Make the video thumbnails responsive */
   height: auto;
   display: block; /* Ensures no extra space around the image */
   border-radius: 6px; /* Optional: Rounded corners matching the container */
@@ -100,5 +99,21 @@ export default {
   font-weight: bold;
   text-align: center;
   padding: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .videos-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+    gap: 8px;
+  }
+
+  .video {
+    width: 100%;
+  }
+
+  .video img {
+    width: 100%;
+  }
 }
 </style>

@@ -1,22 +1,52 @@
 <template>
   <div>
-    <h3 v-if="!isUser" class="response-header">Response</h3>
     <div :class="['message-wrapper', { 'user': isUser, 'bot': !isUser }]">
       <img :src="avatarSrc" class="avatar">
       <div class="message-content-wrapper">
-        <!-- <div class="username">{{ username }}</div> -->
-        <div v-if="htmlContent" :class="['message-content']" v-html="htmlContent"></div>
-        <div v-else  :class="['message-content', { 'typing': typing }]">{{ displayedText }}</div>
+          <!-- Displayed text -->
+          <div v-if="htmlContent" :class="['message-content']" v-html="htmlContent"></div>
+          <div v-else  :class="['message-content', { 'typing': typing }]">{{ displayedText }}</div>
+          <!-- Sources -->
+            <section class="sources" v-if="sources && sources.length > 0">
+              <SearchResult :sources="sources" />
+            </section>
+            <!-- Videos -->
+            <section class="videos" v-if="videos && videos.length > 0">
+              <Video :videos="videos" />
+            </section>
+            <!-- Follow-up questions -->
+            <div class="relevant-questions" v-if="relevantQuestions && relevantQuestions.length > 0">
+              <h3>Related</h3>
+              <ul>
+                <li v-for="(question, i) in relevantQuestions" :key="i" @click="handleQuestionClick(question)">
+                  {{ question }}
+                </li>
+              </ul>
+            </div>
       </div>
-      <!-- <div class="timestamp">{{ timestamp }}</div> -->
     </div>
   </div>
 </template>
 
 <script>
+import SearchResult from '../components/chatbot/SearchResult.vue';
+import Video from '../components/chatbot/Video.vue';
+
 export default {
   name: 'MessageComponent',
-  props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc', 'htmlContent'],
+  components: { SearchResult, Video },
+  props: [
+    'isUser', 
+    'text', 
+    'typing', 
+    'timestamp', 
+    'username', 
+    'avatarSrc',
+    'htmlContent',
+    'sources',
+    'videos',
+    'relevantQuestions'
+  ],
   data() {
     return {
       textProgress: 0, // Initial progress of the typing animation
@@ -49,6 +79,21 @@ export default {
           clearInterval(interval); // Stop the interval when the full text is displayed
         }
       }, typingSpeed);
+    },
+    handleQuestionClick(question) {
+      this.$emit('question-click', question);
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+    },
+    scrollToBottom() {
+      const chatFrame = document.querySelector(".chat-frame");
+      if (chatFrame) {
+        chatFrame.scrollTo({
+          top: chatFrame.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
     }
   },
   mounted() {
@@ -85,12 +130,8 @@ export default {
     background-color: #fff;
   }
 
-  .response-header {
-    margin-bottom: 20px;
-    margin-left: 100px;
-  }
-
   .message-wrapper {
+    padding: 0 15vw;
     display: flex;
     align-items: flex-end;
     gap: 10px;
@@ -119,26 +160,26 @@ export default {
   */
 
   .bot .message-content-wrapper {
-    max-width: 80%;
+    max-width: 100%;
     padding-right: calc(1% + 30px + 18px);
   }
 
   .user .message-content-wrapper {
-    max-width: 80%;
+    max-width: 60%;
   }
 
   .bot .avatar {
     width: 41px;
     aspect-ratio: 1;
     border-radius: 50%;
-    margin-left: 40px; /* Adjusted margin */
+    margin-left: 1%;
   }
 
   .user .avatar {
     width: 41px;
     aspect-ratio: 1;
     border-radius: 50%;
-    margin-right: 40px; /* Adjusted margin */
+    margin-right: 1%;
   }
 
   .user {
@@ -155,6 +196,8 @@ export default {
     border-radius: 16px;
     background-color: #007bff;
     color: #fff; 
+    /* background-color: papayawhip;
+    color: black; */
     border: 1px solid transparent;
     text-align: left;
     white-space: pre-wrap; 
@@ -170,10 +213,41 @@ export default {
     }
   }
 
+
   .message-container.is-user .message-content {
     background-color: #f0f0f0;
     color: #000;
   }
+
+  .combined-content {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.relevant-questions {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.relevant-questions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.relevant-questions li {
+  padding: 10px;
+  background-color: #f8f9fa;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.relevant-questions li:hover {
+  background-color: #e9ecef;
+  transform: translateX(5px);
+}
 
   /* Media queries */
   @media (max-width: 768px) {
