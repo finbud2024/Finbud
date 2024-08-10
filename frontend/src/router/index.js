@@ -16,6 +16,7 @@ import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
 import Update from '@/components/Risk&Chat/Update.vue'
+import VaR from '@/components/Risk&Chat/VaR.vue'
 
 const routes = [
   {
@@ -104,6 +105,11 @@ const routes = [
     path: '/update',
     name: 'Update',
     component: Update,
+  },
+  {
+    path: '/VaR',
+    name: 'VaR',
+    component: VaR,
   }
 ];
 
