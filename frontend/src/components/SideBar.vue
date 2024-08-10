@@ -29,12 +29,7 @@
             </div>
           </div>
         </div>
-        <input
-          v-else
-          v-model="thread.editedName"
-          @keyup.enter="saveThreadName(thread, index)"
-          @blur="enterPressed? enterPressed = false: cancelEdit(index)"
-        />
+
       </li>
     </ul>
     <!-- Confirmation Popup -->
