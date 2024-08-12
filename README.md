@@ -1,3 +1,4 @@
+# Trước khi push phải git pull origin main
 # FinBud
 
 ## Giới thiệu
