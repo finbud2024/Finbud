@@ -1,13 +1,22 @@
 <template>
   <div class="home-container">
     <div v-if="overlayEnabled" class="overlay"/>
-    <div v-if="overlayEnabled" class="overlay"/>
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
-      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
+      <font-awesome-icon
+        class="toggle-sidebar-btn"
+        @click="toggleSidebar"
+        icon="fa-solid fa-bars"
+      />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
-      <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
-        @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
-        @select-thread="selectThread" />
+      <SideBar
+        :class="{ 'is-visible': isSidebarVisible }"
+        :threads="threads"
+        @add-thread="addThread"
+        @edit-thread="editThread"
+        @save-thread-name="saveThreadName"
+        @cancel-edit="cancelEdit"
+        @select-thread="selectThread"
+      />
     </div>
     <div class="chat-container">
       <ChatFrame>
@@ -45,6 +54,17 @@
                 :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
                 @question-click="handleQuestionClick"
               />
+              <SourceComponent
+                v-if="sources.length"
+                :sources="sources"
+                class="source-component-card"
+              />
+              <FollowUpComponent
+                v-if="followUpQuestions.length"
+                :followUpQuestions="followUpQuestions"
+                @sendFollowUp="sendFollowUp"
+                class="followup-component-card"
+              />
             </section>
           </div>
         </div>
@@ -57,37 +77,54 @@
       @click="showGuidance = true"
     >
       <div class="guidance-image-container">
-        <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud">
+        <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
+    <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
 
 <script>
-import authStore        from '@/authStore';
-import axios            from 'axios';
-import ChatHeader       from '../components/ChatHeader.vue';
-import ChatFrame        from '../components/ChatFrame.vue';
-import MessageComponent from '../components/MessageComponent.vue';
-import UserInput        from '../components/UserInput.vue';
-import SideBar          from '../components/SideBar.vue';
-import GuidanceModal    from '../components/GuidanceModal.vue';
-import { gptServices }  from '../services/gptServices.js';
+import authStore from "@/authStore";
+import axios from "axios";
+import ChatHeader from "../components/ChatHeader.vue";
+import ChatFrame from "../components/ChatFrame.vue";
+import MessageComponent from "../components/MessageComponent.vue";
+import SourceComponent from "@/components/SourceComponent.vue";
+import FollowUpComponent from "@/components/FollowUpComponent.vue";
+import UserInput from "../components/UserInput.vue";
+import SideBar from "../components/SideBar.vue";
+import GuidanceModal from "../components/GuidanceModal.vue";
+import { gptServices } from "../services/gptServices.js";
 import { getSources, getVideos, getRelevantQuestions } from '../services/serperService.js';
 
 export default {
-  name: 'ChatView',
-  props: ['threadId'],
-  components: { ChatHeader, ChatFrame, MessageComponent, UserInput, SideBar, GuidanceModal },
+  name: "ChatView",
+  props: ["threadId"],
+  components: {
+    ChatHeader,
+    ChatFrame,
+    MessageComponent,
+    UserInput,
+    SideBar,
+    GuidanceModal ,
+    SourceComponent,
+    FollowUpComponent,
+  },
   data() {
     return {
-      newMessage: '',
+      newMessage: "",
       messages: [],
-      displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.displayName : 'User',
-      userAvatar: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.profilePicture : require('@/assets/anonymous.png'),
-      botAvatar: require('@/assets/botrmbg.png'),
+      sources: [],
+      followUpQuestions: [],
+      displayName: authStore.isAuthenticated
+        ? JSON.parse(localStorage.getItem("user")).identityData.displayName
+        : "User",
+      userAvatar: authStore.isAuthenticated
+        ? JSON.parse(localStorage.getItem("user")).identityData.profilePicture
+        : require("@/assets/anonymous.png"),
+      botAvatar: require("@/assets/botrmbg.png"),
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
@@ -105,7 +142,7 @@ export default {
   computed: {
     authStore() {
       return authStore;
-    }
+    },
   },
   watch: {
     threadId: {
@@ -114,12 +151,12 @@ export default {
         if (newThreadId != null) {
           this.updateCurrentThread(newThreadId);
         }
-      }
+      },
     },
   },
   methods: {
     clearMessage() {
-      this.newMessage = '';
+      this.newMessage = "";
     },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
@@ -133,7 +170,9 @@ export default {
         const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
         this.addTypingResponse(botInstruction, false);
 
-        const thread = this.threads.find(thread => thread.id.toString() === currentThreadId);
+        const thread = this.threads.find(
+          (thread) => thread.id.toString() === currentThreadId
+        );
         if (thread) {
           this.currentThread = thread;
         }
@@ -141,7 +180,7 @@ export default {
         const chats = await axios.get(chatApi);
         const chatsData = chats.data;
         if (Array.isArray(chatsData)) {
-          chatsData.forEach(chat => {
+          chatsData.forEach((chat) => {
             const prompt = {
               text: chat.prompt.toString(),
               isUser: true,
@@ -154,7 +193,7 @@ export default {
             this.messages.push(prompt);
             const responses = chat.response;
             if (Array.isArray(responses)) {
-              responses.forEach(responseData => {
+              responses.forEach((responseData) => {
                 const response = {
                   text: responseData,
                   isUser: false,
@@ -176,19 +215,19 @@ export default {
         await this.scrollChatFrameToBottom();
 
       } catch (err) {
-        console.error('Error on updating to current thread:', err);
+        console.error("Error on updating to current thread:", err);
       }
     },
     async addThread(newThread) {
       try {
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = localStorage.getItem('token');
+        const userId = localStorage.getItem("token");
         const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
         newThread.id = thread.data._id;
         this.threads.push(newThread);
       } catch (err) {
-        console.error('Error on adding new thread:', err);
+        console.error("Error on adding new thread:", err);
       }
     },
     editThread(index) {
@@ -198,15 +237,17 @@ export default {
       this.threads[index].name = newName;
       this.threads[index].editing = false;
       try {
+        console.log("save edit");
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${this.threads[index].id}`;
         const reqBody = { title: newName };
         const updatedThread = await axios.put(api, reqBody);
       } catch (err) {
-        console.error('Error on saving thread name:', err);
+        console.error("Error on saving thread name:", err);
       }
     },
     cancelEdit(index) {
       this.threads[index].editing = false;
+      console.log("cancel edit");
     },
     selectThread(index) {
       this.updateCurrentThread(this.threads[index].id);
@@ -583,9 +624,11 @@ export default {
         const amount = parseInt(match[2], 10);
         const balance = await this.calculateNewBalance(amount);
         await this.addTransaction(description, amount, balance);
-        return [`Transaction added: ${description}, $${amount}. New balance: $${balance}.`];
+        return [
+          `Transaction added: ${description}, $${amount}. New balance: $${balance}.`,
+        ];
       } else {
-        return ['Please specify the description and amount you want to add.'];
+        return ["Please specify the description and amount you want to add."];
       }
     },
     async handleSpendTransaction(userMessage) {
@@ -595,9 +638,13 @@ export default {
         const amount = -parseInt(match[2], 10);
         const balance = await this.calculateNewBalance(amount);
         await this.addTransaction(description, amount, balance);
-        return [`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`];
+        return [
+          `Transaction spent: ${description}, $${Math.abs(
+            amount
+          )}. New balance: $${balance}.`,
+        ];
       } else {
-        return ['Please specify the description and amount you want to spend.'];
+        return ["Please specify the description and amount you want to spend."];
       }
     },
     async addTransaction(description, amount, balance) {
@@ -616,10 +663,15 @@ export default {
     },
     async calculateNewBalance(amount) {
       try {
-        const userId = localStorage.getItem('token');
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+        const userId = localStorage.getItem("token");
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`
+        );
         const transactions = response.data;
-        const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+        const currentBalance = transactions.reduce(
+          (acc, transaction) => acc + transaction.amount,
+          0
+        );
         return currentBalance + amount;
       } catch (err) {
         console.error('Error calculating new balance:', err);
@@ -641,7 +693,7 @@ export default {
         isUser: isUser,
         typing: true,
         timestamp: new Date().toLocaleTimeString(),
-        username: isUser ? 'You' : 'FinBud Bot',
+        username: isUser ? "You" : "FinBud Bot",
         sources: sources,
         videos: videos,
         relevantQuestions: relevantQuestions
@@ -700,41 +752,44 @@ export default {
         top: chatFrame.scrollHeight,
         behavior: "smooth", // Smooth scrolling effect
       });
-    }
+    },
   },
   async mounted() {
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
-    const navbarHeight = document.querySelector('.nav-actions').offsetHeight;
-    document.querySelector('.home-container').style.height = `calc(100vh - ${navbarHeight}px)`;
+    const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
+    document.querySelector(
+      ".home-container"
+    ).style.height = `calc(100vh - ${navbarHeight}px)`;
 
     if (!this.messages) {
       this.messages = [];
     }
 
     if (authStore.isAuthenticated) {
-      const userId = localStorage.getItem('token');
+      const userId = localStorage.getItem("token");
+      console.log(userId);
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
 
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
       if (historyThreadsData.length === 0) {
         const newThread = {
-          name: 'New Thread',
+          name: "New Thread",
           editing: false,
-          editedName: 'New Chat',
-          messages: []
+          editedName: "New Chat",
+          messages: [],
         };
         await this.addThread(newThread);
       } else {
-        historyThreadsData.forEach(threadData => {
+        historyThreadsData.forEach((threadData) => {
           const thread = {
             id: threadData._id,
             name: threadData.title,
             editing: false,
             editedName: threadData.title,
-            messages: []
+            messages: [],
           };
           this.threads.push(thread);
         });
@@ -744,7 +799,7 @@ export default {
       const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
       this.addTypingResponse(botInstruction, false);
     }
-  }
+  },
 };
 </script>
 <style scoped>
@@ -765,7 +820,7 @@ export default {
   top: 15px;
   left: 10px;
   z-index: 1000;
-  color: black; 
+  color: black;
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -872,4 +927,40 @@ export default {
   right: calc(25% + 19px - 80px);
 }
 
+.source-component-card,
+.followup-component-card {
+  width: 70%;
+  margin: 0 auto;
+  background-color: #f8f9fa; /* Light grey background */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  margin-top: 20px;
+}
+
+/* Animation for follow up and source components */
+@keyframes fadeInSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes highlight {
+  0% {
+    background-color: #f0f0f0;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.followup-component-card,
+.source-component-card {
+  animation: fadeInSlide 0.5s ease-out, highlight 1s ease-in-out;
+}
 </style>
