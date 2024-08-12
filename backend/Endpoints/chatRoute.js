@@ -48,6 +48,9 @@ chatRoute.post("/chats", validateRequest(Chat.schema), async (req, res) => {
     const newChat = new Chat({
       prompt: chat.prompt,
       response: chat.response,
+      sources: chat.sources || [],
+      videos: chat.videos || [],
+      followUpQuestions: chat.followUpQuestions || [],
       threadId: chat.threadId,
     });
     console.log(newChat);
@@ -162,21 +165,18 @@ chatRoute.post("/query", async (req, res) => {
 });
 
 // PUT: update chat with given chat id
-chatRoute.put(
-  "/chats/:chatId",
-  validateRequest(Chat.schema),
-  async (req, res) => {
-    const chatId = req.params.chatId;
-    console.log("in /chats/:chatId Route (PUT) chat with ID:" + chatId);
-    try {
-      const filter = { _id: chatId };
-      const updatedChat = {};
-
-      if (req.body) {
-        for (const key in req.body) {
-          updatedChat[key] = req.body[key];
-        }
+chatRoute.put("/chats/:chatId", validateRequest(Chat.schema), async (req, res) => {
+  const chatId = req.params.chatId;
+  console.log('in /chats/:chatId Route (PUT) chat with ID:' + chatId);
+  try {
+    const filter = { "_id": chatId };
+    const updatedChat = {};
+    
+    if (req.body) {
+      for (const key in req.body) {
+        updatedChat[key] = req.body[key];
       }
+    }
 
       const chat = await Chat.updateOne(filter, updatedChat, {
         new: true,

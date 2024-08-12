@@ -3,33 +3,39 @@
     <div :class="['message-wrapper', { user: isUser, bot: !isUser }]">
       <img :src="avatarSrc" class="avatar" />
       <div class="message-content-wrapper">
-        <!-- <div class="username">{{ username }}</div> -->
-        <div
-          v-if="htmlContent"
-          :class="['message-content']"
-          v-html="htmlContent"
-        ></div>
-        <div v-else :class="['message-content', { typing: typing }]">
-          {{ displayedText }}
-        </div>
+          <!-- Displayed text -->
+          <div v-if="htmlContent" :class="['message-content']" v-html="htmlContent"></div>
+          <div v-else  :class="['message-content', { 'typing': typing }]">{{ displayedText }}</div>
+          <!-- Sources -->
+            <section class="sources" v-if="sources && sources.length > 0">
+              <SearchResult :sources="sources" />
+            </section>
+            <!-- Videos -->
+            <section class="videos" v-if="videos && videos.length > 0">
+              <Video :videos="videos" />
+            </section>
+            <!-- Follow-up questions -->
+            <div class="relevant-questions" v-if="relevantQuestions && relevantQuestions.length > 0">
+              <h3>Related</h3>
+              <ul>
+                <li v-for="(question, i) in relevantQuestions" :key="i" @click="handleQuestionClick(question)">
+                  {{ question }}
+                </li>
+              </ul>
+            </div>
       </div>
-      <!-- <div class="timestamp">{{ timestamp }}</div> -->
     </div>
   </div>
 </template>
 
 <script>
+import SearchResult from '../components/chatbot/SearchResult.vue';
+import Video from '../components/chatbot/Video.vue';
+
 export default {
-  name: "MessageComponent",
-  props: [
-    "isUser",
-    "text",
-    "typing",
-    "timestamp",
-    "username",
-    "avatarSrc",
-    "htmlContent",
-  ],
+  name: 'MessageComponent',
+  components: { SearchResult, Video },
+  props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc','htmlContent','sources','videos','relevantQuestions'],
   data() {
     return {
       textProgress: 0, // Initial progress of the typing animation
@@ -63,6 +69,21 @@ export default {
         }
       }, typingSpeed);
     },
+    handleQuestionClick(question) {
+      this.$emit('question-click', question);
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
+    },
+    scrollToBottom() {
+      const chatFrame = document.querySelector(".chat-frame");
+      if (chatFrame) {
+        chatFrame.scrollTo({
+          top: chatFrame.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    }
   },
   mounted() {
     if (this.typing) {
@@ -186,9 +207,39 @@ tr:nth-child(odd) {
   }
 }
 
-.message-container.is-user .message-content {
-  background-color: #f0f0f0;
-  color: #000;
+  .message-container.is-user .message-content {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+
+  .combined-content {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.relevant-questions {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.relevant-questions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.relevant-questions li {
+  padding: 10px;
+  background-color: #f8f9fa;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.relevant-questions li:hover {
+  background-color: #e9ecef;
+  transform: translateX(5px);
 }
 
 /* Media queries */

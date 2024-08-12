@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <div v-if="overlayEnabled" class="overlay" />
+    <div v-if="overlayEnabled" class="overlay"/>
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
       <font-awesome-icon
         class="toggle-sidebar-btn"
@@ -20,33 +20,59 @@
     </div>
     <div class="chat-container">
       <ChatFrame>
-        <MessageComponent
-          v-for="(message, index) in messages"
-          :key="index"
-          :is-user="message.isUser"
-          :text="message.text"
-          :typing="message.typing"
-          :htmlContent="message.htmlContent"
-          :timestamp="message.timestamp"
-          :username="message.isUser ? displayName : 'FinBud Bot'"
-          :avatar-src="message.isUser ? userAvatar : botAvatar"
-        />
-        <SourceComponent
-          v-if="sources.length"
-          :sources="sources"
-          class="source-component-card"
-        />
-        <FollowUpComponent
-          v-if="followUpQuestions.length"
-          :followUpQuestions="followUpQuestions"
-          @sendFollowUp="sendFollowUp"
-          class="followup-component-card"
-        />
+        <div v-for="(message, index) in messages" :key="index">
+          <!-- Message Container -->
+          <div v-if="message.isUser" class="message-container">
+            <section class="chat-response">
+              <MessageComponent 
+                :is-user="message.isUser"
+                :text="message.text" 
+                :typing="message.typing" 
+                :htmlContent="message.htmlContent"
+                :username="message.isUser ? displayName : 'FinBud Bot'"
+                :avatar-src="message.isUser ? userAvatar : botAvatar"
+                :sources="message.isUser ? [] : message.sources"
+                :videos="message.isUser ? [] : message.videos"
+                :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
+                @question-click="handleQuestionClick"
+              />
+            </section>
+          </div>
+
+          <!-- Response Container -->
+          <div v-if="!message.isUser" class="message-container">
+            <section class="chat-response">
+              <MessageComponent 
+                :is-user="message.isUser"
+                :text="message.text" 
+                :typing="message.typing" 
+                :htmlContent="message.htmlContent"
+                :username="message.isUser ? displayName : 'FinBud Bot'"
+                :avatar-src="message.isUser ? userAvatar : botAvatar"
+                :sources="message.isUser ? [] : message.sources"
+                :videos="message.isUser ? [] : message.videos"
+                :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
+                @question-click="handleQuestionClick"
+              />
+              <!-- <SourceComponent
+                v-if="sources.length"
+                :sources="sources"
+                class="source-component-card"
+              />
+              <FollowUpComponent
+                v-if="followUpQuestions.length"
+                :followUpQuestions="followUpQuestions"
+                @sendFollowUp="sendFollowUp"
+                class="followup-component-card"
+              /> -->
+            </section>
+          </div>
+        </div>
       </ChatFrame>
       <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
     </div>
-    <div
-      class="guidance-btn"
+    <div 
+      class="guidance-btn" 
       :class="{ 'is-guidance-visible': showGuidance }"
       @click="showGuidance = true"
     >
@@ -55,11 +81,7 @@
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal
-      v-if="showGuidance"
-      @close="showGuidance = false"
-      :showModal="showGuidance"
-    />
+    <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
 
@@ -69,12 +91,13 @@ import axios from "axios";
 import ChatHeader from "../components/ChatHeader.vue";
 import ChatFrame from "../components/ChatFrame.vue";
 import MessageComponent from "../components/MessageComponent.vue";
-import SourceComponent from "@/components/SourceComponent.vue";
-import FollowUpComponent from "@/components/FollowUpComponent.vue";
+// import SourceComponent from "@/components/SourceComponent.vue";
+// import FollowUpComponent from "@/components/FollowUpComponent.vue";
 import UserInput from "../components/UserInput.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
 import { gptServices } from "../services/gptServices.js";
+import { getSources, getVideos, getRelevantQuestions } from '../services/serperService.js';
 
 export default {
   name: "ChatView",
@@ -85,9 +108,9 @@ export default {
     MessageComponent,
     UserInput,
     SideBar,
-    GuidanceModal,
-    SourceComponent,
-    FollowUpComponent,
+    GuidanceModal ,
+    // SourceComponent,
+    // FollowUpComponent,
   },
   data() {
     return {
@@ -105,7 +128,12 @@ export default {
       currentThread: {},
       threads: [],
       isSidebarVisible: false,
-      showGuidance: false, // State for showing guidance modal
+      showGuidance: false,
+      sources: [],
+      videos: [],
+      showVideos: false,
+      showSearchVideosButton: false,
+      relevantQuestions: [],
       overlayEnabled: false, //overlay to darken the chat screen when new window popsup
       newWindow: null, //new window to referrence to other
       windowCheckInterval: null,
@@ -151,26 +179,41 @@ export default {
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
         const chats = await axios.get(chatApi);
         const chatsData = chats.data;
-        chatsData.forEach((chat) => {
-          const prompt = {
-            text: chat.prompt.toString(),
-            isUser: true,
-            typing: true,
-            timestamp: chat.creationDate,
-          };
-          this.messages.push(prompt);
-          const responses = chat.response;
-          responses.forEach((responseData) => {
-            const response = {
-              text: responseData,
-              isUser: false,
+        if (Array.isArray(chatsData)) {
+          chatsData.forEach((chat) => {
+            const prompt = {
+              text: chat.prompt.toString(),
+              isUser: true,
               typing: true,
               timestamp: chat.creationDate,
+              sources: chat.sources,
+              videos: chat.videos,
+              relevantQuestions: chat.followUpQuestions
             };
-            this.messages.push(response);
+            this.messages.push(prompt);
+            const responses = chat.response;
+            if (Array.isArray(responses)) {
+              responses.forEach((responseData) => {
+                const response = {
+                  text: responseData,
+                  isUser: false,
+                  typing: true,
+                  timestamp: chat.creationDate,
+                  sources: chat.sources,
+                  videos: chat.videos,
+                  relevantQuestions: chat.followUpQuestions
+                };
+                this.messages.push(response);
+              });
+            }
           });
-        });
-        this.scrollChatFrameToBottom();
+        } else {
+          console.error('Error: chatsData is not an array');
+        }
+
+        // Scroll to the bottom after loading messages
+        await this.scrollChatFrameToBottom();
+
       } catch (err) {
         console.error("Error on updating to current thread:", err);
       }
@@ -212,6 +255,39 @@ export default {
         thread.clicked = i === index;
       });
     },
+    async deleteThread(index) {
+      const threadId = this.threads[index].id;
+      try {
+        // Step 1: delete all chats associated with this threadId
+        const deleteChatsApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`;
+        await axios.delete(deleteChatsApi);
+
+        // Step 2: delete the thread itself
+        const deleteThreadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
+        await axios.delete(deleteThreadApi);
+
+        // Remove the thread from the list in the UI
+        this.threads.splice(index, 1);
+        
+        // If there are still threads left, select the first one; otherwise, clear the chat and thread state
+        if (this.threads.length > 0) {
+          this.selectThread(0);
+        } else {
+          this.currentThread = {};
+          this.messages = [];
+        }
+      } catch (err) {
+        console.error('Error on deleting thread or its associated chats:', err);
+      }
+    },
+    async scrollChatFrameToBottom() {
+      await new Promise(r => setTimeout(r, 200));
+      const chatFrame = document.querySelector(".chat-frame");
+      chatFrame.scrollTo({
+        top: chatFrame.scrollHeight,
+        behavior: 'smooth'
+      });
+    },
     async sendMessage(newMessage) {
       const userMessage = newMessage.trim();
       //ONLY EXECUTE COMMAND/SHOW PROMPT IF THERE IS SOME MESSAGES IN THE USER INPUT
@@ -223,6 +299,9 @@ export default {
           timestamp: new Date().toLocaleTimeString(),
         });
         const answers = [];
+        let newSources = [];
+        let newVideos = [];
+        let newRelevantQuestions = [];
 
         // Define additional parameters
         const returnSources = true;
@@ -230,6 +309,7 @@ export default {
         const textChunkOverlap = 200;
         const numberOfSimilarityResults = 2;
         const numberOfPagesToScan = 4;
+
 
         // HANDLE DEFINE
         if (userMessage.toLowerCase().includes("define")) {
@@ -243,7 +323,7 @@ export default {
             const gptResponse = await gptServices(prompt);
             answers.push(gptResponse);
           } catch (err) {
-            console.error("Error in define message:", error);
+            console.error("Error in define message:", err);
           }
         }
         // HANDLE BUY (7)
@@ -381,8 +461,8 @@ export default {
               }
             );
             coinData = res.data.data.coins;
-          } catch (error) {
-            console.error("Failed to fetch cr quotes:", error);
+          } catch (err) {
+            console.error("Failed to fetch cr quotes:", err);
           }
           let tableTemplate = `
         <div style="font-weight: 900; font-size: 30px"> Top 5 Ranking Coins </div>
@@ -444,8 +524,8 @@ export default {
               },
             });
             propertiesData = response.data.props;
-          } catch (error) {
-            console.error("Error fetching property data:", error);
+          } catch (err) {
+            console.error("Error fetching property data:", err);
           }
           let tableTemplate = `
         <div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
@@ -479,40 +559,58 @@ export default {
             timestamp: new Date().toLocaleTimeString(),
           });
         }
+        // HANDLE SEARCH
+        else if (userMessage.toLowerCase().includes("#search")){
+          const searchResults = await getSources(userMessage);
+          newSources = searchResults;
+
+          newVideos = await getVideos(userMessage);
+
+          newRelevantQuestions = await getRelevantQuestions(searchResults);
+
+          const gptResponse = await gptServices(userMessage);
+          answers.push(gptResponse);
+          // this.showSearchVideosButton = true;
+        }
         // HANDLE GENERAL
         else {
           try {
             const prompt = userMessage;
-            const gptResponse = await axios.post(
-              `${process.env.VUE_APP_DEPLOY_URL}/query`,
-              {
-                prompt,
-                returnSources,
-                textChunkSize,
-                textChunkOverlap,
-                numberOfSimilarityResults,
-                numberOfPagesToScan,
-              }
-            );
-            answers.push(gptResponse.data.answer);
-            this.sources = gptResponse.data.sources || [];
-            this.followUpQuestions = gptResponse.data.followUpQuestions || [];
+            // const gptResponse = await axios.post(
+            //   `${process.env.VUE_APP_DEPLOY_URL}/query`,
+            //   {
+            //     prompt,
+            //     returnSources,
+            //     textChunkSize,
+            //     textChunkOverlap,
+            //     numberOfSimilarityResults,
+            //     numberOfPagesToScan,
+            //   }
+            // );
+            const gptResponse =  await gptServices(prompt);
+            answers.push(gptResponse);
+            // answers.push(gptResponse.data.answer);
+            // this.sources = gptResponse.data.sources || [];
+            // this.followUpQuestions = gptResponse.data.followUpQuestions || [];
           } catch (err) {
-            console.error("Error in general message:", error);
+            console.error("Error in general message:", err);
           }
         }
         answers.forEach((answer) => {
-          this.addTypingResponse(answer, false);
+          this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions);
         });
         //save chat to backend
         if (authStore.isAuthenticated) {
           try {
             const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
             const reqBody = {
-              prompt: userMessage,
-              response: answers,
-              threadId: this.currentThread.id,
-            };
+            prompt: userMessage,
+            response: answers,
+            sources: newSources,
+            videos: newVideos,
+            followUpQuestions: newRelevantQuestions,
+            threadId: this.currentThread.id,
+          };
             const chat = await axios.post(chatApi, reqBody);
           } catch (err) {
             console.error("Error on saving chat:", err);
@@ -553,19 +651,16 @@ export default {
     },
     async addTransaction(description, amount, balance) {
       try {
-        const response = await axios.post(
-          `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
-          {
-            description,
-            amount,
-            balance,
-            date: new Date().toISOString(),
-            userId: localStorage.getItem("token"),
-          }
-        );
-      } catch (error) {
-        console.error("Error adding transaction:", error);
-        this.addTypingResponse("Error adding transaction.", false);
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+          description,
+          amount,
+          balance,
+          date: new Date().toISOString(),
+          userId: localStorage.getItem('token')
+        });
+      } catch (err) {
+        console.error('Error adding transaction:', err);
+        this.addTypingResponse('Error adding transaction.', false);
       }
     },
     async calculateNewBalance(amount) {
@@ -580,8 +675,8 @@ export default {
           0
         );
         return currentBalance + amount;
-      } catch (error) {
-        console.error("Error calculating new balance:", error);
+      } catch (err) {
+        console.error('Error calculating new balance:', err);
         throw error;
       }
     },
@@ -590,13 +685,20 @@ export default {
       const matches = message.match(pattern);
       return matches;
     },
-    addTypingResponse(text, isUser) {
+    handleQuestionClick(question) {
+      const searchQuery = `#search ${question}`;
+      this.sendMessage(searchQuery);
+    },
+    addTypingResponse(text, isUser, sources = [], videos = [], relevantQuestions = []) {
       const typingMessage = {
         text: text,
         isUser: isUser,
         typing: true,
         timestamp: new Date().toLocaleTimeString(),
         username: isUser ? "You" : "FinBud Bot",
+        sources: sources,
+        videos: videos,
+        relevantQuestions: relevantQuestions
       };
       this.messages.push(typingMessage);
       setTimeout(() => {
@@ -658,7 +760,6 @@ export default {
     setInterval(() => {
       this.currentTime = new Date().toLocaleTimeString();
     }, 500);
-    //set the height of chat-view page after delete footer
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
     document.querySelector(
       ".home-container"
