@@ -644,15 +644,19 @@ export default {
       }, 1000);
     },
     //USED IN BUY/SELL/ADD/SPEND/(QUIZ?)
-    openNewWindow(url){
+    openNewWindow(url) {
       const screenWidth = window.screen.width;
-      const screenHeight = window.screen.height; 
+      const screenHeight = window.screen.height;
       const width = screenWidth * 0.7; // 80% of screen width
       const height = screenHeight * 0.53; // 80% of screen height
       const left = (screenWidth - width) / 2;
       const top = (screenHeight - height) / 2;
-      this.newWindow = window.open(url,'_blank', `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`);
-      
+      this.newWindow = window.open(
+        url,
+        "_blank",
+        `resize=0,toolbar=0,location=0,menubar=0,width=${width},height=${height},left=${left},top=${top}`
+      );
+
       if (this.newWindow) {
         // Set up interval to check if the window has been closed
         this.windowCheckInterval = setInterval(() => {
@@ -660,7 +664,7 @@ export default {
             this.handleWindowClose();
           }
         }, 1000); // Check every second
-        window.addEventListener('click', this.closeOnClickOutside);
+        window.addEventListener("click", this.closeOnClickOutside);
         this.overlayEnabled = true;
       }
     },
@@ -670,22 +674,22 @@ export default {
         this.newWindow.close();
         this.handleWindowClose();
       }
-    }, 
+    },
     //HANDLE CLOSE WINDOW
     handleWindowClose() {
       if (this.windowCheckInterval) {
         clearInterval(this.windowCheckInterval);
       }
-      window.removeEventListener('click', this.closeOnClickOutside);
+      window.removeEventListener("click", this.closeOnClickOutside);
       this.overlayEnabled = false;
       this.newWindow = null;
     },
-    async scrollChatFrameToBottom(){
-      await new Promise(r => setTimeout(r, 200));
+    async scrollChatFrameToBottom() {
+      await new Promise((r) => setTimeout(r, 200));
       const chatFrame = document.querySelector(".chat-frame");
       chatFrame.scrollTo({
         top: chatFrame.scrollHeight,
-        behavior: 'smooth' // Smooth scrolling effect
+        behavior: "smooth", // Smooth scrolling effect
       });
     }
   },
