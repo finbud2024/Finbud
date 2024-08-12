@@ -285,4 +285,14 @@ tr:hover {
         font-size: 14px;
     }
 }
+
+@media (max-width: 768px) {
+    th,td {
+        font-size: 8px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+}
+
+
 </style>
