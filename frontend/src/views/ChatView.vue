@@ -265,14 +265,21 @@ export default {
         else if (this.extractStockCode(userMessage)) {
           try {
             const stockCode = this.extractStockCode(userMessage)[0];
+            // daily quote
             const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
             const stockData = stockResponse.data;
             const price = stockData['Global Quote']['05. price'];
             const timeStamp = new Date().toLocaleTimeString();
             let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
             answers.push(alphavantageResponse);
+            // stock overview
+            const stockOverview = await axios.get(`https://www.alphavantage.co/query?function=OVERVIEW&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
+            const overviewData = JSON.stringify(stockOverview.data);
             //chatgpt api
-            const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+            const prompt = `You are an AI that can only respond based on the information provided in the following context. \
+            Do not use any external knowledge or assumptions. \
+            If the answer is not explicitly stated in the context, respond with "I do not have information".  \
+            Generate an analysis of ${overviewData} which currently trades at $${price}, as of ${timeStamp}.`;
             const gptResponse = await gptServices(prompt);
             answers.push(gptResponse);
           } catch (err) {
