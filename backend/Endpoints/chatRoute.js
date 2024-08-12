@@ -41,9 +41,12 @@ chatRoute.post("/chats", validateRequest(Chat.schema), async (req, res) => {
       }
     }
     const newChat = new Chat({
-      prompt: chat.prompt,
-      response: chat.response,
-      threadId: chat.threadId
+      prompt: req.body.prompt,
+      response: req.body.response,
+      sources: req.body.sources || [],
+      videos: req.body.videos || [],
+      followUpQuestions: req.body.followUpQuestions || [],
+      threadId: req.body.threadId
     });
     console.log(newChat);
     await newChat.save();
@@ -60,7 +63,7 @@ chatRoute.put("/chats/:chatId", validateRequest(Chat.schema), async (req, res) =
   try {
     const filter = { "_id": chatId };
     const updatedChat = {};
-
+    
     if (req.body) {
       for (const key in req.body) {
         updatedChat[key] = req.body[key];
