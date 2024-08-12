@@ -19,9 +19,6 @@ library.add(...icons); // Use the spread operator to add the icons
 // Create the application
 const app = createApp(App);
 
-// Configure custom elements
-app.config.compilerOptions.isCustomElement = tag => ['Vue3Slider', 'MultiSelector'].includes(tag);
-
 // Register FontAwesomeIcon component
 app.component('font-awesome-icon', FontAwesomeIcon);
 
