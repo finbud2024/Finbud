@@ -7,29 +7,20 @@
     <ul class="thread-list">
       <li v-for="(thread, index) in threads" 
           :key="index" 
-          :class="['thread', {clicked: thread.clicked}]">
-        <div class="thread-item">
-          <span v-if="!thread.editing" @click="selectThread(index)">
-            {{ thread.name }}
-          </span>
-          <input
-            v-else
-            v-model="thread.editedName"
-            :ref="'threadInput-' + index"
-            @keyup.enter="saveThreadName(thread, index)"
-            @blur="handleBlur(thread, index)"
-          />
-          <div class="thread-actions">
-            <div class="edit-btn" @click.stop="toggleDropdown(index)">
-              <font-awesome-icon icon="fa-solid fa-ellipsis" />
-            </div>
-            <div v-if="isDropdownVisible(index)" class="dropdown-menu" ref="dropdowns">
-              <div class="dropdown-item" @click="confirmDelete(index)">Delete</div>
-              <div class="dropdown-item" @click="editThread(index)">Rename</div>
-            </div>
+          :class="['thread', {clicked: thread.clicked}]"
+          @click="handleClick(index)">
+        <div v-if="!thread.editing" class="thread-item">
+          {{ thread.name }}
+          <div class="edit-btn" @click.stop="editThread(index)">
+            <font-awesome-icon icon="fa-solid fa-ellipsis" />
           </div>
         </div>
-
+        <input
+          v-else
+          v-model="thread.editedName"
+          @keyup.enter="saveThreadName(thread, index)"
+          @blur="enterPressed? enterPressed = false: cancelEdit(index)"
+        />
       </li>
     </ul>
     <!-- Confirmation Popup -->
@@ -75,6 +66,7 @@ export default {
           input.setSelectionRange(length, length);
         }
       });
+      this.$emit('edit-thread', index);
     },
     saveThreadName(thread, index) {
       console.log(this.enterPressed);
@@ -86,8 +78,8 @@ export default {
       }
     },
     selectThread(index) {
-      this.$emit("select-thread", index);
-      this.threads.forEach((thread) => {
+      this.$emit('select-thread', index);
+      this.threads.forEach(thread => {
         thread.clicked = false;
       });
       this.threads[index].clicked = true;
@@ -125,6 +117,22 @@ export default {
     handleBlur(thread, index) {
       if (!this.enterPressed) {
         this.cancelEdit(index);
+      }
+    },
+    cancelEdit(index) {
+      this.enterPressed = false;
+      this.$emit('cancel-edit', index);
+    },
+    handleClick(index) {
+      if(event.detail == 1){
+        this.selectThread(index);
+      }
+
+      if(event.detail == 2){
+        this.threads.forEach(thread => {
+          thread.editing = false;
+        });
+        this.editThread(index);
       }
     },
   },

@@ -1,11 +1,13 @@
 <template>
   <div class="home-container">
     <div v-if="overlayEnabled" class="overlay"/>
+    <div v-if="overlayEnabled" class="overlay"/>
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
       <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :threads="threads" @add-thread="addThread"
         @edit-thread="editThread" @save-thread-name="saveThreadName" @cancel-edit="cancelEdit"
+        @select-thread="selectThread" />
         @select-thread="selectThread" />
     </div>
     <div class="chat-container">
@@ -60,7 +62,7 @@
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
+    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
   </div>
 </template>
 
@@ -70,14 +72,14 @@ import axios            from 'axios';
 import ChatHeader       from '../components/ChatHeader.vue';
 import ChatFrame        from '../components/ChatFrame.vue';
 import MessageComponent from '../components/MessageComponent.vue';
-import UserInput from '../components/UserInput.vue';
-import SideBar from '../components/SideBar.vue';
-import GuidanceModal from '../components/GuidanceModal.vue';
-import authStore from '@/authStore';
-import { gptServices } from '../services/gptServices.js';
+import UserInput        from '../components/UserInput.vue';
+import SideBar          from '../components/SideBar.vue';
+import GuidanceModal    from '../components/GuidanceModal.vue';
+import authStore        from '@/authStore';
+import { gptServices }  from '../services/gptServices.js';
 import { handleDefine } from '../services/HandleDefine.js';
-import { handleBuy } from '../services/HandleBuy.js';
-import { handleSell } from '../services/HandleSell.js';
+import { handleBuy }    from '../services/HandleBuy.js';
+import { handleSell }   from '../services/HandleSell.js';
 import { handleAddTransaction } from '../services/HandleAddTransaction.js';
 import { handleSpendTransaction } from '../services/HandleSpendTransaction.js';
 import { handleStock } from '../services/HandleStock.js';

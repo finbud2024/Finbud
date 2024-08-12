@@ -35,18 +35,7 @@ import Video from '../components/chatbot/Video.vue';
 export default {
   name: 'MessageComponent',
   components: { SearchResult, Video },
-  props: [
-    'isUser', 
-    'text', 
-    'typing', 
-    'timestamp', 
-    'username', 
-    'avatarSrc',
-    'htmlContent',
-    'sources',
-    'videos',
-    'relevantQuestions'
-  ],
+  props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc','htmlContent','sources','videos','relevantQuestions'],
   data() {
     return {
       textProgress: 0, // Initial progress of the typing animation
