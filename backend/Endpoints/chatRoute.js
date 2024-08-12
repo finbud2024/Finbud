@@ -3,20 +3,11 @@ import Chat from "../Database Schema/Chat.js";
 import validateRequest from "../utils/validateRequest.js";
 import axios from "axios";
 import dotenv from "dotenv";
-import { OpenAIEmbeddings } from "@langchain/openai";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { BraveSearch } from "@langchain/community/tools/brave_search";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import * as cheerio from "cheerio";
 
 dotenv.config();
 
 const chatRoute = express.Router();
-
-const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
-const BRAVE_SEARCH_API_KEY = process.env.VUE_APP_BRAVE_SEARCH_API_KEY;
-
-const embeddings = new OpenAIEmbeddings();
 
 // GET: Retrieve all chats
 chatRoute.get("/chats", async (req, res) => {
@@ -88,7 +79,7 @@ async function generateFollowUpQuestions(responseText) {
       },
       {
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.VUE_APP_OPENAI_API_KEY}`,
           "Content-Type": "application/json",
         },
       }
@@ -113,7 +104,9 @@ chatRoute.post("/query", async (req, res) => {
 
   try {
     console.log("Initializing BraveSearch");
-    const loader = new BraveSearch({ apiKey: BRAVE_SEARCH_API_KEY });
+    const loader = new BraveSearch({
+      apiKey: process.env.VUE_APP_BRAVE_SEARCH_API_KEY,
+    });
     const docs = await loader.invoke(prompt, { count: numberOfPagesToScan });
     console.log("BraveSearch returned docs", docs);
 
@@ -139,7 +132,7 @@ chatRoute.post("/query", async (req, res) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.VUE_APP_OPENAI_API_KEY}`,
           "Content-Type": "application/json",
         },
       }
