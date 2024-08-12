@@ -96,7 +96,10 @@ export default {
       videos: [],
       showVideos: false,
       showSearchVideosButton: false,
-      relevantQuestions: []
+      relevantQuestions: [],
+      overlayEnabled: false, //overlay to darken the chat screen when new window popsup
+      newWindow: null, //new window to referrence to other
+      windowCheckInterval: null,
     };
   },
   computed: {
@@ -517,7 +520,6 @@ export default {
         }
         // HANDLE SEARCH
         else if (userMessage.toLowerCase().includes("#search")){
-          alert("check");
           const searchResults = await getSources(userMessage);
           newSources = searchResults;
 
@@ -629,13 +631,20 @@ export default {
       const matches = message.match(pattern);
       return matches;
     },
-    addTypingResponse(text, isUser) {
+    handleQuestionClick(question) {
+      const searchQuery = `#search ${question}`;
+      this.sendMessage(searchQuery);
+    },
+    addTypingResponse(text, isUser, sources = [], videos = [], relevantQuestions = []) {
       const typingMessage = {
         text: text,
         isUser: isUser,
         typing: true,
         timestamp: new Date().toLocaleTimeString(),
-        username: isUser ? 'You' : 'FinBud Bot'
+        username: isUser ? 'You' : 'FinBud Bot',
+        sources: sources,
+        videos: videos,
+        relevantQuestions: relevantQuestions
       };
       this.messages.push(typingMessage);
       setTimeout(() => {
