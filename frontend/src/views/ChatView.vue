@@ -54,7 +54,7 @@
                 :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
                 @question-click="handleQuestionClick"
               />
-              <SourceComponent
+              <!-- <SourceComponent
                 v-if="sources.length"
                 :sources="sources"
                 class="source-component-card"
@@ -64,7 +64,7 @@
                 :followUpQuestions="followUpQuestions"
                 @sendFollowUp="sendFollowUp"
                 class="followup-component-card"
-              />
+              /> -->
             </section>
           </div>
         </div>
@@ -91,8 +91,8 @@ import axios from "axios";
 import ChatHeader from "../components/ChatHeader.vue";
 import ChatFrame from "../components/ChatFrame.vue";
 import MessageComponent from "../components/MessageComponent.vue";
-import SourceComponent from "@/components/SourceComponent.vue";
-import FollowUpComponent from "@/components/FollowUpComponent.vue";
+// import SourceComponent from "@/components/SourceComponent.vue";
+// import FollowUpComponent from "@/components/FollowUpComponent.vue";
 import UserInput from "../components/UserInput.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
@@ -109,8 +109,8 @@ export default {
     UserInput,
     SideBar,
     GuidanceModal ,
-    SourceComponent,
-    FollowUpComponent,
+    // SourceComponent,
+    // FollowUpComponent,
   },
   data() {
     return {
@@ -576,20 +576,22 @@ export default {
         else {
           try {
             const prompt = userMessage;
-            const gptResponse = await axios.post(
-              `${process.env.VUE_APP_DEPLOY_URL}/query`,
-              {
-                prompt,
-                returnSources,
-                textChunkSize,
-                textChunkOverlap,
-                numberOfSimilarityResults,
-                numberOfPagesToScan,
-              }
-            );
-            answers.push(gptResponse.data.answer);
-            this.sources = gptResponse.data.sources || [];
-            this.followUpQuestions = gptResponse.data.followUpQuestions || [];
+            // const gptResponse = await axios.post(
+            //   `${process.env.VUE_APP_DEPLOY_URL}/query`,
+            //   {
+            //     prompt,
+            //     returnSources,
+            //     textChunkSize,
+            //     textChunkOverlap,
+            //     numberOfSimilarityResults,
+            //     numberOfPagesToScan,
+            //   }
+            // );
+            const gptResponse =  await gptServices(prompt);
+            answers.push(gptResponse);
+            // answers.push(gptResponse.data.answer);
+            // this.sources = gptResponse.data.sources || [];
+            // this.followUpQuestions = gptResponse.data.followUpQuestions || [];
           } catch (err) {
             console.error("Error in general message:", err);
           }
