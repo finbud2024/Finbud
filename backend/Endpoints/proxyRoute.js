@@ -8,13 +8,11 @@ proxyRoute.all('/proxy', async (req, res) => {
     console.log('in proxy route');
     try {
         const targetUrl = req.body.url;
-        console.log('req.body:', req.body);
-        console.log('targetUrl:', targetUrl);
         if(!targetUrl){
             return res.status(400).send('No target URL provided');
         }
-
         const method = req.body.method.toLowerCase();
+        // Set up the configuration for the axios request
         let config = {
             method: method,
             url: targetUrl,
@@ -24,16 +22,15 @@ proxyRoute.all('/proxy', async (req, res) => {
             },
             timeout: 5000,
         }
-        if(method === 'post'){
+        // Only include the data property for POST, PUT, and PATCH requests
+        if(method === 'post' || method === 'put' || method === 'patch'){
             config['data'] = req.body.data;
         }
-        console.log('config:', config);
         const response = await axios(config);
-
+        // Set the CORS headers in returning response
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
         res.status(response.status).send(response.data);
     } catch (error) {
         console.error('Proxy error:', error.message);
