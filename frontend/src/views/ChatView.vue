@@ -543,14 +543,15 @@ export default {
         }
         // HANDLE SEARCH
         else if (userMessage.toLowerCase().includes("#search")){
+          //Search for sources, videos, and relevant questions
           const searchResults = await getSources(userMessage);
           newSources = searchResults;
           newVideos = await getVideos(userMessage);
           newRelevantQuestions = await getRelevantQuestions(searchResults);
+          //Normal GTP response
           const gptResponse = await gptServices(userMessage);
-          console.log(gptResponse);
           answers.push(gptResponse);
-          // this.showSearchVideosButton = true;
+          // this.showSearchVideosButton = true; ??????
         }
         // HANDLE GENERAL
         else {
