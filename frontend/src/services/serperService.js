@@ -4,10 +4,13 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import OpenAI from 'openai';
+import { method } from 'lodash';
 
 const SERPER_API_KEY = process.env.VUE_APP_SERPER_API_KEY;
+// const SERPER_API_KEY = '8e6b91bffb14581f9a9e9abe0b0d42fee7e5ad15375f3e3b8a328e1432420d8b';
 const BRAVE_SEARCH_API_KEY = process.env.VUE_APP_BRAVE_SEARCH_API_KEY;
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
+const DEPLOY_URL = process.env.VUE_APP_DEPLOY_URL;
 
 // Set up OpenAI configuration
 const openai = new OpenAI({
@@ -17,13 +20,24 @@ const openai = new OpenAI({
 
 export async function getSources(message) {
   try {
-    const response = await axios.get(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(message)}&count=10`, {
+    // const response = await axios.get(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(message)}&count=10`, {
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'X-Subscription-Token': BRAVE_SEARCH_API_KEY,
+    //     'Access-Control-Allow-Origin': '*',
+    //   }
+    // });
+
+    const encodedMessage = encodeURIComponent(message);
+    const response = await axios.post(`${DEPLOY_URL}/proxy`, {
+      url: `https://api.search.brave.com/res/v1/web/search?q=${encodedMessage}&count=10`,
+      method: 'GET',
       headers: {
         'Accept': 'application/json',
         'X-Subscription-Token': BRAVE_SEARCH_API_KEY,
-        'Access-Control-Allow-Origin': '*',
       }
     });
+
     const results = response.data.web.results.map(result => ({
       title: result.title,
       link: result.url,
@@ -90,29 +104,48 @@ export async function processAndVectorizeContent(contents, query) {
 export async function getVideos(message) {
   const url = 'https://google.serper.dev/videos';
   const data = JSON.stringify({ q: message });
-  const requestOptions = {
-    method: 'POST',
-    headers: {
-      'X-API-KEY': SERPER_API_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: data
-  };
+  console.log('data:', data);
+  // const requestOptions = {
+  //   method: 'POST',
+  //   headers: {
+  //     'X-API-KEY': SERPER_API_KEY,
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: data
+  // };
   try {
-    const response = await fetch(url, requestOptions);
+    // const response = await fetch(url, requestOptions);
+    const response = await axios.post(`${DEPLOY_URL}/proxy`, {
+      method: 'POST',
+      url: 'https://google.serper.dev/videos',
+      headers: {
+        'X-API-KEY': SERPER_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      data: data,
+    });
     if (response.status === 403) {
       console.error("Forbidden: Check your API key and permissions.");
       return [];
     }
-    const responseData = await response.json();
+    const responseData = response.data;
     const validLinks = await Promise.all(responseData.videos.map(async video => {
       const imageUrl = video.imageUrl;
-      const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
-      if (imageResponse.ok && imageResponse.headers.get('content-type').startsWith('image/')) {
+      // const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
+      if(!imageUrl) return null;
+      const imageResponse = await axios.post(`${DEPLOY_URL}/proxy`, {
+        method: 'HEAD',
+        url: imageUrl,
+      });
+      
+      console.log('imageResponse:', imageResponse);
+
+      if (imageResponse.status === 200) {
         return { title: video.title, imageUrl, link: video.link };
       }
       return null;
     }));
+    console.log('validLinks:', validLinks);
     return validLinks.filter(link => link !== null).slice(0, 9);
   } catch (error) {
     console.error('Error fetching videos:', error);
