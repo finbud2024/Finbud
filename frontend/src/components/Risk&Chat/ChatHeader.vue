@@ -30,7 +30,6 @@
     padding: 20px;
     text-align: center;
     font-size: 1.5rem;
-    font-family: 'Space Grotesk', sans-serif;
     /* background-image: linear-gradient(to right, #7BDBBF, #7BDBBF); */
     color: white;
     box-shadow: 2 2px 10px rgba(0, 0, 0, 0.1);

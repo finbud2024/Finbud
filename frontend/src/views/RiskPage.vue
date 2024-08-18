@@ -252,9 +252,21 @@ img {
   margin-right: 8px;
 }
 
+/* Media query for phone users */
+
 @media screen and (max-width: 768px) {
   .data-card {
     width: 100%;
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
   }
+
+  th, td {
+    padding: 5px 5px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
 }
 </style>

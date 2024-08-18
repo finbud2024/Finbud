@@ -207,7 +207,6 @@ export default {
 
 <style scoped>
 .quiz-container {
-  font-family: 'Roboto', sans-serif;
   padding: 20px;
   text-align: center;
   max-width: 600px;

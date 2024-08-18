@@ -29,7 +29,6 @@ export default {
   padding: 10px 0;
   text-align: center;
   font-size: clamp(1rem, 1.5rem, 2rem); 
-  font-family: 'Space Grotesk', sans-serif;
   background-image: linear-gradient(to right, #4444c5, #2348db);
   color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

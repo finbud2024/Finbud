@@ -105,10 +105,6 @@ export default {
 <style scoped>
 @import 'animate.css';
 
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
-
 .crypto-watch {
   width: 100%;
   max-width: 1200px;
