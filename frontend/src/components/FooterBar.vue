@@ -34,7 +34,6 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
 
 .footer-bar {
   background-color: #0F1F3D;
@@ -44,7 +43,6 @@ export default {
   align-items: center;
   padding: 1rem 3rem;
   flex-wrap: wrap;
-  font-family: 'Space Grotesk', sans-serif;
   height: auto;
   font-size: 0.875rem;
 }

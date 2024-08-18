@@ -21,26 +21,8 @@
     <div class="chat-container">
       <ChatFrame>
         <div v-for="(message, index) in messages" :key="index">
-          <!-- Message Container -->
-          <div v-if="message.isUser" class="message-container">
-            <section class="chat-response">
-              <MessageComponent 
-                :is-user="message.isUser"
-                :text="message.text" 
-                :typing="message.typing" 
-                :htmlContent="message.htmlContent"
-                :username="message.isUser ? displayName : 'FinBud Bot'"
-                :avatar-src="message.isUser ? userAvatar : botAvatar"
-                :sources="message.isUser ? [] : message.sources"
-                :videos="message.isUser ? [] : message.videos"
-                :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
-                @question-click="handleQuestionClick"
-              />
-            </section>
-          </div>
-
           <!-- Response Container -->
-          <div v-if="!message.isUser" class="message-container">
+          <div class="message-container">
             <section class="chat-response">
               <MessageComponent 
                 :is-user="message.isUser"
@@ -561,16 +543,15 @@ export default {
         }
         // HANDLE SEARCH
         else if (userMessage.toLowerCase().includes("#search")){
+          //Search for sources, videos, and relevant questions
           const searchResults = await getSources(userMessage);
           newSources = searchResults;
-
           newVideos = await getVideos(userMessage);
-
           newRelevantQuestions = await getRelevantQuestions(searchResults);
-
+          //Normal GTP response
           const gptResponse = await gptServices(userMessage);
           answers.push(gptResponse);
-          // this.showSearchVideosButton = true;
+          // this.showSearchVideosButton = true; ??????
         }
         // HANDLE GENERAL
         else {

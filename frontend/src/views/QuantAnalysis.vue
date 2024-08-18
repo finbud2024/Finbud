@@ -564,7 +564,6 @@ import DashBoard from '@/components/quant/DashBoard.vue';
 
 export default {
   components: {
-    //MarketHeader,
     DashBoard,
     MonteCarloSimulation
   },

@@ -4,7 +4,7 @@
     <div class="video" v-for="(video, index) in videos" :key="index" @click="openVideo(video.link)">
       <img :src="video.imageUrl" alt="Video thumbnail" />
       <div class="watch-label">
-        <span class="watch-text">Watch <i class="play-icon">▶</i></span>
+          <font-awesome-icon class="icon" icon="fa-solid fa-play" />
       </div>
       <div class="overlay">
         <div class="title">{{ video.title }}</div>
@@ -32,7 +32,7 @@ export default {
 <style scoped>
 .videos-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
   gap: 10px; /* Space between items */
 }
 
@@ -60,11 +60,11 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
   display: flex;
   justify-content: center;
+  align-items: center;
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 6px; /* Match the image rounded corners */
@@ -72,16 +72,24 @@ export default {
 
 .watch-label {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 10%;
+  right: 10%;
+  width: 2vw;
+  aspect-ratio: 1;
   background: rgba(0, 0, 0, 0.7);
   color: white;
   border: none;
-  padding: 5px 10px;
-  font-size: 0.9rem;
+  font-size: 1vw;
   display: flex;
   align-items: center;
-  border-radius: 20px;
+  border-radius: 50%;
+}
+
+.watch-label .icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .play-icon {
@@ -93,9 +101,9 @@ export default {
 }
 
 .title {
-  margin-top: 10px;
   color: white;
-  font-size: 0.8rem;
+  font-size: 0.7vw;
+  line-height: 0.9vw;
   font-weight: bold;
   text-align: center;
   padding: 10px;
@@ -115,5 +123,6 @@ export default {
   .video img {
     width: 100%;
   }
+
 }
 </style>

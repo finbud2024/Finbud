@@ -257,7 +257,6 @@ export default {
 .profile-page{
   display: flex;
   justify-content:space-evenly;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .border{
