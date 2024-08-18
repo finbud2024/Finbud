@@ -4,6 +4,7 @@ const CryptoSchema = new mongoose.Schema({
     cryptoName: { type: String, required: true },
     symbol: { type: String, required: true },
     open: { type: Number, required: true },
+    low:{type: Number},
     high: { type: Number},
     close: { type: Number, required: true },
     change: { type: Number},

@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <div class="carlendar-container"><label for="">Please select one</label>
+        <div class="carlendar-container">
+            <label for="">Please select one</label>
             <select v-model="selected">
                 <option v-for="stock in stockcurrencies" :key="stock" :value="stock">{{ stock }}</option>
             </select>
@@ -14,22 +15,25 @@
                 <VueDatePicker v-model="endDate" :min-date="minDate" :max-date="maxDate" prevent-min-max-navigation>
                 </VueDatePicker>
             </div>
+            <label for="">Enter your confident level </label>
             <input class ="numberInput"
                 type="number"
                 v-model.number="confidentLevel"
                 @input="checkMaxValue"
-                placeholder="Enter confident level:"
+                placeholder="1-100"
                 max="100"
                 />
+            <label for="">Ammout you are willing to invest</label>
             <input
                 class ="numberInput"
-                type="number"
-                v-model.number="money"
-                placeholder="Enter your money:"
+                type="text"
+                v-model="formattedMoney"
+                placeholder="Ex: 1.000.000.000"
                 />
             <input class="styled" type="button" value="Show" @click="getVaR" :disabled="isFormValid" />        
             <div v-if="VaRValue != ''">
-                <h3>Your Value at Risk is: {{ VaRValue }}</h3>
+                <h3>You will lose: {{ formatOutput(VaRValue) }}</h3>
+                <h6> Your percentile return: {{ percentileReturn }} </h6>
             </div>
         </div>
     </div>
@@ -72,6 +76,16 @@ export default {
         }
     },
     computed: {
+        formattedMoney: {
+        get() {
+            return this.formatMoney(this.money);
+        },
+        set(newValue) {
+            const value = newValue ? newValue.toString() : '';
+            // Remove dots before storing the value in the original `money` property
+            this.money = value.replace(/\./g, '') || 0;
+            }
+        },
         minDate() { return new Date("2024-02-01") },
         maxDate() { return new Date() },
         isFormValid() {
@@ -80,6 +94,20 @@ export default {
         },
     },
     methods: {
+        formatMoney(value) {
+        value = value.toString().replace(/\D/g, '');
+        value = value.toString().replace('.', ',');
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    },
+    formatOutput(value){
+        value = value.toString().replace(/[^\d.]/g, '');
+        let [integerPart, decimalPart] = value.split('.');
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        if (decimalPart !== undefined) {
+            return `${integerPart},${decimalPart}`;
+        }
+        return integerPart;
+    },
         checkMaxValue() {
         if (this.confidentLevel > 100) {
         this.confidentLevel = 100; // Limit the value to 100
