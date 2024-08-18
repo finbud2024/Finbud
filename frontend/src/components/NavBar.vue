@@ -1,5 +1,5 @@
 <template>
-  <nav class="nav-bar" id="app">
+  <nav class="nav-bar">
     <router-link to="/" class="navbar-brand">FinBud</router-link>
     <div class="nav-right">
       <ul class="nav-items">
