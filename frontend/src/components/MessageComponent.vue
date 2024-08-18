@@ -93,7 +93,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 table {
   width: 100%;
   border-collapse: collapse;
@@ -249,12 +249,6 @@ tr:nth-child(odd) {
   }
 }
 
-.home-container {
-  display: flex;
-  width: 100%;
-  background-color: #f0f4f8; /* Added background color for a lighter look */
-  padding: 20px; /* Added padding for spacing */
-}
 
 .sidebar-container {
   display: flex;
