@@ -1,7 +1,6 @@
 <template>
   <section class="content">
     <div>
-      <!--<MarketHeader />-->
       <h1 class="headtitle">Market Data Center</h1>
       <div class="market-data-center"> 
         <div class="market-section">
@@ -24,7 +23,6 @@
 
 
 <script>
-//import MarketHeader from '../components/MarketHeader.vue';
 import NewsSection from '../components/marketPage/NewsSection.vue';
 import CryptoWatch from '@/components/marketPage/CryptoWatch.vue';
 import StockWatch from '@/components/marketPage/StockWatch.vue';
@@ -33,7 +31,6 @@ import RealEstateMap from '@/components/marketPage/RealEstateMap.vue';
 export default {
   name: 'MarketDataCenter',
   components: {
-    //MarketHeader,
     NewsSection,
     CryptoWatch,
     StockWatch,

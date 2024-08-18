@@ -75,7 +75,6 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* Container for the login page */
 .login-container {
@@ -86,7 +85,6 @@ export default {
   border-radius: 15px;
   background: rgb(248, 249, 254);
   text-align: center;
-  font-family: Noto sans, sans-serif;
 }
 
 .brand-name {

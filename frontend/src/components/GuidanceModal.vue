@@ -110,7 +110,6 @@ export default {
 };
 </script>
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
 /* ___________________________*/
 /* guidance appreance */
 .sidebar-overlay {
@@ -126,7 +125,6 @@ export default {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s 0.3s, opacity 0.3s ease-in-out;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .sidebar-overlay.show {

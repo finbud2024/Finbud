@@ -336,7 +336,6 @@ export default {
   margin-top: 0;
   opacity: 1;
   animation: none;
-  font-family: Noto sans, sans-serif;
 }
 
 header {
