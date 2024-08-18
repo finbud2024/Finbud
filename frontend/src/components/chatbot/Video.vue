@@ -4,7 +4,9 @@
     <div class="video" v-for="(video, index) in videos" :key="index" @click="openVideo(video.link)">
       <img :src="video.imageUrl" alt="Video thumbnail" />
       <div class="watch-label">
-        <span class="watch-text">Watch <i class="play-icon">▶</i></span>
+        <span class="watch-text">Watch 
+          <font-awesome-icon class="icon" icon="fa-solid fa-play" />
+        </span>
       </div>
       <div class="overlay">
         <div class="title">{{ video.title }}</div>
@@ -32,7 +34,7 @@ export default {
 <style scoped>
 .videos-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  grid-template-columns: repeat(4, 1fr); /* 3 columns */
   gap: 10px; /* Space between items */
 }
 
@@ -82,6 +84,10 @@ export default {
   display: flex;
   align-items: center;
   border-radius: 20px;
+}
+
+.watch-text .icon {
+  margin-left: 5px;
 }
 
 .play-icon {

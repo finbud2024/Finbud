@@ -10,7 +10,7 @@
             <p>{{ source.host }}</p>
           </div>
         </div>
-        <div v-if="remainingSourcesCount > 0" class="source view-more-frame" @click="openAllSources">
+        <div v-if="remainingSourcesCount > 0" class="source" @click="openAllSources">
           <div class="favicon-container">
             <div class="favicon-row" v-for="(row, rowIndex) in faviconRows" :key="rowIndex">
               <img v-for="(source, idx) in row" :key="idx" :src="source.favicon" alt="favicon" class="favicon"/>
@@ -84,6 +84,7 @@ export default {
   flex-direction: row;
   height: 12vh;
   margin-bottom: 2vh;
+  width: 40vw;
 }
 
 .source {
@@ -91,14 +92,16 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid #ccc;
-  padding: 10px;
   cursor: pointer;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   border-radius: 8px;
   background-color: #f9f9f9;
-  width: 50%;/* Constrain width to prevent overflow */
+  width: 100%;/* Constrain width to prevent overflow */
   margin-bottom: 10px;
-  height: 100%
+  height: 100%;
+  position: relative;
+  padding: 10px;
+  flex: 1;
 }
 
 .source:hover {
@@ -107,18 +110,26 @@ export default {
 }
 
 .title {
+  position: absolute;
   font-size: 0.7rem;
   font-weight: bold;
   color: #007bff;
-  margin: 5px 0;
+  width: 80%;
   word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; 
 }
+
 
 .host-container {
   font-size: 0.7rem;
   display: flex;
   align-items: center;
   margin-top: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; 
 }
 
 .favicon {
@@ -127,14 +138,6 @@ export default {
   margin-right: 5px;
 }
 
-.view-more-frame {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 10px;
-  min-width: 150px;
-  max-width: 150px;
-}
 
 .favicon-container {
   display: flex;
