@@ -3,7 +3,7 @@
   <div class="sources-container">
     <div class="scrollable-sources-frame">
       <div class="scrollable-sources">
-        <div v-for="(source, idx) in sources.slice(0, 4)" :key="idx" class="source" @click="openSource(source.link)">
+        <div v-for="(source, idx) in sources.slice(0, 3)" :key="idx" class="source" @click="openSource(source.link)">
           <p class="title">{{ source.title }}</p>
           <div class="host-container">
             <img :src="source.favicon" alt="favicon" class="favicon"/>
@@ -73,12 +73,17 @@ export default {
 
 .scrollable-sources-frame {
   width: 100%;
+
 }
 
 .scrollable-sources {
   gap: 10px;
   flex-wrap: nowrap;
   align-items: flex-start; /* Ensure items align properly */
+  display: flex;
+  flex-direction: row;
+  height: 12vh;
+  margin-bottom: 2vh;
 }
 
 .source {
@@ -91,8 +96,9 @@ export default {
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   border-radius: 8px;
   background-color: #f9f9f9;
-  width: 100%;/* Constrain width to prevent overflow */
+  width: 50%;/* Constrain width to prevent overflow */
   margin-bottom: 10px;
+  height: 100%
 }
 
 .source:hover {
