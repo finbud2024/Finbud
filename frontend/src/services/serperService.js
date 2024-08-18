@@ -102,19 +102,9 @@ export async function processAndVectorizeContent(contents, query) {
 }
 
 export async function getVideos(message) {
-  const url = 'https://google.serper.dev/videos';
   const data = JSON.stringify({ q: message });
-  console.log('data:', data);
-  // const requestOptions = {
-  //   method: 'POST',
-  //   headers: {
-  //     'X-API-KEY': SERPER_API_KEY,
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: data
-  // };
   try {
-    // const response = await fetch(url, requestOptions);
+    // axios post request to the proxy endpoint
     const response = await axios.post(`${DEPLOY_URL}/proxy`, {
       method: 'POST',
       url: 'https://google.serper.dev/videos',
@@ -129,17 +119,15 @@ export async function getVideos(message) {
       return [];
     }
     const responseData = response.data;
+    // Filter out videos without images
     const validLinks = await Promise.all(responseData.videos.map(async video => {
       const imageUrl = video.imageUrl;
-      // const imageResponse = await fetch(imageUrl, { method: 'HEAD' });
       if(!imageUrl) return null;
+      // Check if the image URL is valid
       const imageResponse = await axios.post(`${DEPLOY_URL}/proxy`, {
         method: 'HEAD',
         url: imageUrl,
       });
-      
-      console.log('imageResponse:', imageResponse);
-
       if (imageResponse.status === 200) {
         return { title: video.title, imageUrl, link: video.link };
       }
