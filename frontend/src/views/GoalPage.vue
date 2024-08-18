@@ -428,7 +428,6 @@ export default {
 <style scoped>
 /* Basic styles */
 .homepage {
-  font-family: 'Space Grotesk', sans-serif;
   color: #333;
   padding: 20px;
   background-color: #f9f9f9;

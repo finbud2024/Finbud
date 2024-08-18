@@ -75,7 +75,7 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 /* Container for the login page */
 .login-container {
@@ -86,7 +86,7 @@ export default {
   border-radius: 15px;
   background: rgb(248, 249, 254);
   text-align: center;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: Noto sans, sans-serif;
 }
 
 .brand-name {
@@ -195,7 +195,6 @@ input:focus {
   border-radius: 50px;
   background-color: #000;
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .login-button:hover {

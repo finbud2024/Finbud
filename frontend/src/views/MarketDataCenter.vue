@@ -45,9 +45,8 @@ export default {
 <style scoped>
 
 
-.content{
-  font-family: 'Space Grotesk', sans-serif;
-}
+/*.content{
+}*/
 
 .market-data-center {
   display: flex;

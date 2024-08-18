@@ -223,7 +223,6 @@ export default {
   max-width: 1200px;
   margin: 0 auto;
   text-align: center;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .features-title {
@@ -364,7 +363,6 @@ button {
   cursor: pointer;
   margin-top: 20px;
   border-radius: 8px;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 button:hover {

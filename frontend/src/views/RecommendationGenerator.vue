@@ -124,12 +124,10 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
 
 .wrap-recommend {
   background-color: white;
   color: #1e06fb;
-  font-family: 'Space Grotesk', sans-serif;
   display: flex;
   flex-direction: column;
   height: 100vh;
