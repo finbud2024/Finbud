@@ -63,7 +63,12 @@
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
+    <GuidanceModal  
+      v-if="showGuidance" 
+      @close="showGuidance = false" 
+      :showModal="showGuidance" 
+      @guidance-command-selected="handleGuidanceSelection" 
+    />
   </div>
 </template>
 
@@ -166,7 +171,7 @@ export default {
             const prompt = {
               text: chat.prompt.toString(),
               isUser: true,
-              typing: true,
+              typing: false,
               timestamp: chat.creationDate,
               sources: chat.sources,
               videos: chat.videos,
@@ -179,7 +184,7 @@ export default {
                 const response = {
                   text: responseData,
                   isUser: false,
-                  typing: true,
+                  typing: false,
                   timestamp: chat.creationDate,
                   sources: chat.sources,
                   videos: chat.videos,
@@ -735,6 +740,11 @@ export default {
         top: chatFrame.scrollHeight,
         behavior: "smooth", // Smooth scrolling effect
       });
+    },
+    //HANDLE GUIDANCE SELECTION
+    handleGuidanceSelection(command) {
+      // this.sendMessage(command);
+      console.log("Guidance selected: ", command);
     },
   },
   async mounted() {

@@ -77,14 +77,12 @@ export default {
 }
 
 .scrollable-sources {
-  gap: 10px;
   flex-wrap: nowrap;
   align-items: flex-start; /* Ensure items align properly */
-  display: flex;
-  flex-direction: row;
-  height: 12vh;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns */
+  gap: 30px; /* Space between items */
   margin-bottom: 2vh;
-  width: 40vw;
 }
 
 .source {

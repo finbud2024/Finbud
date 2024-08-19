@@ -6,7 +6,7 @@
         <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to help you get started:</p>
         <ol class="guidance-list">
           <!-- guidance for general users -->
-          <li v-for="(item, index) in generalGuidanceList" :key="index">
+          <li v-for="(item, index) in generalGuidanceList" :key="index" @click="selectGuidanceCommand(item)">
             <span class="header-list">{{ item.header }}</span>
             <div v-if="item.command" class="command-container">
               <span class="command">{{ item.command }}</span>
@@ -17,7 +17,7 @@
           </li>
           <!-- guidance for authenticated users -->
           <div v-if="authStore.isAuthenticated">
-            <li v-for="(item, index) in userGuidanceList" :key="index">
+            <li v-for="(item, index) in userGuidanceList" :key="index" @click="selectGuidanceCommand(item)" >
               <span class="header-list">{{ item.header }}</span>
               <div v-if="item.command" class="command-container">
                 <span class="command">{{ item.command }}</span>
@@ -105,6 +105,10 @@ export default {
   methods: {
     close() {
       this.$emit('close');
+    },
+    selectGuidanceCommand(item) {
+      this.$emit('guidance-command-selected', item.command || item.example || item.header);
+      this.close();
     }
   }
 };
@@ -178,6 +182,8 @@ export default {
   border: 2px solid black;
   border-radius: 15px;
   margin: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .guidance-text p {
@@ -205,6 +211,8 @@ export default {
 
 .guidance-text ol li:hover{
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /*transform: scale(1.05);*/
+  border: 2px solid #007bff;
 }
 
 .command {
