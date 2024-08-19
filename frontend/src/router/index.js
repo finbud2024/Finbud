@@ -9,7 +9,7 @@ import PricingPage from '@/views/PricingPage.vue';
 import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
-import RiskPage from '@/views/RiskPage.vue';
+import RiskAnalysis from '@/views/RiskAnalysis.vue';
 import GoalPage from '@/views/GoalPage.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
@@ -55,9 +55,9 @@ const routes = [
     component: PricingPage,
   },
   {
-    path: '/risk',
-    name: 'RiskPage',
-    component: RiskPage,
+    path: '/riskanalysis',
+    name: 'RiskAnalysis',
+    component: RiskAnalysis,
   },
   {
     path: '/quant-analysis',

@@ -1,5 +1,5 @@
 <template>
-  <nav class="nav-bar">
+  <nav class="nav-bar" id="app">
     <router-link to="/" class="navbar-brand">FinBud</router-link>
     <div class="nav-right">
       <ul class="nav-items">
@@ -12,14 +12,13 @@
           </div>
         </li>
         <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)" @mouseleave="toggleDropdown(false)">
-          <div class="services-dropdown dropbtn" >Services <span class="arrow-down"></span></div>
+        <div class="services-dropdown dropbtn" >Services <span class="arrow-down"></span></div>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
             <router-link to="/quant-analysis" class="home"  @click="toggleDropdown(false)">Quant</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
-            <router-link to="/risk" class="risk" @click="toggleDropdown(false)">Risk</router-link>
-            <router-link to="/market" class="market" @click="toggleDropdown(false)">Market</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
           </div>
         </li>
         <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
@@ -47,9 +46,10 @@
           <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
           <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
           <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-          <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link>
+          <!-- <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link> -->
+          <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
           <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
-          <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link>
+          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->
           <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
           <router-link to="/quant-analysis" class="home">Quant</router-link>
@@ -165,6 +165,7 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
 
 .nav-bar {
   background-color: #FFFFFF;
@@ -173,6 +174,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0rem 2rem;
+  font-family: 'Space Grotesk', sans-serif;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: fixed;
   z-index: 1000;
