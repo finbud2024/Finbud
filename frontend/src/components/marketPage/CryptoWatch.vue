@@ -29,7 +29,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="rowIndex < rows.length - 1" class="row-divider"></div>
+            <!-- <div v-if="rowIndex < rows.length - 1" class="row-divider"></div> -->
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@ const API_KEY = process.env.VUE_APP_CRYPTO_KEY;
 export default {
   name: 'CryptoWatch',
   components: {
-    CryptoPopup,
+    
   },
   data() {
     return {
@@ -101,13 +101,12 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 @import 'animate.css';
 
 .crypto-watch {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
   overflow: hidden;
@@ -142,7 +141,7 @@ export default {
   display: flex;
   border: 1px solid transparent;
   padding: 8px;
-  width: 350px; /* Set a fixed width for each item */
+  width: 400px; /* Increase the width to fit longer text */
   margin-right: 10px;
   position: relative;
   cursor: pointer;
@@ -155,22 +154,6 @@ export default {
 .crypto-item:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-5px);
-}
-
-.crypto-bar {
-  width: 5px;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
-.positive-bar {
-  background-color: green;
-}
-
-.negative-bar {
-  background-color: red;
 }
 
 .crypto-info {
@@ -202,6 +185,7 @@ export default {
   white-space: normal; /* Ensure text wraps */
   overflow-wrap: break-word; /* Ensure text wraps */
 }
+
 .crypto-price {
   flex-shrink: 0; /* Prevent shrinking */
   text-align: center; /* Center align the text */
@@ -241,21 +225,29 @@ export default {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .cryto-item {
-    width: 363px;
+  .crypto-item {
+    width: 370px; /* Adjust the width for smaller screens */
   }
 }
 
 @media (max-width: 992px) {
   .crypto-item {
-    width: 500px;
+    width: 320px; /* Adjust the width for smaller screens */
+  }
+
+  /* Ensure there's no extra width setting that could lead to double scrollbars */
+  .crypto-table {
+    width: 100%;
   }
 }
 
 @media (max-width: 768px) {
   .crypto-item {
-    width: 350px;
+    width: 280px; /* Adjust the width for smaller screens */
+  }
+
+  .crypto-table {
+    width: 100%;
   }
 }
-
 </style>
