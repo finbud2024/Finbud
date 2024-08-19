@@ -9,7 +9,11 @@ import PricingPage from '@/views/PricingPage.vue';
 import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
+<<<<<<< HEAD
 import RiskAnalysis from '@/views/RiskAnalysis.vue';
+=======
+import RiskPage from '@/views/RiskPage.vue';
+>>>>>>> 30a2051a19a6909b9e4da5939bf0d787530079f9
 import GoalPage from '@/views/GoalPage.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
@@ -98,7 +102,7 @@ const routes = [
     path: '/update',
     name: 'Update',
     component: Update,
-  }
+  },
 ];
 
 const router = createRouter({

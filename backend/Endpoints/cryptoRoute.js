@@ -95,6 +95,7 @@ async function saveNewCrypto(metaData, data, recordDate) {
         cryptoName: metaData['3. Digital Currency Name'],
         symbol: metaData["2. Digital Currency Code"],
         open: data['1. open'],
+        low : data['3. low'],
         high: data['2. high'],
         close: data['4. close'],
         volume: data['5. volume'],
