@@ -10,13 +10,11 @@ import AboutUsPage from '@/views/AboutUsPage.vue';
 import QuizzPage from '@/views/QuizzPage.vue';
 import StockSimulator from '@/views/StockSimulator.vue';
 import RiskPage from '@/views/RiskPage.vue';
-import RiskChat from '@/components/Risk&Chat/RiskChat.vue'
 import GoalPage from '@/views/GoalPage.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
 import Update from '@/components/Risk&Chat/Update.vue'
-import VaR from '@/components/Risk&Chat/VaR.vue'
 
 const routes = [
   {
@@ -62,11 +60,6 @@ const routes = [
     component: RiskPage,
   },
   {
-    path: '/riskchat',
-    name: 'RiskChat',
-    component: RiskChat,
-  },
-  {
     path: '/quant-analysis',
     name: 'QuantAnalysis',
     component: QuantAnalysis,
@@ -106,11 +99,6 @@ const routes = [
     name: 'Update',
     component: Update,
   },
-  {
-    path: '/VaR',
-    name: 'VaR',
-    component: VaR,
-  }
 ];
 
 const router = createRouter({

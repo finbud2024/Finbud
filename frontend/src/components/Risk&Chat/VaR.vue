@@ -6,7 +6,7 @@
                 <option v-for="stock in stockcurrencies" :key="stock" :value="stock">{{ stock }}</option>
             </select>
             <div class="datebox">
-                <label for="">Choose an end date</label>
+                <label for="">Choose an start date</label>
                 <VueDatePicker v-model="startDate" :min-date="minDate" :max-date="maxDate" prevent-min-max-navigation>
                 </VueDatePicker>
             </div>
@@ -23,7 +23,7 @@
                 placeholder="1-100"
                 max="100"
                 />
-            <label for="">Ammout you are willing to invest</label>
+            <label for="">Amount you are willing to invest</label>
             <input
                 class ="numberInput"
                 type="text"
