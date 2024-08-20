@@ -26,7 +26,9 @@ import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
 export default {
 	name: 'ChatComponent',
-	props: {},
+	props: {
+		currentThreadID:String,
+	},
 	components: { ChatFrame, MessageComponent, UserInput },
 	data() {
 		return {
@@ -44,7 +46,15 @@ export default {
 			return authStore;
 		},
 	},
-	watch: {},
+	watch: {
+		currentThreadID:{
+			immediate: true,
+			handler(newThreadID){
+				console.log("Displaying threadID:",newThreadID)
+				if(newThreadID.length > 0)this.updateCurrentThread(newThreadID)
+			}
+		}
+	},
 	methods: {
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async sendMessage(newMessage) {
@@ -298,22 +308,22 @@ export default {
 					}
 				}
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
-				// //save chat to backend
-				// if (authStore.isAuthenticated) {
-				//     try {
-				//         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-				//         const reqBody = {
-				//             prompt: userMessage,
-				//             response: answers,
-				//             sources: newSources,
-				//             videos: newVideos,
-				//             threadId: this.currentThread.id,
-				//         };
-				//         const chat = await axios.post(chatApi, reqBody);
-				//     } catch (err) {
-				//         console.error("Error on saving chat:", err);
-				//     }
-				// }
+				//save chat to backend
+				if (authStore.isAuthenticated) {
+				    try {
+				        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+				        const reqBody = {
+				            prompt: userMessage,
+				            response: answers,
+				            sources: newSources,
+				            videos: newVideos,
+				            threadId: this.currentThreadID,
+				        };
+				        await axios.post(chatApi, reqBody);
+				    } catch (err) {
+				        console.error("Error on saving chat:", err.message);
+				    }
+				}
 				this.scrollChatFrameToBottom();
 			}
 		},
@@ -398,9 +408,57 @@ export default {
 			const searchQuery = `#search ${question}`;
 			this.sendMessage(searchQuery);
 		},
+		async updateCurrentThread(threadID) {
+			try {
+				this.messages = [];
+				const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
+				this.addTypingResponse(botInstruction, false);
+				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
+				const chats = await axios.get(chatApi);
+				const chatsData = chats.data;
+				if (Array.isArray(chatsData)) {
+					chatsData.forEach((chat) => {
+						const prompt = {
+							text: chat.prompt.toString(),
+							isUser: true,
+							typing: true,
+							timestamp: chat.creationDate,
+							sources: chat.sources,
+							videos: chat.videos,
+							relevantQuestions: chat.followUpQuestions
+						};
+						this.messages.push(prompt);
+						const responses = chat.response;
+						if (Array.isArray(responses)) {
+							responses.forEach((responseData) => {
+								const response = {
+									text: responseData,
+									isUser: false,
+									typing: true,
+									timestamp: chat.creationDate,
+									sources: chat.sources,
+									videos: chat.videos,
+									relevantQuestions: chat.followUpQuestions
+								};
+								this.messages.push(response);
+							});
+						}
+					});
+				} else {
+					console.error('Error: chatsData is not an array');
+				}
+				// Scroll to the bottom after loading messages
+				await this.scrollChatFrameToBottom();
+			} catch (err) {
+				console.error("Error on updating to current thread:", err.message);
+			}
+		},
 	},
-	mounted() {
-
+	mounted(){
+		if(!authStore.isAuthenticated){
+			const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+			this.addTypingResponse(botInstruction, false);
+		}
 	}
 }
 </script>
