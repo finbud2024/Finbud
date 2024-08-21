@@ -354,7 +354,7 @@ export default {
                   path: "/stock-simulator",
                   query: { symbol: stockSymbol, quantity: -quantity },
                 }).href;
-                answers.push(`Selling ${quantity} shares of ${stockSymbol} stock, please redirecting to the stock simulator...`);
+                answers.push(`Selling ${quantity} shares of ${stockSymbol} stock, redirecting to the stock simulator...`);
                 this.openNewWindow(url);
               } else {
                 this.addTypingResponse(
@@ -378,9 +378,8 @@ export default {
               const amount = parseInt(match[2], 10);
               const balance = await this.calculateNewBalance(amount);
               await this.addTransaction(description, amount, balance);
-              answers.push(
-                `Transaction added: ${description}, $${amount}. New balance: $${balance}.`
-              );
+              // answers.push( `Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
+              answers.push(`Adding transaction for ${description}, $${amount}. Redirecting to the goal page...`);
               this.openNewWindow("/goal");
             } else {
               answers.push(
@@ -400,11 +399,9 @@ export default {
               const amount = -parseInt(match[2], 10);
               const balance = await this.calculateNewBalance(amount);
               await this.addTransaction(description, amount, balance);
-              answers.push(
-                `Transaction spent: ${description}, $${Math.abs(
-                  amount
-                )}. New balance: $${balance}.`
-              );
+              // answers.push( `Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
+              answers.push(`Adding transaction for ${description}, $${amount}. Please redirect to the goal page...`);
+
               this.openNewWindow("/goal");
             } else {
               answers.push(
@@ -601,7 +598,7 @@ export default {
           };
             const chat = await axios.post(chatApi, reqBody);
           } catch (err) {
-            console.error("Error on saving chat:", err);
+            console.error("Error on saving chat:", err.message);
           }
         }
         this.scrollChatFrameToBottom();

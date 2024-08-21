@@ -19,7 +19,8 @@
             <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
             <div class="expanded-content"> 
               <!-- <div v-if="item.additionalInfo">{{item.additionalInfo}}</div> -->
-               Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos, hic reprehenderit. Dolore provident animi nostrum officia maxime odio tempore quaerat exercitationem, unde possimus magnam. Vel inventore quaerat officiis voluptatum blanditiis.<50></50>
+               <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos, hic reprehenderit. Dolore provident animi nostrum officia maxime odio tempore quaerat exercitationem, unde possimus magnam. Vel inventore quaerat officiis voluptatum blanditiis.<50></50> -->
+              <img class="explanation" :src="item.explanation" alt="explanation">
             </div>
           </li>
           <!-- guidance for authenticated users -->
@@ -44,6 +45,7 @@
 
 <script>
 import authStore from '@/authStore';
+import test from '@/assets/guidance-explanation/test.png'
 export default {
   name: 'GuidanceModal',
   props: {
@@ -58,8 +60,9 @@ export default {
         {
           header: "Advanced search",
           command: "#search [term]",
-          instruction: "Enter the stock code in uppercase",
-          example: "TSLA"
+          instruction: "Enter search term",
+          example: "#search stock market",
+          explanation: test
         },
         {
           header: "Stock Price Inquiry",
@@ -256,10 +259,7 @@ export default {
 /* Command expansion */
 
 .expanded-content {
-  margin-top: 10px;
-  padding: 10px;
   background-color: #f9f9f9;
-  border-left: 3px solid #007bff;
   transition: all 0.3s ease-in-out;/* opacity, max-height*/
   border-radius: 4px;
   max-height: 0;
@@ -270,7 +270,13 @@ export default {
 .expanded .expanded-content {
   max-height: 1000px;
   padding: 10px;
+  margin-top: 20px;
   opacity: 1;
+}
+
+.explanation {
+  width: 100%;
+  height: auto;
 }
 /* ___________________________*/
 /* Media queries */
