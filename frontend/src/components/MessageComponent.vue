@@ -92,15 +92,6 @@ export default {
       return this.text.substring(0, this.textProgress);
     },
   },
-  // watch: {
-  //   typing(newValue) {
-  //     console.log('haha',newValue)
-  //     if (newValue) {
-  //       // Start typing effect when typing is true
-  //       this.startTypingEffect();
-  //     }
-  //   },
-  // },
   methods: {
     startTypingEffect() {
       const length = this.text.length;

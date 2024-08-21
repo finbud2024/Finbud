@@ -67,7 +67,6 @@
       v-if="showGuidance" 
       @close="showGuidance = false" 
       :showModal="showGuidance" 
-      @guidance-command-selected="handleGuidanceSelection" 
     />
   </div>
 </template>
@@ -132,14 +131,15 @@ export default {
     },
   },
   watch: {
-    threadId: {
-      immediate: true,
-      handler(newThreadId) {
-        if (newThreadId != null) {
-          this.updateCurrentThread(newThreadId);
-        }
-      },
-    },
+    // threadId: {
+    //   immediate: true,
+    //   handler(newThreadId) {
+    //     if (newThreadId != null) {
+    //       alert("thread")
+    //       this.updateCurrentThread(newThreadId);
+    //     }
+    //   },
+    // },
   },
   methods: {
     clearMessage() {
@@ -326,6 +326,7 @@ export default {
                   path: "/stock-simulator",
                   query: { symbol: stockSymbol, quantity },
                 }).href;
+                answers.push(`Buying ${quantity} shares of ${stockSymbol} stock, please redirecting to the stock simulator...`);
                 this.openNewWindow(url);
               } else {
                 this.addTypingResponse(
@@ -353,6 +354,7 @@ export default {
                   path: "/stock-simulator",
                   query: { symbol: stockSymbol, quantity: -quantity },
                 }).href;
+                answers.push(`Selling ${quantity} shares of ${stockSymbol} stock, please redirecting to the stock simulator...`);
                 this.openNewWindow(url);
               } else {
                 this.addTypingResponse(
@@ -740,11 +742,6 @@ export default {
         top: chatFrame.scrollHeight,
         behavior: "smooth", // Smooth scrolling effect
       });
-    },
-    //HANDLE GUIDANCE SELECTION
-    handleGuidanceSelection(command) {
-      // this.sendMessage(command);
-      console.log("Guidance selected: ", command);
     },
   },
   async mounted() {

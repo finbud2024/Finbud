@@ -6,7 +6,10 @@
         <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to help you get started:</p>
         <ol class="guidance-list">
           <!-- guidance for general users -->
-          <li v-for="(item, index) in generalGuidanceList" :key="index" @click="selectGuidanceCommand(item)">
+          <li v-for="(item, index) in generalGuidanceList" :key="index" 
+            @click="toggleExpansion(item)" 
+            :class="{'expanded' : expandedItem === item}"
+          >
             <span class="header-list">{{ item.header }}</span>
             <div v-if="item.command" class="command-container">
               <span class="command">{{ item.command }}</span>
@@ -14,10 +17,14 @@
             <div v-if="item.instruction">{{ item.instruction }}.</div>
             <div v-if="item.example">(e.g. "{{ item.example }}").</div>
             <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
+            <div class="expanded-content"> 
+              <!-- <div v-if="item.additionalInfo">{{item.additionalInfo}}</div> -->
+               Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos, hic reprehenderit. Dolore provident animi nostrum officia maxime odio tempore quaerat exercitationem, unde possimus magnam. Vel inventore quaerat officiis voluptatum blanditiis.<50></50>
+            </div>
           </li>
           <!-- guidance for authenticated users -->
           <div v-if="authStore.isAuthenticated">
-            <li v-for="(item, index) in userGuidanceList" :key="index" @click="selectGuidanceCommand(item)" >
+            <li v-for="(item, index) in userGuidanceList" :key="index" >
               <span class="header-list">{{ item.header }}</span>
               <div v-if="item.command" class="command-container">
                 <span class="command">{{ item.command }}</span>
@@ -49,6 +56,12 @@ export default {
     return {
       generalGuidanceList: [
         {
+          header: "Advanced search",
+          command: "#search [term]",
+          instruction: "Enter the stock code in uppercase",
+          example: "TSLA"
+        },
+        {
           header: "Stock Price Inquiry",
           command: null,
           instruction: "Enter the stock code in uppercase",
@@ -56,7 +69,7 @@ export default {
         },
         {
           header: "Financial Term Definitions",
-          command: "#define term",
+          command: "#define [term]",
           instruction: null,
           example: "#define IPO"
         },
@@ -68,7 +81,7 @@ export default {
         },
         {
           header: "Show 5 Properties in area",
-          command: "#realestate area_name",
+          command: "#realestate [area_name]",
           example: "#realestate new york",
           additionalInfo: "If no area is specified, the default location will be San Jose."
         }
@@ -76,25 +89,26 @@ export default {
       userGuidanceList: [
         {
           header: "Add a Transaction",
-          command: "#add description_amount",
+          command: "#add [description] [amount]",
           example: "#add Shopping 125"
         },
         {
           header: "Track Spending",
-          command: "#spend description_amount",
+          command: "#spend [description] [amount]",
           example: "#spend Shopping 125"
         },
         {
           header: "Buy Stock",
-          command: "#buy stock_name quantity",
+          command: "#buy [stock_name] [quantity]",
           example: "#buy TSLA 10"
         },
         {
           header: "Sell Stock",
-          command: "#sell stock_name quantity",
+          command: "#sell [stock_name] [quantity]",
           example: "#sell TSLA 10"
         }
-      ]
+      ],
+      expandedItem: null,
     };
   },
   computed: {
@@ -106,9 +120,14 @@ export default {
     close() {
       this.$emit('close');
     },
-    selectGuidanceCommand(item) {
-      this.$emit('guidance-command-selected', item.command || item.example || item.header);
-      this.close();
+    toggleExpansion(item){
+      //if it is already expanded and click into it again:
+      if(this.expandedItem === item) {
+        this.expandedItem = null;
+      }
+      else {
+        this.expandedItem = item;
+      }
     }
   }
 };
@@ -233,6 +252,26 @@ export default {
   margin: 10px 0;
 }
 
+/* ___________________________*/
+/* Command expansion */
+
+.expanded-content {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-left: 3px solid #007bff;
+  transition: all 0.3s ease-in-out;/* opacity, max-height*/
+  border-radius: 4px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.expanded .expanded-content {
+  max-height: 1000px;
+  padding: 10px;
+  opacity: 1;
+}
 /* ___________________________*/
 /* Media queries */
 @media (max-width: 768px) {
