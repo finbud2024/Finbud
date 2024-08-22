@@ -104,12 +104,6 @@ export default {
       messages: [],
       sources: [],
       followUpQuestions: [],
-      displayName: authStore.isAuthenticated
-        ? JSON.parse(localStorage.getItem("user")).identityData.displayName
-        : "User",
-      userAvatar: authStore.isAuthenticated
-        ? JSON.parse(localStorage.getItem("user")).identityData.profilePicture
-        : require("@/assets/anonymous.png"),
       botAvatar: require("@/assets/botrmbg.png"),
       currentThread: {},
       threads: [],
@@ -129,6 +123,22 @@ export default {
     authStore() {
       return authStore;
     },
+    displayName() {
+      return this.authStore.isAuthenticated
+        ? JSON.parse(localStorage.getItem("user")).identityData.displayName
+        : "User";
+    },
+    userAvatar() {
+      //Check data in localstorage (user is authenticated)
+      if(!JSON.parse(localStorage.getItem("user"))){
+        return require("@/assets/anonymous.png");
+      }
+      //Check if user has a profile picture
+      if(!JSON.parse(localStorage.getItem("user")).identityData.profilePicture){
+        return require("@/assets/anonymous.png");
+      }
+      return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
+    }
   },
   watch: {
     // threadId: {
