@@ -114,9 +114,6 @@ export default {
 <style scoped>
 @import 'animate.css';
 
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-}
 
 .stock-watch {
   width: 100%;

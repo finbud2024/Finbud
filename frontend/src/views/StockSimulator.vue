@@ -256,7 +256,6 @@ export default {
 }
 
 .dashboard {
-  font-family: 'Space Grotesk', sans-serif;
   color: #333;
 }
 

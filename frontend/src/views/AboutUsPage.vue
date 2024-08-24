@@ -411,7 +411,6 @@ body {
 }
 
 .container {
-  font-family: "Space Grotesk", sans-serif;
   list-style-type: none;
   padding: 20px;
 }
@@ -611,7 +610,6 @@ body {
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
-  font-family: "Space Grotesk", sans-serif;
   text-align: center;
 }
 
@@ -636,7 +634,6 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 40px;
-  font-family: "Space Grotesk", sans-serif;
 }
 
 .contact-header h1,
@@ -676,7 +673,6 @@ body {
   padding: 15px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  font-family: "Space Grotesk", sans-serif;
   background: #f9f9f9;
   transition: border-color 0.3s ease;
 }
@@ -696,7 +692,6 @@ body {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-family: "Space Grotesk", sans-serif;
   font-size: 16px;
   transition: background-color 0.3s ease;
 }

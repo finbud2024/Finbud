@@ -332,13 +332,10 @@ export default {
   background-color: white;
   /* Dark blue background */
   color: black;
-  /* White text for better contrast */
-  font-family: 'Segoe UI', Arial, sans-serif;
   /* Modern font */
   margin-top: 0;
   opacity: 1;
   animation: none;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 header {

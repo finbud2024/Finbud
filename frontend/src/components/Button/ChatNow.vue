@@ -25,7 +25,6 @@ export default {
   text-decoration: none;
   display: inline-block;
   font-size: 1em;
-  font-family: 'Space Grotesk', sans-serif;
   margin: 0.25em 0.125em;
   transition-duration: 0.4s;
   cursor: pointer;

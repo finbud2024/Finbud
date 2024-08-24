@@ -55,10 +55,12 @@ export default {
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 body {
   min-height: 100%;
   margin: 0;
   padding: 0;
+  font-family: Noto sans, sans-serif;
 }
 
 html {

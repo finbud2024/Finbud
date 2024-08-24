@@ -1,56 +1,66 @@
 <template>
-    <div class="container">
-        <div class="carlendar-container"><label for="">Please select one</label>
-            <select v-model="selected">
-                <option v-for="stock in stockcurrencies" :key="stock" :value="stock">{{ stock }}</option>
-            </select>
-            <div class="datebox">
-                <label for="">Choose an end date</label>
-                <VueDatePicker v-model="startDate" :min-date="minDate" :max-date="maxDate" prevent-min-max-navigation>
-                </VueDatePicker>
+    <div class="main-container">
+        <!-- Big Container to hold both Stock History and Selection Table -->
+        <div class="inner-container">
+            <!-- Left Container for Stock History -->
+            <div class="stock-history-container">
+                <div class="data-table">
+                    <h1>Stock History</h1>
+                    <div v-if="errorStock" class="error">{{ errorStock }}</div>
+                    <div v-else-if="loadingStock" class="loadingStock">Loading...</div>
+                    <div v-else>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Open</th>
+                                    <th>High</th>
+                                    <th>Low</th>
+                                    <th>Close</th>
+                                    <th>Volume</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody v-if="paginatedStockList.length" class="table-body">
+                                <tr v-for="stock in paginatedStockList" :key="stock.uuid" class="table-row">
+                                    <td>{{ stock["symbol"] }}</td>
+                                    <td>{{ stock["open"] }} B</td>
+                                    <td>{{ stock["high"] }} B</td>
+                                    <td>{{ stock["low"] }} B</td>
+                                    <td>{{ stock["close"] }} B</td>
+                                    <td>{{ stock["volume"] }}</td>
+                                    <td>{{ formattedDate(stock["date"]) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages" @update:currentPage="updateStockCurrentPage" />
+                    </div>
+                </div>
             </div>
-            <div class="datebox">
-                <label for="">Choose an end date</label>
-                <VueDatePicker v-model="endDate" :min-date="minDate" :max-date="maxDate" prevent-min-max-navigation>
-                </VueDatePicker>
-                <input class="styled" type="button" value="Show" @click="queryDate" />
-            </div>
-        </div>
-        <div class="data-table">
-            <h1>Stock History</h1>
-            <div v-if="errorStock" class="error">{{ errorStock }}</div>
-            <div v-else-if="loadingStock" class="loadingStock">Loading...</div>
-            <div v-else>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Symbol</th>
-                            <th>Open</th>
-                            <th>High</th>
-                            <th>low</th>
-                            <th>Close</th>
-                            <th>Volume</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody v-if="paginatedStockList.length" class="table-body">
-                        <tr v-for="stock in paginatedStockList" :key="stock.uuid" class="table-row">
-                            <td> {{ this.selected }} </td>
-                            <td> {{ stock["open"] }} B</td>
-                            <td> {{ stock["high"] }} B</td>
-                            <td> {{ stock["low"] }} B</td>
-                            <td> {{ stock["close"] }} B</td>
-                            <td> {{ stock["volume"] }} </td>
-                            <td> {{ formattedDate(stock["date"]) }} </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages"
-                    @update:currentPage="updateStockCurrentPage" />
+
+            <!-- Right Container for Selection Table -->
+            <div class="selection-container">
+                <div class="calendar-container">
+                    <label for="">Please select one</label>
+                    <select v-model="selected">
+                        <option v-for="stock in stockCurrencies" :key="stock" :value="stock">{{ stock }}</option>
+                    </select>
+                    <div class="datebox">
+                        <label for="">Choose a date</label>
+                        <VueDatePicker v-model="startDate" :min-date="minDate" :max-date="maxDate" prevent-min-max-navigation />
+                    </div>
+                    <div class="datebox">
+                        <label for="">Choose an end date</label>
+                        <VueDatePicker v-model="endDate" :min-date="minDate" :max-date="maxDate" prevent-min-max-navigation />
+                        <input class="styled" type="button" value="Show" @click="queryDate" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
+
+
 <script>
 import axios from 'axios';
 import { ref } from 'vue';
@@ -127,30 +137,59 @@ export default {
     },
 }
 </script>
-
 <style scoped>
-.container {
+.main-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.inner-container {
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 20px;
 }
 
-.carlendar-container {
+.stock-history-container {
+    flex-basis: 75%;
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* New styles for Stock History section title */
+.stock-history-container h1 {
+    font-weight: bold;
+    color: #007bff; /* Blue color similar to Crypto Quotes section */
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid #007bff; /* Underline similar to Crypto Quotes section */
+    padding-bottom: 0.5rem;
+    text-align: left;
+}
+
+.selection-container {
+    flex-basis: 25%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    margin: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
 }
 
-select {
+select, .VueDatePicker, input.styled {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
@@ -163,20 +202,12 @@ select {
     transition: border-color 0.3s;
 }
 
-select:focus {
+select:focus, .VueDatePicker:focus {
     border-color: #007bff;
     outline: none;
 }
 
-::placeholder {
-    color: #888;
-}
-
 input.styled {
-    padding: 10px 20px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 4px;
     background-color: #007bff;
     color: #fff;
     font-size: 16px;
@@ -193,31 +224,6 @@ input.styled:active {
     background-color: #004494;
 }
 
-.VueDatePicker {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    font-size: 10px;
-    color: #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.VueDatePicker:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-.data-table {
-    width: 40%;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 20px 0;
-    border-radius: 10px;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -229,8 +235,8 @@ thead {
     background-color: #f8f8f8;
 }
 
-th,
-td {
+th, td {
+    padding: 8px;
     text-align: left;
     border: 1px solid #ddd;
 }
@@ -255,44 +261,19 @@ tr:hover {
     color: gray;
 }
 
-.positive {
-    color: green;
-}
-
-.negative {
-    color: red;
-}
-
 .table-row {
     transition: background-color 0.3s ease;
 }
 
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
-    .data-table {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .home-container {
-        padding: 10px;
-        max-width: 100%;
+    .inner-container {
+        flex-direction: column;
+        gap: 10px;
     }
 
-    select,
-    .VueDatePicker,
-    input.styled {
-        font-size: 14px;
+    .stock-history-container, .selection-container {
+        flex-basis: 100%;
     }
-
-@media (max-width: 768px) {
-    th,td {
-        font-size: 8px;
-        text-align: left;
-        border: 1px solid #ddd;
-    }
-}
-
 }
 </style>

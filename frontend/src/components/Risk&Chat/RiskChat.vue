@@ -1,5 +1,12 @@
 <template>
     <div class="container">
+        <!-- DisplayCrypto is rendered first -->
+        <DisplayCrypto />
+
+        <!-- Stock History section rendered after DisplayCrypto -->
+        <DisplayStock />
+
+        <!-- Chat section rendered after Stock History -->
         <div class="main-content">
             <div class="chat-section">
                 <ChatFrame>
@@ -18,9 +25,6 @@
                 <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
             </div>
         </div>
-        <!-- <News :keyword="keyword" /> -->
-        <DisplayCrypto />
-        <DisplayStock />
     </div>
 </template>
 
@@ -40,13 +44,14 @@ const genAI = new GoogleGenerativeAI(apiKey);
 export default {
     name: 'RiskChat',
     components: {
+        DisplayCrypto,
+        DisplayStock,
         ChatFrame,
         MessageComponent,
         UserInput,
         ChatHeader,
         News,
-        DisplayCrypto,
-        DisplayStock,
+    
     },
     data() {
         return {
@@ -242,7 +247,7 @@ export default {
 .main-content {
     display: flex;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 20px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     background: linear-gradient(to bottom, #7BDBBF, #e0dede);
