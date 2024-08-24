@@ -1,0 +1,92 @@
+[
+    {
+        "Question": "What is asset allocation?",
+        "Answers": [
+            {"Answer": "Asset allocation involves spreading investments across various asset types to manage risk and return.", "Correct": true, "Explanation": "Asset allocation is about balancing investments across different asset classes to achieve a desired risk-return profile."},
+            {"Answer": "Asset allocation is about concentrating investments in one asset.", "Correct": false, "Explanation": "Asset allocation focuses on diversification, not concentrating investments in one asset."},
+            {"Answer": "Asset allocation focuses on diversifying investments, not predicting trends.", "Correct": false, "Explanation": "Asset allocation aims to manage risk through diversification, not by predicting market trends."},
+            {"Answer": "Asset allocation is about reducing the number of investments.", "Correct": false, "Explanation": "Asset allocation involves balancing investments across different asset classes, not reducing their number."}
+        ]
+    },
+    {
+        "Question": "Which of the following is an asset class?",
+        "Answers": [
+            {"Answer": "Stocks are a common asset class used in investment portfolios.", "Correct": true, "Explanation": "Stocks represent a type of asset that investors can include in their portfolios."},
+            {"Answer": "APR is a financial term related to borrowing costs, not an asset class.", "Correct": false, "Explanation": "APR refers to annual percentage rate, not an asset class."},
+            {"Answer": "A credit score measures creditworthiness, not an asset class.", "Correct": false, "Explanation": "A credit score is not an asset class but a measure of creditworthiness."},
+            {"Answer": "Net income is a measure of a company's earnings, not an asset class.", "Correct": false, "Explanation": "Net income is a financial metric, not an asset class."}
+        ]
+    },
+    {
+        "Question": "What does diversification in a portfolio aim to achieve?",
+        "Answers": [
+            {"Answer": "Diversification helps to spread risk across different investments.", "Correct": true, "Explanation": "Diversification reduces risk by spreading investments across various assets."},
+            {"Answer": "Diversification focuses on increasing the number of investments.", "Correct": false, "Explanation": "Diversification aims to manage risk, not simply increase the number of investments."},
+            {"Answer": "Diversification aims to focus on a single asset's returns.", "Correct": false, "Explanation": "Diversification is about managing risk across various assets, not focusing on a single asset."},
+            {"Answer": "Diversification is about timing the market.", "Correct": false, "Explanation": "Diversification is concerned with spreading risk, not timing market movements."}
+        ]
+    },
+    {
+        "Question": "Which investment is typically considered lower risk?",
+        "Answers": [
+            {"Answer": "Government bonds are generally considered lower risk due to their stability.", "Correct": true, "Explanation": "Government bonds are viewed as low-risk investments due to their stability and government backing."},
+            {"Answer": "Tech start-ups are higher risk investments due to their volatility.", "Correct": false, "Explanation": "Tech start-ups tend to be higher risk investments, not lower risk."},
+            {"Answer": "Cryptocurrencies are high-risk investments due to their price volatility.", "Correct": false, "Explanation": "Cryptocurrencies are known for their high volatility and are considered higher risk."},
+            {"Answer": "High-yield corporate bonds carry higher risk compared to government bonds.", "Correct": false, "Explanation": "High-yield corporate bonds generally carry more risk than government bonds."}
+        ]
+    },
+    {
+        "Question": "What is 'liquidity' in investment terms?",
+        "Answers": [
+            {"Answer": "Liquidity refers to the ease of converting an investment to cash without significant loss of value.", "Correct": true, "Explanation": "Liquidity measures how easily an investment can be converted to cash without substantial loss."},
+            {"Answer": "Liquidity refers to the ease of converting an asset to cash, not its risk.", "Correct": false, "Explanation": "Liquidity focuses on the ability to convert assets to cash, not on the investment's risk level."},
+            {"Answer": "Liquidity concerns how quickly an investment can be sold, not its return.", "Correct": false, "Explanation": "Liquidity is about the ease of selling an investment, not its returns."},
+            {"Answer": "Liquidity is about how easily an asset can be sold, not the total value of a portfolio.", "Correct": false, "Explanation": "Liquidity relates to converting assets to cash, not to the overall portfolio value."}
+        ]
+    },
+    {
+        "Question": "Which investment is likely to be the most volatile?",
+        "Answers": [
+            {"Answer": "Cryptocurrencies are known for their high volatility compared to traditional investments.", "Correct": true, "Explanation": "Cryptocurrencies often experience significant price fluctuations, making them highly volatile."},
+            {"Answer": "Government bonds are generally less volatile compared to cryptocurrencies.", "Correct": false, "Explanation": "Government bonds are typically less volatile than cryptocurrencies."},
+            {"Answer": "Blue-chip stocks are typically less volatile compared to cryptocurrencies.", "Correct": false, "Explanation": "Blue-chip stocks generally have lower volatility than cryptocurrencies."},
+            {"Answer": "Savings accounts are low-volatility investments compared to cryptocurrencies.", "Correct": false, "Explanation": "Savings accounts are considered low-volatility, while cryptocurrencies are highly volatile."}
+        ]
+    },
+    {
+        "Question": "What does a diversified portfolio include?",
+        "Answers": [
+            {"Answer": "A diversified portfolio spreads investments across various asset classes to reduce risk.", "Correct": true, "Explanation": "Diversification involves holding a variety of asset types to minimize risk."},
+            {"Answer": "Diversification includes various asset classes, not just stocks.", "Correct": false, "Explanation": "Diversification encompasses multiple asset classes, not just stocks."},
+            {"Answer": "Diversification involves multiple asset classes, not just bonds and savings accounts.", "Correct": false, "Explanation": "A diversified portfolio includes a range of asset types beyond just bonds and savings accounts."},
+            {"Answer": "Diversification involves multiple asset classes, not focusing on a single type.", "Correct": false, "Explanation": "Diversification is about holding various asset types rather than focusing on a single asset class."}
+        ]
+    },
+    {
+        "Question": "What is 'asset allocation' primarily concerned with?",
+        "Answers": [
+            {"Answer": "Asset allocation is about dividing investments among various asset types to achieve a desired risk-return profile.", "Correct": true, "Explanation": "Asset allocation focuses on distributing investments to balance risk and return."},
+            {"Answer": "Asset allocation focuses on asset classes, not selecting individual stocks.", "Correct": false, "Explanation": "Asset allocation involves the distribution of investments across asset classes, not just stock selection."},
+            {"Answer": "Asset allocation is about diversification, not timing market movements.", "Correct": false, "Explanation": "While asset allocation is about diversification, it does not focus on market timing."},
+            {"Answer": "Asset allocation focuses on how investments are distributed, not reducing their number.", "Correct": false, "Explanation": "Asset allocation is about distributing investments, not necessarily reducing their quantity."}
+        ]
+    },
+    {
+        "Question": "What does a high beta value indicate about a stock?",
+        "Answers": [
+            {"Answer": "A high beta value indicates that a stock's price is more volatile relative to the market.", "Correct": true, "Explanation": "A high beta value suggests greater price fluctuations compared to the market average."},
+            {"Answer": "A high beta value means higher volatility, not lower risk.", "Correct": false, "Explanation": "A high beta value signifies higher volatility, which is associated with higher risk."},
+            {"Answer": "Beta measures volatility, not guaranteed returns.", "Correct": false, "Explanation": "Beta assesses volatility relative to the market, not the certainty of returns."},
+            {"Answer": "Beta is about volatility, not liquidity.", "Correct": false, "Explanation": "Beta relates to volatility, while liquidity concerns the ease of converting an investment to cash."}
+        ]
+    },
+    {
+        "Question": "What is the primary benefit of diversification in asset allocation?",
+        "Answers": [
+            {"Answer": "Diversification helps lower risk by spreading investments across different asset types.", "Correct": true, "Explanation": "The main benefit of diversification is risk reduction by holding a variety of asset types."},
+            {"Answer": "Diversification manages risk, not returns.", "Correct": false, "Explanation": "Diversification focuses on reducing risk rather than managing returns."},
+            {"Answer": "Diversification involves spreading investments, not focusing on high-growth assets.", "Correct": false, "Explanation": "Diversification is about spreading risk, not solely targeting high-growth investments."},
+            {"Answer": "Diversification is about spreading risk, not concentrating investments.", "Correct": false, "Explanation": "Diversification aims to reduce risk through variety, not by concentrating investments."}
+        ]
+    }
+]

@@ -1,24 +1,29 @@
 <template>
   <div class="nav-actions">
-    <NavBar ref="headerBar"/>
+    <NavBar ref="headerBar" />
     <div class="content">
       <!-- Use router-link to navigate to the login page -->
     </div>
   </div>
   <!-- router-view will render the component associated with the current route -->
   <router-view />
-  <FooterBar ref="footerBar"/>
+  <QuizzPage2 />
+  <FooterBar ref="footerBar" />
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue';
-import FooterBar from './components/FooterBar.vue';
+import NavBar from "./components/NavBar.vue";
+import FooterBar from "./components/FooterBar.vue";
+import FetchData from "./views/FetchData.vue";
+import QuizzPage2 from "./views/QuizzPage2.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     NavBar,
     FooterBar,
+    FetchData,
+    QuizzPage2,
   },
   mounted() {
     // this.updateFooterVisibility(this.$route.path);
@@ -31,33 +36,32 @@ export default {
   methods: {
     updateFooterVisibility(path) {
       const footer = this.$refs.footerBar.$el;
-      if (path === '/chat-view'|| path.includes('/stock-simulator?')) {
-        footer.style.display = 'none';
+      if (path === "/chat-view" || path.includes("/stock-simulator?")) {
+        footer.style.display = "none";
       } else {
-        footer.style.display = 'flex';
+        footer.style.display = "flex";
       }
     },
     updateHeaderVisibility(path) {
       const header = this.$refs.headerBar.$el;
-      if (path.includes('/stock-simulator?')) {
-        header.style.display = 'none';
+      if (path.includes("/stock-simulator?")) {
+        header.style.display = "none";
       } else {
-        header.style.display = 'flex';
+        header.style.display = "flex";
       }
-    }
-
-  }
+    },
+  },
 };
 </script>
 
 <style>
 body {
   min-height: 100%;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
-html { 
+html {
   height: 100%;
   scrollbar-gutter: auto;
 }
@@ -83,5 +87,4 @@ a {
 a:hover {
   background-color: #e7f3ff;
 }
-
 </style>
