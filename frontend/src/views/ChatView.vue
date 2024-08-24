@@ -63,7 +63,11 @@
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal  v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance" />
+    <GuidanceModal  
+      v-if="showGuidance" 
+      @close="showGuidance = false" 
+      :showModal="showGuidance" 
+    />
   </div>
 </template>
 
@@ -100,12 +104,6 @@ export default {
       messages: [],
       sources: [],
       followUpQuestions: [],
-      displayName: authStore.isAuthenticated
-        ? JSON.parse(localStorage.getItem("user")).identityData.displayName
-        : "User",
-      userAvatar: authStore.isAuthenticated
-        ? JSON.parse(localStorage.getItem("user")).identityData.profilePicture
-        : require("@/assets/anonymous.png"),
       botAvatar: require("@/assets/botrmbg.png"),
       currentThread: {},
       threads: [],
@@ -125,16 +123,33 @@ export default {
     authStore() {
       return authStore;
     },
+    displayName() {
+      return this.authStore.isAuthenticated
+        ? JSON.parse(localStorage.getItem("user")).identityData.displayName
+        : "User";
+    },
+    userAvatar() {
+      //Check data in localstorage (user is authenticated)
+      if(!JSON.parse(localStorage.getItem("user"))){
+        return require("@/assets/anonymous.png");
+      }
+      //Check if user has a profile picture
+      if(!JSON.parse(localStorage.getItem("user")).identityData.profilePicture){
+        return require("@/assets/anonymous.png");
+      }
+      return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
+    }
   },
   watch: {
-    threadId: {
-      immediate: true,
-      handler(newThreadId) {
-        if (newThreadId != null) {
-          this.updateCurrentThread(newThreadId);
-        }
-      },
-    },
+    // threadId: {
+    //   immediate: true,
+    //   handler(newThreadId) {
+    //     if (newThreadId != null) {
+    //       alert("thread")
+    //       this.updateCurrentThread(newThreadId);
+    //     }
+    //   },
+    // },
   },
   methods: {
     clearMessage() {
@@ -166,7 +181,7 @@ export default {
             const prompt = {
               text: chat.prompt.toString(),
               isUser: true,
-              typing: true,
+              typing: false,
               timestamp: chat.creationDate,
               sources: chat.sources,
               videos: chat.videos,
@@ -179,7 +194,7 @@ export default {
                 const response = {
                   text: responseData,
                   isUser: false,
-                  typing: true,
+                  typing: false,
                   timestamp: chat.creationDate,
                   sources: chat.sources,
                   videos: chat.videos,
@@ -321,6 +336,7 @@ export default {
                   path: "/stock-simulator",
                   query: { symbol: stockSymbol, quantity },
                 }).href;
+                answers.push(`Buying ${quantity} shares of ${stockSymbol} stock, please redirecting to the stock simulator...`);
                 this.openNewWindow(url);
               } else {
                 this.addTypingResponse(
@@ -348,6 +364,7 @@ export default {
                   path: "/stock-simulator",
                   query: { symbol: stockSymbol, quantity: -quantity },
                 }).href;
+                answers.push(`Selling ${quantity} shares of ${stockSymbol} stock, redirecting to the stock simulator...`);
                 this.openNewWindow(url);
               } else {
                 this.addTypingResponse(
@@ -371,9 +388,8 @@ export default {
               const amount = parseInt(match[2], 10);
               const balance = await this.calculateNewBalance(amount);
               await this.addTransaction(description, amount, balance);
-              answers.push(
-                `Transaction added: ${description}, $${amount}. New balance: $${balance}.`
-              );
+              // answers.push( `Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
+              answers.push(`Adding transaction for ${description}, $${amount}. Redirecting to the goal page...`);
               this.openNewWindow("/goal");
             } else {
               answers.push(
@@ -393,11 +409,9 @@ export default {
               const amount = -parseInt(match[2], 10);
               const balance = await this.calculateNewBalance(amount);
               await this.addTransaction(description, amount, balance);
-              answers.push(
-                `Transaction spent: ${description}, $${Math.abs(
-                  amount
-                )}. New balance: $${balance}.`
-              );
+              // answers.push( `Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
+              answers.push(`Adding transaction for ${description}, $${amount}. Please redirect to the goal page...`);
+
               this.openNewWindow("/goal");
             } else {
               answers.push(
@@ -594,7 +608,7 @@ export default {
           };
             const chat = await axios.post(chatApi, reqBody);
           } catch (err) {
-            console.error("Error on saving chat:", err);
+            console.error("Error on saving chat:", err.message);
           }
         }
         this.scrollChatFrameToBottom();
