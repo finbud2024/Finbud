@@ -1,51 +1,49 @@
 <template>
   <div class="nav-actions">
-    <NavBar ref="headerBar"/>
+    <NavBar v-if="showHeader" ref="headerBar"/>
     <div class="content">
-      <!-- Use router-link to navigate to the login page -->
     </div>
   </div>
-  <!-- router-view will render the component associated with the current route -->
-  <router-view />
-  <FooterBar ref="footerBar"/>
+  <router-view @chatviewSelectingThread='loadThread'/>
+  <FooterBar v-if="showFooter" ref="footerBar"/>
+  <ChatBubble v-if="showChatBubble" :chatViewThreadID='threadId'/>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue';
-import FooterBar from './components/FooterBar.vue';
-
+import NavBar from     './components/NavBar.vue';
+import FooterBar from  './components/FooterBar.vue';
+import ChatBubble from './components/ChatBubble.vue'
 export default {
   name: 'App',
   components: {
     NavBar,
     FooterBar,
+    ChatBubble
+  },
+  data(){
+    return{
+      threadId:'',
+    }
   },
   mounted() {
-    // this.updateFooterVisibility(this.$route.path);
-    // this.updateHeaderVisibility(this.$route.path);
-    this.$router.afterEach((to, from) => {
-      this.updateFooterVisibility(to.fullPath);
-      this.updateHeaderVisibility(to.fullPath);
-    });
+    
+  },
+  computed: {
+    showChatBubble() {
+      // Check if the current route is NOT 'chat-view'
+      return this.$route.path !== '/chat-view';
+    },
+    showFooter(){
+      return this.$route.path !== '/chat-view' && !this.$route.fullPath.includes('/stock-simulator?')
+    },
+    showHeader(){
+      return !this.$route.fullPath.includes('/stock-simulator?')
+    }
   },
   methods: {
-    updateFooterVisibility(path) {
-      const footer = this.$refs.footerBar.$el;
-      if (path === '/chat-view'|| path.includes('/stock-simulator?')) {
-        footer.style.display = 'none';
-      } else {
-        footer.style.display = 'flex';
-      }
-    },
-    updateHeaderVisibility(path) {
-      const header = this.$refs.headerBar.$el;
-      if (path.includes('/stock-simulator?')) {
-        header.style.display = 'none';
-      } else {
-        header.style.display = 'flex';
-      }
+    loadThread(chatviewThreadID){
+      this.threadId = chatviewThreadID;
     }
-
   }
 };
 </script>

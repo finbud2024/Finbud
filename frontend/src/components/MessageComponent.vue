@@ -89,6 +89,17 @@ export default {
     if (this.typing) {
       this.startTypingEffect();
     }
+      const chatContainer = document.querySelector('.chat-container');
+      const messageContents = document.querySelectorAll('.message-content');
+      const containerWidth = chatContainer.offsetWidth;
+      messageContents.forEach(messageContent => {
+        if (containerWidth > 400) {
+          messageContent.style.setProperty('--container-width', `${containerWidth}px`);
+          messageContent.style.fontSize = 'clamp(0.75rem, calc(var(--container-width) * 0.056), 1.25rem)';
+        } else {
+          messageContent.style.fontSize = '14px';
+        }
+      });
   },
 };
 </script>
@@ -121,14 +132,15 @@ tr:nth-child(odd) {
 }
 
 .message-wrapper {
-  padding: 0 15vw;
   display: flex;
   align-items: flex-end;
   gap: 10px;
   margin-bottom: 16px;
   overflow: hidden;
   word-wrap: break-word;
+  padding: 0 17.42%;
 }
+
 
 .message-content-wrapper {
   display: inline-flex;
@@ -179,11 +191,6 @@ tr:nth-child(odd) {
 }
 
 .message-content {
-  font-size: clamp(
-    0.75rem,
-    5.6vw,
-    1.25rem
-  ); /*12px, x/3.2 vw, 20px ___ 1vw = 3.2px*/
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -196,7 +203,19 @@ tr:nth-child(odd) {
   text-align: left;
   white-space: pre-wrap;
   line-height: 1.2;
+  font-size: clamp(0.75rem, calc(var(--container-width) * 0.056), 1.25rem);
 }
+
+@container messageContent (max-width: 401px) {
+  .message-content {
+    font-size: 14px
+  }
+
+  .message-wrapper{
+    padding:0
+  }
+}
+
 
 @keyframes typing {
   from {

@@ -24,6 +24,7 @@ import authStore from "@/authStore";
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
+import {getCurrentInstance, onBeforeUnmount } from 'vue';
 export default {
 	name: 'ChatComponent',
 	props: {
@@ -50,8 +51,10 @@ export default {
 		currentThreadID:{
 			immediate: true,
 			handler(newThreadID){
-				console.log("Displaying threadID:",newThreadID)
-				if(newThreadID.length > 0)this.updateCurrentThread(newThreadID)
+				if(newThreadID !== null && newThreadID !== undefined){
+					this.messages=[]
+					this.updateCurrentThread(newThreadID)
+				}
 			}
 		}
 	},
@@ -472,5 +475,6 @@ export default {
 	flex-direction: column;
 	flex: 1;
 	position: relative;
+	container-name: messageContent;
 }
 </style>

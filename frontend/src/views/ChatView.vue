@@ -26,11 +26,14 @@
 </template>
 
 <script>
-import authStore from "@/authStore";
-import axios from "axios";
+//COMPONENT IMPORT
 import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
+//UTILITIES + LIB IMPORT
+import {getCurrentInstance, reactive, onBeforeUnmount, watchEffect } from 'vue';
+import authStore from "@/authStore";
+import axios from "axios";
 
 export default {
   name: "ChatView",
@@ -56,6 +59,12 @@ export default {
       return authStore;
     },
   },
+  setup(props,{emit}){
+   const instance = getCurrentInstance()
+		onBeforeUnmount(()=>{
+			emit('chatviewSelectingThread', instance.data.threadID);
+		})
+	},
   methods: {
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
