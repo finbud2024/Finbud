@@ -1,92 +1,44 @@
-<template>
-  <div ref="chartContainer" :style="styleOptions"></div>
-</template>
-
 <script>
-import AAPLDataCSV from "./assets/AAPL.csv";
-import AMZNDataCSV from "./assets/AMZN.csv";
-import MSFTDataCSV from "./assets/MSFT.csv";
-import TSLADataCSV from "./assets/TSLA.csv";
+import btcDataCSV from "./assets/AAPL.csv";
 import CanvasJS from "@canvasjs/stockcharts";
+console.log(btcDataCSV);
 
 export default {
   name: "StockPrice",
-  props: {
-    stockSymbol: {
-      type: String,
-      required: true,
-    },
-  },
   data() {
+    var dps1 = [],
+      dps2 = [],
+      dps3 = [];
+
+    // Skip the first row as it contains column names
+    btcDataCSV.slice(1).forEach((data) => {
+      console.log(data["Date"], data["Open"]);
+      // CSV loader will return an array for each row
+      dps1.push({
+        x: new Date(data["Date"]), // Date
+        y: [
+          parseFloat(data["Open"]), // Open
+          parseFloat(data["High"]), // High
+          parseFloat(data["Low"]), // Low
+          parseFloat(data["Close"]), // Close
+        ],
+      });
+      dps2.push({
+        x: new Date(data["Date"]), // Date
+        y: parseFloat(data["Volume"]), // Volume
+      });
+      dps3.push({
+        x: new Date(data["Date"]), // Date
+        y: parseFloat(data["Close"]), // Close
+      });
+    });
     return {
       chart: null,
-      options: null,
-      styleOptions: {
-        width: "100%",
-        height: "450px",
-      },
-    };
-  },
-  methods: {
-    addSymbols(e) {
-      var suffixes = ["", "K", "M", "B"];
-      var order = Math.max(
-        Math.floor(Math.log(Math.abs(e.value)) / Math.log(1000)),
-        0
-      );
-      if (order > suffixes.length - 1) order = suffixes.length - 1;
-      var suffix = suffixes[order];
-      return CanvasJS.formatNumber(e.value / Math.pow(1000, order)) + suffix;
-    },
-    loadData() {
-      let dataCSV;
-      switch (this.stockSymbol) {
-        case "AAPL":
-          dataCSV = AAPLDataCSV;
-          break;
-        case "AMZN":
-          dataCSV = AMZNDataCSV;
-          break;
-        case "MSFT":
-          dataCSV = MSFTDataCSV;
-          break;
-        case "TSLA":
-          dataCSV = TSLADataCSV;
-          break;
-        default:
-          console.error("Unknown stock symbol:", this.stockSymbol);
-          return;
-      }
-
-      var dps1 = [],
-        dps2 = [],
-        dps3 = [];
-
-      dataCSV.slice(1).forEach((data) => {
-        dps1.push({
-          x: new Date(data["Date"]),
-          y: [
-            parseFloat(data["Open"]),
-            parseFloat(data["High"]),
-            parseFloat(data["Low"]),
-            parseFloat(data["Close"]),
-          ],
-        });
-        dps2.push({
-          x: new Date(data["Date"]),
-          y: parseFloat(data["Volume"]),
-        });
-        dps3.push({
-          x: new Date(data["Date"]),
-          y: parseFloat(data["Close"]),
-        });
-      });
-
-      this.options = {
+      options: {
         theme: "light2",
         exportEnabled: true,
         title: {
-          text: `Stock Price & Volume`,
+          text: "Price & Volume",
         },
         charts: [
           {
@@ -149,27 +101,27 @@ export default {
             maximum: new Date(2018, 8, 1),
           },
         },
-      };
-    },
-    renderChart() {
-      this.chart = new CanvasJS.StockChart(this.$refs.chartContainer, this.options);
-      this.chart.render();
-    },
+      },
+      styleOptions: {
+        width: "100%",
+        height: "450px",
+      },
+    };
   },
-  mounted() {
-    window.CanvasJS = CanvasJS;
-    this.loadData();
-    this.renderChart();
-  },
-  watch: {
-    stockSymbol() {
-      this.loadData();
-      this.renderChart();
+  methods: {
+    addSymbols(e) {
+      var suffixes = ["", "K", "M", "B"];
+      var order = Math.max(
+        Math.floor(Math.log(Math.abs(e.value)) / Math.log(1000)),
+        0
+      );
+      if (order > suffixes.length - 1) order = suffixes.length - 1;
+      var suffix = suffixes[order];
+      return CanvasJS.formatNumber(e.value / Math.pow(1000, order)) + suffix;
     },
   },
 };
 </script>
-
-<style scoped>
-/* Custom styles if needed */
-</style>
+<template>
+  <CanvasJSStockChart :options="options" :style="styleOptions" />
+</template>
