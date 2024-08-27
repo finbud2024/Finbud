@@ -51,8 +51,7 @@ export default {
 		currentThreadID:{
 			immediate: true,
 			handler(newThreadID){
-				if(newThreadID !== null && newThreadID !== undefined){
-					this.messages=[]
+				if(newThreadID !== null && newThreadID !== undefined && newThreadID.length != 0){
 					this.updateCurrentThread(newThreadID)
 				}
 			}
@@ -413,7 +412,7 @@ export default {
 		},
 		async updateCurrentThread(threadID) {
 			try {
-				this.messages = [];
+				this.messages = []
 				const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
 				this.addTypingResponse(botInstruction, false);
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
@@ -475,6 +474,7 @@ export default {
 	flex-direction: column;
 	flex: 1;
 	position: relative;
-	container-name: messageContent;
+	container-type: size;
+	container-name: messageComponent userInputComponent;
 }
 </style>

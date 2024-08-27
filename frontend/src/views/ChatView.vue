@@ -37,6 +37,9 @@ import axios from "axios";
 
 export default {
   name: "ChatView",
+  props:{
+    chatBubbleThreadID: String
+  },
   components: {
     ChatComponent,
     SideBar,
@@ -208,7 +211,12 @@ export default {
           this.threads.push(thread);
         });
       }
-      this.selectThread(0);
+      for(let i= 0; i< historyThreadsData.length; i++){
+        if(historyThreadsData[i]._id === this.chatBubbleThreadID){
+          this.selectThread(i)
+          break;
+        }
+      }
     }
   },
 };

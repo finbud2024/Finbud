@@ -4,7 +4,7 @@
     <div class="content">
     </div>
   </div>
-  <router-view @chatviewSelectingThread='loadThread'/>
+  <router-view @chatviewSelectingThread='loadThread' :chatBubbleThreadID='threadId'/>
   <FooterBar v-if="showFooter" ref="footerBar"/>
   <ChatBubble v-if="showChatBubble" :chatViewThreadID='threadId'/>
 </template>
@@ -13,6 +13,8 @@
 import NavBar from     './components/NavBar.vue';
 import FooterBar from  './components/FooterBar.vue';
 import ChatBubble from './components/ChatBubble.vue'
+import authStore from "@/authStore";
+import axios from "axios";
 export default {
   name: 'App',
   components: {
@@ -25,13 +27,30 @@ export default {
       threadId:'',
     }
   },
-  mounted() {
-    
+  async mounted() {
+    if(authStore.isAuthenticated){
+      const userId = localStorage.getItem("token");
+      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+      const historyThreads = await axios.get(threadApi);
+      const historyThreadsData = historyThreads.data;
+      if (historyThreadsData.length === 0) {
+        //if new user with no thread, create a new one
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+        const userId = localStorage.getItem("token");
+        const reqBody = { userId };
+        const thread = await axios.post(api, reqBody);
+        this.threadId = thread._id;
+      } else {
+        this.threadId = historyThreadsData[0]._id;
+      }
+    }
   },
   computed: {
+    authStore() {
+			return authStore;
+		},
     showChatBubble() {
-      // Check if the current route is NOT 'chat-view'
-      return this.$route.path !== '/chat-view';
+      return this.$route.path !== '/chat-view' && this.$route.path !== '/login' && this.$route.path !== '/signup' ;
     },
     showFooter(){
       return this.$route.path !== '/chat-view' && !this.$route.fullPath.includes('/stock-simulator?')

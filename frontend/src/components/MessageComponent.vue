@@ -89,17 +89,17 @@ export default {
     if (this.typing) {
       this.startTypingEffect();
     }
-      const chatContainer = document.querySelector('.chat-container');
-      const messageContents = document.querySelectorAll('.message-content');
-      const containerWidth = chatContainer.offsetWidth;
-      messageContents.forEach(messageContent => {
-        if (containerWidth > 400) {
-          messageContent.style.setProperty('--container-width', `${containerWidth}px`);
-          messageContent.style.fontSize = 'clamp(0.75rem, calc(var(--container-width) * 0.056), 1.25rem)';
-        } else {
-          messageContent.style.fontSize = '14px';
-        }
-      });
+      // const chatContainer = document.querySelector('.chat-container');
+      // const messageContents = document.querySelectorAll('.message-content');
+      // const containerWidth = chatContainer.offsetWidth;
+      // messageContents.forEach(messageContent => {
+      //   if (containerWidth > 400) {
+      //     messageContent.style.setProperty('--container-width', `${containerWidth}px`);
+      //     messageContent.style.fontSize = 'clamp(0.75rem, calc(var(--container-width) * 0.056), 1.25rem)';
+      //   } else {
+      //     messageContent.style.fontSize = '14px';
+      //   }
+      // });
   },
 };
 </script>
@@ -139,6 +139,7 @@ tr:nth-child(odd) {
   overflow: hidden;
   word-wrap: break-word;
   padding: 0 17.42%;
+  container-name: chatComponent;
 }
 
 
@@ -206,16 +207,6 @@ tr:nth-child(odd) {
   font-size: clamp(0.75rem, calc(var(--container-width) * 0.056), 1.25rem);
 }
 
-@container messageContent (max-width: 401px) {
-  .message-content {
-    font-size: 14px
-  }
-
-  .message-wrapper{
-    padding:0
-  }
-}
-
 
 @keyframes typing {
   from {
@@ -265,6 +256,16 @@ tr:nth-child(odd) {
 @media (max-width: 768px) {
   .message-wrapper {
     padding: 0 5vw;
+  }
+}
+
+@container messageComponent (max-width: 401px) {
+  .message-content {
+    font-size: 14px;
+  }
+
+  .message-wrapper {
+    padding: 0;
   }
 }
 
