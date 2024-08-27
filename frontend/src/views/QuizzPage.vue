@@ -2,7 +2,21 @@
   <div class="quiz-container">
     <header>
       <h1>Keyword-Based Quiz</h1>
-      <input type="text" v-model="keywords" placeholder="Enter finance-related keywords" />
+      <div class="input-container">
+        <input
+          type="text"
+          v-model="keywords"
+          placeholder="Enter finance-related keywords"
+          @input="handleInput"
+        />
+        <div v-if="showDropdown" class="dropdown">
+          <ul>
+            <li v-for="(topic, index) in recommendedTopics" :key="index">
+              <a href="#" @click.prevent="selectOption(topic)">{{ topic }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
       <button @click="generateQuiz">Generate Quiz</button>
     </header>
     <div class="score-timer-box">
@@ -16,10 +30,10 @@
         </div>
         <div class="answers">
           <button v-for="(answer, index) in question.answers" :key="index" :class="{
-        correct: selectedAnswer === index && answer.correct,
-        incorrect: selectedAnswer === index && !answer.correct && showIncorrect,
-        selected: selectedAnswer === index
-      }" @click="checkAnswer(index)">
+            correct: selectedAnswer === index && answer.correct,
+            incorrect: selectedAnswer === index && !answer.correct && showIncorrect,
+            selected: selectedAnswer === index
+          }" @click="checkAnswer(index)">
             {{ answer.text }}
           </button>
         </div>
@@ -54,6 +68,13 @@ import axios from 'axios';
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 
+// static dataset
+const keywordTopicMapping = {
+  "Budgeting": ["Basic Budgeting", "Advanced Budgeting"],
+  "Investing": ["Stock Market Basics", "Advanced Investing Strategies"],
+  // Add more keyword-to-topic mappings as needed
+};
+
 export default {
   name: 'QuizComponent',
   data() {
@@ -68,11 +89,29 @@ export default {
       isQuizStarted: false,
       attempts: 0,
       showIncorrect: false,
+      showDropdown: false,
+      recommendedTopics: [],
     };
   },
   methods: {
+    handleInput() {
+      this.recommendedTopics = [];
+      for (const [keyword, topics] of Object.entries(keywordTopicMapping)) {
+        if (this.keywords.toLowerCase().includes(keyword.toLowerCase())) {
+          this.recommendedTopics = topics;
+          this.showDropdown = true;
+          break;
+        }
+      }
+      if (!this.keywords) {
+        this.showDropdown = false;
+      }
+    },
+    selectOption(option) {
+      this.keywords = option; // Update the keywords with selected option
+      this.showDropdown = false;
+    },
     async generateQuiz() {
-      // Clear the existing timer before generating a new quiz
       clearInterval(this.timer);
 
       try {
@@ -93,7 +132,7 @@ export default {
         });
 
         const completion = response.data.choices[0]?.message?.content?.trim();
-        console.log('API Response:', completion); // Debug log
+        console.log('API Response:', completion);
 
         if (!completion) {
           throw new Error('No completion content returned from OpenAI');
@@ -110,7 +149,6 @@ export default {
         this.attempts = 0;
         this.showIncorrect = false;
 
-        // Start the timer
         this.startTimer();
       } catch (error) {
         console.error('Error generating quiz:', error.message);
@@ -123,20 +161,20 @@ export default {
         this.score += 1;
         setTimeout(() => {
           this.showPopup = true;
-        }, 500); // Delay before showing popup
+        }, 500);
       } else {
         this.attempts += 1;
         if (this.attempts === 2) {
           this.showCorrectAnswer();
           setTimeout(() => {
             this.generateQuiz();
-          }, 1500); // Delay before generating new question
+          }, 1500);
         } else {
           this.showIncorrect = true;
           setTimeout(() => {
             this.showIncorrect = false;
             this.startTimer();
-          }, 500); // Delay before retrying
+          }, 500);
         }
       }
     },
@@ -162,7 +200,7 @@ export default {
       if (option === 'same') {
         setTimeout(() => {
           this.generateQuiz();
-        }, 500); // Delay before generating new question
+        }, 500);
       } else if (option === 'new') {
         this.keywords = '';
         this.isQuizStarted = false;
@@ -174,7 +212,7 @@ export default {
     },
     parseQuizResponse(response) {
       const lines = response.split('\n').filter(line => line.trim() !== '');
-      console.log('Parsed lines:', lines); // Debug log
+      console.log('Parsed lines:', lines);
 
       if (lines.length < 5) {
         console.error('Unexpected response format:', response);
@@ -206,6 +244,42 @@ export default {
 </script>
 
 <style scoped>
+.input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown {
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  z-index: 1000;
+}
+
+.dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown li {
+  padding: 8px;
+}
+
+.dropdown li a {
+  text-decoration: none;
+  color: #000;
+  display: block;
+}
+
+.dropdown li a:hover {
+  background-color: #ddd;
+}
+
 .quiz-container {
   padding: 20px;
   text-align: center;
@@ -217,7 +291,6 @@ export default {
   border-radius: 10px;
   transition: transform 0.3s ease;
 }
-
 
 header {
   margin-bottom: 20px;
