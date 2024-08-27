@@ -35,7 +35,49 @@ import Video from '../components/chatbot/Video.vue';
 export default {
   name: 'MessageComponent',
   components: { SearchResult, Video },
-  props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc','htmlContent','sources','videos','relevantQuestions'],
+  // props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc','htmlContent','sources','videos','relevantQuestions'],
+  props: {
+    isUser: {
+      type: Boolean,
+      default: false,
+    },
+    text: {
+      type: String,
+      default: '',
+    },
+    typing: {
+      type: Boolean,
+      default: false,
+    },
+    timestamp: {
+      type: String,
+      default: '',
+    },
+    username: {
+      type: String,
+      default: '',
+    },
+    avatarSrc: {
+      type: String,
+      default: '',
+    },
+    htmlContent: {
+      type: String,
+      default: '',
+    },
+    sources: {
+      type: Array,
+      default: () => [],
+    },
+    videos: {
+      type: Array,
+      default: () => [],
+    },
+    relevantQuestions: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       textProgress: 0, // Initial progress of the typing animation
@@ -43,16 +85,11 @@ export default {
   },
   computed: {
     displayedText() {
+      if(!this.typing) {
+        return this.text;
+      }
       // Return the substring of text based on the current typing progress
       return this.text.substring(0, this.textProgress);
-    },
-  },
-  watch: {
-    typing(newValue) {
-      if (newValue) {
-        // Start typing effect when typing is true
-        this.startTypingEffect();
-      }
     },
   },
   methods: {
@@ -192,6 +229,11 @@ tr:nth-child(odd) {
 }
 
 .message-content {
+  font-size: clamp(
+    0.75rem,
+    5.6vw,
+    1rem
+  ); /*12px, x/3.2 vw, 20px ___ 1vw = 3.2px*/
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -203,8 +245,7 @@ tr:nth-child(odd) {
   border: 1px solid transparent;
   text-align: left;
   white-space: pre-wrap;
-  line-height: 1.2;
-  font-size: clamp(0.75rem, calc(var(--container-width) * 0.056), 1.25rem);
+  line-height: 1.3;
 }
 
 

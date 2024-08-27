@@ -432,7 +432,7 @@ export default {
 						const prompt = {
 							text: chat.prompt.toString(),
 							isUser: true,
-							typing: true,
+							typing: false,
 							timestamp: chat.creationDate,
 							sources: chat.sources,
 							videos: chat.videos,
@@ -445,7 +445,7 @@ export default {
 								const response = {
 									text: responseData,
 									isUser: false,
-									typing: true,
+									typing: false,
 									timestamp: chat.creationDate,
 									sources: chat.sources,
 									videos: chat.videos,
