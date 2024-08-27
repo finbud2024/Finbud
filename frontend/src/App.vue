@@ -1,51 +1,68 @@
 <template>
   <div class="nav-actions">
-    <NavBar ref="headerBar"/>
+    <NavBar v-if="showHeader" ref="headerBar"/>
     <div class="content">
-      <!-- Use router-link to navigate to the login page -->
     </div>
   </div>
-  <!-- router-view will render the component associated with the current route -->
-  <router-view />
-  <FooterBar ref="footerBar"/>
+  <router-view @chatviewSelectingThread='loadThread' :chatBubbleThreadID='threadId'/>
+  <FooterBar v-if="showFooter" ref="footerBar"/>
+  <ChatBubble v-if="showChatBubble" :chatViewThreadID='threadId'/>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue';
-import FooterBar from './components/FooterBar.vue';
-
+import NavBar from     './components/NavBar.vue';
+import FooterBar from  './components/FooterBar.vue';
+import ChatBubble from './components/ChatBubble.vue'
+import authStore from "@/authStore";
+import axios from "axios";
 export default {
   name: 'App',
   components: {
     NavBar,
     FooterBar,
+    ChatBubble
   },
-  mounted() {
-    // this.updateFooterVisibility(this.$route.path);
-    // this.updateHeaderVisibility(this.$route.path);
-    this.$router.afterEach((to, from) => {
-      this.updateFooterVisibility(to.fullPath);
-      this.updateHeaderVisibility(to.fullPath);
-    });
+  data(){
+    return{
+      threadId:'',
+    }
   },
-  methods: {
-    updateFooterVisibility(path) {
-      const footer = this.$refs.footerBar.$el;
-      if (path === '/chat-view'|| path.includes('/stock-simulator?')) {
-        footer.style.display = 'none';
+  async mounted() {
+    if(authStore.isAuthenticated){
+      const userId = localStorage.getItem("token");
+      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+      const historyThreads = await axios.get(threadApi);
+      const historyThreadsData = historyThreads.data;
+      if (historyThreadsData.length === 0) {
+        //if new user with no thread, create a new one
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+        const userId = localStorage.getItem("token");
+        const reqBody = { userId };
+        const thread = await axios.post(api, reqBody);
+        this.threadId = thread._id;
       } else {
-        footer.style.display = 'flex';
-      }
-    },
-    updateHeaderVisibility(path) {
-      const header = this.$refs.headerBar.$el;
-      if (path.includes('/stock-simulator?')) {
-        header.style.display = 'none';
-      } else {
-        header.style.display = 'flex';
+        this.threadId = historyThreadsData[0]._id;
       }
     }
-
+  },
+  computed: {
+    authStore() {
+			return authStore;
+		},
+    showChatBubble() {
+      return this.$route.path !== '/chat-view' && this.$route.path !== '/login' && this.$route.path !== '/signup' ;
+    },
+    showFooter(){
+      return this.$route.path !== '/chat-view' && !this.$route.fullPath.includes('/stock-simulator?')
+    },
+    showHeader(){
+      return !this.$route.fullPath.includes('/stock-simulator?')
+    }
+  },
+  methods: {
+    loadThread(chatviewThreadID){
+      this.threadId = chatviewThreadID;
+    }
   }
 };
 </script>

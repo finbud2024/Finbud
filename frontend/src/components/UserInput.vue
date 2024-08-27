@@ -5,7 +5,12 @@
       <div @click="triggerFileInput" class="upload-btn">
         <font-awesome-icon icon="fa-solid fa-paperclip" />
       </div>
-      <input type="text" v-model="messageText" @keyup.enter="send" placeholder="Type your message here..." />
+      <input 
+        type="text" 
+        v-model="messageText" 
+        @keyup.enter="send" 
+        placeholder="Type your message here..."
+      />
       <div @click="send" class="send-btn">
         <font-awesome-icon icon="fa-solid fa-chevron-up" />
       </div>
@@ -108,6 +113,12 @@ export default {
 
 /* Media queries */
 @media (max-width: 768px) {
+  .user-input {
+    width: 100%;
+  }
+}
+
+@container userInputComponent (max-width: 401px){
   .user-input {
     width: 100%;
   }

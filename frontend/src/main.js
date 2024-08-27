@@ -12,7 +12,7 @@ import * as faBrand from '@fortawesome/free-brands-svg-icons';
 const icons = [ faSolid.faCamera, faSolid.faRightFromBracket, 
                 faSolid.faEye, faSolid.faEyeSlash, faSolid.faPaperclip,
                 faSolid.faChevronUp, faSolid.faChevronDown, faSolid.faEllipsis,
-                faSolid.faBars, faSolid.faPlay
+                faSolid.faBars, faSolid.faPlay, faSolid.faXmark
             ];
 library.add(...icons); // Use the spread operator to add the icons
 
