@@ -42,6 +42,15 @@ export default {
 			botAvatar: require("@/assets/botrmbg.png"),
 		}
 	},
+	setup(){
+	const instance = getCurrentInstance()
+			onBeforeUnmount(()=>{
+				instance.data.messages = [];
+				instance.data.sources = [];
+				instance.data.videos = [];
+				instance.data.relevantQuestions = [];
+			})
+	},
 	computed: {
 		authStore() {
 			return authStore;
