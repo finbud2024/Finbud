@@ -117,4 +117,10 @@ export default {
     width: 100%;
   }
 }
+
+@container userInputComponent (max-width: 401px){
+  .user-input {
+    width: 100%;
+  }
+}
 </style>
