@@ -1,21 +1,29 @@
 <template>
   <div>
-    <div id="chartContainer0" style="height: 300px; width: 100%"></div>
-    <div id="chartContainer1" style="height: 300px; width: 100%"></div>
-    <div id="chartContainer2" style="height: 300px; width: 100%"></div>
-    <div id="chartContainer3" style="height: 300px; width: 100%"></div>
-    <div id="chartContainer4" style="height: 300px; width: 100%"></div>
-    <div id="chartContainer5" style="height: 300px; width: 100%"></div>
+    <div ref="chartContainer0" :style="styleOptions"></div>
+    <div ref="chartContainer1" :style="styleOptions"></div>
+    <div ref="chartContainer2" :style="styleOptions"></div>
+    <div ref="chartContainer3" :style="styleOptions"></div>
+    <div ref="chartContainer4" :style="styleOptions"></div>
+    <div ref="chartContainer5" :style="styleOptions"></div>
   </div>
 </template>
 
 <script>
-import btcDataCSV from "./assets/AAPL.csv";
+import AAPLDataCSV from "./assets/AAPL.csv";
+import AMZNDataCSV from "./assets/AMZN.csv";
+import MSFTDataCSV from "./assets/MSFT.csv";
+import TSLADataCSV from "./assets/TSLA.csv";
 import CanvasJS from "@canvasjs/stockcharts";
-console.log(btcDataCSV);
 
 export default {
   name: "Indicators",
+  props: {
+    stockSymbol: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       stockData: [],
@@ -26,17 +34,45 @@ export default {
       bb: [],
       dailyReturns: [],
       dailyVolatility: [],
+      styleOptions: {
+        width: "100%",
+        height: "300px",
+      },
     };
   },
   mounted() {
     window.CanvasJS = CanvasJS;
-    this.processData();
-    this.calculateIndicators();
+    this.loadData();
     this.renderCharts();
   },
+  watch: {
+    stockSymbol() {
+      this.loadData();
+      this.renderCharts();
+    },
+  },
   methods: {
-    processData() {
-      this.stockData = btcDataCSV.slice(1).map((data) => ({
+    loadData() {
+      let dataCSV;
+      switch (this.stockSymbol) {
+        case "AAPL":
+          dataCSV = AAPLDataCSV;
+          break;
+        case "AMZN":
+          dataCSV = AMZNDataCSV;
+          break;
+        case "MSFT":
+          dataCSV = MSFTDataCSV;
+          break;
+        case "TSLA":
+          dataCSV = TSLADataCSV;
+          break;
+        default:
+          console.error("Unknown stock symbol:", this.stockSymbol);
+          return;
+      }
+
+      this.stockData = dataCSV.slice(1).map((data) => ({
         date: new Date(data["Date"]),
         open: parseFloat(data["Open"]),
         high: parseFloat(data["High"]),
@@ -44,6 +80,8 @@ export default {
         close: parseFloat(data["Close"]),
         volume: parseFloat(data["Volume"]),
       }));
+
+      this.calculateIndicators();
     },
     calculateIndicators() {
       this.calculateRSI();
@@ -163,6 +201,7 @@ export default {
       const charts = [
         {
           title: "Stock Price with BB",
+          container: this.$refs.chartContainer0,
           data: [
             {
               type: "candlestick",
@@ -188,21 +227,11 @@ export default {
               dataPoints: this.bb.map((d) => ({ x: d.x, y: d.y[2] })),
             },
           ],
-          navigator: {
-            data: [
-              {
-                dataPoints: this.bb.map((d) => ({ x: d.x, y: d.y[0] })),
-              },
-            ],
-            slider: {
-              minimum: new Date(2018, 6, 1),
-              maximum: new Date(2018, 8, 1),
-            },
-          },
         },
         {
           title: "RSI",
           axisY: { minimum: 0, maximum: 100 },
+          container: this.$refs.chartContainer1,
           data: [
             { type: "line", name: "RSI", dataPoints: this.rsi },
             {
@@ -219,6 +248,7 @@ export default {
         },
         {
           title: "EMA and SMA",
+          container: this.$refs.chartContainer2,
           data: [
             { type: "line", name: "EMA", dataPoints: this.ema },
             { type: "line", name: "SMA", dataPoints: this.sma },
@@ -226,6 +256,7 @@ export default {
         },
         {
           title: "MACD",
+          container: this.$refs.chartContainer3,
           data: [
             {
               type: "line",
@@ -246,6 +277,7 @@ export default {
         },
         {
           title: "Daily Returns",
+          container: this.$refs.chartContainer4,
           data: [
             {
               type: "column",
@@ -256,6 +288,7 @@ export default {
         },
         {
           title: "Daily Volatility Projection",
+          container: this.$refs.chartContainer5,
           data: [
             {
               type: "line",
@@ -266,8 +299,8 @@ export default {
         },
       ];
 
-      charts.forEach((chartData, index) => {
-        new window.CanvasJS.Chart(`chartContainer${index}`, {
+      charts.forEach((chartData) => {
+        new window.CanvasJS.Chart(chartData.container, {
           animationEnabled: true,
           theme: "light2",
           title: { text: chartData.title },
@@ -290,3 +323,7 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+</style>

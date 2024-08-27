@@ -1,5 +1,5 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+import { load } from 'cheerio';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
@@ -51,7 +51,7 @@ export async function get10BlueLinksContents(sources) {
   }
 
   function extractMainContent(html) {
-    const $ = cheerio.load(html);
+    const $ = load(html);
     $("script, style, head, nav, footer, iframe, img").remove();
     return $("body").text().replace(/\s+/g, " ").trim();
   }
