@@ -384,13 +384,20 @@ export default {
           try {
             const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
             if (match) {
-              const description = match[1].trim();
-              const amount = parseInt(match[2], 10);
-              const balance = await this.calculateNewBalance(amount);
-              await this.addTransaction(description, amount, balance);
-              // answers.push( `Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
-              answers.push(`Adding transaction for ${description}, $${amount}. Redirecting to the goal page...`);
-              this.openNewWindow("/goal");
+              const accountCheck = await this.checkAccountBalance();
+              if (!accountCheck){
+                answers.push(`Account balance is not set yet, please set your account balance first`);
+                this.openNewWindow("/goal");
+              }
+              else {
+                const description = match[1].trim();
+                const amount = parseInt(match[2], 10);
+                const balance = await this.calculateNewBalance(amount);
+                await this.addTransaction(description, amount, balance);
+                // answers.push( `Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
+                answers.push(`Adding transaction for ${description}, $${amount}. Redirecting to the goal page...`);
+                this.openNewWindow("/goal");
+              }
             } else {
               answers.push(
                 "Please specify the description and amount you want to add."
@@ -405,14 +412,20 @@ export default {
           try {
             const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
             if (match) {
-              const description = match[1].trim();
-              const amount = -parseInt(match[2], 10);
-              const balance = await this.calculateNewBalance(amount);
-              await this.addTransaction(description, amount, balance);
-              // answers.push( `Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
-              answers.push(`Adding transaction for ${description}, $${amount}. Please redirect to the goal page...`);
-
-              this.openNewWindow("/goal");
+              const accountCheck = await this.checkAccountBalance();
+              if (!accountCheck){
+                answers.push(`Account balance is not set yet, please set your account balance first`);
+                this.openNewWindow("/goal");
+              }
+              else {
+                const description = match[1].trim();
+                const amount = -parseInt(match[2], 10);
+                const balance = await this.calculateNewBalance(amount);
+                await this.addTransaction(description, amount, balance);
+                // answers.push( `Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
+                answers.push(`Adding transaction for ${description}, $${amount}. Please redirect to the goal page...`);
+                this.openNewWindow("/goal");
+              }
             } else {
               answers.push(
                 "Please specify the description and amount you want to spend."
@@ -673,6 +686,17 @@ export default {
       } catch (err) {
         console.error('Error calculating new balance:', err);
         throw error;
+      }
+    },
+    async checkAccountBalance() {
+      try {
+        const userId = localStorage.getItem("token");
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+        const transactions = response.data;
+        return transactions.length > 0 && this.accountBalance !== 0;
+      } catch (error) {
+        console.error('Error checking account balance:', error);
+        return false;
       }
     },
     extractStockCode(message) {

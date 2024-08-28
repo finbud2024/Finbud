@@ -7,10 +7,9 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
-import { createChart } from 'lightweight-charts';
+import ApexCharts from 'apexcharts';
 
 const API_KEY = process.env.VUE_APP_CRYPTO_KEY;
 
@@ -25,8 +24,6 @@ export default {
   data() {
     return {
       chart: null,
-      lineSeries: null,
-      updateInterval: null,
     };
   },
   watch: {
@@ -40,172 +37,93 @@ export default {
     },
   },
   methods: {
-  async fetchChartData(uuid) {
-    try {
-      const response = await axios.get(`https://api.coinranking.com/v2/coin/${uuid}/history`, {
-        headers: {
-          'Authorization': `Bearer ${API_KEY}`
-        },
-        params: {
-          referenceCurrencyUuid: 'yhjMzLPhuIDl', // Assuming USD as the reference currency
-          timePeriod: '1y' // Fetch data for the last month
-        }
-      });
-
-      let data = response.data.data.history.map(item => {
-        const timestampInSeconds = item.timestamp; // Use the timestamp as is (in seconds)
-        return {
-          time: timestampInSeconds, // Use the timestamp as is
-          value: parseFloat(item.price)
-        };
-      });
-
-      // Sort data by time in ascending order
-      data = data.sort((a, b) => a.time - b.time);
-
-      this.renderChart(data);
-
-      // Set up real-time updates
-      this.setupRealTimeUpdates(uuid);
-    } catch (error) {
-      console.error('Error fetching chart data:', error);
-    }
-  },
-  setupRealTimeUpdates(uuid) {
-    if (this.updateInterval) {
-      clearInterval(this.updateInterval);
-    }
-
-    this.updateInterval = setInterval(async () => {
+    async fetchChartData(uuid) {
       try {
         const response = await axios.get(`https://api.coinranking.com/v2/coin/${uuid}/history`, {
           headers: {
             'Authorization': `Bearer ${API_KEY}`
           },
           params: {
-            referenceCurrencyUuid: 'yhjMzLPhuIDl',
-            timePeriod: '1d' // Fetch the last hour to get real-time updates
+            referenceCurrencyUuid: 'yhjMzLPhuIDl', // Assuming USD as the reference currency
+            timePeriod: '1y' // Fetch data for the last year
           }
         });
 
-        const latestData = response.data.data.history.map(item => {
-          const timestampInSeconds = item.timestamp; // Use the timestamp as is (in seconds)
+        const data = response.data.data.history.map(item => {
+          const timestampInMilliseconds = item.timestamp * 1000; // Convert to milliseconds
           return {
-            time: timestampInSeconds, // Use the timestamp as is
-            value: parseFloat(item.price)
+            x: new Date(timestampInMilliseconds),
+            y: [
+              parseFloat(item.price), // Open
+              parseFloat(item.price) * 1.01, // High (sample logic for example)
+              parseFloat(item.price) * 0.99, // Low (sample logic for example)
+              parseFloat(item.price) // Close
+            ]
           };
-        }).sort((a, b) => a.time - b.time);
+        });
 
-        // Merge and update the chart with new data, ensuring no duplicates
-        const currentData = this.lineSeries.data();
-        const mergedData = [...currentData, ...latestData]
-          .reduce((acc, item) => {
-            if (!acc.some(existing => existing.time === item.time)) {
-              acc.push(item);
-            }
-            return acc;
-          }, [])
-          .sort((a, b) => a.time - b.time);
-          
-        this.lineSeries.setData(mergedData);
+        // Render the chart with the fetched data
+        this.renderChart(data);
       } catch (error) {
-        console.error('Error fetching real-time data:', error);
+        console.error('Error fetching chart data:', error);
       }
-    }, 60000); // Update every minute
-  },
-  renderChart(data) {
-    if (this.chart) {
-      this.chart.remove();
-    }
+    },
+    renderChart(data) {
+      if (this.chart) {
+        this.chart.destroy();
+      }
 
-    this.chart = createChart(this.$refs.chartContainer, {
-      width: this.$refs.chartContainer.clientWidth,
-      height: this.$refs.chartContainer.clientHeight,
-      layout: {
-        backgroundColor: '#FFFFFF',
-        textColor: '#333',
-      },
-      grid: {
-        vertLines: {
-          color: '#eee',
+      const options = {
+        chart: {
+          type: 'candlestick',
+          height: '100%',
+          width: '100%',
         },
-        horzLines: {
-          color: '#eee',
+        series: [{
+          data: data
+        }],
+        xaxis: {
+          type: 'datetime',
         },
-      },
-      timeScale: {
-        timeVisible: true,
-        secondsVisible: false,
-      },
-    });
+        yaxis: {
+          tooltip: {
+            enabled: true
+          }
+        },
+        tooltip: {
+          enabled: true,
+          shared: true,
+          x: {
+            format: 'dd MMM yyyy'
+          }
+        },
+        plotOptions: {
+          candlestick: {
+            colors: {
+              upward: '#00B746',
+              downward: '#EF403C'
+            },
+            wick: {
+              useFillColor: true,
+            }
+          }
+        }
+      };
 
-    this.lineSeries = this.chart.addLineSeries({
-      color: '#4caf50',
-      lineWidth: 2,
-      crossHairMarkerVisible: true,
-      crossHairMarkerRadius: 6,
-    });
-    this.lineSeries.setData(data);
-
-    this.chart.subscribeCrosshairMove((param) => {
-      if (!param || !param.time) {
-        this.removeTooltip();
-        return;
-      }
-
-      const point = data.find(item => item.time === param.time);
-      if (point) {
-        this.showTooltip(point, param);
-      }
-    });
-
-    // Resize the chart when the window size changes
-    window.addEventListener('resize', this.resizeChart);
+      this.chart = new ApexCharts(this.$refs.chartContainer, options);
+      this.chart.render();
+    }
   },
-  resizeChart() {
+  mounted() {
+    this.$nextTick(() => {
+      this.renderChart([]);
+    });
+  },
+  beforeUnmount() {
     if (this.chart) {
-      this.chart.resize(this.$refs.chartContainer.clientWidth, this.$refs.chartContainer.clientHeight);
+      this.chart.destroy();
     }
-  },
-  showTooltip(point, param) {
-    let date = new Date(point.time * 1000); // Convert back to milliseconds
-    let dateString = date.toLocaleDateString(undefined, { timeZone: 'UTC' });
-    let timeString = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
-
-    let tooltip = document.querySelector('.tooltip');
-    if (!tooltip) {
-      tooltip = document.createElement('div');
-      tooltip.className = 'tooltip';
-      this.$refs.chartContainer.appendChild(tooltip);
-    }
-
-    // tooltip.innerHTML = `
-    //   <div>${point.value.toFixed(2)}</div>
-    //   <div>${dateString}</div>
-    //   <div>${timeString}</div>
-    // `;
-    tooltip.style.left = param.point.x + 'px';
-    tooltip.style.top = param.point.y + 'px';
-    tooltip.style.display = 'block';
-  },
-  removeTooltip() {
-    let tooltip = document.querySelector('.tooltip');
-    if (tooltip) {
-      tooltip.style.display = 'none';
-    }
-  },
-},
-mounted() {
-  this.$nextTick(() => {
-    this.renderChart([]);
-  });
-},
-beforeUnmount() {
-  if (this.updateInterval) {
-    clearInterval(this.updateInterval);
   }
-  window.removeEventListener('resize', this.resizeChart);
-}
 };
 </script>
 
@@ -278,16 +196,6 @@ beforeUnmount() {
   position: relative;
 }
 
-.tooltip {
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ccc;
-  padding: 5px;
-  border-radius: 3px;
-  pointer-events: none;
-  display: none;
-}
-
 .close-btn {
   position: absolute;
   top: 10px;
@@ -299,4 +207,3 @@ beforeUnmount() {
   z-index: 1001;
 }
 </style>
-
