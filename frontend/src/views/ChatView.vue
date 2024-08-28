@@ -2,12 +2,8 @@
   <div class="home-container">
     <div v-if="overlayEnabled" class="overlay"/>
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
-      <font-awesome-icon
-        class="toggle-sidebar-btn"
-        @click="toggleSidebar"
-        icon="fa-solid fa-bars"
-      />
-      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"></div>
+      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars"/>
+      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
       <SideBar
         :class="{ 'is-visible': isSidebarVisible }"
         :threads="threads"
@@ -18,46 +14,8 @@
         @select-thread="selectThread"
       />
     </div>
-    <div class="chat-container">
-      <ChatFrame>
-        <div v-for="(message, index) in messages" :key="index">
-          <!-- Response Container -->
-          <div class="message-container">
-            <section class="chat-response">
-              <MessageComponent 
-                :is-user="message.isUser"
-                :text="message.text" 
-                :typing="message.typing" 
-                :htmlContent="message.htmlContent"
-                :username="message.isUser ? displayName : 'FinBud Bot'"
-                :avatar-src="message.isUser ? userAvatar : botAvatar"
-                :sources="message.isUser ? [] : message.sources"
-                :videos="message.isUser ? [] : message.videos"
-                :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
-                @question-click="handleQuestionClick"
-              />
-              <!-- <SourceComponent
-                v-if="sources.length"
-                :sources="sources"
-                class="source-component-card"
-              />
-              <FollowUpComponent
-                v-if="followUpQuestions.length"
-                :followUpQuestions="followUpQuestions"
-                @sendFollowUp="sendFollowUp"
-                class="followup-component-card"
-              /> -->
-            </section>
-          </div>
-        </div>
-      </ChatFrame>
-      <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
-    </div>
-    <div 
-      class="guidance-btn" 
-      :class="{ 'is-guidance-visible': showGuidance }"
-      @click="showGuidance = true"
-    >
+    <ChatComponent :currentThreadID="threadID"/>
+    <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
@@ -72,34 +30,28 @@
 </template>
 
 <script>
-import authStore from "@/authStore";
-import axios from "axios";
-import ChatHeader from "../components/ChatHeader.vue";
-import ChatFrame from "../components/ChatFrame.vue";
-import MessageComponent from "../components/MessageComponent.vue";
-// import SourceComponent from "@/components/SourceComponent.vue";
-// import FollowUpComponent from "@/components/FollowUpComponent.vue";
-import UserInput from "../components/UserInput.vue";
+//COMPONENT IMPORT
+import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
-import { gptServices } from "../services/gptServices.js";
-import { getSources, getVideos, getRelevantQuestions } from '../services/serperService.js';
+//UTILITIES + LIB IMPORT
+import {getCurrentInstance, reactive, onBeforeUnmount, watchEffect } from 'vue';
+import authStore from "@/authStore";
+import axios from "axios";
 
 export default {
   name: "ChatView",
-  props: ["threadId"],
+  props:{
+    chatBubbleThreadID: String
+  },
   components: {
-    ChatHeader,
-    ChatFrame,
-    MessageComponent,
-    UserInput,
+    ChatComponent,
     SideBar,
-    GuidanceModal ,
-    // SourceComponent,
-    // FollowUpComponent,
+    GuidanceModal
   },
   data() {
     return {
+      threadID:"",
       newMessage: "",
       messages: [],
       sources: [],
@@ -109,11 +61,6 @@ export default {
       threads: [],
       isSidebarVisible: false,
       showGuidance: false,
-      sources: [],
-      videos: [],
-      showVideos: false,
-      showSearchVideosButton: false,
-      relevantQuestions: [],
       overlayEnabled: false, //overlay to darken the chat screen when new window popsup
       newWindow: null, //new window to referrence to other
       windowCheckInterval: null,
@@ -140,80 +87,18 @@ export default {
       return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
     }
   },
-  watch: {
-    // threadId: {
-    //   immediate: true,
-    //   handler(newThreadId) {
-    //     if (newThreadId != null) {
-    //       alert("thread")
-    //       this.updateCurrentThread(newThreadId);
-    //     }
-    //   },
-    // },
-  },
+  setup(props,{emit}){
+   const instance = getCurrentInstance()
+		onBeforeUnmount(()=>{
+			emit('chatviewSelectingThread', instance.data.threadID);
+		})
+	},
   methods: {
-    clearMessage() {
-      this.newMessage = "";
-    },
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
     },
     closeSidebar() {
       this.isSidebarVisible = false;
-    },
-    async updateCurrentThread(currentThreadId) {
-      try {
-        this.messages = [];
-        const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
-        this.addTypingResponse(botInstruction, false);
-
-        const thread = this.threads.find(
-          (thread) => thread.id.toString() === currentThreadId
-        );
-        if (thread) {
-          this.currentThread = thread;
-        }
-        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${currentThreadId}`;
-        const chats = await axios.get(chatApi);
-        const chatsData = chats.data;
-        if (Array.isArray(chatsData)) {
-          chatsData.forEach((chat) => {
-            const prompt = {
-              text: chat.prompt.toString(),
-              isUser: true,
-              typing: false,
-              timestamp: chat.creationDate,
-              sources: chat.sources,
-              videos: chat.videos,
-              relevantQuestions: chat.followUpQuestions
-            };
-            this.messages.push(prompt);
-            const responses = chat.response;
-            if (Array.isArray(responses)) {
-              responses.forEach((responseData) => {
-                const response = {
-                  text: responseData,
-                  isUser: false,
-                  typing: false,
-                  timestamp: chat.creationDate,
-                  sources: chat.sources,
-                  videos: chat.videos,
-                  relevantQuestions: chat.followUpQuestions
-                };
-                this.messages.push(response);
-              });
-            }
-          });
-        } else {
-          console.error('Error: chatsData is not an array');
-        }
-
-        // Scroll to the bottom after loading messages
-        await this.scrollChatFrameToBottom();
-
-      } catch (err) {
-        console.error("Error on updating to current thread:", err);
-      }
     },
     async addThread(newThread) {
       try {
@@ -247,7 +132,7 @@ export default {
       console.log("cancel edit");
     },
     selectThread(index) {
-      this.updateCurrentThread(this.threads[index].id);
+      this.threadID = this.threads[index].id;
       this.threads.forEach((thread, i) => {
         thread.clicked = i === index;
       });
@@ -766,33 +651,16 @@ export default {
       this.overlayEnabled = false;
       this.newWindow = null;
     },
-    async scrollChatFrameToBottom() {
-      await new Promise((r) => setTimeout(r, 200));
-      const chatFrame = document.querySelector(".chat-frame");
-      chatFrame.scrollTo({
-        top: chatFrame.scrollHeight,
-        behavior: "smooth", // Smooth scrolling effect
-      });
-    },
   },
   async mounted() {
-    setInterval(() => {
-      this.currentTime = new Date().toLocaleTimeString();
-    }, 500);
+    setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
-    document.querySelector(
-      ".home-container"
-    ).style.height = `calc(100vh - ${navbarHeight}px)`;
-
-    if (!this.messages) {
-      this.messages = [];
-    }
+    document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
 
     if (authStore.isAuthenticated) {
       const userId = localStorage.getItem("token");
-      console.log(userId);
+      console.log("current UserID:",userId);
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
       if (historyThreadsData.length === 0) {
@@ -815,10 +683,12 @@ export default {
           this.threads.push(thread);
         });
       }
-      this.selectThread(0);
-    } else {
-      const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
-      this.addTypingResponse(botInstruction, false);
+      for(let i= 0; i< historyThreadsData.length; i++){
+        if(historyThreadsData[i]._id === this.chatBubbleThreadID){
+          this.selectThread(i)
+          break;
+        }
+      }
     }
   },
 };
