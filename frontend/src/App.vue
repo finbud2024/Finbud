@@ -1,34 +1,36 @@
 <template>
   <div class="nav-actions">
-    <NavBar v-if="showHeader" ref="headerBar"/>
-    <div class="content">
-    </div>
+    <NavBar v-if="showHeader" ref="headerBar" />
+    <div class="content"></div>
   </div>
-  <router-view @chatviewSelectingThread='loadThread' :chatBubbleThreadID='threadId'/>
-  <FooterBar v-if="showFooter" ref="footerBar"/>
-  <ChatBubble v-if="showChatBubble" :chatViewThreadID='threadId'/>
+  <router-view
+    @chatviewSelectingThread="loadThread"
+    :chatBubbleThreadID="threadId"
+  />
+  <FooterBar v-if="showFooter" ref="footerBar" />
+  <ChatBubble v-if="showChatBubble" :chatViewThreadID="threadId" />
 </template>
 
 <script>
-import NavBar from     './components/NavBar.vue';
-import FooterBar from  './components/FooterBar.vue';
-import ChatBubble from './components/ChatBubble.vue'
+import NavBar from "./components/NavBar.vue";
+import FooterBar from "./components/FooterBar.vue";
+import ChatBubble from "./components/ChatBubble.vue";
 import authStore from "@/authStore";
 import axios from "axios";
 export default {
-  name: 'App',
+  name: "App",
   components: {
     NavBar,
     FooterBar,
-    ChatBubble
+    ChatBubble,
   },
-  data(){
-    return{
-      threadId:'',
-    }
+  data() {
+    return {
+      threadId: "",
+    };
   },
   async mounted() {
-    if(authStore.isAuthenticated){
+    if (authStore.isAuthenticated) {
       const userId = localStorage.getItem("token");
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
       const historyThreads = await axios.get(threadApi);
@@ -47,37 +49,44 @@ export default {
   },
   computed: {
     authStore() {
-			return authStore;
-		},
+      return authStore;
+    },
     showChatBubble() {
-      return this.$route.path !== '/chat-view' && this.$route.path !== '/login' && this.$route.path !== '/signup' ;
+      return (
+        this.$route.path !== "/chat-view" &&
+        this.$route.path !== "/login" &&
+        this.$route.path !== "/signup"
+      );
     },
-    showFooter(){
-      return this.$route.path !== '/chat-view' && !this.$route.fullPath.includes('/stock-simulator?')
+    showFooter() {
+      return (
+        this.$route.path !== "/chat-view" &&
+        !this.$route.fullPath.includes("/stock-simulator?")
+      );
     },
-    showHeader(){
-      return !this.$route.fullPath.includes('/stock-simulator?')
-    }
+    showHeader() {
+      return !this.$route.fullPath.includes("/stock-simulator?");
+    },
   },
   methods: {
-    loadThread(chatviewThreadID){
+    loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 body {
   min-height: 100%;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
   font-family: Noto sans, sans-serif;
   overflow-x: none;
 }
 
-html { 
+html {
   height: 100%;
   scrollbar-gutter: auto;
 }
@@ -103,5 +112,4 @@ a {
 a:hover {
   background-color: #e7f3ff;
 }
-
 </style>
