@@ -35,7 +35,7 @@ import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
 //UTILITIES + LIB IMPORT
-import {getCurrentInstance, reactive, onBeforeUnmount, watchEffect } from 'vue';
+import {getCurrentInstance, reactive, onBeforeUnmount, watchEffect, onBeforeMount } from 'vue';
 import authStore from "@/authStore";
 import axios from "axios";
 
@@ -90,6 +90,7 @@ export default {
   setup(props,{emit}){
    const instance = getCurrentInstance()
 		onBeforeUnmount(()=>{
+      localStorage.setItem('latestThreadID', instance.data.threadID);
 			emit('chatviewSelectingThread', instance.data.threadID);
 		})
 	},
@@ -239,6 +240,7 @@ export default {
       for(let i= 0; i< historyThreadsData.length; i++){
         if(historyThreadsData[i]._id === this.chatBubbleThreadID){
           this.selectThread(i)
+          this.$emit('chatviewSelectingThread', "")
           break;
         }
       }

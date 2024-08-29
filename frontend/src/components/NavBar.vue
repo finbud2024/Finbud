@@ -43,18 +43,21 @@
         </div>
         <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
           <router-link to="/" class="home" @click="toggleDropdownMobile">Home</router-link>
-          <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
-          <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
-          <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-          <!-- <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link> -->
-          <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
-          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
-          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->
           <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
-          <router-link to="/quant-analysis" class="home">Quant</router-link>
-          <router-link v-if="!authStore.isAuthenticated" to="/login" class="login-button" @click="toggleDropdownMobile">Log In</router-link>
-          <router-link to="#" v-if="authStore.isAuthenticated" @click="logout" class="logout">Log Out</router-link>
+          <div v-if="authStore.isAuthenticated">
+            <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
+            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
+            <router-link to="/quant-analysis" class="home">Quant</router-link>
+            <router-link to="#" @click="logout" class="logout">Log Out</router-link>
+          </div>
+          <!-- <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link> -->
+          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
+          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->                  
+          <router-link to="/login" v-if="!authStore.isAuthenticated" class="login-button" @click="toggleDropdownMobile">Log In</router-link>
+          
         </div>
       </div>
     </div>
