@@ -1,12 +1,15 @@
 <template>
-    <div :class="{'chatBubbleContainer': true, 'active': isActive}">
-        <div :class="{'chatBubbleHeader':true, 'closeChatBubble':!isActive}" @click="toggleChatBubble()">
-            <font-awesome-icon v-if="isActive" icon="fa-solid fa-xmark" class="closeChatBubble"/>
-            <div class="chatBubbleTittle">
-                
+    <div class="chatBubble">
+        <div v-if="isActive" class="chatBubbleContainer">
+            <div class="chatBubbleHeader">
+                <font-awesome-icon icon="fa-solid fa-xmark" class="closeChatBubble"/>
+                <div class="chatBubbleTittle">
+                    
+                </div>
             </div>
+            <ChatComponent  :currentThreadID="chatViewThreadID"/>
         </div>
-        <ChatComponent  :currentThreadID="chatViewThreadID"/>
+        <img class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble"/>
     </div>
 </template>
 <script>
@@ -43,17 +46,11 @@ export default{
     z-index: 100;
     display: flex;
     flex-direction: column;
-    transform: translateY(calc(100% - 8% - 2px));
-    transition: transform 500ms ease-in;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
 }
 
-.active {
-    transform: translateY(0); /* Move up instead of down */
-}
-
-@media (max-width: 1230px){
+@media (max-width: 786px){
     .chatBubbleContainer {
         left: 0;
         right: 0;
@@ -77,10 +74,6 @@ export default{
     border-top-right-radius: 10px;
 }
 
-.closeChatBubble:hover {
-    cursor: pointer;
-}
-
 .chatBubbleTittle{
     width: 100%;
     height: 100%;
@@ -92,4 +85,15 @@ export default{
     align-items: center;
     font-weight: 900;
 }
+.finbudBot{
+    position: fixed;
+    width: 60px;
+    aspect-ratio: 1;
+    right: 20px;
+    bottom: 20px;
+}
+.finbudBot:hover{
+    cursor: pointer
+}
+
 </style>
