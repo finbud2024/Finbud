@@ -1,0 +1,83 @@
+[
+    {
+        "Question": "What is the impact of interest rates on bond prices?",
+        "Answers": [
+            {"Answer": "As interest rates rise, bond prices generally fall, and vice versa.", "Correct": true, "Explanation": "When interest rates increase, the prices of existing bonds typically decrease because new bonds are issued with higher yields, making existing bonds less attractive."},
+            {"Answer": "Bond prices are inversely related to interest rates, not directly.", "Correct": false, "Explanation": "Bond prices have an inverse relationship with interest rates; they do not move directly with interest rates."},
+            {"Answer": "Interest rates impact bond prices inversely; as rates rise, bond prices fall.", "Correct": false, "Explanation": "Although this statement is true, the question's correct answer must be a complete explanation of the relationship."},
+            {"Answer": "Interest rates and bond prices have a direct relationship, not inverse.", "Correct": false, "Explanation": "Interest rates and bond prices have an inverse relationship, meaning they move in opposite directions."}
+        ]
+    },
+    {
+        "Question": "What is the primary purpose of using alternative investments in a portfolio?",
+        "Answers": [
+            {"Answer": "Alternative investments are used to diversify and reduce correlation with traditional asset classes.", "Correct": true, "Explanation": "The primary purpose of alternative investments is to diversify a portfolio and reduce its correlation with traditional asset classes like stocks and bonds."},
+            {"Answer": "Alternative investments add diversity but don't necessarily focus on high returns alone.", "Correct": false, "Explanation": "Alternative investments are primarily used for diversification rather than solely focusing on high returns."},
+            {"Answer": "Alternative investments help with diversification, not guaranteed high returns.", "Correct": false, "Explanation": "Alternative investments aim to diversify the portfolio and do not guarantee high returns."},
+            {"Answer": "Alternative investments focus on reducing risk, not just diversification.", "Correct": false, "Explanation": "While alternative investments can reduce risk, their primary role is diversification, not solely risk reduction."}
+        ]
+    },
+    {
+        "Question": "What is the 'efficient frontier' in modern portfolio theory?",
+        "Answers": [
+            {"Answer": "The efficient frontier represents the set of optimal portfolios offering the highest expected return for a defined level of risk.", "Correct": true, "Explanation": "The efficient frontier is a concept in modern portfolio theory that shows the set of portfolios that offer the highest expected return for a given level of risk."},
+            {"Answer": "The efficient frontier is about finding optimal risk levels, not just maximum returns.", "Correct": false, "Explanation": "The efficient frontier focuses on finding the optimal portfolios that balance risk and return, rather than just identifying optimal risk levels."},
+            {"Answer": "The efficient frontier shows portfolios with balanced risk and return, not just high returns.", "Correct": false, "Explanation": "The efficient frontier illustrates portfolios that offer the best return for a given level of risk, not just high returns."},
+            {"Answer": "The efficient frontier represents optimal portfolios for different risk levels, not guaranteed high returns.", "Correct": false, "Explanation": "The efficient frontier represents portfolios that provide the highest returns for a specific level of risk, rather than guaranteeing high returns."}
+        ]
+    },
+    {
+        "Question": "What does 'tracking error' measure in a portfolio?",
+        "Answers": [
+            {"Answer": "Tracking error measures the volatility of the difference between the portfolio's returns and the benchmark's returns.", "Correct": true, "Explanation": "Tracking error quantifies the volatility of the returns difference between a portfolio and its benchmark, indicating how closely a portfolio follows its benchmark."},
+            {"Answer": "Tracking error measures volatility of the portfolio's returns, not the difference from a benchmark.", "Correct": false, "Explanation": "Tracking error specifically measures the deviation from the benchmark, not the overall volatility of the portfolio's returns."},
+            {"Answer": "Tracking error measures the correlation of portfolio returns with the benchmark, not volatility.", "Correct": false, "Explanation": "Tracking error measures the deviation from the benchmark, not the correlation between the portfolio and benchmark returns."},
+            {"Answer": "Tracking error measures the absolute return of a portfolio, not its deviation from a benchmark.", "Correct": false, "Explanation": "Tracking error measures deviation from the benchmark, not the absolute return of the portfolio."}
+        ]
+    },
+    {
+        "Question": "What is 'capital market line' (CML)?",
+        "Answers": [
+            {"Answer": "The capital market line represents the risk-return trade-off of a portfolio consisting of a risk-free asset and a market portfolio.", "Correct": true, "Explanation": "The Capital Market Line (CML) represents the risk-return trade-off of a portfolio that includes a risk-free asset and a market portfolio, showing the highest expected return for each level of risk."},
+            {"Answer": "The CML represents risk and return, not just risk-free rates.", "Correct": false, "Explanation": "The CML represents the trade-off between risk and return for portfolios, including risk-free assets, not just risk-free rates."},
+            {"Answer": "The CML is about the market portfolio, not just individual asset returns.", "Correct": false, "Explanation": "The CML represents the trade-off for portfolios that combine risk-free assets with the market portfolio, rather than focusing on individual asset returns."},
+            {"Answer": "The CML represents the trade-off between risk and return for individual assets, not portfolios.", "Correct": false, "Explanation": "The CML is concerned with the trade-off between risk and return for portfolios, not individual assets."}
+        ]
+    },
+    {
+        "Question": "What is 'value at risk' (VaR)?",
+        "Answers": [
+            {"Answer": "Value at risk (VaR) estimates the potential loss in value of a portfolio over a defined period for a given confidence interval.", "Correct": true, "Explanation": "Value at Risk (VaR) is a measure used to estimate the potential loss in value of a portfolio over a specified period for a given confidence level."},
+            {"Answer": "VaR measures potential returns, not losses or risks.", "Correct": false, "Explanation": "VaR focuses on estimating potential losses, not returns or risks."},
+            {"Answer": "VaR estimates potential losses, not just the average return.", "Correct": false, "Explanation": "VaR estimates potential losses, but does not measure average returns."},
+            {"Answer": "VaR estimates potential gains or losses, not just the worst-case scenario.", "Correct": false, "Explanation": "VaR specifically estimates potential losses rather than gains or general scenarios."}
+        ]
+    },
+    {
+        "Question": "What is 'alpha' in investment terms?",
+        "Answers": [
+            {"Answer": "Alpha measures the excess return of an investment relative to the return predicted by the market's overall risk.", "Correct": true, "Explanation": "In investment terms, alpha represents the excess return of an investment compared to the return predicted by the overall market risk."},
+            {"Answer": "Alpha measures the absolute return, not adjusted for market risk.", "Correct": false, "Explanation": "Alpha measures the return adjusted for market risk, not just the absolute return."},
+            {"Answer": "Alpha measures the risk-adjusted return, not just the market risk.", "Correct": false, "Explanation": "Alpha is a measure of excess return relative to the market, considering risk-adjusted returns but not just market risk."},
+            {"Answer": "Alpha measures the investment's performance relative to the market, not just its risk.", "Correct": false, "Explanation": "Alpha measures performance relative to the market return, focusing on excess return rather than just risk."}
+        ]
+    },
+    {
+        "Question": "What does 'beta' measure in relation to an investment?",
+        "Answers": [
+            {"Answer": "Beta measures the sensitivity of an investment's returns relative to the returns of the overall market.", "Correct": true, "Explanation": "Beta measures how sensitive an investment's returns are to the overall market returns, indicating its systematic risk."},
+            {"Answer": "Beta measures absolute risk, not relative to the market.", "Correct": false, "Explanation": "Beta measures relative risk compared to the market, not absolute risk."},
+            {"Answer": "Beta measures volatility of an asset, not just returns relative to the market.", "Correct": false, "Explanation": "Beta measures an asset's sensitivity to market returns, not just its volatility."},
+            {"Answer": "Beta measures return, not risk or sensitivity to the market.", "Correct": false, "Explanation": "Beta measures an investment's sensitivity to market returns, not its absolute return."}
+        ]
+    },
+    {
+        "Question": "What is 'Sharpe Ratio' used for?",
+        "Answers": [
+            {"Answer": "The Sharpe Ratio measures the risk-adjusted return of an investment by comparing its excess return to its volatility.", "Correct": true, "Explanation": "The Sharpe Ratio evaluates the risk-adjusted return of an investment by comparing its excess return to its volatility, providing insight into its performance relative to risk."},
+            {"Answer": "The Sharpe Ratio compares total returns, not adjusted for risk.", "Correct": false, "Explanation": "The Sharpe Ratio specifically adjusts returns for risk, rather than comparing total returns alone."},
+            {"Answer": "The Sharpe Ratio measures absolute returns, not risk-adjusted performance.", "Correct": false, "Explanation": "The Sharpe Ratio focuses on risk-adjusted performance, not absolute returns."},
+            {"Answer": "The Sharpe Ratio is about measuring volatility alone, not risk-adjusted returns.", "Correct": false, "Explanation": "The Sharpe Ratio measures risk-adjusted returns, not just volatility."}
+        ]
+    }
+]
