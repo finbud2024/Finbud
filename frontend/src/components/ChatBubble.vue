@@ -2,7 +2,7 @@
     <div class="chatBubble">
         <div v-if="isActive" class="chatBubbleContainer">
             <div class="chatBubbleHeader">
-                <font-awesome-icon icon="fa-solid fa-xmark" class="closeChatBubble"/>
+                <font-awesome-icon icon="fa-solid fa-xmark" class="closeChatBubble" @click="toggleChatBubble"/>
                 <div class="chatBubbleTittle">
                     
                 </div>
