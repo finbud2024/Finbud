@@ -1,16 +1,18 @@
-import Stock from "../Database Schema/StockLocal.js";
+import Stock from "../Database Schema/Stock.js";
 import mongoose from "mongoose";
 import axios from "axios";
+
+const mongoURI = "MONGO_URI";
+const key = ["API_KEY1", "API_KEY2"];
 
 //connect to mongodb
 console.log("mongoURI: ", mongoURI);
 const connectToMongoDB = async () => {
     return new Promise((resolve, reject) => {
         mongoose.connect(mongoURI, {
-            serverSelectionTimeoutMS: 5000 // 5 seconds timeout
+            serverSelectionTimeoutMS: 30000 // 30 seconds timeout
         })
             .then(() => {
-                console.log('MongoDB connected');
                 resolve();
             })
             .catch((err) => {
@@ -19,6 +21,9 @@ const connectToMongoDB = async () => {
             });
     });
 };
+//connect to mongodb
+await connectToMongoDB();
+console.log("Connected to MongoDB");
 
 const testingData = {
     'Meta Data': {
@@ -732,143 +737,99 @@ const testingData = {
     }
   }
 //pull stock data from API
-const getStockData = async (symbol) => {
+const getStockData = async (symbol, key) => {
     try {
+        // const api = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${key}`;
         // const response = await axios.get(api);
         // const data = response.data["Time Series (Daily)"];
-
         const data = testingData["Time Series (Daily)"];
-        // console.log(data);
+        if(!data){
+            console.log("Out of API request for symbol: ", symbol);
+            console.log(response.data["Information"]);
+            process.exit(1);
+        }
+        //take the most recent date and one year ago date
         const mostRecentDateKey = Object.keys(data)[0];
-        console.log("Most recent date key: ", mostRecentDateKey);
         const mostRecentDate = new Date(mostRecentDateKey);
-        const threeDaysAgo = new Date(mostRecentDate);
-        threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        // const oneYearAgo = new Date(mostRecentDate);
-        // oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
+        const oneYearAgo = new Date(mostRecentDate);
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         console.log("Most recent date: ", mostRecentDate);
-        console.log("One year ago: ", threeDaysAgo);
-
+        console.log("One year ago: ", oneYearAgo);
+        //filter data to get only the data from the past year
         const filteredData = Object.keys(data)
             .filter(dateKey => {
                 const currentDate = new Date(dateKey);
-                return currentDate >= threeDaysAgo && currentDate <= mostRecentDate;
+                return currentDate >= oneYearAgo && currentDate <= mostRecentDate;
             })
-            .reduce((obj, dataKey) => {
-                obj[dataKey] = data[dataKey];
-                return obj;
-            }, {});
-        console.log("Filtered data: ", filteredData);
-        
-    } catch (err) {
-        console.log("Error getting stock data: ", err);
-    }
-};
-//(stock[0], stock[0] - 1 year)
-// today is 17/4/2000
-//stock[0] - 17/4
-
-
-//monthly - 2000
-//daily - 4/8 -> 28/8
-//weekly - 4/8 -> 28/8
-getStockData("AAPL");
-
-//stock testing data
-const stocks = [
-    {
-        symbol: "AAPL",
-        open: 1,
-        high: 1,
-        low: 1,
-        close: 1,
-        change: 1,
-        volume: 1,
-        date: new Date()
-    },
-    {
-        symbol: "MSFT",
-        open: 2,
-        high: 2,
-        low: 2,
-        close: 2,
-        change: 2,
-        volume: 2,
-        date: new Date()
-    },
-    {
-        symbol: "GOOGL",
-        open: 3,
-        high: 3,
-        low: 3,
-        close: 3,
-        change: 3,
-        volume: 3,
-        date: new Date()
-    },
-    {
-        symbol: "AMZN",
-        open: 4,
-        high: 4,
-        low: 4,
-        close: 4,
-        change: 4,
-        volume: 4,
-        date: new Date()
-    },
-    {
-        symbol: "TSLA",
-        open: 5,
-        high: 5,
-        low: 5,
-        close: 5,
-        change: 5,
-        volume: 5,
-        date: new Date()
-    }
-];
-
-//seed stock data into database
-const stockSeeding = async (data) => {
-    try {
-        await connectToMongoDB();
-        console.log("Connected to MongoDB");
-        for (const singleStock of data) {
-            const { symbol, open, high, low, close, change, volume, date } = singleStock;
-            let stock = await Stock.findOne({ symbol: symbol });
-
-            if (stock) {
-                console.log("Stock already exists");
-                stock.open.push(open);
-                stock.high.push(high);
-                stock.low.push(low);
-                stock.close.push(close);
-                stock.change.push(change);
-                stock.volume.push(volume);
-                stock.date.push(date);
-                await stock.save();
-            } else {
-                console.log("Stock does not exist");
-                const newStock = new Stock({
+            .map(dateKey => {
+                return {
                     symbol,
-                    open: [open],
-                    high: [high],
-                    low: [low],
-                    close: [close],
-                    change: [change],
-                    volume: [volume],
-                    date: [date]
-                });
+                    open: parseFloat(data[dateKey]["1. open"]),
+                    high: parseFloat(data[dateKey]["2. high"]),
+                    low: parseFloat(data[dateKey]["3. low"]),
+                    close: parseFloat(data[dateKey]["4. close"]),
+                    change: parseFloat(data[dateKey]["4. close"]) - parseFloat(data[dateKey]["1. open"]),
+                    volume: parseFloat(data[dateKey]["5. volume"]),
+                    date: new Date(dateKey)
+                };
+            });
+        console.log("Filtered data length: ", filteredData.length);
+        // save data to database
+        for(let singleStock of filteredData){
+            const stock = await Stock.findOne({ symbol: singleStock.symbol, date: singleStock.date });
+            if(stock){
+                console.log(`Stock data for ${symbol} on ${singleStock.date.toDateString()} already exists, skipping...`);
+            } else {
+                const newStock = new Stock(singleStock);
                 await newStock.save();
             }
-            console.log("Stock seeded successfully with symbol: ", symbol);
         }
-        process.exit(0);
+        console.log(`Stock data for ${symbol} seeded successfully`);
     } catch (err) {
-        console.log("Error seeding stocks: ", err);
+        console.log(`Stock data for ${symbol}`);
+        console.log("Error getting stock data: ", err);
         process.exit(1);
     }
 };
-
-// stockSeeding(stocks);
+// RUN SCRIPT
+const symbol = [
+    "AAPL", "MSFT", "AMZN", "GOOGL", "META", "TSLA", "NVDA", "ADBE", "NFLX", "INTC",
+    "CSCO", "CRM", "ORCL", "IBM", "ZM", "PFE", "JNJ", "MRNA", "MRK", "ABT",
+    "PG", "KO", "PEP", "UL", "NSRGY", "MCD", "SBUX", "WMT", "TGT", "HD",
+    "LOW", "COST", "JPM", "BAC", "WFC", "GS", "MS", "V", "MA", "PYPL",
+    "AXP", "XOM", "CVX", "BP", "SPY", "META", "F", "GM", "TM", "HMC"
+];  
+const symbol1 = [
+    "INTC", "CSCO", "CRM", "ORCL", "IBM", "ZM", 
+    "PFE", "JNJ", "MRNA", "MRK", "ABT", "PG", "KO", "PEP", "UL",
+    "NSRGY"
+];
+const symbol2 = [
+    "HD", "LOW", "COST",
+    "JPM", "BAC", "WFC", "GS", "MS", "V", "MA", "PYPL",
+    "AXP", "XOM", "CVX", "BP", "SPY", "META", "F", "GM",
+    "TM", "HMC"
+];
+const limitPerMinute = 5;
+const limitPerKey = 25;
+// sleep function
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// seed stock data into database
+const seedSymbols = async (symbols) => {
+    for (let i = 0, j = 1;i < symbols.length; i++) {
+        //change key every free limited key (25 request per key)
+        if(i < j*limitPerKey){
+            await getStockData(symbols[i], key[j-1]);
+        } else {
+            j++;
+            await getStockData(symbols[i], key[j-1]);
+        }
+        // pause for a minute after processing 5 symbols
+        if((i+1) %limitPerMinute === 0 && i !== symbols.length - 1){
+            console.log(`Pausing for a minute after processing ${i + 1} symbols...`);
+            await sleep(60000);
+        }
+    }
+};
+// seedSymbols(symbol);
+getStockData("AAPL");

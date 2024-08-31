@@ -1,21 +1,14 @@
 import mongoose from "mongoose";
-
+//alphavantage API key always have these characteristics
 const StockSchema = new mongoose.Schema({
-    symbol: { 
-        type: String, 
-        required: true,
-        unique: true
-    },
-    open: { type: [Number], },
-    high: {  type: [Number], },
-    low : { type: [Number], },
-    close: { type: [Number], },
-    change: { type: [Number], },
-    volume: { type: [Number], },
-    date: { 
-        type: [Date], 
-        required: true
-    }
+    symbol: String,
+    open: Number, 
+    high:  Number, 
+    low : Number, 
+    close: Number, 
+    change: Number, 
+    volume: Number, 
+    date: Date
 })
 
 const Stock = mongoose.model('Stock', StockSchema);
