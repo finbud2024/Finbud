@@ -14,7 +14,6 @@
           v-model="searchKeyword"
           placeholder="Enter a finance-related keyword"
         />
-
         <button @click="searchOrGenerateKeyword">Generate Quiz</button>
       </div>
       <div>
@@ -56,16 +55,17 @@
     </div>
     <div v-if="isQuizStarted" class="score-timer-box">
       <p>Points: {{ score }}</p>
+      <p>Question {{ currentQuestionIndex + 1 }} of 3</p>
       <p>Time left: {{ countdown }}s</p>
     </div>
     <div v-if="isQuizStarted">
       <div class="quiz-content">
         <div class="question">
-          <p>{{ question.question }}</p>
+          <p>{{ currentQuestion.question }}</p>
         </div>
         <div class="answers">
           <button
-            v-for="(answer, index) in question.answers"
+            v-for="(answer, index) in currentQuestion.answers"
             :key="index"
             :class="{
               correct: showExplanation && answer.correct,
@@ -81,9 +81,9 @@
         </div>
         <div v-if="showExplanation" class="explanation-box">
           <h3>Explanation:</h3>
-          <p>{{ question.explanation }}</p>
+          <p>{{ currentQuestion.explanation }}</p>
           <button @click="nextQuestion" class="next-button">
-            Next Question
+            {{ currentQuestionIndex < 2 ? "Next Question" : "Finish Quiz" }}
           </button>
         </div>
       </div>
@@ -102,10 +102,10 @@
 
     <div v-if="showPopup" class="modal-overlay">
       <div class="modal">
-        <h2>Next Step</h2>
-        <p>You answered correctly!</p>
+        <h2>Quiz Completed</h2>
+        <p>Your final score is: {{ score }} out of 3</p>
         <button @click="handlePopupOption('same')">
-          Continue with the same settings
+          Play again with the same settings
         </button>
         <button @click="handlePopupOption('new')">Change settings</button>
         <button @click="handlePopupOption('end')" class="end-game-btn">
@@ -118,6 +118,7 @@
 
 <script>
 import axios from "axios";
+import { gptServices } from "@/services/gptServices";
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 
@@ -130,17 +131,21 @@ export default {
       selectedDifficulty: "",
       generatedKeyword: "",
       relatedKeywords: [],
-      question: null,
+      questions: [],
+      currentQuestionIndex: 0,
       selectedAnswer: null,
       countdown: 15,
       timer: null,
       showPopup: false,
       score: 0,
       isQuizStarted: false,
-      attempts: 0,
       showExplanation: false,
-      showNextButton: false,
     };
+  },
+  computed: {
+    currentQuestion() {
+      return this.questions[this.currentQuestionIndex] || {};
+    },
   },
   methods: {
     async searchOrGenerateKeyword() {
@@ -191,47 +196,26 @@ export default {
       }
     },
     async generateRelatedKeywords() {
-      try {
-        const response = await axios.post(
-          "https://api.openai.com/v1/chat/completions",
-          {
-            model: "gpt-3.5-turbo",
-            messages: [
-              { role: "system", content: "You are a helpful assistant." },
-              {
-                role: "user",
-                content: `Generate 3 related keywords for "${
-                  this.generatedKeyword
-                }" in finance and is used in CFA${
-                  this.selectedQuiz ? ` focusing on ${this.selectedQuiz}` : ""
-                }${
-                  this.selectedDifficulty
-                    ? ` at a ${this.selectedDifficulty} difficulty level`
-                    : ""
-                }. Provide the keywords as a comma-separated list.`,
-              },
-            ],
-            max_tokens: 50,
-            n: 1,
-            stop: ["\n"],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${OPENAI_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const relatedKeywordsString =
-          response.data.choices[0]?.message?.content?.trim();
-        this.relatedKeywords = relatedKeywordsString
-          .split(",")
-          .map((keyword) => keyword.trim());
-      } catch (error) {
-        console.error("Error generating related keywords:", error.message);
-        alert("Failed to generate related keywords. Please try again.");
-      }
+      gptServices([
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: `Generate 3 related keywords for "${
+            this.generatedKeyword
+          }" in finance and is used in CFA${
+            this.selectedQuiz ? ` focusing on ${this.selectedQuiz}` : ""
+          }${
+            this.selectedDifficulty
+              ? ` at a ${this.selectedDifficulty} difficulty level`
+              : ""
+          }. Provide the keywords as a comma-separated list.`,
+        },
+      ]);
+      const relatedKeywordsString =
+        response.data.choices[0]?.message?.content?.trim();
+      this.relatedKeywords = relatedKeywordsString
+        .split(",")
+        .map((keyword) => keyword.trim());
     },
     selectRelatedKeyword(keyword) {
       this.generatedKeyword = keyword;
@@ -258,30 +242,30 @@ export default {
               },
               {
                 role: "user",
-                content: `Generate a finance-related multiple-choice quiz question${
+                content: `Generate 3 finance-related multiple-choice quiz questions${
                   this.selectedQuiz ? ` about ${this.selectedQuiz}` : ""
                 }${
                   this.selectedDifficulty
                     ? ` at a ${this.selectedDifficulty} difficulty level`
                     : ""
-                }, focusing on the keyword: ${this.generatedKeyword}. 
-                - The quiz should align with the selected quiz type (e.g., Saving vs Investing, Budgeting, Asset Allocation) and difficulty level (e.g., Easy, Medium, Hard).
-- Provide a clear and concise question, along with four distinct answer options.
-- Clearly mark the correct answer with an asterisk (*) at the end of the option text. Only the correct answer should have this asterisk, and no other options should have it.
-- Include a detailed explanation for the answer, which should be factually accurate and relevant to the question.
-- Format the response as follows:
+                }, focusing on the keyword: ${this.generatedKeyword}.
+                For each question:
+                - Provide a clear and concise question, along with four distinct answer options.
+                - Clearly mark the correct answer with an asterisk (*) at the end of the correct option text. Only the correct answer should have this asterisk, and no other options should have it.
+                - Include a detailed explanation for the answer, which should be factually accurate and relevant to the question.
+                - Format each question as follows:
 
-  Question: <question>
-  A. <option1>
-  B. <option2>
-  C. <option3>
-  D. <option4>
-  Explanation: <explanation>
+                  Question: <question>
+                  A. <option1>
+                  B. <option2>
+                  C. <option3>
+                  D. <option4>
+                  Explanation: <explanation>
 
-  Ensure the response adheres strictly to this format and includes the asterisk only on the correct option.`,
+                  Ensure the response adheres strictly to this format and includes the asterisk only on the correct option for each question.`,
               },
             ],
-            max_tokens: 300,
+            max_tokens: 1000,
             n: 1,
             temperature: 0.7,
           },
@@ -300,15 +284,15 @@ export default {
           throw new Error("No completion content returned from OpenAI");
         }
 
-        const quizData = this.parseQuizResponse(completion);
-        if (!quizData || !quizData.answers || quizData.answers.length < 4) {
+        this.questions = this.parseQuizResponse(completion);
+        if (!this.questions || this.questions.length < 3) {
           throw new Error("Incomplete quiz data parsed from API response");
         }
 
-        this.question = quizData;
+        this.currentQuestionIndex = 0;
         this.selectedAnswer = null;
         this.isQuizStarted = true;
-        this.attempts = 0;
+        this.score = 0;
         this.showExplanation = false;
 
         this.startTimer();
@@ -319,39 +303,44 @@ export default {
     },
 
     parseQuizResponse(response) {
-      const parts = response.split("\n").filter((line) => line.trim() !== "");
+      const questions = response
+        .split(/Question \d+:/)
+        .filter((q) => q.trim() !== "");
 
-      if (parts.length < 6) {
-        console.error("Unexpected response format:", response);
-        return null;
-      }
+      return questions.map((questionBlock) => {
+        const lines = questionBlock
+          .split("\n")
+          .filter((line) => line.trim() !== "");
 
-      const question = parts[0].replace("Question:", "").trim();
-      const options = parts.slice(1, 5).map((line) => {
-        const [letter, ...textParts] = line.split(".");
-        const text = textParts.join(".").trim();
-        const isCorrect = text.includes("*");
+        const question = lines[0].trim();
+        const options = lines.slice(1, 5).map((line) => {
+          const [letter, ...textParts] = line.split(".");
+          const text = textParts.join(".").trim();
+          const isCorrect = text.includes("*");
+          return {
+            text: text.replace("*", "").trim(),
+            correct: isCorrect,
+          };
+        });
+
+        const explanation = lines
+          .slice(5)
+          .join(" ")
+          .replace("Explanation:", "")
+          .trim();
+
         return {
-          text: text.replace("*", "").trim(),
-          correct: isCorrect,
+          question,
+          answers: options,
+          explanation,
         };
       });
-
-      const explanation = parts[5].replace("Explanation:", "").trim();
-
-      return {
-        question,
-        answers: options,
-        explanation,
-      };
     },
-
     checkAnswer(index) {
       this.selectedAnswer = index;
       this.stopTimer();
       this.showExplanation = true;
-      this.showNextButton = true;
-      if (this.question.answers[index].correct) {
+      if (this.currentQuestion.answers[index].correct) {
         this.score += 1;
       }
     },
@@ -363,7 +352,6 @@ export default {
         if (this.countdown === 0) {
           this.stopTimer();
           this.showExplanation = true;
-          this.showNextButton = true;
         }
       }, 1000);
     },
@@ -377,15 +365,20 @@ export default {
 
     nextQuestion() {
       this.showExplanation = false;
-      this.showNextButton = false;
       this.selectedAnswer = null;
-      this.generateQuiz();
+
+      if (this.currentQuestionIndex < 2) {
+        this.currentQuestionIndex++;
+        this.startTimer();
+      } else {
+        this.showPopup = true;
+      }
     },
 
     handlePopupOption(option) {
       this.showPopup = false;
       if (option === "same") {
-        this.nextQuestion();
+        this.generateQuiz();
       } else if (option === "new") {
         this.searchKeyword = "";
         this.generatedKeyword = "";
@@ -394,44 +387,14 @@ export default {
         this.isQuizStarted = false;
         this.relatedKeywords = [];
         this.score = 0;
+        this.questions = [];
+        this.currentQuestionIndex = 0;
       } else if (option === "end") {
-        alert(`Your final score is: ${this.score}`);
         this.isQuizStarted = false;
         this.score = 0;
+        this.questions = [];
+        this.currentQuestionIndex = 0;
       }
-    },
-
-    parseQuizResponse(response) {
-      const lines = response.split("\n").filter((line) => line.trim() !== "");
-      console.log("Parsed lines:", lines);
-
-      if (lines.length < 6) {
-        console.error("Unexpected response format:", response);
-        return null;
-      }
-
-      const question = lines[0].replace("Question:", "").trim();
-      const options = lines.slice(1, 5).map((line) => {
-        const isCorrect = line.includes("*");
-        const cleanedLine = line.replace("*", "").trim();
-        return {
-          text: cleanedLine,
-          correct: isCorrect,
-        };
-      });
-
-      const explanation = lines[5].replace("Explanation:", "").trim();
-
-      if (options.length < 4) {
-        console.error("Incomplete options parsed from response:", response);
-        return null;
-      }
-
-      return {
-        question,
-        answers: options,
-        explanation,
-      };
     },
   },
 };
