@@ -115,7 +115,7 @@ const seedSymbols = async () => {
 await seedSymbols();
 
 console.log("Database seeding completed!")
-
+process.exit(0);
 
 // const testingData = {
 //     'Meta Data': {
