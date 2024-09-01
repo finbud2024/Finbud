@@ -6,7 +6,7 @@ import stockData from '../../frontend/src/views/hardcodeData/StockData.js'
 const mongoURI = "YOUR MONGO URI";
 const key = 'YOUR API KEY';
 const limitPerMinute = 5;
-const symbols = stockData.map(stock => stock.ticker)
+const symbols = stockData.map(stock => stock.ticker);
 
 //connect to mongodb
 const connectToMongoDB = async () => {
@@ -80,7 +80,7 @@ const getStockData = async (symbol) => {
         console.log(`Error while saving ${symbol} for date ${Object.keys(dataPoint)}: ${err.message}`)
         //remove all and retry
         Stock
-          .deleteMany({'symbol': symbol}) //CHECKKKKKKK
+          .deleteMany({symbol:{$eq: symbol}})
           .then(()=> console.log(`successfully removed all ${symbol}`))
           .catch((err)=>console.log("Error while Deleting: ", err.message));
         return -1;
