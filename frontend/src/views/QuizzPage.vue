@@ -1,84 +1,11 @@
 <template>
-  <div class="quiz-container">
-    <header>
-      <h1>Keyword-Based Quiz</h1>
-      <div class="input-container">
-        <input
-          type="text"
-          v-model="keywords"
-          placeholder="Enter finance-related keywords"
-          @input="handleInput"
-        />
-        <div v-if="showDropdown" class="dropdown">
-          <ul>
-            <li v-for="(topic, index) in recommendedTopics" :key="index">
-              <a href="#" @click.prevent="selectOption(topic)">{{ topic }}</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <button @click="generateQuiz">Generate Quiz</button>
-    </header>
-    <div class="score-timer-box">
-      <p>Points: {{ score }}</p>
-      <p>Time left: {{ countdown }}s</p>
-    </div>
-    <div v-if="isQuizStarted">
-      <div class="quiz-content">
-        <div class="question">
-          <p>{{ question.question }}</p>
-        </div>
-        <div class="answers">
-          <button
-            v-for="(answer, index) in question.answers"
-            :key="index"
-            :class="{
-              correct: selectedAnswer === index && answer.correct,
-              incorrect:
-                selectedAnswer === index && !answer.correct && showIncorrect,
-              selected: selectedAnswer === index,
-            }"
-            @click="checkAnswer(index)"
-          >
-            {{ answer.text }}
-          </button>
-        </div>
-      </div>
-    </div>
-    <div v-else class="placeholder-content">
-      <div class="question">
-        <p>Question will appear here.</p>
-      </div>
-      <div class="answers">
-        <button class="placeholder">Answer A</button>
-        <button class="placeholder">Answer B</button>
-        <button class="placeholder">Answer C</button>
-        <button class="placeholder">Answer D</button>
-      </div>
-    </div>
-
-    <div v-if="showPopup" class="modal-overlay">
-      <div class="modal">
-        <h2>Next Step</h2>
-        <p>You answered correctly!</p>
-        <button @click="handlePopupOption('same')">
-          Continue with the same keyword
-        </button>
-        <button @click="handlePopupOption('new')">
-          Continue with new keywords
-        </button>
-        <button @click="handlePopupOption('end')" class="end-game-btn">
-          End Game
-        </button>
-      </div>
-    </div>
-  </div>
   <QuizzPage2 />
 </template>
 
 <script>
 import QuizzPage2 from "./QuizzPage2.vue";
 import axios from "axios";
+import { gptServices } from "@/services/gptServices";
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 

@@ -18,7 +18,7 @@ export async function gptServices(payload) {
         },
       }
     );
-
+    console.log("[test]: ",response)
     const answer = response.data.choices[0]?.message?.content || "";
     return answer;
   } catch (err) {
