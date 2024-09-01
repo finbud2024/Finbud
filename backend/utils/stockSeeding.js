@@ -3,11 +3,9 @@ import mongoose from "mongoose";
 import axios from "axios";
 import stockData from '../../frontend/src/views/hardcodeData/StockData.js'
 
-
-const mongoURI = "mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/development?retryWrites=true&w=majority&appName=Cluster0";
-const key = 'BD167Z1D2D74NVWM';
+const mongoURI = "YOUR MONGO URI";
+const key = 'YOUR API KEY';
 const limitPerMinute = 5;
-const limitPerKey = 25;
 const symbols = stockData.map(stock => stock.ticker)
 
 //connect to mongodb
@@ -32,11 +30,11 @@ await connectToMongoDB();
 
 //pull stock data from API
 const getStockData = async (symbol) => {
-  //check to see stock already exist in database ------> skip[ if already exist
+  //check to see stock already exist in database ------> skip if already exist
   const stockCheck = await Stock.findOne({ symbol: symbol});
   if(stockCheck){
     console.log(`Skipping symbol ${symbol}. Already exists in database`);
-    return true;
+    return 1;
   }
   console.log(`Working on symbol ${symbol}`)
   const api = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${key}`;
@@ -49,8 +47,8 @@ const getStockData = async (symbol) => {
   }
 
   //Setting timeframe filter
-  const currentDate = new Date();
-  const oneYearAgo = new Date();
+  const currentDate = new Date(Object.keys(data)[0]);
+  const oneYearAgo = new Date(currentDate);
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
   console.log("Most recent date: ", currentDate);
   console.log("One year ago: ", oneYearAgo);
@@ -60,8 +58,7 @@ const getStockData = async (symbol) => {
       const stockDate = new Date(dateKey);
       return oneYearAgo <= stockDate && stockDate <= currentDate;
     })
-    .
-    map(dateKey => {
+    .map(dateKey => {
       return {
           symbol,
           open: parseFloat(data[dateKey]["1. open"]),
@@ -73,6 +70,7 @@ const getStockData = async (symbol) => {
           date: new Date(dateKey)
       };
     });
+    console.log('filteredData length: ', filteredData.length)
     //save filtered stock data within 1 year frame into database
     for(let dataPoint of filteredData){
       try{
@@ -82,14 +80,14 @@ const getStockData = async (symbol) => {
         console.log(`Error while saving ${symbol} for date ${Object.keys(dataPoint)}: ${err.message}`)
         //remove all and retry
         Stock
-          .deleteMany({age: { $gte: 15 }})
+          .deleteMany({'symbol': symbol}) //CHECKKKKKKK
           .then(()=> console.log(`successfully removed all ${symbol}`))
           .catch((err)=>console.log("Error while Deleting: ", err.message));
-        return false;
+        return -1;
       }
     }
     console.log(`Stock data for ${symbol} seeded successfully`);
-    return true;
+    return 0;
 };
 
 // sleep function
@@ -98,19 +96,25 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // seed stock data into database
 const seedSymbols = async () => {
   console.log("seeding database in progress.....")
-  for(let i = 0; i < symbols.length; i++){
-    if((i+1) %limitPerMinute === 0 && i !== symbols.length - 1){
-      console.log(`Pausing for a minute after processing symbols ${i+1}...`);
-      await sleep(60000);
+  for(let i = 0, j = 0; i < symbols.length; i++){
+    const result = await getStockData(symbols[i]);
+    if(result === 0){
+      j++;
+    }else if(result === 1){
+      continue;
+    }else {
+      j++;
+      i--;
     }
-    if(!(await getStockData(symbols[i]))){
-      i--;// retry in case of falling
+    if((j+1) % limitPerMinute === 0){
+      console.log(`Pausing for a minute after processing ${i+1} symbols...`);
+      await sleep(60000);
     }
   }
 };
 await seedSymbols();
 
-console.log("Database seeding completed!!!!!!!!")
+console.log("Database seeding completed!")
 
 
 // const testingData = {
