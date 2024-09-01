@@ -1,0 +1,92 @@
+[
+    {
+        "Question": "What is the 50/30/20 rule?",
+        "Answers": [
+            {"Answer": "A budgeting guideline that suggests allocating 50% to needs, 30% to wants, and 20% to savings", "Correct": true, "Explanation": "The 50/30/20 rule helps allocate income into needs, wants, and savings."},
+            {"Answer": "A savings plan for retirement", "Correct": false, "Explanation": "The 50/30/20 rule is for budgeting, not specifically for retirement savings."},
+            {"Answer": "A method to calculate interest on loans", "Correct": false, "Explanation": "This rule is about budgeting allocation, not loan interest."},
+            {"Answer": "A system for managing investments", "Correct": false, "Explanation": "The 50/30/20 rule is for budgeting, not investment management."}
+        ]
+    },
+    {
+        "Question": "What is a zero-based budget?",
+        "Answers": [
+            {"Answer": "A budgeting method where every dollar is assigned a purpose, resulting in zero remaining at the end of the month", "Correct": true, "Explanation": "Zero-based budgeting ensures all income is allocated to expenses, savings, or debt repayment, leaving no money unassigned."},
+            {"Answer": "A budget that only accounts for fixed expenses", "Correct": false, "Explanation": "Zero-based budgeting includes both fixed and variable expenses, allocating every dollar."},
+            {"Answer": "A budgeting method for businesses only", "Correct": false, "Explanation": "Zero-based budgeting is applicable for personal finances as well."},
+            {"Answer": "A plan that leaves a surplus each month", "Correct": false, "Explanation": "Zero-based budgeting allocates all income, leaving no surplus or deficit."}
+        ]
+    },
+    {
+        "Question": "What is the purpose of setting financial goals?",
+        "Answers": [
+            {"Answer": "To provide direction and motivation for budgeting and saving", "Correct": true, "Explanation": "Setting financial goals helps guide your budgeting and savings efforts with clear targets."},
+            {"Answer": "To increase monthly spending limits", "Correct": false, "Explanation": "Financial goals are meant to guide and prioritize, not necessarily increase spending limits."},
+            {"Answer": "To calculate monthly interest on investments", "Correct": false, "Explanation": "Financial goals focus on savings and spending plans, not investment interest."},
+            {"Answer": "To avoid tracking expenses", "Correct": false, "Explanation": "Financial goals help track and manage expenses effectively."}
+        ]
+    },
+    {
+        "Question": "How can you effectively reduce discretionary spending?",
+        "Answers": [
+            {"Answer": "By setting a budget and sticking to it", "Correct": true, "Explanation": "A budget helps control discretionary spending by allocating funds and tracking expenses."},
+            {"Answer": "By increasing your income", "Correct": false, "Explanation": "Increasing income does not directly reduce discretionary spending."},
+            {"Answer": "By avoiding budgeting altogether", "Correct": false, "Explanation": "Avoiding budgeting will likely lead to increased discretionary spending."},
+            {"Answer": "By investing more money", "Correct": false, "Explanation": "Investing does not directly reduce discretionary spending."}
+        ]
+    },
+    {
+        "Question": "What is a debt-to-income ratio?",
+        "Answers": [
+            {"Answer": "A measure of how much debt you have compared to your income", "Correct": true, "Explanation": "The debt-to-income ratio helps assess your ability to manage debt relative to your income."},
+            {"Answer": "A plan for saving money", "Correct": false, "Explanation": "Debt-to-income ratio is about debt management, not saving plans."},
+            {"Answer": "A method for budgeting expenses", "Correct": false, "Explanation": "Debt-to-income ratio is a financial metric, not a budgeting method."},
+            {"Answer": "A tool for calculating investment returns", "Correct": false, "Explanation": "This ratio is used for assessing debt levels, not investment returns."}
+        ]
+    },
+    {
+        "Question": "What does a cash flow statement show?",
+        "Answers": [
+            {"Answer": "The flow of money into and out of your account", "Correct": true, "Explanation": "A cash flow statement tracks the movement of cash to understand how money is being used."},
+            {"Answer": "The total amount of money in your savings account", "Correct": false, "Explanation": "A cash flow statement shows money movement, not just the total savings amount."},
+            {"Answer": "Your credit score", "Correct": false, "Explanation": "A cash flow statement does not include credit scores."},
+            {"Answer": "The interest earned on investments", "Correct": false, "Explanation": "Interest earned on investments is separate from a cash flow statement."}
+        ]
+    },
+    {
+        "Question": "What is the difference between gross income and net income?",
+        "Answers": [
+            {"Answer": "Gross income is before taxes, net income is after taxes", "Correct": true, "Explanation": "Gross income is your total earnings before deductions, while net income is what you take home after taxes and other deductions."},
+            {"Answer": "Gross income is income from investments, net income is salary", "Correct": false, "Explanation": "Both gross and net income refer to overall earnings, not just investments or salary."},
+            {"Answer": "Gross income includes only fixed expenses", "Correct": false, "Explanation": "Gross income includes all earnings before deductions, not just expenses."},
+            {"Answer": "Net income is what you earn before any deductions", "Correct": false, "Explanation": "Net income is after deductions, not before."}
+        ]
+    },
+    {
+        "Question": "What is a budget surplus?",
+        "Answers": [
+            {"Answer": "When your income exceeds your expenses", "Correct": true, "Explanation": "A budget surplus occurs when you have more income than expenses, resulting in extra money."},
+            {"Answer": "When your expenses exceed your income", "Correct": false, "Explanation": "This situation results in a deficit, not a surplus."},
+            {"Answer": "When you only cover fixed expenses", "Correct": false, "Explanation": "A budget surplus is about exceeding expenses, not just covering them."},
+            {"Answer": "When savings goals are not met", "Correct": false, "Explanation": "A budget surplus is about having extra income, not unmet savings goals."}
+        ]
+    },
+    {
+        "Question": "How can budgeting help with financial stress?",
+        "Answers": [
+            {"Answer": "By providing a clear plan for managing money", "Correct": true, "Explanation": "Budgeting helps alleviate financial stress by creating a clear plan for income and expenses."},
+            {"Answer": "By increasing your debt", "Correct": false, "Explanation": "Budgeting aims to manage and reduce debt, not increase it."},
+            {"Answer": "By avoiding tracking expenses", "Correct": false, "Explanation": "Budgeting involves tracking expenses to manage financial stress effectively."},
+            {"Answer": "By reducing income", "Correct": false, "Explanation": "Budgeting does not affect income; it helps manage how income is used."}
+        ]
+    },
+    {
+        "Question": "What is a budget variance?",
+        "Answers": [
+            {"Answer": "The difference between budgeted and actual figures", "Correct": true, "Explanation": "Budget variance is the discrepancy between what was planned and what actually occurred."},
+            {"Answer": "A plan for increasing income", "Correct": false, "Explanation": "Budget variance involves comparing actual figures to planned ones, not increasing income."},
+            {"Answer": "A type of financial investment", "Correct": false, "Explanation": "Budget variance is not an investment; it's a budgeting term."},
+            {"Answer": "A method for saving money", "Correct": false, "Explanation": "Budget variance measures differences between budgeted and actual figures, not a saving method."}
+        ]
+    }
+]
