@@ -1,236 +1,335 @@
 <template>
-  <QuizzPage2 />
+  <div class="quiz-container">
+    <header>
+      <h1>Keyword-Based Quiz</h1>
+      <div>
+        Put your own keyword
+        <br />
+        <br />
+      </div>
+      <div class="search-container">
+        <input @keyup.enter="generateQuiz" @type="text" v-model="searchKeyword" placeholder="Enter a finance-related keyword"/>
+        <button @click="generateQuiz">Generate Quiz</button>
+      </div>
+      <div>
+        <br/>
+        OR receive a suggestion
+        <br />
+        <br />
+      </div>
+      <div class="dropdown-container">
+        <select v-model="selectedQuiz" class="dropdown">
+          <option disabled value="">Select a quiz type (optional)</option>
+          <option value="saving">Saving vs Investing</option>
+          <option value="budgeting">Budgeting</option>
+          <option value="assetAllocation">Asset Allocation</option>
+        </select>
+        <select v-model="selectedDifficulty" class="dropdown">
+          <option disabled value="">Select difficulty (optional)</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <button @click="searchOrGenerateKeyword">Suggest</button>
+      </div>
+    </header>
+    <div v-if="relatedKeywords.length > 0" class="related-keywords">
+      <p>Related Keywords:</p>
+      <button
+        v-for="keyword in relatedKeywords"
+        :key="keyword"
+        @click="selectRelatedKeyword(keyword)"
+        class="keyword-button"
+      >
+        {{ keyword }}
+      </button>
+    </div>
+    <div v-if="generatedKeyword" class="keyword-display">
+      <p>Current Keyword: {{ generatedKeyword }}</p>
+    </div>
+    <div v-if="isQuizStarted" class="score-timer-box">
+      <p>Points: {{ score }}</p>
+      <p>Question {{ currentQuestionIndex + 1 }} of 3</p>
+      <p>Time left: {{ countdown }}s</p>
+    </div>
+    <div v-if="isQuizStarted">
+      <div class="quiz-content">
+        <div class="question">
+          <p>{{ currentQuestion.question }}</p>
+        </div>
+        <div class="answers">
+          <button
+            v-for="(answer, index) in currentQuestion.answers"
+            :key="index"
+            :class="{
+              correct: showExplanation && answer.correct,
+              incorrect:
+                showExplanation && selectedAnswer === index && !answer.correct,
+              selected: selectedAnswer === index,
+            }"
+            @click="checkAnswer(index)"
+            :disabled="showExplanation"
+          >
+            {{ answer.text }}
+          </button>
+        </div>
+        <div v-if="showExplanation" class="explanation-box">
+          <h3>Explanation:</h3>
+          <p>{{ currentQuestion.explanation }}</p>
+          <button @click="nextQuestion" class="next-button">
+            {{ currentQuestionIndex < 2 ? "Next Question" : "Finish Quiz" }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div v-else class="placeholder-content">
+      <div class="question">
+        <p>Question will appear here.</p>
+      </div>
+      <div class="answers">
+        <button class="placeholder">Answer A</button>
+        <button class="placeholder">Answer B</button>
+        <button class="placeholder">Answer C</button>
+        <button class="placeholder">Answer D</button>
+      </div>
+    </div>
+
+    <div v-if="showPopup" class="modal-overlay">
+      <div class="modal">
+        <h2>Quiz Completed</h2>
+        <p>Your final score is: {{ score }} out of 3</p>
+        <button @click="handlePopupOption('same')">
+          Play again with the same settings
+        </button>
+        <button @click="handlePopupOption('new')">Change settings</button>
+        <button @click="handlePopupOption('end')" class="end-game-btn">
+          End Game
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import QuizzPage2 from "./QuizzPage2.vue";
-import axios from "axios";
 import { gptServices } from "@/services/gptServices";
 
-const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
-
-// static dataset
-const keywordTopicMapping = {
-  Budgeting: ["Basic Budgeting", "Advanced Budgeting"],
-  Investing: ["Stock Market Basics", "Advanced Investing Strategies"],
-  // Add more keyword-to-topic mappings as needed
-};
-
 export default {
-  components: {
-    QuizzPage2,
-  },
   name: "QuizComponent",
   data() {
     return {
-      keywords: "",
-      question: null,
+      searchKeyword: "",
+      selectedQuiz: "",
+      selectedDifficulty: "",
+      generatedKeyword: "",
+      relatedKeywords: [],
+      questions: [],
+      currentQuestionIndex: 0,
       selectedAnswer: null,
       countdown: 15,
       timer: null,
       showPopup: false,
       score: 0,
       isQuizStarted: false,
-      attempts: 0,
-      showIncorrect: false,
-      showDropdown: false,
-      recommendedTopics: [],
+      showExplanation: false,
     };
   },
-  methods: {
-    handleInput() {
-      this.recommendedTopics = [];
-      for (const [keyword, topics] of Object.entries(keywordTopicMapping)) {
-        if (this.keywords.toLowerCase().includes(keyword.toLowerCase())) {
-          this.recommendedTopics = topics;
-          this.showDropdown = true;
-          break;
+  computed: {
+    currentQuestion() {
+      return this.questions[this.currentQuestionIndex] || {};
+    },
+  },
+  watch:{
+    countdown:{
+      immediate: true,
+      handler(newCountdown){
+        if(newCountdown === 0){
+          this.stopTimer();
+          this.generateQuiz();
         }
       }
-      if (!this.keywords) {
-        this.showDropdown = false;
+    }
+  },
+  methods: {
+    async searchOrGenerateKeyword() {
+      //if generated quiz based on input field; Otherwise, generate keyword
+      if (this.searchKeyword.length != 0) {
+        this.generatedKeyword = this.searchKeyword;
+        await this.generateRelatedKeywords();
+      } else {
+        await this.generateKeyword();
       }
     },
-    selectOption(option) {
-      this.keywords = option; // Update the keywords with selected option
-      this.showDropdown = false;
+    async generateKeyword() {
+      this.generatedKeyword = await gptServices(
+        [
+          { role: "system", content: "You are a helpful assistant." },
+          {
+            role: "user",
+            content: `Generate a single keyword in finance and is used in 
+            ${this.selectedQuiz ? ` focusing on ${this.selectedQuiz}` : ""}
+            ${this.selectedDifficulty? ` at a ${this.selectedDifficulty} difficulty level`: ""}
+            . The keyword should be specific and relevant to create a quiz question about finance.`,
+          }
+        ]
+      )
+      this.generateRelatedKeywords();
+    },
+    async generateRelatedKeywords() {
+      const response = await gptServices(
+        [
+          { role: "system", content: "You are a helpful assistant." },
+          {
+            role: "user",
+            content: `Generate 3 related keywords for "${this.generatedKeyword}" in finance and is used in CFA 
+            ${this.selectedQuiz ? ` focusing on ${this.selectedQuiz}` : ""}
+            ${this.selectedDifficulty? ` at a ${this.selectedDifficulty} difficulty level`: ""}
+            . Provide the keywords as a comma-separated list.`,
+          },
+        ]);
+        console.log("[test:]", response)
+      this.relatedKeywords = response.split(",").map((keyword) => keyword.trim());
+    },
+    selectRelatedKeyword(keyword) {
+      this.generatedKeyword = keyword;
+      this.relatedKeywords = [];
     },
     async generateQuiz() {
-      clearInterval(this.timer);
-
+      this.generatedKeyword = this.searchKeyword;
+      this.searchKeyword = "";
       try {
-        const response = await axios.post(
-          "https://api.openai.com/v1/chat/completions",
-          {
-            model: "gpt-3.5-turbo",
-            messages: [
-              { role: "system", content: "You are a helpful assistant." },
-              {
-                role: "user",
-                content: `Generate a finance-related multiple-choice quiz question including the keywords: ${this.keywords}. Provide the question and four answer options. Indicate the correct answer with an asterisk (*). Format: Question: <question>\nA. <option1>\nB. <option2>\nC. <option3>\nD. <option4>`,
-              },
-            ],
-            max_tokens: 150,
-            n: 1,
-            stop: ["\n\n"],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${OPENAI_API_KEY}`,
-              "Content-Type": "application/json",
+        const response = await gptServices(
+          [
+            {
+              role: "system",
+              content: "You are a helpful assistant specializing in finance education.",
             },
-          }
-        );
+            {
+              role: "user",
+              content: `Generate 3 finance-related multiple-choice quiz 
+              ${this.selectedQuiz ? ` about ${this.selectedQuiz}` : ""}
+              ${this.selectedDifficulty? ` at a ${this.selectedDifficulty} difficulty level`: ""}, focusing on the keyword: ${this.generatedKeyword}.
+              For each question:
+              - Provide a clear and concise question, along with four distinct answer options.
+              - Clearly mark the correct answer with an asterisk (*) at the end of the correct option text. Only the correct answer should have this asterisk, and no other options should have it.
+              - Include a detailed explanation for the answer, which should be factually accurate and relevant to the question.
+              - Format each question as follows:
 
-        const completion = response.data.choices[0]?.message?.content?.trim();
-        console.log("API Response:", completion);
+                Question: <question>
+                A. <option1>
+                B. <option2>
+                C. <option3>
+                D. <option4>
+                Explanation: <explanation>
 
-        if (!completion) {
-          throw new Error("No completion content returned from OpenAI");
-        }
+                Ensure the response adheres strictly to this format and includes the asterisk only on the correct option for each question.`,
+            },
+          ]
+        )
 
-        const quizData = this.parseQuizResponse(completion);
-        if (!quizData || !quizData.answers || quizData.answers.length < 4) {
+        this.questions = this.parseQuizResponse(response);
+        if (!this.questions || this.questions.length < 3) {
           throw new Error("Incomplete quiz data parsed from API response");
         }
 
-        this.question = quizData;
+        this.currentQuestionIndex = 0;
         this.selectedAnswer = null;
         this.isQuizStarted = true;
-        this.attempts = 0;
-        this.showIncorrect = false;
+        this.score = 0;
+        this.showExplanation = false;
 
         this.startTimer();
       } catch (error) {
         console.error("Error generating quiz:", error.message);
       }
     },
-    checkAnswer(index) {
-      this.selectedAnswer = index;
-      clearInterval(this.timer);
-      if (this.question.answers[index].correct) {
-        this.score += 1;
-        setTimeout(() => {
-          this.showPopup = true;
-        }, 500);
-      } else {
-        this.attempts += 1;
-        if (this.attempts === 2) {
-          this.showCorrectAnswer();
-          setTimeout(() => {
-            this.generateQuiz();
-          }, 1500);
-        } else {
-          this.showIncorrect = true;
-          setTimeout(() => {
-            this.showIncorrect = false;
-            this.startTimer();
-          }, 500);
-        }
-      }
-    },
-    showCorrectAnswer() {
-      this.question.answers.forEach((answer, index) => {
-        if (answer.correct) {
-          this.selectedAnswer = index;
-        }
+
+    parseQuizResponse(response) {
+      const questions = response.split(/Question \d+:/).filter((q) => q.trim() !== "");
+
+      return questions.map((questionBlock) => {
+        const lines = questionBlock.split("\n").filter((line) => line.trim() !== "");
+
+        const question = lines[0].trim();
+        const options = lines.slice(1, 5).map((line) => {
+          const [letter, ...textParts] = line.split(".");
+          const text = textParts.join(".").trim();
+          const isCorrect = text.includes("*");
+          return {
+            text: text.replace("*", "").trim(),
+            correct: isCorrect,
+          };
+        });
+
+        const explanation = lines.slice(5).join(" ").replace("Explanation:", "").trim();
+
+        return {
+          question,
+          answers: options,
+          explanation,
+        };
       });
     },
+    checkAnswer(index) {
+      this.selectedAnswer = index;
+      this.stopTimer();
+      this.showExplanation = true;
+      if (this.currentQuestion.answers[index].correct) {
+        this.score += 1;
+      }
+    },
+
     startTimer() {
       this.countdown = 15;
       this.timer = setInterval(() => {
         this.countdown -= 1;
-        if (this.countdown === 0) {
-          clearInterval(this.timer);
-          this.generateQuiz();
-        }
       }, 1000);
     },
+
+    stopTimer() {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+    },
+
+    nextQuestion() {
+      this.showExplanation = false;
+      this.selectedAnswer = null;
+
+      if (this.currentQuestionIndex < 2) {
+        this.currentQuestionIndex++;
+        this.startTimer();
+      } else {
+        this.showPopup = true;
+      }
+    },
+
     handlePopupOption(option) {
       this.showPopup = false;
       if (option === "same") {
-        setTimeout(() => {
-          this.generateQuiz();
-        }, 500);
+        this.generateQuiz();
       } else if (option === "new") {
-        this.keywords = "";
+        this.searchKeyword = "";
+        this.generatedKeyword = "";
+        this.selectedQuiz = "";
+        this.selectedDifficulty = "";
         this.isQuizStarted = false;
+        this.relatedKeywords = [];
+        this.score = 0;
+        this.questions = [];
+        this.currentQuestionIndex = 0;
       } else if (option === "end") {
-        alert(`Your final score is: ${this.score}`);
         this.isQuizStarted = false;
         this.score = 0;
+        this.questions = [];
+        this.currentQuestionIndex = 0;
       }
-    },
-    parseQuizResponse(response) {
-      const lines = response.split("\n").filter((line) => line.trim() !== "");
-      console.log("Parsed lines:", lines);
-
-      if (lines.length < 5) {
-        console.error("Unexpected response format:", response);
-        return null;
-      }
-
-      const question = lines[0].replace("Question:", "").trim();
-      const options = lines.slice(1).map((line) => {
-        const isCorrect = line.includes("*");
-        const cleanedLine = line.replace("*", "").trim();
-        return {
-          text: cleanedLine,
-          correct: isCorrect,
-        };
-      });
-
-      if (options.length < 4) {
-        console.error("Incomplete options parsed from response:", response);
-        return null;
-      }
-
-      return {
-        question,
-        answers: options,
-      };
     },
   },
 };
 </script>
 
 <style scoped>
-.input-container {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown {
-  display: block;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  z-index: 1000;
-}
-
-.dropdown ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.dropdown li {
-  padding: 8px;
-}
-
-.dropdown li a {
-  text-decoration: none;
-  color: #000;
-  display: block;
-}
-
-.dropdown li a:hover {
-  background-color: #ddd;
-}
-
 .quiz-container {
   padding: 20px;
   text-align: center;
@@ -247,7 +346,20 @@ header {
   margin-bottom: 20px;
 }
 
-input {
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.dropdown-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+input,
+.dropdown {
   padding: 10px;
   width: 200px;
   margin-right: 10px;
@@ -256,7 +368,8 @@ input {
   transition: border-color 0.3s ease;
 }
 
-input:focus {
+input:focus,
+.dropdown:focus {
   border-color: #007bff;
   outline: none;
 }
@@ -275,6 +388,24 @@ button {
 button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
+}
+
+.related-keywords {
+  margin-top: 10px;
+}
+
+.keyword-button {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.keyword-display {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #e7f7df;
+  border-radius: 8px;
 }
 
 .quiz-content {
@@ -426,5 +557,49 @@ button:hover {
   .modal button {
     padding: 8px 12px;
   }
+}
+
+.explanation-box {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.explanation-box h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.explanation-box p {
+  color: #555;
+  line-height: 1.5;
+}
+
+.answers button.correct {
+  background-color: #4caf50;
+  color: white;
+}
+
+.answers button.incorrect {
+  background-color: #f44336;
+  color: white;
+}
+
+.next-button {
+  margin-top: 20px;
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.next-button:hover {
+  background-color: #218838;
 }
 </style>

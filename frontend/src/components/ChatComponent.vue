@@ -80,7 +80,7 @@ export default {
 					try {
 						const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
 						const prompt = `Explain ${term} to me as if I'm 15.`;
-						const gptResponse = await gptServices(prompt);
+						const gptResponse = await gptServices([{role:"user", content: prompt}]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in define message:", err);
@@ -178,7 +178,7 @@ export default {
 						answers.push(alphavantageResponse);
 						//chatgpt api
 						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-						const gptResponse = await gptServices(prompt);
+						const gptResponse = await gptServices([{role:"user", content: prompt}]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in stock message:", err.message);
@@ -297,14 +297,14 @@ export default {
 					newVideos = await getVideos(userMessage);
 					newRelevantQuestions = await getRelevantQuestions(searchResults);
 					//Normal GTP response
-					const gptResponse = await gptServices(userMessage);
+					const gptResponse = await gptServices([{role:"user", content: userMessage}]);
 					answers.push(gptResponse);
 				}
 				// HANDLE GENERAL
 				else {
 					try {
 						const prompt = userMessage;
-						const gptResponse = await gptServices(prompt);
+						const gptResponse = await gptServices([{role:"user", content: prompt}]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in general message:", err.message);
