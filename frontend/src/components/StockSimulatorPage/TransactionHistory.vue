@@ -1,6 +1,13 @@
 <template>
   <div class="transaction-history">
-    <h3>Transaction History</h3>
+    <div class="transaction-history-header">
+      <h3>Transaction History</h3>
+      <div class="date-picker">
+        <input type="date" v-model="startDate" @change="filterTransactions" />
+        <input type="date" v-model="endDate" @change="filterTransactions" />
+      </div>
+    </div>
+    
     <table>
       <thead>
         <tr>
@@ -12,7 +19,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="transaction in transactions" :key="transaction._id">
+        <tr v-for="transaction in filteredTransactions" :key="transaction._id">
           <td>{{ transaction.stockSymbol }}</td>
           <td>{{ transaction.quantity }}</td>
           <td>{{ transaction.type }}</td>
@@ -33,7 +40,10 @@ export default {
   name: 'TransactionHistory',
   data() {
     return {
-      transactions: []
+      transactions: [],
+      filteredTransactions: [],
+      startDate: '',
+      endDate: ''
     };
   },
   methods: {
@@ -42,10 +52,23 @@ export default {
       axios.get(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`)
         .then(response => {
           this.transactions = response.data;
+          this.filteredTransactions = response.data; // Initialize filtered transactions
         })
         .catch(error => {
           console.error('Error fetching transaction history:', error);
         });
+    },
+    filterTransactions() {
+      if (this.startDate && this.endDate) {
+        const start = new Date(this.startDate);
+        const end = new Date(this.endDate);
+        this.filteredTransactions = this.transactions.filter(transaction => {
+          const transactionDate = new Date(transaction.date);
+          return transactionDate >= start && transactionDate <= end;
+        });
+      } else {
+        this.filteredTransactions = this.transactions; // Reset to all transactions if dates are not set
+      }
     },
     calculateTotal(type, price, quantity) {
       const total = price * quantity;
@@ -69,10 +92,28 @@ export default {
   padding: 0 20px; /* Add padding for better alignment */
 }
 
-.transaction-history h3 {
+.transaction-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
+}
+
+.transaction-history h3 {
   color: #007bff; /* Match the styling of other headers */
   font-size: 1.5rem; /* Match the font size of other headers */
+}
+
+.date-picker {
+  display: flex;
+  gap: 10px;
+}
+
+.date-picker input[type="date"] {
+  padding: 10px;
+  border-radius: 10px;
+  border: 5px solid #ced4da;
+  background-color: #fff;
 }
 
 .transaction-history table {
