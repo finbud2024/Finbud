@@ -12,43 +12,19 @@
 </template>
 
 <script>
-import StockChart from '@/components/StockChart.vue';
+import { ref, onMounted, computed } from "vue";
+import csvData from "./assets/economic_indicators.csv";
+import IndicatorComparison from "@/components/IndicatorComparison.vue";
+import StockPrice from "@/components/StockPrice.vue";
+import Indicators from "@/components/Indicators.vue";
+import CorrelationMatrix from "@/components/CorrelationMatrix.vue";
 
 export default {
   components: {
-    StockChart,
-  },
-  data() {
-    return {
-      selectedStock: 'AAPL',
-      stockData: null,
-      stocks: [
-        { label: 'Apple Inc.', value: 'AAPL' },
-        { label: 'Microsoft Corporation', value: 'MSFT' },
-        { label: 'Amazon.com Inc.', value: 'AMZN' },
-        { label: 'Tesla Inc.', value: 'TSLA' },
-        { label: 'Alphabet Inc. (Google)', value: 'GOOGL' },
-      ],
-    };
-  },
-  mounted() {
-    this.fetchStockData();
-  },
-  methods: {
-    fetchStockData() {
-      // Mock data for demonstration
-      const mockData = [
-        { date: '2023-01-01', close: 150 },
-        { date: '2023-01-02', close: 152 },
-        { date: '2023-01-03', close: 148 },
-        { date: '2023-01-04', close: 155 },
-        { date: '2023-01-05', close: 157 },
-      ];
-      this.stockData = {
-        dates: mockData.map(item => item.date),
-        prices: mockData.map(item => item.close),
-      };
-    },
+    StockPrice,
+    Indicators,
+    IndicatorComparison,
+    CorrelationMatrix,
   },
 };
 </script>
@@ -139,8 +115,6 @@ export default {
 /* Your component-specific styles */
 </style> -->
 
-
-
 <!-- -------------------ORIGINAL REPRESENTATION BEFORE CONVERTING-------------------- -->
 
 <!-- <template>
@@ -174,11 +148,6 @@ export default {
   border: none;
 }
 </style> -->
-
-
-
-
-
 
 <!-- -------------------ALPHAVANTAGE (S&P 500 NOT SUPPORTED)-------------------- -->
 <!-- <template>
@@ -275,8 +244,6 @@ export default {
 <style scoped>
 /* Your component styles here */
 </style> -->
-
-
 
 <!-- -------------------YAHOO FINANCE (S&P 500 SUPPORTED)-------------------- -->
 <!-- <template>
@@ -380,11 +347,6 @@ export default {
 /* Your component styles here */
 </style> -->
 
-
-
-
-
-
 <!-- -------------------TESTING SPACE-------------------- -->
 
 <template>
@@ -420,7 +382,7 @@ export default {
         </div>
       </div>
     </div>
-    <br><br>
+    <br /><br />
     <div class="Panel-Frame">
       <div id="main-content" class="panel animate__animated animate__fadeInUp">
         <select v-model="selectedStock1" class="stock-box">
@@ -434,28 +396,30 @@ export default {
           <div class="change-index" id="c_graph">{{ cGraph }}</div>
           <div class="change-ratio" id="graphs">{{ graphs }}%</div>
         </div>
-        <br>
-          <div class="stock-graph">
-              <div class="chart1">{{ chart1_1 }}</div>
-              <div class="chart2">{{ chart1_2 }}</div>
+        <br />
+        <div class="stock-graph">
+          <div class="chart1">{{ chart1_1 }}</div>
+          <div class="chart2">{{ chart1_2 }}</div>
 
-              <div class="indicator-chart" id="indicator_graph">{{ IndicatorGraph1 }}</div>
-              <div class="return-chart" id="return_graph">{{ ReturnGraph1 }}</div>
+          <div class="indicator-chart" id="indicator_graph">
+            {{ IndicatorGraph1 }}
           </div>
-        <br>
+          <div class="return-chart" id="return_graph">{{ ReturnGraph1 }}</div>
+        </div>
+        <br />
         <div class="trend">
           <h4>Past Trend vs. Future Projections</h4>
           <div class="closing-price">
             <h5>Closing Prices</h5>
             <div id="gbm_graph">{{ gbmGraph }}</div>
           </div>
-          <br>
+          <br />
           <div class="daily-volatility">
             <h5>Daily Volatility (%)</h5>
             <div id="garch_graph">{{ garchGraph }}</div>
           </div>
         </div>
-        <br>
+        <br />
         <div class="Risk-Ratios">
           <h4>Risk Ratios</h4>
           <div class="Risk-info">
@@ -470,7 +434,7 @@ export default {
               <p class="Risk-value" id="b_val">{{ betaRatio }}</p>
               <div>Sortino Ratio</div>
               <p class="Risk-value" id="sor_val">{{ sortinoRatio }}</p>
-            </div>  
+            </div>
             <div>Standard Deviation</div>
             <p class="Risk-value" id="sd_val">{{ stdDeviation }}</p>
           </div>
@@ -491,27 +455,29 @@ export default {
           <div class="change-index" id="c_graph">{{ cGraph2 }}</div>
           <div class="change-ratio" id="graphs">{{ graphs2 }}%</div>
         </div>
-        <br>
-          <div class="stock-graph">
-              <div class="chart1">{{ chart2_1 }}</div>
-              <div class="chart2">{{ chart2_2 }}</div>
-              <div class="indicator-chart" id="indicator_graph">{{ IndicatorGraph2 }}</div>
-              <div class="return-chart" id="return_graph">{{ ReturnGraph2 }}</div>
+        <br />
+        <div class="stock-graph">
+          <div class="chart1">{{ chart2_1 }}</div>
+          <div class="chart2">{{ chart2_2 }}</div>
+          <div class="indicator-chart" id="indicator_graph">
+            {{ IndicatorGraph2 }}
           </div>
-        <br>
+          <div class="return-chart" id="return_graph">{{ ReturnGraph2 }}</div>
+        </div>
+        <br />
         <div class="trend">
           <h4>Past Trend vs. Future Projections</h4>
           <div class="closing-price">
             <h5>Closing Prices</h5>
             <div id="gbm_graph1">{{ gbmGraph2 }}</div>
           </div>
-          <br>
+          <br />
           <div class="daily-volatility">
             <h5>Daily Volatility (%)</h5>
             <div id="garch_graph">{{ garchGraph2 }}</div>
           </div>
         </div>
-        <br>
+        <br />
         <div class="Risk-Ratios">
           <h4>Risk Ratios</h4>
           <div class="Risk-info">
@@ -526,88 +492,116 @@ export default {
               <p class="Risk-value" id="b_val">{{ betaRatio2 }}</p>
               <div>Sortino Ratio</div>
               <p class="Risk-value" id="sor_val">{{ sortinoRatio2 }}</p>
-            </div>  
+            </div>
             <div>Standard Deviation</div>
             <p class="Risk-value" id="sd_val">{{ stdDeviation2 }}</p>
           </div>
         </div>
       </div>
     </div>
-    <br>
-    <div class="Panels animate__animated animate__fadeInRight" style="width: 80%; margin: 0 auto;">
-      <h3 style="text-align: center;">Interpretation</h3>
+    <br />
+    <div
+      class="Panels animate__animated animate__fadeInRight"
+      style="width: 80%; margin: 0 auto"
+    >
+      <h3 style="text-align: center">Interpretation</h3>
       <h5>Technical indicators</h5>
       <ul>
-        <li>Bollinger Bands is a measure of volatility. High volatility is signified by wide bands while low volatility is signified by narrow bands. Generally, high volatility is followed by low volatility</li>
-        <li>RSI or Relative Strength Index, is a measure to evaluate overbought and oversold conditions.</li>
-        <li>SMA or Simple Moving Average using 50 day (fast) and 200 day (slow) lines - short term going above long term is bullish trend. Short term going below long term is bearish</li>
-        <li>EMA or Exponential Moving Average gives higher significance to recent price data</li>
-        <li>MACD or Moving Average Convergence Divergence signifies no trend reversal unless there are crossovers. The market is bullish when signal line crosses above blue line, bearish when signal line crosses below blue line</li>
+        <li>
+          Bollinger Bands is a measure of volatility. High volatility is
+          signified by wide bands while low volatility is signified by narrow
+          bands. Generally, high volatility is followed by low volatility
+        </li>
+        <li>
+          RSI or Relative Strength Index, is a measure to evaluate overbought
+          and oversold conditions.
+        </li>
+        <li>
+          SMA or Simple Moving Average using 50 day (fast) and 200 day (slow)
+          lines - short term going above long term is bullish trend. Short term
+          going below long term is bearish
+        </li>
+        <li>
+          EMA or Exponential Moving Average gives higher significance to recent
+          price data
+        </li>
+        <li>
+          MACD or Moving Average Convergence Divergence signifies no trend
+          reversal unless there are crossovers. The market is bullish when
+          signal line crosses above blue line, bearish when signal line crosses
+          below blue line
+        </li>
       </ul>
       <h5>Risk ratios</h5>
       <ul>
         <li>Alpha: Return performance as compared to benchmark of market</li>
-        <li>Beta: Relative price movement of a stock to go up and down as compared to the market trend</li>
-        <li>Sharpe Ratio: Returns generated per unit of risk - the higher the better</li>
+        <li>
+          Beta: Relative price movement of a stock to go up and down as compared
+          to the market trend
+        </li>
+        <li>
+          Sharpe Ratio: Returns generated per unit of risk - the higher the
+          better
+        </li>
         <li>Sortino Ratio: Returns as compared to only downside risk</li>
       </ul>
     </div>
   </div>
-  
+
   <DashBoard />
   <MonteCarloSimulation />
 </template>
 
 <script>
 import MonteCarloSimulation from "./MonteCarloSimulation.vue";
-import DashBoard from '@/components/quant/DashBoard.vue';
+import DashBoard from "@/components/quant/DashBoard.vue";
 
 export default {
   components: {
     DashBoard,
-    MonteCarloSimulation
+    MonteCarloSimulation,
   },
   data() {
     return {
-      timePeriod: '1y',
-      indicator: 'Bollinger Bands',
-      returns: 'Daily Returns',
-      selectedStock1: '',
-      selectedStock2: '',
-      cGraph: '',
-      graphs: '',
-      gbmGraph: '',
-      garchGraph: '',
-      alphaRatio: '',
-      betaRatio: '',
-      sharpeRatio: '',
-      sortinoRatio: '',
-      stdDeviation: '',
-      cGraph2: '',
-      graphs2: '',
-      gbmGraph2: '',
-      garchGraph2: '',
-      alphaRatio2: '',
-      betaRatio2: '',
-      sharpeRatio2: '',
-      sortinoRatio2: '',
-      stdDeviation2: '',
-      chart1_1: '',
-      chart1_2: '',
-      chart2_1: '',
-      chart2_2: '',
-      IndicatorGraph1: '',
-      IndicatorGraph2: '',
-      ReturnGraph1: '',
-      ReturnGraph2: '',
+      timePeriod: "1y",
+      indicator: "Bollinger Bands",
+      returns: "Daily Returns",
+      selectedStock1: "",
+      selectedStock2: "",
+      cGraph: "",
+      graphs: "",
+      gbmGraph: "",
+      garchGraph: "",
+      alphaRatio: "",
+      betaRatio: "",
+      sharpeRatio: "",
+      sortinoRatio: "",
+      stdDeviation: "",
+      cGraph2: "",
+      graphs2: "",
+      gbmGraph2: "",
+      garchGraph2: "",
+      alphaRatio2: "",
+      betaRatio2: "",
+      sharpeRatio2: "",
+      sortinoRatio2: "",
+      stdDeviation2: "",
+      chart1_1: "",
+      chart1_2: "",
+      chart2_1: "",
+      chart2_2: "",
+      IndicatorGraph1: "",
+      IndicatorGraph2: "",
+      ReturnGraph1: "",
+      ReturnGraph2: "",
     };
   },
   watch: {
-    timePeriod: 'updateBothData',
-    indicator: 'updateBothData',
-    returns: 'updateBothData',
-    selectedStock1: 'fetchData',
-    selectedStock2: 'fetchData2'
+    timePeriod: "updateBothData",
+    indicator: "updateBothData",
+    returns: "updateBothData",
+    selectedStock1: "fetchData",
+    selectedStock2: "fetchData2",
   },
   methods: {
     updateBothData() {
@@ -645,8 +639,8 @@ export default {
       this.sharpeRatio2 = `Updated Sharpe Ratio for ${this.selectedStock2}`;
       this.sortinoRatio2 = `Updated Sortino Ratio for ${this.selectedStock2}`;
       this.stdDeviation2 = `Updated Standard Deviation for ${this.selectedStock2}`;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -700,32 +694,32 @@ label {
 }
 
 .panel {
-    background-color: #ecf0f1;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .Panels {
-    background-color: #ecf0f1;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
 .Panel-Frame {
-  width: 48%; 
-  display: inline-block; 
-  vertical-align: top; 
+  width: 48%;
+  display: inline-block;
+  vertical-align: top;
   margin: 0 1%;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .stock-box {
@@ -764,7 +758,7 @@ h5 {
   margin-top: 0px;
 }
 
-.Risk-Block{
+.Risk-Block {
   width: 49%;
   display: inline-block;
 }
@@ -786,5 +780,5 @@ h5 {
   text-align: center;
 }
 
-@import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
 </style>

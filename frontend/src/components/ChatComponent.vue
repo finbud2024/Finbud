@@ -24,7 +24,6 @@ import authStore from "@/authStore";
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
-import {getCurrentInstance, onBeforeUnmount } from 'vue';
 export default {
 	name: 'ChatComponent',
 	props: {
@@ -42,15 +41,6 @@ export default {
 			botAvatar: require("@/assets/botrmbg.png"),
 		}
 	},
-	setup(){
-	const instance = getCurrentInstance()
-			onBeforeUnmount(()=>{
-				instance.data.messages = [];
-				instance.data.sources = [];
-				instance.data.videos = [];
-				instance.data.relevantQuestions = [];
-			})
-	},
 	computed: {
 		authStore() {
 			return authStore;
@@ -62,6 +52,8 @@ export default {
 			handler(newThreadID){
 				if(newThreadID !== null && newThreadID !== undefined && newThreadID.length != 0){
 					this.updateCurrentThread(newThreadID)
+				}else{
+					this.messages = [];
 				}
 			}
 		}

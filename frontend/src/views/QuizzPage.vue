@@ -29,11 +29,17 @@
           <p>{{ question.question }}</p>
         </div>
         <div class="answers">
-          <button v-for="(answer, index) in question.answers" :key="index" :class="{
-            correct: selectedAnswer === index && answer.correct,
-            incorrect: selectedAnswer === index && !answer.correct && showIncorrect,
-            selected: selectedAnswer === index
-          }" @click="checkAnswer(index)">
+          <button
+            v-for="(answer, index) in question.answers"
+            :key="index"
+            :class="{
+              correct: selectedAnswer === index && answer.correct,
+              incorrect:
+                selectedAnswer === index && !answer.correct && showIncorrect,
+              selected: selectedAnswer === index,
+            }"
+            @click="checkAnswer(index)"
+          >
             {{ answer.text }}
           </button>
         </div>
@@ -55,31 +61,42 @@
       <div class="modal">
         <h2>Next Step</h2>
         <p>You answered correctly!</p>
-        <button @click="handlePopupOption('same')">Continue with the same keyword</button>
-        <button @click="handlePopupOption('new')">Continue with new keywords</button>
-        <button @click="handlePopupOption('end')" class="end-game-btn">End Game</button>
+        <button @click="handlePopupOption('same')">
+          Continue with the same keyword
+        </button>
+        <button @click="handlePopupOption('new')">
+          Continue with new keywords
+        </button>
+        <button @click="handlePopupOption('end')" class="end-game-btn">
+          End Game
+        </button>
       </div>
     </div>
   </div>
+  <QuizzPage2 />
 </template>
 
 <script>
-import axios from 'axios';
+import QuizzPage2 from "./QuizzPage2.vue";
+import axios from "axios";
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 
 // static dataset
 const keywordTopicMapping = {
-  "Budgeting": ["Basic Budgeting", "Advanced Budgeting"],
-  "Investing": ["Stock Market Basics", "Advanced Investing Strategies"],
+  Budgeting: ["Basic Budgeting", "Advanced Budgeting"],
+  Investing: ["Stock Market Basics", "Advanced Investing Strategies"],
   // Add more keyword-to-topic mappings as needed
 };
 
 export default {
-  name: 'QuizComponent',
+  components: {
+    QuizzPage2,
+  },
+  name: "QuizComponent",
   data() {
     return {
-      keywords: '',
+      keywords: "",
       question: null,
       selectedAnswer: null,
       countdown: 15,
@@ -115,32 +132,39 @@ export default {
       clearInterval(this.timer);
 
       try {
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-          model: "gpt-3.5-turbo",
-          messages: [
-            { role: "system", content: "You are a helpful assistant." },
-            { role: "user", content: `Generate a finance-related multiple-choice quiz question including the keywords: ${this.keywords}. Provide the question and four answer options. Indicate the correct answer with an asterisk (*). Format: Question: <question>\nA. <option1>\nB. <option2>\nC. <option3>\nD. <option4>` }
-          ],
-          max_tokens: 150,
-          n: 1,
-          stop: ["\n\n"]
-        }, {
-          headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'Content-Type': 'application/json'
+        const response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          {
+            model: "gpt-3.5-turbo",
+            messages: [
+              { role: "system", content: "You are a helpful assistant." },
+              {
+                role: "user",
+                content: `Generate a finance-related multiple-choice quiz question including the keywords: ${this.keywords}. Provide the question and four answer options. Indicate the correct answer with an asterisk (*). Format: Question: <question>\nA. <option1>\nB. <option2>\nC. <option3>\nD. <option4>`,
+              },
+            ],
+            max_tokens: 150,
+            n: 1,
+            stop: ["\n\n"],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
           }
-        });
+        );
 
         const completion = response.data.choices[0]?.message?.content?.trim();
-        console.log('API Response:', completion);
+        console.log("API Response:", completion);
 
         if (!completion) {
-          throw new Error('No completion content returned from OpenAI');
+          throw new Error("No completion content returned from OpenAI");
         }
 
         const quizData = this.parseQuizResponse(completion);
         if (!quizData || !quizData.answers || quizData.answers.length < 4) {
-          throw new Error('Incomplete quiz data parsed from API response');
+          throw new Error("Incomplete quiz data parsed from API response");
         }
 
         this.question = quizData;
@@ -151,7 +175,7 @@ export default {
 
         this.startTimer();
       } catch (error) {
-        console.error('Error generating quiz:', error.message);
+        console.error("Error generating quiz:", error.message);
       }
     },
     checkAnswer(index) {
@@ -197,48 +221,48 @@ export default {
     },
     handlePopupOption(option) {
       this.showPopup = false;
-      if (option === 'same') {
+      if (option === "same") {
         setTimeout(() => {
           this.generateQuiz();
         }, 500);
-      } else if (option === 'new') {
-        this.keywords = '';
+      } else if (option === "new") {
+        this.keywords = "";
         this.isQuizStarted = false;
-      } else if (option === 'end') {
+      } else if (option === "end") {
         alert(`Your final score is: ${this.score}`);
         this.isQuizStarted = false;
         this.score = 0;
       }
     },
     parseQuizResponse(response) {
-      const lines = response.split('\n').filter(line => line.trim() !== '');
-      console.log('Parsed lines:', lines);
+      const lines = response.split("\n").filter((line) => line.trim() !== "");
+      console.log("Parsed lines:", lines);
 
       if (lines.length < 5) {
-        console.error('Unexpected response format:', response);
+        console.error("Unexpected response format:", response);
         return null;
       }
 
-      const question = lines[0].replace('Question:', '').trim();
-      const options = lines.slice(1).map(line => {
-        const isCorrect = line.includes('*');
-        const cleanedLine = line.replace('*', '').trim();
+      const question = lines[0].replace("Question:", "").trim();
+      const options = lines.slice(1).map((line) => {
+        const isCorrect = line.includes("*");
+        const cleanedLine = line.replace("*", "").trim();
         return {
           text: cleanedLine,
-          correct: isCorrect
+          correct: isCorrect,
         };
       });
 
       if (options.length < 4) {
-        console.error('Incomplete options parsed from response:', response);
+        console.error("Incomplete options parsed from response:", response);
         return null;
       }
 
       return {
         question,
-        answers: options
+        answers: options,
       };
-    }
+    },
   },
 };
 </script>
@@ -306,7 +330,7 @@ input {
 }
 
 input:focus {
-  border-color: #007BFF;
+  border-color: #007bff;
   outline: none;
 }
 
@@ -315,7 +339,7 @@ button {
   cursor: pointer;
   border: none;
   border-radius: 4px;
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   font-size: 16px;
   transition: background-color 0.3s ease, transform 0.3s ease;
@@ -357,7 +381,7 @@ button:hover {
 }
 
 .answers button.correct {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   /* Green */
   color: white;
 }

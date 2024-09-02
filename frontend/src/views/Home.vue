@@ -8,7 +8,7 @@
           <li class="description animate fade-in last-li">With FinBud, you can ask for the best financial advice anytime,
             anywhere</li>
 
-          <BigGreenButton @click="chatNow">Chat Now!</BigGreenButton>
+          <BigGreenButton @click="chatNow">{{displayText}}</BigGreenButton>
         </div>
 
         <div class="photo">
@@ -125,17 +125,30 @@
 
 <script>
 import BigGreenButton from "../components/Button/ChatNow.vue";
+import authStore from "@/authStore";
 export default {
   name: 'MainContent',
   components: {
     BigGreenButton,
+  },
+  computed:{
+    authStore() {
+			return authStore;
+		},
+    displayText(){
+      return authStore.isAuthenticated ? "Chat Now": "Get Started!"
+    }
   },
   methods: {
     learnMore() {
       this.$router.push('/tech');
     },
     chatNow() {
-      this.$router.push('/chat-view');
+      if(authStore.isAuthenticated){
+        this.$router.push('/chat-view');
+      }else{
+        this.$router.push('/login');
+      }
     },
   },
   mounted() {
