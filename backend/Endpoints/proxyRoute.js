@@ -20,6 +20,7 @@ proxyRoute.all('/proxy', async (req, res) => {
                 ...req.body.headers,
                 host: new URL(targetUrl).host,
             },
+            params: req.body.params,  // Ensure params are passed correctly
             timeout: 5000,
         }
         // Only include the data property for POST, PUT, and PATCH requests
