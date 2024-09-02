@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 import axios from "axios";
 import stockData from '../../frontend/src/views/hardcodeData/StockData.js'
 
-const mongoURI = "YOUR MONGO URI";
-const key = 'YOUR API KEY';
+const mongoURI = "mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/development?retryWrites=true&w=majority&appName=Cluster0"
+const key = "282PVUIZQT7MX90K";
 const limitPerMinute = 5;
 const symbols = stockData.map(stock => stock.ticker);
 
