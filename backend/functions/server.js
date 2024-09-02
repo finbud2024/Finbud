@@ -15,6 +15,7 @@ import cryptoRoute from '../Endpoints/cryptoRoute.js';
 import stockRoute from '../Endpoints/stockRoute.js';
 import transactionRoute from '../Endpoints/transactionRoute.js';
 import stockTransactionRoute from '../Endpoints/stockTransactionRoute.js';
+import goalRoute from '../Endpoints/goalRoute.js';
 
 dotenv.config();
 
@@ -64,6 +65,7 @@ router.use('/', cryptoRoute);
 router.use('/', stockRoute);
 router.use('/', transactionRoute);
 router.use('/', stockTransactionRoute);
+router.use('/', goalRoute);
 
 app.use('/.netlify/functions/server', router);
 

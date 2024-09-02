@@ -82,35 +82,125 @@
         <TransactionBar v-else :transactions="transactions" />
       </div>
     </section>
+
+
+    
     <section class="financial-goals">
-      <h2>Your Financial Goals</h2>
+      <h2 class="goal-section-title">Your Financial Goals</h2>
       <button class="add-goal-button" @click="showAddGoalModal = true">Add Goal</button>
       <div class="goals">
-        <div class="goal" v-for="goal in goals" :key="goal.id" :style="goalStyle(goal.progress)" @click="showGoalProgress(goal.name, goal.progress)">
-          <i :class="goal.icon"></i>
-          <p>{{ goal.name }}<br>{{ goal.totalMoney }} VND</p>
+      <div v-for="goal in goals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
+        <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
+        <div class="goal-content">
+          <div class="goal-icon">
+            <i :class="goal.icon"></i>
+          </div>
+          <div class="goal-info">
+            <h3>{{ goal.title }}</h3>
+            <p>Category: {{ goal.category }}</p>
+            <p>Total: {{ goal.targetAmount }} USD</p>
+            <p>Saved: {{ goal.currentAmount }} USD</p>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" :style="{ width: (goal.currentAmount / goal.targetAmount * 100) + '%' }"></div>
+          </div>
         </div>
       </div>
+</div>
+
     </section>
+
+
     <div v-if="showModal" class="modal" @click="showModal = false">
       <div class="modal-content" @click.stop>
-        <h3>{{ goalTitle }}</h3>
-        <p>Completion: {{ goalProgress }}%</p>
-        <div class="progress-bar">
-          <div class="progress" :style="{ width: goalProgress + '%' }"></div>
+        <div>
+          <img src="../assets/financial-goal-mockup.jpg" alt="">
+        </div>
+        <div class="modal-text-content">
+            <h3>{{ goalTitle }}</h3>
+            <p>{{ goalDescription }}</p>
+            <p>Total: {{ goalTargetAmount }} USD</p>
+            <p>Saved: {{ goalCurrentAmount }} USD</p>
+            <p>Completion: {{ goalProgress }}%</p>
+            <div class="progress-bar-container">
+              <div class="progress-bar" :style="{ width: goalProgress + '%' }"></div>
+            </div>
+
+            <!-- Button to show the Add Money form -->
+            <button class="add-goal-button" @click="toggleAddMoneyForm">
+              {{ showAddMoneyForm ? 'Cancel' : 'Add Money' }}
+            </button>
+
+            <!-- Add Money form, hidden initially -->
+            <div v-if="showAddMoneyForm" class="form-group add-money-form">
+              <label for="addAmount">Add Money to Goal</label>
+              <input id="addAmount" type="number" v-model="addAmount" placeholder="Enter amount to add">
+              <button class="add-goal-button" @click="addMoneyToGoal">Add Money</button>
+            </div>
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
+      <div class="modal-content" @click.stop>
+        <div class="modal-text-content">
+          <h3>Add New Goal</h3>
+          <div class="form-group">
+            <label for="goalTitle">Goal Title</label>
+            <input id="goalTitle" type="text" placeholder="Enter your goal title" v-model="newGoal.title" required>
+          </div>
+          <div class="form-group">
+            <label for="goalDescription">Description (optional)</label>
+            <textarea id="goalDescription" placeholder="Describe your goal" v-model="newGoal.description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="targetAmount">Total Money Needed</label>
+            <div class="currency-input">
+              <input id="targetAmount" type="number" placeholder="Total money needed" v-model="newGoal.targetAmount" required>
+              <select>
+                <option value="USD">USD</option>
+                <option value="VND">VND</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <!-- Add more currencies as needed -->
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="currentAmount">Money Already Have</label>
+            <input id="currentAmount" type="number" placeholder="Money already have" v-model="newGoal.currentAmount">
+          </div>
+          <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input id="startDate" type="date" v-model="newGoal.startDate" required>
+          </div>
+          <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input id="endDate" type="date" v-model="newGoal.endDate" required>
+          </div>
+          <div class="form-group">
+            <label for="goalCategory">Category</label>
+            <select id="goalCategory" v-model="selectedCategory">
+              <option v-for="category in categories" :key="category" :value="category">
+                {{ category }}
+              </option>
+              <option value="new">Add New Category</option>
+            </select>
+          </div>
+          <div v-if="selectedCategory === 'new'" class="form-group">
+            <label for="newCategory">New Category</label>
+            <input id="newCategory" type="text" placeholder="Enter new category" v-model="newCategory">
+          </div>
+          <button class="add-goal-button" @click="addGoal">Add Goal</button>
         </div>
       </div>
     </div>
-    <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
-      <div class="modal-content" @click.stop>
-        <h3>Add New Goal</h3>
-        <input type="text" placeholder="Name of the goal" v-model="newGoal.name">
-        <input type="text" placeholder="Icon class (e.g., 'fas fa-home')" v-model="newGoal.icon">
-        <input type="number" placeholder="Total money needed" v-model="newGoal.totalMoney">
-        <input type="number" placeholder="Money already have" v-model="newGoal.moneyHave">
-        <button @click="addGoal">Add Goal</button>
-      </div>
-    </div>
+
+
+
     <div v-if="showEditTransactionModal" class="modal" @click="showEditTransactionModal = false">
       <div class="modal-content" @click.stop>
         <h3>Edit Transaction</h3>
@@ -144,6 +234,8 @@ import TransactionLine from '../components/goalPage/TransactionLine.vue';
 import TransactionBar from '../components/goalPage/TransactionBar.vue';
 import authStore from '@/authStore';
 
+
+
 export default {
   name: 'GoalPage',
   components: {
@@ -152,16 +244,29 @@ export default {
   },
   data() {
     return {
+      userId: localStorage.getItem('token'),
       firstName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.firstName : 'Guest',
       displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.displayName : 'Guest',
+      newGoal: {
+        title: '',
+        description: '',
+        targetAmount: '',
+        currentAmount: 0,
+        startDate: '',
+        endDate: '',
+        isAchieved: false,
+        category: '',
+      },
       showModal: false,
       showAddGoalModal: false,
+      showAddMoneyForm: false, // Controls the visibility of the Add Money form
+      addAmount: 0,
       showEditTransactionModal: false,
       showSetBalanceModal: false,
       showResetConfirmationModal: false,
       goalTitle: '',
       goalProgress: 0,
-      userId: localStorage.getItem('token'),
+      categories: ['Savings', 'Investment', 'Emergency Fund', 'Vacation'], // Predefined categories
       transaction: {
         description: '',
         amount: null,
@@ -178,17 +283,8 @@ export default {
       possibleRecommendations: ['Groceries', 'Utilities', 'Subscription', 'Transport', 'Dining', 
       'Shopping', 'Insurance', 'Entertainment', 'Healthcare', 'Education', 'Coffee', 'Medical', 'Rent', 'Electronics', 
       'Gym', 'Books', 'Snacks', 'Meal', 'Bill', 'Travel'],
-      goals: [
-        { id: 1, name: 'Home Renovation', icon: 'fas fa-home', totalMoney: '300-350 million', moneyHave: '150 million', progress: 50 },
-        { id: 2, name: 'New Sofa', icon: 'fas fa-couch', totalMoney: '56-75 million', moneyHave: '22 million', progress: 30 },
-        { id: 3, name: 'Buy a Tesla', icon: 'fas fa-car', totalMoney: '1.9 - 2 billion', moneyHave: '1.3 billion', progress: 70 },
-      ],
-      newGoal: {
-        name: '',
-        icon: '',
-        totalMoney: '',
-        moneyHave: 0,
-      },
+      goals: [],
+      
       initialBalance: null,
       accountBalance: 0,
       initialBalanceSet: false, // New state to track if initial balance is set
@@ -201,13 +297,110 @@ export default {
     }
   },
   methods: {
-    showGoalProgress(title, progress) {
-      this.goalTitle = title;
-      this.goalProgress = progress;
-      this.showModal = true;
+    retrieveGoals() {
+      axios
+        .get(`${process.env.VUE_APP_DEPLOY_URL}/goals/u/${this.userId}`)
+        .then((response) => {
+          this.goals = response.data;
+        })
+        .catch((error) => {
+          console.error('Error fetching goals:', error);
+        });
     },
 
-    // Get the transaction data of a specific user by using user's userId to display user's transaction
+    addGoal() {
+      if (
+        this.newGoal.title &&
+        this.newGoal.targetAmount &&
+        this.newGoal.startDate &&
+        this.newGoal.endDate &&
+        (this.selectedCategory || this.newCategory)
+      ) {
+        // Use new category if added, otherwise use selected category
+        this.newGoal.category =
+          this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
+
+        axios
+          .post(`${process.env.VUE_APP_DEPLOY_URL}/goals`, {
+            userId: this.userId,
+            ...this.newGoal,
+          })
+          .then((response) => {
+            this.goals.push(response.data);
+            this.showAddGoalModal = false;
+            this.newGoal = {
+              title: '',
+              description: '',
+              targetAmount: '',
+              currentAmount: 0,
+              startDate: '',
+              endDate: '',
+              isAchieved: false,
+              category: '',
+            };
+            this.selectedCategory = '';
+            this.newCategory = '';
+          })
+          .catch((error) => {
+            console.error('Error adding goal:', error);
+          });
+      } else {
+        alert('Please fill in all required fields.');
+      }
+    },
+    
+
+  async addMoneyToGoal() {
+    if (this.addAmount > 0) {
+      const updatedAmount = this.goalCurrentAmount + this.addAmount;
+
+      try {
+        // Send a PUT request to update the goal's currentAmount
+        const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/goals/${this.goalId}`, {
+          userId: this.userId, // Include necessary fields
+          title: this.goalTitle,
+          description: this.goalDescription,
+          targetAmount: this.goalTargetAmount,
+          currentAmount: updatedAmount,
+          startDate: this.goalStartDate,
+          endDate: this.goalEndDate,
+          category: this.goalCategory,
+          isAchieved: updatedAmount >= this.goalTargetAmount ? true : this.isAchieved, // Update isAchieved if the target is reached
+        });
+
+        // Update the local state with the new currentAmount and progress
+        this.goalCurrentAmount = updatedAmount;
+        this.goalProgress = ((updatedAmount / this.goalTargetAmount) * 100).toFixed(2);
+        this.addAmount = 0; // Reset the input
+        this.showAddMoneyForm = false; // Hide the form after adding money
+        alert('Money added successfully!');
+      } catch (error) {
+        console.error('Error updating goal:', error);
+        alert('An error occurred while adding money to the goal.');
+      }
+    } else {
+      alert('Please enter a valid amount.');
+    }
+  },
+
+  showGoalProgress(goal) {
+    this.goalId = goal._id;
+    this.goalTitle = goal.title;
+    this.goalDescription = goal.description;
+    this.goalTargetAmount = goal.targetAmount;
+    this.goalCurrentAmount = goal.currentAmount;
+    this.goalStartDate = goal.startDate;
+    this.goalEndDate = goal.endDate;
+    this.isAchieved = goal.isAchieved;
+    this.goalCategory = goal.category;  
+    this.goalProgress = ((goal.currentAmount / goal.targetAmount) * 100).toFixed(2);
+    this.showAddMoneyForm = false;
+    this.showModal = true;
+  },
+
+  toggleAddMoneyForm() {
+    this.showAddMoneyForm = !this.showAddMoneyForm;
+  },
     async fetchTransactions() {
       try {
         const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`);
@@ -334,30 +527,10 @@ export default {
       }
       this.accountBalance = balance;
     },
-    goalStyle(progress) {
-      const green = Math.min(255, (progress / 100) * 255);
-      const blue = Math.min(255, ((100 - progress) / 100) * 255);
+    goalStyle(currentAmount, targetAmount) {
+      const progress = (currentAmount / targetAmount) * 100;
       return {
-        backgroundColor: `rgb(0, ${green}, ${blue})`,
-        color: 'white',
-      };
-    },
-    addGoal() {
-      const progress = (this.newGoal.moneyHave / this.newGoal.totalMoney) * 100;
-      this.goals.push({
-        id: this.goals.length + 1,
-        name: this.newGoal.name,
-        icon: this.newGoal.icon,
-        totalMoney: this.newGoal.totalMoney,
-        moneyHave: this.newGoal.moneyHave,
-        progress: progress,
-      });
-      this.showAddGoalModal = false;
-      this.newGoal = {
-        name: '',
-        icon: '',
-        totalMoney: '',
-        moneyHave: 0,
+        width: `${Math.min(progress, 100)}%`,
       };
     },
     formatDate(dateString) {
@@ -411,7 +584,9 @@ export default {
     }
     this.fetchTransactions();
     this.processURLParams();
+    this.retrieveGoals();
   },
+
   computed: {
     authStore(){
       return authStore;
@@ -425,6 +600,8 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
 /* Basic styles */
 .homepage {
@@ -434,6 +611,7 @@ export default {
   background-color: #f9f9f9;
 }
 
+/* Header section */
 .header {
   display: flex;
   justify-content: space-between;
@@ -531,8 +709,8 @@ export default {
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%; /* Set to 100% width */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .balance-and-button {
@@ -561,9 +739,10 @@ export default {
   background-color: #005bb5;
 }
 
+/* Recommendations list */
 .recommendation-list {
   position: absolute;
-  top: 50px; /* Adjust this value based on your input field height */
+  top: 50px;
   left: 0;
   right: 0;
   max-height: 150px;
@@ -587,6 +766,7 @@ export default {
   background-color: #f0f0f0;
 }
 
+/* Transactions table */
 .transaction-list {
   width: 100%;
   max-height: 300px;
@@ -618,6 +798,7 @@ export default {
   background-color: rgba(0, 255, 0, 0.5);
 }
 
+/* Transaction chart */
 .transaction-chart {
   margin-top: 30px;
   text-align: center;
@@ -638,7 +819,6 @@ export default {
 .chart-container {
   width: 100%;
   height: 100%;
-  /* max-height: 800px;  */
   box-sizing: border-box;
 }
 
@@ -678,14 +858,20 @@ export default {
   background-color: #005bb5;
 }
 
-
 /* Financial goals */
 .financial-goals {
   margin-top: 40px;
+  text-align: center;
+}
+
+.goal-section-title {
+  margin-bottom: 0px;
+  font-size: 2em;
+  color: #333;
 }
 
 .add-goal-button {
-  margin-bottom: 20px;
+  margin-top: 20px;
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -700,30 +886,80 @@ export default {
 }
 
 .goals {
+  margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .goal {
-  text-align: center;
-  padding: 60px;
-  margin: 10px;
+  background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  animation: slideIn 1s;
+  margin: 10px;
   flex: 1 1 calc(33.333% - 20px);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .goal:hover {
-  transform: scale(1.1) rotateY(15deg);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
-.goal p {
-  color: white;
+.goal-image {
+  z-index: 20;
+  width: 100%;
+  height: auto;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: -20px; /* Overlap with goal-content */
+}
+
+.goal-content {
+  background-color: #ffffff;
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.goal-icon {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.goal-info h3 {
+  margin: 10px 0;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.goal-info p {
+  margin: 5px 0;
+  font-size: 1em;
+  color: #666;
+}
+#goalCategory{
+  width: 100%;
+}
+
+.progress-bar-container {
+  width: 100%;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+  height: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #007bff;
+  transition: width 0.5s ease-in-out;
 }
 
 /* Modal styles */
@@ -742,47 +978,96 @@ export default {
 
 .modal-content {
   background: #ffffff;
-  padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 90%;
   max-width: 500px;
+  font-family: 'Space Grotesk', sans-serif;
+  overflow: hidden;
+}
+.modal-content img {
+  width: 100%;
+  height: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.modal-text-content {
+  padding: 20px;
 }
 
-.modal-content input {
+/* Form styles */
+.form-group {
+  margin-bottom: 15px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
   padding: 10px;
-  margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: border-color 0.3s ease;
 }
 
-.modal-content button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.form-group input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-.modal-content button:hover {
-  background-color: #005bb5;
+.form-group textarea {
+  height: 60px;
+  resize: vertical;
 }
 
-.progress-bar {
-  width: 100%;
-  background: #f1f1f1;
-  border-radius: 10px;
-  overflow: hidden;
+.add-money-form {
   margin-top: 20px;
+  transition: all 0.3s ease-in-out;
 }
 
-.progress {
-  height: 20px;
-  background: #007bff;
+.add-money-form-enter-active, .add-money-form-leave-active {
+  transition: opacity 0.5s;
+}
+
+.add-money-form-enter, .add-money-form-leave-to {
+  opacity: 0;
+}
+
+/* Currency input styles */
+.currency-input {
+  display: flex;
+  align-items: center;
+}
+
+.currency-input input {
+  margin-right: 10px;
+  flex: 1;
+}
+
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: border-color 0.3s ease;
+}
+
+.currency-input select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* Footer navigation */
