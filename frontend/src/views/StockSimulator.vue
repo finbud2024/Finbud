@@ -38,7 +38,32 @@
       <section class="actions">
         <h3>Actions</h3>
         <div class="action-form">
-          <input v-model="stockSymbol" type="text" placeholder="Enter stock symbol" />
+          <input
+            v-model="stockSymbol"
+            type="text"
+            placeholder="Enter stock symbol"
+            @input="filterStockRecommendations"
+            @focus="showRecommendations = true"
+            @keydown="handleKeyDown"
+          />
+          <div class="autocomplete-dropdown">
+            <ul
+              v-if="showRecommendations && stockRecommendations.length"
+              class="autocomplete-list"
+            >
+              <li
+                v-for="(symbol, index) in stockRecommendations"
+                :key="index"
+                @click="selectStockSymbol(symbol)"
+                :class="{
+                  'autocomplete-item': true,
+                  highlighted: index === highlightedIndex,
+                }"
+              >
+                {{ symbol }}
+              </li>
+            </ul>
+          </div>
           <input v-model="quantity" type="number" placeholder="Quantity" />
           <select v-model="action">
             <option value="buy">Buy</option>
@@ -46,7 +71,9 @@
           </select>
           <div class="buttons">
             <button class="clear-btn" @click="clearForm">CLEAR</button>
-            <button class="preview-btn" @click="showModal = true">Preview Order</button>
+            <button class="preview-btn" @click="showModal = true">
+              Preview Order
+            </button>
           </div>
         </div>
       </section>
@@ -83,52 +110,51 @@
 
       <!-- Right Column: Performance Chart Placeholder -->
       <section class="performance-chart">
-  <h3>Performance</h3>
-  <div class="chart-controls">
-    <button
-      class="timeframe-btn"
-      :class="{ active: selectedTimeFrame === '1W' }"
-      @click="setTimeFrame('1W')"
-    >
-      1W
-    </button>
-    <button
-      class="timeframe-btn"
-      :class="{ active: selectedTimeFrame === '1M' }"
-      @click="setTimeFrame('1M')"
-    >
-      1M
-    </button>
-    <button
-      class="timeframe-btn"
-      :class="{ active: selectedTimeFrame === '3M' }"
-      @click="setTimeFrame('3M')"
-    >
-      3M
-    </button>
-    <button
-      class="timeframe-btn"
-      :class="{ active: selectedTimeFrame === '6M' }"
-      @click="setTimeFrame('6M')"
-    >
-      6M
-    </button>
-    <button
-      class="timeframe-btn"
-      :class="{ active: selectedTimeFrame === '1Y' }"
-      @click="setTimeFrame('1Y')"
-    >
-      1Y
-    </button>
-  </div>
-  <div class="chart-placeholder">
-    <p>Your performance chart will update daily starting tomorrow</p>
-  </div>
-  <div class="performance-history">
-    <button class="performance-history-btn">Performance History</button>
-  </div>
-</section>
-
+        <h3>Performance</h3>
+        <div class="chart-controls">
+          <button
+            class="timeframe-btn"
+            :class="{ active: selectedTimeFrame === '1W' }"
+            @click="setTimeFrame('1W')"
+          >
+            1W
+          </button>
+          <button
+            class="timeframe-btn"
+            :class="{ active: selectedTimeFrame === '1M' }"
+            @click="setTimeFrame('1M')"
+          >
+            1M
+          </button>
+          <button
+            class="timeframe-btn"
+            :class="{ active: selectedTimeFrame === '3M' }"
+            @click="setTimeFrame('3M')"
+          >
+            3M
+          </button>
+          <button
+            class="timeframe-btn"
+            :class="{ active: selectedTimeFrame === '6M' }"
+            @click="setTimeFrame('6M')"
+          >
+            6M
+          </button>
+          <button
+            class="timeframe-btn"
+            :class="{ active: selectedTimeFrame === '1Y' }"
+            @click="setTimeFrame('1Y')"
+          >
+            1Y
+          </button>
+        </div>
+        <div class="chart-placeholder">
+          <p>Your performance chart will update daily starting tomorrow</p>
+        </div>
+        <div class="performance-history">
+          <button class="performance-history-btn">Performance History</button>
+        </div>
+      </section>
     </div>
     <section class="transaction-history">
       <TransactionHistory />
@@ -136,79 +162,165 @@
 
     <stockScreener @applyFilter="stockFilterHandler" />
     <div class="stockDisplayContainer" v-if="count">
-      <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
+      <CompanyCard
+        v-for="(item, idx) in displayStock"
+        :key="idx"
+        :companyName="item.ticker"
+        :width="`80%`"
+      />
     </div>
 
-    <PreviewOrderModal 
-      v-if="showModal" 
-      :stockSymbol="stockSymbol" 
-      :quantity="quantity" 
-      :estimatedPrice="estimatedPrice" 
-      :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
-      @close="showModal = false"  
-      @clear-order="clearOrder"  
-      @submit-order="submitOrder(action)" 
+    <PreviewOrderModal
+      v-if="showModal"
+      :stockSymbol="stockSymbol"
+      :quantity="quantity"
+      :estimatedPrice="estimatedPrice"
+      :remainingBalance="
+        calculateRemainingBalance(action, estimatedPrice, quantity)
+      "
+      @close="showModal = false"
+      @clear-order="clearOrder"
+      @submit-order="submitOrder(action)"
     />
   </div>
 </template>
 
 <script>
-import StockScreener from '../components/StockScreener.vue';
-import CompanyCard from '@/components/CompanyCard.vue';
-import stockData from './hardcodeData/StockData.js';
-import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue';
-import TransactionHistory from '../components/StockSimulatorPage/TransactionHistory.vue';
-import axios from 'axios';
+import StockScreener from "../components/StockScreener.vue";
+import CompanyCard from "@/components/CompanyCard.vue";
+import stockData from "./hardcodeData/StockData.js";
+import PreviewOrderModal from "../components/StockSimulatorPage/PreviewOrderModal.vue";
+import TransactionHistory from "../components/StockSimulatorPage/TransactionHistory.vue";
+import axios from "axios";
 
 export default {
-  name: 'StockDashboard',
+  name: "StockDashboard",
   components: {
     StockScreener,
     CompanyCard,
     PreviewOrderModal,
-    TransactionHistory
+    TransactionHistory,
   },
   data() {
     return {
       bannerDisplayStock: "AAPL",
       displayStock: [],
       count: 1,
-      stockSymbol: '', 
-      quantity: '',
+      stockSymbol: "",
+      quantity: "",
+      action: "buy",
+      stockRecommendations: [],
+      showRecommendations: false,
       showModal: false,
-      estimatedPrice: 15, 
+      estimatedPrice: 15,
       accountBalance: 0,
       stockValue: 0,
       cash: 0,
       stockData: {
-        open: '',
-        close: '',
-        high: '',
-        low: '',
-        marketCap: '',
-        volume: ''
+        open: "",
+        close: "",
+        high: "",
+        low: "",
+        marketCap: "",
+        volume: "",
       },
-      fixedUserId: localStorage.getItem('token'),
-      action: 'buy',
-      selectedTimeFrame: '1W'  // Added to manage active state for buttons
+      fixedUserId: localStorage.getItem("token"),
+      action: "buy",
+      selectedTimeFrame: "1W", // Added to manage active state for buttons
+      highlightedIndex: -1,
     };
   },
   methods: {
+    filterStockRecommendations() {
+      const searchTerm = this.stockSymbol.toUpperCase();
+      if (searchTerm.length < 2) {
+        this.stockRecommendations = [];
+        this.showRecommendations = false;
+        return;
+      }
+
+      this.stockRecommendations = stockData
+        .filter((stock) => stock.ticker.startsWith(searchTerm))
+        .map((stock) => stock.ticker);
+
+      if (this.stockRecommendations.length > 10) {
+        this.stockRecommendations = this.stockRecommendations.slice(0, 10); // Limit to top 10 recommendations
+      }
+
+      this.showRecommendations = true;
+    },
+    selectStockSymbol(symbol) {
+      this.stockSymbol = symbol;
+      this.showRecommendations = false;
+    },
+    handleKeyDown(event) {
+      if (event.key === "ArrowDown") {
+        this.highlightedIndex =
+          (this.highlightedIndex + 1) % this.stockRecommendations.length;
+      } else if (event.key === "ArrowUp") {
+        this.highlightedIndex =
+          (this.highlightedIndex - 1 + this.stockRecommendations.length) %
+          this.stockRecommendations.length;
+      } else if (event.key === "Enter" && this.highlightedIndex >= 0) {
+        this.selectStockSymbol(
+          this.stockRecommendations[this.highlightedIndex]
+        );
+      }
+    },
+    clearForm() {
+      this.stockSymbol = "";
+      this.quantity = "";
+      this.action = "buy";
+      this.showRecommendations = false;
+      this.stockRecommendations = [];
+      this.highlightedIndex = -1;
+    },
+
     setTimeFrame(timeframe) {
       this.selectedTimeFrame = timeframe;
     },
     async stockFilterHandler(screenerFilter) {
       const appliedFilter = stockData
-        .filter((data) => data.eps && data.eps <= screenerFilter.eps[1] && data.eps >= screenerFilter.eps[0])
-        .filter((data) => data.pe && data.pe <= screenerFilter.pe[1] && data.pe >= screenerFilter.pe[0])
-        .filter((data) => data.pbr && data.pbr <= screenerFilter.pbr[1] && data.pbr >= screenerFilter.pbr[0])
-        .filter((data) => data.beta && data.beta <= screenerFilter.beta[1] && data.beta >= screenerFilter.beta[0])
-        .filter((data) => data.regularPrice && data.regularPrice <= screenerFilter.regularPrice[1] && data.regularPrice >= screenerFilter.regularPrice[0])
-        .filter((data) => data.priceSales && data.priceSales <= screenerFilter.priceSales[1] && data.priceSales >= screenerFilter.priceSales[0]);
-      
+        .filter(
+          (data) =>
+            data.eps &&
+            data.eps <= screenerFilter.eps[1] &&
+            data.eps >= screenerFilter.eps[0]
+        )
+        .filter(
+          (data) =>
+            data.pe &&
+            data.pe <= screenerFilter.pe[1] &&
+            data.pe >= screenerFilter.pe[0]
+        )
+        .filter(
+          (data) =>
+            data.pbr &&
+            data.pbr <= screenerFilter.pbr[1] &&
+            data.pbr >= screenerFilter.pbr[0]
+        )
+        .filter(
+          (data) =>
+            data.beta &&
+            data.beta <= screenerFilter.beta[1] &&
+            data.beta >= screenerFilter.beta[0]
+        )
+        .filter(
+          (data) =>
+            data.regularPrice &&
+            data.regularPrice <= screenerFilter.regularPrice[1] &&
+            data.regularPrice >= screenerFilter.regularPrice[0]
+        )
+        .filter(
+          (data) =>
+            data.priceSales &&
+            data.priceSales <= screenerFilter.priceSales[1] &&
+            data.priceSales >= screenerFilter.priceSales[0]
+        );
+
       this.displayStock = [];
-      await new Promise(r => setTimeout(r, 500));
-      
+      await new Promise((r) => setTimeout(r, 500));
+
       if (appliedFilter.length > 10) {
         let temp = appliedFilter.slice().sort(() => 0.5 - Math.random());
         this.displayStock = temp.slice(0, 10);
@@ -220,16 +332,16 @@ export default {
     calculateTotal(action, price, quantity) {
       const total = price * quantity;
       const fee = 0.01 * total;
-      return action === 'buy' ? total + fee : total - fee;
+      return action === "buy" ? total + fee : total - fee;
     },
     calculateRemainingBalance(action, price, quantity) {
       const total = this.calculateTotal(action, price, quantity);
-      return this.cash - (action === 'buy' ? total : -total);
+      return this.cash - (action === "buy" ? total : -total);
     },
     clearForm() {
-      this.stockSymbol = '';
-      this.quantity = '';
-      this.action = 'buy';
+      this.stockSymbol = "";
+      this.quantity = "";
+      this.action = "buy";
     },
     submitOrder(action) {
       const transactionData = {
@@ -237,46 +349,52 @@ export default {
         type: action,
         quantity: Math.abs(this.quantity),
         price: this.estimatedPrice,
-        userId: this.fixedUserId
+        userId: this.fixedUserId,
       };
 
-      axios.post(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions`, transactionData)
-        .then(response => {
-          console.log('Order submitted successfully:', response.data);
+      axios
+        .post(
+          `${process.env.VUE_APP_DEPLOY_URL}/stock-transactions`,
+          transactionData
+        )
+        .then((response) => {
+          console.log("Order submitted successfully:", response.data);
           this.showModal = false;
           this.fetchTransactions(); // Re-fetch transactions to update the table
         })
-        .catch(error => {
-          console.error('Error submitting order:', error);
+        .catch((error) => {
+          console.error("Error submitting order:", error);
         });
     },
     async fetchTransactions() {
       const userId = this.fixedUserId;
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`);
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`
+        );
         this.transactions = response.data;
       } catch (error) {
-        console.error('Error fetching transaction history:', error);
+        console.error("Error fetching transaction history:", error);
       }
-    }
+    },
   },
   computed: {
-    accountBalance: function() {
+    accountBalance: function () {
       return this.cash + this.stockValue;
-    } 
+    },
   },
   watch: {
-    '$route.query': {
+    "$route.query": {
       immediate: true,
       handler(newQuery) {
-        this.stockSymbol = newQuery.symbol || '';
-        this.quantity = newQuery.quantity || '';
+        this.stockSymbol = newQuery.symbol || "";
+        this.quantity = newQuery.quantity || "";
         this.bannerDisplayStock = newQuery.symbol || "AAPL";
-      }
+      },
     },
     displayStock(newVal) {
       console.log(newVal);
-    }
+    },
   },
   mounted() {
     const shuffledStock = stockData.slice().sort(() => 0.5 - Math.random());
@@ -285,16 +403,49 @@ export default {
     if (this.$route.query.symbol && this.$route.query.quantity) {
       this.bannerDisplayStock = this.$route.query.symbol;
     }
-    const userData = JSON.parse(localStorage.getItem('user'));
+    const userData = JSON.parse(localStorage.getItem("user"));
     this.accountBalance = userData.bankingAccountData.accountBalance;
     this.cash = userData.bankingAccountData.cash;
     this.stockValue = userData.bankingAccountData.stockValue;
     this.fetchTransactions();
-  }
+  },
 };
 </script>
 
 <style scoped>
+.autocomplete-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-list {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  list-style-type: none;
+  padding: 0;
+  margin: 5px 0 0 0;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.autocomplete-item.highlighted,
+.autocomplete-item:hover {
+  background-color: #007bff;
+  color: white;
+}
+
 .stockDisplayContainer {
   width: 100%;
   height: fit-content;
@@ -341,11 +492,16 @@ export default {
   flex-wrap: wrap;
 }
 
-.key-statistics, .actions {
+.key-statistics,
+.actions {
   width: 48%;
 }
 
-.key-statistics h3, .actions h3, .account-info h3, .transaction-history h3, .performance-chart h3 {
+.key-statistics h3,
+.actions h3,
+.account-info h3,
+.transaction-history h3,
+.performance-chart h3 {
   margin-bottom: 20px;
   color: #007bff;
   font-size: 1.5rem;
@@ -552,6 +708,16 @@ export default {
   .account-stat {
     margin: 5px 0;
   }
-}
 
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(0);
+    }
+  }
+}
 </style>
