@@ -182,6 +182,13 @@
       @clear-order="clearOrder"
       @submit-order="submitOrder(action)"
     />
+
+    <ConfirmationModal
+      v-if="showConfirmation"
+      :stockSymbol="stockSymbol"
+      :quantity="quantity"
+      @close="showConfirmation = false"
+    />
   </div>
 </template>
 
@@ -191,6 +198,7 @@ import CompanyCard from "@/components/CompanyCard.vue";
 import stockData from "./hardcodeData/StockData.js";
 import PreviewOrderModal from "../components/StockSimulatorPage/PreviewOrderModal.vue";
 import TransactionHistory from "../components/StockSimulatorPage/TransactionHistory.vue";
+import ConfirmationModal from "../components/StockSimulatorPage/ConfirmationModal.vue";
 import axios from "axios";
 
 export default {
@@ -200,6 +208,7 @@ export default {
     CompanyCard,
     PreviewOrderModal,
     TransactionHistory,
+    ConfirmationModal,
   },
   data() {
     return {
@@ -212,6 +221,7 @@ export default {
       stockRecommendations: [],
       showRecommendations: false,
       showModal: false,
+      showConfirmation: false,
       estimatedPrice: 15,
       accountBalance: 0,
       stockValue: 0,
@@ -360,6 +370,7 @@ export default {
         .then((response) => {
           console.log("Order submitted successfully:", response.data);
           this.showModal = false;
+          this.showConfirmation = true;
           this.fetchTransactions(); // Re-fetch transactions to update the table
         })
         .catch((error) => {
