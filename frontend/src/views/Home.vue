@@ -145,7 +145,7 @@ export default {
     },
     chatNow() {
       if(authStore.isAuthenticated){
-        this.$router.push('/chat ');
+        this.$router.push('/chat-view');
       }else{
         this.$router.push('/login');
       }
