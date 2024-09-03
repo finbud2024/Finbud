@@ -42,157 +42,160 @@ export default {
   },
   methods: {
     generateChart() {
-      if (!this.transactions.length) {
-        return;
+  if (!this.transactions.length) {
+    return;
+  }
+
+  // Get the initial balance
+  const initialBalance = this.transactions[0]?.balance || 0;
+
+  // Get the data by date
+  const groupedTransactions = this.transactions.reduce((acc, transaction) => {
+    const date = new Date(transaction.date).toLocaleDateString();
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push(transaction);
+    return acc;
+  }, {});
+
+  const labels = Object.keys(groupedTransactions);
+
+  // Receiving data
+  const receivingData = labels.map(date =>
+    groupedTransactions[date]
+      .filter(transaction => transaction.type === 'Income')
+      .reduce((sum, transaction) => sum + transaction.amount, 0)
+  );
+
+  // Spending data
+  const spendingData = labels.map(date =>
+    groupedTransactions[date]
+      .filter(transaction => transaction.type === 'Expense')
+      .reduce((sum, transaction) => sum - transaction.amount, 0)
+  );
+
+  // Set previousBalance to initialBalance
+  let previousBalance = initialBalance; 
+
+  const totalChangeData = labels.map(date => {
+    const dailyTransactions = groupedTransactions[date];
+
+    // Calculate daily net total by treating Income as positive and Expense as negative
+    const dailyNetTotal = dailyTransactions.reduce((sum, transaction) => {
+      if (transaction.type === 'Income') {
+        return sum + transaction.amount;
+      } else if (transaction.type === 'Expense') {
+        return sum - transaction.amount;
       }
+      return sum; // in case other transaction types exist
+    }, 0);
 
-      // Get the initial balance
-      const initialBalance = this.transactions[0]?.balance || 0;
+    // Update the running balance with the daily net total
+    previousBalance += dailyNetTotal;
 
-      // Get the data by date
-      const groupedTransactions = this.transactions.reduce((acc, transaction) => {
-        const date = new Date(transaction.date).toLocaleDateString();
-        if (!acc[date]) {
-          acc[date] = [];
-        }
-        acc[date].push(transaction);
-        return acc;
-      }, {});
+    // Return the updated balance for the chart data
+    return previousBalance;
+  });
 
-      const labels = Object.keys(groupedTransactions);
+  const chartData = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Income',
+        data: receivingData,
+        backgroundColor: 'rgba(0, 255, 0, 0.5)',
+        borderColor: 'rgba(0, 255, 0, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Expense',
+        data: spendingData,
+        backgroundColor: 'rgba(255, 0, 0, 0.5)',
+        borderColor: 'rgba(255, 0, 0, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Balance Change',
+        data: totalChangeData,
+        backgroundColor: 'rgba(171, 171, 171, 0.8)',
+        borderColor: 'rgba(171, 171, 171, 1)',
+        borderWidth: 1
+      }
+    ]
+  };
 
-      // Receiving data
-      const receivingData = labels.map(date =>
-        groupedTransactions[date]
-          .filter(transaction => transaction.type === 'Income')
-          .reduce((sum, transaction) => sum + transaction.amount, 0)
-      );
-
-      // Spending data
-      const spendingData = labels.map(date =>
-        groupedTransactions[date]
-          .filter(transaction => transaction.type === 'Expense')
-          .reduce((sum, transaction) => sum - transaction.amount, 0)
-      );
-
-      let previousBalance = 0;  // Initial balance, can be set to a specific value if needed
-      const totalChangeData = labels.map(date => {
-        const dailyTransactions = groupedTransactions[date];
-
-        // Calculate daily net total by treating Income as positive and Expense as negative
-        const dailyNetTotal = dailyTransactions.reduce((sum, transaction) => {
-          if (transaction.type === 'Income') {
-            return sum + transaction.amount;
-          } else if (transaction.type === 'Expense') {
-            return sum - transaction.amount;
+  const config = {
+    type: 'bar',
+    data: chartData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top'
+        },
+        title: {
+          display: true,
+          text: 'DAILY TRANSACTION OVERVIEW'
+        },
+        tooltip: {
+          callbacks: {
+            title: function (context) {
+              return context[0].label;
+            },
+            label: function (context) {
+              const datasetIndex = context.datasetIndex;
+              const dataIndex = context.dataIndex;
+              const value = context.dataset.data[dataIndex];
+              return `${context.dataset.label}: ${value}`;
+            }
           }
-          return sum; // in case other transaction types exist
-        }, 0);
-
-        // Update the running balance with the daily net total
-        previousBalance += dailyNetTotal;
-
-        // Return the updated balance for the chart data
-        return previousBalance;
-      });
-
-      const chartData = {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Income',
-            data: receivingData,
-            backgroundColor: 'rgba(0, 255, 0, 0.5)',
-            borderColor: 'rgba(0, 255, 0, 1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Expense',
-            data: spendingData,
-            backgroundColor: 'rgba(255, 0, 0, 0.5)',
-            borderColor: 'rgba(255, 0, 0, 1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Balance Change',
-            data: totalChangeData,
-            backgroundColor: 'rgba(171, 171, 171, 0.8)',
-            borderColor: 'rgba(171, 171, 171, 1)',
-            borderWidth: 1
-          }
-        ]
-      };
-
-      const config = {
-        type: 'bar',
-        data: chartData,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top'
-            },
-            title: {
-              display: true,
-              text: 'DAILY TRANSACTION OVERVIEW'
-            },
-            tooltip: {
-              callbacks: {
-                title: function (context) {
-                  return context[0].label;
-                },
-                label: function (context) {
-                  const datasetIndex = context.datasetIndex;
-                  const dataIndex = context.dataIndex;
-                  const value = context.dataset.data[dataIndex];
-                  return `${context.dataset.label}: ${value}`;
-                }
-              }
-            },
-            annotation: {
-              annotations: {
-                line1: {
-                  type: 'line',
-                  yMin: initialBalance,
-                  yMax: initialBalance,
-                  borderColor: 'rgba(255, 99, 132, 1)',
-                  borderWidth: 2,
-                  label: {
-                    content: 'Initial Balance',
-                    enabled: true,
-                    position: 'end',
-                  }
-                }
+        },
+        annotation: {
+          annotations: {
+            line1: {
+              type: 'line',
+              yMin: initialBalance,
+              yMax: initialBalance,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 2,
+              label: {
+                content: 'Initial Balance',
+                enabled: true,
+                position: 'end',
               }
             }
-          },
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: 'Time Series'
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Amount'
-              }
-            }
-          },
-          onClick: this.handleChartClick
+          }
         }
-      };
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Time Series'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Amount'
+          }
+        }
+      },
+      onClick: this.handleChartClick
+    }
+  };
 
-      const ctx = document.getElementById('transaction-bar-chart');
-      if (ctx) {
-        const context = ctx.getContext('2d');
-        if (this.chart) {
-          this.chart.destroy();
-        }
-        this.chart = new Chart(context, config);
-      }
-    },
+  const ctx = document.getElementById('transaction-bar-chart');
+  if (ctx) {
+    const context = ctx.getContext('2d');
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.chart = new Chart(context, config);
+  }
+}
+,
     handleChartClick(event, elements) {
       if (elements.length > 0) {
         const chart = elements[0].element.$context.chart;

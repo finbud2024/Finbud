@@ -4,7 +4,6 @@
   </div>
 </template>
 
-
 <script>
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
@@ -24,14 +23,34 @@ export default {
   },
   methods: {
     generateChart() {
-      let cumulativeBalance = 0;  // Initialize cumulative balance
+      // Find the initial balance from the transactions
+      let initialBalance = this.transactions.find(transaction => transaction.type === 'Initial')?.amount || 0;
+      let cumulativeBalance = initialBalance; // Initialize cumulative balance with the initial balance
 
       // Create arrays for labels and data
       const labels = [];
       const data = [];
       const pointColors = [];
 
+      // If there's an initial balance, add it as the first data point
+      if (initialBalance !== 0) {
+        labels.push('Initial');
+        data.push({
+          x: 'Initial',
+          y: initialBalance,
+          type: 'Initial',
+          amount: initialBalance,
+          description: 'Initial Balance'
+        });
+        pointColors.push('rgba(0, 0, 255, 0.5)'); // Blue color for the initial balance point
+      }
+
+      // Process each transaction to update the cumulative balance
       this.transactions.forEach(transaction => {
+        if (transaction.type === 'Initial') {
+          return; // Skip processing the initial balance again
+        }
+
         // Format the date for the x-axis labels
         const dateLabel = new Date(transaction.date).toLocaleDateString();
         labels.push(dateLabel);

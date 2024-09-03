@@ -8,7 +8,8 @@
         </div>
         <div class="header-greeting">
           <h1>
-            Hello, <span>{{ firstName }}</span>👋
+            Hello, <span>{{ firstName }}</span
+            >👋
           </h1>
           <p>A step towards financial freedom before the age of 30!</p>
         </div>
@@ -33,41 +34,103 @@
       <h2>Daily Transactions</h2>
       <div class="transaction-container">
         <div class="transaction-box">
-          <div class="input-box">
-            <select v-model="transaction.type" class="input-box type-select" required>
-              <option value="" disabled class="input-box-placeholder">Transaction Type</option>
-              <option value="Income">Income</option>
-              <option value="Expense">Expense</option>
-              <option value="Loan/Debt">Loan/Debt</option>
-            </select>
-            <input type="text" placeholder="Description" v-model="transaction.description"
-              @input="generateRecommendations" @keydown="generateRecommendations" @focus="showRecommendations"
-              @blur="hideRecommendations" />
-            <ul v-if="recommendations.length && recommendationsVisible" class="recommendation-list" @mousedown.prevent>
-              <li v-for="(recommendation, index) in recommendations" :key="index"
-                @click="selectRecommendation(recommendation)" :class="{ highlighted: index === highlightedIndex }">
-                {{ recommendation }}
-              </li>
-            </ul>
-            <input type="number" placeholder="Amount" v-model="transaction.amount" />
-            <input type="date" placeholder="Date" v-model="transaction.date" />
-            <input type="notes" placeholder="Notes" v-model="transaction.notes" />
+          <div v-if="showModal" class="modal-overlay">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3>Add Transaction</h3>
+              </div>
+              <div class="modal-body">
+                <div class="input-box">
+                  <select
+                    v-model="transaction.type"
+                    class="input-box type-select"
+                    required
+                  >
+                    <option value="" disabled class="input-box-placeholder">
+                      Transaction Type
+                    </option>
+                    <option value="Income">Income</option>
+                    <option value="Expense">Expense</option>
+                    <option value="Loan/Debt">Loan/Debt</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Description"
+                    v-model="transaction.description"
+                    @input="generateRecommendations"
+                    @keydown="generateRecommendations"
+                    @focus="showRecommendations"
+                    @blur="hideRecommendations"
+                  />
+                  <ul
+                    v-if="recommendations.length && recommendationsVisible"
+                    class="recommendation-list"
+                    @mousedown.prevent
+                  >
+                    <li
+                      v-for="(recommendation, index) in recommendations"
+                      :key="index"
+                      @click="selectRecommendation(recommendation)"
+                      :class="{ highlighted: index === highlightedIndex }"
+                    >
+                      {{ recommendation }}
+                    </li>
+                  </ul>
+                  <div class="currency-input">
+                    <input
+                      type="number"
+                      placeholder="Amount"
+                      v-model="transaction.amount"
+                    />
+                    <select v-model="selectedCurrency" class="selectinside">
+                      <option value="USD">USD</option>
+                      <option value="VND">VND</option>
+                    </select>
+                  </div>
+                  <input
+                    type="date"
+                    placeholder="Date"
+                    v-model="transaction.date"
+                  />
+                  <input
+                    type="notes"
+                    placeholder="Notes"
+                    v-model="transaction.notes"
+                  />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button @click="addTransaction">Add Transaction</button>
+                <button @click="closeModal" style="margin-right: 10px">
+                  Cancel
+                </button>
+              </div>
+            </div>
           </div>
           <div class="balance-and-button">
-            <button @click="addTransaction">Add Transaction</button>
+            <button @click="openModal">Create Transaction</button>
             <div class="balance">
-              Account Balance: {{ formatCurrency(this.accountBalance) }}
+              Account Balance:
+              {{
+                selectedCurrency === "USD"
+                  ? formatCurrency(accountBalance)
+                  : formatCurrency(convertToVND(accountBalance))
+              }}
             </div>
             <button @click="handleBalanceButtonClick">
               {{
-                initialBalanceSet
-                  ? "Reset Account Balance"
-                  : "Set Your Account Balance"
+                initialBalanceSet == 0
+                  ? "Set Your Account Balance"
+                  : "Reset Account Balance"
               }}
             </button>
             <div class="currency-selector">
-              <label for="currency">Choose Currency:</label>
-              <select v-model="selectedCurrency" @change="updateCurrency">
+              <label for="currency">Choose Currency: </label>
+              <select
+                v-model="selectedCurrency"
+                @change="updateCurrency"
+                class="selectoutside"
+              >
                 <option value="USD">USD</option>
                 <option value="VND">VND</option>
               </select>
@@ -87,11 +150,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="trans in transactions" :key="trans._id" :class="{
-                income: trans.type === 'Income',
-                expense: trans.type === 'Expense',
-                'loan-debt': trans.type === 'Loan/Debt'
-              }">
+              <tr
+                v-for="trans in transactions"
+                :key="trans._id"
+                :class="{
+                  income: trans.type === 'Income',
+                  expense: trans.type === 'Expense',
+                  'loan-debt': trans.type === 'Loan/Debt',
+                }"
+              >
                 <td>{{ trans.description }}</td>
                 <td>{{ formattedDate(trans.date) }}</td>
                 <td v-if="selectedCurrency === 'USD'">
@@ -102,12 +169,11 @@
                 </td>
                 <td>{{ trans.type }}</td>
                 <td>
-                  <button @click="editTransaction(trans)">Edit</button>
+                  <button @click="editTransaction(trans)" style="margin-right: 10px;">Edit</button>
                   <button @click="removeTransaction(trans._id)">Remove</button>
                 </td>
                 <td>{{ trans.notes }}</td>
               </tr>
-
             </tbody>
           </table>
         </div>
@@ -117,7 +183,10 @@
       <button @click="showLineChart = true" :class="{ active: showLineChart }">
         Line Chart
       </button>
-      <button @click="showLineChart = false" :class="{ active: !showLineChart }">
+      <button
+        @click="showLineChart = false"
+        :class="{ active: !showLineChart }"
+      >
         Bar Chart
       </button>
     </div>
@@ -133,8 +202,13 @@
         Add Goal
       </button>
       <div class="goals">
-        <div class="goal" v-for="goal in goals" :key="goal.id" :style="goalStyle(goal.progress)"
-          @click="showGoalProgress(goal.name, goal.progress)">
+        <div
+          class="goal"
+          v-for="goal in goals"
+          :key="goal.id"
+          :style="goalStyle(goal.progress)"
+          @click="showGoalProgress(goal.name, goal.progress)"
+        >
           <i :class="goal.icon"></i>
           <p>{{ goal.name }}<br />{{ goal.totalMoney }} VND</p>
         </div>
@@ -149,17 +223,41 @@
         </div>
       </div>
     </div>
-    <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
+    <div
+      v-if="showAddGoalModal"
+      class="modal"
+      @click="showAddGoalModal = false"
+    >
       <div class="modal-content" @click.stop>
         <h3>Add New Goal</h3>
-        <input type="text" placeholder="Name of the goal" v-model="newGoal.name" />
-        <input type="text" placeholder="Icon class (e.g., 'fas fa-home')" v-model="newGoal.icon" />
-        <input type="number" placeholder="Total money needed" v-model="newGoal.totalMoney" />
-        <input type="number" placeholder="Money already have" v-model="newGoal.moneyHave" />
+        <input
+          type="text"
+          placeholder="Name of the goal"
+          v-model="newGoal.name"
+        />
+        <input
+          type="text"
+          placeholder="Icon class (e.g., 'fas fa-home')"
+          v-model="newGoal.icon"
+        />
+        <input
+          type="number"
+          placeholder="Total money needed"
+          v-model="newGoal.totalMoney"
+        />
+        <input
+          type="number"
+          placeholder="Money already have"
+          v-model="newGoal.moneyHave"
+        />
         <button @click="addGoal">Add Goal</button>
       </div>
     </div>
-    <div v-if="showEditTransactionModal" class="modal" @click="showEditTransactionModal = false">
+    <div
+      v-if="showEditTransactionModal"
+      class="modal"
+      @click="showEditTransactionModal = false"
+    >
       <div class="modal-content" @click.stop>
         <h3>Edit Transaction</h3>
         <input type="text" v-model="editTransactionData.description" />
@@ -167,21 +265,39 @@
         <button @click="updateTransaction">Update Transaction</button>
       </div>
     </div>
-    <div v-if="showSetBalanceModal" class="modal" @click="showSetBalanceModal = false">
+    <div
+      v-if="showSetBalanceModal"
+      class="modal"
+      @click="showSetBalanceModal = false"
+    >
       <div class="modal-content" @click.stop>
         <h3>Set Initial Balance</h3>
-        <input type="number" placeholder="Initial Balance" v-model="initialBalance" />
+        <input
+          type="number"
+          placeholder="Initial Balance"
+          v-model="initialBalance"
+          style="
+            width: 90%;
+            margin-top: -20px;
+            margin-bottom: 15px;
+            z-index: 1000;
+          "
+        />
         <button @click="setInitialBalance">Set Balance</button>
       </div>
     </div>
-    <div v-if="showResetConfirmationModal" class="modal" @click="showResetConfirmationModal = false">
+    <div
+      v-if="showResetConfirmationModal"
+      class="modal"
+      @click="showResetConfirmationModal = false"
+    >
       <div class="modal-content" @click.stop>
         <h3>Reset Account Balance</h3>
         <p>
           Are you sure you want to reset your account balance? This action will
           delete all your transactions.
         </p>
-        <button @click="resetAccountBalance">Yes</button>
+        <button @click="resetAccountBalance" style="margin-right: 10px;">Yes</button>
         <button @click="showResetConfirmationModal = false">No</button>
       </div>
     </div>
@@ -297,11 +413,20 @@ export default {
     authStore() {
       return authStore;
     },
+    sortedTransactions() {
+      return this.transactions
+        .slice()
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+    },
   },
   methods: {
     convertToVND(amount) {
       const exchangeRate = 23000; // Example exchange rate, 1 USD = 23,000 VND
       return amount * exchangeRate;
+    },
+    convertVNDToUSD(amount) {
+      const exchangeRate = 23000; // Example exchange rate: 1 USD = 23,000 VND
+      return amount / exchangeRate;
     },
     showGoalProgress(title, progress) {
       this.goalTitle = title;
@@ -310,22 +435,32 @@ export default {
     },
 
     // Get the transaction data of a specific user by using user's userId to display user's transaction
+    sortTransactionsByDate(transactions) {
+      return transactions.sort((a, b) => {
+        // Convert date strings to Date objects
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+
+        // Sort by date in descending order
+        return dateB - dateA;
+      });
+    },
+
+    // Example usage of the sorting function
     async fetchTransactions() {
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
-        this.transactions = response.data;
+        this.transactions = this.sortTransactionsByDate(response.data);
         if (this.transactions.length > 0) {
-          this.accountBalance =
-            this.transactions[this.transactions.length - 1].balance;
-          this.initialBalanceSet = true; // If there are transactions, initial balance is set
+          this.accountBalance = this.transactions[0].balance; // Assuming the most recent transaction is the first one after sorting
+          this.initialBalanceSet = true;
         }
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
     },
-
     // add a transaction with userId to fetch by userId
     async addTransaction() {
       if (
@@ -335,47 +470,51 @@ export default {
         this.transaction.type
       ) {
         try {
+          let amountInUSD = this.transaction.amount;
+
+          // Convert amount to USD if the selected currency is VND
+          if (this.selectedCurrency === "VND") {
+            amountInUSD = this.convertVNDToUSD(this.transaction.amount);
+          }
+
           const latestTransaction =
             this.transactions.length > 0
-              ? this.transactions[this.transactions.length - 1]
+              ? this.transactions[0] // After sorting, the latest transaction is at the beginning
               : null;
           const latestBalance = latestTransaction
             ? latestTransaction.balance
             : 0;
 
-          const newBalance = latestBalance + (
-            this.transaction.type === 'Income'
-              ? this.transaction.amount
-              : this.transaction.type === 'Expense'
-                ? -this.transaction.amount
-                : 0 // For 'Loan/Debt' or other types
-          );
-          console.log(newBalance);
+          const newBalance =
+            latestBalance +
+            (this.transaction.type === "Income"
+              ? amountInUSD
+              : this.transaction.type === "Expense"
+              ? -amountInUSD
+              : 0); // For 'Loan/Debt' or other types
+
           const response = await axios.post(
             `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
             {
-              ...this.transaction, // This should include date, description, amount
+              ...this.transaction,
+              amount: amountInUSD,
               balance: newBalance,
               userId: this.userId,
             }
           );
 
-          console.log(
-            "Date being sent:",
-            this.transaction.date,
-            "Description:",
-            this.transaction.description
-          ); // Debugging output
-          this.transactions.push(response.data);
-          this.accountBalance = newBalance;
+          // Insert the new transaction at the beginning of the array
+          this.transactions.unshift(response.data);
+          this.accountBalance = newBalance; // Update the balance with the new transaction
           this.transaction.description = "";
           this.transaction.amount = null;
-          this.transaction.date = ""; // Reset date after adding transaction
+          this.transaction.date = "";
           this.transaction.notes = "";
           this.transaction.type = "";
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
+        this.showModal = false;
       } else {
         console.error("Transaction description, amount, and date are required");
       }
@@ -383,31 +522,35 @@ export default {
 
     // add a InitialBalance with userId to fetch by userId
     async setInitialBalance() {
-      if (this.initialBalance !== null) {
-        try {
-          const response = await axios.post(
-            `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
-            {
-              description: "Initial Balance",
-              amount: this.initialBalance,
-              date: this.transaction.date,
-              balance: this.initialBalance,
-              notes: this.transaction.notes,
-              userId: this.userId,
-              type: this.transaction.type,
-            }
-          );
+      // Provide default values if they are not set
+      const date =
+        this.transaction.date || new Date().toISOString().slice(0, 10); // Use current date if not set
+      const type = this.transaction.type || "Initial"; // Default type if not set
+      const notes = this.transaction.notes || ""; // Default notes to empty string if not set
 
-          this.transactions.push(response.data);
-          this.accountBalance = this.initialBalance; // Set the initial balance
-          this.initialBalance = null;
-          this.showSetBalanceModal = false;
-          this.initialBalanceSet = true; // Mark initial balance as set
-        } catch (error) {
-          console.error("Error setting initial balance:", error);
-        }
-      } else {
-        console.error("Initial balance is required");
+      try {
+        // Send a POST request to set the initial balance
+        const response = await axios.post(
+          `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
+          {
+            description: "Initial Balance",
+            amount: this.initialBalance,
+            date: date,
+            balance: this.initialBalance,
+            notes: notes,
+            userId: this.userId,
+            type: type,
+          }
+        );
+
+        // Update local state with the response data
+        this.transactions.push(response.data);
+        this.accountBalance = parseFloat(this.initialBalance); // Update the account balance
+        this.initialBalance = null; // Reset the initial balance input field
+        this.showSetBalanceModal = false; // Close the modal
+        this.initialBalanceSet = true; // Mark initial balance as set
+      } catch (error) {
+        console.error("Error setting initial balance:", error);
       }
     },
     handleBalanceButtonClick() {
@@ -472,6 +615,9 @@ export default {
         console.error("Error removing transaction:", error);
       }
     },
+    openModal() {
+      this.showModal = true;
+    },
     recalculateBalances() {
       let balance = 0;
       for (let transaction of this.transactions) {
@@ -511,7 +657,9 @@ export default {
       const [year, month, day] = datePart.split("-");
       return `${month}/${day}/${year}`;
     },
-
+    closeModal() {
+      this.showModal = false;
+    },
     formatCurrency(amount) {
       // Access the selectedCurrency property directly from the Vue instance
       const currency = this.selectedCurrency;
@@ -772,6 +920,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin-bottom: -20px;
 }
 
 .balance {
@@ -920,11 +1069,23 @@ export default {
   /* Optional: Add a border if needed */
   position: relative;
   /* Allows absolute positioning of child inputs */
-
 }
 
-select:invalid {
-  color: gray;
+.selectoutside {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.selectinside {
+  padding: 9px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+  margin-left: 10px;
 }
 
 .type-select {
@@ -1001,6 +1162,7 @@ select:invalid {
   justify-content: center;
   align-items: center;
   z-index: 20;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .modal-content {
@@ -1043,6 +1205,11 @@ select:invalid {
   margin-top: 20px;
 }
 
+.currency-input {
+  display: flex;
+  align-items: center;
+}
+
 .progress {
   height: 20px;
   background: #007bff;
@@ -1061,6 +1228,46 @@ select:invalid {
 
 .nav-item {
   text-align: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 500px;
+  max-width: 90%;
+}
+
+.modal-header {
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-footer button {
+  margin-left: 10px;
 }
 
 /* Animations */
@@ -1107,10 +1314,6 @@ select:invalid {
 
   .assets-value {
     font-size: 1.2em;
-  }
-
-  .transaction-container {
-    flex-direction: column;
   }
 
   .goal {
