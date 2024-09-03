@@ -16,6 +16,7 @@ import stockRoute from '../Endpoints/stockRoute.js';
 import transactionRoute from '../Endpoints/transactionRoute.js';
 import stockTransactionRoute from '../Endpoints/stockTransactionRoute.js';
 import goalRoute from '../Endpoints/goalRoute.js';
+import proxyRoute from '../Endpoints/proxyRoute.js';
 
 dotenv.config();
 
@@ -49,10 +50,10 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(cors());
 
-app.use((req, res, next) => {
-  console.log(req.url);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(req.body);
+//   next();
+// });
 
 const router = express.Router();
 
@@ -66,6 +67,7 @@ router.use('/', stockRoute);
 router.use('/', transactionRoute);
 router.use('/', stockTransactionRoute);
 router.use('/', goalRoute);
+router.use('/', proxyRoute);
 
 app.use('/.netlify/functions/server', router);
 

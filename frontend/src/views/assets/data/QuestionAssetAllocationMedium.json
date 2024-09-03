@@ -1,0 +1,92 @@
+[
+    {
+        "Question": "What is the primary benefit of diversification in asset allocation?",
+        "Answers": [
+            {"Answer": "Diversification helps to spread risk across different investments.", "Correct": true, "Explanation": "Diversification helps to spread risk across different investments, reducing the impact of any single asset's poor performance."},
+            {"Answer": "Diversification focuses on spreading risk, not increasing the number of investments.", "Correct": false, "Explanation": "While diversification spreads risk, it does not primarily aim to increase the number of investments."},
+            {"Answer": "Diversification aims to manage risk, not focus on a single asset's returns.", "Correct": false, "Explanation": "Diversification is intended to manage risk by spreading investments, rather than focusing on the returns of a single asset."},
+            {"Answer": "Diversification is about spreading risk, not timing the market.", "Correct": false, "Explanation": "Diversification focuses on spreading risk across various investments rather than trying to time the market."}
+        ]
+    },
+    {
+        "Question": "What is 'strategic asset allocation'?",
+        "Answers": [
+            {"Answer": "Strategic asset allocation involves setting long-term targets for asset class allocations to achieve investment goals.", "Correct": true, "Explanation": "Strategic asset allocation sets long-term targets for different asset classes to help achieve specific investment goals."},
+            {"Answer": "Strategic allocation is about long-term targets, not short-term market timing.", "Correct": false, "Explanation": "Strategic allocation focuses on long-term targets rather than short-term market timing."},
+            {"Answer": "Strategic allocation focuses on long-term targets across asset classes, not concentrating on one.", "Correct": false, "Explanation": "Strategic allocation addresses long-term targets for various asset classes instead of concentrating on a single asset."},
+            {"Answer": "Strategic allocation is about long-term targets, not frequent changes based on market trends.", "Correct": false, "Explanation": "Strategic allocation aims for long-term targets and does not involve frequent changes based on market trends."}
+        ]
+    },
+    {
+        "Question": "How often should a portfolio be rebalanced?",
+        "Answers": [
+            {"Answer": "Rebalancing should occur at set intervals or when deviations from target allocations are significant.", "Correct": true, "Explanation": "Portfolios should be rebalanced periodically or when there are significant deviations from the target asset allocations."},
+            {"Answer": "Rebalancing should occur periodically, not just at setup.", "Correct": false, "Explanation": "While rebalancing should happen periodically, it is also important to adjust for significant deviations from the target allocations."},
+            {"Answer": "Rebalancing is based on deviation from targets, not market trends.", "Correct": false, "Explanation": "Rebalancing is focused on deviation from target allocations rather than market trends."},
+            {"Answer": "Rebalancing typically occurs less frequently, such as annually, not daily.", "Correct": false, "Explanation": "Rebalancing usually occurs at set intervals, which may be annual or more frequent, depending on the portfolio's needs."}
+        ]
+    },
+    {
+        "Question": "What is 'tactical asset allocation'?",
+        "Answers": [
+            {"Answer": "Tactical asset allocation involves short-term adjustments based on market conditions.", "Correct": true, "Explanation": "Tactical asset allocation involves making short-term adjustments to a portfolio based on current market conditions."},
+            {"Answer": "Tactical allocation is short-term and flexible, while strategic allocation is long-term and fixed.", "Correct": false, "Explanation": "Tactical allocation adjusts based on market conditions, whereas strategic allocation is long-term and more fixed."},
+            {"Answer": "Tactical allocation adjusts based on conditions, not focusing solely on high-risk assets.", "Correct": false, "Explanation": "Tactical allocation involves adjusting investments based on market conditions rather than focusing solely on high-risk assets."},
+            {"Answer": "Tactical allocation is about short-term adjustments, not eliminating risk.", "Correct": false, "Explanation": "Tactical allocation involves making short-term adjustments but does not aim to completely eliminate risk."}
+        ]
+    },
+    {
+        "Question": "Which asset class is known for providing steady income?",
+        "Answers": [
+            {"Answer": "Bonds typically provide regular income through interest payments.", "Correct": true, "Explanation": "Bonds are known for providing steady income through periodic interest payments."},
+            {"Answer": "Stocks provide dividends but are less consistent compared to bonds.", "Correct": false, "Explanation": "While stocks can provide dividends, they are generally less consistent than the income provided by bonds."},
+            {"Answer": "Cryptocurrencies are highly volatile and do not provide regular income.", "Correct": false, "Explanation": "Cryptocurrencies are known for their volatility and do not offer regular income like bonds do."},
+            {"Answer": "Real estate can provide rental income, but it's less steady compared to bonds.", "Correct": false, "Explanation": "Real estate may offer rental income, but it is generally less steady compared to the consistent income provided by bonds."}
+        ]
+    },
+    {
+        "Question": "What is the primary goal of including cash in a portfolio?",
+        "Answers": [
+            {"Answer": "Cash provides liquidity and stability, allowing for flexibility in investment decisions.", "Correct": true, "Explanation": "Including cash in a portfolio provides liquidity and stability, allowing investors flexibility in making investment decisions."},
+            {"Answer": "Cash does not aim for high returns but offers safety and liquidity.", "Correct": false, "Explanation": "The primary goal of cash is not high returns but rather providing safety and liquidity."},
+            {"Answer": "Cash is included for liquidity, not for high returns or growth.", "Correct": false, "Explanation": "The purpose of cash in a portfolio is to ensure liquidity rather than seeking high returns or growth."},
+            {"Answer": "Cash is for stability and liquidity, not for diversification or high returns.", "Correct": false, "Explanation": "Cash contributes to stability and liquidity, but not for diversification or high returns."}
+        ]
+    },
+    {
+        "Question": "What factor is typically NOT considered when determining an investor's risk tolerance?",
+        "Answers": [
+            {"Answer": "An investor's time horizon is crucial for determining risk tolerance.", "Correct": false, "Explanation": "The time horizon is an important factor in assessing an investor's risk tolerance."},
+            {"Answer": "Investment goals are important for assessing risk tolerance.", "Correct": false, "Explanation": "Investment goals are a key consideration when determining risk tolerance."},
+            {"Answer": "An investor's financial situation affects their risk tolerance.", "Correct": false, "Explanation": "An investor's financial situation is a crucial factor in determining risk tolerance."},
+            {"Answer": "An investor's personal preferences are less relevant than financial goals and risk tolerance.", "Correct": true, "Explanation": "Personal preferences are generally less relevant compared to financial goals and risk tolerance when determining an investor's risk tolerance."}
+        ]
+    },
+    {
+        "Question": "What is the main advantage of investing in international assets?",
+        "Answers": [
+            {"Answer": "International investments provide diversification and exposure to global growth opportunities.", "Correct": true, "Explanation": "Investing in international assets offers diversification and access to growth opportunities in global markets."},
+            {"Answer": "International assets can add diversification but do not guarantee higher returns.", "Correct": false, "Explanation": "While international assets offer diversification, they do not guarantee higher returns."},
+            {"Answer": "International investments can provide diversification, not guaranteed returns.", "Correct": false, "Explanation": "International investments are beneficial for diversification but do not ensure guaranteed returns."},
+            {"Answer": "International investments offer exposure to global growth, not necessarily higher returns.", "Correct": false, "Explanation": "International investments provide global growth exposure but do not always lead to higher returns."}
+        ]
+    },
+    {
+        "Question": "Which of the following best describes a 'growth' investment strategy?",
+        "Answers": [
+            {"Answer": "A growth investment strategy focuses on assets expected to grow in value, such as stocks.", "Correct": true, "Explanation": "A growth investment strategy aims at assets that are expected to increase in value over time, such as stocks."},
+            {"Answer": "Growth investments focus on potential for appreciation, not just income generation.", "Correct": false, "Explanation": "Growth investments prioritize potential appreciation in value rather than solely focusing on generating income."},
+            {"Answer": "Growth strategies target assets for capital appreciation, not just income.", "Correct": false, "Explanation": "Growth strategies emphasize capital appreciation and are not focused solely on income generation."},
+            {"Answer": "Growth investments focus on value appreciation, not income stability.", "Correct": false, "Explanation": "Growth investments aim at value appreciation rather than providing stable income."}
+        ]
+    },
+    {
+        "Question": "What does 'asset allocation' help investors achieve?",
+        "Answers": [
+            {"Answer": "Asset allocation helps balance risk and return by spreading investments across various asset classes.", "Correct": true, "Explanation": "Asset allocation assists in balancing risk and return by distributing investments across different asset classes."},
+            {"Answer": "Asset allocation is about managing risk through diversification, not guaranteeing returns.", "Correct": false, "Explanation": "Asset allocation focuses on managing risk through diversification rather than guaranteeing returns."},
+            {"Answer": "Asset allocation helps balance risk and return by spreading investments, not just focusing on one type.", "Correct": false, "Explanation": "Asset allocation aims to balance risk and return by spreading investments across various asset types, rather than focusing on a single type."},
+            {"Answer": "Asset allocation spreads investments to manage risk and return, not just reduce asset numbers.", "Correct": false, "Explanation": "Asset allocation is about managing risk and return through diversification, not merely reducing the number of assets."}
+        ]
+    }
+]

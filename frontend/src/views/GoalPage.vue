@@ -38,11 +38,18 @@
           <div class="balance-and-button">
             <button @click="addTransaction">Add Transaction</button>
             <div class="balance">
-              Account Balance: {{ accountBalance.toFixed(2) }}$
+              Account Balance: {{ displayBalance }} {{ selectedCurrency }}
             </div>
             <button @click="handleBalanceButtonClick">
               {{ initialBalanceSet ? 'Reset Account Balance' : 'Set Your Account Balance' }}
             </button>
+            <div class="currency-selector">
+              <label for="currency">Choose Currency:</label>
+              <select v-model="selectedCurrency" @change="updateCurrency">
+                <option value="USD">USD</option>
+                <option value="VND">VND</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="transaction-list">
@@ -51,7 +58,8 @@
               <tr>
                 <th>Date</th>
                 <th>Description</th>
-                <th>Amount</th>
+                <th>Amount (USD)</th>
+                <th>Amount (VND)</th>
                 <th>Transaction</th>
                 <th>Actions</th>
               </tr>
@@ -60,7 +68,8 @@
               <tr v-for="trans in transactions" :key="trans._id" :class="{ 'receiving': trans.amount > 0, 'spending': trans.amount < 0 }">
                 <td>{{ formatDate(trans.date) }}</td>
                 <td>{{ trans.description }}</td>
-                <td>{{ trans.amount }}</td>
+                <td v-if="selectedCurrency === 'USD'">{{ trans.amount.toFixed(2) }} USD</td>
+                <td v-if="selectedCurrency === 'VND'">{{ convertToVND(trans.amount).toFixed(2) }} VND</td>
                 <td>{{ trans.amount > 0 ? 'Receiving' : 'Spending' }}</td>
                 <td>
                   <button @click="editTransaction(trans)">Edit</button>
@@ -280,8 +289,8 @@ export default {
       recommendations: [],
       recommendationsVisible: false,
       highlightedIndex: -1,
-      possibleRecommendations: ['Groceries', 'Utilities', 'Subscription', 'Transport', 'Dining', 
-      'Shopping', 'Insurance', 'Entertainment', 'Healthcare', 'Education', 'Coffee', 'Medical', 'Rent', 'Electronics', 
+      possibleRecommendations: ['Groceries', 'Utilities', 'Subscription', 'Transport', 'Dining',
+      'Shopping', 'Insurance', 'Entertainment', 'Healthcare', 'Education', 'Coffee', 'Medical', 'Rent', 'Electronics',
       'Gym', 'Books', 'Snacks', 'Meal', 'Bill', 'Travel'],
       goals: [],
       
@@ -289,6 +298,7 @@ export default {
       accountBalance: 0,
       initialBalanceSet: false, // New state to track if initial balance is set
       showLineChart: true, // New state to toggle between line and bar chart
+      selectedCurrency: 'USD' // Default currency
     };
   },
   computed: {
@@ -603,9 +613,55 @@ export default {
 
 
 <style scoped>
+.input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown {
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  z-index: 1000;
+}
+
+.dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown li {
+  padding: 8px;
+}
+
+.dropdown li a {
+  text-decoration: none;
+  color: #000;
+  display: block;
+}
+
+.dropdown li a:hover {
+  background-color: #ddd;
+}
+
+.quiz-container {
+  padding: 20px;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-bottom: 5%;
+  background: #f4f4f4;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
 /* Basic styles */
 .homepage {
-  font-family: 'Space Grotesk', sans-serif;
   color: #333;
   padding: 20px;
   background-color: #f9f9f9;

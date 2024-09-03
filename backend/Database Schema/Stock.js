@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
-
+//alphavantage API key always have these characteristics
 const StockSchema = new mongoose.Schema({
-    symbol: { type: String, required: true },
-    open: { type: Number, required: true },
-    high: { type: Number},
-    low : {type: Number},
-    close: { type: Number, },
-    change: { type: Number},
-    volume: { type: Number},
-    date: { type: Date, required: true}
+    symbol: String,
+    open: Number, 
+    high:  Number, 
+    low : Number, 
+    close: Number, 
+    change: Number, 
+    volume: Number, 
+    date: Date
 })
 
-const StockPrice = mongoose.model('StockPrice', StockSchema);
-export default StockPrice;
+const Stock = mongoose.model('Stock', StockSchema);
+export default Stock;

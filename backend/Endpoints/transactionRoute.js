@@ -155,9 +155,9 @@ transactionRoute.route('/transactions/u/:userId')
     console.log('in /transactions/u/:userId Route (GET) transactions with userId:' + JSON.stringify(userId));
     try {
       let transactions = await Transaction.find({ "userId": userId });
-      if (!transactions.length) {
-        return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
-      }
+      // if (!transactions.length) {
+      //   return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      // }
       return res.status(200).json(transactions);
     } catch (err) {
       return res.status(501).send(`Unexpected error occurred when looking for transactions with userId: ${userId} in database: ${err}`);

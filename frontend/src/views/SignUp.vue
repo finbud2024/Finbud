@@ -203,7 +203,6 @@ export default {
   border-radius: 15px;
   background: rgb(248, 249, 254);
   text-align: center;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .brand-name {
@@ -261,7 +260,6 @@ input {
   border-radius: 50px;
   background-color: #000;
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .error-message {

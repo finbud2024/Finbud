@@ -1,0 +1,92 @@
+[
+    {
+        "Question": "What is a key benefit of compound interest in investing?",
+        "Answers": [
+            {"Answer": "It allows earnings to grow exponentially over time.", "Correct": true, "Explanation": "Compound interest helps investments grow exponentially as interest is earned on previously earned interest."},
+            {"Answer": "It guarantees a fixed return on investment.", "Correct": false, "Explanation": "Compound interest does not guarantee returns; it depends on the performance of the investment."},
+            {"Answer": "It eliminates all investment risk.", "Correct": false, "Explanation": "Compound interest does not eliminate investment risk; it only affects how earnings grow."},
+            {"Answer": "It offers immediate liquidity.", "Correct": false, "Explanation": "Compound interest does not impact the liquidity of an investment."}
+        ]
+    },
+    {
+        "Question": "Which type of investment typically provides dividends?",
+        "Answers": [
+            {"Answer": "Dividend-paying stocks.", "Correct": true, "Explanation": "Dividend-paying stocks distribute a portion of the company's earnings to shareholders in the form of dividends."},
+            {"Answer": "Savings accounts.", "Correct": false, "Explanation": "Savings accounts offer interest rather than dividends."},
+            {"Answer": "Certificates of deposit (CDs).", "Correct": false, "Explanation": "CDs provide interest, not dividends."},
+            {"Answer": "Government bonds.", "Correct": false, "Explanation": "Government bonds pay interest, not dividends."}
+        ]
+    },
+    {
+        "Question": "What is dollar-cost averaging?",
+        "Answers": [
+            {"Answer": "Investing a fixed amount of money at regular intervals regardless of market conditions.", "Correct": true, "Explanation": "Dollar-cost averaging helps reduce the impact of market volatility by investing a set amount at regular intervals."},
+            {"Answer": "Investing a large sum of money all at once.", "Correct": false, "Explanation": "Dollar-cost averaging involves investing gradually, not all at once."},
+            {"Answer": "Buying and selling stocks based on market trends.", "Correct": false, "Explanation": "Dollar-cost averaging does not involve timing the market; it focuses on regular investments."},
+            {"Answer": "Diversifying investments across different asset classes.", "Correct": false, "Explanation": "Dollar-cost averaging is about investment timing, not asset allocation."}
+        ]
+    },
+    {
+        "Question": "Which investment typically carries the highest level of risk?",
+        "Answers": [
+            {"Answer": "Cryptocurrency.", "Correct": true, "Explanation": "Cryptocurrency is highly volatile and considered high-risk compared to traditional investments."},
+            {"Answer": "Government bonds.", "Correct": false, "Explanation": "Government bonds are usually considered low-risk investments."},
+            {"Answer": "Blue-chip stocks.", "Correct": false, "Explanation": "Blue-chip stocks are established companies and generally carry lower risk compared to cryptocurrencies."},
+            {"Answer": "Savings accounts.", "Correct": false, "Explanation": "Savings accounts are low-risk, with minimal potential for high returns."}
+        ]
+    },
+    {
+        "Question": "Why might someone choose to invest in real estate?",
+        "Answers": [
+            {"Answer": "To potentially earn rental income and benefit from property value appreciation.", "Correct": true, "Explanation": "Real estate investments can provide rental income and long-term appreciation."},
+            {"Answer": "To avoid market volatility.", "Correct": false, "Explanation": "Real estate can be subject to market fluctuations, though it may differ from stock markets."},
+            {"Answer": "To receive guaranteed returns.", "Correct": false, "Explanation": "Real estate investments do not guarantee returns and can vary in performance."},
+            {"Answer": "To have immediate liquidity.", "Correct": false, "Explanation": "Real estate is generally not highly liquid and can take time to sell."}
+        ]
+    },
+    {
+        "Question": "What is an index fund?",
+        "Answers": [
+            {"Answer": "A type of mutual fund that aims to replicate the performance of a specific market index.", "Correct": true, "Explanation": "Index funds are designed to track the performance of a market index, offering diversified exposure to a range of securities."},
+            {"Answer": "A fund that invests in a single stock or asset.", "Correct": false, "Explanation": "Index funds invest in a broad range of securities, not just one."},
+            {"Answer": "A fund with guaranteed returns.", "Correct": false, "Explanation": "Index funds do not guarantee returns; they track a market index."},
+            {"Answer": "A savings account with high interest rates.", "Correct": false, "Explanation": "Index funds are investment vehicles, not savings accounts."}
+        ]
+    },
+    {
+        "Question": "What is the purpose of asset allocation in investing?",
+        "Answers": [
+            {"Answer": "To diversify investments across different asset classes to manage risk.", "Correct": true, "Explanation": "Asset allocation helps spread investments across various asset classes to mitigate risk and optimize returns."},
+            {"Answer": "To maximize returns from a single asset class.", "Correct": false, "Explanation": "Asset allocation involves diversification, not focusing on a single asset class."},
+            {"Answer": "To guarantee fixed returns.", "Correct": false, "Explanation": "Asset allocation does not guarantee returns; it aims to balance risk and reward."},
+            {"Answer": "To ensure immediate liquidity.", "Correct": false, "Explanation": "Asset allocation focuses on risk management rather than liquidity."}
+        ]
+    },
+    {
+        "Question": "Which investment vehicle is commonly used for retirement savings?",
+        "Answers": [
+            {"Answer": "An Individual Retirement Account (IRA).", "Correct": true, "Explanation": "IRAs are specifically designed for retirement savings and offer tax advantages."},
+            {"Answer": "A credit card.", "Correct": false, "Explanation": "Credit cards are not investment vehicles and are used for borrowing, not saving or investing."},
+            {"Answer": "A savings bond.", "Correct": false, "Explanation": "Savings bonds are a low-risk investment but not commonly used for retirement savings."},
+            {"Answer": "A certificate of deposit (CD).", "Correct": false, "Explanation": "CDs are used for saving but are not typically the primary vehicle for retirement savings."}
+        ]
+    },
+    {
+        "Question": "What is the main disadvantage of high-risk investments?",
+        "Answers": [
+            {"Answer": "The potential for significant loss of principal.", "Correct": true, "Explanation": "High-risk investments can lead to significant losses, including loss of principal."},
+            {"Answer": "Guaranteed high returns.", "Correct": false, "Explanation": "High-risk investments do not guarantee returns and are more volatile."},
+            {"Answer": "Low potential for returns.", "Correct": false, "Explanation": "High-risk investments have the potential for high returns but also high risk."},
+            {"Answer": "Immediate liquidity issues.", "Correct": false, "Explanation": "While some high-risk investments may have liquidity concerns, the main issue is the potential for loss."}
+        ]
+    },
+    {
+        "Question": "What is a common characteristic of low-risk investments?",
+        "Answers": [
+            {"Answer": "Stable and predictable returns.", "Correct": true, "Explanation": "Low-risk investments generally offer more stable and predictable returns, though they may be lower."},
+            {"Answer": "High potential for returns.", "Correct": false, "Explanation": "Low-risk investments typically offer lower returns compared to high-risk investments."},
+            {"Answer": "Guaranteed returns.", "Correct": false, "Explanation": "Low-risk investments do not guarantee returns; they aim for stability."},
+            {"Answer": "High market volatility.", "Correct": false, "Explanation": "Low-risk investments tend to have low market volatility."}
+        ]
+    }
+]

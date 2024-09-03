@@ -23,46 +23,101 @@
         />
       </li>
     </ul>
+    <!-- Confirmation Popup -->
+    <div v-if="confirmDialogVisible" class="confirmation-popup">
+      <div class="popup-content">
+        <p>Are you sure you want to delete this thread?</p>
+        <button @click="deleteConfirmed">Yes</button>
+        <button @click="cancelDelete">No</button>
+      </div>
+    </div>
   </aside>
 </template>
 
 <script>
 export default {
-  name: 'SideBar',
-  props: ['threads'],
-  data()  {
-    return{
-      enterPressed: false
+  name: "SideBar",
+  props: ["threads"],
+  data() {
+    return {
+      enterPressed: false,
+      visibleDropdownIndex: null,
+      confirmDialogVisible: false,
+      threadToDelete: null,
     };
   },
   methods: {
     addThread() {
-      this.$emit('add-thread', {
-        name: 'New Thread',
+      this.$emit("add-thread", {
+        name: "New Thread",
         editing: false,
-        editedName: 'New Thread',
-        messages: []
+        editedName: "New Thread",
+        messages: [],
       });
     },
     editThread(index) {
+      this.threads[index].editing = true;
+      this.visibleDropdownIndex = null;
+      this.$nextTick(() => {
+        const input = this.$refs["threadInput-" + index][0];
+        if (input) {
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      });
       this.$emit('edit-thread', index);
     },
     saveThreadName(thread, index) {
       console.log(this.enterPressed);
       this.enterPressed = true;
       if (thread.editedName.trim()) {
-        this.$emit('save-thread-name', { newName: thread.editedName, index });
+        this.$emit("save-thread-name", { newName: thread.editedName, index });
       } else {
-        this.$emit('cancel-edit', index);
+        this.$emit("cancel-edit", index);
       }
     },
     selectThread(index) {
       this.$emit('select-thread', index);
-      // Reset the clicked property of all threads
       this.threads.forEach(thread => {
         thread.clicked = false;
       });
       this.threads[index].clicked = true;
+    },
+    confirmDelete(index) {
+      this.threadToDelete = index;
+      this.confirmDialogVisible = true;
+      this.visibleDropdownIndex = null;
+    },
+    deleteConfirmed() {
+      if (this.threadToDelete !== null) {
+        this.$emit("delete-thread", this.threadToDelete);
+        this.threadToDelete = null;
+      }
+      this.confirmDialogVisible = false;
+    },
+    cancelDelete() {
+      this.confirmDialogVisible = false;
+      this.threadToDelete = null;
+    },
+    toggleDropdown(index) {
+      this.visibleDropdownIndex =
+        this.visibleDropdownIndex === index ? null : index;
+    },
+    isDropdownVisible(index) {
+      return this.visibleDropdownIndex === index;
+    },
+    closeDropdown() {
+      this.visibleDropdownIndex = null;
+    },
+    cancelEdit(index) {
+      this.enterPressed = false;
+      this.$emit('cancel-edit', index);
+    },
+    handleBlur(thread, index) {
+      if (!this.enterPressed) {
+        this.cancelEdit(index);
+      }
     },
     cancelEdit(index) {
       this.enterPressed = false;
@@ -165,5 +220,45 @@ export default {
 .thread.clicked{
   background-color: #34495e;
   color: white;
+}
+
+/* Confirmation Popup */
+.confirmation-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.popup-content p {
+  margin-bottom: 20px;
+}
+
+.popup-content button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.popup-content button:hover {
+  background-color: #0056b3;
 }
 </style>

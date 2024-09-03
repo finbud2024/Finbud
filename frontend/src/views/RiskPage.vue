@@ -63,6 +63,7 @@
         <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />
       </div>
     </div>
+    <VaR />
     <RiskChat />
   </div>
 </template>
@@ -71,6 +72,7 @@
 import axios from 'axios';
 import Pagination from '../components/Risk&Chat/Pagination.vue';
 import RiskChat from '../components/Risk&Chat/RiskChat.vue';
+import VaR from '@/components/Risk&Chat/VaR.vue';
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
 const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
@@ -80,6 +82,7 @@ export default {
   components: {
     RiskChat,
     Pagination,
+    VaR,
   },
   data() {
     return {
@@ -252,9 +255,21 @@ img {
   margin-right: 8px;
 }
 
+/* Media query for phone users */
+
 @media screen and (max-width: 768px) {
   .data-card {
     width: 100%;
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
   }
+
+  th, td {
+    padding: 5px 5px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
 }
 </style>

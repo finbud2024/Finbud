@@ -1,8 +1,9 @@
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <CompanyCard :companyName="bannerDisplayStock" :width='`80%`' />
+      <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" />
     </header>
+
     <div class="main-content">
       <section class="key-statistics">
         <h3>Key Statistics</h3>
@@ -33,6 +34,7 @@
           </div>
         </div>
       </section>
+
       <section class="actions">
         <h3>Actions</h3>
         <div class="action-form">
@@ -49,30 +51,94 @@
         </div>
       </section>
     </div>
-    <section class="account-info">
-      <h3>Your account:</h3>
-      <div class="account-stats">
-        <div class="account-stat">
-          <span class="label">ACCOUNT BALANCE</span>
-          <span class="value">${{accountBalance}}</span>
+
+    <!-- New Layout for Account Info and Performance -->
+    <div class="account-performance">
+      <!-- Left Column: Account Information -->
+      <section class="account-info">
+        <h3>Your account:</h3>
+        <div class="account-grid">
+          <div class="stat">
+            <span class="label">ACCOUNT BALANCE:</span>
+            <span class="value">{{ accountBalance }}</span>
+          </div>
+          <div class="stat">
+            <span class="label">CASH BALANCE:</span>
+            <span class="value">{{ cash }}</span>
+          </div>
+          <div class="stat">
+            <span class="label">STOCK VALUE:</span>
+            <span class="value">{{ stockValue }}</span>
+          </div>
+          <div class="stat">
+            <span class="label">TODAY'S CHANGE:</span>
+            <span class="value">{{ todaysChange }}</span>
+          </div>
+          <div class="stat">
+            <span class="label">ANNUAL RETURN:</span>
+            <span class="value">{{ annualReturn }}%</span>
+          </div>
         </div>
-        <div class="account-stat">
-          <span class="label">CASH BALANCE</span>
-          <span class="value">${{cash}}</span>
-        </div>
-        <div class="account-stat">
-          <span class="label">STOCK VALUE</span>
-          <span class="value">${{stockValue}}</span>
-        </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- Right Column: Performance Chart Placeholder -->
+      <section class="performance-chart">
+  <h3>Performance</h3>
+  <div class="chart-controls">
+    <button
+      class="timeframe-btn"
+      :class="{ active: selectedTimeFrame === '1W' }"
+      @click="setTimeFrame('1W')"
+    >
+      1W
+    </button>
+    <button
+      class="timeframe-btn"
+      :class="{ active: selectedTimeFrame === '1M' }"
+      @click="setTimeFrame('1M')"
+    >
+      1M
+    </button>
+    <button
+      class="timeframe-btn"
+      :class="{ active: selectedTimeFrame === '3M' }"
+      @click="setTimeFrame('3M')"
+    >
+      3M
+    </button>
+    <button
+      class="timeframe-btn"
+      :class="{ active: selectedTimeFrame === '6M' }"
+      @click="setTimeFrame('6M')"
+    >
+      6M
+    </button>
+    <button
+      class="timeframe-btn"
+      :class="{ active: selectedTimeFrame === '1Y' }"
+      @click="setTimeFrame('1Y')"
+    >
+      1Y
+    </button>
+  </div>
+  <div class="chart-placeholder">
+    <p>Your performance chart will update daily starting tomorrow</p>
+  </div>
+  <div class="performance-history">
+    <button class="performance-history-btn">Performance History</button>
+  </div>
+</section>
+
+    </div>
     <section class="transaction-history">
       <TransactionHistory />
     </section>
-    <stockScreener @applyFilter="stockFilterHandler"/>
+
+    <stockScreener @applyFilter="stockFilterHandler" />
     <div class="stockDisplayContainer" v-if="count">
-      <CompanyCard v-for="(item,idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
+      <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
     </div>
+
     <PreviewOrderModal 
       v-if="showModal" 
       :stockSymbol="stockSymbol" 
@@ -123,10 +189,14 @@ export default {
         volume: ''
       },
       fixedUserId: localStorage.getItem('token'),
-      action: 'buy' 
+      action: 'buy',
+      selectedTimeFrame: '1W'  // Added to manage active state for buttons
     };
   },
   methods: {
+    setTimeFrame(timeframe) {
+      this.selectedTimeFrame = timeframe;
+    },
     async stockFilterHandler(screenerFilter) {
       const appliedFilter = stockData
         .filter((data) => data.eps && data.eps <= screenerFilter.eps[1] && data.eps >= screenerFilter.eps[0])
@@ -179,22 +249,6 @@ export default {
         .catch(error => {
           console.error('Error submitting order:', error);
         });
-
-      // //update for real user
-      // this.cash = this.calculateRemainingBalance(action, this.estimatedPrice, this.quantity); 
-      // this.stockValue = this.stockValue + this.calculateTotal(action, this.estimatedPrice, this.quantity);
-      // this.accountBalance = this.cash + this.stockValue;
-      // try {
-      //   axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.fixedUserId}`, {
-      //     bankingAccountData: {
-      //       accountBalance: this.accountBalance,
-      //       cash: this.cash,
-      //       stockValue: this.stockValue
-      //     }
-      //   });
-      // }catch(err){
-      //   console.log("error in updating account balance in user database", err);
-      // }
     },
     async fetchTransactions() {
       const userId = this.fixedUserId;
@@ -207,7 +261,6 @@ export default {
     }
   },
   computed: {
-    // Calculate the total account balance by adding cash and stock value
     accountBalance: function() {
       return this.cash + this.stockValue;
     } 
@@ -232,13 +285,10 @@ export default {
     if (this.$route.query.symbol && this.$route.query.quantity) {
       this.bannerDisplayStock = this.$route.query.symbol;
     }
-    // Fetch account balance data from local storage 
-    // dont need to check user authenticated
     const userData = JSON.parse(localStorage.getItem('user'));
     this.accountBalance = userData.bankingAccountData.accountBalance;
     this.cash = userData.bankingAccountData.cash;
     this.stockValue = userData.bankingAccountData.stockValue;
-    // Fetch transactions when the component is mounted
     this.fetchTransactions();
   }
 };
@@ -256,7 +306,6 @@ export default {
 }
 
 .dashboard {
-  font-family: 'Space Grotesk', sans-serif;
   color: #333;
 }
 
@@ -296,7 +345,7 @@ export default {
   width: 48%;
 }
 
-.key-statistics h3, .actions h3, .account-info h3, .transaction-history h3 {
+.key-statistics h3, .actions h3, .account-info h3, .transaction-history h3, .performance-chart h3 {
   margin-bottom: 20px;
   color: #007bff;
   font-size: 1.5rem;
@@ -308,11 +357,99 @@ export default {
   gap: 10px;
 }
 
+.account-performance {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 10px; /* Space between account and performance sections */
+}
+
+.account-info {
+  width: 24%; /* Left side 30% */
+}
+
+.performance-chart {
+  width: 70%; /* Right side 70% */
+  background-color: #e9ecef;
+  padding: 20px;
+  border-radius: 5px;
+  position: relative; /* For positioning the buttons */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90%; /* Make the height equal to account-info */
+  min-height: 500px; /* Optional: Set a minimum height if needed */
+}
+
+.chart-controls {
+  display: flex;
+  justify-content: space-between; /* Ensures buttons are evenly spaced */
+  align-items: center;
+  margin-bottom: 20px; /* Space between buttons and chart content */
+  width: 100%; /* Full width of the performance chart */
+}
+
+.timeframe-btn {
+  background-color: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1; /* Make each button take up an equal amount of space */
+  height: 50px; /* Adjusted height for a larger button */
+  line-height: 30px; /* Center text vertically */
+  margin: 0 5px; /* Space between each button */
+  border-radius: 5px; /* Rounded corners for buttons */
+  transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
+}
+
+.timeframe-btn.active {
+  background-color: #dfe6f1;
+  border: 2px solid #2e5cb8;
+  color: #2e5cb8;
+}
+
+.timeframe-btn:hover {
+  background-color: #dfe6f1;
+  border-radius: 5px;
+}
+
+.chart-placeholder {
+  background-color: #e9ecef;
+  padding: 20px;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px dashed #ced4da;
+  flex-grow: 1; /* Ensures the placeholder takes up the remaining space */
+}
+
+.performance-history {
+  margin-top: auto;
+}
+
+.performance-history-btn {
+  background-color: #2e5cb8;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.performance-history-btn:hover {
+  background-color: #1d3e8e;
+}
+
 .stat {
   background-color: #f8f9fa;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #dee2e6;
+  margin-bottom: 10px; /* Add space between each stat for the account grid */
 }
 
 .stat .label {
@@ -379,37 +516,25 @@ export default {
   background-color: #0056b3;
 }
 
-.account-info {
-  padding: 20px;
+.transaction-history {
+  margin-top: 20px;
 }
 
-.account-stats {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-}
-
-.account-stat {
-  text-align: center;
-  flex: 1;
-  margin: 10px;
-}
-
-.account-stat .label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-/* Media queries for responsiveness */
 @media (max-width: 768px) {
   .main-content {
     flex-direction: column;
     align-items: center;
   }
 
+  .account-performance {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .key-statistics,
-  .actions {
+  .actions,
+  .account-info,
+  .performance-chart {
     width: 100%;
     margin-bottom: 20px;
   }
@@ -428,4 +553,5 @@ export default {
     margin: 5px 0;
   }
 }
+
 </style>

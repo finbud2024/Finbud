@@ -3,10 +3,12 @@
     <div class="sidebar-content">
       <button class="close-btn" @click="close">x</button>
       <div class="guidance-text">
-        <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to help you get started:</p>
+        <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to
+          help you get started:</p>
         <ol class="guidance-list">
           <!-- guidance for general users -->
-          <li v-for="(item, index) in generalGuidanceList" :key="index">
+          <li v-for="(item, index) in generalGuidanceList" :key="index" @click="toggleExpansion(item)"
+            :class="{ 'expanded': expandedItem === item }">
             <span class="header-list">{{ item.header }}</span>
             <div v-if="item.command" class="command-container">
               <span class="command">{{ item.command }}</span>
@@ -14,21 +16,35 @@
             <div v-if="item.instruction">{{ item.instruction }}.</div>
             <div v-if="item.example">(e.g. "{{ item.example }}").</div>
             <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
+            <div class="expanded-content">
+              <img class="explanation" :src="item.explanation" alt="explanation">
+            </div>
           </li>
           <!-- guidance for authenticated users -->
           <div v-if="authStore.isAuthenticated">
-            <li v-for="(item, index) in userGuidanceList" :key="index">
+            <li v-for="(item, index) in userGuidanceList" :key="index" @click="toggleExpansion(item)"
+              :class="{ 'expanded': expandedItem === item }">
               <span class="header-list">{{ item.header }}</span>
               <div v-if="item.command" class="command-container">
                 <span class="command">{{ item.command }}</span>
               </div>
               <div v-if="item.instruction">{{ item.instruction }}.</div>
               <div v-if="item.example">(e.g. "{{ item.example }}").</div>
+              <div class="expanded-content">
+                <img class="explanation" :src="item.explanation" alt="explanation">
+              </div>
             </li>
           </div>
           <!-- this one always at last regardless of user status -->
-          <li> <span class="header-list">General Financial Concepts & Advice:</span>
-            <br> For general inquiries, use descriptive terms.</li>
+          <li @click="toggleExpansion(generalAdvice)"
+            :class="{ 'expanded': expandedItem === generalAdvice }"
+          >
+            <span class="header-list">{{generalAdvice.header}}</span>
+            <br> {{generalAdvice.instruction}}
+            <div class="expanded-content">
+              <img class="explanation" :src="generalAdvice.explanation" alt="explanation">
+            </div>
+          </li>
         </ol>
       </div>
     </div>
@@ -37,6 +53,16 @@
 
 <script>
 import authStore from '@/authStore';
+import search from '@/assets/guidance-explanation/search.png'
+import stockPrice from '@/assets/guidance-explanation/stock-price.png'
+import define from '@/assets/guidance-explanation/define.png'
+import crypto from '@/assets/guidance-explanation/crypto.png'
+import realestate from '@/assets/guidance-explanation/realestate.png'
+import add from '@/assets/guidance-explanation/add.png'
+import spend from '@/assets/guidance-explanation/spend.png'
+import buy from '@/assets/guidance-explanation/buy.png'
+import sell from '@/assets/guidance-explanation/sell.png'
+import general from '@/assets/guidance-explanation/general.png'
 export default {
   name: 'GuidanceModal',
   props: {
@@ -49,52 +75,73 @@ export default {
     return {
       generalGuidanceList: [
         {
+          header: "Advanced search",
+          command: "#search [term]",
+          instruction: "Enter search term",
+          example: "#search stock market",
+          explanation: search,
+        },
+        {
           header: "Stock Price Inquiry",
           command: null,
           instruction: "Enter the stock code in uppercase",
-          example: "TSLA"
+          example: "TSLA",
+          explanation: stockPrice,
         },
         {
           header: "Financial Term Definitions",
-          command: "#define term",
+          command: "#define [term]",
           instruction: null,
-          example: "#define IPO"
+          example: "#define IPO",
+          explanation: define,
         },
         {
           header: "List of Top 5 Cryptocurrencies",
           command: "#crypto",
           instruction: null,
-          example: null
+          example: null,
+          explanation: crypto,
         },
         {
           header: "Show 5 Properties in area",
-          command: "#realestate area_name",
+          command: "#realestate [area_name]",
           example: "#realestate new york",
-          additionalInfo: "If no area is specified, the default location will be San Jose."
-        }
+          additionalInfo: "If no area is specified, the default location will be San Jose.",
+          explanation: realestate,
+        },
       ],
       userGuidanceList: [
         {
           header: "Add a Transaction",
-          command: "#add description_amount",
-          example: "#add Shopping 125"
+          command: "#add [description] [amount]",
+          example: "#add Shopping 125",
+          explanation: add,
         },
         {
           header: "Track Spending",
-          command: "#spend description_amount",
-          example: "#spend Shopping 125"
+          command: "#spend [description] [amount]",
+          example: "#spend Shopping 125",
+          explanation: spend,
         },
         {
           header: "Buy Stock",
-          command: "#buy stock_name quantity",
-          example: "#buy TSLA 10"
+          command: "#buy [stock_name] [quantity]",
+          example: "#buy TSLA 10",
+          explanation: buy,
         },
         {
           header: "Sell Stock",
-          command: "#sell stock_name quantity",
-          example: "#sell TSLA 10"
-        }
-      ]
+          command: "#sell [stock_name] [quantity]",
+          example: "#sell TSLA 10",
+          explanation: sell,
+        },
+      ],
+      generalAdvice: {
+        header: "General Financial Concepts & Advice",
+        instruction: "For general inquiries, use descriptive terms.",
+        explanation: general,
+      },
+      expandedItem: null,
     };
   },
   computed: {
@@ -105,12 +152,20 @@ export default {
   methods: {
     close() {
       this.$emit('close');
+    },
+    toggleExpansion(item) {
+      //if it is already expanded and click into it again:
+      if (this.expandedItem === item) {
+        this.expandedItem = null;
+      }
+      else {
+        this.expandedItem = item;
+      }
     }
   }
 };
 </script>
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
 /* ___________________________*/
 /* guidance appreance */
 .sidebar-overlay {
@@ -126,7 +181,6 @@ export default {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s 0.3s, opacity 0.3s ease-in-out;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .sidebar-overlay.show {
@@ -163,6 +217,7 @@ export default {
   right: 10px;
   cursor: pointer;
 }
+
 /* ___________________________*/
 /* text inside the guidance */
 
@@ -171,7 +226,7 @@ export default {
   margin-bottom: 30px;
 }
 
-.guidance-list{
+.guidance-list {
   margin-left: -40px;
 }
 
@@ -180,6 +235,8 @@ export default {
   border: 2px solid black;
   border-radius: 15px;
   margin: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .guidance-text p {
@@ -193,7 +250,7 @@ export default {
   color: #007bff;
 }
 
-.guidance-text ol{
+.guidance-text ol {
   list-style-type: none;
   counter-reset: guidance-number;
 }
@@ -205,8 +262,10 @@ export default {
   font-weight: bold;
 }
 
-.guidance-text ol li:hover{
+.guidance-text ol li:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /*transform: scale(1.05);*/
+  border: 2px solid #007bff;
 }
 
 .command {
@@ -225,6 +284,34 @@ export default {
 .command-container {
   text-align: center;
   margin: 10px 0;
+}
+
+/* ___________________________*/
+/* Command expansion */
+
+.expanded-content {
+  transition: all 0.3s ease-in-out;
+  /* opacity, max-height*/
+  border-radius: 4px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  border-right: 2px solid #007bff;
+  display: flex;
+  justify-content: end;
+}
+
+.expanded .expanded-content {
+  max-height: 1000px;
+  padding: 10px;
+  margin-top: 20px;
+  opacity: 1;
+  display: flex;
+  justify-content: end;
+}
+
+.explanation {
+  height: 50px;
 }
 
 /* ___________________________*/
