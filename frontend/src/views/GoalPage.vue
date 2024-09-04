@@ -2,10 +2,6 @@
   <div class="homepage">
     <header class="header">
       <div class="header-content">
-        <div class="header-icons">
-          <i class="fas fa-phone"></i>
-          <i class="fas fa-bell"></i>
-        </div>
         <div class="header-greeting">
           <h1>
             Hello, <span>{{ firstName }}</span
@@ -16,18 +12,33 @@
       </div>
     </header>
     <section class="assets">
-      <div class="assets-value">
-        <p>31,340.43 US$</p>
-        <p>-$49.83 (-0.20%) Today</p>
+      <div class="alldata1">
+        <div class="categories-container">
+        <h2>This Week Spend</h2>      
+          <span v-for="category in categories" :key="category.name" :class="category.class">
+            <i :class="category.icon"></i>
+          </span>
+        </div>
+        <div class="chart-toggle-buttons">
+      <button @click="showLineChart = true" :class="{ active: showLineChart }">
+        Line Chart
+      </button>
+      <button
+        @click="showLineChart = false"
+        :class="{ active: !showLineChart }"
+      >
+        Bar Chart
+      </button>
+    </div>
+        <div class="total-spend">
+          <h1 style="margin: 5px;">${{accountBalance.toLocaleString()}}</h1>
+          <p>Account Balance</p>
+        </div>
+        <hr>
+        <div class="chart-container">
+        <TransactionLine v-if="showLineChart" :transactions="transactions" />
+        <TransactionBar v-else :transactions="transactions" />
       </div>
-      <div class="assets-graph">
-        <img src="@/assets/stockTri.png" alt="Assets Graph" />
-        <p class="assets-description">
-          At just 22 years old, <span>{{ displayName }}</span> from Vietnam has
-          amassed an impressive $31,340.43 in assets. This remarkable
-          achievement places him among the top 5% of his peers, demonstrating
-          exceptional financial acumen and strategic foresight.
-        </p>
       </div>
     </section>
     <section class="transactions">
@@ -179,23 +190,6 @@
         </div>
       </div>
     </section>
-    <div class="chart-toggle-buttons">
-      <button @click="showLineChart = true" :class="{ active: showLineChart }">
-        Line Chart
-      </button>
-      <button
-        @click="showLineChart = false"
-        :class="{ active: !showLineChart }"
-      >
-        Bar Chart
-      </button>
-    </div>
-    <section class="transaction-chart">
-      <div class="chart-container">
-        <TransactionLine v-if="showLineChart" :transactions="transactions" />
-        <TransactionBar v-else :transactions="transactions" />
-      </div>
-    </section>
     <section class="financial-goals">
       <h2>Your Financial Goals</h2>
       <button class="add-goal-button" @click="showAddGoalModal = true">
@@ -309,6 +303,7 @@ import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
 import TransactionBar from "../components/goalPage/TransactionBar.vue";
 import authStore from "@/authStore";
+import '@fortawesome/fontawesome-free/css/all.css';
 
 export default {
   name: "GoalPage",
@@ -339,6 +334,11 @@ export default {
         notes: "",
         type: "",
       },
+      categories: [
+      { name: 'Food', amount: '$200', icon: 'fas fa-utensils', class: 'category-icon' },
+      { name: 'Entertainment', amount: '$150', icon: 'fas fa-film', class: 'category-icon' },
+      { name: 'Transportation', amount: '$100', icon: 'fas fa-car', class: 'category-icon' },
+    ],
       editTransactionData: {
         _id: null,
         description: "",
@@ -842,40 +842,102 @@ export default {
 }
 
 /* Assets section */
-.assets {
-  text-align: center;
-  margin-top: 40px;
-}
 
-.assets-value {
-  font-size: 1.5em;
-  margin: 20px 0;
-  color: #003366;
-}
+.alldata1 {
+    padding: 20px;
+    display: flex;
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 42px;
+    justify-content: space-between;
+    width: 40%;
+    flex-wrap: wrap; /* Allow wrapping to a new line */
+  }
+  
+  .total-spend {
+    display: flex; /* Use flexbox for alignment */
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; /* Center items vertically */
+    margin-left: 0; /* Push to the far right within the wrapper */
+    padding: 10px;
+    border-radius: 9px;
+    background-color: #f0f0f0; /* Change to your desired background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #333; /* Icon color */
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
 
-.assets-graph {
-  position: relative;
-  width: 90%;
-  margin: 0 auto;
-}
+  hr {
+    width: 100%; /* Make the <hr> span the full width of its container */
+    border: 0; /* Remove default border */
+    height: 0.5px;/* Set the height of the line */
+    background: #ccc; /* Set the color of the line */
+    margin: 20px 0; /* Add space above and below the line */
+    box-sizing: border-box; /* Include padding and border in the element’s total width and height */
+  }
 
-.assets-graph img {
-  width: 100%;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+  .total-spend:hover {
+    background-color: #ddd; /* Change to your hover background color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
 
-.assets-graph img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
+  .total-spend h2 {
+    margin: 0;
+  }
 
-.assets-description {
-  margin-top: 20px;
-  font-size: 1.2em;
-  color: #333;
-}
+  .total-spend p {
+    margin: 0;
+  }
+
+  .categories-container {
+    align-items: flex-start; /* Align items to the start */
+    width: fit-content; /* Container width fits the content */
+  }
+
+  .categories-container h2 {
+    margin: 0; /* Remove default margins */
+    padding-bottom: 10px; /* Space between heading and icons */
+  }
+
+  .category-icon {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    margin: 10px;
+    margin-top: -5px;
+    margin-left: 7px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f0f0f0; /* Change to your desired background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 24px;
+    color: #333; /* Icon color */
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  .category-icon:hover {
+    background-color: #ddd; /* Change to your hover background color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .amount-popup {
+    display: none;
+    position: absolute;
+    bottom: -30px; /* Adjust as needed */
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .category-container:hover .amount-popup {
+    display: block;
+  }
 
 /* Transactions section */
 .transactions {
@@ -1042,21 +1104,30 @@ export default {
 }
 
 .chart-toggle-buttons {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-}
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: center; /* Center buttons horizontally */
+    margin-top: 3px;
+    height: 100%; /* Adjust height as needed */
+  }
 
-.chart-toggle-buttons button {
-  padding: 10px 20px;
-  margin: 0 5px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+  .chart-toggle-buttons button {
+    padding: 10px 20px;
+    margin: 5px 0; /* Adjust margin to space buttons vertically */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 150px; /* Ensure both buttons have the same minimum width */
+    text-align: center; /* Center text inside buttons */
+  }
+
+  .chart-toggle-buttons button.active {
+    background-color: #0056b3; /* Change color when active */
+  }
+
 
 .input-box {
   width: 100%;
