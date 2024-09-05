@@ -6,8 +6,7 @@
         "build": "cd frontend && vue-cli-service build",
         "client": "cd frontend && vue-cli-service serve",
         "start": "nodemon backend/functions/server.js",
-        "dev": "dotenv -e .env netlify dev",
-        "seeding": "node backend/utils/stockSeeding.js"
+        "dev": "dotenv -e .env netlify dev"
     },
     "dependencies": {
         "@canvasjs/charts": "^3.10.0",
