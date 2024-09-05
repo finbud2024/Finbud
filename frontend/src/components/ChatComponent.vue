@@ -80,7 +80,7 @@ export default {
 					try {
 						const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
 						const prompt = `Explain ${term} to me as if I'm 15.`;
-						const gptResponse = await gptServices(prompt);
+						const gptResponse = await gptServices([{role:"user", content: prompt}]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in define message:", err);
@@ -135,11 +135,17 @@ export default {
 					try {
 						const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
-							const description = match[1].trim();
-							const amount = parseInt(match[2], 10);
-							const balance = await this.calculateNewBalance(amount);
-							await this.addTransaction(description, amount, balance);
-							answers.push(`Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
+							const accountCheck = await this.checkAccountBalance();
+							if (!accountCheck){
+								answers.push(`Account balance is not set yet, please set your account balance first`);
+								// this.openNewWindow("/goal");	
+							} else {
+								const description = match[1].trim();
+								const amount = parseInt(match[2], 10);
+								const balance = await this.calculateNewBalance(amount);
+								await this.addTransaction(description, amount, balance);
+								answers.push(`Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
+							}
 							// this.openNewWindow("/goal");
 						} else {
 							answers.push("Please specify the description and amount you want to add.");
@@ -153,11 +159,17 @@ export default {
 					try {
 						const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
-							const description = match[1].trim();
-							const amount = -parseInt(match[2], 10);
-							const balance = await this.calculateNewBalance(amount);
-							await this.addTransaction(description, amount, balance);
-							answers.push(`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
+							const accountCheck = await this.checkAccountBalance();
+							if (!accountCheck){
+								answers.push(`Account balance is not set yet, please set your account balance first`);
+								// this.openNewWindow("/goal");
+							} else {
+								const description = match[1].trim();
+								const amount = -parseInt(match[2], 10);
+								const balance = await this.calculateNewBalance(amount);
+								await this.addTransaction(description, amount, balance);
+								answers.push(`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
+							}
 							// this.openNewWindow("/goal");
 						} else {
 							answers.push("Please specify the description and amount you want to spend.");
@@ -178,7 +190,7 @@ export default {
 						answers.push(alphavantageResponse);
 						//chatgpt api
 						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-						const gptResponse = await gptServices(prompt);
+						const gptResponse = await gptServices([{role:"user", content: prompt}]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in stock message:", err.message);
@@ -297,14 +309,14 @@ export default {
 					newVideos = await getVideos(userMessage);
 					newRelevantQuestions = await getRelevantQuestions(searchResults);
 					//Normal GTP response
-					const gptResponse = await gptServices(userMessage);
+					const gptResponse = await gptServices([{role:"user", content: userMessage}]);
 					answers.push(gptResponse);
 				}
 				// HANDLE GENERAL
 				else {
 					try {
 						const prompt = userMessage;
-						const gptResponse = await gptServices(prompt);
+						const gptResponse = await gptServices([{role:"user", content: prompt}]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in general message:", err.message);
@@ -374,6 +386,11 @@ export default {
 		},
 		// TO BE USED IN SPEND + ADD
 		async calculateNewBalance(amount) {
+			const accountCheck = await this.checkAccountBalance();
+			if (!accountCheck){
+				return;
+				// this.openNewWindow("/goal");	
+			}
 			try {
 				const userId = localStorage.getItem("token");
 				const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
@@ -384,8 +401,24 @@ export default {
 				console.error('Error calculating new balance:', err.message);
 			}
 		},
+		async checkAccountBalance() {
+			try {
+				const userId = localStorage.getItem("token");
+				const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+				const transactions = response.data;
+				return transactions.length > 0 && transactions[0].balance !== 0;
+			} catch (error) {
+				console.error('Error checking account balance:', error);
+				return false;
+			}
+    	},
 		// TO BE USED IN SPEND + ADD
 		async addTransaction(description, amount, balance) {
+			const accountCheck = await this.checkAccountBalance();
+			if (!accountCheck){
+				return;
+				// this.openNewWindow("/goal");	
+			}
 			try {
 				await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
 					description,

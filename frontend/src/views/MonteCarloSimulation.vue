@@ -8,10 +8,10 @@
 <script>
 import CanvasJS from '@canvasjs/charts';
 import * as math from 'mathjs';
-import AAPLData from './assets/data/AAPL.csv';
-import AMZNData from './assets/data/AMZN.csv';
-import MSFTData from './assets/data/MSFT.csv';
-import TSLAData from './assets/data/TSLA.csv';
+import AAPLData from '../views/hardcodeData/AAPL.csv';
+import AMZNData from '../views/hardcodeData/AMZN.csv';
+import MSFTData from '../views/hardcodeData/MSFT.csv';
+import TSLAData from '../views/hardcodeData/TSLA.csv';
 
 export default {
   name: 'MonteCarloChart',
