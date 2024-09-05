@@ -90,7 +90,6 @@ export default {
   setup(props,{emit}){
    const instance = getCurrentInstance()
 		onBeforeUnmount(()=>{
-      localStorage.setItem('latestThreadID', instance.data.threadID);
 			emit('chatviewSelectingThread', instance.data.threadID);
 		})
 	},
