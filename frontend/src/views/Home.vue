@@ -342,11 +342,13 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.introduction-image{
+
+.introduction-image {
   height: 80%;
   border: 2px solid #007bff;
   border-radius: 20px;
 }
+
 .quizz-image {
   background-image: url("@/assets/home-page/quizz.png");
   background-size: cover;
@@ -480,15 +482,13 @@ header {
   text-align: center;
   padding: 40px 300px 0 300px;
   background: none;
-  /* Removing the light background */
   opacity: 1;
   animation: none;
 }
 
 .sub-header {
   text-align: center;
-  padding: 0 300px 80px 300px;
-  margin-top: 0px;
+  padding: 0 300px 50px 300px;
 }
 
 h1 {
@@ -514,7 +514,55 @@ img {
 }
 
 /* Medium devices (tablets, 768px and up) */
-@media (max-width: 768px) {}
+@media (max-width: 768px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-container>div {
+    height: 300px;
+    width: 100%;
+  }
+
+  .grid-container > div:nth-child(odd) {
+    order: 1;
+  }
+
+  .grid-container > div:nth-child(even) {
+    order: 2;
+  }
+
+  header {
+    padding: 40px 5% 0 5%;
+  }
+
+  .sub-header {
+    padding: 0 10% 30px 10%;
+  }
+
+  .text-right a,
+  .text-left a {
+    align-self: center;
+  }
+
+  .text-left p,
+  .text-left h2 {
+    text-align: center;
+  }
+
+  .text-right p,
+  .text-right h2 {
+    text-align: center;
+  }
+  
+  .feature-section .grid-container>div {
+    padding: 50px 0;
+  }
+
+  .technology-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 /* Large devices (desktops, 992px and up) */
 @media (max-width: 992px) {
