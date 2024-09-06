@@ -2,6 +2,7 @@
   <div class="transaction-history">
     <div class="transaction-history-header">
       <h3>Transaction History</h3>
+      
       <div class="date-picker">
         <input type="date" v-model="startDate" @change="filterTransactions" />
         <input type="date" v-model="endDate" @change="filterTransactions" />
