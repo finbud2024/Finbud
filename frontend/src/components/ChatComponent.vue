@@ -27,7 +27,7 @@ import { getSources, getVideos, getRelevantQuestions } from '@/services/serperSe
 export default {
 	name: 'ChatComponent',
 	props: {
-		currentThreadID:String,
+		currentThreadID: String,
 	},
 	components: { ChatFrame, MessageComponent, UserInput },
 	data() {
@@ -47,12 +47,12 @@ export default {
 		},
 	},
 	watch: {
-		currentThreadID:{
+		currentThreadID: {
 			immediate: true,
-			handler(newThreadID){
-				if(newThreadID !== null && newThreadID !== undefined && newThreadID.length != 0){
+			handler(newThreadID) {
+				if (newThreadID !== null && newThreadID !== undefined && newThreadID.length != 0) {
 					this.updateCurrentThread(newThreadID)
-				}else{
+				} else {
 					this.messages = [];
 				}
 			}
@@ -80,7 +80,7 @@ export default {
 					try {
 						const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
 						const prompt = `Explain ${term} to me as if I'm 15.`;
-						const gptResponse = await gptServices([{role:"user", content: prompt}]);
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in define message:", err);
@@ -136,7 +136,7 @@ export default {
 						const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
 							const accountCheck = await this.checkAccountBalance();
-							if (!accountCheck){
+							if (!accountCheck) {
 								answers.push(`Account balance is not set yet, please set your account balance first`);
 								// this.openNewWindow("/goal");	
 							} else {
@@ -160,7 +160,7 @@ export default {
 						const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
 							const accountCheck = await this.checkAccountBalance();
-							if (!accountCheck){
+							if (!accountCheck) {
 								answers.push(`Account balance is not set yet, please set your account balance first`);
 								// this.openNewWindow("/goal");
 							} else {
@@ -176,24 +176,6 @@ export default {
 						}
 					} catch (err) {
 						console.error("Error in spend transaction:", err.message);
-					}
-				}
-				// HANDLE STOCK
-				else if (this.extractStockCode(userMessage)) {
-					try {
-						const stockCode = this.extractStockCode(userMessage)[0];
-						const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
-						const price = stockResponse.data["Global Quote"]["05. price"];
-						const timeStamp = new Date().toLocaleTimeString();
-						console.log(price, timeStamp, stockCode)
-						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-						answers.push(alphavantageResponse);
-						//chatgpt api
-						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-						const gptResponse = await gptServices([{role:"user", content: prompt}]);
-						answers.push(gptResponse);
-					} catch (err) {
-						console.error("Error in stock message:", err.message);
 					}
 				}
 				// RETURNS CRYPTO TABLE (3)
@@ -309,14 +291,32 @@ export default {
 					newVideos = await getVideos(userMessage);
 					newRelevantQuestions = await getRelevantQuestions(searchResults);
 					//Normal GTP response
-					const gptResponse = await gptServices([{role:"user", content: userMessage}]);
+					const gptResponse = await gptServices([{ role: "user", content: userMessage }]);
 					answers.push(gptResponse);
+				}
+				// HANDLE STOCK
+				else if (this.extractStockCode(userMessage)) {
+					try {
+						const stockCode = this.extractStockCode(userMessage)[0];
+						const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
+						const price = stockResponse.data["Global Quote"]["05. price"];
+						const timeStamp = new Date().toLocaleTimeString();
+						console.log(price, timeStamp, stockCode)
+						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+						answers.push(alphavantageResponse);
+						//chatgpt api
+						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
+						answers.push(gptResponse);
+					} catch (err) {
+						console.error("Error in stock message:", err.message);
+					}
 				}
 				// HANDLE GENERAL
 				else {
 					try {
 						const prompt = userMessage;
-						const gptResponse = await gptServices([{role:"user", content: prompt}]);
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in general message:", err.message);
@@ -325,19 +325,19 @@ export default {
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
 				if (authStore.isAuthenticated) {
-				    try {
-				        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-				        const reqBody = {
-				            prompt: userMessage,
-				            response: answers,
-				            sources: newSources,
-				            videos: newVideos,
-				            threadId: this.currentThreadID,
-				        };
-				        await axios.post(chatApi, reqBody);
-				    } catch (err) {
-				        console.error("Error on saving chat:", err.message);
-				    }
+					try {
+						const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+						const reqBody = {
+							prompt: userMessage,
+							response: answers,
+							sources: newSources,
+							videos: newVideos,
+							threadId: this.currentThreadID,
+						};
+						await axios.post(chatApi, reqBody);
+					} catch (err) {
+						console.error("Error on saving chat:", err.message);
+					}
 				}
 				this.scrollChatFrameToBottom();
 			}
@@ -387,7 +387,7 @@ export default {
 		// TO BE USED IN SPEND + ADD
 		async calculateNewBalance(amount) {
 			const accountCheck = await this.checkAccountBalance();
-			if (!accountCheck){
+			if (!accountCheck) {
 				return;
 				// this.openNewWindow("/goal");	
 			}
@@ -411,11 +411,11 @@ export default {
 				console.error('Error checking account balance:', error);
 				return false;
 			}
-    	},
+		},
 		// TO BE USED IN SPEND + ADD
 		async addTransaction(description, amount, balance) {
 			const accountCheck = await this.checkAccountBalance();
-			if (!accountCheck){
+			if (!accountCheck) {
 				return;
 				// this.openNewWindow("/goal");	
 			}
@@ -490,8 +490,8 @@ export default {
 			}
 		},
 	},
-	mounted(){
-		if(!authStore.isAuthenticated){
+	mounted() {
+		if (!authStore.isAuthenticated) {
 			const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
 			this.addTypingResponse(botInstruction, false);
 		}
