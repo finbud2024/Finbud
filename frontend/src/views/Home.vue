@@ -4,122 +4,145 @@
       <div class="intro-text">
         <div class="intro-text1">
           <li class="title animate fade-in">Making the most informed financial choices</li>
-          <li class="animate fade-in" :style="{ fontSize: '30px',fontWeight: 'bold', listStyleType: 'none' }">Sign in to see more services</li>
-          <li class="description animate fade-in last-li">With FinBud, you can ask for the best financial advice anytime,
-            anywhere</li>
-
-          <BigGreenButton @click="chatNow">{{displayText}}</BigGreenButton>
+          <li class="animate fade-in" :style="{ fontSize: '30px', fontWeight: 'bold', listStyleType: 'none' }">
+            Sign in to see more services
+          </li>
+          <li class="description animate fade-in last-li">
+            With FinBud, you can ask for the best financial advice
+            anytime, anywhere
+          </li>
+          <BigGreenButton @click="chatNow">{{ displayText }}</BigGreenButton>
         </div>
 
         <div class="photo">
-          <img  src='@/assets/botrmbg.png' alt="placeholder">
+          <img src='@/assets/botrmbg.png' alt="placeholder">
         </div>
       </div>
     </div>
-    
-    <header>
-      <h1 class="animate fade-in">Enhance Your Financial Awareness by 25%</h1>
-      <p class="animate fade-in">FinBud is an AI-driven financial analytics platform that makes managing your finances
-        more efficient.</p>
-      <button @click="learnMore" class="animate slide-in-up">Learn More</button>
-    </header>
 
-    <div id="efficiency-chart" class="animate fade-in"></div>
-
-    <div class="feature-icons">
-      <div class="animate slide-in-left">Compatible with any personal finance management software</div>
-      <div class="animate slide-in-right">Data-driven insights provide actionable steps to manage and improve your
-        financial health</div>
-    </div>
-
-    <!-- Statistics Section -->
-    <section id="statistics" class="stats-section">
-      <div class="stats-header">
-        <h2 class="animate fade-in">Experience the Impact</h2>
-        <p class="animate fade-in">Gain actionable insights into your finances automatically. It’s financial management
-          at its best.</p>
+    <section class="introduction-section">
+      <header>
+        <h1 class="animate fade-in">
+          From Learning to Implementation, Partnering with You to Achieve Your Financial Goals
+        </h1>
+      </header>
+      <div class="grid-container">
+        <!-- first row -->
+        <div class="text-section text-left animate slide-in-left">
+          <h2>Enhance Your Financial Awareness</h2>
+          <p>
+            Complex financial concepts and challenging knowledge are no longer a concern. Finbud's advanced AI chatbot
+            will help you review, explore financial topics, and answer all your questions.
+          </p>
+          <a href="/quizz" class="button">Learn more</a>
+        </div>
+        <div class="image-section animate slide-in-right">
+          <div class="quizz-image introduction-image"></div>
+        </div>
+        <!-- second row -->
+        <div class="image-section animate slide-in-left">
+          <div class="goal-image introduction-image"></div>
+        </div>
+        <div class="text-section text-right animate slide-in-right">
+          <h2>Optimize Your Financial Planning & Operations</h2>
+          <p>
+            Is your spending often out of control?
+            <br>
+            Finbud helps you track and manage expenses, record income and spending, and tailor financial management to
+            your specific goals.
+          </p>
+          <a href="/goal" class="button">Learn more</a>
+        </div>
+        <!-- third row -->
+        <div class="text-section text-left animate slide-in-left">
+          <h2>Maximize Your Investment Efficiency</h2>
+          <p>
+            Interested in investing but unsure where to start or worried about risks?
+            <br>
+            Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital
+            confidently.
+          </p>
+          <a href="/stock-simulator" class="button">Learn more</a>
+        </div>
+        <div class="image-section animate slide-in-right">
+          <div class="simulator-image introduction-image"></div>
+        </div>
       </div>
-      <div class="stats-container">
-        <div class="stat-item animate slide-in-left">
+    </section>
+
+    <!-- Features Section -->
+    <section class="feature-section">
+      <header>
+        <h1 class="animate fade-in">Choose Finbud as your <br>
+          Everyday Wealth Management Advisor!
+        </h1>
+      </header>
+      <div class="sub-header">
+        Paired with advanced AI technology, tailored for individual financial needs, Finbud has a comprehensive package
+        of features that suits all your needs.
+      </div>
+      <div class="grid-container">
+        <div class="feature-chatbot animate slide-in-left">
+          <img class="feature-icon" src="@/assets/home-page/chatbot.png" alt="chatbot image">
+          <h2>Advanced AI Chatbot immediately Solve All Your Financial Concerns</h2>
+          <p>With just simple commands and access to a vast source of accurate and reliable information, all your
+            financial queries can be answered instantly.</p>
+          <a href="/chat-view" class="button">Chat now!</a>
+        </div>
+        <div class="feature-investment-tracking animate slide-in-right">
+          <img class="feature-icon" src="@/assets/home-page/investment-tracking.png" alt="chatbot image">
+          <h2>Investment Guidance, Tracker and Market Report </h2>
+          <p>Track how your investments are performing in real-time, provide actionable insights from your investment
+            and the market to make better investment decisions.</p>
+          <a href="/stock-simulator" class="button">Try Simulator now!</a>
+        </div>
+        <div class="feature-budget-projection animate slide-in-left">
+          <img class="feature-icon" src="@/assets/home-page/budget-projection.png" alt="chatbot image">
+          <h2>Future Expense Projections through Spending Habit Analysis</h2>
+          <p>Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive
+            tips for better budget management.</p>
+          <a href="/goal" class="button">Try Goal now! </a>
+        </div>
+        <div class="feature-financial-knowledge animate slide-in-right">
+          <img class="feature-icon" src="@/assets/home-page/financial-knowledge.png" alt="chatbot image">
+          <h2>Financial Knowledge Review with Keyword-based Quiz </h2>
+          <p>Financial Quiz with different topics related to different keywords help you practice and learn financial
+            knowledge in a smart and interactive way.</p>
+          <a href="/quizz" class="button">Try Quiz now!</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="technology-section">
+      <header>
+        <h1 class="animate fade-in">With Finbud, easily notice the impact starting from today!</h1>
+      </header>
+      <div class="technology-grid">
+        <div class="animate slide-in-up technology-card">
           <h3>20% Savings Increase</h3>
-          <p>Average increase in savings per user</p>
+          <p>average per user</p>
         </div>
-        <div class="stat-item animate slide-in-up">
+        <div class="animate slide-in-down technology-card">
+          <h3>25% Financial <br> Awareness Increase</h3>
+        </div>
+        <div class="animate slide-in-up technology-card">
           <h3>30% Debt Reduction</h3>
-          <p>Average reduction in debt after one year</p>
+          <p>after 1 year</p>
         </div>
-        <div class="stat-item animate slide-in-right">
+        <div class="animate slide-in-down technology-card">
           <h3>Improved Credit Score</h3>
-          <p>Enhance your credit score within six months</p>
+          <p>within 6 months</p>
         </div>
       </div>
+      <a href="/tech" class="button">Learn more about Finbud</a>
     </section>
-
-    <!-- Feature Highlights Section -->
-    <section id="features" class="container">
-      <img src="@/assets/performance-overview.png" alt="Performance Overview" class="animate slide-in-left" />
-      <div class="text-content animate slide-in-right">
-        <h2>Optimize Your Financial Operations</h2>
-        <p>FinBud is tailored for individual financial needs, helping to optimize your economic potential.</p>
-        <ul>
-          <li>Expense Tracking: Automatically categorize and track expenses.</li>
-          <br>
-          <li>Investment Guidance: Personalized insights to help you invest wisely.</li>
-        </ul>
-      </div>
+    <section class="question-section">
+      <header>
+        <h1>Commonly Asked Questions</h1>
+      </header>
     </section>
-
-    <!-- Analytics Dashboard Section -->
-    <section id="analytics-dashboard">
-      <div class="dashboard-title">
-        <h2 class="animate fade-in">Understand Your Financial Landscape</h2>
-        <p class="animate fade-in">Delve deeper into your financial habits with our powerful AI insights.</p>
-      </div>
-      <div class="dashboard-content">
-        <div class="info-cards">
-          <div class="info-card animate slide-in-left">
-            <h3>Comprehensive Budget Analysis</h3>
-            <p>Get detailed reports breaking down your spending and savings.</p>
-          </div>
-          <div class="info-card animate slide-in-up">
-            <h3>Future Expense Projections</h3>
-            <p>Our AI predicts upcoming expenses to help you plan ahead.</p>
-          </div>
-          <div class="info-card animate slide-in-right">
-            <h3>Investment Performance Tracker</h3>
-            <p>Track how your investments are performing in real-time.</p>
-          </div>
-        </div>
-        <div class="dashboard-visual animate fade-in">
-
-          <img src="@/assets/how-to-improve-your-financial-literacy.png" alt="Financial Dashboard">
-        </div>
-      </div>
-    </section>
-
-    <!-- Real-time Insights Section -->
-    <section id="real-time-insights">
-      <div class="content-with-image">
-        <div class="text-content animate slide-in-left">
-          <h2>Real-Time Financial Insights</h2>
-          <p>Stay ahead with up-to-the-minute data on your financial status.</p>
-          <div class="insight-cards">
-            <div class="insight-card animate slide-in-up">
-              <h3>Auto-generated Financial Reports</h3>
-              <p>Instantly receive comprehensive financial summaries tailored to your needs.</p>
-            </div>
-            <div class="insight-card animate slide-in-up">
-              <h3>Spending Habit Analysis</h3>
-              <p>Understand your spending patterns and receive tips for better budget management.</p>
-            </div>
-          </div>
-          <button @click="learnMore" class="animate slide-in-up">Learn more</button>
-        </div>
-        <div class="image-container animate slide-in-right">
-          <img src="@/assets/real.png" alt="Detailed Financial Analysis">
-        </div>
-      </div>
-    </section>
+    <!-- Commonly Asked Question -->
   </section>
 </template>
 
@@ -131,12 +154,12 @@ export default {
   components: {
     BigGreenButton,
   },
-  computed:{
+  computed: {
     authStore() {
-			return authStore;
-		},
-    displayText(){
-      return authStore.isAuthenticated ? "Chat Now": "Get Started!"
+      return authStore;
+    },
+    displayText() {
+      return authStore.isAuthenticated ? "Chat Now" : "Get Started!"
     }
   },
   methods: {
@@ -144,9 +167,9 @@ export default {
       this.$router.push('/tech');
     },
     chatNow() {
-      if(authStore.isAuthenticated){
+      if (authStore.isAuthenticated) {
         this.$router.push('/chat-view');
-      }else{
+      } else {
         this.$router.push('/login');
       }
     },
@@ -214,18 +237,15 @@ export default {
   transform: translateY(0);
 }
 
-/* General Styling */
-.container {
-  gap: 0.1rem;
-  padding-left: 3rem;
-  padding-right: 3rem;
-  padding-top: 1.5rem;
-  flex-direction: column;
-  display: flex;
-  opacity: 1;
-  animation: none;
+.slide-in-down {
+  transform: translateY(-20px);
 }
 
+.slide-in-down.animate-visible {
+  transform: translateY(0);
+}
+
+/* General Styling */
 .intro-text {
   display: flex;
   flex-direction: row;
@@ -234,6 +254,7 @@ export default {
   animation: none;
   padding: 2rem;
 }
+
 .intro-text1 {
   width: 66%;
   height: 100%;
@@ -241,9 +262,11 @@ export default {
   flex-direction: column;
   padding-left: 10%;
 }
+
 .last-li {
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
 }
+
 .title {
   font-weight: bold;
   color: black;
@@ -283,38 +306,6 @@ export default {
   font-weight: 300;
 }
 
-.sdesitem {
-  max-width: 150px;
-  opacity: 1;
-  animation: none;
-}
-
-.sdestext {
-  list-style-type: none;
-  color: dark gray;
-  font-size: 18px;
-  text-align: left;
-  flex-direction: column;
-  font-weight: normal;
-  opacity: 1;
-  animation: none;
-}
-
-.sdesimg img {
-  list-style-type: none;
-  width: 150%;
-  border-radius: 20%;
-  opacity: 1;
-  animation: none;
-}
-
-.sdesimg {
-  list-style-type: none;
-  opacity: 1;
-  animation: none;
-  flex: 1;
-}
-
 .photo img {
   width: 50%;
   border-radius: 10%;
@@ -330,7 +321,7 @@ export default {
   animation: none;
   width: 33%;
   height: 100%;
-  right:0;
+  right: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -338,14 +329,148 @@ export default {
   padding-right: 8%;
 }
 
+/*grid*/
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 0 10%;
+}
+
+.grid-container>div {
+  text-align: center;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+}
+.introduction-image{
+  height: 80%;
+  border: 2px solid #007bff;
+  border-radius: 20px;
+}
+.quizz-image {
+  background-image: url("@/assets/home-page/quizz.png");
+  background-size: cover;
+  background-position: top center;
+}
+
+.goal-image {
+  background-image: url("@/assets/home-page/goal.png");
+  background-size: cover;
+  background-position: center center;
+}
+
+.simulator-image {
+  background-image: url("@/assets/home-page/simulator.png");
+  background-size: cover;
+  background-position: top center;
+}
+
+.text-left p,
+.text-left h2 {
+  text-align: left;
+}
+
+.text-right p,
+.text-right h2 {
+  text-align: right;
+}
+
+.text-right a {
+  align-self: flex-end;
+}
+
+.text-left a {
+  align-self: flex-start;
+}
+
+.button {
+  padding: 10px 20px;
+  margin-top: 10px;
+  background-color: #007bff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  max-width: 220px;
+  border-radius: 50px;
+  transition: transform 0.3s;
+}
+
+.button:hover {
+  transform: scale(1.1);
+}
+
+.feature-icon {
+  width: 100px;
+  aspect-ratio: 1;
+}
+
+.feature-section .grid-container>div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* technology section */
+
+.technology-section {
+  padding: 0 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.technology-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding-bottom: 50px;
+}
+
+.technology-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #007bff;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+  color: white;
+  border-radius: 30px;
+  height: 150px;
+  padding: 20px;
+}
+
+.technology-card h3,
+.technology-card p {
+  color: white;
+}
+
+.technology-card h3 {
+  text-align: center;
+}
+
+.technology-card p {
+  margin-top: -20px;
+}
+
+/* question section*/
+.question-section header {
+  padding: 40px 10%;
+}
+
+.question-section header h1 {
+  text-align: left;
+}
+
 /* Global settings and the main content area */
 #main-content {
   display: flex;
   flex-direction: column;
   background-color: white;
-  /* Dark blue background */
   color: black;
-  /* Modern font */
   margin-top: 0;
   opacity: 1;
   animation: none;
@@ -353,237 +478,28 @@ export default {
 
 header {
   text-align: center;
-  padding: 50px 20px;
+  padding: 40px 300px 0 300px;
   background: none;
   /* Removing the light background */
   opacity: 1;
   animation: none;
 }
 
+.sub-header {
+  text-align: center;
+  padding: 0 300px 80px 300px;
+  margin-top: 0px;
+}
+
+h1 {
+  font-size: 30px;
+  font-weight: 700;
+}
+
 h1,
 h2,
 h3 {
   color: #007bff;
-  opacity: 1;
-  animation: none;
-}
-
-p {
-  color: black;
-  /* Lighter grey for paragraphs */
-  opacity: 1;
-  animation: none;
-}
-
-button {
-  background-color: #4a90e2;
-  /* Blue that stands out */
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  /* Make the text a bit bolder */
-  transition: background-color 0.3s ease;
-  opacity: 1;
-  animation: none;
-}
-
-button:hover {
-  background-color: #357ab8;
-  /* Darker shade on hover */
-  opacity: 1;
-  animation: none;
-}
-
-/* Feature icons and stats section styling */
-.feature-icons div,
-.stat-item,
-#features li {
-  background: #2a3f5f;
-  /* Slightly lighter blue background for items */
-  border-radius: 5px;
-  padding: 15px;
-  margin: auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  /* Subtle shadows for depth */
-  font-size: 1rem;
-  color: white;
-  opacity: 1;
-  animation: none;
-  text-align: center;
-  box-shadow: 0 0 8px #202938;
-}
-
-.feature-icons {
-  align-self: center;
-}
-
-.stats-section {
-  text-align: center;
-  padding: 40px;
-  background: white;
-  /* Even darker background for the section */
-  opacity: 1;
-  animation: none;
-}
-
-.stats-header h2 {
-  font-size: 1.8rem;
-  /* Slightly larger for better visibility */
-  margin-bottom: 20px;
-  opacity: 1;
-  animation: none;
-}
-
-.stats-header p {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-  opacity: 1;
-  animation: none;
-}
-
-.stats-container {
-  display: flex;
-  justify-content: space-around;
-  padding: 20px;
-  opacity: 1;
-  animation: none;
-  flex-wrap: wrap;
-}
-
-.stat-item {
-  opacity: 1;
-  animation: none;
-  box-shadow: 0 0 8px #202938;
-}
-
-.stat-item p {
-  color: white;
-  opacity: 1;
-  animation: none;
-}
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* Align items vertically */
-  margin-top: 20px;
-  opacity: 1;
-  animation: none;
-}
-
-.text-content,
-.dashboard-visual {
-  flex: 1;
-  padding: 20px;
-  opacity: 1;
-  animation: none;
-}
-
-.text-content {
-  align-self: start;
-  /* Align text content to the top */
-  opacity: 1;
-  animation: none;
-}
-
-/* Dashboard section specific */
-#analytics-dashboard .dashboard-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  /* Aligns children at the top */
-  opacity: 1;
-  animation: none;
-}
-
-.dashboard-title {
-  align-content: center;
-  text-align: center;
-  opacity: 1;
-  animation: none;
-}
-
-.info-cards {
-  width: 40%;
-  /* Allocate width for the info cards */
-  opacity: 1;
-  animation: none;
-}
-
-.info-cards p {
-  color: white;
-  opacity: 1;
-  animation: none;
-}
-
-.inf-cards h2 {
-  color: #45BAF6;
-  opacity: 1;
-  animation: none;
-}
-
-.info-card {
-  background: #2a3f5f;
-  /* Card background */
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  opacity: 1;
-  animation: none;
-  box-shadow: 0 0 8px #202938;
-}
-
-.dashboard-visual {
-  width: 58%;
-  /* Allocate width for the visual */
-  background-color: #202938;
-  /* Slightly different background for emphasis */
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  /* More prominent shadow */
-  opacity: 1;
-  animation: none;
-}
-
-ul {
-  list-style-type: none;
-  /* Removing bullet points */
-  padding-left: 0;
-  /* Align list items */
-  opacity: 1;
-  animation: none;
-}
-
-#real-time-insights .content-with-image {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  opacity: 1;
-  animation: none;
-}
-
-#real-time-insights .text-content {
-  width: 60%;
-  opacity: 1;
-  animation: none;
-}
-
-#real-time-insights .image-container {
-  width: 35%;
-  padding-left: 20px;
-  opacity: 1;
-  animation: none;
-}
-
-#real-time-insights .image-container img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
   opacity: 1;
   animation: none;
 }
@@ -598,100 +514,23 @@ img {
 }
 
 /* Medium devices (tablets, 768px and up) */
-@media (max-width: 768px) {
-  #analytics-dashboard .dashboard-content{
-    align-items: center;
-  }
-
-  .container,
-  .dashboard-content,
-  .real-time-insights .content-with-image {
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-
-    /* Distributes space between items */
-  }
-
-  .info-cards {
-    text-align: center;
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .stats-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .feature-icons div,
-  .stat-item,
-  .info-card {
-    width: 80%;
-    margin-bottom: 20px;
-  }
-  .text-content {
-    text-align: center;
-  }
-
-
-  .text-content,
-  .dashboard-visual,
-  .real-time-insights .text-content,
-  .real-time-insights {
-    flex: 1 1 50%;
-    /* Takes up half of the container width */
-  }
-  #real-time-insights .image-container {
-    padding: 0;
-    width: 100%;
-  }
-
-
-  .content-with-image {
-    flex-wrap: wrap;
-  }
-}
+@media (max-width: 768px) {}
 
 /* Large devices (desktops, 992px and up) */
 @media (max-width: 992px) {
 
-  .container,
-  .stats-container,
-  .dashboard-content,
-  #real-time-insights .content-with-image {
-    max-width: 1140px;
-    /* Bootstrap's default container max-width for large screens */
-    margin: auto;
-
-  }
-
-  .stat-item,
-  .info-card {
-    flex: 1 1 33%;
-    /* Allows three items per row */
-  }
-
-  .text-content,
-  .dashboard-visual {
-    flex: 1 1 50%;
-  }
-
-  
   .intro-text {
     flex-direction: column;
-
     padding: 0;
     align-items: center;
     text-align: center;
   }
+
   .intro-text1 {
     padding-left: 0;
     gap: 10px;
   }
+
   .intro-text1 li {
     text-align: center;
   }
@@ -703,87 +542,6 @@ img {
 
   .photo img {
     width: 100%;
-  }
-
-  #real-time-insights .text-content{
-    /* Text takes slightly more space */
-    width: 35%;
-    /* Image takes less space */
-  }
-}
-
-/* Ensuring padding and gap responsiveness */
-.container,
-.stats-container,
-.dashboard-content,
-#real-time-insights .content-with-image {
-  padding: 20px;
-  gap: 20px;
-  opacity: 1;
-  animation: none;
-}
-
-/* Medium devices (tablets, 768px and up) */
-@media (min-width: 768px) {
-
-  .container,
-  .dashboard-content,
-  .real-time-insights .content-with-image {
-    flex-direction: row;
-    justify-content: space-between;
-
-    /* Distributes space between items */
-  }
-
-  .stats-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .feature-icons div,
-  .stat-item,
-  .info-card {
-    width: 80%;
-    margin-bottom: 20px;
-  }
-
-  .text-content,
-  .dashboard-visual,
-  .real-time-insights .text-content,
-  .real-time-insights .image-container {
-    flex: 1 1 50%;
-    /* Takes up half of the container width */
-  }
-}
-
-/* Large devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-
-  .container,
-  .stats-container,
-  .dashboard-content,
-  #real-time-insights .content-with-image {
-    max-width: 1140px;
-    /* Bootstrap's default container max-width for large screens */
-    margin: auto;
-  }
-
-  .stat-item,
-  .info-card {
-    flex: 1 1 33%;
-    /* Allows three items per row */
-  }
-
-  .text-content,
-  .dashboard-visual {
-    flex: 1 1 50%;
-  }
-
-  #real-time-insights .text-content {
-    width: 60%;
-    /* Text takes slightly more space */
-    width: 35%;
-    /* Image takes less space */
   }
 }
 </style>
