@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     fetchTransactions() {
-      const userId = '66974fea75fa96762507ca06';
+      const userId = localStorage.getItem("token");
       axios.get(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`)
         .then(response => {
           this.transactions = response.data;
