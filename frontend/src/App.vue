@@ -3,12 +3,15 @@
     <NavBar v-if="showHeader" ref="headerBar" />
     <div class="content"></div>
   </div>
-  <router-view
-    @chatviewSelectingThread="loadThread"
-    :chatBubbleThreadID="threadId"
-  />
+  <router-view @chatviewSelectingThread="loadThread" @finbudBotResponse="displayMessage"
+    :chatBubbleThreadID="threadId" />
   <FooterBar v-if="showFooter" ref="footerBar" />
-  <ChatBubble v-if="showChatBubble" :chatViewThreadID="threadId" />
+  <ChatBubble v-if="showChatBubble && chatBubbleActive" :chatViewThreadID="threadId" />
+  <img class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
+  <div v-if="botMessage" class="finbudBotMessage" ref="botMessage">
+    {{ botMessage }}
+    <div class="messageConnector"></div>
+  </div>
 </template>
 
 <script>
@@ -27,9 +30,14 @@ export default {
   data() {
     return {
       threadId: "",
+      chatBubbleActive: false,
+      botMessage: "",
+      showBotMessage: true,
     };
   },
   async mounted() {
+    this.botMessage = "Hello! Welcome to FinBud.";
+    document.addEventListener('click', this.handleClickOutside);
     if (authStore.isAuthenticated) {
       const userId = localStorage.getItem("token");
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
@@ -61,6 +69,7 @@ export default {
     showFooter() {
       return (
         this.$route.path !== "/chat-view" &&
+        this.$route.path !== "/quizz" &&
         !this.$route.fullPath.includes("/stock-simulator?")
       );
     },
@@ -72,12 +81,39 @@ export default {
     loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
     },
+    toggleChatBubble() {
+      this.chatBubbleActive = !this.chatBubbleActive;
+    },
+    displayMessage(message) {
+      this.showBotMessage = true;
+      this.botMessage = message;
+      event.stopPropagation();
+    },
+    handleClickOutside(event) {
+      const botMessage = this.$refs.botMessage;
+      if (botMessage && !botMessage.contains(event.target) && this.showBotMessage) {
+        console.log("aaaaaaaaaaaaaaaaaaaa")
+        this.botMessage = "";
+        this.showBotMessage = false;
+      }
+      
+    }
   },
-};
+  beforeDestroy() {
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+}
 </script>
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+
+:root {
+  --finbudBotMessageBG: #007bff;
+  --finbudBotMessageColor: white;
+  --finbudBotMessageBorderColor: #007bff;
+}
+
 body {
   min-height: 100%;
   margin: 0;
@@ -103,6 +139,7 @@ html {
   padding-top: 80px;
   flex: 1;
 }
+
 a {
   text-decoration: none;
   color: blue;
@@ -111,5 +148,46 @@ a {
 
 a:hover {
   background-color: #e7f3ff;
+}
+
+.finbudBot {
+  position: fixed;
+  width: 60px;
+  aspect-ratio: 1;
+  right: 3.125vw;
+  bottom: 20px;
+}
+
+.finbudBot:hover {
+  cursor: pointer
+}
+
+.finbudBotMessage {
+  width: fit-content;
+  height: fit-content;
+  padding: 20px;
+  font-size: clamp(0.75rem, 5.6vw, 1.25rem);
+  position: fixed;
+  bottom: 80px;
+  right: 6.25vw;
+  border: 2px solid var(--finbudBotMessageBorderColor);
+  border-radius: 15px;
+  max-width: 18%;
+  background-color: var(--finbudBotMessageBG);
+  color: var(--finbudBotMessageColor)
+}
+
+.messageConnector {
+  width: 0;
+  height: 0;
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--finbudBotMessageBorderColor);
+  transform-origin: bottom right;
+  transform: rotate(15deg);
+  z-index: -1;
 }
 </style>
