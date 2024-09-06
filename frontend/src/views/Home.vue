@@ -137,22 +137,50 @@
       </div>
       <a href="/tech" class="button">Learn more about Finbud</a>
     </section>
+    <!-- Commonly Asked Question -->
     <section class="question-section">
       <header>
-        <h1>Commonly Asked Questions</h1>
+        <h1>Frequently Asked Questions</h1>
       </header>
+      <div class="question-container">
+        <div v-for="(item, index) in faqsData" :key="index" @click="toggleExpansion(item)"
+        :class="{ 'expanded': expandedItem === item}">
+          <div class="question">
+            <h4>{{ item.question }}</h4>
+            <span v-if="expandedItem === item">
+              <font-awesome-icon icon="fa-solid fa-chevron-up" />
+            </span>
+            <span v-else>
+              <font-awesome-icon icon="fa-solid fa-chevron-down" />
+            </span>
+          </div>
+          <div class="expanded-content">
+            <p class="answer">{{ item.answer }}</p>
+          </div>
+        </div>
+      </div>
     </section>
-    <!-- Commonly Asked Question -->
   </section>
 </template>
 
 <script>
 import BigGreenButton from "../components/Button/ChatNow.vue";
 import authStore from "@/authStore";
+import faqs from "@/views/hardcodeData/FAQs.js";
 export default {
   name: 'MainContent',
   components: {
     BigGreenButton,
+  },
+  data() {
+    return {
+      faqsData: faqs.map(dataPoint => ({
+        question: dataPoint.question,
+        answer: dataPoint.answer,
+        isOpen: false,
+      })),
+      expandedItem: null,
+    };
   },
   computed: {
     authStore() {
@@ -173,6 +201,17 @@ export default {
         this.$router.push('/login');
       }
     },
+    toggleExpansion(item) {
+      console.log("here")
+      //if it is already expanded and click into it again:
+      if (this.expandedItem === item) {
+        this.expandedItem = null;
+      }
+      else {
+        this.expandedItem = item;
+      }
+      console.log(this.expandedItem)
+    }
   },
   mounted() {
     const observerOptions = {
@@ -417,7 +456,6 @@ export default {
 }
 
 /* technology section */
-
 .technology-section {
   padding: 0 10%;
   display: flex;
@@ -459,12 +497,46 @@ export default {
 }
 
 /* question section*/
+.question-section {
+  padding: 0 10%;
+}
+
 .question-section header {
-  padding: 40px 10%;
+  padding: 40px 0 0 0;
 }
 
 .question-section header h1 {
   text-align: left;
+}
+
+.question-container {
+  transition: all 0.3s ease;
+}
+.question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #007bff;
+  cursor: pointer;
+}
+
+.expanded-content {
+  transition: all 0.5s ease;
+  /* opacity, max-height*/
+  border-radius: 4px;
+  max-height: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: end;
+}
+
+.expanded .expanded-content {
+  max-height: 100px;
+}
+
+.answer {
+  height: 50px;
 }
 
 /* Global settings and the main content area */
