@@ -58,7 +58,10 @@
         <div v-if="modalDisplay" class="overlay">
             <div class="modalContainer">
                 <div class="resultTitle">Quiz Result</div>
-                <div></div>
+                <div>
+                    <div>Keyword: {{currentKeyword}}</div>
+                    <div>score: {{score}}/3</div>
+                </div>
                 <div class="resultButtonContainer">
                     <button class='button' @click="handleQuizResult('same')">New Game With Same Keyword</button>
                     <button class='button' @click="handleQuizResult('different')">New Game With Different
