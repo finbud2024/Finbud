@@ -1,7 +1,7 @@
 <template>
   <div class ="quizPageContainer">
     <div class="container">
-      <quizComponent />
+      <quizComponent @messageToBot="messageToBot"/>
     </div>
   </div>
 </template>
@@ -14,6 +14,11 @@ import quizComponent from '../components/quizComponent.vue'
 export default {  
   name: 'QuizzPage',
   components:{quizComponent},
+  methods:{
+    messageToBot(message){
+      this.$emit('finbudBotResponse',message);
+    }
+  }
 };
 </script>
 

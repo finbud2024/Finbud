@@ -58,10 +58,13 @@
         <div v-if="modalDisplay" class="overlay">
             <div class="modalContainer">
                 <div class="resultTitle">Quiz Result</div>
-                <div></div>
+                <div>
+                    <div>Keyword: {{currentKeyword}}</div>
+                    <div>score: {{score}}/3</div>
+                </div>
                 <div class="resultButtonContainer">
                     <button class='button' @click="handleQuizResult('same')">New Game With Same Keyword</button>
-                    <button class='button' @click="handleQuizResult('different')">Name Game With Different
+                    <button class='button' @click="handleQuizResult('different')">New Game With Different
                         Keyword</button>
                     <button class='button' @click="handleQuizResult('end')">End</button>
                 </div>
@@ -112,8 +115,13 @@ export default {
         GenerateQuiz: debounce(async function () {
             if (this.searchKeyword.length === 0) return;
             this.isLoading = true;
+            this.answerButtonDisabled = true;
+            this.currentQuestion = -1;
+            this.question = "";
+            this.answerOptions = [];
+            this.relatedKeyword = [];
             //this part below setup to start the quiz
-            this.currentKeyword = this.searchKeyword;
+            this.currentKeyword = this.searchKeyword.toUpperCase();
             this.searchKeyword = "";
             const buttons = document.querySelectorAll('.quizChoices button');
             buttons.forEach(button => {
@@ -157,18 +165,20 @@ export default {
             this.startTimer();
         }, 300),
         keywordSuggestion: debounce(async function () {
-            if ((this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0) && this.searchKeyword.length == 0) return;
-            this.searchKeyword = this.searchKeyword.length === 0 ?
+            if ((this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0)) return;
+            this.searchKeyword =
                 await gptServices([
                     { role: "system", content: "You are a helpful assistant." },
                     {
                         role: "user",
                         content: `Generate a single keyword in finance about 
-                    ${this.selectedQuiz ? this.selectedQuiz : "Saving Vs Investing"} 
-                    at a 
-                    ${this.suggestDifficulty ? this.suggestDifficulty : "hard"} difficulty level. The keyword should be specific and relevant to create a quiz question about finance.`
+                        ${this.selectedQuiz ? this.selectedQuiz : "Saving Vs Investing"} 
+                        at a 
+                        ${this.suggestDifficulty ? this.suggestDifficulty : "hard"}
+                        difficulty level. The keyword should be specific and relevant to create a quiz question about finance.
+                        - no need to add extra question, only the keyword is needed for the response. Please strictly follow the requirement`
                     }
-                ]) : this.searchKeyword;
+                ]);
             this.suggestTopic = "";
             this.suggestDifficulty = "";
 
@@ -188,12 +198,10 @@ export default {
         stateReset() {
             const initialData = this.$options.data.call(this);
             Object.keys(initialData).forEach(key => {
-                if (key !== 'currentKeyword') {
+                if (key !== 'currentKeyword' &&  key !== 'timerCountdown') {
                     this[key] = initialData[key];
                 }
             });
-            // Explicitly set showExplaination to false
-            this.showExplaination = false;
         },
         async generateRelatedKeywords() {
             const response = await gptServices([
@@ -228,7 +236,6 @@ export default {
                 ?.substring('Explanation:'.length).trim() || '';
         },
         handleUserChoice(index) {
-            this.showCorrectAnswer();
             this.stopTimer();
             const isCorrect = String.fromCharCode(64 + index) === this.correctAnswer;
             if (!isCorrect) {
@@ -239,8 +246,10 @@ export default {
             } else {
                 this.score += 1;
             }
+            this.showCorrectAnswer();
         },
         showCorrectAnswer() {
+            this.$emit('messageToBot', this.explanation);
             this.answerButtonDisabled = true;
             this.showExplaination = true;
             if (this.correctAnswer && /^[A-D]$/.test(this.correctAnswer)) {
@@ -274,13 +283,16 @@ export default {
             if (setting === 'same') {
                 const temp = this.currentKeyword;
                 this.stateReset();
-                this.$nextTick(() => {
-                    this.currentKeyword = temp;
-                    this.GenerateQuiz();
-                });
+                this.searchKeyword = temp;
+                this.GenerateQuiz();
             } else if (setting === 'different') {
-                alert('bbbbbbb')
+                const temp = this.currentKeyword;
+                this.stateReset();
+                this.suggestTopic = "random";
+                this.suggestDifficulty = "random";
+                this.keywordSuggestion();
             } else {
+                this.currentKeyword = "";
                 this.stateReset();
             }
         }

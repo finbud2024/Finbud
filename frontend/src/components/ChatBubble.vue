@@ -1,6 +1,6 @@
 <template>
     <div class="chatBubble">
-        <div v-if="isActive" class="chatBubbleContainer">
+        <div class="chatBubbleContainer">
             <div class="chatBubbleHeader">
                 <font-awesome-icon icon="fa-solid fa-xmark" class="closeChatBubble" @click="toggleChatBubble"/>
                 <div class="chatBubbleTittle">
@@ -9,7 +9,6 @@
             </div>
             <ChatComponent  :currentThreadID="chatViewThreadID"/>
         </div>
-        <img v-if="!isActive" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble"/>
     </div>
 </template>
 <script>
@@ -22,13 +21,9 @@ export default{
 	},
     data(){
         return{
-            isActive: false
         }
     },
     methods:{
-        toggleChatBubble(){
-            this.isActive = !this.isActive;
-        }
     }
 }
 </script>
@@ -96,19 +91,6 @@ export default{
 .link{
     text-decoration: none;
     color: #000;
-}
-.finbudBot{
-    z-index: 100;
-    border-radius: 50%;
-    position: fixed;
-    width: 60px;
-    aspect-ratio: 1;
-    right: 20px;
-    bottom: 20px;
-}
-.finbudBot:hover{
-    cursor: pointer;
-    box-shadow: 0px 2px 4px rgb(0,0,0,0.4);
 }
 
 </style>
