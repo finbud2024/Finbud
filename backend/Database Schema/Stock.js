@@ -11,5 +11,5 @@ const StockSchema = new mongoose.Schema({
     date: { type: Date, required: true}
 })
 
-const StockPrice = mongoose.model('StockPrice', StockSchema);
-export default StockPrice;
+const Stock = mongoose.model('Stock', StockSchema);
+export default Stock;
