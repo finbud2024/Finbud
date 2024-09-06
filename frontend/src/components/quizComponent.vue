@@ -236,7 +236,6 @@ export default {
                 ?.substring('Explanation:'.length).trim() || '';
         },
         handleUserChoice(index) {
-            this.showCorrectAnswer();
             this.stopTimer();
             const isCorrect = String.fromCharCode(64 + index) === this.correctAnswer;
             if (!isCorrect) {
@@ -247,8 +246,10 @@ export default {
             } else {
                 this.score += 1;
             }
+            this.showCorrectAnswer();
         },
         showCorrectAnswer() {
+            this.$emit('messageToBot', this.explanation);
             this.answerButtonDisabled = true;
             this.showExplaination = true;
             if (this.correctAnswer && /^[A-D]$/.test(this.correctAnswer)) {
