@@ -49,6 +49,7 @@
         "mathjs": "^13.0.3",
         "moment": "^2.30.1",
         "mongoose": "^8.4.1",
+        "node-cron": "^3.0.3",
         "numeric": "^1.2.6",
         "papaparse": "^5.4.1",
         "plotly.js-dist": "^2.33.0",
