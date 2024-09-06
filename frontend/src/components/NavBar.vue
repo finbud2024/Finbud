@@ -45,7 +45,7 @@
           <router-link to="/" class="home" @click="toggleDropdownMobile">Home</router-link>
           <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
-          <div v-if="authStore.isAuthenticated">
+          <div class="authenticated" v-if="authStore.isAuthenticated">
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
@@ -329,6 +329,17 @@ export default {
   border-bottom-right-radius: 15px;
 }
 
+.dropdown-content .authenticated a:last-child {
+  border-bottom: none;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.dropdown-content .authenticated a:nth-child(1) {
+  border-top: none;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
 
 .dropdown-content,
 .dropdown-profile {
