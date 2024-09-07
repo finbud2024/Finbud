@@ -1,7 +1,7 @@
 <template>
   <div class ="quizPageContainer">
     <div class="container">
-      <quizComponent @messageToBot="messageToBot"/>
+      <quizComponent @messageToBot="$emit('finbudBotResponse',$event)"/>
     </div>
   </div>
 </template>

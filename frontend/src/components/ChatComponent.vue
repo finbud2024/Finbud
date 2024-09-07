@@ -440,6 +440,13 @@ export default {
 				behavior: "smooth", // Smooth scrolling effect
 			});
 		},
+		async setScrollHeightBottomn(){
+			await new Promise((r) => setTimeout(r, 200));
+			const chatFrame = document.querySelector(".chat-frame");
+			chatFrame.scrollTo({
+				top: chatFrame.scrollHeight,
+			});
+		},
 		handleQuestionClick(question) {
 			const searchQuery = `#search ${question}`;
 			this.sendMessage(searchQuery);
@@ -484,7 +491,7 @@ export default {
 					console.error('Error: chatsData is not an array');
 				}
 				// Scroll to the bottom after loading messages
-				await this.scrollChatFrameToBottom();
+				await this.setScrollHeightBottomn();
 			} catch (err) {
 				console.error("Error on updating to current thread:", err.message);
 			}
