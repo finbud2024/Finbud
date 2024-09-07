@@ -2,7 +2,7 @@
     <div class="chatBubble">
         <div class="chatBubbleContainer">
             <div class="chatBubbleHeader">
-                <font-awesome-icon icon="fa-solid fa-xmark" class="closeChatBubble" @click="toggleChatBubble"/>
+                <font-awesome-icon icon="fa-solid fa-xmark" class="closeChatBubble" @click="$emit('closeChatBubble')"/>
                 <div class="chatBubbleTittle">
                     <a class="link" href="/chat-view">Finbud</a>
                 </div>
@@ -19,12 +19,6 @@ export default{
     props: {
 		chatViewThreadID:String,
 	},
-    data(){
-        return{
-        }
-    },
-    methods:{
-    }
 }
 </script>
 
