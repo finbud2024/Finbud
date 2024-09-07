@@ -7,7 +7,7 @@
         <input type="date" v-model="endDate" @change="filterTransactions" />
       </div>
     </div>
-
+    <button class="transaction-btn" @click="goToTransactionHistory">All Transactions</button>
     <table>
       <thead>
         <tr>
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     fetchTransactions() {
-      const userId = '66974fea75fa96762507ca06';
+      const userId = localStorage.getItem("token");
       axios.get(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`)
         .then(response => {
           this.transactions = response.data;
@@ -70,6 +70,10 @@ export default {
       } else {
         this.filteredTransactions = this.transactions; // Reset to all transactions if dates are not set
       }
+    },
+    goToTransactionHistory() {
+      // this.$router.push('stock-simulator')
+      window.location.href = "https://www.google.com/";
     },
     calculateTotal(type, price, quantity) {
       const total = price * quantity;
@@ -116,6 +120,24 @@ export default {
   border-radius: 10px;
   border: 5px solid #ced4da;
   background-color: #fff;
+}
+
+.transaction-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+}
+
+.transaction-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.transaction-btn:hover {
+  background-color: #0056b3;
 }
 
 .transaction-history table {
