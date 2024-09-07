@@ -312,7 +312,7 @@ export default {
   display: flex;
   text-align: left;
   flex-direction: column;
-  font-size: 4rem;
+  font-size: clamp(3rem, 2.5vw, 4rem);
   max-width: 30rem;
   flex-wrap: wrap;
   opacity: 1;
@@ -383,7 +383,7 @@ export default {
 }
 
 .introduction-image {
-  height: 80%;
+  height: 100%;
   border: 2px solid #007bff;
   border-radius: 20px;
 }
@@ -486,9 +486,6 @@ export default {
 .technology-card h3,
 .technology-card p {
   color: white;
-}
-
-.technology-card h3 {
   text-align: center;
 }
 
@@ -536,7 +533,7 @@ export default {
 }
 
 .answer {
-  height: 50px;
+  height: fit-content;
 }
 
 /* Global settings and the main content area */
@@ -590,11 +587,16 @@ img {
   .grid-container {
     grid-template-columns: 1fr;
   }
-
+  
   .grid-container>div {
     height: 300px;
     width: 100%;
+    margin-bottom: 40px;
   }
+
+  .introduction-section .grid-container>div {
+    margin-bottom: 0;
+  } 
 
   .grid-container > div:nth-child(odd) {
     order: 1;
@@ -605,7 +607,11 @@ img {
   }
 
   header {
-    padding: 40px 5% 0 5%;
+    padding: 0 5%;
+  }
+
+  .feature-section header h1 {
+    margin: 0px 0 20px 0px;
   }
 
   .sub-header {
@@ -633,6 +639,10 @@ img {
 
   .technology-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .expanded .expanded-content {
+    max-height: 300px;
   }
 }
 
