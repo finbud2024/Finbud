@@ -7,7 +7,7 @@
         <input type="date" v-model="endDate" @change="filterTransactions" />
       </div>
     </div>
-    
+
     <table>
       <thead>
         <tr>
@@ -24,7 +24,8 @@
           <td>{{ transaction.quantity }}</td>
           <td>{{ transaction.type }}</td>
           <td :class="transaction.type === 'buy' ? 'minus' : 'plus'">
-            {{ transaction.type === 'buy' ? '-' : '+' }}${{ calculateTotal(transaction.type, transaction.price, transaction.quantity).toFixed(2) }}
+            {{ transaction.type === 'buy' ? '-' : '+' }}${{ calculateTotal(transaction.type, transaction.price,
+              transaction.quantity).toFixed(2) }}
           </td>
           <td>{{ formatDate(transaction.date) }}</td>
         </tr>
@@ -89,7 +90,8 @@ export default {
 <style scoped>
 .transaction-history {
   margin: 20px 0;
-  padding: 0 20px; /* Add padding for better alignment */
+  padding: 0 20px;
+  /* Add padding for better alignment */
 }
 
 .transaction-history-header {
@@ -119,10 +121,12 @@ export default {
 .transaction-history table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px; /* Add margin to separate from the header */
+  margin-top: 20px;
+  /* Add margin to separate from the header */
 }
 
-.transaction-history th, .transaction-history td {
+.transaction-history th,
+.transaction-history td {
   border: 1px solid #dee2e6;
   padding: 8px;
   text-align: left;
@@ -147,5 +151,11 @@ export default {
 
 .transaction-history tbody tr:hover {
   background-color: #e9ecef;
+}
+
+@media (max-width: 768px) {
+  .transaction-history-header {
+    flex-direction: column;
+  }
 }
 </style>

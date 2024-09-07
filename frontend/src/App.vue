@@ -174,6 +174,7 @@ a:hover {
   aspect-ratio: 1;
   right: 3.125vw;
   bottom: 20px;
+  z-index: 9998;
 }
 
 .finbudBot:hover {
@@ -196,7 +197,8 @@ a:hover {
   border-radius: 15px;
   max-width: 18%;
   background-color: var(--finbudBotMessageBG);
-  color: var(--finbudBotMessageColor)
+  color: var(--finbudBotMessageColor);
+  z-index: 9998;
 }
 
 .messageConnector {
@@ -210,7 +212,7 @@ a:hover {
   border-bottom: 10px solid var(--finbudBotMessageBorderColor);
   transform-origin: bottom right;
   transform: rotate(15deg);
-  z-index: -1;
+  z-index: 9997;
 }
 
 .blinking-cursor {
@@ -273,7 +275,6 @@ a:hover {
   .finbudBotMessage {
     max-width: 60%; 
   }
-  
 }
 
 </style>
