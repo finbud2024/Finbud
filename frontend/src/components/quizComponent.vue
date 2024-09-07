@@ -10,13 +10,13 @@
         <div>OR recieve a suggestion</div>
         <div class="suggestKeywordContainer">
             <select v-model="suggestTopic">
-                <option disabled value="">Select a quiz type (optional)</option>
+                <option value="" >Select a quiz type (optional)</option>
                 <option value="Saving Vs Investing">Saving vs Investing</option>
                 <option value="Budgeting">Budgeting</option>
                 <option value="Asset Allocation">Asset Allocation</option>
             </select>
             <select v-model="suggestDifficulty">
-                <option disabled value="">Select difficulty (optional)</option>
+                <option value="">Select difficulty (optional)</option>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
@@ -307,16 +307,18 @@ export default {
     display: flex;
     align-items: center;
     flex-direction: column;
-    flex: 1;
     background-color: #f4f4f4;
     padding: 20px;
-    gap: 15px
+    gap: 15px;
+
 }
 
 .title {
     margin-top: 20px;
     font-weight: 900;
-    font-size: 40px;
+    width: 100%;
+    font-size: 3rem;
+    text-align: center
 }
 
 .searchContainer {
@@ -498,5 +500,32 @@ export default {
     justify-content: center;
     align-items: center;
     gap: 10px
+}
+
+@container quizComponent (max-width: 400px) {
+    .title{
+        font-size: clamp(2rem, 10%, 3rem);
+    }
+
+    .quizContainer {
+        width: calc(100% - 40px);
+    }
+
+    .searchContainer {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .searchContainer>input {
+        width: 100%;
+    }
+
+    .suggestKeywordContainer {
+        flex-direction: column;
+    }
+
+    .suggestKeywordContainer>select {
+        width: 100%;
+    }
 }
 </style>

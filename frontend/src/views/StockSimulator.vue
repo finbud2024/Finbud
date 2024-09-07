@@ -280,7 +280,8 @@ export default {
 
 <style scoped>
 .stockDisplayContainer {
-  width: 100%;
+  /* 40px of padding*/
+  width: calc(100%-40px);
   height: fit-content;
   display: flex;
   flex-direction: column;
