@@ -186,8 +186,12 @@ a:hover {
   padding: 20px;
   font-size: clamp(0.75rem, 5.6vw, 1.25rem);
   position: fixed;
-  bottom: 80px;
-  right: 6.25vw;
+  /*  20px: bottom margin of bot image
+      3.125vw: right margin of bot message
+      60px: width/height of bot image
+   */
+  bottom: calc(20px + 60px);
+  right: calc(3.125vw + 60px);
   border: 2px solid var(--finbudBotMessageBorderColor);
   border-radius: 15px;
   max-width: 18%;
@@ -263,6 +267,13 @@ a:hover {
   50% {
     color: #2E3D48;
   }
+}
+
+@media screen and (max-width: 768px) {
+  .finbudBotMessage {
+    max-width: 60%; 
+  }
+  
 }
 
 </style>
