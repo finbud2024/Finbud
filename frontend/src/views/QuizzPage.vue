@@ -1,5 +1,5 @@
 <template>
-  <div class ="quizPageContainer">
+  <div class="quizPageContainer">
     <div class="container">
       <quizComponent @messageToBot="$emit('finbudBotResponse',$event)"/>
     </div>
@@ -14,11 +14,6 @@ import quizComponent from '../components/quizComponent.vue'
 export default {  
   name: 'QuizzPage',
   components:{quizComponent},
-  methods:{
-    messageToBot(message){
-      this.$emit('finbudBotResponse',message);
-    }
-  }
 };
 </script>
 
@@ -33,8 +28,17 @@ export default {
   }
 
   .container{
-    width: 600px;
+    width: 40vw;
     height: 100%;
     box-shadow: 0 4px 8px rgba(0,0,0,.1);
+    container-name: quizComponent;
+    container-type: inline-size;
   }
+
+  @media screen and (max-width: 768px){
+    .container{
+      width: 100%;
+    }
+  }
+
 </style>

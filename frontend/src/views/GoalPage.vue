@@ -1200,5 +1200,19 @@ select {
   .chart-wrapper {
     height: auto;
   }
+
+  .balance-and-button {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .balance-and-button button {
+    width: 100%;
+  }
 }
 </style>

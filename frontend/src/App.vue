@@ -174,6 +174,7 @@ a:hover {
   aspect-ratio: 1;
   right: 3.125vw;
   bottom: 20px;
+  z-index: 9998;
 }
 
 .finbudBot:hover {
@@ -186,13 +187,18 @@ a:hover {
   padding: 20px;
   font-size: clamp(0.75rem, 5.6vw, 1.25rem);
   position: fixed;
-  bottom: 80px;
-  right: 6.25vw;
+  /*  20px: bottom margin of bot image
+      3.125vw: right margin of bot message
+      60px: width/height of bot image
+   */
+  bottom: calc(20px + 60px);
+  right: calc(3.125vw + 60px);
   border: 2px solid var(--finbudBotMessageBorderColor);
   border-radius: 15px;
   max-width: 18%;
   background-color: var(--finbudBotMessageBG);
-  color: var(--finbudBotMessageColor)
+  color: var(--finbudBotMessageColor);
+  z-index: 9998;
 }
 
 .messageConnector {
@@ -206,7 +212,7 @@ a:hover {
   border-bottom: 10px solid var(--finbudBotMessageBorderColor);
   transform-origin: bottom right;
   transform: rotate(15deg);
-  z-index: -1;
+  z-index: 9997;
 }
 
 .blinking-cursor {
@@ -262,6 +268,12 @@ a:hover {
   }
   50% {
     color: #2E3D48;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .finbudBotMessage {
+    max-width: 60%; 
   }
 }
 
