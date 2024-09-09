@@ -7,11 +7,7 @@
       <SideBar
         :class="{ 'is-visible': isSidebarVisible }"
         :threads="threads"
-        @add-thread="addThread"
-        @edit-thread="editThread"
-        @save-thread-name="saveThreadName"
-        @cancel-edit="cancelEdit"
-        @select-thread="selectThread"
+        @update-thread="updateToCurrentThread"
       />
     </div>
     <ChatComponent :currentThreadID="threadID"/>
@@ -100,69 +96,9 @@ export default {
     closeSidebar() {
       this.isSidebarVisible = false;
     },
-    async addThread(newThread) {
-      try {
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = localStorage.getItem("token");
-        const reqBody = { userId };
-        const thread = await axios.post(api, reqBody);
-        newThread.id = thread.data._id;
-        this.threads.push(newThread);
-      } catch (err) {
-        console.error("Error on adding new thread:", err);
-      }
+    updateToCurrentThread(threadID) {
+      this.threadID = threadID;
     },
-    editThread(index) {
-      this.threads[index].editing = true;
-    },
-    async saveThreadName({ newName, index }) {
-      this.threads[index].name = newName;
-      this.threads[index].editing = false;
-      try {
-        console.log("save edit");
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${this.threads[index].id}`;
-        const reqBody = { title: newName };
-        const updatedThread = await axios.put(api, reqBody);
-      } catch (err) {
-        console.error("Error on saving thread name:", err);
-      }
-    },
-    cancelEdit(index) {
-      this.threads[index].editing = false;
-      console.log("cancel edit");
-    },
-    selectThread(index) {
-      this.threadID = this.threads[index].id;
-      this.threads.forEach((thread, i) => {
-        thread.clicked = i === index;
-      });
-    },
-    async deleteThread(index) {
-      const threadId = this.threads[index].id;
-      try {
-        // Step 1: delete all chats associated with this threadId
-        const deleteChatsApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`;
-        await axios.delete(deleteChatsApi);
-
-        // Step 2: delete the thread itself
-        const deleteThreadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
-        await axios.delete(deleteThreadApi);
-
-        // Remove the thread from the list in the UI
-        this.threads.splice(index, 1);
-        
-        // If there are still threads left, select the first one; otherwise, clear the chat and thread state
-        if (this.threads.length > 0) {
-          this.selectThread(0);
-        } else {
-          this.currentThread = {};
-          this.messages = [];
-        }
-      } catch (err) {
-        console.error('Error on deleting thread or its associated chats:', err);
-      }
-    },
-   
     //USED IN BUY/SELL/ADD/SPEND/(QUIZ?)
     openNewWindow(url) {
       const screenWidth = window.screen.width;
@@ -209,41 +145,6 @@ export default {
     setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
     document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
-
-    if (authStore.isAuthenticated) {
-      const userId = localStorage.getItem("token");
-      console.log("current UserID:",userId);
-      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-      const historyThreads = await axios.get(threadApi);
-      const historyThreadsData = historyThreads.data;
-      if (historyThreadsData.length === 0) {
-        const newThread = {
-          name: "New Thread",
-          editing: false,
-          editedName: "New Chat",
-          messages: [],
-        };
-        await this.addThread(newThread);
-      } else {
-        historyThreadsData.forEach((threadData) => {
-          const thread = {
-            id: threadData._id,
-            name: threadData.title,
-            editing: false,
-            editedName: threadData.title,
-            messages: [],
-          };
-          this.threads.push(thread);
-        });
-      }
-      for(let i= 0; i< historyThreadsData.length; i++){
-        if(historyThreadsData[i]._id === this.chatBubbleThreadID){
-          this.selectThread(i)
-          this.$emit('chatviewSelectingThread', "")
-          break;
-        }
-      }
-    }
   },
 };
 </script>

@@ -11,62 +11,84 @@
           @click="handleClick(index)">
         <div v-if="!thread.editing" class="thread-item">
           {{ thread.name }}
-          <div class="edit-btn" @click.stop="editThread(index)">
+          <div class="edit-btn" @click.stop="toggleDropdown(index)">
             <font-awesome-icon icon="fa-solid fa-ellipsis" />
           </div>
         </div>
-        <input
+        <!-- @click.stop="editThread(index) -->
+        <!-- <input
           v-else
           v-model="thread.editedName"
           @keyup.enter="saveThreadName(thread, index)"
           @blur="enterPressed? enterPressed = false: cancelEdit(index)"
-        />
+        /> -->
       </li>
     </ul>
-    <!-- Confirmation Popup -->
-    <div v-if="confirmDialogVisible" class="confirmation-popup">
-      <div class="popup-content">
-        <p>Are you sure you want to delete this thread?</p>
-        <button @click="deleteConfirmed">Yes</button>
-        <button @click="cancelDelete">No</button>
-      </div>
-    </div>
   </aside>
 </template>
 
 <script>
+import authStore from "@/authStore";
+import axios from "axios";
 export default {
   name: "SideBar",
   props: ["threads"],
   data() {
     return {
       enterPressed: false,
-      visibleDropdownIndex: null,
-      confirmDialogVisible: false,
-      threadToDelete: null,
     };
   },
+  computed: {
+    authStore() {
+      return authStore;
+    },
+  },
   methods: {
-    addThread() {
-      this.$emit("add-thread", {
-        name: "New Thread",
-        editing: false,
-        editedName: "New Thread",
-        messages: [],
-      });
+    async addThread() {
+      try {
+        const newThread = {
+          name: "New Thread",
+          editing: false,
+          editedName: "New Chat",
+          messages: [],
+        };
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+        const userId = localStorage.getItem("token");
+        const reqBody = { userId };
+        const thread = await axios.post(api, reqBody);
+        newThread.id = thread.data._id;
+        this.threads.push(newThread);
+      } catch (err) {
+        console.error("Error on adding new thread:", err);
+      }
+    },
+    async deleteThread(index) {
+      const threadId = this.threads[index].id;
+      try {
+        // Step 1: delete all chats associated with this threadId
+        const deleteChatsApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`;
+        await axios.delete(deleteChatsApi);
+
+        // Step 2: delete the thread itself
+        const deleteThreadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
+        await axios.delete(deleteThreadApi);
+
+        // Remove the thread from the list in the UI
+        this.threads.splice(index, 1);
+        
+        // If there are still threads left, select the first one; otherwise, clear the chat and thread state
+        if (this.threads.length > 0) {
+          this.selectThread(0);
+        } else {
+          this.currentThread = {};
+          this.messages = [];
+        }
+      } catch (err) {
+        console.error('Error on deleting thread or its associated chats:', err);
+      }
     },
     editThread(index) {
       this.threads[index].editing = true;
-      this.visibleDropdownIndex = null;
-      this.$nextTick(() => {
-        const input = this.$refs["threadInput-" + index][0];
-        if (input) {
-          input.focus();
-          const length = input.value.length;
-          input.setSelectionRange(length, length);
-        }
-      });
-      this.$emit('edit-thread', index);
     },
     saveThreadName(thread, index) {
       console.log(this.enterPressed);
@@ -78,41 +100,17 @@ export default {
       }
     },
     selectThread(index) {
-      this.$emit('select-thread', index);
-      this.threads.forEach(thread => {
-        thread.clicked = false;
+      this.threadID = this.threads[index].id;
+      this.threads.forEach((thread, i) => {
+        thread.clicked = i === index;
       });
-      this.threads[index].clicked = true;
-    },
-    confirmDelete(index) {
-      this.threadToDelete = index;
-      this.confirmDialogVisible = true;
-      this.visibleDropdownIndex = null;
-    },
-    deleteConfirmed() {
-      if (this.threadToDelete !== null) {
-        this.$emit("delete-thread", this.threadToDelete);
-        this.threadToDelete = null;
-      }
-      this.confirmDialogVisible = false;
-    },
-    cancelDelete() {
-      this.confirmDialogVisible = false;
-      this.threadToDelete = null;
-    },
-    toggleDropdown(index) {
-      this.visibleDropdownIndex =
-        this.visibleDropdownIndex === index ? null : index;
-    },
-    isDropdownVisible(index) {
-      return this.visibleDropdownIndex === index;
-    },
-    closeDropdown() {
-      this.visibleDropdownIndex = null;
+      this.$emit("update-thread", this.threadID);
+      console.log("selected threadID:", this.threadID);
     },
     cancelEdit(index) {
       this.enterPressed = false;
-      this.$emit('cancel-edit', index);
+      this.threads[index].editing = false;
+      console.log("cancel edit");
     },
     handleBlur(thread, index) {
       if (!this.enterPressed) {
@@ -136,6 +134,43 @@ export default {
       }
     },
   },
+  async mounted() {
+    if (authStore.isAuthenticated) {
+      const userId = localStorage.getItem("token");
+      console.log("current UserID:",userId);
+      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+      const historyThreads = await axios.get(threadApi);
+      const historyThreadsData = historyThreads.data;
+      if (historyThreadsData.length === 0) {
+        const newThread = {
+          name: "New Thread",
+          editing: false,
+          editedName: "New Chat",
+          messages: [],
+        };
+        await this.addThread(newThread);
+      } else {
+        historyThreadsData.forEach((threadData) => {
+          const thread = {
+            id: threadData._id,
+            name: threadData.title,
+            editing: false,
+            editedName: threadData.title,
+            messages: [],
+          };
+          this.threads.push(thread);
+        });
+      }
+      this.selectThread(0);
+      // for(let i= 0; i< historyThreadsData.length; i++){
+      //   if(historyThreadsData[i]._id === this.chatBubbleThreadID){
+      //     this.selectThread(i)
+      //     this.$emit('chatviewSelectingThread', "")
+      //     break;
+      //   }
+      // }
+    }
+  }
 };
 </script>
 
