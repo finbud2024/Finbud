@@ -22,6 +22,8 @@ const icons = [
   faSolid.faBars,
   faSolid.faPlay,
   faSolid.faXmark,
+  faSolid.faPen,
+  faSolid.faTrashCan
 ];
 library.add(...icons); // Use the spread operator to add the icons
 

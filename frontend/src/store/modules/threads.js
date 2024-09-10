@@ -1,11 +1,11 @@
 export default {
     namespaced: true,
     state: {
-        currentThreadID: null,
+        threadID: null,
     },
     mutations: {
         SET_THREAD_ID(state, threadID) {
-            state.currentThreadID = threadID;
+            state.threadID = threadID;
         },
     },
     actions: {
@@ -15,7 +15,7 @@ export default {
     },
     getters: {
         getThreadID(state) {
-            return state.currentThreadID;
+            return state.threadID;
         },
     },
 };
