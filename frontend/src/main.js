@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import * as faSolid from "@fortawesome/free-solid-svg-icons";
 import * as faRegular from "@fortawesome/free-regular-svg-icons";
 import * as faBrand from "@fortawesome/free-brands-svg-icons";
+import store from "./store"; // Import the vuex store
 
 // Add specific icons to the library
 const icons = [
@@ -30,8 +31,9 @@ const app = createApp(App);
 // Register FontAwesomeIcon component
 app.component("font-awesome-icon", FontAwesomeIcon);
 
-// Use the router
+// Use the router and vuex store
 app.use(router);
+app.use(store);
 
 // Mount the application to the DOM
 app.mount("#app");

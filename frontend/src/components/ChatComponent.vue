@@ -26,9 +26,7 @@ import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
 export default {
 	name: 'ChatComponent',
-	props: {
-		currentThreadID: String,
-	},
+	props: {},
 	components: { ChatFrame, MessageComponent, UserInput },
 	data() {
 		return {
@@ -44,6 +42,9 @@ export default {
 	computed: {
 		authStore() {
 			return authStore;
+		},
+		currentThreadID() {
+			return this.$store.getters['threads/getThreadID'];
 		},
 	},
 	watch: {

@@ -4,13 +4,9 @@
     <div v-if="authStore.isAuthenticated" class="sidebar-container">
       <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars"/>
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
-      <SideBar
-        :class="{ 'is-visible': isSidebarVisible }"
-        :threads="threads"
-        @update-thread="updateToCurrentThread"
-      />
+      <SideBar :class="{ 'is-visible': isSidebarVisible }"/>
     </div>
-    <ChatComponent :currentThreadID="threadID"/>
+    <ChatComponent/>
     <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
@@ -31,9 +27,7 @@ import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
 //UTILITIES + LIB IMPORT
-import {getCurrentInstance, reactive, onBeforeUnmount, watchEffect, onBeforeMount } from 'vue';
 import authStore from "@/authStore";
-import axios from "axios";
 
 export default {
   name: "ChatView",
@@ -47,14 +41,11 @@ export default {
   },
   data() {
     return {
-      threadID:"",
       newMessage: "",
       messages: [],
       sources: [],
       followUpQuestions: [],
       botAvatar: require("@/assets/botrmbg.png"),
-      currentThread: {},
-      threads: [],
       isSidebarVisible: false,
       showGuidance: false,
       overlayEnabled: false, //overlay to darken the chat screen when new window popsup
@@ -81,23 +72,17 @@ export default {
         return require("@/assets/anonymous.png");
       }
       return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
-    }
+    },
+    threadID() {
+      return this.$store.getters['threads/getThreadID'];
+    },
   },
-  setup(props,{emit}){
-   const instance = getCurrentInstance()
-		onBeforeUnmount(()=>{
-			emit('chatviewSelectingThread', instance.data.threadID);
-		})
-	},
   methods: {
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
     },
     closeSidebar() {
       this.isSidebarVisible = false;
-    },
-    updateToCurrentThread(threadID) {
-      this.threadID = threadID;
     },
     //USED IN BUY/SELL/ADD/SPEND/(QUIZ?)
     openNewWindow(url) {

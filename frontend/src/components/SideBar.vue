@@ -32,9 +32,10 @@ import authStore from "@/authStore";
 import axios from "axios";
 export default {
   name: "SideBar",
-  props: ["threads"],
+  props: [],
   data() {
     return {
+      threads: [],
       enterPressed: false,
     };
   },
@@ -104,22 +105,13 @@ export default {
       this.threads.forEach((thread, i) => {
         thread.clicked = i === index;
       });
-      this.$emit("update-thread", this.threadID);
+      this.$store.dispatch("threads/updateThreadID", this.threadID);
       console.log("selected threadID:", this.threadID);
     },
     cancelEdit(index) {
       this.enterPressed = false;
       this.threads[index].editing = false;
       console.log("cancel edit");
-    },
-    handleBlur(thread, index) {
-      if (!this.enterPressed) {
-        this.cancelEdit(index);
-      }
-    },
-    cancelEdit(index) {
-      this.enterPressed = false;
-      this.$emit('cancel-edit', index);
     },
     handleClick(index) {
       if(event.detail == 1){
@@ -161,14 +153,15 @@ export default {
           this.threads.push(thread);
         });
       }
-      this.selectThread(0);
-      // for(let i= 0; i< historyThreadsData.length; i++){
-      //   if(historyThreadsData[i]._id === this.chatBubbleThreadID){
-      //     this.selectThread(i)
-      //     this.$emit('chatviewSelectingThread', "")
-      //     break;
-      //   }
-      // }
+      if(this.$store.getters['threads/getThreadID'] === null){
+        this.selectThread(0);
+      }
+      for(let i= 0; i< historyThreadsData.length; i++){
+        if(historyThreadsData[i]._id === this.$store.getters['threads/getThreadID']){
+          this.selectThread(i);
+          break;
+        }
+      }
     }
   }
 };
