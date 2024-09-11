@@ -8,7 +8,7 @@
       <li v-for="(thread, index) in threads" :key="index" :class="['thread', { clicked: thread.clicked }]"
         @click="handleClick(index)">
         <div v-if="!thread.editing" class="thread-item">
-          {{ thread.name }}
+          <div class="thread-name">{{ thread.name }}</div>
           <div class="edit-btn" @click.stop="toggleDropdown(index)">
             <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
           </div>
@@ -17,14 +17,14 @@
               <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
               <div>Rename</div>
             </div>
-            <div @click.stop="deleteThread(index)">
+            <div @click.stop="deleteThread(index)" class="delete-thread">
               <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
               <div>Delete</div>
             </div>
           </div>
         </div>
-        <input v-else v-model="thread.editedName" @keyup.enter="saveThreadName(thread, index)"
-          @blur="enterPressed ? enterPressed = false : cancelEdit(index)" />
+        <input v-else :ref="`editInput-${index}`" v-model="thread.editedName"
+          @keyup.enter="saveThreadName(thread, index)" @blur="cancelEdit(index)" />
       </li>
     </ul>
   </aside>
@@ -35,11 +35,9 @@ import authStore from "@/authStore";
 import axios from "axios";
 export default {
   name: "SideBar",
-  props: [],
   data() {
     return {
       threads: [],
-      enterPressed: false,
     };
   },
   computed: {
@@ -51,9 +49,9 @@ export default {
     async addThread() {
       try {
         const newThread = {
-          name: "New Thread",
+          name: "New Chat",
           editing: false,
-          editedName: "New Chat",
+          editedName: null,
           messages: [],
           openDropdown: false,
         };
@@ -100,15 +98,36 @@ export default {
       }
     },
     editThread(index) {
-      this.threads[index].editing = true;
+      this.threads.forEach((thread, idx) => {
+        thread.editing = idx === index;
+      });
+      this.$nextTick(() => {
+        this.$nextTick(() => {
+          const refKey = `editInput-${index}`;
+          if (this.$refs[refKey] && this.$refs[refKey][0]) {
+            this.$refs[refKey][0].focus();
+          } else {
+            console.error(`Failed to find ref: ${refKey}`);
+          }
+        });
+      });
     },
-    saveThreadName(thread, index) {
-      console.log(this.enterPressed);
-      this.enterPressed = true;
+    async saveThreadName(thread, index) {
       if (thread.editedName.trim()) {
-        this.$emit("save-thread-name", { newName: thread.editedName, index });
+        try {
+          thread.name = thread.editedName.trim();
+          thread.editing = false;
+          const threadId = thread.id;
+          const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
+          const threadChanges = await axios.put(api, { title: thread.name });
+          console.log("Thread name saved:", threadChanges.data);
+          thread.editedName = null;
+          openDropdown = false;
+        } catch (err) {
+          console.error("Error on saving thread name:", err);
+        }
       } else {
-        this.$emit("cancel-edit", index);
+        this.cancelEdit(index);
       }
     },
     selectThread(index) {
@@ -120,7 +139,6 @@ export default {
       console.log("selected threadID:", this.threadID);
     },
     cancelEdit(index) {
-      this.enterPressed = false;
       this.threads[index].editing = false;
       console.log("cancel edit");
     },
@@ -186,13 +204,7 @@ export default {
       }
     }
     // Add event listener to handle click outside of dropdown
-    document.addEventListener('click', (event) => {
-      let dropdowns = this.$refs.dropdowns;
-      let isClickInside = dropdowns.some(ref => ref.contains(event.target));
-      if (!isClickInside) {
-        this.closeDropdowns();
-      }
-    });
+    document.addEventListener('click', this.handleOutsideClick);
   },
   beforeDestroy() {
     document.removeEventListener('click', this.handleOutsideClick);
@@ -263,6 +275,12 @@ export default {
   align-items: center;
 }
 
+.thread-name {
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 10px;
+}
+
 .thread-list li:hover {
   color: white;
   cursor: pointer;
@@ -313,7 +331,11 @@ export default {
 }
 
 .dropdown>div:hover {
-  background-color: #afb4bb;
+  background-color: #ddd;
   border-radius: 10px;
+}
+
+.delete-thread {
+  color: red;
 }
 </style>
