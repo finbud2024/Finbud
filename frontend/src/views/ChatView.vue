@@ -250,7 +250,7 @@ export default {
 
 .guidance-text {
   font-size: 1.25rem;
-  padding-top: 15px;
+  margin: auto 0;
 }
 
 .is-guidance-visible {
