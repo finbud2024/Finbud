@@ -3,6 +3,9 @@
     <div class="sidebar-header">
       <span>Chat Threads</span>
     </div>
+    <button class="add-thread-btn" @click="addThread()">
+      <font-awesome-icon icon="fa-solid fa-plus" />
+    </button>
     <ul class="thread-list">
       <li v-for="(thread, index) in threads" :key="index" :class="['thread', { clicked: thread.clicked }]"
         @click="handleClick(index)">
@@ -30,7 +33,7 @@
       <div class="delete-prompt-content">
         <div class="delete-header">Delete chat?</div>
         <div class="delete-body">
-          <p>This will delete <strong class="delete-thread-name">{{threads[deleteIndex].name}}.</strong></p>
+          <p>This will delete <strong class="delete-thread-name">{{ threads[deleteIndex].name }}.</strong></p>
           <div class="delete-button-container">
             <button class="cancel-button" @click="cancelDelete">Cancel</button>
             <button class="confirm-button" @click="confirmDelete">Delete</button>
@@ -38,9 +41,6 @@
         </div>
       </div>
     </div>
-    <button class="add-thread-btn" @click="addThread()">
-      <font-awesome-icon icon="fa-solid fa-plus" />
-    </button>
   </aside>
 </template>
 
@@ -76,7 +76,7 @@ export default {
         const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
         newThread.id = thread.data._id;
-        this.threads.push(newThread);
+        this.threads.unshift(newThread);
       } catch (err) {
         console.error("Error on adding new thread:", err);
       }
@@ -160,12 +160,12 @@ export default {
       }
     },
     selectThread(index) {
-      this.threadID = this.threads[index].id;
+      const threadID = this.threads[index].id;
       this.threads.forEach((thread, i) => {
         thread.clicked = i === index;
       });
-      this.$store.dispatch("threads/updateThreadID", this.threadID);
-      console.log("selected threadID:", this.threadID);
+      this.$store.dispatch("threads/updateThreadID", threadID);
+      console.log("selected threadID:", threadID);
     },
     cancelEdit(index) {
       this.threads[index].editing = false;
@@ -219,16 +219,18 @@ export default {
             messages: [],
             openDropdown: false,
           };
-          this.threads.push(thread);
+          this.threads.unshift(thread);
         });
       }
+      console.log(this.threads);
       if (this.$store.getters['threads/getThreadID'] === null) {
         this.selectThread(0);
-      }
-      for (let i = 0; i < historyThreadsData.length; i++) {
-        if (historyThreadsData[i]._id === this.$store.getters['threads/getThreadID']) {
-          this.selectThread(i);
-          break;
+      } else {
+        for (let i = 0; i < historyThreadsData.length; i++) {
+          if (historyThreadsData[i]._id === this.$store.getters['threads/getThreadID']) {
+            this.selectThread(historyThreadsData.length - i - 1);
+            break;
+          }
         }
       }
     }
