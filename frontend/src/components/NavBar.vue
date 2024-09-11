@@ -30,7 +30,7 @@
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
             <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
               <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
-              <p>{{ name }}</p>
+              <p class="profile-username">{{ name }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
               <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
@@ -390,7 +390,10 @@ export default {
 
 .dropdown-profile p {
   margin-left: 50px;
-  line-height: 3px;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .arrow-down {
