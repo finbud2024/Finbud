@@ -17,7 +17,7 @@
               <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
               <div>Rename</div>
             </div>
-            <div @click.stop="deleteThread(index)" class="delete-thread">
+            <div @click.stop="promptDelete(index)" class="delete-thread">
               <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
               <div>Delete</div>
             </div>
@@ -27,6 +27,18 @@
           @keyup.enter="saveThreadName(thread, index)" @blur="cancelEdit(index)" />
       </li>
     </ul>
+    <div v-if="showConfirmDeleteModal" class="delete-prompt-overlay">
+      <div class="delete-prompt-content">
+        <div class="delete-header">Delete chat?</div>
+        <div class="delete-body">
+          <p>This will delete <strong class="delete-thread-name">{{threads[deleteIndex].name}}.</strong></p>
+          <div class="delete-button-container">
+            <button class="cancel-button" @click="cancelDelete">Cancel</button>
+            <button class="confirm-button" @click="confirmDelete">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </aside>
 </template>
 
@@ -38,6 +50,8 @@ export default {
   data() {
     return {
       threads: [],
+      deleteIndex: null,
+      showConfirmDeleteModal: false,
     };
   },
   computed: {
@@ -72,6 +86,19 @@ export default {
           this.threads[i].openDropdown = false;
         }
       }
+    },
+    //DELETE THREAD HANDLE
+    promptDelete(index) {
+      this.deleteIndex = index;
+      this.showConfirmDeleteModal = true;
+    },
+    confirmDelete() {
+      this.deleteThread(this.deleteIndex);
+      this.showConfirmDeleteModal = false;
+    },
+    cancelDelete() {
+      this.showConfirmDeleteModal = false;
+      this.deleteIndex = null;
     },
     async deleteThread(index) {
       const threadId = this.threads[index].id;
@@ -122,7 +149,7 @@ export default {
           const threadChanges = await axios.put(api, { title: thread.name });
           console.log("Thread name saved:", threadChanges.data);
           thread.editedName = null;
-          openDropdown = false;
+          thread.openDropdown = false;
         } catch (err) {
           console.error("Error on saving thread name:", err);
         }
@@ -335,7 +362,84 @@ export default {
   border-radius: 10px;
 }
 
+/* Delete Prompt */
 .delete-thread {
   color: red;
+}
+
+.delete-prompt-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 10000;
+}
+
+.delete-prompt-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: fit-content;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.delete-header {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.delete-header::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #ddd;
+  margin-top: 20px;
+}
+
+.delete-thread-name {
+  font-weight: bolder;
+}
+
+.delete-button-container {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.delete-button-container button {
+  padding: .75rem .875rem;
+  border: 1px solid #ddd;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.confirm-button {
+  background: red;
+  color: white;
+}
+
+.confirm-button:hover {
+  background: #b30900;
+}
+
+.cancel-button {
+  color: black;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+.cancel-button:hover {
+  background: #ddd;
 }
 </style>
