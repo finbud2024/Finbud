@@ -21,7 +21,7 @@
             </div>
           </li>
           <!-- guidance for authenticated users -->
-          <div v-if="authStore.isAuthenticated">
+          <div v-if="this.isAuthenticated">
             <li v-for="(item, index) in userGuidanceList" :key="index" @click="toggleExpansion(item)"
               :class="{ 'expanded': expandedItem === item }">
               <span class="header-list">{{ item.header }}</span>
@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import authStore from '@/authStore';
 import search from '@/assets/guidance-explanation/search.png'
 import stockPrice from '@/assets/guidance-explanation/stock-price.png'
 import define from '@/assets/guidance-explanation/define.png'
@@ -145,8 +144,8 @@ export default {
     };
   },
   computed: {
-    authStore() {
-      return authStore;
+    isAuthenticated() {
+      return this.$store.getters["users/isAuthenticated"];
     }
   },
   methods: {

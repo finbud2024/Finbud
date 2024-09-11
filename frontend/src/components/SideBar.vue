@@ -45,7 +45,6 @@
 </template>
 
 <script>
-import authStore from "@/authStore";
 import axios from "axios";
 export default {
   name: "SideBar",
@@ -57,8 +56,8 @@ export default {
     };
   },
   computed: {
-    authStore() {
-      return authStore;
+    isAuthenticated() {
+      return this.$store.getters['users/isAuthenticated'];
     },
   },
   methods: {
@@ -126,6 +125,7 @@ export default {
         console.error('Error on deleting thread or its associated chats:', err);
       }
     },
+    //EDIT THREAD HANDLE
     editThread(index) {
       this.threads.forEach((thread, idx) => {
         thread.editing = idx === index;
@@ -194,7 +194,7 @@ export default {
     },
   },
   async mounted() {
-    if (authStore.isAuthenticated) {
+    if (this.isAuthenticated) {
       const userId = localStorage.getItem("token");
       console.log("current UserID:", userId);
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;

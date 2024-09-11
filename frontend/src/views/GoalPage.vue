@@ -7,7 +7,7 @@
           <i class="fas fa-bell"></i>
         </div>
         <div class="header-greeting">
-          <h1>Hello, <span>{{firstName}}</span>👋</h1>
+          <h1>Hello, <span>{{ firstName }}</span>👋</h1>
           <p>A step towards financial freedom before the age of 30!</p>
         </div>
       </div>
@@ -241,9 +241,6 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 import TransactionLine from '../components/goalPage/TransactionLine.vue';
 import TransactionBar from '../components/goalPage/TransactionBar.vue';
-import authStore from '@/authStore';
-
-
 
 export default {
   name: 'GoalPage',
@@ -254,8 +251,8 @@ export default {
   data() {
     return {
       userId: localStorage.getItem('token'),
-      firstName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.firstName : 'Guest',
-      displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem('user')).identityData.displayName : 'Guest',
+      firstName: JSON.parse(localStorage.getItem('user')).identityData.firstName,
+      displayName: JSON.parse(localStorage.getItem('user')).identityData.displayName,
       newGoal: {
         title: '',
         description: '',
@@ -302,9 +299,9 @@ export default {
     };
   },
   computed: {
-    authStore(){
-      return authStore;
-    }
+    isAuthenticated(){
+      return this.$store.getters["users/isAuthenticated"];
+    },
   },
   methods: {
     retrieveGoals() {
@@ -589,7 +586,7 @@ export default {
     },
   },
   mounted() {
-    if (!authStore.isAuthenticated) {
+    if (!this.isAuthenticated) {
       this.$router.push('/');
     }
     this.fetchTransactions();
@@ -598,8 +595,8 @@ export default {
   },
 
   computed: {
-    authStore(){
-      return authStore;
+    isAuthenticated(){
+      return this.$store.getters['users/isAuthenticated'];
     }
   },
   beforeUnmount() {

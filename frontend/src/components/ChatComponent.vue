@@ -20,7 +20,6 @@ import ChatFrame from './ChatFrame.vue';
 import MessageComponent from './MessageComponent.vue';
 import UserInput from './UserInput.vue';
 // SERVICES + LIBRARY IMPORT
-import authStore from "@/authStore";
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
@@ -34,17 +33,29 @@ export default {
 			sources: [],
 			videos: [],
 			relevantQuestions: [],
-			displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem("user")).identityData.displayName : "User",
-			userAvatar: authStore.isAuthenticated ? JSON.parse(localStorage.getItem("user")).identityData.profilePicture : require("@/assets/anonymous.png"),
 			botAvatar: require("@/assets/botrmbg.png"),
 		}
 	},
 	computed: {
-		authStore() {
-			return authStore;
+		isAuthenticated() {
+			return this.$store.getters['users/isAuthenticated'];
 		},
 		currentThreadID() {
 			return this.$store.getters['threads/getThreadID'];
+		},
+		displayName() {
+			if (this.isAuthenticated) {
+				return JSON.parse(localStorage.getItem("user")).identityData.displayName;
+			} else {
+				return "User";
+			}
+		},
+		userAvatar() {
+			if (this.isAuthenticated) {
+				return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
+			} else {
+				return require("@/assets/anonymous.png");
+			}
 		},
 	},
 	watch: {
@@ -325,7 +336,7 @@ export default {
 				}
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
-				if (authStore.isAuthenticated) {
+				if (this.isAuthenticated) {
 					try {
 						const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
 						const reqBody = {
@@ -499,7 +510,7 @@ export default {
 		},
 	},
 	mounted() {
-		if (!authStore.isAuthenticated) {
+		if (!this.isAuthenticated) {
 			const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
 			this.addTypingResponse(botInstruction, false);
 		}

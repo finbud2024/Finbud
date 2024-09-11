@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <div v-if="overlayEnabled" class="overlay"/>
-    <div v-if="authStore.isAuthenticated" class="sidebar-container">
+    <div v-if="this.isAuthenticated" class="sidebar-container">
       <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars"/>
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
       <SideBar :class="{ 'is-visible': isSidebarVisible }"/>
@@ -27,7 +27,6 @@ import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
 //UTILITIES + LIB IMPORT
-import authStore from "@/authStore";
 
 export default {
   name: "ChatView",
@@ -54,11 +53,11 @@ export default {
     };
   },
   computed: {
-    authStore() {
-      return authStore;
+    isAuthenticated() {
+      return this.$store.getters["users/isAuthenticated"];
     },
     displayName() {
-      return this.authStore.isAuthenticated
+      return this.isAuthenticated
         ? JSON.parse(localStorage.getItem("user")).identityData.displayName
         : "User";
     },

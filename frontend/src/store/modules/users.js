@@ -1,21 +1,31 @@
 export default {
     namespaced: true,
     state: {
-        userID: null,
+        userID: localStorage.getItem('token') || null,
     },
     mutations: {
-        SET_USER_ID(state, userID) {
+        login(state, userID){
+            console.log('login:', userID);
+            localStorage.setItem('token', userID);
             state.userID = userID;
+        },
+        logout(state){
+            console.log('logout');
+            localStorage.clear();
+            state.userID = null;
         },
     },
     actions: {
-        updateUserID({ commit }, userID) {
-            commit('SET_THREAD_ID', userID);
+        login({commit}, userID){
+            commit('login', userID);
         },
+        logout({commit}){
+            commit('logout');
+        }
     },
     getters: {
-        getUserID(state) {
-            return state.userID;
+        isAuthenticated(state) {
+            return state.userID !== null;
         },
     },
 };

@@ -22,7 +22,6 @@
 import NavBar from "./components/NavBar.vue";
 import FooterBar from "./components/FooterBar.vue";
 import ChatBubble from "./components/ChatBubble.vue";
-import authStore from "@/authStore";
 import axios from "axios";
 export default {
   name: "App",
@@ -45,7 +44,7 @@ export default {
   async mounted() {
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener('click', this.handleClickOutside);
-    if (authStore.isAuthenticated) {
+    if (this.isAuthenticated) {
       const userId = localStorage.getItem("token");
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
       const historyThreads = await axios.get(threadApi);
@@ -63,8 +62,8 @@ export default {
     }
   },
   computed: {
-    authStore() {
-      return authStore;
+    isAuthenticated(){
+      return this.$store.getters['users/isAuthenticated'];
     },
     showChatBubble() {
       return (
