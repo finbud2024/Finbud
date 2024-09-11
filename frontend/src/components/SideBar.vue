@@ -2,7 +2,6 @@
   <aside class="side-bar">
     <div class="sidebar-header">
       <span>Chat Threads</span>
-      <button class="add-thread-btn" @click="addThread()">+</button>
     </div>
     <ul class="thread-list">
       <li v-for="(thread, index) in threads" :key="index" :class="['thread', { clicked: thread.clicked }]"
@@ -39,6 +38,9 @@
         </div>
       </div>
     </div>
+    <button class="add-thread-btn" @click="addThread()">
+      <font-awesome-icon icon="fa-solid fa-plus" />
+    </button>
   </aside>
 </template>
 
@@ -255,23 +257,26 @@ export default {
   border-bottom: 1px solid #34495e;
   margin-bottom: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   font-size: 1.5rem;
 }
 
 .add-thread-btn {
   cursor: pointer;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  padding: 10px;
+  background-color: transparent;
+  color: #34495e;
+  border: 1px solid #34495e;
+  border-radius: 10px;
   transition: background-color 0.3s;
+  width: 100%;
+  height: 35px;
 }
 
 .add-thread-btn:hover {
-  background-color: #2980b9;
+  background-color: #34495e;
+  color: white;
 }
 
 .edit-btn {
