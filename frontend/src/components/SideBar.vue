@@ -257,7 +257,7 @@ export default {
   border-bottom: 1px solid #34495e;
   margin-bottom: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   font-size: 1.5rem;
 }
