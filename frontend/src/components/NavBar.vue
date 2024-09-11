@@ -30,7 +30,7 @@
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
             <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
               <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
-              <p class="profile-username">{{ name }}</p>
+              <p>{{ profileName }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
               <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
@@ -81,31 +81,38 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
-      image: '',
-      name: 'User',
     };
   },
   computed: {
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
+    userData() {
+    // Assuming isAuthenticated correctly reflects authentication state
+    if (!this.isAuthenticated) {
+      console.log("User is not authenticated");
+      return null;
+    }
+    try {
+      const data = localStorage.getItem('user');
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      console.error('Error parsing user data:', e);
+      return null;
+    }
+  },
     profileImage() {
-      if (this.isAuthenticated) {
-        try {
-          const profileData = JSON.parse(localStorage.getItem('user'));
-          if (profileData.identityData) {
-            this.image = profileData.identityData.profilePicture;
-            this.name = profileData.identityData.displayName;
-          } else {
-            this.image = '';
-            this.name = 'User';
-          }
-        } catch (err) {
-          console.log(err);
-        }
+      if(this.userData && this.userData.identityData) {
+        return this.userData.identityData.profilePicture;
       }
-      return this.image || defaultImage;
+      return defaultImage;
     },
+    profileName() {
+      if(this.userData && this.userData.identityData) {
+        return this.userData.identityData.displayName;
+      }
+      return 'User';
+    }
   },
   methods: {
     toggleDropdown(open) {
@@ -138,7 +145,7 @@ export default {
       const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
       if (response.data.isAuthenticated) {
         //put user info into localStorage
-        console.log('Login Success in navbar:', response.data.user._id);
+        console.log('Login Success in navbar:', response.data);
         this.$store.dispatch("users/login", response.data.user._id);
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
