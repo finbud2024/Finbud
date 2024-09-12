@@ -36,7 +36,6 @@
 
 <script>
 import axios from 'axios';
-import authStore from '@/authStore';
 
 export default {
   name: 'LoginView',
@@ -56,8 +55,8 @@ export default {
           "password": this.password
         }
         const response = await axios.post(api,reqBody);
-        //put user info into localStorage
-        authStore.login(response.data._id);
+        //put user info into localStorage and vuex
+        this.$store.dispatch("users/login", response.data._id);
         localStorage.setItem('user', JSON.stringify(response.data));
         this.$router.push('/'); // Redirect to the main page after login
       } catch (err) {

@@ -20,15 +20,12 @@ import ChatFrame from './ChatFrame.vue';
 import MessageComponent from './MessageComponent.vue';
 import UserInput from './UserInput.vue';
 // SERVICES + LIBRARY IMPORT
-import authStore from "@/authStore";
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
 export default {
 	name: 'ChatComponent',
-	props: {
-		currentThreadID: String,
-	},
+	props: {},
 	components: { ChatFrame, MessageComponent, UserInput },
 	data() {
 		return {
@@ -36,14 +33,29 @@ export default {
 			sources: [],
 			videos: [],
 			relevantQuestions: [],
-			displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem("user")).identityData.displayName : "User",
-			userAvatar: authStore.isAuthenticated ? JSON.parse(localStorage.getItem("user")).identityData.profilePicture : require("@/assets/anonymous.png"),
 			botAvatar: require("@/assets/botrmbg.png"),
 		}
 	},
 	computed: {
-		authStore() {
-			return authStore;
+		isAuthenticated() {
+			return this.$store.getters['users/isAuthenticated'];
+		},
+		currentThreadID() {
+			return this.$store.getters['threads/getThreadID'];
+		},
+		displayName() {
+			if (this.isAuthenticated) {
+				return JSON.parse(localStorage.getItem("user")).identityData.displayName;
+			} else {
+				return "User";
+			}
+		},
+		userAvatar() {
+			if (this.isAuthenticated) {
+				return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
+			} else {
+				return require("@/assets/anonymous.png");
+			}
 		},
 	},
 	watch: {
@@ -62,6 +74,34 @@ export default {
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async sendMessage(newMessage) {
 			const userMessage = newMessage.trim();
+			//UPDATE THREAD NAME BASED ON FIRST MESSAGE
+			if (this.messages.length === 1) {
+				const response = await gptServices([
+					{ role: "system", content: `I am a highly efficient summarizer. 
+												Here are examples: 'Best vacation in Europe' from 
+												'What are the best vacation spots in Europe?'; 
+												'Discussing project deadline' from 
+												'We need to extend the project deadline by two weeks due to unforeseen issues.' 
+												Now, summarize the following user message within 3 to 4 words into a title:`
+					},
+					{
+						role: "user",
+						content: userMessage,
+					},
+				]);
+				if(this.$route.path === "/chat-view"){
+					this.$emit("initialThreadName", response);
+				}else{
+					try{
+						const currentThreadID = this.$store.getters['threads/getThreadID'];
+						const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${currentThreadID}`;
+						axios.put(threadApi, { title: response });
+					}catch(err){
+						console.error("Error on updating thread name:", err.message);
+					}
+				}
+
+			}
 			//ONLY EXECUTE COMMAND/SHOW PROMPT IF THERE IS SOME MESSAGES IN THE USER INPUT
 			if (userMessage.length != 0) {
 				this.messages.push({
@@ -324,7 +364,7 @@ export default {
 				}
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
-				if (authStore.isAuthenticated) {
+				if (this.isAuthenticated) {
 					try {
 						const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
 						const reqBody = {
@@ -440,7 +480,7 @@ export default {
 				behavior: "smooth", // Smooth scrolling effect
 			});
 		},
-		async setScrollHeightBottomn(){
+		async setScrollHeightBottomn() {
 			await new Promise((r) => setTimeout(r, 200));
 			const chatFrame = document.querySelector(".chat-frame");
 			chatFrame.scrollTo({
@@ -498,7 +538,7 @@ export default {
 		},
 	},
 	mounted() {
-		if (!authStore.isAuthenticated) {
+		if (!this.isAuthenticated) {
 			const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
 			this.addTypingResponse(botInstruction, false);
 		}

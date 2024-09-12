@@ -53,7 +53,6 @@ import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import defaultImage from '@/assets/anonymous.png';
-import authStore from '@/authStore';
 
 export default {
   data() {
@@ -97,8 +96,8 @@ export default {
     profileImage(){
       return this.profile.image || defaultImage;
     },
-    authStore(){
-      return authStore;
+    isAuthenticated(){
+      return this.$store.getters['users/isAuthenticated'];
     }
   },
   methods: {
@@ -185,7 +184,6 @@ export default {
         const response = await axios.put(api, {
           identityData: newIdentityData
         });
-        authStore.userProfileChange = !authStore.userProfileChange;
         //if image was updated, update to false
         if(this.imageUploaded){
           this.imageUploaded = false;

@@ -165,7 +165,6 @@
 
 <script>
 import BigGreenButton from "../components/Button/ChatNow.vue";
-import authStore from "@/authStore";
 import faqs from "@/views/hardcodeData/FAQs.js";
 export default {
   name: 'MainContent',
@@ -183,11 +182,11 @@ export default {
     };
   },
   computed: {
-    authStore() {
-      return authStore;
+    isAuthenticated(){
+      return this.$store.getters['users/isAuthenticated'];
     },
     displayText() {
-      return authStore.isAuthenticated ? "Chat Now" : "Get Started!"
+      return this.isAuthenticated ? "Chat Now" : "Get Started!"
     }
   },
   methods: {
@@ -195,7 +194,7 @@ export default {
       this.$router.push('/tech');
     },
     chatNow() {
-      if (authStore.isAuthenticated) {
+      if (this.isAuthenticated) {
         this.$router.push('/chat-view');
       } else {
         this.$router.push('/login');
