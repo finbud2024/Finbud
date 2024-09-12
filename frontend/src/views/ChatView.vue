@@ -4,9 +4,9 @@
     <div v-if="this.isAuthenticated" class="sidebar-container">
       <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars"/>
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
-      <SideBar :class="{ 'is-visible': isSidebarVisible }"/>
+      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
     </div>
-    <ChatComponent/>
+    <ChatComponent @initialThreadName="initialThreadName"/>
     <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
@@ -50,6 +50,7 @@ export default {
       overlayEnabled: false, //overlay to darken the chat screen when new window popsup
       newWindow: null, //new window to referrence to other
       windowCheckInterval: null,
+      newThreadName: "",
     };
   },
   computed: {
@@ -124,6 +125,9 @@ export default {
       this.overlayEnabled = false;
       this.newWindow = null;
     },
+    initialThreadName(newThreadName){
+      this.newThreadName = newThreadName;
+    }
   },
   async mounted() {
     setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);

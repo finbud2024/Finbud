@@ -74,6 +74,34 @@ export default {
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async sendMessage(newMessage) {
 			const userMessage = newMessage.trim();
+			//UPDATE THREAD NAME BASED ON FIRST MESSAGE
+			if (this.messages.length === 1) {
+				const response = await gptServices([
+					{ role: "system", content: `I am a highly efficient summarizer. 
+												Here are examples: 'Best vacation in Europe' from 
+												'What are the best vacation spots in Europe?'; 
+												'Discussing project deadline' from 
+												'We need to extend the project deadline by two weeks due to unforeseen issues.' 
+												Now, summarize the following user message within 3 to 4 words into a title:`
+					},
+					{
+						role: "user",
+						content: userMessage,
+					},
+				]);
+				if(this.$route.path === "/chat-view"){
+					this.$emit("initialThreadName", response);
+				}else{
+					try{
+						const currentThreadID = this.$store.getters['threads/getThreadID'];
+						const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${currentThreadID}`;
+						axios.put(threadApi, { title: response });
+					}catch(err){
+						console.error("Error on updating thread name:", err.message);
+					}
+				}
+
+			}
 			//ONLY EXECUTE COMMAND/SHOW PROMPT IF THERE IS SOME MESSAGES IN THE USER INPUT
 			if (userMessage.length != 0) {
 				this.messages.push({
@@ -452,7 +480,7 @@ export default {
 				behavior: "smooth", // Smooth scrolling effect
 			});
 		},
-		async setScrollHeightBottomn(){
+		async setScrollHeightBottomn() {
 			await new Promise((r) => setTimeout(r, 200));
 			const chatFrame = document.querySelector(".chat-frame");
 			chatFrame.scrollTo({

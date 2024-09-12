@@ -48,6 +48,9 @@
 import axios from "axios";
 export default {
   name: "SideBar",
+  props: {
+    initialThreadName: String,
+  },
   data() {
     return {
       threads: [],
@@ -58,6 +61,20 @@ export default {
   computed: {
     isAuthenticated() {
       return this.$store.getters['users/isAuthenticated'];
+    },
+  },
+  watch: {
+    initialThreadName: {
+      immediate: true,
+      handler(newName) {
+        if (newName.length === 0 || newName === null) return;
+        this.threads.forEach( (thread, index) => {
+          if (thread.id === this.$store.getters['threads/getThreadID']) {
+            thread.editedName = newName;
+            this.saveThreadName(thread, index);
+          }
+        })
+      },
     },
   },
   methods: {
@@ -76,6 +93,7 @@ export default {
         const thread = await axios.post(api, reqBody);
         newThread.id = thread.data._id;
         this.threads.unshift(newThread);
+        this.selectThread(0);
       } catch (err) {
         console.error("Error on adding new thread:", err);
       }
