@@ -25,7 +25,9 @@ import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
 export default {
 	name: 'ChatComponent',
-	props: {},
+	props: {
+		exampleMessage: String,
+	},
 	components: { ChatFrame, MessageComponent, UserInput },
 	data() {
 		return {
@@ -66,6 +68,14 @@ export default {
 					this.updateCurrentThread(newThreadID)
 				} else {
 					this.messages = [];
+				}
+			}
+		},
+		exampleMessage: {
+			immediate: true,
+			handler(newExampleMessage) {
+				if (newExampleMessage.length != 0) {
+					this.sendMessage(newExampleMessage);
 				}
 			}
 		}

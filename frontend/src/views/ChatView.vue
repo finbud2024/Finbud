@@ -1,23 +1,20 @@
 <template>
   <div class="home-container">
-    <div v-if="overlayEnabled" class="overlay"/>
+    <div v-if="overlayEnabled" class="overlay" />
     <div v-if="this.isAuthenticated" class="sidebar-container">
-      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars"/>
-      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
-      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
+      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
+      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar" />
+      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName" />
     </div>
-    <ChatComponent @initialThreadName="initialThreadName"/>
-    <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
+    <ChatComponent @initialThreadName="initialThreadName" :exampleMessage="chatExample"/>
+    <div class="guidance-btn" :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal  
-      v-if="showGuidance" 
-      @close="showGuidance = false" 
-      :showModal="showGuidance" 
-    />
+    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" :showModal="showGuidance"
+      @chat-example="handleEmitChatExample" />
   </div>
 </template>
 
@@ -30,7 +27,7 @@ import GuidanceModal from "../components/GuidanceModal.vue";
 
 export default {
   name: "ChatView",
-  props:{
+  props: {
     chatBubbleThreadID: String
   },
   components: {
@@ -51,6 +48,7 @@ export default {
       newWindow: null, //new window to referrence to other
       windowCheckInterval: null,
       newThreadName: "",
+      chatExample: "",
     };
   },
   computed: {
@@ -64,11 +62,11 @@ export default {
     },
     userAvatar() {
       //Check data in localstorage (user is authenticated)
-      if(!JSON.parse(localStorage.getItem("user"))){
+      if (!JSON.parse(localStorage.getItem("user"))) {
         return require("@/assets/anonymous.png");
       }
       //Check if user has a profile picture
-      if(!JSON.parse(localStorage.getItem("user")).identityData.profilePicture){
+      if (!JSON.parse(localStorage.getItem("user")).identityData.profilePicture) {
         return require("@/assets/anonymous.png");
       }
       return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
@@ -125,12 +123,17 @@ export default {
       this.overlayEnabled = false;
       this.newWindow = null;
     },
-    initialThreadName(newThreadName){
+    initialThreadName(newThreadName) {
       this.newThreadName = newThreadName;
-    }
+    },
+    //HANDLE THE EMITTED CHAT EXAMPLE
+    handleEmitChatExample(chatExample) {
+      this.chatExample = chatExample;
+      this.showGuidance = false;
+    },
   },
   async mounted() {
-    setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);
+    setInterval(() => { this.currentTime = new Date().toLocaleTimeString(); }, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
     document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
   },
@@ -214,6 +217,7 @@ export default {
 .side-bar.is-visible {
   transform: translateX(0);
 }
+
 /*______________________*/
 /* Guidance CSS class*/
 
@@ -265,10 +269,12 @@ export default {
 .followup-component-card {
   width: 70%;
   margin: 0 auto;
-  background-color: #f8f9fa; /* Light grey background */
+  background-color: #f8f9fa;
+  /* Light grey background */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Light shadow */
   margin-top: 20px;
 }
 
@@ -278,6 +284,7 @@ export default {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -288,6 +295,7 @@ export default {
   0% {
     background-color: #f0f0f0;
   }
+
   100% {
     background-color: transparent;
   }

@@ -16,7 +16,7 @@
             <div v-if="item.instruction">{{ item.instruction }}.</div>
             <div v-if="item.example">(e.g. "{{ item.example }}").</div>
             <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
-            <div class="expanded-content">
+            <div class="expanded-content" @click.stop="interactiveClick">
               <img class="explanation" :src="item.explanation" alt="explanation">
             </div>
           </li>
@@ -30,7 +30,7 @@
               </div>
               <div v-if="item.instruction">{{ item.instruction }}.</div>
               <div v-if="item.example">(e.g. "{{ item.example }}").</div>
-              <div class="expanded-content">
+              <div class="expanded-content" @click.stop="interactiveClick">
                 <img class="explanation" :src="item.explanation" alt="explanation">
               </div>
             </li>
@@ -41,7 +41,7 @@
           >
             <span class="header-list">{{generalAdvice.header}}</span>
             <br> {{generalAdvice.instruction}}
-            <div class="expanded-content">
+            <div class="expanded-content" @click.stop="interactiveClick">
               <img class="explanation" :src="generalAdvice.explanation" alt="explanation">
             </div>
           </li>
@@ -138,6 +138,7 @@ export default {
       generalAdvice: {
         header: "General Financial Concepts & Advice",
         instruction: "For general inquiries, use descriptive terms.",
+        example: "Tell me a joke",
         explanation: general,
       },
       expandedItem: null,
@@ -154,12 +155,19 @@ export default {
     },
     toggleExpansion(item) {
       //if it is already expanded and click into it again:
+      // console.log(item);
       if (this.expandedItem === item) {
         this.expandedItem = null;
       }
       else {
         this.expandedItem = item;
       }
+    },
+    interactiveClick() {
+      //prevent the click event from bubbling up to the parent li
+      //so that the expanded content won't collapse
+      console.log(this.expandedItem.example);
+      this.$emit('chat-example', this.expandedItem.example);
     }
   }
 };
@@ -298,6 +306,11 @@ export default {
   border-right: 2px solid #007bff;
   display: flex;
   justify-content: end;
+}
+
+.expanded-content:hover{
+  cursor: pointer;
+  background-color: #f8f9fa;
 }
 
 .expanded .expanded-content {
