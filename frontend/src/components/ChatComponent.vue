@@ -556,6 +556,6 @@ export default {
 	flex: 1;
 	position: relative;
 	container-type: size;
-	container-name: messageComponent userInputComponent;
+	container-name: messageComponent userInputComponent sourcesComponent;
 }
 </style>

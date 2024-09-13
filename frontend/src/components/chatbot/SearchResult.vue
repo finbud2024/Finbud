@@ -77,8 +77,6 @@ export default {
 }
 
 .scrollable-sources {
-  flex-wrap: nowrap;
-  align-items: flex-start; /* Ensure items align properly */
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 columns */
   gap: 30px; /* Space between items */
@@ -167,10 +165,36 @@ export default {
   color: #0056b3;
 }
 
+@container sourcesComponent (max-width: 401px) {
+  .source {
+    height: 100px;
+    margin-bottom: -20px;
+  }
+  .sources-container{
+    height: 100%;
+  }
+  .scrollable-sources {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px; 
+  }
+}
+
 /* Media Query for Responsive Layout */
 @media (max-width: 768px) {
   .scrollable-sources-frame {
     width: 100%;
+  }
+
+  .scrollable-sources {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px; 
+  }
+  .source {
+    height: 100px;
+    margin-bottom: -20px;
+  }
+  .sources-container{
+    height: 100%;
   }
 }
 </style>

@@ -419,4 +419,9 @@ tr:nth-child(odd) {
 .is-guidance-visible {
   right: calc(25% + 19px - 80px);
 }
+
+.sources {
+  width: 100%;
+  position: relative;
+}
 </style>
