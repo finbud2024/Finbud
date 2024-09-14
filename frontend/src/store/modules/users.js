@@ -19,8 +19,9 @@ export default {
         login({commit}, userID){
             commit('login', userID);
         },
-        logout({commit}){
+        logout({commit, dispatch}){
             commit('logout');
+            dispatch("threads/updateThreadID", null, {root: true});
         }
     },
     getters: {
