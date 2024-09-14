@@ -32,7 +32,6 @@ export default {
   },
   data() {
     return {
-      threadId: "",
       chatBubbleActive: false,
       botMessage: "",
       displayedMessage: "",
@@ -55,9 +54,9 @@ export default {
         const userId = localStorage.getItem("token");
         const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
-        this.threadId = thread._id;
+        this.$store.dispatch("threads/updateThreadID", thread._id);
       } else {
-        this.threadId = historyThreadsData[0]._id;
+        this.$store.dispatch("threads/updateThreadID", historyThreadsData.at(-1)._id);
       }
     }
   },

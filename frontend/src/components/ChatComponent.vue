@@ -74,7 +74,7 @@ export default {
 		exampleMessage: {
 			immediate: true,
 			handler(newExampleMessage) {
-				if (newExampleMessage.length != 0) {
+				if (newExampleMessage !== null && newExampleMessage !== undefined && newExampleMessage.length != 0) {
 					this.sendMessage(newExampleMessage);
 				}
 			}
