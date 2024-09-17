@@ -1,7 +1,6 @@
 <template>
   <div class="GoalDashBoardContainer">
       <div class="leftPanel">
-        <!-- TO DO: Update this image based on user profile picture -->
         <div class="leftPanelHeader">
           <img class="profilePic" :src="profilePic" alt="profilePic" />
           <div class="headerText">
@@ -20,7 +19,9 @@
         </div>
       </div>
       <div class="rightPanel">
-
+        No need to put the graph as in figma no more. Add a more goals here.
+        <br>
+        Display corresponding message/ picture if there is no goal for  created by the user
       </div>
   </div>
 </template>
@@ -75,8 +76,13 @@ export default {
   }
   .rightPanel{
     width: 30%;
-    height: 100%;
+    max-height: 100%;
     border: 2px solid green;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   .leftPanelHeader{
     max-width: 100%;
