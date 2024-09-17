@@ -3,11 +3,20 @@
       <div class="leftPanel">
         <!-- TO DO: Update this image based on user profile picture -->
         <div class="leftPanelHeader">
-          <img class="profilePic" src="../assets/botrmbg.png" alt="profilePic" />
+          <img class="profilePic" :src="profilePic" alt="profilePic" />
           <div class="headerText">
-            <>{{new Date().getHours < 12? "Good Morning ": "Good Afternoon "}}{{displayName}}<>
-            <div></div>
+            <div class="greeting">{{new Date().getHours < 12? "Good Morning ": "Good Afternoon "}}{{displayName}}</div>
+            <div class="slogan">Manage your wallet wisely to reach your goals with ease.</div>
           </div>
+        </div>
+        <div class="panelOverview">
+          2 cards as shown in figma goes here
+        </div>
+        <div class="graphContainer">
+          Graph goes here. Use LineChar component. DO NOT MAKE A SEPARATE FOLER UNDER COMPONENT FOLDER FOR THIS PAGE
+        </div>
+        <div class="transactionContainer">
+          Transaction table goes here
         </div>
       </div>
       <div class="rightPanel">
@@ -29,11 +38,11 @@ export default {
       userId: localStorage.getItem('token'),
       firstName: JSON.parse(localStorage.getItem('user')).identityData.firstName,
       displayName: JSON.parse(localStorage.getItem('user')).identityData.displayName,
-      
+      profilePic: JSON.parse(localStorage.getItem('user')).identityData.profilePicture,
     };
   },
   computed: {
-    isAuthenticated(){
+    isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
   },
@@ -57,8 +66,12 @@ export default {
   } 
   .leftPanel{
     width: 70%;
-    height: 100%;
+    max-height: 100%;
+    border: 2px solid red;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
+    justify-content: space-between;
   }
   .rightPanel{
     width: 30%;
@@ -66,14 +79,56 @@ export default {
     border: 2px solid green;
   }
   .leftPanelHeader{
-    width: 100%;
-    height: 10%;
-    background-color: green;
+    max-width: 100%;
+    height: 5%;
     display: flex;
     flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
   }
   .profilePic{
-    width: 60px;
+    height: 100%;
     aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .headerText{
+    margin-left: 10px;
+  }
+  .greeting{
+    font-weight: 600;
+    font-size: 22px;
+  }
+  .slogan{
+    font-size: 14px;
+    color: #aaa;
+  }
+  .panelOverview{
+    width: 100%;
+    height: 15%;
+    background-color: blue;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .graphContainer{
+    width:100%;
+    height: 45%;
+    display: flex;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(31, 126, 53);
+  }
+  .transactionContainer{
+    width:100%;
+    height: 30%;
+    display: flex;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(126, 104, 31);
   }
 </style>

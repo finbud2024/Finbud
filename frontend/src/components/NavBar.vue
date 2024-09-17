@@ -55,6 +55,7 @@
             <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk
               Analysis</router-link>
+            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/quant-analysis" class="home">Quant</router-link>
             <router-link to="#" @click="logout" class="logout">Log Out</router-link>
           </div>
@@ -89,27 +90,27 @@ export default {
       return this.$store.getters["users/isAuthenticated"];
     },
     userData() {
-    // Assuming isAuthenticated correctly reflects authentication state
-    if (!this.isAuthenticated) {
-      console.log("User is not authenticated");
-      return null;
-    }
-    try {
-      const data = localStorage.getItem('user');
-      return data ? JSON.parse(data) : null;
-    } catch (e) {
-      console.error('Error parsing user data:', e);
-      return null;
-    }
-  },
+      // Assuming isAuthenticated correctly reflects authentication state
+      if (!this.isAuthenticated) {
+        console.log("User is not authenticated");
+        return null;
+      }
+      try {
+        const data = localStorage.getItem('user');
+        return data ? JSON.parse(data) : null;
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        return null;
+      }
+    },
     profileImage() {
-      if(this.userData && this.userData.identityData) {
+      if (this.userData && this.userData.identityData) {
         return this.userData.identityData.profilePicture;
       }
       return defaultImage;
     },
     profileName() {
-      if(this.userData && this.userData.identityData) {
+      if (this.userData && this.userData.identityData) {
         return this.userData.identityData.displayName;
       }
       return 'User';
