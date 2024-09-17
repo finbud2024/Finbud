@@ -1,7 +1,12 @@
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" />
+      <template v-if="stockSymbol">
+        <CompanyCard :companyName="stockSymbol" :width="`80%`" />
+      </template>
+      <template v-else>
+        <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" />
+      </template>
     </header>
 
     <div class="main-content">
@@ -241,9 +246,21 @@ export default {
     };
   },
   methods: {
+    // fetch stock data from backend API
+    async fetchStockData(stockSymbol) {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/stockData/${stockSymbol}`
+        );
+        this.stockData = response.data;
+      } catch (error) {
+        console.error("Error fetching stock data: ", error);
+      }
+    },
+
     filterStockRecommendations() {
       const searchTerm = this.stockSymbol.toUpperCase();
-      if (searchTerm.length < 2) {
+      if (searchTerm.length < 1) {
         this.stockRecommendations = [];
         this.showRecommendations = false;
         return;
@@ -262,6 +279,7 @@ export default {
     selectStockSymbol(symbol) {
       this.stockSymbol = symbol;
       this.showRecommendations = false;
+      this.fetchStockData(symbol);
     },
     handleKeyDown(event) {
       if (event.key === "ArrowDown") {
@@ -426,6 +444,7 @@ export default {
 <style scoped>
 .autocomplete-dropdown {
   position: relative;
+  margin-top: -15px;
   width: 100%;
 }
 
@@ -621,6 +640,10 @@ export default {
 
 .stat .label {
   font-weight: bold;
+}
+
+.value {
+  padding-left: 5px;
 }
 
 .actions .action-form {
