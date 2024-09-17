@@ -19,6 +19,7 @@
             <router-link to="/quant-analysis" class="home" @click="toggleDropdown(false)">Quant</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
+            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk
               Analysis</router-link>
           </div>

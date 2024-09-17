@@ -14,7 +14,7 @@ import GoalPage from '@/views/GoalPage.vue';
 import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
-import Update from '@/components/Risk&Chat/Update.vue'
+import EventHub from '@/views/EventHub.vue';
 
 const routes = [
   {
@@ -95,9 +95,9 @@ const routes = [
     component: ProfilePage,
   },
   {
-    path: '/update',
-    name: 'Update',
-    component: Update,
+    path: '/event',
+    name: 'EventHub',
+    component: EventHub,
   },
 ];
 
