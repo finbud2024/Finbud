@@ -7,7 +7,7 @@
         <input type="date" v-model="endDate" @change="filterTransactions" />
       </div>
     </div>
-    
+    <button class="transaction-btn" @click="goToTransactionHistory">All Transactions</button>
     <table>
       <thead>
         <tr>
@@ -24,7 +24,8 @@
           <td>{{ transaction.quantity }}</td>
           <td>{{ transaction.type }}</td>
           <td :class="transaction.type === 'buy' ? 'minus' : 'plus'">
-            {{ transaction.type === 'buy' ? '-' : '+' }}${{ calculateTotal(transaction.type, transaction.price, transaction.quantity).toFixed(2) }}
+            {{ transaction.type === 'buy' ? '-' : '+' }}${{ calculateTotal(transaction.type, transaction.price,
+              transaction.quantity).toFixed(2) }}
           </td>
           <td>{{ formatDate(transaction.date) }}</td>
         </tr>
@@ -48,7 +49,7 @@ export default {
   },
   methods: {
     fetchTransactions() {
-      const userId = '66974fea75fa96762507ca06';
+      const userId = localStorage.getItem("token");
       axios.get(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`)
         .then(response => {
           this.transactions = response.data;
@@ -70,6 +71,10 @@ export default {
         this.filteredTransactions = this.transactions; // Reset to all transactions if dates are not set
       }
     },
+    goToTransactionHistory() {
+      // this.$router.push('stock-simulator')
+      window.location.href = "https://www.google.com/";
+    },
     calculateTotal(type, price, quantity) {
       const total = price * quantity;
       const fee = 0.01 * total;
@@ -89,7 +94,8 @@ export default {
 <style scoped>
 .transaction-history {
   margin: 20px 0;
-  padding: 0 20px; /* Add padding for better alignment */
+  padding: 0 20px;
+  /* Add padding for better alignment */
 }
 
 .transaction-history-header {
@@ -116,13 +122,33 @@ export default {
   background-color: #fff;
 }
 
+.transaction-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+}
+
+.transaction-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.transaction-btn:hover {
+  background-color: #0056b3;
+}
+
 .transaction-history table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px; /* Add margin to separate from the header */
+  margin-top: 20px;
+  /* Add margin to separate from the header */
 }
 
-.transaction-history th, .transaction-history td {
+.transaction-history th,
+.transaction-history td {
   border: 1px solid #dee2e6;
   padding: 8px;
   text-align: left;
@@ -147,5 +173,11 @@ export default {
 
 .transaction-history tbody tr:hover {
   background-color: #e9ecef;
+}
+
+@media (max-width: 768px) {
+  .transaction-history-header {
+    flex-direction: column;
+  }
 }
 </style>

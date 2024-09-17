@@ -49,6 +49,7 @@
         "mathjs": "^13.0.3",
         "moment": "^2.30.1",
         "mongoose": "^8.4.1",
+        "node-cron": "^3.0.3",
         "numeric": "^1.2.6",
         "papaparse": "^5.4.1",
         "plotly.js-dist": "^2.33.0",
@@ -66,7 +67,7 @@
         "vue3-apexcharts": "^1.5.3",
         "vue3-select": "^0.1.2",
         "vue3-toastify": "^0.2.2",
-        "vuex": "^4.1.0",
+        "vuex": "^4.0.2",
         "xlsx": "^0.18.5",
         "yahoo-finance": "^0.3.8",
         "yahoo-finance2": "^2.11.3"

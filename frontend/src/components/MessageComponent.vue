@@ -108,35 +108,12 @@ export default {
     },
     handleQuestionClick(question) {
       this.$emit('question-click', question);
-      this.$nextTick(() => {
-        this.scrollToBottom();
-      });
-    },
-    scrollToBottom() {
-      const chatFrame = document.querySelector(".chat-frame");
-      if (chatFrame) {
-        chatFrame.scrollTo({
-          top: chatFrame.scrollHeight,
-          behavior: 'smooth'
-        });
-      }
     }
   },
   mounted() {
     if (this.typing) {
       this.startTypingEffect();
     }
-      // const chatContainer = document.querySelector('.chat-container');
-      // const messageContents = document.querySelectorAll('.message-content');
-      // const containerWidth = chatContainer.offsetWidth;
-      // messageContents.forEach(messageContent => {
-      //   if (containerWidth > 400) {
-      //     messageContent.style.setProperty('--container-width', `${containerWidth}px`);
-      //     messageContent.style.fontSize = 'clamp(0.75rem, calc(var(--container-width) * 0.056), 1.25rem)';
-      //   } else {
-      //     messageContent.style.fontSize = '14px';
-      //   }
-      // });
   },
 };
 </script>

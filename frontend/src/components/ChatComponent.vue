@@ -20,15 +20,12 @@ import ChatFrame from './ChatFrame.vue';
 import MessageComponent from './MessageComponent.vue';
 import UserInput from './UserInput.vue';
 // SERVICES + LIBRARY IMPORT
-import authStore from "@/authStore";
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
 export default {
 	name: 'ChatComponent',
-	props: {
-		currentThreadID:String,
-	},
+	props: {},
 	components: { ChatFrame, MessageComponent, UserInput },
 	data() {
 		return {
@@ -36,23 +33,38 @@ export default {
 			sources: [],
 			videos: [],
 			relevantQuestions: [],
-			displayName: authStore.isAuthenticated ? JSON.parse(localStorage.getItem("user")).identityData.displayName : "User",
-			userAvatar: authStore.isAuthenticated ? JSON.parse(localStorage.getItem("user")).identityData.profilePicture : require("@/assets/anonymous.png"),
 			botAvatar: require("@/assets/botrmbg.png"),
 		}
 	},
 	computed: {
-		authStore() {
-			return authStore;
+		isAuthenticated() {
+			return this.$store.getters['users/isAuthenticated'];
+		},
+		currentThreadID() {
+			return this.$store.getters['threads/getThreadID'];
+		},
+		displayName() {
+			if (this.isAuthenticated) {
+				return JSON.parse(localStorage.getItem("user")).identityData.displayName;
+			} else {
+				return "User";
+			}
+		},
+		userAvatar() {
+			if (this.isAuthenticated) {
+				return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
+			} else {
+				return require("@/assets/anonymous.png");
+			}
 		},
 	},
 	watch: {
-		currentThreadID:{
+		currentThreadID: {
 			immediate: true,
-			handler(newThreadID){
-				if(newThreadID !== null && newThreadID !== undefined && newThreadID.length != 0){
+			handler(newThreadID) {
+				if (newThreadID !== null && newThreadID !== undefined && newThreadID.length != 0) {
 					this.updateCurrentThread(newThreadID)
-				}else{
+				} else {
 					this.messages = [];
 				}
 			}
@@ -62,6 +74,34 @@ export default {
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async sendMessage(newMessage) {
 			const userMessage = newMessage.trim();
+			//UPDATE THREAD NAME BASED ON FIRST MESSAGE
+			if (this.messages.length === 1) {
+				const response = await gptServices([
+					{ role: "system", content: `I am a highly efficient summarizer. 
+												Here are examples: 'Best vacation in Europe' from 
+												'What are the best vacation spots in Europe?'; 
+												'Discussing project deadline' from 
+												'We need to extend the project deadline by two weeks due to unforeseen issues.' 
+												Now, summarize the following user message within 3 to 4 words into a title:`
+					},
+					{
+						role: "user",
+						content: userMessage,
+					},
+				]);
+				if(this.$route.path === "/chat-view"){
+					this.$emit("initialThreadName", response);
+				}else{
+					try{
+						const currentThreadID = this.$store.getters['threads/getThreadID'];
+						const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${currentThreadID}`;
+						axios.put(threadApi, { title: response });
+					}catch(err){
+						console.error("Error on updating thread name:", err.message);
+					}
+				}
+
+			}
 			//ONLY EXECUTE COMMAND/SHOW PROMPT IF THERE IS SOME MESSAGES IN THE USER INPUT
 			if (userMessage.length != 0) {
 				this.messages.push({
@@ -80,7 +120,7 @@ export default {
 					try {
 						const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
 						const prompt = `Explain ${term} to me as if I'm 15.`;
-						const gptResponse = await gptServices([{role:"user", content: prompt}]);
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in define message:", err);
@@ -136,7 +176,7 @@ export default {
 						const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
 							const accountCheck = await this.checkAccountBalance();
-							if (!accountCheck){
+							if (!accountCheck) {
 								answers.push(`Account balance is not set yet, please set your account balance first`);
 								// this.openNewWindow("/goal");	
 							} else {
@@ -160,7 +200,7 @@ export default {
 						const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
 							const accountCheck = await this.checkAccountBalance();
-							if (!accountCheck){
+							if (!accountCheck) {
 								answers.push(`Account balance is not set yet, please set your account balance first`);
 								// this.openNewWindow("/goal");
 							} else {
@@ -176,24 +216,6 @@ export default {
 						}
 					} catch (err) {
 						console.error("Error in spend transaction:", err.message);
-					}
-				}
-				// HANDLE STOCK
-				else if (this.extractStockCode(userMessage)) {
-					try {
-						const stockCode = this.extractStockCode(userMessage)[0];
-						const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
-						const price = stockResponse.data["Global Quote"]["05. price"];
-						const timeStamp = new Date().toLocaleTimeString();
-						console.log(price, timeStamp, stockCode)
-						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-						answers.push(alphavantageResponse);
-						//chatgpt api
-						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-						const gptResponse = await gptServices([{role:"user", content: prompt}]);
-						answers.push(gptResponse);
-					} catch (err) {
-						console.error("Error in stock message:", err.message);
 					}
 				}
 				// RETURNS CRYPTO TABLE (3)
@@ -309,14 +331,32 @@ export default {
 					newVideos = await getVideos(userMessage);
 					newRelevantQuestions = await getRelevantQuestions(searchResults);
 					//Normal GTP response
-					const gptResponse = await gptServices([{role:"user", content: userMessage}]);
+					const gptResponse = await gptServices([{ role: "user", content: userMessage }]);
 					answers.push(gptResponse);
+				}
+				// HANDLE STOCK
+				else if (this.extractStockCode(userMessage)) {
+					try {
+						const stockCode = this.extractStockCode(userMessage)[0];
+						const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
+						const price = stockResponse.data["Global Quote"]["05. price"];
+						const timeStamp = new Date().toLocaleTimeString();
+						console.log(price, timeStamp, stockCode)
+						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+						answers.push(alphavantageResponse);
+						//chatgpt api
+						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
+						answers.push(gptResponse);
+					} catch (err) {
+						console.error("Error in stock message:", err.message);
+					}
 				}
 				// HANDLE GENERAL
 				else {
 					try {
 						const prompt = userMessage;
-						const gptResponse = await gptServices([{role:"user", content: prompt}]);
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in general message:", err.message);
@@ -324,20 +364,20 @@ export default {
 				}
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
-				if (authStore.isAuthenticated) {
-				    try {
-				        const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-				        const reqBody = {
-				            prompt: userMessage,
-				            response: answers,
-				            sources: newSources,
-				            videos: newVideos,
-				            threadId: this.currentThreadID,
-				        };
-				        await axios.post(chatApi, reqBody);
-				    } catch (err) {
-				        console.error("Error on saving chat:", err.message);
-				    }
+				if (this.isAuthenticated) {
+					try {
+						const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+						const reqBody = {
+							prompt: userMessage,
+							response: answers,
+							sources: newSources,
+							videos: newVideos,
+							threadId: this.currentThreadID,
+						};
+						await axios.post(chatApi, reqBody);
+					} catch (err) {
+						console.error("Error on saving chat:", err.message);
+					}
 				}
 				this.scrollChatFrameToBottom();
 			}
@@ -387,7 +427,7 @@ export default {
 		// TO BE USED IN SPEND + ADD
 		async calculateNewBalance(amount) {
 			const accountCheck = await this.checkAccountBalance();
-			if (!accountCheck){
+			if (!accountCheck) {
 				return;
 				// this.openNewWindow("/goal");	
 			}
@@ -411,11 +451,11 @@ export default {
 				console.error('Error checking account balance:', error);
 				return false;
 			}
-    	},
+		},
 		// TO BE USED IN SPEND + ADD
 		async addTransaction(description, amount, balance) {
 			const accountCheck = await this.checkAccountBalance();
-			if (!accountCheck){
+			if (!accountCheck) {
 				return;
 				// this.openNewWindow("/goal");	
 			}
@@ -438,6 +478,13 @@ export default {
 			chatFrame.scrollTo({
 				top: chatFrame.scrollHeight,
 				behavior: "smooth", // Smooth scrolling effect
+			});
+		},
+		async setScrollHeightBottomn() {
+			await new Promise((r) => setTimeout(r, 200));
+			const chatFrame = document.querySelector(".chat-frame");
+			chatFrame.scrollTo({
+				top: chatFrame.scrollHeight,
 			});
 		},
 		handleQuestionClick(question) {
@@ -484,14 +531,14 @@ export default {
 					console.error('Error: chatsData is not an array');
 				}
 				// Scroll to the bottom after loading messages
-				await this.scrollChatFrameToBottom();
+				await this.setScrollHeightBottomn();
 			} catch (err) {
 				console.error("Error on updating to current thread:", err.message);
 			}
 		},
 	},
-	mounted(){
-		if(!authStore.isAuthenticated){
+	mounted() {
+		if (!this.isAuthenticated) {
 			const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
 			this.addTypingResponse(botInstruction, false);
 		}

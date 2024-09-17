@@ -8,36 +8,40 @@
           <div class="services-dropdown dropbtn">Overview <span class="arrow-down"></span></div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
             <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">About</router-link>
-            <router-link to="/tech" class="technology"  @click="toggleAboutDropdown(false)">Technology</router-link>
+            <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">Technology</router-link>
           </div>
         </li>
-        <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)" @mouseleave="toggleDropdown(false)">
-        <div class="services-dropdown dropbtn" >Services <span class="arrow-down"></span></div>
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)"
+          @mouseleave="toggleDropdown(false)">
+          <div class="services-dropdown dropbtn">Services <span class="arrow-down"></span></div>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
-            <router-link to="/quant-analysis" class="home"  @click="toggleDropdown(false)">Quant</router-link>
+            <router-link to="/quant-analysis" class="home" @click="toggleDropdown(false)">Quant</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
+            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk
+              Analysis</router-link>
           </div>
         </li>
-        <li v-if="!authStore.isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="authStore.isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)" @mouseleave="toggleProfileDropdown(false)">
+        <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)"
+          @mouseleave="toggleProfileDropdown(false)">
           <img :src="profileImage" alt="User Image" class="user-image">
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
             <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
               <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
-              <p>{{name}}</p>
+              <p>{{ profileName }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
-              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon"/>
+              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
               <p>Log Out</p>
             </router-link>
           </div>
         </li>
       </ul>
       <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
-        <div class="button-mobile dropbtn" @click="toggleDropdownMobile" >
+        <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
           <div class="brand-mobile">FinBud</div>
           <font-awesome-icon icon="fa-solid fa-chevron-down" />
         </div>
@@ -45,19 +49,22 @@
           <router-link to="/" class="home" @click="toggleDropdownMobile">Home</router-link>
           <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
           <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
-          <div v-if="authStore.isAuthenticated">
+          <div class="authenticated" v-if="isAuthenticated">
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk
+              Analysis</router-link>
+            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/quant-analysis" class="home">Quant</router-link>
             <router-link to="#" @click="logout" class="logout">Log Out</router-link>
           </div>
           <!-- <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link> -->
           <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
-          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->                  
-          <router-link to="/login" v-if="!authStore.isAuthenticated" class="login-button" @click="toggleDropdownMobile">Log In</router-link>
-          
+          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->
+          <router-link to="/login" v-if="!isAuthenticated" class="login-button" @click="toggleDropdownMobile">Log
+            In</router-link>
+
         </div>
       </div>
     </div>
@@ -65,7 +72,6 @@
 </template>
 
 <script>
-import authStore from '@/authStore';
 import axios from 'axios';
 import defaultImage from '@/assets/anonymous.png';
 
@@ -77,51 +83,37 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
-      image: '',
-      name: 'User',
     };
   },
   computed: {
-    authStore() {
-      return authStore;
+    isAuthenticated() {
+      return this.$store.getters["users/isAuthenticated"];
+    },
+    userData() {
+      // Assuming isAuthenticated correctly reflects authentication state
+      if (!this.isAuthenticated) {
+        console.log("User is not authenticated");
+        return null;
+      }
+      try {
+        const data = localStorage.getItem('user');
+        return data ? JSON.parse(data) : null;
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        return null;
+      }
     },
     profileImage() {
-      return this.image || defaultImage;
-    },
-  },
-  watch: {
-    'authStore.isAuthenticated': async function() {
-      if(authStore.isAuthenticated){
-        try {
-          const profileData = JSON.parse(localStorage.getItem('user'));
-          if(profileData.identityData){
-            this.image = profileData.identityData.profilePicture;
-            this.name = profileData.identityData.displayName;
-          } else{
-            this.image = '';
-            this.name = 'User';
-          }
-        } catch (err) {
-         console.log(err);
-        }
+      if (this.userData && this.userData.identityData) {
+        return this.userData.identityData.profilePicture;
       }
+      return defaultImage;
     },
-
-    'authStore.userProfileChange': async function() {
-      if(authStore.isAuthenticated){
-        try {
-          const profileData = JSON.parse(localStorage.getItem('user'));
-          if(profileData.identityData){
-            this.image = profileData.identityData.profilePicture;
-            this.name = profileData.identityData.displayName;
-          } else{
-            this.image = '';
-            this.name = 'User';
-          }
-        } catch (err) {
-         console.log(err);
-        }
+    profileName() {
+      if (this.userData && this.userData.identityData) {
+        return this.userData.identityData.displayName;
       }
+      return 'User';
     }
   },
   methods: {
@@ -141,12 +133,12 @@ export default {
       this.isDropdownOpenMobile = false;
     },
     async logout() {
-      authStore.logout();
       try {
         await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
       } catch (err) {
         console.log("After logout with err: " + err);
       }
+      this.$store.dispatch("users/logout");
       this.$router.push('/login');
     },
   },
@@ -155,14 +147,13 @@ export default {
       const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
       if (response.data.isAuthenticated) {
         //put user info into localStorage
-        authStore.login(response.data.user._id);
+        console.log('Login Success in navbar:', response.data);
+        this.$store.dispatch("users/login", response.data.user._id);
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
     } catch (err) {
       console.log("After Sign in with google err: " + err);
     }
-
-    authStore.userProfileChange = !authStore.userProfileChange;
   }
 };
 </script>
@@ -213,7 +204,7 @@ export default {
   font-size: clamp(0.75rem, 5.6vw, 1.25rem);
 }
 
-.nav-items li .chatview{
+.nav-items li .chatview {
   border-radius: 10px;
   padding: 5px 10px;
   background-color: #45a049;
@@ -257,6 +248,7 @@ export default {
 .services-dropdown:hover {
   color: #007bff;
 }
+
 .services-dropdown .arrow-down {
   width: 0;
   height: 0;
@@ -280,7 +272,7 @@ export default {
   border-radius: 15px;
 }
 
-.dropdown-profile{
+.dropdown-profile {
   position: absolute;
   background-color: white;
   min-width: 200px;
@@ -322,6 +314,7 @@ export default {
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
+
 .dropdown-content a:last-child,
 .dropdown-profile a:last-child {
   border-bottom: 2px solid #007bff;
@@ -329,6 +322,17 @@ export default {
   border-bottom-right-radius: 15px;
 }
 
+.dropdown-content .authenticated a:last-child {
+  border-bottom: none;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.dropdown-content .authenticated a:nth-child(1) {
+  border-top: none;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
 
 .dropdown-content,
 .dropdown-profile {
@@ -343,6 +347,7 @@ export default {
     opacity: 0;
     height: 0;
   }
+
   100% {
     opacity: 1;
     height: fit-content;
@@ -376,7 +381,7 @@ export default {
   transition: transform 0.3s ease;
 }
 
-.user-image:hover{
+.user-image:hover {
   opacity: 0.8;
   transform: scale(1.05);
 }
@@ -392,9 +397,12 @@ export default {
   cursor: pointer;
 }
 
-.dropdown-profile p{
-  margin-left:50px;
-  line-height: 3px;
+.dropdown-profile p {
+  margin-left: 50px;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .arrow-down {

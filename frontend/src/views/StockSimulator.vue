@@ -84,9 +84,7 @@
       </section>
     </div>
 
-    <!-- New Layout for Account Info and Performance -->
     <div class="account-performance">
-      <!-- Left Column: Account Information -->
       <section class="account-info">
         <h3>Your account:</h3>
         <div class="account-grid">
@@ -113,59 +111,19 @@
         </div>
       </section>
 
-      <!-- Right Column: Performance Chart Placeholder -->
-      <section class="performance-chart">
-        <h3>Performance</h3>
-        <div class="chart-controls">
-          <button
-            class="timeframe-btn"
-            :class="{ active: selectedTimeFrame === '1W' }"
-            @click="setTimeFrame('1W')"
-          >
-            1W
-          </button>
-          <button
-            class="timeframe-btn"
-            :class="{ active: selectedTimeFrame === '1M' }"
-            @click="setTimeFrame('1M')"
-          >
-            1M
-          </button>
-          <button
-            class="timeframe-btn"
-            :class="{ active: selectedTimeFrame === '3M' }"
-            @click="setTimeFrame('3M')"
-          >
-            3M
-          </button>
-          <button
-            class="timeframe-btn"
-            :class="{ active: selectedTimeFrame === '6M' }"
-            @click="setTimeFrame('6M')"
-          >
-            6M
-          </button>
-          <button
-            class="timeframe-btn"
-            :class="{ active: selectedTimeFrame === '1Y' }"
-            @click="setTimeFrame('1Y')"
-          >
-            1Y
-          </button>
-        </div>
-        <div class="chart-placeholder">
-          <p>Your performance chart will update daily starting tomorrow</p>
-        </div>
-        <div class="performance-history">
-          <button class="performance-history-btn">Performance History</button>
-        </div>
-      </section>
+      <!-- Use the new PerformanceChart component -->
+      <PerformanceChart 
+        :performanceData="performanceData"
+        @timeframeChanged="updatePerformanceData"
+      />
     </div>
+
     <section class="transaction-history">
       <TransactionHistory />
     </section>
 
     <stockScreener @applyFilter="stockFilterHandler" />
+
     <div class="stockDisplayContainer" v-if="count">
       <CompanyCard
         v-for="(item, idx) in displayStock"
@@ -203,7 +161,6 @@ import CompanyCard from "@/components/CompanyCard.vue";
 import stockData from "./hardcodeData/StockData.js";
 import PreviewOrderModal from "../components/StockSimulatorPage/PreviewOrderModal.vue";
 import TransactionHistory from "../components/StockSimulatorPage/TransactionHistory.vue";
-import ConfirmationModal from "../components/StockSimulatorPage/ConfirmationModal.vue";
 import axios from "axios";
 
 export default {
@@ -213,7 +170,6 @@ export default {
     CompanyCard,
     PreviewOrderModal,
     TransactionHistory,
-    ConfirmationModal,
   },
   data() {
     return {
@@ -231,6 +187,7 @@ export default {
       accountBalance: 0,
       stockValue: 0,
       cash: 0,
+      performanceData: [], // Add performance data here
       stockData: {
         open: "",
         close: "",
@@ -242,7 +199,6 @@ export default {
       fixedUserId: localStorage.getItem("token"),
       action: "buy",
       selectedTimeFrame: "1W", // Added to manage active state for buttons
-      highlightedIndex: -1,
     };
   },
   methods: {
@@ -306,6 +262,29 @@ export default {
 
     setTimeFrame(timeframe) {
       this.selectedTimeFrame = timeframe;
+      this.updatePerformanceData(timeframe);
+    },
+    updatePerformanceData(timeframe) {
+      const performanceData = [];
+      const startDate = new Date();
+
+      // Generate data for 30 days
+      for (let i = 0; i < 30; i++) {
+        // Calculate the date for the past 30 days
+        const date = new Date();
+        date.setDate(startDate.getDate() - i);
+
+        // Generate a random stock value between 100 and 150
+        const value = (Math.random() * 50 + 100).toFixed(2);
+
+        performanceData.push({
+          date: date.toISOString().split("T")[0], // Format as YYYY-MM-DD
+          value: parseFloat(value),
+        });
+      }
+
+      // Reverse the array to start from the oldest date to the most recent
+      this.performanceData = performanceData.reverse();
     },
     async stockFilterHandler(screenerFilter) {
       const appliedFilter = stockData
@@ -402,6 +381,7 @@ export default {
           `${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`
         );
         this.transactions = response.data;
+        this.updatePerformanceData(this.selectedTimeFrame); // Update chart with fetched data
       } catch (error) {
         console.error("Error fetching transaction history:", error);
       }
@@ -477,7 +457,8 @@ export default {
 }
 
 .stockDisplayContainer {
-  width: 100%;
+  /* 40px of padding*/
+  width: calc(100%-40px);
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -741,17 +722,6 @@ export default {
 
   .account-stat {
     margin: 5px 0;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translate(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(0);
-    }
   }
 }
 </style>

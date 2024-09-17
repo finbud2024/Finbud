@@ -3,30 +3,31 @@
         <div class="title">Keyword-Based Quiz</div>
         <div> Put your own keyword</div>
         <div class="searchContainer">
-            <input type="text" v-model="searchKeyword" placeholder="Enter a finance-related keyword"
-                @keyup.enter="GenerateQuiz" />
+            <input type="text" v-model="searchKeyword" :disabled="isLoading"
+                placeholder="Enter a finance-related keyword" @keyup.enter="GenerateQuiz" />
             <button class="button" @click="GenerateQuiz">Generate Quiz</button>
         </div>
         <div>OR recieve a suggestion</div>
         <div class="suggestKeywordContainer">
             <select v-model="suggestTopic">
-                <option disabled value="">Select a quiz type (optional)</option>
+                <option value="" >Select a quiz type (optional)</option>
                 <option value="Saving Vs Investing">Saving vs Investing</option>
                 <option value="Budgeting">Budgeting</option>
                 <option value="Asset Allocation">Asset Allocation</option>
             </select>
             <select v-model="suggestDifficulty">
-                <option disabled value="">Select difficulty (optional)</option>
+                <option value="">Select difficulty (optional)</option>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
             </select>
-            <button class="button" @click="keywordSuggestion">Suggest</button>
+            <button class="button" :disabled="isLoading" @click="keywordSuggestion">Suggest</button>
         </div>
         <div v-if="relatedKeyword.length !== 0">
             <div>Related keyword</div>
             <div class="relatedKeywordContainer">
-                <button v-for="keyword in relatedKeyword" :key="keyword" class="button" @click="handleSuggestedChoice(keyword)">
+                <button v-for="keyword in relatedKeyword" :key="keyword" :disabled="isLoading" class="button"
+                    @click="handleSuggestedChoice(keyword)">
                     {{ keyword }}
                 </button>
             </div>
@@ -41,15 +42,32 @@
                 {{ currentQuestion === -1 ? "Question will appear here" : question }}
             </div>
             <div class="quizChoices">
-                <button v-for="index in 4" :key="index" :disabled="answerButtonDisabled" @click="handleUserChoice(index)"
+                <button v-for="index in 4" :key="index" :disabled="answerButtonDisabled"
+                    @click="handleUserChoice(index)"
                     :class="['answerButton', { 'answerButtonActive': answerOptions.length !== 0 }]">
-                    {{ answerOptions.length === 0 ? `Answer ${String.fromCharCode(64 + index)}` : answerOptions[index - 1].replace(/\*$/, '')}}
+                    {{ answerOptions.length === 0 ? `Answer ${String.fromCharCode(64 + index)}` : answerOptions[index -
+                        1].replace(/\*$/, '') }}
                 </button>
             </div>
             <div v-if="showExplaination" class="exaplantaionContainer">
                 <div class="explanationTitle"> Explanation:</div>
                 <div>{{ explanation }}</div>
                 <button class="button" @click="handleNextQuestion">Next Question</button>
+            </div>
+        </div>
+        <div v-if="modalDisplay" class="overlay">
+            <div class="modalContainer">
+                <div class="resultTitle">Quiz Result</div>
+                <div>
+                    <div>Keyword: {{currentKeyword}}</div>
+                    <div>score: {{score}}/3</div>
+                </div>
+                <div class="resultButtonContainer">
+                    <button class='button' @click="handleQuizResult('same')">New Game With Same Keyword</button>
+                    <button class='button' @click="handleQuizResult('different')">New Game With Different
+                        Keyword</button>
+                    <button class='button' @click="handleQuizResult('end')">End</button>
+                </div>
             </div>
         </div>
     </div>
@@ -77,7 +95,9 @@ export default {
             timer: null,
             correctAnswer: "",
             showExplaination: false,
-            answerButtonDisabled: true
+            answerButtonDisabled: true,
+            isLoading: false,
+            modalDisplay: false
         }
     },
     watch: {
@@ -89,14 +109,29 @@ export default {
                     this.showCorrectAnswer()
                 }
             }
-        }
+        },
     },
     methods: {
         GenerateQuiz: debounce(async function () {
             if (this.searchKeyword.length === 0) return;
-            this.currentKeyword = this.searchKeyword;
+            this.isLoading = true;
+            this.answerButtonDisabled = true;
+            this.currentQuestion = -1;
+            this.question = "";
+            this.answerOptions = [];
+            this.relatedKeyword = [];
+            //this part below setup to start the quiz
+            this.currentKeyword = this.searchKeyword.toUpperCase();
             this.searchKeyword = "";
+            const buttons = document.querySelectorAll('.quizChoices button');
+            buttons.forEach(button => {
+                button.classList.remove("answerButtonIncorrect");
+                button.classList.remove("answerButtonCorrect");
+            });
+            this.showExplaination = false;
+            this.score = 0;
             this.stopTimer();
+            // ------------------------------------------------------
             const response = await gptServices([
                 {
                     role: "system",
@@ -125,26 +160,33 @@ export default {
             this.currentQuestion = 0;
             this.parseCurrentQuestion();
             await this.generateRelatedKeywords();
+            this.isLoading = false;
             this.answerButtonDisabled = false;
             this.startTimer();
         }, 300),
         keywordSuggestion: debounce(async function () {
-            if ((this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0) && this.searchKeyword.length == 0) return;
-            this.searchKeyword = this.searchKeyword.length === 0 ?
-            await gptServices([
-                { role: "system", content: "You are a helpful assistant." },
-                {
-                    role: "user",
-                    content: `Generate a single keyword in finance about ${this.selectedQuiz} at a ${this.suggestDifficulty} difficulty level. The keyword should be specific and relevant to create a quiz question about finance.`
-                }
-            ]): this.searchKeyword;
+            if ((this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0)) return;
+            this.searchKeyword =
+                await gptServices([
+                    { role: "system", content: "You are a helpful assistant." },
+                    {
+                        role: "user",
+                        content: `Generate a single keyword in finance about 
+                        ${this.selectedQuiz ? this.selectedQuiz : "Saving Vs Investing"} 
+                        at a 
+                        ${this.suggestDifficulty ? this.suggestDifficulty : "hard"}
+                        difficulty level. The keyword should be specific and relevant to create a quiz question about finance.
+                        - no need to add extra question, only the keyword is needed for the response. Please strictly follow the requirement`
+                    }
+                ]);
             this.suggestTopic = "";
             this.suggestDifficulty = "";
+
             await this.GenerateQuiz();
         }, 300),
-        handleSuggestedChoice: debounce(async function(keyword){
+        handleSuggestedChoice: debounce(async function (keyword) {
             this.searchKeyword = keyword;
-            await this.keywordSuggestion();
+            this.GenerateQuiz();
         }, 300),
         startTimer() {
             this.timerCountdown = 15;
@@ -154,22 +196,12 @@ export default {
             clearInterval(this.timer);
         },
         stateReset() {
-            this.score= 0;
-            this.thitimerCountdown = 0;
-            this.searchKeyword = "";
-            this.currentKeyword = "";
-            this.relatedKeyword = [];
-            this.suggestTopic = "";
-            this.suggestDifficulty = "";
-            this.currentQuestion = -1;
-            this.questionList = [];
-            this.question = "";
-            this.answerOptions = [];
-            this.explanation = "";
-            this.timer = null;
-            this.correctAnswer = "";
-            this.showExplaination = false;
-            this.answerButtonDisabled = true;
+            const initialData = this.$options.data.call(this);
+            Object.keys(initialData).forEach(key => {
+                if (key !== 'currentKeyword' &&  key !== 'timerCountdown') {
+                    this[key] = initialData[key];
+                }
+            });
         },
         async generateRelatedKeywords() {
             const response = await gptServices([
@@ -204,7 +236,6 @@ export default {
                 ?.substring('Explanation:'.length).trim() || '';
         },
         handleUserChoice(index) {
-            this.showCorrectAnswer();
             this.stopTimer();
             const isCorrect = String.fromCharCode(64 + index) === this.correctAnswer;
             if (!isCorrect) {
@@ -212,35 +243,58 @@ export default {
                 if (incorrectAnswerBtn) {
                     incorrectAnswerBtn.classList.add('answerButtonIncorrect');
                 }
-            }else{
+            } else {
                 this.score += 1;
             }
+            this.showCorrectAnswer();
         },
         showCorrectAnswer() {
+            this.$emit('messageToBot', this.explanation);
             this.answerButtonDisabled = true;
             this.showExplaination = true;
-            const correctIndex = this.correctAnswer.charCodeAt(0) - 64; // Convert A, B, C, D to 1, 2, 3, 4
-            const correctAnsBtn = document.querySelector(`.quizChoices button:nth-child(${correctIndex})`);
-            if (correctAnsBtn) {
-                correctAnsBtn.classList.add('answerButtonCorrect');
+            if (this.correctAnswer && /^[A-D]$/.test(this.correctAnswer)) {
+                const correctIndex = this.correctAnswer.charCodeAt(0) - 64; // Convert A, B, C, D to 1, 2, 3, 4
+                const correctAnsBtn = document.querySelector(`.quizChoices button:nth-child(${correctIndex})`);
+                if (correctAnsBtn) {
+                    correctAnsBtn.classList.add('answerButtonCorrect');
+                }
             }
         },
-        handleNextQuestion(){
+        handleNextQuestion() {
+            this.showExplaination = false;
             //reset buton style;
             const buttons = document.querySelectorAll('.quizChoices button');
             buttons.forEach(button => {
                 button.classList.remove("answerButtonIncorrect");
                 button.classList.remove("answerButtonCorrect");
             });
-            this.currentQuestion = this.currentQuestion + 1;
-            if(this.currentQuestion >= this.questionList.length) {
-                this.stateReset();
+            this.currentQuestion += 1;
+            if (this.currentQuestion >= this.questionList.length) {
+                this.modalDisplay = true;
+                this.answerButtonDisabled = true;
                 return;
             }
             this.parseCurrentQuestion();
-            this.showExplaination = false;
             this.answerButtonDisabled = false;
             this.startTimer();
+        },
+        handleQuizResult(setting) {
+            this.modalDisplay = false;
+            if (setting === 'same') {
+                const temp = this.currentKeyword;
+                this.stateReset();
+                this.searchKeyword = temp;
+                this.GenerateQuiz();
+            } else if (setting === 'different') {
+                const temp = this.currentKeyword;
+                this.stateReset();
+                this.suggestTopic = "random";
+                this.suggestDifficulty = "random";
+                this.keywordSuggestion();
+            } else {
+                this.currentKeyword = "";
+                this.stateReset();
+            }
         }
     }
 };
@@ -253,16 +307,18 @@ export default {
     display: flex;
     align-items: center;
     flex-direction: column;
-    flex: 1;
     background-color: #f4f4f4;
     padding: 20px;
-    gap: 15px
+    gap: 15px;
+
 }
 
 .title {
     margin-top: 20px;
     font-weight: 900;
-    font-size: 40px;
+    width: 100%;
+    font-size: 3rem;
+    text-align: center
 }
 
 .searchContainer {
@@ -361,12 +417,12 @@ export default {
     color: #bbb;
 }
 
-.answerButtonCorrect{
+.answerButtonCorrect {
     background-color: #4caf50 !important;
     color: white !important;
 }
 
-.answerButtonIncorrect{
+.answerButtonIncorrect {
     background-color: red !important;
     color: white !important;
 }
@@ -403,5 +459,73 @@ export default {
     height: 40%;
     padding: 10px;
     border-radius: 10px;
+}
+
+.overlay {
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modalContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: fit-content;
+    height: fit-content;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 2px solid red;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 10px
+}
+
+.resultTitle {
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.resultButtonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px
+}
+
+@container quizComponent (max-width: 400px) {
+    .title{
+        font-size: clamp(2rem, 10%, 3rem);
+    }
+
+    .quizContainer {
+        width: calc(100% - 40px);
+    }
+
+    .searchContainer {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .searchContainer>input {
+        width: 100%;
+    }
+
+    .suggestKeywordContainer {
+        flex-direction: column;
+    }
+
+    .suggestKeywordContainer>select {
+        width: 100%;
+    }
 }
 </style>

@@ -1,20 +1,12 @@
 <template>
   <div class="home-container">
     <div v-if="overlayEnabled" class="overlay"/>
-    <div v-if="authStore.isAuthenticated" class="sidebar-container">
+    <div v-if="this.isAuthenticated" class="sidebar-container">
       <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars"/>
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
-      <SideBar
-        :class="{ 'is-visible': isSidebarVisible }"
-        :threads="threads"
-        @add-thread="addThread"
-        @edit-thread="editThread"
-        @save-thread-name="saveThreadName"
-        @cancel-edit="cancelEdit"
-        @select-thread="selectThread"
-      />
+      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
     </div>
-    <ChatComponent :currentThreadID="threadID"/>
+    <ChatComponent @initialThreadName="initialThreadName"/>
     <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
@@ -35,9 +27,6 @@ import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
 //UTILITIES + LIB IMPORT
-import {getCurrentInstance, reactive, onBeforeUnmount, watchEffect, onBeforeMount } from 'vue';
-import authStore from "@/authStore";
-import axios from "axios";
 
 export default {
   name: "ChatView",
@@ -51,27 +40,25 @@ export default {
   },
   data() {
     return {
-      threadID:"",
       newMessage: "",
       messages: [],
       sources: [],
       followUpQuestions: [],
       botAvatar: require("@/assets/botrmbg.png"),
-      currentThread: {},
-      threads: [],
       isSidebarVisible: false,
       showGuidance: false,
       overlayEnabled: false, //overlay to darken the chat screen when new window popsup
       newWindow: null, //new window to referrence to other
       windowCheckInterval: null,
+      newThreadName: "",
     };
   },
   computed: {
-    authStore() {
-      return authStore;
+    isAuthenticated() {
+      return this.$store.getters["users/isAuthenticated"];
     },
     displayName() {
-      return this.authStore.isAuthenticated
+      return this.isAuthenticated
         ? JSON.parse(localStorage.getItem("user")).identityData.displayName
         : "User";
     },
@@ -85,15 +72,11 @@ export default {
         return require("@/assets/anonymous.png");
       }
       return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
-    }
+    },
+    threadID() {
+      return this.$store.getters['threads/getThreadID'];
+    },
   },
-  setup(props,{emit}){
-   const instance = getCurrentInstance()
-		onBeforeUnmount(()=>{
-      localStorage.setItem('latestThreadID', instance.data.threadID);
-			emit('chatviewSelectingThread', instance.data.threadID);
-		})
-	},
   methods: {
     toggleSidebar() {
       this.isSidebarVisible = !this.isSidebarVisible;
@@ -101,69 +84,6 @@ export default {
     closeSidebar() {
       this.isSidebarVisible = false;
     },
-    async addThread(newThread) {
-      try {
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = localStorage.getItem("token");
-        const reqBody = { userId };
-        const thread = await axios.post(api, reqBody);
-        newThread.id = thread.data._id;
-        this.threads.push(newThread);
-      } catch (err) {
-        console.error("Error on adding new thread:", err);
-      }
-    },
-    editThread(index) {
-      this.threads[index].editing = true;
-    },
-    async saveThreadName({ newName, index }) {
-      this.threads[index].name = newName;
-      this.threads[index].editing = false;
-      try {
-        console.log("save edit");
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${this.threads[index].id}`;
-        const reqBody = { title: newName };
-        const updatedThread = await axios.put(api, reqBody);
-      } catch (err) {
-        console.error("Error on saving thread name:", err);
-      }
-    },
-    cancelEdit(index) {
-      this.threads[index].editing = false;
-      console.log("cancel edit");
-    },
-    selectThread(index) {
-      this.threadID = this.threads[index].id;
-      this.threads.forEach((thread, i) => {
-        thread.clicked = i === index;
-      });
-    },
-    async deleteThread(index) {
-      const threadId = this.threads[index].id;
-      try {
-        // Step 1: delete all chats associated with this threadId
-        const deleteChatsApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`;
-        await axios.delete(deleteChatsApi);
-
-        // Step 2: delete the thread itself
-        const deleteThreadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
-        await axios.delete(deleteThreadApi);
-
-        // Remove the thread from the list in the UI
-        this.threads.splice(index, 1);
-        
-        // If there are still threads left, select the first one; otherwise, clear the chat and thread state
-        if (this.threads.length > 0) {
-          this.selectThread(0);
-        } else {
-          this.currentThread = {};
-          this.messages = [];
-        }
-      } catch (err) {
-        console.error('Error on deleting thread or its associated chats:', err);
-      }
-    },
-   
     //USED IN BUY/SELL/ADD/SPEND/(QUIZ?)
     openNewWindow(url) {
       const screenWidth = window.screen.width;
@@ -205,46 +125,14 @@ export default {
       this.overlayEnabled = false;
       this.newWindow = null;
     },
+    initialThreadName(newThreadName){
+      this.newThreadName = newThreadName;
+    }
   },
   async mounted() {
     setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
     document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
-
-    if (authStore.isAuthenticated) {
-      const userId = localStorage.getItem("token");
-      console.log("current UserID:",userId);
-      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-      const historyThreads = await axios.get(threadApi);
-      const historyThreadsData = historyThreads.data;
-      if (historyThreadsData.length === 0) {
-        const newThread = {
-          name: "New Thread",
-          editing: false,
-          editedName: "New Chat",
-          messages: [],
-        };
-        await this.addThread(newThread);
-      } else {
-        historyThreadsData.forEach((threadData) => {
-          const thread = {
-            id: threadData._id,
-            name: threadData.title,
-            editing: false,
-            editedName: threadData.title,
-            messages: [],
-          };
-          this.threads.push(thread);
-        });
-      }
-      for(let i= 0; i< historyThreadsData.length; i++){
-        if(historyThreadsData[i]._id === this.chatBubbleThreadID){
-          this.selectThread(i)
-          this.$emit('chatviewSelectingThread', "")
-          break;
-        }
-      }
-    }
   },
 };
 </script>
@@ -366,7 +254,7 @@ export default {
 
 .guidance-text {
   font-size: 1.25rem;
-  padding-top: 15px;
+  margin: auto 0;
 }
 
 .is-guidance-visible {
