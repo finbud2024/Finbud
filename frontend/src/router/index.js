@@ -15,16 +15,13 @@ import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
 import Update from '@/components/Risk&Chat/Update.vue'
+import NotFound from '@/views/NotFound.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-  },
-  {
-    path: '/*',
-    component: 404,
   },
   {
     path: '/login',
@@ -98,6 +95,11 @@ const routes = [
     path: '/update',
     name: 'Update',
     component: Update,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound,
   },
 ];
 
