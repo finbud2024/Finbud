@@ -270,7 +270,7 @@
                     <br>
                     But you can click the button below to go back to the homepage.
                 </p>
-                <button class="btn green" @click="goHome">HOME</button>
+                <button class="btn blue" @click="goHome">HOME</button>
             </div>
         </div>
     </div>
@@ -414,13 +414,13 @@ h2 {
     margin: 5px 0px;
 }
 
-.btn.green {
+.btn.blue {
     border: 4px solid #007bff;
     color: #0e0620;
     position: relative;
 }
 
-.btn.green:before {
+.btn.blue:before {
     content: "";
     position: absolute;
     left: 0;
@@ -432,12 +432,12 @@ h2 {
     transition: 0.2s ease;
 }
 
-.btn.green:hover {
+.btn.blue:hover {
     color: #fff;
     background: #007bff;
 }
 
-.btn.green:hover:before {
+.btn.blue:hover:before {
     width: 100%;
 }
 

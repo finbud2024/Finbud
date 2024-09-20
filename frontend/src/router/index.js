@@ -16,6 +16,7 @@ import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
 import Update from '@/components/Risk&Chat/Update.vue'
 import NotFound from '@/views/NotFound.vue';
+import Local from '@/views/Local.vue';
 
 const routes = [
   {
@@ -95,6 +96,11 @@ const routes = [
     path: '/update',
     name: 'Update',
     component: Update,
+  },
+  {
+    path: '/local',
+    name: 'Local',
+    component: Local,
   },
   {
     path: '/:pathMatch(.*)*',
