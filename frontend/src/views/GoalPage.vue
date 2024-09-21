@@ -19,20 +19,18 @@
         </div>
       </div>
       <div class="rightPanel">
-        No need to put the graph as in figma no more. Add a more goals here.
-        <br>
-        Display corresponding message/ picture if there is no goal for  created by the user
+        <FinancialGoal />
       </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-
+import FinancialGoal from '@/components/goalPage/FinancialGoal.vue';
 export default {
   name: 'GoalPage',
   components: {
-    
+    FinancialGoal,
   },
   data() {
     return {
@@ -40,6 +38,7 @@ export default {
       firstName: JSON.parse(localStorage.getItem('user')).identityData.firstName,
       displayName: JSON.parse(localStorage.getItem('user')).identityData.displayName,
       profilePic: JSON.parse(localStorage.getItem('user')).identityData.profilePicture,
+
     };
   },
   computed: {
@@ -48,6 +47,7 @@ export default {
     },
   },
   methods: {
+
    
   },
   mounted() {
@@ -56,16 +56,20 @@ export default {
     }
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
     document.querySelector(".GoalDashBoardContainer").style.height = `calc(100vh - ${navbarHeight}px)`;
+
   },
 };
 </script>
 <style scoped>
-  .GoalDashBoardContainer{
-    width: calc(100vw - 17px);
+  .GoalDashBoardContainer {
+    width: 100vw; 
+    max-width: 100%;
     display: flex;
     flex-direction: row;
-  } 
-  .leftPanel{
+    height: 100vh;
+    overflow-x: hidden;
+  }
+  .leftPanel {
     width: 70%;
     max-height: 100%;
     border: 2px solid red;
@@ -74,41 +78,32 @@ export default {
     padding: 20px;
     justify-content: space-between;
   }
-  .rightPanel{
-    width: 30%;
-    max-height: 100%;
-    border: 2px solid green;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .leftPanelHeader{
-    max-width: 100%;
+  .leftPanelHeader {
+    width: 100%;
     height: 5%;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
   }
-  .profilePic{
+  .profilePic {
     height: 100%;
     aspect-ratio: 1;
     border-radius: 50%;
+    max-width: 100%;
   }
-  .headerText{
+  .headerText {
     margin-left: 10px;
   }
-  .greeting{
+  .greeting {
     font-weight: 600;
     font-size: 22px;
   }
-  .slogan{
+  .slogan {
     font-size: 14px;
     color: #aaa;
   }
-  .panelOverview{
+  .panelOverview {
     width: 100%;
     height: 15%;
     background-color: blue;
@@ -117,24 +112,62 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  .graphContainer{
-    width:100%;
+  .graphContainer {
+    width: 100%;
     height: 45%;
-    display: flex;
-    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: rgb(31, 126, 53);
   }
-  .transactionContainer{
-    width:100%;
+  .transactionContainer {
+    width: 100%;
     height: 30%;
-    display: flex;
-    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgb(126, 104, 31);
+    overflow-x: auto;
+  }
+  /* Right Panel - Financial goals */
+  .rightPanel {
+    width: 30%;
+    max-height: 100%;
+    border: 2px solid green;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Mobile-specific styles */
+  @media (max-width: 1024px) {
+    .GoalDashBoardContainer {
+      flex-direction: column;
+      height: auto;
+      width: 100vw;
+      max-width: 100%;
+    }
+
+    .leftPanel, .rightPanel {
+      width: 100%; 
+      max-height: none; /* Allow content to expand */
+      margin-bottom: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .leftPanelHeader, .panelOverview, .graphContainer, .transactionContainer {
+      width: 100%;
+      max-width: 100%; 
+    }
+  }
+  .financial-goals {
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 </style>
