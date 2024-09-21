@@ -25,6 +25,7 @@ const icons = [
   faSolid.faPen,
   faSolid.faTrashCan,
   faSolid.faPlus,
+  faSolid.faMagnifyingGlass,
 ];
 library.add(...icons); // Use the spread operator to add the icons
 

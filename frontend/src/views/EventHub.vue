@@ -1,7 +1,18 @@
 <template>
     <div class="EventHubContainer">
         <div class="frame1">
-            <h1>Hue Nguyen</h1>
+            <div class="event-navbar-container">
+                <div class="event-navbar">
+                    <input type="text" v-model="searchQuery" placeholder="Search" @input="filteredResults" class="search-bar"/>
+                    <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="search-icon"/>
+                </div>
+               
+                <div class="event-navbar">
+                    
+                </div>
+            </div>
+            <div class="event-banner">Banner</div>
+            <div class="event-category">Category</div>
         </div>
         <div class="frame2">
             <h1>Hue Nguyen</h1>
@@ -13,22 +24,22 @@
 </template>
 <script>
 import axios from 'axios';
+import { result } from 'lodash';
 
 export default {
     name: 'EventHub',
     data() {
         return {//state declare here
-
+            searchQuery:'',
         };
     },
     computed: {
 
     },
     methods: {
-
     },
     mounted() {
-
+        
     },
 };
 </script>
@@ -44,9 +55,40 @@ export default {
     width: 100%;
     height: 100vh;
     border: 2px solid green;
-    display: flex;
+}
+/* display: flex;
     justify-content: center;
     align-items: center;
+*/
+
+.event-navbar-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.event-navbar {
+    position: relative;
+    width: 50%;
+    border: 2px solid blue;
+}
+
+.search-bar {
+    width: 70%;
+    font-size: 18px;
+    padding: 10px;
+    margin: 20px;
+    box-sizing: border-box;
+    z-index: 100;
+    border-radius: 20px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 230px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    cursor: pointer;
 }
 
 .frame2 {
