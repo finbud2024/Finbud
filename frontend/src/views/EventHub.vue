@@ -7,8 +7,21 @@
                     <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="search-icon"/>
                 </div>
                
-                <div class="event-navbar">
-                    
+                <div class="event-navbar nav-btn">
+                    <div class="event-btn">
+                        <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon"/>
+                        <p>Explore near you</p>
+                    </div>
+                    <div class="event-btn">
+                        <div class="round-star">
+                            <font-awesome-icon icon="fa-regular fa-star" class="btn-icon"/>
+                        </div>
+                        <p>Saved</p>
+                    </div>
+                    <div class="event-btn">
+                        <font-awesome-icon icon="fa-regular fa-bell" class="btn-icon"/>
+                        <p>All Events</p>
+                    </div>
                 </div>
             </div>
             <div class="event-banner">Banner</div>
@@ -56,10 +69,6 @@ export default {
     height: 100vh;
     border: 2px solid green;
 }
-/* display: flex;
-    justify-content: center;
-    align-items: center;
-*/
 
 .event-navbar-container {
     display: flex;
@@ -69,7 +78,7 @@ export default {
 .event-navbar {
     position: relative;
     width: 50%;
-    border: 2px solid blue;
+    margin: 10px;
 }
 
 .search-bar {
@@ -89,6 +98,26 @@ export default {
     transform: translateY(-50%);
     font-size: 20px;
     cursor: pointer;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+    background-color: rgb(225, 225, 226);
+}
+
+.event-btn {
+    margin-top: 10px;
+}
+
+.event-btn:hover {
+    color: #007bff;
+}
+
+.btn-icon {
+    font-size: 20px;
 }
 
 .frame2 {
