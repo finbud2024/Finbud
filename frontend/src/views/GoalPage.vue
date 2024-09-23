@@ -95,8 +95,14 @@
                             <input id="goalTitle" type="text" placeholder="Enter your goal title" v-model="newGoal.title" required>
                         </div>
                         <div class="form-group">
-                            <label for="goalDescription">Description (optional)</label>
-                            <textarea id="goalDescription" placeholder="Describe your goal" v-model="newGoal.description"></textarea>
+                          <label for="goalDescription">Description (optional)</label>
+                          <textarea 
+                            id="goalDescription" 
+                            placeholder="Describe your goal (max 500 words)" 
+                            v-model="newGoal.description" 
+                            maxlength="500" 
+                            @input="updateDescriptionCount"></textarea>
+                          <div class="character-counter">{{ descriptionCharCount }} / 500 characters</div>
                         </div>
                         <div class="form-group">
                             <label for="targetAmount">Total Money Needed</label>
@@ -179,8 +185,8 @@ export default {
       goals: [],
       selectedCategory: '',
       newCategory: '',
-      searchQuery: '',  
-
+      searchQuery: '', 
+      descriptionCharCount: 0,
     };
   },
   computed: {
@@ -305,6 +311,9 @@ export default {
       } else {
         alert('Please enter a valid amount.');
       }
+    },
+    updateDescriptionCount() {
+      this.descriptionCharCount = this.newGoal.description.length;
     },
    
   },
@@ -596,6 +605,7 @@ export default {
     font-size: 16px;
     font-family: 'Space Grotesk', sans-serif;
     transition: border-color 0.3s ease;
+    resize: none;
   }
 
   .form-group input:focus,
@@ -632,6 +642,12 @@ export default {
 
   #addAmount {
     margin-bottom: 10px;
+  }
+  .character-counter {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+    text-align: right;
   }
 
   /* Mobile-specific styles */
