@@ -20,40 +20,62 @@
       </thead>
       <tbody>
         <tr v-for="transaction in filteredTransactions" :key="transaction._id">
-          <td>{{ transaction.stockSymbol }}</td>
-          <td>{{ transaction.quantity }}</td>
-          <td>{{ transaction.type }}</td>
+          <td>"APPL"</td>
+          <td>{{ transaction.volume }}</td>
+          <!-- <td>{{ transaction.type }}</td>
           <td :class="transaction.type === 'buy' ? 'minus' : 'plus'">
             {{ transaction.type === 'buy' ? '-' : '+' }}${{ calculateTotal(transaction.type, transaction.price,
               transaction.quantity).toFixed(2) }}
-          </td>
+          </td> -->
+          <td>buy</td>
+          <td> {{ transaction.high }} </td>
           <td>{{ formatDate(transaction.date) }}</td>
         </tr>
       </tbody>
     </table>
+    <Pagination :currentPage.sync="currentPage" :totalPages="totalPages"  @update:currentPage="updateCurrentPage" />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-
+import Pagination from '../Risk&Chat/Pagination.vue';
 export default {
   name: 'TransactionHistory',
+  components: {
+    Pagination,
+  },
   data() {
     return {
       transactions: [],
       filteredTransactions: [],
       startDate: '',
-      endDate: ''
+      endDate: '',
+      currentPage: 1,
+      itemsPerPage: 5,
     };
   },
+    computed: {
+        totalPages() {
+            return Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+        },
+        filteredTransactions() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            return this.filteredTransactions.slice(start, start + this.itemsPerPage);
+        },
+    },
+    watcher: {
+        filteredTransactions(newV) {
+            this.filteredTransactions();
+        }
+    },
   methods: {
     fetchTransactions() {
       const userId = localStorage.getItem("token");
-      axios.get(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`)
+      axios.get(`https://api.stockdata.org/v1/data/eod?symbols=AAPL&api_token=ZkYvEJRJsmC1R51bmmHB9S3Kysuv56sVNJoFVDZu`)
         .then(response => {
-          this.transactions = response.data;
-          this.filteredTransactions = response.data; // Initialize filtered transactions
+          this.transactions = response.data.data;
+          this.filteredTransactions = response.data.data; // Initialize filtered transactions
         })
         .catch(error => {
           console.error('Error fetching transaction history:', error);
@@ -83,7 +105,10 @@ export default {
     formatDate(dateString) {
       const options = { year: 'numeric', month: 'short', day: 'numeric' };
       return new Date(dateString).toLocaleDateString(undefined, options);
-    }
+    },
+    updateCurrentPage(newPage) {
+            this.currentPage = newPage;
+        },
   },
   mounted() {
     this.fetchTransactions();
@@ -106,8 +131,10 @@ export default {
 }
 
 .transaction-history h3 {
-  color: #007bff; /* Match the styling of other headers */
-  font-size: 1.5rem; /* Match the font size of other headers */
+  color: #007bff;
+  /* Match the styling of other headers */
+  font-size: 1.5rem;
+  /* Match the font size of other headers */
 }
 
 .date-picker {
