@@ -111,7 +111,11 @@ transactionRoute.route('/transactions')
   // POST a new transaction
   .post(validateRequest(Transaction.schema), async (req, res) => {
     console.log('in /transactions Route (POST) new transaction to database');
+<<<<<<< HEAD
     const { description, amount, balance, userId, date, type } = req.body;
+=======
+    const { description, amount, balance, userId, date, notes, type } = req.body;
+>>>>>>> 5aec4ba8a3e593443c264542f962d80407043173
 
     if (!description || amount === undefined || balance === undefined || !userId || !date || !type) {
       return res.status(400).send("Unable to save. Description, amount, balance, date, and userId are required");
@@ -124,6 +128,10 @@ transactionRoute.route('/transactions')
       balance: balance,
       type: type,
       date: date,
+<<<<<<< HEAD
+=======
+      notes: notes
+>>>>>>> 5aec4ba8a3e593443c264542f962d80407043173
     });
 
     try {
