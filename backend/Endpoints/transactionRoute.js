@@ -111,20 +111,19 @@ transactionRoute.route('/transactions')
   // POST a new transaction
   .post(validateRequest(Transaction.schema), async (req, res) => {
     console.log('in /transactions Route (POST) new transaction to database');
-    const { description, amount, balance, userId } = req.body;
+    const { description, amount, balance, userId, date, type } = req.body;
 
-    if (!description || amount === undefined || balance === undefined || !userId) {
-      return res.status(400).send("Unable to save. Description, amount, balance, and userId are required");
+    if (!description || amount === undefined || balance === undefined || !userId || !date || !type) {
+      return res.status(400).send("Unable to save. Description, amount, balance, date, and userId are required");
     }
-
-    const transactionType = amount > 0 ? 'receiving' : 'spending';
 
     const transaction = new Transaction({
       userId: userId,
       description: description,
       amount: amount,
       balance: balance,
-      transaction: transactionType
+      type: type,
+      date: date,
     });
 
     try {
@@ -155,9 +154,9 @@ transactionRoute.route('/transactions/u/:userId')
     console.log('in /transactions/u/:userId Route (GET) transactions with userId:' + JSON.stringify(userId));
     try {
       let transactions = await Transaction.find({ "userId": userId });
-      // if (!transactions.length) {
-      //   return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
-      // }
+      if (!transactions.length) {
+        return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      }
       return res.status(200).json(transactions);
     } catch (err) {
       return res.status(501).send(`Unexpected error occurred when looking for transactions with userId: ${userId} in database: ${err}`);
