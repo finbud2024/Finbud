@@ -220,33 +220,6 @@
             </div>
             </div>
 
-            <div v-if="showModal" class="modal" @click="showModal = false">
-            <div class="modal-content" @click.stop>
-                <div>
-                    <img src="../assets/financial-goal-mockup.jpg" alt="">
-                </div>
-                <div class="modal-text-content">
-                <h3>{{ goalTitle }}</h3>
-                <p>{{ goalDescription }}</p>
-                <p>Total: {{ goalTargetAmount }} USD</p>
-                <p>Saved: {{ goalCurrentAmount }} USD</p>
-                <p>Completion: {{ goalProgress }}%</p>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" :style="{ width: goalProgress + '%' }"></div>
-                </div>
-
-                <button class="add-goal-button" @click="toggleAddMoneyForm">
-                    {{ showAddMoneyForm ? 'Cancel' : 'Add Money' }}
-                </button>
-
-                <div v-if="showAddMoneyForm" class="form-group add-money-form">
-                    <label for="addAmount">Add Money to Goal</label>
-                    <input id="addAmount" type="number" v-model="addAmount" placeholder="Enter amount to add">
-                    <button class="add-goal-button" @click="addMoneyToGoal">Add Money</button>
-                </div>
-                </div>
-            </div>
-            </div>
 
             <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
                 <div class="modal-content" @click.stop>
@@ -911,7 +884,7 @@ export default {
   /* Right Panel - Financial goals */
   .rightPanel {
     width: 30%;
-    height: 100%;
+    max-height: none;
     border: 2px solid green;
     padding: 20px;
     display: flex;
