@@ -195,7 +195,6 @@ export default {
 .frame1 {
     width: 100%;
     height: 100vh;
-    border: 2px solid green;
 }
 
 .event-navbar-container {
@@ -217,11 +216,17 @@ export default {
     box-sizing: border-box;
     z-index: 100;
     border-radius: 28px;
+    border: 4px solid #007bff;
+}
+
+.search-bar:focus {
+    outline: none;
+    border: 4px solid #007bff;
 }
 
 .search-icon {
     position: absolute;
-    right: 230px;
+    right: 30%;
     top: 50%;
     transform: translateY(-50%);
     font-size: 20px;
@@ -244,6 +249,7 @@ export default {
 
 .event-btn {
     margin-top: 10px;
+    cursor: pointer;
 }
 
 .event-btn:hover {
@@ -288,13 +294,13 @@ export default {
 
 .category-btn {
     color: #fff;
+    cursor: pointer;
     padding: 15px 40px 5px 40px;
 }
 
 .category-btn p {
     font-size: 15px;
 }
-
 .category-img {
     width: 25%;
 }
@@ -302,7 +308,6 @@ export default {
 .trending-event {
     width: 100%;
     height: 100vh;
-    border: 2px solid green;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -321,7 +326,7 @@ export default {
     border-radius: 10px;
     text-align: center;
     height: 100%;
-    border: 2px solid red;
+    border: 2px solid black;
 }
 
 .frame3 {
