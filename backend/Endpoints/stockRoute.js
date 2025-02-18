@@ -1,76 +1,135 @@
-import express from 'express';
-import StockPrice from '../Database Schema/Stock.js';
-import validateRequest from '../utils/validateRequest.js';
+import express from "express";
+import StockPrice from "../Database Schema/Stock.js";
+import validateRequest from "../utils/validateRequest.js";
 
 const stockRoute = express.Router();
 
-stockRoute.post("/updateStockDB", validateRequest(StockPrice.schema), async (req, res) => {
+stockRoute.post(
+  "/updateStockDB",
+  validateRequest(StockPrice.schema),
+  async (req, res) => {
     const symbol = req.body.symbol;
     const listOfPrice = req.body.data;
     try {
-        await getStockPrice(symbol, listOfPrice);
-        return res.status(200).send(`Success saving data for Stock ${symbol}`);
+      await getStockPrice(symbol, listOfPrice);
+      return res.status(200).send(`Success saving data for Stock ${symbol}`);
     } catch (error) {
-        return res.status(501).send("Internal error: " + error);
+      return res.status(501).send("Internal error: " + error);
     }
-});
+  }
+);
 
 stockRoute.get("/latestStock", async (req, res) => {
-    try {
-        const latestEntry = await StockPrice.findOne().sort({ date: -1 }).exec();
-        if (latestEntry) {
-            console.log(latestEntry.date);
-            return res.status(200).json(latestEntry.date);
-        } else {
-            return res.status(404).send("No latest entry found");
-        }
-    } catch (error) {
-        return res.status(500).json(error);
+  try {
+    const latestEntry = await StockPrice.findOne().sort({ date: -1 }).exec();
+    if (latestEntry) {
+      console.log(latestEntry.date);
+      return res.status(200).json(latestEntry.date);
+    } else {
+      return res.status(404).send("No latest entry found");
     }
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+stockRoute.get("/allStocks", async (req, res) => {
+  try {
+    const allStocks = await StockPrice.find().sort({ date: -1 }).exec();
+    if (allStocks.length > 0) {
+      return res.status(200).json(allStocks);
+    } else {
+      return res.status(404).send("No stock data available");
+    }
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+//Route to get key statistic for each stock
+stockRoute.get("/stockData/:symbol", async (req, res) => {
+  const symbol = req.params.symbol;
+
+  try {
+    const latestStock = await StockPrice.findOne({ symbol })
+      .sort({ data: -1 })
+      .exec();
+    if (!latestStock) {
+      return res
+        .status(404)
+        .json({ message: `No stock data found for ${symbol}` });
+    }
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    const stocksInPastYear = await StockPrice.find({
+      symbol,
+      date: { $gte: oneYearAgo },
+    }).exec();
+
+    if (stocksInPastYear.length === 0) {
+      return res
+        .status(404)
+        .json({ message: `No historical data for ${symbol}` });
+    }
+    const high = Math.max(...stocksInPastYear.map((stock) => stock.high));
+    const low = Math.min(...stocksInPastYear.map((stock) => stock.low));
+
+    return res.status(200).json({
+      open: latestStock.open,
+      close: latestStock.close,
+      volume: latestStock.volume,
+      high,
+      low,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error", error });
+  }
 });
 
 async function getLatestDate(symbol) {
-    const latestEntry = await StockPrice.findOne({ symbol: symbol }).sort({ date: -1 }).exec();
-    if (latestEntry) {
-        return latestEntry.date;
-    } else {
-        return null;
-    }
+  const latestEntry = await StockPrice.findOne({ symbol: symbol })
+    .sort({ date: -1 })
+    .exec();
+  if (latestEntry) {
+    return latestEntry.date;
+  } else {
+    return null;
+  }
 }
 
 async function getStockPrice(symbol, listOfPrice) {
-    try {
-        const latestDateInDB = await getLatestDate(symbol);
-        console.log(`Latest Date for ${symbol}: `, new Date(latestDateInDB));
-        for (const data of listOfPrice) {
-            const recordDate = data["date"];
-            if (!latestDateInDB || new Date(recordDate) > new Date(latestDateInDB)) {
-                console.log(`Saving data for ${symbol} for date ${recordDate}`);
-                await saveNewStock(symbol, data, recordDate);
-            }
-        }
-        console.log(`Saving Stock ${symbol} complete!`);
-    } catch (error) {
-        console.log('Error in getStockPrice:', error);
+  try {
+    const latestDateInDB = await getLatestDate(symbol);
+    console.log(`Latest Date for ${symbol}: `, new Date(latestDateInDB));
+    for (const data of listOfPrice) {
+      const recordDate = data["date"];
+      if (!latestDateInDB || new Date(recordDate) > new Date(latestDateInDB)) {
+        console.log(`Saving data for ${symbol} for date ${recordDate}`);
+        await saveNewStock(symbol, data, recordDate);
+      }
     }
+    console.log(`Saving Stock ${symbol} complete!`);
+  } catch (error) {
+    console.log("Error in getStockPrice:", error);
+  }
 }
 
 async function saveNewStock(symbol, data, recordDate) {
-    const newStock = new StockPrice({
-        symbol: symbol,
-        open: data['open'],
-        high: data['high'],
-        low: data["low"],
-        close: data['close'],
-        volume: data['5. volume'],
-        date: recordDate,
-    });
-    try {
-        await newStock.save();
-        console.log("Stock saved successfully", symbol);
-    } catch (error) {
-        console.log("Error saving new stock", error);
-    }
+  const newStock = new StockPrice({
+    symbol: symbol,
+    open: data["open"],
+    high: data["high"],
+    low: data["low"],
+    close: data["close"],
+    volume: data["5. volume"],
+    date: recordDate,
+  });
+  try {
+    await newStock.save();
+    console.log("Stock saved successfully", symbol);
+  } catch (error) {
+    console.log("Error saving new stock", error);
+  }
 }
 
 export default stockRoute;
