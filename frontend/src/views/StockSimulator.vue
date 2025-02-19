@@ -9,28 +9,28 @@
         <h3>Key Statistics</h3>
         <div class="stats-grid">
           <div class="stat">
-            <span class="label">Open:</span>
-            <span class="value">{{ stockData.open }}</span>
+            <span class="label">Open: </span>
+            <span class="value">${{ stockData.open }}</span>
           </div>
           <div class="stat">
-            <span class="label">Close:</span>
-            <span class="value">{{ stockData.close }}</span>
+            <span class="label">Close: </span>
+            <span class="value">${{ stockData.close }}</span>
           </div>
           <div class="stat">
-            <span class="label">52 Week High:</span>
-            <span class="value">{{ stockData.high }}</span>
+            <span class="label">52 Week High: </span>
+            <span class="value">${{ stockData.high }}</span>
           </div>
           <div class="stat">
-            <span class="label">52 Week Low:</span>
-            <span class="value">{{ stockData.low }}</span>
+            <span class="label">52 Week Low: </span>
+            <span class="value">${{ stockData.low }}</span>
           </div>
           <div class="stat">
-            <span class="label">Market Cap:</span>
-            <span class="value">{{ stockData.marketCap }}</span>
+            <span class="label">Market Cap: </span>
+            <span class="value">${{ stockData.marketCap }}</span>
           </div>
           <div class="stat">
-            <span class="label">Volume:</span>
-            <span class="value">{{ stockData.volume }}</span>
+            <span class="label">Volume: </span>
+            <span class="value">{{ stockData.volume }} shares</span>
           </div>
         </div>
       </section>
@@ -110,6 +110,7 @@
 </template>
 
 <script>
+import { fetchSimBannerStockData, fetchSimBannerStockDatav2 } from '../services/stockServices';
 import StockScreener from '../components/StockScreener.vue';
 import CompanyCard from '@/components/CompanyCard.vue';
 import stockData from './hardcodeData/StockData.js';
@@ -260,9 +261,41 @@ export default {
     },
     displayStock(newVal) {
       console.log(newVal);
+    },
+    async bannerDisplayStock(newSymbol) {
+      const fetchedStock = await fetchSimBannerStockDatav2(newSymbol);
+      if (fetchedStock) {
+        this.stockData = {
+          open: fetchedStock.open,
+          close: fetchedStock.close,
+          high: fetchedStock.high,
+          low: fetchedStock.low,
+          marketCap: fetchedStock.marketCap,
+          volume: fetchedStock.volume
+        };
+      } else {
+        console.error(`Failed to fetch stock data for ${newSymbol}`);
+      }
     }
   },
-  mounted() {
+  async mounted() {
+    // UPDATED: Fetch key statistics using the API-based service instead of local hardcoded data
+    const defaultTicker = this.bannerDisplayStock; // e.g. "AAPL"
+    const fetchedStock = await fetchSimBannerStockDatav2(defaultTicker);
+    if (fetchedStock) {
+      this.stockData = {
+        open: fetchedStock.open,
+        close: fetchedStock.close,
+        high: fetchedStock.high,
+        low: fetchedStock.low,
+        marketCap: fetchedStock.marketCap,
+        volume: fetchedStock.volume
+      };
+    } else {
+      console.error(`Failed to fetch stock data for default ticker: ${defaultTicker}`);
+    }
+
+    // Continue with remaining mounted logic
     const shuffledStock = stockData.slice().sort(() => 0.5 - Math.random());
     this.displayStock = shuffledStock.slice(0, 10);
 
