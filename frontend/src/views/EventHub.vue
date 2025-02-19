@@ -12,7 +12,7 @@
                         <div class="round">
                             <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
                         </div>
-                        <p>Explore near you</p>
+                        <p>Explore Near You</p>
                     </div>
                     <div class="event-btn">
                         <div class="round-star">
@@ -249,7 +249,7 @@ export default {
 @import "swiper/swiper-bundle.css";
 
 .EventHubContainer {
-    width: calc(100vw - 17px);
+    width: 100%;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -265,6 +265,7 @@ export default {
     display: flex;
     flex-direction: row;
     width: 100%;
+    align-items: center;
 }
 
 .event-navbar {
@@ -303,7 +304,6 @@ export default {
     align-items: center;
     justify-content: space-evenly;
     text-align: center;
-    background-color: rgb(233, 233, 236);
     margin-right: 50px;
     margin-left: 50px;
 }
@@ -326,21 +326,16 @@ export default {
     padding: 5px;
 }
 
-.round {
-    background-color: #c5d7ea;
-    border-radius: 30px;
-    width: 60%;
-    margin-left: 20px;
-}
-
 .event-banner {
     background-color: #007bff;
-    width: 100%;
-    height: 60vh;
+    justify-content: center;
+    align-items: center;
+    height: auto;
 }
 
 .banner-img {
     width: 100%;
+    height: auto;
 }
 
 .event-category h3 {
@@ -350,8 +345,8 @@ export default {
 
 .event-category-bg {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    justify-content: center;
     text-align: center;
     margin: 0 50px 50px 50px;
     background-color: #007bff;
@@ -369,6 +364,8 @@ export default {
 
 .category-img {
     width: 25%;
+    filter: brightness(0) invert(1); 
+
 }
 
 .trending-event {
@@ -386,14 +383,16 @@ export default {
     width: calc(25%-30px);
 }
 
-/* width: doesn't apply*/
-
 .event-infor {
-    padding: 15px;
-    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
     text-align: center;
     height: 100%;
-    border: 2px solid black;
+    display: flex;
+    flex-direction: column;
+    margin: 16px;
 }
 
 .frame3 {
@@ -401,7 +400,6 @@ export default {
     height: fit-content;
     display: flex;
     flex-direction: column;
-    /* Stack elements vertically */
     justify-content: center;
     align-items: center;
 }
@@ -412,9 +410,7 @@ export default {
     align-items: center;
     width: 100%;
     height: 100%;
-    /* Ensure full height */
     padding: 20px;
-    /* Add some padding for spacing */
 }
 
 .events-container h3 {
@@ -423,15 +419,9 @@ export default {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* 3 columns of equal width */
-    grid-template-rows: repeat(2, auto);
-    /* 2 rows */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
     gap: 20px;
-    /* Spacing between cards */
-    width: 80%;
-    height: 100%;
-    /* Ensure the grid takes full height */
+    width: 90%;
     margin-bottom: 100px;
 }
 
@@ -450,7 +440,6 @@ export default {
     width: 100%;
     height: 150px;
     background-color: #f0f0f0;
-    /* Placeholder for image */
     object-fit: cover;
     margin-bottom: 10px;
 }
@@ -481,18 +470,22 @@ export default {
 }
 
 .star-button {
-    padding: 10px 10px;
+    width: 42px; 
+    height: 42px; 
+    border-radius: 50%; 
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 50%;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    padding: 0; 
 }
 
 .star-button:hover {
     background-color: #005bb5;
-    /* Optional: Add a hover effect */
 }
 
 .modal-overlay {
@@ -563,4 +556,35 @@ export default {
 .close-button:hover {
     background-color: #0056b3;
 }
+
+@media (max-width: 600px) {
+
+    .search-bar {
+        height: 40px;
+        padding: 5px;
+        font-size: 0;
+        text-align: center; 
+        overflow: hidden; 
+        transition: width 0.3s ease;
+    }
+    
+    .event-category h3 {
+        font-size: 2rem; 
+    }
+
+    .events-container h3 {
+        font-size: 2rem; 
+    }
+
+    .grid-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-btn p {
+        font-size: 0;
+    }
+}
+
 </style>
