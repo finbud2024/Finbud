@@ -125,10 +125,10 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button @click="addTransaction">Add Transaction</button>
                   <button @click="closeModal" style="margin-right: 10px">
                     Cancel
                   </button>
+                  <button @click="addTransaction">Add Transaction</button>
                 </div>
               </div>
             </div>
@@ -290,10 +290,10 @@
         Are you sure you want to reset your account balance? This action will
         delete all your transactions.
       </p>
-      <button @click="resetAccountBalance" style="margin-right: 10px">
+      <button @click="showResetConfirmationModal = false" style="margin-right: 10px">No</button>
+      <button @click="resetAccountBalance">
         Yes
       </button>
-      <button @click="showResetConfirmationModal = false">No</button>
     </div>
   </div>
 </template>
