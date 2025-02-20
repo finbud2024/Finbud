@@ -104,8 +104,52 @@ const fetchSimBannerStockDatav2 = async (stockCode) => {
   }
 };
 
+const fetchSimBannerStockDatav3 = async (stockCode) => {
+  try {
+    const apiKey = process.env.VUE_APP_STOCK_API_KEY_FINNHUB;
+
+    const quoteUrl = `https://finnhub.io/api/v1/quote?symbol=${stockCode}&token=${apiKey}`;
+    
+
+    const metricUrl = `https://finnhub.io/api/v1/stock/metric?symbol=${stockCode}&metric=all&token=${apiKey}`;
+    
+
+    const profileUrl = `https://finnhub.io/api/v1/stock/profile2?symbol=${stockCode}&token=${apiKey}`;
+    
+    const [quoteResponse, metricResponse, profileResponse] = await Promise.all([
+      axios.get(quoteUrl),
+      axios.get(metricUrl),
+      axios.get(profileUrl)
+    ]);
+    
+ 
+    const quoteData = quoteResponse.data;
+    const metricData = (metricResponse.data && metricResponse.data.metric) || {};
+    const profileData = profileResponse.data || {};
+    
+    console.log({ quoteData, metricData, profileData });
+    
+    return {
+      livePrice: quoteData.c || "N/A",
+      open: quoteData.o || "N/A",
+      close: quoteData.pc || "N/A",
+      high: quoteData.h || "N/A",
+      low: quoteData.l || "N/A",
+      volume: "N/A",
+      marketCap: profileData.marketCapitalization || "N/A",
+      eps: metricData.epsNormalizedAnnual || "N/A",
+      peRatio: metricData.peNormalizedAnnual || "N/A",
+      pbr: metricData.pb || "N/A"
+    };
+  } catch (error) {
+    console.error("Error fetching stock data from Finnhub:", error);
+    return null;
+  }
+};
+
 export {
   fetchStockPrice,
   fetchSimBannerStockData,
-  fetchSimBannerStockDatav2
+  fetchSimBannerStockDatav2,
+  fetchSimBannerStockDatav3
 }

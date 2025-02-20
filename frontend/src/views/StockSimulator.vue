@@ -1,7 +1,8 @@
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" />
+      <!-- <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" /> -->
+      <BannerCardSimulator :stockCode="bannerDisplayStock" />
     </header>
 
     <div class="main-content">
@@ -13,7 +14,7 @@
             <span class="value">${{ stockData.open }}</span>
           </div>
           <div class="stat">
-            <span class="label">Close: </span>
+            <span class="label">Prev Close: </span>
             <span class="value">${{ stockData.close }}</span>
           </div>
           <div class="stat">
@@ -110,9 +111,10 @@
 </template>
 
 <script>
-import { fetchSimBannerStockData, fetchSimBannerStockDatav2 } from '../services/stockServices';
+import { fetchSimBannerStockData, fetchSimBannerStockDatav2, fetchSimBannerStockDatav3 } from '../services/stockServices';
 import StockScreener from '../components/StockScreener.vue';
 import CompanyCard from '@/components/CompanyCard.vue';
+import BannerCardSimulator from '@/components/BannerCardSimulator.vue';
 import stockData from './hardcodeData/StockData.js';
 import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue';
 import TransactionHistory from '../components/StockSimulatorPage/TransactionHistory.vue';
@@ -126,7 +128,8 @@ export default {
     CompanyCard,
     PreviewOrderModal,
     TransactionHistory,
-    PerformanceChart
+    PerformanceChart,
+    BannerCardSimulator
   },
   data() {
     return {
@@ -265,7 +268,7 @@ export default {
     },
 
     async bannerDisplayStock(newSymbol) {
-      const fetchedStock = await fetchSimBannerStockDatav2(newSymbol);
+      const fetchedStock = await fetchSimBannerStockDatav3(newSymbol);
       if (fetchedStock) {
         this.stockData = {
           open: fetchedStock.open,
@@ -283,7 +286,7 @@ export default {
   async mounted() {
     // UPDATED: Fetch key statistics using the API-based service instead of local hardcoded data
     const defaultTicker = this.bannerDisplayStock; // e.g. "AAPL"
-    const fetchedStock = await fetchSimBannerStockDatav2(defaultTicker);
+    const fetchedStock = await fetchSimBannerStockDatav3(defaultTicker);
     if (fetchedStock) {
       this.stockData = {
         open: fetchedStock.open,
