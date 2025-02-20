@@ -256,11 +256,27 @@ export default {
       handler(newQuery) {
         this.stockSymbol = newQuery.symbol || "";
         this.quantity = newQuery.quantity ? parseInt(newQuery.quantity, 10) : 1;
-
+        this.bannerDisplayStock = newQuery.symbol || "AAPL";
         // Ensure "action" gets updated in the dropdown
         if (newQuery.action === "sell" || newQuery.action === "buy") {
           this.action = newQuery.action;
         }
+      }
+    },
+
+    async bannerDisplayStock(newSymbol) {
+      const fetchedStock = await fetchSimBannerStockDatav2(newSymbol);
+      if (fetchedStock) {
+        this.stockData = {
+          open: fetchedStock.open,
+          close: fetchedStock.close,
+          high: fetchedStock.high,
+          low: fetchedStock.low,
+          marketCap: fetchedStock.marketCap,
+          volume: fetchedStock.volume
+        };
+      } else {
+        console.error(`Failed to fetch stock data for ${newSymbol}`);
       }
     }
   },
