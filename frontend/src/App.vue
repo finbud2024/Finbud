@@ -80,7 +80,6 @@ export default {
       );
     },
     showHeader() {
-      // return !this.$route.fullPath.includes("/stock-simulator?");
       return true;
     },
   },
