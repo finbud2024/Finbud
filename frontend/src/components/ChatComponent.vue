@@ -128,48 +128,65 @@ export default {
 				}
 				// HANDLE BUY (7)
 				else if (userMessage.toLowerCase().includes("#buy")) {
-					const buyRegex = /#buy\s+([A-Z]+)\s+(\d+)/i;
-					const match = userMessage.match(buyRegex);
-					if (match) {
-						const stockSymbol = match[1].toUpperCase();
-						const quantity = parseInt(match[2], 10);
-						if (stockSymbol && !isNaN(quantity)) {
-							const url = this.$router.resolve({
-								path: "/stock-simulator",
-								query: { symbol: stockSymbol, quantity },
-							}).href;
-							// this.openNewWindow(url);
-						} else {
-							this.addTypingResponse("Invalid stock symbol or quantity", false);
-						}
-					} else {
-						this.addTypingResponse("Invalid buy command format", false);
-					}
+    				const buyRegex = /#buy\s+([A-Z]+)\s+(\d+)/i;
+    				const match = userMessage.match(buyRegex);
+    				if (match) {
+        				const stockSymbol = match[1].toUpperCase();
+        				const quantity = parseInt(match[2], 10);
+        				if (stockSymbol && !isNaN(quantity)) {
+            				const baseUrl = window.location.origin.includes("localhost")
+                				? "http://localhost:8888"
+                				: "https://finbud.pro";
+							
+								const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=buy&fullUI=true`;
+            				window.open(url, "_blank");
+							// Wait for the page to load and auto-click the Preview Order button
+							setTimeout(() => {
+                				window.addEventListener("load", () => {
+                    				const previewButton = document.querySelector(".preview-btn");
+                    				if (previewButton) previewButton.click();
+                				});
+            				}, 2000);
+        				} else {
+            				this.addTypingResponse("Invalid stock symbol or quantity", false);
+        				}
+    				} else {
+        				this.addTypingResponse("Invalid buy command format", false);
+    				}
 				}
+
 				// HANDLE SELL (8)
-				else if (userMessage.toLowerCase().includes("sell")) {
-					try {
-						const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
-						const match = userMessage.match(sellRegex);
-						if (match) {
-							const stockSymbol = match[1].toUpperCase();
-							const quantity = parseInt(match[2], 10);
-							if (stockSymbol && !isNaN(quantity)) {
-								const url = this.$router.resolve({
-									path: "/stock-simulator",
-									query: { symbol: stockSymbol, quantity: -quantity },
-								}).href;
-								// this.openNewWindow(url);
-							} else {
-								this.addTypingResponse("Invalid stock symbol or quantity", false);
-							}
-						} else {
-							this.addTypingResponse("Invalid sell command format", false);
-						}
-					} catch (err) {
-						console.error("Error in sell message:", err.message);
-					}
-				}
+				else if (userMessage.toLowerCase().includes("#sell")) {
+    				try {
+        				const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
+        				const match = userMessage.match(sellRegex);
+        				if (match) {
+            				const stockSymbol = match[1].toUpperCase();
+            				const quantity = parseInt(match[2], 10);
+            				if (stockSymbol && !isNaN(quantity)) {
+                				const baseUrl = window.location.origin.includes("localhost")
+                    				? "http://localhost:8888"
+                    				: "https://finbud.pro";
+                
+								const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=sell`;
+                				window.open(url, "_blank");
+								// Wait for the page to load and auto-click the Preview Order button
+								setTimeout(() => {
+                					window.addEventListener("load", () => {
+                    					const previewButton = document.querySelector(".preview-btn");
+                    					if (previewButton) previewButton.click();
+                					});
+            					}, 2000);
+            				} else {
+                				this.addTypingResponse("Invalid stock symbol or quantity", false);
+            				}
+        				} else {
+            				this.addTypingResponse("Invalid sell command format", false);
+        				}
+    				} catch (err) {
+        				console.error("Error in sell message:", err.message);
+   					}
+			}
 				// HANDLE ADD TRANSACTION (5)
 				else if (userMessage.toLowerCase().includes("#add")) {
 					try {
