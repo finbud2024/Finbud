@@ -22,7 +22,7 @@
                         :avatar-src="message.isUser ? userAvatar : botAvatar"
                     />
                 </ChatFrame>
-                <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
+                <UserInput class="user-input-container" @send-message="sendMessage" @clear-message="clearMessage" />
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
 import ChatHeader from './ChatHeader.vue';
 import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
-import UserInput from './UserInput.vue';
+import UserInput from '@/components/UserInput.vue';
 import News from '../Risk&Chat/News.vue';
 import DisplayCrypto from './DisplayCrypto.vue';
 import DisplayStock from './DisplayStock.vue';
@@ -263,6 +263,14 @@ export default {
     padding: 20px;
 }
 
+.user-input-container {
+  position: static;
+}
+
+.user-input-container :deep(.user-input) {
+  width: 100%;
+}
+
 @media (max-width: 768px) {
     .chat-header {
         font-size: 1rem;
@@ -278,9 +286,9 @@ export default {
 }
 
 @media (max-width: 768px) {
-    .chat-header {
-        font-size: 1rem;
-        padding: 10px;
-    }
+  .chat-header {
+    font-size: 1rem;
+    padding: 10px;
+  }
 }
 </style>
