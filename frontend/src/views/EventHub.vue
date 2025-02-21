@@ -71,16 +71,16 @@
                         paceBetween: 30,
                     },
                 }">
-                <swiper-slide v-for="event in trendingEvents" :key="event.name" class="swiper-slide">
+                <swiper-slide v-for="event in trendingEvents" :key="event.title" class="swiper-slide">
                     <div class="event-infor">
                         <div class="image-container">
-                            <img :src="event.img" :alt="event.name" class="fade-in" />
+                            <img v-if="event.urlToImage" :src="event.urlToImage" alt="event.title" class="fade-in" />
                         </div>
-                        <h3>{{ event.name }}</h3>
-                        <p>{{ event.date }} &#x2022; {{ event.time }}</p>
-                        <p>{{ event.location }}</p>
-                        <p>{{ event.fee }}</p>
-                        <p>{{ event.company }}</p>
+                        <h3>{{ event.title }}</h3>
+                        <p>{{ new Date(event.publishedAt).toLocaleString() }}</p>
+                        <button @click="openEventUrl(event.url, '_blank')" class="event-button">
+                            View Event
+                        </button>
                     </div>
                 </swiper-slide>
             </swiper>
@@ -89,18 +89,15 @@
             <div class="events-container">
                 <h3>All events</h3>
                 <div class="grid-container">
-                    <div v-for="(event, index) in trendingEvents" :key="index" class="event-card">
-                        <img class="event-image" src="../assets/stockTri.png" alt="Event image" />
+                    <div v-for="(event, index) in allEvents" :key="index" class="event-card">
+                        <img v-if="event.urlToImage" :src="event.urlToImage" alt="Event image" class="event-image" />
                         <div class="event-details">
-                            <h3>{{ event.title }}</h3>
-                            <p>{{ event.date }}</p>
-                            <p>{{ event.location }}</p>
-                            <p>{{ event.organizer }}</p>
-                            <p>{{ event.price }}</p>
+                            <h2>{{ event.title }}</h2>
+                            <p>{{ new Date(event.publishedAt).toLocaleString()  }}</p>
                         </div>
                         <div class="event-actions">
                             <button class="star-button">⭐</button>
-                            <button class="read-more-button" @click="openModal(event)">
+                            <button class="read-more-button" @click="openEventUrl(event.url, '_blank')">
                                 Read more
                             </button>
                         </div>
@@ -108,46 +105,11 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Section -->
-        <div v-if="isModalOpen" class="modal-overlay modal-wrapper" @click="closeModal">
-            <div class="modal-content">
-                <img class="modal-image" src="../assets/stockTri.png" alt="Event image" />
-
-                <div class="modal-body">
-                    <p class="modal-date">{{ selectedEvent.date }}</p>
-                    <div class="modal-secondline">
-                        <h3 class="modal-title">{{ selectedEvent.title }}</h3>
-                        <button class="register-button">Register</button>
-                    </div>
-
-                    <p class="modal-subtitle">
-                        {{
-                            selectedEvent.description ||
-                            "#1 Commercial Real Estate & Networking Community - Ready to Find Your Next Investment Partner ?"
-                        }}
-                    </p>
-
-                    <h4 class="modal-section-title">Pick a time</h4>
-                    <!-- Time picking content (if needed) -->
-
-                    <h4 class="modal-section-title">Agenda</h4>
-                    <!-- Agenda content -->
-
-                    <h4 class="modal-section-title">About this event</h4>
-                    <p class="modal-description">
-                        {{ selectedEvent.details || "Details about the event go here..." }}
-                    </p>
-                </div>
-
-                <button class="close-button" @click="closeModal">Close</button>
-            </div>
-        </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { result } from 'lodash';
 
 import { Swiper, SwiperSlide } from "swiper/vue";
 
@@ -167,81 +129,56 @@ export default {
     data() {
         return {//state declare here
             modules: [Keyboard, Pagination, Navigation, Autoplay],
-            trendingEvents: [
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-            ],
-            isModalOpen: false,
-            selectedEvent: {},
+            trendingEvents: [],
+            allEvents: [],
         };
     },
     computed: {
 
     },
     methods: {
-        openModal(event) {
-            this.selectedEvent = event;
-            this.isModalOpen = true;
+        fetchHeadlines() {
+          const apiKey = process.env.VUE_APP_NEWS_API_KEY; 
+          axios.get(`https://newsapi.org/v2/top-headlines?category=business&q=AI&apiKey=${apiKey}`)
+              .then(response => {
+                  if (response.data.status === "ok") {
+                      this.trendingEvents = response.data.articles.filter(article => article.urlToImage);
+                  } else {
+                      console.error('Error fetching articles:', response.data.message);
+                  }
+              })
+              .catch(error => {
+                  console.error('Fetch error:', error);
+              });
         },
-        closeModal() {
-            this.isModalOpen = false;
-            this.selectedEvent = {};
+        fetchAllEvents () {
+            const apiKey = process.env.VUE_APP_NEWS_API_KEY; 
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1); // Set to yesterday
+            const formattedYesterday = yesterday.toISOString().split('T')[0];
+            const formattedToday = today.toISOString().split('T')[0];
+            
+            axios.get(`https://newsapi.org/v2/everything?q=finance&from=${formattedYesterday}&to=${formattedToday}&sortBy=popularity&apiKey=${apiKey}`)
+            .then(response => {
+                console.log(response.data);
+                if (response.data.status === "ok") {
+                    this.allEvents = response.data.articles.filter(article => article.urlToImage);
+                } else {
+                    console.error('Error fetching articles:', response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
         },
+        openEventUrl(url) {
+            window.open(url, '_blank');
+        }
     },
     mounted() {
-
+        this.fetchHeadlines();
+        this.fetchAllEvents();
     },
 };
 </script>
@@ -419,10 +356,10 @@ export default {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     width: 90%;
-    margin-bottom: 100px;
+    margin: 0 auto;
 }
 
 .event-card {
@@ -465,7 +402,7 @@ export default {
     transition: background-color 0.3s ease;
 }
 
-.read-more-button:hover {
+.read-more-button, .event-button:hover {
     background-color: #005bb5;
 }
 
@@ -585,6 +522,31 @@ export default {
     .nav-btn p {
         font-size: 0;
     }
+}
+
+.image-container {
+    width: 100%; 
+    height: 250px; 
+    overflow: hidden; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.image-container img {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+}
+
+.event-button {
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
 }
 
 </style>
