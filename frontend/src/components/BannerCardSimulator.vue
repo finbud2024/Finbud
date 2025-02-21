@@ -150,7 +150,10 @@
     border-radius: 4px;
     padding: 1.5rem;
     font-family: sans-serif;
-    margin: 1.5rem auto;
+    margin: 0;
+    margin-left: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
   .card-header {
