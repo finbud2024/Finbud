@@ -666,4 +666,11 @@ export default {
   margin-bottom: 4px;  /* Reduced from 6px */
   color: #007bff;
 }
+
+.actions h3 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #007bff;
+  font-size: 1.5rem;
+}
 </style>
