@@ -87,7 +87,7 @@
     </div>
 
     <section class="transaction-history">
-      <TransactionHistory />
+      <TransactionHistory :key="transactionKey"/>
     </section>
 
     <stockScreener @applyFilter="stockFilterHandler" />
@@ -116,6 +116,7 @@ import stockData from './hardcodeData/StockData.js';
 import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue';
 import TransactionHistory from '../components/StockSimulatorPage/TransactionHistory.vue';
 import PerformanceChart from '../components/PerformanceChart.vue'; 
+import { toast } from 'vue3-toastify';
 import axios from 'axios';
 
 export default {
@@ -139,6 +140,7 @@ export default {
       accountBalance: 0,
       stockValue: 0,
       cash: 0,
+      transactionKey: 0,
       performanceData: [], // Add performance data here
       stockData: {
         open: '',
@@ -158,7 +160,7 @@ export default {
       this.selectedTimeFrame = timeframe;
       this.updatePerformanceData(timeframe); 
     },
-        updatePerformanceData(timeframe) {
+    updatePerformanceData(timeframe) {
       const performanceData = [];
       const startDate = new Date();
       
@@ -226,13 +228,35 @@ export default {
       axios.post(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions`, transactionData)
         .then(response => {
           console.log('Order submitted successfully:', response.data);
+          toast.success('Order submitted successfully', { autoClose: 1000 });
           this.showModal = false;
+          this.fetchBankingAccountBalance();
           this.fetchTransactions(); // Re-fetch transactions to update the table
+          this.transactionKey++;
         })
         .catch(error => {
+          this.showModal = false;
           console.error('Error submitting order:', error);
+          toast.error('Order submitted unsuccessfully', {autoClose: 1000});
         });
     },
+    async fetchBankingAccountBalance() {
+      try {
+        const userId = localStorage.getItem('token');
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+        const response = await axios.get(api);
+        const data = response.data;
+        console.log(data);
+        
+        this.accountBalance = data.bankingAccountData.accountBalance;
+        this.stockValue = data.bankingAccountData.stockValue;
+        this.cash = data.bankingAccountData.cash;
+      } catch (error) {
+        console.error('Error fetching financial data:', error);
+        toast.error('Failed to load financial data', { autoClose: 1000 });
+      }
+    },
+
     async fetchTransactions() {
       const userId = this.fixedUserId;
       try {
@@ -243,11 +267,6 @@ export default {
         console.error('Error fetching transaction history:', error);
       }
     }
-  },
-  computed: {
-    accountBalance() {
-      return this.cash + this.stockValue;
-    } 
   },
   watch: {
     '$route.query': {
@@ -269,10 +288,7 @@ export default {
     if (this.$route.query.symbol && this.$route.query.quantity) {
       this.bannerDisplayStock = this.$route.query.symbol;
     }
-    const userData = JSON.parse(localStorage.getItem('user'));
-    this.accountBalance = userData.bankingAccountData.accountBalance;
-    this.cash = userData.bankingAccountData.cash;
-    this.stockValue = userData.bankingAccountData.stockValue;
+    this.fetchBankingAccountBalance();
     this.fetchTransactions();
   }
 };

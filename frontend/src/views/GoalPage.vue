@@ -425,6 +425,21 @@ export default {
     },
   },
   methods: {
+    async getAccountBalance() {
+      try {
+        const userId = localStorage.getItem('token');
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+        const response = await axios.get(api);
+        const data = response.data;
+        console.log(data);
+        
+        this.accountBalance = data.bankingAccountData.accountBalance;
+      } catch (error) {
+        console.error('Error fetching financial data:', error);
+        toast.error('Failed to load financial data', { autoClose: 1000 });
+      }
+    },
+
     // goal methods
     retrieveGoals() {
       axios
@@ -803,6 +818,7 @@ export default {
     if (!this.isAuthenticated) {
       this.$router.push('/');
     }
+    this.getAccountBalance();
     this.retrieveGoals();
 
     this.fetchTransactions();
