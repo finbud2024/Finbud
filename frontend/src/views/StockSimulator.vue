@@ -1,7 +1,8 @@
 <template>
   <div class="dashboard">
     <header class="dashboard-header">
-      <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" />
+      <!-- <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" /> -->
+      <BannerCardSimulator :stockCode="bannerDisplayStock" />
     </header>
 
     <div class="main-content">
@@ -9,28 +10,28 @@
         <h3>Key Statistics</h3>
         <div class="stats-grid">
           <div class="stat">
-            <span class="label">Open:</span>
-            <span class="value">{{ stockData.open }}</span>
+            <span class="label">Open: </span>
+            <span class="value">${{ stockData.open }}</span>
           </div>
           <div class="stat">
-            <span class="label">Close:</span>
-            <span class="value">{{ stockData.close }}</span>
+            <span class="label">Prev Close: </span>
+            <span class="value">${{ stockData.close }}</span>
           </div>
           <div class="stat">
-            <span class="label">52 Week High:</span>
-            <span class="value">{{ stockData.high }}</span>
+            <span class="label">52 Week High: </span>
+            <span class="value">${{ stockData.high }}</span>
           </div>
           <div class="stat">
-            <span class="label">52 Week Low:</span>
-            <span class="value">{{ stockData.low }}</span>
+            <span class="label">52 Week Low: </span>
+            <span class="value">${{ stockData.low }}</span>
           </div>
           <div class="stat">
-            <span class="label">Market Cap:</span>
-            <span class="value">{{ stockData.marketCap }}</span>
+            <span class="label">Market Cap: </span>
+            <span class="value">${{ stockData.marketCap }}</span>
           </div>
           <div class="stat">
-            <span class="label">Volume:</span>
-            <span class="value">{{ stockData.volume }}</span>
+            <span class="label">Volume: </span>
+            <span class="value">{{ stockData.volume }} shares</span>
           </div>
         </div>
       </section>
@@ -54,32 +55,36 @@
 
     <div class="account-performance">
       <section class="account-info">
-        <h3>Your account:</h3>
-        <div class="account-grid">
-          <div class="stat">
-            <span class="label">ACCOUNT BALANCE:</span>
-            <span class="value">{{ accountBalance }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">CASH BALANCE:</span>
-            <span class="value">{{ cash }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">STOCK VALUE:</span>
-            <span class="value">{{ stockValue }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">TODAY'S CHANGE:</span>
-            <span class="value">{{ todaysChange }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">ANNUAL RETURN:</span>
-            <span class="value">{{ annualReturn }}%</span>
+        <div class="account-info-container">
+          <div class="account-grid">
+            <div class="stat">
+              <span class="label">ACCOUNT BALANCE:</span>
+              <span class="value">{{ accountBalance }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">CASH BALANCE:</span>
+              <span class="value">{{ cash }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">STOCK VALUE:</span>
+              <span class="value">{{ stockValue }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">TODAY'S CHANGE:</span>
+              <span class="value">{{ todaysChange }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">ANNUAL RETURN:</span>
+              <span class="value">{{ annualReturn }}%</span>
+            </div>
           </div>
         </div>
+        <div class="chat-bot-container">
+
+        </div>
+
       </section>
 
-      <!-- Use the new PerformanceChart component -->
       <PerformanceChart 
         :performanceData="performanceData"
         @timeframeChanged="updatePerformanceData"
@@ -110,8 +115,10 @@
 </template>
 
 <script>
+import { fetchSimBannerStockData, fetchSimBannerStockDatav2, fetchSimBannerStockDatav3 } from '../services/stockServices';
 import StockScreener from '../components/StockScreener.vue';
 import CompanyCard from '@/components/CompanyCard.vue';
+import BannerCardSimulator from '@/components/BannerCardSimulator.vue';
 import stockData from './hardcodeData/StockData.js';
 import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue';
 import TransactionHistory from '../components/StockSimulatorPage/TransactionHistory.vue';
@@ -126,7 +133,8 @@ export default {
     CompanyCard,
     PreviewOrderModal,
     TransactionHistory,
-    PerformanceChart
+    PerformanceChart,
+    BannerCardSimulator
   },
   data() {
     return {
@@ -269,24 +277,73 @@ export default {
     }
   },
   watch: {
-    '$route.query': {
+    "$route.query": {
       immediate: true,
       handler(newQuery) {
-        this.stockSymbol = newQuery.symbol || '';
-        this.quantity = newQuery.quantity || '';
+        this.stockSymbol = newQuery.symbol || "";
+        this.quantity = newQuery.quantity ? parseInt(newQuery.quantity, 10) : 1;
         this.bannerDisplayStock = newQuery.symbol || "AAPL";
+        // Ensure "action" gets updated in the dropdown
+        if (newQuery.action === "sell" || newQuery.action === "buy") {
+          this.action = newQuery.action;
+        }
       }
     },
-    displayStock(newVal) {
-      console.log(newVal);
+
+    async bannerDisplayStock(newSymbol) {
+      const fetchedStock = await fetchSimBannerStockDatav3(newSymbol);
+      if (fetchedStock) {
+        this.stockData = {
+          open: fetchedStock.open,
+          close: fetchedStock.close,
+          high: fetchedStock.high,
+          low: fetchedStock.low,
+          marketCap: fetchedStock.marketCap,
+          volume: fetchedStock.volume
+        };
+      } else {
+        console.error(`Failed to fetch stock data for ${newSymbol}`);
+      }
     }
   },
-  mounted() {
+  async mounted() {
+    // UPDATED: Fetch key statistics using the API-based service instead of local hardcoded data
+    const defaultTicker = this.bannerDisplayStock; // e.g. "AAPL"
+    const fetchedStock = await fetchSimBannerStockDatav3(defaultTicker);
+    if (fetchedStock) {
+      this.stockData = {
+        open: fetchedStock.open,
+        close: fetchedStock.close,
+        high: fetchedStock.high,
+        low: fetchedStock.low,
+        marketCap: fetchedStock.marketCap,
+        volume: fetchedStock.volume
+      };
+    } else {
+      console.error(`Failed to fetch stock data for default ticker: ${defaultTicker}`);
+    }
+
+    // Continue with remaining mounted logic
     const shuffledStock = stockData.slice().sort(() => 0.5 - Math.random());
     this.displayStock = shuffledStock.slice(0, 10);
 
-    if (this.$route.query.symbol && this.$route.query.quantity) {
-      this.bannerDisplayStock = this.$route.query.symbol;
+    const urlParams = new URLSearchParams(window.location.search);
+    const symbol = urlParams.get("symbol");
+    const quantity = urlParams.get("quantity");
+    const action = urlParams.get("action");
+
+    if (symbol) this.stockSymbol = symbol;
+    if (quantity) this.quantity = parseInt(quantity, 10);
+    if (action === "sell" || action === "buy") {
+      this.action = action;
+    }
+    if (this.stockSymbol && this.quantity) {
+      setTimeout(() => {
+        const previewButton = document.querySelector(".preview-btn");
+        if (previewButton) {
+          previewButton.click();
+        }
+      }, 1000); // Wait 1 second to ensure the form is populated before clicking
     }
     this.fetchBankingAccountBalance();
     this.fetchTransactions();
@@ -314,8 +371,9 @@ export default {
   padding: 20px;
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-left: 20px;
 }
 
 .market {
@@ -340,13 +398,20 @@ export default {
   justify-content: space-between;
   padding: 20px;
   flex-wrap: wrap;
+  margin-top: -50px;
 }
 
-.key-statistics, .actions {
+.key-statistics {
   width: 48%;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
 }
 
-.key-statistics h3, .actions h3, .account-info h3, .transaction-history h3, .performance-chart h3 {
+.key-statistics h3 {
+  margin-top: 30px;
   margin-bottom: 20px;
   color: #007bff;
   font-size: 1.5rem;
@@ -355,7 +420,28 @@ export default {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 20px;
+  padding: 10px;
+}
+
+.stat {
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+}
+
+.stat .label {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.stat .value {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
 }
 
 .account-performance {
@@ -363,140 +449,125 @@ export default {
   justify-content: space-between;
   align-items: flex-start;
   padding: 20px;
-  gap: 10px; /* Space between account and performance sections */
+  gap: 20px;
+  min-height: 520px;  /* Increased to match performance chart */
 }
 
 .account-info {
-  width: 24%; /* Left side 30% */
+  width: 24%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.account-info-container {
+  background-color: #f8f9fa;
+  padding: 33px;  /* Reduced from 15px */
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  width: 100%;
+  min-height: 150px;  /* Reduced from 180px */
+}
+
+.chat-bot-container {
+  background-color: #f8f9fa;
+  padding: 33px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  width: 100%;
+  min-height: 180px;  /* Set specific height for chat bot */
 }
 
 .performance-chart {
-  width: 70%; /* Right side 70% */
-  background-color: #e9ecef;
-  padding: 20px;
-  border-radius: 5px;
-  position: relative; /* For positioning the buttons */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 90%; /* Make the height equal to account-info */
-  min-height: 500px; /* Optional: Set a minimum height if needed */
-}
-
-.chart-controls {
-  display: flex;
-  justify-content: space-between; /* Ensures buttons are evenly spaced */
-  align-items: center;
-  margin-bottom: 20px; /* Space between buttons and chart content */
-  width: 100%; /* Full width of the performance chart */
-}
-
-.timeframe-btn {
-  background-color: transparent;
-  border: none;
-  color: #333;
-  cursor: pointer;
-  padding: 10px 20px;
-  font-weight: bold;
-  text-align: center;
-  flex-grow: 1; /* Make each button take up an equal amount of space */
-  height: 50px; /* Adjusted height for a larger button */
-  line-height: 30px; /* Center text vertically */
-  margin: 0 5px; /* Space between each button */
-  border-radius: 5px; /* Rounded corners for buttons */
-  transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
-}
-
-.timeframe-btn.active {
-  background-color: #dfe6f1;
-  border: 2px solid #2e5cb8;
-  color: #2e5cb8;
-}
-
-.timeframe-btn:hover {
-  background-color: #dfe6f1;
-  border-radius: 5px;
-}
-
-.chart-placeholder {
-  background-color: #e9ecef;
-  padding: 20px;
-  text-align: center;
-  border-radius: 5px;
-  border: 1px dashed #ced4da;
-  flex-grow: 1; /* Ensures the placeholder takes up the remaining space */
-}
-
-.performance-history {
-  margin-top: auto;
-}
-
-.performance-history-btn {
-  background-color: #2e5cb8;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-.performance-history-btn:hover {
-  background-color: #1d3e8e;
-}
-
-.stat {
+  width: 70%;
   background-color: #f8f9fa;
-  padding: 10px;
+  padding: 20px;
   border-radius: 5px;
   border: 1px solid #dee2e6;
-  margin-bottom: 10px; /* Add space between each stat for the account grid */
+  min-height: 520px;  /* Match parent container height */
+  display: flex;
+  flex-direction: column;
 }
 
-.stat .label {
-  font-weight: bold;
+.account-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;    /* Reduced from 8px */
+  padding: 4px;  /* Reduced from 6px */
+}
+
+.account-stat {
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+}
+
+.account-stat .label {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.account-stat .value {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.actions {
+  width: 48%;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  box-sizing: border-box; /* Add this to include padding in width calculation */
 }
 
 .actions .action-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px;
+  box-sizing: border-box; /* Add this to include padding in width calculation */
 }
 
 .actions input,
 .actions select {
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 15px;
   border-radius: 5px;
   border: 1px solid #ced4da;
-  font-size: 1rem;
-  color: #495057;
-  background-color: #fff;
-}
-
-.actions select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 7L10 10L13 7' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
+  font-size: 1.1rem;
+  width: calc(100% - 24px); /* Adjust width to account for padding */
+  height: 45px;
+  box-sizing: border-box; /* Add this to include padding in width calculation */
 }
 
 .buttons {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 20px;
+  width: calc(100% - 24px); /* Adjust width to account for padding */
+  margin-top: 10px;
+  box-sizing: border-box; /* Add this to include padding in width calculation */
 }
 
 .clear-btn,
 .preview-btn {
-  padding: 10px 20px;
+  flex: 1;
+  padding: 12px 25px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  height: 45px;
+  box-sizing: border-box; /* Add this to include padding in width calculation */
 }
 
 .clear-btn {
@@ -553,5 +624,69 @@ export default {
   .account-stat {
     margin: 5px 0;
   }
+}
+
+.new-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.new-section h3 {
+  margin-bottom: 20px;
+  color: #007bff;
+  font-size: 1.5rem;
+}
+
+.new-section-content {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+}
+
+/* Make the stats more compact */
+.account-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;    /* Reduced from 8px */
+  padding: 4px;  /* Reduced from 6px */
+}
+
+.stat {
+  padding: 6px;  /* Reduced from 8px */
+  background-color: white;
+  border-radius: 4px;  /* Reduced from 5px */
+  border: 1px solid #dee2e6;
+}
+
+.stat .label {
+  font-size: 0.8rem;  /* Reduced from 0.9rem */
+  color: #555;
+  margin-bottom: 2px;  /* Reduced from 4px */
+  display: block;
+}
+
+.stat .value {
+  font-size: 0.95rem;  /* Reduced from 1.1rem */
+  font-weight: 500;
+  color: #333;
+}
+
+/* Adjust the title */
+.account-info-container h3 {
+  font-size: 0.9rem;  /* Reduced from 1rem */
+  margin-bottom: 4px;  /* Reduced from 6px */
+  color: #007bff;
+}
+
+.actions h3 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #007bff;
+  font-size: 1.5rem;
 }
 </style>

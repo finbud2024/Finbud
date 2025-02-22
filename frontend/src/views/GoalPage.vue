@@ -5,8 +5,7 @@
         <img class="profilePic" :src="profilePic" alt="profilePic" />
         <div class="headerText">
           <div class="greeting">
-            {{ new Date().getHours < 12 ? "Good Morning " : "Good Afternoon "
-            }}{{ displayName }}
+            {{ (h => h < 12 ? "Good Morning " : h < 18 ? "Good Afternoon " : "Good Evening ")(new Date().getHours()) }}{{ displayName }}
           </div>
           <div class="slogan">
             Manage your wallet wisely to reach your goals with ease.
@@ -126,10 +125,10 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button @click="addTransaction">Add Transaction</button>
                   <button @click="closeModal" style="margin-right: 10px">
                     Cancel
                   </button>
+                  <button @click="addTransaction">Add Transaction</button>
                 </div>
               </div>
             </div>
@@ -291,10 +290,10 @@
         Are you sure you want to reset your account balance? This action will
         delete all your transactions.
       </p>
-      <button @click="resetAccountBalance" style="margin-right: 10px">
+      <button @click="showResetConfirmationModal = false" style="margin-right: 10px">No</button>
+      <button @click="resetAccountBalance">
         Yes
       </button>
-      <button @click="showResetConfirmationModal = false">No</button>
     </div>
   </div>
 </template>
@@ -838,7 +837,7 @@ export default {
   .leftPanel {
   width: 70%;
   height: fit-content;
-  border: 2px solid red;
+  /*border: 2px solid red;*/ /*Hieu Cao removed this boder*/
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -901,7 +900,7 @@ export default {
   .rightPanel {
     width: 30%;
     max-height: none;
-    border: 2px solid green;
+    /*border: 2px solid rgb(7, 187, 7);*/ /*Hieu Cao removed this boder*/
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -1183,7 +1182,7 @@ export default {
 .rightPanel {
   width: 30%;
   max-height: 100%;
-  border: 2px solid green;
+  /*border: 2px solid green;*/ /*Hieu Cao removed this boder*/
   padding: 20px;
   display: flex;
   flex-direction: column;
