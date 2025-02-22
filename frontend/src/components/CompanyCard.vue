@@ -26,7 +26,7 @@ export default {
       symbol: this.companyName,
       width: this.width,
       locale: "en",
-      colorTheme: "dark",
+      colorTheme: "light",
       isTransparent: false,
     });
     script.className = "componentCard";

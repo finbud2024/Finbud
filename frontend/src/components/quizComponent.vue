@@ -1,145 +1,343 @@
 <template>
-    <div class="quizContainer">
-        <div class="title">Keyword-Based Quiz</div>
-        <div> Put your own keyword</div>
-        <div class="searchContainer">
-            <input type="text" v-model="searchKeyword" :disabled="isLoading"
-                placeholder="Enter a finance-related keyword" @keyup.enter="GenerateQuiz" />
-            <button class="button" @click="GenerateQuiz">Generate Quiz</button>
+  <div class="section-container">
+    <div class="goal-form-card">
+      <h1 class="title">What's your goal?</h1>
+
+      <div class="form-group">
+        <label for="proficiency">Proficiency level</label>
+        <select id="proficiency" v-model="proficiency" class="form-select">
+          <option value="" disabled selected>---</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="learning-hours">You will learn</label>
+        <div class="input-row">
+          <div class="input-group input-half-width">
+            <input
+              type="number"
+              id="hours-per-day"
+              v-model="hoursPerDay"
+              placeholder="Hours per day"
+              min="0"
+              class="form-input"
+            />
+          </div>
+          <div class="input-group input-half-width">
+            <input
+              type="number"
+              id="days-per-week"
+              v-model="daysPerWeek"
+              placeholder="Days per week"
+              min="0"
+              max="7"
+              class="form-input"
+            />
+          </div>
         </div>
-        <div>OR recieve a suggestion</div>
-        <div class="suggestKeywordContainer">
-            <select v-model="suggestTopic">
-                <option value="" >Select a quiz type (optional)</option>
-                <option value="Saving Vs Investing">Saving vs Investing</option>
-                <option value="Budgeting">Budgeting</option>
-                <option value="Asset Allocation">Asset Allocation</option>
+      </div>
+
+      <div class="form-group">
+        <label>In period</label>
+        <div class="input-row">
+          <div class="input-group duration-input">
+            <input
+              type="number"
+              v-model="duration"
+              placeholder="Duration"
+              min="1"
+              class="form-input"
+            />
+          </div>
+          <div class="input-group period-select">
+            <select v-model="period" class="form-select">
+              <option value="days">Days</option>
+              <option value="weeks">Weeks</option>
+              <option value="months">Months</option>
             </select>
-            <select v-model="suggestDifficulty">
-                <option value="">Select difficulty (optional)</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
-            <button class="button" :disabled="isLoading" @click="keywordSuggestion">Suggest</button>
+          </div>
         </div>
-        <div v-if="relatedKeyword.length !== 0">
-            <div>Related keyword</div>
-            <div class="relatedKeywordContainer">
-                <button v-for="keyword in relatedKeyword" :key="keyword" :disabled="isLoading" class="button"
-                    @click="handleSuggestedChoice(keyword)">
-                    {{ keyword }}
-                </button>
-            </div>
-        </div>
-        <div v-if="currentKeyword" class="quizInfo">
-            <div>Current Keyword: {{ currentKeyword }}</div>
-            <div>Points: {{ score }}</div>
-            <div>Time Left: {{ timerCountdown }}</div>
-        </div>
-        <div class="quizArea">
-            <div :class="['quizQuestion', { 'quizQuestionEnabled': question.length !== 0 }]">
-                {{ currentQuestion === -1 ? "Question will appear here" : question }}
-            </div>
-            <div class="quizChoices">
-                <button v-for="index in 4" :key="index" :disabled="answerButtonDisabled"
-                    @click="handleUserChoice(index)"
-                    :class="['answerButton', { 'answerButtonActive': answerOptions.length !== 0 }]">
-                    {{ answerOptions.length === 0 ? `Answer ${String.fromCharCode(64 + index)}` : answerOptions[index -
-                        1].replace(/\*$/, '') }}
-                </button>
-            </div>
-            <div v-if="showExplaination" class="exaplantaionContainer">
-                <div class="explanationTitle"> Explanation:</div>
-                <div>{{ explanation }}</div>
-                <button class="button" @click="handleNextQuestion">Next Question</button>
-            </div>
-        </div>
-        <div v-if="modalDisplay" class="overlay">
-            <div class="modalContainer">
-                <div class="resultTitle">Quiz Result</div>
-                <div>
-                    <div>Keyword: {{currentKeyword}}</div>
-                    <div>score: {{score}}/3</div>
-                </div>
-                <div class="resultButtonContainer">
-                    <button class='button' @click="handleQuizResult('same')">New Game With Same Keyword</button>
-                    <button class='button' @click="handleQuizResult('different')">New Game With Different
-                        Keyword</button>
-                    <button class='button' @click="handleQuizResult('end')">End</button>
-                </div>
-            </div>
-        </div>
+      </div>
+
+      <button class="submit-button" @click="createRoadmap">
+        Create my roadmap
+      </button>
     </div>
+  </div>
+
+  <div class="section-container">
+    <div class="quiz-card">
+      <h1 class="title">Keyword-Based Quiz</h1>
+      <div class="form-group">
+        <label for="search-keyword">Put your own keyword</label>
+        <div id="search-keyword" class="search-container">
+          <input
+            style="height: 100%; margin-bottom: 0"
+            type="text"
+            v-model="searchKeyword"
+            :disabled="isLoading"
+            placeholder="Enter a finance-related keyword"
+            @keyup.enter="GenerateQuiz"
+          />
+          <button class="button" @click="GenerateQuiz">Generate Quiz</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="suggest-topic">OR recieve a suggestion</label>
+        <div id="suggest-topic" class="suggest-keyword-container">
+          <select v-model="suggestTopic">
+            <option value="">Select a quiz type (optional)</option>
+            <option value="Saving Vs Investing">Saving vs Investing</option>
+            <option value="Budgeting">Budgeting</option>
+            <option value="Asset Allocation">Asset Allocation</option>
+          </select>
+          <select v-model="suggestDifficulty">
+            <option value="">Select difficulty (optional)</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+          <button
+            class="button"
+            :disabled="isLoading"
+            @click="keywordSuggestion"
+          >
+            Suggest
+          </button>
+        </div>
+      </div>
+      <div class="form-group" v-if="relatedKeyword.length !== 0">
+        <label for="related-keyword">Related keyword</label>
+        <div id="related-keyword" class="related-keyword-container">
+          <button
+            v-for="keyword in relatedKeyword"
+            :key="keyword"
+            :disabled="isLoading"
+            class="button"
+            @click="handleSuggestedChoice(keyword)"
+          >
+            {{ keyword }}
+          </button>
+        </div>
+      </div>
+      <div v-if="currentKeyword" class="quiz-info">
+        <div>Current Keyword: {{ currentKeyword }}</div>
+        <div>Points: {{ score }}</div>
+        <div>Time Left: {{ timerCountdown }}</div>
+      </div>
+      <div class="quiz-area">
+        <div
+          :class="[
+            'quizQuestion',
+            { quizQuestionEnabled: question.length !== 0 },
+          ]"
+        >
+          {{ currentQuestion === -1 ? "Question will appear here" : question }}
+        </div>
+        <div class="quizChoices">
+          <button
+            v-for="index in 4"
+            :key="index"
+            :disabled="answerButtonDisabled"
+            @click="handleUserChoice(index)"
+            :class="[
+              'answerButton',
+              { answerButtonActive: answerOptions.length !== 0 },
+            ]"
+          >
+            {{
+              answerOptions.length === 0
+                ? `Answer ${String.fromCharCode(64 + index)}`
+                : answerOptions[index - 1].replace(/\*$/, "")
+            }}
+          </button>
+        </div>
+        <div v-if="showExplaination" class="explanation-container">
+          <div class="explanation-text">
+            <div class="explanation-title">Explanation:</div>
+            <div>{{ explanation }}</div>
+          </div>
+          <button class="button" @click="handleNextQuestion">
+            Next Question
+          </button>
+        </div>
+      </div>
+      <div v-if="modalDisplay" class="overlay">
+        <div class="modal-container">
+          <div class="result-title">Quiz Result</div>
+          <div>
+            <div>Keyword: {{ currentKeyword }}</div>
+            <div>score: {{ score }}/3</div>
+          </div>
+          <div class="result-button-container">
+            <button class="button" @click="handleQuizResult('same')">
+              New Game With Same Keyword
+            </button>
+            <button class="button" @click="handleQuizResult('different')">
+              New Game With Different Keyword
+            </button>
+            <button class="button" @click="handleQuizResult('end')">End</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-container">
+    <div class="course-categories-section">
+      <span class="category-label">COURSE CATEGORIES</span>
+      <h2 class="category-title">Popular Topics To Learn</h2>
+
+      <div class="categories-grid">
+        <div
+          v-for="(category, index) in categories"
+          :key="index"
+          :class="['category-card', { active: category.isActive }]"
+          @click="setActiveCategory(index)"
+        >
+          <div class="card-content">
+            <div class="icon-wrapper">
+              <i :class="category.icon"></i>
+            </div>
+            <div class="card-text">
+              <h3>{{ category.name }}</h3>
+              <span>{{ category.courseCount }} Courses</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { gptServices } from '@/services/gptServices';
-import debounce from 'lodash/debounce';
+import { gptServices } from "@/services/gptServices";
+import debounce from "lodash/debounce";
 export default {
-    name: 'quizComponent',
-    data() {
-        return {
-            score: 0,
-            timerCountdown: 0,
-            searchKeyword: "",
-            currentKeyword: "",
-            relatedKeyword: [],
-            suggestTopic: "",
-            suggestDifficulty: "",
-            currentQuestion: -1,
-            questionList: [],
-            question: "",
-            answerOptions: [],
-            explanation: "",
-            timer: null,
-            correctAnswer: "",
-            showExplaination: false,
-            answerButtonDisabled: true,
-            isLoading: false,
-            modalDisplay: false
-        }
-    },
-    watch: {
-        timerCountdown: {
-            immedidate: true,
-            handler(newTime) {
-                if (newTime <= 0) {
-                    this.stopTimer();
-                    this.showCorrectAnswer()
-                }
-            }
+  name: "quizComponent",
+  data() {
+    return {
+      score: 0,
+      timerCountdown: 0,
+      searchKeyword: "",
+      currentKeyword: "",
+      relatedKeyword: [],
+      suggestTopic: "",
+      suggestDifficulty: "",
+      currentQuestion: -1,
+      questionList: [],
+      question: "",
+      answerOptions: [],
+      explanation: "",
+      timer: null,
+      correctAnswer: "",
+      showExplaination: false,
+      answerButtonDisabled: true,
+      isLoading: false,
+      modalDisplay: false,
+
+      categories: [
+        {
+          name: "Personal Development",
+          courseCount: 39,
+          icon: "fas fa-backpack",
+          isActive: false,
         },
+        {
+          name: "Data Sciences",
+          courseCount: 45,
+          icon: "fas fa-microscope",
+          isActive: false,
+        },
+        {
+          name: "Human Research",
+          courseCount: 32,
+          icon: "fas fa-users",
+          isActive: true,
+        },
+        {
+          name: "Business Strategy",
+          courseCount: 28,
+          icon: "fas fa-chart-line",
+          isActive: false,
+        },
+        {
+          name: "Web Development",
+          courseCount: 56,
+          icon: "fas fa-code",
+          isActive: false,
+        },
+        {
+          name: "Digital Marketing",
+          courseCount: 42,
+          icon: "fas fa-bullhorn",
+          isActive: false,
+        },
+        {
+          name: "Graphic Design",
+          courseCount: 35,
+          icon: "fas fa-palette",
+          isActive: false,
+        },
+        {
+          name: "Mobile Development",
+          courseCount: 48,
+          icon: "fas fa-mobile-alt",
+          isActive: false,
+        },
+        {
+          name: "Web Development",
+          courseCount: 56,
+          icon: "fas fa-code",
+          isActive: false,
+        },
+      ],
+    };
+  },
+  watch: {
+    timerCountdown: {
+      immedidate: true,
+      handler(newTime) {
+        if (newTime <= 0) {
+          this.stopTimer();
+          this.showCorrectAnswer();
+        }
+      },
     },
-    methods: {
-        GenerateQuiz: debounce(async function () {
-            if (this.searchKeyword.length === 0) return;
-            this.isLoading = true;
-            this.answerButtonDisabled = true;
-            this.currentQuestion = -1;
-            this.question = "";
-            this.answerOptions = [];
-            this.relatedKeyword = [];
-            //this part below setup to start the quiz
-            this.currentKeyword = this.searchKeyword.toUpperCase();
-            this.searchKeyword = "";
-            const buttons = document.querySelectorAll('.quizChoices button');
-            buttons.forEach(button => {
-                button.classList.remove("answerButtonIncorrect");
-                button.classList.remove("answerButtonCorrect");
-            });
-            this.showExplaination = false;
-            this.score = 0;
-            this.stopTimer();
-            // ------------------------------------------------------
-            const response = await gptServices([
-                {
-                    role: "system",
-                    content: "You are a helpful assistant specializing in finance education.",
-                },
-                {
-                    role: "user",
-                    content: `Generate 3 finance-related multiple-choice quiz focusing on the keyword: ${this.currentKeyword}.
+  },
+  methods: {
+    GenerateQuiz: debounce(async function () {
+      if (this.searchKeyword.length === 0) return;
+      this.isLoading = true;
+      this.answerButtonDisabled = true;
+      this.currentQuestion = -1;
+      this.question = "";
+      this.answerOptions = [];
+      this.relatedKeyword = [];
+      //this part below setup to start the quiz
+      this.currentKeyword = this.searchKeyword.toUpperCase();
+      this.searchKeyword = "";
+      const buttons = document.querySelectorAll(".quizChoices button");
+      buttons.forEach((button) => {
+        button.classList.remove("answer-button-incorrect");
+        button.classList.remove("answer-button-correct");
+      });
+      this.showExplaination = false;
+      this.score = 0;
+      this.stopTimer();
+      // ------------------------------------------------------
+      const response = await gptServices([
+        {
+          role: "system",
+          content:
+            "You are a helpful assistant specializing in finance education.",
+        },
+        {
+          role: "user",
+          content: `Generate 3 finance-related multiple-choice quiz focusing on the keyword: ${this.currentKeyword}.
                         For each question:
                         - Provide a clear and concise question, along with four distinct answer options.
                         - Include a detailed explanation for the answer, which should be factually accurate and relevant to the question.
@@ -153,379 +351,662 @@ export default {
                         C. <option3>
                         D. <option4>
                         Correct Answer: <A,B,C,D>
-                        Explanation: <explanation>`
-                }
-            ])
-            this.questionList = response.split(/\n\n+/);
-            this.currentQuestion = 0;
-            this.parseCurrentQuestion();
-            await this.generateRelatedKeywords();
-            this.isLoading = false;
-            this.answerButtonDisabled = false;
-            this.startTimer();
-        }, 300),
-        keywordSuggestion: debounce(async function () {
-            if ((this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0)) return;
-            this.searchKeyword =
-                await gptServices([
-                    { role: "system", content: "You are a helpful assistant." },
-                    {
-                        role: "user",
-                        content: `Generate a single keyword in finance about 
-                        ${this.selectedQuiz ? this.selectedQuiz : "Saving Vs Investing"} 
+                        Explanation: <explanation>`,
+        },
+      ]);
+      this.questionList = response.split(/\n\n+/);
+      this.currentQuestion = 0;
+      this.parseCurrentQuestion();
+      await this.generateRelatedKeywords();
+      this.isLoading = false;
+      this.answerButtonDisabled = false;
+      this.startTimer();
+    }, 300),
+    keywordSuggestion: debounce(async function () {
+      if (this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0)
+        return;
+      this.searchKeyword = await gptServices([
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: `Generate a single keyword in finance about 
+                        ${
+                          this.selectedQuiz
+                            ? this.selectedQuiz
+                            : "Saving Vs Investing"
+                        } 
                         at a 
-                        ${this.suggestDifficulty ? this.suggestDifficulty : "hard"}
+                        ${
+                          this.suggestDifficulty
+                            ? this.suggestDifficulty
+                            : "hard"
+                        }
                         difficulty level. The keyword should be specific and relevant to create a quiz question about finance.
-                        - no need to add extra question, only the keyword is needed for the response. Please strictly follow the requirement`
-                    }
-                ]);
-            this.suggestTopic = "";
-            this.suggestDifficulty = "";
+                        - no need to add extra question, only the keyword is needed for the response. Please strictly follow the requirement`,
+        },
+      ]);
+      this.suggestTopic = "";
+      this.suggestDifficulty = "";
 
-            await this.GenerateQuiz();
-        }, 300),
-        handleSuggestedChoice: debounce(async function (keyword) {
-            this.searchKeyword = keyword;
-            this.GenerateQuiz();
-        }, 300),
-        startTimer() {
-            this.timerCountdown = 15;
-            this.timer = setInterval(() => { this.timerCountdown -= 1 }, 1000);
-        },
-        stopTimer() {
-            clearInterval(this.timer);
-        },
-        stateReset() {
-            const initialData = this.$options.data.call(this);
-            Object.keys(initialData).forEach(key => {
-                if (key !== 'currentKeyword' &&  key !== 'timerCountdown') {
-                    this[key] = initialData[key];
-                }
-            });
-        },
-        async generateRelatedKeywords() {
-            const response = await gptServices([
-                { role: "system", content: "You are a helpful assistant." },
-                {
-                    role: "user",
-                    content: `Generate 3 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide the keywords as a comma-separated list.`,
-                },
-            ]);
-            this.relatedKeyword = response.split(',')
-        },
-        parseCurrentQuestion() {
-            if (this.currentQuestion >= this.questionList.length) {
-                console.log("No more questions");
-                return;
-            }
-
-            const questionBlock = this.questionList[this.currentQuestion].trim().split('\n');
-
-            this.question = questionBlock[0].toLowerCase().startsWith('question')
-                ? questionBlock[0].substring(10)
-                : questionBlock[0];
-
-            this.answerOptions = questionBlock.slice(1, 5).map(option => option.trim());
-
-            const correctAnswerLine = questionBlock.find(line => line.startsWith('Correct Answer:'));
-            this.correctAnswer = correctAnswerLine
-                ? correctAnswerLine.split(':')[1].trim()
-                : '';
-
-            this.explanation = questionBlock.find(line => line.startsWith('Explanation:'))
-                ?.substring('Explanation:'.length).trim() || '';
-        },
-        handleUserChoice(index) {
-            this.stopTimer();
-            const isCorrect = String.fromCharCode(64 + index) === this.correctAnswer;
-            if (!isCorrect) {
-                const incorrectAnswerBtn = document.querySelector(`.quizChoices button:nth-child(${index})`);
-                if (incorrectAnswerBtn) {
-                    incorrectAnswerBtn.classList.add('answerButtonIncorrect');
-                }
-            } else {
-                this.score += 1;
-            }
-            this.showCorrectAnswer();
-        },
-        showCorrectAnswer() {
-            this.$emit('messageToBot', this.explanation);
-            this.answerButtonDisabled = true;
-            this.showExplaination = true;
-            if (this.correctAnswer && /^[A-D]$/.test(this.correctAnswer)) {
-                const correctIndex = this.correctAnswer.charCodeAt(0) - 64; // Convert A, B, C, D to 1, 2, 3, 4
-                const correctAnsBtn = document.querySelector(`.quizChoices button:nth-child(${correctIndex})`);
-                if (correctAnsBtn) {
-                    correctAnsBtn.classList.add('answerButtonCorrect');
-                }
-            }
-        },
-        handleNextQuestion() {
-            this.showExplaination = false;
-            //reset buton style;
-            const buttons = document.querySelectorAll('.quizChoices button');
-            buttons.forEach(button => {
-                button.classList.remove("answerButtonIncorrect");
-                button.classList.remove("answerButtonCorrect");
-            });
-            this.currentQuestion += 1;
-            if (this.currentQuestion >= this.questionList.length) {
-                this.modalDisplay = true;
-                this.answerButtonDisabled = true;
-                return;
-            }
-            this.parseCurrentQuestion();
-            this.answerButtonDisabled = false;
-            this.startTimer();
-        },
-        handleQuizResult(setting) {
-            this.modalDisplay = false;
-            if (setting === 'same') {
-                const temp = this.currentKeyword;
-                this.stateReset();
-                this.searchKeyword = temp;
-                this.GenerateQuiz();
-            } else if (setting === 'different') {
-                const temp = this.currentKeyword;
-                this.stateReset();
-                this.suggestTopic = "random";
-                this.suggestDifficulty = "random";
-                this.keywordSuggestion();
-            } else {
-                this.currentKeyword = "";
-                this.stateReset();
-            }
+      await this.GenerateQuiz();
+    }, 300),
+    handleSuggestedChoice: debounce(async function (keyword) {
+      this.searchKeyword = keyword;
+      this.GenerateQuiz();
+    }, 300),
+    startTimer() {
+      this.timerCountdown = 15;
+      this.timer = setInterval(() => {
+        this.timerCountdown -= 1;
+      }, 1000);
+    },
+    stopTimer() {
+      clearInterval(this.timer);
+    },
+    stateReset() {
+      const initialData = this.$options.data.call(this);
+      Object.keys(initialData).forEach((key) => {
+        if (key !== "currentKeyword" && key !== "timerCountdown") {
+          this[key] = initialData[key];
         }
-    }
+      });
+    },
+    async generateRelatedKeywords() {
+      const response = await gptServices([
+        { role: "system", content: "You are a helpful assistant." },
+        {
+          role: "user",
+          content: `Generate 3 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide the keywords as a comma-separated list.`,
+        },
+      ]);
+      this.relatedKeyword = response.split(",");
+    },
+    parseCurrentQuestion() {
+      if (this.currentQuestion >= this.questionList.length) {
+        console.log("No more questions");
+        return;
+      }
+
+      const questionBlock = this.questionList[this.currentQuestion]
+        .trim()
+        .split("\n");
+
+      this.question = questionBlock[0].toLowerCase().startsWith("question")
+        ? questionBlock[0].substring(10)
+        : questionBlock[0];
+
+      this.answerOptions = questionBlock
+        .slice(1, 5)
+        .map((option) => option.trim());
+
+      const correctAnswerLine = questionBlock.find((line) =>
+        line.startsWith("Correct Answer:")
+      );
+      this.correctAnswer = correctAnswerLine
+        ? correctAnswerLine.split(":")[1].trim()
+        : "";
+
+      this.explanation =
+        questionBlock
+          .find((line) => line.startsWith("Explanation:"))
+          ?.substring("Explanation:".length)
+          .trim() || "";
+    },
+    handleUserChoice(index) {
+      this.stopTimer();
+      const isCorrect = String.fromCharCode(64 + index) === this.correctAnswer;
+      if (!isCorrect) {
+        const incorrectAnswerBtn = document.querySelector(
+          `.quizChoices button:nth-child(${index})`
+        );
+        if (incorrectAnswerBtn) {
+          incorrectAnswerBtn.classList.add("answer-button-incorrect");
+        }
+      } else {
+        this.score += 1;
+      }
+      this.showCorrectAnswer();
+    },
+    showCorrectAnswer() {
+      this.$emit("messageToBot", this.explanation);
+      this.answerButtonDisabled = true;
+      this.showExplaination = true;
+      if (this.correctAnswer && /^[A-D]$/.test(this.correctAnswer)) {
+        const correctIndex = this.correctAnswer.charCodeAt(0) - 64; // Convert A, B, C, D to 1, 2, 3, 4
+        const correctAnsBtn = document.querySelector(
+          `.quizChoices button:nth-child(${correctIndex})`
+        );
+        if (correctAnsBtn) {
+          correctAnsBtn.classList.add("answer-button-correct");
+        }
+      }
+    },
+    handleNextQuestion() {
+      this.showExplaination = false;
+      //reset buton style;
+      const buttons = document.querySelectorAll(".quizChoices button");
+      buttons.forEach((button) => {
+        button.classList.remove("answer-button-incorrect");
+        button.classList.remove("answer-button-correct");
+      });
+      this.currentQuestion += 1;
+      if (this.currentQuestion >= this.questionList.length) {
+        this.modalDisplay = true;
+        this.answerButtonDisabled = true;
+        return;
+      }
+      this.parseCurrentQuestion();
+      this.answerButtonDisabled = false;
+      this.startTimer();
+    },
+    handleQuizResult(setting) {
+      this.modalDisplay = false;
+      if (setting === "same") {
+        const temp = this.currentKeyword;
+        this.stateReset();
+        this.searchKeyword = temp;
+        this.GenerateQuiz();
+      } else if (setting === "different") {
+        const temp = this.currentKeyword;
+        this.stateReset();
+        this.suggestTopic = "random";
+        this.suggestDifficulty = "random";
+        this.keywordSuggestion();
+      } else {
+        this.currentKeyword = "";
+        this.stateReset();
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-.quizContainer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    background-color: #f4f4f4;
-    padding: 20px;
-    gap: 15px;
-
+.quiz-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .title {
-    margin-top: 20px;
-    font-weight: 900;
-    width: 100%;
-    font-size: 3rem;
-    text-align: center
+  font-family: sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: left;
 }
 
-.searchContainer {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 5px
+.search-container {
+  margin-bottom: 1.5rem;
+  width: 60vw;
+  display: flex;
+  gap: 0.75rem;
 }
 
-.searchContainer>input {
-    height: 35px;
-    width: 40%;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding-left: 10px;
+.search-container > input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+  margin-bottom: 0.75rem;
+}
+
+.search-container > input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
 .button {
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    padding: 10px 20px;
-    display: grid;
-    place-items: center;
-    font-size: 16px;
-    transition: transform 300ms ease-in;
-    border: none;
+  width: 100%;
+  padding: 0.875rem;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .button:hover {
-    cursor: pointer;
-    transform: translateY(-2px);
-    background-color: #0d4178;
+  background: #2c5282;
+  transform: none;
 }
 
-.suggestKeywordContainer {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+.suggest-keyword-container {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  width: 60vw;
 }
 
-.suggestKeywordContainer>select {
-    height: 35px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding-left: 10px;
+.suggest-keyword-container > select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
 }
 
-.relatedKeywordContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px
+.related-keyword-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
-.quizArea {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.quiz-area {
+  background: white;
+  border-radius: 12px;
+  width: 60vw;
+  max-width: 60vw;
 }
 
 .quizQuestion {
-    color: #bbb;
-    font-weight: 600;
-    font-size: 24px;
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
 }
 
 .quizQuestionEnabled {
-    color: black
+  color: black;
 }
 
 .quizChoices {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
 }
 
 .answerButton {
-    width: 100%;
-    height: 45px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    color: #bbb;
-}
-
-.answerButtonCorrect {
-    background-color: #4caf50 !important;
-    color: white !important;
-}
-
-.answerButtonIncorrect {
-    background-color: red !important;
-    color: white !important;
-}
-
-.answerButtonActive {
-    color: black
+  width: 100%;
+  padding: 0.875rem;
+  background: white;
+  color: #2c3e50;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
 }
 
 .answerButton:hover {
-    cursor: pointer;
+  background: #f7fafc;
 }
 
-.exaplantaionContainer {
-    width: 100%;
-    height: 40%;
-    background-color: #f0f0f0;
-    padding: 10px;
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 10px;
-    border-radius: 10px;
+.answer-button-correct {
+  background-color: #4caf50 !important;
+  color: white !important;
 }
 
-.explanationTitle {
-    font-size: 1.17em;
-    font-weight: bold;
+.answer-button-incorrect {
+  background-color: red !important;
+  color: white !important;
 }
 
-.quizInfo {
-    background-color: #e7f7df;
-    width: 100%;
-    height: 40%;
-    padding: 10px;
-    border-radius: 10px;
+.answerButtonActive {
+  color: black;
+}
+
+.answerButton:hover {
+  cursor: pointer;
+}
+
+.explanation-container {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+}
+
+.explanation-title {
+  font-size: 1.17em;
+  font-weight: bold;
+}
+
+.explanation-text {
+  margin-bottom: 1.5rem;
+}
+
+.quiz-info {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
 }
 
 .overlay {
-    z-index: 100;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    position: fixed;
-    background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-.modalContainer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: fit-content;
-    height: fit-content;
-    transform: translate(-50%, -50%);
-    background: white;
-    border: 2px solid red;
-    border-radius: 15px;
-    display: flex;
+.modal-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: fit-content;
+  height: fit-content;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 2px solid red;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+}
+
+.result-title {
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.result-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 70vw;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.goal-form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-family: sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-family: sans-serif;
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.input-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+}
+
+.input-half-width {
+  flex: 1;
+}
+
+.duration-input {
+  flex: 7;
+}
+
+.period-select {
+  flex: 3;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input::placeholder {
+  font-style: italic;
+  color: #a0aec0;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234A5568' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.duration-input {
+  flex: 2;
+}
+
+.period-select {
+  flex: 1;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.875rem;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  background: #2c5282;
+}
+
+.course-categories-section {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.category-label {
+  display: block;
+  color: #4299e1;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.category-title {
+  font-size: 2.5rem;
+  color: #1a365d;
+  font-weight: 700;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.category-card {
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-card:hover:not(.active) {
+  background: #edf2f7;
+}
+
+.category-card.active {
+  background: #4299e1;
+  color: white;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(66, 153, 225, 0.1);
+  color: #4299e1;
+}
+
+.active .icon-wrapper {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.card-text h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 0.25rem;
+}
+
+.card-text span {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.active .card-text span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive Styles */
+@media (max-width: 640px) {
+  .goal-form-card {
+    padding: 1.5rem;
+  }
+
+  .input-row {
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    gap: 10px
-}
+    gap: 0.75rem;
+  }
 
-.resultTitle {
-    font-size: 40px;
-    font-weight: 600;
-}
-
-.resultButtonContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px
+  .title {
+    font-size: 1.5rem;
+  }
 }
 
 @container quizComponent (max-width: 400px) {
-    .title{
-        font-size: clamp(2rem, 10%, 3rem);
-    }
+  .title {
+    font-size: clamp(2rem, 10%, 3rem);
+  }
 
-    .quizContainer {
-        width: calc(100% - 40px);
-    }
+  .quiz-container {
+    width: calc(100% - 40px);
+  }
 
-    .searchContainer {
-        flex-direction: column;
-        gap: 10px;
-    }
+  .search-container {
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .searchContainer>input {
-        width: 100%;
-    }
+  .search-container > input {
+    width: 100%;
+  }
 
-    .suggestKeywordContainer {
-        flex-direction: column;
-    }
+  .suggest-keyword-container {
+    flex-direction: column;
+  }
 
-    .suggestKeywordContainer>select {
-        width: 100%;
-    }
+  .suggest-keyword-container > select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .category-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-categories-section {
+    padding: 2rem 1rem;
+  }
+
+  .category-title {
+    font-size: 1.75rem;
+  }
 }
 </style>
