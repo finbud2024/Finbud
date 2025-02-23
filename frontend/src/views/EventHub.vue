@@ -55,52 +55,87 @@
                 </div>
             </div>
         </div>
-        <div class="trending-event">
-            <swiper :slidesPerView="4" :spaceBetween="0" :keyboard="{ enabled: true, }" :pagination="false"
-                :navigation="true" :modules="modules" class="event-swiper" :breakpoints="{
-                    0: {
-                        slidesPerView: 1,
-                        spaceBetween: 10,
-                    },
-                    768: {
-                        slidesPerView: 2,
-                        spaceBetween: 20,
-                    },
-                    1024: {
-                        slidesPerView: 3,
-                        paceBetween: 30,
-                    },
-                }">
-                <swiper-slide v-for="event in trendingEvents" :key="event.name" class="swiper-slide">
-                    <div class="event-infor">
-                        <div class="image-container">
-                            <img :src="event.img" :alt="event.name" class="fade-in" />
+        <div class="rounded-xl md:bg-white md:p-4">
+            <section class="events-section">
+                <div class="content-wrapper">
+                    <!-- Left Div for Top 5 Trending Events -->
+                    <div class="left-div">
+                        <h2 class="trending-title">Trending</h2>
+                        <div v-for="(event, index) in topTrendingEvents" :key="index" class="event-item">
+                            <a :href="event.url" class="event-link">
+                                <span class="event-number">{{ index + 1 }}. {{ event.title }}</span>
+                            </a>
+                            <p class="event-description">{{ event.description }}</p>
                         </div>
-                        <h3>{{ event.name }}</h3>
-                        <p>{{ event.date }} &#x2022; {{ event.time }}</p>
-                        <p>{{ event.location }}</p>
-                        <p>{{ event.fee }}</p>
-                        <p>{{ event.company }}</p>
                     </div>
-                </swiper-slide>
-            </swiper>
+
+                    <!-- Right Div for Remaining Events -->
+                    <div class="right-div">
+                        <!-- Top Part: Swiper Slider -->
+                        <div class="swiper-container">
+                            <swiper 
+                                :slidesPerView="1" 
+                                :spaceBetween="0" 
+                                :pagination="false" 
+                                :navigation="{
+                                    nextEl: '.next-button',
+                                    prevEl: '.prev-button'
+                                }" 
+                                :modules="modules"
+                                :autoplay="{
+                                    delay: 3000,
+                                    disableOnInteraction: false
+                                }"
+                                class="swiper"
+                            >
+                                <swiper-slide v-for="(event, index) in remainingEvents" :key="index" class="swiper-slide">
+                                    <div class="slider-content">
+                                        <div class="slider-image-container">
+                                            <img :src="event.urlToImage" alt="Event image" class="slider-image" />
+                                        </div>
+                                        <div class="slider-info">
+                                            <h3 class="slider-title">{{ event.title }}</h3>
+                                            <p class="slider-meta">{{ event.source.name }} | {{ event.author }}</p>
+                                        </div>
+                                    </div>
+                                </swiper-slide>
+                            </swiper>
+                            <div class="swiper-nav-buttons">
+                                <button class="nav-button prev-button">
+                                    <font-awesome-icon icon="fa-solid fa-chevron-left" class="nav-icon" />
+                                </button>
+                                <button class="nav-button next-button">
+                                    <font-awesome-icon icon="fa-solid fa-chevron-right" class="nav-icon" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Part: Nine Articles -->
+                        <div class="bottom-articles">
+                            <div v-for="(event, index) in remainingEvents.slice(0, 9)" :key="index" class="article-card">
+                                <a :href="event.url" class="article-link">
+                                    <img :src="event.urlToImage" alt="Event image" class="article-image" />
+                                    <p class="article-title">{{ event.title }}</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
         <div class="frame3">
             <div class="events-container">
                 <h3>All events</h3>
                 <div class="grid-container">
-                    <div v-for="(event, index) in trendingEvents" :key="index" class="event-card">
-                        <img class="event-image" src="../assets/stockTri.png" alt="Event image" />
+                    <div v-for="(event, index) in allEvents" :key="index" class="event-card">
+                        <img v-if="event.urlToImage" :src="event.urlToImage" alt="Event image" class="event-image" />
                         <div class="event-details">
-                            <h3>{{ event.title }}</h3>
-                            <p>{{ event.date }}</p>
-                            <p>{{ event.location }}</p>
-                            <p>{{ event.organizer }}</p>
-                            <p>{{ event.price }}</p>
+                            <h2>{{ event.title }}</h2>
+                            <p>{{ new Date(event.publishedAt).toLocaleString()  }}</p>
                         </div>
                         <div class="event-actions">
                             <button class="star-button">⭐</button>
-                            <button class="read-more-button" @click="openModal(event)">
+                            <button class="read-more-button" @click="openEventUrl(event.url, '_blank')">
                                 Read more
                             </button>
                         </div>
@@ -108,52 +143,20 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Section -->
-        <div v-if="isModalOpen" class="modal-overlay modal-wrapper" @click="closeModal">
-            <div class="modal-content">
-                <img class="modal-image" src="../assets/stockTri.png" alt="Event image" />
-
-                <div class="modal-body">
-                    <p class="modal-date">{{ selectedEvent.date }}</p>
-                    <div class="modal-secondline">
-                        <h3 class="modal-title">{{ selectedEvent.title }}</h3>
-                        <button class="register-button">Register</button>
-                    </div>
-
-                    <p class="modal-subtitle">
-                        {{
-                            selectedEvent.description ||
-                            "#1 Commercial Real Estate & Networking Community - Ready to Find Your Next Investment Partner ?"
-                        }}
-                    </p>
-
-                    <h4 class="modal-section-title">Pick a time</h4>
-                    <!-- Time picking content (if needed) -->
-
-                    <h4 class="modal-section-title">Agenda</h4>
-                    <!-- Agenda content -->
-
-                    <h4 class="modal-section-title">About this event</h4>
-                    <p class="modal-description">
-                        {{ selectedEvent.details || "Details about the event go here..." }}
-                    </p>
-                </div>
-
-                <button class="close-button" @click="closeModal">Close</button>
-            </div>
-        </div>
+        <div v-if="loading" class="loading-spinner">Loading...</div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { result } from 'lodash';
 
 import { Swiper, SwiperSlide } from "swiper/vue";
 
 import "swiper/css";
 
 import "swiper/css/pagination";
+
+import "swiper/css/navigation";
 
 import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
 
@@ -167,81 +170,68 @@ export default {
     data() {
         return {//state declare here
             modules: [Keyboard, Pagination, Navigation, Autoplay],
-            trendingEvents: [
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-                {
-                    name: "National Industrial Real Estate Forum 2024",
-                    img: require("@/assets/trendingEvent.png"),
-                    date: "Thursday",
-                    time: "2: OO PM",
-                    location: "Intercontinental Hanoi Landmark Hotel",
-                    fee: "Free",
-                    company: "VNIC - VIETNAM INVESTMENT CONSULTING"
-                },
-            ],
-            isModalOpen: false,
-            selectedEvent: {},
+            trendingEvents: [],
+            allEvents: [],
+            loading: false,
         };
     },
     computed: {
-
+        topTrendingEvents() {
+            return this.trendingEvents.slice(0, 5); // Get top 5 events
+        },
+        remainingEvents() {
+            return this.trendingEvents.slice(5); // Get remaining events
+        },
     },
     methods: {
-        openModal(event) {
-            this.selectedEvent = event;
-            this.isModalOpen = true;
+        fetchHeadlines() {
+          const apiKey = process.env.VUE_APP_NEWS_API_KEY; 
+          axios.get(`https://newsapi.org/v2/top-headlines?category=business&q=AI&apiKey=${apiKey}`)
+              .then(response => {
+                  if (response.data.status === "ok") {
+                      this.trendingEvents = response.data.articles.filter(article => article.urlToImage);
+                  } else {
+                      console.error('Error fetching articles:', response.data.message);
+                  }
+              })
+              .catch(error => {
+                  console.error('Fetch error:', error);
+              });
         },
-        closeModal() {
-            this.isModalOpen = false;
-            this.selectedEvent = {};
+        // Commenting out the fetchAllEvents method
+        /*
+        fetchAllEvents () {
+            const apiKey = process.env.VUE_APP_NEWS_API_KEY; 
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1); // Set to yesterday
+            const formattedYesterday = yesterday.toISOString().split('T')[0];
+            const formattedToday = today.toISOString().split('T')[0];
+            
+            axios.get(`https://newsapi.org/v2/everything?q=finance&from=${formattedYesterday}&to=${formattedToday}&sortBy=popularity&apiKey=${apiKey}`)
+            .then(response => {
+                console.log(response.data);
+                if (response.data.status === "ok") {
+                    this.allEvents = response.data.articles.filter(article => article.urlToImage);
+                } else {
+                    console.error('Error fetching articles:', response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
         },
+        */
+        openEventUrl(url) {
+            window.open(url, '_blank');
+        }
     },
     mounted() {
-
+        this.fetchHeadlines();
+        // Commenting out the fetchAllEvents method
+        /*
+        this.fetchAllEvents();
+        */
     },
 };
 </script>
@@ -419,10 +409,10 @@ export default {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     width: 90%;
-    margin-bottom: 100px;
+    margin: 0 auto;
 }
 
 .event-card {
@@ -433,7 +423,8 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 16px;
+    padding: 15px;
+    margin: 20px;
 }
 
 .event-image {
@@ -465,7 +456,7 @@ export default {
     transition: background-color 0.3s ease;
 }
 
-.read-more-button:hover {
+.read-more-button, .event-button:hover {
     background-color: #005bb5;
 }
 
@@ -587,4 +578,250 @@ export default {
     }
 }
 
+.image-container {
+    width: 100%; 
+    height: 250px; 
+    overflow: hidden; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.image-container img {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+}
+
+.event-button {
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+}
+
+.left-div {
+    border-right: 1px solid #e0e0e0; /* Optional: Add a border to separate the two sections */
+}
+
+.swiper-container {
+    width: 100%;
+    height: 600px;
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.bottom-article img {
+    height: 300px; /* Set height for bottom articles */
+}
+
+.events-section {
+    width: 100%;
+    padding: 20px;
+}
+
+.content-wrapper {
+    display: flex;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.left-div {
+    width: 25%;
+    padding: 20px;
+    border-right: 1px solid #e0e0e0;
+    min-height: 600px;
+}
+
+.right-div {
+    width: 75%;
+    padding: 20px;
+    position: relative;
+}
+
+.trending-title {
+    color: #007bff;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.event-item {
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.event-link {
+    text-decoration: none;
+    color: #333;
+}
+
+.event-link:hover {
+    text-decoration: underline;
+    color: #0056b3; /* Change to a darker shade */
+}
+
+.event-number {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.event-description {
+    color: #666;
+    margin-top: 8px;
+    font-size: 0.95rem; /* Slightly larger for readability */
+}
+
+.slider-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slider-image-container {
+    width: 100%;
+    height: 600px; /* Fixed height */
+    overflow: hidden;
+    position: relative;
+}
+
+.slider-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+}
+
+.slider-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+}
+
+.slider-title {
+    font-size: 1.8rem; /* Increase size for emphasis */
+    font-weight: 600; /* Use a bolder weight */
+    margin-bottom: 8px;
+}
+
+.slider-meta {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.swiper-nav-buttons {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+.nav-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: black;  /* Changed to black background */
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+    background-color: white;  /* Changed to white on hover */
+    transform: scale(1.1); /* Slightly enlarge the button */
+}
+
+.nav-icon {
+    color: white;  /* White arrow color */
+    transition: all 0.3s ease;
+}
+
+.nav-button:hover .nav-icon {
+    color: #007bff;  /* Blue arrow on hover */
+}
+
+.bottom-articles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.article-card {
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.article-link {
+    text-decoration: none;
+    color: #333;
+}
+
+.article-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.article-title {
+    margin-top: 12px;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+
+    .left-div, .right-div {
+        width: 100%;
+        border-right: none;
+    }
+
+    .left-div {
+        border-bottom: 1px solid #e0e0e0;
+        min-height: auto;
+        padding-bottom: 20px;
+    }
+
+    .swiper-container {
+        height: 400px;
+    }
+
+    .slider-image-container {
+        height: 350px;
+    }
+    
+    .bottom-articles {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .bottom-articles {
+        grid-template-columns: 1fr; /* 1 column on small screens */
+    }
+
+    .slider-image-container {
+        height: 250px;
+    }
+}
 </style>
