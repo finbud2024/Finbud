@@ -94,7 +94,32 @@
           <div class="margin-box">
             <RealEstateMap class="margin-box-content" />
             <div class = "margin-box-content">
-
+              <div v-if="errorRealEstate" class="error">{{ errorRealEstate }}</div> 
+              <div v-else-if="loadingRealEstate" class="loading">Loading...</div>
+              <div v-else>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Address</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody v-if="paginatedRealEstate.length">
+                    <tr v-for="estate in paginatedRealEstate" :key="estate.id">
+                      <td>{{ estate.propertyType && !isNaN(estate.propertyType) ? estate.propertyType : "Single-family"}}</td>
+                      <td>{{ estate.formattedAddress }}</td>
+                      <td>
+                        {{ estate.lastSalePrice && !isNaN(estate.lastSalePrice) ? 
+                        '$' + estate.lastSalePrice.toLocaleString() : "N/A" }}
+                      </td>
+                      <td>{{ estate.ownerOccupied === true ? 'Inactive' : 'Active'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <Pagination :currentPage.sync="currentRealEstatePage" :totalPages="realEstateTotalPages" @update:currentPage="updateRealEstateCurrentPage" />
+              </div>
             </div>
           </div>
 
@@ -119,6 +144,7 @@ import RealEstateMap from '@/components/marketPage/RealEstateMap.vue';
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY; 
 const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
+const apiKeyRealEstate = process.env.VUE_APP_REAL_ESTATE_KEY;
 
 export default {
   name: 'RiskAnalysis',
@@ -149,6 +175,7 @@ export default {
   mounted() {
     this.fetchStockQuote();
     this.getCryptoPrice();
+    this.getRealEstatePrice();
   },
   computed: {
     stockTotalPages() {
@@ -218,6 +245,9 @@ export default {
     updateStockCurrentPage(newPage) {
       this.currentStockPage = newPage;
     },
+    updateRealEstateCurrentPage(newPage){
+      this.currentRealEstatePage = newPage;
+    },
     formatPrice(price) {
       const x = parseFloat(price);
       if (x >= 1e9) {
@@ -226,14 +256,22 @@ export default {
       return x.toFixed(2);
     },
 
-    // async getRealEstatePrice(){
-    //   const url = "https://api.rentcast.io/v1/listings/sale";
-    //   try {
-
-    //   } catch (error){
-
-    //   }
-    // }
+    async getRealEstatePrice(){
+      const url = "https://api.rentcast.io/v1/properties/random";
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            'X-Api-Key': apiKeyRealEstate
+          }
+        })
+        this.realEstateList = response.data;
+        this.loadingRealEstate = false;
+      } catch (error){
+        console.log('Error fetching real estate', error)
+        this.errorRealEstate = 'Error fetching real estate';
+        this.loadingRealEstate = false;
+      }
+    }
   },
 };
 </script>
