@@ -287,9 +287,14 @@ export default {
 				else if (userMessage.includes("#realestate")) {
 					let userInputToken = userMessage.split(/\s+/);
 					let searchLocation;
+
+					const capitalizeLocation = (word) => {
+						return word.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ")
+					}
+
 					if (userInputToken.length > 1) {
 						userInputToken = userInputToken.slice(1, userInputToken.length);
-						searchLocation = userInputToken.join(" ");
+						searchLocation = capitalizeLocation(userInputToken.join(" "));
 					} else {
 						searchLocation = "San Jose";
 					}
@@ -302,7 +307,6 @@ export default {
 							headers: {
 								accept: 'application/json',
 								"X-Api-Key": API_KEY
-								// "X-RapidAPI-Host": "zillow-com1.p.rapidapi.com",
 							},
 						});
 						// console.log(response.data)
