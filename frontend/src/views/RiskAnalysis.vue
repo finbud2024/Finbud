@@ -19,11 +19,7 @@
             <StockWatch class="margin-box-content" />
           </div>
 
-          <!-- Real Estate Section -->
-          <div class="section-title">Real Estate</div>
-          <div class="margin-box">
-            <RealEstateMap class="margin-box-content" />
-          </div>
+          
 
           <!-- Stock Quotes Section -->
           <div class="section-title">Stock Quotes</div>
@@ -93,6 +89,15 @@
             </div>
           </div>
 
+          <!-- Real Estate Section -->
+          <div class="section-title">Real Estate</div>
+          <div class="margin-box">
+            <RealEstateMap class="margin-box-content" />
+            <div class = "margin-box-content">
+
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -132,6 +137,10 @@ export default {
       loadingCrypto: true,
       errorCrypto: null,
       cryptoList: [],
+      realEstateList: [],
+      loadingRealEstate: true,
+      errorRealEstate: null,
+      currentRealEstatePage: 1,
       currentStockPage: 1,
       currentCryptoPage: 1,
       itemsPerPage: 10,
@@ -148,6 +157,9 @@ export default {
     cryptoTotalPages() {
       return Math.ceil(this.cryptoList.length / this.itemsPerPage);
     },
+    realEstateTotalPages(){
+      return Math.ceil(this.realEstateList.length / this.itemsPerPage);
+    },
     paginatedStockQuotes() {
       const start = (this.currentStockPage - 1) * this.itemsPerPage;
       return this.stockQuotes.slice(start, start + this.itemsPerPage);
@@ -156,6 +168,11 @@ export default {
       const start = (this.currentCryptoPage - 1) * this.itemsPerPage;
       return this.cryptoList.slice(start, start + this.itemsPerPage);
     },
+    paginatedRealEstate() {
+      const start = (this.currentRealEstatePage - 1) * this.itemsPerPage;
+      return this.realEstateList.slice(start, start + this.itemsPerPage);
+    },
+
   },
   methods: {
     async fetchStockQuote() {
@@ -208,6 +225,15 @@ export default {
       }
       return x.toFixed(2);
     },
+
+    // async getRealEstatePrice(){
+    //   const url = "https://api.rentcast.io/v1/listings/sale";
+    //   try {
+
+    //   } catch (error){
+
+    //   }
+    // }
   },
 };
 </script>
