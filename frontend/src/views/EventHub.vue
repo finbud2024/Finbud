@@ -603,6 +603,31 @@ export default {
     transition: background-color 0.3s ease; 
 }
 
+.image-container {
+    width: 100%; 
+    height: 250px; 
+    overflow: hidden; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.image-container img {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+}
+
+.event-button {
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+}
+
 .left-div {
     border-right: 1px solid #e0e0e0; /* Optional: Add a border to separate the two sections */
 }
