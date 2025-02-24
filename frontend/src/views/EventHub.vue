@@ -1,10 +1,20 @@
 <template>
     <div class="EventHubContainer">
-        <div class="frame1">
-            <div class="event-navbar-container">
-                <div class="event-navbar">
-                    <input type="text" v-model="searchQuery" placeholder="Search" class="search-bar" />
-                    <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="search-icon" />
+        <nav class="w-full p-4 bg-white shadow-sm">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="event-navbar relative w-full md:w-1/2">
+                    <input 
+                        type="text" 
+                        v-model="searchQuery" 
+                        :placeholder="isMobile ? '' : 'Search events...'" 
+                        class="search-bar w-full"
+                        @focus="searchExpanded = true"
+                        @blur="searchExpanded = false"
+                    />
+                    <font-awesome-icon 
+                        icon="fa-solid fa-magnifying-glass" 
+                        class="search-icon"
+                    />
                 </div>
 
                 <div class="event-navbar nav-btn">
@@ -12,54 +22,37 @@
                         <div class="round">
                             <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
                         </div>
-                        <p>Explore Near You</p>
+                        <p v-if="!isMobile">Explore Near You</p>
                     </div>
                     <div class="event-btn">
                         <div class="round-star">
                             <font-awesome-icon icon="fa-regular fa-star" class="btn-icon" />
                         </div>
-                        <p>Saved</p>
+                        <p v-if="!isMobile">Saved</p>
                     </div>
                     <div class="event-btn">
                         <font-awesome-icon icon="fa-regular fa-bell" class="btn-icon" />
-                        <p>All Events</p>
+                        <p v-if="!isMobile">All Events</p>
                     </div>
                 </div>
             </div>
-            <div class="event-banner">
-                <img :src="require('@/assets/Banner.png')" alt="Banner" class="banner-img" />
-            </div>
-            <div class="event-category">
-                <h3>Event Category that You May Interest</h3>
-                <div class="event-category-bg">
-                    <div class="category-btn">
-                        <img :src="require('@/assets/career fair.png')" alt="Conference" class="category-img" />
-                        <p>Conference & Submmit</p>
-                    </div>
-                    <div class="category-btn">
-                        <img :src="require('@/assets/workshop.png')" alt="Conference" class="category-img" />
-                        <p>Workshop & Training</p>
-                    </div>
-                    <div class="category-btn">
-                        <img :src="require('@/assets/career fair.png')" alt="Conference" class="category-img" />
-                        <p>Webinars</p>
-                    </div>
-                    <div class="category-btn">
-                        <img :src="require('@/assets/workshop.png')" alt="Conference" class="category-img" />
-                        <p>Networking</p>
-                    </div>
-                    <div class="category-btn">
-                        <img :src="require('@/assets/career fair.png')" alt="Conference" class="category-img" />
-                        <p>Career Fairs & Recruitement</p>
-                    </div>
+        </nav>
+        <div class="event-banner">
+            <img :src="require('@/assets/Banner.png')" alt="Banner" class="banner-img" />
+        </div>
+        <div class="event-category">
+            <h3 class="text-2xl md:text-3xl text-center">Event Categories You May Like</h3>
+            <div class="event-category-bg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div v-for="(category, index) in categories" :key="index" class="category-btn">
+                    <img :src="category.image" :alt="category.name" class="category-img" />
+                    <p>{{ category.name }}</p>
                 </div>
             </div>
         </div>
         <div class="rounded-xl md:bg-white md:p-4">
             <section class="events-section">
-                <div class="content-wrapper">
-                    <!-- Left Div for Top 5 Trending Events -->
-                    <div class="left-div">
+                <div class="content-wrapper flex flex-col md:flex-row">
+                    <div class="left-div w-full md:w-1/4 mb-6 md:mb-0">
                         <h2 class="trending-title">Trending</h2>
                         <div v-for="(event, index) in topTrendingEvents" :key="index" class="event-item">
                             <a :href="event.url" class="event-link">
@@ -69,9 +62,7 @@
                         </div>
                     </div>
 
-                    <!-- Right Div for Remaining Events -->
-                    <div class="right-div">
-                        <!-- Top Part: Swiper Slider -->
+                    <div class="right-div w-full md:w-3/4">
                         <div class="swiper-container">
                             <swiper 
                                 :slidesPerView="1" 
@@ -91,11 +82,11 @@
                                 <swiper-slide v-for="(event, index) in remainingEvents" :key="index" class="swiper-slide">
                                     <a :href="event.url" target="_blank" class="slider-link">
                                         <div class="slider-content">
-                                            <div class="slider-image-container">
+                                            <div class="slider-image-container h-48 md:h-96">
                                                 <img :src="event.urlToImage" alt="Event image" class="slider-image" />
                                             </div>
                                             <div class="slider-info">
-                                                <h3 class="slider-title">{{ event.title }}</h3>
+                                                <h3 class="slider-title text-lg md:text-xl">{{ event.title }}</h3>
                                                 <p class="slider-meta">{{ event.source.name }} | {{ event.author }}</p>
                                             </div>
                                         </div>
@@ -104,16 +95,15 @@
                             </swiper>
                             <div class="swiper-nav-buttons">
                                 <button class="nav-button prev-button">
-                                    <i class="fas fa-angle-left nav-icon icon-size"></i>
+                                    <i class="fas fa-angle-left nav-icon"></i>
                                 </button>
                                 <button class="nav-button next-button">
-                                    <i class="fas fa-angle-right nav-icon icon-size"></i>
+                                    <i class="fas fa-angle-right nav-icon"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Bottom Part: Nine Articles -->
-                        <div class="bottom-articles">
+                        <div class="bottom-articles grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div v-for="(event, index) in remainingEvents.slice(0, 9)" :key="index" class="article-card">
                                 <a :href="event.url" class="article-link">
                                     <img :src="event.urlToImage" alt="Event image" class="article-image" />
@@ -127,17 +117,17 @@
         </div>
         <div class="frame3">
             <div class="events-container">
-                <h3>All events</h3>
-                <div class="grid-container">
+                <h3 class="text-2xl md:text-3xl mb-6">All Events</h3>
+                <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="(event, index) in allEvents" :key="index" class="event-card">
                         <img v-if="event.urlToImage" :src="event.urlToImage" alt="Event image" class="event-image" />
                         <div class="event-details">
                             <h2>{{ event.title }}</h2>
-                            <p>{{ new Date(event.publishedAt).toLocaleString()  }}</p>
+                            <p>{{ new Date(event.publishedAt).toLocaleString() }}</p>
                         </div>
                         <div class="event-actions">
                             <button class="star-button">⭐</button>
-                            <button class="read-more-button" @click="openEventUrl(event.url, '_blank')">
+                            <button class="read-more-button" @click="openEventUrl(event.url)">
                                 Read more
                             </button>
                         </div>
@@ -151,15 +141,10 @@
 
 <script>
 import axios from 'axios';
-
 import { Swiper, SwiperSlide } from "swiper/vue";
-
 import "swiper/css";
-
 import "swiper/css/pagination";
-
 import "swiper/css/navigation";
-
 import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
 import { gptNewsService } from '@/services/gptServices';
 
@@ -169,72 +154,80 @@ export default {
         Swiper,
         SwiperSlide,
     },
-
     data() {
-        return {//state declare here
+        return {
             modules: [Keyboard, Pagination, Navigation, Autoplay],
             trendingEvents: [],
             allEvents: [],
             loading: false,
-            botMessage: "Hello World", // Set the bot message
-            displayedMessage: "",
-            isTyping: false,
-            typingSpeed: 100, // Adjust typing speed if needed
+            searchQuery: '',
+            searchExpanded: false,
+            isMobile: false,
+            categories: [
+                { name: 'Conference & Summit', image: require('@/assets/career fair.png') },
+                { name: 'Workshop & Training', image: require('@/assets/workshop.png') },
+                { name: 'Webinars', image: require('@/assets/career fair.png') },
+                { name: 'Networking', image: require('@/assets/workshop.png') },
+                { name: 'Career Fairs', image: require('@/assets/career fair.png') }
+            ]
         };
     },
     computed: {
         topTrendingEvents() {
-            return this.trendingEvents.slice(0, 5); // Get top 5 events
+            return this.trendingEvents.slice(0, 5);
         },
         remainingEvents() {
-            return this.trendingEvents.slice(5); // Get remaining events
-        },
+            return this.trendingEvents.slice(5);
+        }
     },
     methods: {
-        fetchHeadlines() {
-          const apiKey = process.env.VUE_APP_NEWS_API_KEY; 
-          axios.get(`https://newsapi.org/v2/top-headlines?category=business&q=AI&apiKey=${apiKey}`)
-              .then(response => {
-                  if (response.data.status === "ok") {
-                      this.trendingEvents = response.data.articles.filter(article => article.urlToImage);
-                      this.generateBotMessage(this.trendingEvents);
-                  } else {
-                      console.error('Error fetching articles:', response.data.message);
-                  }
-              })
-              .catch(error => {
-                  console.error('Fetch error:', error);
-              });
+        checkMobile() {
+            this.isMobile = window.innerWidth <= 768;
         },
-
+        async fetchHeadlines() {
+            this.loading = true;
+            try {
+                const apiKey = process.env.VUE_APP_NEWS_API_KEY;
+                const response = await axios.get(
+                    `https://newsapi.org/v2/top-headlines?category=business&q=AI&apiKey=${apiKey}`
+                );
+                if (response.data.status === "ok") {
+                    this.trendingEvents = response.data.articles.filter(article => article.urlToImage);
+                    await this.generateBotMessage(this.trendingEvents);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
         async generateBotMessage(articles) {
             if (!articles.length) return;
-            let message = "";
-
-            const additionalMessages = [
-                {
-                    role: "user",
-                    content: "Please sort these articles based on the defined priorities."
-                }
-            ];
-
             try {
-                message = await gptNewsService(additionalMessages, this.trendingEvents);
+                const message = await gptNewsService(
+                    [{ role: "user", content: "Please sort these articles based on the defined priorities." }],
+                    this.trendingEvents
+                );
                 this.$emit('finbudBotResponse', message);
             } catch (error) {
                 console.error("GPT Service Error:", error);
             }
         },
-
         openEventUrl(url) {
             window.open(url, '_blank');
         }
     },
     mounted() {
         this.fetchHeadlines();
+        this.checkMobile();
+        window.addEventListener('resize', this.checkMobile);
     },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.checkMobile);
+    }
 };
 </script>
+
 <style scoped>
 @import "swiper/swiper-bundle.css";
 
@@ -249,7 +242,6 @@ export default {
     width: 100%;
     height: fit-content;
 }
-
 
 .event-navbar-container {
     display: flex;
@@ -355,7 +347,6 @@ export default {
 .category-img {
     width: 25%;
     filter: brightness(0) invert(1); 
-
 }
 
 .trending-event {
@@ -548,33 +539,74 @@ export default {
     background-color: #0056b3;
 }
 
-@media (max-width: 600px) {
-
+@media (max-width: 768px) {
     .search-bar {
-        height: 40px;
-        padding: 5px;
-        font-size: 0;
-        text-align: center; 
-        overflow: hidden; 
-        transition: width 0.3s ease;
-    }
-    
-    .event-category h3 {
-        font-size: 2rem; 
+        width: 100%;
+        font-size: 14px;
+        padding: 8px 16px;
     }
 
+    .event-navbar-container {
+        flex-direction: column;
+    }
+
+    .event-navbar {
+        width: 100%;
+        margin: 5px;
+    }
+
+    .nav-btn {
+        margin: 10px 0;
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .event-category h3,
     .events-container h3 {
-        font-size: 2rem; 
+        font-size: 1.5rem;
+    }
+
+    .event-category-bg {
+        margin: 0 20px 20px 20px;
+    }
+
+    .category-btn {
+        padding: 10px 20px;
+    }
+
+    .category-img {
+        width: 40%;
     }
 
     .grid-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        grid-template-columns: 1fr;
+        width: 95%;
     }
 
-    .nav-btn p {
-        font-size: 0;
+    .event-card {
+        margin: 10px;
+    }
+
+    .slider-image-container {
+        height: 200px;
+    }
+
+    .slider-title {
+        font-size: 1.2rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .event-category-bg {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .slider-image-container {
+        height: 400px;
     }
 }
 
