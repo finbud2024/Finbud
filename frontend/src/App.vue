@@ -164,6 +164,57 @@ export default {
   --finbudBotMessageBG: #007bff;
   --finbudBotMessageColor: white;
   --finbudBotMessageBorderColor: #007bff;
+  --bg-primary: #ffffff;
+  --text-primary: #333333;
+  --nav-bg: #ffffff;
+  --border-color: #dddddd;
+  --link-color: #007bff;
+  --hover-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --content-bg: #ffffff;
+  --shadow-color: #e9e2e2
+}
+
+:root.dark-mode,
+body.dark-mode {
+  /* Dark theme */
+  --bg-primary: #1a1a1a;
+  --text-primary: #ffffff;
+  --nav-bg: #242424;
+  --border-color: #404040;
+  --link-color: #4da3ff;
+  --hover-bg: #2d2d2d;
+  --card-bg: #2d2d2d;
+  --shadow-color: #0a6b10
+}
+
+/* Update content area */
+.content {
+  background-color: var(--content-bg);
+}
+
+/* Add transition for all elements */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Update common elements */
+.card,
+.container,
+.dropdown-menu,
+.nav-actions {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .nav-bar {
+  background-color: var(--nav-bg);
+}
+
+.dark-mode .dropdown-content a:hover,
+.dark-mode .dropdown-profile a:hover {
+  background-color: var(--hover-bg);
 }
 
 body {

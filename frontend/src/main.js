@@ -29,6 +29,8 @@ const icons = [
   faSolid.faLocationDot,
   faRegular.faStar,
   faRegular.faBell,
+  faSolid.faMoon,    
+  faSolid.faSun
 ];
 library.add(...icons); // Use the spread operator to add the icons
 

@@ -826,23 +826,27 @@ export default {
 };
 </script>
 <style scoped>
-  .GoalDashBoardContainer {
-    width: 100vw; 
-    max-width: 100%;
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-    overflow-x: hidden;
-  }
-  .leftPanel {
+.GoalDashBoardContainer {
+  width: 100vw; 
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.leftPanel {
   width: 70%;
   height: fit-content;
-  /*border: 2px solid red;*/ /*Hieu Cao removed this boder*/
   display: flex;
   flex-direction: column;
   padding: 20px;
   padding-top: 0;
+  background-color: var(--bg-primary);
 }
+
 .leftPanelHeader {
   max-width: 100%;
   height: 5%;
@@ -853,336 +857,356 @@ export default {
   padding: 10px;
   margin-bottom: 0;
   padding-bottom: 5px;
+  color: var(--text-primary);
 }
-  .profilePic {
-    height: 100%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    max-width: 100%;
-  }
-  .headerText {
-    margin-left: 10px;
-  }
-  .greeting {
-    font-weight: 600;
-    font-size: 22px;
-  }
-  .slogan {
-    font-size: 14px;
-    color: #aaa;
-  }
-  .panelOverview {
-    width: 100%;
-    height: 15%;
-    background-color: blue;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .graphContainer {
-    width: 100%;
-    height: 45%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgb(31, 126, 53);
-  }
-  .transactionContainer {
-    width: 100%;
-    height: 30%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow-x: auto;
-  }
-  /* Right Panel - Financial goals */
-  .rightPanel {
-    width: 30%;
-    max-height: none;
-    /*border: 2px solid rgb(7, 187, 7);*/ /*Hieu Cao removed this boder*/
-    padding: 20px;
-    display: flex;
+
+.profilePic {
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  max-width: 100%;
+}
+
+.headerText {
+  margin-left: 10px;
+}
+
+.greeting {
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--text-primary);
+}
+
+.slogan {
+  font-size: 14px;
+  color: var(--text-primary);
+  opacity: 0.7;
+}
+
+.panelOverview {
+  width: 100%;
+  height: 15%;
+  background-color: blue;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.graphContainer {
+  width: 100%;
+  height: 45%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(31, 126, 53);
+}
+
+.transactionContainer {
+  width: 100%;
+  height: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+}
+
+/* Right Panel - Financial goals */
+.rightPanel {
+  width: 30%;
+  max-height: none;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+}
+
+/* Goals styles */
+.financial-goals {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.goal-image {
+  z-index: 20;
+  width: 100%;
+  height: auto;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: -20px; /* Overlap with goal-content */
+}
+
+.goal-upper-part {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.goal-section-title {
+  margin-bottom: 0px;
+  margin-top: 0px;
+  font-size: 2em;
+  color: #333;
+}
+
+.add-goal-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-goal-button:hover {
+  background-color: #005bb5;
+}
+
+.goals {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.goal {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 8px 16px var(--shadow-color);
+  cursor: pointer;
+  margin: 10px;
+  flex: 1 1 calc(100% - 20px);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: var(--text-primary);
+}
+
+.goal:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.goal-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px 10px 0 0;
+}
+
+.goal-content {
+  background-color: var(--card-bg);
+  border-radius: 10px;
+  margin-top: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.goal-icon {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+
+.goal-info h3 {
+  margin: 10px 0;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.goal-info p {
+  margin: 5px 0;
+  font-size: 1em;
+  color: #666;
+}
+
+.progress-bar-container {
+  width: 100%;
+  background-color: var(--hover-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  height: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--link-color);
+  transition: width 0.5s ease-in-out;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px var(--shadow-color);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh; /* Limit height to 90% of viewport */
+  overflow-y: auto; /* Add scroll for overflow content */
+  padding: 20px;
+}
+
+.modal-content img {
+  width: 100%;
+  height: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.modal-text-content {
+  padding: 20px;
+}
+
+.add-money-form {
+  margin-top: 20px;
+}
+
+.add-money-form input {
+  margin-top: 10px;
+}
+
+.search-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  font-size: 16px;
+  box-sizing: border-box;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Add Goal Modal Styles */
+.form-group {
+  margin-bottom: 15px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: border-color 0.3s ease;
+  resize: none;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--link-color);
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.currency-input {
+  display: flex;
+  align-items: center;
+}
+
+.currency-input input {
+  margin-right: 10px;
+  flex: 1;
+}
+
+.currency-input select {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: border-color 0.3s ease;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.currency-input select:focus {
+  border-color: var(--link-color);
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#addAmount {
+  margin-bottom: 10px;
+}
+
+.character-counter {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px;
+  text-align: right;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 1024px) {
+  .GoalDashBoardContainer {
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-
-  /* Goals styles */
-  .financial-goals {
-    text-align: center;
-    height: 100%;
-    width: 100%;
-  }
-  .goal-image {
-    z-index: 20;
-    width: 100%;
     height: auto;
-    border-radius: 10px 10px 0 0;
-    margin-bottom: -20px; /* Overlap with goal-content */
-  }
-
-  .goal-upper-part {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-
-  .goal-section-title {
-    margin-bottom: 0px;
-    margin-top: 0px;
-    font-size: 2em;
-    color: #333;
-  }
-
-  .add-goal-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .add-goal-button:hover {
-    background-color: #005bb5;
-  }
-
-  .goals {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-  }
-
-  .goal {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    margin: 10px;
-    flex: 1 1 calc(100% - 20px);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-
-  .goal:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-  }
-
-  .goal-image {
-    width: 100%;
-    height: auto;
-    border-radius: 10px 10px 0 0;
-  }
-
-  .goal-content {
-    background-color: #ffffff;
-    border-radius: 10px;
-    margin-top: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-
-  .goal-icon {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    color: #007bff;
-  }
-
-  .goal-info h3 {
-    margin: 10px 0;
-    font-size: 1.5em;
-    color: #333;
-  }
-
-  .goal-info p {
-    margin: 5px 0;
-    font-size: 1em;
-    color: #666;
-  }
-
-  .progress-bar-container {
-    width: 100%;
-    background-color: #f1f1f1;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    height: 20px;
-  }
-
-  .progress-bar {
-    height: 100%;
-    background-color: #007bff;
-    transition: width 0.5s ease-in-out;
-  }
-
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 20;
-  }
-
-  .modal-content {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 90%;
-    max-width: 500px;
-    overflow: hidden;
-  }
-
-  .modal-content img {
-    width: 100%;
-    height: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-  }
-
-  .modal-text-content {
-    padding: 20px;
-  }
-
-  .add-money-form {
-    margin-top: 20px;
-  }
-
-  .add-money-form input {
-    margin-top: 10px;
-  }
-
-  .search-container {
-    margin: 20px 0;
-    text-align: center;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-  }
-
-  /* Add Goal Modal Styles */
-  .form-group {
-    margin-bottom: 15px;
-    font-family: 'Space Grotesk', sans-serif;
-  }
-
-  .form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-  }
-
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 16px;
-    font-family: 'Space Grotesk', sans-serif;
-    transition: border-color 0.3s ease;
-    resize: none;
-  }
-
-  .form-group input:focus,
-  .form-group textarea:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-
-  .currency-input {
-    display: flex;
-    align-items: center;
-  }
-
-  .currency-input input {
-    margin-right: 10px;
-    flex: 1;
-  }
-
-  .currency-input select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    font-family: 'Space Grotesk', sans-serif;
-    transition: border-color 0.3s ease;
-  }
-
-  .currency-input select:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-
-  #addAmount {
-    margin-bottom: 10px;
-  }
-  .character-counter {
-    font-size: 0.9em;
-    color: #666;
-    margin-top: 5px;
-    text-align: right;
-  }
-
-  /* Mobile-specific styles */
-  @media (max-width: 1024px) {
-    .GoalDashBoardContainer {
-      flex-direction: column;
-      height: auto;
-      width: 100vw;
-      max-width: 100%;
-    }
-
-    .leftPanel, .rightPanel {
-      width: 100%; 
-      max-height: none; /* Allow content to expand */
-      margin-bottom: 20px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .leftPanelHeader, .panelOverview, .graphContainer, .transactionContainer {
-      width: 100%;
-      max-width: 100%; 
-    }
-  }
-  .financial-goals {
-    text-align: center;
-    width: 100%;
+    width: 100vw;
     max-width: 100%;
-    box-sizing: border-box;
+    background-color: var(--bg-primary);
   }
+
+  .leftPanel, .rightPanel {
+    width: 100%;
+    background-color: var(--bg-primary);
+  }
+
+  .leftPanelHeader, .panelOverview, .graphContainer, .transactionContainer {
+    width: 100%;
+    max-width: 100%; 
+  }
+}
+
+.financial-goals {
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 
 .rightPanel {
   width: 30%;
   max-height: 100%;
-  /*border: 2px solid green;*/ /*Hieu Cao removed this boder*/
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -1195,13 +1219,16 @@ export default {
   aspect-ratio: 1;
   border-radius: 50%;
 }
+
 .headerText {
   margin-left: 10px;
 }
+
 .greeting {
   font-weight: 600;
   font-size: 22px;
 }
+
 .slogan {
   font-size: 14px;
   color: #aaa;
@@ -1263,9 +1290,9 @@ export default {
   margin-left: 0; /* Push to the far right within the wrapper */
   padding: 10px;
   border-radius: 9px;
-  background-color: #f0f0f0; /* Change to your desired background color */
+  background-color: var(--card-bg);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: #333; /* Icon color */
+  color: var(--text-primary);
   transition: background-color 0.3s, box-shadow 0.3s;
   height: auto;
 }
@@ -1280,11 +1307,13 @@ export default {
 
 .selectoutside {
   padding: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   font-size: 16px;
   transition: border-color 0.3s ease;
   height: 33px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 hr {
@@ -1293,7 +1322,7 @@ hr {
   height: 0.5px; /* Set the height of the line */
   background: #ccc; /* Set the color of the line */
   margin: 20px 0; /* Add space above and below the line */
-  box-sizing: border-box; /* Include padding and border in the element’s total width and height */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 .total-spend:hover {
@@ -1361,11 +1390,12 @@ hr {
 .transactions {
   margin-top: 20px;
   text-align: center;
-  border: 2px solid #1e06fb;
+  border: 2px solid var(--border-color);
   padding: 20px;
   padding-top: 0px;
   border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 16px var(--shadow-color);
+  background-color: var(--card-bg);
 }
 
 .headline-buttons {
@@ -1392,32 +1422,32 @@ hr {
   height: 100%;
   padding: 10px 20px;
   border-radius: 5px;
-  background-color: #007BFF;
+  background-color: var(--link-color);
   color: white;
   border: none;
   cursor: pointer;
 }
 
 .buttons button:hover {
-  background-color: #005bb5;
+  background-color: var(--hover-bg);
 }
-
-
 
 .transaction-box input {
   padding: 10px;
   margin: 10px 0;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   width: 100%;
   /* Set to 100% width */
   box-sizing: border-box;
   /* Include padding and border in the element's total width and height */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .transaction-box button {
   padding: 10px 20px;
-  background-color: #003366;
+  background-color: var(--link-color);
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -1426,7 +1456,7 @@ hr {
 }
 
 .transaction-box button:hover {
-  background-color: #005bb5;
+  background-color: var(--bg-primary);
 }
 
 .recommendation-list {
@@ -1437,8 +1467,8 @@ hr {
   right: 0;
   max-height: 150px;
   overflow-y: auto;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   list-style: none;
   padding: 0;
@@ -1453,40 +1483,41 @@ hr {
 
 .recommendation-list li:hover,
 .recommendation-list li.highlighted {
-  background-color: #f0f0f0;
+  background-color: var(--hover-bg);
 }
-
 
 .transaction-list table {
   width: 100%;
   border-collapse: collapse;
+  color: var(--text-primary);
 }
 
 .transaction-list th,
 .transaction-list td {
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .transaction-list th {
-  background-color: #f2f2f2;
+  background-color: var(--hover-bg);
 }
 
 .expense {
-  background-color: rgba(255, 0, 0, 0.5);
+  background-color: rgba(244, 67, 54, 0.1);
 }
 
 .income {
-  background-color: rgba(0, 255, 0, 0.5);
+  background-color: rgba(76, 175, 80, 0.1);
 }
 
 .chart-container {
   width: 100%;
   /* max-height: 800px;  */
   box-sizing: border-box;
-  border: 2px solid rgb(30, 6, 251);
+  border: 2px solid var(--border-color);
   border-radius: 10px;
+  background-color: var(--card-bg);
 }
 
 .chart-wrapper {
@@ -1511,7 +1542,7 @@ hr {
 .chart-toggle-buttons button {
   padding: 10px 20px;
   margin: 5px 0; /* Adjust margin to space buttons vertically */
-  background-color: #007bff;
+  background-color: var(--link-color);
   color: white;
   border: none;
   border-radius: 5px;
@@ -1522,7 +1553,7 @@ hr {
 }
 
 .chart-toggle-buttons button.active {
-  background-color: #0056b3; /* Change color when active */
+  background-color: var(--hover-bg);
 }
 
 .input-box {
@@ -1538,29 +1569,30 @@ hr {
   /* Allows absolute positioning of child inputs */
 }
 
-
 .selectinside {
   padding: 9px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   font-size: 15px;
   transition: border-color 0.3s ease;
   margin-left: 10px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .type-select {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   margin-bottom: 10px;
   padding-left: 5px;
 }
 
 .chart-toggle-buttons button:hover {
-  background-color: #005bb5;
+  background-color: var(--hover-bg);
 }
 
 .chart-toggle-buttons button.active {
-  background-color: #005bb5;
+  background-color: var(--hover-bg);
 }
 
 /* Financial goals */
@@ -1571,7 +1603,7 @@ hr {
 .add-goal-button {
   margin-bottom: 20px;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: var(--link-color);
   color: white;
   border: none;
   border-radius: 5px;
@@ -1580,7 +1612,7 @@ hr {
 }
 
 .add-goal-button:hover {
-  background-color: #005bb5;
+  background-color: var(--hover-bg);
 }
 
 .goals {
@@ -1594,7 +1626,7 @@ hr {
   padding: 60px;
   margin: 10px;
   border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 16px var(--shadow-color);
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
   animation: slideIn 1s;
@@ -1625,7 +1657,7 @@ hr {
 }
 
 .modal-content {
-  background: #ffffff;
+  background: var(--card-bg);
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1637,14 +1669,14 @@ hr {
 .modal-content input {
   padding: 10px;
   margin: 10px 0;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   width: 100%;
 }
 
 .modal-content button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: var(--link-color);
   color: white;
   border: none;
   border-radius: 5px;
@@ -1653,12 +1685,12 @@ hr {
 }
 
 .modal-content button:hover {
-  background-color: #005bb5;
+  background-color: var(--hover-bg);
 }
 
 .progress-bar {
   width: 100%;
-  background: #f1f1f1;
+  background: var(--hover-bg);
   border-radius: 10px;
   overflow: hidden;
   margin-top: 20px;
@@ -1671,7 +1703,7 @@ hr {
 
 .progress {
   height: 20px;
-  background: #007bff;
+  background: var(--link-color);
 }
 
 /* Footer navigation */
@@ -1695,7 +1727,7 @@ hr {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1703,7 +1735,7 @@ hr {
 }
 
 .modal-content {
-  background: white;
+  background: var(--card-bg);
   padding: 20px;
   border-radius: 5px;
   width: 500px;
@@ -1740,7 +1772,7 @@ hr {
   width: 27%;
   padding: 10px;
   border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-color);
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* Align items to the start (left) */
@@ -1754,11 +1786,13 @@ hr {
 }
 
 .revenue-card {
-  background-color: #e0f7fa; /* Light blue for revenue */
+  background-color: var(--card-bg);
+  border: 1px solid #4CAF50;
 }
 
 .expense-card {
-  background-color: #ffebee; /* Light red for expense */
+  background-color: var(--card-bg);
+  border: 1px solid #f44336;
 }
 
 /* Animations */
@@ -1814,5 +1848,96 @@ hr {
   .chart-wrapper {
     height: auto;
   }
+}
+
+/* Responsive Modal Adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-width: 400px;
+    padding: 15px;
+    margin: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .currency-input {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .currency-input select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 95%;
+    max-width: 320px;
+    padding: 10px;
+    margin: 5px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 6px;
+    font-size: 13px;
+  }
+
+  .modal-text-content h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+}
+
+/* Scrollbar Customization */
+/* For Webkit browsers (Chrome, Safari, newer Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--link-color);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) var(--bg-primary);
+}
+
+/* Apply to specific scrollable containers */
+.modal-content,
+.rightPanel,
+.transaction-list {
+  /* Inherit the global scrollbar styles */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) var(--bg-primary);
 }
 </style>
