@@ -196,6 +196,7 @@ export default {
               .then(response => {
                   if (response.data.status === "ok") {
                       this.trendingEvents = response.data.articles.filter(article => article.urlToImage);
+                      this.generateBotMessage(this.trendingEvents);
                   } else {
                       console.error('Error fetching articles:', response.data.message);
                   }
@@ -204,26 +205,25 @@ export default {
                   console.error('Fetch error:', error);
               });
         },
-        displayBotMessage() {
-            this.displayedMessage = this.botMessage.charAt(0);
-            this.isTyping = true;
-            this.typeMessage();
+
+        generateBotMessage(articles) {
+            if (!articles.length) return;
+
+            let message = "Here are some interesting articles I found:<br><br>";
+            articles.slice(0, 3).forEach((article, index) => {
+                message += `${index + 1}. <a href="${article.url}" target="_blank" class="article-link">${article.title}</a><br>`;
+                message += '<br>';
+            });
+
+            this.$emit('finbudBotResponse', message);
         },
-        typeMessage() {
-            if (this.displayedMessage.length < this.botMessage.length) {
-                this.displayedMessage += this.botMessage.charAt(this.displayedMessage.length);
-                setTimeout(this.typeMessage, this.typingSpeed);
-            } else {
-                this.isTyping = false;
-            }
-        },
+
         openEventUrl(url) {
             window.open(url, '_blank');
         }
     },
     mounted() {
         this.fetchHeadlines();
-        this.displayBotMessage(); // Call to display the bot message
     },
 };
 </script>
