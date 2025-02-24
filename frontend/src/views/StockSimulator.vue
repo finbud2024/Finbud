@@ -285,18 +285,12 @@ export default {
       handler(newQuery) {
         this.stockSymbol = newQuery.symbol || "";
         this.quantity = newQuery.quantity ? parseInt(newQuery.quantity, 10) : 1;
-<<<<<<< HEAD
-
-=======
         this.bannerDisplayStock = newQuery.symbol || "AAPL";
->>>>>>> origin/main
         // Ensure "action" gets updated in the dropdown
         if (newQuery.action === "sell" || newQuery.action === "buy") {
           this.action = newQuery.action;
         }
       }
-<<<<<<< HEAD
-=======
     },
 
     async bannerDisplayStock(newSymbol) {
@@ -313,7 +307,6 @@ export default {
       } else {
         console.error(`Failed to fetch stock data for ${newSymbol}`);
       }
->>>>>>> origin/main
     }
   },
   async mounted() {
@@ -346,17 +339,6 @@ export default {
     if (quantity) this.quantity = parseInt(quantity, 10);
     if (action === "sell" || action === "buy") {
       this.action = action;
-<<<<<<< HEAD
-    }
-    if (this.stockSymbol && this.quantity) {
-      setTimeout(() => {
-        const previewButton = document.querySelector(".preview-btn");
-        if (previewButton) {
-          previewButton.click();
-        }
-      }, 1000); // Wait 1 second to ensure the form is populated before clicking
-=======
->>>>>>> origin/main
     }
     if (this.stockSymbol && this.quantity) {
       setTimeout(() => {
