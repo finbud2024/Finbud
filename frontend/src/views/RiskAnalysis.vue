@@ -19,11 +19,7 @@
             <StockWatch class="margin-box-content" />
           </div>
 
-          <!-- Real Estate Section -->
-          <div class="section-title">Real Estate</div>
-          <div class="margin-box">
-            <RealEstateMap class="margin-box-content" />
-          </div>
+          
 
           <!-- Stock Quotes Section -->
           <div class="section-title">Stock Quotes</div>
@@ -93,6 +89,40 @@
             </div>
           </div>
 
+          <!-- Real Estate Section -->
+          <div class="section-title">Real Estate</div>
+          <div class="margin-box">
+            <RealEstateMap class="margin-box-content" />
+            <div class = "margin-box-content">
+              <div v-if="errorRealEstate" class="error">{{ errorRealEstate }}</div> 
+              <div v-else-if="loadingRealEstate" class="loading">Loading...</div>
+              <div v-else>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Address</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody v-if="paginatedRealEstate.length">
+                    <tr v-for="estate in paginatedRealEstate" :key="estate.id">
+                      <td>{{ estate.propertyType && !isNaN(estate.propertyType) ? estate.propertyType : "Single-family"}}</td>
+                      <td>{{ estate.formattedAddress }}</td>
+                      <td>
+                        {{ estate.lastSalePrice && !isNaN(estate.lastSalePrice) ? 
+                        '$' + estate.lastSalePrice.toLocaleString() : "N/A" }}
+                      </td>
+                      <td>{{ estate.ownerOccupied === true ? 'Inactive' : 'Active'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <Pagination :currentPage.sync="currentRealEstatePage" :totalPages="realEstateTotalPages" @update:currentPage="updateRealEstateCurrentPage" />
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -114,6 +144,7 @@ import RealEstateMap from '@/components/marketPage/RealEstateMap.vue';
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY; 
 const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
+const apiKeyRealEstate = process.env.VUE_APP_REAL_ESTATE_KEY;
 
 export default {
   name: 'RiskAnalysis',
@@ -132,6 +163,10 @@ export default {
       loadingCrypto: true,
       errorCrypto: null,
       cryptoList: [],
+      realEstateList: [],
+      loadingRealEstate: true,
+      errorRealEstate: null,
+      currentRealEstatePage: 1,
       currentStockPage: 1,
       currentCryptoPage: 1,
       itemsPerPage: 10,
@@ -140,6 +175,7 @@ export default {
   mounted() {
     this.fetchStockQuote();
     this.getCryptoPrice();
+    this.getRealEstatePrice();
   },
   computed: {
     stockTotalPages() {
@@ -147,6 +183,9 @@ export default {
     },
     cryptoTotalPages() {
       return Math.ceil(this.cryptoList.length / this.itemsPerPage);
+    },
+    realEstateTotalPages(){
+      return Math.ceil(this.realEstateList.length / this.itemsPerPage);
     },
     paginatedStockQuotes() {
       const start = (this.currentStockPage - 1) * this.itemsPerPage;
@@ -156,6 +195,11 @@ export default {
       const start = (this.currentCryptoPage - 1) * this.itemsPerPage;
       return this.cryptoList.slice(start, start + this.itemsPerPage);
     },
+    paginatedRealEstate() {
+      const start = (this.currentRealEstatePage - 1) * this.itemsPerPage;
+      return this.realEstateList.slice(start, start + this.itemsPerPage);
+    },
+
   },
   methods: {
     async fetchStockQuote() {
@@ -201,6 +245,9 @@ export default {
     updateStockCurrentPage(newPage) {
       this.currentStockPage = newPage;
     },
+    updateRealEstateCurrentPage(newPage){
+      this.currentRealEstatePage = newPage;
+    },
     formatPrice(price) {
       const x = parseFloat(price);
       if (x >= 1e9) {
@@ -208,6 +255,23 @@ export default {
       }
       return x.toFixed(2);
     },
+
+    async getRealEstatePrice(){
+      const url = "https://api.rentcast.io/v1/properties/random";
+      try {
+        const response = await axios.get(url, {
+          headers: {
+            'X-Api-Key': apiKeyRealEstate
+          }
+        })
+        this.realEstateList = response.data;
+        this.loadingRealEstate = false;
+      } catch (error){
+        console.log('Error fetching real estate', error)
+        this.errorRealEstate = 'Error fetching real estate';
+        this.loadingRealEstate = false;
+      }
+    }
   },
 };
 </script>
