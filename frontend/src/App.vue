@@ -12,9 +12,14 @@
     @closeChatBubble="toggleChatBubble"
     :chatViewThreadID="threadId" />
   <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
-  <div v-if="showBotMessage" class="finbudBotMessage" ref="botMessage">
-    {{ displayedMessage }}<span class="blinking-cursor" v-show="isTyping">|</span>
-    <div class="messageConnector"></div>
+  
+  <div v-if="showBotMessage" class="bot-message-container">
+    <div class="finbudBotMessage" 
+         ref="botMessage" 
+         :class="{ 'message-visible': messageVisible }">
+      <div class="message-content" v-html="displayedMessage"></div>
+      <div class="messageConnector"></div>
+    </div>
   </div>
 </template>
 
@@ -23,6 +28,8 @@ import NavBar from "./components/NavBar.vue";
 import FooterBar from "./components/FooterBar.vue";
 import ChatBubble from "./components/ChatBubble.vue";
 import axios from "axios";
+import '@fortawesome/fontawesome-free/css/all.css';
+
 export default {
   name: "App",
   components: {
@@ -39,9 +46,11 @@ export default {
       showBotMessage: true,
       typingSpeed: 20, // milliseconds per character
       isTyping: false,
+      messageVisible: false, // New property for message visibility
     };
   },
   async mounted() {
+    // Set the initial bot message
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener('click', this.handleClickOutside);
     if (this.isAuthenticated) {
@@ -50,9 +59,8 @@ export default {
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
       if (historyThreadsData.length === 0) {
-        //if new user with no thread, create a new one
+        // If new user with no thread, create a new one
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = localStorage.getItem("token");
         const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
         this.threadId = thread._id;
@@ -60,9 +68,20 @@ export default {
         this.threadId = historyThreadsData[0]._id;
       }
     }
+
+    // Add route watcher
+    this.$watch(
+      () => this.$route.path,
+      (newPath) => {
+        if (newPath === '/event') {
+          this.showEventHubGreeting();
+        }
+      },
+      { immediate: true } // Check immediately on mount
+    );
   },
   computed: {
-    isAuthenticated(){
+    isAuthenticated() {
       return this.$store.getters['users/isAuthenticated'];
     },
     showChatBubble() {
@@ -93,10 +112,16 @@ export default {
     displayMessage(message) {
       this.showBotMessage = true;
       this.botMessage = message;
-      this.displayedMessage = message.charAt(0);
-      this.isTyping = true;
-      this.typeMessage();
-      event.stopPropagation();
+      this.displayedMessage = message;
+      
+      // Add small delay before showing the message
+      setTimeout(() => {
+        this.messageVisible = true;
+      }, 200);
+
+      if (event) {
+        event.stopPropagation();
+      }
     },
     typeMessage() {
       if (this.displayedMessage.length < this.botMessage.length) {
@@ -108,13 +133,23 @@ export default {
     },
     handleClickOutside(event) {
       const botMessage = this.$refs.botMessage;
-      if (botMessage && !botMessage.contains(event.target) && this.showBotMessage) {
-        this.botMessage = "";
-        this.displayedMessage = "";
-        this.showBotMessage = false;
+      if (botMessage && !botMessage.contains(event.target) && 
+          !event.target.closest('a') && 
+          this.showBotMessage) {
+        this.messageVisible = false;
+        // Wait for fade out animation before hiding
+        setTimeout(() => {
+          this.botMessage = "";
+          this.displayedMessage = "";
+          this.showBotMessage = false;
+        }, 300);
       }
-      
-    }
+    },
+    showEventHubGreeting() {
+      // Instead of static message, we'll wait for EventHub to emit the message
+      // The actual message will be handled by displayMessage method
+      // which is already connected to finbudBotResponse event
+    },
   },
   beforeDestroy() {
     document.removeEventListener('click', this.handleClickOutside);
@@ -173,31 +208,64 @@ a:hover {
   aspect-ratio: 1;
   right: 3.125vw;
   bottom: 20px;
-  z-index: 9998;
+  z-index: 99998;
+  transition: transform 0.2s ease;
 }
 
 .finbudBot:hover {
-  cursor: pointer
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.bot-message-container {
+  position: fixed;
+  z-index: 99999;
+  bottom: calc(20px + 60px);
+  right: calc(3.125vw + 60px);
 }
 
 .finbudBotMessage {
   width: fit-content;
   height: fit-content;
-  padding: 20px;
-  font-size: clamp(0.75rem, 5.6vw, 1.25rem);
-  position: fixed;
-  /*  20px: bottom margin of bot image
-      3.125vw: right margin of bot message
-      60px: width/height of bot image
-   */
-  bottom: calc(20px + 60px);
-  right: calc(3.125vw + 60px);
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s ease-out;
+}
+
+.message-content {
+  padding: 15px;
+  font-size: 0.875rem;
+  line-height: 1.4;
   border: 2px solid var(--finbudBotMessageBorderColor);
   border-radius: 15px;
-  max-width: 18%;
+  max-width: 300px;
   background-color: var(--finbudBotMessageBG);
-  color: var(--finbudBotMessageColor);
-  z-index: 9998;
+  color: #ffffff;
+}
+
+/* Animation class for message visibility */
+.message-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Force all text elements inside the message to be white */
+.message-content :deep(*) {
+  color: #ffffff !important;
+}
+
+.message-content :deep(a) {
+  color: #ffffff;
+  text-decoration: underline;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.message-content :deep(a:hover) {
+  color: #e0e0e0;
+  background-color: transparent;
 }
 
 .messageConnector {
@@ -211,12 +279,11 @@ a:hover {
   border-bottom: 10px solid var(--finbudBotMessageBorderColor);
   transform-origin: bottom right;
   transform: rotate(15deg);
-  z-index: 9997;
 }
 
 .blinking-cursor {
   font-weight: 100;
-  font-size: 20px;
+  font-size: 16px; /* Reduced cursor size to match new text size */
   color: #2E3D48;
   -webkit-animation: 1s blink step-end infinite;
   -moz-animation: 1s blink step-end infinite;
@@ -225,6 +292,29 @@ a:hover {
   animation: 1s blink step-end infinite;
 }
 
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .message-content {
+    max-width: 250px;
+    font-size: 0.8125rem;
+    padding: 12px;
+  }
+  
+  .bot-message-container {
+    right: calc(3.125vw + 50px);
+  }
+}
+
+/* Very small screens */
+@media screen and (max-width: 480px) {
+  .message-content {
+    max-width: 200px;
+    font-size: 0.75rem;
+    padding: 10px;
+  }
+}
+
+/* Keep existing animation keyframes */
 @keyframes blink {
   from, to {
     color: transparent;
@@ -234,46 +324,5 @@ a:hover {
   }
 }
 
-@-moz-keyframes blink {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: #2E3D48;
-  }
-}
-
-@-webkit-keyframes blink {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: #2E3D48;
-  }
-}
-
-@-ms-keyframes blink {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: #2E3D48;
-  }
-}
-
-@-o-keyframes blink {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: #2E3D48;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .finbudBotMessage {
-    max-width: 60%; 
-  }
-}
-
+/* Keep other existing animation keyframes */
 </style>
