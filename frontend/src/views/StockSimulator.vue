@@ -78,18 +78,22 @@
               <span class="value">{{ annualReturn }}%</span>
             </div>
           </div>
+          <img class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
         </div>
         <div class="chat-bot-container">
 
         </div>
 
       </section>
+     
+     
 
       <PerformanceChart 
         :performanceData="performanceData"
         @timeframeChanged="updatePerformanceData"
       />
     </div>
+
 
     <section class="transaction-history">
       <TransactionHistory />
@@ -608,6 +612,16 @@ export default {
   .account-stat {
     margin: 5px 0;
   }
+
+  .finbudBot {
+  position: fixed;
+  width: 60px;
+  aspect-ratio: 1;
+  right: 3.125vw;
+  bottom: 20px;
+  z-index: 9998;
+}
+  
 }
 
 .new-section {
