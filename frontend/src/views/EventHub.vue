@@ -196,7 +196,7 @@ export default {
                     await this.generateBotMessage(this.trendingEvents);
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
+                console.error('Fetch error:', error.response ? error.response.data : error.message);
             } finally {
                 this.loading = false;
             }
