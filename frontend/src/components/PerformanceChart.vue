@@ -79,16 +79,17 @@ export default {
 
 <style scoped>
 .performance-chart {
-  width: 70%; 
-  background-color: #e9ecef;
+  width: 100%; 
+  background-color: #f8f9fa;
   padding: 20px;
   border-radius: 5px;
+  border: 1px solid #dee2e6;
   position: relative; 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 90%; 
-  min-height: 500px;
+  height: 100%;
+  min-height: 520px;
 }
 
 .chart-controls {
