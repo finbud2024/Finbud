@@ -187,23 +187,16 @@ export default {
         				console.error("Error in sell message:", err.message);
    					}
 			}
-				// HANDLE ADD TRANSACTION (5)
+				// HANDLE ADD TRANSACTION (6)
 				else if (userMessage.toLowerCase().includes("#add")) {
 					try {
 						const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
-							const accountCheck = await this.checkAccountBalance();
-							if (!accountCheck) {
-								answers.push(`Account balance is not set yet, please set your account balance first`);
-								// this.openNewWindow("/goal");	
-							} else {
-								const description = match[1].trim();
-								const amount = parseInt(match[2], 10);
-								const balance = await this.calculateNewBalance(amount);
-								await this.addTransaction(description, amount, balance);
-								answers.push(`Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
-							}
-							// this.openNewWindow("/goal");
+							const description = match[1].trim();
+							const amount = parseInt(match[2], 10);
+							const balance = await this.calculateNewBalance(amount);
+							await this.addTransaction(description, amount, balance);
+							answers.push(`Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
 						} else {
 							answers.push("Please specify the description and amount you want to add.");
 						}
@@ -211,7 +204,7 @@ export default {
 						console.error("Error in add transaction:", err.message);
 					}
 				}
-				// HANDLE SPEND TRANSACTION (6)
+				// HANDLE SPEND TRANSACTION (7)
 				else if (userMessage.toLowerCase().includes("#spend")) {
 					try {
 						const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
@@ -467,32 +460,54 @@ export default {
 				const userId = localStorage.getItem("token");
 				const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
 				const transactions = response.data;
-				return transactions.length > 0 && transactions[0].balance !== 0;
+
+				if (transactions.length === 0) {
+					return "no_transactions"; // Special case for handling #add
+				}
+
+				return transactions[0].balance !== 0;
 			} catch (error) {
 				console.error('Error checking account balance:', error);
 				return false;
 			}
 		},
+
 		// TO BE USED IN SPEND + ADD
 		async addTransaction(description, amount, balance) {
 			const accountCheck = await this.checkAccountBalance();
 			if (!accountCheck) {
 				return;
-				// this.openNewWindow("/goal");	
 			}
+
+			const userId = localStorage.getItem('token'); // Ensure userId is defined
+			const date = new Date().toISOString(); // Get current date
+			const type = 'revenue';
+
+			/* logs for testing
+			console.log("description:", description);
+			console.log("amount:", amount);
+			console.log("balance:", balance);
+			console.log("userId:", userId);
+			console.log("date:", date);
+			console.log("type:", type);
+			*/
 			try {
 				await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
 					description,
 					amount,
 					balance,
-					date: new Date().toISOString(),
-					userId: localStorage.getItem('token')
+					date,
+					userId,
+					type
 				});
+
 			} catch (err) {
-				console.error('Error adding transaction:', err);
+				console.error('Error adding transaction:', err.message);
 				this.addTypingResponse('Error adding transaction.', false);
 			}
 		},
+
+
 		async scrollChatFrameToBottom() {
 			await new Promise((r) => setTimeout(r, 200));
 			const chatFrame = document.querySelector(".chat-frame");
