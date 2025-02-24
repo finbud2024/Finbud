@@ -78,7 +78,6 @@
               <span class="value">{{ annualReturn }}%</span>
             </div>
           </div>
-          <img class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
         </div>
         <div class="chat-bot-container">
 
