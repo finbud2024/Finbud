@@ -8,6 +8,7 @@ import * as faSolid from "@fortawesome/free-solid-svg-icons";
 import * as faRegular from "@fortawesome/free-regular-svg-icons";
 import * as faBrand from "@fortawesome/free-brands-svg-icons";
 import store from "./store"; // Import the vuex store
+import VueGoogleMaps from "@fawmi/vue-google-maps"; 
 
 // Add specific icons to the library
 const icons = [
@@ -34,6 +35,12 @@ library.add(...icons); // Use the spread operator to add the icons
 
 // Create the application
 const app = createApp(App);
+
+app.use(VueGoogleMaps, {
+  load: {
+      key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY, 
+  },
+});
 
 // Register FontAwesomeIcon component
 app.component("font-awesome-icon", FontAwesomeIcon);
