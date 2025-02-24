@@ -84,12 +84,15 @@
         </div>
 
       </section>
+     
+     
 
       <PerformanceChart 
         :performanceData="performanceData"
         @timeframeChanged="updatePerformanceData"
       />
     </div>
+
 
     <section class="transaction-history">
       <TransactionHistory :key="transactionKey"/>
@@ -624,6 +627,16 @@ export default {
   .account-stat {
     margin: 5px 0;
   }
+
+  .finbudBot {
+  position: fixed;
+  width: 60px;
+  aspect-ratio: 1;
+  right: 3.125vw;
+  bottom: 20px;
+  z-index: 9998;
+}
+  
 }
 
 .new-section {
