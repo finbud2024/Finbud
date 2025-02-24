@@ -89,23 +89,25 @@
                                 class="swiper"
                             >
                                 <swiper-slide v-for="(event, index) in remainingEvents" :key="index" class="swiper-slide">
-                                    <div class="slider-content">
-                                        <div class="slider-image-container">
-                                            <img :src="event.urlToImage" alt="Event image" class="slider-image" />
+                                    <a :href="event.url" target="_blank" class="slider-link">
+                                        <div class="slider-content">
+                                            <div class="slider-image-container">
+                                                <img :src="event.urlToImage" alt="Event image" class="slider-image" />
+                                            </div>
+                                            <div class="slider-info">
+                                                <h3 class="slider-title">{{ event.title }}</h3>
+                                                <p class="slider-meta">{{ event.source.name }} | {{ event.author }}</p>
+                                            </div>
                                         </div>
-                                        <div class="slider-info">
-                                            <h3 class="slider-title">{{ event.title }}</h3>
-                                            <p class="slider-meta">{{ event.source.name }} | {{ event.author }}</p>
-                                        </div>
-                                    </div>
+                                    </a>
                                 </swiper-slide>
                             </swiper>
                             <div class="swiper-nav-buttons">
                                 <button class="nav-button prev-button">
-                                    <font-awesome-icon icon="fa-solid fa-chevron-left" class="nav-icon" />
+                                    <i class="fas fa-angle-left nav-icon icon-size"></i>
                                 </button>
                                 <button class="nav-button next-button">
-                                    <font-awesome-icon icon="fa-solid fa-chevron-right" class="nav-icon" />
+                                    <i class="fas fa-angle-right nav-icon icon-size"></i>
                                 </button>
                             </div>
                         </div>
@@ -173,6 +175,10 @@ export default {
             trendingEvents: [],
             allEvents: [],
             loading: false,
+            botMessage: "Hello World", // Set the bot message
+            displayedMessage: "",
+            isTyping: false,
+            typingSpeed: 100, // Adjust typing speed if needed
         };
     },
     computed: {
@@ -198,40 +204,26 @@ export default {
                   console.error('Fetch error:', error);
               });
         },
-        // Commenting out the fetchAllEvents method
-        /*
-        fetchAllEvents () {
-            const apiKey = process.env.VUE_APP_NEWS_API_KEY; 
-            const today = new Date();
-            const yesterday = new Date(today);
-            yesterday.setDate(today.getDate() - 1); // Set to yesterday
-            const formattedYesterday = yesterday.toISOString().split('T')[0];
-            const formattedToday = today.toISOString().split('T')[0];
-            
-            axios.get(`https://newsapi.org/v2/everything?q=finance&from=${formattedYesterday}&to=${formattedToday}&sortBy=popularity&apiKey=${apiKey}`)
-            .then(response => {
-                console.log(response.data);
-                if (response.data.status === "ok") {
-                    this.allEvents = response.data.articles.filter(article => article.urlToImage);
-                } else {
-                    console.error('Error fetching articles:', response.data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-            });
+        displayBotMessage() {
+            this.displayedMessage = this.botMessage.charAt(0);
+            this.isTyping = true;
+            this.typeMessage();
         },
-        */
+        typeMessage() {
+            if (this.displayedMessage.length < this.botMessage.length) {
+                this.displayedMessage += this.botMessage.charAt(this.displayedMessage.length);
+                setTimeout(this.typeMessage, this.typingSpeed);
+            } else {
+                this.isTyping = false;
+            }
+        },
         openEventUrl(url) {
             window.open(url, '_blank');
         }
     },
     mounted() {
         this.fetchHeadlines();
-        // Commenting out the fetchAllEvents method
-        /*
-        this.fetchAllEvents();
-        */
+        this.displayBotMessage(); // Call to display the bot message
     },
 };
 </script>
@@ -756,7 +748,7 @@ export default {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: black;  /* Changed to black background */
+    background-color: black;  /* Black background */
     border: none;
     cursor: pointer;
     display: flex;
@@ -766,7 +758,7 @@ export default {
 }
 
 .nav-button:hover {
-    background-color: white;  /* Changed to white on hover */
+    background-color: white;  /* White background on hover */
     transform: scale(1.1); /* Slightly enlarge the button */
 }
 
@@ -848,5 +840,32 @@ export default {
     .slider-image-container {
         height: 250px;
     }
+}
+
+.icon-size {
+    font-size: 24px; /* Set the font size to 24px */
+}
+
+.slider-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    position: relative;
+}
+
+.slider-link:hover .slider-image {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.slider-link:hover .slider-title {
+    text-decoration: underline;
+}
+
+.slider-image {
+    transition: transform 0.3s ease;
 }
 </style>

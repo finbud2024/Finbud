@@ -23,6 +23,8 @@ import NavBar from "./components/NavBar.vue";
 import FooterBar from "./components/FooterBar.vue";
 import ChatBubble from "./components/ChatBubble.vue";
 import axios from "axios";
+import '@fortawesome/fontawesome-free/css/all.css';
+
 export default {
   name: "App",
   components: {
@@ -42,6 +44,7 @@ export default {
     };
   },
   async mounted() {
+    // Set the initial bot message
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener('click', this.handleClickOutside);
     if (this.isAuthenticated) {
@@ -50,7 +53,7 @@ export default {
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
       if (historyThreadsData.length === 0) {
-        //if new user with no thread, create a new one
+        // If new user with no thread, create a new one
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
         const userId = localStorage.getItem("token");
         const reqBody = { userId };
@@ -60,9 +63,20 @@ export default {
         this.threadId = historyThreadsData[0]._id;
       }
     }
+
+    // Add route watcher
+    this.$watch(
+      () => this.$route.path,
+      (newPath) => {
+        if (newPath === '/event') {
+          this.showEventHubGreeting();
+        }
+      },
+      { immediate: true } // Check immediately on mount
+    );
   },
   computed: {
-    isAuthenticated(){
+    isAuthenticated() {
       return this.$store.getters['users/isAuthenticated'];
     },
     showChatBubble() {
@@ -113,7 +127,10 @@ export default {
         this.displayedMessage = "";
         this.showBotMessage = false;
       }
-      
+    },
+    // New method to handle EventHub greeting
+    showEventHubGreeting() {
+      this.displayMessage("Hello! Welcome to Event Hub. Here you can explore all the latest events and news!");
     }
   },
   beforeDestroy() {
