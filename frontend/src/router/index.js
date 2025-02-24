@@ -15,7 +15,7 @@ import MarketDataCenter from '@/views/MarketDataCenter.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
 import QuantAnalysis from '@/views/QuantAnalysis.vue';
 import EventHub from '@/views/EventHub.vue';
-import EventMap from '@/views/EventMap.vue';
+// import EventMap from '@/components/EventMap.vue';
 
 const routes = [
   {
@@ -100,11 +100,11 @@ const routes = [
     name: 'EventHub',
     component: EventHub,
   },
-  {
-    path: '/event-map',
-    name: 'EventMap',
-    component: EventMap,
-  }
+  // {
+  //   path: '/event-map',
+  //   name: 'EventMap',
+  //   component: EventMap,
+  // }
 ];
 
 const router = createRouter({
