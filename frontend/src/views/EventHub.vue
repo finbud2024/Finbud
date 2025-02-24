@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="event-navbar nav-btn">
-                    <div class="event-btn">
+                    <div class="event-btn" @click="goToEventMap">
                         <div class="round">
                             <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
                         </div>
@@ -215,7 +215,18 @@ export default {
         },
         openEventUrl(url) {
             window.open(url, '_blank');
-        }
+        },
+        penModal(event) {
+            this.selectedEvent = event;
+            this.isModalOpen = true;
+        },
+        closeModal() {
+            this.isModalOpen = false;
+            this.selectedEvent = {};
+        },
+        goToEventMap() {
+            this.$router.push('/event-map');
+  }
     },
     mounted() {
         this.fetchHeadlines();
@@ -286,8 +297,7 @@ export default {
     align-items: center;
     justify-content: space-evenly;
     text-align: center;
-    margin-right: 50px;
-    margin-left: 50px;
+    margin: 10px
 }
 
 .nav-btn p {
