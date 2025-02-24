@@ -58,7 +58,7 @@
                             <a :href="event.url" class="event-link">
                                 <span class="event-number">{{ index + 1 }}. {{ event.title }}</span>
                             </a>
-                            <p class="event-description">{{ event.description }}</p>
+                            <p class="event-description">{{ cropSummary(event.summary) }}</p>
                         </div>
                     </div>
 
@@ -83,11 +83,11 @@
                                     <a :href="event.url" target="_blank" class="slider-link">
                                         <div class="slider-content">
                                             <div class="slider-image-container h-48 md:h-96">
-                                                <img :src="event.urlToImage" alt="Event image" class="slider-image" />
+                                                <img :src="event.image" alt="Event image" class="slider-image" />
                                             </div>
                                             <div class="slider-info">
                                                 <h3 class="slider-title text-lg md:text-xl">{{ event.title }}</h3>
-                                                <p class="slider-meta">{{ event.source.name }} | {{ event.author }}</p>
+                                                <p class="slider-meta">{{ event.author }}</p>
                                             </div>
                                         </div>
                                     </a>
@@ -104,9 +104,9 @@
                         </div>
 
                         <div class="bottom-articles grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div v-for="(event, index) in remainingEvents.slice(0, 9)" :key="index" class="article-card">
+                            <div v-for="(event, index) in remainingEvents.slice(0, 3)" :key="index" class="article-card">
                                 <a :href="event.url" class="article-link">
-                                    <img :src="event.urlToImage" alt="Event image" class="article-image" />
+                                    <img :src="event.image" alt="Event image" class="article-image" />
                                     <p class="article-title">{{ event.title }}</p>
                                 </a>
                             </div>
@@ -119,11 +119,11 @@
             <div class="events-container">
                 <h3 class="text-2xl md:text-3xl mb-6">All Events</h3>
                 <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="(event, index) in allEvents" :key="index" class="event-card">
-                        <img v-if="event.urlToImage" :src="event.urlToImage" alt="Event image" class="event-image" />
+                    <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card">
+                        <img v-if="event.image" :src="event.image" alt="Event image" class="event-image" />
                         <div class="event-details">
                             <h2>{{ event.title }}</h2>
-                            <p>{{ new Date(event.publishedAt).toLocaleString() }}</p>
+                            <p>{{ new Date(event.publish_date).toLocaleString() }}</p>
                         </div>
                         <div class="event-actions">
                             <button class="star-button">⭐</button>
@@ -174,10 +174,10 @@ export default {
     },
     computed: {
         topTrendingEvents() {
-            return this.trendingEvents.slice(0, 5);
+            return this.trendingEvents.slice(0, 3);
         },
         remainingEvents() {
-            return this.trendingEvents.slice(5);
+            return this.trendingEvents.slice(3, 6);
         }
     },
     methods: {
@@ -189,10 +189,10 @@ export default {
             try {
                 const apiKey = process.env.VUE_APP_NEWS_API_KEY;
                 const response = await axios.get(
-                    `https://newsapi.org/v2/top-headlines?category=business&q=AI&apiKey=${apiKey}`
+                    `https://api.worldnewsapi.com/search-news?country=us&language=en&categories=business,technology&earliest-publish-date=2025-02-24&number=8&api-key=${apiKey}`
                 );
-                if (response.data.status === "ok") {
-                    this.trendingEvents = response.data.articles.filter(article => article.urlToImage);
+                if (response.data.news) {
+                    this.trendingEvents = response.data.news.filter(article => article.image);
                     await this.generateBotMessage(this.trendingEvents);
                 }
             } catch (error) {
@@ -215,6 +215,10 @@ export default {
         },
         openEventUrl(url) {
             window.open(url, '_blank');
+        },
+        cropSummary(summary) {
+            const maxLength = 106; // Length of the reference summary
+            return summary.length > maxLength ? summary.substring(0, maxLength) + "..." : summary;
         }
     },
     mounted() {
