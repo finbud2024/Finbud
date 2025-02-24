@@ -215,7 +215,18 @@ export default {
         },
         openEventUrl(url) {
             window.open(url, '_blank');
-        }
+        },
+        penModal(event) {
+            this.selectedEvent = event;
+            this.isModalOpen = true;
+        },
+        closeModal() {
+            this.isModalOpen = false;
+            this.selectedEvent = {};
+        },
+        goToEventMap() {
+            this.$router.push('/event-map');
+  }
     },
     mounted() {
         this.fetchHeadlines();
@@ -286,8 +297,7 @@ export default {
     align-items: center;
     justify-content: space-evenly;
     text-align: center;
-    margin-right: 50px;
-    margin-left: 50px;
+    margin: 10px
 }
 
 .nav-btn p {
