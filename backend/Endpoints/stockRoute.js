@@ -27,7 +27,7 @@ stockRoute.get("/api/stocks", async (req, res) => {
                     sortOrder: "desc",
                     nullsFirst: false
                 },
-                preset: "worlds_largest_companies"
+                preset: "worlds-largest-employers"
             },
             {
                 headers: {
