@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="event-navbar nav-btn">
-                    <div class="event-btn" @click="goToEventMap">
+                    <div class="event-btn">
                         <div class="round">
                             <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
                         </div>
@@ -135,7 +135,8 @@
                 </div>
             </div>
         </div>
-        <div v-if="loading" class="loading-spinner">Loading...</div>
+        <!-- <div v-if="loading" class="loading-spinner">Loading...</div> -->
+        <EventMap />
     </div>
 </template>
 
@@ -147,12 +148,14 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
 import { gptNewsService } from '@/services/gptServices';
+import EventMap from '@/components/EventMap.vue';
 
 export default {
     name: 'EventHub',
     components: {
         Swiper,
         SwiperSlide,
+        EventMap,
     },
     data() {
         return {
@@ -394,7 +397,7 @@ export default {
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: 20px;
+    padding: 10px;
 }
 
 .events-container h3 {
