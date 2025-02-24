@@ -187,11 +187,7 @@ export default {
         				console.error("Error in sell message:", err.message);
    					}
 			}
-<<<<<<< HEAD
-				// HANDLE ADD TRANSACTION (5)
-=======
 				// HANDLE ADD TRANSACTION (6)
->>>>>>> origin/main
 				else if (userMessage.toLowerCase().includes("#add")) {
 					try {
 						const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
