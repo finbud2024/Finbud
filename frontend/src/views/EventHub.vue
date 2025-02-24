@@ -8,7 +8,7 @@
                 </div>
 
                 <div class="event-navbar nav-btn">
-                    <div class="event-btn">
+                    <div class="event-btn" @click="goToEventMap">
                         <div class="round">
                             <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
                         </div>
@@ -238,6 +238,9 @@ export default {
         closeModal() {
             this.isModalOpen = false;
             this.selectedEvent = {};
+        },
+        goToEventMap() {
+            this.$router.push("/event-map"); 
         },
     },
     mounted() {

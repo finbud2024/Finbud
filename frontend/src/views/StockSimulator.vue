@@ -250,24 +250,40 @@ export default {
     } 
   },
   watch: {
-    '$route.query': {
+    "$route.query": {
       immediate: true,
       handler(newQuery) {
-        this.stockSymbol = newQuery.symbol || '';
-        this.quantity = newQuery.quantity || '';
-        this.bannerDisplayStock = newQuery.symbol || "AAPL";
+        this.stockSymbol = newQuery.symbol || "";
+        this.quantity = newQuery.quantity ? parseInt(newQuery.quantity, 10) : 1;
+
+        // Ensure "action" gets updated in the dropdown
+        if (newQuery.action === "sell" || newQuery.action === "buy") {
+          this.action = newQuery.action;
+        }
       }
-    },
-    displayStock(newVal) {
-      console.log(newVal);
     }
   },
   mounted() {
     const shuffledStock = stockData.slice().sort(() => 0.5 - Math.random());
     this.displayStock = shuffledStock.slice(0, 10);
 
-    if (this.$route.query.symbol && this.$route.query.quantity) {
-      this.bannerDisplayStock = this.$route.query.symbol;
+    const urlParams = new URLSearchParams(window.location.search);
+    const symbol = urlParams.get("symbol");
+    const quantity = urlParams.get("quantity");
+    const action = urlParams.get("action");
+
+    if (symbol) this.stockSymbol = symbol;
+    if (quantity) this.quantity = parseInt(quantity, 10);
+    if (action === "sell" || action === "buy") {
+      this.action = action;
+    }
+    if (this.stockSymbol && this.quantity) {
+      setTimeout(() => {
+        const previewButton = document.querySelector(".preview-btn");
+        if (previewButton) {
+          previewButton.click();
+        }
+      }, 1000); // Wait 1 second to ensure the form is populated before clicking
     }
     const userData = JSON.parse(localStorage.getItem('user'));
     this.accountBalance = userData.bankingAccountData.accountBalance;
