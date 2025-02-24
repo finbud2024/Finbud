@@ -123,5 +123,13 @@
     background-color: #f0f0f0;
     color: #000;
   }
+
+
+  .user {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+  }
+
   </style>
   
