@@ -161,6 +161,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
+import { gptNewsService } from '@/services/gptServices';
 
 export default {
     name: 'EventHub',
@@ -206,16 +207,23 @@ export default {
               });
         },
 
-        generateBotMessage(articles) {
+        async generateBotMessage(articles) {
             if (!articles.length) return;
+            let message = "";
 
-            let message = "Here are some interesting articles I found:<br><br>";
-            articles.slice(0, 3).forEach((article, index) => {
-                message += `${index + 1}. <a href="${article.url}" target="_blank" class="article-link">${article.title}</a><br>`;
-                message += '<br>';
-            });
+            const additionalMessages = [
+                {
+                    role: "user",
+                    content: "Please sort these articles based on the defined priorities."
+                }
+            ];
 
-            this.$emit('finbudBotResponse', message);
+            try {
+                message = await gptNewsService(additionalMessages, this.trendingEvents);
+                this.$emit('finbudBotResponse', message);
+            } catch (error) {
+                console.error("GPT Service Error:", error);
+            }
         },
 
         openEventUrl(url) {
