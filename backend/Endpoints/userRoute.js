@@ -9,7 +9,8 @@ userRoute.get("/users/:userId", async (req, res) => {
     const userId = req.params.userId;
     console.log('in /users/:userId Route (GET) user with ID:' + JSON.stringify(userId));
     try {
-        const user = await User.findById(userId);
+        //const user = await User.findById(userId);
+        const user = await User.findById(userId).select('accountData.username settings');
         if (!user) {
             return res.status(404).send(`Cannot find user in db with user ID is: ${userId}`);
         }
@@ -52,6 +53,40 @@ userRoute.put("/users/:userId", validateRequest(User.schema), async (req, res) =
         return res.status(501).send("Internal error: " + err);
     }
 });
+
+// Update user settings
+userRoute.put("/users/:userId/settings", async (req, res) => {
+    const userId = req.params.userId;
+    console.log('in /users/:userId/settings Route (PUT) user with ID:', userId);
+    console.log('Request body:', req.body);
+    
+    try {
+        // First verify the user exists
+        const userExists = await User.findById(userId);
+        if (!userExists) {
+            console.log('User not found in database');
+            return res.status(404).send(`Cannot find user with user ID : ${userId} in database`);
+        }
+
+        const filter = { "_id": userId };
+        const update = { $set: { 'settings.darkMode': req.body.settings.darkMode } };
+        
+        console.log('Attempting update with filter:', filter);
+        console.log('Update operation:', update);
+
+        const user = await User.updateOne(filter, update, { new: true });
+        console.log('Update result:', user);
+
+        return res.status(200).send({ 
+            message: `User settings updated successfully`,
+            darkMode: req.body.settings.darkMode
+        });
+    } catch (err) {
+        console.error('Error in settings update:', err);
+        return res.status(501).send("Internal error: " + err);
+    }
+});
+
 
 // DELETE: delete a user with given id
 userRoute.delete("/users/:userId", async (req, res) => {
