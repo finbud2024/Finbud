@@ -38,7 +38,10 @@ const userSchema = new mongoose.Schema({
 			type: Number,
 			default: 1000
 		}
-	}
+	},
+	settings: {
+		darkMode: { type: Boolean, default: false }
+	  }
 });
 
 // // Hash password before saving user
