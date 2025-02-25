@@ -174,6 +174,7 @@ export default {
   --content-bg: #ffffff;
   --shadow-color: #e9e2e2;
   --progress-color: #c8c5c5;
+  --logo-color: #007bff
 }
 
 :root.dark-mode,
@@ -187,7 +188,9 @@ body.dark-mode {
   --hover-bg: #024384;
   --card-bg: #2d2d2d;
   --shadow-color: #0a6b10;
-  --progress-color: #e9e2e2
+  --progress-color: #e9e2e2;
+  --logo-color: #007bff;
+  --content-bg: #736969;
 }
 
 /* Update content area */
