@@ -208,7 +208,7 @@ export default {
 .navbar-brand {
   font-size: 2.5rem;
   font-weight: bold;
-  color: var(--accent-color);
+  color: var(--logo-color);
   cursor: pointer;
   text-decoration: none;
 }
