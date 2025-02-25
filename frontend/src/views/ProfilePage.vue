@@ -86,9 +86,9 @@ export default {
         // },
       ],
       financialData: [
-        { label: 'Account Value', value: '$23,196.00' },
-        { label: 'Buying Power', value: '$1,320.23' },
-        { label: 'Cash', value: '$-3,501.18' }
+        { label: 'Account Value', value: '$' },
+        { label: 'Buying Power', value: '$' },
+        { label: 'Cash', value: '$' }
       ]
     };
   },
@@ -220,16 +220,35 @@ export default {
     }
   },
   async mounted(){
-    //Change color of balance based on value
-    const accountValue = document.querySelectorAll('.stock-simulator-container h1');
-    accountValue.forEach((value) => {
-      const v = parseFloat(value.textContent.replace('$', '').replace(',', ''));
-      if(v < 5000){
-        value.style.color = 'red';
-      } else {
-        value.style.color = 'green';
-      }
-    });
+    // fetch user's account balance
+    try {
+      const userId = localStorage.getItem('token');
+      const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
+      const response = await axios.get(api);
+      const data = response.data;
+
+      this.financialData = [
+        { label: 'Account Value', value: `$${data.bankingAccountData.accountBalance.toLocaleString()}` },
+        { label: 'Stock Value', value: `$${data.bankingAccountData.stockValue.toLocaleString()}` },
+        { label: 'Cash', value: `$${data.bankingAccountData.cash.toLocaleString()}` }
+      ];
+      
+      //Change color of balance based on value
+      this.$nextTick(() => {
+        const accountValue = document.querySelectorAll('.stock-simulator-container h1');
+        accountValue.forEach((value) => {
+          const v = parseFloat(value.textContent.replace('$', '').replace(',', ''));
+          if(v < 5000){
+            value.style.color = 'red';
+          } else {
+            value.style.color = 'green';
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error fetching financial data:', error);
+      toast.error('Failed to load financial data', { autoClose: 1000 });
+    }
 
     //fetch user profile
     try{

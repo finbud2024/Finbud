@@ -18,11 +18,11 @@
                         :text="message.text"
                         :typing="message.typing"
                         :timestamp="message.timestamp"
-                        :username="message.isUser ? 'Tri Bui' : 'FinBud Bot'"
-                        :avatar-src="message.isUser ? userAvatar : botAvatar"
+                        :username="message.isUser ? profileName : 'FinBud Bot'"
+                        :avatar-src="message.isUser ? profileImage : botAvatar"
                     />
                 </ChatFrame>
-                <UserInput @send-message="sendMessage" @clear-message="clearMessage" />
+                <UserInput class="user-input-container" @send-message="sendMessage" @clear-message="clearMessage" />
             </div>
         </div>
     </div>
@@ -32,11 +32,12 @@
 import ChatHeader from './ChatHeader.vue';
 import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
-import UserInput from './UserInput.vue';
+import UserInput from '@/components/UserInput.vue';
 import News from '../Risk&Chat/News.vue';
 import DisplayCrypto from './DisplayCrypto.vue';
 import DisplayStock from './DisplayStock.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import defaultImage from "@/assets/anonymous.png";
 
 const apiKey = process.env.VUE_APP_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -57,7 +58,6 @@ export default {
         return {
             newMessage: '',
             messages: [],
-            userAvatar: require('@/assets/profile/khoi.jpg'),
             botAvatar: require('@/assets/bot.png'),
             currentThread: {},
             threads: [],
@@ -65,6 +65,32 @@ export default {
             keyword: '',
         };
     },
+    computed: {
+      userData() {
+        try {
+          const data = localStorage.getItem('user');
+          return data ? JSON.parse(data) : null;
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+          return null;
+        }
+      },
+      profileImage() {
+        if (this.userData && this.userData.identityData) {
+          return this.userData.identityData.profilePicture;
+        }
+        return defaultImage;
+      },
+      profileName() {
+        if (this.userData && this.userData.identityData) {
+          return this.userData.identityData.displayName;
+        }
+        return 'User';
+      }
+    },
+
+
+
     watch: {
         threadId: {
             immediate: true,
@@ -261,6 +287,14 @@ export default {
     flex-direction: column;
     flex: 1;
     padding: 20px;
+}
+
+.user-input-container {
+  position: static;
+}
+
+.user-input-container :deep(.user-input) {
+  width: 100%;
 }
 
 @media (max-width: 768px) {

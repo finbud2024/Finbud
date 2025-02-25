@@ -12,7 +12,7 @@ export default {
 
 <style>
 .chat-frame {
-    height: 100%; /* Fixed height */
+    height: 50vh; /* Fixed height */
     overflow-y: auto; /* Enables vertical scrolling */
     /* padding: 0 10px; */
     /* border: 1px solid #ccc;  */

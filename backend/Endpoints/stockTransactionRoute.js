@@ -1,5 +1,6 @@
 import express from 'express';
 import StockTransaction from '../Database Schema/StockTransaction.js';
+import User from '../Database Schema/User.js';
 import validateRequest from '../utils/validateRequest.js';
 
 const stockTransactionRoute = express.Router();
@@ -91,15 +92,42 @@ stockTransactionRoute.route('/stock-transactions')
       return res.status(400).send("Stock symbol, type, quantity, price, and userId are required");
     }
 
-    const transaction = new StockTransaction({
-      stockSymbol,
-      type,
-      quantity,
-      price,
-      userId
-    });
-
     try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+
+      const totalCost = quantity * price;
+
+      if (type === "buy") {
+        if (user.bankingAccountData.cash < totalCost) {
+          return res.status(400).send("Insufficient cash to buy stocks");
+        }
+        user.bankingAccountData.cash -= totalCost;
+        user.bankingAccountData.stockValue += totalCost;
+      }
+      else if (type === "sell") {
+        if (user.bankingAccountData.stockValue < totalCost) {
+          return res.status(400).send("Not enough stock value to sell");
+        }
+        user.bankingAccountData.cash += totalCost;
+        user.bankingAccountData.stockValue -= totalCost;
+      }
+      else {
+        return res.status(400).send("Invalid transaction type");
+      }
+
+      await user.save();
+
+      const transaction = new StockTransaction({
+        stockSymbol,
+        type,
+        quantity,
+        price,
+        userId
+      });
+
       const savedTransaction = await transaction.save();
       console.log("Stock transaction saved: ", savedTransaction);
       return res.status(201).json(savedTransaction);
