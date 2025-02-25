@@ -169,10 +169,11 @@ export default {
   --nav-bg: #ffffff;
   --border-color: #dddddd;
   --link-color: #007bff;
-  --hover-bg: #f8f9fa;
+  --hover-bg: #024384;
   --card-bg: #ffffff;
   --content-bg: #ffffff;
-  --shadow-color: #e9e2e2
+  --shadow-color: #e9e2e2;
+  --progress-color: #c8c5c5;
 }
 
 :root.dark-mode,
@@ -183,9 +184,10 @@ body.dark-mode {
   --nav-bg: #242424;
   --border-color: #404040;
   --link-color: #4da3ff;
-  --hover-bg: #2d2d2d;
+  --hover-bg: #024384;
   --card-bg: #2d2d2d;
-  --shadow-color: #0a6b10
+  --shadow-color: #0a6b10;
+  --progress-color: #e9e2e2
 }
 
 /* Update content area */

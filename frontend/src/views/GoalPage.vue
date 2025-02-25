@@ -58,8 +58,8 @@
         <div class="headline-buttons">
           <h2>Daily Transactions</h2>
           <div class="buttons">
-              <button @click="openModal">Add</button>
-              <button @click="showResetConfirmationModal = true">
+              <button @click="openModal" style="font-weight: bold;">Add</button>
+              <button @click="showResetConfirmationModal = true" style="font-weight: bold;">
                 Reset
               </button>
             </div>
@@ -164,14 +164,22 @@
                   <td>
                     {{ trans.type === "Income" ? "Credited" : "Debited" }}
                   </td>
-                  <td>
+                  <td class="buttons">
                     <button
                       @click="editTransaction(trans)"
-                      style="margin-right: 10px"
+                      style="
+                      margin-right: 10px;
+                      padding: 6px 12px;
+                      "
                     >
                       Edit
                     </button>
-                    <button @click="removeTransaction(trans._id)">
+                    <button 
+                      @click="removeTransaction(trans._id)"
+                      style="
+                      padding: 6px 12px;
+                      "
+                    >
                       Remove
                     </button>
                   </td>
@@ -186,7 +194,7 @@
         <section class="financial-goals">
           <div class="goal-upper-part">
             <h3 class="goal-section-title">Goals</h3>
-            <button class="add-goal-button" @click="showAddGoalModal = true">Add Goal</button>
+            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">Add Goal</button>
             </div>
 
             <div class="search-container">
@@ -951,7 +959,7 @@ export default {
   margin-bottom: 0px;
   margin-top: 0px;
   font-size: 2em;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .add-goal-button {
@@ -1006,7 +1014,7 @@ export default {
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  color: var(--text-primary);
+  color: var(--bg-primary);
 }
 
 .goal-icon {
@@ -1018,18 +1026,18 @@ export default {
 .goal-info h3 {
   margin: 10px 0;
   font-size: 1.5em;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .goal-info p {
   margin: 5px 0;
   font-size: 1em;
-  color: #666;
+  color: var(--text-primary) !important;
 }
 
 .progress-bar-container {
   width: 100%;
-  background-color: var(--hover-bg);
+  background-color: var(--progress-color);
   border-radius: 10px;
   overflow: hidden;
   margin-top: 10px;
@@ -1113,7 +1121,7 @@ export default {
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .form-group input,
@@ -1500,7 +1508,7 @@ hr {
 }
 
 .transaction-list th {
-  background-color: var(--hover-bg);
+  background-color: var(--bg-primary);
 }
 
 .expense {
