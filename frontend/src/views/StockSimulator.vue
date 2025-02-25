@@ -446,7 +446,7 @@ export default {
 
 .account-info-container {
   background-color: #f8f9fa;
-  padding: 33px;  /* Reduced from 15px */
+  padding: 28px;  /* Reduced from 15px */
   border-radius: 5px;
   border: 1px solid #dee2e6;
   width: 100%;
@@ -455,7 +455,7 @@ export default {
 
 .chat-bot-container {
   background-color: #f8f9fa;
-  padding: 33px;
+  padding: 30px;
   border-radius: 5px;
   border: 1px solid #dee2e6;
   width: 100%;
