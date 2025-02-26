@@ -17,7 +17,7 @@
             <div v-if="item.example">(e.g. "{{ item.example }}").</div>
             <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
             <div class="expanded-content">
-              <img class="explanation" :src="item.explanation" alt="explanation">
+              <img class="explanation" :src="item.explanation" alt="explanation" @click="handleImageClick(item)">
             </div>
           </li>
           <!-- guidance for authenticated users -->
@@ -31,12 +31,12 @@
               <div v-if="item.instruction">{{ item.instruction }}.</div>
               <div v-if="item.example">(e.g. "{{ item.example }}").</div>
               <div class="expanded-content">
-                <img class="explanation" :src="item.explanation" alt="explanation">
+                <img class="explanation" :src="item.explanation" alt="explanation" @click.stop="handleImageClick(item)">
               </div>
             </li>
           </div>
           <!-- this one always at last regardless of user status -->
-          <li @click="toggleExpansion(generalAdvice)"
+          <!-- <li @click="toggleExpansion(generalAdvice)"
             :class="{ 'expanded': expandedItem === generalAdvice }"
           >
             <span class="header-list">{{generalAdvice.header}}</span>
@@ -44,7 +44,7 @@
             <div class="expanded-content">
               <img class="explanation" :src="generalAdvice.explanation" alt="explanation">
             </div>
-          </li>
+          </li> -->
         </ol>
       </div>
     </div>
@@ -61,7 +61,8 @@ import add from '@/assets/guidance-explanation/add.png'
 import spend from '@/assets/guidance-explanation/spend.png'
 import buy from '@/assets/guidance-explanation/buy.png'
 import sell from '@/assets/guidance-explanation/sell.png'
-import general from '@/assets/guidance-explanation/general.png'
+// import general from '@/assets/guidance-explanation/general.png'
+import create from '@/assets/guidance-explanation/create.png'
 export default {
   name: 'GuidanceModal',
   props: {
@@ -134,12 +135,18 @@ export default {
           example: "#sell TSLA 10",
           explanation: sell,
         },
+        {
+          header: "Add a Goal",
+          command: "#create goal",
+          example: null,
+          explanation: create,
+        },
       ],
-      generalAdvice: {
-        header: "General Financial Concepts & Advice",
-        instruction: "For general inquiries, use descriptive terms.",
-        explanation: general,
-      },
+      // generalAdvice: {
+      //   header: "General Financial Concepts & Advice",
+      //   instruction: "For general inquiries, use descriptive terms.",
+      //   explanation: general,
+      // },
       expandedItem: null,
     };
   },
@@ -160,6 +167,10 @@ export default {
       else {
         this.expandedItem = item;
       }
+    },
+    handleImageClick(item) {
+      this.$emit("sendMessage", item.example || item.command);
+      this.close();
     }
   }
 };
