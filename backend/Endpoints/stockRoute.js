@@ -21,7 +21,7 @@ stockRoute.get("/api/stocks", async (req, res) => {
                 ],
                 ignore_unknown_fields: false,
                 options: { lang: "vi" },
-                range: [0, 100],
+                range: [0, 10],
                 sort: {
                     sortBy: "market_cap_basic",
                     sortOrder: "desc",
