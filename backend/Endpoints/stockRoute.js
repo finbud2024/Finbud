@@ -11,23 +11,19 @@ stockRoute.get("/api/stocks", async (req, res) => {
             "https://scanner.tradingview.com/global/scan?label-product=markets-screener",
             {
                 columns: [
-                    "name", "description", "logoid", "update_mode", "type", "typespecs",
-                    "country.tr", "country_code_fund", "market_cap_basic",
-                    "fundamental_currency_code", "close", "pricescale", "minmov",
-                    "fractional", "minmove2", "currency", "change", "relative_volume_10d_calc",
-                    "price_earnings_ttm", "earnings_per_share_diluted_ttm",
-                    "earnings_per_share_diluted_yoy_growth_ttm", "dividends_yield_current",
-                    "sector.tr", "market", "sector", "recommendation_mark"
+                    "name", "logoid", "fundamental_currency_code", "close", "currency",
+                    "change", "relative_volume_10d_calc", "price_earnings_ttm",
+                    "earnings_per_share_diluted_ttm", "dividends_yield_current", "market", "sector"
                 ],
                 ignore_unknown_fields: false,
-                options: { lang: "vi" },
-                range: [0, 100],
+                options: { lang: "en" },
+                range: [0, 9],
                 sort: {
                     sortBy: "market_cap_basic",
                     sortOrder: "desc",
                     nullsFirst: false
                 },
-                preset: "worlds-largest-employers"
+                preset: "worlds_largest_companies"
             },
             {
                 headers: {
@@ -42,10 +38,29 @@ stockRoute.get("/api/stocks", async (req, res) => {
                 }
             }
         );
+        const formattedData = response.data.data.map(stock => {
+            return {
+                name: stock.d[0],                   // Mã chứng khoán
+                logo: stock.d[1],                     // Logo
+                currency: stock.d[2],                 // Loại tiền tệ
+                close: stock.d[3],                    // Giá đóng cửa
+                priceCurrency: stock.d[4],           // Đơn vị tiền tệ của giá
+                priceChange: stock.d[5],             // Tỷ lệ thay đổi giá
+                relativeVolume: stock.d[6],          // Khối lượng giao dịch so với trung bình 10 ngày
+                PERatio: stock.d[7],                 // Hệ số P/E (Price to Earnings)
+                EPS: stock.d[8],                     // Thu nhập trên mỗi cổ phiếu
+                dividendYield: stock.d[9],          // Lợi suất cổ tức
+                market: stock.d[10],                  // Thị trường
+                sector: stock.d[11]                   // Ngành
+            };
+        });
 
-        res.json(response.data);
+        res.json({
+            totalCount: response.data.totalCount,
+            stocks: formattedData
+        });
     } catch (error) {
-        console.error("Error fetching data from TradingView:", error.message);
+        console.error("Error fetching data from TradingView:", error);
         res.status(500).json({ error: "Failed to fetch data" });
     }
 });

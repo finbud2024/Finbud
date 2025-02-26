@@ -505,34 +505,29 @@ export default {
       style="width: 80%; margin: 0 auto"
     >
       <h3 style="text-align: center">Interpretation</h3>
-      <h5>Technical indicators</h5>
-      <ul>
-        <li>
-          Bollinger Bands is a measure of volatility. High volatility is
-          signified by wide bands while low volatility is signified by narrow
-          bands. Generally, high volatility is followed by low volatility
-        </li>
-        <li>
-          RSI or Relative Strength Index, is a measure to evaluate overbought
-          and oversold conditions.
-        </li>
-        <li>
-          SMA or Simple Moving Average using 50 day (fast) and 200 day (slow)
-          lines - short term going above long term is bullish trend. Short term
-          going below long term is bearish
-        </li>
-        <li>
-          EMA or Exponential Moving Average gives higher significance to recent
-          price data
-        </li>
-        <li>
-          MACD or Moving Average Convergence Divergence signifies no trend
-          reversal unless there are crossovers. The market is bullish when
-          signal line crosses above blue line, bearish when signal line crosses
-          below blue line
-        </li>
-      </ul>
-      <h5>Risk ratios</h5>
+      <ChatBotTyping :message="technicalIndicators" />
+      <ChatBotTyping :message="riskRatio" />
+    </div>
+  </div>
+
+  <DashBoard />
+  <MonteCarloSimulation />
+</template>
+
+<script>
+import MonteCarloSimulation from "./MonteCarloSimulation.vue";
+import DashBoard from "@/components/quant/DashBoard.vue";
+import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+
+export default {
+  components: {
+    ChatBotTyping,
+    DashBoard,
+    MonteCarloSimulation,
+  },
+  data() {
+    return {
+      riskRatio: `<h5>Risk ratios</h5>
       <ul>
         <li>Alpha: Return performance as compared to benchmark of market</li>
         <li>
@@ -544,25 +539,34 @@ export default {
           better
         </li>
         <li>Sortino Ratio: Returns as compared to only downside risk</li>
-      </ul>
-    </div>
-  </div>
-
-  <DashBoard />
-  <MonteCarloSimulation />
-</template>
-
-<script>
-import MonteCarloSimulation from "./MonteCarloSimulation.vue";
-import DashBoard from "@/components/quant/DashBoard.vue";
-
-export default {
-  components: {
-    DashBoard,
-    MonteCarloSimulation,
-  },
-  data() {
-    return {
+      </ul>`,
+      technicalIndicators: `<h5>Technical indicators</h5>
+  <ul>
+    <li>
+      Bollinger Bands is a measure of volatility. High volatility is
+      signified by wide bands while low volatility is signified by narrow
+      bands. Generally, high volatility is followed by low volatility.
+    </li>
+    <li>
+      RSI or Relative Strength Index is a measure to evaluate overbought
+      and oversold conditions.
+    </li>
+    <li>
+      SMA or Simple Moving Average using 50-day (fast) and 200-day (slow)
+      lines - short term going above long term is bullish; short term
+      going below long term is bearish.
+    </li>
+    <li>
+      EMA or Exponential Moving Average gives higher significance to recent
+      price data.
+    </li>
+    <li>
+      MACD or Moving Average Convergence Divergence signifies no trend
+      reversal unless there are crossovers. The market is bullish when
+      the signal line crosses above the blue line, and bearish when it crosses
+      below.
+    </li>
+  </ul>`,
       timePeriod: "1y",
       indicator: "Bollinger Bands",
       returns: "Daily Returns",
