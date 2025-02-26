@@ -17,11 +17,11 @@
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
             <router-link to="/quant-analysis" class="home" @click="toggleDropdown(false)">Quant</router-link>
+            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdown(false)">Quant Simulator</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk
-              Analysis</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
           </div>
         </li>
         <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
@@ -56,9 +56,9 @@
           <div class="authenticated" v-if="isAuthenticated">
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
+            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">Quant Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk
-              Analysis</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/quant-analysis" class="home">Quant</router-link>
             <router-link to="#" @click="logout" class="logout">Log Out</router-link>
