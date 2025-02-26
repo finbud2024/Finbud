@@ -7,7 +7,8 @@
         "client": "cd frontend && vue-cli-service serve",
         "start": "nodemon backend/functions/server.js",
         "dev": "dotenv -e .env netlify dev",
-        "seeding": "node backend/utils/stockSeeding.js"
+        "seeding": "node backend/utils/stockSeeding.js",
+        "install:python-deps": "pip install -r backend/functions/requirements.txt"
     },
     "dependencies": {
         "@canvasjs/charts": "^3.10.0",
