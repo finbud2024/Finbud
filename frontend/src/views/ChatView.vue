@@ -6,7 +6,7 @@
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
     </div>
-    <ChatComponent @initialThreadName="initialThreadName"/>
+    <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent"/>
     <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
@@ -16,6 +16,7 @@
     <GuidanceModal  
       v-if="showGuidance" 
       @close="showGuidance = false" 
+      @sendMessage="sendMessageToChat"
       :showModal="showGuidance" 
     />
   </div>
@@ -127,6 +128,11 @@ export default {
     },
     initialThreadName(newThreadName){
       this.newThreadName = newThreadName;
+    },
+    sendMessageToChat(message) {
+      if (this.$refs.chatComponent) {
+        this.$refs.chatComponent.sendMessage(message);
+      }
     }
   },
   async mounted() {
