@@ -56,6 +56,7 @@ export default {
   position: absolute;
   width: 100%;
   bottom: 0;
+  background-color: var(--bg-primary);
 }
 
 .user-input {
@@ -76,39 +77,46 @@ export default {
   flex-grow: 1;
   margin-right: 10px;
   padding: 10px 10px 10px 40px;
-  border: 2px solid black;
+  border: 2px solid var(--border-color);
   border-radius: 20px;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
   transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .user-input input[type="text"]:focus {
-  border-color: #80bdff;
+  border-color: var(--link-color);
   outline: none;
-  box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+  box-shadow: 0 0 5px var(--shadow-color);
+}
+
+.user-input input[type="text"]::placeholder {
+  color: var(--text-primary);
+  opacity: 0.6;
 }
 
 .upload-btn {
   position: absolute;
   left: 30px;
   cursor: pointer;
-  color: #007bff;
+  color: var(--link-color);
 }
 
 .send-btn {
   position: absolute;
   right: 40px;
   cursor: pointer;
-  color: #007bff;
+  color: var(--link-color);
 }
 
 .upload-btn:hover {
-  color: #0056b3;
+  color: var(--link-color);
   transform: scale(1.1);
 }
 
 .upload-btn:focus, .send-btn:focus {
   outline: none;
-  box-shadow: 0 0 5px rgba(128, 189, 255, 0.5);
+  box-shadow: 0 0 5px var(--shadow-color);
 }
 
 /* Media queries */
