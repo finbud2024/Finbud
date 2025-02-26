@@ -309,6 +309,7 @@
 <script>
 import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
+import { toast } from 'vue3-toastify';
 export default {
   name: 'GoalPage',
   components: {

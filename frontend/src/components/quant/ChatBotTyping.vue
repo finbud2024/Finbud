@@ -6,7 +6,7 @@ export default {
       partialMessage: "",
       chatbotTriggeredByScroll: false,
       chatbotMessage: "",
-      typingSpeed: 30,
+      typingSpeed: 8,
       showChatBubble: true,
       typingComplete: false
     }
