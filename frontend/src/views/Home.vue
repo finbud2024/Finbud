@@ -5,11 +5,10 @@
         <div class="intro-text1">
           <li class="title animate fade-in">Making the most informed financial choices</li>
           <li class="animate fade-in" :style="{ fontSize: '30px', fontWeight: 'bold', listStyleType: 'none' }">
-            Sign in to see more services
+            {{ signInTitle }}<span class="cursor">|</span>
           </li>
           <li class="description animate fade-in last-li">
-            With FinBud, you can ask for the best financial advice
-            anytime, anywhere
+            {{  signInDescription }} <span class="cursor">|</span>
           </li>
           <BigGreenButton @click="chatNow">{{ displayText }}</BigGreenButton>
         </div>
@@ -166,10 +165,29 @@
 <script>
 import BigGreenButton from "../components/Button/ChatNow.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
+import { useTypingEffect } from '@/composables/useTypingEffect';
+
 export default {
   name: 'MainContent',
   components: {
     BigGreenButton,
+  },
+  setup() {
+    const { 
+        typingText: signInTitle, 
+        startTyping: startTypingSignInTitle 
+    } = useTypingEffect('Sign in to see more services')
+    const { 
+      typingText: signInDescription, 
+      startTyping:  startTypingSignInDescription 
+    } = useTypingEffect('With FinBud, you can ask for the best financial advice anytime, anywhere')
+    
+    return {
+      signInTitle,
+      signInDescription, 
+      startTypingSignInTitle,
+      startTypingSignInDescription
+    }
   },
   data() {
     return {
@@ -213,6 +231,9 @@ export default {
     }
   },
   mounted() {
+    this.startTypingSignInTitle(); 
+    this.startTypingSignInDescription();
+    
     const observerOptions = {
       threshold: 0.1,
     };
@@ -233,6 +254,15 @@ export default {
 </script>
 
 <style scoped>
+.cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Add animations */
 .animate {
   opacity: 0;
