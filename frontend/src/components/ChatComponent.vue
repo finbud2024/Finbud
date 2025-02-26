@@ -366,16 +366,44 @@ export default {
 						console.error("Error in stock message:", err.message);
 					}
 				}
-				// HANDLE GENERAL
-				else {
+				// HANDLE CREATE (10)
+				else if (userMessage.includes("#create")) {
 					try {
-						const prompt = userMessage;
-						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
-						answers.push(gptResponse);
+						const createRegex = /#create\s+goal/i;
+						const match = userMessage.match(createRegex);
+						if (match) {
+							const baseUrl = window.location.origin.includes("localhost")
+								? "http://localhost:8888"
+								: "https://finbud.pro";
+
+							// Open the /goal page
+							const url = `${baseUrl}/goal`;
+							window.open(url, "_blank");
+
+							// Wait for the page to load and auto-click the Add Goal button
+							setTimeout(() => {
+								window.addEventListener("load", () => {
+									const addGoalButton = document.querySelector(".add-goal-button");
+									if (addGoalButton) addGoalButton.click();
+								});
+							}, 2000);
+						} else {
+							this.addTypingResponse("Invalid create command format", false);
+						}
 					} catch (err) {
-						console.error("Error in general message:", err.message);
-					}
+        				console.error("Error in create message:", err.message);
+   					}
 				}
+				// HANDLE GENERAL
+				// else {
+				// 	try {
+				// 		const prompt = userMessage;
+				// 		const gptResponse = await gptServices([{ role: "user", content: prompt }]);
+				// 		answers.push(gptResponse);
+				// 	} catch (err) {
+				// 		console.error("Error in general message:", err.message);
+				// 	}
+				// }
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
 				if (this.isAuthenticated) {
