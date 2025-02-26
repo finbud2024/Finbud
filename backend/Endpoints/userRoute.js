@@ -10,45 +10,11 @@ userRoute.get("/users/:userId", async (req, res) => {
     console.log('in /users/:userId Route (GET) user with ID:' + JSON.stringify(userId));
     try {
         //const user = await User.findById(userId);
-        const user = await User.findById(userId).select('accountData.username settings');
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).send(`Cannot find user in db with user ID is: ${userId}`);
         }
         return res.status(200).send(user);
-    } catch (err) {
-        return res.status(501).send("Internal error: " + err);
-    }
-});
-
-// PUT: update user with given id
-userRoute.put("/users/:userId", validateRequest(User.schema), async (req, res) => {
-    const userId = req.params.userId;
-    console.log('in /users/:userId Route (PUT) user with ID:' + userId);
-    try {
-        const filter = { "_id": userId };
-        const updatedUser = {};
-
-        if (req.body.accountData) {
-            for (const key in req.body.accountData) {
-                updatedUser[`accountData.${key}`] = req.body.accountData[key];
-            }
-        }
-
-        if (req.body.identityData) {
-            for (const key in req.body.identityData) {
-                updatedUser[`identityData.${key}`] = req.body.identityData[key];
-            }
-        }
-
-        const user = await User.updateOne(filter, updatedUser, {
-            new: true
-        });
-
-        if (!user.modifiedCount) {
-            return res.status(404).send(`Cannot find user with user ID : ${userId} in database`);
-        }
-
-        return res.status(200).send({ message: `User updated successfully`, updatedUser: user });
     } catch (err) {
         return res.status(501).send("Internal error: " + err);
     }
@@ -87,6 +53,39 @@ userRoute.put("/users/:userId/settings", async (req, res) => {
     }
 });
 
+// PUT: update user with given id
+userRoute.put("/users/:userId", validateRequest(User.schema), async (req, res) => {
+    const userId = req.params.userId;
+    console.log('in /users/:userId Route (PUT) user with ID:' + userId);
+    try {
+        const filter = { "_id": userId };
+        const updatedUser = {};
+
+        if (req.body.accountData) {
+            for (const key in req.body.accountData) {
+                updatedUser[`accountData.${key}`] = req.body.accountData[key];
+            }
+        }
+
+        if (req.body.identityData) {
+            for (const key in req.body.identityData) {
+                updatedUser[`identityData.${key}`] = req.body.identityData[key];
+            }
+        }
+
+        const user = await User.updateOne(filter, updatedUser, {
+            new: true
+        });
+
+        if (!user.modifiedCount) {
+            return res.status(404).send(`Cannot find user with user ID : ${userId} in database`);
+        }
+
+        return res.status(200).send({ message: `User updated successfully`, updatedUser: user });
+    } catch (err) {
+        return res.status(501).send("Internal error: " + err);
+    }
+});
 
 // DELETE: delete a user with given id
 userRoute.delete("/users/:userId", async (req, res) => {
