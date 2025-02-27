@@ -395,15 +395,15 @@ export default {
    					}
 				}
 				// HANDLE GENERAL
-				// else {
-				// 	try {
-				// 		const prompt = userMessage;
-				// 		const gptResponse = await gptServices([{ role: "user", content: prompt }]);
-				// 		answers.push(gptResponse);
-				// 	} catch (err) {
-				// 		console.error("Error in general message:", err.message);
-				// 	}
-				// }
+				else {
+					try {
+						const prompt = userMessage;
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
+						answers.push(gptResponse);
+					} catch (err) {
+						console.error("Error in general message:", err.message);
+					}
+				}
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
 				if (this.isAuthenticated) {
