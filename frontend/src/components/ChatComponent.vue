@@ -115,6 +115,9 @@ export default {
 				let newVideos = [];
 				let newRelevantQuestions = [];
 
+				// Add thinking message
+				this.addTypingResponse("Thinking...", false);
+
 				// HANDLE DEFINE(2)
 				if (userMessage.toLowerCase().includes("#define")) {
 					try {
@@ -404,6 +407,11 @@ export default {
 				// 		console.error("Error in general message:", err.message);
 				// 	}
 				// }
+				
+				// Remove the thinking message
+        this.messages = this.messages.filter(msg => msg.text !== "Thinking...");
+				await this.$nextTick();
+				
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
 				if (this.isAuthenticated) {
