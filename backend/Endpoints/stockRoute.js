@@ -6,6 +6,15 @@ import axios from 'axios';
 const stockRoute = express.Router();
 
 stockRoute.get("/api/stocks", async (req, res) => {
+    const { start = 0, end = 9, search } = req.query;
+
+    const filter = search ? [{
+        left: "name,description",
+        operation: "match",
+        right: search
+    }] : undefined;
+
+
     try {
         const response = await axios.post(
             "https://scanner.tradingview.com/global/scan?label-product=markets-screener",
@@ -17,7 +26,8 @@ stockRoute.get("/api/stocks", async (req, res) => {
                 ],
                 ignore_unknown_fields: false,
                 options: { lang: "en" },
-                range: [0, 9],
+                range: [start, end],
+                filter,
                 sort: {
                     sortBy: "market_cap_basic",
                     sortOrder: "desc",
