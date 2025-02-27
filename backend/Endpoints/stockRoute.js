@@ -5,16 +5,21 @@ import axios from 'axios';
 
 const stockRoute = express.Router();
 
+
 stockRoute.get("/api/stocks", async (req, res) => {
-    const { start = 0, end = 9, search } = req.query;
+    const { page = 1, pageSize = 10, search, sortBy = "market_cap_basic", sortOrder = "desc", markets = "america" } = req.query;
+    const pageNumber = parseInt(page);
+    const size = parseInt(pageSize);
+
+    const start = (pageNumber - 1) * size;
+    const end = start + size - 1;
+
 
     const filter = search ? [{
         left: "name,description",
         operation: "match",
         right: search
     }] : undefined;
-
-
 
     try {
         const response = await axios.post(
@@ -29,12 +34,12 @@ stockRoute.get("/api/stocks", async (req, res) => {
                 options: { lang: "en" },
                 range: [start, end],
                 filter,
+                markets: [markets],
                 sort: {
-                    sortBy: "market_cap_basic",
-                    sortOrder: "desc",
+                    sortBy,
+                    sortOrder: sortOrder.toLowerCase() === "asc" ? "asc" : "desc",
                     nullsFirst: false
                 },
-                preset: "worlds_largest_companies"
             },
             {
                 headers: {
@@ -49,26 +54,33 @@ stockRoute.get("/api/stocks", async (req, res) => {
                 }
             }
         );
-        const formattedData = response.data.data.map(stock => {
-            return {
-                name: stock.d[0],                   // Mã chứng khoán
-                logo: stock.d[1],                     // Logo
-                currency: stock.d[2],                 // Loại tiền tệ
-                close: stock.d[3],                    // Giá đóng cửa
-                priceCurrency: stock.d[4],           // Đơn vị tiền tệ của giá
-                priceChange: stock.d[5],             // Tỷ lệ thay đổi giá
-                relativeVolume: stock.d[6],          // Khối lượng giao dịch so với trung bình 10 ngày
-                PERatio: stock.d[7],                 // Hệ số P/E (Price to Earnings)
-                EPS: stock.d[8],                     // Thu nhập trên mỗi cổ phiếu
-                dividendYield: stock.d[9],          // Lợi suất cổ tức
-                market: stock.d[10],                  // Thị trường
-                sector: stock.d[11]                   // Ngành
-            };
-        });
+
+        // Tính tổng số trang
+        const totalCount = response.data.totalCount;
+        const totalPages = Math.ceil(totalCount / size);
+
+        // Định dạng dữ liệu trả về
+        const formattedData = response.data.data.map(stock => ({
+            name: stock.d[0],
+            logo: stock.d[1],
+            currency: stock.d[2],
+            close: stock.d[3],
+            priceCurrency: stock.d[4],
+            priceChange: stock.d[5],
+            relativeVolume: stock.d[6],
+            PERatio: stock.d[7],
+            EPS: stock.d[8],
+            dividendYield: stock.d[9],
+            market: stock.d[10],
+            sector: stock.d[11]
+        }));
 
         res.json({
-            totalCount: response.data.totalCount,
-            stocks: formattedData
+            page: pageNumber,         // Trang hiện tại
+            totalPages: totalPages,    // Tổng số trang
+            pageSize: size,            // Số lượng item mỗi trang
+            totalCount: totalCount,    // Tổng số item
+            stocks: formattedData      // Dữ liệu chứng khoán
         });
     } catch (error) {
         console.error("Error fetching data from TradingView:", error);
