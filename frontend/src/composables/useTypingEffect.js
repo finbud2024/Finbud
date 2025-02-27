@@ -1,6 +1,12 @@
 import { ref } from 'vue'
 
-export function useTypingEffect(text, typingSpeed = 100, pauseDuration = 1000) {
+export function useTypingEffect(text, options = {}) {
+  const {
+    typingSpeed = 100,
+    pauseDuration = 1000,
+    reverseEffect = true
+  } = options
+
   const typingText = ref('')
   const typingIndex = ref(0)
   const isTypingForward = ref(true)
@@ -12,8 +18,8 @@ export function useTypingEffect(text, typingSpeed = 100, pauseDuration = 1000) {
         typingText.value += text.charAt(typingIndex.value)
         typingIndex.value++
         setTimeout(typeText, typingSpeed)
-      } else {
-        // When reached the end, wait and start deleting
+      } else if (reverseEffect) {
+        // When reached the end, wait and start deleting if reverseEffect is enabled
         setTimeout(() => {
           isTypingForward.value = false
           typeText()
