@@ -3,6 +3,7 @@
 		<ChatFrame>
 			<div v-for="(message, index) in messages" :key="index">
 				<MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
+					:is-thinking="message.isThinking"
 					:htmlContent="message.htmlContent" :username="message.isUser ? displayName : 'FinBud Bot'"
 					:avatar-src="message.isUser ? userAvatar : botAvatar"
 					:sources="message.isUser ? [] : message.sources" :videos="message.isUser ? [] : message.videos"
@@ -116,7 +117,7 @@ export default {
 				let newRelevantQuestions = [];
 
 				// Add thinking message
-				this.addTypingResponse("Thinking...", false);
+				this.addTypingResponse("", false, [], [], [], true);
 
 				// HANDLE DEFINE(2)
 				if (userMessage.toLowerCase().includes("#define")) {
@@ -409,7 +410,7 @@ export default {
 				// }
 				
 				// Remove the thinking message
-        this.messages = this.messages.filter(msg => msg.text !== "Thinking...");
+        this.messages = this.messages.filter(msg => !msg.isThinking);
 				await this.$nextTick();
 				
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
@@ -433,7 +434,7 @@ export default {
 			}
 		},
 		//------------------------- ULTILITIES FUNCTIONS ------------------------------------------------
-		addTypingResponse(text, isUser, sources = [], videos = [], relevantQuestions = []) {
+		addTypingResponse(text, isUser, sources = [], videos = [], relevantQuestions = [], isThinking = false) {
 			const typingMessage = {
 				text: text,
 				isUser: isUser,
@@ -442,7 +443,8 @@ export default {
 				username: isUser ? "You" : "FinBud Bot",
 				sources: sources,
 				videos: videos,
-				relevantQuestions: relevantQuestions
+				relevantQuestions: relevantQuestions,
+				isThinking,
 			};
 			this.messages.push(typingMessage);
 			setTimeout(() => {
