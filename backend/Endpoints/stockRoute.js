@@ -15,6 +15,7 @@ stockRoute.get("/api/stocks", async (req, res) => {
     }] : undefined;
 
 
+
     try {
         const response = await axios.post(
             "https://scanner.tradingview.com/global/scan?label-product=markets-screener",
