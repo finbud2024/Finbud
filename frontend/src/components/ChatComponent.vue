@@ -408,11 +408,11 @@ export default {
 						console.error("Error in general message:", err.message);
 					}
 				}
-				
+
 				// Remove the thinking message
         this.messages = this.messages.filter(msg => !msg.isThinking);
 				await this.$nextTick();
-				
+
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
 				//save chat to backend
 				if (this.isAuthenticated) {
