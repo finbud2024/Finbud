@@ -9,7 +9,7 @@
       {{ elapsedTime }}
     </div>
     
-    <div class="grid-container">
+    <div class="grid-container" data-aos="flip-left">
       <div class="left-column">
         <!-- Markets Panel -->
         <div class="panel">
@@ -40,7 +40,7 @@
         </div>
 
         <!-- Trades Panel -->
-        <div class="panel">
+        <div class="panel" data-aos="flip-left">
           <h2>Trades</h2>
           <div class="table-container">
             <table>
@@ -65,7 +65,7 @@
         </div>
 
         <!-- Chart Panel -->
-        <div class="panel">
+        <div class="panel" data-aos="flip-left">
           <h2>Multiplier Tradeable value</h2>
           <div class="chart-container">
             <LineChart :data="chartData" :options="chartOptions" />
@@ -75,7 +75,7 @@
 
       <div class="right-column">
         <!-- Team A Panel -->
-        <div class="panel">
+        <div class="panel" data-aos="flip-right">
           <h2>Team A Live Game</h2>
           <div class="table-container">
             <table>
@@ -98,7 +98,7 @@
         </div>
 
         <!-- Team B Panel -->
-        <div class="panel">
+        <div class="panel" data-aos="flip-right">
           <h2>Team B Live Game</h2>
           <div class="table-container">
             <table>
@@ -126,9 +126,11 @@
 
 <script>
 // import { ref, onMounted, onUnmounted } from 'vue';  // Comment out onMounted and onUnmounted
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Line as LineChart } from 'vue-chartjs';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -223,15 +225,14 @@ export default {
       return `${timeValue.toFixed(1)} min`;
     };
 
-    /* Temporarily comment out these lifecycle hooks
     onMounted(() => {
       // mounted code
+      AOS.init({ duration: 800, easing: "ease-out" });
     });
 
-    onUnmounted(() => {
-      // unmounted code
-    });
-    */
+    // onUnmounted(() => {
+    //   // unmounted code
+    // });
 
     const clockPosition = ref({ x: 20, y: 400 });
     const isDragging = ref(false);

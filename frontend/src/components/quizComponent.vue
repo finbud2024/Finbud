@@ -4,9 +4,10 @@
       v-model="searchQuery"
       @search="createRoadmap"
       placeholder="What do you want to learn today..."
+      data-aos="flip-right"
     />
 
-    <div class="goal-form-card">
+    <div class="goal-form-card" data-aos="zoom-in-up">
       <h1 class="title">What's your goal?</h1>
 
       <div class="form-group">
@@ -83,7 +84,7 @@
     </div>
   </div>
 
-  <div class="section-container">
+  <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
       <h1 class="title">Keyword-Based Quiz</h1>
       <div class="form-group">
@@ -201,7 +202,7 @@
     </div>
   </div>
 
-  <div class="section-container">
+  <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
       <span class="category-label">COURSE CATEGORIES</span>
       <h2 class="category-title">Popular Topics To Learn</h2>
@@ -227,7 +228,7 @@
     </div>
   </div>
 
-  <div class="section-container">
+  <div class="section-container" data-aos="fade-left">
     <div class="courses-container">
       <!-- Header Section -->
       <div class="courses-header">
@@ -337,55 +338,55 @@ export default {
       is_generating_roadmap: false,
       categories: [
         {
-          name: "Personal Development",
+          name: "Corporate Finance",
           courseCount: 39,
           icon: "fas fa-backpack",
           isActive: false,
         },
         {
-          name: "Data Sciences",
+          name: "Financial Accounting",
           courseCount: 45,
           icon: "fas fa-microscope",
           isActive: false,
         },
         {
-          name: "Human Research",
+          name: "Stock Market",
           courseCount: 32,
           icon: "fas fa-users",
           isActive: true,
         },
         {
-          name: "Business Strategy",
+          name: "Investing",
           courseCount: 28,
           icon: "fas fa-chart-line",
           isActive: false,
         },
         {
-          name: "Web Development",
+          name: "Real Estate",
           courseCount: 56,
           icon: "fas fa-code",
           isActive: false,
         },
         {
-          name: "Digital Marketing",
+          name: "Mergers & Acquisitions (M&A)",
           courseCount: 42,
           icon: "fas fa-bullhorn",
           isActive: false,
         },
         {
-          name: "Graphic Design",
+          name: "Risk Management",
           courseCount: 35,
           icon: "fas fa-palette",
           isActive: false,
         },
         {
-          name: "Mobile Development",
+          name: "Financial Planning",
           courseCount: 48,
           icon: "fas fa-mobile-alt",
           isActive: false,
         },
         {
-          name: "Web Development",
+          name: "Wealth Management",
           courseCount: 56,
           icon: "fas fa-code",
           isActive: false,
@@ -394,11 +395,11 @@ export default {
       courses: [
         {
           id: 1,
-          title: "Complete JavaScript Course for Beginners",
+          title: "Financial Accounting for Beginners",
           level: "Beginner",
           image: "courses/course-01.jpg",
           lessons: 12,
-          duration: "6h 30m",
+          duration: " 6h 30m",
           rating: 4.8,
           reviews: 420,
           isFree: false,
@@ -408,11 +409,11 @@ export default {
         },
         {
           id: 2,
-          title: "UI/UX Design Fundamentals",
+          title: "Corporate Finance Essentials",
           level: "Intermediate",
           image: "courses/course-02.jpg",
           lessons: 15,
-          duration: "8h 45m",
+          duration: " 8h 45m",
           rating: 4.5,
           reviews: 350,
           isFree: false,
@@ -422,11 +423,11 @@ export default {
         },
         {
           id: 3,
-          title: "Introduction to Python Programming",
+          title: "Stock Market Investing 101",
           level: "Beginner",
           image: "courses/course-03.jpg",
           lessons: 10,
-          duration: "5h 15m",
+          duration: " 5h 15m",
           rating: 4.9,
           reviews: 530,
           isFree: true,
@@ -436,11 +437,11 @@ export default {
         },
         {
           id: 4,
-          title: "Advanced React Development",
+          title: "Real Estate Investment Strategies",
           level: "Advanced",
           image: "courses/course-04.jpg",
           lessons: 18,
-          duration: "10h 20m",
+          duration: " 10h 20m",
           rating: 4.7,
           reviews: 280,
           isFree: false,
@@ -450,11 +451,11 @@ export default {
         },
         {
           id: 5,
-          title: "Machine Learning Fundamentals",
+          title: "Mergers & Acquisitions (M&A) Fundamentals",
           level: "Intermediate",
           image: "courses/course-05.jpg",
           lessons: 14,
-          duration: "9h 10m",
+          duration: " 9h 10m",
           rating: 4.6,
           reviews: 320,
           isFree: false,
@@ -464,11 +465,11 @@ export default {
         },
         {
           id: 6,
-          title: "Web Development Bootcamp",
+          title: "Private Equity & Venture Capital",
           level: "Beginner",
           image: "courses/course-06.jpg",
           lessons: 20,
-          duration: "12h 45m",
+          duration: " 12h 45m",
           rating: 4.8,
           reviews: 475,
           isFree: false,
