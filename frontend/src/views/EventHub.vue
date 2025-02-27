@@ -1,6 +1,6 @@
 <template>
     <div class="EventHubContainer">
-        <nav class="w-full p-4 bg-white shadow-sm">
+        <nav class="w-full p-4 bg-white shadow-sm" data-aos="fade-left">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="event-navbar relative w-full md:w-1/2">
                     <input 
@@ -37,10 +37,10 @@
                 </div>
             </div>
         </nav>
-        <div class="event-banner">
+        <div class="event-banner" data-aos="flip-left">
             <img :src="require('@/assets/Banner.png')" alt="Banner" class="banner-img" />
         </div>
-        <div class="event-category">
+        <div class="event-category" data-aos="fade-right">
             <h3 class="text-2xl md:text-3xl text-center">Event Categories You May Like</h3>
             <div class="event-category-bg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div v-for="(category, index) in categories" :key="index" class="category-btn">
@@ -49,7 +49,7 @@
                 </div>
             </div>
         </div>
-        <div class="rounded-xl md:bg-white md:p-4">
+        <div class="rounded-xl md:bg-white md:p-4" data-aos="fade-right">
             <section class="events-section">
                 <div class="content-wrapper flex flex-col md:flex-row">
                     <div class="left-div w-full md:w-1/4 mb-6 md:mb-0">
@@ -115,12 +115,12 @@
                 </div>
             </section>
         </div>
-        <div class="frame3">
+        <div class="frame3" data-aos="flip-left">
             <div class="events-container">
                 <h3 class="text-2xl md:text-3xl mb-6">All Events</h3>
                 <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card">
-                        <img v-if="event.image" :src="event.image" alt="Event image" class="event-image" />
+                    <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card" data-aos="fade-left">
+                        <img v-if="event.image" :src="event.image" alt="Event image" class="event-image"/>
                         <div class="event-details">
                             <h2>{{ event.title }}</h2>
                             <p>{{ new Date(event.publish_date).toLocaleString() }}</p>
@@ -149,6 +149,8 @@ import "swiper/css/navigation";
 import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
 import { gptNewsService } from '@/services/gptServices';
 import EventMap from '@/components/EventMap.vue';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default {
     name: 'EventHub',
@@ -228,6 +230,7 @@ export default {
         this.fetchHeadlines();
         this.checkMobile();
         window.addEventListener('resize', this.checkMobile);
+        AOS.init({ duration: 1000, easing: "ease-out" });
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.checkMobile);
