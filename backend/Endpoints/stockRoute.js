@@ -5,15 +5,13 @@ import axios from 'axios';
 
 const stockRoute = express.Router();
 
-
 stockRoute.get("/api/stocks", async (req, res) => {
-    const { page = 1, pageSize = 10, search, sortBy = "market_cap_basic", sortOrder = "desc", markets = "america" } = req.query;
+    const { page = 1, pageSize = 10, search, sortBy = "market_cap_basic", sortOrder = "desc", markets="india"  } = req.query;
     const pageNumber = parseInt(page);
     const size = parseInt(pageSize);
 
     const start = (pageNumber - 1) * size;
     const end = start + size - 1;
-
 
     const filter = search ? [{
         left: "name,description",
@@ -76,17 +74,18 @@ stockRoute.get("/api/stocks", async (req, res) => {
         }));
 
         res.json({
-            page: pageNumber,         // Trang hiện tại
-            totalPages: totalPages,    // Tổng số trang
-            pageSize: size,            // Số lượng item mỗi trang
-            totalCount: totalCount,    // Tổng số item
-            stocks: formattedData      // Dữ liệu chứng khoán
+            page: pageNumber,
+            totalPages: totalPages,
+            pageSize: size,
+            totalCount: totalCount,
+            stocks: formattedData
         });
     } catch (error) {
         console.error("Error fetching data from TradingView:", error);
         res.status(500).json({ error: "Failed to fetch data" });
     }
 });
+
 
 stockRoute.post("/updateStockDB", validateRequest(StockPrice.schema), async (req, res) => {
     const symbol = req.body.symbol;

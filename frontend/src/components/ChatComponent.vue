@@ -399,15 +399,15 @@ export default {
    					}
 				}
 				// HANDLE GENERAL
-				// else {
-				// 	try {
-				// 		const prompt = userMessage;
-				// 		const gptResponse = await gptServices([{ role: "user", content: prompt }]);
-				// 		answers.push(gptResponse);
-				// 	} catch (err) {
-				// 		console.error("Error in general message:", err.message);
-				// 	}
-				// }
+				else {
+					try {
+						const prompt = userMessage;
+						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
+						answers.push(gptResponse);
+					} catch (err) {
+						console.error("Error in general message:", err.message);
+					}
+				}
 				
 				// Remove the thinking message
         this.messages = this.messages.filter(msg => !msg.isThinking);
