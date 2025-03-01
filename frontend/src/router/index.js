@@ -16,6 +16,7 @@ import ProfilePage from "@/views/ProfilePage.vue";
 import QuantAnalysis from "@/views/QuantAnalysis.vue";
 import EventHub from "@/views/EventHub.vue";
 import LearningRoadMap from "@/views/LearningRoadMap.vue";
+import QuantSimulator from "@/views/QuantSimulator.vue";
 // import EventMap from '@/components/EventMap.vue';
 
 const routes = [
@@ -80,6 +81,11 @@ const routes = [
     path: "/stock-simulator",
     name: "StockSimulator",
     component: StockSimulator,
+  },
+  {
+    path: "/quant-simulator",
+    name: "QuantSimulator",
+    component: QuantSimulator,
   },
   {
     path: "/goal",

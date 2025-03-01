@@ -304,14 +304,18 @@
       </button>
     </div>
   </div>
+  <ChatBotTyping :message="templateChat"/>
 </template>
 
 <script>
 import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
+import { toast } from 'vue3-toastify';
+import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
 export default {
   name: 'GoalPage',
   components: {
+    ChatBotTyping,
     TransactionLine,
   },
   data() {
@@ -320,7 +324,21 @@ export default {
       firstName: JSON.parse(localStorage.getItem('user')).identityData.firstName,
       displayName: JSON.parse(localStorage.getItem('user')).identityData.displayName,
       profilePic: JSON.parse(localStorage.getItem('user')).identityData.profilePicture,
+      templateChat: `Hey "Tri"! 😊 Here's a closer look at your spending:
 
+📚 You spent $1,233 on books on 03/23/2333. If it's for learning, great! Otherwise, make sure it aligns with your financial goals.
+
+🛒 You spent $425 on “shopping” across multiple entries on 09/07/2024 and 09/14/2024. Grouping these under one category might help track spending better.
+
+🚗 A -$150 car expense—if it's a refund, labeling it clearly will help with accurate tracking.
+
+Suggestions:
+
+1. Set spending caps for categories like books or shopping.
+2. Review high-cost purchases.
+3. Use consistent labels for similar expenses.
+
+Keep it chill, "Tri," and let's make smarter financial moves together!`,
       // goal data
       newGoal: {
         title: '',

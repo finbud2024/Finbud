@@ -545,7 +545,7 @@ export default {
 
 <style scoped>
 .stockDisplayContainer {
-  width: calc(100%-40px);
+  width: calc(100%- 40px);
   height: fit-content;
   display: flex;
   flex-direction: column;
