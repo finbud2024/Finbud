@@ -17,11 +17,11 @@
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
             <router-link to="/quant-analysis" class="home" @click="toggleDropdown(false)">Quant</router-link>
+            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdown(false)">Quant Simulator</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk
-              Analysis</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
           </div>
         </li>
         <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
@@ -32,6 +32,10 @@
             <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
               <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
               <p>{{ profileName }}</p>
+            </router-link>
+            <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
+              <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
+              <p>{{ isDarkMode ? 'Dark Mode' : 'Light Mode' }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
               <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
@@ -52,9 +56,9 @@
           <div class="authenticated" v-if="isAuthenticated">
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
+            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">Quant Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk
-              Analysis</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/quant-analysis" class="home">Quant</router-link>
             <router-link to="#" @click="logout" class="logout">Log Out</router-link>
@@ -83,6 +87,7 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
+      isDarkMode: localStorage.getItem("darkMode") === "enabled"
     };
   },
   computed: {
@@ -141,6 +146,26 @@ export default {
       this.$store.dispatch("users/logout");
       this.$router.push('/login');
     },
+    async toggleDarkMode() {
+      this.isDarkMode = !this.isDarkMode;
+      localStorage.setItem("darkMode", this.isDarkMode ? "enabled" : "disabled");
+      document.body.classList.toggle("dark-mode", this.isDarkMode);
+
+      // Update dark mode in the database
+      if (this.userData) {
+        const userId = this.userData._id;
+        try {
+          const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${userId}/settings`, {
+            settings: {
+              darkMode: this.isDarkMode
+            }
+          });
+          console.log("Dark mode updated:", response.data);
+        } catch (err) {
+          console.error("Error updating dark mode in database:", err.response ? err.response.data : err);
+        }
+      }
+    }
   },
   async mounted() {
     try {
@@ -150,6 +175,12 @@ export default {
         console.log('Login Success in navbar:', response.data);
         this.$store.dispatch("users/login", response.data.user._id);
         localStorage.setItem('user', JSON.stringify(response.data.user));
+
+        // Fetch user settings and apply dark mode if enabled
+        const userSettings = response.data.user.settings;
+        this.isDarkMode = userSettings?.darkMode || false;
+        document.body.classList.toggle("dark-mode", this.isDarkMode);
+        localStorage.setItem("darkMode", this.isDarkMode ? "enabled" : "disabled");
       }
     } catch (err) {
       console.log("After Sign in with google err: " + err);
@@ -162,7 +193,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
 
 .nav-bar {
-  background-color: #FFFFFF;
+  background-color: var(--bg-primary);
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -177,7 +208,7 @@ export default {
 .navbar-brand {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #007bff;
+  color: var(--logo-color);
   cursor: pointer;
   text-decoration: none;
 }
@@ -197,10 +228,9 @@ export default {
 }
 
 .nav-items li a {
-  color: black;
+  color: var(--text-primary);
   text-decoration: none;
   transition: color 0.3s ease;
-  /* set all font in navbar to 1rem */
   font-size: clamp(0.75rem, 5.6vw, 1.25rem);
 }
 
@@ -231,7 +261,7 @@ export default {
 }
 
 .nav-items li a:not(.login-button):not(.chatview):hover {
-  color: #007bff;
+  color: var(--accent-color);
 }
 
 .login-button:hover,
@@ -243,10 +273,11 @@ export default {
   cursor: pointer;
   position: relative;
   font-size: clamp(0.75rem, 5.6vw, 1.25rem);
+  color: var(--text-primary);
 }
 
 .services-dropdown:hover {
-  color: #007bff;
+  color: var(--accent-color);
 }
 
 .services-dropdown .arrow-down {
@@ -254,7 +285,7 @@ export default {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid black;
+  border-top: 5px solid var(--text-primary);
 }
 
 .dropdown {
@@ -265,18 +296,18 @@ export default {
 .dropdown-content {
   height: 0;
   position: absolute;
-  background-color: white;
+  background-color: var(--bg-primary);
   min-width: 100px;
-  box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
+  box-shadow: 0px 8px 16px 0px var(--shadow-color);
   z-index: 1;
   border-radius: 15px;
 }
 
 .dropdown-profile {
   position: absolute;
-  background-color: white;
+  background-color: var(--bg-primary);
   min-width: 200px;
-  box-shadow: 0px 8px 16px 0px rgba(25, 53, 143, 0.2);
+  box-shadow: 0px 8px 16px 0px var(--shadow-color);
   z-index: 1;
   transform: translate(-160px, 0px);
   border-radius: 15px;
@@ -296,8 +327,8 @@ export default {
 
 .dropdown-content a,
 .dropdown-profile a {
-  background-color: white;
-  color: black;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   padding: 12px 16px;
   text-decoration: none;
   display: flex;
@@ -354,10 +385,9 @@ export default {
   }
 }
 
-
 .dropdown-content a:hover,
 .dropdown-profile a:hover {
-  background-color: #ddd;
+  background-color: var(--bg-secondary);
 }
 
 /* .dropdown:hover .dropdown-content {
@@ -460,7 +490,7 @@ export default {
   .brand-mobile {
     font-size: 2rem;
     font-weight: bold;
-    color: #007bff;
+    color: var(--accent-color);
     cursor: pointer;
     text-decoration: none;
   }

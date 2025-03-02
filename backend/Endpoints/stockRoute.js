@@ -6,28 +6,38 @@ import axios from 'axios';
 const stockRoute = express.Router();
 
 stockRoute.get("/api/stocks", async (req, res) => {
+    const { page = 1, pageSize = 10, search, sortBy = "market_cap_basic", sortOrder = "desc", markets="india"  } = req.query;
+    const pageNumber = parseInt(page);
+    const size = parseInt(pageSize);
+
+    const start = (pageNumber - 1) * size;
+    const end = start + size - 1;
+
+    const filter = search ? [{
+        left: "name,description",
+        operation: "match",
+        right: search
+    }] : undefined;
+
     try {
         const response = await axios.post(
             "https://scanner.tradingview.com/global/scan?label-product=markets-screener",
             {
                 columns: [
-                    "name", "description", "logoid", "update_mode", "type", "typespecs",
-                    "country.tr", "country_code_fund", "market_cap_basic",
-                    "fundamental_currency_code", "close", "pricescale", "minmov",
-                    "fractional", "minmove2", "currency", "change", "relative_volume_10d_calc",
-                    "price_earnings_ttm", "earnings_per_share_diluted_ttm",
-                    "earnings_per_share_diluted_yoy_growth_ttm", "dividends_yield_current",
-                    "sector.tr", "market", "sector", "recommendation_mark"
+                    "name", "logoid", "fundamental_currency_code", "close", "currency",
+                    "change", "relative_volume_10d_calc", "price_earnings_ttm",
+                    "earnings_per_share_diluted_ttm", "dividends_yield_current", "market", "sector"
                 ],
                 ignore_unknown_fields: false,
-                options: { lang: "vi" },
-                range: [0, 100],
+                options: { lang: "en" },
+                range: [start, end],
+                filter,
+                markets: [markets],
                 sort: {
-                    sortBy: "market_cap_basic",
-                    sortOrder: "desc",
+                    sortBy,
+                    sortOrder: sortOrder.toLowerCase() === "asc" ? "asc" : "desc",
                     nullsFirst: false
                 },
-                preset: "worlds-largest-employers"
             },
             {
                 headers: {
@@ -43,12 +53,39 @@ stockRoute.get("/api/stocks", async (req, res) => {
             }
         );
 
-        res.json(response.data);
+        // Tính tổng số trang
+        const totalCount = response.data.totalCount;
+        const totalPages = Math.ceil(totalCount / size);
+
+        // Định dạng dữ liệu trả về
+        const formattedData = response.data.data.map(stock => ({
+            name: stock.d[0],
+            logo: stock.d[1],
+            currency: stock.d[2],
+            close: stock.d[3],
+            priceCurrency: stock.d[4],
+            priceChange: stock.d[5],
+            relativeVolume: stock.d[6],
+            PERatio: stock.d[7],
+            EPS: stock.d[8],
+            dividendYield: stock.d[9],
+            market: stock.d[10],
+            sector: stock.d[11]
+        }));
+
+        res.json({
+            page: pageNumber,
+            totalPages: totalPages,
+            pageSize: size,
+            totalCount: totalCount,
+            stocks: formattedData
+        });
     } catch (error) {
-        console.error("Error fetching data from TradingView:", error.message);
+        console.error("Error fetching data from TradingView:", error);
         res.status(500).json({ error: "Failed to fetch data" });
     }
 });
+
 
 stockRoute.post("/updateStockDB", validateRequest(StockPrice.schema), async (req, res) => {
     const symbol = req.body.symbol;

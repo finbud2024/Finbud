@@ -29,7 +29,7 @@ export default {
   transition-duration: 0.4s;
   cursor: pointer;
   border-radius: 0.5em;
-  box-shadow: 0 0.3125em #e9e2e2;
+  box-shadow: 0 0.3125em var(--shadow-color);
   width: 20%;
   min-width: 100px;
 }
@@ -39,7 +39,7 @@ export default {
 }
 
 .big-green-button:active {
-  box-shadow: 0 0.125em #666;
+  box-shadow: 0 0.125em var(--shadow-color);
   transform: translateY(0.25em);
 }
 

@@ -6,7 +6,7 @@
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
     </div>
-    <ChatComponent @initialThreadName="initialThreadName"/>
+    <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent"/>
     <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
@@ -16,6 +16,7 @@
     <GuidanceModal  
       v-if="showGuidance" 
       @close="showGuidance = false" 
+      @sendMessage="sendMessageToChat"
       :showModal="showGuidance" 
     />
   </div>
@@ -127,6 +128,11 @@ export default {
     },
     initialThreadName(newThreadName){
       this.newThreadName = newThreadName;
+    },
+    sendMessageToChat(message) {
+      if (this.$refs.chatComponent) {
+        this.$refs.chatComponent.sendMessage(message);
+      }
     }
   },
   async mounted() {
@@ -140,6 +146,8 @@ export default {
 .home-container {
   display: flex;
   width: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .sidebar-container {
@@ -154,14 +162,14 @@ export default {
   top: 15px;
   left: 10px;
   z-index: 1000;
-  color: black;
+  color: var(--text-primary);
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .toggle-sidebar-btn:hover {
-  background-color: #2980b9;
+  background-color: var(--hover-bg);
 }
 
 .chat-container {
@@ -194,7 +202,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 1000;
 }
 
@@ -205,7 +213,7 @@ export default {
   top: 0;
   width: 60%;
   height: 100%;
-  background-color: rgb(248, 249, 254);
+  background-color: var(--card-bg);
   z-index: 1001;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
@@ -223,7 +231,7 @@ export default {
   position: fixed;
   bottom: calc(15%);
   right: -105px;
-  background-color: #007bff;
+  background-color: var(--link-color);
   color: white;
   border: none;
   cursor: pointer;
@@ -240,7 +248,7 @@ export default {
   width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: var(--link-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -265,11 +273,12 @@ export default {
 .followup-component-card {
   width: 70%;
   margin: 0 auto;
-  background-color: #f8f9fa; /* Light grey background */
+  background-color: var(--card-bg);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  box-shadow: 0 2px 4px var(--shadow-color);
   margin-top: 20px;
+  color: var(--text-primary);
 }
 
 /* Animation for follow up and source components */
@@ -286,7 +295,7 @@ export default {
 
 @keyframes highlight {
   0% {
-    background-color: #f0f0f0;
+    background-color: var(--hover-bg);
   }
   100% {
     background-color: transparent;

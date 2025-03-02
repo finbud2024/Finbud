@@ -264,17 +264,17 @@ export default {
 <style scoped>
 .side-bar {
   width: 200px;
-  background-color: rgb(248, 249, 254);
+  background-color: var(--bg-primary);
   padding: 20px;
   height: 100%;
   overflow-y: auto;
-  color: black;
+  color: var(--text-primary);
 }
 
 .sidebar-header {
   font-weight: bold;
   padding-bottom: 15px;
-  border-bottom: 1px solid #34495e;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 20px;
   display: flex;
   justify-content: start;
@@ -286,8 +286,8 @@ export default {
   cursor: pointer;
   padding: 10px;
   background-color: transparent;
-  color: #34495e;
-  border: 1px solid #34495e;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   transition: background-color 0.3s;
   width: 100%;
@@ -295,12 +295,12 @@ export default {
 }
 
 .add-thread-btn:hover {
-  background-color: #34495e;
-  color: white;
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .edit-btn {
-  color: white;
+  color: var(--text-primary);
 }
 
 .edit-btn:hover {
@@ -334,33 +334,33 @@ export default {
 }
 
 .thread-list li:hover {
-  color: white;
+  color: var(--text-primary);
   cursor: pointer;
-  background-color: #34495e;
+  background-color: var(--hover-bg);
 }
 
 .thread-list input {
   width: 80%;
   padding: 8px;
-  border: 1px solid #34495e;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
-  background-color: #ecf0f1;
-  color: #2c3e50;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
 }
 
 .thread.clicked {
-  background-color: #34495e;
-  color: white;
+  background-color: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 /* Dropdown */
 .dropdown {
   display: block;
   position: absolute;
-  color: black;
-  background-color: rgb(249, 249, 249);
+  color: var(--text-primary);
+  background-color: var(--card-bg);
   min-width: 120px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 16px 0px var(--shadow-color);
   z-index: 1;
   left: 190px;
   margin-top: 140px;
@@ -383,7 +383,7 @@ export default {
 }
 
 .dropdown>div:hover {
-  background-color: #ddd;
+  background-color: var(--hover-bg);
   border-radius: 10px;
 }
 
@@ -409,10 +409,11 @@ export default {
   transform: translate(-50%, -50%);
   width: 400px;
   height: fit-content;
-  background: white;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px var(--shadow-color);
 }
 
 .delete-header {
@@ -426,7 +427,7 @@ export default {
   display: block;
   width: 100%;
   height: 1px;
-  background: #ddd;
+  background: var(--border-color);
   margin-top: 20px;
 }
 
@@ -443,7 +444,7 @@ export default {
 
 .delete-button-container button {
   padding: .75rem .875rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 9999px;
   cursor: pointer;
   font-weight: 500;
@@ -459,12 +460,12 @@ export default {
 }
 
 .cancel-button {
-  color: black;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
 }
 
 .cancel-button:hover {
-  background: #ddd;
+  background: var(--hover-bg);
 }
 </style>

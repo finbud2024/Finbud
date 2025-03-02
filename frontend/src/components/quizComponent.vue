@@ -1,6 +1,13 @@
 <template>
   <div class="section-container">
-    <div class="goal-form-card">
+    <search-input
+      v-model="searchQuery"
+      @search="createRoadmap"
+      placeholder="What do you want to learn today..."
+      data-aos="flip-right"
+    />
+
+    <div class="goal-form-card" data-aos="zoom-in-up">
       <h1 class="title">What's your goal?</h1>
 
       <div class="form-group">
@@ -54,6 +61,7 @@
           </div>
           <div class="input-group period-select">
             <select v-model="period" class="form-select">
+              <option value="" disabled selected>Select period</option>
               <option value="days">Days</option>
               <option value="weeks">Weeks</option>
               <option value="months">Months</option>
@@ -62,13 +70,21 @@
         </div>
       </div>
 
-      <button class="submit-button" @click="createRoadmap">
-        Create my roadmap
+      <button
+        class="submit-button"
+        @click="createRoadmap"
+        :disabled="!searchQuery.trim() || is_generating_roadmap"
+      >
+        {{
+          is_generating_roadmap
+            ? "Personalizing your roadmap..."
+            : "Create my roadmap"
+        }}
       </button>
     </div>
   </div>
 
-  <div class="section-container">
+  <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
       <h1 class="title">Keyword-Based Quiz</h1>
       <div class="form-group">
@@ -186,7 +202,7 @@
     </div>
   </div>
 
-  <div class="section-container">
+  <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
       <span class="category-label">COURSE CATEGORIES</span>
       <h2 class="category-title">Popular Topics To Learn</h2>
@@ -211,15 +227,96 @@
       </div>
     </div>
   </div>
+
+  <div class="section-container" data-aos="fade-left">
+    <div class="courses-container">
+      <!-- Header Section -->
+      <div class="courses-header">
+        <h4 class="courses-subtitle">POPULAR COURSES</h4>
+        <h2 class="courses-title">Our Popular Courses</h2>
+      </div>
+
+      <!-- Courses Grid -->
+      <div class="courses-grid">
+        <!-- Course Card  -->
+        <div v-for="course in courses" :key="course.id" class="course-card">
+          <!-- Top Section -->
+          <div class="course-card-top">
+            <span class="course-level" :class="course.level.toLowerCase()">{{
+              course.level
+            }}</span>
+            <button class="favorite-btn">
+              <i class="fas fa-heart"></i>
+            </button>
+            <img
+              :src="require(`@/assets/${course.image}`)"
+              :alt="course.title"
+              class="course-image"
+            />
+          </div>
+
+          <!-- Details Section -->
+          <div class="course-card-content">
+            <div class="course-meta">
+              <div class="course-lessons">
+                <i class="fas fa-book"></i>
+                <span>{{ course.lessons }} Lessons</span>
+              </div>
+              <div class="course-duration">
+                <i class="fas fa-clock"></i>
+                <span>{{ course.duration }}</span>
+              </div>
+            </div>
+
+            <h3 class="course-title">{{ course.title }}</h3>
+
+            <div class="course-rating">
+              <div class="stars">
+                <i
+                  v-for="n in 5"
+                  :key="n"
+                  :class="['fas', n <= course.rating ? 'fa-star' : 'fa-star-o']"
+                ></i>
+              </div>
+              <span class="reviews">({{ course.reviews }})</span>
+            </div>
+
+            <div class="course-price">
+              <template v-if="course.isFree">
+                <span class="free-price">Free</span>
+              </template>
+              <template v-else>
+                <span class="current-price">${{ course.price }}</span>
+                <span class="original-price" v-if="course.originalPrice"
+                  >${{ course.originalPrice }}</span
+                >
+              </template>
+            </div>
+
+            <div class="course-students">
+              <i class="fas fa-user"></i>
+              <span>{{ course.students }} Students</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { gptServices } from "@/services/gptServices";
+import { GPTService, gptServices } from "@/services/gptServices";
 import debounce from "lodash/debounce";
+import SearchInput from "@/components/basic/SearchInput.vue";
+
 export default {
   name: "quizComponent",
+  components: {
+    SearchInput,
+  },
   data() {
     return {
+      searchQuery: "",
       score: 0,
       timerCountdown: 0,
       searchKeyword: "",
@@ -238,61 +335,147 @@ export default {
       answerButtonDisabled: true,
       isLoading: false,
       modalDisplay: false,
-
+      is_generating_roadmap: false,
       categories: [
         {
-          name: "Personal Development",
+          name: "Corporate Finance",
           courseCount: 39,
           icon: "fas fa-backpack",
           isActive: false,
         },
         {
-          name: "Data Sciences",
+          name: "Financial Accounting",
           courseCount: 45,
           icon: "fas fa-microscope",
           isActive: false,
         },
         {
-          name: "Human Research",
+          name: "Stock Market",
           courseCount: 32,
           icon: "fas fa-users",
           isActive: true,
         },
         {
-          name: "Business Strategy",
+          name: "Investing",
           courseCount: 28,
           icon: "fas fa-chart-line",
           isActive: false,
         },
         {
-          name: "Web Development",
+          name: "Real Estate",
           courseCount: 56,
           icon: "fas fa-code",
           isActive: false,
         },
         {
-          name: "Digital Marketing",
+          name: "Mergers & Acquisitions (M&A)",
           courseCount: 42,
           icon: "fas fa-bullhorn",
           isActive: false,
         },
         {
-          name: "Graphic Design",
+          name: "Risk Management",
           courseCount: 35,
           icon: "fas fa-palette",
           isActive: false,
         },
         {
-          name: "Mobile Development",
+          name: "Financial Planning",
           courseCount: 48,
           icon: "fas fa-mobile-alt",
           isActive: false,
         },
         {
-          name: "Web Development",
+          name: "Wealth Management",
           courseCount: 56,
           icon: "fas fa-code",
           isActive: false,
+        },
+      ],
+      courses: [
+        {
+          id: 1,
+          title: "Financial Accounting for Beginners",
+          level: "Beginner",
+          image: "courses/course-01.jpg",
+          lessons: 12,
+          duration: " 6h 30m",
+          rating: 4.8,
+          reviews: 420,
+          isFree: false,
+          price: 29.99,
+          originalPrice: 49.99,
+          students: 1234,
+        },
+        {
+          id: 2,
+          title: "Corporate Finance Essentials",
+          level: "Intermediate",
+          image: "courses/course-02.jpg",
+          lessons: 15,
+          duration: " 8h 45m",
+          rating: 4.5,
+          reviews: 350,
+          isFree: false,
+          price: 39.99,
+          originalPrice: 59.99,
+          students: 987,
+        },
+        {
+          id: 3,
+          title: "Stock Market Investing 101",
+          level: "Beginner",
+          image: "courses/course-03.jpg",
+          lessons: 10,
+          duration: " 5h 15m",
+          rating: 4.9,
+          reviews: 530,
+          isFree: true,
+          price: 0,
+          originalPrice: 0,
+          students: 2456,
+        },
+        {
+          id: 4,
+          title: "Real Estate Investment Strategies",
+          level: "Advanced",
+          image: "courses/course-04.jpg",
+          lessons: 18,
+          duration: " 10h 20m",
+          rating: 4.7,
+          reviews: 280,
+          isFree: false,
+          price: 49.99,
+          originalPrice: 79.99,
+          students: 765,
+        },
+        {
+          id: 5,
+          title: "Mergers & Acquisitions (M&A) Fundamentals",
+          level: "Intermediate",
+          image: "courses/course-05.jpg",
+          lessons: 14,
+          duration: " 9h 10m",
+          rating: 4.6,
+          reviews: 320,
+          isFree: false,
+          price: 44.99,
+          originalPrice: 69.99,
+          students: 1098,
+        },
+        {
+          id: 6,
+          title: "Private Equity & Venture Capital",
+          level: "Beginner",
+          image: "courses/course-06.jpg",
+          lessons: 20,
+          duration: " 12h 45m",
+          rating: 4.8,
+          reviews: 475,
+          isFree: false,
+          price: 34.99,
+          originalPrice: 54.99,
+          students: 1876,
         },
       ],
     };
@@ -362,6 +545,120 @@ export default {
       this.answerButtonDisabled = false;
       this.startTimer();
     }, 300),
+
+    generateLearningRoadmap: async function (roadmapData) {
+      try {
+        const messages = [
+          {
+            role: "system",
+            content:
+              "You are a helpful assistant specializing in creating learning roadmaps. Return only valid JSON.",
+          },
+          {
+            role: "user",
+            content: `Create a detailed learning roadmap for "${roadmapData.topic}" at a ${roadmapData.proficiency} level.
+            The user will study ${roadmapData.hoursPerDay} hour(s) per day, ${roadmapData.daysPerWeek} day(s) per week, for ${roadmapData.duration} ${roadmapData.period}.
+            Only relevant result, no additional text.`,
+          },
+        ];
+
+        // Use the gptServices function with response_format parameter
+        const response = await GPTService.generateStructuredJson({
+          messages: [
+            {
+              role: "system",
+              content: `You are an experienced finance educator. You will help the user to create a learning roadmap for the topic provided by the user. Return only valid JSON.
+                The learning roadmap should be in the following format:
+                {
+                 modules: [
+                    {
+                        title: "Section Title",
+                        topics: ["Topic 1", "Topic 2", ...]
+                    }
+                 ]
+                }
+                `,
+            },
+            {
+              role: "user",
+              content: `Create a detailed learning roadmap for "${roadmapData.topic}" at a ${roadmapData.proficiency} level.
+            The user will study ${roadmapData.hoursPerDay} hour(s) per day, ${roadmapData.daysPerWeek} day(s) per week, for ${roadmapData.duration} ${roadmapData.period}.
+            Only relevant result, no additional text.
+            Every answer should related to quant finance, finance, or economics (either in soft or hard skill. Must be related to the topic of finance)
+            `,
+            },
+          ],
+          model: "gpt-3.5-turbo",
+          temperature: 0.7,
+          maxTokens: 1000,
+          jsonSchema: {
+            name: "roadmap",
+            schema: {
+              type: "object",
+              properties: {
+                roadmap: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      section: { type: "string" },
+                      topics: {
+                        type: "array",
+                        items: { type: "string" },
+                      },
+                    },
+                    required: ["section", "topics"],
+                  },
+                },
+              },
+              required: ["roadmap"],
+            },
+          },
+        });
+
+        // Parse the response if it's a string, otherwise return it directly
+        return typeof response === "string" ? JSON.parse(response) : response;
+      } catch (error) {
+        console.error("Error generating roadmap JSON:", error);
+        return { roadmap: [] };
+      }
+    },
+
+    createRoadmap: async function () {
+      if (!this.searchQuery.trim() || this.is_generating_roadmap) return;
+
+      this.is_generating_roadmap = true;
+
+      // Collect all form data
+      const roadmapData = {
+        topic: this.searchQuery,
+        proficiency: this.proficiency || "beginner",
+        hoursPerDay: this.hoursPerDay || 1,
+        daysPerWeek: this.daysPerWeek || 3,
+        duration: this.duration || 1,
+        period: this.period || "weeks",
+      };
+
+      try {
+        const roadmap = await this.generateLearningRoadmap(roadmapData);
+        // Handle the roadmap data - perhaps emit an event or process it
+
+        // Reset search query after creating roadmap
+        this.searchQuery = "";
+
+        this.$router.push({
+          name: "LearningRoadMap",
+          params: { id: Date.now() },
+          query: { source: "quizComponent" },
+          state: { roadmapData: roadmap },
+        });
+      } catch (error) {
+        console.error("Error creating roadmap:", error);
+      } finally {
+        this.is_generating_roadmap = false;
+      }
+    },
+
     keywordSuggestion: debounce(async function () {
       if (this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0)
         return;
@@ -423,7 +720,6 @@ export default {
     },
     parseCurrentQuestion() {
       if (this.currentQuestion >= this.questionList.length) {
-        console.log("No more questions");
         return;
       }
 
@@ -736,6 +1032,7 @@ export default {
 .section-container {
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   max-width: 70vw;
@@ -854,7 +1151,7 @@ export default {
 }
 
 .course-categories-section {
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -1007,6 +1304,232 @@ export default {
 
   .category-title {
     font-size: 1.75rem;
+  }
+}
+</style>
+
+<!-- Courses Section -->
+<style scoped>
+.courses-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  font-family: "Arial", sans-serif;
+}
+
+.courses-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.courses-subtitle {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #4299e1;
+  text-align: left;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.courses-title {
+  font-size: 2.5rem;
+  color: #2d3748;
+  font-weight: 700;
+  margin: 0;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.course-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.course-card-top {
+  position: relative;
+}
+
+.course-level {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.course-level.beginner {
+  background-color: #48bb78;
+  color: white;
+}
+
+.course-level.intermediate {
+  background-color: #4299e1;
+  color: white;
+}
+
+.course-level.advanced {
+  background-color: #ed8936;
+  color: white;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+}
+
+.favorite-btn i {
+  color: #e53e3e;
+  font-size: 1rem;
+}
+
+.course-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.course-card-content {
+  padding: 1.5rem;
+}
+
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.meta-item i {
+  margin-right: 0.5rem;
+  color: #4299e1;
+}
+
+.course-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+  height: 3.5rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.course-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stars {
+  display: flex;
+  margin-right: 0.5rem;
+}
+
+.stars i {
+  color: #f6ad55;
+  font-size: 0.875rem;
+  margin-right: 2px;
+}
+
+.review-count {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.course-price {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.free-price {
+  font-weight: 700;
+  color: #48bb78;
+  font-size: 1.25rem;
+}
+
+.current-price {
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+}
+
+.original-price {
+  color: #a0aec0;
+  text-decoration: line-through;
+  font-size: 0.875rem;
+}
+
+.course-students {
+  display: flex;
+  align-items: center;
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.course-students i {
+  margin-right: 0.5rem;
+  color: #4299e1;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .courses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .courses-title {
+    font-size: 2rem;
   }
 }
 </style>

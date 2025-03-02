@@ -1,9 +1,23 @@
 <template>
   <div class="dashboard">
-    <header class="dashboard-header">
-      <!-- <CompanyCard :companyName="bannerDisplayStock" :width="`80%`" /> -->
-      <BannerCardSimulator :stockCode="bannerDisplayStock" />
-    </header>
+    <!-- Combined header section with both dashboard header and chatbot side by side -->
+    <div class="header-container">
+      <header class="dashboard-header">
+        <BannerCardSimulator :stockCode="bannerDisplayStock" />
+      </header>
+
+      <!-- Repositioned header chatbot to be beside the dashboard header -->
+      <div class="header-chatbot-container">
+        <div class="header-finbudBot-container">
+          <img class="header-finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleHeaderChatBubble" />
+        </div>
+        <div class="header-chatbot-content">
+          <div class="header-chat-message" v-html="formatChatMessage(headerTypingComplete ? headerChatbotMessage : headerPartialMessage)">
+          </div>
+          <span v-if="!headerTypingComplete" class="typing-cursor">|</span>
+        </div>
+      </div>
+    </div>
 
     <div class="main-content">
       <section class="key-statistics">
@@ -79,20 +93,25 @@
             </div>
           </div>
         </div>
+
         <div class="chat-bot-container">
-
+          <div class="chatbot-content">
+            <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
+            <div v-else class="chat-message typing">
+              <span v-html="formatChatMessage(partialMessage)"></span>
+              <span class="typing-cursor">|</span>
+            </div>
+          </div>
+          <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
         </div>
-
       </section>
      
-     
-
       <PerformanceChart 
         :performanceData="performanceData"
         @timeframeChanged="updatePerformanceData"
+        class="performance-chart"
       />
     </div>
-
 
     <section class="transaction-history">
       <TransactionHistory :key="transactionKey"/>
@@ -152,7 +171,7 @@ export default {
       stockValue: 0,
       cash: 0,
       transactionKey: 0,
-      performanceData: [], // Add performance data here
+      performanceData: [],
       stockData: {
         open: '',
         close: '',
@@ -163,10 +182,151 @@ export default {
       },
       fixedUserId: localStorage.getItem('token'),
       action: 'buy',
-      selectedTimeFrame: '1W' 
+      selectedTimeFrame: '1W',
+      chatbotTriggeredByScroll: false,
+      chatbotMessage: "",
+      partialMessage: "",
+      typingComplete: false,
+      typingSpeed: 30,
+      showChatBubble: true,
+      todaysChange: "+$23.45",
+      annualReturn: "12.5",
+      headerChatbotMessage: "",
+      headerPartialMessage: "",
+      headerTypingComplete: false,
+      headerTypingInterval: null,
+      headerBotVisible: true
     };
   },
   methods: {
+    // Add the adjustChartHeight method here
+    adjustChartHeight() {
+      this.$nextTick(() => {
+        const accountInfo = document.querySelector('.account-info');
+        const performanceChart = document.querySelector('.performance-chart');
+        
+        if (accountInfo && performanceChart) {
+          const accountInfoHeight = accountInfo.offsetHeight;
+          performanceChart.style.height = `${accountInfoHeight}px`;
+        }
+      });
+    },
+    formatChatMessage(message) {
+      return message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    },
+    startHeaderTypingEffect() {
+      // Reset typing process
+      if (this.headerTypingInterval) {
+        clearInterval(this.headerTypingInterval);
+      }
+      
+      this.headerTypingComplete = false;
+      this.headerPartialMessage = "";
+      this.headerChatbotMessage = ""; // Reset full message
+      
+      const userName = localStorage.getItem('userName') || 'there';
+      
+      // Store the complete message we want to display
+      const fullMessage = `Hey ${userName}, here's my quick take on these stock stats:<br>- The Open at $${this.stockData.open} and Prev Close at $${this.stockData.close} show it's starting today just a tad lower than yesterday—pretty stable so far.<br>- The 52 Week High of $${this.stockData.high} and Low of $${this.stockData.low} mean it's near the bottom of its yearly range, but still has room to climb.<br>- That Market Cap of $${this.stockData.marketCap} is huge, marking it as a major player, way bigger than smaller stocks.`;
+      
+      this.headerChatbotMessage = fullMessage; // Store the full message for later
+
+      // Format the message for better readability
+      const lines = [
+        `Hey ${userName}, here's my quick take on these stock stats:`,
+        `- The Open at $${this.stockData.open} and Prev Close at $${this.stockData.close} show it's starting today just a bit lower than yesterday, pretty stable so far.`,
+        `- The 52 Week High of $${this.stockData.high} and Low of $${this.stockData.low} mean it's near the bottom of its yearly range, but still has room to climb.`,
+        `- That Market Cap of $${this.stockData.marketCap} is huge, marking it as a major player, way bigger than smaller stocks.`
+      ];
+
+      // Modified typing logic to create "upward" typing effect
+      // Start with the last line and work backward to create the upward effect
+      let lineIndex = lines.length - 1;
+      let linesTyped = [];
+
+      const typeLine = () => {
+        if (lineIndex >= 0) {
+          // Add the current line to the beginning of our array
+          linesTyped.unshift(lines[lineIndex]);
+          
+          // Update the partial message with all currently typed lines
+          this.headerPartialMessage = linesTyped.join('<br>');
+          
+          // Move to the previous line (going upward)
+          lineIndex--;
+          
+          // Delay before typing the next line
+          this.headerTypingInterval = setTimeout(typeLine, 500);
+        } else {
+          // Typing is complete
+          this.headerTypingComplete = true;
+          this.headerTypingInterval = null;
+        }
+      };
+      // Start typing
+      typeLine();
+
+      // Ensure the bot is visible
+      this.headerBotVisible = true;
+    },
+    toggleHeaderChatBubble() {
+      // Reset and restart the typing effect when bot is clicked
+      this.startHeaderTypingEffect();
+    },
+    startTypingEffect() {
+      this.typingComplete = false;
+      this.partialMessage = "";
+      const message = this.generateChatbotMessage();
+      let charIndex = 0;
+      
+      if (this.typingInterval) {
+        clearInterval(this.typingInterval);
+      }
+      
+      this.typingInterval = setInterval(() => {
+        if (charIndex < message.length) {
+          this.partialMessage += message.charAt(charIndex);
+          charIndex++;
+        } else {
+          clearInterval(this.typingInterval);
+          this.typingInterval = null;
+          this.chatbotMessage = message;
+          this.typingComplete = true;
+        }
+      }, this.typingSpeed);
+    },
+    
+    toggleChatBubble() {
+      this.chatbotTriggeredByScroll = false;
+      this.startTypingEffect();
+    },
+
+    generateChatbotMessage() {
+      const userName = localStorage.getItem('userName') || 'there';
+      const cashPercentage = ((this.cash / this.accountBalance) * 100).toFixed(2);
+      const stockPercentage = ((this.stockValue / this.accountBalance) * 100).toFixed(2);
+      
+      return `Hey ${userName}! **Cash Balance:** ${this.cash} USD, making up ${cashPercentage}% of your account—super liquid! **Stocks:** ${this.stockValue} USD, just ${stockPercentage}% of the total—pretty small. Keep saving, but consider putting a bit more into stocks for some fun diversification. Sound good?`;
+    },
+
+    handleScroll() {
+      if (this.chatbotTriggeredByScroll) return;
+      
+      const chatbotContainer = document.querySelector('.chat-bot-container');
+      if (!chatbotContainer) return;
+      
+      const rect = chatbotContainer.getBoundingClientRect();
+      const isVisible = (
+        rect.top >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+      );
+      
+      if (isVisible) {
+        this.startTypingEffect();
+        this.chatbotTriggeredByScroll = true;
+      }
+    },
+
     setTimeFrame(timeframe) {
       this.selectedTimeFrame = timeframe;
       this.updatePerformanceData(timeframe); 
@@ -175,23 +335,23 @@ export default {
       const performanceData = [];
       const startDate = new Date();
       
-      // Generate data for 30 days
       for (let i = 0; i < 30; i++) {
-        // Calculate the date for the past 30 days
         const date = new Date();
         date.setDate(startDate.getDate() - i);
-
-        // Generate a random stock value between 100 and 150
         const value = (Math.random() * 50 + 100).toFixed(2);
         
         performanceData.push({
-          date: date.toISOString().split('T')[0], // Format as YYYY-MM-DD
+          date: date.toISOString().split('T')[0],
           value: parseFloat(value)
         });
       }
       
-      // Reverse the array to start from the oldest date to the most recent
       this.performanceData = performanceData.reverse();
+      
+      // Add height adjustment after updating chart data
+      this.$nextTick(() => {
+        this.adjustChartHeight();
+      });
     },
     async stockFilterHandler(screenerFilter) {
       const appliedFilter = stockData
@@ -242,7 +402,7 @@ export default {
           toast.success('Order submitted successfully', { autoClose: 1000 });
           this.showModal = false;
           this.fetchBankingAccountBalance();
-          this.fetchTransactions(); // Re-fetch transactions to update the table
+          this.fetchTransactions();
           this.transactionKey++;
         })
         .catch(error => {
@@ -257,11 +417,12 @@ export default {
         const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
         const response = await axios.get(api);
         const data = response.data;
-        console.log(data);
         
         this.accountBalance = data.bankingAccountData.accountBalance;
         this.stockValue = data.bankingAccountData.stockValue;
         this.cash = data.bankingAccountData.cash;
+
+        this.startTypingEffect();
       } catch (error) {
         console.error('Error fetching financial data:', error);
         toast.error('Failed to load financial data', { autoClose: 1000 });
@@ -273,7 +434,7 @@ export default {
       try {
         const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`);
         this.transactions = response.data;
-        this.updatePerformanceData(this.selectedTimeFrame); // Update chart with fetched data
+        this.updatePerformanceData(this.selectedTimeFrame);
       } catch (error) {
         console.error('Error fetching transaction history:', error);
       }
@@ -286,7 +447,6 @@ export default {
         this.stockSymbol = newQuery.symbol || "";
         this.quantity = newQuery.quantity ? parseInt(newQuery.quantity, 10) : 1;
         this.bannerDisplayStock = newQuery.symbol || "AAPL";
-        // Ensure "action" gets updated in the dropdown
         if (newQuery.action === "sell" || newQuery.action === "buy") {
           this.action = newQuery.action;
         }
@@ -304,14 +464,22 @@ export default {
           marketCap: fetchedStock.marketCap,
           volume: fetchedStock.volume
         };
+        // Start the header typing animation when stock data is updated
+        this.startHeaderTypingEffect();
       } else {
         console.error(`Failed to fetch stock data for ${newSymbol}`);
       }
     }
   },
   async mounted() {
-    // UPDATED: Fetch key statistics using the API-based service instead of local hardcoded data
-    const defaultTicker = this.bannerDisplayStock; // e.g. "AAPL"
+    // Delayed start for header chatbot to enable fade-in effect
+    setTimeout(() => {
+      this.startHeaderTypingEffect();
+    }, 500);
+    
+    this.startTypingEffect();
+    
+    const defaultTicker = this.bannerDisplayStock;
     const fetchedStock = await fetchSimBannerStockDatav3(defaultTicker);
     if (fetchedStock) {
       this.stockData = {
@@ -326,7 +494,6 @@ export default {
       console.error(`Failed to fetch stock data for default ticker: ${defaultTicker}`);
     }
 
-    // Continue with remaining mounted logic
     const shuffledStock = stockData.slice().sort(() => 0.5 - Math.random());
     this.displayStock = shuffledStock.slice(0, 10);
 
@@ -346,37 +513,143 @@ export default {
         if (previewButton) {
           previewButton.click();
         }
-      }, 1000); // Wait 1 second to ensure the form is populated before clicking
+      }, 1000);
     }
     this.fetchBankingAccountBalance();
     this.fetchTransactions();
+    
+    window.addEventListener('scroll', this.handleScroll);
+    
+    // Add window resize listener
+    window.addEventListener('resize', this.adjustChartHeight);
+    
+    // Call adjustChartHeight after everything is loaded
+    this.$nextTick(() => {
+      this.handleScroll();
+      this.adjustChartHeight();
+    });
+  },
+  beforeUnmount() {
+    // Clean up all event listeners
+    window.removeEventListener('resize', this.adjustChartHeight);
+    window.removeEventListener('scroll', this.handleScroll);
+    if (this.headerTypingInterval) {
+      clearInterval(this.headerTypingInterval);
+    }
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
   }
 };
 </script>
 
 <style scoped>
 .stockDisplayContainer {
-  /* 40px of padding*/
-  width: calc(100%-40px);
+  width: calc(100%- 40px);
   height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 20px; /* Add padding on both sides */
+  padding: 0 20px;
 }
 
 .dashboard {
   color: #333;
 }
 
-.dashboard-header {
-  padding: 20px;
+/* New container to hold both header elements side by side */
+.header-container {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch; /* Changed from flex-start to stretch for equal height */
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 20px; /* Added gap for consistent spacing */
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: column; /* Changed to column for better content alignment */
   justify-content: flex-start;
+  align-items: stretch;
+  min-height: 120px;
+  width: 50%; /* Adjusted for more equal space distribution */
+  margin-right: 0; /* Removed margin-right and using gap instead */
+  background-color: #f8f9fa; /* Added background to match other containers */
+  border-radius: 10px; /* Added border-radius to match other containers */
+  padding: 15px; /* Added padding to match other containers */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05); /* Added shadow to match */
+  border: 1px solid #dee2e6;
+  overflow: hidden; 
+}
+
+/* Add new style to ensure BannerCardSimulator is properly contained */
+.dashboard-header :deep(.banner-card) {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+/* Ensure any direct children of dashboard-header take full width */
+.dashboard-header > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Updated header chatbot container to be side-by-side with header */
+.header-chatbot-container {
+  display: flex;
+  flex-direction: row-reverse;
   align-items: flex-start;
-  margin-left: 20px;
+  width: 50%; /* Equal width with dashboard-header */
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border: 1px solid #dee2e6;
+}
+
+.header-chatbot-content {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+  flex-grow: 1;
+  position: relative;
+}
+
+.header-chat-message {
+  background-color: #2196F3;
+  color: white;
+  border-radius: 15px;
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100%;
+  margin-top: 30px
+}
+
+/* Updated FinBudBot styles */
+.header-finbudBot-container {
+  display: flex;
+  align-items: flex-start;
+  margin-left: 10px;
+}
+
+.header-finbudBot {
+  width: 40px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.header-finbudBot:hover {
+  transform: scale(1.1);
 }
 
 .market {
@@ -401,20 +674,27 @@ export default {
   justify-content: space-between;
   padding: 20px;
   flex-wrap: wrap;
-  margin-top: -50px;
+  gap: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-.key-statistics {
-  width: 48%;
-  margin-top: 20px;
+.key-statistics, .actions {
+  width: calc(50% - 10px); /* Adjusted to ensure exact 50% minus half the gap */
   padding: 20px;
   background-color: #f8f9fa;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  height: 350px; /* Set fixed height instead of min-height for better alignment */
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
-.key-statistics h3 {
-  margin-top: 30px;
+.key-statistics h3, .actions h3 {
+  margin-top: 0;
   margin-bottom: 20px;
   color: #007bff;
   font-size: 1.5rem;
@@ -423,8 +703,9 @@ export default {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 15px;
   padding: 10px;
+  flex-grow: 1;
 }
 
 .stat {
@@ -434,152 +715,41 @@ export default {
   border: 1px solid #dee2e6;
 }
 
-.stat .label {
-  font-size: 1.1rem;
-  color: #555;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.stat .value {
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.account-performance {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px;
-  gap: 20px;
-  min-height: 520px;  /* Increased to match performance chart */
-}
-
-.account-info {
-  width: 24%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.account-info-container {
-  background-color: #f8f9fa;
-  padding: 33px;  /* Reduced from 15px */
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-  width: 100%;
-  min-height: 150px;  /* Reduced from 180px */
-}
-
-.chat-bot-container {
-  background-color: #f8f9fa;
-  padding: 33px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-  width: 100%;
-  min-height: 180px;  /* Set specific height for chat bot */
-}
-
-.performance-chart {
-  width: 70%;
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-  min-height: 520px;  /* Match parent container height */
-  display: flex;
-  flex-direction: column;
-}
-
-.account-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 5px;    /* Reduced from 8px */
-  padding: 4px;  /* Reduced from 6px */
-}
-
-.account-stat {
-  background-color: white;
-  padding: 15px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-}
-
-.account-stat .label {
-  font-size: 1.1rem;
-  color: #555;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.account-stat .value {
-  font-size: 1.3rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.actions {
-  width: 48%;
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-  box-sizing: border-box; /* Add this to include padding in width calculation */
-}
-
-.actions .action-form {
+.action-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  width: 100%;
-  max-width: 100%;
   padding: 10px;
-  box-sizing: border-box; /* Add this to include padding in width calculation */
+  flex-grow: 1;
 }
 
-.actions input,
-.actions select {
+.action-form input, 
+.action-form select {
   padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 5px;
-  border: 1px solid #ced4da;
-  font-size: 1.1rem;
-  width: calc(100% - 24px); /* Adjust width to account for padding */
-  height: 45px;
-  box-sizing: border-box; /* Add this to include padding in width calculation */
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  font-size: 1rem;
 }
 
 .buttons {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  width: calc(100% - 24px); /* Adjust width to account for padding */
-  margin-top: 10px;
-  box-sizing: border-box; /* Add this to include padding in width calculation */
+  gap: 10px;
+  margin-top: auto;
 }
 
-.clear-btn,
-.preview-btn {
-  flex: 1;
-  padding: 12px 25px;
+.clear-btn, .preview-btn {
+  padding: 12px 20px;
+  border-radius: 6px;
   border: none;
-  border-radius: 5px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 1.1rem;
-  height: 45px;
-  box-sizing: border-box; /* Add this to include padding in width calculation */
+  transition: all 0.2s ease;
 }
 
 .clear-btn {
-  background-color: #6c757d;
-  color: white;
-}
-
-.clear-btn:hover {
-  background-color: #5a6268;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #555;
 }
 
 .preview-btn {
@@ -587,56 +757,169 @@ export default {
   color: white;
 }
 
-.preview-btn:hover {
-  background-color: #0056b3;
+.clear-btn:hover {
+  background-color: #e9ecef;
 }
 
-.transaction-history {
-  margin-top: 20px;
+.preview-btn:hover {
+  background-color: #0069d9;
+}
+
+.account-performance {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 20px;
+  min-height: 400px;
+}
+
+.account-info {
+  width: 28%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: fit-content;
+}
+
+.account-info-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  min-height: 240px;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 5px;
+}
+
+.stat {
+  background-color: white;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+}
+
+.stat .label {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.stat .value {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.chat-bot-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  min-height: 200px;
+  height: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatbot-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-message {
+  background-color: #2196F3;
+  color: white;
+  border-radius: 15px;
+  padding: 12px 15px;
+  border: 1px solid #dee2e6;
+  max-width: 85%;
+  align-self: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-left: 10px;
+  margin-top: 30px;
+}
+
+.chat-message strong {
+  font-weight: 600;
+  color: #007bff;
+}
+
+.typing-cursor {
+  animation: blink 1s infinite;
+  font-weight: bold;
+  display: inline;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.finbudBot {
+  width: 40px;
+  aspect-ratio: 1;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.finbudBot:hover {
+  transform: scale(1.1);
+}
+
+.performance-chart {
+  width: 70%;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 768px) {
+  /* Mobile styling for header container */
+  .header-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .dashboard-header,
+  .header-chatbot-container {
+    width: 100%;
+    margin-bottom: 0; /* Removed margin-bottom and using gap instead */
+  }
+  
   .main-content {
     flex-direction: column;
-    align-items: center;
+    flex-wrap: nowrap;
   }
 
+  .key-statistics, .actions {
+    width: 100%;
+    margin-bottom: 0; /* Using gap instead */
+    height: auto; /* Allow height to adjust on mobile */
+  }
   .account-performance {
     flex-direction: column;
-    align-items: center;
   }
 
-  .key-statistics,
-  .actions,
-  .account-info,
+  .account-info, 
   .performance-chart {
     width: 100%;
-    margin-bottom: 20px;
+    height: auto !important; /* Override any JS-set height on mobile */
+    min-height: 400px;
   }
-
-  .stock-info {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .account-stats {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .account-stat {
-    margin: 5px 0;
-  }
-
-  .finbudBot {
-  position: fixed;
-  width: 60px;
-  aspect-ratio: 1;
-  right: 3.125vw;
-  bottom: 20px;
-  z-index: 9998;
-}
-  
 }
 
 .new-section {
@@ -644,62 +927,6 @@ export default {
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 5px;
-  border: 1px solid #dee2e6;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.new-section h3 {
-  margin-bottom: 20px;
-  color: #007bff;
-  font-size: 1.5rem;
-}
-
-.new-section-content {
-  display: flex;
-  gap: 20px;
-  padding: 10px;
-}
-
-/* Make the stats more compact */
-.account-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 5px;    /* Reduced from 8px */
-  padding: 4px;  /* Reduced from 6px */
-}
-
-.stat {
-  padding: 6px;  /* Reduced from 8px */
-  background-color: white;
-  border-radius: 4px;  /* Reduced from 5px */
-  border: 1px solid #dee2e6;
-}
-
-.stat .label {
-  font-size: 0.8rem;  /* Reduced from 0.9rem */
-  color: #555;
-  margin-bottom: 2px;  /* Reduced from 4px */
-  display: block;
-}
-
-.stat .value {
-  font-size: 0.95rem;  /* Reduced from 1.1rem */
-  font-weight: 500;
-  color: #333;
-}
-
-/* Adjust the title */
-.account-info-container h3 {
-  font-size: 0.9rem;  /* Reduced from 1rem */
-  margin-bottom: 4px;  /* Reduced from 6px */
-  color: #007bff;
-}
-
-.actions h3 {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  color: #007bff;
-  font-size: 1.5rem;
+  border: 1px solid;
 }
 </style>

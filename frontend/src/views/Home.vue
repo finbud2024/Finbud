@@ -4,12 +4,11 @@
       <div class="intro-text">
         <div class="intro-text1">
           <li class="title animate fade-in">Making the most informed financial choices</li>
-          <li class="animate fade-in" :style="{ fontSize: '30px', fontWeight: 'bold', listStyleType: 'none' }">
-            Sign in to see more services
+          <li class="animate fade-in" :style="{ minHeight: '41px', fontSize: '30px', fontWeight: 'bold', listStyleType: 'none' }">
+            {{ signInTitle }}
           </li>
           <li class="description animate fade-in last-li">
-            With FinBud, you can ask for the best financial advice
-            anytime, anywhere
+            {{  signInDescription }}
           </li>
           <BigGreenButton @click="chatNow">{{ displayText }}</BigGreenButton>
         </div>
@@ -166,10 +165,31 @@
 <script>
 import BigGreenButton from "../components/Button/ChatNow.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
+import { useTypingEffect } from '@/composables/useTypingEffect';
+
 export default {
   name: 'MainContent',
   components: {
     BigGreenButton,
+  },
+  setup() {
+    const { 
+        typingText: signInTitle, 
+        startTyping: startTypingSignInTitle 
+    } = useTypingEffect('Sign in to see more services')
+    const { 
+      typingText: signInDescription, 
+      startTyping:  startTypingSignInDescription 
+    } = useTypingEffect('With FinBud, you can ask for the best financial advice anytime, anywhere', {
+      reverseEffect: false
+    })
+    
+    return {
+      signInTitle,
+      signInDescription, 
+      startTypingSignInTitle,
+      startTypingSignInDescription
+    }
   },
   data() {
     return {
@@ -213,6 +233,9 @@ export default {
     }
   },
   mounted() {
+    this.startTypingSignInTitle(); 
+    this.startTypingSignInDescription();
+    
     const observerOptions = {
       threshold: 0.1,
     };
@@ -307,7 +330,7 @@ export default {
 
 .title {
   font-weight: bold;
-  color: black;
+  color: var(--text-primary);
   display: flex;
   text-align: left;
   flex-direction: column;
@@ -320,7 +343,7 @@ export default {
 }
 
 .description {
-  color: dark gray;
+  color: var(--text-primary);
   display: flex;
   text-align: left;
   font-size: 1.2rem;
@@ -332,7 +355,7 @@ export default {
 }
 
 .small-description {
-  color: dark gray;
+  color: var(--text-primary);
   padding-top: 90px;
   padding: 2rem;
   flex-direction: row;
@@ -383,7 +406,7 @@ export default {
 
 .introduction-image {
   height: 100%;
-  border: 2px solid #007bff;
+  border: 2px solid var(--border-color);
   border-radius: 20px;
 }
 
@@ -446,6 +469,12 @@ export default {
   aspect-ratio: 1;
 }
 
+/* Dark mode specific styles for PNG icons */
+:root.dark-mode .feature-icon,
+body.dark-mode .feature-icon {
+  filter: brightness(0) invert(1); /* This will make the PNG icons white */
+}
+
 .feature-section .grid-container>div {
   display: flex;
   flex-direction: column;
@@ -460,6 +489,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .technology-grid {
@@ -474,9 +505,9 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #007bff;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
-  color: white;
+  background-color: var(--card-bg);
+  box-shadow: 0 4px 8px 0 var(--shadow-color);
+  color: var(--text-primary);
   border-radius: 30px;
   height: 150px;
   padding: 20px;
@@ -484,7 +515,7 @@ export default {
 
 .technology-card h3,
 .technology-card p {
-  color: white;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -495,6 +526,8 @@ export default {
 /* question section*/
 .question-section {
   padding: 0 10%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .question-section header {
@@ -513,7 +546,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 15px 0;
-  border-bottom: 1px solid #007bff;
+  border-bottom: 1px solid var(--border-color);
   cursor: pointer;
 }
 
@@ -539,8 +572,8 @@ export default {
 #main-content {
   display: flex;
   flex-direction: column;
-  background-color: white;
-  color: black;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   margin-top: 0;
   opacity: 1;
   animation: none;
