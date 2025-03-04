@@ -6,8 +6,8 @@
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
     </div>
-    <ChatComponent @initialThreadName="initialThreadName"/>
-    <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
+    <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent"/>
+    <div class="guidance-btn" id="tutorial-guidance-button" :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
@@ -16,8 +16,15 @@
     <GuidanceModal  
       v-if="showGuidance" 
       @close="showGuidance = false" 
+      @sendMessage="sendMessageToChat"
       :showModal="showGuidance" 
     />
+    <TutorialOverlay 
+      :steps="tutorialSteps" 
+      storageKey="finbudChatViewTutorialShown" 
+      :autoStart="true"
+      @tutorial-completed="onTutorialCompleted" 
+      ref="tutorialOverlay" />
   </div>
 </template>
 
@@ -26,6 +33,7 @@
 import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
+import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 //UTILITIES + LIB IMPORT
 
 export default {
@@ -36,7 +44,8 @@ export default {
   components: {
     ChatComponent,
     SideBar,
-    GuidanceModal
+    GuidanceModal,
+    TutorialOverlay
   },
   data() {
     return {
@@ -51,6 +60,13 @@ export default {
       newWindow: null, //new window to referrence to other
       windowCheckInterval: null,
       newThreadName: "",
+      tutorialSteps: [
+        {
+          element: '#tutorial-guidance-button',
+          message: "Click here for guidance on how to ask questions to FinBud!",
+          title: "Need help with queries?"
+        }
+      ]
     };
   },
   computed: {
@@ -127,12 +143,35 @@ export default {
     },
     initialThreadName(newThreadName){
       this.newThreadName = newThreadName;
+    },
+    sendMessageToChat(message) {
+      if (this.$refs.chatComponent) {
+        this.$refs.chatComponent.sendMessage(message);
+      }
+    },
+    onTutorialCompleted() {
+      console.log("ChatView Tutorial completed!");
+    },
+    restartTutorial() {
+      if (this.$refs.tutorialOverlay) {
+        this.$refs.tutorialOverlay.resetTutorial();
+      }
     }
   },
   async mounted() {
     setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
     document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
+    
+    // Check if we've been redirected from Home page and show tutorial
+    if (this.$route.query.showTutorial) {
+      // A small delay to ensure the page is fully loaded
+      setTimeout(() => {
+        if (this.$refs.tutorialOverlay) {
+          this.$refs.tutorialOverlay.resetTutorial();
+        }
+      }, 500);
+    }
   },
 };
 </script>
@@ -140,6 +179,8 @@ export default {
 .home-container {
   display: flex;
   width: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .sidebar-container {
@@ -154,14 +195,14 @@ export default {
   top: 15px;
   left: 10px;
   z-index: 1000;
-  color: black;
+  color: var(--text-primary);
   padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .toggle-sidebar-btn:hover {
-  background-color: #2980b9;
+  background-color: var(--hover-bg);
 }
 
 .chat-container {
@@ -194,7 +235,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 1000;
 }
 
@@ -205,7 +246,7 @@ export default {
   top: 0;
   width: 60%;
   height: 100%;
-  background-color: rgb(248, 249, 254);
+  background-color: var(--card-bg);
   z-index: 1001;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
@@ -223,15 +264,33 @@ export default {
   position: fixed;
   bottom: calc(15%);
   right: -105px;
-  background-color: #007bff;
+  background-color: var(--link-color);
   color: white;
   border: none;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, right 0.3s ease, z-index 0.3s ease;
   display: flex;
+  z-index: 999; /* Default z-index */
+}
+
+/* Make button visible during tutorial with higher z-index */
+.guidance-btn.tutorial-active {
+  transform: translateX(-100px) !important;
+  right: -105px !important;
+  z-index: 10001 !important; /* Higher z-index during tutorial */
 }
 
 .guidance-btn:hover {
+  transform: translateX(-90px);
+}
+
+.is-guidance-visible {
+  right: calc(50% + 19px - 80px);
+  z-index: 999; /* Normal z-index when visible */
+}
+
+/* Make the guidance button always visible during tutorial */
+#tutorial-guidance-button.tutorial-active {
   transform: translateX(-90px);
 }
 
@@ -240,7 +299,7 @@ export default {
   width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: var(--link-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -265,11 +324,12 @@ export default {
 .followup-component-card {
   width: 70%;
   margin: 0 auto;
-  background-color: #f8f9fa; /* Light grey background */
+  background-color: var(--card-bg);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+  box-shadow: 0 2px 4px var(--shadow-color);
   margin-top: 20px;
+  color: var(--text-primary);
 }
 
 /* Animation for follow up and source components */
@@ -286,7 +346,7 @@ export default {
 
 @keyframes highlight {
   0% {
-    background-color: #f0f0f0;
+    background-color: var(--hover-bg);
   }
   100% {
     background-color: transparent;
