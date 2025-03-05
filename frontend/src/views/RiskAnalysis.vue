@@ -851,41 +851,70 @@ img {
 /* Add these new styles for the sub-navigation */
 .sub-nav {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 0.5rem;
+  justify-content: space-between;
+  margin: 1rem auto 3rem;
+  padding: 0.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #f8f9fa;
+  width: 600px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .tab-button {
-  padding: 0.75rem 1.5rem;
+  flex: 1;
+  padding: 1rem 0;
   border: none;
   background: none;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: #666;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
+  font-weight: 500;
+  margin: 0 0.25rem;
+  border-radius: 8px;
 }
 
 .tab-button:hover {
   color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
 }
 
 .tab-button.active {
-  color: #007bff;
+  color: white;
+  background-color: #007bff;
   font-weight: bold;
 }
 
+/* Remove the underline effect */
 .tab-button.active::after {
-  content: '';
-  position: absolute;
-  bottom: -0.5rem;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #007bff;
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .sub-nav {
+    width: 90%;
+    padding: 0.4rem;
+  }
+
+  .tab-button {
+    padding: 0.75rem 0;
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .sub-nav {
+    width: 95%;
+    padding: 0.3rem;
+  }
+
+  .tab-button {
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    margin: 0 0.15rem;
+  }
 }
 
 .tab-content {
