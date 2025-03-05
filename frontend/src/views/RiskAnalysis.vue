@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Bot Chat Component - Placed outside the main container -->
-    <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
+    <div class="bot-chat-container" :class="{ 'bot-visible': activeTab === 'realEstate', 'bot-hidden': hidingBot }">
       <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
       <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
         <div v-if="isTyping" class="typing-animation">
@@ -17,119 +17,156 @@
       <!-- Market Data Section -->
       <section class="content">
         <h2 class="headtitle">Market Data Center</h2>
+
+        <!-- Sub Navigation Bar -->
+        <div class="sub-nav">
+          <button 
+            v-for="tab in ['stock', 'crypto', 'realEstate']" 
+            :key="tab"
+            :class="['tab-button', { active: activeTab === tab }]"
+            @click="activeTab = tab"
+          >
+            {{ formatTabName(tab) }}
+          </button>
+        </div>
+
         <div class="market-data-center">
-          <div class="market-section">
-            <!-- Cryptocurrency Watch Section -->
-            <div class="section-title">Cryptocurrency Watch</div>
-            <div class="margin-box">
-              <CryptoWatch class="margin-box-content" />
-            </div>
-            
-            <!-- Stock Watch Section -->
-            <div class="section-title">Stock Watch</div>
-            <div class="margin-box">
-              <StockWatch class="margin-box-content" />
-            </div>
-
-            <!-- Stock Quotes Section -->
-            <div class="section-title">Stock Quotes</div>
-            <div class="margin-box">
-              <div class="margin-box-content">
-                <div v-if="error" class="error">{{ error }}</div>
-                <div v-else-if="loading" class="loading">Loading...</div>
-                <div v-else>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Symbol</th>
-                        <th>Price</th>
-                        <th>Volume</th>
-                        <th>Previous Close</th>
-                        <th>Change</th>
-                        <th>Change Percent</th>
-                      </tr>
-                    </thead>
-                    <tbody v-if="paginatedStockQuotes.length">
-                      <tr v-for="stock in paginatedStockQuotes" :key="stock['01. symbol']">
-                        <td>{{ stock['01. symbol'] }}</td>
-                        <td>{{ stock['05. price'] }}</td>
-                        <td>{{ stock['06. volume'] }}</td>
-                        <td>{{ stock['08. previous close'] }}</td>
-                        <td>{{ stock['09. change'] }}</td>
-                        <td>{{ stock['10. change percent'] }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages" @update:currentPage="updateStockCurrentPage" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Crypto Quotes Section -->
-            <div class="section-title">Crypto Quotes</div>
-            <div class="margin-box">
-              <div class="margin-box-content">
-                <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div> 
-                <div v-else-if="loadingCrypto" class="loading">Loading...</div>
-                <div v-else>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Rank</th>
-                        <th>Tier</th>
-                        <th>Price</th>
-                        <th>Symbol</th>
-                        <th>Change</th>
-                      </tr>
-                    </thead>
-                    <tbody v-if="paginatedCryptoList.length">
-                      <tr v-for="crypto in paginatedCryptoList" :key="crypto.uuid">
-                        <td><img :src="crypto.iconUrl" :alt="crypto.name"> {{ crypto.name }}</td>
-                        <td>{{ crypto.rank }}</td>
-                        <td>{{ crypto.tier }}</td>
-                        <td>{{ formatPrice(crypto.price) }} B</td>
-                        <td>{{ crypto.symbol }}</td>
-                        <td>{{ crypto.change }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Real Estate Section - Bot will appear when this section comes into view -->
-            <div class="section-title">Real Estate</div>
-            <div class="real-estate-section" ref="realEstateSection">
+          <!-- Crypto Tab Content -->
+          <div v-if="activeTab === 'crypto'" class="tab-content">
+            <div class="market-section">
+              <!-- Cryptocurrency Watch Section -->
+              <div class="section-title">Cryptocurrency Watch</div>
               <div class="margin-box">
-                <RealEstateMap class="margin-box-content" />
+                <CryptoWatch class="margin-box-content" />
+              </div>
+            
+              
+              <!-- Crypto Quotes Section -->
+              <div class="section-title">Crypto Quotes</div>
+              <div class="margin-box">
                 <div class="margin-box-content">
-                  <div v-if="errorRealEstate" class="error">{{ errorRealEstate }}</div> 
-                  <div v-else-if="loadingRealEstate" class="loading">Loading...</div>
+                  <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div> 
+                  <div v-else-if="loadingCrypto" class="loading">Loading...</div>
                   <div v-else>
                     <table>
                       <thead>
                         <tr>
-                          <th>Type</th>
-                          <th>Address</th>
+                          <th>Name</th>
+                          <th>Rank</th>
+                          <th>Tier</th>
                           <th>Price</th>
-                          <th>Status</th>
+                          <th>Symbol</th>
+                          <th>Change</th>
                         </tr>
                       </thead>
-                      <tbody v-if="paginatedRealEstate.length">
-                        <tr v-for="estate in paginatedRealEstate" :key="estate.id">
-                          <td>{{ estate.propertyType && !isNaN(estate.propertyType) ? estate.propertyType : "Single-family"}}</td>
-                          <td>{{ estate.formattedAddress }}</td>
-                          <td>
-                            {{ estate.lastSalePrice && !isNaN(estate.lastSalePrice) ? 
-                            '$' + estate.lastSalePrice.toLocaleString() : "N/A" }}
-                          </td>
-                          <td>{{ estate.ownerOccupied === true ? 'Inactive' : 'Active'}}</td>
+                      <tbody v-if="paginatedCryptoList.length">
+                        <tr v-for="crypto in paginatedCryptoList" :key="crypto.uuid">
+                          <td><img :src="crypto.iconUrl" :alt="crypto.name"> {{ crypto.name }}</td>
+                          <td>{{ crypto.rank }}</td>
+                          <td>{{ crypto.tier }}</td>
+                          <td>{{ formatPrice(crypto.price) }} B</td>
+                          <td>{{ crypto.symbol }}</td>
+                          <td>{{ crypto.change }}</td>
                         </tr>
                       </tbody>
                     </table>
-                    <Pagination :currentPage.sync="currentRealEstatePage" :totalPages="realEstateTotalPages" @update:currentPage="updateRealEstateCurrentPage" />
+                    <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stock Tab Content -->
+          <div v-if="activeTab === 'stock'" class="tab-content">
+            <div class="market-section">
+              <!-- Stock Watch Section -->
+              <div class="section-title">Stock Watch</div>
+              <div class="margin-box">
+                <StockWatch class="margin-box-content" />
+              </div>
+
+              <!-- Stock Quotes Section -->
+              <div class="section-title">Stock Quotes</div>
+              <div class="margin-box">
+                <div class="margin-box-content">
+                  <div v-if="error" class="error">{{ error }}</div>
+                  <div v-else-if="loading" class="loading">Loading...</div>
+                  <div v-else>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Symbol</th>
+                          <th>Price</th>
+                          <th>Volume</th>
+                          <th>Previous Close</th>
+                          <th>Change</th>
+                          <th>Change Percent</th>
+                        </tr>
+                      </thead>
+                      <tbody v-if="paginatedStockQuotes.length">
+                        <tr v-for="stock in paginatedStockQuotes" :key="stock['01. symbol']">
+                          <td>{{ stock['01. symbol'] }}</td>
+                          <td>{{ stock['05. price'] }}</td>
+                          <td>{{ stock['06. volume'] }}</td>
+                          <td>{{ stock['08. previous close'] }}</td>
+                          <td>{{ stock['09. change'] }}</td>
+                          <td>{{ stock['10. change percent'] }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages" @update:currentPage="updateStockCurrentPage" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stock History Section -->
+              <div class="section-title">Stock History</div>
+              <div class="margin-box">
+                <div class="margin-box-content">
+                  <!-- Add Stock History component here -->
+                  <p>Stock History Component (Coming Soon)</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Real Estate Tab Content -->
+          <div v-if="activeTab === 'realEstate'" class="tab-content">
+            <div class="market-section">
+              <!-- Real Estate Section -->
+              <div class="section-title">Real Estate</div>
+              <div class="real-estate-section" ref="realEstateSection">
+                <div class="margin-box">
+                  <RealEstateMap class="margin-box-content" />
+                  <div class="margin-box-content">
+                    <div v-if="errorRealEstate" class="error">{{ errorRealEstate }}</div> 
+                    <div v-else-if="loadingRealEstate" class="loading">Loading...</div>
+                    <div v-else>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Type</th>
+                            <th>Address</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody v-if="paginatedRealEstate.length">
+                          <tr v-for="estate in paginatedRealEstate" :key="estate.id">
+                            <td>{{ estate.propertyType && !isNaN(estate.propertyType) ? estate.propertyType : "Single-family"}}</td>
+                            <td>{{ estate.formattedAddress }}</td>
+                            <td>
+                              {{ estate.lastSalePrice && !isNaN(estate.lastSalePrice) ? 
+                              '$' + estate.lastSalePrice.toLocaleString() : "N/A" }}
+                            </td>
+                            <td>{{ estate.ownerOccupied === true ? 'Inactive' : 'Active'}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <Pagination :currentPage.sync="currentRealEstatePage" :totalPages="realEstateTotalPages" @update:currentPage="updateRealEstateCurrentPage" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -137,9 +174,8 @@
           </div>
         </div>
       </section>
-
       <!-- Risk Chat Section -->
-      <RiskChat />
+      <RiskChat :activeTab="activeTab" />
     </div>
   </div>
 </template>
@@ -167,6 +203,7 @@ export default {
   },
   data() {
     return {
+      activeTab: 'stock',
       // Bot Chat data
       showBot: false,
       hidingBot: false,
@@ -221,6 +258,18 @@ export default {
       const start = (this.currentRealEstatePage - 1) * this.itemsPerPage;
       return this.realEstateList.slice(start, start + this.itemsPerPage);
     },
+  },
+  watch: {
+    activeTab: {
+      immediate: true,
+      handler(newTab) {
+        if (newTab === 'realEstate') {
+          this.startBotAnimation();
+        } else {
+          this.hideBot();
+        }
+      }
+    }
   },
   mounted() {
     this.fetchStockQuote();
@@ -444,7 +493,11 @@ export default {
         this.errorRealEstate = 'Error fetching real estate';
         this.loadingRealEstate = false;
       }
-    }
+    },
+    formatTabName(tab) {
+      if (tab === 'realEstate') return 'Real Estate';
+      return tab.charAt(0).toUpperCase() + tab.slice(1);
+    },
   },
 };
 </script>
@@ -792,6 +845,90 @@ img {
   
   .bot-message {
     max-width: 220px;
+  }
+}
+
+/* Add these new styles for the sub-navigation */
+.sub-nav {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem auto 3rem;
+  padding: 0.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #f8f9fa;
+  width: 600px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 1rem 0;
+  border: none;
+  background: none;
+  font-size: 1.3rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  font-weight: 500;
+  margin: 0 0.25rem;
+  border-radius: 8px;
+}
+
+.tab-button:hover {
+  color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.tab-button.active {
+  color: white;
+  background-color: #007bff;
+  font-weight: bold;
+}
+
+/* Remove the underline effect */
+.tab-button.active::after {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .sub-nav {
+    width: 90%;
+    padding: 0.4rem;
+  }
+
+  .tab-button {
+    padding: 0.75rem 0;
+    font-size: 1.1rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .sub-nav {
+    width: 95%;
+    padding: 0.3rem;
+  }
+
+  .tab-button {
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    margin: 0 0.15rem;
+  }
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>

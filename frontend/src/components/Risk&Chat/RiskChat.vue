@@ -1,13 +1,11 @@
 <template>
     <div class="container">
-        <!-- DisplayCrypto is rendered first -->
-        <DisplayCrypto />
-
-        <!-- Stock History section rendered after DisplayCrypto -->
-        <DisplayStock />
-
-        <!-- Chat section rendered after Stock History -->
-        <div class="main-content">
+        <!-- Conditional rendering based on activeTab -->
+        <DisplayCrypto v-if="activeTab === 'crypto'" />
+        <DisplayStock v-if="activeTab === 'stock'" />
+        
+        <!-- Chat section only shown in stock tab -->
+        <div v-if="activeTab === 'stock'" class="main-content">
             <div class="chat-section">
                 <ChatFrame>
                     <ChatHeader :threadId="currentThread.id" />
@@ -34,8 +32,8 @@ import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
 import UserInput from '@/components/UserInput.vue';
 import News from '../Risk&Chat/News.vue';
-import DisplayCrypto from './DisplayCrypto.vue';
 import DisplayStock from './DisplayStock.vue';
+import DisplayCrypto from './DisplayCrypto.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import defaultImage from "@/assets/anonymous.png";
 
@@ -52,7 +50,13 @@ export default {
         UserInput,
         ChatHeader,
         News,
-    
+    },
+    props: {
+        activeTab: {
+            type: String,
+            required: true,
+            default: 'stock'
+        }
     },
     data() {
         return {
