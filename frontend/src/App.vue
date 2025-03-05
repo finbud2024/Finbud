@@ -53,6 +53,7 @@ export default {
     // Set the initial bot message
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener('click', this.handleClickOutside);
+
     if (this.isAuthenticated) {
       const userId = localStorage.getItem("token");
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
@@ -67,6 +68,11 @@ export default {
       } else {
         this.threadId = historyThreadsData[0]._id;
       }
+    }
+
+    if (this.$route.query.showTutorial === 'true') {
+      document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('dark-mode');
     }
 
     // Add route watcher

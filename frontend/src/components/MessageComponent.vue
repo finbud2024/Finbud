@@ -5,7 +5,14 @@
       <div class="message-content-wrapper">
           <!-- Displayed text -->
           <div v-if="htmlContent" :class="['message-content']" v-html="htmlContent"></div>
-          <div v-else  :class="['message-content', { 'typing': typing }]">{{ displayedText }}</div>
+          <div v-else  :class="['message-content', { 'typing': typing }]">
+            <div v-if="isThinking" class="thinking-animation">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <p v-else>{{ displayedText }}</p>
+          </div>
           <!-- Sources -->
             <section class="sources" v-if="sources && sources.length > 0">
               <SearchResult :sources="sources" />
@@ -37,6 +44,10 @@ export default {
   components: { SearchResult, Video },
   // props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc','htmlContent','sources','videos','relevantQuestions'],
   props: {
+    isThinking: {
+      type: Boolean,
+      default: false,
+    },
     isUser: {
       type: Boolean,
       default: false,
@@ -223,6 +234,45 @@ tr:nth-child(odd) {
   text-align: left;
   white-space: pre-wrap;
   line-height: 1.3;
+}
+
+
+/* thinking animation */
+.thinking-animation {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  opacity: 0.3;
+}
+
+.dot:nth-child(1) {
+  animation: thinking 1s infinite 0s;
+}
+
+.dot:nth-child(2) {
+  animation: thinking 1s infinite 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation: thinking 1s infinite 0.4s;
+}
+
+@keyframes thinking {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
 

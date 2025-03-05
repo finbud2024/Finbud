@@ -7,7 +7,7 @@
       <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
     </div>
     <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent"/>
-    <div  class="guidance-btn"  :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
+    <div class="guidance-btn" id="tutorial-guidance-button" :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
@@ -19,6 +19,12 @@
       @sendMessage="sendMessageToChat"
       :showModal="showGuidance" 
     />
+    <TutorialOverlay 
+      :steps="tutorialSteps" 
+      storageKey="finbudChatViewTutorialShown" 
+      :autoStart="true"
+      @tutorial-completed="onTutorialCompleted" 
+      ref="tutorialOverlay" />
   </div>
 </template>
 
@@ -27,6 +33,7 @@
 import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
+import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 //UTILITIES + LIB IMPORT
 
 export default {
@@ -37,7 +44,8 @@ export default {
   components: {
     ChatComponent,
     SideBar,
-    GuidanceModal
+    GuidanceModal,
+    TutorialOverlay
   },
   data() {
     return {
@@ -52,6 +60,13 @@ export default {
       newWindow: null, //new window to referrence to other
       windowCheckInterval: null,
       newThreadName: "",
+      tutorialSteps: [
+        {
+          element: '#tutorial-guidance-button',
+          message: "Click here for guidance on how to ask questions to FinBud!",
+          title: "Need help with queries?"
+        }
+      ]
     };
   },
   computed: {
@@ -133,12 +148,30 @@ export default {
       if (this.$refs.chatComponent) {
         this.$refs.chatComponent.sendMessage(message);
       }
+    },
+    onTutorialCompleted() {
+      console.log("ChatView Tutorial completed!");
+    },
+    restartTutorial() {
+      if (this.$refs.tutorialOverlay) {
+        this.$refs.tutorialOverlay.resetTutorial();
+      }
     }
   },
   async mounted() {
     setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
     document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
+    
+    // Check if we've been redirected from Home page and show tutorial
+    if (this.$route.query.showTutorial) {
+      // A small delay to ensure the page is fully loaded
+      setTimeout(() => {
+        if (this.$refs.tutorialOverlay) {
+          this.$refs.tutorialOverlay.resetTutorial();
+        }
+      }, 500);
+    }
   },
 };
 </script>
@@ -235,11 +268,29 @@ export default {
   color: white;
   border: none;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, right 0.3s ease, z-index 0.3s ease;
   display: flex;
+  z-index: 999; /* Default z-index */
+}
+
+/* Make button visible during tutorial with higher z-index */
+.guidance-btn.tutorial-active {
+  transform: translateX(-100px) !important;
+  right: -105px !important;
+  z-index: 10001 !important; /* Higher z-index during tutorial */
 }
 
 .guidance-btn:hover {
+  transform: translateX(-90px);
+}
+
+.is-guidance-visible {
+  right: calc(50% + 19px - 80px);
+  z-index: 999; /* Normal z-index when visible */
+}
+
+/* Make the guidance button always visible during tutorial */
+#tutorial-guidance-button.tutorial-active {
   transform: translateX(-90px);
 }
 

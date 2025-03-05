@@ -4,14 +4,13 @@
       <div class="intro-text">
         <div class="intro-text1">
           <li class="title animate fade-in">Making the most informed financial choices</li>
-          <li class="animate fade-in" :style="{ fontSize: '30px', fontWeight: 'bold', listStyleType: 'none' }">
-            Sign in to see more services
+          <li class="animate fade-in" :style="{ minHeight: '41px', fontSize: '30px', fontWeight: 'bold', listStyleType: 'none' }">
+            {{ signInTitle }}
           </li>
           <li class="description animate fade-in last-li">
-            With FinBud, you can ask for the best financial advice
-            anytime, anywhere
+            {{  signInDescription }}
           </li>
-          <BigGreenButton @click="chatNow">{{ displayText }}</BigGreenButton>
+          <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton>
         </div>
 
         <div class="photo">
@@ -160,16 +159,45 @@
         </div>
       </div>
     </section>
+    <TutorialOverlay 
+      :steps="tutorialSteps" 
+      storageKey="finbudHomeTutorialShown" 
+      :autoStart="true"
+      @tutorial-completed="onTutorialCompleted" 
+      ref="tutorialOverlay" />
   </section>
 </template>
 
 <script>
 import BigGreenButton from "../components/Button/ChatNow.vue";
+import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
+import { useTypingEffect } from '@/composables/useTypingEffect';
+
 export default {
   name: 'MainContent',
   components: {
     BigGreenButton,
+    TutorialOverlay
+  },
+  setup() {
+    const { 
+        typingText: signInTitle, 
+        startTyping: startTypingSignInTitle 
+    } = useTypingEffect('Sign in to see more services')
+    const { 
+      typingText: signInDescription, 
+      startTyping:  startTypingSignInDescription 
+    } = useTypingEffect('With FinBud, you can ask for the best financial advice anytime, anywhere', {
+      reverseEffect: false
+    })
+    
+    return {
+      signInTitle,
+      signInDescription, 
+      startTypingSignInTitle,
+      startTypingSignInDescription
+    }
   },
   data() {
     return {
@@ -179,6 +207,13 @@ export default {
         isOpen: false,
       })),
       expandedItem: null,
+      tutorialSteps: [
+        {
+          element: '#tutorial-main-button', // Target the BigGreenButton in the intro
+          message: "Click here to start chatting with FinBud, your personal finance assistant!",
+          title: "Welcome to FinBud"
+        }
+      ]
     };
   },
   computed: {
@@ -201,7 +236,6 @@ export default {
       }
     },
     toggleExpansion(item) {
-      console.log("here")
       //if it is already expanded and click into it again:
       if (this.expandedItem === item) {
         this.expandedItem = null;
@@ -209,10 +243,23 @@ export default {
       else {
         this.expandedItem = item;
       }
-      console.log(this.expandedItem)
+    },
+    onTutorialCompleted() {
+      console.log("Tutorial completed!");
+      if (this.isAuthenticated) {
+        this.$router.push({
+          path: '/chat-view',
+          query: {showTutorial: 'true'}
+        });
+      } else {
+        this.$router.push('login');
+      }
     }
   },
   mounted() {
+    this.startTypingSignInTitle(); 
+    this.startTypingSignInDescription();
+    
     const observerOptions = {
       threshold: 0.1,
     };
@@ -423,6 +470,7 @@ export default {
   align-self: flex-start;
 }
 
+/* Button styling */
 .button {
   padding: 10px 20px;
   margin-top: 10px;
@@ -439,6 +487,12 @@ export default {
 
 .button:hover {
   transform: scale(1.1);
+}
+
+/* Important - make the tutorial button accessible for clicks */
+#tutorial-main-button {
+  position: relative;
+  z-index: 10001;
 }
 
 .feature-icon {
