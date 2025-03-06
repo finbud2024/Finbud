@@ -95,14 +95,31 @@
         </div>
 
         <div class="chat-bot-container">
+          <!-- <div class="chatbot-content"> -->
+            
+            <!-- <div v-else-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
+            <div v-else class="chat-message typing">
+              <span v-html="formatChatMessage(partialMessage)"></span>
+              <span class="typing-cursor">|</span>
+            </div> -->
+          <!-- </div> -->
+
           <div class="chatbot-content">
-            <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
+
+          
+        <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
+        <div v-if="isThinking" class="thinking-animation">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div v-else-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
             <div v-else class="chat-message typing">
               <span v-html="formatChatMessage(partialMessage)"></span>
               <span class="typing-cursor">|</span>
             </div>
           </div>
-          <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
+
         </div>
       </section>
      
@@ -115,7 +132,18 @@
 
     <section class="transaction-history">
       <TransactionHistory :key="transactionKey"/>
+      <!-- <div class="chat-bot-container">
+          <div class="chatbot-content">
+            <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
+            <div v-else class="chat-message typing">
+              <span v-html="formatChatMessage(partialMessage)"></span>
+              <span class="typing-cursor">|</span>
+            </div>
+          </div>
+          <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
+        </div> -->
     </section>
+    
 
     <stockScreener @applyFilter="stockFilterHandler" />
 
@@ -186,6 +214,7 @@ export default {
       chatbotTriggeredByScroll: false,
       chatbotMessage: "",
       partialMessage: "",
+      isThinking: true,
       typingComplete: false,
       typingSpeed: 30,
       showChatBubble: true,
@@ -195,7 +224,9 @@ export default {
       headerPartialMessage: "",
       headerTypingComplete: false,
       headerTypingInterval: null,
-      headerBotVisible: true
+      headerBotVisible: true,
+      chatbotTransactionMessage: "",
+      showChatTransactionBubble: true
     };
   },
   methods: {
@@ -273,10 +304,23 @@ export default {
       // Reset and restart the typing effect when bot is clicked
       this.startHeaderTypingEffect();
     },
-    startTypingEffect() {
+    async startTypingEffect() {
       this.typingComplete = false;
       this.partialMessage = "";
-      const message = this.generateChatbotMessage();
+      this.isThinking = true;
+      // if (content === 'balance'){
+      //   const message = await this.generateBalanceInsights();
+      // console.log("message from generate balance insights", message)
+      
+      // } else if (content === 'transaction'){
+      //   const message = await this.generateTransactionInsights();
+      //   console.log("message from generate transaction insights", message);
+      // }
+      this.$nextTick(async () => {
+        try{
+          const message = await this.generateBalanceInsights();
+        console.log('balance insight', message)
+      this.isThinking = false;
       let charIndex = 0;
       
       if (this.typingInterval) {
@@ -294,6 +338,11 @@ export default {
           this.typingComplete = true;
         }
       }, this.typingSpeed);
+        } catch (error){
+          console.log("Error getting message balance", error)
+        }
+      })
+      
     },
     
     toggleChatBubble() {
@@ -301,12 +350,73 @@ export default {
       this.startTypingEffect();
     },
 
-    generateChatbotMessage() {
-      const userName = localStorage.getItem('userName') || 'there';
-      const cashPercentage = ((this.cash / this.accountBalance) * 100).toFixed(2);
-      const stockPercentage = ((this.stockValue / this.accountBalance) * 100).toFixed(2);
-      
-      return `Hey ${userName}! **Cash Balance:** ${this.cash} USD, making up ${cashPercentage}% of your account—super liquid! **Stocks:** ${this.stockValue} USD, just ${stockPercentage}% of the total—pretty small. Keep saving, but consider putting a bit more into stocks for some fun diversification. Sound good?`;
+    // async generateTransactionInsights(){
+    //   const url = "https://openrouter.ai/api/v1/chat/completions";
+    //   try {
+    //     const response = await axios.post(url, {
+    //       model: "deepseek/deepseek-chat:free",
+    //       messages: [
+    //         {
+    //           role: "system",
+    //           content: "You are financial expert providing comments based on my transaction history"
+    //         },
+    //         {
+    //           role: "user",
+    //           content: `Generate 3 bullet points providing comments about this transaction history.
+    //           - Transaction data: ${this.transactionData} 
+    //           Each bullet point has 1-2 sentence`
+    //         }
+    //       ], 
+    //     }, 
+    //     {
+    //       headers: {
+    //         'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+    //         "Content-Type": "application/json", 
+    //         "Accept": "application/json"
+    //       }
+    //     }
+    //   )
+    //   return response.data.choices[0].message.content
+
+    //   } catch (error){
+    //     console.log("Error generating comments about transaction data", error)
+
+    //   }
+    // },
+
+    async generateBalanceInsights(){
+      const url = "https://openrouter.ai/api/v1/chat/completions";
+      try {
+        const response = await axios.post(url, { 
+          model: "deepseek/deepseek-chat:free",
+          messages: [
+            {
+              role: "system",
+              content: "You are financial expert providing insights and engaged investment advice based on their finance portfolio"
+            }, 
+            {
+              role: "user",
+              content: `Generate financial insights and advice based on portfolio:
+              - Cash balance: ${this.cash}
+              - Account balance: ${this.accountBalance}
+              - Stock value: ${this.stockValue}
+              Generate 3 sentences providing insights or advice. Keep it interesting and concise.
+              `
+            }
+          ]
+        }, {
+          headers: {
+            'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+            "Content-Type": "application/json", 
+            "Accept": "application/json"
+          }
+        }
+        )
+        console.log(response.data.choices[0].message.content)
+        return response.data.choices[0].message.content
+      } catch (error){
+        console.log("Error giving insights", error)
+      }
     },
 
     handleScroll() {
@@ -557,6 +667,50 @@ export default {
 .dashboard {
   color: #333;
 }
+
+/* Thinking animation */
+.thinking-animation {
+  display: flex;
+  gap: 4px;
+  margin-top: 26px;
+  margin-left: 20px;
+  padding: 4px;
+  background-color: #2196F3;
+  width: fit-content;
+  border-radius: 16px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  opacity: 0.3;
+}
+
+.dot:nth-child(1) {
+  animation: thinking 1s infinite 0s;
+}
+
+.dot:nth-child(2) {
+  animation: thinking 1s infinite 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation: thinking 1s infinite 0.4s;
+}
+
+@keyframes thinking {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
 
 /* New container to hold both header elements side by side */
 .header-container {
