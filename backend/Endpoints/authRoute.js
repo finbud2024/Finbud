@@ -23,10 +23,19 @@ authRoute.get('/auth/google/callback',
       console.log("in google authenticate callback")
       if (err) { console.error(err); return next(err); }
       if (!user) { console.log('No user found'); return res.redirect('/login'); }
+      
+      // Check if this is a new user
+      const isNewUser = req.user && req.user.isNew; // Adjust based on your user model
+      
       req.logIn(user, (err) => {
         if (err) { console.error(err); return next(err); }
         console.log('User logged in');
-        return res.redirect('/');
+        
+        if (isNewUser) {
+          return res.redirect('/?showTutorial=true');
+        } else {
+          return res.redirect('/');
+        }
       });
     })(req, res, next); 
   }

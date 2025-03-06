@@ -10,7 +10,7 @@
           <li class="description animate fade-in last-li">
             {{  signInDescription }}
           </li>
-          <BigGreenButton @click="chatNow">{{ displayText }}</BigGreenButton>
+          <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton>
         </div>
 
         <div class="photo">
@@ -159,11 +159,18 @@
         </div>
       </div>
     </section>
+    <TutorialOverlay 
+      :steps="tutorialSteps" 
+      storageKey="finbudHomeTutorialShown" 
+      :autoStart="true"
+      @tutorial-completed="onTutorialCompleted" 
+      ref="tutorialOverlay" />
   </section>
 </template>
 
 <script>
 import BigGreenButton from "../components/Button/ChatNow.vue";
+import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
 import { useTypingEffect } from '@/composables/useTypingEffect';
 
@@ -171,6 +178,7 @@ export default {
   name: 'MainContent',
   components: {
     BigGreenButton,
+    TutorialOverlay
   },
   setup() {
     const { 
@@ -199,6 +207,13 @@ export default {
         isOpen: false,
       })),
       expandedItem: null,
+      tutorialSteps: [
+        {
+          element: '#tutorial-main-button', // Target the BigGreenButton in the intro
+          message: "Click here to start chatting with FinBud, your personal finance assistant!",
+          title: "Welcome to FinBud"
+        }
+      ]
     };
   },
   computed: {
@@ -221,7 +236,6 @@ export default {
       }
     },
     toggleExpansion(item) {
-      console.log("here")
       //if it is already expanded and click into it again:
       if (this.expandedItem === item) {
         this.expandedItem = null;
@@ -229,7 +243,17 @@ export default {
       else {
         this.expandedItem = item;
       }
-      console.log(this.expandedItem)
+    },
+    onTutorialCompleted() {
+      console.log("Tutorial completed!");
+      if (this.isAuthenticated) {
+        this.$router.push({
+          path: '/chat-view',
+          query: {showTutorial: 'true'}
+        });
+      } else {
+        this.$router.push('login');
+      }
     }
   },
   mounted() {
@@ -446,6 +470,7 @@ export default {
   align-self: flex-start;
 }
 
+/* Button styling */
 .button {
   padding: 10px 20px;
   margin-top: 10px;
@@ -462,6 +487,12 @@ export default {
 
 .button:hover {
   transform: scale(1.1);
+}
+
+/* Important - make the tutorial button accessible for clicks */
+#tutorial-main-button {
+  position: relative;
+  z-index: 10001;
 }
 
 .feature-icon {

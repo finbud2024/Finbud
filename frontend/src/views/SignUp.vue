@@ -179,6 +179,8 @@ export default {
               displayName: `${this.formData.firstName} ${this.formData.lastName}`,
             }
           });
+
+          localStorage.setItem('isNewUser', 'true');
           this.$router.push('/login');
         } catch (err) {
           console.log(err);

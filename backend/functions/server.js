@@ -17,6 +17,7 @@ import transactionRoute from '../Endpoints/transactionRoute.js';
 import stockTransactionRoute from '../Endpoints/stockTransactionRoute.js';
 import goalRoute from '../Endpoints/goalRoute.js';
 import proxyRoute from '../Endpoints/proxyRoute.js';
+import eventRoute from "../Endpoints/eventRoute.js";
 import quantSimulatorRoute from '../Endpoints/QuantSimulatorRoute.js'
 
 dotenv.config();
@@ -69,6 +70,7 @@ router.use('/', transactionRoute);
 router.use('/', stockTransactionRoute);
 router.use('/', goalRoute);
 router.use('/', proxyRoute);
+router.use('/events', eventRoute);
 router.use('/', quantSimulatorRoute);
 
 app.use('/.netlify/functions/server', router);
