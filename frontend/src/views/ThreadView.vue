@@ -15,10 +15,7 @@
             <img :src="thread.authorAvatar" alt="Author Avatar" class="author-avatar" />
 
             <div class="thread-meta">
-              <!-- Title on First Line -->
               <h1 class="thread-title">{{ thread.title }}</h1>
-
-              <!-- Author + Date on Second Line -->
               <div class="thread-info">
                 <span class="author-name">{{ thread.author }}</span>
                 <span class="separator">•</span>
@@ -56,10 +53,7 @@
             <h2>Replies</h2>
             <div v-for="reply in thread.replies" :key="reply.id" class="reply">
               
-              <!-- Left: Avatar -->
               <img :src="reply.authorAvatar" alt="Avatar" class="reply-avatar" />
-
-              <!-- Right: Reply Content -->
               <div class="reply-content">
                 
                 <!-- Author & Date -->
@@ -71,7 +65,6 @@
                 <!-- Reply Body -->
                 <p class="reply-text">{{ reply.text }}</p>
 
-                <!-- Reply Actions (Reactions + Date) -->
                 <div class="reply-actions">
                   <span class="reaction">
                     <Heart class="icon" /> {{ reply.likes }}
@@ -272,8 +265,11 @@ export default {
   width: 100%;
   max-width: 800px;
   margin-bottom: 10px; 
+  display: flex; 
+  flex-direction: column;
 }
 
+/* Textbox */
 .comment-box {
   width: 100%;
   height: 96px;
@@ -281,18 +277,23 @@ export default {
   border-radius: 6px;
   padding: 10px;
   font-size: 14px;
+  margin-bottom: 16px;
+  resize: vertical;
 }
 
+/* Button */
 .comment-button {
-  display: block;
-  margin-left: auto; 
-  background: var(--primary-color);
-  color: white;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
+  background: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  border: 2px solid #dddddd !important;
+  align-self: flex-end;
+  width: 90px;
+  height: 44px;
+  font-size: 16px;
+  border-radius: 25px;
   cursor: pointer;
-  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
 }
 
 /* Replies Section */
