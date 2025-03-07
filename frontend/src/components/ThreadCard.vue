@@ -120,7 +120,7 @@ export default {
 .thread-footer {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 32px;
   padding-top: 8px;
 }
 

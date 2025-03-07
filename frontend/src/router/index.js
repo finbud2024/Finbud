@@ -20,6 +20,7 @@ import QuantSimulator from "@/views/QuantSimulator.vue";
 import ForumView from "@/views/ForumView.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/ThreadView.vue";
+import StartThread from "@/views/StartThread.vue";
 
 const routes = [
   {
@@ -136,6 +137,12 @@ const routes = [
     path: "/thread-view",
     name: "ThreadView",
     component: ThreadView,
+    props: true,
+  },
+  {
+    path: "/start-thread",
+    name: "StartThread",
+    component: StartThread,
     props: true,
   },
 ];

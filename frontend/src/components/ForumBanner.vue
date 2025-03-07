@@ -1,13 +1,15 @@
 <template>
   <div class="forum-banner">
     <div class="forum-info">
-      <img :src="forum.logo" class="forum-icon" />
+      <img :src="forum.logo" class="forum-icon" alt="Forum Logo" />
       <div class="forum-text">
         <h1>{{ forum.name }}</h1>
         <p>{{ forum.description }}</p>
       </div>
     </div>
-    <button class="start-thread-btn">
+    
+    <!-- Start New Thread Button -->
+    <button @click="navigateToStartThread" class="start-thread-btn">
       <MessageSquarePlus class="icon" />
       Start new thread
     </button>
@@ -16,12 +18,22 @@
 
 <script>
 import { MessageSquarePlus } from "lucide-vue-next";
+import { useRouter } from "vue-router";
 
 export default {
   components: { MessageSquarePlus },
   props: {
-    forum: Object
-  }
+    forum: Object,
+  },
+  setup() {
+    const router = useRouter();
+
+    const navigateToStartThread = () => {
+      router.push("/start-thread"); 
+    };
+
+    return { navigateToStartThread };
+  },
 };
 </script>
 
@@ -33,15 +45,15 @@ export default {
   background: #f8f9fa;
   border: 1px solid #e0e0e0; 
   border-radius: 12px;
-  padding: 32px 24px; /* Increased vertical padding */
+  padding: 32px 24px; 
   margin-bottom: 20px;
-  min-height: 96px; /* Ensure it's at least double the original height */
+  min-height: 96px; 
 }
 
 .forum-info {
   display: flex;
   align-items: center;
-  gap: 16px; /* Slightly increased gap for better spacing */
+  gap: 16px; 
 }
 
 .forum-icon {
@@ -60,7 +72,7 @@ export default {
 }
 
 .forum-text p {
-  font-size: 16px; /* Slightly larger text for better readability */
+  font-size: 16px; 
   color: #6c757d;
   margin: 4px 0 0;
   max-width: 500px;
@@ -69,7 +81,7 @@ export default {
 .start-thread-btn {
   background: #007bff;
   color: white;
-  padding: 12px 22px; /* Slightly larger button */
+  padding: 12px 22px; 
   border: none;
   border-radius: 9999px;
   cursor: pointer;
