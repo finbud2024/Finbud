@@ -1,5 +1,18 @@
 <template>
   <div class="GoalDashBoardContainer">
+    <!-- Bot Chat Component - Placed outside the main content -->
+    <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
+      <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
+      <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
+        <div v-if="isTyping" class="typing-animation">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <div v-else class="typed-message" v-html="typedContent"></div>
+      </div>
+    </div>
+    
     <div class="leftPanel">
       <div class="leftPanelHeader">
         <img class="profilePic" :src="profilePic" alt="profilePic" />
@@ -191,7 +204,7 @@
     </div>
 
       <div class="rightPanel">
-        <section class="financial-goals">
+        <section class="financial-goals" ref="financialGoalsSection">
           <div class="goal-upper-part">
             <h3 class="goal-section-title">Goals</h3>
             <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">Add Goal</button>
@@ -304,7 +317,6 @@
       </button>
     </div>
   </div>
-  <ChatBotTyping :message="templateChat"/>
 </template>
 
 <script>
@@ -320,6 +332,21 @@ export default {
   },
   data() {
     return {
+      // Bot Chat data
+      showBot: false,
+      hidingBot: false,
+      showMessage: false,
+      hidingMessage: false,
+      isTyping: false,
+      botMessage: "",
+      typedContent: "", // Add this for the typing effect
+      botObserver: null,
+      botHideTimer: null,
+      words: [], // For word-by-word typing
+      currentWordIndex: 0,
+      typingSpeed: 50, // milliseconds between words
+      typingTimer: null,
+
       userId: localStorage.getItem('token'),
       firstName: JSON.parse(localStorage.getItem('user')).identityData.firstName,
       displayName: JSON.parse(localStorage.getItem('user')).identityData.displayName,
@@ -449,7 +476,140 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
     },
   },
+  mounted() {
+    if (!this.isAuthenticated) {
+      this.$router.push('/');
+    }
+    this.getAccountBalance();
+    this.retrieveGoals();
+    this.fetchTransactions();
+    this.processURLParams();
+    this.setupBotObserver(); // Add bot observer setup
+  },
+  beforeUnmount() {
+    // Clean up timers and observers when the component is destroyed
+    if (this.botObserver) {
+      this.botObserver.disconnect();
+    }
+    if (this.typingTimer) {
+      clearTimeout(this.typingTimer);
+    }
+    if (this.botHideTimer) {
+      clearTimeout(this.botHideTimer);
+    }
+  },
   methods: {
+    // Bot Chat methods
+    setupBotObserver() {
+      this.$nextTick(() => {
+        // Create an observer to watch when the user scrolls to the bottom of the page
+        this.botObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !this.showBot) {
+              this.startBotAnimation();
+              // Disconnect the observer after triggering to prevent multiple activations
+              this.botObserver.disconnect();
+            }
+          });
+        }, { threshold: 0.9 }); // Trigger when 80% of the element is visible
+        
+        // Observe the end of the document (the rightPanel which contains the goals)
+        const observeTarget = document.querySelector('.rightPanel');
+        if (observeTarget) {
+          this.botObserver.observe(observeTarget);
+        }
+      });
+    },
+    
+    startBotAnimation() {
+      // Reset any existing timers
+      if (this.typingTimer) {
+        clearTimeout(this.typingTimer);
+      }
+      if (this.botHideTimer) {
+        clearTimeout(this.botHideTimer);
+      }
+      
+      // Reset states
+      this.hidingBot = false;
+      this.hidingMessage = false;
+      this.typedContent = "";
+      
+      // First show the bot avatar sliding in
+      this.showBot = true;
+      
+      // After bot slides in, show typing animation
+      setTimeout(() => {
+        this.showMessage = true;
+        this.isTyping = true;
+        
+        // After typing animation, start actual message typing
+        setTimeout(() => {
+          this.isTyping = false;
+          this.botMessage = this.templateChat;
+          this.startWordByWordTyping();
+        }, 1500);
+      }, 800); // Wait for bot slide-in animation to complete
+    },
+    
+    startWordByWordTyping() {
+      // Split the message by spaces and newlines to get words
+      // This regex splits by spaces but keeps newlines as separate "words"
+      this.words = this.botMessage.split(/( |\n)/g).filter(word => word !== "");
+      this.currentWordIndex = 0;
+      this.typedContent = "";
+      this.typeNextWord();
+    },
+    
+    typeNextWord() {
+      if (this.currentWordIndex < this.words.length) {
+        const word = this.words[this.currentWordIndex];
+        
+        // Add the word to the content
+        if (word === "\n") {
+          this.typedContent += "<br>";
+        } else {
+          this.typedContent += word;
+        }
+        
+        this.currentWordIndex++;
+        
+        // Schedule the next word with a delay
+        this.typingTimer = setTimeout(() => {
+          this.typeNextWord();
+        }, this.typingSpeed * (word.length / 2 + 1)); // Delay proportional to word length
+      } else {
+        // Typing complete, schedule the hide after 1 minute
+        this.scheduleHideBot();
+      }
+    },
+    
+    scheduleHideBot() {
+      // Set a timeout to hide the bot after 1 minute (60000ms)
+      this.botHideTimer = setTimeout(() => {
+        this.hideBot();
+      }, 60000);
+    },
+    
+    hideBot() {
+      // Start fade-out animations
+      this.hidingMessage = true;
+      
+      // Wait for message to fade out, then hide bot
+      setTimeout(() => {
+        this.hidingBot = true;
+        
+        // Reset states after animations complete
+        setTimeout(() => {
+          this.showBot = false;
+          this.showMessage = false;
+          this.hidingBot = false;
+          this.hidingMessage = false;
+          this.typedContent = "";
+        }, 1000);
+      }, 500);
+    },
+    
     async getAccountBalance() {
       try {
         const userId = localStorage.getItem('token');
@@ -838,16 +998,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         this.recommendationsVisible = false;
       }, 100); //delay
     },
-  },
-  mounted() {
-    if (!this.isAuthenticated) {
-      this.$router.push('/');
-    }
-    this.getAccountBalance();
-    this.retrieveGoals();
-
-    this.fetchTransactions();
-    this.processURLParams();
   },
 };
 </script>
@@ -1966,4 +2116,144 @@ hr {
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) var(--bg-primary);
 }
+
+/* Bot Chat Styles */
+.bot-chat-container {
+  position: fixed; /* Fixed positioning relative to viewport */
+  left: -350px; /* Start off-screen to the left */
+  bottom: 30px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+  z-index: 100;
+  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
+  opacity: 0;
+  transform: translateX(0);
+  pointer-events: none; /* Prevents interaction with elements behind it */
+}
+
+.bot-chat-container.bot-visible {
+  transform: translateX(350px); /* Move to the right */
+  opacity: 1;
+  pointer-events: auto; /* Re-enable interaction when visible */
+}
+
+.bot-chat-container.bot-hidden {
+  transform: translateX(350px) translateY(50px);
+  opacity: 0;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+.bot-image {
+  width: 60px;
+  height: auto;
+  display: block;
+  position: relative;
+  background: transparent;
+  transition: transform 0.5s ease;
+  border-radius: 50%;
+}
+
+.bot-visible .bot-image {
+  animation: botBounce 1s ease-out;
+}
+
+@keyframes botBounce {
+  0% { transform: translateY(20px); opacity: 0; }
+  60% { transform: translateY(-5px); }
+  80% { transform: translateY(2px); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.bot-message {
+  margin-top: 10px;
+  margin-left: 10px;
+  background: #007bff;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 18px;
+  max-width: 280px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0; /* Start hidden */
+  transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: 0.3s; /* Reduced delay for smoother appearance */
+}
+
+.bot-message.message-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.bot-message.message-hidden {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Typing animation */
+.typing-animation {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  opacity: 0.3;
+}
+
+.dot:nth-child(1) {
+  animation: typing 1s infinite 0s;
+}
+
+.dot:nth-child(2) {
+  animation: typing 1s infinite 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation: typing 1s infinite 0.4s;
+}
+
+.typed-message {
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+@keyframes typing {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  /* ...existing code... */
+  
+  /* For mobile, position the bot at the bottom of the screen */
+  .bot-chat-container {
+    left: auto;
+    right: -300px;
+    bottom: 20px;
+  }
+  
+  .bot-chat-container.bot-visible {
+    transform: translateX(-310px);
+  }
+  
+  .bot-chat-container.bot-hidden {
+    transform: translateX(-310px) translateY(50px);
+  }
+}
+
+/* ...existing code... */
 </style>
