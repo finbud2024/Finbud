@@ -303,6 +303,8 @@
 
         </section>
       </div>
+      <!-- Ghost div for chatbot trigger - placed at the very end of the page -->
+      <div ref="chatbotTriggerPoint" class="chatbot-trigger"></div>
       </div>
   <div v-if="showResetConfirmationModal" class="modal">
     <div class="modal-content">
@@ -511,12 +513,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
               this.botObserver.disconnect();
             }
           });
-        }, { threshold: 0.9 }); // Trigger when 80% of the element is visible
+        }, { threshold: 0.9 }); // Trigger when 50% of the element is visible
         
-        // Observe the end of the document (the rightPanel which contains the goals)
-        const observeTarget = document.querySelector('.rightPanel');
-        if (observeTarget) {
-          this.botObserver.observe(observeTarget);
+        // Observe the ghost div at the end of the page
+        if (this.$refs.chatbotTriggerPoint) {
+          this.botObserver.observe(this.$refs.chatbotTriggerPoint);
         }
       });
     },
@@ -2253,6 +2254,32 @@ hr {
   .bot-chat-container.bot-hidden {
     transform: translateX(-310px) translateY(50px);
   }
+}
+
+/* Ghost div for chatbot trigger */
+.chatbot-trigger {
+  height: 20px; /* Small height to be less intrusive */
+  width: 100%;
+  opacity: 0; /* Invisible */
+  pointer-events: none; /* Won't interfere with user interaction */
+  position: relative;
+  margin-top: 20px; /* Space after the last visible element */
+  margin-bottom: 20px; /* Space at the bottom of the page */
+}
+
+/* Ghost div for chatbot trigger - truly invisible */
+.chatbot-trigger {
+  height: 1px; /* Minimal height */
+  width: 1px; /* Minimal width */
+  opacity: 0; /* Invisible */
+  pointer-events: none; /* Won't interfere with user interaction */
+  position: absolute; /* Take out of normal document flow */
+  bottom: 20px; /* Position near the bottom of the container */
+  left: 0; /* Align to the left */
+  margin: 0; /* Remove margins */
+  padding: 0; /* Remove padding */
+  border: none; /* Remove borders */
+  background: transparent; /* Transparent background */
 }
 
 /* ...existing code... */
