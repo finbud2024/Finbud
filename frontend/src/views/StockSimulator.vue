@@ -137,18 +137,19 @@
       <div class="stockDisplayContainer" v-if="count">
         <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
       </div>
-
-      <PreviewOrderModal 
-        v-if="showModal" 
-        :stockSymbol="stockSymbol" 
-        :quantity="quantity" 
-        :estimatedPrice="estimatedPrice" 
-        :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
-        @close="showModal = false"  
-        @clear-order="clearOrder"  
-        @submit-order="submitOrder(action)" 
-      />
     </section>
+
+
+    <PreviewOrderModal 
+      v-if="showModal" 
+      :stockSymbol="stockSymbol" 
+      :quantity="quantity" 
+      :estimatedPrice="estimatedPrice" 
+      :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
+      @close="showModal = false"  
+      @clear-order="clearForm"   
+      @submit-order="submitOrder(action)" 
+    />
   </div>
 </template>
 
