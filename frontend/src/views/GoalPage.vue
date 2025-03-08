@@ -1,8 +1,14 @@
 <template>
   <div class="GoalDashBoardContainer">
-    <!-- Bot Chat Component - Placed outside the main content -->
+    <!-- Bot Chat Component - Updated with toggle functionality -->
     <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-      <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
+      <img 
+        class="bot-image" 
+        src="@/assets/botrmbg.png" 
+        alt="Bot" 
+        @click="toggleBotMessage"
+        :class="{ 'clickable': showBot }"
+      />
       <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
@@ -348,6 +354,7 @@ export default {
       currentWordIndex: 0,
       typingSpeed: 50, // milliseconds between words
       typingTimer: null,
+      messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
 
       userId: localStorage.getItem('token'),
       firstName: JSON.parse(localStorage.getItem('user')).identityData.firstName,
@@ -535,6 +542,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       this.hidingBot = false;
       this.hidingMessage = false;
       this.typedContent = "";
+      this.messageManuallyToggled = false; // Reset the toggle flag
       
       // First show the bot avatar sliding in
       this.showBot = true;
@@ -586,29 +594,36 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     },
     
     scheduleHideBot() {
-      // Set a timeout to hide the bot after 1 minute (60000ms)
-      this.botHideTimer = setTimeout(() => {
-        this.hideBot();
-      }, 60000);
+      // Only schedule auto-hiding if the message wasn't manually toggled
+      if (!this.messageManuallyToggled) {
+        this.botHideTimer = setTimeout(() => {
+          this.hideBot();
+        }, 60000);
+      }
     },
     
     hideBot() {
-      // Start fade-out animations
-      this.hidingMessage = true;
-      
-      // Wait for message to fade out, then hide bot
-      setTimeout(() => {
-        this.hidingBot = true;
-        
-        // Reset states after animations complete
+      // If manually toggled, only hide the message
+      if (this.messageManuallyToggled) {
+        this.hidingMessage = true;
         setTimeout(() => {
-          this.showBot = false;
           this.showMessage = false;
-          this.hidingBot = false;
           this.hidingMessage = false;
-          this.typedContent = "";
-        }, 1000);
-      }, 500);
+        }, 500);
+      } else {
+        // Original behavior - hide both bot and message
+        this.hidingMessage = true;
+        setTimeout(() => {
+          this.hidingBot = true;
+          setTimeout(() => {
+            this.showBot = false;
+            this.showMessage = false;
+            this.hidingBot = false;
+            this.hidingMessage = false;
+            this.typedContent = "";
+          }, 1000);
+        }, 500);
+      }
     },
     
     async getAccountBalance() {
@@ -623,6 +638,46 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       } catch (error) {
         console.error('Error fetching financial data:', error);
         toast.error('Failed to load financial data', { autoClose: 1000 });
+      }
+    },
+
+    // Add this new method to toggle the message visibility
+    toggleBotMessage() {
+      // Only allow toggling if the bot is visible
+      if (!this.showBot) return;
+      
+      this.messageManuallyToggled = true;
+      
+      // If hiding message timer is active, clear it
+      if (this.botHideTimer) {
+        clearTimeout(this.botHideTimer);
+        this.botHideTimer = null;
+      }
+      
+      if (this.showMessage) {
+        // Hide the message
+        this.hidingMessage = true;
+        setTimeout(() => {
+          this.showMessage = false;
+          this.hidingMessage = false;
+        }, 500);
+      } else {
+        // Show the message
+        this.hidingMessage = false;
+        this.showMessage = true;
+        
+        // If the typing was already completed
+        if (!this.isTyping && this.typedContent) {
+          // Message is already typed, just show it
+        } else if (!this.isTyping && !this.typedContent) {
+          // Start the typing animation again
+          this.isTyping = true;
+          setTimeout(() => {
+            this.isTyping = false;
+            this.botMessage = this.templateChat;
+            this.startWordByWordTyping();
+          }, 1500);
+        }
       }
     },
 
@@ -2283,4 +2338,12 @@ hr {
 }
 
 /* ...existing code... */
+.bot-image.clickable {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.bot-image.clickable:hover {
+  transform: scale(1.1);
+}
 </style>
