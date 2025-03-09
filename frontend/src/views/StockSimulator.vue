@@ -71,7 +71,7 @@
             </select>
             <div class="buttons">
               <button class="clear-btn" @click="clearForm">CLEAR</button>
-              <button class="preview-btn" @click="showModal = true">Preview Order</button>
+              <button class="preview-btn" @click="previewOrder">Preview Order</button>
             </div>
           </div>
         </section>
@@ -137,18 +137,19 @@
       <div class="stockDisplayContainer" v-if="count">
         <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
       </div>
-
-      <PreviewOrderModal 
-        v-if="showModal" 
-        :stockSymbol="stockSymbol" 
-        :quantity="quantity" 
-        :estimatedPrice="estimatedPrice" 
-        :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
-        @close="showModal = false"  
-        @clear-order="clearOrder"  
-        @submit-order="submitOrder(action)" 
-      />
     </section>
+
+
+    <PreviewOrderModal 
+      v-if="showModal" 
+      :stockSymbol="stockSymbol" 
+      :quantity="quantity" 
+      :estimatedPrice="estimatedPrice" 
+      :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
+      @close="showModal = false"  
+      @clear-order="clearForm"   
+      @submit-order="submitOrder(action)" 
+    />
   </div>
 </template>
 
@@ -404,6 +405,65 @@ export default {
       this.quantity = '';
       this.action = 'buy';
     },
+    async updateEstimatedPrice(symbol) {
+      if (!symbol) return false; // Return false to indicate failure
+      
+      try {
+        const stockData = await fetchSimBannerStockDatav3(symbol);
+        
+        if (stockData) {
+          // Try to get current price - prioritize different price fields
+          let price = stockData.regularPrice || stockData.currentPrice || stockData.close;
+          
+          // Check if the price is a valid number and not NaN
+          if (price && !isNaN(parseFloat(price))) {
+            this.estimatedPrice = parseFloat(price);
+            return true; // Return true to indicate success
+          } else {
+            // No valid price field found or price is NaN
+            alert(`Sorry, we couldn't find valid price data for ${symbol.toUpperCase()}.`);
+            console.warn(`Invalid price data for ${symbol}:`, price);
+            return false; // Return false to indicate failure
+          }
+        } else {
+          // No stock data returned at all
+          alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
+          console.error(`No stock data returned for ${symbol}`);
+          return false; // Return false to indicate failure
+        }
+      } catch (error) {
+        // API call failed completely
+        alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
+        console.error(`Error fetching price for ${symbol}:`, error);
+        return false; // Return false to indicate failure
+      }
+    },
+
+    async previewOrder() {
+      // Validate required fields
+      if (!this.stockSymbol) {
+        alert("Please enter a stock symbol");
+        return;
+      }
+      
+      if (!this.quantity || this.quantity <= 0) {
+        alert("Please enter a valid quantity");
+        return;
+      }
+      
+      // Only fetch the price when the Preview button is clicked
+      try {
+        // Only show modal if price fetch was successful
+        const success = await this.updateEstimatedPrice(this.stockSymbol);
+        if (success) {
+          this.showModal = true;
+        }
+        // If not successful, do nothing (modal won't show)
+      } catch (error) {
+        console.error("Error in preview order:", error);
+        // Error message already shown in updateEstimatedPrice
+      }
+    },
     submitOrder(action) {
       const transactionData = {
         stockSymbol: this.stockSymbol,
@@ -486,7 +546,7 @@ export default {
       } else {
         console.error(`Failed to fetch stock data for ${newSymbol}`);
       }
-    }
+    },
   },
   async mounted() {
     // Delayed start for header chatbot to enable fade-in effect
