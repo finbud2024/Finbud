@@ -113,6 +113,36 @@
       />
     </div>
 
+    <div class="section-container" data-aos="flip-right">
+      <div class="quiz-card">
+        <h1 class="title">Finance Quiz</h1>
+        <button class="button" @click="GenerateQuiz">Generate Quiz</button>
+        <div class="quiz-area">
+          <div :class="['quizQuestion', { quizQuestionEnabled: question.length !== 0 }]">
+            {{ currentQuestion === -1 ? "Question will appear here" : question }}
+          </div>
+          <div class="quizChoices">
+            <button
+              v-for="(option, index) in answerOptions"
+              :key="index"
+              :disabled="answerButtonDisabled"
+              @click="handleUserChoice(index)"
+              :class="['answerButton', { answerButtonActive: answerOptions.length !== 0 }]"
+            >
+              {{ option.replace(/\*$/, "") }}
+            </button>
+          </div>
+          <div v-if="showExplaination" class="explanation-container">
+            <div class="explanation-text">
+              <div class="explanation-title">Explanation:</div>
+              <div>{{ explanation || "Ready for the next question!" }}</div>
+            </div>
+            <button class="button" @click="handleNextQuestion">Next Question</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <section class="transaction-history">
       <TransactionHistory :key="transactionKey"/>
     </section>
@@ -138,6 +168,8 @@
 
 <script>
 import { fetchSimBannerStockData, fetchSimBannerStockDatav2, fetchSimBannerStockDatav3 } from '../services/stockServices';
+import { GPTService, gptServices } from "../services/gptServices";
+import debounce from "lodash/debounce";
 import StockScreener from '../components/StockScreener.vue';
 import CompanyCard from '@/components/CompanyCard.vue';
 import BannerCardSimulator from '@/components/BannerCardSimulator.vue';
@@ -195,10 +227,162 @@ export default {
       headerPartialMessage: "",
       headerTypingComplete: false,
       headerTypingInterval: null,
-      headerBotVisible: true
+      headerBotVisible: true,
+      isLoading: false,
+      answerButtonDisabled: false,
+      currentQuestion: -1,
+      question: "",
+      answerOptions: [],
+      showExplaination: false,
+      transactions: [],
+      explanation: ""
     };
   },
   methods: {
+      // Generate Quiz
+      GenerateQuiz: debounce(async function () {
+        this.isLoading = true;
+        this.answerButtonDisabled = true;
+        this.currentQuestion = -1;
+        this.question = "";
+        this.answerOptions = [];
+
+        // Randomly select a company from stockData (which contains S&P 500 companies)
+        const randomIndex = Math.floor(Math.random() * stockData.length);
+        const randomCompany = stockData[randomIndex].ticker;
+        
+        const response = await gptServices([
+          {
+            role: "system",
+            content: "You are a financial trading assistant.",
+          },
+          {
+            role: "user",
+            content: `Generate a trading scenario involving the company ${randomCompany}.
+              The scenario should reflect a real-world market event affecting the company.
+              The user should have 5 choices:
+              - Buy #amount1 shares
+              - Buy #amount2 shares
+              - Do nothing
+              - Sell #amount1 shares
+              - Sell #amount2 shares
+              
+              Format the response like this:
+              Question: <scenario>
+              Choices:
+              A. Buy <amount1> shares
+              B. Buy <amount2> shares
+              C. Do nothing
+              D. Sell <amount1> shares
+              E. Sell <amount2> shares`,
+          },
+        ]);
+
+        // Parse the response
+        const questionBlock = response.split("\n");
+        this.question = questionBlock[0].substring(10); // Extract scenario
+        this.answerOptions = questionBlock.slice(2, 7).map((option) => option.substring(3)); // Extract choices
+
+        this.isLoading = false;
+        this.answerButtonDisabled = false;
+        this.showExplaination = true;
+      }, 300),
+    // handle user choice
+    handleUserChoice(index) {
+      // Get the selected choice (adjusting for 0-based index)
+      const choice = this.answerOptions[index];
+      
+      // Use the current stock price from the banner or a default value
+      let stockPrice = this.estimatedPrice || 100;
+      let shares = 0;
+      let cashChange = 0;
+      let stockChange = 0;
+      
+      if (choice.includes("Buy")) {
+        // Extract the number of shares from the choice
+        const match = choice.match(/\d+/);
+        if (match) {
+          shares = parseInt(match[0]);
+          const totalCost = shares * stockPrice;
+          
+          // Validate if user has enough cash
+          if (totalCost > this.cash) {
+            toast.error('Not enough cash to complete this purchase', { autoClose: 2000 });
+            return; // Stop execution if not enough cash
+          }
+          
+          cashChange = -totalCost;
+          stockChange = shares;
+        }
+      } else if (choice.includes("Sell")) {
+        // Extract the number of shares from the choice
+        const match = choice.match(/\d+/);
+        if (match) {
+          shares = parseInt(match[0]);
+          cashChange = shares * stockPrice;
+          stockChange = -shares;
+        }
+      }
+      
+      // Update user data
+      this.cash += cashChange;
+      this.stockValue += stockChange * stockPrice;
+      this.accountBalance = this.cash + this.stockValue;
+      
+      // Record the transaction
+      if (choice !== "Do nothing" && shares > 0) {
+        this.transactions.push({
+          type: choice.includes("Buy") ? "Buy" : "Sell",
+          shares: shares,
+          value: Math.abs(cashChange),
+          stockPrice: stockPrice,
+          date: new Date().toISOString()
+        });
+      }
+      
+      // Check if user is out of money
+      if (this.cash <= 0) {
+        toast.error('Game over! You have run out of cash.', { autoClose: 3000 });
+        // You could add additional game over logic here
+      } else {
+        // Generate next question automatically
+        this.handleNextQuestion();
+      }
+    },
+    handleNextQuestion() {
+      this.currentQuestion++;
+      // Generate a new quiz after a short delay
+      setTimeout(() => {
+        this.GenerateQuiz();
+      }, 1000);
+    },
+    handleQuizResult(type) {
+      if (type === "end") {
+        this.modalDisplay = false;
+        return;
+      }
+
+      let transactionSummary = "";
+      if (this.transactions.length > 0) {
+        transactionSummary = this.transactions
+          .map(
+            (transaction) =>
+              `${transaction.type} ${transaction.shares} shares for $${transaction.value}`
+          )
+          .join("\n");
+      } else {
+        transactionSummary = "No transactions made.";
+      }
+
+      alert(`Transaction Summary:\n${transactionSummary}`);
+
+      if (type === "same") {
+        this.startNewGame(this.currentKeyword);
+      } else {
+        this.startNewGame("");
+      }
+    },
+
     // Add the adjustChartHeight method here
     adjustChartHeight() {
       this.$nextTick(() => {
@@ -928,5 +1112,155 @@ export default {
   background-color: #f8f9fa;
   border-radius: 5px;
   border: 1px solid;
+}
+
+/* Quiz Section Styles - Matching quizComponent.vue */
+.section-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 90vw;
+  margin: 2rem auto;
+  padding: 0;
+  background-color: transparent;
+}
+
+.quiz-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  margin-bottom: 2rem;
+}
+
+.quiz-card .title {
+  font-family: sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.quiz-card .button {
+  width: auto;
+  padding: 0.875rem 1.5rem;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.quiz-card .button:hover {
+  background: #2c5282;
+}
+
+.quiz-area {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.quizQuestion {
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+}
+
+.quizQuestionEnabled {
+  color: black;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.quizChoices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.answerButton {
+  width: 100%;
+  padding: 0.875rem;
+  background: white;
+  color: #2c3e50;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.answerButton:hover {
+  background: #f7fafc;
+  transform: translateY(-2px);
+}
+
+.answer-button-correct {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.answer-button-incorrect {
+  background-color: red !important;
+  color: white !important;
+}
+
+.answerButtonActive {
+  color: black;
+}
+
+.explanation-container {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.explanation-title {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.explanation-text {
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .section-container {
+    max-width: 95vw;
+    padding: 0 10px;
+  }
+  
+  .quiz-card {
+    padding: 1.5rem;
+  }
+  
+  .quiz-card .title {
+    font-size: 1.5rem;
+  }
 }
 </style>
