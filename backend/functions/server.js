@@ -18,8 +18,7 @@ import stockTransactionRoute from '../Endpoints/stockTransactionRoute.js';
 import goalRoute from '../Endpoints/goalRoute.js';
 import proxyRoute from '../Endpoints/proxyRoute.js';
 import quantSimulatorRoute from '../Endpoints/QuantSimulatorRoute.js'
-import chatStockRoute from '../Endpoints/chatStockRoute.js';
-
+import chatStockRoute from '../Endpoints/subChat/chatStockRoute.js';
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;

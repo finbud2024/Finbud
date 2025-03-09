@@ -1,13 +1,17 @@
 import express from "express"
-import ChatSimulator from "../Database Schema/ChatStockSimulator"
-
+import ChatSimulator from "../../Database Schema/ChatStockSimulator";
 const chatStockRoute = express.Router()
 
 chatStockRoute.post("/update-response", async (req, res) => {
     const {userId, newMessage} = req.body;
     try {
+        const start = new Date()
+        start.setHours(0, 0, 0, 0)
+        const end = new Date()
+        end.setHours(23, 59, 59, 999)
         const updateResponse = await ChatSimulator.findOneAndUpdate(
-            {userId}, 
+            {userId, 
+            createdAt: {$gte: start, $lte: end} },
             {response: newMessage}, 
             {upsert: true, new: true}
         )
@@ -17,10 +21,10 @@ chatStockRoute.post("/update-response", async (req, res) => {
     }
 })
 
-chatStockRoute.get('/most-recent/:userId', async(req, res) => {
+chatStockRoute.get('/all-responses/:userId', async(req, res) => {
     const {userId} = req.params;
     try {
-        const recentResponse = await ChatSimulator.findOne({userId})
+        const recentResponse = await ChatSimulator.find({userId})
         if (!recentResponse){
             return res.status(404).json({message: 'No response found'})
         }

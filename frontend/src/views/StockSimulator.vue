@@ -198,6 +198,7 @@ export default {
       accountBalance: 0,
       stockValue: 0,
       cash: 0,
+      pastBalanceInsight: "",
       transactionKey: 0,
       performanceData: [],
       stockData: {
@@ -385,6 +386,13 @@ export default {
     // },
 
     async generateBalanceInsights(){
+      try {
+        const pastResponse = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/all-responses/${this.fixedUserId}`)
+        this.pastBalanceInsight = pastResponse.data[0].response
+        console.log("past insights", this.pastBalanceInsight)
+      } catch (error){
+        console.log("error getting past insights", error)
+      }
       const url = "https://openrouter.ai/api/v1/chat/completions";
       try {
         const response = await axios.post(url, { 
@@ -392,15 +400,16 @@ export default {
           messages: [
             {
               role: "system",
-              content: "You are financial expert providing insights and engaged investment advice based on their finance portfolio"
+              content: "You are financial expert providing comparision to past insights"
             }, 
             {
               role: "user",
-              content: `Generate financial insights and advice based on portfolio:
+              content: `Compare to past insights:
               - Cash balance: ${this.cash}
               - Account balance: ${this.accountBalance}
               - Stock value: ${this.stockValue}
-              Generate 3 sentences providing insights or advice. Keep it interesting and concise.
+              - Past insights: ${this.pastBalanceInsight}
+              Generate 3 sentences providing comparision. Keep it interesting and concise.
               `
             }
           ]
@@ -412,8 +421,17 @@ export default {
           }
         }
         )
-        console.log(response.data.choices[0].message.content)
-        return response.data.choices[0].message.content
+        const newResponse = response.data.choices[0].message.content;
+        try {
+          await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/update-response/`,{
+          userId: this.fixedUserId,
+          newMessage: newResponse
+        })
+        console.log("Updating response success")
+      } catch(error) {
+          console.log("error updating response from frontend", error)
+        }
+        return newResponse
       } catch (error){
         console.log("Error giving insights", error)
       }
