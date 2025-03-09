@@ -17,6 +17,7 @@ import QuantAnalysis from "@/views/QuantAnalysis.vue";
 import EventHub from "@/views/EventHub.vue";
 import LearningRoadMap from "@/views/LearningRoadMap.vue";
 import QuantSimulator from "@/views/QuantSimulator.vue";
+import MorgageCalc from "@/views/Morgage-calc.vue";
 // import EventMap from '@/components/EventMap.vue';
 
 const routes = [
@@ -112,6 +113,11 @@ const routes = [
     name: "LearningRoadMap",
     component: LearningRoadMap,
     props: true,
+  },
+  {
+    path: "/morgage-calc",
+    name: "Morgage-calc",
+    component: MorgageCalc,
   },
   // {
   //   path: '/event-map',

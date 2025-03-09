@@ -22,6 +22,7 @@
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
+            <router-link to="/morgage-calc" class="event" @click="toggleDropdown(false)">Morgage Calculation</router-link>
           </div>
         </li>
         <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
