@@ -30,6 +30,7 @@
       <select v-model="loanTerm">
         <option value="30">30-year fixed</option>
         <option value="15">15-year fixed</option>
+        <option value="5">5-year ARM</option>
       </select>
     </div>
     
@@ -43,10 +44,11 @@
     
     <div class="input-group">
       <label>Taxes, Insurance, HOA Fees</label>
-      <select v-model="showExtras">
-        <option :value="false">Hidden</option>
-        <option :value="true">Show</option>
-      </select>
+      <div class="toggle-header">
+        <button @click="toggleExtras">
+          <span class="dropdown-icon" :class="{ rotated: showExtras }">▼</span>
+        </button>
+      </div>
     </div>
     
     <div v-if="showExtras" class="extra-content">
@@ -81,7 +83,6 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
   data() {
@@ -90,17 +91,21 @@ export default {
       downPayment: 2000,
       downPaymentPercentage: 20,
       loanTerm: 30,
-      interestRate: 6.319,
+      interestRate: 6.304,
       propertyTax: 3,
       homeInsurance: 150,
       pmi: 0,
       hoaFees: 0,
       showExtras: false
     };
+  },
+  methods: {
+    toggleExtras() {
+      this.showExtras = !this.showExtras;
+    }
   }
 };
 </script>
-
 <style scoped>
 .mortgage-calc {
   max-width: 500px;
@@ -151,6 +156,30 @@ input, select {
 .split-input {
   display: flex;
   gap: 10px;
+}
+
+.toggle-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.dropdown-icon.rotated {
+  transform: rotate(180deg);
 }
 
 .extra-content {
