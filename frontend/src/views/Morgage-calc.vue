@@ -115,7 +115,7 @@
               <div class="breakdown-item">
                 <span class="percentage">{{ ((this.propertyTax / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                 <span class="label">Property Tax</span>
-                <span class="amount">${{  this.propertyTax }}54 /month</span>
+                <span class="amount">${{  this.propertyTax }} /month</span>
               </div>
               <div class="breakdown-item">
                 <span class="percentage">{{ ((this.homeInsurance / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
@@ -148,11 +148,11 @@ export default {
   data() {
     return {
       homePrice: 425000,
-      downPayment: 2000,
+      downPayment: 85000,
       downPaymentPercentage: 20,
       loanTerm: 30,
-      interestRate: 6.304,
-      propertyTax: 3,
+      interestRate: 6.299,
+      propertyTax: 354,
       homeInsurance: 150,
       pmi: 0,
       hoaFees: 0,
@@ -220,7 +220,7 @@ export default {
         data: {
           labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance', 'PMI', 'HOA Fees'],
           datasets: [{
-            data: [2105, 354, 150, 0, 0],
+            data: [this.calculatePrincipalInterest, this.propertyTax, this.homeInsurance, this.Private, this.hoaFees],
             backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0', '#03A9F4'],
           }]
         },
