@@ -19,7 +19,7 @@ import goalRoute from '../Endpoints/goalRoute.js';
 import proxyRoute from '../Endpoints/proxyRoute.js';
 import eventRoute from "../Endpoints/eventRoute.js";
 import quantSimulatorRoute from '../Endpoints/QuantSimulatorRoute.js'
-
+import chatStockRoute from '../Endpoints/subChat/chatStockRoute.js';
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -72,6 +72,7 @@ router.use('/', goalRoute);
 router.use('/', proxyRoute);
 router.use('/events', eventRoute);
 router.use('/', quantSimulatorRoute);
+router.use('/', chatStockRoute);
 
 app.use('/.netlify/functions/server', router);
 

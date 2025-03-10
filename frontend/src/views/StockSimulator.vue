@@ -104,6 +104,29 @@
             </div>
           </div>
 
+        <div class="chat-bot-container">
+         
+          <div class="chatbot-content">
+
+          
+        <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
+        <div v-if="isThinking" class="thinking-animation">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div v-else-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
+            <div v-else class="chat-message typing">
+              <span v-html="formatChatMessage(partialMessage)"></span>
+              <span class="typing-cursor">|</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+     
+      
+    <!-- </div>
           <div class="chat-bot-container">
             <div class="chatbot-content">
               <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
@@ -114,7 +137,7 @@
             </div>
             <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
           </div>
-        </section>
+        </section> -->
       
         <PerformanceChart 
           :performanceData="performanceData"
@@ -129,7 +152,9 @@
       <section class="transaction-history">
         <TransactionHistory :key="transactionKey"/>
       </section>
+    
     </section>
+    
 
     <section v-if="activeSection === 'filters'">
       <stockScreener @applyFilter="stockFilterHandler" />
@@ -188,6 +213,7 @@ export default {
       accountBalance: 0,
       stockValue: 0,
       cash: 0,
+      pastBalanceInsight: "",
       transactionKey: 0,
       performanceData: [],
       stockData: {
@@ -204,6 +230,7 @@ export default {
       chatbotTriggeredByScroll: false,
       chatbotMessage: "",
       partialMessage: "",
+      isThinking: true,
       typingComplete: false,
       typingSpeed: 30,
       showChatBubble: true,
@@ -214,6 +241,9 @@ export default {
       headerTypingComplete: false,
       headerTypingInterval: null,
       headerBotVisible: true,
+      headerBotVisible: true,
+      chatbotTransactionMessage: "",
+      showChatTransactionBubble: true
     };
   },
   methods: {
@@ -230,7 +260,11 @@ export default {
       });
     },
     formatChatMessage(message) {
-      return message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      if (!message){
+        return ""
+      }
+      const sentences = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').split(/(?<=[.!?])\s+/);
+      return sentences.map(sentence => `<div>${sentence}</div>`).join("")
     },
     startHeaderTypingEffect() {
       // Reset typing process
@@ -291,10 +325,15 @@ export default {
       // Reset and restart the typing effect when bot is clicked
       this.startHeaderTypingEffect();
     },
-    startTypingEffect() {
+    async startTypingEffect() {
       this.typingComplete = false;
       this.partialMessage = "";
-      const message = this.generateChatbotMessage();
+      this.isThinking = true;
+      this.$nextTick(async () => {
+        try{
+          const message = await this.generateBalanceInsights();
+        console.log('balance insight', message)
+      this.isThinking = false;
       let charIndex = 0;
       
       if (this.typingInterval) {
@@ -312,6 +351,11 @@ export default {
           this.typingComplete = true;
         }
       }, this.typingSpeed);
+        } catch (error){
+          console.log("Error getting message balance", error)
+        }
+      })
+      
     },
     
     toggleChatBubble() {
@@ -319,12 +363,57 @@ export default {
       this.startTypingEffect();
     },
 
-    generateChatbotMessage() {
-      const userName = localStorage.getItem('userName') || 'there';
-      const cashPercentage = ((this.cash / this.accountBalance) * 100).toFixed(2);
-      const stockPercentage = ((this.stockValue / this.accountBalance) * 100).toFixed(2);
-      
-      return `Hey ${userName}! **Cash Balance:** ${this.cash} USD, making up ${cashPercentage}% of your account—super liquid! **Stocks:** ${this.stockValue} USD, just ${stockPercentage}% of the total—pretty small. Keep saving, but consider putting a bit more into stocks for some fun diversification. Sound good?`;
+
+    async generateBalanceInsights(){
+      try {
+        const pastResponse = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/all-responses/${this.fixedUserId}`)
+        this.pastBalanceInsight = pastResponse.data[0].response
+        console.log("past insights", this.pastBalanceInsight)
+      } catch (error){
+        console.log("error getting past insights", error)
+      }
+      const url = "https://openrouter.ai/api/v1/chat/completions";
+      try {
+        const response = await axios.post(url, { 
+          model: "deepseek/deepseek-chat:free",
+          messages: [
+            {
+              role: "system",
+              content: "You are financial expert providing comparision to past insights"
+            }, 
+            {
+              role: "user",
+              content: `Compare to past insights:
+              - Cash balance: ${this.cash}
+              - Account balance: ${this.accountBalance}
+              - Stock value: ${this.stockValue}
+              - Past insights: ${this.pastBalanceInsight}
+              Generate 3 sentences providing comparision. Keep it interesting and concise.
+              `
+            }
+          ]
+        }, {
+          headers: {
+            'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+            "Content-Type": "application/json", 
+            "Accept": "application/json"
+          }
+        }
+        )
+        const newResponse = response.data.choices[0].message.content;
+        try {
+          await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/update-response/`,{
+          userId: this.fixedUserId,
+          newMessage: newResponse
+        })
+        console.log("Updating response success")
+      } catch(error) {
+          console.log("error updating response from frontend", error)
+        }
+        return newResponse
+      } catch (error){
+        console.log("Error giving insights", error)
+      }
     },
 
     handleScroll() {
@@ -634,6 +723,50 @@ export default {
 .dashboard {
   color: #333;
 }
+
+/* Thinking animation */
+.thinking-animation {
+  display: flex;
+  gap: 4px;
+  margin-top: 26px;
+  margin-left: 20px;
+  padding: 4px;
+  background-color: #2196F3;
+  width: fit-content;
+  border-radius: 16px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  opacity: 0.3;
+}
+
+.dot:nth-child(1) {
+  animation: thinking 1s infinite 0s;
+}
+
+.dot:nth-child(2) {
+  animation: thinking 1s infinite 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation: thinking 1s infinite 0.4s;
+}
+
+@keyframes thinking {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
 
 /* New container to hold both header elements side by side */
 .header-container {
