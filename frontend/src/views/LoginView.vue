@@ -58,7 +58,14 @@ export default {
         //put user info into localStorage and vuex
         this.$store.dispatch("users/login", response.data._id);
         localStorage.setItem('user', JSON.stringify(response.data));
-        this.$router.push('/'); // Redirect to the main page after login
+
+        const isNewUser = localStorage.getItem('isNewUser');
+        if (isNewUser === 'true') {
+          localStorage.removeItem('isNewUser');
+          this.$router.push('/?showTutorial=true');
+        } else {
+          this.$router.push('/'); // Redirect to the main page after login
+        }
       } catch (err) {
         console.error('Login Error:', err.response ? err.response.data : err.message);
         document.getElementById('errorMessage').classList.remove('wrong-password');

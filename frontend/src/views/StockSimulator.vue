@@ -1,98 +1,108 @@
 <template>
   <div class="dashboard">
     <!-- Combined header section with both dashboard header and chatbot side by side -->
-    <div class="header-container">
-      <header class="dashboard-header">
-        <BannerCardSimulator :stockCode="bannerDisplayStock" />
-      </header>
+    <h1>Stock Simulator</h1>
+    <nav class="navbar">
+      <ul>
+        <li @click="activeSection = 'investment'" :class="{ active: activeSection === 'investment' }">Investment</li>
+        <li @click="activeSection = 'transactionHistory'" :class="{ active: activeSection === 'transactionHistory' }">Transaction History</li>
+        <li @click="activeSection = 'filters'" :class="{ active: activeSection === 'filters' }">Filters</li>
+      </ul>
+    </nav>
 
-      <!-- Repositioned header chatbot to be beside the dashboard header -->
-      <div class="header-chatbot-container">
-        <div class="header-finbudBot-container">
-          <img class="header-finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleHeaderChatBubble" />
-        </div>
-        <div class="header-chatbot-content">
-          <div class="header-chat-message" v-html="formatChatMessage(headerTypingComplete ? headerChatbotMessage : headerPartialMessage)">
+    <section v-if="activeSection === 'investment'">
+      <div class="header-container">
+        <header class="dashboard-header">
+          <BannerCardSimulator :stockCode="bannerDisplayStock" />
+        </header>
+      
+        <!-- Repositioned header chatbot to be beside the dashboard header -->
+        <div class="header-chatbot-container">
+          <div class="header-finbudBot-container">
+            <img class="header-finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleHeaderChatBubble" />
           </div>
-          <span v-if="!headerTypingComplete" class="typing-cursor">|</span>
+          <div class="header-chatbot-content">
+            <div class="header-chat-message" v-html="formatChatMessage(headerTypingComplete ? headerChatbotMessage : headerPartialMessage)">
+            </div>
+            <span v-if="!headerTypingComplete" class="typing-cursor">|</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="main-content">
-      <section class="key-statistics">
-        <h3>Key Statistics</h3>
-        <div class="stats-grid">
-          <div class="stat">
-            <span class="label">Open: </span>
-            <span class="value">${{ stockData.open }}</span>
+      <div class="main-content">
+        <section class="key-statistics">
+          <h3>Key Statistics</h3>
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="label">Open: </span>
+              <span class="value">${{ stockData.open }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">Prev Close: </span>
+              <span class="value">${{ stockData.close }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">52 Week High: </span>
+              <span class="value">${{ stockData.high }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">52 Week Low: </span>
+              <span class="value">${{ stockData.low }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">Market Cap: </span>
+              <span class="value">${{ stockData.marketCap }}</span>
+            </div>
+            <div class="stat">
+              <span class="label">Volume: </span>
+              <span class="value">{{ stockData.volume }} shares</span>
+            </div>
           </div>
-          <div class="stat">
-            <span class="label">Prev Close: </span>
-            <span class="value">${{ stockData.close }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">52 Week High: </span>
-            <span class="value">${{ stockData.high }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">52 Week Low: </span>
-            <span class="value">${{ stockData.low }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">Market Cap: </span>
-            <span class="value">${{ stockData.marketCap }}</span>
-          </div>
-          <div class="stat">
-            <span class="label">Volume: </span>
-            <span class="value">{{ stockData.volume }} shares</span>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="actions">
-        <h3>Actions</h3>
-        <div class="action-form">
-          <input v-model="stockSymbol" type="text" placeholder="Enter stock symbol" />
-          <input v-model="quantity" type="number" placeholder="Quantity" />
-          <select v-model="action">
-            <option value="buy">Buy</option>
-            <option value="sell">Sell</option>
-          </select>
-          <div class="buttons">
-            <button class="clear-btn" @click="clearForm">CLEAR</button>
-            <button class="preview-btn" @click="showModal = true">Preview Order</button>
+        <section class="actions">
+          <h3>Actions</h3>
+          <div class="action-form">
+            <input v-model="stockSymbol" type="text" placeholder="Enter stock symbol" />
+            <input v-model="quantity" type="number" placeholder="Quantity" />
+            <select v-model="action">
+              <option value="buy">Buy</option>
+              <option value="sell">Sell</option>
+            </select>
+            <div class="buttons">
+              <button class="clear-btn" @click="clearForm">CLEAR</button>
+              <button class="preview-btn" @click="previewOrder">Preview Order</button>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
 
-    <div class="account-performance">
-      <section class="account-info">
-        <div class="account-info-container">
-          <div class="account-grid">
-            <div class="stat">
-              <span class="label">ACCOUNT BALANCE:</span>
-              <span class="value">{{ accountBalance }}</span>
-            </div>
-            <div class="stat">
-              <span class="label">CASH BALANCE:</span>
-              <span class="value">{{ cash }}</span>
-            </div>
-            <div class="stat">
-              <span class="label">STOCK VALUE:</span>
-              <span class="value">{{ stockValue }}</span>
-            </div>
-            <div class="stat">
-              <span class="label">TODAY'S CHANGE:</span>
-              <span class="value">{{ todaysChange }}</span>
-            </div>
-            <div class="stat">
-              <span class="label">ANNUAL RETURN:</span>
-              <span class="value">{{ annualReturn }}%</span>
+      <div class="account-performance">
+        <section class="account-info">
+          <div class="account-info-container">
+            <div class="account-grid">
+              <div class="stat">
+                <span class="label">ACCOUNT BALANCE:</span>
+                <span class="value">{{ accountBalance }}</span>
+              </div>
+              <div class="stat">
+                <span class="label">CASH BALANCE:</span>
+                <span class="value">{{ cash }}</span>
+              </div>
+              <div class="stat">
+                <span class="label">STOCK VALUE:</span>
+                <span class="value">{{ stockValue }}</span>
+              </div>
+              <div class="stat">
+                <span class="label">TODAY'S CHANGE:</span>
+                <span class="value">{{ todaysChange }}</span>
+              </div>
+              <div class="stat">
+                <span class="label">ANNUAL RETURN:</span>
+                <span class="value">{{ annualReturn }}%</span>
+              </div>
             </div>
           </div>
-        </div>
 
         <div class="chat-bot-container">
          
@@ -115,24 +125,45 @@
         </div>
       </section>
      
-      <PerformanceChart 
-        :performanceData="performanceData"
-        @timeframeChanged="updatePerformanceData"
-        class="performance-chart"
-      />
-    </div>
-
-    <section class="transaction-history">
-      <TransactionHistory :key="transactionKey"/>
       
+    <!-- </div>
+          <div class="chat-bot-container">
+            <div class="chatbot-content">
+              <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
+              <div v-else class="chat-message typing">
+                <span v-html="formatChatMessage(partialMessage)"></span>
+                <span class="typing-cursor">|</span>
+              </div>
+            </div>
+            <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
+          </div>
+        </section> -->
+      
+        <PerformanceChart 
+          :performanceData="performanceData"
+          @timeframeChanged="updatePerformanceData"
+          class="performance-chart"
+        />
+      </div>
+
+    </section>
+
+    <section v-if="activeSection === 'transactionHistory'">
+      <section class="transaction-history">
+        <TransactionHistory :key="transactionKey"/>
+      </section>
+    
     </section>
     
 
-    <stockScreener @applyFilter="stockFilterHandler" />
+    <section v-if="activeSection === 'filters'">
+      <stockScreener @applyFilter="stockFilterHandler" />
 
-    <div class="stockDisplayContainer" v-if="count">
-      <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
-    </div>
+      <div class="stockDisplayContainer" v-if="count">
+        <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
+      </div>
+    </section>
+
 
     <PreviewOrderModal 
       v-if="showModal" 
@@ -141,7 +172,7 @@
       :estimatedPrice="estimatedPrice" 
       :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
       @close="showModal = false"  
-      @clear-order="clearOrder"  
+      @clear-order="clearForm"   
       @submit-order="submitOrder(action)" 
     />
   </div>
@@ -171,6 +202,7 @@ export default {
   },
   data() {
     return {
+      activeSection: 'investment',
       bannerDisplayStock: "AAPL",
       displayStock: [],
       count: 1,
@@ -208,6 +240,7 @@ export default {
       headerPartialMessage: "",
       headerTypingComplete: false,
       headerTypingInterval: null,
+      headerBotVisible: true,
       headerBotVisible: true,
       chatbotTransactionMessage: "",
       showChatTransactionBubble: true
@@ -461,6 +494,65 @@ export default {
       this.quantity = '';
       this.action = 'buy';
     },
+    async updateEstimatedPrice(symbol) {
+      if (!symbol) return false; // Return false to indicate failure
+      
+      try {
+        const stockData = await fetchSimBannerStockDatav3(symbol);
+        
+        if (stockData) {
+          // Try to get current price - prioritize different price fields
+          let price = stockData.regularPrice || stockData.currentPrice || stockData.close;
+          
+          // Check if the price is a valid number and not NaN
+          if (price && !isNaN(parseFloat(price))) {
+            this.estimatedPrice = parseFloat(price);
+            return true; // Return true to indicate success
+          } else {
+            // No valid price field found or price is NaN
+            alert(`Sorry, we couldn't find valid price data for ${symbol.toUpperCase()}.`);
+            console.warn(`Invalid price data for ${symbol}:`, price);
+            return false; // Return false to indicate failure
+          }
+        } else {
+          // No stock data returned at all
+          alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
+          console.error(`No stock data returned for ${symbol}`);
+          return false; // Return false to indicate failure
+        }
+      } catch (error) {
+        // API call failed completely
+        alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
+        console.error(`Error fetching price for ${symbol}:`, error);
+        return false; // Return false to indicate failure
+      }
+    },
+
+    async previewOrder() {
+      // Validate required fields
+      if (!this.stockSymbol) {
+        alert("Please enter a stock symbol");
+        return;
+      }
+      
+      if (!this.quantity || this.quantity <= 0) {
+        alert("Please enter a valid quantity");
+        return;
+      }
+      
+      // Only fetch the price when the Preview button is clicked
+      try {
+        // Only show modal if price fetch was successful
+        const success = await this.updateEstimatedPrice(this.stockSymbol);
+        if (success) {
+          this.showModal = true;
+        }
+        // If not successful, do nothing (modal won't show)
+      } catch (error) {
+        console.error("Error in preview order:", error);
+        // Error message already shown in updateEstimatedPrice
+      }
+    },
     submitOrder(action) {
       const transactionData = {
         stockSymbol: this.stockSymbol,
@@ -543,7 +635,7 @@ export default {
       } else {
         console.error(`Failed to fetch stock data for ${newSymbol}`);
       }
-    }
+    },
   },
   async mounted() {
     // Delayed start for header chatbot to enable fade-in effect
@@ -1047,4 +1139,50 @@ export default {
   border-radius: 5px;
   border: 1px solid;
 }
+
+h1{
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 0px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  background: white;
+  padding: 0px 0;
+  border-bottom: 2px solid #ddd;
+}
+.navbar ul {
+  list-style-type: none;
+  display: flex;
+  gap: 10px;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 15px;
+  border: 2px solid #ddd;
+}
+.navbar li {
+  cursor: pointer;
+  padding: 15px 50px;
+  color: #333;
+  transition: background 0.3s, color 0.3s;
+  border-radius: 10px;
+  font-size: 1.1rem;
+}
+
+.navbar li:hover {
+  color: #007bff;
+  background: #e9f0fc;
+}
+
+.navbar li.active {
+  font-weight: bold;
+  background: #007bff;
+  color: white;
+}
+.content {
+  padding: 20px;
+}
+
 </style>
