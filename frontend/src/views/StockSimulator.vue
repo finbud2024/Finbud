@@ -95,15 +95,7 @@
         </div>
 
         <div class="chat-bot-container">
-          <!-- <div class="chatbot-content"> -->
-            
-            <!-- <div v-else-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
-            <div v-else class="chat-message typing">
-              <span v-html="formatChatMessage(partialMessage)"></span>
-              <span class="typing-cursor">|</span>
-            </div> -->
-          <!-- </div> -->
-
+         
           <div class="chatbot-content">
 
           
@@ -132,16 +124,7 @@
 
     <section class="transaction-history">
       <TransactionHistory :key="transactionKey"/>
-      <!-- <div class="chat-bot-container">
-          <div class="chatbot-content">
-            <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
-            <div v-else class="chat-message typing">
-              <span v-html="formatChatMessage(partialMessage)"></span>
-              <span class="typing-cursor">|</span>
-            </div>
-          </div>
-          <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
-        </div> -->
+      
     </section>
     
 
@@ -244,7 +227,11 @@ export default {
       });
     },
     formatChatMessage(message) {
-      return message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      if (!message){
+        return ""
+      }
+      const sentences = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').split(/(?<=[.!?])\s+/);
+      return sentences.map(sentence => `<div>${sentence}</div>`).join("")
     },
     startHeaderTypingEffect() {
       // Reset typing process
@@ -309,14 +296,6 @@ export default {
       this.typingComplete = false;
       this.partialMessage = "";
       this.isThinking = true;
-      // if (content === 'balance'){
-      //   const message = await this.generateBalanceInsights();
-      // console.log("message from generate balance insights", message)
-      
-      // } else if (content === 'transaction'){
-      //   const message = await this.generateTransactionInsights();
-      //   console.log("message from generate transaction insights", message);
-      // }
       this.$nextTick(async () => {
         try{
           const message = await this.generateBalanceInsights();
@@ -351,39 +330,6 @@ export default {
       this.startTypingEffect();
     },
 
-    // async generateTransactionInsights(){
-    //   const url = "https://openrouter.ai/api/v1/chat/completions";
-    //   try {
-    //     const response = await axios.post(url, {
-    //       model: "deepseek/deepseek-chat:free",
-    //       messages: [
-    //         {
-    //           role: "system",
-    //           content: "You are financial expert providing comments based on my transaction history"
-    //         },
-    //         {
-    //           role: "user",
-    //           content: `Generate 3 bullet points providing comments about this transaction history.
-    //           - Transaction data: ${this.transactionData} 
-    //           Each bullet point has 1-2 sentence`
-    //         }
-    //       ], 
-    //     }, 
-    //     {
-    //       headers: {
-    //         'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-    //         "Content-Type": "application/json", 
-    //         "Accept": "application/json"
-    //       }
-    //     }
-    //   )
-    //   return response.data.choices[0].message.content
-
-    //   } catch (error){
-    //     console.log("Error generating comments about transaction data", error)
-
-    //   }
-    // },
 
     async generateBalanceInsights(){
       try {
