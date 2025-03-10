@@ -227,7 +227,7 @@ export default {
 
 <style scoped>
 .mortgage-calc {
-  max-width: 1200px;
+  max-width: 80%;
   margin: auto;
   padding: 20px;
   background: #f9f9f9;
