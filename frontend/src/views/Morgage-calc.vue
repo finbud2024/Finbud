@@ -102,34 +102,35 @@
             <canvas ref="chart"></canvas>
           </div>
           <div class="breakdown-details">
-            <div class="monthly-total">
-              <strong>Monthly Total:</strong> $2,609
+            <div class="input-group">
+                <label>Monthly Payment</label>
+                <span class="amount">{{ `$${calculateMonthlyPayment}` }}</span>
             </div>
             <div class="breakdown-list">
               <div class="breakdown-item">
-                <span class="percentage">81%</span>
+                <span class="percentage">{{ ((calculatePrincipalInterest / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                 <span class="label">Principal & Interest</span>
-                <span class="amount">$2,105</span>
+                <span class="amount">{{ `$${calculatePrincipalInterest}` }}</span>
               </div>
               <div class="breakdown-item">
-                <span class="percentage">14%</span>
+                <span class="percentage">{{ ((this.propertyTax / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                 <span class="label">Property Tax</span>
-                <span class="amount">$354 /month</span>
+                <span class="amount">${{  this.propertyTax }}54 /month</span>
               </div>
               <div class="breakdown-item">
-                <span class="percentage">6%</span>
+                <span class="percentage">{{ ((this.homeInsurance / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                 <span class="label">Homeowners Insurance</span>
-                <span class="amount">$150 /month</span>
+                <span class="amount">${{ this.homeInsurance }} /month</span>
               </div>
               <div class="breakdown-item">
-                <span class="percentage">0%</span>
+                <span class="percentage">{{ ((this.pmi / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                 <span class="label">Private Mortgage Insurance</span>
-                <span class="amount">$0 /month</span>
+                <span class="amount">${{ this.pmi }} /month</span>
               </div>
               <div class="breakdown-item">
-                <span class="percentage">0%</span>
+                <span class="percentage">{{ ((this.hoaFees / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                 <span class="label">HOA Fees</span>
-                <span class="amount">$0 /month</span>
+                <span class="amount">${{ this.hoaFees }} /month</span>
               </div>
             </div>
           </div>
@@ -158,6 +159,36 @@ export default {
       showExtras: false,
     };
   },
+  computed: {
+    calculatePrincipalInterest() {
+        const loanAmount = this.homePrice - this.downPayment;
+        const monthlyInterestRate = (this.interestRate / 100) / 12;
+        const numberOfPayments = this.loanTerm * 12;
+
+        if (loanAmount <= 0 || numberOfPayments <= 0) {
+            return 0;
+        }
+
+        if (monthlyInterestRate === 0) {
+            return (loanAmount / numberOfPayments).toFixed(0);
+        }
+
+        const numerator = monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments);
+        const denominator = Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1;
+        return (loanAmount * (numerator / denominator)).toFixed(0);
+    },
+
+    // Calculate month payment
+    calculateMonthlyPayment() {
+        return (
+        parseFloat(this.calculatePrincipalInterest) + 
+        parseFloat(this.propertyTax) + 
+        parseFloat(this.homeInsurance) + 
+        parseFloat(this.pmi) + 
+        parseFloat(this.hoaFees)
+        ).toFixed(2);
+    },
+  },
   methods: {
     // Calculate Down Payment Percentage based on Down Payment
     calculateDownPaymentPercentage() {
@@ -177,6 +208,8 @@ export default {
       }
     },
 
+    
+
     toggleExtras() {
       this.showExtras = !this.showExtras;
     },
@@ -191,9 +224,9 @@ export default {
             backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0', '#03A9F4'],
           }]
         },
-        options: {
-          responsive: true,
-          plugins: {
+            options: {
+                responsive: true,
+                plugins: {
             legend: {
               position: 'bottom',
             },
@@ -205,11 +238,12 @@ export default {
               }
             }
           }
+            }
+        });
         }
-      });
-    }
-  },
-  watch: {
+    },
+
+    watch: {
     // Watch for changes in homePrice and update downPayment
     homePrice(newHomePrice) {
       if (newHomePrice > 0) {
@@ -219,6 +253,8 @@ export default {
       }
     }
   },
+
+
   mounted() {
     this.renderChart();
   }
