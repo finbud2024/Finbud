@@ -186,14 +186,14 @@ export default {
         parseFloat(this.homeInsurance) + 
         parseFloat(this.pmi) + 
         parseFloat(this.hoaFees)
-        ).toFixed(2);
+        ).toFixed(0);
     },
   },
   methods: {
     // Calculate Down Payment Percentage based on Down Payment
     calculateDownPaymentPercentage() {
       if (this.homePrice > 0) {
-        this.downPaymentPercentage = ((this.downPayment / this.homePrice) * 100).toFixed(2);
+        this.downPaymentPercentage = ((this.downPayment / this.homePrice) * 100).toFixed(0);
       } else {
         this.downPaymentPercentage = 0;
       }
@@ -247,7 +247,7 @@ export default {
     // Watch for changes in homePrice and update downPayment
     homePrice(newHomePrice) {
       if (newHomePrice > 0) {
-        this.downPayment = ((this.downPaymentPercentage / 100) * newHomePrice).toFixed(2);
+        this.downPayment = ((this.downPaymentPercentage / 100) * newHomePrice).toFixed(0);
       } else {
         this.downPayment = 0;
       }
