@@ -386,11 +386,11 @@ export default {
     <div class="Panel-Frame">
       <div id="main-content" class="panel animate__animated animate__fadeInUp">
         <select v-model="selectedStock" class="stock-box">
-          <option value="AAPL">Apple Inc.</option>
-          <option value="MSFT">Microsoft Corporation</option>
-          <option value="AMZN">Amazon.com Inc.</option>
-          <option value="TSLA">Tesla Inc.</option>
-          <option value="GOOGL">Alphabet Inc. (Google)</option>
+          <option value="Apple|AAPL">Apple Inc.</option>
+          <option value="Microsoft|MSFT">Microsoft Corporation</option>
+          <option value="Amazon|AMZN">Amazon.com Inc.</option>
+          <option value="Tesla|TSLA">Tesla Inc.</option>
+          <option value="Google|GOOGL">Alphabet Inc. (Google)</option>
         </select>
         <div class="stock-value">
           <div class="change-index" id="c_graph">{{ cGraph }}</div>
@@ -530,13 +530,31 @@ export default {
       chart1_2: "",
       IndicatorGraph1: "",
       ReturnGraph1: "",
+      dateRangeMap: {
+        "6m": "6m|120",
+        "1y": "12m|1D",
+        "3y": "36m|1W",
+        "5y": "60m|1W",
+      },
     };
   },
   watch: {
-    timePeriod: "updateBothData",
+    timePeriod(){
+      this.fetchData();
+
+      if(this.selectedStock){
+        this.renderStockChart();
+      }
+    },
+    selectedStock() {
+      this.fetchData();
+
+      if(this.timePeriod){
+        this.renderStockChart();
+      }
+    },
     indicator: "updateBothData",
     returns: "updateBothData",
-    selectedStock: "fetchData",
   },
   methods: {
     updateBothData() {
@@ -558,57 +576,67 @@ export default {
       this.sortinoRatio = `Updated Sortino Ratio for ${this.selectedStock}`;
       this.stdDeviation = `Updated Standard Deviation for ${this.selectedStock}`;
     },
+    renderStockChart() {
+      if (!this.dateRange || !this.symbol) return;
+      // Remove existing chart
+      const container = document.getElementById("stockGraphChart1");
+      container.innerHTML = "";
+      // Render new stock chart
+      const script = document.createElement("script");
+      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
+      script.type = "text/javascript";
+      script.async = true;
+      script.innerHTML = `
+          {
+            "symbols": [
+              ["${this.symbol[1]}"]
+            ],
+            "chartOnly": true,
+            "width": "100%",
+            "height": "100%",
+            "locale": "en",
+            "colorTheme": "dark",
+            "autosize": true,
+            "showVolume": false,
+            "showMA": false,
+            "hideDateRanges": true,
+            "hideMarketStatus": false,
+            "hideSymbolLogo": false,
+            "scalePosition": "right",
+            "scaleMode": "Normal",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+            "fontSize": "10",
+            "noTimeScale": false,
+            "valuesTracking": "1",
+            "changeMode": "price-and-percent",
+            "chartType": "candlesticks",
+            "maLineColor": "#2962FF",
+            "maLineWidth": 1,
+            "maLength": 9,
+            "headerFontSize": "medium",
+            "lineWidth": 2,
+            "lineType": 0,
+            "dateRanges": [
+              "${this.dateRange}"
+            ]
+        }`;
+      container.appendChild(script);
+    },
   },
   mounted() {
     this.fetchData();
-
-    // Load TradingView widget
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.innerHTML = `
-        {
-          "symbols": [
-            [
-              "Apple",
-              "AAPL|6M"
-            ]
-          ],
-          "chartOnly": true,
-          "width": "100%",
-          "height": "100%",
-          "locale": "en",
-          "colorTheme": "dark",
-          "autosize": true,
-          "showVolume": false,
-          "showMA": false,
-          "hideDateRanges": true,
-          "hideMarketStatus": false,
-          "hideSymbolLogo": true,
-          "scalePosition": "right",
-          "scaleMode": "Normal",
-          "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
-          "fontSize": "10",
-          "noTimeScale": false,
-          "valuesTracking": "1",
-          "changeMode": "price-and-percent",
-          "chartType": "candlesticks",
-          "maLineColor": "#2962FF",
-          "maLineWidth": 1,
-          "maLength": 9,
-          "headerFontSize": "medium",
-          "lineWidth": 2,
-          "lineType": 0,
-          "dateRanges": [
-            "6m|120",
-            "12m|1D",
-            "60m|1W"
-          ]
-      }`;
-      
-    document.querySelector('#stockGraphChart1').appendChild(script);
-  }
+  },
+  computed: {
+    dateRange() {
+      return this.dateRangeMap[this.timePeriod];
+    },
+    symbol() {
+      return [
+        this.selectedStock.split("|")[0],
+        `${this.selectedStock.split("|")[1]}|${this.dateRange.split("|")[0].toUpperCase()}`,
+      ];
+    },
+  },
 };
 </script>
 
