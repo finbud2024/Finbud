@@ -264,6 +264,27 @@
             </table>
           </div>
         </div>
+        
+        <!-- Bot Trigger Element for Portfolio Section -->
+        <div ref="portfolioBotTrigger" class="chatbot-trigger"></div>
+        
+        <!-- Investment Assistant Bot for Portfolio Section -->
+        <div class="portfolio-bot-container" :class="{ 'bot-visible': showPortfolioBot, 'bot-hidden': hidingPortfolioBot }">
+          <div 
+            class="bot-image clickable" 
+            :class="{ 'bot-visible': showPortfolioBot }" 
+            @click="togglePortfolioBotMessage">
+            <img src="../assets/botrmbg.png" alt="Investment Assistant">
+          </div>
+          <div class="bot-message" :class="{ 'message-visible': showPortfolioMessage, 'message-hidden': hidingPortfolioMessage }">
+            <div v-if="isPortfolioTyping" class="typing-animation">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div v-else class="typed-message" v-html="currentPortfolioTypedMessage"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -347,7 +368,30 @@ export default {
       headerBotVisible: true,
       headerBotVisible: true,
       chatbotTransactionMessage: "",
-      showChatTransactionBubble: true
+      showChatTransactionBubble: true,
+      
+      // New Portfolio Bot related data
+      showPortfolioBot: false,
+      hidingPortfolioBot: false,
+      showPortfolioMessage: false,
+      hidingPortfolioMessage: false,
+      isPortfolioTyping: false,
+      portfolioMessageManuallyToggled: false,
+      currentPortfolioTypedMessage: '',
+      portfolioBotObserver: null,
+      portfolioBotMessage: `📊 <strong>Portfolio Analysis:</strong><br><br>
+Your portfolio is showing impressive performance with a total value of $24,892.31 and overall gain of 18.5%.<br><br>
+<strong>Strengths:</strong><br>
+✅ Strong tech sector allocation (AAPL, MSFT, GOOGL) driving growth<br>
+✅ All positions showing positive returns (17.5%-26.7%)<br>
+✅ Healthy cash position of $8,438.52 (33.9% of portfolio)<br><br>
+<strong>Suggestions:</strong><br>
+1. Consider diversifying beyond tech to reduce sector risk<br>
+2. Look into dividend-paying stocks to balance growth<br>
+3. Set up regular investment schedule to optimize dollar-cost averaging`,
+      portfolioTypingSpeed: 20, // ms per character
+      portfolioWordByWordTyping: true,
+      portfolioBotHideTimeout: null
     };
   },
   methods: {
@@ -708,6 +752,151 @@ export default {
       } catch (error) {
         console.error('Error fetching transaction history:', error);
       }
+    },
+    // Portfolio Bot Methods
+    setupPortfolioBotObserver() {
+      // Using watcher instead
+    },
+    
+    startPortfolioBotAnimation() {
+      this.showPortfolioBot = true;
+      this.hidingPortfolioBot = false;
+      
+      setTimeout(() => {
+        this.showPortfolioMessage = true;
+        this.hidingPortfolioMessage = false;
+        this.isPortfolioTyping = true;
+        
+        setTimeout(() => {
+          if (this.portfolioWordByWordTyping) {
+            this.startPortfolioWordByWordTyping();
+          } else {
+            this.startPortfolioCharacterByCharacterTyping();
+          }
+        }, 1000);
+        
+        this.scheduleHidePortfolioBot();
+      }, 500);
+    },
+    
+    startPortfolioWordByWordTyping() {
+      this.currentPortfolioTypedMessage = '';
+      const words = this.portfolioBotMessage.split(' ');
+      let wordIndex = 0;
+      
+      const typeNextWord = () => {
+        if (wordIndex < words.length) {
+          this.currentPortfolioTypedMessage += words[wordIndex] + ' ';
+          wordIndex++;
+          const delay = Math.random() * 100 + 50;
+          setTimeout(typeNextWord, delay);
+        } else {
+          this.isPortfolioTyping = false;
+        }
+      };
+      
+      typeNextWord();
+    },
+    
+    startPortfolioCharacterByCharacterTyping() {
+      this.currentPortfolioTypedMessage = '';
+      let charIndex = 0;
+      
+      const typeNextChar = () => {
+        if (charIndex < this.portfolioBotMessage.length) {
+          this.currentPortfolioTypedMessage += this.portfolioBotMessage.charAt(charIndex);
+          charIndex++;
+          setTimeout(typeNextChar, this.portfolioTypingSpeed);
+        } else {
+          this.isPortfolioTyping = false;
+        }
+      };
+      
+      typeNextChar();
+    },
+    
+    scheduleHidePortfolioBot() {
+      if (this.portfolioBotHideTimeout) {
+        clearTimeout(this.portfolioBotHideTimeout);
+      }
+      
+      if (!this.portfolioMessageManuallyToggled) {
+        this.portfolioBotHideTimeout = setTimeout(() => {
+          this.hidePortfolioBot();
+        }, 60000);
+      }
+    },
+    
+    hidePortfolioBot() {
+      // If manually toggled, only hide the message
+      if (this.portfolioMessageManuallyToggled) {
+        this.hidingPortfolioMessage = true;
+        setTimeout(() => {
+          this.showPortfolioMessage = false;
+          this.hidingPortfolioMessage = false;
+        }, 500);
+      } else {
+        // Original behavior - hide both bot and message
+        this.hidingPortfolioMessage = true;
+        setTimeout(() => {
+          this.hidingPortfolioBot = true;
+          this.showPortfolioMessage = false;
+          
+          setTimeout(() => {
+            this.showPortfolioBot = false;
+            this.hidingPortfolioBot = false;
+            this.hidingPortfolioMessage = false;
+            // Reset toggle state
+            this.portfolioMessageManuallyToggled = false;
+          }, 1000);
+        }, 500);
+      }
+    },
+    
+    togglePortfolioBotMessage() {
+      // Only allow toggling if the bot is visible (important check from GoalPage)
+      if (!this.showPortfolioBot) return;
+      
+      // Set the flag to prevent auto-hiding
+      this.portfolioMessageManuallyToggled = true;
+      
+      // Clear any existing hide timer
+      if (this.portfolioBotHideTimeout) {
+        clearTimeout(this.portfolioBotHideTimeout);
+        this.portfolioBotHideTimeout = null;
+      }
+      
+      if (this.showPortfolioMessage) {
+        // Hide the message but keep the bot visible
+        this.hidingPortfolioMessage = true;
+        
+        // IMPORTANT: Only set showPortfolioMessage to false AFTER animation completes
+        setTimeout(() => {
+          this.showPortfolioMessage = false;
+          this.hidingPortfolioMessage = false;
+        }, 500);
+      } else {
+        // Show message without restarting typing if it's already been typed
+        this.hidingPortfolioMessage = false;
+        this.showPortfolioMessage = true;
+        
+        // Only start typing animation if the message hasn't been typed yet
+        if (this.currentPortfolioTypedMessage === '') {
+          this.isPortfolioTyping = true;
+          
+          // Start typing animation
+          setTimeout(() => {
+            if (this.portfolioWordByWordTyping) {
+              this.startPortfolioWordByWordTyping();
+            } else {
+              this.startPortfolioCharacterByCharacterTyping();
+            }
+          }, 500);
+        } else {
+          // Message already exists, don't retype
+          this.isPortfolioTyping = false;
+        }
+      }
     }
   },
   watch: {
@@ -740,6 +929,53 @@ export default {
         console.error(`Failed to fetch stock data for ${newSymbol}`);
       }
     },
+    activeSection: {
+      handler(newSection) {
+        console.log("Active section changed to:", newSection);
+        
+        // Clear any existing timers to prevent conflicts
+        if (this.portfolioBotHideTimeout) {
+          clearTimeout(this.portfolioBotHideTimeout);
+        }
+        
+        if (newSection === 'portfolio') {
+          console.log("Portfolio section activated");
+          
+          // Reset bot states to ensure it can appear
+          this.showPortfolioBot = false;
+          this.hidingPortfolioBot = false;
+          this.showPortfolioMessage = false; // <-- Reset message state
+          this.hidingPortfolioMessage = false; // <-- Reset message state
+          this.portfolioMessageManuallyToggled = false; // <-- Reset toggle state
+          
+          // Force show the bot with a slight delay
+          setTimeout(() => {
+            console.log("Showing portfolio bot now");
+            this.showPortfolioBot = true;
+            this.hidingPortfolioBot = false;
+            
+            setTimeout(() => {
+              this.showPortfolioMessage = true;
+              this.hidingPortfolioMessage = false;
+              this.isPortfolioTyping = true;
+              
+              // Start typing animation
+              setTimeout(() => {
+                if (this.portfolioWordByWordTyping) {
+                  this.startPortfolioWordByWordTyping();
+                } else {
+                  this.startPortfolioCharacterByCharacterTyping();
+                }
+              }, 500);
+            }, 300);
+          }, 500);
+        } else if (this.showPortfolioBot) {
+      
+          this.hidePortfolioBot();
+        }
+      },
+      immediate: true // Make it run immediately on component creation
+    }
   },
   async mounted() {
     // Delayed start for header chatbot to enable fade-in effect
@@ -798,6 +1034,14 @@ export default {
       this.handleScroll();
       this.adjustChartHeight();
     });
+
+    // If portfolio is the initial section, show the bot after a delay
+    if (this.activeSection === 'portfolio') {
+      setTimeout(() => {
+        console.log("Portfolio is initial section, showing bot");
+        this.startPortfolioBotAnimation();
+      }, 1000);
+    }
   },
   beforeUnmount() {
     // Clean up all event listeners
@@ -808,6 +1052,14 @@ export default {
     }
     if (this.typingInterval) {
       clearInterval(this.typingInterval);
+    }
+    
+    // Clean up portfolio bot resources
+    if (this.portfolioBotObserver) {
+      this.portfolioBotObserver.disconnect();
+    }
+    if (this.portfolioBotHideTimeout) {
+      clearTimeout(this.portfolioBotHideTimeout);
     }
   }
 };
@@ -1425,5 +1677,156 @@ h1{
 
 .holdings-table .negative {
   color: #dc3545;
+}
+
+/* Bot Chat Styles for Portfolio Section */
+.chatbot-trigger {
+  position: relative;
+  height: 20px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portfolio-bot-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  display: flex !important; /* Force display */
+  align-items: flex-end;
+  pointer-events: auto; /* Ensure it's clickable */
+  opacity: 1 !important; /* Force visibility */
+}
+
+.portfolio-bot-container.bot-visible {
+  animation: botSlideIn 0.5s forwards;
+}
+
+.portfolio-bot-container.bot-hidden {
+  animation: botSlideOut 0.5s forwards;
+}
+
+@keyframes botSlideIn {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes botSlideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100px); opacity: 0; }
+}
+
+.bot-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  overflow: hidden;
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+  z-index: 1001;
+}
+
+.bot-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.bot-image.clickable:hover {
+  transform: scale(1.1);
+}
+
+.bot-message {
+  background-color: white;
+  border-radius: 12px;
+  padding: 15px;
+  max-width: 320px;
+  min-width: 280px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  opacity: 0; /* Start hidden */
+  transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: 0.3s; /* Add delay for smoother appearance */
+  line-height: 1.5;
+  font-size: 0.9rem;
+  color: #333;
+  border: 2px solid #2196F3;
+}
+
+.bot-message.message-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.bot-message.message-hidden {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease; /* Explicit transition */
+  pointer-events: none;
+}
+
+/* Typing animation */
+.typing-animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #28a745; /* Green color for portfolio bot */
+  border-radius: 50%;
+  margin: 0 3px;
+  animation: bounce 1.2s infinite;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.typed-message {
+  white-space: pre-wrap;
+}
+
+/* Add mobile responsiveness for the bot */
+@media (max-width: 768px) {
+  .portfolio-bot-container {
+    bottom: 20px;
+    right: 20px;
+  }
+  
+  .bot-message {
+    max-width: 280px;
+    min-width: 220px;
+    font-size: 0.85rem;
+  }
+  
+  .bot-image {
+    width: 50px;
+    height: 50px;
+  }
 }
 </style>
