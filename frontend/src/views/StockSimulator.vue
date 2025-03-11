@@ -270,12 +270,13 @@
         
         <!-- Investment Assistant Bot for Portfolio Section -->
         <div class="portfolio-bot-container" :class="{ 'bot-visible': showPortfolioBot, 'bot-hidden': hidingPortfolioBot }">
-          <div 
-            class="bot-image clickable" 
-            :class="{ 'bot-visible': showPortfolioBot }" 
-            @click="togglePortfolioBotMessage">
-            <img src="../assets/botrmbg.png" alt="Investment Assistant">
-          </div>
+          <img 
+            class="bot-image" 
+            src="@/assets/botrmbg.png" 
+            alt="Bot" 
+            @click="togglePortfolioBotMessage"
+            :class="{ 'clickable': showPortfolioBot }"
+          />
           <div class="bot-message" :class="{ 'message-visible': showPortfolioMessage, 'message-hidden': hidingPortfolioMessage }">
             <div v-if="isPortfolioTyping" class="typing-animation">
               <span class="dot"></span>
@@ -643,36 +644,36 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       this.action = 'buy';
     },
     async updateEstimatedPrice(symbol) {
-      if (!symbol) return false; // Return false to indicate failure
+      if (!symbol) return false; 
       
       try {
         const stockData = await fetchSimBannerStockDatav3(symbol);
         
         if (stockData) {
-          // Try to get current price - prioritize different price fields
+      
           let price = stockData.regularPrice || stockData.currentPrice || stockData.close;
           
-          // Check if the price is a valid number and not NaN
+    
           if (price && !isNaN(parseFloat(price))) {
             this.estimatedPrice = parseFloat(price);
-            return true; // Return true to indicate success
+            return true; 
           } else {
-            // No valid price field found or price is NaN
+           
             alert(`Sorry, we couldn't find valid price data for ${symbol.toUpperCase()}.`);
             console.warn(`Invalid price data for ${symbol}:`, price);
-            return false; // Return false to indicate failure
+            return false;
           }
         } else {
-          // No stock data returned at all
+      
           alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
           console.error(`No stock data returned for ${symbol}`);
-          return false; // Return false to indicate failure
+          return false; 
         }
       } catch (error) {
-        // API call failed completely
+        
         alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
         console.error(`Error fetching price for ${symbol}:`, error);
-        return false; // Return false to indicate failure
+        return false; 
       }
     },
 
@@ -688,17 +689,17 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         return;
       }
       
-      // Only fetch the price when the Preview button is clicked
+
       try {
-        // Only show modal if price fetch was successful
+      
         const success = await this.updateEstimatedPrice(this.stockSymbol);
         if (success) {
           this.showModal = true;
         }
-        // If not successful, do nothing (modal won't show)
+      
       } catch (error) {
         console.error("Error in preview order:", error);
-        // Error message already shown in updateEstimatedPrice
+      
       }
     },
     submitOrder(action) {
@@ -1687,78 +1688,76 @@ h1{
   pointer-events: none;
 }
 
+/* Keep just the left-side positioning styles (around lines 1809-1825) */
 .portfolio-bot-container {
   position: fixed;
+  left: 20px; /* Change from -350px to visible on page load */
   bottom: 30px;
-  right: 30px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
   z-index: 1000;
-  display: flex !important; /* Force display */
-  align-items: flex-end;
-  pointer-events: auto; /* Ensure it's clickable */
-  opacity: 1 !important; /* Force visibility */
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+  pointer-events: all;
 }
 
 .portfolio-bot-container.bot-visible {
-  animation: botSlideIn 0.5s forwards;
+  opacity: 1;
+  transform: translateX(0); /* Don't move, just fade in */
 }
 
 .portfolio-bot-container.bot-hidden {
-  animation: botSlideOut 0.5s forwards;
+  opacity: 0;
+  transform: translateX(-50px);
+  pointer-events: none;
 }
 
 @keyframes botSlideIn {
-  from { transform: translateX(100px); opacity: 0; }
+  from { transform: translateX(-100px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes botSlideOut {
   from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(-100px); opacity: 0; }
 }
 
 .bot-image {
   width: 60px;
-  height: 60px;
+  height: auto;
+  display: block;
+  position: relative;
+  background: transparent;
+  transition: transform 0.5s ease;
   border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 15px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  overflow: hidden;
-  background-color: transparent;
-  box-shadow: none;
-  border: none;
-  z-index: 1001;
 }
 
-.bot-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+.bot-visible .bot-image {
+  animation: botBounce 1s ease-out;
 }
 
-.bot-image.clickable:hover {
-  transform: scale(1.1);
+@keyframes botBounce {
+  0% { transform: translateY(20px); opacity: 0; }
+  60% { transform: translateY(-5px); }
+  80% { transform: translateY(2px); }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
 .bot-message {
-  background-color: white;
-  border-radius: 12px;
-  padding: 15px;
-  max-width: 320px;
-  min-width: 280px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-  opacity: 0; /* Start hidden */
-  transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
+  margin-top: 10px;
+  margin-left: 10px;
+  background: #007bff;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 18px;
+  max-width: 280px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
   transition: opacity 0.7s ease, transform 0.7s ease;
-  transition-delay: 0.3s; /* Add delay for smoother appearance */
-  line-height: 1.5;
-  font-size: 0.9rem;
-  color: #333;
-  border: 2px solid #2196F3;
+  transition-delay: 0.3s;
 }
 
 .bot-message.message-visible {
@@ -1769,64 +1768,69 @@ h1{
 .bot-message.message-hidden {
   opacity: 0;
   transform: scale(0.8) translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease; /* Explicit transition */
-  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 /* Typing animation */
 .typing-animation {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20px;
+  gap: 4px;
+  padding: 4px;
 }
 
 .dot {
   width: 8px;
   height: 8px;
-  background-color: #28a745; /* Green color for portfolio bot */
   border-radius: 50%;
-  margin: 0 3px;
-  animation: bounce 1.2s infinite;
+  background-color: #ffffff;
+  opacity: 0.3;
 }
 
 .dot:nth-child(1) {
-  animation-delay: 0s;
+  animation: typing 1s infinite 0s;
 }
 
 .dot:nth-child(2) {
-  animation-delay: 0.2s;
+  animation: typing 1s infinite 0.2s;
 }
 
 .dot:nth-child(3) {
-  animation-delay: 0.4s;
+  animation: typing 1s infinite 0.4s;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+@keyframes typing {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
-.typed-message {
-  white-space: pre-wrap;
+.bot-image.clickable {
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-/* Add mobile responsiveness for the bot */
-@media (max-width: 768px) {
+.bot-image.clickable:hover {
+  transform: scale(1.1);
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 768px) {
   .portfolio-bot-container {
+    left: -300px;
     bottom: 20px;
-    right: 20px;
   }
   
-  .bot-message {
-    max-width: 280px;
-    min-width: 220px;
-    font-size: 0.85rem;
+  .portfolio-bot-container.bot-visible {
+    transform: translateX(310px);
   }
   
-  .bot-image {
-    width: 50px;
-    height: 50px;
+  .portfolio-bot-container.bot-hidden {
+    transform: translateX(310px) translateY(50px);
   }
 }
 </style>
