@@ -7,6 +7,7 @@
         <li @click="activeSection = 'investment'" :class="{ active: activeSection === 'investment' }">Investment</li>
         <li @click="activeSection = 'transactionHistory'" :class="{ active: activeSection === 'transactionHistory' }">Transaction History</li>
         <li @click="activeSection = 'filters'" :class="{ active: activeSection === 'filters' }">Filters</li>
+        <li @click="activeSection = 'portfolio'" :class="{ active: activeSection === 'portfolio' }">Your Portfolio</li>
       </ul>
     </nav>
 
@@ -164,6 +165,14 @@
       </div>
     </section>
 
+    <section v-if="activeSection === 'portfolio'" class="portfolio-section">
+      <div class="portfolio-container">
+        <h2>Your Portfolio</h2>
+        <div class="portfolio-content">
+          <p>Portfolio content will be displayed here.</p>
+        </div>
+      </div>
+    </section>
 
     <PreviewOrderModal 
       v-if="showModal" 
@@ -1185,4 +1194,29 @@ h1{
   padding: 20px;
 }
 
+.portfolio-section {
+  padding: 20px;
+}
+
+.portfolio-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.portfolio-container h2 {
+  color: #007bff;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.portfolio-content {
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  min-height: 300px;
+}
 </style>
