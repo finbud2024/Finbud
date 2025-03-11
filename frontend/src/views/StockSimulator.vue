@@ -855,37 +855,35 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
     
     togglePortfolioBotMessage() {
-      // Only allow toggling if the bot is visible (important check from GoalPage)
+
       if (!this.showPortfolioBot) return;
       
-      // Set the flag to prevent auto-hiding
       this.portfolioMessageManuallyToggled = true;
       
-      // Clear any existing hide timer
+     
       if (this.portfolioBotHideTimeout) {
         clearTimeout(this.portfolioBotHideTimeout);
         this.portfolioBotHideTimeout = null;
       }
       
       if (this.showPortfolioMessage) {
-        // Hide the message but keep the bot visible
+      
         this.hidingPortfolioMessage = true;
         
-        // IMPORTANT: Only set showPortfolioMessage to false AFTER animation completes
+        
         setTimeout(() => {
           this.showPortfolioMessage = false;
           this.hidingPortfolioMessage = false;
         }, 500);
       } else {
-        // Show message without restarting typing if it's already been typed
+     
         this.hidingPortfolioMessage = false;
         this.showPortfolioMessage = true;
         
-        // Only start typing animation if the message hasn't been typed yet
+   
         if (this.currentPortfolioTypedMessage === '') {
           this.isPortfolioTyping = true;
-          
-          // Start typing animation
+        
           setTimeout(() => {
             if (this.portfolioWordByWordTyping) {
               this.startPortfolioWordByWordTyping();
@@ -894,7 +892,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             }
           }, 500);
         } else {
-          // Message already exists, don't retype
+     
           this.isPortfolioTyping = false;
         }
       }
@@ -979,7 +977,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     }
   },
   async mounted() {
-    // Delayed start for header chatbot to enable fade-in effect
+
     setTimeout(() => {
       this.startHeaderTypingEffect();
     }, 500);
