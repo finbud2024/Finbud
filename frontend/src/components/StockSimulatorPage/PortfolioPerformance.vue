@@ -1,190 +1,461 @@
 <template>
-    <section class="chart-section">
-      <header>
-        <h1>Toggle Chart Type (Candlestick / Line)</h1>
-      </header>
-  
-      <!-- Toggle Button -->
-      <div class="toggle-buttons">
-        <button @click="showCandlestick">Candlestick</button>
-        <button @click="showLine">Line</button>
+  <section class="chart-section">
+    <header class="chart-header">
+      <h1>Portfolio Performance</h1>
+      <div class="portfolio-summary">
+        <div class="summary-item">
+          <span class="summary-label">Total Value</span>
+          <span class="summary-value">$24,892.31</span>
+        </div>
+        <div class="summary-item positive">
+          <span class="summary-label">Today</span>
+          <span class="summary-value">+$365.28 (1.48%)</span>
+        </div>
+        <div class="summary-item positive">
+          <span class="summary-label">Overall</span>
+          <span class="summary-value">+$3,892.31 (18.5%)</span>
+        </div>
       </div>
-  
-      <!-- Chart Container -->
-      <div ref="chartContainer" class="chart-container"></div>
-    </section>
-  </template>
-  
-  <script>
-  import { createChart } from "lightweight-charts";
-  
-  export default {
-    name: "StockChartToggle",
-    
-    data() {
-      return {
-        chart: null,
-        candlestickSeries: null,
-        lineSeries: null,
-        // Example mock data (10 days of data for demonstration)
-        // time is 'YYYY-MM-DD', open/high/low/close are numeric
-        candlestickData: [
-          { time: '2023-03-01', open: 100.0, high: 105.0, low: 98.0, close: 102.0 },
-          { time: '2023-03-02', open: 102.0, high: 108.0, low: 101.0, close: 107.0 },
-          { time: '2023-03-03', open: 107.0, high: 109.0, low: 105.0, close: 108.5 },
-          { time: '2023-03-04', open: 108.5, high: 110.0, low: 106.0, close: 109.0 },
-          { time: '2023-03-05', open: 109.0, high: 113.0, low: 108.0, close: 112.0 },
-          { time: '2023-03-06', open: 112.0, high: 115.0, low: 111.0, close: 114.5 },
-          { time: '2023-03-07', open: 114.5, high: 115.5, low: 113.0, close: 114.0 },
-          { time: '2023-03-08', open: 114.0, high: 116.0, low: 112.5, close: 115.0 },
-          { time: '2023-03-09', open: 115.0, high: 117.0, low: 114.0, close: 116.0 },
-          { time: '2023-03-10', open: 116.0, high: 119.0, low: 115.0, close: 118.5 },
-        ],
-      };
-    },
-  
-    computed: {
+    </header>
 
-      lineData() {
-        // Returns array of objects { time, value }
-        return this.candlestickData.map(item => ({
-          time: item.time,
-          value: item.close,
-        }));
-      }
-    },
-  
-    mounted() {
-      this.initChart();
-      this.createCandlestickSeries();
-      this.createLineSeries();
-      this.candlestickSeries.setData(this.candlestickData);
-      this.lineSeries.setData(this.lineData);
-      this.showCandlestick();
-      window.addEventListener("resize", this.handleResize);
-    },
-  
-    beforeUnmount() {
-      window.removeEventListener("resize", this.handleResize);
-    },
-  
-    methods: {
- 
-      initChart() {
-        const container = this.$refs.chartContainer;
-  
-        this.chart = createChart(container, {
-          width: container.clientWidth, 
-          height: 400,
-          layout: {
-            background: { type: 'solid', color: '#FFFFFF' },
-            textColor: '#000000',
-          },
-          grid: {
-            vertLines: { visible: true },
-            horzLines: { visible: true },
-          },
-          crosshair: {
-            mode: 1, // Normal crosshair mode
-          },
-          rightPriceScale: {
-            visible: true,
-            borderVisible: false,
-          },
-          timeScale: {
-            borderVisible: false,
-            timeVisible: true,
-            secondsVisible: false,
-          },
-        });
-      },
-  
-      /**
-       * Create our candlestick series and store reference.
-       */
-      createCandlestickSeries() {
-        this.candlestickSeries = this.chart.addCandlestickSeries({
-          upColor: '#26a69a',
-          downColor: '#ef5350',
-          wickUpColor: '#26a69a',
-          wickDownColor: '#ef5350',
-          borderVisible: false,
-        });
-      },
-  
-      /**
-       * Create a line series and store reference.
-       */
-      createLineSeries() {
-        this.lineSeries = this.chart.addLineSeries({
-          // We'll let the library pick default line color, or you can specify one
-          lineWidth: 2,
-        });
-      },
-  
-      /**
-       * Show candlestick chart, hide line chart
-       */
-      showCandlestick() {
-        if (this.candlestickSeries) {
-          // Make candlestick visible
-          this.candlestickSeries.applyOptions({ visible: true });
-        }
-        if (this.lineSeries) {
-          // Hide line
-          this.lineSeries.applyOptions({ visible: false });
-        }
-      },
-  
-      /**
-       * Show line chart, hide candlestick chart
-       */
-      showLine() {
-        if (this.candlestickSeries) {
- 
-          this.candlestickSeries.applyOptions({ visible: false });
-        }
-        if (this.lineSeries) {
-     
-          this.lineSeries.applyOptions({ visible: true });
-        }
-      },
+    <!-- Time Range Selector -->
+    <div class="time-range-selector">
+      <button 
+        v-for="range in timeRanges" 
+        :key="range.value"
+        :class="{ active: selectedRange === range.value }"
+        @click="changeTimeRange(range.value)">
+        {{ range.label }}
+      </button>
+    </div>
 
-      handleResize() {
-        const container = this.$refs.chartContainer;
-        if (this.chart && container) {
-          this.chart.applyOptions({ width: container.clientWidth });
-        }
-      },
+    <!-- Chart Container -->
+    <div ref="chartContainer" class="chart-container"></div>
+
+    <!-- No Data Message -->
+    <div v-if="noData" class="no-data-message">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <p>No historical data available. Start investing to see your portfolio performance.</p>
+    </div>
+
+    <div class="portfolio-metrics">
+      <div class="metric-card">
+        <div class="metric-title">Annual Return</div>
+        <div class="metric-value positive">+21.4%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">Volatility</div>
+        <div class="metric-value">14.2%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-title">Sharpe Ratio</div>
+        <div class="metric-value">1.68</div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import { createChart } from "lightweight-charts";
+
+export default {
+  name: "PortfolioPerformance",
+  
+  props: {
+    portfolioData: {
+      type: Array,
+      default: () => []
     }
-  };
-  </script>
+  },
   
-  <style scoped>
-  .chart-section {
-    display: flex;
+  data() {
+    return {
+      chart: null,
+      lineSeries: null,
+      selectedRange: '1M',
+      timeRanges: [
+        { label: '1W', value: '1W' },
+        { label: '1M', value: '1M' },
+        { label: '3M', value: '3M' },
+        { label: 'YTD', value: 'YTD' },
+        { label: '1Y', value: '1Y' },
+        { label: 'All', value: 'All' }
+      ],
+      noData: false,
+      firstTransactionDate: null,
+      candlestickData: []
+    };
+  },
+
+  computed: {
+    lineData() {
+      return this.candlestickData.map(item => ({
+        time: item.time,
+        value: item.close,
+      }));
+    }
+  },
+
+  created() {
+    this.generateYearOfData();
+  },
+
+  mounted() {
+    this.initChart();
+    this.createSeries();
+    this.updateChart();
+    window.addEventListener("resize", this.handleResize);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+    if (this.chart) {
+      this.chart.remove();
+    }
+  },
+
+  methods: {
+    generateYearOfData() {
+      const data = [];
+      const today = new Date();
+      let startValue = 10000;
+      
+      for (let i = 365; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(today.getDate() - i);
+        
+        const dailyChange = Math.random() * 4 - 1.5;
+        
+        const trendMultiplier = 
+          i > 300 ? 1.2 :
+          i > 200 && i < 250 ? 0.7 :
+          i > 100 && i < 150 ? 1.3 :
+          1;
+          
+        const percentChange = dailyChange * trendMultiplier;
+        startValue = startValue * (1 + percentChange / 100);
+        
+        if (i === 285 || i === 180 || i === 75) {
+          const eventMultiplier = [0.92, 1.08, 0.94][Math.floor(i / 100)];
+          startValue = startValue * eventMultiplier;
+        }
+        
+        const close = startValue;
+        
+        data.push({
+          time: date.toISOString().split('T')[0],
+          close: parseFloat(close.toFixed(2))
+        });
+      }
+      
+      this.candlestickData = data;
+    },
+
+    changeTimeRange(range) {
+      this.selectedRange = range;
+      this.updateChart();
+    },
+
+    initChart() {
+      const container = this.$refs.chartContainer;
+      
+      if (!container) return;
+
+      this.chart = createChart(container, {
+        width: container.clientWidth, 
+        height: 400,
+        layout: {
+          background: { type: 'solid', color: '#FFFFFF' },
+          textColor: '#333333',
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        },
+        grid: {
+          vertLines: { color: '#f0f0f0' },
+          horzLines: { color: '#f0f0f0' },
+        },
+        timeScale: {
+          timeVisible: true,
+          borderColor: '#f0f0f0',
+        },
+        rightPriceScale: {
+          borderColor: '#f0f0f0',
+        },
+        crosshair: {
+          mode: 1,
+          vertLine: {
+            width: 1,
+            color: 'rgba(0, 123, 255, 0.3)',
+            style: 0,
+          },
+          horzLine: {
+            width: 1,
+            color: 'rgba(0, 123, 255, 0.3)',
+            style: 0,
+          },
+        },
+      });
+    },
+
+    createSeries() {
+      if (!this.chart) return;
+      
+      this.lineSeries = this.chart.addLineSeries({
+        color: '#007bff',
+        lineWidth: 2,
+        lineType: 0,
+        priceLineVisible: false,
+        lastValueVisible: true,
+        crosshairMarkerVisible: true,
+        crosshairMarkerRadius: 4,
+        crosshairMarkerBorderColor: '#FFFFFF',
+        crosshairMarkerBackgroundColor: '#007bff',
+      });
+    },
+
+    updateChart() {
+      if (!this.lineSeries) return;
+      
+      let filteredData = [...this.candlestickData];
+      
+      const today = new Date();
+      let startDate = new Date();
+      
+      switch (this.selectedRange) {
+        case '1W':
+          startDate.setDate(today.getDate() - 7);
+          break;
+        case '1M':
+          startDate.setMonth(today.getMonth() - 1);
+          break;
+        case '3M':
+          startDate.setMonth(today.getMonth() - 3);
+          break;
+        case 'YTD':
+          startDate = new Date(today.getFullYear(), 0, 1);
+          break;
+        case '1Y':
+          startDate.setFullYear(today.getFullYear() - 1);
+          break;
+      }
+      
+      if (this.selectedRange !== 'All') {
+        filteredData = filteredData.filter(item => {
+          const itemDate = new Date(item.time);
+          return itemDate >= startDate;
+        });
+      }
+      
+      const filteredLineData = filteredData.map(item => ({
+        time: item.time,
+        value: item.close
+      }));
+      
+      this.lineSeries.setData(filteredLineData);
+      this.chart.timeScale().fitContent();
+    },
+
+    handleResize() {
+      const container = this.$refs.chartContainer;
+      if (this.chart && container) {
+        this.chart.applyOptions({ width: container.clientWidth });
+      }
+    }
+  }
+};
+</script>
+
+<style scoped>
+.chart-section {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+.chart-header h1 {
+  font-size: 1.75rem;
+  margin: 0 0 1.5rem 0;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.portfolio-summary {
+  display: flex;
+  gap: 2rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.summary-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.positive {
+  color: #10b981;
+}
+
+.negative {
+  color: #ef4444;
+}
+
+.summary-item.positive .summary-value {
+  color: #10b981;
+}
+
+.summary-item.negative .summary-value {
+  color: #ef4444;
+}
+
+.time-range-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.time-range-selector button {
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  background-color: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.time-range-selector button:hover {
+  color: #1e293b;
+  background-color: #f1f5f9;
+}
+
+.time-range-selector button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+}
+
+.chart-container {
+  width: 100%;
+  height: 400px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #64748b;
+  text-align: center;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 2rem;
+  gap: 1rem;
+}
+
+.no-data-message svg {
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.no-data-message p {
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.portfolio-metrics {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.metric-card {
+  flex: 1;
+  min-width: 180px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.metric-title {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.metric-value.positive {
+  color: #10b981;
+}
+
+.metric-value.negative {
+  color: #ef4444;
+}
+
+@media (max-width: 768px) {
+  .portfolio-summary {
+    gap: 1rem;
+  }
+  
+  .portfolio-metrics {
     flex-direction: column;
-    align-items: center;
-    margin: 2rem auto;
-    max-width: 800px;
   }
   
-  .toggle-buttons {
-    margin: 1rem 0;
+  .metric-card {
+    min-width: auto;
   }
-  
-  .toggle-buttons button {
-    margin-right: 1rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-  }
-  
-  .chart-container {
-    width: 100%;
-    min-height: 400px; 
-    background: #f9f9f9;
-    border: 1px solid #ccc;
-    position: relative;
-  }
-  </style>
-  
+}
+</style>

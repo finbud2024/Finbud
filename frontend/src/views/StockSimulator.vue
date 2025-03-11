@@ -167,9 +167,102 @@
 
     <section v-if="activeSection === 'portfolio'" class="portfolio-section">
       <div class="portfolio-container">
-        <h2>Your Portfolio</h2>
+        <div class="portfolio-header">
+          <h2>Your Investment Portfolio</h2>
+          <div class="portfolio-actions">
+            <button class="refresh-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <polyline points="23 20 23 14 17 14"></polyline>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+              </svg>
+              Refresh
+            </button>
+            <button class="export-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export
+            </button>
+          </div>
+        </div>
+        
+        <div class="portfolio-overview">
+          <div class="overview-card total">
+            <div class="overview-title">Total Portfolio Value</div>
+            <div class="overview-value">$24,892.31</div>
+            <div class="overview-change positive">+$3,892.31 (18.5%)</div>
+          </div>
+          
+          <div class="overview-card">
+            <div class="overview-title">Stocks</div>
+            <div class="overview-value">$16,453.79</div>
+            <div class="overview-change positive">+$2,731.42 (19.9%)</div>
+          </div>
+          
+          <div class="overview-card">
+            <div class="overview-title">Cash</div>
+            <div class="overview-value">$8,438.52</div>
+            <div class="overview-change neutral">+$0.00 (0.0%)</div>
+          </div>
+        </div>
+        
         <div class="portfolio-content">
-          <p>Portfolio content will be displayed here.</p>
+          <PortfolioPerformance />
+        </div>
+        
+        <div class="holdings-section">
+          <h3>Your Holdings</h3>
+          <div class="holdings-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Name</th>
+                  <th>Quantity</th>
+                  <th>Avg Price</th>
+                  <th>Current Price</th>
+                  <th>Market Value</th>
+                  <th>Gain/Loss</th>
+                  <th>% Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="symbol">AAPL</td>
+                  <td>Apple Inc.</td>
+                  <td>12</td>
+                  <td>$145.82</td>
+                  <td>$179.66</td>
+                  <td>$2,155.92</td>
+                  <td class="positive">+$406.08</td>
+                  <td class="positive">+23.2%</td>
+                </tr>
+                <tr>
+                  <td class="symbol">MSFT</td>
+                  <td>Microsoft Corp</td>
+                  <td>8</td>
+                  <td>$258.74</td>
+                  <td>$327.89</td>
+                  <td>$2,623.12</td>
+                  <td class="positive">+$553.20</td>
+                  <td class="positive">+26.7%</td>
+                </tr>
+                <tr>
+                  <td class="symbol">GOOGL</td>
+                  <td>Alphabet Inc.</td>
+                  <td>5</td>
+                  <td>$134.18</td>
+                  <td>$157.73</td>
+                  <td>$788.65</td>
+                  <td class="positive">+$117.75</td>
+                  <td class="positive">+17.5%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -196,6 +289,7 @@ import stockData from './hardcodeData/StockData.js';
 import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue';
 import TransactionHistory from '../components/StockSimulatorPage/TransactionHistory.vue';
 import PerformanceChart from '../components/PerformanceChart.vue'; 
+import PortfolioPerformance from '../components/StockSimulatorPage/PortfolioPerformance.vue';
 import { toast } from 'vue3-toastify';
 import axios from 'axios';
 
@@ -207,7 +301,8 @@ export default {
     PreviewOrderModal,
     TransactionHistory,
     PerformanceChart,
-    BannerCardSimulator
+    BannerCardSimulator,
+    PortfolioPerformance
   },
   data() {
     return {
@@ -1218,5 +1313,117 @@ h1{
   padding: 20px;
   border: 1px solid #dee2e6;
   min-height: 300px;
+}
+
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.portfolio-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.refresh-btn, .export-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.refresh-btn:hover, .export-btn:hover {
+  background-color: #e9ecef;
+}
+
+.portfolio-overview {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.overview-card {
+  flex: 1;
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  text-align: center;
+}
+
+.overview-title {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.overview-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.overview-change {
+  font-size: 1rem;
+}
+
+.overview-change.positive {
+  color: #28a745;
+}
+
+.overview-change.negative {
+  color: #dc3545;
+}
+
+.overview-change.neutral {
+  color: #6c757d;
+}
+
+.holdings-section {
+  margin-top: 20px;
+}
+
+.holdings-table {
+  overflow-x: auto;
+}
+
+.holdings-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.holdings-table th, .holdings-table td {
+  padding: 12px 15px;
+  border: 1px solid #dee2e6;
+  text-align: left;
+}
+
+.holdings-table th {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.holdings-table td {
+  background-color: white;
+}
+
+.holdings-table .symbol {
+  font-weight: bold;
+}
+
+.holdings-table .positive {
+  color: #28a745;
+}
+
+.holdings-table .negative {
+  color: #dc3545;
 }
 </style>
