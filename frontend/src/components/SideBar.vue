@@ -183,7 +183,6 @@ export default {
         thread.clicked = i === index;
       });
       this.$store.dispatch("threads/updateThreadID", threadID);
-      console.log("selected threadID:", threadID);
     },
     cancelEdit(index) {
       this.threads[index].editing = false;
@@ -214,7 +213,6 @@ export default {
   async mounted() {
     if (this.isAuthenticated) {
       const userId = this.$store.getters['users/userId'];
-      console.log("current UserID:", userId);
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
