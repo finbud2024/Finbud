@@ -74,20 +74,10 @@ export default {
       return this.$store.getters["users/isAuthenticated"];
     },
     displayName() {
-      return this.isAuthenticated
-        ? JSON.parse(localStorage.getItem("user")).identityData.displayName
-        : "User";
+      return this.$store.getters["users/userDisplayName"];
     },
     userAvatar() {
-      //Check data in localstorage (user is authenticated)
-      if(!JSON.parse(localStorage.getItem("user"))){
-        return require("@/assets/anonymous.png");
-      }
-      //Check if user has a profile picture
-      if(!JSON.parse(localStorage.getItem("user")).identityData.profilePicture){
-        return require("@/assets/anonymous.png");
-      }
-      return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
+      return this.$store.getters["users/userProfileImage"] || require("@/assets/anonymous.png");
     },
     threadID() {
       return this.$store.getters['threads/getThreadID'];

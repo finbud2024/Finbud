@@ -224,7 +224,7 @@ export default {
         marketCap: '',
         volume: ''
       },
-      fixedUserId: localStorage.getItem('token'),
+      fixedUserId: this.$store.getters['users/userId'],
       action: 'buy',
       selectedTimeFrame: '1W',
       chatbotTriggeredByScroll: false,
@@ -276,7 +276,7 @@ export default {
       this.headerPartialMessage = "";
       this.headerChatbotMessage = ""; // Reset full message
       
-      const userName = localStorage.getItem('userName') || 'there';
+      const userName = this.$store.getters['users/userDisplayName'] || 'there';
       
       // Store the complete message we want to display
       const fullMessage = `Hey ${userName}, here's my quick take on these stock stats:<br>- The Open at $${this.stockData.open} and Prev Close at $${this.stockData.close} show it's starting today just a tad lower than yesterday—pretty stable so far.<br>- The 52 Week High of $${this.stockData.high} and Low of $${this.stockData.low} mean it's near the bottom of its yearly range, but still has room to climb.<br>- That Market Cap of $${this.stockData.marketCap} is huge, marking it as a major player, way bigger than smaller stocks.`;
@@ -579,7 +579,7 @@ export default {
     },
     async fetchBankingAccountBalance() {
       try {
-        const userId = localStorage.getItem('token');
+        const userId = this.$store.getters['users/userId'];
         const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
         const response = await axios.get(api);
         const data = response.data;

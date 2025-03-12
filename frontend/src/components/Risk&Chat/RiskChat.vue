@@ -71,30 +71,15 @@ export default {
     },
     computed: {
       userData() {
-        try {
-          const data = localStorage.getItem('user');
-          return data ? JSON.parse(data) : null;
-        } catch (e) {
-          console.error('Error parsing user data:', e);
-          return null;
-        }
+        return this.$store.getters["users/currentUser"];
       },
       profileImage() {
-        if (this.userData && this.userData.identityData) {
-          return this.userData.identityData.profilePicture;
-        }
-        return defaultImage;
+        return this.$store.getters["users/userProfileImage"] || defaultImage;
       },
       profileName() {
-        if (this.userData && this.userData.identityData) {
-          return this.userData.identityData.displayName;
-        }
-        return 'User';
+        return this.$store.getters["users/userDisplayName"];
       }
     },
-
-
-
     watch: {
         threadId: {
             immediate: true,
