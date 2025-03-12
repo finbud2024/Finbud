@@ -32,7 +32,13 @@ const passportConfig = (app) => {
                 secret: process.env.SESSION_SECRET, 
                 resave: false,
                 saveUninitialized: false,
-                cookie: {maxAge: 1000 * 60}}))
+                cookie: {
+                  maxAge: 1000 * 60 * 60 * 24, // 24 hours instead of 1 minute
+                  httpOnly: true, // Prevents client-side JS from reading the cookie
+                  sameSite: 'lax', // Provides some CSRF protection
+                  // secure: process.env.NODE_ENV === 'production' // Uncomment in production
+                }
+              }))
   
         .use(passport.initialize())
         .use(passport.session());

@@ -10,13 +10,16 @@ const googleStrategy = new GoogleStrategy.Strategy ({
         console.log("User authenticated through Google. In Google Strategy.");
         //Our convention is to build userId from displayName and provider
         const userId = profile.email;
-        console.log(profile);
+        console.log("Checking if user exists:", userId);
+        
         const existingUser = await User.findOne({"accountData.username": userId});
         if (existingUser) {
-            return done(null, existingUser);
+            console.log("Existing user found, not a new user");
+            return done(null, existingUser, { isNewUser: false });
         } else {
             console.log("User not found in database. Creating new user.");
         }
+        
         const update = {
             accountData: {
                 username: userId
@@ -28,11 +31,19 @@ const googleStrategy = new GoogleStrategy.Strategy ({
                 profilePicture: profile.picture
             }
         };
-        const currentUser = await User.findOneAndUpdate({"accountData.username": userId}, update, {
-            new: true,
-            upsert: true,
-        });
-        return done(null,currentUser);
+        
+        try {
+            const currentUser = await User.findOneAndUpdate({"accountData.username": userId}, update, {
+                new: true,
+                upsert: true,
+            });
+            console.log("New user created:", currentUser._id);
+            console.log("Setting isNewUser flag to true");
+            return done(null, currentUser, { isNewUser: true });
+        } catch (error) {
+            console.error("Error creating new user:", error);
+            return done(error);
+        }
     }
 );
 

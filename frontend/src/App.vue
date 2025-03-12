@@ -54,23 +54,65 @@ export default {
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener('click', this.handleClickOutside);
 
-    if (this.isAuthenticated) {
-      const userId = localStorage.getItem("token");
+    console.log("App mounted, checking for tutorial flag");
+    console.log("showTutorial query param:", this.$route.query.showTutorial);
+
+    // Check for isNewUser flag in localStorage as a fallback
+    const isNewUser = localStorage.getItem('isNewUser') === 'true';
+    if (isNewUser && !this.$route.query.showTutorial) {
+      console.log("New user detected from localStorage, adding showTutorial param");
+      this.$router.replace({ 
+        path: this.$route.path, 
+        query: { ...this.$route.query, showTutorial: 'true' } 
+      });
+      // Remove the flag after using it
+      localStorage.removeItem('isNewUser');
+    }
+
+    // Fetch current user data
+    await this.$store.dispatch("users/fetchCurrentUser");
+    const userData = this.$store.getters["users/currentUser"];
+
+    if (this.isAuthenticated && userData) {
+      console.log("User is authenticated, user data:", userData._id);
+      const userId = userData._id;
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-      const historyThreads = await axios.get(threadApi);
-      const historyThreadsData = historyThreads.data;
-      if (historyThreadsData.length === 0) {
-        // If new user with no thread, create a new one
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const reqBody = { userId };
-        const thread = await axios.post(api, reqBody);
-        this.threadId = thread._id;
+      try {
+        const historyThreads = await axios.get(threadApi, { withCredentials: true });
+        const historyThreadsData = historyThreads.data;
+        if (historyThreadsData.length === 0) {
+          // If new user with no thread, create a new one
+          console.log("No threads found, creating new thread for user");
+          const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+          const reqBody = { userId };
+          const thread = await axios.post(api, reqBody, { withCredentials: true });
+          this.threadId = thread._id;
+        } else {
+          console.log("Using existing thread:", historyThreadsData[0]._id);
+          this.threadId = historyThreadsData[0]._id;
+        }
+      } catch (error) {
+        console.error("Error fetching threads:", error);
+      }
+
+      // Check if user is new
+      await this.checkIfUserIsNew();
+
+      // Apply dark mode based on user settings
+      if (userData.settings && userData.settings.darkMode) {
+        console.log("Applying dark mode from user settings");
+        document.documentElement.classList.add('dark-mode');
+        document.body.classList.add('dark-mode');
       } else {
-        this.threadId = historyThreadsData[0]._id;
+        console.log("Applying light mode from user settings");
+        document.documentElement.classList.remove('dark-mode');
+        document.body.classList.remove('dark-mode');
       }
     }
 
+    // If showTutorial query parameter is present, ensure light mode for tutorial
     if (this.$route.query.showTutorial === 'true') {
+      console.log("Tutorial mode activated, forcing light mode");
       document.documentElement.classList.remove('dark-mode');
       document.body.classList.remove('dark-mode');
     }
@@ -85,6 +127,9 @@ export default {
       },
       { immediate: true } // Check immediately on mount
     );
+
+    // Add new method to check if user is new
+    await this.checkIfUserIsNew();
   },
   computed: {
     isAuthenticated() {
@@ -114,6 +159,27 @@ export default {
     },
     toggleChatBubble() {
       this.chatBubbleActive = !this.chatBubbleActive;
+    },
+    // Add new method to check if user is new
+    async checkIfUserIsNew() {
+      if (this.isAuthenticated) {
+        try {
+          const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/is-new-user`, { 
+            withCredentials: true 
+          });
+          
+          if (response.data.isNewUser) {
+            console.log("User is new, showing tutorial");
+            // Add showTutorial query parameter
+            this.$router.replace({ 
+              path: this.$route.path, 
+              query: { ...this.$route.query, showTutorial: 'true' } 
+            });
+          }
+        } catch (error) {
+          console.error("Error checking if user is new:", error);
+        }
+      }
     },
     displayMessage(message) {
       this.showBotMessage = true;

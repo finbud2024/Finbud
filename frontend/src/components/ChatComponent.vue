@@ -24,6 +24,7 @@ import UserInput from './UserInput.vue';
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
+import api from '@/utils/api';
 export default {
 	name: 'ChatComponent',
 	props: {},
@@ -45,18 +46,10 @@ export default {
 			return this.$store.getters['threads/getThreadID'];
 		},
 		displayName() {
-			if (this.isAuthenticated) {
-				return JSON.parse(localStorage.getItem("user")).identityData.displayName;
-			} else {
-				return "User";
-			}
+			return this.$store.getters['users/userDisplayName'];
 		},
 		userAvatar() {
-			if (this.isAuthenticated) {
-				return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
-			} else {
-				return require("@/assets/anonymous.png");
-			}
+			return this.$store.getters['users/userProfileImage'] || require("@/assets/anonymous.png");
 		},
 	},
 	watch: {
@@ -484,8 +477,8 @@ export default {
 				// this.openNewWindow("/goal");	
 			}
 			try {
-				const userId = localStorage.getItem("token");
-				const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+				const userId = this.$store.getters["users/userId"];
+				const response = await api.get(`/transactions/u/${userId}`);
 				const transactions = response.data;
 				const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
 				return currentBalance + amount;
@@ -495,8 +488,8 @@ export default {
 		},
 		async checkAccountBalance() {
 			try {
-				const userId = localStorage.getItem("token");
-				const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+				const userId = this.$store.getters["users/userId"];
+				const response = await api.get(`/transactions/u/${userId}`);
 				const transactions = response.data;
 
 				if (transactions.length === 0) {
@@ -517,7 +510,7 @@ export default {
 				return;
 			}
 
-			const userId = localStorage.getItem('token'); // Ensure userId is defined
+			const userId = this.$store.getters["users/userId"]; // Get userId from store
 			const date = new Date().toISOString(); // Get current date
 			const type = 'revenue';
 
@@ -530,7 +523,7 @@ export default {
 			console.log("type:", type);
 			*/
 			try {
-				await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+				await api.post(`/transactions`, {
 					description,
 					amount,
 					balance,
