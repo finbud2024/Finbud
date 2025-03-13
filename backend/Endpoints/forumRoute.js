@@ -14,16 +14,16 @@ forumRouter.get("/", async (req, res) => {
 
 forumRouter.post("/init", async (req, res) => {
   const forumsData = [
-    { name: "General", slug: "p/general", description: "General financial discussions", logo: "Home" },
+    { name: "General", slug: "p/general", description: "General financial discussions", logo: "Globe" },
     { name: "Investing", slug: "p/investing", description: "Stock market and investment strategies", logo: "TrendingUp" },
-    { name: "Crypto", slug: "p/crypto", description: "Cryptocurrency and blockchain", logo: "Coins" },
-    { name: "Economy", slug: "p/economy", description: "Macroeconomics and financial news", logo: "BarChart" },
-    { name: "Personal Finance", slug: "p/personal-finance", description: "Budgeting and saving tips", logo: "Wallet" },
-    { name: "Real Estate", slug: "p/real-estate", description: "Housing and mortgage discussions", logo: "Building" },
-    { name: "Fintech", slug: "p/fintech", description: "Financial technology innovations", logo: "Cpu" },
-    { name: "AMA", slug: "p/ama", description: "Ask Me Anything with experts", logo: "Mic" },
-    { name: "Self Promotions", slug: "p/self-promotions", description: "Share your projects and blogs", logo: "Megaphone" },
-    { name: "Memes", slug: "p/memes", description: "Finance-related humor", logo: "Smile" },
+    { name: "Crypto", slug: "p/crypto", description: "Cryptocurrency and blockchain", logo: "Bitcoin" },
+    { name: "Economy", slug: "p/economy", description: "Macroeconomics and financial news", logo: "ChartNoAxesCombined" },
+    { name: "Personal Finance", slug: "p/personal-finance", description: "Budgeting and saving tips", logo: "HandCoins" },
+    { name: "Real Estate", slug: "p/real-estate", description: "Housing and mortgage discussions", logo: "House" },
+    { name: "Fintech", slug: "p/fintech", description: "Financial technology innovations", logo: "WalletCards" },
+    { name: "AMA", slug: "p/ama", description: "Ask Me Anything with experts", logo: "CircleHelp" },
+    { name: "Self Promotions", slug: "p/self-promotions", description: "Share your projects and blogs", logo: "Store" },
+    { name: "Memes", slug: "p/memes", description: "Finance-related humor", logo: "Laugh" },
     { name: "Education", slug: "p/education", description: "Learning resources and literacy", logo: "BookOpen" }
   ];
 

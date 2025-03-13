@@ -1,7 +1,10 @@
 <template>
   <div class="forum-banner">
     <div class="forum-info">
-      <img :src="forum.logo || '/assets/icons/general.svg'" class="forum-icon" alt="Forum Logo" />
+      <component 
+        :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
+        class="forum-icon" 
+      />
       <div class="forum-text">
         <h1>{{ forum.name }}</h1>
         <p>{{ forum.description }}</p>
@@ -16,22 +19,23 @@
 </template>
 
 <script>
-import { MessageSquarePlus } from "lucide-vue-next";
-import { useRoute } from "vue-router";
 import { ref, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import axios from "axios";
+import * as LucideIcons from "lucide-vue-next"; // ✅ Import all Lucide icons
+import { MessageSquarePlus } from "lucide-vue-next";
 
 export default {
   components: { MessageSquarePlus },
   setup() {
     const route = useRoute();
-    const forum = ref({}); 
+    const forum = ref({});
 
     const fetchForumDetails = async () => {
       const forumSlug = route.query.forum || "p/general";
       try {
         console.log("Fetching forum details for:", forumSlug);
-        const response = await axios.get("http://localhost:8888/.netlify/functions/server/api/forums");
+        const response = await axios.get("/.netlify/functions/server/api/forums");
         const forums = response.data;
         forum.value = forums.find(f => f.slug === forumSlug) || {};
         console.log("✅ Forum details fetched:", forum.value);
@@ -41,19 +45,16 @@ export default {
     };
 
     watch(() => route.query.forum, fetchForumDetails);
-
     onMounted(fetchForumDetails);
 
     const navigateToStartThread = () => {
       console.log("Navigating to start thread");
     };
 
-    return { forum, navigateToStartThread };
+    return { forum, LucideIcons, navigateToStartThread };
   }
 };
 </script>
-
-
 
 <style scoped>
 .forum-banner {

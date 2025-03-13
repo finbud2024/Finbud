@@ -2,10 +2,16 @@
   <aside class="sidebar">
     <h2>Forums</h2>
     <ul>
-      <li v-for="forum in forums" :key="forum._id"
-          :class="{ 'selected': activeForum === forum.slug }"
-          @click="selectForum(forum.slug)">
-        <img :src="forum.logo || '/assets/icons/general.svg'" class="forum-icon" />
+      <li 
+        v-for="forum in forums" 
+        :key="forum._id"
+        :class="{ 'selected': activeForum === forum.slug }"
+        @click="selectForum(forum.slug)">
+        
+        <component 
+          :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
+          class="forum-icon" 
+        />
         <span class="forum-name">{{ forum.name }}</span>
       </li>
     </ul>
@@ -13,40 +19,43 @@
 </template>
 
 <script>
+import { ref, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 
+import * as LucideIcons from "lucide-vue-next";
+
 export default {
-  data() {
-    return {
-      activeForum: "p/general",
-      forums: [] 
-    };
-  },
-  methods: {
-    async fetchForums() {
+  setup() {
+    const forums = ref([]);
+    const route = useRoute();
+    const router = useRouter();
+    const activeForum = ref(route.query.forum || "p/general");
+
+    const fetchForums = async () => {
       try {
-        console.log("Fetching forums...");
-        const response = await axios.get("http://localhost:8888/.netlify/functions/server/api/forums");
-        console.log("✅ Forums fetched:", response.data);
-        this.forums = response.data;
+        const response = await axios.get("/.netlify/functions/server/api/forums");
+        forums.value = response.data;
       } catch (error) {
-        console.error("❌ Failed to fetch forums:", error);
+        console.error("Failed to fetch forums:", error);
       }
-    },
-    selectForum(forumSlug) {
-      this.activeForum = forumSlug;
-      this.$router.push({ path: "/forum", query: { forum: forumSlug } });
-      this.$emit("forum-selected", forumSlug);
-    }
-  },
-  mounted() {
-    this.fetchForums(); 
-    const queryForum = this.$route.query.forum;
-    if (queryForum) this.activeForum = queryForum;
+    };
+
+    watch(() => route.query.forum, (newForum) => {
+      activeForum.value = newForum || "p/general";
+    });
+
+    const selectForum = (forumSlug) => {
+      activeForum.value = forumSlug;
+      router.push({ path: "/forum", query: { forum: forumSlug } }); 
+    };
+
+    onMounted(fetchForums);
+
+    return { forums, activeForum, LucideIcons, selectForum };
   }
 };
 </script>
-
 
 <style scoped>
 .sidebar {
