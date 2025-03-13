@@ -5,15 +5,14 @@
 
     <div class="content">
       <!-- Forum Banner -->
-      <ForumBanner :forum="forumDetails" class="forum-banner" />
+      <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
-      <div class="thread-container">
+      <div class="thread-container" v-if="thread">
         <div class="thread-content">
 
           <!-- Thread Main Content -->
           <div class="thread-header">
             <img :src="thread.authorAvatar" alt="Author Avatar" class="author-avatar" />
-
             <div class="thread-meta">
               <h1 class="thread-title">{{ thread.title }}</h1>
               <div class="thread-info">
@@ -26,7 +25,7 @@
 
           <p class="thread-body">{{ thread.content }}</p>
 
-          <!-- Reaction Bar (Same as ThreadCard) -->
+          <!-- Reaction Bar -->
           <div class="thread-footer">
             <span class="reaction">
               <Heart class="icon" /> {{ thread.likes }}
@@ -55,14 +54,11 @@
               
               <img :src="reply.authorAvatar" alt="Avatar" class="reply-avatar" />
               <div class="reply-content">
-                
-                <!-- Author & Date -->
                 <div class="reply-header">
                   <strong class="reply-author">{{ reply.author }}</strong>
                   <span class="reply-date">• {{ reply.date }}</span>
                 </div>
 
-                <!-- Reply Body -->
                 <p class="reply-text">{{ reply.text }}</p>
 
                 <div class="reply-actions">
@@ -76,95 +72,85 @@
               </div>
             </div>
           </div>
+
         </div>
+      </div>
+
+      <div v-else class="error-message">
+        <p>Thread not found.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Heart, MessageCircle, Repeat, Send, AlertTriangle } from "lucide-vue-next";
+import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
 
 export default {
-  components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send, AlertTriangle },
+  components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send },
   data() {
     return {
       newComment: "",
-      forumDetails: {
-        name: "p/general",
-        description: "Thảo luận tài chính tổng hợp",
-        logo: "/assets/icons/general.svg",
-      },
-      thread: {
-        id: "1",
-        forum: "p/general",
-        forumLogo: "/assets/icons/general.svg",
-        author: "Matt Carroll",
-        authorAvatar: "/assets/avatars/matt.png",
-        date: "9h ago",
-        title: "Cal Vs Calendly",
-        content:
-          "Is there any reason to prefer one over the other? Have you used both or either?\n\nMy needs are simple. I want to be able to add two accounts and let someone put a meeting on my calendar from a link. I think both cover the use case -- which should I use?",
-        comments: 6,
-        likes: 7,
-        reposts: 2,
-        replies: [
-          {
-            id: 1,
-            author: "Steve Beyatte",
-            authorAvatar: "/assets/avatars/steve.png",
-            date: "8h ago",
-            text: "@Cal.com has a more generous free plan, is open-source, and is bootstrapped. Those 3 make it my pick!",
-            likes: 5,
-            replies: 5,
-          },
-          {
-            id: 2,
-            author: "Eithiriel DeMerè",
-            authorAvatar: "/assets/avatars/eithiriel.png",
-            date: "4h ago",
-            text: "@steveb Solid reasons.",
-            likes: 3,
-            replies: 5,
-          },
-          {
-            id: 3,
-            author: "David Leuliette",
-            authorAvatar: "/assets/avatars/david.png",
-            date: "8h ago",
-            text: "cal.com because your needs are simple — now. But your usage will evolve over the years, and I personally found cal.com more flexible.",
-            likes: 3,
-            replies: 5,
-          },
-        ],
-      },
+      thread: null,
+      forumDetails: null
     };
   },
-  methods: {
-    goBack() {
-      this.$router.push("/"); 
-    },
-    addComment() {
-      if (this.newComment.trim()) {
-        this.thread.replies.push({
-          id: this.thread.replies.length + 1,
-          author: "You",
-          authorAvatar: "/assets/avatars/your-avatar.png",
-          date: "Just now",
-          text: this.newComment,
-          likes: 0,
-        });
-        this.newComment = "";
+  created() {
+    const threadId = this.$route.params.id;
+
+    const allThreads = [
+      { 
+        id: 1, 
+        forum: "p/general", 
+        forumLogo: "/assets/icons/general.svg", 
+        author: "John Doe", 
+        authorAvatar: "/assets/avatars/john.png", 
+        date: "2h ago", 
+        title: "Best investment strategies?", 
+        content: "Looking for solid investment strategies for 2025.", 
+        comments: 12, 
+        likes: 360, 
+        reposts: 8, 
+        replies: [
+          { id: 1, author: "Steve Beyatte", authorAvatar: "/assets/avatars/steve.png", date: "8h ago", text: "@Cal.com has a more generous free plan, is open-source, and is bootstrapped.", likes: 5, replies: 5 },
+          { id: 2, author: "Eithiriel DeMerè", authorAvatar: "/assets/avatars/eithiriel.png", date: "4h ago", text: "I agree with Steve's point!", likes: 2, replies: 3 }
+        ] 
+      },
+      { 
+        id: 2, 
+        forum: "p/investing", 
+        forumLogo: "/assets/icons/investing.svg", 
+        author: "Jane Smith", 
+        authorAvatar: "/assets/avatars/jane.png", 
+        date: "5h ago", 
+        title: "How to manage financial risks?", 
+        content: "Looking for ways to handle financial risks effectively.", 
+        comments: 10, 
+        likes: 150, 
+        reposts: 4, 
+        replies: [
+          { id: 1, author: "Alice Johnson", authorAvatar: "/assets/avatars/alice.png", date: "3h ago", text: "Diversification is key!", likes: 10, replies: 2 }
+        ] 
       }
-    },
-  },
+    ];
+
+    this.thread = allThreads.find(t => t.id == threadId) || null;
+
+    if (this.thread) {
+      this.forumDetails = {
+        name: this.thread.forum,
+        logo: this.thread.forumLogo,
+        description: "Discussion related to " + this.thread.forum
+      };
+    }
+  }
 };
 </script>
 
 <style scoped>
-/* Layout */
+
 .forum-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -186,11 +172,13 @@ export default {
   gap: 20px;
 }
 
-/* Thread Content */
 .thread-container {
   width: 100%;
+  max-width: 800px;
+  margin: auto;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .thread-header {
@@ -237,7 +225,6 @@ export default {
   margin-bottom: 48px;
 }
 
-/* Reaction Bar */
 .thread-footer,
 .reply-actions {
   display: flex;
@@ -260,7 +247,6 @@ export default {
   stroke-width: 2;
 }
 
-/* Comment Section */
 .comment-box-container {
   width: 100%;
   max-width: 800px;
@@ -269,7 +255,6 @@ export default {
   flex-direction: column;
 }
 
-/* Textbox */
 .comment-box {
   width: 100%;
   height: 96px;
@@ -281,7 +266,6 @@ export default {
   resize: vertical;
 }
 
-/* Button */
 .comment-button {
   background: var(--primary-color) !important;
   color: var(--primary-color) !important;
@@ -296,12 +280,10 @@ export default {
   margin-top: 10px;
 }
 
-/* Replies Section */
 .replies {
   margin-top: 20px;
 }
 
-/* Individual Reply */
 .reply {
   display: flex;
   align-items: flex-start;
@@ -309,21 +291,18 @@ export default {
   padding: 10px 0;
 }
 
-/* Avatar */
 .reply-avatar {
   width: 48px;
   height: 48px;
   border-radius: 50%;
 }
 
-/* Reply Content */
 .reply-content {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-/* Author & Date */
 .reply-header {
   display: flex;
   align-items: center;
@@ -333,7 +312,6 @@ export default {
   margin-bottom: 5px;
 }
 
-/* Reply Text */
 .reply-text {
   font-size: 16px;
   line-height: 1.4;
@@ -341,7 +319,6 @@ export default {
   color: var(--text-primary);
 }
 
-/* Reply Actions */
 .reply-actions {
   display: flex;
   align-items: center;
@@ -351,7 +328,6 @@ export default {
   margin-top: 6px;
 }
 
-/* Reactions */
 .reaction {
   display: flex;
   align-items: center;

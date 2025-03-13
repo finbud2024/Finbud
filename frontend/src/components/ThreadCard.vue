@@ -48,7 +48,10 @@ export default {
   },
   methods: {
     goToThread() {
-      this.$router.push({ name: "ThreadView", params: { id: this.thread.id } });
+      this.$router.push({
+        name: "ThreadView",
+        params: { id: this.thread.id } 
+      });
     },
   },
 };

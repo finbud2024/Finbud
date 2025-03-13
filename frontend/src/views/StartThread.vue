@@ -1,7 +1,7 @@
 <template>
   <div class="forum-layout">
     <!-- Sidebar -->
-    <ForumSidebar class="sidebar" />
+    <ForumSidebar @forum-selected="changeForum" :selectedForum="selectedForum" class="sidebar" />
 
     <!-- Main Content -->
     <div class="content">
@@ -10,7 +10,6 @@
       <!-- Select Forum Dropdown -->
       <div class="selected-forum">
         <select v-model="selectedForum" class="forum-dropdown">
-          <option disabled value="">Select a forum</option>
           <option v-for="forum in forums" :key="forum.id" :value="forum.id">
             {{ forum.name }}
           </option>
@@ -29,70 +28,73 @@
 
 <script>
 import ForumSidebar from "@/components/ForumSidebar.vue";
+import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+import { ref, computed } from "vue";
 
 export default {
   components: { ForumSidebar },
-  data() {
-    return {
-      title: "",
-      body: "",
-      selectedForum: "",
-      forums: [
-        { id: "p/general", name: "General", logo: "/assets/icons/general.svg" },
-        { id: "p/tech", name: "Technology", logo: "/assets/icons/tech.svg" },
-        { id: "p/finance", name: "Finance", logo: "/assets/icons/finance.svg" },
-        { id: "p/startups", name: "Startups", logo: "/assets/icons/startups.svg" },
-        { id: "p/crypto", name: "Crypto", logo: "/assets/icons/crypto.svg" }
-      ],
-    };
-  },
-  methods: {
-    submitThread() {
-      if (!this.title.trim() || !this.body.trim() || !this.selectedForum) {
+  setup() {
+    const store = useStore();
+    const route = useRoute();
+    const router = useRouter();
+
+    const title = ref("");
+    const body = ref("");
+    const selectedForum = ref(route.query.forum || "p/general");
+
+    const forums = [
+      { id: "p/general", name: "p/general" },
+      { id: "p/investing", name: "p/investing" },
+      { id: "p/crypto", name: "p/crypto" },
+      { id: "p/economy", name: "p/economy" },
+      { id: "p/personal-finance", name: "p/personal-finance" },
+      { id: "p/real-estate", name: "p/real-estate" },
+      { id: "p/fintech", name: "p/fintech" },
+      { id: "p/ama", name: "p/ama" },
+      { id: "p/self-promotions", name: "p/self-promotions" },
+      { id: "p/memes", name: "p/memes" },
+      { id: "p/education", name: "p/education" },
+    ];
+
+    function submitThread() {
+      if (!title.value.trim() || !body.value.trim() || !selectedForum.value) {
         alert("Please select a forum and fill in both the title and body.");
         return;
       }
 
-      console.log("New Thread:", {
-        forum: this.selectedForum,
-        title: this.title,
-        body: this.body,
-      });
+      const newThread = {
+        id: Date.now(),
+        forum: selectedForum.value,
+        author: "You",
+        title: title.value,
+        content: body.value,
+        date: "Just now",
+        comments: 0,
+        likes: 0,
+      };
 
-      this.title = "";
-      this.body = "";
-      this.selectedForum = "";
-      alert("Thread submitted successfully!");
-    },
-    enforceBodyStyles() {
-      const bodyInput = this.$refs.bodyInput;
-      if (bodyInput) {
-        bodyInput.style.height = "200px";
-        bodyInput.style.overflowWrap = "break-word";
-        bodyInput.style.wordWrap = "break-word";
-        bodyInput.style.whiteSpace = "pre-wrap";
-        bodyInput.style.verticalAlign = "top";
-        bodyInput.style.textAlign = "left";
-        bodyInput.style.padding = "12px";
-        bodyInput.style.fontSize = "16px";
-        bodyInput.style.border = "1px solid var(--border-color)";
-        bodyInput.style.borderRadius = "6px";
-        bodyInput.style.resize = "vertical";
-        bodyInput.style.boxSizing = "border-box";
-      }
-    },
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.enforceBodyStyles();
-    });
+      store.dispatch("forum/addNewThread", { forum: selectedForum.value, thread: newThread });
+
+      title.value = "";
+      body.value = "";
+
+      router.push({ path: "/forum", query: { forum: selectedForum.value } });
+    }
+
+    return {
+      title,
+      body,
+      selectedForum,
+      forums,
+      submitThread,
+    };
   }
 };
 </script>
 
 <style scoped>
 
-/* Layout */
 .forum-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -102,27 +104,23 @@ export default {
   gap: 64px;
 }
 
-/* Sidebar */
 .sidebar {
   background: var(--background-primary);
   padding: 20px;
   border-right: 1px solid var(--background-tertiary);
 }
 
-/* Main Content */
 .content {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Page Title */
 .page-title {
   font-size: 24px;
   font-weight: bold;
 }
 
-/* Forum Dropdown */
 .selected-forum {
   display: flex;
   align-items: center;
@@ -136,7 +134,6 @@ export default {
   border: 1px solid var(--border-color);
 }
 
-/* Form */
 .thread-form {
   display: flex;
   flex-direction: column;
@@ -170,7 +167,6 @@ export default {
   overflow-y: auto;
 }
 
-/* Submit Button */
 .submit-button {
   background: var(--primary-color) !important;
   color: var(--primary-color) !important;

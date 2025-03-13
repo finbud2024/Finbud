@@ -116,11 +116,6 @@ const routes = [
     component: LearningRoadMap,
     props: true,
   },
-  // {
-  //   path: '/event-map',
-  //   name: 'EventMap',
-  //   component: EventMap,
-  // },
   {
     path: "/forum",
     name: "ForumView",
@@ -134,7 +129,7 @@ const routes = [
     props: true,
   },
   {
-    path: "/thread-view",
+    path: "/forum/thread/:id",
     name: "ThreadView",
     component: ThreadView,
     props: true,

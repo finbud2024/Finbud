@@ -5,7 +5,7 @@ const ReactionSchema = new mongoose.Schema({
   type: { type: String, enum: ["like", "upvote"], required: true },
   targetId: { type: mongoose.Schema.Types.ObjectId, required: true }, 
   targetType: { type: String, enum: ["Post", "Comment"], required: true },
-  timestamp: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model("Reaction", ReactionSchema);

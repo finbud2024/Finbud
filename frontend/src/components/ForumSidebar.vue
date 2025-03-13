@@ -16,7 +16,7 @@
 export default {
   data() {
     return {
-      activeForum: "p/general", 
+      activeForum: "p/general",
       forums: [
         { id: "p/general", name: "p/general", logo: "/assets/icons/general.svg" },
         { id: "p/investing", name: "p/investing", logo: "/assets/icons/investing.svg" },
@@ -24,20 +24,24 @@ export default {
         { id: "p/economy", name: "p/economy", logo: "/assets/icons/economy.svg" },
         { id: "p/personal-finance", name: "p/personal-finance", logo: "/assets/icons/personal-finance.svg" },
         { id: "p/real-estate", name: "p/real-estate", logo: "/assets/icons/real-estate.svg" },
-        { id: "p/startups", name: "p/startups", logo: "/assets/icons/startups.svg" },
         { id: "p/fintech", name: "p/fintech", logo: "/assets/icons/fintech.svg" },
         { id: "p/ama", name: "p/ama", logo: "/assets/icons/ama.svg" },
-        { id: "p/self-promotion", name: "p/self-promotion", logo: "/assets/icons/self-promotion.svg" },
+        { id: "p/self-promotions", name: "p/self-promotions", logo: "/assets/icons/self-promotions.svg" },
         { id: "p/memes", name: "p/memes", logo: "/assets/icons/memes.svg" },
-        { id: "p/education", name: "p/education", logo: "/assets/icons/education.svg" }
+        { id: "p/education", name: "p/education", logo: "/assets/icons/education.svg" },
       ],
     };
   },
   methods: {
     selectForum(forumId) {
       this.activeForum = forumId;
+      this.$router.push({ path: "/forum", query: { forum: forumId } }); 
       this.$emit("forum-selected", forumId);
     },
+  },
+  mounted() {
+    const queryForum = this.$route.query.forum;
+    if (queryForum) this.activeForum = queryForum;
   },
 };
 </script>

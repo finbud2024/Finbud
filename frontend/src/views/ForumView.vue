@@ -23,39 +23,52 @@
 import ThreadCard from "@/components/ThreadCard.vue";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
+import { useStore } from "vuex";
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   components: { ThreadCard, ForumSidebar, ForumBanner },
-  data() {
-    return {
-      activeForum: "p/general", 
-      forums: {
-        "p/general": { name: "p/general", description: "Thảo luận tài chính tổng hợp", logo: "/assets/icons/general.svg" },
-        "p/investing": { name: "p/investing", description: "Đầu tư chứng khoán, vàng, bất động sản", logo: "/assets/icons/investing.svg" },
-        "p/crypto": { name: "p/crypto", description: "Tiền mã hóa & Blockchain", logo: "/assets/icons/crypto.svg" },
-        "p/economy": { name: "p/economy", description: "Phân tích thị trường, vĩ mô, lãi suất", logo: "/assets/icons/economy.svg" },
-      },
-      threads: [
-        { id: 1, forum: "p/general", forumLogo: "/assets/icons/general.svg", author: "John Doe", authorAvatar: "/assets/avatars/john.png", date: "2h ago", title: "Best investment strategies?", content: "Looking for solid investment strategies for 2025.", comments: 12, likes: 360, reposts: 8 },
-        { id: 2, forum: "p/investing", forumLogo: "/assets/icons/investing.svg", author: "Jane Smith", authorAvatar: "/assets/avatars/jane.png", date: "5h ago", title: "How to manage financial risks?", content: "Looking for ways to handle financial risks effectively.", comments: 10, likes: 150, reposts: 4 },
-        { id: 3, forum: "p/crypto", forumLogo: "/assets/icons/crypto.svg", author: "Alice Johnson", authorAvatar: "/assets/avatars/alice.png", date: "1h ago", title: "Latest crypto trends?", content: "What do you think about the latest trends in cryptocurrency?", comments: 8, likes: 220, reposts: 5 },
-        { id: 4, forum: "p/economy", forumLogo: "/assets/icons/economy.svg", author: "Bob Brown", authorAvatar: "/assets/avatars/bob.png", date: "3h ago", title: "Interest rate hikes", content: "How will interest rate hikes impact the economy?", comments: 7, likes: 90, reposts: 2 },
-      ],
-    };
-  },
-  computed: {
-    activeForumDetails() {
-      return this.forums[this.activeForum] || this.forums["p/general"];
-    },
-    filteredThreads() {
-      return this.threads.filter(thread => thread.forum === this.activeForum);
+  setup() {
+    const store = useStore();
+    const route = useRoute();
+    const router = useRouter();
+
+    const activeForum = computed(() => route.query.forum || "p/general");
+
+    const activeForumDetails = computed(() => {
+      const forums = {
+        "p/general": { name: "p/general", description: "General financial discussions", logo: "/assets/icons/general.svg" },
+        "p/investing": { name: "p/investing", description: "Stock market and investment strategies", logo: "/assets/icons/investing.svg" },
+        "p/crypto": { name: "p/crypto", description: "Cryptocurrency and blockchain", logo: "/assets/icons/crypto.svg" },
+        "p/economy": { name: "p/economy", description: "Macroeconomics and financial news", logo: "/assets/icons/economy.svg" },
+        "p/personal-finance": { name: "p/personal-finance", description: "Personal finance, budgeting, and saving tips", logo: "/assets/icons/personal-finance.svg" },
+        "p/real-estate": { name: "p/real-estate", description: "Discussions about housing, mortgages, and real estate investments", logo: "/assets/icons/real-estate.svg" },
+        "p/fintech": { name: "p/fintech", description: "Financial technology innovations and startups", logo: "/assets/icons/fintech.svg" },
+        "p/ama": { name: "p/ama", description: "Ask Me Anything sessions with experts", logo: "/assets/icons/ama.svg" },
+        "p/self-promotions": { name: "p/self-promotions", description: "Share your projects, blogs, and personal finance content", logo: "/assets/icons/self-promotions.svg" },
+        "p/memes": { name: "p/memes", description: "Finance-related memes and humor", logo: "/assets/icons/memes.svg" },
+        "p/education": { name: "p/education", description: "Learning resources and financial literacy", logo: "/assets/icons/education.svg" }
+      };
+      return forums[activeForum.value] || forums["p/general"];
+    });
+
+    // ✅ Get threads from Vuex `forum.js`
+    const filteredThreads = computed(() => {
+      return store.getters["forum/getForumThreads"](activeForum.value);
+    });
+
+    function setActiveForum(forumId) {
+      router.push({ path: "/forum", query: { forum: forumId } });
     }
-  },
-  methods: {
-    setActiveForum(id) {
-      this.activeForum = id;
-    },
-  },
+
+    return {
+      activeForum,
+      activeForumDetails,
+      filteredThreads,
+      setActiveForum,
+    };
+  }
 };
 </script>
 
