@@ -1,14 +1,13 @@
 <template>
   <div class="forum-banner">
     <div class="forum-info">
-      <img :src="forum.logo" class="forum-icon" alt="Forum Logo" />
+      <img :src="forum.logo || '/assets/icons/general.svg'" class="forum-icon" alt="Forum Logo" />
       <div class="forum-text">
         <h1>{{ forum.name }}</h1>
         <p>{{ forum.description }}</p>
       </div>
     </div>
     
-    <!-- Start New Thread Button -->
     <button @click="navigateToStartThread" class="start-thread-btn">
       <MessageSquarePlus class="icon" />
       Start new thread
@@ -18,24 +17,43 @@
 
 <script>
 import { MessageSquarePlus } from "lucide-vue-next";
-import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
+import { ref, watch, onMounted } from "vue";
+import axios from "axios";
 
 export default {
   components: { MessageSquarePlus },
-  props: {
-    forum: Object,
-  },
   setup() {
-    const router = useRouter();
+    const route = useRoute();
+    const forum = ref({}); 
 
-    const navigateToStartThread = () => {
-      router.push("/start-thread"); 
+    const fetchForumDetails = async () => {
+      const forumSlug = route.query.forum || "p/general";
+      try {
+        console.log("Fetching forum details for:", forumSlug);
+        const response = await axios.get("http://localhost:8888/.netlify/functions/server/api/forums");
+        const forums = response.data;
+        forum.value = forums.find(f => f.slug === forumSlug) || {};
+        console.log("✅ Forum details fetched:", forum.value);
+      } catch (error) {
+        console.error("❌ Failed to fetch forum details:", error);
+      }
     };
 
-    return { navigateToStartThread };
-  },
+    watch(() => route.query.forum, fetchForumDetails);
+
+    onMounted(fetchForumDetails);
+
+    const navigateToStartThread = () => {
+      console.log("Navigating to start thread");
+    };
+
+    return { forum, navigateToStartThread };
+  }
 };
 </script>
+
+
 
 <style scoped>
 .forum-banner {

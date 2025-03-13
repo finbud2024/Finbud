@@ -34,7 +34,7 @@ if (!mongoURI) {
 const connectToMongoDB = async () => {
   return new Promise((resolve, reject) => {
     mongoose.connect(mongoURI, { 
-      serverSelectionTimeoutMS: 5000 // 5 seconds timeout
+      serverSelectionTimeoutMS: 5000 
     })
     .then(() => {
       console.log('MongoDB connected');
@@ -73,7 +73,7 @@ router.use('/', goalRoute);
 router.use('/', proxyRoute);
 router.use('/events', eventRoute);
 router.use('/', quantSimulatorRoute);
-router.use('/', forumRoute);
+router.use('/api/forums', forumRoute);
 
 app.use('/.netlify/functions/server', router);
 

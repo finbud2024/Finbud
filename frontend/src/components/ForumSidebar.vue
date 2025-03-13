@@ -2,10 +2,10 @@
   <aside class="sidebar">
     <h2>Forums</h2>
     <ul>
-      <li v-for="forum in forums" :key="forum.id"
-          :class="{ 'selected': activeForum === forum.id }"
-          @click="selectForum(forum.id)">
-        <img :src="forum.logo" class="forum-icon" />
+      <li v-for="forum in forums" :key="forum._id"
+          :class="{ 'selected': activeForum === forum.slug }"
+          @click="selectForum(forum.slug)">
+        <img :src="forum.logo || '/assets/icons/general.svg'" class="forum-icon" />
         <span class="forum-name">{{ forum.name }}</span>
       </li>
     </ul>
@@ -13,38 +13,40 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
       activeForum: "p/general",
-      forums: [
-        { id: "p/general", name: "p/general", logo: "/assets/icons/general.svg" },
-        { id: "p/investing", name: "p/investing", logo: "/assets/icons/investing.svg" },
-        { id: "p/crypto", name: "p/crypto", logo: "/assets/icons/crypto.svg" },
-        { id: "p/economy", name: "p/economy", logo: "/assets/icons/economy.svg" },
-        { id: "p/personal-finance", name: "p/personal-finance", logo: "/assets/icons/personal-finance.svg" },
-        { id: "p/real-estate", name: "p/real-estate", logo: "/assets/icons/real-estate.svg" },
-        { id: "p/fintech", name: "p/fintech", logo: "/assets/icons/fintech.svg" },
-        { id: "p/ama", name: "p/ama", logo: "/assets/icons/ama.svg" },
-        { id: "p/self-promotions", name: "p/self-promotions", logo: "/assets/icons/self-promotions.svg" },
-        { id: "p/memes", name: "p/memes", logo: "/assets/icons/memes.svg" },
-        { id: "p/education", name: "p/education", logo: "/assets/icons/education.svg" },
-      ],
+      forums: [] 
     };
   },
   methods: {
-    selectForum(forumId) {
-      this.activeForum = forumId;
-      this.$router.push({ path: "/forum", query: { forum: forumId } }); 
-      this.$emit("forum-selected", forumId);
+    async fetchForums() {
+      try {
+        console.log("Fetching forums...");
+        const response = await axios.get("http://localhost:8888/.netlify/functions/server/api/forums");
+        console.log("✅ Forums fetched:", response.data);
+        this.forums = response.data;
+      } catch (error) {
+        console.error("❌ Failed to fetch forums:", error);
+      }
     },
+    selectForum(forumSlug) {
+      this.activeForum = forumSlug;
+      this.$router.push({ path: "/forum", query: { forum: forumSlug } });
+      this.$emit("forum-selected", forumSlug);
+    }
   },
   mounted() {
+    this.fetchForums(); 
     const queryForum = this.$route.query.forum;
     if (queryForum) this.activeForum = queryForum;
-  },
+  }
 };
 </script>
+
 
 <style scoped>
 .sidebar {

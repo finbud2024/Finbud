@@ -11,7 +11,7 @@
       <div class="thread-list">
         <ThreadCard 
           v-for="thread in filteredThreads" 
-          :key="thread.id" 
+          :key="thread._id" 
           :thread="thread" 
         />
       </div>
@@ -20,57 +20,50 @@
 </template>
 
 <script>
+import axios from "axios";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
-import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 export default {
   components: { ThreadCard, ForumSidebar, ForumBanner },
   setup() {
-    const store = useStore();
     const route = useRoute();
     const router = useRouter();
+    const activeForum = ref(route.query.forum || "p/general");
+    const forums = ref([]);
 
-    const activeForum = computed(() => route.query.forum || "p/general");
+    const fetchForums = async () => {
+      try {
+        const response = await axios.get(api);
+        forums.value = response.data;
+      } catch (error) {
+        console.error("Failed to fetch forums:", error);
+      }
+    };
 
     const activeForumDetails = computed(() => {
-      const forums = {
-        "p/general": { name: "p/general", description: "General financial discussions", logo: "/assets/icons/general.svg" },
-        "p/investing": { name: "p/investing", description: "Stock market and investment strategies", logo: "/assets/icons/investing.svg" },
-        "p/crypto": { name: "p/crypto", description: "Cryptocurrency and blockchain", logo: "/assets/icons/crypto.svg" },
-        "p/economy": { name: "p/economy", description: "Macroeconomics and financial news", logo: "/assets/icons/economy.svg" },
-        "p/personal-finance": { name: "p/personal-finance", description: "Personal finance, budgeting, and saving tips", logo: "/assets/icons/personal-finance.svg" },
-        "p/real-estate": { name: "p/real-estate", description: "Discussions about housing, mortgages, and real estate investments", logo: "/assets/icons/real-estate.svg" },
-        "p/fintech": { name: "p/fintech", description: "Financial technology innovations and startups", logo: "/assets/icons/fintech.svg" },
-        "p/ama": { name: "p/ama", description: "Ask Me Anything sessions with experts", logo: "/assets/icons/ama.svg" },
-        "p/self-promotions": { name: "p/self-promotions", description: "Share your projects, blogs, and personal finance content", logo: "/assets/icons/self-promotions.svg" },
-        "p/memes": { name: "p/memes", description: "Finance-related memes and humor", logo: "/assets/icons/memes.svg" },
-        "p/education": { name: "p/education", description: "Learning resources and financial literacy", logo: "/assets/icons/education.svg" }
-      };
-      return forums[activeForum.value] || forums["p/general"];
+      return forums.value.find(forum => forum.slug === activeForum.value) || {};
     });
 
-    // ✅ Get threads from Vuex `forum.js`
-    const filteredThreads = computed(() => {
-      return store.getters["forum/getForumThreads"](activeForum.value);
-    });
-
-    function setActiveForum(forumId) {
-      router.push({ path: "/forum", query: { forum: forumId } });
+    function setActiveForum(forumSlug) {
+      activeForum.value = forumSlug;
+      router.push({ path: "/forum", query: { forum: forumSlug } });
     }
+
+    onMounted(fetchForums);
 
     return {
       activeForum,
       activeForumDetails,
-      filteredThreads,
-      setActiveForum,
+      setActiveForum
     };
   }
 };
 </script>
+
 
 <style scoped>
 .forum-layout {
