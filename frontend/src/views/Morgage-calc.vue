@@ -102,10 +102,7 @@
             <canvas ref="chart"></canvas>
           </div>
           <div class="breakdown-details">
-            <div class="input-group">
-                <label>Monthly Payment</label>
-                <span class="amount">{{ `$${calculateMonthlyPayment}` }}</span>
-            </div>
+
             <div class="breakdown-list">
               <div class="breakdown-item">
                 <span class="percentage">{{ ((calculatePrincipalInterest / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
@@ -214,44 +211,74 @@ export default {
       this.showExtras = !this.showExtras;
     },
     renderChart() {
-    if (this.chartInstance) {
-      this.chartInstance.destroy(); // Destroy previous chart instance
-    }
-    
-    const ctx = this.$refs.chart.getContext('2d');
-    this.chartInstance = new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance', 'PMI', 'HOA Fees'],
-        datasets: [{
-          data: [
-            parseFloat(this.calculatePrincipalInterest), 
-            parseFloat(this.propertyTax), 
-            parseFloat(this.homeInsurance), 
-            parseFloat(this.pmi), 
-            parseFloat(this.hoaFees)
-          ],
-          backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0', '#03A9F4'],
-        }]
-      },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                position: 'bottom',
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    return `${context.label}: $${context.raw.toFixed(2)}`;
-                  }
+      if (this.chartInstance) {
+        this.chartInstance.destroy(); // Destroy previous chart instance
+      }
+
+      const ctx = this.$refs.chart.getContext('2d');
+      this.chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance', 'PMI', 'HOA Fees'],
+          datasets: [{
+            data: [
+              parseFloat(this.calculatePrincipalInterest), 
+              parseFloat(this.propertyTax), 
+              parseFloat(this.homeInsurance), 
+              parseFloat(this.pmi), 
+              parseFloat(this.hoaFees)
+            ],
+            backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0', '#03A9F4'],
+          }]
+        },
+        options: {
+          responsive: true,
+          cutout: '70%', // Creates a "donut" effect
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: $${context.raw.toFixed(2)}`;
                 }
               }
+            },
+            // Custom Plugin for Center Text
+            centerText: {
+              text:`$${this.calculateMonthlyPayment}`, 
             }
           }
-        });
-      }
-    },
+        },
+        plugins: [{
+          id: 'centerText',
+          beforeDraw: (chart) => {
+            const width = chart.width;
+            const height = chart.height;
+            const ctx = chart.ctx;
+
+            ctx.restore();
+            const fontSize = (height / 10).toFixed(2);
+            ctx.font = `${fontSize}px Arial`;
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'center';
+
+            const text = `$${this.calculateMonthlyPayment}`;
+            const textX = Math.round(width / 2);
+            const textY = Math.round(height / 2);
+
+            ctx.fillStyle = '#000'; // Black text color
+            ctx.fillText('Monthly Payment', centerX, centerY - 10);
+            ctx.font = 'bold 18px Arial';
+            ctx.fillText(text, textX, textY);
+            ctx.save();
+          }
+        }]
+      });
+    }
+  },
+
 
 
     watch: {
@@ -281,7 +308,7 @@ export default {
 
 <style scoped>
 .mortgage-calc {
-  max-width: 80%;
+  max-width: 90%;
   margin: auto;
   padding: 20px;
   background: #f9f9f9;
@@ -291,8 +318,9 @@ export default {
 
 h1 {
   text-align: center;
-  font-size: 24px;
+  font-size: 33px;
   margin-bottom: 20px;
+  color: #007bff;
 }
 
 .content-wrapper {
@@ -301,10 +329,12 @@ h1 {
 }
 
 .input-section {
+  max-width: 30%;
   flex: 1;
 }
 
 .payment-breakdown {
+  margin-left: 30px;
   flex: 1;
 }
 
@@ -382,8 +412,9 @@ input, select {
 
 .payment-breakdown h2 {
   text-align: center;
-  font-size: 20px;
+  font-size: 25px;
   margin-bottom: 20px;
+  color: #007bff;
 }
 
 .breakdown-content {
