@@ -1,35 +1,35 @@
 <template>
-  <div class="thread-card"
+  <div v-if="thread" class="thread-card"
        :class="{ 'hovered': isHovered }"
        @mouseenter="isHovered = true"
        @mouseleave="isHovered = false"
        @click="goToThread">
     
     <div class="thread-header">
-      <component :is="LucideIcons[thread.forum.logo] || LucideIcons['HelpCircle']" class="forum-logo" />
-      <span class="forum-name">{{ thread.forum.name }}</span>
+      <span class="forum-name">{{ thread?.forumId?.name || "Unknown Forum" }}</span>
       <span class="separator">•</span>
-      <img :src="thread.author.avatar || '/default-avatar.png'" alt="Author" class="author-avatar" />
-      <span class="author">{{ thread.author.username }}</span>
+      
+      <img :src="thread?.authorId?.profilePicture || '/default-avatar.png'" alt="Author" class="author-avatar" />
+      <span class="author">{{ thread?.authorId?.displayName || "Anonymous" }}</span>
       <span class="separator">•</span>
-      <span class="date">{{ formatDate(thread.createdAt) }}</span>
+      <span class="date">{{ formatDate(thread?.createdAt) }}</span>
     </div>
 
-    <h2 class="thread-title">{{ thread.title }}</h2>
+    <h2 class="thread-title">{{ thread?.title || "Untitled" }}</h2>
 
     <p class="thread-content">
-      {{ thread.body.length > 150 ? thread.body.substring(0, 150) + "..." : thread.body }}
+      {{ thread?.body?.length > 150 ? thread?.body.substring(0, 150) + "..." : thread?.body || "No content available." }}
     </p>
 
     <div class="thread-footer">
       <span class="reaction">
-        <Heart class="icon" /> {{ thread.reactions.likes }}
+        <Heart class="icon" /> {{ thread?.reactions?.likes || 0 }}
       </span>
       <span class="reaction">
-        <MessageCircle class="icon" /> {{ thread.reactions.comments }}
+        <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
       </span>
       <span class="reaction">
-        <Repeat class="icon" /> {{ thread.reactions.shares }}
+        <Repeat class="icon" /> {{ thread?.reactions?.shares || 0 }}
       </span>
       <span class="reaction">
         <Send class="icon" /> 
@@ -40,7 +40,6 @@
 
 <script>
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
-import * as LucideIcons from "lucide-vue-next";
 
 export default {
   components: { Heart, MessageCircle, Repeat, Send },
@@ -49,18 +48,22 @@ export default {
   },
   methods: {
     goToThread() {
-      this.$router.push({
-        name: "ThreadView",
-        params: { id: this.thread._id } 
-      });
+      if (this.thread?._id) {
+        this.$router.push({
+          name: "ThreadView",
+          params: { id: this.thread._id }
+        });
+      }
     },
     formatDate(dateString) {
+      if (!dateString) return "Unknown Date";
       const options = { year: "numeric", month: "short", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
     }
   }
 };
 </script>
+
 
 <style scoped>
 .thread-card {

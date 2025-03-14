@@ -25,18 +25,16 @@ import ThreadCard from "@/components/ThreadCard.vue";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
 import { computed, ref, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 export default {
   components: { ThreadCard, ForumSidebar, ForumBanner },
   setup() {
     const route = useRoute();
-    const router = useRouter();
     const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
     const threads = ref([]);
 
-    // ✅ Fetch forums from API (only for banner details)
     const fetchForums = async () => {
       try {
         const response = await axios.get(`/.netlify/functions/server/api/forums`);
@@ -46,8 +44,6 @@ export default {
       }
     };
 
-
-    // ✅ Fetch threads from API based on the selected forum
     const fetchThreads = async () => {
       try {
         console.log(`Fetching threads for: ${activeForum.value}`);
@@ -59,19 +55,15 @@ export default {
       }
     };
 
-
-    // 🔹 Update when forum changes
     watch(() => route.query.forum, (newForum) => {
       activeForum.value = newForum || "p/general";
       fetchThreads();
     });
 
-    // ✅ Compute active forum details for banner
     const activeForumDetails = computed(() => {
       return forums.value.find(forum => forum.slug === activeForum.value) || {};
     });
 
-    // ✅ Filter threads for the selected forum
     const filteredThreads = computed(() => threads.value);
 
     onMounted(() => {

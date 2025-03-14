@@ -41,7 +41,6 @@ export default {
       }
     };
 
-    // 🔹 Update `activeForum` when the URL changes
     watch(() => route.query.forum, (newForum) => {
       activeForum.value = newForum || "p/general";
     });
