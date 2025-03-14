@@ -102,7 +102,10 @@
             <canvas ref="chart"></canvas>
           </div>
           <div class="breakdown-details">
-
+            <div class="input-group">
+                <label>Monthly Payment</label>
+                <span class="amount">{{ `$${calculateMonthlyPayment}` }}</span>
+            </div>
             <div class="breakdown-list">
               <div class="breakdown-item">
                 <span class="percentage">{{ ((calculatePrincipalInterest / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
@@ -268,9 +271,6 @@ export default {
             const textX = Math.round(width / 2);
             const textY = Math.round(height / 2);
 
-            ctx.fillStyle = '#000'; // Black text color
-            ctx.fillText('Monthly Payment', centerX, centerY - 10);
-            ctx.font = 'bold 18px Arial';
             ctx.fillText(text, textX, textY);
             ctx.save();
           }
