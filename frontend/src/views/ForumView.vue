@@ -1,7 +1,7 @@
 <template>
   <div class="forum-layout">
     <!-- Sidebar -->
-    <ForumSidebar @forum-selected="setActiveForum" class="sidebar" />
+    <ForumSidebar class="sidebar" />
 
     <div class="content">
       <!-- Forum Banner -->
@@ -24,7 +24,7 @@ import axios from "axios";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 export default {
@@ -34,31 +34,55 @@ export default {
     const router = useRouter();
     const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
+    const threads = ref([]);
 
+    // ✅ Fetch forums from API (only for banner details)
     const fetchForums = async () => {
       try {
-        const response = await axios.get(api);
+        const response = await axios.get(`/.netlify/functions/server/api/forums`);
         forums.value = response.data;
       } catch (error) {
-        console.error("Failed to fetch forums:", error);
+        console.error("❌ Failed to fetch forums:", error);
       }
     };
 
+
+    // ✅ Fetch threads from API based on the selected forum
+    const fetchThreads = async () => {
+      try {
+        console.log(`Fetching threads for: ${activeForum.value}`);
+        const response = await axios.get(`/.netlify/functions/server/api/posts/forum/${activeForum.value}`);
+        console.log("✅ Fetched threads:", response.data);
+        threads.value = response.data;
+      } catch (error) {
+        console.error("❌ Error fetching threads:", error);
+      }
+    };
+
+
+    // 🔹 Update when forum changes
+    watch(() => route.query.forum, (newForum) => {
+      activeForum.value = newForum || "p/general";
+      fetchThreads();
+    });
+
+    // ✅ Compute active forum details for banner
     const activeForumDetails = computed(() => {
       return forums.value.find(forum => forum.slug === activeForum.value) || {};
     });
 
-    function setActiveForum(forumSlug) {
-      activeForum.value = forumSlug;
-      router.push({ path: "/forum", query: { forum: forumSlug } });
-    }
+    // ✅ Filter threads for the selected forum
+    const filteredThreads = computed(() => threads.value);
 
-    onMounted(fetchForums);
+    onMounted(() => {
+      fetchForums();
+      fetchThreads();
+    });
 
     return {
       activeForum,
       activeForumDetails,
-      setActiveForum
+      filteredThreads
     };
   }
 };

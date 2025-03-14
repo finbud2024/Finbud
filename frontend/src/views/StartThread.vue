@@ -1,7 +1,7 @@
 <template>
   <div class="forum-layout">
     <!-- Sidebar -->
-    <ForumSidebar @forum-selected="changeForum" :selectedForum="selectedForum" class="sidebar" />
+    <ForumSidebar class="sidebar" />
 
     <!-- Main Content -->
     <div class="content">
@@ -10,7 +10,7 @@
       <!-- Select Forum Dropdown -->
       <div class="selected-forum">
         <select v-model="selectedForum" class="forum-dropdown">
-          <option v-for="forum in forums" :key="forum.id" :value="forum.id">
+          <option v-for="forum in forums" :key="forum.slug" :value="forum.slug">
             {{ forum.name }}
           </option>
         </select>
@@ -19,7 +19,7 @@
       <!-- Thread Form -->
       <form @submit.prevent="submitThread" class="thread-form">
         <input v-model="title" type="text" placeholder="Title*" class="title-input" required />
-        <textarea v-model="body" ref="bodyInput" placeholder="Body" class="body-input" required></textarea>
+        <textarea v-model="body" placeholder="Body" class="body-input" required></textarea>
         <button type="submit" class="submit-button">Submit</button>
       </form>
     </div>
@@ -28,70 +28,68 @@
 
 <script>
 import ForumSidebar from "@/components/ForumSidebar.vue";
-import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
 
 export default {
   components: { ForumSidebar },
   setup() {
-    const store = useStore();
     const route = useRoute();
     const router = useRouter();
 
     const title = ref("");
     const body = ref("");
     const selectedForum = ref(route.query.forum || "p/general");
+    const forums = ref([]);
 
-    const forums = [
-      { id: "p/general", name: "p/general" },
-      { id: "p/investing", name: "p/investing" },
-      { id: "p/crypto", name: "p/crypto" },
-      { id: "p/economy", name: "p/economy" },
-      { id: "p/personal-finance", name: "p/personal-finance" },
-      { id: "p/real-estate", name: "p/real-estate" },
-      { id: "p/fintech", name: "p/fintech" },
-      { id: "p/ama", name: "p/ama" },
-      { id: "p/self-promotions", name: "p/self-promotions" },
-      { id: "p/memes", name: "p/memes" },
-      { id: "p/education", name: "p/education" },
-    ];
+    const fetchForums = async () => {
+      try {
+        const response = await axios.get("/.netlify/functions/server/api/forums");
+        forums.value = response.data;
+      } catch (error) {
+        console.error("❌ Failed to fetch forums:", error);
+      }
+    };
 
-    function submitThread() {
+    onMounted(fetchForums);
+
+    const submitThread = async () => {
       if (!title.value.trim() || !body.value.trim() || !selectedForum.value) {
         alert("Please select a forum and fill in both the title and body.");
         return;
       }
 
-      const newThread = {
-        id: Date.now(),
-        forum: selectedForum.value,
-        author: "You",
-        title: title.value,
-        content: body.value,
-        date: "Just now",
-        comments: 0,
-        likes: 0,
-      };
+      try {
+        const newThread = {
+          forumSlug: selectedForum.value,
+          authorId: "65f1e9c2a4c4b0c8d3e4f9a6", // Replace with actual logged-in user ID
+          title: title.value,
+          body: body.value
+        };
 
-      store.dispatch("forum/addNewThread", { forum: selectedForum.value, thread: newThread });
+        await axios.post("/.netlify/functions/server/api/posts", newThread);
 
-      title.value = "";
-      body.value = "";
+        title.value = "";
+        body.value = "";
+        router.push({ path: "/forum", query: { forum: selectedForum.value } });
 
-      router.push({ path: "/forum", query: { forum: selectedForum.value } });
-    }
+      } catch (error) {
+        console.error("❌ Failed to submit thread:", error);
+      }
+    };
 
     return {
       title,
       body,
       selectedForum,
       forums,
-      submitThread,
+      submitThread
     };
   }
 };
 </script>
+
 
 <style scoped>
 

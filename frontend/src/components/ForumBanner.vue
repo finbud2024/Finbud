@@ -19,26 +19,24 @@
 </template>
 
 <script>
-import { ref, watch, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted, watch } from "vue";
 import axios from "axios";
-import * as LucideIcons from "lucide-vue-next"; // ✅ Import all Lucide icons
+import * as LucideIcons from "lucide-vue-next";
 import { MessageSquarePlus } from "lucide-vue-next";
 
 export default {
   components: { MessageSquarePlus },
   setup() {
+    const router = useRouter();
     const route = useRoute();
     const forum = ref({});
 
     const fetchForumDetails = async () => {
       const forumSlug = route.query.forum || "p/general";
       try {
-        console.log("Fetching forum details for:", forumSlug);
         const response = await axios.get("/.netlify/functions/server/api/forums");
-        const forums = response.data;
-        forum.value = forums.find(f => f.slug === forumSlug) || {};
-        console.log("✅ Forum details fetched:", forum.value);
+        forum.value = response.data.find(f => f.slug === forumSlug) || {};
       } catch (error) {
         console.error("❌ Failed to fetch forum details:", error);
       }
@@ -48,13 +46,14 @@ export default {
     onMounted(fetchForumDetails);
 
     const navigateToStartThread = () => {
-      console.log("Navigating to start thread");
+      router.push({ path: "/start-thread", query: { forum: route.query.forum || "p/general" } });
     };
 
     return { forum, LucideIcons, navigateToStartThread };
   }
 };
 </script>
+
 
 <style scoped>
 .forum-banner {

@@ -20,6 +20,7 @@ import proxyRoute from '../Endpoints/proxyRoute.js';
 import eventRoute from "../Endpoints/eventRoute.js";
 import quantSimulatorRoute from '../Endpoints/QuantSimulatorRoute.js'
 import forumRoute from "../Endpoints/forumRoute.js";
+import postRoute from "../Endpoints/postRoute.js";
 
 dotenv.config();
 
@@ -74,6 +75,7 @@ router.use('/', proxyRoute);
 router.use('/events', eventRoute);
 router.use('/', quantSimulatorRoute);
 router.use('/api/forums', forumRoute);
+router.use('/api/posts', postRoute);
 
 app.use('/.netlify/functions/server', router);
 

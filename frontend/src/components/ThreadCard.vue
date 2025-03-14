@@ -6,30 +6,30 @@
        @click="goToThread">
     
     <div class="thread-header">
-      <img :src="thread.forumLogo" alt="Forum Logo" class="forum-logo" />
-      <span class="forum-name">{{ thread.forum }}</span>
+      <component :is="LucideIcons[thread.forum.logo] || LucideIcons['HelpCircle']" class="forum-logo" />
+      <span class="forum-name">{{ thread.forum.name }}</span>
       <span class="separator">•</span>
-      <img :src="thread.authorAvatar" alt="Author" class="author-avatar" />
-      <span class="author">{{ thread.author }}</span>
+      <img :src="thread.author.avatar || '/default-avatar.png'" alt="Author" class="author-avatar" />
+      <span class="author">{{ thread.author.username }}</span>
       <span class="separator">•</span>
-      <span class="date">{{ thread.date }}</span>
+      <span class="date">{{ formatDate(thread.createdAt) }}</span>
     </div>
 
     <h2 class="thread-title">{{ thread.title }}</h2>
 
     <p class="thread-content">
-      {{ thread.content.length > 150 ? thread.content.substring(0, 150) + "..." : thread.content }}
+      {{ thread.body.length > 150 ? thread.body.substring(0, 150) + "..." : thread.body }}
     </p>
 
     <div class="thread-footer">
       <span class="reaction">
-        <Heart class="icon" /> {{ thread.likes }}
+        <Heart class="icon" /> {{ thread.reactions.likes }}
       </span>
       <span class="reaction">
-        <MessageCircle class="icon" /> {{ thread.comments }}
+        <MessageCircle class="icon" /> {{ thread.reactions.comments }}
       </span>
       <span class="reaction">
-        <Repeat class="icon" /> {{ thread.reposts }}
+        <Repeat class="icon" /> {{ thread.reactions.shares }}
       </span>
       <span class="reaction">
         <Send class="icon" /> 
@@ -40,6 +40,7 @@
 
 <script>
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
+import * as LucideIcons from "lucide-vue-next";
 
 export default {
   components: { Heart, MessageCircle, Repeat, Send },
@@ -50,10 +51,14 @@ export default {
     goToThread() {
       this.$router.push({
         name: "ThreadView",
-        params: { id: this.thread.id } 
+        params: { id: this.thread._id } 
       });
     },
-  },
+    formatDate(dateString) {
+      const options = { year: "numeric", month: "short", day: "numeric" };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+  }
 };
 </script>
 
