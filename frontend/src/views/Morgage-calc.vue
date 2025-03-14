@@ -214,45 +214,63 @@ export default {
       this.showExtras = !this.showExtras;
     },
     renderChart() {
-      const ctx = this.$refs.chart.getContext('2d');
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance', 'PMI', 'HOA Fees'],
-          datasets: [{
-            data: [this.calculatePrincipalInterest, this.propertyTax, this.homeInsurance, this.Private, this.hoaFees],
-            backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0', '#03A9F4'],
-          }]
-        },
-            options: {
-                responsive: true,
-                plugins: {
-            legend: {
-              position: 'bottom',
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.label}: $${context.raw}`;
+    if (this.chartInstance) {
+      this.chartInstance.destroy(); // Destroy previous chart instance
+    }
+    
+    const ctx = this.$refs.chart.getContext('2d');
+    this.chartInstance = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance', 'PMI', 'HOA Fees'],
+        datasets: [{
+          data: [
+            parseFloat(this.calculatePrincipalInterest), 
+            parseFloat(this.propertyTax), 
+            parseFloat(this.homeInsurance), 
+            parseFloat(this.pmi), 
+            parseFloat(this.hoaFees)
+          ],
+          backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0', '#03A9F4'],
+        }]
+      },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.label}: $${context.raw.toFixed(2)}`;
+                  }
                 }
               }
             }
           }
-            }
         });
-        }
+      }
     },
 
+
     watch: {
-    // Watch for changes in homePrice and update downPayment
-    homePrice(newHomePrice) {
-      if (newHomePrice > 0) {
-        this.downPayment = ((this.downPaymentPercentage / 100) * newHomePrice).toFixed(0);
-      } else {
-        this.downPayment = 0;
+      calculateMonthlyPayment() {
+      this.renderChart();
+      },
+      propertyTax() {
+        this.renderChart();
+      },
+      homeInsurance() {
+        this.renderChart();
+      },
+      pmi() {
+        this.renderChart();
+      },
+      hoaFees() {
+        this.renderChart();
       }
-    }
-  },
+    },
 
 
   mounted() {
