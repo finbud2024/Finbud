@@ -1,10 +1,8 @@
 <template>
   <div class="forum-layout">
-    <!-- Sidebar -->
     <ForumSidebar class="sidebar" />
 
     <div class="content">
-      <!-- Forum Banner -->
       <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
       <div class="thread-container" v-if="thread">
@@ -12,29 +10,29 @@
 
           <!-- Thread Main Content -->
           <div class="thread-header">
-            <img :src="thread.authorAvatar" alt="Author Avatar" class="author-avatar" />
+            <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author Avatar" class="author-avatar" />
             <div class="thread-meta">
-              <h1 class="thread-title">{{ thread.title }}</h1>
+              <h1 class="thread-title">{{ thread?.title || "Untitled Thread" }}</h1>
               <div class="thread-info">
-                <span class="author-name">{{ thread.author }}</span>
+                <span class="author-name">{{ thread?.authorId?.displayName || "Anonymous" }}</span>
                 <span class="separator">•</span>
-                <span class="thread-date">{{ thread.date }}</span>
+                <span class="thread-date">{{ formatDate(thread?.createdAt) }}</span>
               </div>
             </div>
           </div>
 
-          <p class="thread-body">{{ thread.content }}</p>
+          <p class="thread-body">{{ thread?.body || "No content available." }}</p>
 
           <!-- Reaction Bar -->
           <div class="thread-footer">
             <span class="reaction">
-              <Heart class="icon" /> {{ thread.likes }}
+              <Heart class="icon" /> {{ thread?.reactions?.likes || 0 }}
             </span>
             <span class="reaction">
-              <MessageCircle class="icon" /> {{ thread.comments }}
+              <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
             </span>
             <span class="reaction">
-              <Repeat class="icon" /> {{ thread.reposts }}
+              <Repeat class="icon" /> {{ thread?.reactions?.shares || 0 }}
             </span>
             <span class="reaction">
               <Send class="icon" />
@@ -50,23 +48,19 @@
           <!-- Replies Section -->
           <div class="replies">
             <h2>Replies</h2>
-            <div v-for="reply in thread.replies" :key="reply.id" class="reply">
-              
-              <img :src="reply.authorAvatar" alt="Avatar" class="reply-avatar" />
+            <div v-for="comment in thread?.comments" :key="comment?._id" class="reply">
+              <img :src="comment?.authorId?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
               <div class="reply-content">
                 <div class="reply-header">
-                  <strong class="reply-author">{{ reply.author }}</strong>
-                  <span class="reply-date">• {{ reply.date }}</span>
+                  <strong class="reply-author">{{ comment?.authorId?.displayName || "Anonymous" }}</strong>
+                  <span class="reply-date">• {{ formatDate(comment?.createdAt) }}</span>
                 </div>
 
-                <p class="reply-text">{{ reply.text }}</p>
+                <p class="reply-text">{{ comment?.body || "No content available." }}</p>
 
                 <div class="reply-actions">
                   <span class="reaction">
-                    <Heart class="icon" /> {{ reply.likes }}
-                  </span>
-                  <span class="reaction">
-                    <MessageCircle class="icon" /> {{ reply.replies }}
+                    <Heart class="icon" /> {{ comment?.reactions?.likes || 0 }}
                   </span>
                 </div>
               </div>
@@ -84,6 +78,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
@@ -97,57 +92,30 @@ export default {
       forumDetails: null
     };
   },
-  created() {
-    const threadId = this.$route.params.id;
-
-    const allThreads = [
-      { 
-        id: 1, 
-        forum: "p/general", 
-        forumLogo: "/assets/icons/general.svg", 
-        author: "John Doe", 
-        authorAvatar: "/assets/avatars/john.png", 
-        date: "2h ago", 
-        title: "Best investment strategies?", 
-        content: "Looking for solid investment strategies for 2025.", 
-        comments: 12, 
-        likes: 360, 
-        reposts: 8, 
-        replies: [
-          { id: 1, author: "Steve Beyatte", authorAvatar: "/assets/avatars/steve.png", date: "8h ago", text: "@Cal.com has a more generous free plan, is open-source, and is bootstrapped.", likes: 5, replies: 5 },
-          { id: 2, author: "Eithiriel DeMerè", authorAvatar: "/assets/avatars/eithiriel.png", date: "4h ago", text: "I agree with Steve's point!", likes: 2, replies: 3 }
-        ] 
-      },
-      { 
-        id: 2, 
-        forum: "p/investing", 
-        forumLogo: "/assets/icons/investing.svg", 
-        author: "Jane Smith", 
-        authorAvatar: "/assets/avatars/jane.png", 
-        date: "5h ago", 
-        title: "How to manage financial risks?", 
-        content: "Looking for ways to handle financial risks effectively.", 
-        comments: 10, 
-        likes: 150, 
-        reposts: 4, 
-        replies: [
-          { id: 1, author: "Alice Johnson", authorAvatar: "/assets/avatars/alice.png", date: "3h ago", text: "Diversification is key!", likes: 10, replies: 2 }
-        ] 
-      }
-    ];
-
-    this.thread = allThreads.find(t => t.id == threadId) || null;
-
-    if (this.thread) {
-      this.forumDetails = {
-        name: this.thread.forum,
-        logo: this.thread.forumLogo,
-        description: "Discussion related to " + this.thread.forum
-      };
+  async created() {
+    try {
+      console.log("Route Params ID:", this.$route.params.id);
+      
+      const postId = this.$route.params.id;
+      const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`);
+      
+      console.log("API Response:", response.data);
+      
+      this.thread = response.data || null;
+    } catch (error) {
+      console.error("❌ Error fetching thread:", error);
+    }
+  },
+  methods: {
+    formatDate(dateString) {
+      if (!dateString) return "Unknown Date";
+      const options = { year: "numeric", month: "short", day: "numeric" };
+      return new Date(dateString).toLocaleDateString(undefined, options);
     }
   }
 };
 </script>
+
 
 <style scoped>
 

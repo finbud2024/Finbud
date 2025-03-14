@@ -49,10 +49,8 @@ export default {
   methods: {
     goToThread() {
       if (this.thread?._id) {
-        this.$router.push({
-          name: "ThreadView",
-          params: { id: this.thread._id }
-        });
+        console.log("Clicked thread ID:", this.thread._id);
+        this.$router.push({ name: "ThreadView", params: { id: this.thread._id } });
       }
     },
     formatDate(dateString) {

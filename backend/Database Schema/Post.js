@@ -1,11 +1,20 @@
 import mongoose from "mongoose";
 
+const CommentSchema = new mongoose.Schema({
+  authorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  body: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  reactions: {
+    likes: { type: Number, default: 0 }
+  }
+});
+
 const PostSchema = new mongoose.Schema({
   forumId: { type: mongoose.Schema.Types.ObjectId, ref: "Forum", required: true },
-  authorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
+  authorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   title: { type: String, required: true },
   body: { type: String, required: true },
-  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }], 
+  comments: [CommentSchema], 
   reactions: {
     likes: { type: Number, default: 0 },
     comments: { type: Number, default: 0 },
@@ -15,4 +24,5 @@ const PostSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.model("Post", PostSchema);
+const Post = mongoose.model("Post", PostSchema);
+export default Post;

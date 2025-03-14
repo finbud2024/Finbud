@@ -5,7 +5,7 @@ const ForumSchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true },
   description: String,
   logo: { type: String, default: "Globe" }, 
-  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }] 
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }]
 });
 
 const Forum = mongoose.model('Forum', ForumSchema);
