@@ -89,7 +89,7 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
-      isDarkMode: localStorage.getItem("darkMode") === "enabled"
+      isDarkMode: false
     };
   },
   computed: {
@@ -97,30 +97,13 @@ export default {
       return this.$store.getters["users/isAuthenticated"];
     },
     userData() {
-      // Assuming isAuthenticated correctly reflects authentication state
-      if (!this.isAuthenticated) {
-        console.log("User is not authenticated");
-        return null;
-      }
-      try {
-        const data = localStorage.getItem('user');
-        return data ? JSON.parse(data) : null;
-      } catch (e) {
-        console.error('Error parsing user data:', e);
-        return null;
-      }
+      return this.$store.getters["users/currentUser"];
     },
     profileImage() {
-      if (this.userData && this.userData.identityData) {
-        return this.userData.identityData.profilePicture;
-      }
-      return defaultImage;
+      return this.$store.getters["users/userProfileImage"] || defaultImage;
     },
     profileName() {
-      if (this.userData && this.userData.identityData) {
-        return this.userData.identityData.displayName;
-      }
-      return 'User';
+      return this.$store.getters["users/userDisplayName"];
     }
   },
   methods: {
@@ -141,7 +124,9 @@ export default {
     },
     async logout() {
       try {
-        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
+        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`, { 
+          withCredentials: true 
+        });
       } catch (err) {
         console.log("After logout with err: " + err);
       }
@@ -150,7 +135,6 @@ export default {
     },
     async toggleDarkMode() {
       this.isDarkMode = !this.isDarkMode;
-      localStorage.setItem("darkMode", this.isDarkMode ? "enabled" : "disabled");
       document.body.classList.toggle("dark-mode", this.isDarkMode);
 
       // Update dark mode in the database
@@ -161,7 +145,7 @@ export default {
             settings: {
               darkMode: this.isDarkMode
             }
-          });
+          }, { withCredentials: true });
           console.log("Dark mode updated:", response.data);
         } catch (err) {
           console.error("Error updating dark mode in database:", err.response ? err.response.data : err);
@@ -170,22 +154,13 @@ export default {
     }
   },
   async mounted() {
-    try {
-      const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
-      if (response.data.isAuthenticated) {
-        //put user info into localStorage
-        console.log('Login Success in navbar:', response.data);
-        this.$store.dispatch("users/login", response.data.user._id);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-
-        // Fetch user settings and apply dark mode if enabled
-        const userSettings = response.data.user.settings;
-        this.isDarkMode = userSettings?.darkMode || false;
-        document.body.classList.toggle("dark-mode", this.isDarkMode);
-        localStorage.setItem("darkMode", this.isDarkMode ? "enabled" : "disabled");
-      }
-    } catch (err) {
-      console.log("After Sign in with google err: " + err);
+    // Fetch current user data from the server
+    await this.$store.dispatch("users/fetchCurrentUser");
+    
+    // Apply dark mode based on user settings
+    if (this.userData && this.userData.settings) {
+      this.isDarkMode = this.userData.settings.darkMode || false;
+      document.body.classList.toggle("dark-mode", this.isDarkMode);
     }
   }
 };

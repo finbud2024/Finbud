@@ -53,6 +53,7 @@ import axios from 'axios';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 import defaultImage from '@/assets/anonymous.png';
+import api from '@/utils/api';
 
 export default {
   data() {
@@ -162,12 +163,15 @@ export default {
           lastName: this.profile.lastName,
           profilePicture: this.profile.image
         };
-        const profileData = JSON.parse(localStorage.getItem('user'));
+        
+        // Get user data from store instead of localStorage
+        const userData = this.$store.getters['users/currentUser'];
+        
         //check if user profile change or not
-        if(newIdentityData.displayName === profileData.identityData.displayName &&
-          newIdentityData.firstName === profileData.identityData.firstName &&
-          newIdentityData.lastName === profileData.identityData.lastName &&
-          newIdentityData.profilePicture === profileData.identityData.profilePicture
+        if(newIdentityData.displayName === userData.identityData.displayName &&
+          newIdentityData.firstName === userData.identityData.firstName &&
+          newIdentityData.lastName === userData.identityData.lastName &&
+          newIdentityData.profilePicture === userData.identityData.profilePicture
         ){
           toast.info("No changes detected!", {
             autoClose: 1000,
@@ -175,19 +179,22 @@ export default {
           })
           return;
         }
-        //update in localStorage
-        profileData.identityData = newIdentityData;
-        localStorage.setItem('user', JSON.stringify(profileData));
+        
         //update in database
-        const userId = localStorage.getItem('token');
+        const userId = userData._id;
         const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
         const response = await axios.put(api, {
           identityData: newIdentityData
-        });
+        }, { withCredentials: true });
+        
+        // Refresh user data in store
+        await this.$store.dispatch('users/fetchCurrentUser');
+        
         //if image was updated, update to false
         if(this.imageUploaded){
           this.imageUploaded = false;
         }
+        
         toast.success("Updated successfully!", {
           autoClose: 1000,
           collapsed: false,
@@ -202,16 +209,26 @@ export default {
       }
     },
     cancelChange(){
-      //reset profile data
-      const profileData = JSON.parse(localStorage.getItem('user'));
+      // Get user data from store
+      const userData = this.$store.getters['users/currentUser'];
+      if (!userData) {
+        toast.error("User data not available", {
+          autoClose: 1000,
+          collapsed: false,
+        });
+        return;
+      }
+      
+      // Reset profile data from store
       this.profile = {
-        displayName: profileData.identityData.displayName,
-        firstName: profileData.identityData.firstName,
-        lastName: profileData.identityData.lastName,
-        email: profileData.accountData.username,
-        image: profileData.identityData.profilePicture
+        displayName: userData.identityData.displayName,
+        firstName: userData.identityData.firstName,
+        lastName: userData.identityData.lastName,
+        email: userData.accountData.username,
+        image: userData.identityData.profilePicture
       };
-      //reset imageUploaded
+      
+      // Reset imageUploaded
       this.imageUploaded = false;
       toast.success("Changes canceled!", {
         autoClose: 1000,
@@ -220,11 +237,19 @@ export default {
     }
   },
   async mounted(){
-    // fetch user's account balance
+    // Ensure user data is loaded
+    await this.$store.dispatch('users/fetchCurrentUser');
+    const userData = this.$store.getters['users/currentUser'];
+    
+    if (!userData) {
+      toast.error("Failed to load user data", { autoClose: 1000 });
+      return;
+    }
+    
+    // Fetch user's account balance
     try {
-      const userId = localStorage.getItem('token');
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
-      const response = await axios.get(api);
+      const userId = userData._id;
+      const response = await api.get(`/users/${userId}`);
       const data = response.data;
 
       this.financialData = [
@@ -233,7 +258,7 @@ export default {
         { label: 'Cash', value: `$${data.bankingAccountData.cash.toLocaleString()}` }
       ];
       
-      //Change color of balance based on value
+      // Change color of balance based on value
       this.$nextTick(() => {
         const accountValue = document.querySelectorAll('.stock-simulator-container h1');
         accountValue.forEach((value) => {
@@ -250,20 +275,14 @@ export default {
       toast.error('Failed to load financial data', { autoClose: 1000 });
     }
 
-    //fetch user profile
-    try{
-      const profileData = JSON.parse(localStorage.getItem('user'));
-      this.profile = {
-        displayName: profileData.identityData.displayName,
-        firstName: profileData.identityData.firstName,
-        lastName: profileData.identityData.lastName,
-        email: profileData.accountData.username,
-        image: profileData.identityData.profilePicture
-      };
-
-    }catch(err){
-      console.log(err);
-    }
+    // Set profile data from store
+    this.profile = {
+      displayName: userData.identityData.displayName,
+      firstName: userData.identityData.firstName,
+      lastName: userData.identityData.lastName,
+      email: userData.accountData.username,
+      image: userData.identityData.profilePicture
+    };
   },
 };
 </script>
