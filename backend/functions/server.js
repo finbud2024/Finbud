@@ -74,6 +74,8 @@ router.use('/', goalRoute);
 router.use('/', proxyRoute);
 router.use('/events', eventRoute);
 router.use('/', quantSimulatorRoute);
+router.use('/api/forums', forumRoute);
+router.use('/api/posts', postRoute);
 
 app.use('/.netlify/functions/server', router);
 

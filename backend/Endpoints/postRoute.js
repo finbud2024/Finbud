@@ -44,53 +44,6 @@ postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
 postRouter.get("/post/:postId", async (req, res) => {
   try {
     const { postId } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
-      return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
-    }
-
-    const post = await Post.findById(postId)
-      .populate({ path: "forumId", select: "name logo slug" })
-      .populate({ path: "authorId", select: "identityData.displayName identityData.profilePicture" })
-      .populate({ path: "comments.authorId", select: "identityData.displayName identityData.profilePicture" });
-
-    if (!post) return res.status(404).json({ error: "Post not found" });
-
-    res.json({
-      _id: post._id,
-      title: post.title,
-      body: post.body,
-      createdAt: post.createdAt,
-      reactions: post.reactions,
-      forumId: {
-        name: post.forumId.name || "Unknown Forum",
-        logo: post.forumId.logo || null,
-        slug: post.forumId.slug || ""
-      },
-      author: {
-        displayName: post.authorId.identityData?.displayName || "Anonymous",
-        profilePicture: post.authorId.identityData?.profilePicture || "/default-avatar.png"
-      },
-      comments: post.comments.map(comment => ({
-        _id: comment._id,
-        body: comment.body,  
-        createdAt: comment.createdAt,
-        author: {
-          displayName: comment.authorId?.identityData?.displayName || "A  nonymous",
-          profilePicture: comment.authorId?.identityData?.profilePicture || "/default-avatar.png"
-        },
-        likes: comment.reactions?.likes || 0
-      }))
-    });
-  } catch (err) {
-    console.error("❌ Error fetching post:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-postRouter.get("/post/:postId", async (req, res) => {
-  try {
-    const { postId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
@@ -138,6 +91,37 @@ postRouter.get("/post/:postId", async (req, res) => {
   }
 });
 
+postRouter.post("/post/:postId/like", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { userId, action } = req.body; 
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    if (action === "like") {
+      post.reactions.likes += 1;
+    } else if (action === "unlike") {
+      post.reactions.likes = Math.max(0, post.reactions.likes - 1);
+    } else {
+      return res.status(400).json({ error: "Invalid action" });
+    }
+
+    await post.save();
+
+    res.json({ success: true, likes: post.reactions.likes });
+
+  } catch (err) {
+    console.error("❌ Error updating like:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 postRouter.post("/post/:postId/add-comment", async (req, res) => {
   try {
     const { postId } = req.params;
@@ -154,15 +138,12 @@ postRouter.post("/post/:postId/add-comment", async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    // Fetch the user details from the database
     const author = await mongoose.model("User").findById(authorId).select("identityData.displayName identityData.profilePicture");
 
-    // Ensure the user exists
     if (!author) {
       return res.status(404).json({ error: "Author not found" });
     }
 
-    // Create new comment
     const newComment = {
       _id: new mongoose.Types.ObjectId(),
       authorId: author._id,
@@ -195,7 +176,6 @@ postRouter.post("/post/:postId/add-comment", async (req, res) => {
   }
 });
 
-// ✅ Create a new thread
 postRouter.post("/", async (req, res) => {
   try {
     const { forumId, authorId, title, body } = req.body;
@@ -208,7 +188,6 @@ postRouter.post("/", async (req, res) => {
       return res.status(400).json({ error: "Invalid ID format" });
     }
 
-    // Fetch the user details from the database
     const author = await mongoose.model("User").findById(authorId).select("identityData.displayName identityData.profilePicture");
 
     if (!author) {

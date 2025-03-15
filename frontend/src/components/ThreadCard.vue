@@ -8,7 +8,6 @@
     <div class="thread-header">
       <span class="forum-name">{{ thread?.forumId?.name || "Unknown Forum" }}</span>
       <span class="separator">•</span>
-      
       <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author" class="author-avatar" />
       <span class="author">{{ thread?.author?.displayName || "Anonymous" }}</span>
       <span class="separator">•</span>
@@ -22,8 +21,9 @@
     </p>
 
     <div class="thread-footer">
-      <span class="reaction">
-        <Heart class="icon" /> {{ thread?.reactions?.likes || 0 }}
+      <span class="reaction like-reaction" @click.stop="toggleLike">
+        <Heart class="icon" :class="{ 'liked': isLiked }" /> 
+        <span :class="{ 'liked-text': isLiked }">{{ thread?.reactions?.likes || 0 }}</span>
       </span>
       <span class="reaction">
         <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
@@ -32,13 +32,14 @@
         <Repeat class="icon" /> {{ thread?.reactions?.shares || 0 }}
       </span>
       <span class="reaction">
-        <Send class="icon" /> 
+        <Send class="icon" />
       </span>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
 
 export default {
@@ -46,10 +47,14 @@ export default {
   props: {
     thread: Object,
   },
+  data() {
+    return {
+      isLiked: false,
+    };
+  },
   methods: {
     goToThread() {
       if (this.thread?._id) {
-        console.log("Clicked thread ID:", this.thread._id);
         this.$router.push({ name: "ThreadView", params: { id: this.thread._id } });
       }
     },
@@ -57,11 +62,24 @@ export default {
       if (!dateString) return "Unknown Date";
       const options = { year: "numeric", month: "short", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-  }
+    },
+    async toggleLike() {
+      this.isLiked = !this.isLiked;
+      const action = this.isLiked ? "like" : "unlike";
+
+      try {
+        const response = await axios.post(
+          `/.netlify/functions/server/api/posts/post/${this.thread._id}/like`,
+          { userId: "67b3c1f309b3978d12ea0b8f", action }
+        );
+        this.thread.reactions.likes = response.data.likes;
+      } catch (error) {
+        console.error("❌ Error liking post:", error);
+      }
+    },
+  },
 };
 </script>
-
 
 <style scoped>
 .thread-card {
@@ -147,4 +165,14 @@ export default {
   height: 18px;
   stroke-width: 2;
 }
+
+.liked {
+  color: red;
+  fill: red; 
+}
+.liked-text {
+  color: red;
+  font-weight: bold;
+}
+
 </style>

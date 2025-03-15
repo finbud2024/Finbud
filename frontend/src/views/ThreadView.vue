@@ -1,15 +1,11 @@
 <template>
   <div class="forum-layout">
-    <!-- ✅ Pass forum slug to Sidebar to highlight correct forum -->
     <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
-
     <div class="content">
-      <!-- ✅ Show Forum Banner based on thread's forum -->
       <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
       <div class="thread-container" v-if="thread">
         <div class="thread-content">
-          <!-- Thread Main Content -->
           <div class="thread-header">
             <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author Avatar" class="author-avatar" />
             <div class="thread-meta">
@@ -24,10 +20,10 @@
 
           <p class="thread-body">{{ thread?.body || "No content available." }}</p>
 
-          <!-- Reaction Bar -->
           <div class="thread-footer">
-            <span class="reaction">
-              <Heart class="icon" /> {{ thread?.reactions?.likes || 0 }}
+            <span class="reaction like-reaction" @click="toggleLike">
+              <Heart class="icon" :class="{ 'liked': isLiked }" />
+              <span :class="{ 'liked-text': isLiked }">{{ thread?.reactions?.likes || 0 }}</span>
             </span>
             <span class="reaction">
               <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
@@ -40,16 +36,14 @@
             </span>
           </div>
 
-          <!-- Comment Input Section -->
           <div class="comment-box-container">
             <textarea v-model="newComment" class="comment-box" placeholder="Add a comment..."></textarea>
             <button @click="addComment" class="comment-button">Comment</button>
           </div>
 
-          <!-- Replies Section -->
           <div class="replies">
             <h2>Replies</h2>
-            <div v-for="comment in thread?.comments" :key="comment?._id" class="reply">
+            <div v-for="(comment, index) in thread?.comments" :key="comment?._id" class="reply">
               <img :src="comment?.author?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
               <div class="reply-content">
                 <div class="reply-header">
@@ -60,8 +54,9 @@
                 <p class="reply-text">{{ comment?.body || "No content available." }}</p>
 
                 <div class="reply-actions">
-                  <span class="reaction">
-                    <Heart class="icon" /> {{ comment?.likes || 0 }}
+                  <span class="reaction" @click="toggleCommentLike(index)">
+                    <Heart class="icon" :class="{ 'liked': comment.isLiked }" />
+                    <span :class="{ 'liked-text': comment.isLiked }">{{ comment?.likes || 0 }}</span>
                   </span>
                 </div>
               </div>
@@ -81,7 +76,6 @@
 <script>
 import axios from "axios";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
-import { useRoute } from "vue-router";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
 
@@ -91,25 +85,28 @@ export default {
     return {
       newComment: "",
       thread: null,
-      forumDetails: null
+      forumDetails: null,
+      isLiked: false,
     };
   },
   async created() {
     try {
-      console.log("Route Params ID:", this.$route.params.id);
-
       const postId = this.$route.params.id;
       const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`);
-
-      console.log("API Response:", response.data);
       this.thread = response.data || null;
 
       if (this.thread?.forumId) {
         this.forumDetails = {
           name: this.thread.forumId.name,
           logo: this.thread.forumId.logo,
-          slug: this.thread.forumId.slug
+          slug: this.thread.forumId.slug,
         };
+      }
+
+      if (this.thread?.comments) {
+        this.thread.comments.forEach(comment => {
+          comment.isLiked = false;
+        });
       }
     } catch (error) {
       console.error("❌ Error fetching thread:", error);
@@ -121,34 +118,41 @@ export default {
       const options = { year: "numeric", month: "short", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
     },
-    async addComment() {
-      if (!this.newComment.trim()) return;
-      
+
+    async toggleLike() {
+      this.isLiked = !this.isLiked;
+      const action = this.isLiked ? "like" : "unlike";
+
       try {
-        console.log("Submitting comment:", this.newComment);
-
         const response = await axios.post(
-          `/.netlify/functions/server/api/posts/post/${this.thread._id}/add-comment`,
-          {
-            body: this.newComment,
-            authorId: "67b3c1f309b3978d12ea0b8f" 
-          }
+          `/.netlify/functions/server/api/posts/post/${this.thread._id}/like`,
+          { userId: "67b3c1f309b3978d12ea0b8f", action }
         );
-
-        console.log("✅ Comment added:", response.data);
-
-        this.thread.comments.push(response.data.comment);
-        this.newComment = "";
+        this.thread.reactions.likes = response.data.likes;
       } catch (error) {
-        console.error(
-          "❌ Error adding comment:",
-          error.response ? error.response.data : error.message
+        console.error("❌ Error liking post:", error);
+      }
+    },
+
+    async toggleCommentLike(index) {
+      const comment = this.thread.comments[index];
+      comment.isLiked = !comment.isLiked;
+      const action = comment.isLiked ? "like" : "unlike";
+
+      try {
+        const response = await axios.post(
+          `/.netlify/functions/server/api/posts/comment/${comment._id}/like`,
+          { userId: "67b3c1f309b3978d12ea0b8f", action }
         );
+        this.thread.comments[index].likes = response.data.likes;
+      } catch (error) {
+        console.error("❌ Error liking comment:", error);
       }
     }
   }
 };
 </script>
+
 
 <style scoped>
 
@@ -334,6 +338,15 @@ export default {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.liked {
+  color: red;
+  fill: red;
+}
+.liked-text {
+  color: red;
+  font-weight: bold;
 }
 
 </style>
