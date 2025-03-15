@@ -12,9 +12,10 @@
     </div>
 
     <button @click="navigateToStartThread" class="start-thread-btn">
-      <MessageSquarePlus class="icon" />
+      <component :is="MessageSquarePlus" class="icon" />
       Start new thread
     </button>
+
   </div>
 </template>
 
