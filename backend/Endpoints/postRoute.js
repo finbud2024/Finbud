@@ -5,37 +5,6 @@ import Forum from "../Database Schema/Forum.js";
 
 const postRouter = express.Router();
 
-postRouter.get("/", async (req, res) => {
-  try {
-    const posts = await Post.find()
-      .populate({ path: "forumId", select: "name logo slug" })
-      .populate({ path: "authorId", select: "identityData.displayName identityData.profilePicture" });
-
-    const formattedPosts = posts.map(post => ({
-      _id: post._id,
-      title: post.title,
-      body: post.body,
-      createdAt: post.createdAt,
-      reactions: post.reactions,
-      forumId: {
-        name: post.forumId.name || "Unknown Forum",
-        logo: post.forumId.logo || null,
-        slug: post.forumId.slug || ""
-      },
-      author: {
-        displayName: post.authorId.identityData?.displayName || "Anonymous",
-        profilePicture: post.authorId.identityData?.profilePicture || "/default-avatar.png"
-      }
-    }));
-
-    res.json(formattedPosts);
-  } catch (err) {
-    console.error("❌ Error fetching posts:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
 postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
   try {
     const forumSlug = decodeURIComponent(req.params.forumSlug);
