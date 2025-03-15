@@ -40,6 +40,7 @@ export default {
 </script>
 
 
+
 <style scoped>
 .forum-banner {
   display: flex;

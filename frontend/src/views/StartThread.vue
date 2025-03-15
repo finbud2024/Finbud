@@ -10,7 +10,7 @@
       <!-- Select Forum Dropdown -->
       <div class="selected-forum">
         <select v-model="selectedForum" class="forum-dropdown">
-          <option v-for="forum in forums" :key="forum.slug" :value="forum.slug">
+          <option v-for="forum in forums" :key="forum._id" :value="forum._id">
             {{ forum.name }}
           </option>
         </select>
@@ -29,7 +29,7 @@
 <script>
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import { useRoute, useRouter } from "vue-router";
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
 export default {
@@ -40,42 +40,74 @@ export default {
 
     const title = ref("");
     const body = ref("");
-    const selectedForum = ref(route.query.forum || "p/general");
+    const selectedForum = ref(""); 
     const forums = ref([]);
+    const userId = ref("");
+
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("/.netlify/functions/server/api/user/me");
+        userId.value = response.data?._id || "";
+        console.log(`✅ Fetched User ID: ${userId.value}`);
+      } catch (error) {
+        console.error("❌ Failed to fetch user, using hardcoded fallback:", error);
+        userId.value = "67b3c1f309b3978d12ea0b8f"; 
+      }
+    };
 
     const fetchForums = async () => {
       try {
         const response = await axios.get("/.netlify/functions/server/api/forums");
         forums.value = response.data;
+
+        console.log("✅ Fetched forums:", response.data);
+
+        const forumFromQuery = response.data.find(f => f.slug === route.query.forum);
+        
+        if (forumFromQuery) {
+          selectedForum.value = forumFromQuery._id; 
+          console.log(`✅ Selected Forum ID (from query): ${selectedForum.value}`);
+        } else {
+          selectedForum.value = response.data[0]?._id || ""; 
+          console.log(`⚠️ Defaulting to first forum ID: ${selectedForum.value}`);
+        }
       } catch (error) {
         console.error("❌ Failed to fetch forums:", error);
       }
     };
 
-    onMounted(fetchForums);
+
+    onMounted(() => {
+      fetchForums();
+      fetchUser();
+    });
 
     const submitThread = async () => {
-      if (!title.value.trim() || !body.value.trim() || !selectedForum.value) {
-        alert("Please select a forum and fill in both the title and body.");
+      if (!title.value.trim() || !body.value.trim() || !selectedForum.value || !userId.value) {
+        alert("Please select a forum, fill in both the title and body, and be logged in.");
         return;
       }
 
       try {
         const newThread = {
-          forumSlug: selectedForum.value,
-          authorId: "65f1e9c2a4c4b0c8d3e4f9a6", // Replace with actual logged-in user ID
+          forumId: selectedForum.value,
+          authorId: userId.value,
           title: title.value,
           body: body.value
         };
 
-        await axios.post("/.netlify/functions/server/api/posts", newThread);
+        console.log("Submitting Thread Data:", newThread);
+        const response = await axios.post("/.netlify/functions/server/api/posts", newThread);
+        console.log("✅ Thread Created:", response.data);
 
         title.value = "";
         body.value = "";
-        router.push({ path: "/forum", query: { forum: selectedForum.value } });
+
+        const forumSlug = forums.value.find(f => f._id === selectedForum.value)?.slug || "p/general";
+        router.push({ path: "/forum", query: { forum: forumSlug } });
 
       } catch (error) {
-        console.error("❌ Failed to submit thread:", error);
+        console.error("❌ Failed to submit thread:", error.response ? error.response.data : error.message);
       }
     };
 

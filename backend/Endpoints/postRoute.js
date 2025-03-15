@@ -226,6 +226,58 @@ postRouter.post("/post/:postId/add-comment", async (req, res) => {
   }
 });
 
+// ✅ Create a new thread
+postRouter.post("/", async (req, res) => {
+  try {
+    const { forumId, authorId, title, body } = req.body;
+
+    if (!forumId || !authorId || !title.trim() || !body.trim()) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(forumId) || !mongoose.Types.ObjectId.isValid(authorId)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+
+    // Fetch the user details from the database
+    const author = await mongoose.model("User").findById(authorId).select("identityData.displayName identityData.profilePicture");
+
+    if (!author) {
+      return res.status(404).json({ error: "Author not found" });
+    }
+
+    const newPost = new Post({
+      forumId,
+      authorId: author._id,
+      title,
+      body,
+      comments: [],
+      reactions: { likes: 0, comments: 0, shares: 0 }
+    });
+
+    await newPost.save();
+
+    res.json({
+      message: "Thread created successfully",
+      thread: {
+        _id: newPost._id,
+        title: newPost.title,
+        body: newPost.body,
+        createdAt: newPost.createdAt,
+        reactions: newPost.reactions,
+        forumId: newPost.forumId,
+        author: {
+          displayName: author.identityData.displayName || "Anonymous",
+          profilePicture: author.identityData.profilePicture || "/default-avatar.png"
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error("❌ Error creating thread:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 export default postRouter;
 
