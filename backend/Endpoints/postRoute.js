@@ -35,6 +35,7 @@ postRouter.get("/", async (req, res) => {
   }
 });
 
+
 postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
   try {
     const forumSlug = decodeURIComponent(req.params.forumSlug);
@@ -74,9 +75,7 @@ postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
 postRouter.get("/post/:postId", async (req, res) => {
   try {
     const { postId } = req.params;
-
     if (!mongoose.Types.ObjectId.isValid(postId)) {
-      console.error("🚨 Invalid Post ID received:", postId);
       return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
     }
 
@@ -104,10 +103,10 @@ postRouter.get("/post/:postId", async (req, res) => {
       },
       comments: post.comments.map(comment => ({
         _id: comment._id,
-        text: comment.body,
+        body: comment.body,  
         createdAt: comment.createdAt,
         author: {
-          displayName: comment.authorId?.identityData?.displayName || "Anonymous",
+          displayName: comment.authorId?.identityData?.displayName || "A  nonymous",
           profilePicture: comment.authorId?.identityData?.profilePicture || "/default-avatar.png"
         },
         likes: comment.reactions?.likes || 0
@@ -118,6 +117,7 @@ postRouter.get("/post/:postId", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 postRouter.post("/post/:postId/add-comment", async (req, res) => {
   try {

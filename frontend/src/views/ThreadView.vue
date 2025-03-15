@@ -14,7 +14,7 @@
             <div class="thread-meta">
               <h1 class="thread-title">{{ thread?.title || "Untitled Thread" }}</h1>
               <div class="thread-info">
-                <span class="author-name">{{ thread?.authorId?.displayName || "Anonymous" }}</span>
+                <span class="author">{{ thread?.author?.displayName || "Anonymous" }}</span>
                 <span class="separator">•</span>
                 <span class="thread-date">{{ formatDate(thread?.createdAt) }}</span>
               </div>
@@ -49,10 +49,10 @@
           <div class="replies">
             <h2>Replies</h2>
             <div v-for="comment in thread?.comments" :key="comment?._id" class="reply">
-              <img :src="comment?.authorId?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
+              <img :src="comment?.author?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
               <div class="reply-content">
                 <div class="reply-header">
-                  <strong class="reply-author">{{ comment?.authorId?.displayName || "Anonymous" }}</strong>
+                  <strong class="reply-author">{{ comment?.author?.displayName || "Anonymous" }}</strong>
                   <span class="reply-date">• {{ formatDate(comment?.createdAt) }}</span>
                 </div>
 
@@ -60,7 +60,7 @@
 
                 <div class="reply-actions">
                   <span class="reaction">
-                    <Heart class="icon" /> {{ comment?.reactions?.likes || 0 }}
+                    <Heart class="icon" /> {{ comment?.likes || 0 }}
                   </span>
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .thread-meta {
@@ -190,7 +190,7 @@ export default {
 .thread-body {
   font-size: 16px;
   line-height: 1.5;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .thread-footer,
@@ -249,7 +249,7 @@ export default {
 }
 
 .replies {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .reply {
@@ -284,6 +284,7 @@ export default {
   font-size: 16px;
   line-height: 1.4;
   margin-top: 4px;
+  margin-bottom: 10px;
   color: var(--text-primary);
 }
 

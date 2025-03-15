@@ -9,8 +9,8 @@
       <span class="forum-name">{{ thread?.forumId?.name || "Unknown Forum" }}</span>
       <span class="separator">•</span>
       
-      <img :src="thread?.authorId?.profilePicture || '/default-avatar.png'" alt="Author" class="author-avatar" />
-      <span class="author">{{ thread?.authorId?.displayName || "Anonymous" }}</span>
+      <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author" class="author-avatar" />
+      <span class="author">{{ thread?.author?.displayName || "Anonymous" }}</span>
       <span class="separator">•</span>
       <span class="date">{{ formatDate(thread?.createdAt) }}</span>
     </div>
@@ -123,7 +123,8 @@ export default {
   font-weight: 400;
   line-height: 24px;
   color: var(--text-primary);
-  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
 .thread-footer {
