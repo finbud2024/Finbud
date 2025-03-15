@@ -5,7 +5,7 @@
       <li 
         v-for="forum in forums" 
         :key="forum._id"
-        :class="{ 'selected': activeForum === forum.slug }"
+        :class="{ 'selected': activeForumSlug === forum.slug }"
         @click="selectForum(forum.slug)">
         
         <component 
@@ -19,14 +19,16 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
-
 import * as LucideIcons from "lucide-vue-next";
 
 export default {
-  setup() {
+  props: {
+    activeForumSlug: String, 
+  },
+  setup(props) {
     const forums = ref([]);
     const route = useRoute();
     const router = useRouter();
@@ -37,12 +39,20 @@ export default {
         const response = await axios.get("/.netlify/functions/server/api/forums");
         forums.value = response.data;
       } catch (error) {
-        console.error("Failed to fetch forums:", error);
+        console.error("❌ Failed to fetch forums:", error);
       }
     };
 
     watch(() => route.query.forum, (newForum) => {
-      activeForum.value = newForum || "p/general";
+      if (newForum) {
+        activeForum.value = newForum;
+      }
+    });
+
+    watch(() => props.activeForumSlug, (newSlug) => {
+      if (newSlug) {
+        activeForum.value = newSlug;
+      }
     });
 
     const selectForum = (forumSlug) => {
@@ -52,7 +62,7 @@ export default {
 
     onMounted(fetchForums);
 
-    return { forums, activeForum, LucideIcons, selectForum };
+    return { forums, activeForumSlug: activeForum, LucideIcons, selectForum };
   }
 };
 </script>

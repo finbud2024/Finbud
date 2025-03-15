@@ -1,13 +1,14 @@
 <template>
   <div class="forum-layout">
-    <ForumSidebar class="sidebar" />
+    <!-- ✅ Pass forum slug to Sidebar to highlight correct forum -->
+    <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
 
     <div class="content">
+      <!-- ✅ Show Forum Banner based on thread's forum -->
       <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
       <div class="thread-container" v-if="thread">
         <div class="thread-content">
-
           <!-- Thread Main Content -->
           <div class="thread-header">
             <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author Avatar" class="author-avatar" />
@@ -80,6 +81,7 @@
 <script>
 import axios from "axios";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
+import { useRoute } from "vue-router";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
 
@@ -95,13 +97,20 @@ export default {
   async created() {
     try {
       console.log("Route Params ID:", this.$route.params.id);
-      
+
       const postId = this.$route.params.id;
       const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`);
-      
+
       console.log("API Response:", response.data);
-      
       this.thread = response.data || null;
+
+      if (this.thread?.forumId) {
+        this.forumDetails = {
+          name: this.thread.forumId.name,
+          logo: this.thread.forumId.logo,
+          slug: this.thread.forumId.slug
+        };
+      }
     } catch (error) {
       console.error("❌ Error fetching thread:", error);
     }
@@ -113,6 +122,8 @@ export default {
       return new Date(dateString).toLocaleDateString(undefined, options);
     },
     async addComment() {
+      if (!this.newComment.trim()) return;
+      
       try {
         console.log("Submitting comment:", this.newComment);
 
@@ -120,13 +131,12 @@ export default {
           `/.netlify/functions/server/api/posts/post/${this.thread._id}/add-comment`,
           {
             body: this.newComment,
-            authorId: "67b3c1f309b3978d12ea0b8f", // Example authorId (replace with actual user ID)
+            authorId: "67b3c1f309b3978d12ea0b8f" 
           }
         );
 
         console.log("✅ Comment added:", response.data);
 
-        // Update UI: Push new comment to thread
         this.thread.comments.push(response.data.comment);
         this.newComment = "";
       } catch (error) {
@@ -136,11 +146,9 @@ export default {
         );
       }
     }
-
   }
 };
 </script>
-
 
 <style scoped>
 
@@ -195,7 +203,7 @@ export default {
 .thread-info {
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-secondary);
   margin: 5px; 
 }

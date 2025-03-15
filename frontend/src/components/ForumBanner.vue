@@ -2,15 +2,15 @@
   <div class="forum-banner">
     <div class="forum-info">
       <component 
-        :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
+        :is="LucideIcons[forum?.logo] || LucideIcons['HelpCircle']" 
         class="forum-icon" 
       />
       <div class="forum-text">
-        <h1>{{ forum.name }}</h1>
-        <p>{{ forum.description }}</p>
+        <h1>{{ forum?.name || "Unknown Forum" }}</h1>
+        <p>{{ forum?.description || "Forum details unavailable" }}</p>
       </div>
     </div>
-    
+
     <button @click="navigateToStartThread" class="start-thread-btn">
       <MessageSquarePlus class="icon" />
       Start new thread
@@ -19,37 +19,22 @@
 </template>
 
 <script>
-import { useRouter, useRoute } from "vue-router";
-import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import { useRouter } from "vue-router";
 import * as LucideIcons from "lucide-vue-next";
 import { MessageSquarePlus } from "lucide-vue-next";
 
 export default {
-  components: { MessageSquarePlus },
-  setup() {
+  props: {
+    forum: Object 
+  },
+  setup(props) {
     const router = useRouter();
-    const route = useRoute();
-    const forum = ref({});
-
-    const fetchForumDetails = async () => {
-      const forumSlug = route.query.forum || "p/general";
-      try {
-        const response = await axios.get("/.netlify/functions/server/api/forums");
-        forum.value = response.data.find(f => f.slug === forumSlug) || {};
-      } catch (error) {
-        console.error("❌ Failed to fetch forum details:", error);
-      }
-    };
-
-    watch(() => route.query.forum, fetchForumDetails);
-    onMounted(fetchForumDetails);
 
     const navigateToStartThread = () => {
-      router.push({ path: "/start-thread", query: { forum: route.query.forum || "p/general" } });
+      router.push({ path: "/start-thread", query: { forum: props.forum?.slug || "p/general" } });
     };
 
-    return { forum, LucideIcons, navigateToStartThread };
+    return { LucideIcons, navigateToStartThread };
   }
 };
 </script>

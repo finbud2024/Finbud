@@ -169,5 +169,64 @@ postRouter.get("/post/:postId", async (req, res) => {
   }
 });
 
+postRouter.post("/post/:postId/add-comment", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { body, authorId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(postId)) {
+      return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
+    }
+
+    if (!body.trim()) {
+      return res.status(400).json({ error: "Comment cannot be empty" });
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    // Fetch the user details from the database
+    const author = await mongoose.model("User").findById(authorId).select("identityData.displayName identityData.profilePicture");
+
+    // Ensure the user exists
+    if (!author) {
+      return res.status(404).json({ error: "Author not found" });
+    }
+
+    // Create new comment
+    const newComment = {
+      _id: new mongoose.Types.ObjectId(),
+      authorId: author._id,
+      body: body,
+      createdAt: new Date(),
+      reactions: { likes: 0 }
+    };
+
+    post.comments.push(newComment);
+    post.reactions.comments += 1;
+    await post.save();
+
+    res.json({
+      message: "Comment added successfully",
+      comment: {
+        _id: newComment._id,
+        body: newComment.body,
+        createdAt: newComment.createdAt,
+        likes: newComment.reactions.likes,
+        author: {
+          displayName: author.identityData.displayName || "Anonymous",
+          profilePicture: author.identityData.profilePicture || "/default-avatar.png"
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error("❌ Error adding comment:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 export default postRouter;
+
 
