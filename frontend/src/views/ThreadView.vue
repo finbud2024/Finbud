@@ -23,7 +23,7 @@
           <div class="thread-footer">
             <span class="reaction like-reaction" @click="toggleLike">
               <Heart class="icon" :class="{ 'liked': isLiked }" />
-              <span :class="{ 'liked-text': isLiked }">{{ thread?.reactions?.likes || 0 }}</span>
+              <span :class="{ 'liked-text': isLiked }">{{ thread.reactions.likes || 0 }}</span>
             </span>
             <span class="reaction">
               <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
@@ -55,8 +55,8 @@
 
                 <div class="reply-actions">
                   <span class="reaction" @click="toggleCommentLike(index)">
-                    <Heart class="icon" :class="{ 'liked': comment.isLiked }" />
-                    <span :class="{ 'liked-text': comment.isLiked }">{{ comment?.likes || 0 }}</span>
+                    <Heart class="icon" :class="{ 'liked': isCommentLiked(comment) }" />
+                    <span :class="{ 'liked-text': isCommentLiked(comment) }">{{ comment.reactions.likes || 0 }}</span>
                   </span>
                 </div>
               </div>
@@ -86,7 +86,8 @@ export default {
       newComment: "",
       thread: null,
       forumDetails: null,
-      isLiked: false,
+      userId: "67b3c1f309b3978d12ea0b8f",
+      isLiked: false, 
     };
   },
   async created() {
@@ -97,26 +98,34 @@ export default {
 
       if (this.thread?.forumId) {
         this.forumDetails = {
-          name: this.thread.forumId.name,
-          logo: this.thread.forumId.logo,
-          slug: this.thread.forumId.slug,
+          name: this.thread.forumId.name || "Unknown Forum",
+          logo: this.thread.forumId.logo || null,
+          slug: this.thread.forumId.slug || ""
         };
       }
 
-      if (this.thread?.comments) {
-        this.thread.comments.forEach(comment => {
-          comment.isLiked = false;
-        });
-      }
+      this.thread.reactions = this.thread.reactions || { likes: 0, comments: 0, shares: 0 };
+
+      this.thread.comments.forEach(comment => {
+        comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
+
+        comment.reactions.likes = comment.reactions.likes || 0;
+
+        comment.isLiked = comment.reactions.likedUsers.includes(this.userId);
+      });
+
+      this.isLiked = this.thread.reactions.likedUsers?.includes(this.userId) || false;
+
     } catch (error) {
       console.error("❌ Error fetching thread:", error);
     }
   },
+
   methods: {
     formatDate(dateString) {
       if (!dateString) return "Unknown Date";
-      const options = { year: "numeric", month: "short", day: "numeric" };
-      return new Date(dateString).toLocaleDateString(undefined, options);
+      const options = { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
+      return new Date(dateString).toLocaleString(undefined, options);
     },
 
     async toggleLike() {
@@ -126,27 +135,50 @@ export default {
       try {
         const response = await axios.post(
           `/.netlify/functions/server/api/posts/post/${this.thread._id}/like`,
-          { userId: "67b3c1f309b3978d12ea0b8f", action }
+          { userId: this.userId, action }
         );
+
         this.thread.reactions.likes = response.data.likes;
       } catch (error) {
-        console.error("❌ Error liking post:", error);
+        console.error("❌ Error toggling like:", error);
       }
+    },
+
+    isCommentLiked(comment) {
+      return comment.reactions?.likedUsers?.includes(this.userId);
     },
 
     async toggleCommentLike(index) {
       const comment = this.thread.comments[index];
-      comment.isLiked = !comment.isLiked;
-      const action = comment.isLiked ? "like" : "unlike";
+
+      if (!comment.reactions) {
+        comment.reactions = { likes: 0, likedUsers: [] };
+      }
+      if (!Array.isArray(comment.reactions.likedUsers)) {
+        comment.reactions.likedUsers = [];
+      }
+
+      const isLiked = this.isCommentLiked(comment); 
+      const action = isLiked ? "unlike" : "like";
 
       try {
         const response = await axios.post(
-          `/.netlify/functions/server/api/posts/comment/${comment._id}/like`,
-          { userId: "67b3c1f309b3978d12ea0b8f", action }
+          `/.netlify/functions/server/api/posts/post/${this.thread._id}/like-comment`,
+          { userId: this.userId, commentId: comment._id, action }
         );
-        this.thread.comments[index].likes = response.data.likes;
+
+        if (action === "like") {
+          comment.reactions.likes += 1;
+          comment.reactions.likedUsers.push(this.userId);
+        } else {
+          comment.reactions.likes -= 1; 
+          comment.reactions.likedUsers = comment.reactions.likedUsers.filter(
+            id => id !== this.userId
+          );
+        }
+
       } catch (error) {
-        console.error("❌ Error liking comment:", error);
+        console.error("❌ Error toggling comment like:", error);
       }
     }
   }

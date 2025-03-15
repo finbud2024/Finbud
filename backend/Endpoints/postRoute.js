@@ -64,7 +64,7 @@ postRouter.get("/post/:postId", async (req, res) => {
       title: post.title,
       body: post.body,
       createdAt: post.createdAt,
-      reactions: post.reactions,
+      reactions: post.reactions || { likes: 0, comments: 0, shares: 0 }, 
       forumId: {
         name: post.forumId.name || "Unknown Forum",
         logo: post.forumId.logo || null,
@@ -82,7 +82,7 @@ postRouter.get("/post/:postId", async (req, res) => {
           displayName: comment.authorId?.identityData?.displayName || "Anonymous",
           profilePicture: comment.authorId?.identityData?.profilePicture || "/default-avatar.png",
         },
-        likes: comment.reactions?.likes || 0,
+        reactions: comment.reactions || { likes: 0, likedUsers: [] }, 
       })),
     });
   } catch (err) {
@@ -94,29 +94,70 @@ postRouter.get("/post/:postId", async (req, res) => {
 postRouter.post("/post/:postId/like", async (req, res) => {
   try {
     const { postId } = req.params;
-    const { userId, action } = req.body; 
+    const { action } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
-      return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
+      return res.status(400).json({ error: "Invalid Post ID format" });
     }
 
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
+    post.reactions = post.reactions || { likes: 0, comments: 0, shares: 0 };
+
     if (action === "like") {
       post.reactions.likes += 1;
-    } else if (action === "unlike") {
-      post.reactions.likes = Math.max(0, post.reactions.likes - 1);
-    } else {
-      return res.status(400).json({ error: "Invalid action" });
+    } else if (action === "unlike" && post.reactions.likes > 0) {
+      post.reactions.likes -= 1;
     }
 
     await post.save();
-
     res.json({ success: true, likes: post.reactions.likes });
 
   } catch (err) {
     console.error("❌ Error updating like:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+postRouter.post("/post/:postId/like-comment", async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { commentId, action, userId } = req.body;
+
+    console.log(`🛠️ Like API called - Action: ${action}, PostID: ${postId}, CommentID: ${commentId}`);
+
+    if (!mongoose.Types.ObjectId.isValid(postId) || !mongoose.Types.ObjectId.isValid(commentId)) {
+      return res.status(400).json({ error: "Invalid Post ID or Comment ID format" });
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    const comment = post.comments.find(c => c._id.toString() === commentId);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+
+    comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
+
+    if (!Array.isArray(comment.reactions.likedUsers)) {
+      comment.reactions.likedUsers = [];
+    }
+
+    const userIndex = comment.reactions.likedUsers.indexOf(userId);
+
+    if (action === "like" && userIndex === -1) {
+      comment.reactions.likes += 1;
+      comment.reactions.likedUsers.push(userId);
+    } else if (action === "unlike" && userIndex !== -1) {
+      comment.reactions.likes -= 1;
+      comment.reactions.likedUsers.splice(userIndex, 1);
+    }
+
+    await post.save();
+    res.json({ success: true, likes: comment.reactions.likes, likedUsers: comment.reactions.likedUsers });
+
+  } catch (err) {
+    console.error("❌ Error updating comment like:", err);
     res.status(500).json({ error: err.message });
   }
 });
