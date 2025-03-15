@@ -38,7 +38,7 @@
         
         <div class="input-group">
           <label>Loan term</label>
-          <select v-model="loanTerm">
+          <select class="loan-group" v-model="loanTerm">
             <option value="30">30-year fixed</option>
             <option value="15">15-year fixed</option>
             <option value="5">5-year ARM</option>
@@ -51,16 +51,15 @@
             <input type="number" v-model="interestRate" step="0.01" />
             <span class="unit">%</span>
           </div>
+          <h3>Interest rate provided via Zillow. </h3>
         </div>
         
-        <div class="input-group">
-          <label>Taxes, Insurance, HOA Fees</label>
-          <div class="toggle-header">
-            <button @click="toggleExtras">
-              <span class="dropdown-icon" :class="{ rotated: showExtras }">▼</span>
-            </button>
-          </div>
-        </div>
+        <div class="toggle-header">
+          <button @click="toggleExtras">
+            <label>Taxes, Insurance, HOA Fees</label>
+            <span class="dropdown-icon" :class="{ rotated: showExtras }">▼</span>
+          </button>
+        </div>       
         
         <div v-if="showExtras" class="extra-content">
           <div class="input-group">
@@ -96,46 +95,44 @@
 
       <!-- Payment Breakdown Section -->
       <div class="payment-breakdown">
-        <h2>Mortgage Payment Breakdown</h2>
-        <div class="breakdown-content">
-          <div class="chart-container">
-            <canvas ref="chart"></canvas>
-          </div>
-          <div class="breakdown-details">
-            <div class="input-group">
-                <label>Monthly Payment</label>
-                <span class="amount">{{ `$${calculateMonthlyPayment}` }}</span>
+        <div class="payment-breakdown-box">
+          <h2>Mortgage Payment Breakdown</h2>
+          <div class="breakdown-content">
+            <div class="chart-container">
+              <canvas ref="chart"></canvas>
             </div>
-            <div class="breakdown-list">
-              <div class="breakdown-item">
-                <span class="percentage">{{ ((calculatePrincipalInterest / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                <span class="label">Principal & Interest</span>
-                <span class="amount">{{ `$${calculatePrincipalInterest}` }}</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="percentage">{{ ((this.propertyTax / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                <span class="label">Property Tax</span>
-                <span class="amount">${{  this.propertyTax }} /month</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="percentage">{{ ((this.homeInsurance / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                <span class="label">Homeowners Insurance</span>
-                <span class="amount">${{ this.homeInsurance }} /month</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="percentage">{{ ((this.pmi / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                <span class="label">Private Mortgage Insurance</span>
-                <span class="amount">${{ this.pmi }} /month</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="percentage">{{ ((this.hoaFees / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                <span class="label">HOA Fees</span>
-                <span class="amount">${{ this.hoaFees }} /month</span>
+            <div class="breakdown-details">
+              <div class="breakdown-list">
+                <div class="breakdown-item">
+                  <span class="percentage">{{ ((calculatePrincipalInterest / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
+                  <span class="label">Principal & Interest</span>
+                  <span class="amount">{{ `$${calculatePrincipalInterest}` }}</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="percentage">{{ ((this.propertyTax / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
+                  <span class="label">Property Tax</span>
+                  <span class="amount">${{  this.propertyTax }} /month</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="percentage">{{ ((this.homeInsurance / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
+                  <span class="label">Homeowners Insurance</span>
+                  <span class="amount">${{ this.homeInsurance }} /month</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="percentage">{{ ((this.pmi / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
+                  <span class="label">Private Mortgage Insurance</span>
+                  <span class="amount">${{ this.pmi }} /month</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="percentage">{{ ((this.hoaFees / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
+                  <span class="label">HOA Fees</span>
+                  <span class="amount">${{ this.hoaFees }} /month</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   </div>
 </template>
@@ -231,12 +228,12 @@ export default {
               parseFloat(this.pmi), 
               parseFloat(this.hoaFees)
             ],
-            backgroundColor: ['#4CAF50', '#FFC107', '#FF5722', '#9C27B0', '#03A9F4'],
+            backgroundColor: ['#81D4FA', '#FFCC80', '#E6EE9C', '#A5D6A7', '#80CBC4']
           }]
         },
         options: {
           responsive: true,
-          cutout: '70%', // Creates a "donut" effect
+          cutout: '60%', 
           plugins: {
             legend: {
               position: 'bottom',
@@ -250,7 +247,7 @@ export default {
             },
             // Custom Plugin for Center Text
             centerText: {
-              text:`$${this.calculateMonthlyPayment}`, 
+              text: `Monthly total<br><span style="font-size: 24px; font-weight: bold;">$${this.calculateMonthlyPayment}</span>`, 
             }
           }
         },
@@ -267,16 +264,26 @@ export default {
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'center';
 
-            const text = `$${this.calculateMonthlyPayment}`;
+            // Draw the custom text in two lines
+            const text = `Monthly total`;
             const textX = Math.round(width / 2);
-            const textY = Math.round(height / 2);
+            const textY = Math.round(height / 2) - 50;
 
+            const paymentText = `$${this.calculateMonthlyPayment}`;
+            const paymentTextY = Math.round(height / 2) - 10;
+
+            // Set the style for the larger payment amount text
+            ctx.font = '20px Arial';
             ctx.fillText(text, textX, textY);
+            ctx.font = '36px Arial';
+            ctx.fillText(paymentText, textX, paymentTextY);
+
             ctx.save();
           }
         }]
       });
     }
+
   },
 
 
@@ -317,8 +324,7 @@ export default {
 }
 
 h1 {
-  text-align: center;
-  font-size: 33px;
+  font-size: 40px;
   margin-bottom: 20px;
   color: #007bff;
 }
@@ -330,6 +336,16 @@ h1 {
 
 .input-section {
   max-width: 30%;
+}
+
+.payment-breakdown-box {
+  border: 2px solid #ddd; 
+  border-radius: 12px; 
+  padding: 20px;  
+  background-color: #f9f9f9; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  margin-top: 20px; 
+  margin-left: 30px;
   flex: 1;
 }
 
@@ -340,6 +356,12 @@ h1 {
 
 .input-group {
   margin-bottom: 15px;
+}
+
+.loan-group {
+  margin-bottom: 15px;
+  width: 35%;
+  border-radius: 25px;
 }
 
 label {
@@ -380,6 +402,11 @@ input, select {
   gap: 10px;
 }
 
+.toggle-header button label {
+  font-size: 1.2rem; 
+  font-weight: bold; 
+}
+
 .toggle-header button {
   background: none;
   border: none;
@@ -400,8 +427,6 @@ input, select {
 
 .extra-content {
   margin-top: 10px;
-  padding: 10px;
-  background: #f1f1f1;
   border-radius: 5px;
 }
 
@@ -414,13 +439,17 @@ input, select {
   text-align: center;
   font-size: 25px;
   margin-bottom: 20px;
-  color: #007bff;
 }
 
 .breakdown-content {
   display: flex;
   gap: 20px;
   align-items: center;
+}
+
+h3 {
+  font-size: 12px;
+  font-weight:400;
 }
 
 .chart-container {
