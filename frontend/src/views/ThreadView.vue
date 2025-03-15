@@ -111,7 +111,32 @@ export default {
       if (!dateString) return "Unknown Date";
       const options = { year: "numeric", month: "short", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
+    },
+    async addComment() {
+      try {
+        console.log("Submitting comment:", this.newComment);
+
+        const response = await axios.post(
+          `/.netlify/functions/server/api/posts/post/${this.thread._id}/add-comment`,
+          {
+            body: this.newComment,
+            authorId: "67b3c1f309b3978d12ea0b8f", // Example authorId (replace with actual user ID)
+          }
+        );
+
+        console.log("✅ Comment added:", response.data);
+
+        // Update UI: Push new comment to thread
+        this.thread.comments.push(response.data.comment);
+        this.newComment = "";
+      } catch (error) {
+        console.error(
+          "❌ Error adding comment:",
+          error.response ? error.response.data : error.message
+        );
+      }
     }
+
   }
 };
 </script>
