@@ -76,7 +76,7 @@ export default {
 }
 
 .sidebar h2 {
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text-secondary);
   margin-bottom: 10px;
 }
@@ -91,7 +91,7 @@ export default {
   align-items: center;
   padding: 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   border-radius: 8px;
   transition: background 0.2s ease-in-out;
   margin-bottom: 5px;
