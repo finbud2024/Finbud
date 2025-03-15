@@ -48,9 +48,10 @@
         <div class="input-group">
           <label>Interest rate</label>
           <div class="input-wrapper">
-            <input type="number" v-model="interestRate" step="0.01" />
+            <input type="number" v-model="interestRate" min="0" step="0.01" />
             <span class="unit">%</span>
           </div>
+          <span v-if="interestRate <= 0" class="error">Must be greater than 0</span>
           <h3>Interest rate provided via Zillow. </h3>
         </div>
         
@@ -65,28 +66,28 @@
           <div class="input-group">
             <label>Property tax</label>
             <div class="input-wrapper">
-              <input type="number" v-model="propertyTax" />
+              <input type="number" v-model="propertyTax" @input="propertyTax = propertyTax || 0"/>
               <span class="unit">$/month</span>
             </div>
           </div>
           <div class="input-group">
             <label>Homeowners insurance</label>
             <div class="input-wrapper">
-              <input type="number" v-model="homeInsurance" />
+              <input type="number" v-model="homeInsurance" @input="homeInsurance = homeInsurance || 0" />
               <span class="unit">$/month</span>
             </div>
           </div>
           <div class="input-group">
             <label>Private mortgage insurance</label>
             <div class="input-wrapper">
-              <input type="number" v-model="pmi" />
+              <input type="number" v-model="pmi" @input="pmi = pmi || 0"/>
               <span class="unit">$/month</span>
             </div>
           </div>
           <div class="input-group">
             <label>HOA fees</label>
             <div class="input-wrapper">
-              <input type="number" v-model="hoaFees" />
+              <input type="number" v-model="hoaFees" @input="hoaFees = hoaFees || 0"/>
               <span class="unit">$/month</span>
             </div>
           </div>
@@ -139,6 +140,8 @@
 <script>
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
 
+//const ZillowKey = process.env.VUE_APP_ZILLOW_KEY;
+
 Chart.register(PieController, ArcElement, Tooltip, Legend);
 
 export default {
@@ -187,6 +190,16 @@ export default {
     },
   },
   methods: {
+    // async fetchInterestRates() {
+    //   try {
+    //     const response = await fetch("https://mortgageapi.zillow.com/api/getRates?partnerId=YOUR_PARTNER_ID");
+    //     const data = await response.json();
+    //     this.rates = data.rates; /
+    //   } catch (error) {
+    //     console.error("Error fetching mortgage rates:", error);
+    //   }
+    // },
+    
     // Calculate Down Payment Percentage based on Down Payment
     calculateDownPaymentPercentage() {
       if (this.homePrice > 0) {
@@ -497,4 +510,14 @@ h3 {
   font-weight: bold;
   color: #333;
 }
+
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
 </style>
