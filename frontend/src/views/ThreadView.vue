@@ -104,22 +104,33 @@ export default {
         };
       }
 
-      this.thread.reactions = this.thread.reactions || { likes: 0, comments: 0, shares: 0 };
+      // ✅ Ensure reactions exist for the post
+      this.thread.reactions = this.thread.reactions || { likes: 0, comments: 0, shares: 0, likedUsers: [] };
 
+      if (!Array.isArray(this.thread.reactions.likedUsers)) {
+        this.thread.reactions.likedUsers = [];
+      }
+
+      // ✅ Set "liked" state for the **post**
+      this.isLiked = this.thread.reactions.likedUsers.includes(this.userId);
+
+      // ✅ Ensure reactions for comments are initialized
       this.thread.comments.forEach(comment => {
         comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
 
-        comment.reactions.likes = comment.reactions.likes || 0;
+        if (!Array.isArray(comment.reactions.likedUsers)) {
+          comment.reactions.likedUsers = [];
+        }
 
+        // ✅ Set "liked" state for each **comment**
         comment.isLiked = comment.reactions.likedUsers.includes(this.userId);
       });
-
-      this.isLiked = this.thread.reactions.likedUsers?.includes(this.userId) || false;
 
     } catch (error) {
       console.error("❌ Error fetching thread:", error);
     }
   },
+
 
   methods: {
     formatDate(dateString) {
@@ -129,8 +140,7 @@ export default {
     },
 
     async toggleLike() {
-      this.isLiked = !this.isLiked;
-      const action = this.isLiked ? "like" : "unlike";
+      const action = this.isLiked ? "unlike" : "like"; // ✅ Determine action based on state
 
       try {
         const response = await axios.post(
@@ -138,19 +148,35 @@ export default {
           { userId: this.userId, action }
         );
 
+        // ✅ Update likes count
         this.thread.reactions.likes = response.data.likes;
+
+        // ✅ Update `likedUsers` array to persist state
+        if (action === "like") {
+          if (!this.thread.reactions.likedUsers.includes(this.userId)) {
+            this.thread.reactions.likedUsers.push(this.userId);
+          }
+        } else {
+          this.thread.reactions.likedUsers = this.thread.reactions.likedUsers.filter(id => id !== this.userId);
+        }
+
+        // ✅ Toggle UI state
+        this.isLiked = !this.isLiked;
+
       } catch (error) {
         console.error("❌ Error toggling like:", error);
       }
     },
-
+   
     isCommentLiked(comment) {
-      return comment.reactions?.likedUsers?.includes(this.userId);
+      return Array.isArray(comment.reactions?.likedUsers) && comment.reactions.likedUsers.includes(this.userId);
     },
+
 
     async toggleCommentLike(index) {
       const comment = this.thread.comments[index];
 
+      // ✅ Ensure reactions exist
       if (!comment.reactions) {
         comment.reactions = { likes: 0, likedUsers: [] };
       }
@@ -158,8 +184,8 @@ export default {
         comment.reactions.likedUsers = [];
       }
 
-      const isLiked = this.isCommentLiked(comment); 
-      const action = isLiked ? "unlike" : "like";
+      const isLiked = comment.reactions.likedUsers.includes(this.userId); // ✅ Check current state
+      const action = isLiked ? "unlike" : "like"; // ✅ Determine action
 
       try {
         const response = await axios.post(
@@ -167,20 +193,27 @@ export default {
           { userId: this.userId, commentId: comment._id, action }
         );
 
+        // ✅ Update likes count
+        this.thread.comments[index].reactions.likes = response.data.likes;
+
+        // ✅ Update `likedUsers` to persist state
         if (action === "like") {
-          comment.reactions.likes += 1;
-          comment.reactions.likedUsers.push(this.userId);
+          if (!comment.reactions.likedUsers.includes(this.userId)) {
+            comment.reactions.likedUsers.push(this.userId);
+          }
         } else {
-          comment.reactions.likes -= 1; 
-          comment.reactions.likedUsers = comment.reactions.likedUsers.filter(
-            id => id !== this.userId
-          );
+          comment.reactions.likedUsers = comment.reactions.likedUsers.filter(id => id !== this.userId);
         }
+
+        // ✅ Toggle UI state
+        this.thread.comments[index].isLiked = !isLiked;
 
       } catch (error) {
         console.error("❌ Error toggling comment like:", error);
       }
     }
+
+
   }
 };
 </script>
