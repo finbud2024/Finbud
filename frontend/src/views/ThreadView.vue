@@ -75,137 +75,142 @@
 
 <script>
 import axios from "axios";
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
 
 export default {
   components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send },
-  data() {
-    return {
-      newComment: "",
-      thread: null,
-      forumDetails: null,
-      userId: "67b3c1f309b3978d12ea0b8f",
-      isLiked: false, 
-    };
-  },
-  async created() {
-    try {
-      console.log("Route Params ID:", this.$route.params.id);
+  setup() {
+    const store = useStore();
+    const route = useRoute();
+    const router = useRouter();
 
-      const postId = this.$route.params.id;
-      const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`);
+    const newComment = ref("");
+    const thread = ref(null);
+    const forumDetails = ref(null);
+    const isLiked = ref(false);
 
-      console.log("API Response:", response.data);
+    const userId = computed(() => store.getters["users/userId"]);
+    const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
-      this.thread = response.data || null;
+    // Fetch thread data
+    const fetchThread = async () => {
+      try {
+        const postId = route.params.id;
+        const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`, {
+          withCredentials: true, // Ensure cookies are sent
+        });
 
-      if (this.thread?.forumId) {
-        this.forumDetails = {
-          name: this.thread.forumId.name,
-          logo: this.thread.forumId.logo,
-          slug: this.thread.forumId.slug
-        };
-      }
+        thread.value = response.data || null;
 
-      this.thread.reactions = this.thread.reactions || { likes: 0, comments: 0, shares: 0, likedUsers: [] };
-
-      if (!Array.isArray(this.thread.reactions.likedUsers)) {
-        this.thread.reactions.likedUsers = [];
-      }
-
-      this.isLiked = this.thread.reactions.likedUsers.includes(this.userId);
-
-      this.thread.comments.forEach(comment => {
-        comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
-
-        if (!Array.isArray(comment.reactions.likedUsers)) {
-          comment.reactions.likedUsers = [];
+        if (thread.value?.forumId) {
+          forumDetails.value = {
+            name: thread.value.forumId.name,
+            logo: thread.value.forumId.logo,
+            slug: thread.value.forumId.slug
+          };
         }
 
-        comment.isLiked = comment.reactions.likedUsers.includes(this.userId);
-      });
+        thread.value.reactions = thread.value.reactions || { likes: 0, comments: 0, shares: 0, likedUsers: [] };
 
-    } catch (error) {
-      console.error("❌ Error fetching thread:", error);
-    }
-  },
+        if (!Array.isArray(thread.value.reactions.likedUsers)) {
+          thread.value.reactions.likedUsers = [];
+        }
 
-  methods: {
-    formatDate(dateString) {
+        isLiked.value = thread.value.reactions.likedUsers.includes(userId.value);
+
+        thread.value.comments.forEach(comment => {
+          comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
+
+          if (!Array.isArray(comment.reactions.likedUsers)) {
+            comment.reactions.likedUsers = [];
+          }
+
+          comment.isLiked = comment.reactions.likedUsers.includes(userId.value);
+        });
+
+      } catch (error) {
+        console.error("❌ Error fetching thread:", error);
+      }
+    };
+
+    // Ensure authentication before fetching thread
+    onMounted(() => {
+      if (!isAuthenticated.value) {
+        router.push("/login"); // Redirect if not logged in
+      } else {
+        fetchThread();
+      }
+    });
+
+    const formatDate = (dateString) => {
       if (!dateString) return "Unknown Date";
       const options = { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
       return new Date(dateString).toLocaleString(undefined, options);
-    },
+    };
 
-    async addComment() {
-    if (!this.newComment.trim()) return;
-
-    try {
-      console.log("Submitting comment:", this.newComment);
-
-      const response = await axios.post(
-        `/.netlify/functions/server/api/posts/post/${this.thread._id}/add-comment`,
-        {
-          body: this.newComment,
-          authorId: this.userId
-        }
-      );
-
-      console.log("✅ Comment added:", response.data);
-
-      const newComment = response.data.comment;
-
-      newComment.reactions = newComment.reactions || { likes: 0, likedUsers: [] };
-
-      if (!Array.isArray(newComment.reactions.likedUsers)) {
-        newComment.reactions.likedUsers = [];
-      }
-
-      this.thread.comments.push(newComment);
-
-      this.thread.reactions.comments += 1;
-
-      this.newComment = "";
-
-    } catch (error) {
-      console.error("❌ Error adding comment:", error);
-    }
-  },
-
-    async toggleLike() {
-      const action = this.isLiked ? "unlike" : "like";
+    const addComment = async () => {
+      if (!newComment.value.trim()) return;
 
       try {
         const response = await axios.post(
-          `/.netlify/functions/server/api/posts/post/${this.thread._id}/like`,
-          { userId: this.userId, action }
+          `/.netlify/functions/server/api/posts/post/${thread.value._id}/add-comment`,
+          { body: newComment.value },
+          { withCredentials: true }
         );
 
-        this.thread.reactions.likes = response.data.likes;
+        const newCommentData = response.data.comment;
+        newCommentData.reactions = newCommentData.reactions || { likes: 0, likedUsers: [] };
 
-        if (action === "like") {
-          if (!this.thread.reactions.likedUsers.includes(this.userId)) {
-            this.thread.reactions.likedUsers.push(this.userId);
-          }
-        } else {
-          this.thread.reactions.likedUsers = this.thread.reactions.likedUsers.filter(id => id !== this.userId);
+        if (!Array.isArray(newCommentData.reactions.likedUsers)) {
+          newCommentData.reactions.likedUsers = [];
         }
 
-        this.isLiked = !this.isLiked;
+        thread.value.comments.push(newCommentData);
+        thread.value.reactions.comments += 1;
+        newComment.value = "";
+      } catch (error) {
+        console.error("❌ Error adding comment:", error);
+      }
+    };
+
+    const toggleLike = async () => {
+      const action = isLiked.value ? "unlike" : "like";
+
+      try {
+        const response = await axios.post(
+          `/.netlify/functions/server/api/posts/post/${thread.value._id}/like`,
+          { action },
+          { withCredentials: true }
+        );
+
+        thread.value.reactions.likes = response.data.likes;
+
+        if (action === "like") {
+          if (!thread.value.reactions.likedUsers.includes(userId.value)) {
+            thread.value.reactions.likedUsers.push(userId.value);
+          }
+        } else {
+          thread.value.reactions.likedUsers = thread.value.reactions.likedUsers.filter(id => id !== userId.value);
+        }
+
+        isLiked.value = !isLiked.value;
 
       } catch (error) {
         console.error("❌ Error toggling like:", error);
       }
-    },
-   
-    isCommentLiked(comment) {
-      return Array.isArray(comment.reactions?.likedUsers) && comment.reactions.likedUsers.includes(this.userId);
-    },
+    };
 
-    async toggleCommentLike(index) {
-      const comment = this.thread.comments[index];
+    const isCommentLiked = (comment) => {
+      return Array.isArray(comment.reactions?.likedUsers) && comment.reactions.likedUsers.includes(userId.value);
+    };
+
+    const toggleCommentLike = async (index) => {
+      const comment = thread.value.comments[index];
 
       if (!comment.reactions) {
         comment.reactions = { likes: 0, likedUsers: [] };
@@ -214,34 +219,50 @@ export default {
         comment.reactions.likedUsers = [];
       }
 
-      const isLiked = comment.reactions.likedUsers.includes(this.userId);
+      const isLiked = comment.reactions.likedUsers.includes(userId.value);
       const action = isLiked ? "unlike" : "like";
 
       try {
         const response = await axios.post(
-          `/.netlify/functions/server/api/posts/post/${this.thread._id}/like-comment`,
-          { userId: this.userId, commentId: comment._id, action }
+          `/.netlify/functions/server/api/posts/post/${thread.value._id}/like-comment`,
+          { commentId: comment._id, action },
+          { withCredentials: true }
         );
 
-        this.thread.comments[index].reactions.likes = response.data.likes;
+        thread.value.comments[index].reactions.likes = response.data.likes;
 
         if (action === "like") {
-          if (!comment.reactions.likedUsers.includes(this.userId)) {
-            comment.reactions.likedUsers.push(this.userId);
+          if (!comment.reactions.likedUsers.includes(userId.value)) {
+            comment.reactions.likedUsers.push(userId.value);
           }
         } else {
-          comment.reactions.likedUsers = comment.reactions.likedUsers.filter(id => id !== this.userId);
+          comment.reactions.likedUsers = comment.reactions.likedUsers.filter(id => id !== userId.value);
         }
 
-        this.thread.comments[index].isLiked = !isLiked;
+        thread.value.comments[index].isLiked = !isLiked;
 
       } catch (error) {
         console.error("❌ Error toggling comment like:", error);
       }
-    }
+    };
+
+    return {
+      newComment,
+      thread,
+      forumDetails,
+      isLiked,
+      userId,
+      addComment,
+      toggleLike,
+      isCommentLiked,
+      toggleCommentLike,
+      formatDate 
+    };
   }
 };
 </script>
+
+
 
 
 <style scoped>

@@ -27,96 +27,185 @@
 </template>
 
 <script>
-import ForumSidebar from "@/components/ForumSidebar.vue";
-import { useRoute, useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
 import axios from "axios";
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
+import ForumSidebar from "@/components/ForumSidebar.vue";
+import ForumBanner from "@/components/ForumBanner.vue";
 
 export default {
-  components: { ForumSidebar },
+  components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send },
   setup() {
+    const store = useStore();
     const route = useRoute();
     const router = useRouter();
 
-    const title = ref("");
-    const body = ref("");
-    const selectedForum = ref(""); 
-    const forums = ref([]);
-    const userId = ref("");
+    const newComment = ref("");
+    const thread = ref(null);
+    const forumDetails = ref(null);
+    const isLiked = ref(false);
 
-    const fetchUser = async () => {
+    const userId = computed(() => store.getters["users/userId"]);
+    const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
+
+    const fetchThread = async () => {
       try {
-        const response = await axios.get("/.netlify/functions/server/api/user/me");
-        userId.value = response.data?._id || "";
-        console.log(`✅ Fetched User ID: ${userId.value}`);
-      } catch (error) {
-        console.error("❌ Failed to fetch user, using hardcoded fallback:", error);
-        userId.value = "67b3c1f309b3978d12ea0b8f"; 
-      }
-    };
+        const postId = route.params.id;
+        const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`);
 
-    const fetchForums = async () => {
-      try {
-        const response = await axios.get("/.netlify/functions/server/api/forums");
-        forums.value = response.data;
+        thread.value = response.data || null;
 
-        console.log("✅ Fetched forums:", response.data);
-
-        const forumFromQuery = response.data.find(f => f.slug === route.query.forum);
-        
-        if (forumFromQuery) {
-          selectedForum.value = forumFromQuery._id; 
-          console.log(`✅ Selected Forum ID (from query): ${selectedForum.value}`);
-        } else {
-          selectedForum.value = response.data[0]?._id || ""; 
-          console.log(`⚠️ Defaulting to first forum ID: ${selectedForum.value}`);
+        if (thread.value?.forumId) {
+          forumDetails.value = {
+            name: thread.value.forumId.name,
+            logo: thread.value.forumId.logo,
+            slug: thread.value.forumId.slug
+          };
         }
+
+        thread.value.reactions = thread.value.reactions || { likes: 0, comments: 0, shares: 0, likedUsers: [] };
+
+        if (!Array.isArray(thread.value.reactions.likedUsers)) {
+          thread.value.reactions.likedUsers = [];
+        }
+
+        isLiked.value = thread.value.reactions.likedUsers.includes(userId.value);
+
+        thread.value.comments.forEach(comment => {
+          comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
+
+          if (!Array.isArray(comment.reactions.likedUsers)) {
+            comment.reactions.likedUsers = [];
+          }
+
+          comment.isLiked = comment.reactions.likedUsers.includes(userId.value);
+        });
+
       } catch (error) {
-        console.error("❌ Failed to fetch forums:", error);
+        console.error("❌ Error fetching thread:", error);
       }
     };
-
 
     onMounted(() => {
-      fetchForums();
-      fetchUser();
+      if (!isAuthenticated.value) {
+        router.push("/login");
+      } else {
+        fetchThread();
+      }
     });
 
-    const submitThread = async () => {
-      if (!title.value.trim() || !body.value.trim() || !selectedForum.value || !userId.value) {
-        alert("Please select a forum, fill in both the title and body, and be logged in.");
-        return;
-      }
+    const formatDate = (dateString) => {
+      if (!dateString) return "Unknown Date";
+      const options = { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
+      return new Date(dateString).toLocaleString(undefined, options);
+    };
+
+    const addComment = async () => {
+      if (!newComment.value.trim()) return;
 
       try {
-        const newThread = {
-          forumId: selectedForum.value,
-          authorId: userId.value,
-          title: title.value,
-          body: body.value
-        };
+        const response = await axios.post(
+          `/.netlify/functions/server/api/posts/post/${thread.value._id}/add-comment`,
+          { body: newComment.value },
+          { withCredentials: true }
+        );
 
-        console.log("Submitting Thread Data:", newThread);
-        const response = await axios.post("/.netlify/functions/server/api/posts", newThread);
-        console.log("✅ Thread Created:", response.data);
+        const newCommentData = response.data.comment;
+        newCommentData.reactions = newCommentData.reactions || { likes: 0, likedUsers: [] };
 
-        title.value = "";
-        body.value = "";
+        if (!Array.isArray(newCommentData.reactions.likedUsers)) {
+          newCommentData.reactions.likedUsers = [];
+        }
 
-        const forumSlug = forums.value.find(f => f._id === selectedForum.value)?.slug || "p/general";
-        router.push({ path: "/forum", query: { forum: forumSlug } });
+        thread.value.comments.push(newCommentData);
+        thread.value.reactions.comments += 1;
+        newComment.value = "";
+      } catch (error) {
+        console.error("❌ Error adding comment:", error);
+      }
+    };
+
+    const toggleLike = async () => {
+      const action = isLiked.value ? "unlike" : "like";
+
+      try {
+        const response = await axios.post(
+          `/.netlify/functions/server/api/posts/post/${thread.value._id}/like`,
+          { action },
+          { withCredentials: true }
+        );
+
+        thread.value.reactions.likes = response.data.likes;
+
+        if (action === "like") {
+          if (!thread.value.reactions.likedUsers.includes(userId.value)) {
+            thread.value.reactions.likedUsers.push(userId.value);
+          }
+        } else {
+          thread.value.reactions.likedUsers = thread.value.reactions.likedUsers.filter(id => id !== userId.value);
+        }
+
+        isLiked.value = !isLiked.value;
 
       } catch (error) {
-        console.error("❌ Failed to submit thread:", error.response ? error.response.data : error.message);
+        console.error("❌ Error toggling like:", error);
+      }
+    };
+
+    const isCommentLiked = (comment) => {
+      return Array.isArray(comment.reactions?.likedUsers) && comment.reactions.likedUsers.includes(userId.value);
+    };
+
+    const toggleCommentLike = async (index) => {
+      const comment = thread.value.comments[index];
+
+      if (!comment.reactions) {
+        comment.reactions = { likes: 0, likedUsers: [] };
+      }
+      if (!Array.isArray(comment.reactions.likedUsers)) {
+        comment.reactions.likedUsers = [];
+      }
+
+      const isLiked = comment.reactions.likedUsers.includes(userId.value);
+      const action = isLiked ? "unlike" : "like";
+
+      try {
+        const response = await axios.post(
+          `/.netlify/functions/server/api/posts/post/${thread.value._id}/like-comment`,
+          { commentId: comment._id, action },
+          { withCredentials: true }
+        );
+
+        thread.value.comments[index].reactions.likes = response.data.likes;
+
+        if (action === "like") {
+          if (!comment.reactions.likedUsers.includes(userId.value)) {
+            comment.reactions.likedUsers.push(userId.value);
+          }
+        } else {
+          comment.reactions.likedUsers = comment.reactions.likedUsers.filter(id => id !== userId.value);
+        }
+
+        thread.value.comments[index].isLiked = !isLiked;
+
+      } catch (error) {
+        console.error("❌ Error toggling comment like:", error);
       }
     };
 
     return {
-      title,
-      body,
-      selectedForum,
-      forums,
-      submitThread
+      newComment,
+      thread,
+      forumDetails,
+      isLiked,
+      userId,
+      addComment,
+      toggleLike,
+      isCommentLiked,
+      toggleCommentLike,
+      formatDate 
     };
   }
 };

@@ -2,20 +2,21 @@ import express from "express";
 import mongoose from "mongoose";
 import Post from "../Database Schema/Post.js";
 import Forum from "../Database Schema/Forum.js";
+import User from "../Database Schema/User.js"; // Ensure correct import
+import { isAuthenticated } from '../middleware/auth.js';
 
 const postRouter = express.Router();
 
+// Get all posts in a forum
 postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
   try {
     const forumSlug = decodeURIComponent(req.params.forumSlug);
-    console.log(`🔍 Searching forum with slug: ${forumSlug}`);
-
     const forum = await Forum.findOne({ slug: forumSlug });
     if (!forum) return res.status(404).json({ error: "Forum not found" });
 
     const posts = await Post.find({ forumId: forum._id })
-      .populate({ path: "forumId", select: "name logo slug" })
-      .populate({ path: "authorId", select: "identityData.displayName identityData.profilePicture" });
+      .populate("forumId", "name logo slug")
+      .populate("authorId", "identityData.displayName identityData.profilePicture");
 
     const formattedPosts = posts.map(post => ({
       _id: post._id,
@@ -29,18 +30,18 @@ postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
         slug: post.forumId.slug || ""
       },
       author: {
-        displayName: post.authorId.identityData?.displayName || "Anonymous",
-        profilePicture: post.authorId.identityData?.profilePicture || "/default-avatar.png"
+        displayName: post.authorId?.identityData?.displayName || "Anonymous",
+        profilePicture: post.authorId?.identityData?.profilePicture || "/default-avatar.png"
       }
     }));
 
     res.json(formattedPosts);
   } catch (err) {
-    console.error("❌ Error fetching forum posts:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
+// Get a specific post
 postRouter.get("/post/:postId", async (req, res) => {
   try {
     const { postId } = req.params;
@@ -50,12 +51,9 @@ postRouter.get("/post/:postId", async (req, res) => {
     }
 
     const post = await Post.findById(postId)
-      .populate({ path: "forumId", select: "name logo slug" })
-      .populate({ path: "authorId", select: "identityData.displayName identityData.profilePicture" })
-      .populate({
-        path: "comments.authorId", 
-        select: "identityData.displayName identityData.profilePicture",
-      });
+      .populate("forumId", "name logo slug")
+      .populate("authorId", "identityData.displayName identityData.profilePicture")
+      .populate("comments.authorId", "identityData.displayName identityData.profilePicture");
 
     if (!post) return res.status(404).json({ error: "Post not found" });
 
@@ -64,15 +62,15 @@ postRouter.get("/post/:postId", async (req, res) => {
       title: post.title,
       body: post.body,
       createdAt: post.createdAt,
-      reactions: post.reactions || { likes: 0, comments: 0, shares: 0 }, 
+      reactions: post.reactions || { likes: 0, comments: 0, shares: 0 },
       forumId: {
         name: post.forumId.name || "Unknown Forum",
         logo: post.forumId.logo || null,
         slug: post.forumId.slug || "",
       },
       author: {
-        displayName: post.authorId.identityData?.displayName || "Anonymous",
-        profilePicture: post.authorId.identityData?.profilePicture || "/default-avatar.png",
+        displayName: post.authorId?.identityData?.displayName || "Anonymous",
+        profilePicture: post.authorId?.identityData?.profilePicture || "/default-avatar.png",
       },
       comments: post.comments.map(comment => ({
         _id: comment._id,
@@ -82,15 +80,15 @@ postRouter.get("/post/:postId", async (req, res) => {
           displayName: comment.authorId?.identityData?.displayName || "Anonymous",
           profilePicture: comment.authorId?.identityData?.profilePicture || "/default-avatar.png",
         },
-        reactions: comment.reactions || { likes: 0, likedUsers: [] }, 
+        reactions: comment.reactions || { likes: 0, likedUsers: [] },
       })),
     });
   } catch (err) {
-    console.error("❌ Error fetching post:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
+// Like/unlike a post
 postRouter.post("/post/:postId/like", async (req, res) => {
   try {
     const { postId } = req.params;
@@ -113,19 +111,16 @@ postRouter.post("/post/:postId/like", async (req, res) => {
 
     await post.save();
     res.json({ success: true, likes: post.reactions.likes });
-
   } catch (err) {
-    console.error("❌ Error updating like:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
+// Like/unlike a comment
 postRouter.post("/post/:postId/like-comment", async (req, res) => {
   try {
     const { postId } = req.params;
     const { commentId, action, userId } = req.body;
-
-    console.log(`🛠️ Like API called - Action: ${action}, PostID: ${postId}, CommentID: ${commentId}`);
 
     if (!mongoose.Types.ObjectId.isValid(postId) || !mongoose.Types.ObjectId.isValid(commentId)) {
       return res.status(400).json({ error: "Invalid Post ID or Comment ID format" });
@@ -155,18 +150,16 @@ postRouter.post("/post/:postId/like-comment", async (req, res) => {
 
     await post.save();
     res.json({ success: true, likes: comment.reactions.likes, likedUsers: comment.reactions.likedUsers });
-
   } catch (err) {
-    console.error("❌ Error updating comment like:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-
-postRouter.post("/post/:postId/add-comment", async (req, res) => {
+postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) => {  
   try {
     const { postId } = req.params;
-    const { body, authorId } = req.body;
+    const { body } = req.body;
+    const userId = req.user._id;  // ✅ Get user ID from session
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
@@ -179,16 +172,13 @@ postRouter.post("/post/:postId/add-comment", async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    const author = await mongoose.model("User").findById(authorId).select("identityData.displayName identityData.profilePicture");
-
-    if (!author) {
-      return res.status(404).json({ error: "Author not found" });
-    }
+    const author = await User.findById(userId).select("identityData.displayName identityData.profilePicture");
+    if (!author) return res.status(404).json({ error: "Author not found" });
 
     const newComment = {
       _id: new mongoose.Types.ObjectId(),
       authorId: author._id,
-      body: body,
+      body,
       createdAt: new Date(),
       reactions: { likes: 0 }
     };
@@ -210,34 +200,25 @@ postRouter.post("/post/:postId/add-comment", async (req, res) => {
         }
       }
     });
-
   } catch (err) {
-    console.error("❌ Error adding comment:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-postRouter.post("/", async (req, res) => {
+
+// Create a new post/thread 
+postRouter.post("/", isAuthenticated, async (req, res) => {  
   try {
-    const { forumId, authorId, title, body } = req.body;
+    const { forumId, title, body } = req.body; 
+    const userId = req.user._id;  
 
-    if (!forumId || !authorId || !title.trim() || !body.trim()) {
+    if (!forumId || !title.trim() || !body.trim()) {
       return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(forumId) || !mongoose.Types.ObjectId.isValid(authorId)) {
-      return res.status(400).json({ error: "Invalid ID format" });
-    }
-
-    const author = await mongoose.model("User").findById(authorId).select("identityData.displayName identityData.profilePicture");
-
-    if (!author) {
-      return res.status(404).json({ error: "Author not found" });
     }
 
     const newPost = new Post({
       forumId,
-      authorId: author._id,
+      authorId: userId,  
       title,
       body,
       comments: [],
@@ -245,29 +226,10 @@ postRouter.post("/", async (req, res) => {
     });
 
     await newPost.save();
-
-    res.json({
-      message: "Thread created successfully",
-      thread: {
-        _id: newPost._id,
-        title: newPost.title,
-        body: newPost.body,
-        createdAt: newPost.createdAt,
-        reactions: newPost.reactions,
-        forumId: newPost.forumId,
-        author: {
-          displayName: author.identityData.displayName || "Anonymous",
-          profilePicture: author.identityData.profilePicture || "/default-avatar.png"
-        }
-      }
-    });
-
+    res.json({ message: "Thread created successfully", thread: newPost });
   } catch (err) {
-    console.error("❌ Error creating thread:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
 export default postRouter;
-
-
