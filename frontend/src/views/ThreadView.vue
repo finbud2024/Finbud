@@ -92,29 +92,31 @@ export default {
   },
   async created() {
     try {
+      console.log("Route Params ID:", this.$route.params.id);
+
       const postId = this.$route.params.id;
       const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`);
+
+      console.log("API Response:", response.data);
+
       this.thread = response.data || null;
 
       if (this.thread?.forumId) {
         this.forumDetails = {
-          name: this.thread.forumId.name || "Unknown Forum",
-          logo: this.thread.forumId.logo || null,
-          slug: this.thread.forumId.slug || ""
+          name: this.thread.forumId.name,
+          logo: this.thread.forumId.logo,
+          slug: this.thread.forumId.slug
         };
       }
 
-      // ✅ Ensure reactions exist for the post
       this.thread.reactions = this.thread.reactions || { likes: 0, comments: 0, shares: 0, likedUsers: [] };
 
       if (!Array.isArray(this.thread.reactions.likedUsers)) {
         this.thread.reactions.likedUsers = [];
       }
 
-      // ✅ Set "liked" state for the **post**
       this.isLiked = this.thread.reactions.likedUsers.includes(this.userId);
 
-      // ✅ Ensure reactions for comments are initialized
       this.thread.comments.forEach(comment => {
         comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
 
@@ -122,7 +124,6 @@ export default {
           comment.reactions.likedUsers = [];
         }
 
-        // ✅ Set "liked" state for each **comment**
         comment.isLiked = comment.reactions.likedUsers.includes(this.userId);
       });
 
@@ -131,7 +132,6 @@ export default {
     }
   },
 
-
   methods: {
     formatDate(dateString) {
       if (!dateString) return "Unknown Date";
@@ -139,8 +139,43 @@ export default {
       return new Date(dateString).toLocaleString(undefined, options);
     },
 
+    async addComment() {
+    if (!this.newComment.trim()) return;
+
+    try {
+      console.log("Submitting comment:", this.newComment);
+
+      const response = await axios.post(
+        `/.netlify/functions/server/api/posts/post/${this.thread._id}/add-comment`,
+        {
+          body: this.newComment,
+          authorId: this.userId
+        }
+      );
+
+      console.log("✅ Comment added:", response.data);
+
+      const newComment = response.data.comment;
+
+      newComment.reactions = newComment.reactions || { likes: 0, likedUsers: [] };
+
+      if (!Array.isArray(newComment.reactions.likedUsers)) {
+        newComment.reactions.likedUsers = [];
+      }
+
+      this.thread.comments.push(newComment);
+
+      this.thread.reactions.comments += 1;
+
+      this.newComment = "";
+
+    } catch (error) {
+      console.error("❌ Error adding comment:", error);
+    }
+  },
+
     async toggleLike() {
-      const action = this.isLiked ? "unlike" : "like"; // ✅ Determine action based on state
+      const action = this.isLiked ? "unlike" : "like";
 
       try {
         const response = await axios.post(
@@ -148,10 +183,8 @@ export default {
           { userId: this.userId, action }
         );
 
-        // ✅ Update likes count
         this.thread.reactions.likes = response.data.likes;
 
-        // ✅ Update `likedUsers` array to persist state
         if (action === "like") {
           if (!this.thread.reactions.likedUsers.includes(this.userId)) {
             this.thread.reactions.likedUsers.push(this.userId);
@@ -160,7 +193,6 @@ export default {
           this.thread.reactions.likedUsers = this.thread.reactions.likedUsers.filter(id => id !== this.userId);
         }
 
-        // ✅ Toggle UI state
         this.isLiked = !this.isLiked;
 
       } catch (error) {
@@ -172,11 +204,9 @@ export default {
       return Array.isArray(comment.reactions?.likedUsers) && comment.reactions.likedUsers.includes(this.userId);
     },
 
-
     async toggleCommentLike(index) {
       const comment = this.thread.comments[index];
 
-      // ✅ Ensure reactions exist
       if (!comment.reactions) {
         comment.reactions = { likes: 0, likedUsers: [] };
       }
@@ -184,8 +214,8 @@ export default {
         comment.reactions.likedUsers = [];
       }
 
-      const isLiked = comment.reactions.likedUsers.includes(this.userId); // ✅ Check current state
-      const action = isLiked ? "unlike" : "like"; // ✅ Determine action
+      const isLiked = comment.reactions.likedUsers.includes(this.userId);
+      const action = isLiked ? "unlike" : "like";
 
       try {
         const response = await axios.post(
@@ -193,10 +223,8 @@ export default {
           { userId: this.userId, commentId: comment._id, action }
         );
 
-        // ✅ Update likes count
         this.thread.comments[index].reactions.likes = response.data.likes;
 
-        // ✅ Update `likedUsers` to persist state
         if (action === "like") {
           if (!comment.reactions.likedUsers.includes(this.userId)) {
             comment.reactions.likedUsers.push(this.userId);
@@ -205,15 +233,12 @@ export default {
           comment.reactions.likedUsers = comment.reactions.likedUsers.filter(id => id !== this.userId);
         }
 
-        // ✅ Toggle UI state
         this.thread.comments[index].isLiked = !isLiked;
 
       } catch (error) {
         console.error("❌ Error toggling comment like:", error);
       }
     }
-
-
   }
 };
 </script>
