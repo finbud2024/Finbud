@@ -61,6 +61,8 @@
 
 <script>
 import { createChart } from "lightweight-charts";
+import axios from "axios";
+import { sort } from "mathjs";
 
 export default {
   name: "PortfolioPerformance",
@@ -87,7 +89,8 @@ export default {
       ],
       noData: false,
       firstTransactionDate: null,
-      candlestickData: []
+      candlestickData: [],
+      userID: this.$store.getters['users/userId'] || null
     };
   },
 
@@ -101,7 +104,8 @@ export default {
   },
 
   created() {
-    this.generateYearOfData();
+    // this.generateYearOfData();
+    this.fetchPortfolioData()
   },
 
   mounted() {
@@ -119,6 +123,35 @@ export default {
   },
 
   methods: {
+    async fetchPortfolioData() {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/portfolios/${this.userID}`);
+        const data = response.data.portfolio;
+        
+        const sortedData = data.sort((a, b) => {
+          return new Date(a.date) - new Date(b.date);
+        });
+    
+        sortedData.forEach((item, index) => {
+          const formattedDate = new Date(item.date).toISOString().split('T')[0];
+          
+          if (index === 0) {
+            this.firstTransactionDate = formattedDate;
+          }
+          this.candlestickData.push({
+            time: formattedDate,
+            close: parseFloat(item.totalValue)
+          });
+        });
+        
+        console.log(this.candlestickData);
+    
+        this.updateChart();
+      } catch (error) {
+        console.error('Error fetching portfolio data:', error);
+        this.noData = true;
+      }
+    },
     generateYearOfData() {
       const data = [];
       const today = new Date();
@@ -151,7 +184,8 @@ export default {
           close: parseFloat(close.toFixed(2))
         });
       }
-      
+      console.log(data)
+      this.fetchPortfolioData()
       this.candlestickData = data;
     },
 
