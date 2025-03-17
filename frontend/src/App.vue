@@ -11,7 +11,7 @@
   <ChatBubble v-if="showChatBubble && chatBubbleActive"
     @closeChatBubble="toggleChatBubble"
     :chatViewThreadID="threadId" />
-  <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
+  <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" ref="finbudBot"/>
   
   <div v-if="showBotMessage" class="bot-message-container">
     <div class="finbudBotMessage" 
@@ -47,6 +47,11 @@ export default {
       typingSpeed: 20, // milliseconds per character
       isTyping: false,
       messageVisible: false, // New property for message visibility
+      isDragging: false, // Track if the bot is being dragged
+      dragStartX: 0, // Initial X position when dragging starts
+      dragStartY: 0, // Initial Y position when dragging starts
+      initialOffsetX: 0, // Initial offset X
+      initialOffsetY: 0, // Initial offset Y
     };
   },
   async mounted() {
@@ -85,6 +90,9 @@ export default {
       },
       { immediate: true } // Check immediately on mount
     );
+
+    // Add drag event listeners
+    this.addDragListeners();
   },
   computed: {
     isAuthenticated() {
@@ -109,6 +117,30 @@ export default {
     },
   },
   methods: {
+    addDragListeners() {
+      const finbudBot = this.$refs.finbudBot;
+
+      finbudBot.addEventListener('mousedown', (e) => {
+        this.isDragging = true;
+        this.dragStartX = e.clientX;
+        this.dragStartY = e.clientY;
+        this.initialOffsetX = finbudBot.offsetLeft;
+        this.initialOffsetY = finbudBot.offsetTop;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (this.isDragging) {
+          const offsetX = e.clientX - this.dragStartX;
+          const offsetY = e.clientY - this.dragStartY;
+          finbudBot.style.left = `${this.initialOffsetX + offsetX}px`;
+          finbudBot.style.top = `${this.initialOffsetY + offsetY}px`;
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        this.isDragging = false;
+      });
+    },
     loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
     },
@@ -272,6 +304,11 @@ a:hover {
   bottom: 20px;
   z-index: 99998;
   transition: transform 0.2s ease;
+  cursor:auto; /* Change cursor to indicate draggable */
+}
+
+.finbudBot:active {
+  cursor: auto; /* Change cursor when dragging */
 }
 
 .finbudBot:hover {
