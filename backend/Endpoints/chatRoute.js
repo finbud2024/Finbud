@@ -4,62 +4,68 @@ import validateRequest from "../utils/validateRequest.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import { BraveSearch } from "@langchain/community/tools/brave_search";
+import { isAuthenticated, isAdmin } from '../middleware/auth.js';
+import OpenAI from 'openai';
+// import { YoutubeTranscript } from 'youtube-transcript';
+// import { getVideoId } from '../utils/getVideoId.js';
 
 dotenv.config();
 
 const chatRoute = express.Router();
 
 // GET: Retrieve all chats
-chatRoute.get("/chats", async (req, res) => {
-  console.log("in /chats Route (GET) all chats");
-  try {
-    const chats = await Chat.find();
-    return res.status(200).send(chats);
-  } catch (err) {
-    return res.status(501).send("Internal error: " + err);
-  }
-});
-
-// DELETE: delete all chats
-chatRoute.delete("/chats", async (req, res) => {
-  console.log("in /chats Route (DELETE) all chats");
-  try {
-    await Chat.deleteMany();
-    return res.status(200).send("All chats deleted successfully");
-  } catch (err) {
-    return res.status(501).send("Internal error: " + err);
-  }
-});
-
-// POST: create a new chat
-chatRoute.post("/chats", validateRequest(Chat.schema), async (req, res) => {
-  console.log(req.body);
-  if (!req.body.prompt || !req.body.response || !req.body.threadId) {
-    return res.status(400).send("Prompt, response and threadId are required");
-  }
-  console.log("in /chats Route (POST) new chat to database");
-  try {
-    const chat = {};
-    if (req.body) {
-      for (const key in req.body) {
-        chat[key] = req.body[key];
-      }
+chatRoute.route('/chats')
+  .get(isAdmin, async (req, res) => {
+    console.log('in /chats Route (GET) ALL chats from database');
+    try {
+      let chats = await Chat.find();
+      return res.status(200).json(chats);
+    } catch (err) {
+      return res.status(501).send("Unexpected error occurred when getting chats in database: " + err);
     }
-    const newChat = new Chat({
-      prompt: chat.prompt,
-      response: chat.response,
-      sources: chat.sources || [],
-      videos: chat.videos || [],
-      followUpQuestions: chat.followUpQuestions || [],
-      threadId: chat.threadId,
-    });
-    console.log(newChat);
-    await newChat.save();
-    return res.status(200).send(newChat);
-  } catch (err) {
-    return res.status(502).send("Internal error e" + err);
-  }
-});
+  })
+  // DELETE: delete all chats
+  .delete(isAdmin, async (req, res) => {
+    console.log('in /chats Route (DELETE) ALL chats from database');
+    try {
+      let chats = await Chat.deleteMany();
+      return res.status(200).send("All chats deleted successfully");
+    } catch (err) {
+      return res.status(501).send("Unexpected error occurred when deleting chats in database: " + err);
+    }
+  })
+  // POST: create a new chat
+  .post(isAuthenticated, async (req, res) => {
+    console.log('in /chats Route (POST) new chat to database');
+    if (!req.body.prompt || !req.body.response || !req.body.threadId) {
+      return res.status(400).send("Unable to save chat to database due to missing prompt, response, or threadId");
+    }
+    try {
+      const chatBody = {
+        prompt: req.body.prompt,
+        response: req.body.response,
+        threadId: req.body.threadId
+      };
+
+      if (req.body.sources) {
+        chatBody.sources = req.body.sources;
+      }
+
+      if (req.body.videos) {
+        chatBody.videos = req.body.videos;
+      }
+
+      if (req.body.followUpQuestions) {
+        chatBody.followUpQuestions = req.body.followUpQuestions;
+      }
+
+      const chat = new Chat(chatBody);
+      await chat.save();
+      return res.status(200).json(chat);
+    } catch (err) {
+      return res.status(502).send("Unexpected error occurred when saving chat to database: " + err);
+    }
+  });
 
 // function to generate follow-up questions
 async function generateFollowUpQuestions(responseText) {
@@ -95,7 +101,7 @@ async function generateFollowUpQuestions(responseText) {
 }
 
 // POST: Handle OpenAI API request
-chatRoute.post("/query", async (req, res) => {
+chatRoute.post("/query", isAuthenticated, async (req, res) => {
   const {
     prompt,
     returnSources = true,
@@ -165,10 +171,20 @@ chatRoute.post("/query", async (req, res) => {
 });
 
 // PUT: update chat with given chat id
-chatRoute.put("/chats/:chatId", validateRequest(Chat.schema), async (req, res) => {
+chatRoute.put("/chats/:chatId", isAuthenticated, validateRequest(Chat.schema), async (req, res) => {
   const chatId = req.params.chatId;
   console.log('in /chats/:chatId Route (PUT) chat with ID:' + chatId);
   try {
+    // First check if the chat exists
+    const existingChat = await Chat.findById(chatId);
+    if (!existingChat) {
+      return res.status(404).send(`Cannot find chat with chat ID : ${chatId} in database`);
+    }
+    
+    // We need to check if this chat belongs to a thread owned by the user
+    // Since Chat doesn't have a direct user field, we need to rely on the threadId
+    // This would be more secure if we had a way to verify thread ownership
+    
     const filter = { "_id": chatId };
     const updatedChat = {};
     
@@ -178,76 +194,65 @@ chatRoute.put("/chats/:chatId", validateRequest(Chat.schema), async (req, res) =
       }
     }
 
-      const chat = await Chat.updateOne(filter, updatedChat, {
-        new: true,
-      });
+    const chat = await Chat.updateOne(filter, updatedChat, {
+      new: true,
+    });
 
-      if (!chat.modifiedCount) {
-        return res
-          .status(404)
-          .send(`Cannot find chat with chat ID : ${chatId} in database`);
-      }
-
-      return res
-        .status(200)
-        .send({ message: `Chat updated successfully`, updatedChat: chat });
-    } catch (err) {
-      return res.status(501).send("Internal error e" + err);
-    }
-  }
-);
-
-// DELETE: delete a chat with given chat id
-chatRoute.delete("/chats/:chatId", async (req, res) => {
-  const chatId = req.params.chatId;
-  console.log("In /chats/:chatId Route (DELETE) for chat with ID: " + chatId);
-  try {
-    const chat = await Chat.findOneAndDelete({ _id: chatId });
-    if (!chat) {
+    if (!chat.modifiedCount) {
       return res
         .status(404)
-        .send(`Cannot find chat in db with chat ID is: ${chatId}`);
+        .send(`Cannot find chat with chat ID : ${chatId} in database`);
     }
-    return res.status(200).send("Chat deleted successfully");
-  } catch (err) {
-    return res.status(500).send("Internal sever error" + err);
-  }
-});
 
-// GET: retrieve chats with given thread id
-chatRoute.get("/chats/t/:threadId", async (req, res) => {
-  const threadId = req.params.threadId;
-  console.log(
-    "in /chats/:threadId Route (GET) chat with thread ID:" +
-      JSON.stringify(threadId)
-  );
-  try {
-    const chats = await Chat.find({ threadId: threadId });
-    if (!chats) {
-      return res
-        .status(404)
-        .send(`Cannot find chat in db with thread ID is: ${threadId}`);
-    }
-    return res.status(200).send(chats);
+    return res
+      .status(200)
+      .send({ message: `Chat updated successfully`, updatedChat: chat });
   } catch (err) {
     return res.status(501).send("Internal error e" + err);
   }
 });
 
-// DELETE: delete all chats with given thread id
-chatRoute.delete("/chats/t/:threadId", async (req, res) => {
-  const threadId = req.params.threadId;
-  console.log(
-    "In /chats/t/:threadId Route (DELETE) for chat with thread ID: " + threadId
-  );
-  try {
-    await Chat.deleteMany({ threadId: threadId });
-    return res
-      .status(200)
-      .send("All chats with thread ID: " + threadId + " deleted successfully");
-  } catch (err) {
-    return res.status(501).send("Internal error: " + err);
-  }
-});
+// DELETE: delete a chat with given chat id
+chatRoute.route('/chats/:chatId')
+  .delete(isAuthenticated, async (req, res) => {
+    const chatId = req.params.chatId;
+    console.log('in /chats/:chatId Route (DELETE) chat with ID:' + JSON.stringify(chatId));
+    try {
+      let chat = await Chat.findOneAndDelete({ "_id": chatId });
+      if (!chat) {
+        return res.status(404).send("No chat with id: " + JSON.stringify(chatId) + " existed in database");
+      }
+      return res.status(200).send("Deleted successfully chat with Id: " + chatId);
+    } catch (err) {
+      return res.status(500).send("Unexpected error occurred when deleting chat with id: " + chatId + " in database: " + err);
+    }
+  });
+
+// GET: retrieve chats with given thread id
+chatRoute.route('/chats/t/:threadId')
+  .get(isAuthenticated, async (req, res) => {
+    const threadId = req.params.threadId;
+    console.log('in /chats/t/:threadId Route (GET) chats with threadId:' + JSON.stringify(threadId));
+    try {
+      let chats = await Chat.find({ "threadId": threadId });
+      if (!chats || chats.length === 0) {
+        return res.status(404).send("No chats with threadId: " + JSON.stringify(threadId) + " existed in database");
+      }
+      return res.status(200).json(chats);
+    } catch (err) {
+      return res.status(501).send("Unexpected error occurred when looking for chats with threadId: " + threadId + " in database: " + err);
+    }
+  })
+  // DELETE: delete all chats with given thread id
+  .delete(isAuthenticated, async (req, res) => {
+    const threadId = req.params.threadId;
+    console.log('in /chats/t/:threadId Route (DELETE) chats with threadId:' + JSON.stringify(threadId));
+    try {
+      let chats = await Chat.deleteMany({ "threadId": threadId });
+      return res.status(200).send("All chats with threadId: " + threadId + " deleted successfully");
+    } catch (err) {
+      return res.status(501).send("Unexpected error occurred when deleting chats with threadId: " + threadId + " in database: " + err);
+    }
+  });
 
 export default chatRoute;
