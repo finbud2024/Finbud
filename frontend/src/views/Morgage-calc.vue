@@ -1,91 +1,88 @@
 <template>
   <div class="mortgage-calc">
-    <h1>Mortgage Payment Calculator</h1>
+    <div class="language-switcher">
+      <button @click="switchLanguage('en')">🇺🇸 English</button>
+      <button @click="switchLanguage('vi')">🇻🇳 Tiếng Việt</button>
+    </div>
     
+    <h1>{{ $t('title') }}</h1>
+
     <div class="content-wrapper">
       <!-- Input Fields Section -->
       <div class="input-section">
         <div class="input-group">
-          <label>Home price</label>
+          <label>{{ $t('homePrice') }}</label>
           <div class="input-wrapper">
             <input type="number" v-model="homePrice" min="10000" />
             <span class="unit">$</span>
           </div>
-          <span v-if="homePrice < 10000" class="error">Minimum of $10,000 required</span>
+          <span v-if="homePrice < 10000" class="error">{{ $t('errorMinHomePrice') }}</span>
         </div>
-        
+
         <div class="input-group">
-            <label>Down payment</label>
-            <div class="split-input">
-                <div class="input-wrapper">
-                <input
-                    type="number"
-                    v-model="downPayment"
-                    @input="calculateDownPaymentPercentage"
-                />
-                <span class="unit">$</span>
-                </div>
-                <div class="input-wrapper">
-                <input
-                    type="number"
-                    v-model="downPaymentPercentage"
-                    @input="calculateDownPayment"
-                />
-                <span class="unit">%</span>
-                </div>
+          <label>{{ $t('downPayment') }}</label>
+          <div class="split-input">
+            <div class="input-wrapper">
+              <input type="number" v-model="downPayment" @input="calculateDownPaymentPercentage" />
+              <span class="unit">$</span>
             </div>
+            <div class="input-wrapper">
+              <input type="number" v-model="downPaymentPercentage" @input="calculateDownPayment" />
+              <span class="unit">%</span>
             </div>
-        
+          </div>
+        </div>
+
         <div class="input-group">
-          <label>Loan term</label>
+          <label>{{ $t('loanTerm') }}</label>
           <select class="loan-group" v-model="loanTerm">
             <option value="30">30-year fixed</option>
             <option value="15">15-year fixed</option>
             <option value="5">5-year ARM</option>
           </select>
         </div>
-        
+
         <div class="input-group">
-          <label>Interest rate</label>
+          <label>{{ $t('interestRate') }}</label>
           <div class="input-wrapper">
             <input type="number" v-model="interestRate" min="0" step="0.01" />
             <span class="unit">%</span>
           </div>
-          <span v-if="interestRate <= 0" class="error">Must be greater than 0</span>
-          <h3>Interest rate provided via Zillow. </h3>
+          <span v-if="interestRate <= 0" class="error">{{ $t('errorInterestRate') }}</span>
+          <h3>Interest rate provided via Zillow.</h3>
         </div>
-        
+
         <div class="toggle-header">
           <button @click="toggleExtras">
-            <label>Taxes, Insurance, HOA Fees</label>
+            <label>{{ $t('taxesFees') }}</label>
             <span class="dropdown-icon" :class="{ rotated: showExtras }">▼</span>
           </button>
-        </div>       
-        
+        </div>
+
         <div v-if="showExtras" class="extra-content">
           <div class="input-group">
-            <label>Property tax</label>
+            <label>{{ $t('propertyTax') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="propertyTax" @input="propertyTax = propertyTax || 0"/>
               <span class="unit">$/month</span>
             </div>
           </div>
           <div class="input-group">
-            <label>Homeowners insurance</label>
+            <label>{{ $t('homeownersInsurance') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="homeInsurance" @input="homeInsurance = homeInsurance || 0" />
               <span class="unit">$/month</span>
             </div>
           </div>
           <div class="input-group">
-            <label>Private mortgage insurance</label>
+            <label>{{ $t('pmi') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="pmi" @input="pmi = pmi || 0"/>
               <span class="unit">$/month</span>
             </div>
           </div>
           <div class="input-group">
-            <label>HOA fees</label>
+            <label>{{ $t('hoaFees') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="hoaFees" @input="hoaFees = hoaFees || 0"/>
               <span class="unit">$/month</span>
@@ -97,7 +94,7 @@
       <!-- Payment Breakdown Section -->
       <div class="payment-breakdown">
         <div class="payment-breakdown-box">
-          <h2>Mortgage Payment Breakdown</h2>
+          <h2>{{ $t('mortgageBreakdown') }}</h2>
           <div class="breakdown-content">
             <div class="chart-container">
               <canvas ref="chart"></canvas>
@@ -106,27 +103,27 @@
               <div class="breakdown-list">
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((calculatePrincipalInterest / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                  <span class="label">Principal & Interest</span>
+                  <span class="label">{{ $t('principalInterest') }}</span>
                   <span class="amount">{{ `$${calculatePrincipalInterest}` }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.propertyTax / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                  <span class="label">Property Tax</span>
-                  <span class="amount">${{  this.propertyTax }} /month</span>
+                  <span class="label">{{ $t('propertyTax') }}</span>
+                  <span class="amount">${{ this.propertyTax }} /month</span>
                 </div>
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.homeInsurance / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                  <span class="label">Homeowners Insurance</span>
+                  <span class="label">{{ $t('homeownersInsurance') }}</span>
                   <span class="amount">${{ this.homeInsurance }} /month</span>
                 </div>
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.pmi / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                  <span class="label">Private Mortgage Insurance</span>
+                  <span class="label">{{ $t('pmi') }}</span>
                   <span class="amount">${{ this.pmi }} /month</span>
                 </div>
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.hoaFees / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
-                  <span class="label">HOA Fees</span>
+                  <span class="label">{{ $t('hoaFees') }}</span>
                   <span class="amount">${{ this.hoaFees }} /month</span>
                 </div>
               </div>
@@ -137,6 +134,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
 
@@ -190,6 +188,9 @@ export default {
     },
   },
   methods: {
+    switchLanguage(lang) {
+      this.$i18n.locale = lang;
+    },
     // async fetchInterestRates() {
     //   try {
     //     const response = await fetch("https://mortgageapi.zillow.com/api/getRates?partnerId=YOUR_PARTNER_ID");
@@ -327,6 +328,18 @@ export default {
 </script>
 
 <style scoped>
+.language-switcher {
+  display: flex;
+  justify-content: right;
+  margin-bottom: 10px;
+}
+
+.language-switcher button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
 .mortgage-calc {
   max-width: 90%;
   margin: auto;
