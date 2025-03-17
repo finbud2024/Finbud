@@ -6,10 +6,10 @@ const userHoldingSchema = new mongoose.Schema({
         ref: 'User',
         require: true
     },
-    //Arrays of stocks symbol + quantity
     stocks: [{
         stockSymbol: { type: String, required: true },
-        quantity: { type: Number, required: true }
+        quantity: { type: Number, required: true },
+        purchasePrice: { type: Number, required: true },
     }]   
 });
 

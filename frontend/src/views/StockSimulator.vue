@@ -219,46 +219,39 @@
             <table>
               <thead>
                 <tr>
-                  <th>Symbol</th>
-                  <th>Name</th>
-                  <th>Quantity</th>
-                  <th>Avg Price</th>
-                  <th>Current Price</th>
-                  <th>Market Value</th>
+                  <th>Stock Ticker</th>
+                  <!-- <th>Company Name</th> -->
+                  <th>Share Quantity</th>
+                  <th>Total Purchased Value</th>
+                  <th>Current Price per Share</th>
+                  <th>Current Market Value</th>
                   <th>Gain/Loss</th>
                   <th>% Change</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td class="symbol">AAPL</td>
-                  <td>Apple Inc.</td>
-                  <td>12</td>
-                  <td>$145.82</td>
-                  <td>$179.66</td>
-                  <td>$2,155.92</td>
-                  <td class="positive">+$406.08</td>
-                  <td class="positive">+23.2%</td>
+                <tr v-if="loadingHoldings">
+                  <td colspan="8" class="loading-message">Loading your holdings...</td>
                 </tr>
-                <tr>
-                  <td class="symbol">MSFT</td>
-                  <td>Microsoft Corp</td>
-                  <td>8</td>
-                  <td>$258.74</td>
-                  <td>$327.89</td>
-                  <td>$2,623.12</td>
-                  <td class="positive">+$553.20</td>
-                  <td class="positive">+26.7%</td>
+                <tr v-else-if="holdingsError">
+                  <td colspan="8" class="error-message">{{ holdingsError }}</td>
                 </tr>
-                <tr>
-                  <td class="symbol">GOOGL</td>
-                  <td>Alphabet Inc.</td>
-                  <td>5</td>
-                  <td>$134.18</td>
-                  <td>$157.73</td>
-                  <td>$788.65</td>
-                  <td class="positive">+$117.75</td>
-                  <td class="positive">+17.5%</td>
+                <tr v-else-if="userHoldings.length === 0">
+                  <td colspan="8" class="empty-message">No holdings found. Start investing to build your portfolio.</td>
+                </tr>
+                <tr v-for="(holding, index) in userHoldings" :key="index">
+                  <td class="symbol">{{ holding.symbol }}</td>
+                  <!-- <td>{{ holding.name || holding.symbol + ' Inc.' }}</td> -->
+                  <td>{{ holding.quantity }}</td>
+                  <td>${{ formatNumber(holding.purchasePrice) }}</td>
+                  <td>${{ formatNumber(holding.currentPrice || holding.purchasePrice) }}</td>
+                  <td>${{ formatNumber(calculateMarketValue(holding)) }}</td>
+                  <td :class="getGainLossClass(holding)">
+                    {{ formatGainLoss(calculateGainLoss(holding)) }}
+                  </td>
+                  <td :class="getGainLossClass(holding)">
+                    {{ formatPercentage(calculatePercentChange(holding)) }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -392,7 +385,10 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 3. Set up regular investment schedule to optimize dollar-cost averaging`,
       portfolioTypingSpeed: 20, // ms per character
       portfolioWordByWordTyping: true,
-      portfolioBotHideTimeout: null
+      portfolioBotHideTimeout: null,
+      userHoldings: [],
+      loadingHoldings: false,
+      holdingsError: null,
     };
   },
   methods: {
@@ -896,7 +892,106 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           this.isPortfolioTyping = false;
         }
       }
+    },
+
+    async fetchUserHoldings() {
+      this.loadingHoldings = true;
+      this.holdingsError = null;
+      
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/holdings/${this.fixedUserId}`);
+        console.log(response.data.stocks)
+        if (response.data.stocks) {
+          // Map the API response to our UI format
+          this.userHoldings = response.data.stocks.map(holding => ({
+            symbol: holding.stockSymbol,
+            name: holding.stockSymbol + ' Inc.', 
+            quantity: holding.quantity,
+            purchasePrice: holding.purchasePrice,
+            currentPrice: holding.currentPrice || holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)) // Temporary: use current price or generate one with random variation
+          }));
+          
+         
+          this.updateCurrentPrices();
+        } else {
+          this.userHoldings = [];
+        }
+      } catch (error) {
+        console.error('Error fetching holdings:', error);
+        this.holdingsError = 'Could not load your investment holdings. Please try again later.';
+      } finally {
+        this.loadingHoldings = false;
+      }
+    },
+    
+    async updateCurrentPrices() {
+      const symbols = [...new Set(this.userHoldings.map(h => h.symbol))];
+      if (symbols.length === 0) return;
+      
+      try {
+        for (const symbol of symbols) {
+          try {
+            const stockData = await fetchSimBannerStockDatav3(symbol);
+            if (stockData) {
+              const currentPrice = stockData.regularPrice || stockData.currentPrice || stockData.close;
+              
+              this.userHoldings = this.userHoldings.map(holding => {
+                if (holding.symbol === symbol) {
+                  return {
+                    ...holding,
+                    currentPrice: currentPrice
+                  };
+                }
+                return holding;
+              });
+            }
+          } catch (err) {
+            console.warn(`Could not fetch current price for ${symbol}:`, err);
+          }
+        }
+      } catch (error) {
+        console.error('Error updating current prices:', error);
+      }
+    },
+    
+    calculateMarketValue(holding) {
+      return holding.quantity * (holding.currentPrice || holding.purchasePrice);
+    },
+    
+    calculateGainLoss(holding) {
+      const currentValue = this.calculateMarketValue(holding);
+      const costBasis = holding.purchasePrice;
+      return currentValue - costBasis;
+    },
+    
+    calculatePercentChange(holding) {
+      const gainLoss = this.calculateGainLoss(holding);
+      const costBasis = holding.quantity * holding.purchasePrice;
+      return (gainLoss / costBasis) * 100;
+    },
+    
+    getGainLossClass(holding) {
+      const gainLoss = this.calculateGainLoss(holding);
+      return gainLoss > 0 ? 'positive' : gainLoss < 0 ? 'negative' : '';
+    },
+    
+    formatNumber(value) {
+      if (!value) return '0.00';
+      return parseFloat(value).toFixed(2);
+    },
+    
+    formatGainLoss(value) {
+      if (!value) return '+$0.00';
+      const prefix = value >= 0 ? '+' : '';
+      return `${prefix}$${Math.abs(value).toFixed(2)}`;
+    },
+    
+    formatPercentage(value) {
+      if (!value) return '0.0%';
+      const prefix = value >= 0 ? '+' : '';
+      return `${prefix}${Math.abs(value).toFixed(1)}%`;
     }
+
   },
   watch: {
     "$route.query": {
@@ -968,6 +1063,10 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
               }, 500);
             }, 300);
           }, 500);
+
+         
+          console.log("Fetching user holdings...");
+          this.fetchUserHoldings();
         } else if (this.showPortfolioBot) {
       
           this.hidePortfolioBot();
@@ -1830,5 +1929,15 @@ h1{
   .portfolio-bot-container.bot-hidden {
     transform: translateX(310px) translateY(50px);
   }
+}
+
+.loading-message, .error-message, .empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+.error-message {
+  color: #dc3545;
 }
 </style>
