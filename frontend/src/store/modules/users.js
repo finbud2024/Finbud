@@ -5,7 +5,7 @@ export default {
     state: {
         userID: null,
         userData: null,
-        isLoading: false,
+        isLoading: true,
         error: null
     },
     mutations: {
@@ -66,6 +66,9 @@ export default {
     getters: {
         isAuthenticated(state) {
             return state.userID !== null;
+        },
+        isAuthLoading(state) {
+            return state.isLoading;
         },
         currentUser(state) {
             return state.userData;

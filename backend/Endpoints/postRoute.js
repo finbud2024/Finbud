@@ -8,7 +8,7 @@ import { isAuthenticated } from '../middleware/auth.js';
 const postRouter = express.Router();
 
 // Get all posts in a forum
-postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
+postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
   try {
     const forumSlug = decodeURIComponent(req.params.forumSlug);
     const forum = await Forum.findOne({ slug: forumSlug });
@@ -42,7 +42,7 @@ postRouter.get("/forum/:forumSlug(*)", async (req, res) => {
 });
 
 // Get a specific post
-postRouter.get("/post/:postId", async (req, res) => {
+postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
   try {
     const { postId } = req.params;
 
@@ -89,7 +89,7 @@ postRouter.get("/post/:postId", async (req, res) => {
 });
 
 // Like/unlike a post
-postRouter.post("/post/:postId/like", async (req, res) => {
+postRouter.post("/post/:postId/like", isAuthenticated, async (req, res) => {
   try {
     const { postId } = req.params;
     const { action, userId } = req.body; 
@@ -124,7 +124,7 @@ postRouter.post("/post/:postId/like", async (req, res) => {
 });
 
 
-postRouter.post("/post/:postId/like-comment", async (req, res) => {
+postRouter.post("/post/:postId/like-comment", isAuthenticated, async (req, res) => {
   try {
     const { postId } = req.params;
     const { commentId, action, userId } = req.body;  
