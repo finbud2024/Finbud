@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from "@/utils/api";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
 import ShareButton from "@/components/ShareButton.vue";
 import { mapGetters } from "vuex";
@@ -99,8 +99,8 @@ export default {
       const action = this.isLiked ? "like" : "unlike";
 
       try {
-        const response = await axios.post(
-          `/.netlify/functions/server/api/posts/post/${this.thread._id}/like`,
+        const response = await api.post(
+          `/api/posts/post/${this.thread._id}/like`,
           { userId: this.userId, action }
         );
 
