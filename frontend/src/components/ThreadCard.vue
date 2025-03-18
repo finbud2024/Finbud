@@ -28,9 +28,15 @@
       <span class="reaction">
         <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
       </span>
-      <span class="reaction">
+
+      <!-- Share (Repeat) Button -->
+      <span class="reaction" @click.stop="toggleShare">
         <Repeat class="icon" /> {{ thread?.reactions?.shares || 0 }}
       </span>
+
+      <!-- Share Popup Component -->
+      <ShareButton v-if="showShare" :postId="thread._id" @close="toggleShare" />
+
       <span class="reaction">
         <Send class="icon" />
       </span>
@@ -41,20 +47,42 @@
 <script>
 import axios from "axios";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
+import ShareButton from "@/components/ShareButton.vue";
+import { mapGetters } from "vuex";
 
 export default {
-  components: { Heart, MessageCircle, Repeat, Send },
+  components: { Heart, MessageCircle, Repeat, Send, ShareButton },
   props: {
-    thread: Object,
+    thread: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
+      isHovered: false,
       isLiked: false,
+      showShare: false,  // <-- Added to track share popup visibility
     };
+  },
+  computed: {
+    ...mapGetters({
+      userId: "users/userId"
+    })
+  },
+  watch: {
+    thread: {
+      immediate: true,
+      handler(newThread) {
+        if (newThread && newThread.reactions && Array.isArray(newThread.reactions.likedUsers)) {
+          this.isLiked = newThread.reactions.likedUsers.includes(this.userId);
+        }
+      }
+    }
   },
   methods: {
     goToThread() {
-      if (this.thread?._id) {
+      if (this.thread && this.thread._id) {
         this.$router.push({ name: "ThreadView", params: { id: this.thread._id } });
       }
     },
@@ -63,6 +91,9 @@ export default {
       const options = { year: "numeric", month: "short", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
     },
+    toggleShare() {
+      this.showShare = !this.showShare;
+    },
     async toggleLike() {
       this.isLiked = !this.isLiked;
       const action = this.isLiked ? "like" : "unlike";
@@ -70,9 +101,23 @@ export default {
       try {
         const response = await axios.post(
           `/.netlify/functions/server/api/posts/post/${this.thread._id}/like`,
-          { userId: "67b3c1f309b3978d12ea0b8f", action }
+          { userId: this.userId, action }
         );
+
         this.thread.reactions.likes = response.data.likes;
+
+        if (!this.thread.reactions.likedUsers) {
+          this.$set(this.thread.reactions, "likedUsers", []);
+        }
+
+        if (action === "like" && !this.thread.reactions.likedUsers.includes(this.userId)) {
+          this.thread.reactions.likedUsers.push(this.userId);
+        } else if (action === "unlike") {
+          const index = this.thread.reactions.likedUsers.indexOf(this.userId);
+          if (index !== -1) {
+            this.thread.reactions.likedUsers.splice(index, 1);
+          }
+        }
       } catch (error) {
         console.error("❌ Error liking post:", error);
       }
@@ -80,6 +125,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .thread-card {

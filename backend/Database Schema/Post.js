@@ -5,7 +5,8 @@ const CommentSchema = new mongoose.Schema({
   body: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   reactions: {
-    likes: { type: Number, default: 0 }
+    likes: { type: Number, default: 0 },
+    likedUsers: { type: [mongoose.Schema.Types.ObjectId], default: [] }  
   }
 });
 
@@ -17,6 +18,7 @@ const PostSchema = new mongoose.Schema({
   comments: [CommentSchema], 
   reactions: {
     likes: { type: Number, default: 0 },
+    likedUsers: { type: [mongoose.Schema.Types.ObjectId], default: [] },
     comments: { type: Number, default: 0 },
     shares: { type: Number, default: 0 }
   },

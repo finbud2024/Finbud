@@ -5,7 +5,7 @@ const forumRouter = express.Router();
 
 forumRouter.get("/", async (req, res) => {
   try {
-    const forums = await Forum.find();
+    const forums = await Forum.find().sort({ _id: 1 });;
     res.json(forums);
   } catch (err) {
     res.status(500).json({ error: err.message });

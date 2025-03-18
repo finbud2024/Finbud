@@ -12,7 +12,6 @@
     </div>
 
     <button @click="navigateToStartThread" class="start-thread-btn">
-      <component :is="MessageSquarePlus" class="icon" />
       Start new thread
     </button>
 
@@ -20,9 +19,13 @@
 </template>
 
 <script>
-import { useRouter } from "vue-router";
+import { useRouter, useRoute} from "vue-router";
 import * as LucideIcons from "lucide-vue-next";
-import { MessageSquarePlus } from "lucide-vue-next";
+import { ref, watchEffect } from "vue";
+import axios from "axios";
+
+const route = useRoute();
+const forum = ref(null);
 
 export default {
   props: {
@@ -30,16 +33,16 @@ export default {
   },
   setup(props) {
     const router = useRouter();
+    const route = useRoute();  
 
     const navigateToStartThread = () => {
       router.push({ path: "/start-thread", query: { forum: props.forum?.slug || "p/general" } });
     };
 
-    return { LucideIcons, navigateToStartThread };
+    return { LucideIcons, navigateToStartThread, route }; 
   }
 };
 </script>
-
 
 
 <style scoped>

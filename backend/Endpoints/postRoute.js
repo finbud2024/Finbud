@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import Post from "../Database Schema/Post.js";
 import Forum from "../Database Schema/Forum.js";
-import User from "../Database Schema/User.js"; // Ensure correct import
+import User from "../Database Schema/User.js";
 import { isAuthenticated } from '../middleware/auth.js';
 
 const postRouter = express.Router();
@@ -92,7 +92,7 @@ postRouter.get("/post/:postId", async (req, res) => {
 postRouter.post("/post/:postId/like", async (req, res) => {
   try {
     const { postId } = req.params;
-    const { action } = req.body;
+    const { action, userId } = req.body; 
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return res.status(400).json({ error: "Invalid Post ID format" });
@@ -101,26 +101,33 @@ postRouter.post("/post/:postId/like", async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    post.reactions = post.reactions || { likes: 0, comments: 0, shares: 0 };
+    post.reactions = post.reactions || { likes: 0, likedUsers: [] };
+    if (!Array.isArray(post.reactions.likedUsers)) {
+      post.reactions.likedUsers = [];
+    }
 
-    if (action === "like") {
+    const userIndex = post.reactions.likedUsers.indexOf(userId);
+
+    if (action === "like" && userIndex === -1) {
       post.reactions.likes += 1;
-    } else if (action === "unlike" && post.reactions.likes > 0) {
+      post.reactions.likedUsers.push(userId);
+    } else if (action === "unlike" && userIndex !== -1) {
       post.reactions.likes -= 1;
+      post.reactions.likedUsers.splice(userIndex, 1);
     }
 
     await post.save();
-    res.json({ success: true, likes: post.reactions.likes });
+    res.json({ success: true, likes: post.reactions.likes, likedUsers: post.reactions.likedUsers });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Like/unlike a comment
+
 postRouter.post("/post/:postId/like-comment", async (req, res) => {
   try {
     const { postId } = req.params;
-    const { commentId, action, userId } = req.body;
+    const { commentId, action, userId } = req.body;  
 
     if (!mongoose.Types.ObjectId.isValid(postId) || !mongoose.Types.ObjectId.isValid(commentId)) {
       return res.status(400).json({ error: "Invalid Post ID or Comment ID format" });
@@ -133,7 +140,6 @@ postRouter.post("/post/:postId/like-comment", async (req, res) => {
     if (!comment) return res.status(404).json({ error: "Comment not found" });
 
     comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
-
     if (!Array.isArray(comment.reactions.likedUsers)) {
       comment.reactions.likedUsers = [];
     }
@@ -155,11 +161,15 @@ postRouter.post("/post/:postId/like-comment", async (req, res) => {
   }
 });
 
+
 postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) => {  
   try {
     const { postId } = req.params;
-    const { body } = req.body;
-    const userId = req.user._id;  // ✅ Get user ID from session
+    const { body, userId } = req.body; 
+
+    if (!userId) {
+      return res.status(400).json({ error: "Missing user ID" });
+    }
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
@@ -180,7 +190,7 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
       authorId: author._id,
       body,
       createdAt: new Date(),
-      reactions: { likes: 0 }
+      reactions: { likes: 0 },
     };
 
     post.comments.push(newComment);
@@ -196,9 +206,9 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
         likes: newComment.reactions.likes,
         author: {
           displayName: author.identityData.displayName || "Anonymous",
-          profilePicture: author.identityData.profilePicture || "/default-avatar.png"
-        }
-      }
+          profilePicture: author.identityData.profilePicture || "/default-avatar.png",
+        },
+      },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -207,10 +217,13 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
 
 
 // Create a new post/thread 
-postRouter.post("/", isAuthenticated, async (req, res) => {  
+postRouter.post("/", isAuthenticated, async (req, res) => {
   try {
-    const { forumId, title, body } = req.body; 
-    const userId = req.user._id;  
+    const { forumId, title, body, userId } = req.body; 
+
+    if (!userId) {
+      return res.status(400).json({ error: "Missing user ID" });
+    }
 
     if (!forumId || !title.trim() || !body.trim()) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -218,18 +231,21 @@ postRouter.post("/", isAuthenticated, async (req, res) => {
 
     const newPost = new Post({
       forumId,
-      authorId: userId,  
+      authorId: userId, 
       title,
       body,
       comments: [],
-      reactions: { likes: 0, comments: 0, shares: 0 }
+      reactions: { likes: 0, comments: 0, shares: 0 },
     });
 
     await newPost.save();
     res.json({ message: "Thread created successfully", thread: newPost });
+
   } catch (err) {
+    console.error("Error saving post:", err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 export default postRouter;

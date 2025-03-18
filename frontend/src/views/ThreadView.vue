@@ -1,268 +1,294 @@
-<template>
-  <div class="forum-layout">
-    <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
-    <div class="content">
-      <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
+  <template>
+    <div class="forum-layout">
+      <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
+      <div class="content">
+        <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
-      <div class="thread-container" v-if="thread">
-        <div class="thread-content">
-          <div class="thread-header">
-            <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author Avatar" class="author-avatar" />
-            <div class="thread-meta">
-              <h1 class="thread-title">{{ thread?.title || "Untitled Thread" }}</h1>
-              <div class="thread-info">
-                <span class="author">{{ thread?.author?.displayName || "Anonymous" }}</span>
-                <span class="separator">•</span>
-                <span class="thread-date">{{ formatDate(thread?.createdAt) }}</span>
-              </div>
-            </div>
-          </div>
-
-          <p class="thread-body">{{ thread?.body || "No content available." }}</p>
-
-          <div class="thread-footer">
-            <span class="reaction like-reaction" @click="toggleLike">
-              <Heart class="icon" :class="{ 'liked': isLiked }" />
-              <span :class="{ 'liked-text': isLiked }">{{ thread.reactions.likes || 0 }}</span>
-            </span>
-            <span class="reaction">
-              <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
-            </span>
-            <span class="reaction">
-              <Repeat class="icon" /> {{ thread?.reactions?.shares || 0 }}
-            </span>
-            <span class="reaction">
-              <Send class="icon" />
-            </span>
-          </div>
-
-          <div class="comment-box-container">
-            <textarea v-model="newComment" class="comment-box" placeholder="Add a comment..."></textarea>
-            <button @click="addComment" class="comment-button">Comment</button>
-          </div>
-
-          <div class="replies">
-            <h2>Replies</h2>
-            <div v-for="(comment, index) in thread?.comments" :key="comment?._id" class="reply">
-              <img :src="comment?.author?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
-              <div class="reply-content">
-                <div class="reply-header">
-                  <strong class="reply-author">{{ comment?.author?.displayName || "Anonymous" }}</strong>
-                  <span class="reply-date">• {{ formatDate(comment?.createdAt) }}</span>
-                </div>
-
-                <p class="reply-text">{{ comment?.body || "No content available." }}</p>
-
-                <div class="reply-actions">
-                  <span class="reaction" @click="toggleCommentLike(index)">
-                    <Heart class="icon" :class="{ 'liked': isCommentLiked(comment) }" />
-                    <span :class="{ 'liked-text': isCommentLiked(comment) }">{{ comment.reactions.likes || 0 }}</span>
-                  </span>
+        <div class="thread-container" v-if="thread">
+          <div class="thread-content">
+            <div class="thread-header">
+              <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author Avatar" class="author-avatar" />
+              <div class="thread-meta">
+                <h1 class="thread-title">{{ thread?.title || "Untitled Thread" }}</h1>
+                <div class="thread-info">
+                  <span class="author">{{ thread?.author?.displayName || "Anonymous" }}</span>
+                  <span class="separator">•</span>
+                  <span class="thread-date">{{ formatDate(thread?.createdAt) }}</span>
                 </div>
               </div>
             </div>
-          </div>
 
+            <p class="thread-body">{{ thread?.body || "No content available." }}</p>
+
+            <div class="thread-footer">
+              <span class="reaction like-reaction" @click="toggleLike">
+                <Heart class="icon" :class="{ 'liked': isLiked }" />
+                <span :class="{ 'liked-text': isLiked }">{{ thread.reactions.likes || 0 }}</span>
+              </span>
+              <span class="reaction">
+                <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
+              </span>
+
+              <span class="reaction" @click="toggleShare">
+                <Repeat class="icon" /> {{ thread.reactions.shares || 0 }}
+              </span>
+
+              <ShareButton v-if="showShare" :postId="thread._id" @close="toggleShare" />
+
+              <span class="reaction">
+                <Send class="icon" />
+              </span>
+            </div>
+
+            <div class="comment-box-container">
+              <textarea v-model="newComment" class="comment-box" placeholder="Add a comment..."></textarea>
+              <button @click="addComment" class="comment-button">Comment</button>
+            </div>
+
+            <div class="replies">
+              <h2>Replies</h2>
+              <div v-for="(comment, index) in thread?.comments" :key="comment?._id" class="reply">
+                <img :src="comment?.author?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
+                <div class="reply-content">
+                  <div class="reply-header">
+                    <strong class="reply-author">{{ comment?.author?.displayName || "Anonymous" }}</strong>
+                    <span class="reply-date">• {{ formatDate(comment?.createdAt) }}</span>
+                  </div>
+
+                  <p class="reply-text">{{ comment?.body || "No content available." }}</p>
+
+                  <div class="reply-actions">
+                    <span class="reaction" @click="toggleCommentLike(index)">
+                      <Heart class="icon" :class="{ 'liked': comment.isLiked }" />
+                      <span :class="{ 'liked-text': comment.isLiked }">{{ comment.reactions.likes || 0 }}</span>
+
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div v-else class="error-message">
+          <p>Thread not found.</p>
         </div>
       </div>
-
-      <div v-else class="error-message">
-        <p>Thread not found.</p>
-      </div>
     </div>
-  </div>
-</template>
+  </template>
 
-<script>
-import axios from "axios";
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
-import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
-import ForumSidebar from "@/components/ForumSidebar.vue";
-import ForumBanner from "@/components/ForumBanner.vue";
+  <script>
+  import axios from "axios";
+  import { ref, computed, onMounted } from "vue";
+  import { useRoute, useRouter } from "vue-router";
+  import { useStore } from "vuex";
+  import { useHead } from "@vueuse/head"; 
+  import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
+  import ShareButton from "@/components/ShareButton.vue";
+  import ForumSidebar from "@/components/ForumSidebar.vue";
+  import ForumBanner from "@/components/ForumBanner.vue";
 
-export default {
-  components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send },
-  setup() {
-    const store = useStore();
-    const route = useRoute();
-    const router = useRouter();
+  export default {
+    components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send, ShareButton },
+    setup() {
+      const store = useStore();
+      const route = useRoute();
+      const router = useRouter();
 
-    const newComment = ref("");
-    const thread = ref(null);
-    const forumDetails = ref(null);
-    const isLiked = ref(false);
+      const newComment = ref("");
+      const loading = ref(true);
+      const thread = ref(null);
+      const forumDetails = ref(null);
+      const isLiked = ref(false);
+      const showShare = ref(false);
 
-    const userId = computed(() => store.getters["users/userId"]);
-    const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
+      const toggleShare = () => {
+        showShare.value = !showShare.value;
+      };
 
-    // Fetch thread data
-    const fetchThread = async () => {
-      try {
-        const postId = route.params.id;
-        const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`, {
-          withCredentials: true, // Ensure cookies are sent
+      const userId = computed(() => { return store.getters["users/userId"] || localStorage.getItem("userID"); });    
+      const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
+
+      const updateMetaTags = (post) => {
+        if (!post) return;
+
+        const postURL = `https://finbud.com/forum/thread/${post._id}`;
+        const defaultImage = "https://finbud.pro/img/botrmbg.50ade46a.png"; 
+
+        useHead({
+          title: post.title || "FinBud - Discuss Finance & Investment",
+          meta: [
+            { name: "description", content: post.body.substring(0, 150) || "Join discussions on finance and investment." },
+            { property: "og:title", content: post.title || "FinBud" },
+            { property: "og:description", content: post.body.substring(0, 150) },
+            { property: "og:image", content: post.image || defaultImage },
+            { property: "og:url", content: postURL },
+            { property: "og:type", content: "article" },
+            { property: "twitter:card", content: "summary_large_image" },
+            { property: "twitter:title", content: post.title || "FinBud" },
+            { property: "twitter:description", content: post.body.substring(0, 150) },
+            { property: "twitter:image", content: post.image || defaultImage },
+          ],
         });
+      };
 
-        thread.value = response.data || null;
+      const fetchThread = async () => {
+        try {
+          loading.value = true;
+          const postId = route.params.id;
 
-        if (thread.value?.forumId) {
-          forumDetails.value = {
-            name: thread.value.forumId.name,
-            logo: thread.value.forumId.logo,
-            slug: thread.value.forumId.slug
-          };
-        }
+          const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`, {
+            withCredentials: true, 
+          });
 
-        thread.value.reactions = thread.value.reactions || { likes: 0, comments: 0, shares: 0, likedUsers: [] };
+          thread.value = response.data || null;
 
-        if (!Array.isArray(thread.value.reactions.likedUsers)) {
-          thread.value.reactions.likedUsers = [];
-        }
-
-        isLiked.value = thread.value.reactions.likedUsers.includes(userId.value);
-
-        thread.value.comments.forEach(comment => {
-          comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
-
-          if (!Array.isArray(comment.reactions.likedUsers)) {
-            comment.reactions.likedUsers = [];
+          if (thread.value?.forumId) {
+            forumDetails.value = {
+              name: thread.value.forumId.name,
+              logo: thread.value.forumId.logo,
+              slug: thread.value.forumId.slug
+            };
           }
 
-          comment.isLiked = comment.reactions.likedUsers.includes(userId.value);
-        });
-
-      } catch (error) {
-        console.error("❌ Error fetching thread:", error);
-      }
-    };
-
-    // Ensure authentication before fetching thread
-    onMounted(() => {
-      if (!isAuthenticated.value) {
-        router.push("/login"); // Redirect if not logged in
-      } else {
-        fetchThread();
-      }
-    });
-
-    const formatDate = (dateString) => {
-      if (!dateString) return "Unknown Date";
-      const options = { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
-      return new Date(dateString).toLocaleString(undefined, options);
-    };
-
-    const addComment = async () => {
-      if (!newComment.value.trim()) return;
-
-      try {
-        const response = await axios.post(
-          `/.netlify/functions/server/api/posts/post/${thread.value._id}/add-comment`,
-          { body: newComment.value },
-          { withCredentials: true }
-        );
-
-        const newCommentData = response.data.comment;
-        newCommentData.reactions = newCommentData.reactions || { likes: 0, likedUsers: [] };
-
-        if (!Array.isArray(newCommentData.reactions.likedUsers)) {
-          newCommentData.reactions.likedUsers = [];
-        }
-
-        thread.value.comments.push(newCommentData);
-        thread.value.reactions.comments += 1;
-        newComment.value = "";
-      } catch (error) {
-        console.error("❌ Error adding comment:", error);
-      }
-    };
-
-    const toggleLike = async () => {
-      const action = isLiked.value ? "unlike" : "like";
-
-      try {
-        const response = await axios.post(
-          `/.netlify/functions/server/api/posts/post/${thread.value._id}/like`,
-          { action },
-          { withCredentials: true }
-        );
-
-        thread.value.reactions.likes = response.data.likes;
-
-        if (action === "like") {
-          if (!thread.value.reactions.likedUsers.includes(userId.value)) {
-            thread.value.reactions.likedUsers.push(userId.value);
+          thread.value.reactions = thread.value.reactions || { likes: 0, likedUsers: [] };
+          if (!Array.isArray(thread.value.reactions.likedUsers)) {
+            thread.value.reactions.likedUsers = [];
           }
+
+          isLiked.value = thread.value.reactions.likedUsers.includes(userId.value); 
+
+          thread.value.comments.forEach(comment => {
+            comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
+
+            if (!Array.isArray(comment.reactions.likedUsers)) {
+              comment.reactions.likedUsers = [];
+            }
+
+            comment.isLiked = comment.reactions.likedUsers.includes(userId.value); 
+          });
+
+        } catch (error) {
+          console.error("Error fetching thread:", error);
+        } finally {
+          loading.value = false;  
+        }
+      };
+
+      onMounted(() => {
+        if (!userId.value) { 
+          store.dispatch("users/fetchCurrentUser").then(() => {
+            if (!userId.value) {
+              router.push("/login"); 
+            } else {
+              fetchThread();
+            }
+          });
         } else {
-          thread.value.reactions.likedUsers = thread.value.reactions.likedUsers.filter(id => id !== userId.value);
+          fetchThread(); 
         }
+      });
 
-        isLiked.value = !isLiked.value;
+      const formatDate = (dateString) => {
+        if (!dateString) return "Unknown Date";
+        const options = { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
+        return new Date(dateString).toLocaleString(undefined, options);
+      };
 
-      } catch (error) {
-        console.error("❌ Error toggling like:", error);
-      }
-    };
+      const addComment = async () => {
+        if (!newComment.value.trim()) return;
 
-    const isCommentLiked = (comment) => {
-      return Array.isArray(comment.reactions?.likedUsers) && comment.reactions.likedUsers.includes(userId.value);
-    };
+        try {
+          const response = await axios.post(
+            `/.netlify/functions/server/api/posts/post/${thread.value._id}/add-comment`,
+            {
+              body: newComment.value,
+              userId: store.getters["users/userId"], 
+            },
+            { withCredentials: true }
+          );
 
-    const toggleCommentLike = async (index) => {
-      const comment = thread.value.comments[index];
+          const newCommentData = response.data.comment;
+          newCommentData.reactions = newCommentData.reactions || { likes: 0, likedUsers: [] };
 
-      if (!comment.reactions) {
-        comment.reactions = { likes: 0, likedUsers: [] };
-      }
-      if (!Array.isArray(comment.reactions.likedUsers)) {
-        comment.reactions.likedUsers = [];
-      }
-
-      const isLiked = comment.reactions.likedUsers.includes(userId.value);
-      const action = isLiked ? "unlike" : "like";
-
-      try {
-        const response = await axios.post(
-          `/.netlify/functions/server/api/posts/post/${thread.value._id}/like-comment`,
-          { commentId: comment._id, action },
-          { withCredentials: true }
-        );
-
-        thread.value.comments[index].reactions.likes = response.data.likes;
-
-        if (action === "like") {
-          if (!comment.reactions.likedUsers.includes(userId.value)) {
-            comment.reactions.likedUsers.push(userId.value);
+          if (!Array.isArray(newCommentData.reactions.likedUsers)) {
+            newCommentData.reactions.likedUsers = [];
           }
-        } else {
-          comment.reactions.likedUsers = comment.reactions.likedUsers.filter(id => id !== userId.value);
+
+          thread.value.comments.push(newCommentData);
+          thread.value.reactions.comments += 1;
+          newComment.value = "";
+        } catch (error) {
+          console.error("Error adding comment:", error);
+        }
+      };
+
+      const toggleLike = async () => {
+        const action = isLiked.value ? "unlike" : "like";
+
+        try {
+          const response = await axios.post(
+            `/.netlify/functions/server/api/posts/post/${thread.value._id}/like`,
+            { action, userId: userId.value },  
+            { withCredentials: true }
+          );
+
+          thread.value.reactions.likes = response.data.likes;
+          thread.value.reactions.likedUsers = response.data.likedUsers;
+
+          isLiked.value = thread.value.reactions.likedUsers.includes(userId.value); 
+        } catch (error) {
+          console.error("Error toggling like:", error);
+        }
+      };
+
+      const toggleCommentLike = async (index) => {
+        const comment = thread.value.comments[index];
+
+        if (!comment.reactions) {
+          comment.reactions = { likes: 0, likedUsers: [] };
+        }
+        if (!Array.isArray(comment.reactions.likedUsers)) {
+          comment.reactions.likedUsers = [];
         }
 
-        thread.value.comments[index].isLiked = !isLiked;
+        const isLiked = comment.reactions.likedUsers.includes(userId.value);
+        const action = isLiked ? "unlike" : "like";
 
-      } catch (error) {
-        console.error("❌ Error toggling comment like:", error);
-      }
-    };
+        try {
+          const response = await axios.post(
+            `/.netlify/functions/server/api/posts/post/${thread.value._id}/like-comment`,
+            { commentId: comment._id, action, userId: userId.value },  
+            { withCredentials: true }
+          );
 
-    return {
-      newComment,
-      thread,
-      forumDetails,
-      isLiked,
-      userId,
-      addComment,
-      toggleLike,
-      isCommentLiked,
-      toggleCommentLike,
-      formatDate 
-    };
-  }
-};
-</script>
+          thread.value.comments[index].reactions.likes = response.data.likes;
+          thread.value.comments[index].reactions.likedUsers = response.data.likedUsers;
 
+          thread.value.comments[index].isLiked = thread.value.comments[index].reactions.likedUsers.includes(userId.value); 
+        } catch (error) {
+          console.error("Error toggling comment like:", error);
+        }
+      };
 
+      return {
+        newComment,
+        thread,
+        loading,
+        forumDetails,
+        isLiked,
+        userId,
+        addComment,
+        toggleLike,
+        toggleCommentLike,
+        formatDate,
+        showShare,
+        toggleShare
+      };
+    }
+  };
+  </script>
 
 
 <style scoped>
