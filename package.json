@@ -47,7 +47,7 @@
         "jstat": "^1.9.6",
         "langchain": "^0.2.12",
         "leaflet": "^1.9.4",
-        "lightweight-charts": "^4.1.4",
+        "lightweight-charts": "^4.2.3",
         "luxon": "^3.4.4",
         "mathjs": "^13.0.3",
         "moment": "^2.30.1",
