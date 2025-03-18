@@ -1,13 +1,24 @@
 <template>
-  <div class="mortgage-calc">
-    <div class="language-switcher">
-      <button @click="switchLanguage('en')">English</button>
-      <button @click="switchLanguage('vi')">Tiếng Việt</button>
-    </div>
-    
+  <div class="language-switcher">
+    <button @click="switchLanguage('en')">English</button>
+    <button @click="switchLanguage('vi')">Tiếng Việt</button>
+  </div>
+  <div class="mortgage-calc">    
     <h1>{{ $t('title') }}</h1>
 
     <div class="content-wrapper">
+      <!-- Bot Chat Component -->
+      <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
+        <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
+        <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
+          <div v-if="isTyping" class="typing-animation">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <div v-else class="typed-message" v-html="typedContent"></div>
+        </div>
+      </div>
       <!-- Input Fields Section -->
       <div class="input-section">
         <div class="input-group">
@@ -145,6 +156,22 @@ Chart.register(PieController, ArcElement, Tooltip, Legend);
 export default {
   data() {
     return {
+      // Bot Chat data
+      showBot: false,
+      hidingBot: false,
+      showMessage: false,
+      hidingMessage: false,
+      isTyping: false,
+      botMessage: "This pie shows monthly payment including all the fee.", 
+      typedContent: "",
+      typingSpeed: 50, // milliseconds between characters
+      typingIndex: 0,
+      typingTimer: null,
+      botHideTimer: null,
+      words: [],
+      currentWordIndex: 0,
+
+      // morgage data
       homePrice: 425000,
       downPayment: 85000,
       downPaymentPercentage: 20,
@@ -201,6 +228,75 @@ export default {
     //     console.error("Error fetching mortgage rates:", error);
     //   }
     // },
+
+    // Bot caht method
+    startBotAnimation() {
+      if (this.typingTimer) {
+        clearTimeout(this.typingTimer);
+      }
+      if (this.botHideTimer) {
+        clearTimeout(this.botHideTimer);
+      }
+
+      this.hidingBot = false;
+      this.hidingMessage = false;
+      this.typedContent = "";
+
+      this.showBot = true;
+
+      setTimeout(() => {
+        this.showMessage = true;
+        this.isTyping = true;
+
+        setTimeout(() => {
+          this.isTyping = false;
+          this.startWordByWordTyping();
+        }, 1500);
+      }, 800);
+    },
+
+    startWordByWordTyping() {
+      this.words = this.botMessage.split(/( |\n)/g).filter(word => word !== "");
+      this.currentWordIndex = 0;
+      this.typedContent = "";
+      this.typeNextWord();
+    },
+
+    typeNextWord() {
+      if (this.currentWordIndex < this.words.length) {
+        const word = this.words[this.currentWordIndex];
+        this.typedContent += word === "\n" ? "<br>" : word;
+        this.currentWordIndex++;
+
+        this.typingTimer = setTimeout(() => {
+          this.typeNextWord();
+        }, this.typingSpeed * (word.length / 2 + 1));
+      } else {
+        this.scheduleHideBot();
+      }
+    },
+
+    scheduleHideBot() {
+      this.botHideTimer = setTimeout(() => {
+        this.hideBot();
+      }, 60000);
+    },
+
+    hideBot() {
+      this.hidingMessage = true;
+
+      setTimeout(() => {
+        this.hidingBot = true;
+
+        setTimeout(() => {
+          this.showBot = false;
+          this.showMessage = false;
+          this.hidingBot = false;
+          this.hidingMessage = false;
+          this.typedContent = "";
+        }, 1000);
+      }, 500);
+    },
     
     // Calculate Down Payment Percentage based on Down Payment
     calculateDownPaymentPercentage() {
@@ -300,9 +396,6 @@ export default {
     }
 
   },
-
-
-
     watch: {
       calculateMonthlyPayment() {
       this.renderChart();
@@ -324,6 +417,7 @@ export default {
 
   mounted() {
     this.renderChart();
+    this.startBotAnimation();
   }
 };
 </script>
@@ -550,5 +644,122 @@ h3 {
   opacity: 0;
   transform: translateY(20px);
 }
+
+/* Add the bot chat styles from the previous example here */
+.bot-chat-container {
+  position: fixed;
+  left: -350px;
+  top: 30%;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+  z-index: 100;
+  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
+  opacity: 0;
+  transform: translateX(0);
+  pointer-events: none;
+}
+
+.bot-chat-container.bot-visible {
+  transform: translateX(350px);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bot-chat-container.bot-hidden {
+  transform: translateX(350px) translateY(50px);
+  opacity: 0;
+  transition: transform 1s ease, opacity 1s ease;
+}
+
+.bot-image {
+  width: 40px;
+  height: auto;
+  display: block;
+  position: relative;
+  background: transparent;
+  transition: transform 0.5s ease;
+}
+
+.bot-visible .bot-image {
+  animation: botBounce 1s ease-out;
+}
+
+@keyframes botBounce {
+  0% { transform: translateY(20px); opacity: 0; }
+  60% { transform: translateY(-5px); }
+  80% { transform: translateY(2px); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.bot-message {
+  margin-top: 10px;
+  background: #2196F3;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 18px;
+  max-width: 280px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: 0.3s;
+}
+
+.bot-message.message-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.bot-message.message-hidden {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.typing-animation {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  opacity: 0.3;
+}
+
+.dot:nth-child(1) {
+  animation: typing 1s infinite 0s;
+}
+
+.dot:nth-child(2) {
+  animation: typing 1s infinite 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation: typing 1s infinite 0.4s;
+}
+
+.typed-message {
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+@keyframes typing {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
 
 </style>
