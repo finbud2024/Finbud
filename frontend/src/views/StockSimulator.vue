@@ -7,6 +7,7 @@
         <li @click="activeSection = 'investment'" :class="{ active: activeSection === 'investment' }">Investment</li>
         <li @click="activeSection = 'transactionHistory'" :class="{ active: activeSection === 'transactionHistory' }">Transaction History</li>
         <li @click="activeSection = 'filters'" :class="{ active: activeSection === 'filters' }">Filters</li>
+        <li @click="activeSection = 'predictiveCalc'" :class="{ active: activeSection === 'predictiveCalc' }">Predictive Calculator</li>
         <li @click="activeSection = 'portfolio'" :class="{ active: activeSection === 'portfolio' }">Your Portfolio</li>
       </ul>
     </nav>
@@ -163,7 +164,6 @@
       <div class="stockDisplayContainer" v-if="count">
         <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
       </div>
-    </section>
 
     <section v-if="activeSection === 'portfolio'" class="portfolio-section">
       <div class="portfolio-container">
@@ -282,16 +282,23 @@
       </div>
     </section>
 
-    <PreviewOrderModal 
-      v-if="showModal" 
-      :stockSymbol="stockSymbol" 
-      :quantity="quantity" 
-      :estimatedPrice="estimatedPrice" 
-      :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
-      @close="showModal = false"  
-      @clear-order="clearForm"   
-      @submit-order="submitOrder(action)" 
-    />
+  </section>
+  <PreviewOrderModal 
+    v-if="showModal" 
+    :stockSymbol="stockSymbol" 
+    :quantity="quantity" 
+    :estimatedPrice="estimatedPrice" 
+    :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
+    @close="showModal = false"  
+    @clear-order="clearForm"   
+    @submit-order="submitOrder(action)" 
+  />
+
+  <section v-if="activeSection === 'predictiveCalc'">
+    <div class="predictive-calc">
+      <PredicitveCalc />
+    </div>
+  </section>
   </div>
 </template>
 
@@ -304,6 +311,7 @@ import stockData from './hardcodeData/StockData.js';
 import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue';
 import TransactionHistory from '../components/StockSimulatorPage/TransactionHistory.vue';
 import PerformanceChart from '../components/PerformanceChart.vue'; 
+import PredicitveCalc from '../components/StockSimulatorPage/PredicitveCalc.vue';
 import PortfolioPerformance from '../components/StockSimulatorPage/PortfolioPerformance.vue';
 import { toast } from 'vue3-toastify';
 import axios from 'axios';
@@ -317,6 +325,7 @@ export default {
     TransactionHistory,
     PerformanceChart,
     BannerCardSimulator,
+    PredicitveCalc,
     PortfolioPerformance
   },
   data() {
