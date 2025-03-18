@@ -4,6 +4,7 @@
 
 import passport from 'passport';
 import express from 'express';
+import {setupUserDocuments} from '../utils/setupUserDocuments.js';
 const authRoute = express.Router();
 
 //AUTHENTICATE route: Uses passport to authenticate with GitHub.
@@ -18,8 +19,8 @@ authRoute.get('/auth/google', passport.authenticate('google', {
 //OAuth authentication process is complete.
 //req.isAuthenticated() tells us whether authentication was successful.
 authRoute.get('/auth/google/callback', 
-  (req, res, next) => {
-    passport.authenticate('google', (err, user, info) => {
+   (req, res, next) => {
+    passport.authenticate('google',async (err, user, info) => {
       console.log("in google authenticate callback");
       console.log("Auth info received:", info);
       
@@ -32,6 +33,8 @@ authRoute.get('/auth/google/callback',
         console.log("No user found"); 
         return res.redirect('/login'); 
       }
+
+      await setupUserDocuments(user._id);
       
       // Check if this is a new user
       const isNewUser = info && info.isNewUser;
@@ -62,7 +65,7 @@ authRoute.get('/auth/google/callback',
 
 //lOGIN ROUTE FOR LOCAL USER
 authRoute.post('/auth/login', passport.authenticate('local', { failWithError: true }),
-  (req, res) => {
+  async (req, res) => {
     console.log("/login route reached: successful authentication.");
     
     // Check if this is a new user (for local login)
@@ -75,6 +78,7 @@ authRoute.post('/auth/login', passport.authenticate('local', { failWithError: tr
       req.session.isNewUser = true;
     }
     
+    await setupUserDocuments(user._id);
     // Send the user data along with the isNewUser flag
     res.status(200).json({
       user: req.user,

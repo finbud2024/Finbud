@@ -4,7 +4,8 @@ const userHoldingSchema = new mongoose.Schema({
     userId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        require: true
+        require: true,
+        unique: true
     },
     stocks: [{
         stockSymbol: { type: String, required: true },
