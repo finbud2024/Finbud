@@ -222,8 +222,8 @@
                   <th>Stock Ticker</th>
                   <!-- <th>Company Name</th> -->
                   <th>Share Quantity</th>
-                  <th>Total Purchased Value</th>
                   <th>Current Price per Share</th>
+                  <th>Total Purchased Value</th>
                   <th>Current Market Value</th>
                   <th>Gain/Loss</th>
                   <th>% Change</th>
@@ -243,8 +243,8 @@
                   <td class="symbol">{{ holding.symbol }}</td>
                   <!-- <td>{{ holding.name || holding.symbol + ' Inc.' }}</td> -->
                   <td>{{ holding.quantity }}</td>
-                  <td>${{ formatNumber(holding.purchasePrice) }}</td>
                   <td>${{ formatNumber(holding.currentPrice || holding.purchasePrice) }}</td>
+                  <td>${{ formatNumber(holding.purchasePrice) }}</td>
                   <td>${{ formatNumber(calculateMarketValue(holding)) }}</td>
                   <td :class="getGainLossClass(holding)">
                     {{ formatGainLoss(calculateGainLoss(holding)) }}
@@ -343,7 +343,7 @@ export default {
         marketCap: '',
         volume: ''
       },
-      fixedUserId: this.$store.getters['users/userId'],
+      fixedUserId: this.$store.getters['users/userId'] || null,
       action: 'buy',
       selectedTimeFrame: '1W',
       chatbotTriggeredByScroll: false,
@@ -982,13 +982,13 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     
     formatGainLoss(value) {
       if (!value) return '+$0.00';
-      const prefix = value >= 0 ? '+' : '';
+      const prefix = value >= 0 ? '+' : '-';
       return `${prefix}$${Math.abs(value).toFixed(2)}`;
     },
-    
+
     formatPercentage(value) {
       if (!value) return '0.0%';
-      const prefix = value >= 0 ? '+' : '';
+      const prefix = value >= 0 ? '+' : '-';
       return `${prefix}${Math.abs(value).toFixed(1)}%`;
     }
 
