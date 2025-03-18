@@ -143,74 +143,102 @@
   </script>
   
   <style scoped>
-  .company-card {
-    width: 100%;
-    max-width: 800px;
-    border: 1px solid #e7e7e7;
-    border-radius: 4px;
-    padding: 1.5rem;
-    font-family: sans-serif;
-    margin: 0;
-    margin-left: 20px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .company-name {
-    font-size: 1.8rem;
-    font-weight: bold;
-  }
-  
-  .price-info {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-  }
-  
-  .current-price {
-    font-size: 1.8rem;
-  }
-  
-  .price-change {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-  
-  /* Change color based on positive/negative movement */
-  .price-change.positive {
-    color: green;
-  }
-  .price-change.negative {
-    color: red;
-  }
-  
-  .card-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-  }
-  
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    width: 140px;
-  }
-  
-  .label {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 0.3rem;
-  }
-  
-  .value {
-    font-size: 1.3rem;
-  }
+ /* Light & Dark Mode Variables */
+:root {
+  --bg-primary: white;
+  --text-primary: black;
+  --border-color: #e7e7e7;
+  --box-shadow: rgba(0, 0, 0, 0.1);
+  --label-color: #555;
+}
+
+:root.dark-mode {
+  --bg-primary: #1e1e1e;
+  --text-primary: #f5f5f5;
+  --border-color: #444;
+  --box-shadow: rgba(255, 255, 255, 0.1);
+  --label-color: #bbbbbb;
+}
+
+/* Company Card */
+.company-card {
+  width: 100%;
+  max-width: 800px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1.5rem;
+  font-family: sans-serif;
+  margin: 0;
+  margin-left: 20px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: 0 2px 4px var(--box-shadow);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.company-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* Price Information */
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.current-price {
+  font-size: 1.8rem;
+}
+
+.price-change {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Change color based on positive/negative movement */
+.price-change.positive {
+  color: #4caf50;
+}
+
+.price-change.negative {
+  color: #e74c3c;
+}
+
+/* Stats Section */
+.card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  width: 140px;
+}
+
+.label {
+  font-size: 0.9rem;
+  color: var(--label-color);
+  margin-bottom: 0.3rem;
+}
+
+.value {
+  font-size: 1.3rem;
+}
+
+/* Dark Mode Support for Loading Text */
+:root.dark-mode div {
+  color: var(--text-primary);
+}
   </style>
   

@@ -144,9 +144,7 @@ export default {
     },
     showFooter() {
       return (
-        this.$route.path !== "/chat-view" &&
-        this.$route.path !== "/quizz" &&
-        !this.$route.fullPath.includes("/stock-simulator?")
+          this.$route.path === "/about"
       );
     },
     showHeader() {
