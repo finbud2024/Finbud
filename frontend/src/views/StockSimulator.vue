@@ -574,7 +574,7 @@ export default {
         .catch(error => {
           this.showModal = false;
           console.error('Error submitting order:', error);
-          toast.error('Order submitted unsuccessfully', {autoClose: 1000});
+          // toast.error('Order submitted unsuccessfully', {autoClose: 1000});
         });
     },
     async fetchBankingAccountBalance() {

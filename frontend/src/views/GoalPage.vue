@@ -630,7 +630,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         this.accountBalance = data.bankingAccountData.accountBalance;
       } catch (error) {
         console.error('Error fetching financial data:', error);
-        toast.error('Failed to load financial data', { autoClose: 1000 });
+
       }
     },
 
