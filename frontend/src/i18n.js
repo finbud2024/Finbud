@@ -16,7 +16,10 @@ const messages = {
     hoaFees: "HOA Fees",
     monthlyTotal: "Monthly total",
     errorMinHomePrice: "Minimum of $10,000 required",
-    errorInterestRate: "Must be greater than 0"
+    errorInterestRate: "Must be greater than 0",
+    loan30: "30-year fixed",
+    loan15: "15-year fixed",
+    loan5: "5-year ARM"
   },
   vi: {
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
@@ -31,9 +34,12 @@ const messages = {
     homeownersInsurance: "Bảo hiểm nhà",
     pmi: "Bảo hiểm thế chấp tư nhân",
     hoaFees: "Phí HOA",
-    monthlyTotal: "Tổng cộng hàng tháng",
+    monthlyTotal: "Hàng tháng",
     errorMinHomePrice: "Tối thiểu $10,000",
-    errorInterestRate: "Phải lớn hơn 0"
+    errorInterestRate: "Phải lớn hơn 0",
+    loan30: "Lãi suất cố định 30 năm",
+    loan15: "Lãi suất cố định 15 năm ",
+    loan5: "Lãi suất điều chỉnh 5 năm"
   }
 };
 

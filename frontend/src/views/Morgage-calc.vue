@@ -1,8 +1,8 @@
 <template>
   <div class="mortgage-calc">
     <div class="language-switcher">
-      <button @click="switchLanguage('en')">🇺🇸 English</button>
-      <button @click="switchLanguage('vi')">🇻🇳 Tiếng Việt</button>
+      <button @click="switchLanguage('en')">English</button>
+      <button @click="switchLanguage('vi')">Tiếng Việt</button>
     </div>
     
     <h1>{{ $t('title') }}</h1>
@@ -36,9 +36,9 @@
         <div class="input-group">
           <label>{{ $t('loanTerm') }}</label>
           <select class="loan-group" v-model="loanTerm">
-            <option value="30">30-year fixed</option>
-            <option value="15">15-year fixed</option>
-            <option value="5">5-year ARM</option>
+            <option value="30">{{ $t('loan30') }}</option>
+            <option value="15">{{ $t('loan15') }}</option>
+            <option value="5">{{ $t('loan5') }}</option>
           </select>
         </div>
 
@@ -190,6 +190,7 @@ export default {
   methods: {
     switchLanguage(lang) {
       this.$i18n.locale = lang;
+      this.renderChart(); 
     },
     // async fetchInterestRates() {
     //   try {
@@ -261,7 +262,7 @@ export default {
             },
             // Custom Plugin for Center Text
             centerText: {
-              text: `Monthly total<br><span style="font-size: 24px; font-weight: bold;">$${this.calculateMonthlyPayment}</span>`, 
+              text: `${this.$t('monthlyTotal')}<br><span style="font-size: 24px; font-weight: bold;">$${this.calculateMonthlyPayment}</span>`, 
             }
           }
         },
@@ -279,7 +280,7 @@ export default {
             ctx.textAlign = 'center';
 
             // Draw the custom text in two lines
-            const text = `Monthly total`;
+            const text = this.$t('monthlyTotal');
             const textX = Math.round(width / 2);
             const textY = Math.round(height / 2) - 50;
 
