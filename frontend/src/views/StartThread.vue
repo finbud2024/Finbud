@@ -31,7 +31,7 @@ import ForumSidebar from "@/components/ForumSidebar.vue";
 import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
-import axios from "axios";
+import api from "@/utils/api";
 
 export default {
   components: { ForumSidebar },
@@ -47,7 +47,7 @@ export default {
 
     const fetchForums = async () => {
       try {
-        const response = await axios.get("/.netlify/functions/server/api/forums");
+        const response = await api.get("/api/forums");
         forums.value = response.data;
 
         const forumFromQuery = response.data.find(f => f.slug === route.query.forum);
@@ -79,9 +79,7 @@ export default {
 
         console.log("📤 Submitting Thread Data:", newThread);
 
-        const response = await axios.post("/.netlify/functions/server/api/posts", newThread, {
-          withCredentials: true
-        });
+        const response = await api.post("/api/posts", newThread);
 
         console.log("Thread Created:", response.data);
         title.value = "";

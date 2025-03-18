@@ -20,24 +20,27 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from "@/utils/api";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import ForumBanner from "@/components/ForumBanner.vue";
 import { computed, ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 export default {
   components: { ThreadCard, ForumSidebar, ForumBanner },
   setup() {
     const route = useRoute();
+    const router = useRouter();
+    const store = useStore();
     const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
     const threads = ref([]);
 
     const fetchForums = async () => {
       try {
-        const response = await axios.get(`/.netlify/functions/server/api/forums`);
+        const response = await api.get("/api/forums");
         forums.value = response.data;
       } catch (error) {
         console.error("❌ Failed to fetch forums:", error);
@@ -47,7 +50,7 @@ export default {
     const fetchThreads = async () => {
       try {
         console.log(`Fetching threads for: ${activeForum.value}`);
-        const response = await axios.get(`/.netlify/functions/server/api/posts/forum/${activeForum.value}`);
+        const response = await api.get(`/api/posts/forum/${activeForum.value}`);
         console.log("✅ Fetched threads:", response.data);
         threads.value = response.data;
       } catch (error) {
@@ -65,16 +68,29 @@ export default {
     });
 
     const filteredThreads = computed(() => threads.value);
+    
+    const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
-    onMounted(() => {
-      fetchForums();
-      fetchThreads();
+    onMounted(async () => {
+      // First ensure we have the current user data
+      await store.dispatch("users/fetchCurrentUser");
+      
+      // Check if user is authenticated
+      if (!store.getters["users/isAuthenticated"]) {
+        router.push("/login");
+        return;
+      }
+      
+      // Then fetch forums and threads
+      await fetchForums();
+      await fetchThreads();
     });
 
     return {
       activeForum,
       activeForumDetails,
-      filteredThreads
+      filteredThreads,
+      isAuthenticated
     };
   }
 };

@@ -79,6 +79,7 @@
   </template>
 
   <script>
+  import api from "@/utils/api";
   import axios from "axios";
   import { ref, computed, onMounted } from "vue";
   import { useRoute, useRouter } from "vue-router";
@@ -107,7 +108,7 @@
         showShare.value = !showShare.value;
       };
 
-      const userId = computed(() => { return store.getters["users/userId"] || localStorage.getItem("userID"); });    
+      const userId = computed(() => store.getters["users/userId"]);    
       const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
       const updateMetaTags = (post) => {
@@ -138,9 +139,7 @@
           loading.value = true;
           const postId = route.params.id;
 
-          const response = await axios.get(`/.netlify/functions/server/api/posts/post/${postId}`, {
-            withCredentials: true, 
-          });
+          const response = await api.get(`/api/posts/post/${postId}`);
 
           thread.value = response.data || null;
 
@@ -176,18 +175,17 @@
         }
       };
 
-      onMounted(() => {
-        if (!userId.value) { 
-          store.dispatch("users/fetchCurrentUser").then(() => {
-            if (!userId.value) {
-              router.push("/login"); 
-            } else {
-              fetchThread();
-            }
-          });
-        } else {
-          fetchThread(); 
+      onMounted(async () => {
+        // Always try to fetch the current user first
+        await store.dispatch("users/fetchCurrentUser");
+        
+        if (!store.getters["users/isAuthenticated"]) {
+          router.push("/login");
+          return;
         }
+        
+        // Only fetch thread data if we're authenticated
+        await fetchThread();
       });
 
       const formatDate = (dateString) => {
@@ -200,13 +198,12 @@
         if (!newComment.value.trim()) return;
 
         try {
-          const response = await axios.post(
-            `/.netlify/functions/server/api/posts/post/${thread.value._id}/add-comment`,
+          const response = await api.post(
+            `/api/posts/post/${thread.value._id}/add-comment`,
             {
               body: newComment.value,
               userId: store.getters["users/userId"], 
-            },
-            { withCredentials: true }
+            }
           );
 
           const newCommentData = response.data.comment;
@@ -228,10 +225,9 @@
         const action = isLiked.value ? "unlike" : "like";
 
         try {
-          const response = await axios.post(
-            `/.netlify/functions/server/api/posts/post/${thread.value._id}/like`,
-            { action, userId: userId.value },  
-            { withCredentials: true }
+          const response = await api.post(
+            `/api/posts/post/${thread.value._id}/like`,
+            { action, userId: userId.value }
           );
 
           thread.value.reactions.likes = response.data.likes;
@@ -257,10 +253,9 @@
         const action = isLiked ? "unlike" : "like";
 
         try {
-          const response = await axios.post(
-            `/.netlify/functions/server/api/posts/post/${thread.value._id}/like-comment`,
-            { commentId: comment._id, action, userId: userId.value },  
-            { withCredentials: true }
+          const response = await api.post(
+            `/api/posts/post/${thread.value._id}/like-comment`,
+            { commentId: comment._id, action, userId: userId.value }
           );
 
           thread.value.comments[index].reactions.likes = response.data.likes;
