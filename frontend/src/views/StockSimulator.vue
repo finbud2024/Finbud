@@ -484,16 +484,24 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       this.partialMessage = "";
       this.isThinking = true;
       this.$nextTick(async () => {
-        try{
-          const message = await this.generateBalanceInsights();
-        console.log('balance insight', message)
+     
+  try {
+    const message = await this.generateBalanceInsights(); // Ensure this is awaited!
+
+    console.log("Message received:", message); // Debugging
+    if (!message || message.trim() === "") {
+      console.warn("No valid message received from generateBalanceInsights()");
+      this.partialMessage = "No insights available. Currently API may have some problem";
       this.isThinking = false;
-      let charIndex = 0;
-      
-      if (this.typingInterval) {
-        clearInterval(this.typingInterval);
-      }
-      
+      return;
+    }
+
+    this.isThinking = false;
+    let charIndex = 0;
+
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
       this.typingInterval = setInterval(() => {
         if (charIndex < message.length) {
           this.partialMessage += message.charAt(charIndex);
