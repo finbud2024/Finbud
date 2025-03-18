@@ -7,6 +7,8 @@
         <li @click="activeSection = 'investment'" :class="{ active: activeSection === 'investment' }">Investment</li>
         <li @click="activeSection = 'transactionHistory'" :class="{ active: activeSection === 'transactionHistory' }">Transaction History</li>
         <li @click="activeSection = 'filters'" :class="{ active: activeSection === 'filters' }">Filters</li>
+        <li @click="activeSection = 'predictiveCalc'" :class="{ active: activeSection === 'predictiveCalc' }">Predictive Calculator</li>
+        <li @click="activeSection = 'portfolio'" :class="{ active: activeSection === 'portfolio' }">Your Portfolio</li>
       </ul>
     </nav>
 
@@ -162,19 +164,141 @@
       <div class="stockDisplayContainer" v-if="count">
         <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
       </div>
+
+    <section v-if="activeSection === 'portfolio'" class="portfolio-section">
+      <div class="portfolio-container">
+        <div class="portfolio-header">
+          <h2>Your Investment Portfolio</h2>
+          <div class="portfolio-actions">
+            <button class="refresh-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <polyline points="23 20 23 14 17 14"></polyline>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+              </svg>
+              Refresh
+            </button>
+            <button class="export-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Export
+            </button>
+          </div>
+        </div>
+        
+        <div class="portfolio-overview">
+          <div class="overview-card total">
+            <div class="overview-title">Total Portfolio Value</div>
+            <div class="overview-value">$24,892.31</div>
+            <div class="overview-change positive">+$3,892.31 (18.5%)</div>
+          </div>
+          
+          <div class="overview-card">
+            <div class="overview-title">Stocks</div>
+            <div class="overview-value">$16,453.79</div>
+            <div class="overview-change positive">+$2,731.42 (19.9%)</div>
+          </div>
+          
+          <div class="overview-card">
+            <div class="overview-title">Cash</div>
+            <div class="overview-value">$8,438.52</div>
+            <div class="overview-change neutral">+$0.00 (0.0%)</div>
+          </div>
+        </div>
+        
+        <div class="portfolio-content">
+          <PortfolioPerformance />
+        </div>
+        
+        <div class="holdings-section">
+          <h3>Your Holdings</h3>
+          <div class="holdings-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Stock Ticker</th>
+                  <!-- <th>Company Name</th> -->
+                  <th>Share Quantity</th>
+                  <th>Current Price per Share</th>
+                  <th>Total Purchased Value</th>
+                  <th>Current Market Value</th>
+                  <th>Gain/Loss</th>
+                  <th>% Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="loadingHoldings">
+                  <td colspan="8" class="loading-message">Loading your holdings...</td>
+                </tr>
+                <tr v-else-if="holdingsError">
+                  <td colspan="8" class="error-message">{{ holdingsError }}</td>
+                </tr>
+                <tr v-else-if="userHoldings.length === 0">
+                  <td colspan="8" class="empty-message">No holdings found. Start investing to build your portfolio.</td>
+                </tr>
+                <tr v-for="(holding, index) in userHoldings" :key="index">
+                  <td class="symbol">{{ holding.symbol }}</td>
+                  <!-- <td>{{ holding.name || holding.symbol + ' Inc.' }}</td> -->
+                  <td>{{ holding.quantity }}</td>
+                  <td>${{ formatNumber(holding.currentPrice || holding.purchasePrice) }}</td>
+                  <td>${{ formatNumber(holding.purchasePrice) }}</td>
+                  <td>${{ formatNumber(calculateMarketValue(holding)) }}</td>
+                  <td :class="getGainLossClass(holding)">
+                    {{ formatGainLoss(calculateGainLoss(holding)) }}
+                  </td>
+                  <td :class="getGainLossClass(holding)">
+                    {{ formatPercentage(calculatePercentChange(holding)) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Bot Trigger Element for Portfolio Section -->
+        <div ref="portfolioBotTrigger" class="chatbot-trigger"></div>
+        
+        <!-- Investment Assistant Bot for Portfolio Section -->
+        <div class="portfolio-bot-container" :class="{ 'bot-visible': showPortfolioBot, 'bot-hidden': hidingPortfolioBot }">
+          <img 
+            class="bot-image" 
+            src="@/assets/botrmbg.png" 
+            alt="Bot" 
+            @click="togglePortfolioBotMessage"
+            :class="{ 'clickable': showPortfolioBot }"
+          />
+          <div class="bot-message" :class="{ 'message-visible': showPortfolioMessage, 'message-hidden': hidingPortfolioMessage }">
+            <div v-if="isPortfolioTyping" class="typing-animation">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div v-else class="typed-message" v-html="currentPortfolioTypedMessage"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
+  </section>
+  <PreviewOrderModal 
+    v-if="showModal" 
+    :stockSymbol="stockSymbol" 
+    :quantity="quantity" 
+    :estimatedPrice="estimatedPrice" 
+    :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
+    @close="showModal = false"  
+    @clear-order="clearForm"   
+    @submit-order="submitOrder(action)" 
+  />
 
-    <PreviewOrderModal 
-      v-if="showModal" 
-      :stockSymbol="stockSymbol" 
-      :quantity="quantity" 
-      :estimatedPrice="estimatedPrice" 
-      :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
-      @close="showModal = false"  
-      @clear-order="clearForm"   
-      @submit-order="submitOrder(action)" 
-    />
+  <section v-if="activeSection === 'predictiveCalc'">
+    <div class="predictive-calc">
+      <PredicitveCalc />
+    </div>
+  </section>
   </div>
 </template>
 
@@ -187,6 +311,8 @@ import stockData from './hardcodeData/StockData.js';
 import PreviewOrderModal from '../components/StockSimulatorPage/PreviewOrderModal.vue';
 import TransactionHistory from '../components/StockSimulatorPage/TransactionHistory.vue';
 import PerformanceChart from '../components/PerformanceChart.vue'; 
+import PredicitveCalc from '../components/StockSimulatorPage/PredicitveCalc.vue';
+import PortfolioPerformance from '../components/StockSimulatorPage/PortfolioPerformance.vue';
 import { toast } from 'vue3-toastify';
 import axios from 'axios';
 
@@ -198,7 +324,9 @@ export default {
     PreviewOrderModal,
     TransactionHistory,
     PerformanceChart,
-    BannerCardSimulator
+    BannerCardSimulator,
+    PredicitveCalc,
+    PortfolioPerformance
   },
   data() {
     return {
@@ -224,7 +352,7 @@ export default {
         marketCap: '',
         volume: ''
       },
-      fixedUserId: this.$store.getters['users/userId'],
+      fixedUserId: this.$store.getters['users/userId'] || null,
       action: 'buy',
       selectedTimeFrame: '1W',
       chatbotTriggeredByScroll: false,
@@ -243,7 +371,33 @@ export default {
       headerBotVisible: true,
       headerBotVisible: true,
       chatbotTransactionMessage: "",
-      showChatTransactionBubble: true
+      showChatTransactionBubble: true,
+      
+      // New Portfolio Bot related data
+      showPortfolioBot: false,
+      hidingPortfolioBot: false,
+      showPortfolioMessage: false,
+      hidingPortfolioMessage: false,
+      isPortfolioTyping: false,
+      portfolioMessageManuallyToggled: false,
+      currentPortfolioTypedMessage: '',
+      portfolioBotObserver: null,
+      portfolioBotMessage: `📊 <strong>Portfolio Analysis:</strong><br><br>
+Your portfolio is showing impressive performance with a total value of $24,892.31 and overall gain of 18.5%.<br><br>
+<strong>Strengths:</strong><br>
+✅ Strong tech sector allocation (AAPL, MSFT, GOOGL) driving growth<br>
+✅ All positions showing positive returns (17.5%-26.7%)<br>
+✅ Healthy cash position of $8,438.52 (33.9% of portfolio)<br><br>
+<strong>Suggestions:</strong><br>
+1. Consider diversifying beyond tech to reduce sector risk<br>
+2. Look into dividend-paying stocks to balance growth<br>
+3. Set up regular investment schedule to optimize dollar-cost averaging`,
+      portfolioTypingSpeed: 20, // ms per character
+      portfolioWordByWordTyping: true,
+      portfolioBotHideTimeout: null,
+      userHoldings: [],
+      loadingHoldings: false,
+      holdingsError: null,
     };
   },
   methods: {
@@ -330,16 +484,24 @@ export default {
       this.partialMessage = "";
       this.isThinking = true;
       this.$nextTick(async () => {
-        try{
-          const message = await this.generateBalanceInsights();
-        console.log('balance insight', message)
+     
+  try {
+    const message = await this.generateBalanceInsights(); // Ensure this is awaited!
+
+    console.log("Message received:", message); // Debugging
+    if (!message || message.trim() === "") {
+      console.warn("No valid message received from generateBalanceInsights()");
+      this.partialMessage = "No insights available. Currently API may have some problem";
       this.isThinking = false;
-      let charIndex = 0;
-      
-      if (this.typingInterval) {
-        clearInterval(this.typingInterval);
-      }
-      
+      return;
+    }
+
+    this.isThinking = false;
+    let charIndex = 0;
+
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
       this.typingInterval = setInterval(() => {
         if (charIndex < message.length) {
           this.partialMessage += message.charAt(charIndex);
@@ -495,36 +657,36 @@ export default {
       this.action = 'buy';
     },
     async updateEstimatedPrice(symbol) {
-      if (!symbol) return false; // Return false to indicate failure
+      if (!symbol) return false; 
       
       try {
         const stockData = await fetchSimBannerStockDatav3(symbol);
         
         if (stockData) {
-          // Try to get current price - prioritize different price fields
+      
           let price = stockData.regularPrice || stockData.currentPrice || stockData.close;
           
-          // Check if the price is a valid number and not NaN
+    
           if (price && !isNaN(parseFloat(price))) {
             this.estimatedPrice = parseFloat(price);
-            return true; // Return true to indicate success
+            return true; 
           } else {
-            // No valid price field found or price is NaN
+           
             alert(`Sorry, we couldn't find valid price data for ${symbol.toUpperCase()}.`);
             console.warn(`Invalid price data for ${symbol}:`, price);
-            return false; // Return false to indicate failure
+            return false;
           }
         } else {
-          // No stock data returned at all
+      
           alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
           console.error(`No stock data returned for ${symbol}`);
-          return false; // Return false to indicate failure
+          return false; 
         }
       } catch (error) {
-        // API call failed completely
+        
         alert(`Stock symbol ${symbol.toUpperCase()} not found or invalid.`);
         console.error(`Error fetching price for ${symbol}:`, error);
-        return false; // Return false to indicate failure
+        return false; 
       }
     },
 
@@ -540,17 +702,17 @@ export default {
         return;
       }
       
-      // Only fetch the price when the Preview button is clicked
+
       try {
-        // Only show modal if price fetch was successful
+      
         const success = await this.updateEstimatedPrice(this.stockSymbol);
         if (success) {
           this.showModal = true;
         }
-        // If not successful, do nothing (modal won't show)
+      
       } catch (error) {
         console.error("Error in preview order:", error);
-        // Error message already shown in updateEstimatedPrice
+      
       }
     },
     submitOrder(action) {
@@ -574,7 +736,7 @@ export default {
         .catch(error => {
           this.showModal = false;
           console.error('Error submitting order:', error);
-          toast.error('Order submitted unsuccessfully', {autoClose: 1000});
+          // toast.error('Order submitted unsuccessfully', {autoClose: 1000});
         });
     },
     async fetchBankingAccountBalance() {
@@ -604,7 +766,249 @@ export default {
       } catch (error) {
         console.error('Error fetching transaction history:', error);
       }
+    },
+    // Portfolio Bot Methods
+    setupPortfolioBotObserver() {
+      // Using watcher instead
+    },
+    
+    startPortfolioBotAnimation() {
+      this.showPortfolioBot = true;
+      this.hidingPortfolioBot = false;
+      
+      setTimeout(() => {
+        this.showPortfolioMessage = true;
+        this.hidingPortfolioMessage = false;
+        this.isPortfolioTyping = true;
+        
+        setTimeout(() => {
+          if (this.portfolioWordByWordTyping) {
+            this.startPortfolioWordByWordTyping();
+          } else {
+            this.startPortfolioCharacterByCharacterTyping();
+          }
+        }, 1000);
+        
+        this.scheduleHidePortfolioBot();
+      }, 500);
+    },
+    
+    startPortfolioWordByWordTyping() {
+      this.currentPortfolioTypedMessage = '';
+      const words = this.portfolioBotMessage.split(' ');
+      let wordIndex = 0;
+      
+      const typeNextWord = () => {
+        if (wordIndex < words.length) {
+          this.currentPortfolioTypedMessage += words[wordIndex] + ' ';
+          wordIndex++;
+          const delay = Math.random() * 100 + 50;
+          setTimeout(typeNextWord, delay);
+        } else {
+          this.isPortfolioTyping = false;
+        }
+      };
+      
+      typeNextWord();
+    },
+    
+    startPortfolioCharacterByCharacterTyping() {
+      this.currentPortfolioTypedMessage = '';
+      let charIndex = 0;
+      
+      const typeNextChar = () => {
+        if (charIndex < this.portfolioBotMessage.length) {
+          this.currentPortfolioTypedMessage += this.portfolioBotMessage.charAt(charIndex);
+          charIndex++;
+          setTimeout(typeNextChar, this.portfolioTypingSpeed);
+        } else {
+          this.isPortfolioTyping = false;
+        }
+      };
+      
+      typeNextChar();
+    },
+    
+    scheduleHidePortfolioBot() {
+      if (this.portfolioBotHideTimeout) {
+        clearTimeout(this.portfolioBotHideTimeout);
+      }
+      
+      if (!this.portfolioMessageManuallyToggled) {
+        this.portfolioBotHideTimeout = setTimeout(() => {
+          this.hidePortfolioBot();
+        }, 60000);
+      }
+    },
+    
+    hidePortfolioBot() {
+      // If manually toggled, only hide the message
+      if (this.portfolioMessageManuallyToggled) {
+        this.hidingPortfolioMessage = true;
+        setTimeout(() => {
+          this.showPortfolioMessage = false;
+          this.hidingPortfolioMessage = false;
+        }, 500);
+      } else {
+        // Original behavior - hide both bot and message
+        this.hidingPortfolioMessage = true;
+        setTimeout(() => {
+          this.hidingPortfolioBot = true;
+          this.showPortfolioMessage = false;
+          
+          setTimeout(() => {
+            this.showPortfolioBot = false;
+            this.hidingPortfolioBot = false;
+            this.hidingPortfolioMessage = false;
+            // Reset toggle state
+            this.portfolioMessageManuallyToggled = false;
+          }, 1000);
+        }, 500);
+      }
+    },
+    
+    togglePortfolioBotMessage() {
+
+      if (!this.showPortfolioBot) return;
+      
+      this.portfolioMessageManuallyToggled = true;
+      
+     
+      if (this.portfolioBotHideTimeout) {
+        clearTimeout(this.portfolioBotHideTimeout);
+        this.portfolioBotHideTimeout = null;
+      }
+      
+      if (this.showPortfolioMessage) {
+      
+        this.hidingPortfolioMessage = true;
+        
+        
+        setTimeout(() => {
+          this.showPortfolioMessage = false;
+          this.hidingPortfolioMessage = false;
+        }, 500);
+      } else {
+     
+        this.hidingPortfolioMessage = false;
+        this.showPortfolioMessage = true;
+        
+   
+        if (this.currentPortfolioTypedMessage === '') {
+          this.isPortfolioTyping = true;
+        
+          setTimeout(() => {
+            if (this.portfolioWordByWordTyping) {
+              this.startPortfolioWordByWordTyping();
+            } else {
+              this.startPortfolioCharacterByCharacterTyping();
+            }
+          }, 500);
+        } else {
+     
+          this.isPortfolioTyping = false;
+        }
+      }
+    },
+
+    async fetchUserHoldings() {
+      this.loadingHoldings = true;
+      this.holdingsError = null;
+      
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/holdings/${this.fixedUserId}`);
+        console.log(response.data.stocks)
+        if (response.data.stocks) {
+          // Map the API response to our UI format
+          this.userHoldings = response.data.stocks.map(holding => ({
+            symbol: holding.stockSymbol,
+            name: holding.stockSymbol + ' Inc.', 
+            quantity: holding.quantity,
+            purchasePrice: holding.purchasePrice,
+            currentPrice: holding.currentPrice || holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)) // Temporary: use current price or generate one with random variation
+          }));
+          
+         
+          this.updateCurrentPrices();
+        } else {
+          this.userHoldings = [];
+        }
+      } catch (error) {
+        console.error('Error fetching holdings:', error);
+        this.holdingsError = 'Could not load your investment holdings. Please try again later.';
+      } finally {
+        this.loadingHoldings = false;
+      }
+    },
+    
+    async updateCurrentPrices() {
+      const symbols = [...new Set(this.userHoldings.map(h => h.symbol))];
+      if (symbols.length === 0) return;
+      
+      try {
+        for (const symbol of symbols) {
+          try {
+            const stockData = await fetchSimBannerStockDatav3(symbol);
+            if (stockData) {
+              const currentPrice = stockData.regularPrice || stockData.currentPrice || stockData.close;
+              
+              this.userHoldings = this.userHoldings.map(holding => {
+                if (holding.symbol === symbol) {
+                  return {
+                    ...holding,
+                    currentPrice: currentPrice
+                  };
+                }
+                return holding;
+              });
+            }
+          } catch (err) {
+            console.warn(`Could not fetch current price for ${symbol}:`, err);
+          }
+        }
+      } catch (error) {
+        console.error('Error updating current prices:', error);
+      }
+    },
+    
+    calculateMarketValue(holding) {
+      return holding.quantity * (holding.currentPrice || holding.purchasePrice);
+    },
+    
+    calculateGainLoss(holding) {
+      const currentValue = this.calculateMarketValue(holding);
+      const costBasis = holding.purchasePrice;
+      return currentValue - costBasis;
+    },
+    
+    calculatePercentChange(holding) {
+      const gainLoss = this.calculateGainLoss(holding);
+      const costBasis = holding.quantity * holding.purchasePrice;
+      return (gainLoss / costBasis) * 100;
+    },
+    
+    getGainLossClass(holding) {
+      const gainLoss = this.calculateGainLoss(holding);
+      return gainLoss > 0 ? 'positive' : gainLoss < 0 ? 'negative' : '';
+    },
+    
+    formatNumber(value) {
+      if (!value) return '0.00';
+      return parseFloat(value).toFixed(2);
+    },
+    
+    formatGainLoss(value) {
+      if (!value) return '+$0.00';
+      const prefix = value >= 0 ? '+' : '-';
+      return `${prefix}$${Math.abs(value).toFixed(2)}`;
+    },
+
+    formatPercentage(value) {
+      if (!value) return '0.0%';
+      const prefix = value >= 0 ? '+' : '-';
+      return `${prefix}${Math.abs(value).toFixed(1)}%`;
     }
+
   },
   watch: {
     "$route.query": {
@@ -636,9 +1040,60 @@ export default {
         console.error(`Failed to fetch stock data for ${newSymbol}`);
       }
     },
+    activeSection: {
+      handler(newSection) {
+        console.log("Active section changed to:", newSection);
+        
+        // Clear any existing timers to prevent conflicts
+        if (this.portfolioBotHideTimeout) {
+          clearTimeout(this.portfolioBotHideTimeout);
+        }
+        
+        if (newSection === 'portfolio') {
+          console.log("Portfolio section activated");
+          
+          // Reset bot states to ensure it can appear
+          this.showPortfolioBot = false;
+          this.hidingPortfolioBot = false;
+          this.showPortfolioMessage = false; // <-- Reset message state
+          this.hidingPortfolioMessage = false; // <-- Reset message state
+          this.portfolioMessageManuallyToggled = false; // <-- Reset toggle state
+          
+          // Force show the bot with a slight delay
+          setTimeout(() => {
+            console.log("Showing portfolio bot now");
+            this.showPortfolioBot = true;
+            this.hidingPortfolioBot = false;
+            
+            setTimeout(() => {
+              this.showPortfolioMessage = true;
+              this.hidingPortfolioMessage = false;
+              this.isPortfolioTyping = true;
+              
+              // Start typing animation
+              setTimeout(() => {
+                if (this.portfolioWordByWordTyping) {
+                  this.startPortfolioWordByWordTyping();
+                } else {
+                  this.startPortfolioCharacterByCharacterTyping();
+                }
+              }, 500);
+            }, 300);
+          }, 500);
+
+         
+          console.log("Fetching user holdings...");
+          this.fetchUserHoldings();
+        } else if (this.showPortfolioBot) {
+      
+          this.hidePortfolioBot();
+        }
+      },
+      immediate: true // Make it run immediately on component creation
+    }
   },
   async mounted() {
-    // Delayed start for header chatbot to enable fade-in effect
+
     setTimeout(() => {
       this.startHeaderTypingEffect();
     }, 500);
@@ -694,6 +1149,14 @@ export default {
       this.handleScroll();
       this.adjustChartHeight();
     });
+
+    // If portfolio is the initial section, show the bot after a delay
+    if (this.activeSection === 'portfolio') {
+      setTimeout(() => {
+        console.log("Portfolio is initial section, showing bot");
+        this.startPortfolioBotAnimation();
+      }, 1000);
+    }
   },
   beforeUnmount() {
     // Clean up all event listeners
@@ -704,6 +1167,14 @@ export default {
     }
     if (this.typingInterval) {
       clearInterval(this.typingInterval);
+    }
+    
+    // Clean up portfolio bot resources
+    if (this.portfolioBotObserver) {
+      this.portfolioBotObserver.disconnect();
+    }
+    if (this.portfolioBotHideTimeout) {
+      clearTimeout(this.portfolioBotHideTimeout);
     }
   }
 };
@@ -1185,4 +1656,305 @@ h1{
   padding: 20px;
 }
 
+.portfolio-section {
+  padding: 20px;
+}
+
+.portfolio-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.portfolio-container h2 {
+  color: #007bff;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.portfolio-content {
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  min-height: 300px;
+}
+
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.portfolio-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.refresh-btn, .export-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.refresh-btn:hover, .export-btn:hover {
+  background-color: #e9ecef;
+}
+
+.portfolio-overview {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.overview-card {
+  flex: 1;
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  text-align: center;
+}
+
+.overview-title {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.overview-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.overview-change {
+  font-size: 1rem;
+}
+
+.overview-change.positive {
+  color: #28a745;
+}
+
+.overview-change.negative {
+  color: #dc3545;
+}
+
+.overview-change.neutral {
+  color: #6c757d;
+}
+
+.holdings-section {
+  margin-top: 20px;
+}
+
+.holdings-table {
+  overflow-x: auto;
+}
+
+.holdings-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.holdings-table th, .holdings-table td {
+  padding: 12px 15px;
+  border: 1px solid #dee2e6;
+  text-align: left;
+}
+
+.holdings-table th {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.holdings-table td {
+  background-color: white;
+}
+
+.holdings-table .symbol {
+  font-weight: bold;
+}
+
+.holdings-table .positive {
+  color: #28a745;
+}
+
+.holdings-table .negative {
+  color: #dc3545;
+}
+
+/* Bot Chat Styles for Portfolio Section */
+.chatbot-trigger {
+  position: relative;
+  height: 20px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Keep just the left-side positioning styles (around lines 1809-1825) */
+.portfolio-bot-container {
+  position: fixed;
+  left: 20px; /* Change from -350px to visible on page load */
+  bottom: 30px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+  z-index: 1000;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+  pointer-events: all;
+}
+
+.portfolio-bot-container.bot-visible {
+  opacity: 1;
+  transform: translateX(0); /* Don't move, just fade in */
+}
+
+.portfolio-bot-container.bot-hidden {
+  opacity: 0;
+  transform: translateX(-50px);
+  pointer-events: none;
+}
+
+@keyframes botSlideIn {
+  from { transform: translateX(-100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes botSlideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100px); opacity: 0; }
+}
+
+.bot-image {
+  width: 60px;
+  height: auto;
+  display: block;
+  position: relative;
+  background: transparent;
+  transition: transform 0.5s ease;
+  border-radius: 50%;
+}
+
+.bot-visible .bot-image {
+  animation: botBounce 1s ease-out;
+}
+
+@keyframes botBounce {
+  0% { transform: translateY(20px); opacity: 0; }
+  60% { transform: translateY(-5px); }
+  80% { transform: translateY(2px); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.bot-message {
+  margin-top: 10px;
+  margin-left: 10px;
+  background: #007bff;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 18px;
+  max-width: 280px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: 0.3s;
+}
+
+.bot-message.message-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.bot-message.message-hidden {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Typing animation */
+.typing-animation {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  opacity: 0.3;
+}
+
+.dot:nth-child(1) {
+  animation: typing 1s infinite 0s;
+}
+
+.dot:nth-child(2) {
+  animation: typing 1s infinite 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation: typing 1s infinite 0.4s;
+}
+
+@keyframes typing {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.bot-image.clickable {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.bot-image.clickable:hover {
+  transform: scale(1.1);
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 768px) {
+  .portfolio-bot-container {
+    left: -300px;
+    bottom: 20px;
+  }
+  
+  .portfolio-bot-container.bot-visible {
+    transform: translateX(310px);
+  }
+  
+  .portfolio-bot-container.bot-hidden {
+    transform: translateX(310px) translateY(50px);
+  }
+}
+
+.loading-message, .error-message, .empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+.error-message {
+  color: #dc3545;
+}
 </style>
