@@ -1,5 +1,6 @@
 import express from 'express';
 import StockTransaction from '../Database Schema/StockTransaction.js';
+import UserHolding from '../Database Schema/UserHolding.js';
 import User from '../Database Schema/User.js';
 import validateRequest from '../utils/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
@@ -118,7 +119,8 @@ stockTransactionRoute.route('/stock-transactions')
 
     try {
       const user = await User.findById(userId);
-      if (!user) {
+      const holding = await UserHolding.findOne({userId : userId});
+      if (!user || !holding) {
         return res.status(404).send("User not found");
       }
 
@@ -130,19 +132,36 @@ stockTransactionRoute.route('/stock-transactions')
         }
         user.bankingAccountData.cash -= totalCost;
         user.bankingAccountData.stockValue += totalCost;
+        let stock = holding.stocks.find(stock => stock.stockSymbol === stockSymbol);
+        if (stock) {
+          stock.quantity += quantity;
+          stock.purchasePrice = stock.purchasePrice + totalCost;
+        }
+        else {
+          holding.stocks.push({ stockSymbol, quantity, purchasePrice: totalCost });
+        }
       }
       else if (type === "sell") {
-        if (user.bankingAccountData.stockValue < totalCost) {
+        let stock = holding.stocks.find(stock => stock.stockSymbol === stockSymbol);
+        if (!stock || stock.quantity < quantity) {
           return res.status(400).send("Not enough stock value to sell");
         }
         user.bankingAccountData.cash += totalCost;
         user.bankingAccountData.stockValue -= totalCost;
+        stock.quantity -= quantity;
+        stock.purchasePrice = stock.purchasePrice - totalCost
+
+        if (stock.quantity === 0) {
+          holding.stocks = holding.stocks.filter(stock => stock.stockSymbol !== stockSymbol);
+        }
+        
       }
       else {
         return res.status(400).send("Invalid transaction type");
       }
 
       await user.save();
+      await holding.save();
 
       const transaction = new StockTransaction({
         stockSymbol,
