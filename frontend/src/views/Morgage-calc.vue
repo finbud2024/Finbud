@@ -229,7 +229,7 @@ export default {
     //   }
     // },
 
-    // Bot caht method
+    // Bot Chat method
     startBotAnimation() {
       if (this.typingTimer) {
         clearTimeout(this.typingTimer);
