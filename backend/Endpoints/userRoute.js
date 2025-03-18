@@ -1,11 +1,12 @@
 import express from 'express';
 import User from '../Database Schema/User.js';
 import validateRequest from '../utils/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
 
 const userRoute = express.Router();
 
 // GET: Retrieve a specific user with given Id
-userRoute.get("/users/:userId", async (req, res) => {
+userRoute.get("/users/:userId", isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     console.log('in /users/:userId Route (GET) user with ID:' + JSON.stringify(userId));
     try {
@@ -21,7 +22,7 @@ userRoute.get("/users/:userId", async (req, res) => {
 });
 
 // Update user settings
-userRoute.put("/users/:userId/settings", async (req, res) => {
+userRoute.put("/users/:userId/settings", isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     console.log('in /users/:userId/settings Route (PUT) user with ID:', userId);
     console.log('Request body:', req.body);
@@ -54,7 +55,7 @@ userRoute.put("/users/:userId/settings", async (req, res) => {
 });
 
 // PUT: update user with given id
-userRoute.put("/users/:userId", validateRequest(User.schema), async (req, res) => {
+userRoute.put("/users/:userId", isOwnerOrAdmin, validateRequest(User.schema), async (req, res) => {
     const userId = req.params.userId;
     console.log('in /users/:userId Route (PUT) user with ID:' + userId);
     try {
@@ -88,7 +89,7 @@ userRoute.put("/users/:userId", validateRequest(User.schema), async (req, res) =
 });
 
 // DELETE: delete a user with given id
-userRoute.delete("/users/:userId", async (req, res) => {
+userRoute.delete("/users/:userId", isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     console.log('In /users/:userid Route (DELETE) for thread with ID: ' + userId);
     try {
@@ -102,8 +103,8 @@ userRoute.delete("/users/:userId", async (req, res) => {
     }
 });
 
-// GET: get all users from database
-userRoute.get("/users", async (req, res) => {
+// GET: get all users from database - Admin only
+userRoute.get("/users", isAdmin, async (req, res) => {
     console.log("in /users route (GET) all users");
     try {
         const users = await User.find();

@@ -88,7 +88,7 @@ export default {
           openDropdown: false,
         };
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = localStorage.getItem("token");
+        const userId = this.$store.getters['users/userId'];
         const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
         newThread.id = thread.data._id;
@@ -183,7 +183,6 @@ export default {
         thread.clicked = i === index;
       });
       this.$store.dispatch("threads/updateThreadID", threadID);
-      console.log("selected threadID:", threadID);
     },
     cancelEdit(index) {
       this.threads[index].editing = false;
@@ -213,8 +212,7 @@ export default {
   },
   async mounted() {
     if (this.isAuthenticated) {
-      const userId = localStorage.getItem("token");
-      console.log("current UserID:", userId);
+      const userId = this.$store.getters['users/userId'];
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;

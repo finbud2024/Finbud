@@ -356,15 +356,15 @@ export default {
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
 
-      userId: localStorage.getItem('token'),
-      firstName: JSON.parse(localStorage.getItem('user')).identityData.firstName,
-      displayName: JSON.parse(localStorage.getItem('user')).identityData.displayName,
-      profilePic: JSON.parse(localStorage.getItem('user')).identityData.profilePicture,
+      userId: this.$store.getters['users/userId'],
+      firstName: this.$store.getters['users/currentUser']?.identityData?.firstName || '',
+      displayName: this.$store.getters['users/userDisplayName'],
+      profilePic: this.$store.getters['users/userProfileImage'],
       templateChat: `Hey "Tri"! 😊 Here's a closer look at your spending:
 
 📚 You spent $1,233 on books on 03/23/2333. If it's for learning, great! Otherwise, make sure it aligns with your financial goals.
 
-🛒 You spent $425 on “shopping” across multiple entries on 09/07/2024 and 09/14/2024. Grouping these under one category might help track spending better.
+🛒 You spent $425 on "shopping" across multiple entries on 09/07/2024 and 09/14/2024. Grouping these under one category might help track spending better.
 
 🚗 A -$150 car expense—if it's a refund, labeling it clearly will help with accurate tracking.
 
@@ -398,13 +398,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       newCategory: '',
       searchQuery: '', 
       descriptionCharCount: 0,
-      userId: localStorage.getItem("token"),
-      firstName: JSON.parse(localStorage.getItem("user")).identityData
-        .firstName,
-      displayName: JSON.parse(localStorage.getItem("user")).identityData
-        .displayName,
-      profilePic: JSON.parse(localStorage.getItem("user")).identityData
-        .profilePicture,
       showModal: false,
       showAddGoalModal: false,
       showEditTransactionModal: false,
@@ -628,7 +621,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     
     async getAccountBalance() {
       try {
-        const userId = localStorage.getItem('token');
+        const userId = this.$store.getters['users/userId'];
         const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
         const response = await axios.get(api);
         const data = response.data;
@@ -637,7 +630,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         this.accountBalance = data.bankingAccountData.accountBalance;
       } catch (error) {
         console.error('Error fetching financial data:', error);
-        toast.error('Failed to load financial data', { autoClose: 1000 });
+
       }
     },
 
@@ -1518,7 +1511,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: flex; /* Use flexbox for alignment */
   flex-direction: column; /* Stack elements vertically */
   align-items: center; /* Center items horizontally */
-  justify-content: center; /* Center items vertically */
+  justify-content: center; /* Align items to the top */
   margin-left: 0; /* Push to the far right within the wrapper */
   padding: 10px;
   border-radius: 9px;

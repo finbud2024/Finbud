@@ -49,19 +49,19 @@ export default {
   methods: {
     async onLogin() {
       try {
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
         const reqBody = {
           "username": this.username,
           "password": this.password
-        }
-        const response = await axios.post(api,reqBody);
-        //put user info into localStorage and vuex
-        this.$store.dispatch("users/login", response.data._id);
-        localStorage.setItem('user', JSON.stringify(response.data));
-
-        const isNewUser = localStorage.getItem('isNewUser');
-        if (isNewUser === 'true') {
-          localStorage.removeItem('isNewUser');
+        };
+        const response = await axios.post(api, reqBody, { withCredentials: true });
+        
+        // Store user data in Vuex store
+        this.$store.dispatch("users/login", response.data.user);
+        
+        // Check if this is a new user from the server response
+        const isNewUser = response.data.isNewUser;
+        if (isNewUser) {
           this.$router.push('/?showTutorial=true');
         } else {
           this.$router.push('/'); // Redirect to the main page after login
@@ -70,11 +70,10 @@ export default {
         console.error('Login Error:', err.response ? err.response.data : err.message);
         document.getElementById('errorMessage').classList.remove('wrong-password');
       }
-
     },
-    signInWithGoogle(){
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`
-        window.location.href = api;
+    signInWithGoogle() {
+      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      window.location.href = api;
     }
   },
 };

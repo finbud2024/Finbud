@@ -17,8 +17,10 @@ import QuantAnalysis from "@/views/QuantAnalysis.vue";
 import EventHub from "@/views/EventHub.vue";
 import LearningRoadMap from "@/views/LearningRoadMap.vue";
 import QuantSimulator from "@/views/QuantSimulator.vue";
-import MorgageCalc from "@/views/Morgage-calc.vue";
-// import EventMap from '@/components/EventMap.vue';
+import ForumView from "@/views/ForumView.vue";
+import ThreadCard from "@/components/ThreadCard.vue";
+import ThreadView from "@/views/ThreadView.vue";
+import StartThread from "@/views/StartThread.vue";
 
 const routes = [
   {
@@ -115,15 +117,29 @@ const routes = [
     props: true,
   },
   {
-    path: "/morgage-calc",
-    name: "Morgage-calc",
-    component: MorgageCalc,
+    path: "/forum",
+    name: "ForumView",
+    component: ForumView,
+    props: true,
   },
-  // {
-  //   path: '/event-map',
-  //   name: 'EventMap',
-  //   component: EventMap,
-  // }
+  {
+    path: "/thread",
+    name: "ThreadCard",
+    component: ThreadCard,
+    props: true,
+  },
+  {
+    path: "/forum/thread/:id",
+    name: "ThreadView",
+    component: ThreadView,
+    props: true,
+  },
+  {
+    path: "/start-thread",
+    name: "StartThread",
+    component: StartThread,
+    props: true,
+  },
 ];
 
 const router = createRouter({

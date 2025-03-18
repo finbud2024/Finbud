@@ -30,6 +30,15 @@ import ChatBubble from "./components/ChatBubble.vue";
 import axios from "axios";
 import '@fortawesome/fontawesome-free/css/all.css';
 
+// Initialize dark mode from localStorage before Vue loads
+(function initializeDarkMode() {
+  const storedDarkMode = localStorage.getItem('darkMode');
+  if (storedDarkMode === 'true') {
+    document.documentElement.classList.add('dark-mode');
+    document.body.classList.add('dark-mode');
+  }
+})();
+
 export default {
   name: "App",
   components: {
@@ -59,23 +68,78 @@ export default {
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener('click', this.handleClickOutside);
 
-    if (this.isAuthenticated) {
-      const userId = localStorage.getItem("token");
+    console.log("App mounted, checking for tutorial flag");
+    console.log("showTutorial query param:", this.$route.query.showTutorial);
+
+    // Check for isNewUser flag in localStorage as a fallback
+    const isNewUser = localStorage.getItem('isNewUser') === 'true';
+    if (isNewUser && !this.$route.query.showTutorial) {
+      console.log("New user detected from localStorage, adding showTutorial param");
+      this.$router.replace({ 
+        path: this.$route.path, 
+        query: { ...this.$route.query, showTutorial: 'true' } 
+      });
+      // Remove the flag after using it
+      localStorage.removeItem('isNewUser');
+    }
+
+    // Fetch current user data
+    await this.$store.dispatch("users/fetchCurrentUser");
+    const userData = this.$store.getters["users/currentUser"];
+
+    if (this.isAuthenticated && userData) {
+      const userId = userData._id;
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-      const historyThreads = await axios.get(threadApi);
-      const historyThreadsData = historyThreads.data;
-      if (historyThreadsData.length === 0) {
-        // If new user with no thread, create a new one
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const reqBody = { userId };
-        const thread = await axios.post(api, reqBody);
-        this.threadId = thread._id;
-      } else {
-        this.threadId = historyThreadsData[0]._id;
+      try {
+        const historyThreads = await axios.get(threadApi, { withCredentials: true });
+        const historyThreadsData = historyThreads.data;
+        if (historyThreadsData.length === 0) {
+          // If new user with no thread, create a new one
+          console.log("No threads found, creating new thread for user");
+          const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+          const reqBody = { userId };
+          const thread = await axios.post(api, reqBody, { withCredentials: true });
+          this.threadId = thread._id;
+        } else {
+          this.threadId = historyThreadsData[0]._id;
+        }
+      } catch (error) {
+        console.error("Error fetching threads:", error);
+      }
+
+      // Check if user is new
+      await this.checkIfUserIsNew();
+
+      // Check localStorage for dark mode preference first
+      const storedDarkMode = localStorage.getItem('darkMode');
+      
+      if (storedDarkMode !== null) {
+        console.log("Applying dark mode from localStorage:", storedDarkMode);
+        if (storedDarkMode === 'true') {
+          document.documentElement.classList.add('dark-mode');
+          document.body.classList.add('dark-mode');
+        } else {
+          document.documentElement.classList.remove('dark-mode');
+          document.body.classList.remove('dark-mode');
+        }
+      }
+      // If no localStorage setting, fall back to user settings
+      else if (userData.settings) {
+        if (userData.settings.darkMode) {
+          console.log("Applying dark mode from user settings");
+          document.documentElement.classList.add('dark-mode');
+          document.body.classList.add('dark-mode');
+        } else {
+          console.log("Applying light mode from user settings");
+          document.documentElement.classList.remove('dark-mode');
+          document.body.classList.remove('dark-mode');
+        }
       }
     }
 
+    // If showTutorial query parameter is present, ensure light mode for tutorial
     if (this.$route.query.showTutorial === 'true') {
+      console.log("Tutorial mode activated, forcing light mode");
       document.documentElement.classList.remove('dark-mode');
       document.body.classList.remove('dark-mode');
     }
@@ -91,8 +155,8 @@ export default {
       { immediate: true } // Check immediately on mount
     );
 
-    // Add drag event listeners
-    this.addDragListeners();
+    // Add new method to check if user is new
+    await this.checkIfUserIsNew();
   },
   computed: {
     isAuthenticated() {
@@ -107,9 +171,7 @@ export default {
     },
     showFooter() {
       return (
-        this.$route.path !== "/chat-view" &&
-        this.$route.path !== "/quizz" &&
-        !this.$route.fullPath.includes("/stock-simulator?")
+          this.$route.path === "/about"
       );
     },
     showHeader() {
@@ -146,6 +208,27 @@ export default {
     },
     toggleChatBubble() {
       this.chatBubbleActive = !this.chatBubbleActive;
+    },
+    // Add new method to check if user is new
+    async checkIfUserIsNew() {
+      if (this.isAuthenticated) {
+        try {
+          const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/is-new-user`, { 
+            withCredentials: true 
+          });
+          
+          if (response.data.isNewUser) {
+            console.log("User is new, showing tutorial");
+            // Add showTutorial query parameter
+            this.$router.replace({ 
+              path: this.$route.path, 
+              query: { ...this.$route.query, showTutorial: 'true' } 
+            });
+          }
+        } catch (error) {
+          console.error("Error checking if user is new:", error);
+        }
+      }
     },
     displayMessage(message) {
       this.showBotMessage = true;
