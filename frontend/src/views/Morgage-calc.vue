@@ -331,14 +331,31 @@ export default {
 <style scoped>
 .language-switcher {
   display: flex;
-  justify-content: right;
-  margin-bottom: 10px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  gap: 10px;
 }
 
 .language-switcher button {
-  margin-left: 10px;
-  padding: 5px 10px;
+  padding: 8px 15px;
+  border: 2px solid #007bff;
+  background-color: #ffffff;
+  color: #007bff;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.language-switcher button:hover {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.language-switcher button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .mortgage-calc {
