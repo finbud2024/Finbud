@@ -110,7 +110,7 @@ sau khi authorize xong thì vào terminal và chọn "Use current git remote ori
 ```sh
  How do you want to link this folder to a site? (Use arrow keys)
 ❯ Use current git remote origin (https://github.com/finbud2024/Finbud) 
-  Search by full or partial site name 
+  Search.svg by full or partial site name 
   Choose from a list of your recently updated sites 
   Enter a site ID 
 ```

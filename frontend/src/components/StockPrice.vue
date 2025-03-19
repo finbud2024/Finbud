@@ -20,7 +20,7 @@ export default {
           parseFloat(data["Open"]), // Open
           parseFloat(data["High"]), // High
           parseFloat(data["Low"]), // Low
-          parseFloat(data["Close"]), // Close
+          parseFloat(data["Close"]), // Close.svg
         ],
       });
       dps2.push({
@@ -29,7 +29,7 @@ export default {
       });
       dps3.push({
         x: new Date(data["Date"]), // Date
-        y: parseFloat(data["Close"]), // Close
+        y: parseFloat(data["Close"]), // Close.svg
       });
     });
     return {

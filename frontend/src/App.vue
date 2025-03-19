@@ -3,8 +3,8 @@
     <NavBar v-if="showHeader" ref="headerBar" />
     <div class="content"></div>
   </div>
-  <router-view 
-    @chatviewSelectingThread="loadThread" 
+  <router-view
+    @chatviewSelectingThread="loadThread"
     @finbudBotResponse="displayMessage"
     :chatBubbleThreadID="threadId" />
   <FooterBar v-if="showFooter" ref="footerBar" />
@@ -12,10 +12,10 @@
     @closeChatBubble="toggleChatBubble"
     :chatViewThreadID="threadId" />
   <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
-  
+
   <div v-if="showBotMessage" class="bot-message-container">
-    <div class="finbudBotMessage" 
-         ref="botMessage" 
+    <div class="finbudBotMessage"
+         ref="botMessage"
          :class="{ 'message-visible': messageVisible }">
       <div class="message-content" v-html="displayedMessage"></div>
       <div class="messageConnector"></div>
@@ -61,9 +61,9 @@ export default {
     const isNewUser = localStorage.getItem('isNewUser') === 'true';
     if (isNewUser && !this.$route.query.showTutorial) {
       console.log("New user detected from localStorage, adding showTutorial param");
-      this.$router.replace({ 
-        path: this.$route.path, 
-        query: { ...this.$route.query, showTutorial: 'true' } 
+      this.$router.replace({
+        path: this.$route.path,
+        query: { ...this.$route.query, showTutorial: 'true' }
       });
       // Remove the flag after using it
       localStorage.removeItem('isNewUser');
@@ -164,16 +164,16 @@ export default {
     async checkIfUserIsNew() {
       if (this.isAuthenticated) {
         try {
-          const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/is-new-user`, { 
-            withCredentials: true 
+          const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/is-new-user`, {
+            withCredentials: true
           });
-          
+
           if (response.data.isNewUser) {
             console.log("User is new, showing tutorial");
             // Add showTutorial query parameter
-            this.$router.replace({ 
-              path: this.$route.path, 
-              query: { ...this.$route.query, showTutorial: 'true' } 
+            this.$router.replace({
+              path: this.$route.path,
+              query: { ...this.$route.query, showTutorial: 'true' }
             });
           }
         } catch (error) {
@@ -185,7 +185,7 @@ export default {
       this.showBotMessage = true;
       this.botMessage = message;
       this.displayedMessage = message;
-      
+
       // Add small delay before showing the message
       setTimeout(() => {
         this.messageVisible = true;
@@ -205,8 +205,8 @@ export default {
     },
     handleClickOutside(event) {
       const botMessage = this.$refs.botMessage;
-      if (botMessage && !botMessage.contains(event.target) && 
-          !event.target.closest('a') && 
+      if (botMessage && !botMessage.contains(event.target) &&
+          !event.target.closest('a') &&
           this.showBotMessage) {
         this.messageVisible = false;
         // Wait for fade out animation before hiding
@@ -427,7 +427,7 @@ a:hover {
     font-size: 0.8125rem;
     padding: 12px;
   }
-  
+
   .bot-message-container {
     right: calc(3.125vw + 50px);
   }

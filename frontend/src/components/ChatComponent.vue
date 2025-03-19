@@ -71,11 +71,11 @@ export default {
 			//UPDATE THREAD NAME BASED ON FIRST MESSAGE
 			if (this.messages.length === 1) {
 				const response = await gptServices([
-					{ role: "system", content: `I am a highly efficient summarizer. 
-												Here are examples: 'Best vacation in Europe' from 
-												'What are the best vacation spots in Europe?'; 
-												'Discussing project deadline' from 
-												'We need to extend the project deadline by two weeks due to unforeseen issues.' 
+					{ role: "system", content: `I am a highly efficient summarizer.
+												Here are examples: 'Best vacation in Europe' from
+												'What are the best vacation spots in Europe?';
+												'Discussing project deadline' from
+												'We need to extend the project deadline by two weeks due to unforeseen issues.'
 												Now, summarize the following user message within 3 to 4 words into a title:`
 					},
 					{
@@ -134,7 +134,7 @@ export default {
             				const baseUrl = window.location.origin.includes("localhost")
                 				? "http://localhost:8888"
                 				: "https://finbud.pro";
-							
+
 								const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=buy&fullUI=true`;
             				window.open(url, "_blank");
 							// Wait for the page to load and auto-click the Preview Order button
@@ -164,7 +164,7 @@ export default {
                 				const baseUrl = window.location.origin.includes("localhost")
                     				? "http://localhost:8888"
                     				: "https://finbud.pro";
-                
+
 								const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=sell`;
                 				window.open(url, "_blank");
 								// Wait for the page to load and auto-click the Preview Order button
@@ -336,7 +336,7 @@ export default {
 				}
 				// HANDLE SEARCH
 				else if (userMessage.toLowerCase().includes("#search")) {
-					//Search for sources, videos, and relevant questions
+					//Search.svg for sources, videos, and relevant questions
 					const searchResults = await getSources(userMessage);
 					newSources = searchResults;
 					newVideos = await getVideos(userMessage);
@@ -474,7 +474,7 @@ export default {
 			const accountCheck = await this.checkAccountBalance();
 			if (!accountCheck) {
 				return;
-				// this.openNewWindow("/goal");	
+				// this.openNewWindow("/goal");
 			}
 			try {
 				const userId = this.$store.getters["users/userId"];

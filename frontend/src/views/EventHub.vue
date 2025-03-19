@@ -3,16 +3,16 @@
         <nav class="w-full p-4 bg-white shadow-sm" data-aos="fade-left">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="event-navbar relative w-full md:w-1/2">
-                    <input 
-                        type="text" 
-                        v-model="searchQuery" 
-                        :placeholder="isMobile ? '' : 'Search events...'" 
+                    <input
+                        type="text"
+                        v-model="searchQuery"
+                        :placeholder="isMobile ? '' : 'Search.svg events...'"
                         class="search-bar w-full"
                         @focus="searchExpanded = true"
                         @blur="searchExpanded = false"
                     />
-                    <font-awesome-icon 
-                        icon="fa-solid fa-magnifying-glass" 
+                    <font-awesome-icon
+                        icon="fa-solid fa-magnifying-glass"
                         class="search-icon"
                     />
                 </div>
@@ -64,14 +64,14 @@
 
                     <div class="right-div w-full md:w-3/4">
                         <div class="swiper-container">
-                            <swiper 
-                                :slidesPerView="1" 
-                                :spaceBetween="0" 
-                                :pagination="false" 
+                            <swiper
+                                :slidesPerView="1"
+                                :spaceBetween="0"
+                                :pagination="false"
                                 :navigation="{
                                     nextEl: '.next-button',
                                     prevEl: '.prev-button'
-                                }" 
+                                }"
                                 :modules="modules"
                                 :autoplay="{
                                     delay: 3000,
@@ -355,7 +355,7 @@ export default {
 
 .category-img {
     width: 25%;
-    filter: brightness(0) invert(1); 
+    filter: brightness(0) invert(1);
 }
 
 .trending-event {
@@ -461,18 +461,18 @@ export default {
 }
 
 .star-button {
-    width: 42px; 
-    height: 42px; 
-    border-radius: 50%; 
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
     background-color: #007bff;
     color: white;
     border: none;
-    display: flex; 
-    align-items: center; 
+    display: flex;
+    align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    padding: 0; 
+    padding: 0;
 }
 
 .star-button:hover {
@@ -620,53 +620,53 @@ export default {
 }
 
 .image-container {
-    width: 100%; 
-    height: 250px; 
-    overflow: hidden; 
-    display: flex; 
-    justify-content: center; 
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
 
 .image-container img {
-    width: 100%; 
+    width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
 }
 
 .event-button {
-    background-color: #007bff; 
-    color: white; 
-    border: none; 
-    border-radius: 5px; 
-    padding: 10px 20px; 
-    cursor: pointer; 
-    transition: background-color 0.3s ease; 
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .image-container {
-    width: 100%; 
-    height: 250px; 
-    overflow: hidden; 
-    display: flex; 
-    justify-content: center; 
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
 
 .image-container img {
-    width: 100%; 
+    width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
 }
 
 .event-button {
-    background-color: #007bff; 
-    color: white; 
-    border: none; 
-    border-radius: 5px; 
-    padding: 10px 20px; 
-    cursor: pointer; 
-    transition: background-color 0.3s ease; 
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .left-div {
@@ -875,7 +875,7 @@ export default {
     .slider-image-container {
         height: 350px;
     }
-    
+
     .bottom-articles {
         grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
     }

@@ -51,7 +51,7 @@ export default {
     async N50() {
       const now = new Date();
       const today345pm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 45, 0, 0);
-      
+
       const benchmarkFile = 'benchmark.csv';
       let beta_r = [];
 
@@ -162,7 +162,7 @@ export default {
             <th>Open</th>
             <th>High</th>
             <th>Low</th>
-            <th>Close</th>
+            <th>Close.svg</th>
             <th>Volume</th>
           </tr>
         </thead>
@@ -258,7 +258,7 @@ export default {
             <th>Open</th>
             <th>High</th>
             <th>Low</th>
-            <th>Close</th>
+            <th>Close.svg</th>
             <th>Volume</th>
           </tr>
         </thead>

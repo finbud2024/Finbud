@@ -16,22 +16,22 @@
       <TopSeries title="Top Volume" :cryptos="topVolume" :openPopup="openPopup" />
     </section>
 
-    <!-- Search Bar -->
+    <!-- Search.svg Bar -->
     <!-- <div class="search-bar">
-      <input 
-        type="text" 
-        v-model="searchQuery" 
-        placeholder="Search by symbol or name..." 
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search.svg by symbol or name..."
         @keyup.enter="filterCryptos"
       />
-      <button @click="filterCryptos">Search</button>
+      <button @click="filterCryptos">Search.svg</button>
     </div> -->
 
     <div class="search-bar">
-      <input 
-        type="text" 
-        v-model="searchQuery" 
-        placeholder="Search for a coin..." 
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search for a coin..."
         @input="filterCryptos"
       />
     </div>
@@ -41,13 +41,13 @@
       <div class="crypto-table">
         <div v-for="(row, rowIndex) in filteredRows" :key="rowIndex">
           <div class="crypto-row">
-            <div 
-              class="crypto-item animate__animated animate__fadeInUp" 
-              v-for="crypto in row" 
-              :key="crypto.symbol" 
+            <div
+              class="crypto-item animate__animated animate__fadeInUp"
+              v-for="crypto in row"
+              :key="crypto.symbol"
               @click="openPopup(crypto)"
-              @mouseover="showTooltip(crypto.uuid)"  
-              @mouseleave="hideTooltip"  
+              @mouseover="showTooltip(crypto.uuid)"
+              @mouseleave="hideTooltip"
             >
               <div :class="['crypto-bar', { 'positive-bar': crypto.change > 0, 'negative-bar': crypto.change < 0 }]"></div>
               <div class="crypto-info">
@@ -321,8 +321,8 @@ body {
 
 .crypto-table-wrapper {
   overflow-x: auto;
-  overflow-y: hidden; 
-  white-space: nowrap; 
+  overflow-y: hidden;
+  white-space: nowrap;
 }
 
 .crypto-table {

@@ -8,44 +8,7 @@
       <div class="margin-box-content">
 <!--        <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div>-->
 <!--        <div v-else-if="loadingCrypto" class="loading">Loading...</div>-->
-        <div>
-          <table>
-            <thead>
-            <tr>
-              <th>Stock Ticker</th>
-              <th>Logo</th>
-              <th>Currency Code</th>
-              <th>Close</th>
-              <th>Price Currency</th>
-              <th>Price Change</th>
-              <th>Relative Volume (10d)</th>
-              <th>P/E Ratio (TTM)</th>
-              <th>EPS Diluted (TTM)</th>
-              <th>Dividend Yield</th>
-              <th>Exchange</th>
-              <th>Industry Sector</th>
-            </tr>
-            </thead>
-            <tbody v-if="cryptoList.length">
-            <tr v-for="crypto in cryptoList" :key="crypto.name">
-              <td>{{ crypto.name }}</td>
-              <td><img :src="`https://s3-symbol-logo.tradingview.com/${crypto.logo}.svg`"
-                       :alt="`${crypto.logo} logo`"/></td>
-              <td>{{ crypto.currency }}</td>
-              <td>{{ crypto.close }} </td>
-              <td>{{ crypto.priceCurrency }} </td>
-              <td>{{ crypto.priceChange }} </td>
-              <td>{{ crypto.relativeVolume }}</td>
-              <td>{{ crypto.PERatio }} </td>
-              <td>{{ crypto.EPS }} </td>
-              <td>{{ crypto.dividendYield }} </td>
-              <td>{{ crypto.market }} </td>
-              <td>{{ crypto.sector }} </td>
-            </tr>
-            </tbody>
-          </table>
-<!--          <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />-->
-        </div>
+        <StockBoard></StockBoard>
       </div>
     </section>
 
@@ -89,10 +52,12 @@ import VueApexCharts from 'vue3-apexcharts';
 import BollingerBands from './BollingerBands.vue';
 import Pagination from "@/components/Risk&Chat/Pagination.vue";
 import axios from "axios";
+import StockBoard from "@/components/quant/StockBoard.vue";
 
 export default {
   name: 'PortfolioDashboard',
   components: {
+    StockBoard,
     Pagination,
     Multiselect,
     apexchart: VueApexCharts,
@@ -353,7 +318,7 @@ export default {
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  border-radius: 50%;  
+  border-radius: 50%;
 }
 
 .inner.one {

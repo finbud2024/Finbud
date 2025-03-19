@@ -54,7 +54,7 @@ Here is the combined `TechnologySection` and `FeaturesSection` components into o
         <button>Start your 30-day free trial</button>
       </div>
     </div>
-    
+
     <div class="insights-section">
       <div class="image animate slide-in-right">
         <img src="@/assets/stock.png" alt="Car in garage">
@@ -74,7 +74,7 @@ Here is the combined `TechnologySection` and `FeaturesSection` components into o
         <button @click="learnMore" class="animate slide-in-up">Learn more</button>
       </div>
     </div>
-    
+
     <div class="computer-vision-section animate fade-in">
       <h2>ADVANCED AI CHATBOT</h2>
       <p>Smart Financial Assistance at Your Fingertips.</p>
@@ -112,7 +112,7 @@ Here is the combined `TechnologySection` and `FeaturesSection` components into o
         </div>
       </div>
     </div>
-    
+
 
   </div>
 </template>
@@ -264,7 +264,7 @@ export default {
 }
 
 .feature-title {
-  font-size: 
+  font-size:
 
 18px;
   color: #333;
@@ -502,7 +502,7 @@ button:hover {
 }
 
 .left-column, .right-column {
-  width: 48%; /* Close to half the container width to fit all items nicely */
+  width: 48%; /* Close.svg to half the container width to fit all items nicely */
 }
 
 .service-highlights {

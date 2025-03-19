@@ -2,10 +2,10 @@
   <div class="GoalDashBoardContainer">
     <!-- Bot Chat Component - Updated with toggle functionality -->
     <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-      <img 
-        class="bot-image" 
-        src="@/assets/botrmbg.png" 
-        alt="Bot" 
+      <img
+        class="bot-image"
+        src="@/assets/botrmbg.png"
+        alt="Bot"
         @click="toggleBotMessage"
         :class="{ 'clickable': showBot }"
       />
@@ -18,7 +18,7 @@
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
     </div>
-    
+
     <div class="leftPanel">
       <div class="leftPanelHeader">
         <img class="profilePic" :src="profilePic" alt="profilePic" />
@@ -69,7 +69,7 @@
           <p>Account Balance</p>
         </div>
       </div>
-      
+
       <div class="chart-container">
         <TransactionLine :transactions="transactions" />
       </div>
@@ -193,7 +193,7 @@
                     >
                       Edit
                     </button>
-                    <button 
+                    <button
                       @click="removeTransaction(trans._id)"
                       style="
                       padding: 6px 12px;
@@ -257,11 +257,11 @@
                         </div>
                         <div class="form-group">
                           <label for="goalDescription">Description (optional)</label>
-                          <textarea 
-                            id="goalDescription" 
-                            placeholder="Describe your goal (max 500 words)" 
-                            v-model="newGoal.description" 
-                            maxlength="500" 
+                          <textarea
+                            id="goalDescription"
+                            placeholder="Describe your goal (max 500 words)"
+                            v-model="newGoal.description"
+                            maxlength="500"
                             @input="updateDescriptionCount"></textarea>
                           <div class="character-counter">{{ descriptionCharCount }} / 500 characters</div>
                         </div>
@@ -396,7 +396,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       goals: [],
       selectedCategory: '',
       newCategory: '',
-      searchQuery: '', 
+      searchQuery: '',
       descriptionCharCount: 0,
       showModal: false,
       showAddGoalModal: false,
@@ -466,7 +466,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       });
     },
 
-    
+
     totalRevenue() {
       return this.transactions
         .filter((transaction) => transaction.type === "Income") // Only "Income"
@@ -514,14 +514,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
             }
           });
         }, { threshold: 0.9 }); // Trigger when 50% of the element is visible
-        
+
         // Observe the ghost div at the end of the page
         if (this.$refs.chatbotTriggerPoint) {
           this.botObserver.observe(this.$refs.chatbotTriggerPoint);
         }
       });
     },
-    
+
     startBotAnimation() {
       // Reset any existing timers
       if (this.typingTimer) {
@@ -530,21 +530,21 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       if (this.botHideTimer) {
         clearTimeout(this.botHideTimer);
       }
-      
+
       // Reset states
       this.hidingBot = false;
       this.hidingMessage = false;
       this.typedContent = "";
       this.messageManuallyToggled = false; // Reset the toggle flag
-      
+
       // First show the bot avatar sliding in
       this.showBot = true;
-      
+
       // After bot slides in, show typing animation
       setTimeout(() => {
         this.showMessage = true;
         this.isTyping = true;
-        
+
         // After typing animation, start actual message typing
         setTimeout(() => {
           this.isTyping = false;
@@ -553,7 +553,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         }, 1500);
       }, 800); // Wait for bot slide-in animation to complete
     },
-    
+
     startWordByWordTyping() {
       // Split the message by spaces and newlines to get words
       // This regex splits by spaces but keeps newlines as separate "words"
@@ -562,20 +562,20 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       this.typedContent = "";
       this.typeNextWord();
     },
-    
+
     typeNextWord() {
       if (this.currentWordIndex < this.words.length) {
         const word = this.words[this.currentWordIndex];
-        
+
         // Add the word to the content
         if (word === "\n") {
           this.typedContent += "<br>";
         } else {
           this.typedContent += word;
         }
-        
+
         this.currentWordIndex++;
-        
+
         // Schedule the next word with a delay
         this.typingTimer = setTimeout(() => {
           this.typeNextWord();
@@ -585,7 +585,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         this.scheduleHideBot();
       }
     },
-    
+
     scheduleHideBot() {
       // Only schedule auto-hiding if the message wasn't manually toggled
       if (!this.messageManuallyToggled) {
@@ -594,7 +594,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         }, 60000);
       }
     },
-    
+
     hideBot() {
       // If manually toggled, only hide the message
       if (this.messageManuallyToggled) {
@@ -618,7 +618,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         }, 500);
       }
     },
-    
+
     async getAccountBalance() {
       try {
         const userId = this.$store.getters['users/userId'];
@@ -626,7 +626,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         const response = await axios.get(api);
         const data = response.data;
         console.log(data);
-        
+
         this.accountBalance = data.bankingAccountData.accountBalance;
       } catch (error) {
         console.error('Error fetching financial data:', error);
@@ -638,15 +638,15 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     toggleBotMessage() {
       // Only allow toggling if the bot is visible
       if (!this.showBot) return;
-      
+
       this.messageManuallyToggled = true;
-      
+
       // If hiding message timer is active, clear it
       if (this.botHideTimer) {
         clearTimeout(this.botHideTimer);
         this.botHideTimer = null;
       }
-      
+
       if (this.showMessage) {
         // Hide the message
         this.hidingMessage = true;
@@ -658,7 +658,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         // Show the message
         this.hidingMessage = false;
         this.showMessage = true;
-        
+
         // If the typing was already completed
         if (!this.isTyping && this.typedContent) {
           // Message is already typed, just show it
@@ -735,7 +735,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     this.goalStartDate = goal.startDate;
     this.goalEndDate = goal.endDate;
     this.isAchieved = goal.isAchieved;
-    this.goalCategory = goal.category;  
+    this.goalCategory = goal.category;
     this.goalProgress = ((goal.currentAmount / goal.targetAmount) * 100).toFixed(2);
     this.showAddMoneyForm = false;
     this.showModal = true;
@@ -781,7 +781,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     updateDescriptionCount() {
       this.descriptionCharCount = this.newGoal.description.length;
     },
-   
+
     convertToVND(amount) {
       const exchangeRate = 23000; // Example exchange rate, 1 USD = 23,000 VND
       return amount * exchangeRate;
@@ -893,7 +893,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         this.transactions.push(response.data);
         this.accountBalance = parseFloat(this.initialBalance); // Update the account balance
         this.initialBalance = null; // Reset the initial balance input field
-        this.showSetBalanceModal = false; // Close the modal
+        this.showSetBalanceModal = false; // Close.svg the modal
         this.initialBalanceSet = true; // Mark initial balance as set
       } catch (error) {
         console.error("Error setting initial balance:", error);
@@ -1052,7 +1052,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 </script>
 <style scoped>
 .GoalDashBoardContainer {
-  width: 100vw; 
+  width: 100vw;
   max-width: 100%;
   display: flex;
   flex-direction: row;
@@ -1418,7 +1418,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
   .leftPanelHeader, .panelOverview, .graphContainer, .transactionContainer {
     width: 100%;
-    max-width: 100%; 
+    max-width: 100%;
   }
 }
 
@@ -2275,11 +2275,11 @@ hr {
 }
 
 @keyframes typing {
-  0%, 100% { 
-    opacity: 0.3; 
+  0%, 100% {
+    opacity: 0.3;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 1;
     transform: scale(1.2);
   }
@@ -2287,18 +2287,18 @@ hr {
 
 @media screen and (max-width: 768px) {
   /* ...existing code... */
-  
+
   /* For mobile, position the bot at the bottom of the screen */
   .bot-chat-container {
     left: auto;
     right: -300px;
     bottom: 20px;
   }
-  
+
   .bot-chat-container.bot-visible {
     transform: translateX(-310px);
   }
-  
+
   .bot-chat-container.bot-hidden {
     transform: translateX(-310px) translateY(50px);
   }

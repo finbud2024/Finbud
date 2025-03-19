@@ -64,7 +64,7 @@ export default {
       const headers = data[0];
       const closeIndex = headers.indexOf('Close');
       if (closeIndex === -1) {
-        console.error("CSV data does not have 'Close' column");
+        console.error("CSV data does not have 'Close.svg' column");
         return [];
       }
       const rows = data.slice(1);
