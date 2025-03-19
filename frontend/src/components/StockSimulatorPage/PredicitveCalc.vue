@@ -78,7 +78,7 @@ export default {
     async fetchPredictionData() {
       try {
         const modelsParam = this.selectedModels.join(',');  // Join selected models to a comma-separated string
-        const response = await axios.post(`https://1x4t3ggqm4.execute-api.us-west-2.amazonaws.com/dev/predict?stock=${this.selectedStock}&predict_size=${this.predictSize}&show_size=${this.showSize}&models=${modelsParam}`);
+        const response = await axios.post(`https://o5az2qbdw6.execute-api.us-east-2.amazonaws.com/predict?stock=${this.selectedStock}&predict_size=${this.predictSize}&show_size=${this.showSize}&models=${modelsParam}`);
         // const response = await axios.post(`http://localhost:8000/api/predict?stock=${this.selectedStock}&predict_size=${this.predictSize}&show_size=${this.showSize}&models=${modelsParam}`);
         const { show, predict } = response.data;
 

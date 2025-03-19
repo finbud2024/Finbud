@@ -160,10 +160,11 @@
 
     <section v-if="activeSection === 'filters'">
       <stockScreener @applyFilter="stockFilterHandler" />
-
+    
       <div class="stockDisplayContainer" v-if="count">
         <CompanyCard v-for="(item, idx) in displayStock" :key="idx" :companyName="item.ticker" :width="`80%`" />
       </div>
+    </section>
 
     <section v-if="activeSection === 'portfolio'" class="portfolio-section">
       <div class="portfolio-container">
@@ -282,7 +283,6 @@
       </div>
     </section>
 
-  </section>
   <PreviewOrderModal 
     v-if="showModal" 
     :stockSymbol="stockSymbol" 
