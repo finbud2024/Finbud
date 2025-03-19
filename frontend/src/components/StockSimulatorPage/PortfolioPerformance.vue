@@ -5,15 +5,21 @@
       <div class="portfolio-summary">
         <div class="summary-item">
           <span class="summary-label">Total Value</span>
-          <span class="summary-value">$24,892.31</span>
+          <span class="summary-value">${{ portfolioTotalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
         </div>
-        <div class="summary-item positive">
+        <div class="summary-item" :class="{ positive: portfolioDailyChange.isPositive, negative: !portfolioDailyChange.isPositive }">
           <span class="summary-label">Today</span>
-          <span class="summary-value">+$365.28 (1.48%)</span>
+          <span class="summary-value">
+            {{ portfolioDailyChange.isPositive ? '+' : '-' }}${{ portfolioDailyChange.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            ({{ portfolioDailyChange.isPositive ? '+' : '-' }}{{ portfolioDailyChange.percent.toFixed(2) }}%)
+          </span>
         </div>
-        <div class="summary-item positive">
+        <div class="summary-item" :class="{ positive: portfolioOverallChange.isPositive, negative: !portfolioOverallChange.isPositive }">
           <span class="summary-label">Overall</span>
-          <span class="summary-value">+$3,892.31 (18.5%)</span>
+          <span class="summary-value">
+            {{ portfolioOverallChange.isPositive ? '+' : '-' }}${{ portfolioOverallChange.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            ({{ portfolioOverallChange.isPositive ? '+' : '-' }}{{ portfolioOverallChange.percent.toFixed(2) }}%)
+          </span>
         </div>
       </div>
     </header>
@@ -45,15 +51,17 @@
     <div class="portfolio-metrics">
       <div class="metric-card">
         <div class="metric-title">Annual Return</div>
-        <div class="metric-value positive">+21.4%</div>
+        <div :class="['metric-value', { positive: calculateAnnualReturn > 0, negative: calculateAnnualReturn < 0 }]">
+          {{ calculateAnnualReturn > 0 ? '+' : '' }}{{ calculateAnnualReturn.toFixed(1) }}%
+        </div>
       </div>
       <div class="metric-card">
         <div class="metric-title">Volatility</div>
-        <div class="metric-value">14.2%</div>
+        <div class="metric-value">{{ calculateVolatility.toFixed(1) }}%</div>
       </div>
       <div class="metric-card">
         <div class="metric-title">Sharpe Ratio</div>
-        <div class="metric-value">1.68</div>
+        <div class="metric-value">{{ calculateSharpeRatio.toFixed(2) }}</div>
       </div>
     </div>
   </section>
@@ -100,6 +108,105 @@ export default {
         time: item.time,
         value: item.close,
       }));
+    },
+    
+    portfolioTotalValue() {
+      // Get the most recent portfolio value or return 0 if no data
+      const latestData = this.candlestickData[this.candlestickData.length - 1];
+      return latestData ? latestData.close : 0;
+    },
+    
+    portfolioDailyChange() {
+      // Calculate today's change (if we have at least 2 data points)
+      if (this.candlestickData.length < 2) return { value: 0, percent: 0 };
+      
+      const latestData = this.candlestickData[this.candlestickData.length - 1];
+      const previousData = this.candlestickData[this.candlestickData.length - 2];
+      
+      const valueChange = latestData.close - previousData.close;
+      const percentChange = (valueChange / previousData.close) * 100;
+      
+      return { 
+        value: valueChange, 
+        percent: percentChange,
+        isPositive: valueChange >= 0
+      };
+    },
+    
+    portfolioOverallChange() {
+      // Calculate overall change since beginning
+      if (this.candlestickData.length < 2) return { value: 0, percent: 0 };
+      
+      const latestData = this.candlestickData[this.candlestickData.length - 1];
+      const firstData = this.candlestickData[0];
+      
+      const valueChange = latestData.close - firstData.close;
+      const percentChange = (valueChange / firstData.close) * 100;
+      
+      return { 
+        value: valueChange, 
+        percent: percentChange,
+        isPositive: valueChange >= 0
+      };
+    },
+
+    calculateAnnualReturn() {
+      if (this.candlestickData.length < 2) return 0;
+      
+      const latestData = this.candlestickData[this.candlestickData.length - 1];
+      const firstData = this.candlestickData[0];
+      
+      const firstDate = new Date(firstData.time);
+      const lastDate = new Date(latestData.time);
+      const daysDiff = (lastDate - firstDate) / (1000 * 60 * 60 * 24);
+   
+      if (daysDiff === 0) return 0;
+      
+      const totalReturn = (latestData.close / firstData.close) - 1;
+      const annualReturn = (Math.pow(1 + totalReturn, 365 / daysDiff) - 1) * 100;
+      
+      return annualReturn;
+    },
+
+    calculateVolatility() {
+      if (this.candlestickData.length < 2) return 0;
+      
+      const returns = [];
+      for (let i = 1; i < this.candlestickData.length; i++) {
+        const dailyReturn = (this.candlestickData[i].close / this.candlestickData[i-1].close) - 1;
+        returns.push(dailyReturn);
+      }
+     
+      const mean = returns.reduce((sum, value) => sum + value, 0) / returns.length;
+      
+      const squaredDiffs = returns.map(value => Math.pow(value - mean, 2));
+      const variance = squaredDiffs.reduce((sum, value) => sum + value, 0) / returns.length;
+      
+      const dailyVolatility = Math.sqrt(variance);
+      const annualizedVolatility = dailyVolatility * Math.sqrt(252) * 100; // 252 trading days in a year
+      
+      return annualizedVolatility;
+    },
+
+    calculateSharpeRatio() {
+      if (this.candlestickData.length < 2) return 0;
+      
+      // Using 0.02 (2%) as risk-free rate
+      const riskFreeRate = 0.02;
+      
+      // Get annualized return in decimal form
+      const annualReturn = this.calculateAnnualReturn / 100;
+      
+      // Get volatility in decimal form
+      const volatility = this.calculateVolatility / 100;
+      
+      // Avoid division by zero
+      if (volatility === 0) return 0;
+      
+      // Calculate Sharpe ratio
+      const sharpeRatio = (annualReturn - riskFreeRate) / volatility;
+      
+      return sharpeRatio;
     }
   },
 

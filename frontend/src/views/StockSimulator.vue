@@ -5,10 +5,10 @@
     <nav class="navbar">
       <ul>
         <li @click="activeSection = 'investment'" :class="{ active: activeSection === 'investment' }">Investment</li>
+        <li @click="activeSection = 'portfolio'" :class="{ active: activeSection === 'portfolio' }">Your Portfolio</li>
         <li @click="activeSection = 'transactionHistory'" :class="{ active: activeSection === 'transactionHistory' }">Transaction History</li>
         <li @click="activeSection = 'filters'" :class="{ active: activeSection === 'filters' }">Filters</li>
         <li @click="activeSection = 'predictiveCalc'" :class="{ active: activeSection === 'predictiveCalc' }">Predictive Calculator</li>
-        <li @click="activeSection = 'portfolio'" :class="{ active: activeSection === 'portfolio' }">Your Portfolio</li>
       </ul>
     </nav>
 

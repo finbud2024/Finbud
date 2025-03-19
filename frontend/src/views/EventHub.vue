@@ -222,6 +222,7 @@ export default {
             window.open(url, '_blank');
         },
         cropSummary(summary) {
+            if (!summary) return "";
             const maxLength = 106; // Length of the reference summary
             return summary.length > maxLength ? summary.substring(0, maxLength) + "..." : summary;
         }

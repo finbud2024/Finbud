@@ -1,10 +1,12 @@
+import { unique } from '@tensorflow/tfjs';
 import mongoose from 'mongoose';
 
 const portfolioSchema = new mongoose.Schema({ 
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
+        unique: true
     },
     //Arrays display user's portfolio overtime
     portfolio: [{
