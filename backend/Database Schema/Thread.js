@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+// serve for thread memory
+const threadMemorySchema = new mongoose.Schema({
+    history: {
+        type: String,
+        default: ""
+      }
+});
+
 //define Thread Schema
 const ThreadSchema = new mongoose.Schema({
     title: {
@@ -14,6 +22,12 @@ const ThreadSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         require: true
+    },
+    // thread memory that each chat will need to access
+    memory: {
+        type: threadMemorySchema,
+        required: true,
+        default: { history: "" }
     }
 })
 

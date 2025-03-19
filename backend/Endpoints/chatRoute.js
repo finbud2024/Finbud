@@ -1,15 +1,15 @@
 import express from "express";
 import Chat from "../Database Schema/Chat.js";
+import Thread from "../Database Schema/Thread.js"; // serve for thread memory
 import validateRequest from "../utils/validateRequest.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import { BraveSearch } from "@langchain/community/tools/brave_search";
 import { isAuthenticated, isAdmin } from '../middleware/auth.js';
-import OpenAI from 'openai';
 // import { YoutubeTranscript } from 'youtube-transcript';
 // import { getVideoId } from '../utils/getVideoId.js';
-
-dotenv.config();
+import { ConversationSummaryBufferMemory } from "langchain/memory";
+import { ChatOpenAI } from "@langchain/openai";
 
 const chatRoute = express.Router();
 
@@ -61,6 +61,61 @@ chatRoute.route('/chats')
 
       const chat = new Chat(chatBody);
       await chat.save();
+
+      // feed conversation to thread memory
+      try {
+        const thread = await Thread.findById(chatBody.threadId);
+        if (!thread) {
+          return res.status(404).send("Thread not found");
+        }
+        
+        console.log("Thread memory:", thread.memory);
+        
+        // Initialize memory for the new thread using ChatOpenAI properly
+        const llm = new ChatOpenAI({
+          temperature: 0,
+          modelName: "gpt-3.5-turbo",
+          openAIApiKey: process.env.VUE_APP_OPENAI_API_KEY,
+        });
+        
+        var memoryInstance = new ConversationSummaryBufferMemory({
+          llm: llm,
+          maxTokenLimit: 50,
+          returnMessages: false
+        });
+
+        // Add the new message to memory
+        await memoryInstance.saveContext(
+          { input: chatBody.prompt },
+          { output: Array.isArray(chatBody.response) ? chatBody.response.join('\n') : chatBody.response }
+        );
+
+        var memoryResult = await memoryInstance.loadMemoryVariables({});
+        
+        // Get the updated conversation history with token limit applied
+        if (thread.memory && thread.memory.history) {
+          // Ensure we're not duplicating content
+          if (!thread.memory.history.includes(memoryResult.history)) {
+            thread.memory.history += "\n" + memoryResult.history;
+          }
+        } else {
+          // Otherwise, initialize thread.memory.history with memoryResult
+          if (!thread.memory) {
+            thread.memory = { history: "" };
+          }
+          thread.memory.history = memoryResult.history || "";
+        }
+        await thread.save();
+        console.log("Thread memory updated successfully", memoryResult);
+        console.log("Thread memory:", thread.memory);
+      } catch (err) {
+        console.error("Error updating thread memory:", err);
+        // Continue execution even if memory update fails
+        // We don't want to fail the entire chat save operation
+      }
+
+      console.log("Chat saved to database and thread memory updated");
+
       return res.status(200).json(chat);
     } catch (err) {
       return res.status(502).send("Unexpected error occurred when saving chat to database: " + err);
@@ -107,9 +162,15 @@ chatRoute.post("/query", isAuthenticated, async (req, res) => {
     returnSources = true,
     numberOfPagesToScan = 4,
     returnFollowUpQuestions = true,
+    threadId, // thread id for thread memory
   } = req.body;
 
   console.log("Request body:", req.body);
+
+  // Validate threadId is provided
+  if (!threadId) {
+    return res.status(400).json({ error: "threadId is required" });
+  }
 
   try {
     console.log("Initializing BraveSearch");
@@ -126,6 +187,16 @@ chatRoute.post("/query", isAuthenticated, async (req, res) => {
 
     console.log("Normalized data:", normalizedData);
 
+    // load memory context for this thread
+    const thread = await Thread.findById(threadId);
+    if (!thread) {
+      return res.status(404).json({ error: "Thread not found" });
+    }
+    
+    // Safely get memory context
+    const memoryContext = thread.memory && thread.memory.history ? thread.memory.history : "";
+    console.log("Memory context:", memoryContext);
+
     console.log("Sending request to OpenAI");
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
@@ -134,8 +205,17 @@ chatRoute.post("/query", isAuthenticated, async (req, res) => {
         messages: [
           {
             role: "system",
-            content: `Here is my query "${prompt}", respond back with an answer that is as long as possible. If you can't find any relevant results, respond with "No relevant results found."`,
+            content: `Here is my query "${prompt}", respond back with an answer that is as long as possible. If you can't find any relevant results, respond with "No relevant results found." Answer the question based on the following context: ${memoryContext}`,
           },
+          // add previous conversation context (chat memory)
+          {
+            role: "system",
+            content: memoryContext ? `Previous conversation context: ${memoryContext}` : "This is a new conversation."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
         ],
         temperature: 0.7,
       },

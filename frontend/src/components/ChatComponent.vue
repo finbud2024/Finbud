@@ -23,6 +23,7 @@ import UserInput from './UserInput.vue';
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
+import { threadService } from '@/services/threadService';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
 import api from '@/utils/api';
 export default {
@@ -35,6 +36,7 @@ export default {
 			sources: [],
 			videos: [],
 			relevantQuestions: [],
+			threadMemory: {}, // This will hold the thread memory object (e.g. { history: "..." }) (chat memory)
 			botAvatar: require("@/assets/botrmbg.png"),
 		}
 	},
@@ -58,13 +60,54 @@ export default {
 			handler(newThreadID) {
 				if (newThreadID !== null && newThreadID !== undefined && newThreadID.length != 0) {
 					this.updateCurrentThread(newThreadID)
+					// Fetch thread memory when thread changes
+					this.fetchThreadMemory(newThreadID);
 				} else {
 					this.messages = [];
+					this.threadMemory = { history: "" };
 				}
 			}
 		}
 	},
 	methods: {
+		// Debug logging helper function
+		logPromptDebug(type, originalMessage, prompt) {
+			console.group(`DEBUG - ${type} Prompt`);
+			console.log('Original Message:', originalMessage);
+			console.log('Complete Prompt:', prompt);
+			
+			// Detailed memory logging
+			if (this.threadMemory && this.threadMemory.history) {
+				console.log('Thread Memory Present:', true);
+				console.log('Memory Length:', this.threadMemory.history.length);
+				console.log('Memory Preview:', this.threadMemory.history.substring(0, 100) + 
+					(this.threadMemory.history.length > 100 ? '...' : ''));
+				
+				// Show first and last 200 chars if memory is long
+				if (this.threadMemory.history.length > 400) {
+					console.log('Memory Start:', this.threadMemory.history.substring(0, 200));
+					console.log('Memory End:', this.threadMemory.history.substring(
+						this.threadMemory.history.length - 200, 
+						this.threadMemory.history.length
+					));
+				}
+			} else {
+				console.log('Thread Memory Present:', false);
+			}
+			console.groupEnd();
+		},
+		// Add method to fetch thread memory
+		async fetchThreadMemory(threadId) {
+			try {
+				// Use the store action instead of direct API call
+				await this.$store.dispatch('threadMemory/fetchThreadMemory', threadId);
+				this.threadMemory = this.$store.getters['threadMemory/getMemoryByThreadId'](threadId);
+				console.log("Thread memory loaded:", this.threadMemory);
+			} catch (err) {
+				console.error("Error fetching thread memory:", err);
+				this.threadMemory = { history: "" };
+			}
+		},
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async sendMessage(newMessage) {
 			const userMessage = newMessage.trim();
@@ -116,7 +159,11 @@ export default {
 				if (userMessage.toLowerCase().includes("#define")) {
 					try {
 						const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
-						const prompt = `Explain ${term} to me as if I'm 15.`;
+						const prompt = `Explain ${term} to me as if I'm 15.\nContext: ${this.threadMemory.history || ""}`;
+						
+						// Use the debug logging helper
+						this.logPromptDebug('Define Command', term, prompt);
+						
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
@@ -342,7 +389,12 @@ export default {
 					newVideos = await getVideos(userMessage);
 					newRelevantQuestions = await getRelevantQuestions(searchResults);
 					//Normal GTP response
-					const gptResponse = await gptServices([{ role: "user", content: userMessage }]);
+					const enhancedMessage = `${userMessage}\nContext: ${this.threadMemory.history || ""}`;
+					
+					// Use the debug logging helper
+					this.logPromptDebug('Search Command', userMessage, enhancedMessage);
+					
+					const gptResponse = await gptServices([{ role: "user", content: enhancedMessage }]);
 					answers.push(gptResponse);
 				}
 				// HANDLE STOCK
@@ -356,7 +408,11 @@ export default {
 						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
 						answers.push(alphavantageResponse);
 						//chatgpt api
-						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.\nContext: ${this.threadMemory.history || ""}`;
+						
+						// Use the debug logging helper
+						this.logPromptDebug('Stock Analysis', `${stockCode} at $${price}`, prompt);
+						
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
@@ -394,7 +450,11 @@ export default {
 				// HANDLE GENERAL
 				else {
 					try {
-						const prompt = userMessage;
+						const prompt = `${userMessage}\nContext: ${this.threadMemory.history || ""}`;
+						
+						// Use the debug logging helper
+						this.logPromptDebug('General', userMessage, prompt);
+						
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
@@ -566,6 +626,10 @@ export default {
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
 				const chats = await axios.get(chatApi);
 				const chatsData = chats.data;
+				
+				// Fetch thread memory
+				await this.fetchThreadMemory(threadID);
+				
 				if (Array.isArray(chatsData)) {
 					chatsData.forEach((chat) => {
 						const prompt = {
