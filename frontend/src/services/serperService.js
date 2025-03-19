@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as cheerio from 'cheerio';
+import { load } from "cheerio";
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
@@ -111,7 +111,7 @@ export async function getVideos(message) {
     // Filter out videos without images
     const validLinks = await Promise.all(responseData.videos.map(async video => {
       const imageUrl = video.imageUrl;
-      if (!imageUrl) return null;
+      if(!imageUrl) return null;
       // Check if the image URL is valid
       const imageResponse = await axios.post(`${DEPLOY_URL}/proxy`, {
         method: 'HEAD',

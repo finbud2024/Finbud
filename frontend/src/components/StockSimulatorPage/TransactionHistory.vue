@@ -92,12 +92,42 @@ export default {
 </script>
 
 <style scoped>
+/* Light & Dark Mode Variables */
+:root {
+  --bg-primary: white;
+  --text-primary: black;
+  --table-border: #dee2e6;
+  --table-header-bg: #f8f9fa;
+  --table-row-bg: #f2f2f2;
+  --hover-bg: #e9ecef;
+  --button-bg: #007bff;
+  --button-hover-bg: #0056b3;
+  --date-picker-bg: white;
+  --date-picker-border: #ced4da;
+}
+
+:root.dark-mode {
+  --bg-primary: #121212;
+  --text-primary: #f5f5f5;
+  --table-border: #444;
+  --table-header-bg: #1e1e1e;
+  --table-row-bg: #2a2a2a;
+  --hover-bg: #333;
+  --button-bg: #0a84ff;
+  --button-hover-bg: #0077cc;
+  --date-picker-bg: #1e1e1e;
+  --date-picker-border: #555;
+}
+
+/* Transaction History */
 .transaction-history {
   margin: 20px 0;
   padding: 0 20px;
-  /* Add padding for better alignment */
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
+/* Header */
 .transaction-history-header {
   display: flex;
   justify-content: space-between;
@@ -106,10 +136,11 @@ export default {
 }
 
 .transaction-history h3 {
-  color: #007bff; /* Match the styling of other headers */
-  font-size: 1.5rem; /* Match the font size of other headers */
+  color: var(--button-bg);
+  font-size: 1.5rem;
 }
 
+/* Date Picker */
 .date-picker {
   display: flex;
   gap: 10px;
@@ -118,10 +149,12 @@ export default {
 .date-picker input[type="date"] {
   padding: 10px;
   border-radius: 10px;
-  border: 5px solid #ced4da;
-  background-color: #fff;
+  border: 5px solid var(--date-picker-border);
+  background-color: var(--date-picker-bg);
+  color: var(--text-primary);
 }
 
+/* Button */
 .transaction-btn {
   padding: 10px 20px;
   border: none;
@@ -129,40 +162,42 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s;
   font-size: 1rem;
-}
-
-.transaction-btn {
-  background-color: #007bff;
+  background-color: var(--button-bg);
   color: white;
 }
 
 .transaction-btn:hover {
-  background-color: #0056b3;
+  background-color: var(--button-hover-bg);
 }
 
+/* Table */
 .transaction-history table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  /* Add margin to separate from the header */
 }
 
 .transaction-history th,
 .transaction-history td {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--table-border);
   padding: 8px;
   text-align: left;
 }
 
 .transaction-history th {
-  background-color: #f8f9fa;
+  background-color: var(--table-header-bg);
   font-weight: bold;
 }
 
 .transaction-history tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: var(--table-row-bg);
 }
 
+.transaction-history tbody tr:hover {
+  background-color: var(--hover-bg);
+}
+
+/* Buy/Sell Colors */
 .transaction-history .minus {
   color: red;
 }
@@ -171,13 +206,11 @@ export default {
   color: green;
 }
 
-.transaction-history tbody tr:hover {
-  background-color: #e9ecef;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
   .transaction-history-header {
     flex-direction: column;
   }
 }
+
 </style>
