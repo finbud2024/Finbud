@@ -14,7 +14,32 @@
           <div class="services-dropdown dropbtn">
             Overview <span class="arrow-down"></span>
           </div>
+        </li>
+
+        <li>
+          <router-link to="/chat-view" class="chatview">Chat</router-link>
+        </li>
+        <li
+          class="dropdown"
+          @mouseenter="toggleAboutDropdown(true)"
+          @mouseleave="toggleAboutDropdown(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Overview <span class="arrow-down"></span>
+          </div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
+            <router-link
+              to="/about"
+              class="about"
+              @click="toggleAboutDropdown(false)"
+              >About</router-link
+            >
+            <router-link
+              to="/tech"
+              class="technology"
+              @click="toggleAboutDropdown(false)"
+              >Technology</router-link
+            >
             <router-link
               to="/about"
               class="about"
@@ -44,6 +69,37 @@
               >Goal</router-link
             >
             <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdown(false)"
+              >Quant</router-link
+            >
+            <!-- <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdown(false)">Quant Simulator</router-link> -->
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdown(false)"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quizz"
+              class="quizz"
+              @click="toggleDropdown(false)"
+              >Quiz</router-link
+            >
+            <router-link
+              to="/event"
+              class="event"
+              @click="toggleDropdown(false)"
+              >Event</router-link
+            >
+            <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdown(false)"
+              >Forum</router-link
+            >
+            <router-link
               to="/riskanalysis"
               class="risk-analysis"
               @click="toggleDropdown(false)"
@@ -51,74 +107,9 @@
             >
           </div>
         </li>
-
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdownInvest(true)"
-          @mouseleave="toggleDropdownInvest(false)"
-        >
-          <div class="services-dropdown dropbtn">
-            Fin Invest <span class="arrow-down"></span>
-          </div>
-          <div class="dropdown-content" v-show="isDropdownOpenInvest">
-            <router-link
-              to="/stock-simulator"
-              class="simulator"
-              @click="toggleDropdownInvest(false)"
-              >Simulator</router-link
-            >
-            <router-link
-              to="/quant-analysis"
-              class="home"
-              @click="toggleDropdownInvest(false)"
-              >Quant</router-link
-            >
-
-            <router-link
-              to="/quant-simulator"
-              class="quant-simulator"
-              @click="toggleDropdownInvest(false)"
-              >Quant Simulator</router-link
-            >
-          </div>
-        </li>
-
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdownEdu(true)"
-          @mouseleave="toggleDropdownEdu(false)"
-        >
-          <div class="services-dropdown dropbtn">
-            Fin Edu <span class="arrow-down"></span>
-          </div>
-          <div class="dropdown-content" v-show="isDropdownOpenEdu">
-            <router-link
-              to="/quizz"
-              class="quizz"
-              @click="toggleDropdownEdu(false)"
-              >Quiz</router-link
-            >
-            <router-link
-              to="/event"
-              class="event"
-              @click="toggleDropdownEdu(false)"
-              >Event</router-link
-            >
-            <router-link
-              to="/forum"
-              class="forum"
-              @click="toggleDropdownEdu(false)"
-              >Forum</router-link
-            >
-          </div>
-        </li>
-
         <li v-if="!isAuthenticated && !isAuthLoading">
           <router-link to="/login" class="login-button">Log In</router-link>
         </li>
-
         <li
           v-if="isAuthenticated"
           class="dropdown"
@@ -164,8 +155,6 @@
           <div class="loading-indicator"></div>
         </li>
       </ul>
-
-      <!-- Mobile version -->
       <div
         class="dropdown mobile-only"
         :class="{ active: isDropdownOpenMobile }"
@@ -179,11 +168,8 @@
           v-show="isDropdownOpenMobile"
           @mouseleave="closeDropdownMobile"
         >
-          <router-link
-            to="/chat-view"
-            class="chatview"
-            @click="toggleDropdownMobile"
-            >Chat</router-link
+          <router-link to="/" class="home" @click="toggleDropdownMobile"
+            >Home</router-link
           >
           <router-link to="/about" class="about" @click="toggleDropdownMobile"
             >About</router-link
@@ -195,9 +181,17 @@
             >Technology</router-link
           >
           <div class="authenticated" v-if="isAuthenticated">
-            <strong>Fin Manage</strong>
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile"
               >Goal</router-link
+            >
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownMobile"
+              >Simulator</router-link
+            >
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
+              >Quiz</router-link
             >
             <router-link
               to="/riskanalysis"
@@ -205,43 +199,23 @@
               @click="toggleDropdownMobile"
               >Risk Analysis</router-link
             >
-
-            <strong>Fin Invest</strong>
             <router-link
-              to="/stock-simulator"
-              class="simulator"
-              @click="toggleDropdownMobile"
-              >Simulator</router-link
-            >
-            <router-link
-              to="/quant-analysis"
-              class="home"
-              @click="toggleDropdownMobile"
-              >Quant</router-link
-            >
-
-            <router-link
-              to="/quant-simulator"
-              class="quant-simulator"
-              @click="toggleDropdownMobile"
-              >Quant Simulator</router-link
-            >
-
-            <strong>Fin Edu</strong>
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
-              >Quiz</router-link
-            >
-            <router-link to="/event" class="event" @click="toggleDropdownMobile"
+              to="/event"
+              class="event"
+              @click="toggleDropdown(false)"
               >Event</router-link
             >
-            <router-link to="/forum" class="forum" @click="toggleDropdownMobile"
-              >Forum</router-link
-            >
-
+            <router-link to="/quant-analysis" class="home">Quant</router-link>
             <router-link to="#" @click="logout" class="logout"
               >Log Out</router-link
             >
           </div>
+          <router-link
+            to="/chat-view"
+            class="chatview"
+            @click="toggleDropdownMobile"
+            >Chat</router-link
+          >
           <router-link
             to="/login"
             v-if="!isAuthenticated && !isAuthLoading"
@@ -292,17 +266,6 @@ export default {
     profileName() {
       return this.$store.getters["users/userDisplayName"];
     },
-    finCoinBalance() {
-      return this.$store.getters["finCoin/finCoinBalance"];
-    },
-  },
-  watch: {
-    // Fetch FinCoin balance when user logs in
-    isAuthenticated(newVal) {
-      if (newVal) {
-        this.$store.dispatch("finCoin/fetchFinCoinBalance");
-      }
-    },
   },
   methods: {
     toggleDropdown(open) {
@@ -339,6 +302,8 @@ export default {
     },
     async toggleDarkMode() {
       this.isDarkMode = !this.isDarkMode;
+
+      // Apply dark mode to both root and body elements
       document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
       document.body.classList.toggle("dark-mode", this.isDarkMode);
 
@@ -370,34 +335,26 @@ export default {
   async mounted() {
     await this.$store.dispatch("users/fetchCurrentUser");
 
-    // Fetch FinCoin balance if user is authenticated
-    if (this.isAuthenticated) {
-      await this.$store.dispatch("finCoin/fetchFinCoinBalance");
+    // First check localStorage for dark mode preference
+    const storedDarkMode = localStorage.getItem("darkMode");
+
+    if (storedDarkMode !== null) {
+      // Apply dark mode from localStorage
+      this.isDarkMode = storedDarkMode === "true";
+    } else if (this.userData && this.userData.settings) {
+      // Fall back to user settings from the database
+      this.isDarkMode = this.userData.settings.darkMode || false;
+    } else {
+      // As a last resort, check system preference
+      const prefersDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      this.isDarkMode = prefersDarkMode;
     }
 
-    // Apply dark mode based on user settings
-    if (this.userData && this.userData.settings) {
-      // First check localStorage for dark mode preference
-      const storedDarkMode = localStorage.getItem("darkMode");
-
-      if (storedDarkMode !== null) {
-        // Apply dark mode from localStorage
-        this.isDarkMode = storedDarkMode === "true";
-      } else if (this.userData && this.userData.settings) {
-        // Fall back to user settings from the database
-        this.isDarkMode = this.userData.settings.darkMode || false;
-      } else {
-        // As a last resort, check system preference
-        const prefersDarkMode =
-          window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches;
-        this.isDarkMode = prefersDarkMode;
-      }
-
-      // Apply dark mode to both root and body elements
-      document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
-      document.body.classList.toggle("dark-mode", this.isDarkMode);
-    }
+    // Apply dark mode to both root and body elements
+    document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
+    document.body.classList.toggle("dark-mode", this.isDarkMode);
   },
 };
 </script>
