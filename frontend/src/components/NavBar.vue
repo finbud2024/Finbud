@@ -242,6 +242,14 @@ export default {
       return this.$store.getters["finCoin/finCoinBalance"];
     },
   },
+  watch: {
+    // Fetch FinCoin balance when user logs in
+    isAuthenticated(newVal) {
+      if (newVal) {
+        this.$store.dispatch("finCoin/fetchFinCoinBalance");
+      }
+    },
+  },
   methods: {
     toggleDropdown(open) {
       this.isDropdownOpen = open;
@@ -277,7 +285,7 @@ export default {
       document.body.classList.toggle("dark-mode", this.isDarkMode);
 
       // Store dark mode preference in localStorage for persistence
-      localStorage.setItem('darkMode', this.isDarkMode ? 'true' : 'false');
+      localStorage.setItem("darkMode", this.isDarkMode ? "true" : "false");
 
       // Update dark mode in the database
       if (this.userData) {
@@ -313,33 +321,27 @@ export default {
 
     // Apply dark mode based on user settings
     if (this.userData && this.userData.settings) {
+      // First check localStorage for dark mode preference
+      const storedDarkMode = localStorage.getItem("darkMode");
 
-    // First check localStorage for dark mode preference
-    const storedDarkMode = localStorage.getItem('darkMode');
-
-    if (storedDarkMode !== null) {
-      // Apply dark mode from localStorage
-      this.isDarkMode = storedDarkMode === 'true';
-    } else if (this.userData && this.userData.settings) {
-      // Fall back to user settings from the database
-      this.isDarkMode = this.userData.settings.darkMode || false;
-    } else {
-      // As a last resort, check system preference
-      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      this.isDarkMode = prefersDarkMode;
-    }
-
-    // Apply dark mode to both root and body elements
-    document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
-    document.body.classList.toggle("dark-mode", this.isDarkMode);
-  },
-  watch: {
-    // Fetch FinCoin balance when user logs in
-    isAuthenticated(newVal) {
-      if (newVal) {
-        this.$store.dispatch("finCoin/fetchFinCoinBalance");
+      if (storedDarkMode !== null) {
+        // Apply dark mode from localStorage
+        this.isDarkMode = storedDarkMode === "true";
+      } else if (this.userData && this.userData.settings) {
+        // Fall back to user settings from the database
+        this.isDarkMode = this.userData.settings.darkMode || false;
+      } else {
+        // As a last resort, check system preference
+        const prefersDarkMode =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        this.isDarkMode = prefersDarkMode;
       }
-    },
+
+      // Apply dark mode to both root and body elements
+      document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
+      document.body.classList.toggle("dark-mode", this.isDarkMode);
+    }
   },
 };
 </script>
