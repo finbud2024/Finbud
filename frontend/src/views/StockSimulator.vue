@@ -283,7 +283,6 @@
       </div>
     </section>
 
-
   <PreviewOrderModal
     v-if="showModal"
     :stockSymbol="stockSymbol"
