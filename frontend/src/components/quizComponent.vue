@@ -1,5 +1,11 @@
 <template>
   <div class="section-container">
+    <QuizRewards
+      v-if="showingReward"
+      :reward-amount="rewardAmount"
+      @close="showingReward = false"
+    />
+
     <search-input
       v-model="searchQuery"
       @search="createRoadmap"
@@ -308,11 +314,14 @@
 import { GPTService, gptServices } from "@/services/gptServices";
 import debounce from "lodash/debounce";
 import SearchInput from "@/components/basic/SearchInput.vue";
+import QuizRewards from "@/components/QuizRewards.vue";
+import { showReward } from "@/utils/utils";
 
 export default {
   name: "quizComponent",
   components: {
     SearchInput,
+    QuizRewards,
   },
   data() {
     return {
@@ -478,6 +487,8 @@ export default {
           students: 1876,
         },
       ],
+      rewardAmount: 1,
+      showingReward: false,
     };
   },
   watch: {
@@ -666,13 +677,13 @@ export default {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Generate a single keyword in finance about 
+          content: `Generate a single keyword in finance about
                         ${
                           this.selectedQuiz
                             ? this.selectedQuiz
                             : "Saving Vs Investing"
-                        } 
-                        at a 
+                        }
+                        at a
                         ${
                           this.suggestDifficulty
                             ? this.suggestDifficulty
@@ -760,6 +771,17 @@ export default {
         }
       } else {
         this.score += 1;
+
+        this.awardFinCoinsForCorrectAnswer()
+          .then(() => {
+            showReward(this, 1, "quiz");
+          })
+          .catch((error) => {
+            console.error(
+              "Failed to award FinCoins for correct answer:",
+              error
+            );
+          });
       }
       this.showCorrectAnswer();
     },
@@ -812,6 +834,38 @@ export default {
         this.currentKeyword = "";
         this.stateReset();
       }
+
+      // Award FinCoins for completing the quiz if score is good
+      if (this.score >= 0) {
+        this.awardFinCoinsForQuizCompletion()
+          .then(() => {
+            showReward(this, 5, "quiz");
+          })
+          .catch((error) => {
+            console.error(
+              "Failed to award FinCoins for quiz completion:",
+              error
+            );
+          });
+      }
+    },
+
+    async awardFinCoinsForCorrectAnswer() {
+      return this.$store.dispatch("finCoin/earnFinCoins", {
+        amount: 1,
+        source: "quiz_correct",
+        sourceId: this.currentQuiz?._id,
+        description: "Correct quiz answer",
+      });
+    },
+
+    async awardFinCoinsForQuizCompletion() {
+      return this.$store.dispatch("finCoin/earnFinCoins", {
+        amount: 5,
+        source: "quiz_completion",
+        sourceId: this.currentQuiz?._id,
+        description: "Completed full quiz session",
+      });
     },
   },
 };
