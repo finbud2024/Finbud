@@ -68,6 +68,12 @@
               >Event</router-link
             >
             <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdown(false)"
+              >Forum</router-link
+            >
+            <router-link
               to="/riskanalysis"
               class="risk-analysis"
               @click="toggleDropdown(false)"

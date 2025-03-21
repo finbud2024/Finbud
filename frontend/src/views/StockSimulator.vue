@@ -22,6 +22,12 @@
         >
           Filters
         </li>
+        <li
+          @click="activeSection = 'predictiveCalc'"
+          :class="{ active: activeSection === 'predictiveCalc' }"
+        >
+          Predictive Calculator
+        </li>
       </ul>
     </nav>
 
