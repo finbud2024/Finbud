@@ -385,6 +385,7 @@
 
     <QuizRewards v-if="showingReward" :reward-amount="rewardAmount" />
 
+    <!-- Predictive Calculator Section -->
     <section v-if="activeSection === 'predictiveCalc'">
       <div class="predictive-calc">
         <PredicitveCalc />
