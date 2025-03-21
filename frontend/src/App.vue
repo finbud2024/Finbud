@@ -11,7 +11,7 @@
   <ChatBubble v-if="showChatBubble && chatBubbleActive"
     @closeChatBubble="toggleChatBubble"
     :chatViewThreadID="threadId" />
-  <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" ref="finbudBot"/>
+    <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" ref="finbudBot"/>
   
   <div v-if="showBotMessage" class="bot-message-container">
     <div class="finbudBotMessage" 
@@ -154,6 +154,9 @@ export default {
       },
       { immediate: true } // Check immediately on mount
     );
+
+    // add drag event
+    this.addDragListeners();
 
     // Add new method to check if user is new
     await this.checkIfUserIsNew();
@@ -387,11 +390,11 @@ a:hover {
   bottom: 20px;
   z-index: 99998;
   transition: transform 0.2s ease;
-  cursor:auto; /* Change cursor to indicate draggable */
+  cursor: grab; /* Change cursor to indicate draggable */
 }
 
 .finbudBot:active {
-  cursor: auto; /* Change cursor when dragging */
+  cursor: grab; /* Change cursor when dragging */
 }
 
 .finbudBot:hover {
