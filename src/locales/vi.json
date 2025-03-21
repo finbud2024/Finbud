@@ -1,0 +1,237 @@
+{
+  "home": "Trang chủ",
+  "achievements": "Thành tựu",
+  "blog": "Blog",
+  "blogPage1": "Trang Blog 1",
+  "products": "Sản phẩm",
+  "AboutUs": "Về Chúng Tôi",
+  "Process": "Quy trình",
+  "AboutUs": {
+    "title": "Về Chúng Tôi",
+    "description1": "ESmart Solutions - tập trung hỗ trợ các doanh nghiệp kinh doanh tăng cường khả năng tiếp cận và quảng bá sản phẩm đến khách hàng tiềm năng.",
+    "description2": "ESmart với tôn chỉ Tôn trọng - Hiệu quả - Chuyên nghiệp, đối tác của chúng tôi sẽ thường xuyên được cập nhật thông tin, chăm sóc và đảm bảo quyền lợi từ những điều khoản nhỏ nhất.",
+    "description3": "Sản phẩm E-Boost của chúng tôi mang đến cơ hội cho doanh nghiệp không chỉ mở rộng và tối ưu hóa hoạt động kinh doanh, mà còn nâng cao thương hiệu, góp phần phát triển hệ sinh thái các doanh nghiệp phát triển bền vững."
+  },
+  "blogPost": {
+    "mainPost": {
+      "title": "ECO TOUCH - HÀNH TRÌNH MỚI CỦA VIET STRAW ĐỂ ĐI TOÀN CẦU",
+      "excerpt": "Hợp tác với EcoSmart Solutions, ECO Touch bắt đầu một hành trình hấp dẫn cùng VietStraw...",
+      "fullText": "Hợp tác với EcoSmart Solutions, ECO Touch bắt đầu một hành trình hấp dẫn cùng VietStraw. Khi chúng tôi bắt đầu hành trình hấp dẫn này, ECO Touch và EcoSmart Solutions sẵn sàng cách mạng hóa cảnh quan của các thực hành bền vững. Đối tác của chúng tôi xây dựng trên cơ sở tôn trọng lẫn nhau và cam kết thúc đẩy các giải pháp môi trường. Với sự chuyên môn của EcoSmart Solutions trong các công nghệ xanh tiên tiến và cách tiếp cận tiên phong của ECO Touch đối với các sản phẩm thân thiện với môi trường, chúng tôi sẵn sàng tạo ra một ảnh hưởng đáng kể."
+    },
+    "readMore": "Xem Thêm",
+    "readLess": "Thu Gọn",
+    "morePosts": "Bài Viết Khác"
+  },
+  "contactUs": {
+    "title": "Liên hệ với chúng tôi",
+    "general": {
+      "title": "Tài khoản & Thanh toán",
+      "description": "Gửi email trực tiếp cho đội ngũ Esmart nếu bạn có bất kỳ câu hỏi nào.",
+      "form": {
+        "name": "Tên",
+        "email": "Địa chỉ email",
+        "option": "Thông tin chung",
+        "submit": "Gửi"
+      }
+    },
+    "support": {
+      "title": "Hỗ trợ kỹ thuật",
+      "description": "Nếu cần trợ giúp, khách hàng có thể trò chuyện trực tiếp với nhóm hỗ trợ của Esmart Solutions!",
+      "button": "Trò chuyện với nhóm hỗ trợ"
+    }
+  },
+  "process": {
+    "title": "Quy trình của chúng tôi",
+    "steps": [
+      {
+        "title": "Bước 1: Tư vấn và lập kế hoạch",
+        "subsSteps": [
+          { "title": "Phân tích thị trường - khách hàng mục tiêu." },
+          { "title": "Xây dựng customer insight" },
+          { "title": "Lên kế hoạch triển khai theo tháng, có mục tiêu rõ ràng." }
+        ]
+      },
+      {
+        "title": "Bước 2: Ký kết hợp đồng",
+        "subsSteps": [
+          { "title": "Ký hợp đồng với gói dịch vụ phù hợp, đảm bảo điều khoản đều minh bạch, rõ ràng." }
+        ]
+      },
+      {
+        "title": "Bước 3: Triển khai Dịch vụ",
+        "subsSteps": [
+          { "title": "Tạo nhóm trao đổi và giám sát công việc." },
+          { "title": "Lên kế hoạch nội dung hàng tháng, trình khách hàng phê duyệt." },
+          { "title": "Thiết kế hình ảnh, sản xuất video, triển khai các chiến dịch quảng cáo." }
+        ]
+      },
+      {
+        "title": "Bước 4: Báo cáo và đánh giá",
+        "subsSteps": [
+          { "title": "Báo cáo kết quả cuối tháng, đưa ra điều chỉnh cần thiết." },
+          { "title": "Thu thập phản hồi khách hàng, hỗ trợ khách hàng trong quá trình sử dụng." }
+        ]
+      }
+    ],
+    "modal": {
+      "close": "Đóng"
+    }
+  },
+  "features": {
+    "title": "Thành tựu",
+    "achievements": [
+      {
+        "title": "Nhân sự",
+        "description": "20+"
+      },
+      {
+        "title": "Ấn phẩm",
+        "description": "5000+"
+      },
+      {
+        "title": "Khu vực",
+        "description": "10+"
+      },
+      {
+        "title": "Tiếp cận",
+        "description": "1000000+"
+      }
+    ],
+    "feature1": {
+      "title": "Đội ngũ",
+      "description": "Các ấn phẩm truyền thông của ESmart Solutions đã đạt được số lượng người tiếp cận lên tới 1,000,000+."
+    },
+    "feature2": {
+      "title": "Đầu tư",
+      "description": "Esmart Solution đã gây quỹ tài trợ và nhận được sự hợp tác chiến lược từ tổ chức Macalester Entrepreneurship and Innovation Fund có trụ sở tại Saint Paul, Minnesota."
+    }
+  },
+  "footer": {
+    "brand": "ESmart Solutions",
+    "description": "Hiệu quả - Tôn trọng - Chuyên nghiệp.",
+    "subscribe": {
+      "label": "Đăng kí với chúng tôi",
+      "placeholder": "Đăng nhập bằng email",
+      "submit": "Đăng kí"
+    },
+    "links": {
+      "home": "Trang chủ",
+      "aboutUs": "Về chúng tôi",
+      "process": "Sản phẩm",
+      "contact": "Liên hệ",
+      "socialProof": "Thành tựu",
+      "blog": "Blog"
+    }
+  },
+  "hero": {
+    "title": "Công ty ESmart Solutions",
+    "description": "ESmart Solutions Agency là đối tác, người bạn đồng hành chuyên nghiệp cùng doanh nghiệp Việt Nam trên hành trình xây dựng và phát triển thương hiệu uy tín, chất lượng.",
+    "buttons": {
+      "join": "Tham gia",
+      "contact": "Liên hệ"
+    }
+  },
+  "feats": {
+    "sectionTitle": "Phát triển website",
+    "mainTitle": "Cùng Esmart trải nghiệm những tính năng đặc biệt",
+    "items": {
+      "0": "Trình tạo trang Elementor",
+      "1": "Tích hợp sẵn Woocommerce",
+      "2": "Hỗ trợ WPML Đa ngôn ngữ",
+      "3": "Tài liệu hướng dẫn bằng video",
+      "4": "Tùy chọn màu sắc không giới hạn"
+    }
+  },
+  "process": {
+    "title": "Quy trình của chúng tôi",
+    "closeButton": "Đóng",
+    "steps": {
+      "0": {
+        "title": "Bước 1: Tư vấn và lập kế hoạch",
+        "subs": {
+          "0": "Phân tích thị trường - khách hàng mục tiêu.",
+          "1": "Xây dựng customer insight.",
+          "2": "Lên kế hoạch triển khai triển khai theo tháng, có mục tiêu rõ ràng."
+        }
+      },
+      "1": {
+        "title": "Bước 2: Ký kết hợp đồng",
+        "subs": {
+          "0": "Ký hợp đồng với gói dịch vụ phù hợp, đảm bảo điều khoản đều minh bạch, rõ ràng."
+        }
+      },
+      "2": {
+        "title": "Bước 3: Triển khai chăm sóc Fanpage",
+        "subs": {
+          "0": "Tạo nhóm trao đổi và giám sát công việc.",
+          "1": "Lên kế hoạch nội dung hàng tháng, trình khách hàng phê duyệt.",
+          "2": "Thiết kế hình ảnh, sản xuất video, triển khai các chiến dịch quảng cáo."
+        }
+      },
+      "3": {
+        "title": "Bước 4: Báo cáo và đánh giá",
+        "subs": {
+          "0": "Báo cáo kết quả cuối tháng, đưa ra điều chỉnh cần thiết.",
+          "1": "Thu thập phản hồi khách hàng, hỗ trợ khách hàng trong quá trình sử dụng."
+        }
+      }
+    }
+  },
+  "socialProof": {
+    "mediaTitle": "Mạng xã hội",
+    "testimonialsTitle": "Khách hàng nói gì về chúng tôi",
+    "toolkitTitle": "ESmart Solutions - Dịch vụ hỗ trợ tối ưu",
+    "facebook": "Hơn 1,000,000 lượt tiếp cận Facebook",
+    "instagram": "Nội dung hấp dẫn trên Instagram",
+    "linkedin": "Kết nối chuyên nghiệp trên LinkedIn",
+    "tiktok": "Tạo xu hướng thịnh hành trên TikTok",
+    "testimonial1": {
+      "name": "Lê Khánh Linh - Đối tác hợp tác toàn diện",
+      "title": "Nhà sáng lập thương hiệu thời trang xanh Mỵ",
+      "text": "Tôi đã đồng ý lựa chọn sản phẩm hỗ trợ truyền thông đa kênh toàn diện ngay lần gặp mặt đầu tiên. Đội ngũ ESmart Solutions tuy trẻ tuổi nhưng có quy trình và cách thức làm việc rất chuyên nghiệp, rõ ràng. Ngoài ra, sản phẩm của ESmart mang ý nghĩa nhân văn và giá cả phải chăng."
+    },
+    "testimonial2": {
+      "name": "Tạ Việt Dũng",
+      "title": "Đối tác hợp tác toàn diện",
+      "text": "Ban đầu, mục tiêu của chúng tôi là xuất khẩu sản phẩm sang Mỹ và châu Âu, ít quan tâm đến các kênh truyền thông tại Việt Nam. Tuy nhiên, sau khi xem xét hồ sơ hợp tác với ESmart Solutions, chúng tôi đã quyết định hợp tác vì sự rõ ràng trong kế hoạch truyền thông và giá cả hợp lý. Thông qua E-Boost, chúng tôi đặt mục tiêu đưa ống hút VietStraw đến các nhà hàng trên Châu Âu và Bắc Mỹ."
+    },
+    "testimonial3": {
+      "name": "Nguyễn Thu Huyền",
+      "title": "CEO Thời Trang Mimi Organic",
+      "text": "Mimi - Doanh nghiệp thời trang hữu cơ đạt chứng nhận dệt may hữu cơ toàn cầu (GOTS) - đối tác lựa chọn hợp tác toàn diện cùng ESmart Solutions, sử dụng tất cả các dịch vụ từ truyền thông đa kênh, thương mại điện tử, công nghệ thông tin,…"
+    },
+    "testimonial4": {
+      "name": "Bác sĩ My",
+      "title": "CEO -KinderHealth",
+      "text": "ESmart Solutions là một đối tác trẻ, năng động và mang lại giá trị cho Kinderhealth. Hợp tác với ESmart trong việc quản lý và phát triển trang Facebook và hài lòng kết quả mà team đã đem lại."
+    },
+    "testimonial5": {
+      "name": "Phan Minh Tuấn",
+      "title": "Giám đốc Marketing tại Công ty Công Nghệ FTech",
+      "text": "Chúng tôi đã rất ấn tượng với cách ESmart Solutions tiếp cận và giải quyết các vấn đề truyền thông của chúng tôi. Đội ngũ chuyên nghiệp và tận tâm, cùng với sự sáng tạo trong các giải pháp truyền thông đã giúp chúng tôi gia tăng hiệu quả quảng cáo và mở rộng thị trường. ESmart thực sự là một đối tác đáng tin cậy trong hành trình phát triển thương hiệu của chúng tôi."
+    },
+    "testimonial6": {
+      "name": "Hà Anh Thư",
+      "title": "Founder và Giám đốc điều hành Tinh Tế Café",
+      "text": "Khi bắt đầu hợp tác với ESmart Solutions, chúng tôi mong muốn tạo ra một hình ảnh thương hiệu độc đáo và nổi bật cho Tinh Tế Café. Đội ngũ ESmart đã vượt qua mong đợi của chúng tôi với những ý tưởng sáng tạo và giải pháp truyền thông hiệu quả. Họ không chỉ giúp nâng cao nhận diện thương hiệu mà còn tăng cường sự kết nối với khách hàng mục tiêu. Chúng tôi rất hài lòng với kết quả đạt được."
+    },
+    "toolkit": {
+      "item1": {
+        "title": "Giải pháp quản lý truyền thông số đa kênh",
+        "description": "Esmart Solutions cung cấp giải pháp quản lý truyền thông số đa kênh - Omnichannel Saving Digital Marketing - trên các nền tảng như Facebook, Instagram, Website, TikTok, Thương mại điện tử,..."
+      },
+      "item2": {
+        "title": "Xây dựng kế hoạch Marketing tích hợp",
+        "description": "Chúng tôi hỗ trợ bạn xây dựng kế hoạch Marketing tích hợp, triển khai đa kênh dựa theo hành trình khách hàng để tăng tỷ lệ chuyển đổi."
+      },
+      "item3": {
+        "title": "Hỗ trợ đa kênh và quản lý mạng xã hội",
+        "description": "Esmart Solutions giúp bạn quản lý mạng xã hội và truyền thông số kênh một cách hiệu quả, tạo ra trải nghiệm khách hàng tốt nhất."
+      },
+      "item4": {
+        "title": "Xây dựng từ 2 Năm Kinh nghiệm",
+        "description": "Esmart Solutions được xây dựng trên nền tảng trong lĩnh vực quảng cáo và quản lý truyền thông số kênh."
+      }
+    }
+  }
+}

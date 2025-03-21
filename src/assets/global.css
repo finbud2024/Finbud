@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  
+  .container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 10px;
+    }
+  
+    .responsive-text {
+      font-size: 1.5rem;
+    }
+  
+    .responsive-padding {
+      padding: 1rem;
+    }
+  
+    .responsive-flex {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .responsive-text {
+      font-size: 1.2rem;
+    }
+  
+    .responsive-padding {
+      padding: 0.5rem;
+    }
+  
+    .responsive-flex {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }

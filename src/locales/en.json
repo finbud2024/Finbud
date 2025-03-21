@@ -1,0 +1,241 @@
+{
+        "home": "Home",
+        "achievements": "Achievements",
+        "blog": "Blog",
+        "blogPage1": "Blog Page 1",
+        "products": "Products",
+        "AboutUs": "About Us",
+        "Process": "Process",
+        "AboutUs": {
+    "title": "About Us",
+    "description1": "ESmart Solutions focuses on helping businesses enhance their ability to reach and promote their products to potential customers.",
+    "description2": "With the motto Respect - Efficiency - Professionalism, our partners will be regularly updated with information, care, and ensured rights from the smallest terms.",
+    "description3": "Our E-Boost product offers businesses the opportunity to not only expand and optimize their business activities but also enhance their brand and contribute to the development of a sustainable business ecosystem."
+  },
+  "blogPost": {
+    "mainPost": {
+      "title": "ECO TOUCH - A NEW JOURNEY OF VIET STRAW TO GO GLOBAL",
+      "excerpt": "Joining forces with EcoSmart Solutions, ECO Touch embarks on an exhilarating journey alongside VietStraw...",
+      "fullText": "Joining forces with EcoSmart Solutions, ECO Touch embarks on an exhilarating journey alongside VietStraw. As we embark on this exhilarating journey, ECO Touch and EcoSmart Solutions are poised to revolutionize the landscape of sustainable practices. Our partnership is built on a foundation of mutual respect and a commitment to advancing environmental solutions. With EcoSmart Solutions' expertise in cutting-edge green technologies and ECO Touch’s pioneering approach to eco-friendly products, we are set to make a significant impact."
+    },
+    "readMore": "Read More",
+    "readLess": "Read Less",
+    "morePosts": "More Posts"
+  },
+  "contactUs": {
+    "title": "Contact Us",
+    "general": {
+      "title": "Account & Payments",
+      "description": "Email the Esmart team directly if you have any questions.",
+      "form": {
+        "name": "Name",
+        "email": "Email Address",
+        "option": "General Inquiry",
+        "submit": "Submit"
+      }
+    },
+    "support": {
+      "title": "Technical Support",
+      "description": "If you need help, customers can chat directly with the Esmart Solutions support team!",
+      "button": "Chat with Support Team"
+    }
+  },
+
+  "process": {
+    "title": "Our Process",
+    "closeButton": "Close",
+    "steps": {
+      "0": {
+        "title": "Step 1: Consultation and Planning",
+        "subs": {
+          "0": "Market analysis - target customers.",
+          "1": "Building customer insight.",
+          "2": "Planning implementation monthly with clear objectives."
+        }
+      },
+      "1": {
+        "title": "Step 2: Contract Signing",
+        "subs": {
+          "0": "Sign a contract with an appropriate service package, ensuring transparent and clear terms."
+        }
+      },
+      "2": {
+        "title": "Step 3: Fanpage Management",
+        "subs": {
+          "0": "Create a group for discussion and work supervision.",
+          "1": "Monthly content planning, customer approval.",
+          "2": "Design images, produce videos, and launch ad campaigns."
+        }
+      },
+      "3": {
+        "title": "Step 4: Reporting and Evaluation",
+        "subs": {
+          "0": "Monthly result reporting, making necessary adjustments.",
+          "1": "Collect customer feedback, support customers during usage."
+        }
+      }
+    }
+  },
+
+  "process": {
+    "title": "Our Process",
+    "steps": [
+      {
+        "title": "Step 1: Consultation and Planning",
+        "subsSteps": [
+          { "title": "Market analysis - target customers." },
+          { "title": "Build customer insight" },
+          { "title": "Plan implementation monthly, with clear goals." }
+        ]
+      },
+      {
+        "title": "Step 2: Contract Signing",
+        "subsSteps": [
+          { "title": "Sign the contract with the appropriate service package, ensuring all terms are transparent and clear." }
+        ]
+      },
+      {
+        "title": "Step 3: Service Implementation",
+        "subsSteps": [
+          { "title": "Create a team for communication and work supervision." },
+          { "title": "Develop monthly content plans, present to customers for approval." },
+          { "title": "Design images, produce videos, and implement advertising campaigns." }
+        ]
+      },
+      {
+        "title": "Step 4: Reporting and Evaluation",
+        "subsSteps": [
+          { "title": "Report results at the end of the month, make necessary adjustments." },
+          { "title": "Collect customer feedback, support customers during use." }
+        ]
+      }
+    ],
+    "modal": {
+      "close": "Close"
+    }
+  },
+  "features": {
+    "title": "Achievements",
+    "achievements": [
+      {
+        "title": "Human Resources",
+        "description": "20+"
+      },
+      {
+        "title": "Publications",
+        "description": "5000+"
+      },
+      {
+        "title": "Regions",
+        "description": "10+"
+      },
+      {
+        "title": "Reach",
+        "description": "1000000+"
+      }
+    ],
+    "feature1": {
+      "title": "Team",
+      "description": "ESmart Solutions' media publications have reached up to 1,000,000+."
+    },
+    "feature2": {
+      "title": "Investment",
+      "description": "Esmart Solution has secured funding and strategic collaboration from the Macalester Entrepreneurship and Innovation Fund based in Saint Paul, Minnesota."
+    }
+  },
+  "footer": {
+    "brand": "ESmart Solutions",
+    "description": "Effective - Respectful - Professional.",
+    "subscribe": {
+      "label": "Subscribe to Us",
+      "placeholder": "Enter your email",
+      "submit": "Subscribe"
+    },
+    "links": {
+      "home": "Home",
+      "aboutUs": "About Us",
+      "process": "Products",
+      "contact": "Contact",
+      "socialProof": "Achievements",
+      "blog": "Blog"
+    }
+  },
+  "hero": {
+    "title": "ESmart Solutions Agency",
+    "description": "ESmart Solutions Agency is a professional partner and companion for Vietnamese businesses on the journey to build and develop reputable and quality brands.",
+    "buttons": {
+      "join": "Join Us",
+      "contact": "Contact Us"
+    }
+  },
+
+  "feats": {
+    "sectionTitle": "Website Development",
+    "mainTitle": "Experience the Special Features with Esmart",
+    "items": {
+      "0": "Elementor Page Builder",
+      "1": "Built-in Woocommerce",
+      "2": "WPML Multilingual Support",
+      "3": "Video Documentation",
+      "4": "Unlimited Color Options"
+    }
+  },
+
+  "socialProof": {
+    "mediaTitle": "Social Media",
+    "testimonialsTitle": "What our customers say about us",
+    "toolkitTitle": "ESmart Solutions - Optimal Support Services",
+    "facebook": "Over 1,000,000 Facebook reach",
+    "instagram": "Engaging content on Instagram",
+    "linkedin": "Professional connections on LinkedIn",
+    "tiktok": "Create trending content on TikTok",
+    "testimonial1": {
+      "name": "Le Khanh Linh - Comprehensive Partner",
+      "title": "Founder of Green Fashion Brand My",
+      "text": "I agreed to choose a comprehensive multi-channel communication support product at the first meeting. The ESmart Solutions team, although young, has a very professional and clear process and working method. In addition, ESmart's product is meaningful and affordable."
+    },
+    "testimonial2": {
+      "name": "Ta Viet Dung",
+      "title": "Comprehensive Partner",
+      "text": "Initially, our goal was to export products to the US and Europe, with little focus on media channels in Vietnam. However, after reviewing the partnership profile with ESmart Solutions, we decided to cooperate due to the clarity in the communication plan and reasonable prices. Through E-Boost, we aim to bring VietStraw straws to restaurants in Europe and North America."
+    },
+    "testimonial3": {
+      "name": "Nguyen Thu Huyen",
+      "title": "CEO of Mimi Organic Fashion",
+      "text": "Mimi - A global organic textile certified (GOTS) fashion company - chose to partner comprehensively with ESmart Solutions, using all services from multi-channel communication, e-commerce, information technology, ..."
+    },
+    "testimonial4": {
+      "name": "Dr. My",
+      "title": "CEO - KinderHealth",
+      "text": "ESmart Solutions is a young, dynamic partner that adds value to Kinderhealth. Collaborating with ESmart in managing and developing the Facebook page, we are satisfied with the results the team has brought."
+    },
+    "testimonial5": {
+      "name": "Phan Minh Tuan",
+      "title": "Marketing Director at FTech Technology Company",
+      "text": "We were very impressed with the way ESmart Solutions approached and solved our communication problems. The professional and dedicated team, along with creativity in communication solutions, helped us increase advertising effectiveness and expand the market. ESmart is truly a reliable partner in our brand development journey."
+    },
+    "testimonial6": {
+      "name": "Ha Anh Thu",
+      "title": "Founder and CEO of Tinh Te Café",
+      "text": "When we started working with ESmart Solutions, we wanted to create a unique and outstanding brand image for Tinh Te Café. The ESmart team exceeded our expectations with creative ideas and effective communication solutions. They not only helped enhance brand recognition but also strengthened connections with target customers. We are very pleased with the results achieved."
+    },
+    "toolkit": {
+      "item1": {
+        "title": "Omnichannel Digital Marketing Management Solutions",
+        "description": "Esmart Solutions provides omnichannel digital marketing management solutions across platforms like Facebook, Instagram, Website, TikTok, E-commerce, ..."
+      },
+      "item2": {
+        "title": "Integrated Marketing Plan Development",
+        "description": "We support you in developing an integrated marketing plan, deploying across channels based on the customer journey to increase conversion rates."
+      },
+      "item3": {
+        "title": "Omnichannel Support and Social Media Management",
+        "description": "Esmart Solutions helps you effectively manage social media and digital marketing channels, creating the best customer experience."
+      },
+      "item4": {
+        "title": "Built on 2 Years of Experience",
+        "description": "Esmart Solutions is built on a foundation in the field of advertising and omnichannel digital marketing management."
+      }
+    }
+  }
+}
