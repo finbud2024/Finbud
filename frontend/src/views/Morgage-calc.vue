@@ -1,8 +1,4 @@
 <template>
-  <div class="language-switcher">
-    <button @click="switchLanguage('en')">English</button>
-    <button @click="switchLanguage('vi')">Tiếng Việt</button>
-  </div>
   <div class="mortgage-calc">    
     <h1>{{ $t('title') }}</h1>
 
@@ -144,10 +140,19 @@
       </div> 
     </div>
   </div>
+  <div class="language-switcher">
+    <button @click="switchLanguage('en')">
+      <img src="@/assets/us.png" alt="English" />
+    </button>
+    <button @click="switchLanguage('vi')">
+      <img src="@/assets/vn.png" alt="Tiếng Việt" />
+    </button>
+  </div>
 </template>
 
 <script>
 import { Chart, PieController, ArcElement, Tooltip, Legend } from 'chart.js';
+import axios from 'axios';
 
 //const ZillowKey = process.env.VUE_APP_ZILLOW_KEY;
 
@@ -230,7 +235,7 @@ export default {
     // },
 
     // Bot Chat method
-    startBotAnimation() {
+    async startBotAnimation() {
       if (this.typingTimer) {
         clearTimeout(this.typingTimer);
       }
@@ -244,9 +249,13 @@ export default {
 
       this.showBot = true;
 
-      setTimeout(() => {
+      setTimeout(async () => {
         this.showMessage = true;
         this.isTyping = true;
+
+        // Fetch insights from DeepSeek API
+        const insights = await this.generateMortgageInsights();
+        this.botMessage = insights; // Update the bot message with the generated insights
 
         setTimeout(() => {
           this.isTyping = false;
@@ -296,6 +305,44 @@ export default {
           this.typedContent = "";
         }, 1000);
       }, 500);
+    },
+    async generateMortgageInsights() {
+      const url = "https://openrouter.ai/api/v1/chat/completions";
+      try {
+        const response = await axios.post(url, {
+          model: "deepseek/deepseek-chat:free",
+          messages: [
+            {
+              role: "system",
+              content: "You are a financial expert providing insights on mortgage payment."
+            },
+            {
+              role: "user",
+              content: `Analyze this mortgage data:
+              - Home Price: $${this.homePrice}
+              - Down Payment: $${this.downPayment} (${this.downPaymentPercentage}%)
+              - Loan Term: ${this.loanTerm} years
+              - Interest Rate: ${this.interestRate}%
+              - Property Tax: $${this.propertyTax}/month
+              - Home Insurance: $${this.homeInsurance}/month
+              - PMI: $${this.pmi}/month
+              - HOA Fees: $${this.hoaFees}/month
+              - Monthly Payment: $${this.calculateMonthlyPayment}
+              Provide 2-3 sentences of insights. Keep it concise and actionable.`
+            }
+          ]
+        }, {
+          headers: {
+            'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          }
+        });
+        return response.data.choices[0].message.content;
+      } catch (error) {
+        console.error("Error generating mortgage insights:", error);
+        return "Unable to generate insights at the moment. Please try again later.";
+      }
     },
     
     // Calculate Down Payment Percentage based on Down Payment
@@ -396,23 +443,40 @@ export default {
     }
 
   },
-    watch: {
-      calculateMonthlyPayment() {
+  watch: {
+    homePrice() {
       this.renderChart();
-      },
-      propertyTax() {
-        this.renderChart();
-      },
-      homeInsurance() {
-        this.renderChart();
-      },
-      pmi() {
-        this.renderChart();
-      },
-      hoaFees() {
-        this.renderChart();
-      }
+      this.startBotAnimation(); // Trigger chatbot on home price change
     },
+    downPayment() {
+      this.renderChart();
+      this.startBotAnimation(); // Trigger chatbot on down payment change
+    },
+    loanTerm() {
+      this.renderChart();
+      this.startBotAnimation(); // Trigger chatbot on loan term change
+    },
+    interestRate() {
+      this.renderChart();
+      this.startBotAnimation(); // Trigger chatbot on interest rate change
+    },
+    propertyTax() {
+      this.renderChart();
+      this.startBotAnimation(); // Trigger chatbot on property tax change
+    },
+    homeInsurance() {
+      this.renderChart();
+      this.startBotAnimation(); // Trigger chatbot on home insurance change
+    },
+    pmi() {
+      this.renderChart();
+      this.startBotAnimation(); // Trigger chatbot on PMI change
+    },
+    hoaFees() {
+      this.renderChart();
+      this.startBotAnimation(); // Trigger chatbot on HOA fees change
+    }
+  },
 
 
   mounted() {
@@ -423,35 +487,32 @@ export default {
 </script>
 
 <style scoped>
+/* Language Switcher */
 .language-switcher {
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-  gap: 10px;
 }
 
 .language-switcher button {
-  padding: 8px 15px;
-  border: 2px solid #007bff;
-  background-color: #ffffff;
-  color: #007bff;
-  font-size: 14px;
-  font-weight: bold;
   cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s, color 0.3s;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
-.language-switcher button:hover {
-  background-color: #007bff;
-  color: #ffffff;
+.language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
 }
 
-.language-switcher button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+.language-switcher button:hover img {
+  transform: scale(1.1); /* Slightly enlarge the flag on hover */
 }
 
+/* Mortgage Calculator Container */
 .mortgage-calc {
   max-width: 90%;
   margin: auto;
@@ -461,45 +522,51 @@ export default {
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Headings */
 h1 {
   font-size: 40px;
   margin-bottom: 20px;
   color: #007bff;
 }
 
+/* Layout */
 .content-wrapper {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
+/* Input Section */
 .input-section {
   max-width: 30%;
+  flex-grow: 1;
 }
 
+/* Loan Input Group */
+.loan-group {
+  margin-bottom: 15px;
+  width: 100%;
+  border-radius: 25px;
+}
+
+/* Payment Breakdown Box */
 .payment-breakdown-box {
-  border: 2px solid #ddd; 
-  border-radius: 12px; 
-  padding: 20px;  
-  background-color: #f9f9f9; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-  margin-top: 20px; 
-  margin-left: 30px;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
   flex: 1;
 }
 
 .payment-breakdown {
-  margin-left: 30px;
   flex: 1;
 }
 
+/* Input Groups */
 .input-group {
   margin-bottom: 15px;
-}
-
-.loan-group {
-  margin-bottom: 15px;
-  width: 35%;
-  border-radius: 25px;
 }
 
 label {
@@ -508,6 +575,7 @@ label {
   margin-bottom: 5px;
 }
 
+/* Input Wrapper */
 .input-wrapper {
   position: relative;
   display: flex;
@@ -529,20 +597,17 @@ input, select {
   color: #555;
 }
 
+/* Split Input */
 .split-input {
   display: flex;
   gap: 10px;
 }
 
+/* Toggle Header */
 .toggle-header {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.toggle-header button label {
-  font-size: 1.2rem; 
-  font-weight: bold; 
 }
 
 .toggle-header button {
@@ -552,6 +617,11 @@ input, select {
   padding: 0;
   display: flex;
   align-items: center;
+}
+
+.toggle-header button label {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .dropdown-icon {
