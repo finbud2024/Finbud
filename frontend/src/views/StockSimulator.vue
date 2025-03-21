@@ -11,6 +11,12 @@
           Investment
         </li>
         <li
+          @click="activeSection = 'portfolio'"
+          :class="{ active: activeSection === 'portfolio' }"
+        >
+          Your Portfolio
+        </li>
+        <li
           @click="activeSection = 'transactionHistory'"
           :class="{ active: activeSection === 'transactionHistory' }"
         >
@@ -21,6 +27,12 @@
           :class="{ active: activeSection === 'filters' }"
         >
           Filters
+        </li>
+        <li
+          @click="activeSection = 'predictiveCalc'"
+          :class="{ active: activeSection === 'predictiveCalc' }"
+        >
+          Predictive Calculator
         </li>
       </ul>
     </nav>
