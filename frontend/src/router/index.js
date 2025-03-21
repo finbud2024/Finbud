@@ -21,7 +21,7 @@ import ForumView from "@/views/ForumView.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/ThreadView.vue";
 import StartThread from "@/views/StartThread.vue";
-import MorgageCalc from "@/views/Morgage-calc.vue";
+import MortgageCalc from "@/views/Mortgage-calc.vue";
 
 const routes = [
   {
@@ -142,9 +142,9 @@ const routes = [
     props: true,
   },
   {
-    path: "/morgage-calc",
-    name: "MorgageCalc",
-    component: MorgageCalc,
+    path: "/mortgage-calc",
+    name: "MortgageCalc",
+    component: MortgageCalc,
     props: true,
   },
 ];

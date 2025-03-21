@@ -5,7 +5,7 @@
     <div class="content-wrapper">
       <!-- Bot Chat Component -->
       <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-        <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
+        <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" @click="hideMessage"/>
         <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
           <div v-if="isTyping" class="typing-animation">
             <span class="dot"></span>
@@ -167,7 +167,7 @@ export default {
       showMessage: false,
       hidingMessage: false,
       isTyping: false,
-      botMessage: "This pie shows monthly payment including all the fee.", 
+      botMessage: "", 
       typedContent: "",
       typingSpeed: 50, // milliseconds between characters
       typingIndex: 0,
@@ -176,7 +176,7 @@ export default {
       words: [],
       currentWordIndex: 0,
 
-      // morgage data
+      // mortgage data
       homePrice: 425000,
       downPayment: 85000,
       downPaymentPercentage: 20,
@@ -289,6 +289,10 @@ export default {
       this.botHideTimer = setTimeout(() => {
         this.hideBot();
       }, 60000);
+    },
+
+    hideMessage() {
+      this.hidingMessage = true;
     },
 
     hideBot() {
@@ -718,12 +722,12 @@ h3 {
 /* Add the bot chat styles from the previous example here */
 .bot-chat-container {
   position: fixed;
-  left: -350px;
+  right: -350px;
   top: 30%;
   width: 300px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
   padding: 15px;
   z-index: 100;
   transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
@@ -733,13 +737,13 @@ h3 {
 }
 
 .bot-chat-container.bot-visible {
-  transform: translateX(350px);
+  transform: translateX(-350px);
   opacity: 1;
   pointer-events: auto;
 }
 
 .bot-chat-container.bot-hidden {
-  transform: translateX(350px) translateY(50px);
+  transform: translateX(-350px) translateY(50px); 
   opacity: 0;
   transition: transform 1s ease, opacity 1s ease;
 }
@@ -751,6 +755,7 @@ h3 {
   position: relative;
   background: transparent;
   transition: transform 0.5s ease;
+  cursor: pointer;
 }
 
 .bot-visible .bot-image {

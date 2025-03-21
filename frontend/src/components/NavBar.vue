@@ -23,7 +23,7 @@
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/forum" class="forum" @click="toggleDropdown(false)">Forum</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
-            <router-link to="/morgage-calc" class="morgage-calc" @click="toggleDropdown(false)">Morgage Calculator</router-link>
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
           </div>
         </li>
         <li v-if="!isAuthenticated && !isAuthLoading"><router-link to="/login" class="login-button">Log In</router-link></li>
