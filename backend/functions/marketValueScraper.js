@@ -2,12 +2,11 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { fileURLToPath } from 'url';
 import Investor from '../Database Schema/TopInvestors.js';
-import MarketValue from '../Database Schema/MarketValue.js';
+import InvestorData from '../Database Schema/MarketValue.js';
 import { 
     getRandomUserAgent,
     connectToMongoDB,
-    disconnectFromMongoDB,
-    saveToDatabase 
+    disconnectFromMongoDB
 } from '../utils/scraperUtils.js';
 
 puppeteer.use(StealthPlugin());
@@ -31,7 +30,7 @@ async function scrapeTopInvestorsMarketValue(baseUrl, dateQuarter = '') {
     await page.setUserAgent(getRandomUserAgent());
     
     const url = dateQuarter ? `${baseUrl}/${dateQuarter}` : baseUrl;
-    console.log(`Scraping URL: ${url}`);
+    console.log(`Scraping market values from URL: ${url}`);
     
     await page.goto(url, { waitUntil: 'domcontentloaded' });
 
@@ -128,6 +127,56 @@ async function scrapeTopInvestorsMarketValue(baseUrl, dateQuarter = '') {
     return marketValues;
 }
 
+async function scrapeTopInvestorsHolding(url, dateQuarter = '') {
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
+    await page.setUserAgent(getRandomUserAgent());
+
+    // Construct URL with date quarter if provided
+    const finalUrl = dateQuarter ? `${url}/${dateQuarter}/` : url;
+    console.log(`Scraping holdings from URL: ${finalUrl}`);
+    
+    await page.goto(finalUrl, { waitUntil: 'domcontentloaded' });
+    const investorData = await page.evaluate(() => {
+        const sanitizeKey = (key) => key.replace(/\./g, ' ');
+        
+        const container = document.querySelector("#portal > div > main > div > div.m_e615b15f.mantine-Card-root.m_1b7284a3.mantine-Paper-root > div.my-2.flex.w-full.flex-col.gap-4.\\@md\\:flex-row > div.h-full.rounded-md.\\@md\\:w-full.\\@lg\\:min-h-\\[450px\\].\\@lg\\:max-w-\\[500px\\]");
+        if (!container) return {};
+
+        const data = {};
+
+        const sections = container.querySelectorAll("h3");
+
+        sections.forEach(section => {
+            const sectionTitle = section.innerText.trim();
+            const sectionData = {};
+            let sibling = section.nextElementSibling;
+
+            if (sibling) {
+                const rows = sibling.querySelectorAll("div.mantine-Flex-root");
+                rows.forEach(row => {
+                    const texts = row.querySelectorAll("p.mantine-Text-root");
+                    if (texts.length === 2) {
+                        const key = sanitizeKey(texts[0].innerText.trim());
+                        const value = texts[1].innerText.trim();
+                        sectionData[key] = value;
+                    }
+                });
+                
+                data[sectionTitle] = sectionData;
+            }
+        });
+        return data;
+    });
+
+    await browser.close();
+    return investorData;
+}
+
 export async function extractDateValues() {
     const browser = await puppeteer.launch({
         headless: true,
@@ -168,7 +217,7 @@ export async function extractDateValues() {
 }
 
 async function runScrapers() {
-    console.log("🚀 Starting Market Values Scraper...");
+    console.log("🚀 Starting Combined Data Scraper...");
 
     try {
         await connectToMongoDB();
@@ -192,39 +241,36 @@ async function runScrapers() {
                 for (const { date, quarter } of validDates) {
                     try {
                         console.log(`Processing ${quarter} for ${investor.company}`);
-                        const marketValues = await scrapeTopInvestorsMarketValue(baseUrl, quarter);
-
-                        if (marketValues.length > 0) {
-                            // Add metadata to each entry
-                            const marketValuesWithMetadata = marketValues.map(value => ({
-                                ...value,
+                        const [marketValues, holdings] = await Promise.all([
+                            scrapeTopInvestorsMarketValue(baseUrl, quarter),
+                            scrapeTopInvestorsHolding(baseUrl, quarter)
+                        ]);
+                        if (marketValues.length > 0 || Object.keys(holdings).length > 0) {
+                            const combinedData = {
                                 investorId: investor._id,
-                                date,
-                                quarter,
-                                updatedAt: new Date().toISOString()
-                            }));
+                                date: date,
+                                quarter: quarter,
+                                marketValue: marketValues,
+                                'Basic Stats': holdings['Basic Stats'] || {},
+                                'Industry Breakdown': holdings['Industry Breakdown'] || {},
+                                updatedAt: new Date()
+                            };
+                            await InvestorData.findOneAndUpdate(
+                                {
+                                    investorId: investor._id,
+                                    quarter: quarter,
+                                },
+                                combinedData,
+                                { upsert: true, new: true }
+                            );
 
-                            // Bulk upsert the market values
-                            for (const marketValue of marketValuesWithMetadata) {
-                                await MarketValue.findOneAndUpdate(
-                                    {
-                                        investorId: investor._id,
-                                        Ticker: marketValue.Ticker,
-                                        quarter: quarter,
-                                    },
-                                    marketValue,
-                                    { upsert: true, new: true }
-                                );
-                            }
-
-                            console.log(`✅ Saved ${marketValuesWithMetadata.length} entries for ${investor.company} - ${quarter}`);
+                            console.log(`✅ Saved combined data for ${investor.company} - ${quarter}`);
                         } else {
-                            console.log(`⚠️ No market values found for ${investor.company} - ${quarter}`);
+                            console.log(`⚠️ No data found for ${investor.company} - ${quarter}`);
                         }
 
                         // Add a small delay between quarters
                         await new Promise(resolve => setTimeout(resolve, 2000));
-
                     } catch (error) {
                         console.error(`Error processing quarter ${quarter} for ${investor.company}:`, error);
                         continue; // Continue with next quarter even if one fails
@@ -233,17 +279,16 @@ async function runScrapers() {
 
                 // Add a longer delay between investors
                 await new Promise(resolve => setTimeout(resolve, 5000));
-                
             } catch (error) {
                 console.error(`Error processing investor ${investor.company}:`, error);
                 continue; // Continue with next investor even if one fails
             }
         }
 
-        console.log("✨ Market values scraping completed!");
+        console.log("✨ Combined data scraping completed!");
 
     } catch (error) {
-        console.error("Error in market values scraper:", error);
+        console.error("Error in combined scraper:", error);
     } finally {
         await disconnectFromMongoDB();
     }
@@ -253,4 +298,4 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     runScrapers().catch(console.error);
 }
 
-export { scrapeTopInvestorsMarketValue, runScrapers };
+export { scrapeTopInvestorsMarketValue, scrapeTopInvestorsHolding, runScrapers };

@@ -1,19 +1,6 @@
 import mongoose from 'mongoose';
 
-const marketValueSchema = new mongoose.Schema({
-    investorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Investor',
-        required: true
-    },
-    date: {
-        type: String,
-        required: true
-    },
-    quarter: {
-        type: String,
-        required: true
-    },
+const stockHoldingSchema = new mongoose.Schema({
     Ticker: {
         type: String,
         required: true
@@ -49,20 +36,65 @@ const marketValueSchema = new mongoose.Schema({
     "Percentage Owned": {
         type: String,
         required: true
+    }
+});
+
+const basicStatsSchema = new mongoose.Schema({
+    'Market Value': {
+        type: String,
+        required: true
     },
+    'Top 10 (%)': {
+        type: String,
+        required: true
+    },
+    'Portfolio Size (Change from Prev.)': {
+        type: String,
+        required: true
+    },
+    'Avg. Holding Period': {
+        type: String,
+        required: true
+    },
+    'Turnover': {
+        type: String,
+        required: true
+    }
+});
+
+const combinedSchema = new mongoose.Schema({
+    investorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Investor',
+        required: true
+    },
+    date: {
+        type: String,
+        required: true
+    },
+    quarter: {
+        type: String,
+        required: true
+    },
+    'Basic Stats': basicStatsSchema,
+    'Industry Breakdown': {
+        type: Map,
+        of: String,
+        default: new Map()
+    },
+    marketValue: [stockHoldingSchema],
     updatedAt: {
         type: Date,
         default: Date.now
     }
 });
 
-// Compound index for unique entries
-marketValueSchema.index({ 
+// Compound index for unique entries per investor and quarter
+combinedSchema.index({ 
     investorId: 1, 
-    quarter: 1, 
-    Ticker: 1 
+    quarter: 1
 }, { unique: true });
 
-const MarketValue = mongoose.model('MarketValue', marketValueSchema, 'marketValues');
+const InvestorData = mongoose.model('InvestorData', combinedSchema, 'investorData');
 
-export default MarketValue; 
+export default InvestorData; 

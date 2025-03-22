@@ -21,14 +21,16 @@ export const getInvestors = async () => {
   }
 };
 
-// Function to fetch stock holdings by investorId and quarter
-export const fetchStockHoldings = async (investorId, quarter) => {
+/**
+ * Fetch all investor data (holdings and market values) for a specific quarter
+ */
+export const fetchInvestorData = async (investorId, quarter) => {
   try {
-    console.log('Fetching stock holdings:', `/api/investors/market-value/${investorId}/${quarter}`);
-    const response = await axiosInstance.get(`/api/investors/market-value/${investorId}/${quarter}`);
+    console.log('Fetching investor data:', `/api/investors/data/${investorId}/${quarter}`);
+    const response = await axiosInstance.get(`/api/investors/data/${investorId}/${quarter}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching stock holdings:", error);
+    console.error("Error fetching investor data:", error);
     throw error;
   }
 };
@@ -40,7 +42,7 @@ export const fetchStockHoldings = async (investorId, quarter) => {
  */
 export const getDistinctQuarters = async (investorId) => {
   try {
-    const response = await axiosInstance.get(`/api/investors/market-value/${investorId}`);
+    const response = await axiosInstance.get(`/api/investors/data/${investorId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching distinct quarters:", error);
@@ -70,18 +72,3 @@ export const fetchOwnershipHistory = async (investorId, cusip) => {
     throw error;
   }
 };
-
-/**
- * Fetch holding for a specific investor and quarter
- */
-export const fetchHoldingByQuarter = async (investorId, quarter) => {
-  try {
-    console.log('Fetching holding for quarter:', `/api/investors/holding/${investorId}/${quarter}`);
-    const response = await axiosInstance.get(`/api/investors/holding/${investorId}/${quarter}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching holding for quarter:', error);
-    throw error;
-  }
-};
-
