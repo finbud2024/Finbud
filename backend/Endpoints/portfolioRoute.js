@@ -1,9 +1,9 @@
 import express from 'express';
-import Portfolio from '../Database Schema/Portfolio';
-import UserHolding from '../Database Schema/UserHolding';
-import User from '../Database Schema/User';
-import validateRequest from '../utils/validateRequest';
-import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth';
+import Portfolio from '../Database Schema/Portfolio.js';
+import UserHolding from '../Database Schema/UserHolding.js';
+import User from '../Database Schema/User.js';
+import validateRequest from '../utils/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
 
 const portfolioRoute = express.Router();
 
