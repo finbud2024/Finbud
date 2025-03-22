@@ -23,6 +23,7 @@ import forumRoute from "../Endpoints/forumRoute.js";
 import postRoute from "../Endpoints/postRoute.js";
 import chatStockRoute from '../Endpoints/subChat/chatStockRoute.js';
 import portfolioRoute from '../Endpoints/portfolioRoute.js';
+import superInvestorsRoute from '../Endpoints/superInvestorsRoute.js';
 
 dotenv.config();
 
@@ -80,6 +81,7 @@ router.use('/api/forums', forumRoute);
 router.use('/api/posts', postRoute);
 router.use('/', chatStockRoute);
 router.use('/', portfolioRoute);
+router.use("/api/investors", superInvestorsRoute);
 
 app.use('/.netlify/functions/server', router);
 

@@ -1,0 +1,78 @@
+.investor-card {
+    border: 1px solid #4b5563;
+    background-color: #ebf2fb;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .investor-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .investor-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .investor-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-cover: cover;
+    border: 2px solid #4b5563;
+  }
+  
+  .investor-name {
+    color: rgb(43, 41, 41);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .investor-company {
+    color: rgb(43, 41, 41);
+    font-size: 0.875rem;
+  }
+  
+  .investor-metrics {
+    border-top: 1px solid #4b5563;
+    padding-top: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .metric {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  
+  .metric-label {
+    color: rgb(43, 41, 41);
+    font-size: 0.875rem;
+  }
+  
+  .metric-value {
+    color: rgb(43, 41, 41);
+    font-size: 0.875rem;
+  }
+  
+  .investor-stocks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-top: 1px solid #5e6877;
+    padding-top: 12px;
+  }
+  
+  .stock-badge {
+    padding: 6px 12px;
+    background-color: #404957;
+    color: #d1d5db;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
