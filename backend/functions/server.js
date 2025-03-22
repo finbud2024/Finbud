@@ -23,6 +23,10 @@ import eventRoute from "../Endpoints/eventRoute.js";
 import chatStockRoute from '../Endpoints/subChat/chatStockRoute.js';
 // Import the multiplier simulator route
 import multiplierSimulatorRoute from '../Endpoints/quantSimulator/multiplierSimulatorEndpoints.js';
+import forumRoute from "../Endpoints/forumRoute.js";
+import postRoute from "../Endpoints/postRoute.js";
+import portfolioRoute from '../Endpoints/portfolioRoute.js';
+
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -80,7 +84,7 @@ if (!mongoURI) {
 const connectToMongoDB = async () => {
   return new Promise((resolve, reject) => {
     mongoose.connect(mongoURI, { 
-      serverSelectionTimeoutMS: 5000 // 5 seconds timeout
+      serverSelectionTimeoutMS: 5000 
     })
     .then(() => {
       console.log('MongoDB connected');
@@ -121,6 +125,11 @@ router.use('/events', eventRoute);
 router.use('/', chatStockRoute);
 // Register the multiplier simulator route
 router.use('/multiplier-simulator', multiplierSimulatorRoute);
+// router.use('/', quantSimulatorRoute); // Commenting out undefined route
+router.use('/api/forums', forumRoute);
+router.use('/api/posts', postRoute);
+// router.use('/', chatStockRoute); // Duplicate route - already registered above
+router.use('/', portfolioRoute);
 
 app.use('/.netlify/functions/server', router);
 // Also use routes without Netlify prefix for local development

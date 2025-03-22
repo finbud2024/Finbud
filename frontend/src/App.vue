@@ -30,6 +30,15 @@ import ChatBubble from "./components/ChatBubble.vue";
 import axios from "axios";
 import '@fortawesome/fontawesome-free/css/all.css';
 
+// Initialize dark mode from localStorage before Vue loads
+(function initializeDarkMode() {
+  const storedDarkMode = localStorage.getItem('darkMode');
+  if (storedDarkMode === 'true') {
+    document.documentElement.classList.add('dark-mode');
+    document.body.classList.add('dark-mode');
+  }
+})();
+
 export default {
   name: "App",
   components: {
@@ -74,7 +83,6 @@ export default {
     const userData = this.$store.getters["users/currentUser"];
 
     if (this.isAuthenticated && userData) {
-      console.log("User is authenticated, user data:", userData._id);
       const userId = userData._id;
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
       try {
@@ -88,7 +96,6 @@ export default {
           const thread = await axios.post(api, reqBody, { withCredentials: true });
           this.threadId = thread._id;
         } else {
-          console.log("Using existing thread:", historyThreadsData[0]._id);
           this.threadId = historyThreadsData[0]._id;
         }
       } catch (error) {
@@ -98,15 +105,30 @@ export default {
       // Check if user is new
       await this.checkIfUserIsNew();
 
-      // Apply dark mode based on user settings
-      if (userData.settings && userData.settings.darkMode) {
-        console.log("Applying dark mode from user settings");
-        document.documentElement.classList.add('dark-mode');
-        document.body.classList.add('dark-mode');
-      } else {
-        console.log("Applying light mode from user settings");
-        document.documentElement.classList.remove('dark-mode');
-        document.body.classList.remove('dark-mode');
+      // Check localStorage for dark mode preference first
+      const storedDarkMode = localStorage.getItem('darkMode');
+      
+      if (storedDarkMode !== null) {
+        console.log("Applying dark mode from localStorage:", storedDarkMode);
+        if (storedDarkMode === 'true') {
+          document.documentElement.classList.add('dark-mode');
+          document.body.classList.add('dark-mode');
+        } else {
+          document.documentElement.classList.remove('dark-mode');
+          document.body.classList.remove('dark-mode');
+        }
+      }
+      // If no localStorage setting, fall back to user settings
+      else if (userData.settings) {
+        if (userData.settings.darkMode) {
+          console.log("Applying dark mode from user settings");
+          document.documentElement.classList.add('dark-mode');
+          document.body.classList.add('dark-mode');
+        } else {
+          console.log("Applying light mode from user settings");
+          document.documentElement.classList.remove('dark-mode');
+          document.body.classList.remove('dark-mode');
+        }
       }
     }
 
@@ -144,9 +166,7 @@ export default {
     },
     showFooter() {
       return (
-        this.$route.path !== "/chat-view" &&
-        this.$route.path !== "/quizz" &&
-        !this.$route.fullPath.includes("/stock-simulator?")
+          this.$route.path === "/about"
       );
     },
     showHeader() {

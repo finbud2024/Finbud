@@ -21,10 +21,12 @@
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
+            <router-link to="/forum" class="forum" @click="toggleDropdown(false)">Forum</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
+            
           </div>
         </li>
-        <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
+        <li v-if="!isAuthenticated && !isAuthLoading"><router-link to="/login" class="login-button">Log In</router-link></li>
         <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)"
           @mouseleave="toggleProfileDropdown(false)">
           <img :src="profileImage" alt="User Image" class="user-image">
@@ -43,6 +45,9 @@
             </router-link>
           </div>
         </li>
+        <li v-if="isAuthLoading" class="auth-loading">
+          <div class="loading-indicator"></div>
+        </li>
       </ul>
       <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
         <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
@@ -56,19 +61,17 @@
           <div class="authenticated" v-if="isAuthenticated">
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
-            <!-- <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">Quant Simulator</router-link> -->
             <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/quant-analysis" class="home">Quant</router-link>
             <router-link to="#" @click="logout" class="logout">Log Out</router-link>
           </div>
-          <!-- <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link> -->
           <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
-          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->
-          <router-link to="/login" v-if="!isAuthenticated" class="login-button" @click="toggleDropdownMobile">Log
-            In</router-link>
-
+          <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button" @click="toggleDropdownMobile">Log In</router-link>
+          <div v-if="isAuthLoading" class="auth-loading-mobile">
+            <div class="loading-indicator"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -87,12 +90,16 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
-      isDarkMode: false
+      isDarkMode: false,
+      isAuthLoading: false
     };
   },
   computed: {
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
+    },
+    isAuthLoading() {
+      return this.$store.getters["users/isAuthLoading"];
     },
     userData() {
       return this.$store.getters["users/currentUser"];
@@ -133,7 +140,13 @@ export default {
     },
     async toggleDarkMode() {
       this.isDarkMode = !this.isDarkMode;
+      
+      // Apply dark mode to both root and body elements
+      document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
       document.body.classList.toggle("dark-mode", this.isDarkMode);
+      
+      // Store dark mode preference in localStorage for persistence
+      localStorage.setItem('darkMode', this.isDarkMode ? 'true' : 'false');
 
       // Update dark mode in the database
       if (this.userData) {
@@ -155,11 +168,24 @@ export default {
     // Fetch current user data from the server
     await this.$store.dispatch("users/fetchCurrentUser");
     
-    // Apply dark mode based on user settings
-    if (this.userData && this.userData.settings) {
+    // First check localStorage for dark mode preference
+    const storedDarkMode = localStorage.getItem('darkMode');
+    
+    if (storedDarkMode !== null) {
+      // Apply dark mode from localStorage
+      this.isDarkMode = storedDarkMode === 'true';
+    } else if (this.userData && this.userData.settings) {
+      // Fall back to user settings from the database
       this.isDarkMode = this.userData.settings.darkMode || false;
-      document.body.classList.toggle("dark-mode", this.isDarkMode);
+    } else {
+      // As a last resort, check system preference
+      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.isDarkMode = prefersDarkMode;
     }
+    
+    // Apply dark mode to both root and body elements
+    document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
+    document.body.classList.toggle("dark-mode", this.isDarkMode);
   }
 };
 </script>
@@ -482,4 +508,35 @@ export default {
   }
 
 }
+
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.loading-indicator {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #45a049;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.auth-loading-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+/* Only keep one instance of the keyframes animation */
 </style>
