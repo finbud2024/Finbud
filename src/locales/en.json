@@ -9,8 +9,8 @@
         "AboutUs": {
     "title": "About Us",
     "description1": "ESmart Solutions focuses on helping businesses enhance their ability to reach and promote their products to potential customers.",
-    "description2": "With the motto Respect - Efficiency - Professionalism, our partners will be regularly updated with information, care, and ensured rights from the smallest terms.",
-    "description3": "Our E-Boost product offers businesses the opportunity to not only expand and optimize their business activities but also enhance their brand and contribute to the development of a sustainable business ecosystem."
+    "description2": "AboutUs.description2",
+    "description3": "AboutUs.description3"
   },
   "blogPost": {
     "mainPost": {
@@ -161,8 +161,8 @@
     }
   },
   "hero": {
-    "title": "ESmart Solutions Agency",
-    "description": "ESmart Solutions Agency is a professional partner and companion for Vietnamese businesses on the journey to build and develop reputable and quality brands.",
+    "title": "CF Hub Coaching",
+    "description": "Career Foundation Hub",
     "buttons": {
       "join": "Join Us",
       "contact": "Contact Us"
@@ -185,10 +185,10 @@
     "mediaTitle": "Social Media",
     "testimonialsTitle": "What our customers say about us",
     "toolkitTitle": "ESmart Solutions - Optimal Support Services",
-    "facebook": "Over 1,000,000 Facebook reach",
-    "instagram": "Engaging content on Instagram",
-    "linkedin": "Professional connections on LinkedIn",
-    "tiktok": "Create trending content on TikTok",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "tiktok": "TikTok",
     "testimonial1": {
       "name": "Le Khanh Linh - Comprehensive Partner",
       "title": "Founder of Green Fashion Brand My",

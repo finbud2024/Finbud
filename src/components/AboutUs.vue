@@ -34,9 +34,9 @@ export default {
     return {
       currentIndex: 0,
       images: [
-        { src: require("@/assets/esmart_end.jpg"), alt: this.$t("AboutUs.imageAlt") },
-        { src: require("@/assets/esmart_start.jpg"), alt: this.$t("AboutUs.imageAlt1") },
-        { src: require("@/assets/logo.png"), alt: this.$t("AboutUs.imageAlt2") },
+        { src: require("@/assets/logo.png"), alt: this.$t("AboutUs.imag  eAlt") },
+        { src: require("@/assets/tribui.jpg"), alt: this.$t("AboutUs.imageAlt1") },
+        { src: require("@/assets/hoanguyen.jpg"), alt: this.$t("AboutUs.imageAlt2") },
       ],
     };
   },
