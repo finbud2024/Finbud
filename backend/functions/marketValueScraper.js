@@ -271,6 +271,7 @@ async function runScrapers() {
 
                         // Add a small delay between quarters
                         await new Promise(resolve => setTimeout(resolve, 2000));
+                        console.log(`\n`);
                     } catch (error) {
                         console.error(`Error processing quarter ${quarter} for ${investor.company}:`, error);
                         continue; // Continue with next quarter even if one fails

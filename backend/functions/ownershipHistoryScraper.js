@@ -150,10 +150,9 @@ async function runScrapers() {
                         continue;
                     }
                 }
-
+                console.log(`✨ Portfolio history scraping completed for ${investor.company}`);
                 // Add a longer delay between investors
                 await new Promise(resolve => setTimeout(resolve, 5000));
-                break;
             } catch (error) {
                 console.error(`Error processing ${investor.company}:`, error);
                 // Continue with next investor even if one fails
