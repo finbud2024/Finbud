@@ -38,18 +38,19 @@ export default {
     const router = useRouter();
     const store = useStore();
 
-    const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
     const threads = ref([]);
-    const forumDetails = ref(null);
+    const activeForum = ref(route.query.forum || "p/general");
+
+    // forumDetails now reacts to activeForum and forums
+    const forumDetails = computed(() => {
+      return forums.value.find(f => f.slug === activeForum.value) || null;
+    });
 
     const fetchForums = async () => {
       try {
         const response = await api.get("/api/forums", { withCredentials: true });
         forums.value = response.data;
-
-        // After fetching forums, find the details for the active one
-        forumDetails.value = forums.value.find(f => f.slug === activeForum.value) || null;
       } catch (error) {
         console.error("Failed to fetch forums:", error);
       }
@@ -68,9 +69,9 @@ export default {
       }
     };
 
+    // Only fetchThreads when forum changes — keep forum list fixed
     watch(() => route.query.forum, async (newForum) => {
       activeForum.value = newForum || "p/general";
-      await fetchForums();
       await fetchThreads();
     });
 
@@ -86,7 +87,7 @@ export default {
         return;
       }
 
-      await fetchForums();
+      await fetchForums(); // only once
       await fetchThreads();
     });
 

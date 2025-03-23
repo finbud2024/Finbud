@@ -17,31 +17,32 @@
   </div>
 </template>
 
-
 <script>
-import { useRouter, useRoute} from "vue-router";
+import { useRouter } from "vue-router";
 import * as LucideIcons from "lucide-vue-next";
 
 export default {
   props: {
-    forum: Object 
+    forum: Object
   },
   setup(props) {
     const router = useRouter();
-    const route = useRoute();  
 
     const navigateToStartThread = () => {
-      router.push({ path: "/start-thread", query: { forum: props.forum?.slug || "p/general" } });
+      router.push({
+        path: "/start-thread",
+        query: { forum: props.forum?.slug || "p/general" }
+      });
     };
 
     return {
-      forum: props.forum, 
       LucideIcons,
       navigateToStartThread
     };
   }
 };
 </script>
+
 
 
 <style scoped>

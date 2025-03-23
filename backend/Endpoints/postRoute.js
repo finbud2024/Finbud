@@ -15,7 +15,7 @@ postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
     if (!forum) return res.status(404).json({ error: "Forum not found" });
 
     const posts = await Post.find({ forumId: forum._id })
-      .populate("forumId", "name logo slug")
+      .populate("forumId", "name logo slug description")
       .populate("authorId", "identityData.displayName identityData.profilePicture");
 
     const formattedPosts = posts.map(post => ({
@@ -51,7 +51,7 @@ postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
     }
 
     const post = await Post.findById(postId)
-      .populate("forumId", "name logo slug")
+      .populate("forumId", "name logo slug description")
       .populate("authorId", "identityData.displayName identityData.profilePicture")
       .populate("comments.authorId", "identityData.displayName identityData.profilePicture");
 
