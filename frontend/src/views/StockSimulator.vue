@@ -11,6 +11,12 @@
           Investment
         </li>
         <li
+          @click="activeSection = 'portfolio'"
+          :class="{ active: activeSection === 'portfolio' }"
+        >
+          Your Portfolio
+        </li>
+        <li
           @click="activeSection = 'transactionHistory'"
           :class="{ active: activeSection === 'transactionHistory' }"
         >
@@ -21,6 +27,12 @@
           :class="{ active: activeSection === 'filters' }"
         >
           Filters
+        </li>
+        <li
+          @click="activeSection = 'predictiveCalc'"
+          :class="{ active: activeSection === 'predictiveCalc' }"
+        >
+          Predictive Calculator
         </li>
       </ul>
     </nav>
@@ -227,6 +239,9 @@
                 <path
                   d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
                 ></path>
+                <path
+                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
+                ></path>
               </svg>
               Refresh
             </button>
@@ -410,8 +425,8 @@ import PredicitveCalc from "../components/StockSimulatorPage/PredicitveCalc.vue"
 import PortfolioPerformance from "../components/StockSimulatorPage/PortfolioPerformance.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
-import QuizRewards from "../components/QuizRewards.vue";
 import { showReward } from "../utils/utils";
+import QuizRewards from "@/components/QuizRewards.vue";
 
 export default {
   name: "StockDashboard",
@@ -466,7 +481,6 @@ export default {
       headerPartialMessage: "",
       headerTypingComplete: false,
       headerTypingInterval: null,
-      headerBotVisible: true,
       headerBotVisible: true,
       chatbotTransactionMessage: "",
       showChatTransactionBubble: true,
@@ -811,7 +825,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             this.estimatedPrice = parseFloat(price);
             return true;
           } else {
-            // No valid price field found or price is NaN
             alert(
               `Sorry, we couldn't find valid price data for ${symbol.toUpperCase()}.`
             );
@@ -861,33 +874,33 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         userId: this.fixedUserId,
       };
 
-      try {
-        await axios.post(
+      axios
+        .post(
           `${process.env.VUE_APP_DEPLOY_URL}/stock-transactions`,
           transactionData
-        );
-        toast.success("Order submitted successfully", { autoClose: 1000 });
-        this.showModal = false;
-        this.fetchBankingAccountBalance();
-        this.fetchTransactions();
-        this.transactionKey++;
+        )
+        .then(async (response) => {
+          console.log("Order submitted successfully:", response.data);
+          toast.success("Order submitted successfully", { autoClose: 1000 });
+          this.showModal = false;
+          this.fetchBankingAccountBalance();
+          this.fetchTransactions();
+          this.transactionKey++;
 
-        // Award 1 FinCoin for executing a trade
-        await this.$store.dispatch("finCoin/earnFinCoins", {
-          amount: 1,
-          source: "trade_execution",
-          description: `${action} ${Math.abs(this.quantity)} ${
-            this.stockSymbol
-          }`,
+          await this.$store.dispatch("finCoin/earnFinCoins", {
+            amount: 1,
+            source: "trade_execution",
+            description: `${action} ${Math.abs(this.quantity)} ${
+              this.stockSymbol
+            }`,
+          });
+          showReward(this, 1, "trade");
+        })
+        .catch((error) => {
+          this.showModal = false;
+          console.error("Error submitting order:", error);
+          // toast.error('Order submitted unsuccessfully', {autoClose: 1000});
         });
-
-        // Use the dedicated method for showing reward
-        showReward(this, 1, "trade");
-      } catch (error) {
-        this.showModal = false;
-        console.error("Error submitting order:", error);
-        toast.error("Order submitted unsuccessfully", { autoClose: 1000 });
-      }
     },
     async fetchBankingAccountBalance() {
       try {

@@ -25,7 +25,6 @@ import chatStockRoute from "../Endpoints/subChat/chatStockRoute.js";
 import multiplierSimulatorRoute from "../Endpoints/quantSimulator/multiplierSimulatorEndpoints.js";
 import forumRoute from "../Endpoints/forumRoute.js";
 import postRoute from "../Endpoints/postRoute.js";
-import chatStockRoute from "../Endpoints/subChat/chatStockRoute.js";
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 
