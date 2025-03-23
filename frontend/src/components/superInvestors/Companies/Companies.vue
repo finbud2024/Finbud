@@ -66,18 +66,19 @@ const chartData = computed(() => ({
       type: 'line',
       label: `Portfolio % - ${companyTitle.value} (Line)`,
       data: ownershipHistory.value.map(item => item.percentage_of_portfolio),
-      borderColor: '#4BC0C0',
-      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderColor: '#15803d',
+      backgroundColor: 'rgba(21, 128, 61, 0.2)',
       borderWidth: 2,
       pointRadius: 4,
-      pointBackgroundColor: '#4BC0C0',
+      pointBackgroundColor: '#15803d',
       yAxisID: 'y'
     },
     {
       type: 'bar',
       label: `Portfolio % - ${companyTitle.value} (Bar)`,
       data: ownershipHistory.value.map(item => item.percentage_of_portfolio),
-      backgroundColor: 'rgba(255, 159, 64, 0.5)',
+      backgroundColor: 'rgba(59, 130, 246, 0.5)',
+      borderColor: 'rgb(59, 130, 246)',
       borderWidth: 1,
       yAxisID: 'y'
     }

@@ -3,8 +3,6 @@ import TopInvestors from "../Database Schema/TopInvestors.js";
 import CompanyPortfolio from "../Database Schema/CompanyPortfolio.js";
 import InvestorData from "../Database Schema/MarketValue.js";
 import mongoose from 'mongoose';
-import InvestorData from '../Database Schema/MarketValue.js';
-import CompanyPortfolio from '../Database Schema/CompanyPortfolio.js';
 const superInvestorsRoute = express.Router();
 
 superInvestorsRoute.get("/", async (req, res) => {
