@@ -121,7 +121,7 @@ export default {
       try {
         // Make a request to your backend, which will call the Binance API
         const response = await axios.post(`${DEPLOY_URL}/proxy`, {
-          url: 'https://api.binance.com/api/v3/ticker/24hr',
+          url: 'https://api.binance.us/api/v3/ticker/24hr',
           method: 'GET',
           headers: {
             'X-MBX-APIKEY': BINANCE_API_KEY,
