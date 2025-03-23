@@ -101,9 +101,11 @@ passportConfig(app)
 
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use(bodyParser.json({limit: '10mb'}));
+
+
 app.use(cors({
-  origin: "https://finbud.pro", 
-  credentials: true             
+  // origin: allowedOrigin,
+  // credentials: true             
 }));
 
 // app.use((req, res, next) => {
