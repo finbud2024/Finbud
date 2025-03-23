@@ -35,7 +35,7 @@ const passportConfig = (app) => {
                 cookie: {
                   maxAge: 1000 * 60 * 60 * 24, // 24 hours instead of 1 minute
                   httpOnly: true, // Prevents client-side JS from reading the cookie
-                  sameSite: 'lax', // Provides some CSRF protection
+                  sameSite: 'none', // Provides some CSRF protection
                   secure: process.env.NODE_ENV === 'production' // Uncomment in production
                 }
               }))
