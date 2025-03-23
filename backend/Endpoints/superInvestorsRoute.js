@@ -3,7 +3,8 @@ import TopInvestors from "../Database Schema/TopInvestors.js";
 import CompanyPortfolio from "../Database Schema/CompanyPortfolio.js";
 import InvestorData from "../Database Schema/MarketValue.js";
 import mongoose from 'mongoose';
-
+import InvestorData from '../Database Schema/MarketValue.js';
+import CompanyPortfolio from '../Database Schema/CompanyPortfolio.js';
 const superInvestorsRoute = express.Router();
 
 superInvestorsRoute.get("/", async (req, res) => {
@@ -104,4 +105,49 @@ superInvestorsRoute.get('/portfolio/:investorId', async (req, res) => {
     }
 });
 
+// Get most recent scrape document based on updatedAt
+superInvestorsRoute.get("/recent-document", async (req, res) => {
+    try {
+        const recentDocument = await InvestorData.findOne()
+            .sort({ updatedAt: -1 })
+            .exec();
+        
+        if (!recentDocument) {
+            return res.status(404).json({ message: "No documents found" });
+        }
+        
+        return res.status(200).json(recentDocument);
+    } catch (error) {
+        console.error("Error fetching recent document:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// Get count of distinct investors from InvestorData collection
+superInvestorsRoute.get("/investor-data-count", async (req, res) => {
+    try {
+        const distinctCount = await InvestorData.distinct('investorId').exec();
+        
+        return res.status(200).json({
+            count: distinctCount.length
+        });
+    } catch (error) {
+        console.error("Error counting distinct investors:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// Get count of distinct investors from CompanyPortfolio collection
+superInvestorsRoute.get("/portfolio-investor-count", async (req, res) => {
+    try {
+        const distinctCount = await CompanyPortfolio.distinct('investorId').exec();
+        
+        return res.status(200).json({
+            count: distinctCount.length
+        });
+    } catch (error) {
+        console.error("Error counting distinct portfolio investors:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
 export default superInvestorsRoute;
