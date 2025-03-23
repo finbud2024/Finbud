@@ -21,7 +21,7 @@
 <script>
 import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import api from "@/utils/api";
+import api from "@/utils/api"; 
 import * as LucideIcons from "lucide-vue-next";
 
 export default {
@@ -36,7 +36,7 @@ export default {
 
     const fetchForums = async () => {
       try {
-        const response = await api.get("/api/forums");
+        const response = await api.get("/api/forums", { withCredentials: true });
         forums.value = response.data;
       } catch (error) {
         console.error("❌ Failed to fetch forums:", error);

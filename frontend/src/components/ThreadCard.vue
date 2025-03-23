@@ -101,7 +101,7 @@ export default {
       try {
         const response = await api.post(
           `/api/posts/post/${this.thread._id}/like`,
-          { userId: this.userId, action }
+          { userId: this.userId, action }, { withCredentials: true }
         );
 
         this.thread.reactions.likes = response.data.likes;

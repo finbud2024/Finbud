@@ -22,7 +22,6 @@
 import { useRouter, useRoute} from "vue-router";
 import * as LucideIcons from "lucide-vue-next";
 import { ref, watchEffect } from "vue";
-import axios from "axios";
 
 const route = useRoute();
 const forum = ref(null);

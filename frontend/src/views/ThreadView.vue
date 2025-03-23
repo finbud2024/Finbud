@@ -80,7 +80,6 @@
 
   <script>
   import api from "@/utils/api";
-  import axios from "axios";
   import { ref, computed, onMounted } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useStore } from "vuex";
@@ -139,7 +138,7 @@
           loading.value = true;
           const postId = route.params.id;
 
-          const response = await api.get(`/api/posts/post/${postId}`);
+          const response = await api.get(`/api/posts/post/${postId}`, { withCredentials: true });
 
           thread.value = response.data || null;
 
@@ -203,7 +202,7 @@
             {
               body: newComment.value,
               userId: store.getters["users/userId"], 
-            }
+            }, { withCredentials: true }
           );
 
           const newCommentData = response.data.comment;
@@ -227,7 +226,7 @@
         try {
           const response = await api.post(
             `/api/posts/post/${thread.value._id}/like`,
-            { action, userId: userId.value }
+            { action, userId: userId.value }, { withCredentials: true }
           );
 
           thread.value.reactions.likes = response.data.likes;
@@ -255,7 +254,7 @@
         try {
           const response = await api.post(
             `/api/posts/post/${thread.value._id}/like-comment`,
-            { commentId: comment._id, action, userId: userId.value }
+            { commentId: comment._id, action, userId: userId.value }, { withCredentials: true }
           );
 
           thread.value.comments[index].reactions.likes = response.data.likes;
