@@ -223,6 +223,7 @@ export default {
     switchLanguage(lang) {
       this.$i18n.locale = lang;
       this.renderChart(); 
+      this.startBotAnimation();
     },
     // async fetchInterestRates() {
     //   try {
@@ -318,7 +319,7 @@ export default {
           messages: [
             {
               role: "system",
-              content: "You are a financial expert providing insights on mortgage payment."
+              content: "You are a financial expert providing insights on mortgage payment. If language is Vietnamese, translate everyting in Vietnamese."
             },
             {
               role: "user",
