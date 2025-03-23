@@ -67,6 +67,7 @@ postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
         name: post.forumId.name || "Unknown Forum",
         logo: post.forumId.logo || null,
         slug: post.forumId.slug || "",
+        description: post.forumId.description || "No description available"
       },
       author: {
         displayName: post.authorId?.identityData?.displayName || "Anonymous",

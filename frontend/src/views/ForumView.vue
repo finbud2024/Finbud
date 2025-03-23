@@ -5,7 +5,10 @@
 
     <div class="content">
       <!-- Forum Banner -->
-      <ForumBanner :forum="activeForumDetails" class="forum-banner" />
+      <ForumBanner
+        v-if="forumDetails?.name"
+        :forum="forumDetails"
+      />
 
       <!-- List of Threads -->
       <div class="thread-list">
@@ -34,14 +37,19 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const store = useStore();
+
     const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
     const threads = ref([]);
+    const forumDetails = ref(null);
 
     const fetchForums = async () => {
       try {
         const response = await api.get("/api/forums", { withCredentials: true });
         forums.value = response.data;
+
+        // After fetching forums, find the details for the active one
+        forumDetails.value = forums.value.find(f => f.slug === activeForum.value) || null;
       } catch (error) {
         console.error("Failed to fetch forums:", error);
       }
@@ -60,43 +68,38 @@ export default {
       }
     };
 
-    watch(() => route.query.forum, (newForum) => {
+    watch(() => route.query.forum, async (newForum) => {
       activeForum.value = newForum || "p/general";
-      fetchThreads();
-    });
-
-    const activeForumDetails = computed(() => {
-      return forums.value.find(forum => forum.slug === activeForum.value) || {};
+      await fetchForums();
+      await fetchThreads();
     });
 
     const filteredThreads = computed(() => threads.value);
-    
+
     const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
     onMounted(async () => {
-      // First ensure we have the current user data
       await store.dispatch("users/fetchCurrentUser");
-      
-      // Check if user is authenticated
-      if (!store.getters["users/isAuthenticated"]) {
+
+      if (!isAuthenticated.value) {
         router.push("/login");
         return;
       }
-      
-      // Then fetch forums and threads
+
       await fetchForums();
       await fetchThreads();
     });
 
     return {
       activeForum,
-      activeForumDetails,
+      forumDetails,
       filteredThreads,
       isAuthenticated
     };
   }
 };
 </script>
+
 
 
 <style scoped>

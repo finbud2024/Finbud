@@ -49,9 +49,9 @@ export default {
       }
     });
 
-    watch(() => props.activeForumSlug, (newSlug) => {
-      if (newSlug) {
-        activeForum.value = newSlug;
+    watch(() => {
+      if (props.activeForumSlug) {
+        activeForum.value = props.activeForumSlug;
       }
     });
 
