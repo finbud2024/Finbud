@@ -279,86 +279,114 @@ export async function extractDateValues() {
     return validDates;
 }
 
-async function runScrapers() {
-    console.log("🚀 Starting Combined Data Scraper...");
+async function scrapeInvestorBatch(investors, batchNumber) {
+    console.log(`🚀 Starting Batch ${batchNumber} with ${investors.length} investors`);
+
+    for (const investor of investors) {
+        try {
+            const slug = investor.company
+                .toLowerCase()
+                .replace(/[^a-z0-9.()]+/g, '-') // Allow letters, numbers, periods, and parentheses; replace others with '-'
+                .replace(/^-+/, '')   // Remove leading hyphens only
+                    
+                const baseUrl = `https://finchat.io/investor/${slug}`;
+                console.log(`Processing ${investor.company} (${baseUrl})`);
+
+            const validDates = await extractDateValues();
+            console.log(`Found ${validDates.length} quarters to process for ${investor.company}`);
+
+            for (const { date, quarter } of validDates) {
+                try {
+                    console.log(`Processing ${quarter} for ${investor.company}`);
+                    const [marketValues, holdings] = await Promise.all([
+                        scrapeTopInvestorsMarketValue(baseUrl, quarter),
+                        scrapeTopInvestorsHolding(baseUrl, quarter)
+                    ]);
+
+                    if (marketValues.length > 0 || Object.keys(holdings).length > 0) {
+                        const combinedData = {
+                            investorId: investor._id,
+                            date: date,
+                            quarter: quarter,
+                            marketValue: marketValues,
+                            'Basic Stats': holdings['Basic Stats'] || {},
+                            'Industry Breakdown': holdings['Industry Breakdown'] || {},
+                            updatedAt: new Date()
+                        };
+
+                        await InvestorData.findOneAndUpdate(
+                            {
+                                investorId: investor._id,
+                                quarter: quarter,
+                            },
+                            combinedData,
+                            { upsert: true, new: true }
+                        );
+
+                        console.log(`✅ Saved combined data for ${investor.company} - ${quarter}`);
+                    } else {
+                        console.log(`⚠️ No data found for ${investor.company} - ${quarter}`);
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                } catch (error) {
+                    console.error(`Error processing quarter ${quarter} for ${investor.company}:`, error);
+                    continue;
+                }
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        } catch (error) {
+            console.error(`Error processing investor ${investor.company}:`, error);
+            continue;
+        }
+    }
+}
+
+async function runBatchedScraping() {
+    console.log("🚀 Starting Batched Data Scraper...");
 
     try {
         await connectToMongoDB();
-
-        // Get all investors from the database
+        
+        // Get all investors
         const investors = await Investor.find({});
-        console.log(`Found ${investors.length} investors to process`);
+        console.log(`Found ${investors.length} total investors to process`);
 
-        // Process each investor
-        for (const [index, investor] of investors.entries()) {
-            try {
-                const slug = investor.company
-                .toLowerCase()
-                .replace(/[^a-z0-9.()]+/g, '-') // Allow letters, numbers, periods, and parentheses; replace others with '-'
-                .replace(/^-+/, '')                 // Remove leading hyphens only
-                if (index >= 51){
-                    const baseUrl = `https://finchat.io/investor/${slug}`;
-                    console.log(`Processing ${investor.company} (${baseUrl})`);
+        // Calculate batch size and split investors into 4 batches
+        const batchSize = Math.ceil(investors.length / 4);
+        const batches = [
+            investors.slice(0, batchSize),
+            investors.slice(batchSize, batchSize * 2),
+            investors.slice(batchSize * 2, batchSize * 3),
+            investors.slice(batchSize * 3)
+        ];
 
-                    // Get available dates for this investor
-                    const validDates = await extractDateValues();
-                    console.log(`Found ${validDates.length} quarters to process for ${investor.company}`);
-
-                    // Process each quarter for this investor
-                    for (const { date, quarter } of validDates) {
-                        try {
-                            console.log(`Processing ${quarter} for ${investor.company}`);
-                            const [marketValues, holdings] = await Promise.all([
-                                scrapeTopInvestorsMarketValue(baseUrl, quarter),
-                                scrapeTopInvestorsHolding(baseUrl, quarter)
-                            ]);
-                            if (marketValues.length > 0 || Object.keys(holdings).length > 0) {
-                                const combinedData = {
-                                    investorId: investor._id,
-                                    date: date,
-                                    quarter: quarter,
-                                    marketValue: marketValues,
-                                    'Basic Stats': holdings['Basic Stats'] || {},
-                                    'Industry Breakdown': holdings['Industry Breakdown'] || {},
-                                    updatedAt: new Date()
-                                };
-                                await InvestorData.findOneAndUpdate(
-                                    {
-                                        investorId: investor._id,
-                                        quarter: quarter,
-                                    },
-                                    combinedData,
-                                    { upsert: true, new: true }
-                                );
-
-                                console.log(`✅ Saved combined data for ${investor.company} - ${quarter}`);
-                            } else {
-                                console.log(`⚠️ No data found for ${investor.company} - ${quarter}`);
-                            }
-
-                            // Add a small delay between quarters
-                            await new Promise(resolve => setTimeout(resolve, 2000));
-                            console.log(`\n`);
-                        } catch (error) {
-                            console.error(`Error processing quarter ${quarter} for ${investor.company}:`, error);
-                            continue; // Continue with next quarter even if one fails
-                        }
-                    }
-                }
-                // Add a longer delay between investors
-                await new Promise(resolve => setTimeout(resolve, 2000));
-            } catch (error) {
-                console.error(`Error processing investor ${investor.company}:`, error);
-                continue; // Continue with next investor even if one fails
+        // Process batches with delays between them
+        for (let i = 0; i < batches.length; i++) {
+            await scrapeInvestorBatch(batches[i], i + 1);
+            // Add a 5-minute delay between batches
+            if (i < batches.length - 1) {
+                console.log('Waiting 5 minutes before starting next batch...');
+                await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000));
             }
         }
 
-        console.log("✨ Combined data scraping completed!");
-
+        console.log("✨ All batches completed successfully!");
     } catch (error) {
-        console.error("Error in combined scraper:", error);
+        console.error("Error in batched scraping:", error);
     } finally {
         await disconnectFromMongoDB();
+    }
+}
+
+// Modified to use batched scraping
+async function runScrapers() {
+    try {
+        await runBatchedScraping();
+    } catch (error) {
+        console.error("Error in scraper:", error);
+        throw error; // Re-throw to handle in calling code
     }
 }
 
@@ -366,4 +394,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     runScrapers().catch(console.error);
 }
 
-export { scrapeTopInvestorsMarketValue, scrapeTopInvestorsHolding, runScrapers };
+export { 
+    scrapeTopInvestorsMarketValue, 
+    scrapeTopInvestorsHolding, 
+    runScrapers,
+    runBatchedScraping 
+};
