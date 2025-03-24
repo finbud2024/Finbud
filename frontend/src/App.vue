@@ -17,6 +17,7 @@
   <img
     v-if="showChatBubble"
     class="finbudBot"
+    ref="finbudBot" 
     src="./assets/botrmbg.png"
     alt="Finbud"
     @click="toggleChatBubble"
@@ -203,28 +204,38 @@ export default {
   },
   methods: {
     addDragListeners() {
-      const finbudBot = this.$refs.finbudBot;
-
-      finbudBot.addEventListener('mousedown', (e) => {
-        this.isDragging = true;
-        this.dragStartX = e.clientX;
-        this.dragStartY = e.clientY;
-        this.initialOffsetX = finbudBot.offsetLeft;
-        this.initialOffsetY = finbudBot.offsetTop;
-      });
-
-      document.addEventListener('mousemove', (e) => {
-        if (this.isDragging) {
-          const offsetX = e.clientX - this.dragStartX;
-          const offsetY = e.clientY - this.dragStartY;
-          finbudBot.style.left = `${this.initialOffsetX + offsetX}px`;
-          finbudBot.style.top = `${this.initialOffsetY + offsetY}px`;
+      this.$nextTick(() => {
+        const finbudBot = this.$refs.finbudBot;
+        
+        // Check if element exists before adding listeners
+        if (!finbudBot) {
+          console.warn("Finbud bot element not found");
+          return;
         }
-      });
 
-      document.addEventListener('mouseup', () => {
-        this.isDragging = false;
+        finbudBot.addEventListener('mousedown', (e) => {
+          this.isDragging = true;
+          this.dragStartX = e.clientX;
+          this.dragStartY = e.clientY;
+          this.initialOffsetX = finbudBot.offsetLeft;
+          this.initialOffsetY = finbudBot.offsetTop;
+        });
+
+        document.addEventListener('mousemove', this.handleDragMove);
+        document.addEventListener('mouseup', this.handleDragEnd);
       });
+    },
+    handleDragMove(e) {
+      if (this.isDragging && this.$refs.finbudBot) {
+        const offsetX = e.clientX - this.dragStartX;
+        const offsetY = e.clientY - this.dragStartY;
+        this.$refs.finbudBot.style.left = `${this.initialOffsetX + offsetX}px`;
+        this.$refs.finbudBot.style.top = `${this.initialOffsetY + offsetY}px`;
+      }
+    },
+
+    handleDragEnd() {
+      this.isDragging = false;
     },
     loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
@@ -335,6 +346,8 @@ export default {
   },
   beforeDestroy() {
     document.removeEventListener("click", this.handleClickOutside);
+    document.removeEventListener('mousemove', this.handleDragMove);
+    document.removeEventListener('mouseup', this.handleDragEnd);
   },
 };
 </script>
@@ -449,7 +462,7 @@ a:hover {
   bottom: 20px;
   z-index: 99998;
   transition: transform 0.2s ease;
-  cursor: grab; /* Change cursor to indicate draggable */
+  cursor: grab;
 }
 
 .finbudBot:active {
