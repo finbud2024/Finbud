@@ -20,7 +20,7 @@
         <div class="input-group">
           <label>{{ $t('homePrice') }}</label>
           <div class="input-wrapper">
-            <input type="number" v-model="homePrice" min="10000" />
+            <input type="number" v-model="homePrice" min="10000" @input="calculateDownPaymentPercentage"/>
             <span class="unit">$</span>
           </div>
           <span v-if="homePrice < 10000" class="error">{{ $t('errorMinHomePrice') }}</span>
@@ -314,12 +314,13 @@ export default {
     async generateMortgageInsights() {
       const url = "https://openrouter.ai/api/v1/chat/completions";
       try {
-        const response = await axios.post(url, {
+        // First get insights in English
+        const englishResponse = await axios.post(url, {
           model: "deepseek/deepseek-chat:free",
           messages: [
             {
               role: "system",
-              content: "You are a financial expert providing insights on mortgage payment. If language is Vietnamese, translate everyting in Vietnamese."
+              content: "You are a financial expert providing insights on mortgage payment."
             },
             {
               role: "user",
@@ -343,12 +344,44 @@ export default {
             "Accept": "application/json"
           }
         });
-        return response.data.choices[0].message.content;
+
+        const englishInsights = englishResponse.data.choices[0].message.content;
+
+        // If language is Vietnamese, translate the insights
+        if (this.$i18n.locale === "vi") {
+          const translationResponse = await axios.post(url, {
+            model: "deepseek/deepseek-chat:free",
+            messages: [
+              {
+                role: "system",
+                content: "Bạn là một chuyên gia dịch thuật. Hãy dịch văn bản sau từ tiếng Anh sang tiếng Việt một cách chính xác và tự nhiên, giữ nguyên ý nghĩa tài chính."
+              },
+              {
+                role: "user",
+                content: englishInsights
+              }
+            ]
+          }, {
+            headers: {
+              'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            }
+          });
+
+          return translationResponse.data.choices[0].message.content;
+        }
+
+        // Return English by default
+        return englishInsights;
       } catch (error) {
         console.error("Error generating mortgage insights:", error);
-        return "Unable to generate insights at the moment. Please try again later.";
+        return this.$i18n.locale === "vi" 
+          ? "Không thể tạo thông tin chi tiết vào lúc này. Vui lòng thử lại sau."
+          : "Unable to generate insights at the moment. Please try again later.";
       }
     },
+
     
     // Calculate Down Payment Percentage based on Down Payment
     calculateDownPaymentPercentage() {
