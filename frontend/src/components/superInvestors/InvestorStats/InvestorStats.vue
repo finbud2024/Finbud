@@ -15,14 +15,7 @@ const pieChartCanvas = ref(null);
 let pieChartInstance = null; // Store the Chart instance
 
 const processedBasicStats = computed(() => {
-  const rawData = props.basicStats || {};
-  return {
-    "Market Value": rawData["Market Value"] || "N/A",
-    "Top 10 (%)": rawData["Top 10 (%)"] || "N/A",
-    "Portfolio Size (Change from Prev.)": rawData["Portfolio Size (Change from Prev"]?.[")"] || "N/A",
-    "Avg. Holding Period": rawData["Avg"]?.[" Holding Period"] || "N/A",
-    "Turnover": rawData["Turnover"] || "N/A"
-  };
+  return props.basicStats || {};
 });
 
 const processedIndustryBreakdown = computed(() => {

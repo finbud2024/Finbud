@@ -39,29 +39,6 @@ const stockHoldingSchema = new mongoose.Schema({
     }
 });
 
-const basicStatsSchema = new mongoose.Schema({
-    'Market Value': {
-        type: String,
-        required: true
-    },
-    'Top 10 (%)': {
-        type: String,
-        required: true
-    },
-    'Portfolio Size (Change from Prev.)': {
-        type: String,
-        required: true
-    },
-    'Avg. Holding Period': {
-        type: String,
-        required: true
-    },
-    'Turnover': {
-        type: String,
-        required: true
-    }
-});
-
 const combinedSchema = new mongoose.Schema({
     investorId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -76,7 +53,11 @@ const combinedSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    'Basic Stats': basicStatsSchema,
+    'Basic Stats': {
+        type: Map,
+        of: String,
+        default: new Map()
+    },
     'Industry Breakdown': {
         type: Map,
         of: String,

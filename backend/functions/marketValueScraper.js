@@ -37,6 +37,8 @@ async function scrapeTopInvestorsMarketValue(baseUrl, dateQuarter = '') {
     const marketValues = [];
     let currentPage = 1;
     let hasNextPage = true;
+    let previousPageData = new Set(); // To track duplicate data
+    let emptyPageCount = 0; // To track consecutive empty pages
 
     // Wait for the table container to appear
     await page.waitForSelector("div.mrt-table-container");
@@ -54,7 +56,7 @@ async function scrapeTopInvestorsMarketValue(baseUrl, dateQuarter = '') {
                 tableRows.forEach(row => {
                     const cells = row.querySelectorAll("td");
                     if (cells.length >= 9) {
-                        extractedData.push({
+                        const rowData = {
                             "Ticker": cells[0].innerText.trim(),
                             "Company Name": cells[1].innerText.trim(),
                             "Market Value": cells[2].innerText.trim(),
@@ -64,31 +66,70 @@ async function scrapeTopInvestorsMarketValue(baseUrl, dateQuarter = '') {
                             "Change in Shares": cells[6].innerText.trim(),
                             "Quarter End Price": cells[7].innerText.trim(),
                             "Percentage Owned": cells[8].innerText.trim()
-                        });
+                        };
+                        // Only add non-empty rows
+                        if (rowData.Ticker && rowData.Ticker !== '') {
+                            extractedData.push(rowData);
+                        }
                     }
                 });
 
                 return extractedData;
             });
 
+            // Check for duplicate data
+            const currentPageDataString = JSON.stringify(pageData);
+            if (previousPageData.has(currentPageDataString)) {
+                console.log(`Detected duplicate data on page ${currentPage}, stopping pagination`);
+                hasNextPage = false;
+                break;
+            }
+
+            // Check for empty pages
+            if (pageData.length === 0) {
+                emptyPageCount++;
+                if (emptyPageCount >= 2) {
+                    console.log(`Detected ${emptyPageCount} consecutive empty pages, stopping pagination`);
+                    hasNextPage = false;
+                    break;
+                }
+            } else {
+                emptyPageCount = 0;
+            }
+
+            // Store current page data for duplicate detection
+            previousPageData.add(currentPageDataString);
+
             marketValues.push(...pageData);
             console.log(`Scraped ${pageData.length} rows from page ${currentPage}`);
 
-            // Check for next page
+            // Check for next page with improved validation
             const hasNext = await page.evaluate(() => {
                 const paginationContainer = document.querySelector("div.m_4addd315.mantine-Pagination-root");
                 if (!paginationContainer) return false;
 
                 const currentButton = paginationContainer.querySelector("button[aria-current='page']");
-                const currentPage = currentButton ? parseInt(currentButton.innerText.trim()) : 1;
-                
+                if (!currentButton) return false;
+
+                const currentPage = parseInt(currentButton.innerText.trim());
+                if (isNaN(currentPage)) return false;
+
+                // Get all page numbers
                 const buttons = Array.from(paginationContainer.querySelectorAll("button.mantine-Pagination-control"));
                 const pageNumbers = buttons
-                    .map(btn => parseInt(btn.innerText.trim()))
-                    .filter(num => !isNaN(num));
-                
+                    .map(btn => {
+                        const num = parseInt(btn.innerText.trim());
+                        return !isNaN(num) ? num : null;
+                    })
+                    .filter(num => num !== null);
+
+                if (pageNumbers.length === 0) return false;
+
                 const maxPage = Math.max(...pageNumbers);
-                return currentPage < maxPage;
+                // Add additional validation for reasonable max page
+                if (maxPage > 30 || maxPage <= currentPage) return false;
+
+                return true;
             });
 
             if (!hasNext) {
@@ -97,24 +138,46 @@ async function scrapeTopInvestorsMarketValue(baseUrl, dateQuarter = '') {
                 break;
             }
 
-            // Click next page
-            await page.evaluate(() => {
+            // Click next page with validation
+            const clickSuccess = await page.evaluate(() => {
                 const paginationContainer = document.querySelector("div.m_4addd315.mantine-Pagination-root");
+                if (!paginationContainer) return false;
+
                 const currentButton = paginationContainer.querySelector("button[aria-current='page']");
+                if (!currentButton) return false;
+
                 const currentPage = parseInt(currentButton.innerText.trim());
-                
+                if (isNaN(currentPage)) return false;
+
                 const buttons = Array.from(paginationContainer.querySelectorAll("button.mantine-Pagination-control"));
                 const nextButton = buttons.find(btn => {
                     const pageNum = parseInt(btn.innerText.trim());
                     return !isNaN(pageNum) && pageNum === currentPage + 1;
                 });
-                
-                if (nextButton) nextButton.click();
+
+                if (nextButton) {
+                    nextButton.click();
+                    return true;
+                }
+                return false;
             });
+
+            if (!clickSuccess) {
+                console.log(`Failed to click next page button on page ${currentPage}`);
+                hasNextPage = false;
+                break;
+            }
 
             // Wait for table to update
             await new Promise(resolve => setTimeout(resolve, 2000)); 
             currentPage++;
+
+            // Add a maximum page limit as a safety measure
+            if (currentPage > 30) {
+                console.log('Reached maximum page limit (30), stopping pagination');
+                hasNextPage = false;
+                break;
+            }
 
         } catch (error) {
             console.log(`Error navigating pagination: ${error}`);
@@ -142,7 +205,7 @@ async function scrapeTopInvestorsHolding(url, dateQuarter = '') {
     
     await page.goto(finalUrl, { waitUntil: 'domcontentloaded' });
     const investorData = await page.evaluate(() => {
-        const sanitizeKey = (key) => key.replace(/\./g, ' ');
+        const sanitizeKey = (key) => key.replace(/\./g, '');
         
         const container = document.querySelector("#portal > div > main > div > div.m_e615b15f.mantine-Card-root.m_1b7284a3.mantine-Paper-root > div.my-2.flex.w-full.flex-col.gap-4.\\@md\\:flex-row > div.h-full.rounded-md.\\@md\\:w-full.\\@lg\\:min-h-\\[450px\\].\\@lg\\:max-w-\\[500px\\]");
         if (!container) return {};
@@ -227,59 +290,63 @@ async function runScrapers() {
         console.log(`Found ${investors.length} investors to process`);
 
         // Process each investor
-        for (const investor of investors) {
+        for (const [index, investor] of investors.entries()) {
             try {
-                const slug = investor.company.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                const baseUrl = `https://finchat.io/investor/${slug}`;
-                console.log(`Processing ${investor.company} (${baseUrl})`);
+                const slug = investor.company
+                .toLowerCase()
+                .replace(/[^a-z0-9.()]+/g, '-') // Allow letters, numbers, periods, and parentheses; replace others with '-'
+                .replace(/^-+/, '')                 // Remove leading hyphens only
+                if (index >= 51){
+                    const baseUrl = `https://finchat.io/investor/${slug}`;
+                    console.log(`Processing ${investor.company} (${baseUrl})`);
 
-                // Get available dates for this investor
-                const validDates = await extractDateValues();
-                console.log(`Found ${validDates.length} quarters to process for ${investor.company}`);
+                    // Get available dates for this investor
+                    const validDates = await extractDateValues();
+                    console.log(`Found ${validDates.length} quarters to process for ${investor.company}`);
 
-                // Process each quarter for this investor
-                for (const { date, quarter } of validDates) {
-                    try {
-                        console.log(`Processing ${quarter} for ${investor.company}`);
-                        const [marketValues, holdings] = await Promise.all([
-                            scrapeTopInvestorsMarketValue(baseUrl, quarter),
-                            scrapeTopInvestorsHolding(baseUrl, quarter)
-                        ]);
-                        if (marketValues.length > 0 || Object.keys(holdings).length > 0) {
-                            const combinedData = {
-                                investorId: investor._id,
-                                date: date,
-                                quarter: quarter,
-                                marketValue: marketValues,
-                                'Basic Stats': holdings['Basic Stats'] || {},
-                                'Industry Breakdown': holdings['Industry Breakdown'] || {},
-                                updatedAt: new Date()
-                            };
-                            await InvestorData.findOneAndUpdate(
-                                {
+                    // Process each quarter for this investor
+                    for (const { date, quarter } of validDates) {
+                        try {
+                            console.log(`Processing ${quarter} for ${investor.company}`);
+                            const [marketValues, holdings] = await Promise.all([
+                                scrapeTopInvestorsMarketValue(baseUrl, quarter),
+                                scrapeTopInvestorsHolding(baseUrl, quarter)
+                            ]);
+                            if (marketValues.length > 0 || Object.keys(holdings).length > 0) {
+                                const combinedData = {
                                     investorId: investor._id,
+                                    date: date,
                                     quarter: quarter,
-                                },
-                                combinedData,
-                                { upsert: true, new: true }
-                            );
+                                    marketValue: marketValues,
+                                    'Basic Stats': holdings['Basic Stats'] || {},
+                                    'Industry Breakdown': holdings['Industry Breakdown'] || {},
+                                    updatedAt: new Date()
+                                };
+                                await InvestorData.findOneAndUpdate(
+                                    {
+                                        investorId: investor._id,
+                                        quarter: quarter,
+                                    },
+                                    combinedData,
+                                    { upsert: true, new: true }
+                                );
 
-                            console.log(`✅ Saved combined data for ${investor.company} - ${quarter}`);
-                        } else {
-                            console.log(`⚠️ No data found for ${investor.company} - ${quarter}`);
+                                console.log(`✅ Saved combined data for ${investor.company} - ${quarter}`);
+                            } else {
+                                console.log(`⚠️ No data found for ${investor.company} - ${quarter}`);
+                            }
+
+                            // Add a small delay between quarters
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            console.log(`\n`);
+                        } catch (error) {
+                            console.error(`Error processing quarter ${quarter} for ${investor.company}:`, error);
+                            continue; // Continue with next quarter even if one fails
                         }
-
-                        // Add a small delay between quarters
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        console.log(`\n`);
-                    } catch (error) {
-                        console.error(`Error processing quarter ${quarter} for ${investor.company}:`, error);
-                        continue; // Continue with next quarter even if one fails
                     }
                 }
-
                 // Add a longer delay between investors
-                await new Promise(resolve => setTimeout(resolve, 5000));
+                await new Promise(resolve => setTimeout(resolve, 2000));
             } catch (error) {
                 console.error(`Error processing investor ${investor.company}:`, error);
                 continue; // Continue with next investor even if one fails

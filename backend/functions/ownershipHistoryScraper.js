@@ -103,7 +103,10 @@ async function runScrapers() {
         // Process each investor
         for (const investor of investors) {
             try {
-                const slug = investor.company.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                const slug = investor.company
+                .toLowerCase()
+                .replace(/[^a-z0-9.()]+/g, '-') // Allow letters, numbers, periods, and parentheses; replace others with '-'
+                .replace(/^-+/, '')                 // Remove leading hyphens only
                 const companiesUrl = `https://finchat.io/investor/${slug}/companies/`;
                 console.log(`\nProcessing ${investor.company} (${companiesUrl})`);
 
