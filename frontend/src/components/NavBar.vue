@@ -49,6 +49,7 @@
               @click="toggleDropdown(false)"
               >Risk Analysis</router-link
             >
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
           </div>
         </li>
 
