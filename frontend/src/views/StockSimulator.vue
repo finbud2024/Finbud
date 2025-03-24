@@ -22,6 +22,12 @@
         >
           Filters
         </li>
+        <li
+          @click="activeSection = 'quiz'"
+          :class="{ active: activeSection === 'quiz' }"
+        >
+          Quiz
+        </li>
       </ul>
     </nav>
 
@@ -390,6 +396,23 @@
         <PredicitveCalc />
       </div>
     </section>
+
+    <section v-if="activeSection === 'quiz'" class="quiz-section">
+      <div class="quiz-container">
+        <h2>Trading Scenarios Quiz</h2>
+        <div v-if="currentQuestion">
+          <p>{{ currentQuestion.text }}</p>
+          <div class="options">
+            <button v-for="(option, index) in currentQuestion.options" :key="index" @click="handleQuizOption(option)">
+              {{ option.text }}
+            </button>
+          </div>
+        </div>
+        <div v-else>
+          <p>No more questions available.</p>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -412,6 +435,8 @@ import { toast } from "vue3-toastify";
 import axios from "axios";
 import QuizRewards from "../components/QuizRewards.vue";
 import { showReward } from "../utils/utils";
+import { gptServices } from "@/services/gptServices";
+
 
 export default {
   name: "StockDashboard",
@@ -498,6 +523,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       userHoldings: [],
       loadingHoldings: false,
       holdingsError: null,
+      currentQuestion: null,
+      questions: [],
     };
   },
   methods: {
@@ -1161,6 +1188,142 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       const prefix = value >= 0 ? "+" : "-";
       return `${prefix}${Math.abs(value).toFixed(1)}%`;
     },
+
+    async generateTradingQuestions() {
+      console.log("Generating trading questions..."); 
+      try {
+        const response = await gptServices([
+          {
+            role: "system",
+            content: "You are a financial assistant generating quiz questions. Use actual S&P 500 company names and tickers in your scenarios."
+          },
+          {
+            role: "user",
+            content: `Generate 10 trading scenarios quiz using REAL S&P 500 companies like Apple (AAPL), Microsoft (MSFT), Amazon (AMZN), Google/Alphabet (GOOGL), Tesla (TSLA), JPMorgan Chase (JPM), etc.
+
+                    For each question:
+                    - Use a real S&P 500 company name and its ticker symbol in the scenario
+                    - Reference actual recent or plausible company events (product launches, earnings reports, etc.)
+                    - Provide a clear and concise question, along with five distinct answer options
+                    - The answers should be it should either be A (buy #amount1), B (buy #amount2), C (sell #amount2), D (amount #3), or E (Do Nothing)
+                    - The format must be exactly as follows:
+                    
+                    Question: <question about a specific real S&P 500 company>
+                    A. <option1>
+                    B. <option2>
+                    C. <option3>
+                    D. <option4>
+                    E. <option5>
+                    Correct Answer: <A,B,C,D,E>
+                    Explanation: <explanation>
+                    
+                    Important: Always use real company names and tickers - never use placeholders like "Company XYZ".`,
+          },
+        ]);
+
+        console.log("API Response:", response);
+        
+        // Parse the text response
+        if (response && typeof response === 'string') {
+          const questionBlocks = response.split(/Question: /).filter(block => block.trim());
+          const parsedQuestions = questionBlocks.map(block => {
+            // Extract the question text (everything before the first option)
+            const questionText = block.split(/\nA\./)[0].trim();
+            
+            // Extract all options
+            const optionsRegex = /([A-E])\. ([^\n]+)/g;
+            const options = [];
+            let match;
+            while ((match = optionsRegex.exec(block)) !== null) {
+              const letter = match[1];
+              const text = match[2].trim();
+              
+              // Determine action and amount based on option text
+              let action = 'none';
+              let amount = 0;
+              
+              if (text.toLowerCase().includes('buy')) {
+                action = 'buy';
+                const amountMatch = text.match(/\d+/);
+                amount = amountMatch ? parseInt(amountMatch[0]) : 0;
+              } else if (text.toLowerCase().includes('sell')) {
+                action = 'sell';
+                const amountMatch = text.match(/\d+/);
+                amount = amountMatch ? parseInt(amountMatch[0]) : 0;
+              }
+              
+              options.push({ text, action, amount });
+            }
+            
+            return {
+              text: questionText,
+              options: options
+            };
+          });
+          
+          this.questions = parsedQuestions;
+          console.log("Questions generated:", this.questions); // Debugging
+          
+          if (this.questions.length > 0) {
+            this.currentQuestion = this.questions[0];
+          } else {
+            console.warn("No questions were generated.");
+          }
+        } else if (response.data && response.data.questions) {
+          // Handle case where response is already structured (original code)
+          this.questions = response.data.questions.map((question) => ({
+            text: question.text,
+            options: question.options.map((option) => ({
+              text: option.text,
+              action: option.action,
+              amount: option.amount,
+            })),
+          }));
+          
+          if (this.questions.length > 0) {
+            this.currentQuestion = this.questions[0];
+          }
+        } else {
+          console.error("Invalid response structure:", response);
+        }
+      } catch (error) {
+        console.error("Error generating questions:", error);
+      }
+    },
+    handleQuizOption(option) {
+      if (option.action !== "none") {
+        const transaction = {
+          stockSymbol: "XYZ",
+          type: option.action,
+          quantity: option.amount,
+          price: this.estimatedPrice,
+          userId: this.fixedUserId,
+        };
+        this.submitOrder(transaction.type);
+      }
+      this.updateBalances(option);
+      this.nextQuestion();
+    },
+    updateBalances(option) {
+      const total = option.amount * this.estimatedPrice;
+      if (option.action === "buy") {
+        this.cash -= total;
+        this.stockValue += total;
+      } else if (option.action === "sell") {
+        this.cash += total;
+        this.stockValue -= total;
+      }
+      this.accountBalance = this.cash + this.stockValue;
+    },
+    nextQuestion() {
+      const currentIndex = this.questions.indexOf(this.currentQuestion);
+      if (currentIndex < this.questions.length - 1) {
+        this.currentQuestion = this.questions[currentIndex + 1];
+      } else {
+        this.currentQuestion = null;
+        console.log("No more questions available.");
+      }
+    },
   },
   watch: {
     "$route.query": {
@@ -1241,6 +1404,11 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       },
       immediate: true, // Make it run immediately on component creation
     },
+    activeSection(newSection) {
+      if (newSection === 'quiz') {
+        this.generateTradingQuestions(); // Call method when quiz section is activated
+      }
+    },
   },
   async mounted() {
     setTimeout(() => {
@@ -1307,6 +1475,11 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         console.log("Portfolio is initial section, showing bot");
         this.startPortfolioBotAnimation();
       }, 1000);
+    }
+
+    // Ensure the method is called when the component is mounted
+    if (this.activeSection === 'quiz') {
+      this.generateTradingQuestions();
     }
   },
   beforeUnmount() {
@@ -1547,6 +1720,20 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   padding: 15px;
   border-radius: 5px;
   border: 1px solid #dee2e6;
+}
+
+.stat .label {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.stat .value {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
 }
 
 .action-form {
