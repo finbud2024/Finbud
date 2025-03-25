@@ -211,6 +211,13 @@
               >Risk Analysis</router-link
             >
 
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdownMobile"
+              >Mortgage Calculator</router-link
+            >
+
             <strong>Fin Invest</strong>
             <router-link
               to="/stock-simulator"
