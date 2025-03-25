@@ -21,6 +21,7 @@
     src="./assets/botrmbg.png"
     alt="Finbud"
     @click="toggleChatBubble"
+    :style="botPosition"
   />
 
   <div v-if="showBotMessage" class="bot-message-container">
@@ -73,6 +74,9 @@ export default {
       dragStartY: 0, // Initial Y position when dragging starts
       initialOffsetX: 0, // Initial offset X
       initialOffsetY: 0, // Initial offset Y
+      botPosition: { right: '20px', bottom: '20px' },
+      hasLoadedPosition: false,
+      touchIdentifier: null
     };
   },
   async mounted() {
@@ -172,6 +176,20 @@ export default {
       },
       { immediate: true } // Check immediately on mount
     );
+    
+    // Load saved position if exists
+    const savedPosition = localStorage.getItem('finbudBotPosition');
+    if (savedPosition) {
+      try {
+        const parsed = JSON.parse(savedPosition);
+        // Validate position
+        if (this.isValidPosition(parsed)) {
+          this.botPosition = parsed;
+        }
+      } catch (e) {
+        console.warn('Invalid saved position', e);
+      }
+    }
 
     // add drag event
     this.addDragListeners();
@@ -212,18 +230,110 @@ export default {
           console.warn("Finbud bot element not found");
           return;
         }
+        // Mouse events
+        finbudBot.addEventListener('mousedown', this.startDrag);
+        document.addEventListener('mousemove', this.drag);
+        document.addEventListener('mouseup', this.endDrag);
 
-        finbudBot.addEventListener('mousedown', (e) => {
-          this.isDragging = true;
-          this.dragStartX = e.clientX;
-          this.dragStartY = e.clientY;
-          this.initialOffsetX = finbudBot.offsetLeft;
-          this.initialOffsetY = finbudBot.offsetTop;
-        });
-
-        document.addEventListener('mousemove', this.handleDragMove);
-        document.addEventListener('mouseup', this.handleDragEnd);
+        // Touch events
+        finbudBot.addEventListener('touchstart', this.startDrag, { passive: false });
+        document.addEventListener('touchmove', this.drag, { passive: false });
+        document.addEventListener('touchend', this.endDrag);
       });
+    },
+    startDrag(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      this.isDragging = true;
+      
+      // For touch events
+      if (e.type === 'touchstart') {
+        this.touchIdentifier = e.changedTouches[0].identifier;
+        const touch = e.changedTouches[0];
+        this.dragStartX = touch.clientX;
+        this.dragStartY = touch.clientY;
+      } 
+      // For mouse events
+      else {
+        this.dragStartX = e.clientX;
+        this.dragStartY = e.clientY;
+      }
+      
+      // Get current position from style or default
+      const currentLeft = parseInt(this.botPosition.left) || window.innerWidth - 80;
+      const currentTop = parseInt(this.botPosition.top) || window.innerHeight - 100;
+      
+      this.initialOffsetX = currentLeft;
+      this.initialOffsetY = currentTop;
+      
+      // Change cursor to grabbing
+      this.$refs.finbudBot.style.cursor = 'grabbing';
+    },
+    
+    drag(e) {
+      if (!this.isDragging) return;
+      e.preventDefault();
+      e.stopPropagation();
+      
+      let clientX, clientY;
+      
+      // For touch events
+      if (e.type === 'touchmove') {
+        // Find the correct touch point
+        const touch = Array.from(e.changedTouches).find(
+          t => t.identifier === this.touchIdentifier
+        );
+        if (!touch) return;
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } 
+      // For mouse events
+      else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      // Calculate new position
+      const offsetX = clientX - this.dragStartX;
+      const offsetY = clientY - this.dragStartY;
+      
+      const newLeft = this.initialOffsetX + offsetX;
+      const newTop = this.initialOffsetY + offsetY;
+      
+      // Apply boundaries to keep bot within viewport
+      const boundedLeft = Math.max(0, Math.min(newLeft, window.innerWidth - 60));
+      const boundedTop = Math.max(0, Math.min(newTop, window.innerHeight - 60));
+      
+      // Update position
+      this.botPosition = {
+        left: `${boundedLeft}px`,
+        top: `${boundedTop}px`
+      };
+    },
+    
+    endDrag(e) {
+      if (!this.isDragging) return;
+      
+      // For touch events
+      if (e.type === 'touchend') {
+        // Check if this is the correct touch
+        const touch = Array.from(e.changedTouches).find(
+          t => t.identifier === this.touchIdentifier
+        );
+        if (!touch) return;
+      }
+      
+      this.isDragging = false;
+      this.touchIdentifier = null;
+      
+      // Reset cursor
+      if (this.$refs.finbudBot) {
+        this.$refs.finbudBot.style.cursor = 'grab';
+      }
+      
+      // Save position to localStorage if needed
+      localStorage.setItem('finbudBotPosition', JSON.stringify(this.botPosition));
     },
     handleDragMove(e) {
       if (this.isDragging && this.$refs.finbudBot) {
@@ -348,6 +458,12 @@ export default {
     document.removeEventListener("click", this.handleClickOutside);
     document.removeEventListener('mousemove', this.handleDragMove);
     document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('mousedown', this.startDrag);
+    document.removeEventListener('mousemove', this.drag);
+    document.removeEventListener('mouseup', this.endDrag);
+    document.removeEventListener('touchstart', this.startDrag);
+    document.removeEventListener('touchmove', this.drag);
+    document.removeEventListener('touchend', this.endDrag);
   },
 };
 </script>
@@ -458,15 +574,17 @@ a:hover {
   position: fixed;
   width: 60px;
   aspect-ratio: 1;
-  right: 3.125vw;
-  bottom: 20px;
   z-index: 99998;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
   cursor: grab;
+  user-select: none;
+  touch-action: none; 
 }
 
 .finbudBot:active {
-  cursor: grab; /* Change cursor when dragging */
+  cursor: grabbing;
+  transform: scale(1.05);
+  transition: transform 0.1s ease;
 }
 
 .finbudBot:hover {
