@@ -40,7 +40,7 @@ export default {
 
     const fetchForums = async () => {
       try {
-        const response = await api.get("/api/forums");
+        const response = await api.get("/api/forums", { withCredentials: true });
         forums.value = response.data;
       } catch (error) {
         console.error("❌ Failed to fetch forums:", error);
@@ -50,7 +50,7 @@ export default {
     const fetchThreads = async () => {
       try {
         console.log(`Fetching threads for: ${activeForum.value}`);
-        const response = await api.get(`/api/posts/forum/${activeForum.value}`);
+        const response = await api.get(`/api/posts/forum/${activeForum.value}`, { withCredentials: true });
         console.log("✅ Fetched threads:", response.data);
         threads.value = response.data;
       } catch (error) {
