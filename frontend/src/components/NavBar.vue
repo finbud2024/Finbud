@@ -29,6 +29,7 @@
             >
           </div>
         </li>
+
         <li
           v-if="isAuthenticated"
           class="dropdown"
@@ -36,36 +37,11 @@
           @mouseleave="toggleDropdown(false)"
         >
           <div class="services-dropdown dropbtn">
-            Services <span class="arrow-down"></span>
+            Fin Manage <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)"
               >Goal</router-link
-            >
-            <router-link
-              to="/quant-analysis"
-              class="home"
-              @click="toggleDropdown(false)"
-              >Quant</router-link
-            >
-            <!-- <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdown(false)">Quant Simulator</router-link> -->
-            <router-link
-              to="/stock-simulator"
-              class="simulator"
-              @click="toggleDropdown(false)"
-              >Simulator</router-link
-            >
-            <router-link
-              to="/quizz"
-              class="quizz"
-              @click="toggleDropdown(false)"
-              >Quiz</router-link
-            >
-            <router-link
-              to="/event"
-              class="event"
-              @click="toggleDropdown(false)"
-              >Event</router-link
             >
             <router-link
               to="/riskanalysis"
@@ -73,14 +49,81 @@
               @click="toggleDropdown(false)"
               >Risk Analysis</router-link
             >
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
           </div>
         </li>
-        <li v-if="!isAuthenticated">
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownInvest(true)"
+          @mouseleave="toggleDropdownInvest(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Invest <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="isDropdownOpenInvest">
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownInvest(false)"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownInvest(false)"
+              >Quant</router-link
+            >
+
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownInvest(false)"
+              >Quant Simulator</router-link
+            >
+          </div>
+        </li>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownEdu(true)"
+          @mouseleave="toggleDropdownEdu(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Edu <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="isDropdownOpenEdu">
+            <router-link
+              to="/quizz"
+              class="quizz"
+              @click="toggleDropdownEdu(false)"
+              >Quiz</router-link
+            >
+            <router-link
+              to="/event"
+              class="event"
+              @click="toggleDropdownEdu(false)"
+              >Event</router-link
+            >
+            <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdownEdu(false)"
+              >Forum</router-link
+            >
+          </div>
+        </li>
+
+        <li v-if="!isAuthenticated && !isAuthLoading">
           <router-link to="/login" class="login-button">Log In</router-link>
         </li>
+
         <li v-if="isAuthenticated" class="fincoin-container">
           <FinCoinDisplay :balance="finCoinBalance" />
         </li>
+
         <li
           v-if="isAuthenticated"
           class="dropdown"
@@ -121,10 +164,13 @@
             </router-link>
           </div>
         </li>
+
         <li v-if="isAuthLoading" class="auth-loading">
           <div class="loading-indicator"></div>
         </li>
       </ul>
+
+      <!-- Mobile version -->
       <div
         class="dropdown mobile-only"
         :class="{ active: isDropdownOpenMobile }"
@@ -138,8 +184,11 @@
           v-show="isDropdownOpenMobile"
           @mouseleave="closeDropdownMobile"
         >
-          <router-link to="/" class="home" @click="toggleDropdownMobile"
-            >Home</router-link
+          <router-link
+            to="/chat-view"
+            class="chatview"
+            @click="toggleDropdownMobile"
+            >Chat</router-link
           >
           <router-link to="/about" class="about" @click="toggleDropdownMobile"
             >About</router-link
@@ -151,18 +200,9 @@
             >Technology</router-link
           >
           <div class="authenticated" v-if="isAuthenticated">
+            <strong>Fin Manage</strong>
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile"
               >Goal</router-link
-            >
-            <router-link
-              to="/stock-simulator"
-              class="simulator"
-              @click="toggleDropdownMobile"
-              >Simulator</router-link
-            >
-            <!-- <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">Quant Simulator</router-link> -->
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
-              >Quiz</router-link
             >
             <router-link
               to="/riskanalysis"
@@ -170,32 +210,60 @@
               @click="toggleDropdownMobile"
               >Risk Analysis</router-link
             >
+
             <router-link
-              to="/event"
-              class="event"
-              @click="toggleDropdown(false)"
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdownMobile"
+              >Mortgage Calculator</router-link
+            >
+
+            <strong>Fin Invest</strong>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownMobile"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownMobile"
+              >Quant</router-link
+            >
+
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownMobile"
+              >Quant Simulator</router-link
+            >
+
+            <strong>Fin Edu</strong>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
+              >Quiz</router-link
+            >
+            <router-link to="/event" class="event" @click="toggleDropdownMobile"
               >Event</router-link
             >
-            <router-link to="/quant-analysis" class="home">Quant</router-link>
+            <router-link to="/forum" class="forum" @click="toggleDropdownMobile"
+              >Forum</router-link
+            >
+
             <router-link to="#" @click="logout" class="logout"
               >Log Out</router-link
             >
           </div>
-          <!-- <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link> -->
-          <router-link
-            to="/chat-view"
-            class="chatview"
-            @click="toggleDropdownMobile"
-            >Chat</router-link
-          >
-          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->
           <router-link
             to="/login"
-            v-if="!isAuthenticated"
+            v-if="!isAuthenticated && !isAuthLoading"
             class="login-button"
             @click="toggleDropdownMobile"
             >Log In</router-link
           >
+          <div v-if="isAuthLoading" class="auth-loading-mobile">
+            <div class="loading-indicator"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -206,7 +274,6 @@
 import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
-
 export default {
   name: "NavBar",
   components: {
@@ -215,6 +282,8 @@ export default {
   data() {
     return {
       isDropdownOpen: false,
+      isDropdownOpenInvest: false,
+      isDropdownOpenEdu: false,
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
@@ -241,18 +310,24 @@ export default {
     finCoinBalance() {
       return this.$store.getters["finCoin/finCoinBalance"];
     },
-  },
-  watch: {
-    // Fetch FinCoin balance when user logs in
-    isAuthenticated(newVal) {
-      if (newVal) {
-        this.$store.dispatch("finCoin/fetchFinCoinBalance");
-      }
+    watch: {
+      // Fetch FinCoin balance when user logs in
+      isAuthenticated(newVal) {
+        if (newVal) {
+          this.$store.dispatch("finCoin/fetchFinCoinBalance");
+        }
+      },
     },
   },
   methods: {
     toggleDropdown(open) {
       this.isDropdownOpen = open;
+    },
+    toggleDropdownInvest(open) {
+      this.isDropdownOpenInvest = open;
+    },
+    toggleDropdownEdu(open) {
+      this.isDropdownOpenEdu = open;
     },
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;
@@ -279,15 +354,10 @@ export default {
     },
     async toggleDarkMode() {
       this.isDarkMode = !this.isDarkMode;
-
-      // Apply dark mode to both root and body elements
       document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
       document.body.classList.toggle("dark-mode", this.isDarkMode);
-
-      // Store dark mode preference in localStorage for persistence
       localStorage.setItem("darkMode", this.isDarkMode ? "true" : "false");
 
-      // Update dark mode in the database
       if (this.userData) {
         const userId = this.userData._id;
         try {
@@ -311,37 +381,26 @@ export default {
     },
   },
   async mounted() {
-    // Fetch current user data from the server
     await this.$store.dispatch("users/fetchCurrentUser");
+    const storedDarkMode = localStorage.getItem("darkMode");
+    if (storedDarkMode !== null) {
+      this.isDarkMode = storedDarkMode === "true";
+    } else if (this.userData && this.userData.settings) {
+      this.isDarkMode = this.userData.settings.darkMode || false;
+    } else {
+      const prefersDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      this.isDarkMode = prefersDarkMode;
+    }
 
     // Fetch FinCoin balance if user is authenticated
     if (this.isAuthenticated) {
       await this.$store.dispatch("finCoin/fetchFinCoinBalance");
     }
 
-    // Apply dark mode based on user settings
-    if (this.userData && this.userData.settings) {
-      // First check localStorage for dark mode preference
-      const storedDarkMode = localStorage.getItem("darkMode");
-
-      if (storedDarkMode !== null) {
-        // Apply dark mode from localStorage
-        this.isDarkMode = storedDarkMode === "true";
-      } else if (this.userData && this.userData.settings) {
-        // Fall back to user settings from the database
-        this.isDarkMode = this.userData.settings.darkMode || false;
-      } else {
-        // As a last resort, check system preference
-        const prefersDarkMode =
-          window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches;
-        this.isDarkMode = prefersDarkMode;
-      }
-
-      // Apply dark mode to both root and body elements
-      document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
-      document.body.classList.toggle("dark-mode", this.isDarkMode);
-    }
+    document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
+    document.body.classList.toggle("dark-mode", this.isDarkMode);
   },
 };
 </script>

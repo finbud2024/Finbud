@@ -9,6 +9,7 @@ import * as faRegular from "@fortawesome/free-regular-svg-icons";
 import * as faBrand from "@fortawesome/free-brands-svg-icons";
 import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps"; 
+import i18n from "./i18n";
 
 // Add specific icons to the library
 const icons = [
@@ -50,6 +51,7 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 // Use the router and vuex store
 app.use(router);
 app.use(store);
+app.use(i18n);
 
 // Mount the application to the DOM
 app.mount("#app");

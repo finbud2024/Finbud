@@ -11,6 +11,12 @@
           Investment
         </li>
         <li
+          @click="activeSection = 'portfolio'"
+          :class="{ active: activeSection === 'portfolio' }"
+        >
+          Your Portfolio
+        </li>
+        <li
           @click="activeSection = 'transactionHistory'"
           :class="{ active: activeSection === 'transactionHistory' }"
         >
@@ -27,6 +33,12 @@
           :class="{ active: activeSection === 'quiz' }"
         >
           Quiz
+        </li>
+        <li
+          @click="activeSection = 'predictiveCalc'"
+          :class="{ active: activeSection === 'predictiveCalc' }"
+        >
+          Predictive Calculator
         </li>
       </ul>
     </nav>
@@ -233,6 +245,9 @@
                 <path
                   d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
                 ></path>
+                <path
+                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
+                ></path>
               </svg>
               Refresh
             </button>
@@ -433,9 +448,9 @@ import PredicitveCalc from "../components/StockSimulatorPage/PredicitveCalc.vue"
 import PortfolioPerformance from "../components/StockSimulatorPage/PortfolioPerformance.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
-import QuizRewards from "../components/QuizRewards.vue";
 import { showReward } from "../utils/utils";
 import { gptServices } from "@/services/gptServices";
+import QuizRewards from "@/components/QuizRewards.vue";
 
 
 export default {
@@ -491,7 +506,6 @@ export default {
       headerPartialMessage: "",
       headerTypingComplete: false,
       headerTypingInterval: null,
-      headerBotVisible: true,
       headerBotVisible: true,
       chatbotTransactionMessage: "",
       showChatTransactionBubble: true,
@@ -838,7 +852,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             this.estimatedPrice = parseFloat(price);
             return true;
           } else {
-            // No valid price field found or price is NaN
             alert(
               `Sorry, we couldn't find valid price data for ${symbol.toUpperCase()}.`
             );
@@ -887,6 +900,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         price: this.estimatedPrice,
         userId: this.fixedUserId,
       };
+
 
       console.log("Submitting order with data:", transactionData);
 
