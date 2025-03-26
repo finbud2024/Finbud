@@ -112,7 +112,7 @@
               to="/event"
               class="event"
               @click="toggleDropdownEdu(false)"
-              >Event</router-link
+              >News</router-link
             >
             <router-link
               to="/forum"
@@ -258,7 +258,7 @@
               >Quiz</router-link
             >
             <router-link to="/event" class="event" @click="toggleDropdownMobile"
-              >Event</router-link
+              >News</router-link
             >
             <router-link to="/forum" class="forum" @click="toggleDropdownMobile"
               >Forum</router-link
