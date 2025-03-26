@@ -61,6 +61,7 @@ export default {
   },
   data() {
     return {
+      botSize: { width: 60, height: 60},
       threadId: "",
       chatBubbleActive: false,
       botMessage: "",
@@ -76,7 +77,8 @@ export default {
       initialOffsetY: 0, // Initial offset Y
       botPosition: { right: '20px', bottom: '20px' },
       hasLoadedPosition: false,
-      touchIdentifier: null
+      touchIdentifier: null,
+      touchStart: null,
     };
   },
   async mounted() {
@@ -236,88 +238,121 @@ export default {
         document.addEventListener('mouseup', this.endDrag);
 
         // Touch events
-        finbudBot.addEventListener('touchstart', this.startDrag, { passive: false });
+        finbudBot.addEventListener('touchstart', this.handleTouchStart, { passive: false });
         document.addEventListener('touchmove', this.drag, { passive: false });
-        document.addEventListener('touchend', this.endDrag);
+        document.addEventListener('touchend', this.handleTouchEnd);
       });
     },
+    handleTouchStart(e) {
+      // Store initial touch position and time
+      const touch = e.touches[0] || e.changedTouches[0];
+      this.touchStart = {
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now()
+      };
+      this.startDrag(e);
+    },
+
+    handleTouchEnd(e) {
+      if (!this.isDragging) return;
+      
+      const touch = e.changedTouches[0];
+      if (!touch) return;
+
+      // Calculate distance and time from touch start
+      const dx = touch.clientX - this.touchStart.x;
+      const dy = touch.clientY - this.touchStart.y;
+      const dt = Date.now() - this.touchStart.time;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // If it was a short, small movement (tap), open chat
+      if (distance < 10 && dt < 200) {
+        this.toggleChatBubble();
+      }
+
+      this.endDrag(e);
+    },
+
     startDrag(e) {
       e.preventDefault();
       e.stopPropagation();
       
       this.isDragging = true;
       
-      // For touch events
+      let clientX, clientY;
+      
       if (e.type === 'touchstart') {
-        this.touchIdentifier = e.changedTouches[0].identifier;
-        const touch = e.changedTouches[0];
-        this.dragStartX = touch.clientX;
-        this.dragStartY = touch.clientY;
-      } 
-      // For mouse events
-      else {
-        this.dragStartX = e.clientX;
-        this.dragStartY = e.clientY;
+        const touch = e.touches[0] || e.changedTouches[0];
+        this.touchIdentifier = touch.identifier;
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
       }
       
-      // Get current position from style or default
-      const currentLeft = parseInt(this.botPosition.left) || window.innerWidth - 80;
-      const currentTop = parseInt(this.botPosition.top) || window.innerHeight - 100;
+      this.dragStartX = clientX;
+      this.dragStartY = clientY;
+      
+      const currentLeft = parseInt(this.botPosition.left) || 
+                         window.innerWidth - this.botSize.width - 20;
+      const currentTop = parseInt(this.botPosition.top) || 
+                         window.innerHeight - this.botSize.height - 20;
       
       this.initialOffsetX = currentLeft;
       this.initialOffsetY = currentTop;
       
-      // Change cursor to grabbing
-      this.$refs.finbudBot.style.cursor = 'grabbing';
+      if (this.$refs.finbudBot) {
+        this.$refs.finbudBot.style.cursor = 'grabbing';
+        this.$refs.finbudBot.style.transition = 'none';
+      }
     },
-    
+
     drag(e) {
       if (!this.isDragging) return;
+      
       e.preventDefault();
       e.stopPropagation();
       
       let clientX, clientY;
       
-      // For touch events
       if (e.type === 'touchmove') {
-        // Find the correct touch point
-        const touch = Array.from(e.changedTouches).find(
+        const touch = Array.from(e.touches).find(
           t => t.identifier === this.touchIdentifier
-        );
+        ) || e.changedTouches[0];
         if (!touch) return;
         clientX = touch.clientX;
         clientY = touch.clientY;
-      } 
-      // For mouse events
-      else {
+      } else {
         clientX = e.clientX;
         clientY = e.clientY;
       }
       
-      // Calculate new position
       const offsetX = clientX - this.dragStartX;
       const offsetY = clientY - this.dragStartY;
       
-      const newLeft = this.initialOffsetX + offsetX;
-      const newTop = this.initialOffsetY + offsetY;
+      let newLeft = this.initialOffsetX + offsetX;
+      let newTop = this.initialOffsetY + offsetY;
       
-      // Apply boundaries to keep bot within viewport
-      const boundedLeft = Math.max(0, Math.min(newLeft, window.innerWidth - 60));
-      const boundedTop = Math.max(0, Math.min(newTop, window.innerHeight - 60));
+      const maxX = window.innerWidth - this.botSize.width;
+      const maxY = window.innerHeight - this.botSize.height;
       
-      // Update position
+      newLeft = Math.max(0, Math.min(newLeft, maxX));
+      newTop = Math.max(0, Math.min(newTop, maxY));
+      
       this.botPosition = {
-        left: `${boundedLeft}px`,
-        top: `${boundedTop}px`
+        left: `${newLeft}px`,
+        top: `${newTop}px`,
+        right: 'auto',
+        bottom: 'auto'
       };
     },
-    
+
     endDrag(e) {
       if (!this.isDragging) return;
       
-      // For touch events
-      if (e.type === 'touchend') {
-        // Check if this is the correct touch
+      if (e.type === 'touchend' && this.touchIdentifier !== null) {
         const touch = Array.from(e.changedTouches).find(
           t => t.identifier === this.touchIdentifier
         );
@@ -327,12 +362,11 @@ export default {
       this.isDragging = false;
       this.touchIdentifier = null;
       
-      // Reset cursor
       if (this.$refs.finbudBot) {
         this.$refs.finbudBot.style.cursor = 'grab';
+        this.$refs.finbudBot.style.transition = 'left 0.2s, top 0.2s';
       }
       
-      // Save position to localStorage if needed
       localStorage.setItem('finbudBotPosition', JSON.stringify(this.botPosition));
     },
     handleDragMove(e) {
