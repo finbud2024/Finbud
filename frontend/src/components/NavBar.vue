@@ -50,6 +50,13 @@
               >Risk Analysis</router-link
             >
             <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
+            
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownInvest(false)"
+              >Super Investors</router-link
+            >
           </div>
         </li>
 
@@ -216,6 +223,13 @@
               class="mortgage-calc"
               @click="toggleDropdownMobile"
               >Mortgage Calculator</router-link
+            >
+
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownMobile"
+              >Super Investors</router-link
             >
 
             <strong>Fin Invest</strong>
