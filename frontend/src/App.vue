@@ -67,14 +67,14 @@ export default {
       botMessage: "",
       displayedMessage: "",
       showBotMessage: true,
-      typingSpeed: 20, // milliseconds per character
+      typingSpeed: 20, 
       isTyping: false,
-      messageVisible: false, // New property for message visibility
-      isDragging: false, // Track if the bot is being dragged
-      dragStartX: 0, // Initial X position when dragging starts
-      dragStartY: 0, // Initial Y position when dragging starts
-      initialOffsetX: 0, // Initial offset X
-      initialOffsetY: 0, // Initial offset Y
+      messageVisible: false, 
+      isDragging: false, 
+      dragStartX: 0, 
+      dragStartY: 0, 
+      initialOffsetX: 0, 
+      initialOffsetY: 0, 
       botPosition: { right: '20px', bottom: '20px' },
       hasLoadedPosition: false,
       touchIdentifier: null,

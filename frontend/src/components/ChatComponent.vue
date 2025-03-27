@@ -1,25 +1,28 @@
 <template>
 	<div class="chat-container">
-		<ChatFrame>
-			<div v-for="(message, index) in messages" :key="index">
-				<MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
-					:is-thinking="message.isThinking"
-					:htmlContent="message.htmlContent" :username="message.isUser ? displayName : 'FinBud Bot'"
-					:avatar-src="message.isUser ? userAvatar : botAvatar"
-					:sources="message.isUser ? [] : message.sources" :videos="message.isUser ? [] : message.videos"
-					:relevantQuestions="message.isUser ? [] : message.relevantQuestions"
-					@question-click="handleQuestionClick" />
-			</div>
-		</ChatFrame>
-		<UserInput @send-message="sendMessage" />
+	  <ChatFrame>
+		<div v-for="(message, index) in messages" :key="index">
+		  <MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
+			:is-thinking="message.isThinking"
+			:htmlContent="message.htmlContent" :username="message.isUser ? displayName : 'FinBud Bot'"
+			:avatar-src="message.isUser ? userAvatar : botAvatar"
+			:sources="message.isUser ? [] : message.sources" :videos="message.isUser ? [] : message.videos"
+			:relevantQuestions="message.isUser ? [] : message.relevantQuestions"
+			@question-click="handleQuestionClick" />
+		  <!-- Add TradingView widget after stock messages -->
+		  <TradingViewWidget v-if="message.showChart" :symbol="message.stockSymbol" />
+		</div>
+	  </ChatFrame>
+	  <UserInput @send-message="sendMessage" />
 	</div>
-</template>
+  </template>
 
 <script>
 // COMPONENT IMPORT
 import ChatFrame from './ChatFrame.vue';
 import MessageComponent from './MessageComponent.vue';
 import UserInput from './UserInput.vue';
+import TradingViewWidget from './TradingViewWidget.vue';
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
@@ -28,7 +31,7 @@ import api from '@/utils/api';
 export default {
 	name: 'ChatComponent',
 	props: {},
-	components: { ChatFrame, MessageComponent, UserInput },
+	components: { ChatFrame, MessageComponent, UserInput, TradingViewWidget },
 	data() {
 		return {
 			messages: [],
@@ -390,6 +393,16 @@ export default {
 						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
+						
+						// Add a message that will trigger the chart display
+						this.messages.push({
+						text: '',
+						isUser: false,
+						typing: false,
+						showChart: true,
+						stockSymbol: stockCode,
+						timestamp: new Date().toLocaleTimeString()
+						});
 					} catch (err) {
 						console.error("Error in stock message:", err.message);
 					}
