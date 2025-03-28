@@ -97,6 +97,7 @@ import axios from 'axios';
 import TopSeries from './TopSeries.vue';
 import CryptoPopup from '../marketPage/CryptoPopup.vue';
 import { gptServices } from '@/services/gptServices.js';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 
 const DEPLOY_URL = process.env.VUE_APP_DEPLOY_URL;
@@ -165,7 +166,7 @@ export default {
         this.isTyping = true;
 
         // Fetch insights from Gemini API
-        const insights = await this.generateMortgageInsights();
+        const insights = await this.generateCryptoInsights();
         this.botMessage = insights; // Update the bot message with the generated insights
 
         setTimeout(() => {
@@ -185,7 +186,7 @@ export default {
     typeNextWord() {
       if (this.currentWordIndex < this.words.length) {
         const word = this.words[this.currentWordIndex];
-        this.typedContent += word === "\n" ? "<br>" : word;
+        this.typedContent += word === "\n" ? "<br>" : word + " ";
         this.currentWordIndex++;
 
         this.typingTimer = setTimeout(() => {
@@ -221,19 +222,19 @@ export default {
         }, 1000);
       }, 500);
     },
-    async generateCryptoInsights(cryptoQuery) {
+    async generateCryptoInsights() {
       try {
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        
+
         const chat = await model.startChat({
           history: [
             {
               role: 'user',
-              parts: [{ text: "You're a crypto trading expert. Provide concise technical analysis with key metrics." }],
+              parts: [{ text: "You're a crypto trading expert. Provide a general analysis of the cryptocurrency market." }],
             },
             {
               role: 'model',
-              parts: [{ text: 'Ready to analyze. Provide the cryptocurrency or token you want examined.' }],
+              parts: [{ text: 'Analyzing the current state of the cryptocurrency market.' }],
             },
           ],
           generationConfig: {
@@ -241,22 +242,18 @@ export default {
           },
         });
 
-        const prompt = `Analyze ${cryptoQuery} with:
-        - Price action and trend analysis
-        - Key support/resistance levels
-        - RSI and MACD indicators
-        - Volume analysis
-        - Notable chart patterns
-        - Short-term outlook (1-3 days)
-        - Medium-term outlook (1-2 weeks)`;
-        
+        const prompt = `Provide a general cryptocurrency market analysis including:
+        - Overall market trends
+        - Bitcoin and Ethereum price movements
+        - Key altcoin trends`;
+
         const result = await chat.sendMessage(prompt);
-        const response = await result.response;
-        return await response.text();
+        const response = result.response;
+        return response.text();
 
       } catch (error) {
-        console.error("Error generating crypto insights:", error);
-        return "Unable to analyze cryptocurrency at the moment. Please try again later.";
+        console.error("Error generating general crypto insights:", error);
+        return "Unable to analyze the cryptocurrency market at the moment. Please try again later.";
       }
     },
 
@@ -726,6 +723,8 @@ body {
   transform: scale(0.8) translateY(10px);
   transition: opacity 0.7s ease, transform 0.7s ease;
   transition-delay: 0.3s;
+  word-wrap: break-word;
+  white-space: pre-line;
 }
 
 .bot-message.message-visible {
