@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   chainWebpack: config => {
       config.module
           .rule('csv')

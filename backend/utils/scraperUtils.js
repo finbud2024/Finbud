@@ -9,6 +9,8 @@ const __dirname = dirname(__filename);
 // Load .env file from backend directory
 dotenv.config({ path: join(__dirname, '..', '.env') });
 
+const MONGO_URI = process.env.MONGO_URI;
+
 export const browserConfig = {
     headless: true,
     args: [
@@ -27,40 +29,28 @@ export const contextConfig = {
 };
 
 export function getRandomUserAgent() {
-    const userAgents = [
+    const agents = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.59',
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/604.1'
     ];
-    return userAgents[Math.floor(Math.random() * userAgents.length)];
+    return agents[Math.floor(Math.random() * agents.length)];
 }
 
-export const connectToMongoDB = async () => {
-    try {
-        if (!process.env.MONGO_URI) {
-            throw new Error("MONGO_URI is not defined in environment variables");
-        }
-        console.log("🔍 Connecting to MongoDB...");
-        await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 10000,
-        });
-        console.log("✅ Connected to MongoDB!");
-    } catch (err) {
-        console.error("❌ MongoDB Connection Error:", err.message);
-        process.exit(1);
-    }
-};
+export async function connectToMongoDB() {
+    if (!MONGO_URI) throw new Error('MONGO_URI not set');
+    console.log("🔍 Connecting to MongoDB...");
+    await mongoose.connect(MONGO_URI, {
+        serverSelectionTimeoutMS: 10000,
+    });
+    console.log("✅ Connected to MongoDB!");
+}
 
-export const disconnectFromMongoDB = async () => {
-    try {
-        await mongoose.disconnect();
-        console.log("✅ Disconnected from MongoDB");
-    } catch (err) {
-        console.error("❌ MongoDB Disconnection Error:", err.message);
-    }
-};
+export async function disconnectFromMongoDB() {
+    await mongoose.disconnect();
+    console.log("✅ Disconnected from MongoDB");
+}
 
 export async function saveToDatabase(Model, documents, identifyingField = 'name') {
     if (!documents || (Array.isArray(documents) && documents.length === 0)) {
