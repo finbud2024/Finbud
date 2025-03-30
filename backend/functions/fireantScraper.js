@@ -15,48 +15,59 @@ async function scrapeFireAnt() {
   // Load session cookies
   const cookies = JSON.parse(await fs.readFile(COOKIES_PATH, 'utf-8'));
   await page.setCookie(...cookies);
-
   await page.setViewport({ width: 1280, height: 800 });
 
-  console.log('🌐 Opening FireAnt with session cookies...');
+  console.log('🌐 Opening FireAnt...');
   await page.goto(FIREANT_URL, { waitUntil: 'networkidle2' });
 
-  // Wait for post content to appear
-  await page.waitForSelector('div.leading-7', { timeout: 10000 });
+  // Wait for at least one post to show up
+  await page.waitForSelector('div[data-index]', { timeout: 10000 });
 
-  // Scroll to load more posts
-  for (let i = 0; i < 5; i++) {
+  // Scroll and fetch until 100+ posts are visible
+  let previousCount = 0;
+  let tries = 0;
+  const maxPosts = 100;
+
+  while (tries < 40) {
     await page.evaluate(() => window.scrollBy(0, window.innerHeight));
     await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Expand truncated content
+    await page.evaluate(() => {
+      document.querySelectorAll('button').forEach(btn => {
+        if (btn.innerText.includes('Thêm')) btn.click();
+      });
+    });
+
+    const currentCount = await page.$$eval('div[data-index]', els => els.length);
+    if (currentCount > previousCount) {
+      previousCount = currentCount;
+      tries = 0;
+    } else {
+      tries++;
+    }
+
+    if (currentCount >= maxPosts) break;
   }
 
-  // Expand "...Thêm" buttons to show full post body
-  await page.evaluate(() => {
-    document.querySelectorAll('button').forEach(btn => {
-      if (btn.innerText.includes('Thêm')) btn.click();
-    });
-  });
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // Extract post info
+  // Extract posts and comments
   const posts = await page.evaluate(() => {
-    const postElements = Array.from(document.querySelectorAll('div.leading-7'));
-    return postElements.map(post => {
-      const wrapper = post.closest('article') || post.closest('[data-author]') || post.parentElement;
+    const postDivs = Array.from(document.querySelectorAll('div[data-index]'));
+    return postDivs.map(div => {
+      const wrapper = div;
 
-      const author = wrapper?.querySelector('a[href*="/thanh-vien/"]')?.innerText?.trim() || 'Unknown';
-      const avatar = wrapper?.querySelector('img')?.src || '';
-      const time = wrapper?.querySelector('time')?.getAttribute('datetime') || '';
-      const body = post?.innerText?.trim() || '';
+      const author = wrapper.querySelector('a[href*="/thanh-vien/"]')?.innerText.trim() || 'Unknown';
+      const avatar = wrapper.querySelector('img')?.src || '';
+      const time = wrapper.querySelector('time')?.getAttribute('datetime') || '';
+      const body = wrapper.querySelector('div.leading-7')?.innerText.trim() || '';
 
-      const commentEls = wrapper?.querySelectorAll('div.leading-8') || [];
+      const commentEls = wrapper.querySelectorAll('div.leading-8');
       const comments = Array.from(commentEls).map(c => c.innerText.trim()).filter(Boolean);
 
       return { author, avatar, body, time, comments };
     });
   });
 
-  // Save to file
   const filename = 'fireant-posts.json';
   await fs.writeFile(filename, JSON.stringify(posts, null, 2), 'utf-8');
   console.log(`Scraped ${posts.length} posts. Saved to ${filename}`);
