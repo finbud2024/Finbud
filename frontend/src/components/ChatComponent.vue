@@ -286,7 +286,7 @@ export default {
 						userInputToken = userInputToken.slice(1, userInputToken.length);
 						searchLocation = capitalizeLocation(userInputToken.join(" "));
 					} else {
-						searchLocation = "San Jose";
+						searchLocation = "San Jose";	
 					}
 					let propertiesData = [
 					{
