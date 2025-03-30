@@ -107,30 +107,6 @@
           <button class="button" @click="GenerateQuiz">Generate Quiz</button>
         </div>
       </div>
-      <div class="form-group">
-        <label for="suggest-topic">OR recieve a suggestion</label>
-        <div id="suggest-topic" class="suggest-keyword-container">
-          <select v-model="suggestTopic">
-            <option value="">Select a quiz type (optional)</option>
-            <option value="Saving Vs Investing">Saving vs Investing</option>
-            <option value="Budgeting">Budgeting</option>
-            <option value="Asset Allocation">Asset Allocation</option>
-          </select>
-          <select v-model="suggestDifficulty">
-            <option value="">Select difficulty (optional)</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-          <button
-            class="button"
-            :disabled="isLoading"
-            @click="keywordSuggestion"
-          >
-            Suggest
-          </button>
-        </div>
-      </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
         <label for="related-keyword">Related keyword</label>
         <div id="related-keyword" class="related-keyword-container">
@@ -331,8 +307,6 @@ export default {
       searchKeyword: "",
       currentKeyword: "",
       relatedKeyword: [],
-      suggestTopic: "",
-      suggestDifficulty: "",
       currentQuestion: -1,
       questionList: [],
       question: "",
@@ -504,58 +478,102 @@ export default {
   },
   methods: {
     GenerateQuiz: debounce(async function () {
-      if (this.searchKeyword.length === 0) return;
+      if (!this.searchKeyword.trim()) return;
       this.isLoading = true;
       this.answerButtonDisabled = true;
       this.currentQuestion = -1;
       this.question = "";
       this.answerOptions = [];
       this.relatedKeyword = [];
-      //this part below setup to start the quiz
+      this.resetQuizState(); // Reset all quiz-related variables
+
       this.currentKeyword = this.searchKeyword.toUpperCase();
       this.searchKeyword = "";
-      const buttons = document.querySelectorAll(".quizChoices button");
-      buttons.forEach((button) => {
-        button.classList.remove("answer-button-incorrect");
-        button.classList.remove("answer-button-correct");
+
+      try {
+        const response = await gptServices([
+          {
+            role: "system",
+            content: "You are a finance quiz generator. Return questions in EXACTLY this format:\n\n" +
+                    "Question: [question]\n" +
+                    "A. [option1]\n" +
+                    "B. [option2]\n" +
+                    "C. [option3]\n" +
+                    "D. [option4]\n" +
+                    "Correct Answer: [A/B/C/D]\n" +
+                    "Explanation: [explanation]\n\n" +
+                    "[Repeat for 3 questions]"
+          },
+          {
+            role: "user",
+            content: `Generate 3 multiple-choice questions about ${this.currentKeyword} in finance.`
+          }
+        ]);
+
+        // Improved parsing
+        this.questionList = this.parseQuizResponse(response);
+        
+        if (this.questionList.length === 0) {
+          throw new Error("No valid questions found in response");
+        }
+
+        this.currentQuestion = 0;
+        this.loadCurrentQuestion();
+        await this.generateRelatedKeywords();
+
+      } catch (error) {
+        console.error("Quiz generation failed:", error);
+        this.question = "Failed to generate questions. Please try again.";
+      } finally {
+        this.isLoading = false;
+        this.answerButtonDisabled = false;
+        this.startTimer();
+      }
+    }, 300),
+
+    // New helper method
+    parseQuizResponse(response) {
+      const blocks = response.split(/\n\n+/);
+      const questions = [];
+
+      blocks.forEach(block => {
+        const lines = block.split('\n').filter(l => l.trim());
+        if (lines.length < 7) return; // Skip incomplete questions
+
+        questions.push({
+          question: lines[0].replace('Question:', '').trim(),
+          options: lines.slice(1, 5).map(opt => opt.replace(/^[A-D]\.\s*/, '').trim()),
+          correctAnswer: lines[5].replace('Correct Answer:', '').trim(),
+          explanation: lines[6].replace('Explanation:', '').trim()
+        });
       });
+
+      return questions;
+    },
+
+    // Improved question loading
+    loadCurrentQuestion() {
+      if (this.currentQuestion >= this.questionList.length) return;
+
+      const q = this.questionList[this.currentQuestion];
+      this.question = q.question;
+      this.answerOptions = q.options;
+      this.correctAnswer = q.correctAnswer;
+      this.explanation = q.explanation;
+    },
+
+    // Reset quiz state properly
+    resetQuizState() {
+      this.questionList = [];
+      this.currentQuestion = -1;
+      this.question = "";
+      this.answerOptions = [];
+      this.correctAnswer = "";
+      this.explanation = "";
       this.showExplaination = false;
       this.score = 0;
       this.stopTimer();
-      // ------------------------------------------------------
-      const response = await gptServices([
-        {
-          role: "system",
-          content:
-            "You are a helpful assistant specializing in finance education.",
-        },
-        {
-          role: "user",
-          content: `Generate 3 finance-related multiple-choice quiz focusing on the keyword: ${this.currentKeyword}.
-                        For each question:
-                        - Provide a clear and concise question, along with four distinct answer options.
-                        - Include a detailed explanation for the answer, which should be factually accurate and relevant to the question.
-                        - The question genereated should be generated right behind the word "question"
-                        - There should be not extra space in between the question, the options, and the exaplinataion
-                        - Provide the Correct Answer in the field Called Correct Answer, and it should either be A,B, C, or D
-                        - It should follow exactly how the format is as below:
-                        Question: <question>
-                        A. <option1>
-                        B. <option2>
-                        C. <option3>
-                        D. <option4>
-                        Correct Answer: <A,B,C,D>
-                        Explanation: <explanation>`,
-        },
-      ]);
-      this.questionList = response.split(/\n\n+/);
-      this.currentQuestion = 0;
-      this.parseCurrentQuestion();
-      await this.generateRelatedKeywords();
-      this.isLoading = false;
-      this.answerButtonDisabled = false;
-      this.startTimer();
-    }, 300),
+    },
 
     generateLearningRoadmap: async function (roadmapData) {
       try {
@@ -669,35 +687,6 @@ export default {
         this.is_generating_roadmap = false;
       }
     },
-
-    keywordSuggestion: debounce(async function () {
-      if (this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0)
-        return;
-      this.searchKeyword = await gptServices([
-        { role: "system", content: "You are a helpful assistant." },
-        {
-          role: "user",
-          content: `Generate a single keyword in finance about
-                        ${
-                          this.selectedQuiz
-                            ? this.selectedQuiz
-                            : "Saving Vs Investing"
-                        }
-                        at a
-                        ${
-                          this.suggestDifficulty
-                            ? this.suggestDifficulty
-                            : "hard"
-                        }
-                        difficulty level. The keyword should be specific and relevant to create a quiz question about finance.
-                        - no need to add extra question, only the keyword is needed for the response. Please strictly follow the requirement`,
-        },
-      ]);
-      this.suggestTopic = "";
-      this.suggestDifficulty = "";
-
-      await this.GenerateQuiz();
-    }, 300),
     handleSuggestedChoice: debounce(async function (keyword) {
       this.searchKeyword = keyword;
       this.GenerateQuiz();
@@ -724,40 +713,22 @@ export default {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Generate 3 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide the keywords as a comma-separated list.`,
+          content: `Generate 10 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide the keywords as a comma-separated list.`,
         },
       ]);
       this.relatedKeyword = response.split(",");
     },
-    parseCurrentQuestion() {
+    loadCurrentQuestion() {
       if (this.currentQuestion >= this.questionList.length) {
         return;
       }
 
-      const questionBlock = this.questionList[this.currentQuestion]
-        .trim()
-        .split("\n");
+      const q = this.questionList[this.currentQuestion];
+      this.question = q.question;
+      this.answerOptions = q.options;
+      this.correctAnswer = q.correctAnswer;
+      this.explanation = q.explanation;
 
-      this.question = questionBlock[0].toLowerCase().startsWith("question")
-        ? questionBlock[0].substring(10)
-        : questionBlock[0];
-
-      this.answerOptions = questionBlock
-        .slice(1, 5)
-        .map((option) => option.trim());
-
-      const correctAnswerLine = questionBlock.find((line) =>
-        line.startsWith("Correct Answer:")
-      );
-      this.correctAnswer = correctAnswerLine
-        ? correctAnswerLine.split(":")[1].trim()
-        : "";
-
-      this.explanation =
-        questionBlock
-          .find((line) => line.startsWith("Explanation:"))
-          ?.substring("Explanation:".length)
-          .trim() || "";
     },
     handleUserChoice(index) {
       this.stopTimer();
@@ -801,19 +772,19 @@ export default {
     },
     handleNextQuestion() {
       this.showExplaination = false;
-      //reset buton style;
-      const buttons = document.querySelectorAll(".quizChoices button");
-      buttons.forEach((button) => {
-        button.classList.remove("answer-button-incorrect");
-        button.classList.remove("answer-button-correct");
+      
+      // Reset button styles
+      document.querySelectorAll('.quizChoices button').forEach(button => {
+        button.classList.remove('answer-button-incorrect', 'answer-button-correct');
       });
+
       this.currentQuestion += 1;
       if (this.currentQuestion >= this.questionList.length) {
         this.modalDisplay = true;
         this.answerButtonDisabled = true;
         return;
       }
-      this.parseCurrentQuestion();
+      this.loadCurrentQuestion(); // Use the new method
       this.answerButtonDisabled = false;
       this.startTimer();
     },
@@ -827,9 +798,6 @@ export default {
       } else if (setting === "different") {
         const temp = this.currentKeyword;
         this.stateReset();
-        this.suggestTopic = "random";
-        this.suggestDifficulty = "random";
-        this.keywordSuggestion();
       } else {
         this.currentKeyword = "";
         this.stateReset();
@@ -929,31 +897,6 @@ export default {
 .button:hover {
   background: #2c5282;
   transform: none;
-}
-
-.suggest-keyword-container {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  width: 60vw;
-}
-
-.suggest-keyword-container > select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  background: white;
-}
-
-.related-keyword-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
 }
 
 .quiz-area {
