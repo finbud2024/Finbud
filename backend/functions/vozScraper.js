@@ -7,14 +7,14 @@ import puppeteerExtra from 'puppeteer-extra';
 puppeteerExtra.use(StealthPlugin());
 
 
-async function disconnectFromMongoDB() {
-  try {
-    await mongoose.disconnect();
-    console.log('Disconnected from MongoDB');
-  } catch (error) {
-    console.error('MongoDB disconnection error:', error);
-    throw error;
-  }
+function getRandomUserAgent() {
+  const agents = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64)...',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...',
+    'Mozilla/5.0 (X11; Linux x86_64)...',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3)...',
+  ];
+  return agents[Math.floor(Math.random() * agents.length)];
 }
 
 async function scrapeVoz() {
@@ -45,7 +45,7 @@ async function scrapeVoz() {
   const results = [];
 
   for (const thread of threads) {
-    console.log(`Scraping thread: ${thread.title}`);
+    console.log(`🧵 Scraping thread: ${thread.title}`);
     const threadPage = await browser.newPage();
     await threadPage.setUserAgent(getRandomUserAgent());
     await threadPage.goto(thread.url, { waitUntil: 'domcontentloaded' });
