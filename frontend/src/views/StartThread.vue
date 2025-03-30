@@ -47,7 +47,7 @@ export default {
 
     const fetchForums = async () => {
       try {
-        const response = await api.get("/api/forums");
+        const response = await api.get("/api/forums", { withCredentials: true });
         forums.value = response.data;
 
         const forumFromQuery = response.data.find(f => f.slug === route.query.forum);
@@ -79,7 +79,7 @@ export default {
 
         console.log("📤 Submitting Thread Data:", newThread);
 
-        const response = await api.post("/api/posts", newThread);
+        const response = await api.post("/api/posts", newThread, { withCredentials: true });
 
         console.log("Thread Created:", response.data);
         title.value = "";

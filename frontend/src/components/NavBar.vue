@@ -3,72 +3,278 @@
     <router-link to="/" class="navbar-brand">FinBud</router-link>
     <div class="nav-right">
       <ul class="nav-items">
-        <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
-        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
-          <div class="services-dropdown dropbtn">Overview <span class="arrow-down"></span></div>
+        <li>
+          <router-link to="/chat-view" class="chatview">Chat</router-link>
+        </li>
+        <li
+          class="dropdown"
+          @mouseenter="toggleAboutDropdown(true)"
+          @mouseleave="toggleAboutDropdown(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Overview <span class="arrow-down"></span>
+          </div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
-            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">About</router-link>
-            <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">Technology</router-link>
+            <router-link
+              to="/about"
+              class="about"
+              @click="toggleAboutDropdown(false)"
+              >About</router-link
+            >
+            <router-link
+              to="/tech"
+              class="technology"
+              @click="toggleAboutDropdown(false)"
+              >Technology</router-link
+            >
           </div>
         </li>
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)"
-          @mouseleave="toggleDropdown(false)">
-          <div class="services-dropdown dropbtn">Services <span class="arrow-down"></span></div>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdown(true)"
+          @mouseleave="toggleDropdown(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Manage <span class="arrow-down"></span>
+          </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdown(false)">Quant</router-link>
-            <!-- <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdown(false)">Quant Simulator</router-link> -->
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
-            <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
-            <router-link to="/forum" class="forum" @click="toggleDropdown(false)">Forum</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
+            <router-link to="/goal" class="goal" @click="toggleDropdown(false)"
+              >Goal</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdown(false)"
+              >Risk Analysis</router-link
+            >
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
             
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownInvest(false)"
+              >Super Investors</router-link
+            >
           </div>
         </li>
-        <li v-if="!isAuthenticated && !isAuthLoading"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)"
-          @mouseleave="toggleProfileDropdown(false)">
-          <img :src="profileImage" alt="User Image" class="user-image">
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownInvest(true)"
+          @mouseleave="toggleDropdownInvest(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Invest <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="isDropdownOpenInvest">
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownInvest(false)"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownInvest(false)"
+              >Quant</router-link
+            >
+
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownInvest(false)"
+              >Quant Simulator</router-link
+            >
+          </div>
+        </li>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownEdu(true)"
+          @mouseleave="toggleDropdownEdu(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Edu <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="isDropdownOpenEdu">
+            <router-link
+              to="/quizz"
+              class="quizz"
+              @click="toggleDropdownEdu(false)"
+              >Quiz</router-link
+            >
+            <router-link
+              to="/event"
+              class="event"
+              @click="toggleDropdownEdu(false)"
+              >Event</router-link
+            >
+            <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdownEdu(false)"
+              >Forum</router-link
+            >
+          </div>
+        </li>
+
+        <li v-if="!isAuthenticated && !isAuthLoading">
+          <router-link to="/login" class="login-button">Log In</router-link>
+        </li>
+
+        <li v-if="isAuthenticated" class="fincoin-container">
+          <FinCoinDisplay :balance="finCoinBalance" />
+        </li>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleProfileDropdown(true)"
+          @mouseleave="toggleProfileDropdown(false)"
+        >
+          <img :src="profileImage" alt="User Image" class="user-image" />
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-            <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-              <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
+            <router-link
+              to="/profile"
+              class="profile"
+              @click="toggleProfileDropdown(false)"
+            >
+              <img
+                :src="profileImage"
+                alt="User Image"
+                class="inside-dropdown-user-image"
+              />
               <p>{{ profileName }}</p>
             </router-link>
-            <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-              <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-              <p>{{ isDarkMode ? 'Dark Mode' : 'Light Mode' }}</p>
+            <router-link
+              to="#"
+              class="dark-mode-toggle"
+              @click="toggleDarkMode"
+            >
+              <font-awesome-icon
+                :icon="isDarkMode ? 'fa-moon' : 'fa-sun'"
+                class="icon"
+              />
+              <p>{{ isDarkMode ? "Dark Mode" : "Light Mode" }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
-              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
+              <font-awesome-icon
+                icon="fa-solid fa-right-from-bracket"
+                class="icon"
+              />
               <p>Log Out</p>
             </router-link>
           </div>
         </li>
+
         <li v-if="isAuthLoading" class="auth-loading">
           <div class="loading-indicator"></div>
         </li>
       </ul>
-      <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
+
+      <!-- Mobile version -->
+      <div
+        class="dropdown mobile-only"
+        :class="{ active: isDropdownOpenMobile }"
+      >
         <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
           <div class="brand-mobile">FinBud</div>
           <font-awesome-icon icon="fa-solid fa-chevron-down" />
         </div>
-        <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
-          <router-link to="/" class="home" @click="toggleDropdownMobile">Home</router-link>
-          <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
-          <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
+        <div
+          class="dropdown-content"
+          v-show="isDropdownOpenMobile"
+          @mouseleave="closeDropdownMobile"
+        >
+          <router-link
+            to="/chat-view"
+            class="chatview"
+            @click="toggleDropdownMobile"
+            >Chat</router-link
+          >
+          <router-link to="/about" class="about" @click="toggleDropdownMobile"
+            >About</router-link
+          >
+          <router-link
+            to="/tech"
+            class="technology"
+            @click="toggleDropdownMobile"
+            >Technology</router-link
+          >
           <div class="authenticated" v-if="isAuthenticated">
-            <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
-            <router-link to="/quant-analysis" class="home">Quant</router-link>
-            <router-link to="#" @click="logout" class="logout">Log Out</router-link>
+            <strong>Fin Manage</strong>
+            <router-link to="/goal" class="goal" @click="toggleDropdownMobile"
+              >Goal</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdownMobile"
+              >Risk Analysis</router-link
+            >
+
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdownMobile"
+              >Mortgage Calculator</router-link
+            >
+
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownMobile"
+              >Super Investors</router-link
+            >
+
+            <strong>Fin Invest</strong>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownMobile"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownMobile"
+              >Quant</router-link
+            >
+
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownMobile"
+              >Quant Simulator</router-link
+            >
+
+            <strong>Fin Edu</strong>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
+              >Quiz</router-link
+            >
+            <router-link to="/event" class="event" @click="toggleDropdownMobile"
+              >Event</router-link
+            >
+            <router-link to="/forum" class="forum" @click="toggleDropdownMobile"
+              >Forum</router-link
+            >
+
+            <router-link to="#" @click="logout" class="logout"
+              >Log Out</router-link
+            >
           </div>
-          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
-          <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button" @click="toggleDropdownMobile">Log In</router-link>
+          <router-link
+            to="/login"
+            v-if="!isAuthenticated && !isAuthLoading"
+            class="login-button"
+            @click="toggleDropdownMobile"
+            >Log In</router-link
+          >
           <div v-if="isAuthLoading" class="auth-loading-mobile">
             <div class="loading-indicator"></div>
           </div>
@@ -79,19 +285,24 @@
 </template>
 
 <script>
-import axios from 'axios';
-import defaultImage from '@/assets/anonymous.png';
-
+import axios from "axios";
+import defaultImage from "@/assets/anonymous.png";
+import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
 export default {
-  name: 'NavBar',
+  name: "NavBar",
+  components: {
+    FinCoinDisplay,
+  },
   data() {
     return {
       isDropdownOpen: false,
+      isDropdownOpenInvest: false,
+      isDropdownOpenEdu: false,
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
       isDarkMode: false,
-      isAuthLoading: false
+      isAuthLoading: false,
     };
   },
   computed: {
@@ -109,11 +320,28 @@ export default {
     },
     profileName() {
       return this.$store.getters["users/userDisplayName"];
-    }
+    },
+    finCoinBalance() {
+      return this.$store.getters["finCoin/finCoinBalance"];
+    },
+    watch: {
+      // Fetch FinCoin balance when user logs in
+      isAuthenticated(newVal) {
+        if (newVal) {
+          this.$store.dispatch("finCoin/fetchFinCoinBalance");
+        }
+      },
+    },
   },
   methods: {
     toggleDropdown(open) {
       this.isDropdownOpen = open;
+    },
+    toggleDropdownInvest(open) {
+      this.isDropdownOpenInvest = open;
+    },
+    toggleDropdownEdu(open) {
+      this.isDropdownOpenEdu = open;
     },
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;
@@ -129,69 +357,70 @@ export default {
     },
     async logout() {
       try {
-        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`, { 
-          withCredentials: true 
+        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`, {
+          withCredentials: true,
         });
       } catch (err) {
         console.log("After logout with err: " + err);
       }
       this.$store.dispatch("users/logout");
-      this.$router.push('/login');
+      this.$router.push("/login");
     },
     async toggleDarkMode() {
       this.isDarkMode = !this.isDarkMode;
-      
-      // Apply dark mode to both root and body elements
       document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
       document.body.classList.toggle("dark-mode", this.isDarkMode);
-      
-      // Store dark mode preference in localStorage for persistence
-      localStorage.setItem('darkMode', this.isDarkMode ? 'true' : 'false');
+      localStorage.setItem("darkMode", this.isDarkMode ? "true" : "false");
 
-      // Update dark mode in the database
       if (this.userData) {
         const userId = this.userData._id;
         try {
-          const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${userId}/settings`, {
-            settings: {
-              darkMode: this.isDarkMode
-            }
-          }, { withCredentials: true });
+          const response = await axios.put(
+            `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}/settings`,
+            {
+              settings: {
+                darkMode: this.isDarkMode,
+              },
+            },
+            { withCredentials: true }
+          );
           console.log("Dark mode updated:", response.data);
         } catch (err) {
-          console.error("Error updating dark mode in database:", err.response ? err.response.data : err);
+          console.error(
+            "Error updating dark mode in database:",
+            err.response ? err.response.data : err
+          );
         }
       }
-    }
+    },
   },
   async mounted() {
-    // Fetch current user data from the server
     await this.$store.dispatch("users/fetchCurrentUser");
-    
-    // First check localStorage for dark mode preference
-    const storedDarkMode = localStorage.getItem('darkMode');
-    
+    const storedDarkMode = localStorage.getItem("darkMode");
     if (storedDarkMode !== null) {
-      // Apply dark mode from localStorage
-      this.isDarkMode = storedDarkMode === 'true';
+      this.isDarkMode = storedDarkMode === "true";
     } else if (this.userData && this.userData.settings) {
-      // Fall back to user settings from the database
       this.isDarkMode = this.userData.settings.darkMode || false;
     } else {
-      // As a last resort, check system preference
-      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const prefersDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
       this.isDarkMode = prefersDarkMode;
     }
-    
-    // Apply dark mode to both root and body elements
+
+    // Fetch FinCoin balance if user is authenticated
+    if (this.isAuthenticated) {
+      await this.$store.dispatch("finCoin/fetchFinCoinBalance");
+    }
+
     document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
     document.body.classList.toggle("dark-mode", this.isDarkMode);
-  }
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .nav-bar {
   background-color: var(--bg-primary);
@@ -200,7 +429,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0rem 2rem;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: fixed;
   z-index: 1000;
@@ -506,7 +735,6 @@ export default {
     display: flex;
     flex-direction: column;
   }
-
 }
 
 .auth-loading {
@@ -526,8 +754,12 @@ export default {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .auth-loading-mobile {

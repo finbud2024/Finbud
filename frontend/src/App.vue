@@ -3,20 +3,33 @@
     <NavBar v-if="showHeader" ref="headerBar" />
     <div class="content"></div>
   </div>
-  <router-view 
-    @chatviewSelectingThread="loadThread" 
+  <router-view
+    @chatviewSelectingThread="loadThread"
     @finbudBotResponse="displayMessage"
-    :chatBubbleThreadID="threadId" />
+    :chatBubbleThreadID="threadId"
+  />
   <FooterBar v-if="showFooter" ref="footerBar" />
-  <ChatBubble v-if="showChatBubble && chatBubbleActive"
+  <ChatBubble
+    v-if="showChatBubble && chatBubbleActive"
     @closeChatBubble="toggleChatBubble"
-    :chatViewThreadID="threadId" />
-  <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
-  
+    :chatViewThreadID="threadId"
+  />
+  <img
+    v-if="showChatBubble"
+    class="finbudBot"
+    ref="finbudBot" 
+    src="./assets/botrmbg.png"
+    alt="Finbud"
+    @click="toggleChatBubble"
+    :style="botPosition"
+  />
+
   <div v-if="showBotMessage" class="bot-message-container">
-    <div class="finbudBotMessage" 
-         ref="botMessage" 
-         :class="{ 'message-visible': messageVisible }">
+    <div
+      class="finbudBotMessage"
+      ref="botMessage"
+      :class="{ 'message-visible': messageVisible }"
+    >
       <div class="message-content" v-html="displayedMessage"></div>
       <div class="messageConnector"></div>
     </div>
@@ -28,14 +41,14 @@ import NavBar from "./components/NavBar.vue";
 import FooterBar from "./components/FooterBar.vue";
 import ChatBubble from "./components/ChatBubble.vue";
 import axios from "axios";
-import '@fortawesome/fontawesome-free/css/all.css';
+import "@fortawesome/fontawesome-free/css/all.css";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {
-  const storedDarkMode = localStorage.getItem('darkMode');
-  if (storedDarkMode === 'true') {
-    document.documentElement.classList.add('dark-mode');
-    document.body.classList.add('dark-mode');
+  const storedDarkMode = localStorage.getItem("darkMode");
+  if (storedDarkMode === "true") {
+    document.documentElement.classList.add("dark-mode");
+    document.body.classList.add("dark-mode");
   }
 })();
 
@@ -48,6 +61,7 @@ export default {
   },
   data() {
     return {
+      botSize: { width: 60, height: 60},
       threadId: "",
       chatBubbleActive: false,
       botMessage: "",
@@ -56,26 +70,37 @@ export default {
       typingSpeed: 20, // milliseconds per character
       isTyping: false,
       messageVisible: false, // New property for message visibility
+      isDragging: false, // Track if the bot is being dragged
+      dragStartX: 0, // Initial X position when dragging starts
+      dragStartY: 0, // Initial Y position when dragging starts
+      initialOffsetX: 0, // Initial offset X
+      initialOffsetY: 0, // Initial offset Y
+      botPosition: { right: '20px', bottom: '20px' },
+      hasLoadedPosition: false,
+      touchIdentifier: null,
+      touchStart: null,
     };
   },
   async mounted() {
     // Set the initial bot message
     this.displayedMessage = "Hello! Welcome to FinBud.";
-    document.addEventListener('click', this.handleClickOutside);
+    document.addEventListener("click", this.handleClickOutside);
 
     console.log("App mounted, checking for tutorial flag");
     console.log("showTutorial query param:", this.$route.query.showTutorial);
 
     // Check for isNewUser flag in localStorage as a fallback
-    const isNewUser = localStorage.getItem('isNewUser') === 'true';
+    const isNewUser = localStorage.getItem("isNewUser") === "true";
     if (isNewUser && !this.$route.query.showTutorial) {
-      console.log("New user detected from localStorage, adding showTutorial param");
-      this.$router.replace({ 
-        path: this.$route.path, 
-        query: { ...this.$route.query, showTutorial: 'true' } 
+      console.log(
+        "New user detected from localStorage, adding showTutorial param"
+      );
+      this.$router.replace({
+        path: this.$route.path,
+        query: { ...this.$route.query, showTutorial: "true" },
       });
       // Remove the flag after using it
-      localStorage.removeItem('isNewUser');
+      localStorage.removeItem("isNewUser");
     }
 
     // Fetch current user data
@@ -86,14 +111,18 @@ export default {
       const userId = userData._id;
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
       try {
-        const historyThreads = await axios.get(threadApi, { withCredentials: true });
+        const historyThreads = await axios.get(threadApi, {
+          withCredentials: true,
+        });
         const historyThreadsData = historyThreads.data;
         if (historyThreadsData.length === 0) {
           // If new user with no thread, create a new one
           console.log("No threads found, creating new thread for user");
           const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
           const reqBody = { userId };
-          const thread = await axios.post(api, reqBody, { withCredentials: true });
+          const thread = await axios.post(api, reqBody, {
+            withCredentials: true,
+          });
           this.threadId = thread._id;
         } else {
           this.threadId = historyThreadsData[0]._id;
@@ -106,56 +135,78 @@ export default {
       await this.checkIfUserIsNew();
 
       // Check localStorage for dark mode preference first
-      const storedDarkMode = localStorage.getItem('darkMode');
-      
+      const storedDarkMode = localStorage.getItem("darkMode");
+
       if (storedDarkMode !== null) {
         console.log("Applying dark mode from localStorage:", storedDarkMode);
-        if (storedDarkMode === 'true') {
-          document.documentElement.classList.add('dark-mode');
-          document.body.classList.add('dark-mode');
+        if (storedDarkMode === "true") {
+          document.documentElement.classList.add("dark-mode");
+          document.body.classList.add("dark-mode");
         } else {
-          document.documentElement.classList.remove('dark-mode');
-          document.body.classList.remove('dark-mode');
+          document.documentElement.classList.remove("dark-mode");
+          document.body.classList.remove("dark-mode");
         }
       }
       // If no localStorage setting, fall back to user settings
       else if (userData.settings) {
         if (userData.settings.darkMode) {
           console.log("Applying dark mode from user settings");
-          document.documentElement.classList.add('dark-mode');
-          document.body.classList.add('dark-mode');
+          document.documentElement.classList.add("dark-mode");
+          document.body.classList.add("dark-mode");
         } else {
           console.log("Applying light mode from user settings");
-          document.documentElement.classList.remove('dark-mode');
-          document.body.classList.remove('dark-mode');
+          document.documentElement.classList.remove("dark-mode");
+          document.body.classList.remove("dark-mode");
         }
       }
     }
 
     // If showTutorial query parameter is present, ensure light mode for tutorial
-    if (this.$route.query.showTutorial === 'true') {
+    if (this.$route.query.showTutorial === "true") {
       console.log("Tutorial mode activated, forcing light mode");
-      document.documentElement.classList.remove('dark-mode');
-      document.body.classList.remove('dark-mode');
+      document.documentElement.classList.remove("dark-mode");
+      document.body.classList.remove("dark-mode");
     }
 
     // Add route watcher
     this.$watch(
       () => this.$route.path,
       (newPath) => {
-        if (newPath === '/event') {
+        if (newPath === "/event") {
           this.showEventHubGreeting();
         }
       },
       { immediate: true } // Check immediately on mount
     );
+    
+    // Load saved position if exists
+    const savedPosition = localStorage.getItem('finbudBotPosition');
+    if (savedPosition) {
+      try {
+        const parsed = JSON.parse(savedPosition);
+        // Validate position
+        if (this.isValidPosition(parsed)) {
+          this.botPosition = parsed;
+        }
+      } catch (e) {
+        console.warn('Invalid saved position', e);
+      }
+    }
+
+    // add drag event
+    this.addDragListeners();
 
     // Add new method to check if user is new
     await this.checkIfUserIsNew();
+
+    // Check for daily login rewards if user is authenticated
+    if (this.$store.getters["users/isAuthenticated"]) {
+      this.checkDailyLoginReward();
+    }
   },
   computed: {
     isAuthenticated() {
-      return this.$store.getters['users/isAuthenticated'];
+      return this.$store.getters["users/isAuthenticated"];
     },
     showChatBubble() {
       return (
@@ -165,15 +216,171 @@ export default {
       );
     },
     showFooter() {
-      return (
-          this.$route.path === "/about"
-      );
+      return this.$route.path === "/about";
     },
     showHeader() {
       return true;
     },
   },
   methods: {
+    addDragListeners() {
+      this.$nextTick(() => {
+        const finbudBot = this.$refs.finbudBot;
+        
+        // Check if element exists before adding listeners
+        if (!finbudBot) {
+          console.warn("Finbud bot element not found");
+          return;
+        }
+        // Mouse events
+        finbudBot.addEventListener('mousedown', this.startDrag);
+        document.addEventListener('mousemove', this.drag);
+        document.addEventListener('mouseup', this.endDrag);
+
+        // Touch events
+        finbudBot.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+        document.addEventListener('touchmove', this.drag, { passive: false });
+        document.addEventListener('touchend', this.handleTouchEnd);
+      });
+    },
+    handleTouchStart(e) {
+      // Store initial touch position and time
+      const touch = e.touches[0] || e.changedTouches[0];
+      this.touchStart = {
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now()
+      };
+      this.startDrag(e);
+    },
+
+    handleTouchEnd(e) {
+      if (!this.isDragging) return;
+      
+      const touch = e.changedTouches[0];
+      if (!touch) return;
+
+      // Calculate distance and time from touch start
+      const dx = touch.clientX - this.touchStart.x;
+      const dy = touch.clientY - this.touchStart.y;
+      const dt = Date.now() - this.touchStart.time;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // If it was a short, small movement (tap), open chat
+      if (distance < 10 && dt < 200) {
+        this.toggleChatBubble();
+      }
+
+      this.endDrag(e);
+    },
+
+    startDrag(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      this.isDragging = true;
+      
+      let clientX, clientY;
+      
+      if (e.type === 'touchstart') {
+        const touch = e.touches[0] || e.changedTouches[0];
+        this.touchIdentifier = touch.identifier;
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      this.dragStartX = clientX;
+      this.dragStartY = clientY;
+      
+      const currentLeft = parseInt(this.botPosition.left) || 
+                         window.innerWidth - this.botSize.width - 20;
+      const currentTop = parseInt(this.botPosition.top) || 
+                         window.innerHeight - this.botSize.height - 20;
+      
+      this.initialOffsetX = currentLeft;
+      this.initialOffsetY = currentTop;
+      
+      if (this.$refs.finbudBot) {
+        this.$refs.finbudBot.style.cursor = 'grabbing';
+        this.$refs.finbudBot.style.transition = 'none';
+      }
+    },
+
+    drag(e) {
+      if (!this.isDragging) return;
+      
+      e.preventDefault();
+      e.stopPropagation();
+      
+      let clientX, clientY;
+      
+      if (e.type === 'touchmove') {
+        const touch = Array.from(e.touches).find(
+          t => t.identifier === this.touchIdentifier
+        ) || e.changedTouches[0];
+        if (!touch) return;
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      const offsetX = clientX - this.dragStartX;
+      const offsetY = clientY - this.dragStartY;
+      
+      let newLeft = this.initialOffsetX + offsetX;
+      let newTop = this.initialOffsetY + offsetY;
+      
+      const maxX = window.innerWidth - this.botSize.width;
+      const maxY = window.innerHeight - this.botSize.height;
+      
+      newLeft = Math.max(0, Math.min(newLeft, maxX));
+      newTop = Math.max(0, Math.min(newTop, maxY));
+      
+      this.botPosition = {
+        left: `${newLeft}px`,
+        top: `${newTop}px`,
+        right: 'auto',
+        bottom: 'auto'
+      };
+    },
+
+    endDrag(e) {
+      if (!this.isDragging) return;
+      
+      if (e.type === 'touchend' && this.touchIdentifier !== null) {
+        const touch = Array.from(e.changedTouches).find(
+          t => t.identifier === this.touchIdentifier
+        );
+        if (!touch) return;
+      }
+      
+      this.isDragging = false;
+      this.touchIdentifier = null;
+      
+      if (this.$refs.finbudBot) {
+        this.$refs.finbudBot.style.cursor = 'grab';
+        this.$refs.finbudBot.style.transition = 'left 0.2s, top 0.2s';
+      }
+      
+      localStorage.setItem('finbudBotPosition', JSON.stringify(this.botPosition));
+    },
+    handleDragMove(e) {
+      if (this.isDragging && this.$refs.finbudBot) {
+        const offsetX = e.clientX - this.dragStartX;
+        const offsetY = e.clientY - this.dragStartY;
+        this.$refs.finbudBot.style.left = `${this.initialOffsetX + offsetX}px`;
+        this.$refs.finbudBot.style.top = `${this.initialOffsetY + offsetY}px`;
+      }
+    },
+
+    handleDragEnd() {
+      this.isDragging = false;
+    },
     loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
     },
@@ -184,16 +391,19 @@ export default {
     async checkIfUserIsNew() {
       if (this.isAuthenticated) {
         try {
-          const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/is-new-user`, { 
-            withCredentials: true 
-          });
-          
+          const response = await axios.get(
+            `${process.env.VUE_APP_DEPLOY_URL}/auth/is-new-user`,
+            {
+              withCredentials: true,
+            }
+          );
+
           if (response.data.isNewUser) {
             console.log("User is new, showing tutorial");
             // Add showTutorial query parameter
-            this.$router.replace({ 
-              path: this.$route.path, 
-              query: { ...this.$route.query, showTutorial: 'true' } 
+            this.$router.replace({
+              path: this.$route.path,
+              query: { ...this.$route.query, showTutorial: "true" },
             });
           }
         } catch (error) {
@@ -205,7 +415,7 @@ export default {
       this.showBotMessage = true;
       this.botMessage = message;
       this.displayedMessage = message;
-      
+
       // Add small delay before showing the message
       setTimeout(() => {
         this.messageVisible = true;
@@ -217,7 +427,9 @@ export default {
     },
     typeMessage() {
       if (this.displayedMessage.length < this.botMessage.length) {
-        this.displayedMessage += this.botMessage.charAt(this.displayedMessage.length);
+        this.displayedMessage += this.botMessage.charAt(
+          this.displayedMessage.length
+        );
         setTimeout(this.typeMessage, this.typingSpeed);
       } else {
         this.isTyping = false;
@@ -225,9 +437,12 @@ export default {
     },
     handleClickOutside(event) {
       const botMessage = this.$refs.botMessage;
-      if (botMessage && !botMessage.contains(event.target) && 
-          !event.target.closest('a') && 
-          this.showBotMessage) {
+      if (
+        botMessage &&
+        !botMessage.contains(event.target) &&
+        !event.target.closest("a") &&
+        this.showBotMessage
+      ) {
         this.messageVisible = false;
         // Wait for fade out animation before hiding
         setTimeout(() => {
@@ -242,11 +457,49 @@ export default {
       // The actual message will be handled by displayMessage method
       // which is already connected to finbudBotResponse event
     },
+    async checkDailyLoginReward() {
+      // Get the last login date from localStorage
+      const lastLogin = localStorage.getItem("lastLoginDate");
+      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+
+      // If no previous login or last login was before today
+      if (!lastLogin || lastLogin !== today) {
+        try {
+          // Award 5 FinCoins for daily login
+          await this.$store.dispatch("finCoin/earnFinCoins", {
+            amount: 5,
+            source: "daily_login",
+            description: "Daily login reward",
+          });
+
+          // Save today's date as last login
+          localStorage.setItem("lastLoginDate", today);
+
+          // Show reward notification
+          this.$notify({
+            title: "Daily Login Reward",
+            message: "You earned 5 FinCoins for logging in today!",
+            type: "success",
+            duration: 3000,
+          });
+        } catch (error) {
+          console.error("Failed to award daily login FinCoins:", error);
+        }
+      }
+    },
   },
   beforeDestroy() {
-    document.removeEventListener('click', this.handleClickOutside);
+    document.removeEventListener("click", this.handleClickOutside);
+    document.removeEventListener('mousemove', this.handleDragMove);
+    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('mousedown', this.startDrag);
+    document.removeEventListener('mousemove', this.drag);
+    document.removeEventListener('mouseup', this.endDrag);
+    document.removeEventListener('touchstart', this.startDrag);
+    document.removeEventListener('touchmove', this.drag);
+    document.removeEventListener('touchend', this.endDrag);
   },
-}
+};
 </script>
 
 <style>
@@ -266,7 +519,7 @@ export default {
   --content-bg: #ffffff;
   --shadow-color: #e9e2e2;
   --progress-color: #c8c5c5;
-  --logo-color: #007bff
+  --logo-color: #007bff;
 }
 
 :root.dark-mode,
@@ -292,7 +545,8 @@ body.dark-mode {
 
 /* Add transition for all elements */
 * {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 /* Update common elements */
@@ -354,10 +608,17 @@ a:hover {
   position: fixed;
   width: 60px;
   aspect-ratio: 1;
-  right: 3.125vw;
-  bottom: 20px;
   z-index: 99998;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
+  cursor: grab;
+  user-select: none;
+  touch-action: none; 
+}
+
+.finbudBot:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+  transition: transform 0.1s ease;
 }
 
 .finbudBot:hover {
@@ -432,7 +693,7 @@ a:hover {
 .blinking-cursor {
   font-weight: 100;
   font-size: 16px; /* Reduced cursor size to match new text size */
-  color: #2E3D48;
+  color: #2e3d48;
   -webkit-animation: 1s blink step-end infinite;
   -moz-animation: 1s blink step-end infinite;
   -ms-animation: 1s blink step-end infinite;
@@ -447,7 +708,7 @@ a:hover {
     font-size: 0.8125rem;
     padding: 12px;
   }
-  
+
   .bot-message-container {
     right: calc(3.125vw + 50px);
   }
@@ -464,11 +725,12 @@ a:hover {
 
 /* Keep existing animation keyframes */
 @keyframes blink {
-  from, to {
+  from,
+  to {
     color: transparent;
   }
   50% {
-    color: #2E3D48;
+    color: #2e3d48;
   }
 }
 
