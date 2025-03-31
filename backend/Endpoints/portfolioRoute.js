@@ -14,8 +14,8 @@ portfolioRoute.route('/portfolios')
     })
     
 portfolioRoute.route('/portfolios/:userId')
-    .get(isAuthenticated, async (req, res) => { 
-    // .get(async (req, res) => {
+    // .get(isAuthenticated, async (req, res) => { 
+    .get(async (req, res) => {
         const userId = req.params.userId;
         console.log('in /portfolios/:userId Route (GET) portfolio with userId: ' + JSON.stringify(userId));
         try {
@@ -107,7 +107,7 @@ portfolioRoute.route('/holdings/:userId')
             }
         };
         removeIdFields(userHoldingObj);
-
+        console.log(process.env.VUE_APP_STOCK_API_KEY_FINNHUB)
         return res.status(200).json(userHoldingObj);
 
         } catch (err) {

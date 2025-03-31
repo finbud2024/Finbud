@@ -78,7 +78,7 @@ authRoute.post('/auth/login', passport.authenticate('local', { failWithError: tr
       req.session.isNewUser = true;
     }
     
-    await setupUserDocuments(user._id);
+    await setupUserDocuments(req.user._id);
     // Send the user data along with the isNewUser flag
     res.status(200).json({
       user: req.user,

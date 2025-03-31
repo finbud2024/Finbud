@@ -29,6 +29,12 @@
           Filters
         </li>
         <li
+          @click="activeSection = 'quiz'"
+          :class="{ active: activeSection === 'quiz' }"
+        >
+          Quiz
+        </li>
+        <li
           @click="activeSection = 'predictiveCalc'"
           :class="{ active: activeSection === 'predictiveCalc' }"
         >
@@ -405,6 +411,23 @@
         <PredicitveCalc />
       </div>
     </section>
+
+    <section v-if="activeSection === 'quiz'" class="quiz-section">
+      <div class="quiz-container">
+        <h2>Trading Scenarios Quiz</h2>
+        <div v-if="currentQuestion">
+          <p>{{ currentQuestion.text }}</p>
+          <div class="options">
+            <button v-for="(option, index) in currentQuestion.options" :key="index" @click="handleQuizOption(option)">
+              {{ option.text }}
+            </button>
+          </div>
+        </div>
+        <div v-else>
+          <p>Loading more questions... (Reload if action take more than 1 minute)</p>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -426,7 +449,9 @@ import PortfolioPerformance from "../components/StockSimulatorPage/PortfolioPerf
 import { toast } from "vue3-toastify";
 import axios from "axios";
 import { showReward } from "../utils/utils";
+import { gptServices } from "@/services/gptServices";
 import QuizRewards from "@/components/QuizRewards.vue";
+
 
 export default {
   name: "StockDashboard",
@@ -512,6 +537,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       userHoldings: [],
       loadingHoldings: false,
       holdingsError: null,
+      currentQuestion: null,
+      questions: [],
     };
   },
   methods: {
@@ -869,38 +896,51 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       const transactionData = {
         stockSymbol: this.stockSymbol,
         type: action,
-        quantity: Math.abs(this.quantity),
+        quantity: Math.abs(parseInt(this.quantity) || 1),
         price: this.estimatedPrice,
         userId: this.fixedUserId,
       };
 
-      axios
-        .post(
+
+      console.log("Submitting order with data:", transactionData);
+
+      try {
+        const response = await axios.post(
           `${process.env.VUE_APP_DEPLOY_URL}/stock-transactions`,
           transactionData
-        )
-        .then(async (response) => {
-          console.log("Order submitted successfully:", response.data);
-          toast.success("Order submitted successfully", { autoClose: 1000 });
-          this.showModal = false;
-          this.fetchBankingAccountBalance();
-          this.fetchTransactions();
-          this.transactionKey++;
+        );
+        console.log("Order response:", response);
+        
+        toast.success("Order submitted successfully", { autoClose: 1000 });
+        this.showModal = false;
+        this.fetchBankingAccountBalance();
+        this.fetchTransactions();
+        this.transactionKey++;
 
-          await this.$store.dispatch("finCoin/earnFinCoins", {
-            amount: 1,
-            source: "trade_execution",
-            description: `${action} ${Math.abs(this.quantity)} ${
-              this.stockSymbol
-            }`,
-          });
-          showReward(this, 1, "trade");
-        })
-        .catch((error) => {
-          this.showModal = false;
-          console.error("Error submitting order:", error);
-          // toast.error('Order submitted unsuccessfully', {autoClose: 1000});
+        // Award 1 FinCoin for executing a trade
+        await this.$store.dispatch("finCoin/earnFinCoins", {
+          amount: 1,
+          source: "trade_execution",
+          description: `${action} ${Math.abs(this.quantity)} ${
+            this.stockSymbol
+          }`,
         });
+
+        // Use the dedicated method for showing reward
+        showReward(this, 1, "trade");
+      } catch (error) {
+        this.showModal = false;
+        console.error("Error submitting order:", error);
+        console.error("Error details:", error.response?.data);
+        
+        // Toast error but don't show it for quiz flow - we handle that in the caller
+        if (!this.currentQuestion) {
+          toast.error(`Order failed: ${error.response?.data || "Unknown error"}`, { autoClose: 2000 });
+        }
+        
+        // Re-throw the error so the caller can handle it specifically for quiz flow
+        throw error;
+      }
     },
     async fetchBankingAccountBalance() {
       try {
@@ -1174,6 +1214,213 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       const prefix = value >= 0 ? "+" : "-";
       return `${prefix}${Math.abs(value).toFixed(1)}%`;
     },
+
+    async generateTradingQuestions() {
+      console.log("Generating trading questions..."); 
+      try {
+        // First, ensure we have the latest user data
+        await this.fetchBankingAccountBalance();
+        await this.fetchUserHoldings();
+        
+        // Create a summary of user's financial situation
+        const userFinancialSummary = {
+          cash: this.cash,
+          stockValue: this.stockValue,
+          totalBalance: this.accountBalance,
+          holdings: this.userHoldings.map(h => ({
+            symbol: h.symbol,
+            quantity: h.quantity,
+            currentPrice: h.currentPrice
+          }))
+        };
+        
+        console.log("User financial data for quiz generation:", userFinancialSummary);
+        
+        // Create a prompt that includes the user's financial data
+        const response = await gptServices([
+          {
+            role: "system",
+            content: "You are a financial assistant generating quiz questions. Use actual S&P 500 company names and tickers in your scenarios."
+          },
+          {
+            role: "user",
+            content: `Generate 5 trading scenarios quiz using REAL S&P 500 companies like Apple (AAPL), Microsoft (MSFT), Amazon (AMZN), Google/Alphabet (GOOGL), Tesla (TSLA), JPMorgan Chase (JPM), etc.
+
+                    USER'S FINANCIAL INFORMATION:
+                    Available Cash: $${this.cash.toFixed(2)}
+                    Stock Holdings: ${JSON.stringify(this.userHoldings.map(h => 
+                      `${h.quantity} shares of ${h.symbol} at $${h.currentPrice.toFixed(2)} per share`
+                    ))}
+
+                    IMPORTANT GUIDELINES:
+                    - For BUY options, suggest amounts the user can afford. The maximum single purchase should be no more than 80% of available cash.
+                    - For SELL options, only suggest selling stocks the user actually owns and in quantities they possess.
+                    - If the user has no significant stock holdings, focus more on affordable buy scenarios.
+                    - Always include at least one "Do Nothing" option in each question.
+                    
+                    For each question:
+                    - Use a real S&P 500 company name and its ticker symbol in the scenario
+                    - Reference actual recent or plausible company events (product launches, earnings reports, etc.)
+                    - Provide a clear and concise question, along with five answer options
+                    - Only one option should be "Do Nothing" or something similar, 2 options are buy and 2 options are sell
+                    - The format must be exactly as follows:
+                    
+                    Question: <question about a specific real S&P 500 company>
+                    A. <option1>
+                    B. <option2>
+                    C. <option3>
+                    D. <option4>
+                    E. <option5>
+                    
+                    Important: Always use real company names and tickers - never use placeholders like "Company XYZ".`,
+          },
+        ]);
+
+        console.log("API Response:", response);
+        
+        // Parse the text response
+        if (response && typeof response === 'string') {
+          const questionBlocks = response.split(/Question: /).filter(block => block.trim());
+          const parsedQuestions = questionBlocks.map(block => {
+            // Extract the question text (everything before the first option)
+            const questionText = block.split(/\nA\./)[0].trim();
+            
+            // Extract all options
+            const optionsRegex = /([A-E])\. ([^\n]+)/g;
+            const options = [];
+            let match;
+            while ((match = optionsRegex.exec(block)) !== null) {
+              const letter = match[1];
+              const text = match[2].trim();
+              
+              // Determine action and amount based on option text
+              let action = 'none';
+              let amount = 0;
+              
+              if (text.toLowerCase().includes('buy')) {
+                action = 'buy';
+                const amountMatch = text.match(/\d+/);
+                amount = amountMatch ? parseInt(amountMatch[0]) : 0;
+              } else if (text.toLowerCase().includes('sell')) {
+                action = 'sell';
+                const amountMatch = text.match(/\d+/);
+                amount = amountMatch ? parseInt(amountMatch[0]) : 0;
+              }
+              
+              options.push({ text, action, amount });
+            }
+            
+            return {
+              text: questionText,
+              options: options
+            };
+          });
+          
+          this.questions = parsedQuestions;
+          console.log("Questions generated:", this.questions);
+          
+          if (this.questions.length > 0) {
+            this.currentQuestion = this.questions[0];
+          } else {
+            console.warn("No questions were generated.");
+          }
+        } else if (response.data && response.data.questions) {
+          // Handle case where response is already structured (original code)
+          this.questions = response.data.questions.map((question) => ({
+            text: question.text,
+            options: question.options.map((option) => ({
+              text: option.text,
+              action: option.action,
+              amount: option.amount,
+            })),
+          }));
+          
+          if (this.questions.length > 0) {
+            this.currentQuestion = this.questions[0];
+          }
+        } else {
+          console.error("Invalid response structure:", response);
+        }
+      } catch (error) {
+        console.error("Error generating questions:", error);
+      }
+    },
+    async handleQuizOption(option) {
+      if (option.action !== "none") {
+        try {
+          // Extract stock symbol from the question (e.g., "AAPL")
+          const symbolMatch = this.currentQuestion.text.match(/\(([A-Z]+)\)/);
+          const stockSymbol = symbolMatch ? symbolMatch[1] : "AAPL"; // Default to AAPL if no symbol found
+          
+          // Save values to component data
+          this.stockSymbol = stockSymbol;
+          this.quantity = option.amount || 1; // Ensure quantity is not 0
+          this.action = option.action;
+          
+          // Fetch the current price for this stock
+          const success = await this.updateEstimatedPrice(stockSymbol);
+          
+          if (success) {
+            // Now try to submit the real order through the API
+            try {
+              await this.submitOrder(option.action);
+              // If successful, the transaction will appear in history automatically
+              toast.success(`Successfully ${option.action === 'buy' ? 'bought' : 'sold'} ${this.quantity} shares of ${stockSymbol}`, { autoClose: 2000 });
+            } catch (error) {
+              console.log("Quiz trade API error:", error);
+              
+              // Handle specific error cases with user-friendly messages
+              if (error.response?.data?.includes("Insufficient cash")) {
+                toast.warning(`You don't have enough cash to buy ${this.quantity} shares of ${stockSymbol}. The quiz will continue.`, { autoClose: 3000 });
+              } 
+              else if (error.response?.data?.includes("Not enough stock")) {
+                toast.warning(`You don't own enough shares of ${stockSymbol} to sell. The quiz will continue.`, { autoClose: 3000 });
+              }
+              else {
+                toast.warning(`Couldn't execute this trade: ${error.response?.data || error.message}. The quiz will continue.`, { autoClose: 3000 });
+              }
+            }
+          } else {
+            console.error("Could not get price for", stockSymbol);
+            toast.error(`Could not get current price for ${stockSymbol}`, { autoClose: 1000 });
+          }
+        } catch (error) {
+          console.error("Error processing quiz option:", error);
+        }
+      } else {
+        // For "do nothing" options, show a message
+        toast.info("You chose to take no action for this scenario", { autoClose: 1500 });
+      }
+      
+      // Move to next question regardless of outcome
+      this.nextQuestion();
+    },
+    updateBalances(option) {
+      if (option.action === "none") return;
+      
+      const total = option.amount * this.estimatedPrice;
+      if (option.action === "buy") {
+        // Simulate purchase
+        this.cash -= total;
+        this.stockValue += total;
+      } else if (option.action === "sell") {
+        // Simulate sale
+        this.cash += total;
+        this.stockValue -= total;
+      }
+      
+      // Update total balance
+      this.accountBalance = this.cash + this.stockValue;
+    },
+    nextQuestion() {
+      const currentIndex = this.questions.indexOf(this.currentQuestion);
+      if (currentIndex < this.questions.length - 1) {
+        this.currentQuestion = this.questions[currentIndex + 1];
+      } else {
+        this.currentQuestion = null;
+        console.log("No more questions available.");
+      }
+    },
   },
   watch: {
     "$route.query": {
@@ -1213,7 +1460,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         if (this.portfolioBotHideTimeout) {
           clearTimeout(this.portfolioBotHideTimeout);
         }
-
+        
         if (newSection === "portfolio") {
           console.log("Portfolio section activated");
 
@@ -1250,6 +1497,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           this.fetchUserHoldings();
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
+        } else if (newSection === 'quiz') {
+        this.generateTradingQuestions(); // Call method when quiz section is activated
         }
       },
       immediate: true, // Make it run immediately on component creation
@@ -1320,6 +1569,11 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         console.log("Portfolio is initial section, showing bot");
         this.startPortfolioBotAnimation();
       }, 1000);
+    }
+
+    // Ensure the method is called when the component is mounted
+    if (this.activeSection === 'quiz') {
+      this.generateTradingQuestions();
     }
   },
   beforeUnmount() {
@@ -1560,6 +1814,20 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   padding: 15px;
   border-radius: 5px;
   border: 1px solid #dee2e6;
+}
+
+.stat .label {
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.stat .value {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
 }
 
 .action-form {
@@ -1888,6 +2156,69 @@ h1 {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
+}
+
+.quiz-container {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.quiz-container h2 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.quiz-container p {
+  background: #f5f7fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  text-align: left;
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  color: var(--text-primary); /* Thay #2c3e50 */
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.options button {
+  background: #f5f7fa;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #333;
+  transition: all 0.3s;
+  text-align: left;
+  min-height: 60px;
+}
+
+.options button:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
+  
+}
+
+.options button:active {
+  transform: translateY(0);
+  color: var(--text-primary);
 }
 
 .overview-card {
