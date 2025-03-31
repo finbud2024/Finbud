@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Post from "../Database Schema/Post.js";
 import Forum from "../Database Schema/Forum.js";
 import User from "../Database Schema/User.js";
+import ScrapedUser from "../Database Schema/ScrapedUser.js";
 import { isAuthenticated } from '../middleware/auth.js';
 
 const postRouter = express.Router();
@@ -16,24 +17,41 @@ postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
 
     const posts = await Post.find({ forumId: forum._id })
       .populate("forumId", "name logo slug description")
-      .populate("authorId", "identityData.displayName identityData.profilePicture");
+      .populate({
+        path: 'authorId',
+        select: 'identityData.displayName identityData.profilePicture accountData.username username avatar'
+      })
 
-    const formattedPosts = posts.map(post => ({
-      _id: post._id,
-      title: post.title,
-      body: post.body,
-      createdAt: post.createdAt,
-      reactions: post.reactions,
-      forumId: {
-        name: post.forumId.name || "Unknown Forum",
-        logo: post.forumId.logo || null,
-        slug: post.forumId.slug || ""
-      },
-      author: {
-        displayName: post.authorId?.identityData?.displayName || "Anonymous",
-        profilePicture: post.authorId?.identityData?.profilePicture || "/default-avatar.png"
+    const formattedPosts = posts.map(post => {
+      const author = post.authorId;
+      let displayName = "Anonymous";
+      let profilePicture = "/default-avatar.png";
+
+      if (post.authorModel === 'User') {
+        displayName = author?.identityData?.displayName || "Anonymous";
+        profilePicture = author?.identityData?.profilePicture || "/default-avatar.png";
+      } else {
+        displayName = author?.username || "Anonymous";
+        profilePicture = author?.avatar || "/default-avatar.png";
       }
-    }));
+
+      return {
+        _id: post._id,
+        title: post.title,
+        body: post.body,
+        createdAt: post.createdAt,
+        reactions: post.reactions,
+        forumId: {
+          name: post.forumId.name || "Unknown Forum",
+          logo: post.forumId.logo || null,
+          slug: post.forumId.slug || ""
+        },
+        author: {
+          displayName,
+          profilePicture
+        }
+      };
+    });
 
     res.json(formattedPosts);
   } catch (err) {
@@ -52,10 +70,34 @@ postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
 
     const post = await Post.findById(postId)
       .populate("forumId", "name logo slug description")
-      .populate("authorId", "identityData.displayName identityData.profilePicture")
-      .populate("comments.authorId", "identityData.displayName identityData.profilePicture");
+      .populate({
+        path: "authorId",
+        select: "identityData.displayName identityData.profilePicture username avatar",
+        options: { strictPopulate: false }
+      })
+      .populate({
+        path: "comments.authorId",
+        select: "identityData.displayName identityData.profilePicture username avatar",
+        options: { strictPopulate: false }
+      });
 
     if (!post) return res.status(404).json({ error: "Post not found" });
+
+    const formatAuthor = (author, authorModel) => {
+      if (!author) return { displayName: "Anonymous", profilePicture: "/default-avatar.png" };
+      
+      if (authorModel === 'User') {
+        return {
+          displayName: author.identityData?.displayName || author.accountData?.username || "Anonymous",
+          profilePicture: author.identityData?.profilePicture || "/default-avatar.png"
+        };
+      }
+      
+      return {
+        displayName: author.username || "Anonymous",
+        profilePicture: author.avatar || "/default-avatar.png"
+      };
+    };
 
     res.json({
       _id: post._id,
@@ -69,18 +111,12 @@ postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
         slug: post.forumId.slug || "",
         description: post.forumId.description || "No description available"
       },
-      author: {
-        displayName: post.authorId?.identityData?.displayName || "Anonymous",
-        profilePicture: post.authorId?.identityData?.profilePicture || "/default-avatar.png",
-      },
+      author: formatAuthor(post.authorId, post.authorModel),
       comments: post.comments.map(comment => ({
         _id: comment._id,
         body: comment.body,
         createdAt: comment.createdAt,
-        author: {
-          displayName: comment.authorId?.identityData?.displayName || "Anonymous",
-          profilePicture: comment.authorId?.identityData?.profilePicture || "/default-avatar.png",
-        },
+        author: formatAuthor(comment.authorId, comment.authorModel),
         reactions: comment.reactions || { likes: 0, likedUsers: [] },
       })),
     });
@@ -183,12 +219,19 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    const author = await User.findById(userId).select("identityData.displayName identityData.profilePicture");
+    let author;
+    if (post.authorModel === 'User') {
+      author = await User.findById(userId).select("identityData.displayName identityData.profilePicture accountData.username");
+    } else {
+      author = await ScrapedUser.findById(userId).select("username avatar");
+    }
+
     if (!author) return res.status(404).json({ error: "Author not found" });
 
     const newComment = {
       _id: new mongoose.Types.ObjectId(),
       authorId: author._id,
+      authorModel: post.authorModel,
       body,
       createdAt: new Date(),
       reactions: { likes: 0 },
@@ -198,6 +241,22 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
     post.reactions.comments += 1;
     await post.save();
 
+    const formatAuthor = (author, authorModel) => {
+      if (!author) return { displayName: "Anonymous", profilePicture: "/default-avatar.png" };
+      
+      if (authorModel === 'User') {
+        return {
+          displayName: author.identityData?.displayName || author.accountData?.username || "Anonymous",
+          profilePicture: author.identityData?.profilePicture || "/default-avatar.png"
+        };
+      }
+      
+      return {
+        displayName: author.username || "Anonymous",
+        profilePicture: author.avatar || "/default-avatar.png"
+      };
+    };
+
     res.json({
       message: "Comment added successfully",
       comment: {
@@ -205,10 +264,7 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
         body: newComment.body,
         createdAt: newComment.createdAt,
         likes: newComment.reactions.likes,
-        author: {
-          displayName: author.identityData.displayName || "Anonymous",
-          profilePicture: author.identityData.profilePicture || "/default-avatar.png",
-        },
+        author: formatAuthor(author, post.authorModel),
       },
     });
   } catch (err) {
@@ -220,7 +276,7 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
 // Create a new post/thread 
 postRouter.post("/", isAuthenticated, async (req, res) => {
   try {
-    const { forumId, title, body, userId } = req.body; 
+    const { forumId, title, body, userId, userType } = req.body; 
 
     if (!userId) {
       return res.status(400).json({ error: "Missing user ID" });
@@ -230,9 +286,14 @@ postRouter.post("/", isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    if (!userType || !['User', 'ScrapedUser'].includes(userType)) {
+      return res.status(400).json({ error: "Invalid user type" });
+    }
+
     const newPost = new Post({
       forumId,
-      authorId: userId, 
+      authorId: userId,
+      authorModel: userType,
       title,
       body,
       comments: [],

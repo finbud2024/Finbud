@@ -6,8 +6,7 @@
 [dev]
   port = 8888
   functions = "backend/functions"
-  framework = "vue"
-  targetPort = 8080
+  framework = "#auto"
   command = "npm run client"
 
 [functions]
@@ -17,5 +16,3 @@
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
   PORT = "8000"
-
-

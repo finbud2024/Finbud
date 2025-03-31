@@ -1,6 +1,7 @@
 {
     "name": "FinBud-AI-bot",
     "version": "0.1.0",
+    "type": "module",
     "scripts": {
         "build": "cd frontend && vue-cli-service build",
         "client": "cd frontend && vue-cli-service serve",
