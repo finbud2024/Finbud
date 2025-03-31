@@ -27,6 +27,7 @@ import forumRoute from "../Endpoints/forumRoute.js";
 import postRoute from "../Endpoints/postRoute.js";
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
+import plaidRoute from "../Endpoints/PlaidService.js";
 
 dotenv.config();
 
@@ -143,6 +144,7 @@ router.use("/api/posts", postRoute);
 // router.use("/", chatStockRoute); // Duplicate route - already registered above
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
+router.use("/api/plaid", plaidRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
