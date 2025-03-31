@@ -1,12 +1,11 @@
 import cron from 'node-cron';
 import axios from 'axios';
 import mongoose from 'mongoose';
-import Stock from '../Database Schema/Stock.js';
 import User from '../Database Schema/User.js';
 import UserHolding from '../Database Schema/UserHolding.js';
 import Portfolio from '../Database Schema/Portfolio.js';
 
-const MONGO_URI =  "mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/development?retryWrites=true&w=majority&appName=Cluster0"
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/development?retryWrites=true&w=majority&appName=Cluster0";
 
 const connectToMongoDB = async () => {
   try {
@@ -20,7 +19,6 @@ const connectToMongoDB = async () => {
     return false;
   }
 };
-
 
 const fetchStockData = async (stockCode) => {
   try {
@@ -39,13 +37,7 @@ const fetchStockData = async (stockCode) => {
     console.log(`Successfully fetched stock data for ${stockCode}`);
     return {
       symbol: stockCode,
-      open: data.o,
-      high: data.h,
-      low: data.l,
-      close: data.c,
-      change: data.d,
-      volume: data.v,
-      date: new Date()
+      currentPrice: data.c
     };
   } catch (error) {
     console.error(`Error fetching stock data for ${stockCode}:`, error.message);
@@ -53,68 +45,54 @@ const fetchStockData = async (stockCode) => {
   }
 };
 
-
-const saveStockData = async (stockData) => {
+const getAllUserStocks = async () => {
   try {
-    if (!stockData) return null;
+    const allHoldings = await UserHolding.find({});
+    const uniqueStocks = new Set();
     
-    console.log(`Saving stock data for ${stockData.symbol}`);
-    const stock = new Stock(stockData);
-    await stock.save();
-    console.log(`Stock data saved for ${stockData.symbol}`);
-    return stock;
+    allHoldings.forEach(holding => {
+      holding.stocks.forEach(stock => {
+        uniqueStocks.add(stock.stockSymbol);
+      });
+    });
+    
+    return Array.from(uniqueStocks);
   } catch (error) {
-    console.error(`Error saving stock data:`, error.message);
-    return null;
+    console.error("Error fetching user stocks:", error.message);
+    return [];
   }
 };
 
-
-const updateUserPortfolios = async (stockSymbol, currentPrice) => {
+const updateAllUserPortfolios = async (stockPrices) => {
   try {
-    console.log(`Finding users with ${stockSymbol} holdings`);
+    console.log("Updating all user portfolios using new stock prices");
+    const userHoldings = await UserHolding.find({}).populate("userId");
+    console.log(`Found ${userHoldings.length} user holdings`);
     
-
-    const userHoldings = await UserHolding.find({
-      "stocks.stockSymbol": stockSymbol
-    }).populate('userId');
-    
-    console.log(`Found ${userHoldings.length} users with ${stockSymbol} holdings`);
-    
-    for (const userHolding of userHoldings) {
-      const user = userHolding.userId;
+    for (const holding of userHoldings) {
+      const user = holding.userId;
       if (!user) continue;
       
-      
-      const stockHolding = userHolding.stocks.find(s => s.stockSymbol === stockSymbol);
-      if (!stockHolding) continue;
-      
-     
-      const holdingValue = stockHolding.quantity * currentPrice;
-      
-  
-      const totalStockValue = userHolding.stocks.reduce((total, stock) => {
-        if (stock.stockSymbol === stockSymbol) {
-          return total + holdingValue;
-        }
-        return total + (stock.quantity * stock.purchasePrice);
-      }, 0);
-      
+      let totalValue = user.bankingAccountData.cash;
     
-      user.bankingAccountData.stockValue = totalStockValue;
-      user.bankingAccountData.accountBalance = user.bankingAccountData.cash + totalStockValue;
+      for (const stock of holding.stocks) {
+        
+        const updatedPrice = stockPrices[stock.stockSymbol];
+        totalValue += stock.quantity * updatedPrice;
+      }
+      
+      
+      user.bankingAccountData.stockValue = totalValue - user.bankingAccountData.cash;
+      user.bankingAccountData.accountBalance = totalValue;
       await user.save();
+      console.log(`Updated user ${user.accountData.username}'s portfolio`);
       
-      console.log(`Updated user ${user.accountData.username}'s portfolio with new ${stockSymbol} price`);
       
-    
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
       let portfolio = await Portfolio.findOne({ userId: user._id });
       
       if (!portfolio) {
-      
         portfolio = new Portfolio({
           userId: user._id,
           portfolio: [{
@@ -123,16 +101,12 @@ const updateUserPortfolios = async (stockSymbol, currentPrice) => {
           }]
         });
       } else {
-        
         const todayEntry = portfolio.portfolio.find(entry => 
           new Date(entry.date).setHours(0, 0, 0, 0) === today.getTime()
         );
-        
         if (todayEntry) {
-          
           todayEntry.totalValue = user.bankingAccountData.accountBalance;
         } else {
-       
           portfolio.portfolio.push({
             date: new Date(),
             totalValue: user.bankingAccountData.accountBalance
@@ -143,45 +117,48 @@ const updateUserPortfolios = async (stockSymbol, currentPrice) => {
       await portfolio.save();
       console.log(`Updated portfolio history for user ${user.accountData.username}`);
     }
-    
-    console.log(`All user portfolios updated for ${stockSymbol}`);
+    console.log("All user portfolios updated");
   } catch (error) {
-    console.error(`Error updating user portfolios:`, error.message);
+    console.error("Error updating user portfolios:", error.message);
   }
 };
 
-/**
- * Main function to fetch stock data and update user portfolios
- */
 const updateStockData = async () => {
-  const STOCK_SYMBOL = 'AAPL'; //functions to update this list of every stock existed in user portfolio 
+  console.log('Starting stock update job');
   
-  console.log(`Starting stock update for ${STOCK_SYMBOL}`);
-  
-  // Connect to MongoDB
   const isConnected = await connectToMongoDB();
   if (!isConnected) return;
   
   try {
-    // Fetch stock data
-    const stockData = await fetchStockData(STOCK_SYMBOL);
-    if (!stockData) {
-      console.error(`No stock data available for ${STOCK_SYMBOL}`);
+    const stockSymbols = await getAllUserStocks();
+    console.log(`Found ${stockSymbols.length} unique stocks to update: ${stockSymbols.join(', ')}`);
+    
+    if (stockSymbols.length === 0) {
+      console.log('No stocks found in user portfolios');
       return;
     }
     
-    // Save stock data to database
-    const savedStock = await saveStockData(stockData);
-    if (!savedStock) return;
+  
+    const stockPrices = {};
+    for (const symbol of stockSymbols) {
+      const stockData = await fetchStockData(symbol);
+      if (!stockData) {
+        console.error(`No stock data available for ${symbol}`);
+        continue;
+      }
+      stockPrices[symbol] = stockData.currentPrice;
+
+      // Avoid rate limiting by adding a short delay between API requests
+      //60 reqs/sec
+      await new Promise(resolve => setTimeout(resolve, 1100));
+    }
     
-    // Update portfolios for users holding this stock
-    await updateUserPortfolios(STOCK_SYMBOL, savedStock.close);
-    
-    console.log(`Completed stock update job for ${STOCK_SYMBOL}`);
+    await updateAllUserPortfolios(stockPrices);
+    console.log(stockPrices)
+    console.log('Completed stock update job for all stocks');
   } catch (error) {
     console.error(`Error in stock update job:`, error.message);
   } finally {
-    // Disconnect from MongoDB
     if (mongoose.connection.readyState !== 0) {
       await mongoose.disconnect();
       console.log("Disconnected from MongoDB");
@@ -191,19 +168,14 @@ const updateStockData = async () => {
 
 // Schedule the job to run at market close (4:00 PM ET) on weekdays (Monday-Friday)
 const scheduleJob = cron.schedule('0 20 * * 1-5', async () => {
-  console.log('Running scheduled stock update job for AAPL');
+  console.log('Running scheduled stock update job');
   await updateStockData();
 }, {
   scheduled: true,
   timezone: "America/New_York" 
 });
 
-
 export { updateStockData, scheduleJob };
 
-
-// scheduleJob.start();
-// console.log('AAPL stock update job scheduled to run at 4:00 PM ET on weekdays');
-
-// For development
+// For development/testing
 updateStockData();
