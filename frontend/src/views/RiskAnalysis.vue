@@ -227,7 +227,38 @@ export default {
       loadingCrypto: true,
       errorCrypto: null,
       cryptoList: [],
-      realEstateList: [],
+      realEstateList: [
+      {
+						propertyType: "Single Family Home",
+						formattedAddress: "123 Main St, San Jose, CA 95112",
+						price: "$1,200,000",
+						status: "For Sale"
+					},
+					{
+						propertyType: "Condo",
+						formattedAddress: "456 Elm St, San Jose, CA 95126",
+						price: "$850,000",
+						status: "Pending"
+					},
+					{
+						propertyType: "Townhouse",
+						formattedAddress: "789 Oak Ave, San Jose, CA 95128",
+						price: "$975,000",
+						status: "Sold"
+					},
+					{
+						propertyType: "Apartment",
+						formattedAddress: "101 Pine St, San Jose, CA 95110",
+						price: "$3,200/mo",
+						status: "For Rent"
+					},
+					{
+						propertyType: "Duplex",
+						formattedAddress: "202 Maple Dr, San Jose, CA 95125",
+						price: "$1,050,000",
+						status: "For Sale"
+					}
+      ],
       loadingRealEstate: true,
       errorRealEstate: null,
       currentRealEstatePage: 1,
@@ -274,7 +305,7 @@ export default {
   mounted() {
     this.fetchStockQuote();
     this.getCryptoPrice();
-    this.getRealEstatePrice();
+    // this.getRealEstatePrice();
     this.setupBotObserver();
   },
   beforeUnmount() {
@@ -478,22 +509,22 @@ export default {
       }
       return x.toFixed(2);
     },
-    async getRealEstatePrice(){
-      const url = "https://api.rentcast.io/v1/properties/random";
-      try {
-        const response = await axios.get(url, {
-          headers: {
-            'X-Api-Key': apiKeyRealEstate
-          }
-        })
-        this.realEstateList = response.data;
-        this.loadingRealEstate = false;
-      } catch (error){
-        console.log('Error fetching real estate', error)
-        this.errorRealEstate = 'Error fetching real estate';
-        this.loadingRealEstate = false;
-      }
-    },
+    // async getRealEstatePrice(){
+    //   const url = "https://api.rentcast.io/v1/properties/random";
+    //   try {
+    //     const response = await axios.get(url, {
+    //       headers: {
+    //         'X-Api-Key': apiKeyRealEstate
+    //       }
+    //     })
+    //     this.realEstateList = response.data;
+    //     this.loadingRealEstate = false;
+    //   } catch (error){
+    //     console.log('Error fetching real estate', error)
+    //     this.errorRealEstate = 'Error fetching real estate';
+    //     this.loadingRealEstate = false;
+    //   }
+    // },
     formatTabName(tab) {
       if (tab === 'realEstate') return 'Real Estate';
       return tab.charAt(0).toUpperCase() + tab.slice(1);

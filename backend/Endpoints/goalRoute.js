@@ -1,13 +1,14 @@
 import express from 'express';
 import Goal from '../Database Schema/Goal.js';
 import validateRequest from '../utils/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
 
 const goalRoute = express.Router();
 
 // CRUD operations on /goals/:goalId
 goalRoute.route('/goals/:goalId')
   // GET a goal by ID
-  .get(async (req, res) => {
+  .get(isAuthenticated, async (req, res) => {
     const goalId = req.params.goalId;
     console.log('in /goals/:goalId Route (GET) goal with ID: ' + goalId);
     try {
@@ -15,6 +16,12 @@ goalRoute.route('/goals/:goalId')
       if (!goal) {
         return res.status(404).send(`No goal with ID: ${goalId} exists in the database.`);
       }
+      
+      // Check if the user is authorized to access this goal
+      if (req.user.accountData.priviledge !== 'admin' && goal.userId._id.toString() !== req.user._id.toString()) {
+        return res.status(403).send('Forbidden: You can only access your own goals');
+      }
+      
       return res.status(200).json(goal);
     } catch (err) {
       return res.status(501).send(`Unexpected error occurred when looking for goal with ID: ${goalId} in database: ${err}`);
@@ -22,12 +29,17 @@ goalRoute.route('/goals/:goalId')
   })
 
   // PUT: update a goal with a given ID
-  .put(validateRequest(Goal.schema), async (req, res) => {
+  .put(isAuthenticated, validateRequest(Goal.schema), async (req, res) => {
     const { userId, title, description, targetAmount, currentAmount, startDate, endDate, isAchieved, category } = req.body;
     const goalId = req.params.goalId;
 
     if (!userId || !title || targetAmount === undefined || startDate === undefined || endDate === undefined || !category) {
       return res.status(400).send("User ID, title, targetAmount, startDate, endDate, and category are required");
+    }
+    
+    // Check if the user is authorized to update this goal
+    if (req.user.accountData.priviledge !== 'admin' && userId !== req.user._id.toString()) {
+      return res.status(403).send('Forbidden: You can only update your own goals');
     }
 
     console.log('in /goals/:goalId Route (PUT) goal with ID: ' + goalId);
@@ -51,16 +63,24 @@ goalRoute.route('/goals/:goalId')
   })
 
   // DELETE a goal by ID
-  .delete(async (req, res) => {
+  .delete(isAuthenticated, async (req, res) => {
     const goalId = req.params.goalId;
     console.log('In /goals/:goalId Route (DELETE) goal with ID: ' + goalId);
 
     try {
-      const goal = await Goal.findByIdAndDelete(goalId);
+      // First find the goal to check ownership
+      const goal = await Goal.findById(goalId);
       if (!goal) {
         return res.status(404).send(`No goal with ID: ${goalId} exists in the database.`);
       }
-
+      
+      // Check if the user is authorized to delete this goal
+      if (req.user.accountData.priviledge !== 'admin' && goal.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).send('Forbidden: You can only delete your own goals');
+      }
+      
+      // Now delete the goal
+      await Goal.findByIdAndDelete(goalId);
       console.log('Goal deleted: ', goal);
       return res.status(204).send('Goal deleted successfully');
     } catch (error) {
@@ -70,8 +90,8 @@ goalRoute.route('/goals/:goalId')
 
 // CRUD operations on /goals, all goals in database
 goalRoute.route('/goals')
-  // GET all goals
-  .get(async (req, res) => {
+  // GET all goals - Admin only
+  .get(isAdmin, async (req, res) => {
     console.log("in /goals route (GET) all goals");
     try {
       const goals = await Goal.find().populate('userId', 'accountData.username identityData.displayName');
@@ -82,13 +102,18 @@ goalRoute.route('/goals')
   })
 
   // POST a new goal
-  .post(validateRequest(Goal.schema), async (req, res) => {
+  .post(isAuthenticated, validateRequest(Goal.schema), async (req, res) => {
     console.log('in /goals Route (POST) new goal to database');
     const { userId, title, description, targetAmount, currentAmount, startDate, endDate, isAchieved, category } = req.body;
     console.log(req.body);
 
     if (!userId || !title || targetAmount === undefined || startDate === undefined || endDate === undefined || !category) {
       return res.status(400).send("User ID, title, targetAmount, startDate, endDate, and category are required");
+    }
+    
+    // Check if the user is authorized to create a goal for this userId
+    if (req.user.accountData.priviledge !== 'admin' && userId !== req.user._id.toString()) {
+      return res.status(403).send('Forbidden: You can only create goals for yourself');
     }
 
     const goal = new Goal({
@@ -114,7 +139,7 @@ goalRoute.route('/goals')
 // CRUD operations on /goals/u/:userId, all goals for a specific user
 goalRoute.route('/goals/u/:userId')
   // GET all goals for a specific userId
-  .get(async (req, res) => {
+  .get(isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     console.log('in /goals/u/:userId Route (GET) goals with userId:' + userId);
     try {
@@ -129,7 +154,7 @@ goalRoute.route('/goals/u/:userId')
   })
 
   // DELETE all goals for a specific userId
-  .delete(async (req, res) => {
+  .delete(isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     if (!userId) {
       return res.status(400).send("Missing userId in request parameters");

@@ -11,3 +11,8 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Adding environment variables for the development environment
+[dev.environment]
+  REDIS_URL = "redis://localhost:6379"
+  PORT = "8000"

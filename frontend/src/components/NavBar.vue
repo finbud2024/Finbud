@@ -3,17 +3,42 @@
     <router-link to="/" class="navbar-brand">FinBud</router-link>
     <div class="nav-right">
       <ul class="nav-items">
-        <li><router-link to="/chat-view" class="chatview">Chat</router-link></li>
-        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
-          <div class="services-dropdown dropbtn">Overview <span class="arrow-down"></span></div>
+        <li>
+          <router-link to="/chat-view" class="chatview">Chat</router-link>
+        </li>
+        <li
+          class="dropdown"
+          @mouseenter="toggleAboutDropdown(true)"
+          @mouseleave="toggleAboutDropdown(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Overview <span class="arrow-down"></span>
+          </div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
-            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">About</router-link>
-            <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">Technology</router-link>
+            <router-link
+              to="/about"
+              class="about"
+              @click="toggleAboutDropdown(false)"
+              >About</router-link
+            >
+            <router-link
+              to="/tech"
+              class="technology"
+              @click="toggleAboutDropdown(false)"
+              >Technology</router-link
+            >
           </div>
         </li>
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)"
-          @mouseleave="toggleDropdown(false)">
-          <div class="services-dropdown dropbtn">Services <span class="arrow-down"></span></div>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdown(true)"
+          @mouseleave="toggleDropdown(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Manage <span class="arrow-down"></span>
+          </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
             <router-link to="/quant-analysis" class="home" @click="toggleDropdown(false)">Quant</router-link>
@@ -22,54 +47,164 @@
             <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
             <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
-            <router-link to="/tax-calculator" class="tax-calculator" @click="toggleDropdown(false)">Calculator</router-link>
           </div>
         </li>
-        <li v-if="!isAuthenticated"><router-link to="/login" class="login-button">Log In</router-link></li>
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)"
-          @mouseleave="toggleProfileDropdown(false)">
-          <img :src="profileImage" alt="User Image" class="user-image">
+
+        <li v-if="!isAuthenticated && !isAuthLoading">
+          <router-link to="/login" class="login-button">Log In</router-link>
+        </li>
+
+        <li v-if="isAuthenticated" class="fincoin-container">
+          <FinCoinDisplay :balance="finCoinBalance" />
+        </li>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleProfileDropdown(true)"
+          @mouseleave="toggleProfileDropdown(false)"
+        >
+          <img :src="profileImage" alt="User Image" class="user-image" />
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-            <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-              <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image">
+            <router-link
+              to="/profile"
+              class="profile"
+              @click="toggleProfileDropdown(false)"
+            >
+              <img
+                :src="profileImage"
+                alt="User Image"
+                class="inside-dropdown-user-image"
+              />
               <p>{{ profileName }}</p>
             </router-link>
-            <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-              <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-              <p>{{ isDarkMode ? 'Dark Mode' : 'Light Mode' }}</p>
+            <router-link
+              to="#"
+              class="dark-mode-toggle"
+              @click="toggleDarkMode"
+            >
+              <font-awesome-icon
+                :icon="isDarkMode ? 'fa-moon' : 'fa-sun'"
+                class="icon"
+              />
+              <p>{{ isDarkMode ? "Dark Mode" : "Light Mode" }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
-              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
+              <font-awesome-icon
+                icon="fa-solid fa-right-from-bracket"
+                class="icon"
+              />
               <p>Log Out</p>
             </router-link>
           </div>
         </li>
+
+        <li v-if="isAuthLoading" class="auth-loading">
+          <div class="loading-indicator"></div>
+        </li>
       </ul>
-      <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
+
+      <!-- Mobile version -->
+      <div
+        class="dropdown mobile-only"
+        :class="{ active: isDropdownOpenMobile }"
+      >
         <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
           <div class="brand-mobile">FinBud</div>
           <font-awesome-icon icon="fa-solid fa-chevron-down" />
         </div>
-        <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
-          <router-link to="/" class="home" @click="toggleDropdownMobile">Home</router-link>
-          <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
-          <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
+        <div
+          class="dropdown-content"
+          v-show="isDropdownOpenMobile"
+          @mouseleave="closeDropdownMobile"
+        >
+          <router-link
+            to="/chat-view"
+            class="chatview"
+            @click="toggleDropdownMobile"
+            >Chat</router-link
+          >
+          <router-link to="/about" class="about" @click="toggleDropdownMobile"
+            >About</router-link
+          >
+          <router-link
+            to="/tech"
+            class="technology"
+            @click="toggleDropdownMobile"
+            >Technology</router-link
+          >
           <div class="authenticated" v-if="isAuthenticated">
-            <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
-            <!-- <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">Quant Simulator</router-link> -->
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk Analysis</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
-            <router-link to="/quant-analysis" class="home">Quant</router-link>
-            <router-link to="#" @click="logout" class="logout">Log Out</router-link>
-          </div>
-          <!-- <router-link to="/market" class="market" @click="toggleDropdownMobile">Market</router-link> -->
-          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
-          <!-- <router-link to="/risk" class="risk" @click="toggleDropdownMobile">Risk</router-link> -->
-          <router-link to="/login" v-if="!isAuthenticated" class="login-button" @click="toggleDropdownMobile">Log
-            In</router-link>
+            <strong>Fin Manage</strong>
+            <router-link to="/goal" class="goal" @click="toggleDropdownMobile"
+              >Goal</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdownMobile"
+              >Risk Analysis</router-link
+            >
 
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdownMobile"
+              >Mortgage Calculator</router-link
+            >
+
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownMobile"
+              >Super Investors</router-link
+            >
+
+            <strong>Fin Invest</strong>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownMobile"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownMobile"
+              >Quant</router-link
+            >
+
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownMobile"
+              >Quant Simulator</router-link
+            >
+
+            <strong>Fin Edu</strong>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
+              >Quiz</router-link
+            >
+            <router-link to="/event" class="event" @click="toggleDropdownMobile"
+              >Event</router-link
+            >
+            <router-link to="/forum" class="forum" @click="toggleDropdownMobile"
+              >Forum</router-link
+            >
+
+            <router-link to="#" @click="logout" class="logout"
+              >Log Out</router-link
+            >
+          </div>
+          <router-link
+            to="/login"
+            v-if="!isAuthenticated && !isAuthLoading"
+            class="login-button"
+            @click="toggleDropdownMobile"
+            >Log In</router-link
+          >
+          <div v-if="isAuthLoading" class="auth-loading-mobile">
+            <div class="loading-indicator"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -77,54 +212,63 @@
 </template>
 
 <script>
-import axios from 'axios';
-import defaultImage from '@/assets/anonymous.png';
-
+import axios from "axios";
+import defaultImage from "@/assets/anonymous.png";
+import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
 export default {
-  name: 'NavBar',
+  name: "NavBar",
+  components: {
+    FinCoinDisplay,
+  },
   data() {
     return {
       isDropdownOpen: false,
+      isDropdownOpenInvest: false,
+      isDropdownOpenEdu: false,
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
-      isDarkMode: localStorage.getItem("darkMode") === "enabled"
+      isDarkMode: false,
+      isAuthLoading: false,
     };
   },
   computed: {
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
+    isAuthLoading() {
+      return this.$store.getters["users/isAuthLoading"];
+    },
     userData() {
-      // Assuming isAuthenticated correctly reflects authentication state
-      if (!this.isAuthenticated) {
-        console.log("User is not authenticated");
-        return null;
-      }
-      try {
-        const data = localStorage.getItem('user');
-        return data ? JSON.parse(data) : null;
-      } catch (e) {
-        console.error('Error parsing user data:', e);
-        return null;
-      }
+      return this.$store.getters["users/currentUser"];
     },
     profileImage() {
-      if (this.userData && this.userData.identityData) {
-        return this.userData.identityData.profilePicture;
-      }
-      return defaultImage;
+      return this.$store.getters["users/userProfileImage"] || defaultImage;
     },
     profileName() {
-      if (this.userData && this.userData.identityData) {
-        return this.userData.identityData.displayName;
-      }
-      return 'User';
-    }
+      return this.$store.getters["users/userDisplayName"];
+    },
+    finCoinBalance() {
+      return this.$store.getters["finCoin/finCoinBalance"];
+    },
+    watch: {
+      // Fetch FinCoin balance when user logs in
+      isAuthenticated(newVal) {
+        if (newVal) {
+          this.$store.dispatch("finCoin/fetchFinCoinBalance");
+        }
+      },
+    },
   },
   methods: {
     toggleDropdown(open) {
       this.isDropdownOpen = open;
+    },
+    toggleDropdownInvest(open) {
+      this.isDropdownOpenInvest = open;
+    },
+    toggleDropdownEdu(open) {
+      this.isDropdownOpenEdu = open;
     },
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;
@@ -140,58 +284,70 @@ export default {
     },
     async logout() {
       try {
-        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`);
+        await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/logout`, {
+          withCredentials: true,
+        });
       } catch (err) {
         console.log("After logout with err: " + err);
       }
       this.$store.dispatch("users/logout");
-      this.$router.push('/login');
+      this.$router.push("/login");
     },
     async toggleDarkMode() {
       this.isDarkMode = !this.isDarkMode;
-      localStorage.setItem("darkMode", this.isDarkMode ? "enabled" : "disabled");
+      document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
       document.body.classList.toggle("dark-mode", this.isDarkMode);
+      localStorage.setItem("darkMode", this.isDarkMode ? "true" : "false");
 
-      // Update dark mode in the database
       if (this.userData) {
         const userId = this.userData._id;
         try {
-          const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${userId}/settings`, {
-            settings: {
-              darkMode: this.isDarkMode
-            }
-          });
+          const response = await axios.put(
+            `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}/settings`,
+            {
+              settings: {
+                darkMode: this.isDarkMode,
+              },
+            },
+            { withCredentials: true }
+          );
           console.log("Dark mode updated:", response.data);
         } catch (err) {
-          console.error("Error updating dark mode in database:", err.response ? err.response.data : err);
+          console.error(
+            "Error updating dark mode in database:",
+            err.response ? err.response.data : err
+          );
         }
       }
-    }
+    },
   },
   async mounted() {
-    try {
-      const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/auth/test`);
-      if (response.data.isAuthenticated) {
-        //put user info into localStorage
-        console.log('Login Success in navbar:', response.data);
-        this.$store.dispatch("users/login", response.data.user._id);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-
-        // Fetch user settings and apply dark mode if enabled
-        const userSettings = response.data.user.settings;
-        this.isDarkMode = userSettings?.darkMode || false;
-        document.body.classList.toggle("dark-mode", this.isDarkMode);
-        localStorage.setItem("darkMode", this.isDarkMode ? "enabled" : "disabled");
-      }
-    } catch (err) {
-      console.log("After Sign in with google err: " + err);
+    await this.$store.dispatch("users/fetchCurrentUser");
+    const storedDarkMode = localStorage.getItem("darkMode");
+    if (storedDarkMode !== null) {
+      this.isDarkMode = storedDarkMode === "true";
+    } else if (this.userData && this.userData.settings) {
+      this.isDarkMode = this.userData.settings.darkMode || false;
+    } else {
+      const prefersDarkMode =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      this.isDarkMode = prefersDarkMode;
     }
-  }
+
+    // Fetch FinCoin balance if user is authenticated
+    if (this.isAuthenticated) {
+      await this.$store.dispatch("finCoin/fetchFinCoinBalance");
+    }
+
+    document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
+    document.body.classList.toggle("dark-mode", this.isDarkMode);
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .nav-bar {
   background-color: var(--bg-primary);
@@ -200,7 +356,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0rem 2rem;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: fixed;
   z-index: 1000;
@@ -506,6 +662,40 @@ export default {
     display: flex;
     flex-direction: column;
   }
-
 }
+
+.auth-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.loading-indicator {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #45a049;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.auth-loading-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+/* Only keep one instance of the keyframes animation */
 </style>

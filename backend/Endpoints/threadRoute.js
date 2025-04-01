@@ -1,13 +1,14 @@
 import express from 'express';
 import Thread from '../Database Schema/Thread.js';
 import validateRequest from '../utils/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
 
 const threadRoute = express.Router();
 
 // CRUD operation to route "/threads/:threadId"
 threadRoute.route('/threads/:threadId')
   // GET thread request with a given thread ID
-  .get(async (req, res) => {
+  .get(isAuthenticated, async (req, res) => {
     const threadId = req.params.threadId;
     console.log('in /threads/:threadId Route (GET) thread with ID:' + JSON.stringify(threadId));
     try {
@@ -15,6 +16,12 @@ threadRoute.route('/threads/:threadId')
       if (!thread) {
         return res.status(404).send("No thread with id: " + JSON.stringify(threadId) + "existed in database");
       }
+      
+      // Check if user is authorized to access this thread
+      if (req.user.accountData.priviledge !== 'admin' && thread.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Forbidden: You can only access your own threads' });
+      }
+      
       return res.status(200).json(thread);
     } catch (err) {
       return res.status(501).send("Unexpected error occurred when looking for thread with id: " + threadId + " in database: " + err);
@@ -22,13 +29,24 @@ threadRoute.route('/threads/:threadId')
   })
 
   // PUT thread: update a Thread with a given ID
-  .put(validateRequest(Thread.schema), async (req, res) => {
+  .put(isAuthenticated, validateRequest(Thread.schema), async (req, res) => {
     const threadId = req.params.threadId;
     console.log('In /threads Route (PUT) for thread with ID: ' + threadId);
     if (req.body.userId) {
       return res.status(501).send("Cannot update User associate with Thread");
     }
     try {
+      // First check if the thread belongs to the user
+      const thread = await Thread.findOne({ "_id": threadId });
+      if (!thread) {
+        return res.status(404).send(`Cannot find thread with thread ID: ${threadId} in database`);
+      }
+      
+      // Check if user is authorized to update this thread
+      if (req.user.accountData.priviledge !== 'admin' && thread.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Forbidden: You can only update your own threads' });
+      }
+      
       const filter = { "_id": threadId };
       const updatedThread = {};
 
@@ -36,29 +54,33 @@ threadRoute.route('/threads/:threadId')
         updatedThread[`${key}`] = req.body[key];
       }
 
-      const thread = await Thread.updateOne(filter, updatedThread, {
+      const result = await Thread.updateOne(filter, updatedThread, {
         new: true
       });
 
-      if (!thread.modifiedCount) {
-        return res.status(404).send(`Cannot find thread with thread ID: ${threadId} in database`);
-      }
-
-      return res.status(200).send({ message: `Thread updated successfully`, updatedThread: thread });
+      return res.status(200).send({ message: `Thread updated successfully`, updatedThread: result });
     } catch (err) {
       return res.status(501).send("Error while updating thread" + err);
     }
   })
 
   // DELETE: removing a thread with a given id
-  .delete(async (req, res) => {
+  .delete(isAuthenticated, async (req, res) => {
     const threadId = req.params.threadId;
     console.log('In /threads Route (DELETE) for thread with ID: ' + threadId);
     try {
-      let thread = await Thread.findOneAndDelete({ _id: threadId });
+      // First check if the thread belongs to the user
+      const thread = await Thread.findOne({ "_id": threadId });
       if (!thread) {
         return res.status(404).send("No thread with ID: " + threadId + " exists in the database.");
       }
+      
+      // Check if user is authorized to delete this thread
+      if (req.user.accountData.priviledge !== 'admin' && thread.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Forbidden: You can only delete your own threads' });
+      }
+      
+      await Thread.findOneAndDelete({ _id: threadId });
       return res.status(200).send("Deleted successfully thread with Id: " + threadId);
     } catch (err) {
       return res.status(501).send("Unexpected error occurred while deleting thread with ID: " + threadId + " from the database: " + err);
@@ -67,7 +89,7 @@ threadRoute.route('/threads/:threadId')
 
 threadRoute.route('/threads')
   // GET: finding all Threads in database
-  .get(async (req, res) => {
+  .get(isAdmin, async (req, res) => {
     const { userid } = req.query;
     try {
       console.log("in /threads route (GET) ALL threads from database");
@@ -79,11 +101,17 @@ threadRoute.route('/threads')
   })
 
   // POST: saving a new thread into database
-  .post(validateRequest(Thread.schema), async (req, res) => {
+  .post(isAuthenticated, validateRequest(Thread.schema), async (req, res) => {
     console.log('in /threads Route (POST) new thread to database');
     if (!req.body.userId) {
       return res.status(501).send("Unable to save thread to database due to missing userId");
     }
+    
+    // Ensure users can only create threads for themselves unless they're an admin
+    if (req.user.accountData.priviledge !== 'admin' && req.body.userId !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Forbidden: You can only create threads for yourself' });
+    }
+    
     try {
       const threadBody = {
         userId: req.body.userId
@@ -101,7 +129,7 @@ threadRoute.route('/threads')
   })
 
   // DELETE: delete all threads
-  .delete(async (req, res) => {
+  .delete(isAdmin, async (req, res) => {
     console.log('In /threads Route (DELETE) for all threads');
     try {
       let threads = await Thread.deleteMany();
@@ -116,7 +144,7 @@ threadRoute.route('/threads')
 
 threadRoute.route('/threads/u/:userId')
   // GET: get all threads with given userId
-  .get(async (req, res) => {
+  .get(isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     console.log('in /threads/u/:userId Route (GET) thread with userId:' + JSON.stringify(userId));
     try {
@@ -131,7 +159,7 @@ threadRoute.route('/threads/u/:userId')
   })
 
   // DELETE: delete all threads with given userId
-  .delete(async (req, res) => {
+  .delete(isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     if (!userId) {
       return res.status(404).send("Unable to delete thread with userId: " + userId + " due to missing userId");

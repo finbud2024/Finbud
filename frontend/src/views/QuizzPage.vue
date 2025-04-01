@@ -21,6 +21,22 @@ export default {
 </script>
 
 <style scoped>
+/* Light & Dark Mode Variables */
+:root {
+  --bg-primary: white;
+  --text-primary: black;
+  --container-bg: #f8f9fa;
+  --container-border: #ddd;
+}
+
+:root.dark-mode {
+  --bg-primary: #121212;
+  --text-primary: #f5f5f5;
+  --container-bg: #1e1e1e;
+  --container-border: #444;
+}
+
+/* Quiz Page Container */
 .quizPageContainer {
   width: 100%;
   height: 100%;
@@ -28,8 +44,11 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
+/* Container for Quiz Component */
 .container {
   width: 100%;
   height: 100%;
@@ -39,13 +58,18 @@ export default {
   justify-content: center;
   gap: 2rem;
   margin: 2rem 0;
-  container-name: quizComponent;
-  container-type: inline-size;
+  background-color: var(--container-bg);
+  border: 1px solid var(--container-border);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Responsive Styles */
 @media screen and (max-width: 768px) {
   .container {
     width: 100%;
+    padding: 15px;
   }
 }
 </style>

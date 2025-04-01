@@ -4,6 +4,7 @@
 
 import passport from 'passport';
 import express from 'express';
+import {setupUserDocuments} from '../utils/setupUserDocuments.js';
 const authRoute = express.Router();
 
 //AUTHENTICATE route: Uses passport to authenticate with GitHub.
@@ -18,22 +19,42 @@ authRoute.get('/auth/google', passport.authenticate('google', {
 //OAuth authentication process is complete.
 //req.isAuthenticated() tells us whether authentication was successful.
 authRoute.get('/auth/google/callback', 
-  (req, res, next) => {
-    passport.authenticate('google', (err, user, info) => {
-      console.log("in google authenticate callback")
-      if (err) { console.error(err); return next(err); }
-      if (!user) { console.log('No user found'); return res.redirect('/login'); }
+   (req, res, next) => {
+    passport.authenticate('google',async (err, user, info) => {
+      console.log("in google authenticate callback");
+      console.log("Auth info received:", info);
+      
+      if (err) { 
+        console.error("Authentication error:", err); 
+        return next(err); 
+      }
+      
+      if (!user) { 
+        console.log("No user found"); 
+        return res.redirect('/login'); 
+      }
+
+      await setupUserDocuments(user._id);
       
       // Check if this is a new user
-      const isNewUser = req.user && req.user.isNew; // Adjust based on your user model
+      const isNewUser = info && info.isNewUser;
+      console.log("Is new user flag:", isNewUser);
       
       req.logIn(user, (err) => {
-        if (err) { console.error(err); return next(err); }
-        console.log('User logged in');
+        if (err) { 
+          console.error("Login error:", err); 
+          return next(err); 
+        }
+        
+        console.log('User logged in successfully');
         
         if (isNewUser) {
+          console.log("Redirecting new user to tutorial");
+          // Set isNewUser flag in session
+          req.session.isNewUser = true;
           return res.redirect('/?showTutorial=true');
         } else {
+          console.log("Redirecting existing user to home");
           return res.redirect('/');
         }
       });
@@ -44,10 +65,25 @@ authRoute.get('/auth/google/callback',
 
 //lOGIN ROUTE FOR LOCAL USER
 authRoute.post('/auth/login', passport.authenticate('local', { failWithError: true }),
-  (req, res) => {
+  async (req, res) => {
     console.log("/login route reached: successful authentication.");
-    //Redirect to app's main page; the /auth/test route should return true
-    res.status(200).send(req.user);
+    
+    // Check if this is a new user (for local login)
+    // We can determine this by checking if this is their first login
+    // or by checking a specific field in the user document
+    const isNewUser = req.user.isNew || false;
+    
+    // Set isNewUser flag in session if user is new
+    if (isNewUser) {
+      req.session.isNewUser = true;
+    }
+    
+    await setupUserDocuments(req.user._id);
+    // Send the user data along with the isNewUser flag
+    res.status(200).json({
+      user: req.user,
+      isNewUser: isNewUser
+    });
   },
   (err, req, res, next) => {
     console.log("/login route reached: unsuccessful authentication");
@@ -93,6 +129,50 @@ authRoute.get('/auth/test', (req, res) => {
     }
     //Return JSON object to client with results.
     res.json({isAuthenticated: isAuth, user: req.user});
+});
+
+// NEW ENDPOINT: Get current user data
+// This endpoint will be used by the frontend to get the current user data
+// without relying on localStorage
+authRoute.get('/auth/current-user', (req, res) => {
+  console.log("/auth/current-user reached.");
+  if (req.isAuthenticated()) {
+    console.log("User is authenticated, returning user data");
+    return res.status(200).json({ 
+      isAuthenticated: true, 
+      user: req.user 
+    });
+  } else {
+    console.log("User is not authenticated");
+    return res.status(401).json({ 
+      isAuthenticated: false, 
+      message: "User is not authenticated" 
+    });
+  }
+});
+
+// NEW ENDPOINT: Check if user is new
+authRoute.get('/auth/is-new-user', (req, res) => {
+  console.log("/auth/is-new-user reached.");
+  if (req.isAuthenticated()) {
+    const isNewUser = req.session.isNewUser || false;
+    console.log("Is new user:", isNewUser);
+    
+    // Clear the flag after checking it
+    if (isNewUser) {
+      req.session.isNewUser = false;
+    }
+    
+    return res.status(200).json({ 
+      isNewUser: isNewUser
+    });
+  } else {
+    console.log("User is not authenticated");
+    return res.status(401).json({ 
+      isAuthenticated: false, 
+      message: "User is not authenticated" 
+    });
+  }
 });
 
 export default authRoute;

@@ -17,8 +17,14 @@ import QuantAnalysis from "@/views/QuantAnalysis.vue";
 import EventHub from "@/views/EventHub.vue";
 import LearningRoadMap from "@/views/LearningRoadMap.vue";
 import QuantSimulator from "@/views/QuantSimulator.vue";
+import ForumView from "@/views/ForumView.vue";
+import ThreadCard from "@/components/ThreadCard.vue";
+import ThreadView from "@/views/ThreadView.vue";
+import StartThread from "@/views/StartThread.vue";
+import MortgageCalc from "@/views/Mortgage-calc.vue";
+import SuperInvestors from "@/views/SuperInvestors.vue";
+import InvestorDetail from "@/views/InvestorDetail.vue";
 import TaxCalculator from "@/components/tax&chat/TaxCalculator.vue";
-// import EventMap from '@/components/EventMap.vue';
 
 const routes = [
   {
@@ -114,11 +120,47 @@ const routes = [
     component: LearningRoadMap,
     props: true,
   },
-  // {
-  //   path: '/event-map',
-  //   name: 'EventMap',
-  //   component: EventMap,
-  // },
+  {
+    path: "/forum",
+    name: "ForumView",
+    component: ForumView,
+    props: true,
+  },
+  {
+    path: "/thread",
+    name: "ThreadCard",
+    component: ThreadCard,
+    props: true,
+  },
+  {
+    path: "/forum/thread/:id",
+    name: "ThreadView",
+    component: ThreadView,
+    props: true,
+  },
+  {
+    path: "/start-thread",
+    name: "StartThread",
+    component: StartThread,
+    props: true,
+  },
+  {
+    path: "/mortgage-calc",
+    name: "MortgageCalc",
+    component: MortgageCalc,
+    props: true,
+  },
+  ,
+  {
+    path: "/super-investors",
+    name: "SuperInvestors",
+    component: SuperInvestors,
+  },
+  {
+    path: "/super-investors/:id",
+    name: "InvestorDetails",
+    component: InvestorDetail,
+  },
   {
     path: '/tax-calculator',
     name: 'Tax Calculator',

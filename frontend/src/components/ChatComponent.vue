@@ -24,6 +24,7 @@ import UserInput from './UserInput.vue';
 import axios from "axios";
 import { gptServices } from '@/services/gptServices';
 import { getSources, getVideos, getRelevantQuestions } from '@/services/serperService.js';
+import api from '@/utils/api';
 export default {
 	name: 'ChatComponent',
 	props: {},
@@ -45,18 +46,10 @@ export default {
 			return this.$store.getters['threads/getThreadID'];
 		},
 		displayName() {
-			if (this.isAuthenticated) {
-				return JSON.parse(localStorage.getItem("user")).identityData.displayName;
-			} else {
-				return "User";
-			}
+			return this.$store.getters['users/userDisplayName'];
 		},
 		userAvatar() {
-			if (this.isAuthenticated) {
-				return JSON.parse(localStorage.getItem("user")).identityData.profilePicture;
-			} else {
-				return require("@/assets/anonymous.png");
-			}
+			return this.$store.getters['users/userProfileImage'] || require("@/assets/anonymous.png");
 		},
 	},
 	watch: {
@@ -305,22 +298,53 @@ export default {
 					} else {
 						searchLocation = "San Jose";
 					}
-					let propertiesData = [];
-					const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
-					const BASE_URL = "https://api.rentcast.io/v1/listings/sale";
-					try {
-						const response = await axios.get(BASE_URL, {
-							params: { city: searchLocation },
-							headers: {
-								accept: 'application/json',
-								"X-Api-Key": API_KEY
-							},
-						});
-						// console.log(response.data)
-						propertiesData = response.data;
-					} catch (err) {
-						console.error("Error fetching property data:", err);
+					let propertiesData = [
+					{
+						propertyType: "Single Family Home",
+						formattedAddress: "123 Main St, San Jose, CA 95112",
+						price: "$1,200,000",
+						status: "For Sale"
+					},
+					{
+						propertyType: "Condo",
+						formattedAddress: "456 Elm St, San Jose, CA 95126",
+						price: "$850,000",
+						status: "Pending"
+					},
+					{
+						propertyType: "Townhouse",
+						formattedAddress: "789 Oak Ave, San Jose, CA 95128",
+						price: "$975,000",
+						status: "Sold"
+					},
+					{
+						propertyType: "Apartment",
+						formattedAddress: "101 Pine St, San Jose, CA 95110",
+						price: "$3,200/mo",
+						status: "For Rent"
+					},
+					{
+						propertyType: "Duplex",
+						formattedAddress: "202 Maple Dr, San Jose, CA 95125",
+						price: "$1,050,000",
+						status: "For Sale"
 					}
+					];
+					// const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
+					// const BASE_URL = "https://api.rentcast.io/v1/listings/sale";
+					// try {
+					// 	const response = await axios.get(BASE_URL, {
+					// 		params: { city: searchLocation },
+					// 		headers: {
+					// 			accept: 'application/json',
+					// 			"X-Api-Key": API_KEY
+					// 		},
+					// 	});
+					// 	// console.log(response.data)
+					// 	propertiesData = response.data;
+					// } catch (err) {
+					// 	console.error("Error fetching property data:", err);
+					// }
 					let tableTemplate = `
 				<div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
 				<table>
@@ -494,8 +518,8 @@ export default {
 				// this.openNewWindow("/goal");	
 			}
 			try {
-				const userId = localStorage.getItem("token");
-				const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+				const userId = this.$store.getters["users/userId"];
+				const response = await api.get(`/transactions/u/${userId}`);
 				const transactions = response.data;
 				const currentBalance = transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
 				return currentBalance + amount;
@@ -505,8 +529,8 @@ export default {
 		},
 		async checkAccountBalance() {
 			try {
-				const userId = localStorage.getItem("token");
-				const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${userId}`);
+				const userId = this.$store.getters["users/userId"];
+				const response = await api.get(`/transactions/u/${userId}`);
 				const transactions = response.data;
 
 				if (transactions.length === 0) {
@@ -527,7 +551,7 @@ export default {
 				return;
 			}
 
-			const userId = localStorage.getItem('token'); // Ensure userId is defined
+			const userId = this.$store.getters["users/userId"]; // Get userId from store
 			const date = new Date().toISOString(); // Get current date
 			const type = 'revenue';
 
@@ -540,7 +564,7 @@ export default {
 			console.log("type:", type);
 			*/
 			try {
-				await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+				await api.post(`/transactions`, {
 					description,
 					amount,
 					balance,

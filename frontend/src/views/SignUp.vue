@@ -180,8 +180,27 @@ export default {
             }
           });
 
-          localStorage.setItem('isNewUser', 'true');
-          this.$router.push('/login');
+          // Automatically log in the user after successful registration
+          try {
+            const loginApi = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
+            await axios.post(loginApi, {
+              username: this.formData.email,
+              password: this.formData.password
+            }, { withCredentials: true });
+            
+            // Set user as authenticated in Vuex store
+            await this.$store.dispatch('users/login', {
+              username: this.formData.email,
+              password: this.formData.password
+            });
+            
+            // Redirect to home page with tutorial flag
+            this.$router.push('/?showTutorial=true');
+          } catch (loginErr) {
+            console.error("Auto-login failed after registration:", loginErr);
+            // Fall back to manual login if auto-login fails
+            this.$router.push('/login');
+          }
         } catch (err) {
           console.log(err);
           this.errorMessage = "Email has already been registered!"

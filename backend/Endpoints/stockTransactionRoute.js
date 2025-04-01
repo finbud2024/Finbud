@@ -1,14 +1,16 @@
 import express from 'express';
 import StockTransaction from '../Database Schema/StockTransaction.js';
+import UserHolding from '../Database Schema/UserHolding.js';
 import User from '../Database Schema/User.js';
 import validateRequest from '../utils/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
 
 const stockTransactionRoute = express.Router();
 
 // CRUD operations on /stock-transactions/:transactionId
 stockTransactionRoute.route('/stock-transactions/:transactionId')
   // GET a stock transaction by ID
-  .get(async (req, res) => {
+  .get(isAuthenticated, async (req, res) => {
     const transactionId = req.params.transactionId;
     console.log('in /stock-transactions/:transactionId Route (GET) stock transaction with ID: ' + JSON.stringify(transactionId));
     try {
@@ -16,6 +18,12 @@ stockTransactionRoute.route('/stock-transactions/:transactionId')
       if (!transaction) {
         return res.status(404).send(`No stock transaction with ID: ${transactionId} exists in the database.`);
       }
+      
+      // Check if user is authorized to access this transaction
+      if (req.user.accountData.priviledge !== 'admin' && transaction.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Forbidden: You can only access your own transactions' });
+      }
+      
       return res.status(200).json(transaction);
     } catch (err) {
       return res.status(501).send(`Unexpected error occurred when looking for stock transaction with ID: ${transactionId} in database: ${err}`);
@@ -23,12 +31,17 @@ stockTransactionRoute.route('/stock-transactions/:transactionId')
   })
 
   // PUT: update a stock transaction with a given ID
-  .put(validateRequest(StockTransaction.schema), async (req, res) => {
+  .put(isAuthenticated, validateRequest(StockTransaction.schema), async (req, res) => {
     const { stockSymbol, type, quantity, price, userId } = req.body;
     const transactionId = req.params.transactionId;
 
     if (!stockSymbol || !type || quantity === undefined || price === undefined || !userId) {
       return res.status(400).send("Stock symbol, type, quantity, price, and userId are required");
+    }
+    
+    // Check if user is authorized to update this transaction
+    if (req.user.accountData.priviledge !== 'admin' && userId !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Forbidden: You can only update your own transactions' });
     }
 
     console.log('in /stock-transactions/:transactionId Route (PUT) stock transaction with ID: ' + transactionId);
@@ -52,16 +65,23 @@ stockTransactionRoute.route('/stock-transactions/:transactionId')
   })
 
   // DELETE a stock transaction by ID
-  .delete(async (req, res) => {
+  .delete(isAuthenticated, async (req, res) => {
     const transactionId = req.params.transactionId;
     console.log('In /stock-transactions/:transactionId Route (DELETE) stock transaction with ID: ' + transactionId);
 
     try {
-      const transaction = await StockTransaction.findByIdAndDelete(transactionId);
+      // First check if the transaction exists and belongs to the user
+      const transaction = await StockTransaction.findById(transactionId);
       if (!transaction) {
         return res.status(404).send(`No stock transaction with ID: ${transactionId} exists in the database.`);
       }
-
+      
+      // Check if user is authorized to delete this transaction
+      if (req.user.accountData.priviledge !== 'admin' && transaction.userId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: 'Forbidden: You can only delete your own transactions' });
+      }
+      
+      await StockTransaction.findByIdAndDelete(transactionId);
       console.log('Stock transaction deleted: ', transaction);
       return res.status(204).send('Stock transaction deleted successfully');
     } catch (error) {
@@ -72,7 +92,7 @@ stockTransactionRoute.route('/stock-transactions/:transactionId')
 // CRUD operations on /stock-transactions, all stock transactions in database
 stockTransactionRoute.route('/stock-transactions')
   // GET all stock transactions
-  .get(async (req, res) => {
+  .get(isAdmin, async (req, res) => {
     console.log("in /stock-transactions route (GET) all stock transactions");
     try {
       const transactions = await StockTransaction.find();
@@ -83,7 +103,7 @@ stockTransactionRoute.route('/stock-transactions')
   })
 
   // POST a new stock transaction
-  .post(validateRequest(StockTransaction.schema), async (req, res) => {
+  .post(isAuthenticated, validateRequest(StockTransaction.schema), async (req, res) => {
     console.log('in /stock-transactions Route (POST) new stock transaction to database')
     const { stockSymbol, type, quantity, price, userId } = req.body;
     console.log(req.body);
@@ -91,10 +111,16 @@ stockTransactionRoute.route('/stock-transactions')
     if (!stockSymbol || !type || quantity === undefined || price === undefined || !userId) {
       return res.status(400).send("Stock symbol, type, quantity, price, and userId are required");
     }
+    
+    // Check if user is authorized to create a transaction for this userId
+    if (req.user.accountData.priviledge !== 'admin' && userId !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Forbidden: You can only create transactions for yourself' });
+    }
 
     try {
       const user = await User.findById(userId);
-      if (!user) {
+      const holding = await UserHolding.findOne({userId : userId});
+      if (!user || !holding) {
         return res.status(404).send("User not found");
       }
 
@@ -106,19 +132,36 @@ stockTransactionRoute.route('/stock-transactions')
         }
         user.bankingAccountData.cash -= totalCost;
         user.bankingAccountData.stockValue += totalCost;
+        let stock = holding.stocks.find(stock => stock.stockSymbol === stockSymbol);
+        if (stock) {
+          stock.quantity += quantity;
+          stock.purchasePrice = stock.purchasePrice + totalCost;
+        }
+        else {
+          holding.stocks.push({ stockSymbol, quantity, purchasePrice: totalCost });
+        }
       }
       else if (type === "sell") {
-        if (user.bankingAccountData.stockValue < totalCost) {
+        let stock = holding.stocks.find(stock => stock.stockSymbol === stockSymbol);
+        if (!stock || stock.quantity < quantity) {
           return res.status(400).send("Not enough stock value to sell");
         }
         user.bankingAccountData.cash += totalCost;
         user.bankingAccountData.stockValue -= totalCost;
+        stock.quantity -= quantity;
+        stock.purchasePrice = stock.purchasePrice - totalCost
+
+        if (stock.quantity === 0) {
+          holding.stocks = holding.stocks.filter(stock => stock.stockSymbol !== stockSymbol);
+        }
+        
       }
       else {
         return res.status(400).send("Invalid transaction type");
       }
 
       await user.save();
+      await holding.save();
 
       const transaction = new StockTransaction({
         stockSymbol,
@@ -139,7 +182,7 @@ stockTransactionRoute.route('/stock-transactions')
 // CRUD operations on /stock-transactions/u/:userId, separated user's data
 stockTransactionRoute.route('/stock-transactions/u/:userId')
   // GET all stock transactions for a specific userId
-  .get(async (req, res) => {
+  .get(isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     console.log('in /stock-transactions/u/:userId Route (GET) stock transactions with userId:' + JSON.stringify(userId));
     try {
@@ -154,7 +197,7 @@ stockTransactionRoute.route('/stock-transactions/u/:userId')
   })
 
   // DELETE all stock transactions for a specific userId
-  .delete(async (req, res) => {
+  .delete(isOwnerOrAdmin, async (req, res) => {
     const userId = req.params.userId;
     if (!userId) {
       return res.status(400).send("Missing userId in request parameters");

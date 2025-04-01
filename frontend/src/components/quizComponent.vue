@@ -1,5 +1,11 @@
 <template>
   <div class="section-container">
+    <QuizRewards
+      v-if="showingReward"
+      :reward-amount="rewardAmount"
+      @close="showingReward = false"
+    />
+
     <search-input
       v-model="searchQuery"
       @search="createRoadmap"
@@ -308,11 +314,14 @@
 import { GPTService, gptServices } from "@/services/gptServices";
 import debounce from "lodash/debounce";
 import SearchInput from "@/components/basic/SearchInput.vue";
+import QuizRewards from "@/components/QuizRewards.vue";
+import { showReward } from "@/utils/utils";
 
 export default {
   name: "quizComponent",
   components: {
     SearchInput,
+    QuizRewards,
   },
   data() {
     return {
@@ -478,6 +487,8 @@ export default {
           students: 1876,
         },
       ],
+      rewardAmount: 1,
+      showingReward: false,
     };
   },
   watch: {
@@ -666,13 +677,13 @@ export default {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Generate a single keyword in finance about 
+          content: `Generate a single keyword in finance about
                         ${
                           this.selectedQuiz
                             ? this.selectedQuiz
                             : "Saving Vs Investing"
-                        } 
-                        at a 
+                        }
+                        at a
                         ${
                           this.suggestDifficulty
                             ? this.suggestDifficulty
@@ -760,6 +771,17 @@ export default {
         }
       } else {
         this.score += 1;
+
+        this.awardFinCoinsForCorrectAnswer()
+          .then(() => {
+            showReward(this, 1, "quiz");
+          })
+          .catch((error) => {
+            console.error(
+              "Failed to award FinCoins for correct answer:",
+              error
+            );
+          });
       }
       this.showCorrectAnswer();
     },
@@ -812,6 +834,38 @@ export default {
         this.currentKeyword = "";
         this.stateReset();
       }
+
+      // Award FinCoins for completing the quiz if score is good
+      if (this.score >= 0) {
+        this.awardFinCoinsForQuizCompletion()
+          .then(() => {
+            showReward(this, 5, "quiz");
+          })
+          .catch((error) => {
+            console.error(
+              "Failed to award FinCoins for quiz completion:",
+              error
+            );
+          });
+      }
+    },
+
+    async awardFinCoinsForCorrectAnswer() {
+      return this.$store.dispatch("finCoin/earnFinCoins", {
+        amount: 1,
+        source: "quiz_correct",
+        sourceId: this.currentQuiz?._id,
+        description: "Correct quiz answer",
+      });
+    },
+
+    async awardFinCoinsForQuizCompletion() {
+      return this.$store.dispatch("finCoin/earnFinCoins", {
+        amount: 5,
+        source: "quiz_completion",
+        sourceId: this.currentQuiz?._id,
+        description: "Completed full quiz session",
+      });
     },
   },
 };
@@ -1508,6 +1562,668 @@ export default {
   display: flex;
   align-items: center;
   color: #718096;
+  font-size: 0.875rem;
+}
+
+.course-students i {
+  margin-right: 0.5rem;
+  color: #4299e1;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .courses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .courses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .courses-title {
+    font-size: 2rem;
+  }
+}
+</style>
+
+
+<style scoped>
+/* Section 1: Quiz and Goal Form Styles */
+.section-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 70vw;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.goal-form-card,
+.quiz-card {
+  background: var(--card-bg); /* Thay màu trắng tĩnh bằng biến */
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 100%;
+  box-shadow: 0 4px 6px var(--shadow-color); /* Dùng biến cho shadow */
+}
+
+.title {
+  font-family: sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary); /* Thay #2c3e50 bằng biến */
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-family: sans-serif;
+  font-weight: 500;
+  color: var(--text-primary); /* Thay #2c3e50 bằng biến */
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.input-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.input-group {
+  flex: 1;
+  display: flex;
+}
+
+.input-half-width {
+  flex: 1;
+}
+
+.duration-input {
+  flex: 7;
+}
+
+.period-select {
+  flex: 3;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color); /* Thay #e2e8f0 bằng biến */
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: var(--card-bg); /* Thay trắng bằng biến */
+  color: var(--text-primary); /* Thêm màu chữ */
+}
+
+.form-input::placeholder {
+  font-style: italic;
+  color: #a0aec0; /* Giữ màu này hoặc thay bằng biến nếu muốn */
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234A5568' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.submit-button,
+.button {
+  width: 100%;
+  padding: 0.875rem;
+  background: #3182ce; /* Giữ màu này hoặc dùng biến nếu muốn */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-button:hover,
+.button:hover {
+  background: #2c5282;
+}
+
+.search-container {
+  margin-bottom: 1.5rem;
+  width: 60vw;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.search-container > input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color); /* Thay #e2e8f0 */
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: var(--card-bg); /* Thay trắng */
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.search-container > input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.suggest-keyword-container {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  width: 60vw;
+}
+
+.suggest-keyword-container > select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color); /* Thay #e2e8f0 */
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: var(--card-bg); /* Thay trắng */
+  color: var(--text-primary);
+}
+
+.related-keyword-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiz-area {
+  background: var(--card-bg); /* Thay trắng */
+  border-radius: 12px;
+  width: 60vw;
+  max-width: 60vw;
+}
+
+.quizQuestion {
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  color: var(--text-primary); /* Thay #2c3e50 */
+  margin-bottom: 1.5rem;
+}
+
+.quizQuestionEnabled {
+  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+}
+
+.quizChoices {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.answerButton {
+  width: 100%;
+  padding: 0.875rem;
+  background: var(--card-bg); /* Thay trắng */
+  color: var(--text-primary); /* Thay #2c3e50 */
+  border: 1px solid var(--border-color); /* Thay #e2e8f0 */
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+}
+
+.answerButton:hover {
+  background: var(--hover-bg); /* Thay #f7fafc */
+}
+
+.answer-button-correct {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.answer-button-incorrect {
+  background-color: red !important;
+  color: white !important;
+}
+
+.answerButtonActive {
+  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+}
+
+.explanation-container {
+  background: var(--content-bg); /* Thay #f8fafc */
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  color: var(--text-primary); /* Thêm màu chữ */
+}
+
+.explanation-title {
+  font-size: 1.17em;
+  font-weight: bold;
+  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+}
+
+.quiz-info {
+  background: var(--content-bg); /* Thay #f8fafc */
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary); /* Thay #2c3e50 */
+}
+
+.overlay {
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5); /* Giữ nguyên vì là overlay */
+}
+
+.modal-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: fit-content;
+  height: fit-content;
+  transform: translate(-50%, -50%);
+  background: var(--card-bg); /* Thay trắng */
+  border: 2px solid red;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  color: var(--text-primary); /* Thêm màu chữ */
+}
+
+.result-title {
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+}
+
+.result-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.course-categories-section {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.category-label {
+  display: block;
+  color: #4299e1; /* Giữ màu này hoặc dùng biến nếu muốn */
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+.category-title {
+  font-size: 2.5rem;
+  color: var(--text-primary); /* Thay #1a365d */
+  font-weight: 700;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.category-card {
+  background: var(--content-bg); /* Thay #f7fafc */
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-card:hover:not(.active) {
+  background: var(--hover-bg); /* Thay #edf2f7 */
+}
+
+.category-card.active {
+  background: #4299e1; /* Giữ màu này hoặc dùng biến */
+  color: white;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(66, 153, 225, 0.1);
+  color: #4299e1;
+}
+
+.active .icon-wrapper {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.card-text h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary); /* Thêm màu chữ */
+}
+
+.card-text span {
+  font-size: 0.875rem;
+  color: #718096; /* Giữ màu này hoặc dùng biến */
+}
+
+.active .card-text span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive Styles */
+@media (max-width: 640px) {
+  .goal-form-card,
+  .quiz-card {
+    padding: 1.5rem;
+  }
+
+  .input-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+@container quizComponent (max-width: 400px) {
+  .title {
+    font-size: clamp(2rem, 10%, 3rem);
+  }
+
+  .search-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-container > input {
+    width: 100%;
+  }
+
+  .suggest-keyword-container {
+    flex-direction: column;
+  }
+
+  .suggest-keyword-container > select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .category-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<style scoped>
+/* Section 2: Courses Section */
+.courses-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  font-family: "Arial", sans-serif;
+}
+
+.courses-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.courses-subtitle {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: #4299e1;
+  text-align: left;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.courses-title {
+  font-size: 2.5rem;
+  color: var(--text-primary); /* Thay #2d3748 */
+  font-weight: 700;
+  margin: 0;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.course-card {
+  background: var(--card-bg); /* Thay trắng */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px var(--shadow-color); /* Dùng biến shadow */
+  transition: all 0.3s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px var(--shadow-color);
+}
+
+.course-card-top {
+  position: relative;
+}
+
+.course-level {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.course-level.beginner {
+  background-color: #48bb78;
+  color: white;
+}
+
+.course-level.intermediate {
+  background-color: #4299e1;
+  color: white;
+}
+
+.course-level.advanced {
+  background-color: #ed8936;
+  color: white;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--card-bg); /* Thay trắng */
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: 0 2px 5px var(--shadow-color);
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+}
+
+.favorite-btn i {
+  color: #e53e3e;
+  font-size: 1rem;
+}
+
+.course-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.course-card-content {
+  padding: 1.5rem;
+}
+
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: #718096; /* Giữ màu này hoặc dùng biến */
+  font-size: 0.875rem;
+}
+
+.course-meta i {
+  margin-right: 0.5rem;
+  color: #4299e1;
+}
+
+.course-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary); /* Thay #2d3748 */
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+  height: 3.5rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.course-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stars {
+  display: flex;
+  margin-right: 0.5rem;
+}
+
+.stars i {
+  color: #f6ad55;
+  font-size: 0.875rem;
+  margin-right: 2px;
+}
+
+.reviews {
+  color: #718096; /* Giữ màu này hoặc dùng biến */
+  font-size: 0.875rem;
+}
+
+.course-price {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.free-price {
+  font-weight: 700;
+  color: #48bb78;
+  font-size: 1.25rem;
+}
+
+.current-price {
+  font-weight: 700;
+  color: var(--text-primary); /* Thay #2d3748 */
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+}
+
+.original-price {
+  color: #a0aec0; /* Giữ màu này hoặc dùng biến */
+  text-decoration: line-through;
+  font-size: 0.875rem;
+}
+
+.course-students {
+  display: flex;
+  align-items: center;
+  color: #718096; /* Giữ màu này hoặc dùng biến */
   font-size: 0.875rem;
 }
 
