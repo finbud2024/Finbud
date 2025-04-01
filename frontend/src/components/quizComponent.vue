@@ -109,7 +109,17 @@
       </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
         <label for="related-keyword">Related keyword</label>
-        <div id="related-keyword" class="related-keyword-container">
+        <div class="carousel-wrapper">
+          <button 
+            class="carousel-nav left" 
+            @click="scrollLeft"
+            :disabled="isAtStart"
+            aria-label="Scroll left"
+          >
+            &lt;
+          </button>
+          
+        <div class="related-keyword-container" ref="carousel">
           <button
             v-for="keyword in relatedKeyword"
             :key="keyword"
@@ -120,7 +130,17 @@
             {{ keyword }}
           </button>
         </div>
+        
+        <button 
+          class="carousel-nav right" 
+          @click="scrollRight"
+          :disabled="isAtEnd"
+          aria-label="Scroll right"
+        >
+          &gt;
+        </button>
       </div>
+    </div>
       <div v-if="currentKeyword" class="quiz-info">
         <div>Current Keyword: {{ currentKeyword }}</div>
         <div>Points: {{ score }}</div>
@@ -319,6 +339,8 @@ export default {
       isLoading: false,
       modalDisplay: false,
       is_generating_roadmap: false,
+      scrollPosition: 0,
+      maxScroll: 0,
       categories: [
         {
           name: "Corporate Finance",
@@ -713,7 +735,7 @@ export default {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Generate 10 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide only the keywords as a comma-separated list.`,
+          content: `Generate 10 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Just provide the keywords as a comma-separated list and nothing else.`,
         },
       ]);
       this.relatedKeyword = response.split(",");
@@ -835,6 +857,47 @@ export default {
         description: "Completed full quiz session",
       });
     },
+    calculateMaxScroll() {
+      if (this.$refs.carousel) {
+        const container = this.$refs.carousel;
+        this.maxScroll = container.scrollWidth - container.clientWidth;
+      }
+    },
+    scrollLeft() {
+      this.scrollTo(this.scrollPosition - 200);
+    },
+    scrollRight() {
+      this.scrollTo(this.scrollPosition + 200);
+    },
+    scrollTo(position) {
+      const container = this.$refs.carousel;
+      if (!container) return;
+      
+      // Smooth scroll animation
+      container.scrollTo({
+        left: position,
+        behavior: 'smooth'
+      });
+      
+      this.scrollPosition = position;
+    }
+  },
+
+  computed: {
+    isAtStart() {
+      return this.scrollPosition <= 0;
+    },
+    isAtEnd() {
+      return this.scrollPosition >= this.maxScroll;
+    }
+  },
+
+  mounted() {
+    this.calculateMaxScroll();
+    window.addEventListener('resize', this.calculateMaxScroll);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.calculateMaxScroll);
   },
 };
 </script>
@@ -894,9 +957,63 @@ export default {
   transition: background-color 0.2s ease;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background: #2c5282;
   transform: none;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.carousel-nav {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: white;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.carousel-nav:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.carousel-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Animation for button appearance */
+.button {
+  animation: slideIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .carousel-nav {
+    display: none; /* Hide arrows on mobile */
+  }
+  
+  .related-keyword-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
 }
 
 .quiz-area {
@@ -1056,6 +1173,8 @@ export default {
 
 .form-group {
   margin-bottom: 1.5rem;
+  margin: 1rem 0;
+  position: relative;
 }
 
 .form-group label {
@@ -1693,12 +1812,26 @@ export default {
   color: var(--text-primary);
 }
 
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
 .related-keyword-container {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  flex: 1;
+  padding: 0.5rem 0;
+}
+
+.related-keyword-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .quiz-area {
