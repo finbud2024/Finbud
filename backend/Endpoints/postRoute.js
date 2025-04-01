@@ -8,6 +8,24 @@ import { isAuthenticated } from '../middleware/auth.js';
 
 const postRouter = express.Router();
 
+const getAuthorData = async (authorId) => {
+  if (!mongoose.Types.ObjectId.isValid(authorId)) return null;
+
+  let author = await User.findById(authorId).select("identityData.displayName identityData.profilePicture");
+  if (author) return {
+    displayName: author.identityData?.displayName || "Anonymous",
+    profilePicture: author.identityData?.profilePicture || "/default-avatar.png"
+  };
+
+  author = await ScrapedUser.findById(authorId).select("username avatar");
+  if (author) return {
+    displayName: author.username || "Anonymous",
+    profilePicture: author.avatar || "/default-avatar.png"
+  };
+
+  return { displayName: "Anonymous", profilePicture: "/default-avatar.png" };
+};
+
 // Get all posts in a forum
 postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
   try {
@@ -15,26 +33,10 @@ postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
     const forum = await Forum.findOne({ slug: forumSlug });
     if (!forum) return res.status(404).json({ error: "Forum not found" });
 
-    const posts = await Post.find({ forumId: forum._id })
-      .populate("forumId", "name logo slug description")
-      .populate({
-        path: 'authorId',
-        select: 'identityData.displayName identityData.profilePicture accountData.username username avatar'
-      })
+    const posts = await Post.find({ forumId: forum._id }).populate("forumId", "name logo slug description");
 
-    const formattedPosts = posts.map(post => {
-      const author = post.authorId;
-      let displayName = "Anonymous";
-      let profilePicture = "/default-avatar.png";
-
-      if (post.authorModel === 'User') {
-        displayName = author?.identityData?.displayName || "Anonymous";
-        profilePicture = author?.identityData?.profilePicture || "/default-avatar.png";
-      } else {
-        displayName = author?.username || "Anonymous";
-        profilePicture = author?.avatar || "/default-avatar.png";
-      }
-
+    const formattedPosts = await Promise.all(posts.map(async (post) => {
+      const author = await getAuthorData(post.authorId);
       return {
         _id: post._id,
         title: post.title,
@@ -42,16 +44,13 @@ postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
         createdAt: post.createdAt,
         reactions: post.reactions,
         forumId: {
-          name: post.forumId.name || "Unknown Forum",
-          logo: post.forumId.logo || null,
-          slug: post.forumId.slug || ""
+          name: post.forumId?.name || "Unknown Forum",
+          logo: post.forumId?.logo || null,
+          slug: post.forumId?.slug || ""
         },
-        author: {
-          displayName,
-          profilePicture
-        }
+        author
       };
-    });
+    }));
 
     res.json(formattedPosts);
   } catch (err) {
@@ -63,41 +62,25 @@ postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
 postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
   try {
     const { postId } = req.params;
-
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
     }
 
-    const post = await Post.findById(postId)
-      .populate("forumId", "name logo slug description")
-      .populate({
-        path: "authorId",
-        select: "identityData.displayName identityData.profilePicture username avatar",
-        options: { strictPopulate: false }
-      })
-      .populate({
-        path: "comments.authorId",
-        select: "identityData.displayName identityData.profilePicture username avatar",
-        options: { strictPopulate: false }
-      });
-
+    const post = await Post.findById(postId).populate("forumId", "name logo slug description");
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    const formatAuthor = (author, authorModel) => {
-      if (!author) return { displayName: "Anonymous", profilePicture: "/default-avatar.png" };
-      
-      if (authorModel === 'User') {
-        return {
-          displayName: author.identityData?.displayName || author.accountData?.username || "Anonymous",
-          profilePicture: author.identityData?.profilePicture || "/default-avatar.png"
-        };
-      }
-      
+    const author = await getAuthorData(post.authorId);
+
+    const formattedComments = await Promise.all(post.comments.map(async (comment) => {
+      const commentAuthor = await getAuthorData(comment.authorId);
       return {
-        displayName: author.username || "Anonymous",
-        profilePicture: author.avatar || "/default-avatar.png"
+        _id: comment._id,
+        body: comment.body,
+        createdAt: comment.createdAt,
+        reactions: comment.reactions || { likes: 0, likedUsers: [] },
+        author: commentAuthor
       };
-    };
+    }));
 
     res.json({
       _id: post._id,
@@ -106,19 +89,13 @@ postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
       createdAt: post.createdAt,
       reactions: post.reactions || { likes: 0, comments: 0, shares: 0 },
       forumId: {
-        name: post.forumId.name || "Unknown Forum",
-        logo: post.forumId.logo || null,
-        slug: post.forumId.slug || "",
-        description: post.forumId.description || "No description available"
+        name: post.forumId?.name || "Unknown Forum",
+        logo: post.forumId?.logo || null,
+        slug: post.forumId?.slug || "",
+        description: post.forumId?.description || "No description available"
       },
-      author: formatAuthor(post.authorId, post.authorModel),
-      comments: post.comments.map(comment => ({
-        _id: comment._id,
-        body: comment.body,
-        createdAt: comment.createdAt,
-        author: formatAuthor(comment.authorId, comment.authorModel),
-        reactions: comment.reactions || { likes: 0, likedUsers: [] },
-      })),
+      author,
+      comments: formattedComments
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -129,7 +106,7 @@ postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
 postRouter.post("/post/:postId/like", isAuthenticated, async (req, res) => {
   try {
     const { postId } = req.params;
-    const { action, userId } = req.body; 
+    const { action, userId } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return res.status(400).json({ error: "Invalid Post ID format" });
@@ -139,12 +116,9 @@ postRouter.post("/post/:postId/like", isAuthenticated, async (req, res) => {
     if (!post) return res.status(404).json({ error: "Post not found" });
 
     post.reactions = post.reactions || { likes: 0, likedUsers: [] };
-    if (!Array.isArray(post.reactions.likedUsers)) {
-      post.reactions.likedUsers = [];
-    }
+    if (!Array.isArray(post.reactions.likedUsers)) post.reactions.likedUsers = [];
 
     const userIndex = post.reactions.likedUsers.indexOf(userId);
-
     if (action === "like" && userIndex === -1) {
       post.reactions.likes += 1;
       post.reactions.likedUsers.push(userId);
@@ -160,11 +134,11 @@ postRouter.post("/post/:postId/like", isAuthenticated, async (req, res) => {
   }
 });
 
-
+// Like/unlike a comment
 postRouter.post("/post/:postId/like-comment", isAuthenticated, async (req, res) => {
   try {
     const { postId } = req.params;
-    const { commentId, action, userId } = req.body;  
+    const { commentId, action, userId } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(postId) || !mongoose.Types.ObjectId.isValid(commentId)) {
       return res.status(400).json({ error: "Invalid Post ID or Comment ID format" });
@@ -177,12 +151,9 @@ postRouter.post("/post/:postId/like-comment", isAuthenticated, async (req, res) 
     if (!comment) return res.status(404).json({ error: "Comment not found" });
 
     comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
-    if (!Array.isArray(comment.reactions.likedUsers)) {
-      comment.reactions.likedUsers = [];
-    }
+    if (!Array.isArray(comment.reactions.likedUsers)) comment.reactions.likedUsers = [];
 
     const userIndex = comment.reactions.likedUsers.indexOf(userId);
-
     if (action === "like" && userIndex === -1) {
       comment.reactions.likes += 1;
       comment.reactions.likedUsers.push(userId);
@@ -198,64 +169,32 @@ postRouter.post("/post/:postId/like-comment", isAuthenticated, async (req, res) 
   }
 });
 
-
-postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) => {  
+// Add comment
+postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) => {
   try {
     const { postId } = req.params;
-    const { body, userId } = req.body; 
+    const { body, userId } = req.body;
 
-    if (!userId) {
-      return res.status(400).json({ error: "Missing user ID" });
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
-      return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
-    }
-
-    if (!body.trim()) {
-      return res.status(400).json({ error: "Comment cannot be empty" });
-    }
+    if (!userId) return res.status(400).json({ error: "Missing user ID" });
+    if (!mongoose.Types.ObjectId.isValid(postId)) return res.status(400).json({ error: `Invalid Post ID format: ${postId}` });
+    if (!body.trim()) return res.status(400).json({ error: "Comment cannot be empty" });
 
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ error: "Post not found" });
 
-    let author;
-    if (post.authorModel === 'User') {
-      author = await User.findById(userId).select("identityData.displayName identityData.profilePicture accountData.username");
-    } else {
-      author = await ScrapedUser.findById(userId).select("username avatar");
-    }
-
-    if (!author) return res.status(404).json({ error: "Author not found" });
-
     const newComment = {
       _id: new mongoose.Types.ObjectId(),
-      authorId: author._id,
-      authorModel: post.authorModel,
+      authorId: userId,
       body,
       createdAt: new Date(),
-      reactions: { likes: 0 },
+      reactions: { likes: 0, likedUsers: [] },
     };
 
     post.comments.push(newComment);
     post.reactions.comments += 1;
     await post.save();
 
-    const formatAuthor = (author, authorModel) => {
-      if (!author) return { displayName: "Anonymous", profilePicture: "/default-avatar.png" };
-      
-      if (authorModel === 'User') {
-        return {
-          displayName: author.identityData?.displayName || author.accountData?.username || "Anonymous",
-          profilePicture: author.identityData?.profilePicture || "/default-avatar.png"
-        };
-      }
-      
-      return {
-        displayName: author.username || "Anonymous",
-        profilePicture: author.avatar || "/default-avatar.png"
-      };
-    };
+    const author = await getAuthorData(userId);
 
     res.json({
       message: "Comment added successfully",
@@ -264,36 +203,26 @@ postRouter.post("/post/:postId/add-comment", isAuthenticated, async (req, res) =
         body: newComment.body,
         createdAt: newComment.createdAt,
         likes: newComment.reactions.likes,
-        author: formatAuthor(author, post.authorModel),
-      },
+        author
+      }
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-
-// Create a new post/thread 
+// Create a new thread
 postRouter.post("/", isAuthenticated, async (req, res) => {
   try {
-    const { forumId, title, body, userId, userType } = req.body; 
-
-    if (!userId) {
-      return res.status(400).json({ error: "Missing user ID" });
-    }
-
+    const { forumId, title, body, userId } = req.body;
+    if (!userId) return res.status(400).json({ error: "Missing user ID" });
     if (!forumId || !title.trim() || !body.trim()) {
       return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    if (!userType || !['User', 'ScrapedUser'].includes(userType)) {
-      return res.status(400).json({ error: "Invalid user type" });
     }
 
     const newPost = new Post({
       forumId,
       authorId: userId,
-      authorModel: userType,
       title,
       body,
       comments: [],
@@ -302,12 +231,10 @@ postRouter.post("/", isAuthenticated, async (req, res) => {
 
     await newPost.save();
     res.json({ message: "Thread created successfully", thread: newPost });
-
   } catch (err) {
     console.error("Error saving post:", err);
     res.status(500).json({ error: err.message });
   }
 });
-
 
 export default postRouter;
