@@ -12,7 +12,7 @@
           :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
           class="forum-icon" 
         />
-        <span class="forum-name">{{ forum.name }}</span>
+        <span class="forum-name">{{ $t('forums.' + forum.name) }}</span>
       </li>
     </ul>
   </aside>

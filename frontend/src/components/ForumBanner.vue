@@ -6,13 +6,13 @@
         class="forum-icon" 
       />
       <div class="forum-text">
-        <h1>{{ forum.name }}</h1>
-        <p>{{ forum.description }}</p>
+        <h1>{{ $t('forums.' + forum.name) }}</h1>
+        <p>{{ $t('forums.desc.' + forum.name) }}</p>
       </div>
     </div>
 
     <button @click="navigateToStartThread" class="start-thread-btn">
-      Start new thread
+      {{ $t('startThread') }}
     </button>
   </div>
 </template>
