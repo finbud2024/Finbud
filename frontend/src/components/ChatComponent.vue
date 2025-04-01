@@ -119,8 +119,18 @@ export default {
 				// Add thinking message
 				this.addTypingResponse("", false, [], [], [], true);
 
+				//HANDLE #TAX COMMAND
+				if (userMessage.toLowerCase() === "#tax") {
+				// Add a clickable link to the response
+				this.addTypingResponse(
+					"Click on the <a href='/tax-calculator' target='_blank'>Tax Calculator</a> page to get started!",
+					false
+				);
+				}
+
+
 				// HANDLE DEFINE(2)
-				if (userMessage.toLowerCase().includes("#define")) {
+				else if (userMessage.toLowerCase().includes("#define")) {
 					try {
 						const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
 						const prompt = `Explain ${term} to me as if I'm 15.`;
@@ -627,7 +637,7 @@ export default {
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	flex: 1;
+	fxlex: 1;
 	position: relative;
 	container-type: size;
 	container-name: messageComponent userInputComponent;
