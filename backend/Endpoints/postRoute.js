@@ -33,7 +33,14 @@ postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
     const forum = await Forum.findOne({ slug: forumSlug });
     if (!forum) return res.status(404).json({ error: "Forum not found" });
 
-    const posts = await Post.find({ forumId: forum._id }).populate("forumId", "name logo slug description");
+    const posts = await Post.find({ forumId: forum._id })
+      .sort({ createdAt: -1 })
+      .populate("forumId", "name logo slug description")
+      .populate({
+        path: "authorId",
+        select: "identityData.displayName identityData.profilePicture username avatar",
+        options: { strictPopulate: false }
+      });
 
     const formattedPosts = await Promise.all(posts.map(async (post) => {
       const author = await getAuthorData(post.authorId);
