@@ -12,10 +12,6 @@ export default defineConfig({
   },
   devServer: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8888',
-        changeOrigin: true
-      },
       '/multiplier-simulator': {
         target: 'http://localhost:8889',
         changeOrigin: true
