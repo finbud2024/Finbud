@@ -17,6 +17,7 @@ import QuantAnalysis from "@/views/QuantAnalysis.vue";
 import EventHub from "@/views/EventHub.vue";
 import LearningRoadMap from "@/views/LearningRoadMap.vue";
 import QuantSimulator from "@/views/QuantSimulator.vue";
+import TaxCalculator from "@/components/TaxCalculator.vue";
 // import EventMap from '@/components/EventMap.vue';
 
 const routes = [
@@ -117,7 +118,12 @@ const routes = [
   //   path: '/event-map',
   //   name: 'EventMap',
   //   component: EventMap,
-  // }
+  // },
+  {
+    path: '/tax-calculator',
+    name: 'Tax Calculator',
+    component: TaxCalculator,
+  }
 ];
 
 const router = createRouter({
