@@ -227,68 +227,22 @@
       <div class="portfolio-container">
         <div class="portfolio-header">
           <h2>Your Investment Portfolio</h2>
-          <div class="portfolio-actions">
-            <button class="refresh-btn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <polyline points="23 20 23 14 17 14"></polyline>
-                <path
-                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-                ></path>
-                <path
-                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-                ></path>
-              </svg>
-              Refresh
-            </button>
-            <button class="export-btn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Export
-            </button>
-          </div>
         </div>
 
         <div class="portfolio-overview">
           <div class="overview-card total">
             <div class="overview-title">Total Portfolio Value</div>
-            <div class="overview-value">$24,892.31</div>
-            <div class="overview-change positive">+$3,892.31 (18.5%)</div>
+            <div class="overview-value">${{ formatCurrency(accountBalance) }}</div>
           </div>
 
           <div class="overview-card">
             <div class="overview-title">Stocks</div>
-            <div class="overview-value">$16,453.79</div>
-            <div class="overview-change positive">+$2,731.42 (19.9%)</div>
+            <div class="overview-value">${{ formatCurrency(stockValue) }}</div>
           </div>
 
           <div class="overview-card">
             <div class="overview-title">Cash</div>
-            <div class="overview-value">$8,438.52</div>
-            <div class="overview-change neutral">+$0.00 (0.0%)</div>
+            <div class="overview-value">${{ formatCurrency(cash) }}</div>
           </div>
         </div>
 
@@ -1213,6 +1167,14 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       if (!value) return "0.0%";
       const prefix = value >= 0 ? "+" : "-";
       return `${prefix}${Math.abs(value).toFixed(1)}%`;
+    },
+
+    formatCurrency(value) {
+      if (!value && value !== 0) return '0.00';
+      return parseFloat(value).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     },
 
     async generateTradingQuestions() {
