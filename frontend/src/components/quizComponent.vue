@@ -713,7 +713,7 @@ export default {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Generate 10 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide the keywords as a comma-separated list.`,
+          content: `Generate 10 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide only the keywords as a comma-separated list.`,
         },
       ]);
       this.relatedKeyword = response.split(",");
