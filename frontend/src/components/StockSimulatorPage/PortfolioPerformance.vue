@@ -329,37 +329,49 @@ export default {
     },
     
     async fetchPortfolioData() {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/portfolios/${this.userID}`
-        );
-        const data = response.data.portfolio;
-        
-        const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
+  try {
+    const response = await axios.get(
+      `${process.env.VUE_APP_DEPLOY_URL}/portfolios/${this.userID}`
+    );
+    const data = response.data.portfolio;
     
-        if (sortedData.length === 0) {
-          this.noData = true;
-          return;
+    // Sort by date first
+    const sortedData = data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    if (sortedData.length === 0) {
+      this.noData = true;
+      return;
+    }
+    
+    this.candlestickData = [];
+    
+    // Track seen dates to avoid duplicates
+    const seenDates = new Set();
+    
+    sortedData.forEach((item, index) => {
+      const formattedDate = new Date(item.date).toISOString().split('T')[0];
+      
+      // Only add if we haven't seen this date before
+      if (!seenDates.has(formattedDate)) {
+        seenDates.add(formattedDate);
+        
+        if (index === 0) {
+          this.firstTransactionDate = formattedDate;
         }
         
-        this.candlestickData = [];
-        sortedData.forEach((item, index) => {
-          const formattedDate = new Date(item.date).toISOString().split('T')[0];
-          if (index === 0) {
-            this.firstTransactionDate = formattedDate;
-          }
-          this.candlestickData.push({
-            time: formattedDate,
-            close: parseFloat(item.totalValue)
-          });
+        this.candlestickData.push({
+          time: formattedDate,
+          close: parseFloat(item.totalValue)
         });
-        
-        this.updateChart();
-      } catch (error) {
-        console.error('Error fetching portfolio data:', error);
-        this.noData = true;
       }
-    },
+    });
+    
+    this.updateChart();
+  } catch (error) {
+    console.error('Error fetching portfolio data:', error);
+    this.noData = true;
+  }
+},
 
     initChart() {
   const container = this.$refs.chartContainer;
