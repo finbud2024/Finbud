@@ -21,6 +21,7 @@ import ForumView from "@/views/ForumView.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/ThreadView.vue";
 import StartThread from "@/views/StartThread.vue";
+import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
 
 const routes = [
   {
@@ -138,6 +139,13 @@ const routes = [
     path: "/start-thread",
     name: "StartThread",
     component: StartThread,
+    props: true,
+  },
+
+  {
+    path: "/investment-calculator",
+    name: "InvestmentCalculator",
+    component: InvestmentCalculator,
     props: true,
   },
 ];
