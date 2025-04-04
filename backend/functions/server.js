@@ -25,8 +25,10 @@ import chatStockRoute from "../Endpoints/subChat/chatStockRoute.js";
 import multiplierSimulatorRoute from "../Endpoints/quantSimulator/multiplierSimulatorEndpoints.js";
 import forumRoute from "../Endpoints/forumRoute.js";
 import postRoute from "../Endpoints/postRoute.js";
+import superInvestorsRoute from '../Endpoints/superInvestorsRoute.js';
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
+import plaidRoute from "../Endpoints/PlaidService.js";
 
 dotenv.config();
 
@@ -138,11 +140,14 @@ router.use("/", chatStockRoute);
 // Register the multiplier simulator route
 router.use("/multiplier-simulator", multiplierSimulatorRoute);
 // router.use('/', quantSimulatorRoute); // Commenting out undefined route
+// router.use('/', chatStockRoute); // Duplicate route - already registered above
+router.use('/', portfolioRoute);
+router.use("/api/investors", superInvestorsRoute);
 router.use("/api/forums", forumRoute);
 router.use("/api/posts", postRoute);
-// router.use("/", chatStockRoute); // Duplicate route - already registered above
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
+router.use("/api/plaid", plaidRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development

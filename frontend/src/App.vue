@@ -17,9 +17,11 @@
   <img
     v-if="showChatBubble"
     class="finbudBot"
+    ref="finbudBot" 
     src="./assets/botrmbg.png"
     alt="Finbud"
     @click="toggleChatBubble"
+    :style="botPosition"
   />
 
   <div v-if="showBotMessage" class="bot-message-container">
@@ -59,6 +61,7 @@ export default {
   },
   data() {
     return {
+      botSize: { width: 60, height: 60},
       threadId: "",
       chatBubbleActive: false,
       botMessage: "",
@@ -67,6 +70,15 @@ export default {
       typingSpeed: 20, // milliseconds per character
       isTyping: false,
       messageVisible: false, // New property for message visibility
+      isDragging: false, // Track if the bot is being dragged
+      dragStartX: 0, // Initial X position when dragging starts
+      dragStartY: 0, // Initial Y position when dragging starts
+      initialOffsetX: 0, // Initial offset X
+      initialOffsetY: 0, // Initial offset Y
+      botPosition: { right: '20px', bottom: '20px' },
+      hasLoadedPosition: false,
+      touchIdentifier: null,
+      touchStart: null,
     };
   },
   async mounted() {
@@ -166,6 +178,23 @@ export default {
       },
       { immediate: true } // Check immediately on mount
     );
+    
+    // Load saved position if exists
+    const savedPosition = localStorage.getItem('finbudBotPosition');
+    if (savedPosition) {
+      try {
+        const parsed = JSON.parse(savedPosition);
+        // Validate position
+        if (this.isValidPosition(parsed)) {
+          this.botPosition = parsed;
+        }
+      } catch (e) {
+        console.warn('Invalid saved position', e);
+      }
+    }
+
+    // add drag event
+    this.addDragListeners();
 
     // Add new method to check if user is new
     await this.checkIfUserIsNew();
@@ -194,6 +223,164 @@ export default {
     },
   },
   methods: {
+    addDragListeners() {
+      this.$nextTick(() => {
+        const finbudBot = this.$refs.finbudBot;
+        
+        // Check if element exists before adding listeners
+        if (!finbudBot) {
+          console.warn("Finbud bot element not found");
+          return;
+        }
+        // Mouse events
+        finbudBot.addEventListener('mousedown', this.startDrag);
+        document.addEventListener('mousemove', this.drag);
+        document.addEventListener('mouseup', this.endDrag);
+
+        // Touch events
+        finbudBot.addEventListener('touchstart', this.handleTouchStart, { passive: false });
+        document.addEventListener('touchmove', this.drag, { passive: false });
+        document.addEventListener('touchend', this.handleTouchEnd);
+      });
+    },
+    handleTouchStart(e) {
+      // Store initial touch position and time
+      const touch = e.touches[0] || e.changedTouches[0];
+      this.touchStart = {
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now()
+      };
+      this.startDrag(e);
+    },
+
+    handleTouchEnd(e) {
+      if (!this.isDragging) return;
+      
+      const touch = e.changedTouches[0];
+      if (!touch) return;
+
+      // Calculate distance and time from touch start
+      const dx = touch.clientX - this.touchStart.x;
+      const dy = touch.clientY - this.touchStart.y;
+      const dt = Date.now() - this.touchStart.time;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // If it was a short, small movement (tap), open chat
+      if (distance < 10 && dt < 200) {
+        this.toggleChatBubble();
+      }
+
+      this.endDrag(e);
+    },
+
+    startDrag(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      this.isDragging = true;
+      
+      let clientX, clientY;
+      
+      if (e.type === 'touchstart') {
+        const touch = e.touches[0] || e.changedTouches[0];
+        this.touchIdentifier = touch.identifier;
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      this.dragStartX = clientX;
+      this.dragStartY = clientY;
+      
+      const currentLeft = parseInt(this.botPosition.left) || 
+                         window.innerWidth - this.botSize.width - 20;
+      const currentTop = parseInt(this.botPosition.top) || 
+                         window.innerHeight - this.botSize.height - 20;
+      
+      this.initialOffsetX = currentLeft;
+      this.initialOffsetY = currentTop;
+      
+      if (this.$refs.finbudBot) {
+        this.$refs.finbudBot.style.cursor = 'grabbing';
+        this.$refs.finbudBot.style.transition = 'none';
+      }
+    },
+
+    drag(e) {
+      if (!this.isDragging) return;
+      
+      e.preventDefault();
+      e.stopPropagation();
+      
+      let clientX, clientY;
+      
+      if (e.type === 'touchmove') {
+        const touch = Array.from(e.touches).find(
+          t => t.identifier === this.touchIdentifier
+        ) || e.changedTouches[0];
+        if (!touch) return;
+        clientX = touch.clientX;
+        clientY = touch.clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      const offsetX = clientX - this.dragStartX;
+      const offsetY = clientY - this.dragStartY;
+      
+      let newLeft = this.initialOffsetX + offsetX;
+      let newTop = this.initialOffsetY + offsetY;
+      
+      const maxX = window.innerWidth - this.botSize.width;
+      const maxY = window.innerHeight - this.botSize.height;
+      
+      newLeft = Math.max(0, Math.min(newLeft, maxX));
+      newTop = Math.max(0, Math.min(newTop, maxY));
+      
+      this.botPosition = {
+        left: `${newLeft}px`,
+        top: `${newTop}px`,
+        right: 'auto',
+        bottom: 'auto'
+      };
+    },
+
+    endDrag(e) {
+      if (!this.isDragging) return;
+      
+      if (e.type === 'touchend' && this.touchIdentifier !== null) {
+        const touch = Array.from(e.changedTouches).find(
+          t => t.identifier === this.touchIdentifier
+        );
+        if (!touch) return;
+      }
+      
+      this.isDragging = false;
+      this.touchIdentifier = null;
+      
+      if (this.$refs.finbudBot) {
+        this.$refs.finbudBot.style.cursor = 'grab';
+        this.$refs.finbudBot.style.transition = 'left 0.2s, top 0.2s';
+      }
+      
+      localStorage.setItem('finbudBotPosition', JSON.stringify(this.botPosition));
+    },
+    handleDragMove(e) {
+      if (this.isDragging && this.$refs.finbudBot) {
+        const offsetX = e.clientX - this.dragStartX;
+        const offsetY = e.clientY - this.dragStartY;
+        this.$refs.finbudBot.style.left = `${this.initialOffsetX + offsetX}px`;
+        this.$refs.finbudBot.style.top = `${this.initialOffsetY + offsetY}px`;
+      }
+    },
+
+    handleDragEnd() {
+      this.isDragging = false;
+    },
     loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
     },
@@ -303,6 +490,14 @@ export default {
   },
   beforeDestroy() {
     document.removeEventListener("click", this.handleClickOutside);
+    document.removeEventListener('mousemove', this.handleDragMove);
+    document.removeEventListener('mouseup', this.handleDragEnd);
+    document.removeEventListener('mousedown', this.startDrag);
+    document.removeEventListener('mousemove', this.drag);
+    document.removeEventListener('mouseup', this.endDrag);
+    document.removeEventListener('touchstart', this.startDrag);
+    document.removeEventListener('touchmove', this.drag);
+    document.removeEventListener('touchend', this.endDrag);
   },
 };
 </script>
@@ -413,10 +608,17 @@ a:hover {
   position: fixed;
   width: 60px;
   aspect-ratio: 1;
-  right: 3.125vw;
-  bottom: 20px;
   z-index: 99998;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
+  cursor: grab;
+  user-select: none;
+  touch-action: none; 
+}
+
+.finbudBot:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+  transition: transform 0.1s ease;
 }
 
 .finbudBot:hover {
