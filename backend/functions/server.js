@@ -28,6 +28,7 @@ import postRoute from "../Endpoints/postRoute.js";
 import superInvestorsRoute from '../Endpoints/superInvestorsRoute.js';
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
+import plaidRoute from "../Endpoints/PlaidService.js";
 
 dotenv.config();
 
@@ -146,6 +147,7 @@ router.use("/api/forums", forumRoute);
 router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
+router.use("/api/plaid", plaidRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
