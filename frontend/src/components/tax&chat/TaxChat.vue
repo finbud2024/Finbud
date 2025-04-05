@@ -27,6 +27,7 @@ import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
 import UserInput from '@/components/UserInput.vue';
 import defaultImage from "@/assets/anonymous.png";
+import ChatHeader from './ChatHeader.vue';
 
 // Initialize AI
 const apiKey = process.env.VUE_APP_GEMINI_API_KEY;

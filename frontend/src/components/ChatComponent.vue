@@ -112,15 +112,18 @@ export default {
 				// Add thinking message
 				this.addTypingResponse("", false, [], [], [], true);
 
-				//HANDLE #TAX COMMAND
-				if (userMessage.toLowerCase() === "#tax") {
-				// Add a clickable link to the response
-				this.addTypingResponse(
-					"Click on the <a href='/tax-calculator' target='_blank'>Tax Calculator</a> page to get started!",
-					false
-				);
-				}
+				//HANDLE #TAX MESSAGE
+				if (userMessage.includes('#tax')) {
+				// Add a message in the chatbox before navigating
+				this.addTypingResponse('Hey there! Tax talk, huh? No worries, I got you covered! Taxes can be a bit of a maze, but I will help you navigate through it. Navigating to Tax Calculator ...', false)
 
+       			// Navigate to the Tax Calculator Page
+				setTimeout(() => {
+       				this.$router.push('/tax-calculator');
+				}, 3000);
+
+        		return; // Prevent further processing of the message
+    }
 
 				// HANDLE DEFINE(2)
 				else if (userMessage.toLowerCase().includes("#define")) {

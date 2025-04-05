@@ -91,9 +91,9 @@
         "yahoo-finance2": "^2.11.3"
     },
     "devDependencies": {
-        "@babel/core": "^7.24.5",
+        "@babel/core": "^7.26.10",
         "@babel/eslint-parser": "^7.12.16",
-        "@babel/preset-env": "^7.24.5",
+        "@babel/preset-env": "^7.26.9",
         "@fortawesome/fontawesome-svg-core": "^6.6.0",
         "@fortawesome/free-brands-svg-icons": "^6.6.0",
         "@fortawesome/free-regular-svg-icons": "^6.6.0",
@@ -107,6 +107,7 @@
         "@vueform/multiselect": "^2.6.8",
         "@vuepic/vue-datepicker": "^8.8.0",
         "assert": "^2.1.0",
+        "babel-loader": "^10.0.0",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.20.2",
         "bootstrap-vue": "^2.23.1",

@@ -24,10 +24,10 @@
         <img class="profilePic" :src="profilePic" alt="profilePic" />
         <div class="headerText">
           <div class="greeting">
-            {{ (h => h < 12 ? "Good Morning " : h < 18 ? "Good Afternoon " : "Good Evening ")(new Date().getHours()) }}{{ displayName }}
+            {{ $t('greeting.morning') }} {{ displayName }}
           </div>
           <div class="slogan">
-            Manage your wallet wisely to reach your goals with ease.
+            {{ $t('slogan') }}
           </div>
         </div>
       </div>
@@ -342,6 +342,14 @@
       </button>
     </div>
   </div>
+  <div class="language-switcher">
+    <button @click="switchLanguage('en')">
+      <img src="@/assets/us.png" alt="English" />
+    </button>
+    <button @click="switchLanguage('vi')">
+      <img src="@/assets/vn.png" alt="Tiếng Việt" />
+    </button>
+  </div>
 </template>
 
 <script>
@@ -469,6 +477,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     };
   },
   computed: {
+    displayName() {
+      return this.$store.getters['users/userDisplayName'];
+    },
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
@@ -502,6 +513,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     },
   },
   mounted() {
+    console.log(this.$t('slogan'));
+    this.$i18n.locale = 'vi';
+    console.log(this.$t('greeting.morning'));
+    
     if (!this.isAuthenticated) {
       this.$router.push('/');
     }
@@ -524,6 +539,22 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     }
   },
   methods: {
+
+    getGreeting() {
+      const hours = new Date().getHours();
+        let greetingKey = 'greeting.morning'; // Default to morning
+        if (hours >= 12 && hours < 18) {
+          greetingKey = 'greeting.afternoon';
+        } else if (hours >= 18) {
+          greetingKey = 'greeting.evening';
+        }
+      return this.$t(greetingKey);  // This ensures the correct key is used for translation
+    },
+
+    switchLanguage(lang) {
+      this.$i18n.locale = lang;
+      console.log('Current language:', this.$i18n.locale);
+    },
     // Bot Chat methods
     setupBotObserver() {
       this.$nextTick(() => {
@@ -822,6 +853,77 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         // Sort by date in descending order
         return dateB - dateA;
       });
+    },
+
+    async generateMortgageInsights() {
+      const url = "https://openrouter.ai/api/v1/chat/completions";
+      try {
+        // First get insights in English
+        const englishResponse = await axios.post(url, {
+          model: "deepseek/deepseek-chat:free",
+          messages: [
+            {
+              role: "system",
+              content: "You are a financial expert providing insights on mortgage payment."
+            },
+            {
+              role: "user",
+              content: `Analyze this mortgage data:
+              - Home Price: $${this.homePrice}
+              - Down Payment: $${this.downPayment} (${this.downPaymentPercentage}%)
+              - Loan Term: ${this.loanTerm} years
+              - Interest Rate: ${this.interestRate}%
+              - Property Tax: $${this.propertyTax}/month
+              - Home Insurance: $${this.homeInsurance}/month
+              - PMI: $${this.pmi}/month
+              - HOA Fees: $${this.hoaFees}/month
+              - Monthly Payment: $${this.calculateMonthlyPayment}
+              Provide 2-3 sentences of insights. Keep it concise and actionable.`
+            }
+          ]
+        }, {
+          headers: {
+            'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          }
+        });
+
+        const englishInsights = englishResponse.data.choices[0].message.content;
+
+        // If language is Vietnamese, translate the insights
+        if (this.$i18n.locale === "vi") {
+          const translationResponse = await axios.post(url, {
+            model: "deepseek/deepseek-chat:free",
+            messages: [
+              {
+                role: "system",
+                content: "Bạn là một chuyên gia dịch thuật. Hãy dịch văn bản sau từ tiếng Anh sang tiếng Việt một cách chính xác và tự nhiên, giữ nguyên ý nghĩa tài chính."
+              },
+              {
+                role: "user",
+                content: englishInsights
+              }
+            ]
+          }, {
+            headers: {
+              'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            }
+          });
+
+          return translationResponse.data.choices[0].message.content;
+        }
+
+        // Return English by default
+        return englishInsights;
+      } catch (error) {
+        console.error("Error generating mortgage insights:", error);
+        return this.$i18n.locale === "vi" 
+          ? "Không thể tạo thông tin chi tiết vào lúc này. Vui lòng thử lại sau."
+          : "Unable to generate insights at the moment. Please try again later.";
+      }
     },
 
     // Example usage of the sorting function
@@ -1143,6 +1245,31 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 };
 </script>
 <style scoped>
+
+.language-switcher {
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
+  display: flex;
+}
+
+.language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.language-switcher button:hover img {
+  transform: scale(1.1); /* Slightly enlarge the flag on hover */
+}
+
 .GoalDashBoardContainer {
   width: 100vw; 
   max-width: 100%;

@@ -19,7 +19,13 @@ const messages = {
     errorInterestRate: "Must be greater than 0",
     loan30: "30-year fixed",
     loan15: "15-year fixed",
-    loan5: "5-year ARM"
+    loan5: "5-year ARM",
+    greeting: {
+      morning: "Good Morning",
+      afternoon: "Good Afternoon",
+      evening: "Good Evening"
+    },
+    slogan: "Manage your wallet wisely to reach your goals with ease"
   },
   vi: {
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
@@ -39,7 +45,13 @@ const messages = {
     errorInterestRate: "Phải lớn hơn 0",
     loan30: "Lãi suất cố định 30 năm",
     loan15: "Lãi suất cố định 15 năm ",
-    loan5: "Lãi suất điều chỉnh 5 năm"
+    loan5: "Lãi suất điều chỉnh 5 năm",
+    greeting: {
+      morning: "Chào buổi sáng",
+      afternoon: "Chào buổi chiều",
+      evening: "Chào buổi tối"
+    },
+    slogan: "Quản lý ví tiền của bạn một cách khôn ngoan để đạt được mục tiêu một cách dễ dàng."
   }
 };
 

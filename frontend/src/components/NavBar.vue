@@ -40,13 +40,93 @@
             Fin Manage <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdown(false)">Quant</router-link>
-            <!-- <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdown(false)">Quant Simulator</router-link> -->
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdown(false)">Simulator</router-link>
-            <router-link to="/quizz" class="quizz" @click="toggleDropdown(false)">Quiz</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdown(false)">Event</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk Analysis</router-link>
+            <router-link to="/goal" class="goal" @click="toggleDropdown(false)"
+              >Goal</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdown(false)"
+              >Risk Analysis</router-link
+            >
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
+            
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownInvest(false)"
+              >Super Investors</router-link
+            >
+
+            <router-link
+              to="/tax-calculator"
+              class="tax-calculator"
+              @click="toggleDropdownMobile"
+              >Calculator</router-link>
+
+          </div>
+        </li>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownInvest(true)"
+          @mouseleave="toggleDropdownInvest(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Invest <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="isDropdownOpenInvest">
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownInvest(false)"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownInvest(false)"
+              >Quant</router-link
+            >
+
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownInvest(false)"
+              >Quant Simulator</router-link
+            >
+          </div>
+        </li>
+
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownEdu(true)"
+          @mouseleave="toggleDropdownEdu(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Edu <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="isDropdownOpenEdu">
+            <router-link
+              to="/quizz"
+              class="quizz"
+              @click="toggleDropdownEdu(false)"
+              >Quiz</router-link
+            >
+            <router-link
+              to="/event"
+              class="event"
+              @click="toggleDropdownEdu(false)"
+              >Event</router-link
+            >
+            <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdownEdu(false)"
+              >Forum</router-link
+            >
           </div>
         </li>
 
@@ -158,6 +238,13 @@
               @click="toggleDropdownMobile"
               >Super Investors</router-link
             >
+
+            <router-link
+              to="/tax-calculator"
+              class="tax-calculator"
+              @click="toggleDropdownMobile"
+            >Calculator</router-link>
+
 
             <strong>Fin Invest</strong>
             <router-link

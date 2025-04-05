@@ -46,9 +46,56 @@
             <div class="col">
               <label for="location">Location</label>
               <select id="location" v-model="location">
-                <option value="Philadelphia, PA">Philadelphia, PA</option>
-                <option value="New York, NY">New York, NY</option>
-                <option value="Chicago, IL">Chicago, IL</option>
+                <option value="Alabama">Alabama</option>
+                <option value="Alaska">Alaska</option>
+                <option value="Arizona">Arizona</option>
+                <option value="Arkansas">Arkansas</option>
+                <option value="California">California</option>
+                <option value="Colorado">Colorado</option>
+                <option value="Connecticut">Connecticut</option>
+                <option value="Delaware">Delaware</option>
+                <option value="Florida">Florida</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Hawaii">Hawaii</option>
+                <option value="Idaho">Idaho</option>
+                <option value="Illinois">Illinois</option>
+                <option value="Indiana">Indiana</option>
+                <option value="Iowa">Iowa</option>
+                <option value="Kansas">Kansas</option>
+                <option value="Kentucky">Kentucky</option>
+                <option value="Louisiana">Louisiana</option>
+                <option value="Maine">Maine</option>
+                <option value="Maryland">Maryland</option>
+                <option value="Massachusetts">Massachusetts</option>
+                <option value="Michigan">Michigan</option>
+                <option value="Minnesota">Minnesota</option>
+                <option value="Mississippi">Mississippi</option>
+                <option value="Missouri">Missouri</option>
+                <option value="Montana">Montana</option>
+                <option value="Nebraska">Nebraska</option>
+                <option value="Nevada">Nevada</option>
+                <option value="New Hampshire">New Hampshire</option>
+                <option value="New Jersey">New Jersey</option>
+                <option value="New Mexico">New Mexico</option>
+                <option value="New York">New York</option>
+                <option value="North Carolina">North Carolina</option>
+                <option value="North Dakota">North Dakota</option>
+                <option value="Ohio">Ohio</option>
+                <option value="Oklahoma">Oklahoma</option>
+                <option value="Oregon">Oregon</option>
+                <option value="Pennsylvania">Pennsylvania</option>
+                <option value="Rhode Island">Rhode Island</option>
+                <option value="South Carolina">South Carolina</option>
+                <option value="South Dakota">South Dakota</option>
+                <option value="Tennessee">Tennessee</option>
+                <option value="Texas">Texas</option>
+                <option value="Utah">Utah</option>
+                <option value="Vermont">Vermont</option>
+                <option value="Virginia">Virginia</option>
+                <option value="Washington">Washington</option>
+                <option value="West Virginia">West Virginia</option>
+                <option value="Wisconsin">Wisconsin</option>
+                <option value="Wyoming">Wyoming</option>
               </select>
             </div>
             <div class="col">
@@ -272,6 +319,9 @@
       <div class="tax-chat">
         <TaxChat />
       </div>
+      <div class="bubble-chat">
+        <BubbleChat />
+      </div>
     </main>
 
 
@@ -290,6 +340,7 @@ import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
 import UserInput from './UserInput.vue';
 import TaxChat from './TaxChat.vue'; // if you want to use the full tax chat functionality
+import BubbleChat from './chatbox.vue';
 
 
 export default {
@@ -299,10 +350,26 @@ export default {
     MessageComponent,
     ChatFrame,
     UserInput,
-    TaxChat, // If needed, add the full tax chat functionality here
+    TaxChat,
+    BubbleChat, // If needed, add the full tax chat functionality here
   },
   data() {
     return {
+      userName: 'John Doe', // Example user name, can be dynamic
+      taxSummary: {
+        amount: 2500, // Example tax amount
+        income: 60000, // Example income
+      },
+      filingStatus: 'Married', // Example filing status
+      suggestions: [
+        'Consider contributing to a 401(k) to reduce your taxable income.',
+        'Look into tax deductions for education-related expenses.',
+      ],
+      taxBreakdownDetails: [
+        { type: 'Federal Income Tax', yearTaxes: 1500 },
+        { type: 'State Tax', yearTaxes: 500 },
+        { type: 'FICA', yearTaxes: 300 },
+      ],
       messages: [],
       botAvatar: require('@/assets/bot.png'),
       profileImage: 'path_to_profile_image', // This can be fetched from user data or default
@@ -360,14 +427,275 @@ export default {
     getTaxBracketsForStateAndFilingStatus() {
       // This should be dynamically fetched based on the selected state and filing status
       // For example, using the scraped data
-      if (this.location === 'Philadelphia, PA') {
+
+      if (this.location === 'California') {
         return [
-          { income: 5000, rate: 0.02 },
-          { income: 20000, rate: 0.04 },
-          { income: 50000, rate: 0.05 },
+          { income: 0, rate: 0.01 },
+          { income: 10000, rate: 0.02 },
+          { income: 25000, rate: 0.04 },
+          { income: 50000, rate: 0.06 },
+          { income: 100000, rate: 0.09 },
+          { income: Infinity, rate: 0.10 },
+        ];
+      }
+      if (this.location === 'Texas') {
+        return [
+          { income: 0, rate: 0.00 } // No state income tax in Texas
         ];
       }
 
+      if (this.location === 'Florida') {
+        return [
+          { income: 0, rate: 0.00 } // No state income tax in Florida
+        ];
+      }
+
+      if (this.location === 'Nevada') {
+        return [
+          { income: 0, rate: 0.00 } // No state income tax in Nevada
+        ];
+      }
+
+      if (this.location === 'South Dakota') {
+        return [
+          { income: 0, rate: 0.00 } // No state income tax in South Dakota
+        ];
+      }
+      if (this.location === 'Washington') {
+        return [
+          { income: 0, rate: 0.00 } // No state income tax
+        ];
+      }
+      if (this.location === 'Alaska') {
+        return [
+          { income: 0, rate: 0.00 } // No state income tax
+        ];
+      }
+      if (this.location === 'North Dakota') {
+        return [
+          { income: 0, rate: 0.01 },
+          { income: 40000, rate: 0.02 },
+          { income: 100000, rate: 0.03 },
+          { income: 200000, rate: 0.04 },
+          { income: Infinity, rate: 0.05 },
+        ];
+      }
+      if (this.location === 'Minnesota') {
+        return [
+          { income: 0, rate: 0.05 },
+          { income: 25000, rate: 0.07 },
+          { income: 70000, rate: 0.09 },
+          { income: 150000, rate: 0.10 },
+          { income: Infinity, rate: 0.11 },
+        ];
+      }
+      if (this.location === 'Illinois') {
+        return [
+          { income: 0, rate: 0.04 },
+          { income: Infinity, rate: 0.05 },
+        ];
+      }
+      if (this.location === 'Ohio') {
+        return [
+          { income: 0, rate: 0.01 },
+          { income: 22000, rate: 0.02 },
+          { income: 44000, rate: 0.03 },
+          { income: 88000, rate: 0.04 },
+          { income: 110000, rate: 0.05 },
+          { income: 150000, rate: 0.06 },
+          { income: Infinity, rate: 0.07 },
+        ];
+      }
+      if (this.location === 'Pennsylvania') {
+        return [
+          { income: 0, rate: 0.03 }  // Flat rate tax
+        ];
+      }
+
+      if (this.location === 'Michigan') {
+        return [
+          { income: 0, rate: 0.0425 }  // Flat rate tax
+        ];
+      }
+      if (this.location === 'Oregon') {
+        return [
+          { income: 0, rate: 0.05 },
+          { income: 20000, rate: 0.07 },
+          { income: 50000, rate: 0.09 },
+          { income: 100000, rate: 0.10 },
+          { income: 200000, rate: 0.12 },
+          { income: Infinity, rate: 0.15 },
+        ];
+      }
+
+      if (this.location === 'Colorado') {
+        return [
+          { income: 0, rate: 0.04 }  // Flat rate tax
+        ];
+      }
+
+      if (this.location === 'Arizona') {
+        return [
+          { income: 0, rate: 0.02 },
+          { income: 25000, rate: 0.03 },
+          { income: 50000, rate: 0.04 },
+          { income: 100000, rate: 0.05 },
+          { income: 150000, rate: 0.06 },
+          { income: 200000, rate: 0.07 },
+          { income: Infinity, rate: 0.08 },
+        ];
+      }
+
+      if (this.location === 'Kansas') {
+        return [
+          { income: 0, rate: 0.03 },
+          { income: 30000, rate: 0.05 },
+          { income: 100000, rate: 0.07 },
+          { income: 250000, rate: 0.09 },
+          { income: Infinity, rate: 0.11 },
+        ];
+      }
+
+      if (this.location === 'Kentucky') {
+        return [
+          { income: 0, rate: 0.05 }  // Flat rate tax
+        ];
+      }
+
+      if (this.location === 'Tennessee') {
+        return [
+          { income: 0, rate: 0.00 }  // No state income tax in Tennessee
+        ];
+      }
+
+      if (this.location === 'Missouri') {
+        return [
+          { income: 0, rate: 0.01 },
+          { income: 10000, rate: 0.02 },
+          { income: 30000, rate: 0.03 },
+          { income: 75000, rate: 0.04 },
+          { income: 150000, rate: 0.05 },
+          { income: 200000, rate: 0.06 },
+          { income: Infinity, rate: 0.07 },
+        ];
+      }
+
+      if (this.location === 'Montana') {
+        return [
+          { income: 0, rate: 0.01 },
+          { income: 5000, rate: 0.02 },
+          { income: 12000, rate: 0.03 },
+          { income: 25000, rate: 0.04 },
+          { income: 50000, rate: 0.05 },
+          { income: 100000, rate: 0.06 },
+          { income: 200000, rate: 0.07 },
+          { income: Infinity, rate: 0.08 },
+        ];
+      }
+
+      if (this.location === 'Idaho') {
+        return [
+          { income: 0, rate: 0.01 },
+          { income: 10000, rate: 0.02 },
+          { income: 25000, rate: 0.03 },
+          { income: 50000, rate: 0.04 },
+          { income: 100000, rate: 0.05 },
+          { income: 200000, rate: 0.06 },
+          { income: Infinity, rate: 0.07 },
+        ];
+      }
+
+      if (this.location === 'Maine') {
+        return [
+          { income: 0, rate: 0.05 },
+          { income: 50000, rate: 0.07 },
+          { income: 100000, rate: 0.09 },
+          { income: Infinity, rate: 0.10 },
+        ];
+      }
+
+      if (this.location === 'Vermont') {
+        return [
+          { income: 0, rate: 0.03 },
+          { income: 40000, rate: 0.05 },
+          { income: 80000, rate: 0.06 },
+          { income: 200000, rate: 0.07 },
+          { income: Infinity, rate: 0.08 },
+        ];
+      }
+
+      if (this.location === 'Maryland') {
+        return [
+          { income: 0, rate: 0.02 },
+          { income: 20000, rate: 0.04 },
+          { income: 80000, rate: 0.06 },
+          { income: 150000, rate: 0.08 },
+          { income: 300000, rate: 0.09 },
+          { income: Infinity, rate: 0.10 },
+        ];
+      }
+
+      if (this.location === 'Rhode Island') {
+        return [
+          { income: 0, rate: 0.04 },
+          { income: 20000, rate: 0.06 },
+          { income: 50000, rate: 0.08 },
+          { income: Infinity, rate: 0.10 },
+        ];
+      }
+
+      if (this.location === 'Delaware') {
+        return [
+          { income: 0, rate: 0.02 },
+          { income: 20000, rate: 0.04 },
+          { income: 40000, rate: 0.06 },
+          { income: 60000, rate: 0.08 },
+          { income: Infinity, rate: 0.09 },
+        ];
+      }
+
+      if (this.location === 'Connecticut') {
+        return [
+          { income: 0, rate: 0.03 },
+          { income: 10000, rate: 0.05 },
+          { income: 50000, rate: 0.07 },
+          { income: 100000, rate: 0.09 },
+          { income: Infinity, rate: 0.11 },
+        ];
+      }
+
+      if (this.location === 'New Jersey') {
+        return [
+          { income: 0, rate: 0.01 },
+          { income: 20000, rate: 0.02 },
+          { income: 50000, rate: 0.04 },
+          { income: 100000, rate: 0.06 },
+          { income: 200000, rate: 0.08 },
+          { income: Infinity, rate: 0.10 },
+        ];
+      }
+
+      if (this.location === 'Massachusetts') {
+        return [
+          { income: 0, rate: 0.05 }  // Flat rate tax
+        ];
+      }
+
+      if (this.location === 'Hawaii') {
+        return [
+          { income: 0, rate: 0.01 },
+          { income: 40000, rate: 0.02 },
+          { income: 80000, rate: 0.03 },
+          { income: 200000, rate: 0.05 },
+          { income: Infinity, rate: 0.06 },
+        ];
+      }
+
+      if (this.location === 'New Hampshire') {
+        return [
+          { income: 0, rate: 0.00 }  // No state income tax
+        ];
+      }
       return [
         { income: 5000, rate: 0.03 },
         { income: 15000, rate: 0.05 },
@@ -385,7 +713,7 @@ import Chart from 'chart.js/auto';
 
 /* ========= DATA & REFS ========= */
 const income = ref(210000);
-const location = ref('Philadelphia, PA');
+const location = ref('Pennsylvannia');
 const filingStatus = ref('Married');
 const showAdvanced = ref(false);
 const contribution401k = ref(0);

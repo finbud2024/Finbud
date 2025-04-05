@@ -1,6 +1,6 @@
 <template>
   <div class="chat-header">
-    <h1>FINBUD - FINANCIAL BUDDY</h1>
+    <h1>FINBUD - TAX CALCULATOR</h1>
   </div>
 </template>
 

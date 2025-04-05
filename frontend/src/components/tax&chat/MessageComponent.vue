@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     startTypingEffect() {
-      const length = thisnet.text.length;
+      const length = this.text.length;
       const typingSpeed = 5; // milliseconds per character
       let currentLength = 0;
 
