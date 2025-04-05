@@ -80,9 +80,11 @@ export default {
 
 .chatBubbleLeft {
     position: fixed;
-    left: 10px;  /* Position the bubble on the left */
-    bottom: 10%;  /* Adjust bottom position */
-    box-shadow: 0px 2px 4px rgba(0,0,0,0.7);
+    height: 455px;
+    width: 391px;
+    bottom: 0;
+    right: 7.5%;
+    box-shadow: 0px 2px 4px rgb(0,0,0,0.7);
     background-color: white;
     z-index: 100;
     display: flex;
