@@ -31,6 +31,7 @@
           </div>
         </div>
       </div>
+      <button @click="openPlaidLink" :class="['add-goal-button', disabledConnect ? 'disabled' : null]">Connect Your Bank Account</button>
       <div class="revenue-expense">
         <div class="total-spend revenue-card">
           <h2>{{
@@ -49,7 +50,7 @@
                 }}</h2>
           <p>Total Expense</p>
         </div>
-
+        
         <div class="total-spend">
           <div class="balance-header">
           <h2>{{
@@ -164,15 +165,24 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
+                <!-- <tr
                   v-for="trans in transactions"
                   :key="trans._id"
                   :class="{
                     income: trans.type === 'Income',
                     expense: trans.type === 'Expense',
                   }"
+                > -->
+                <tr
+                  v-for="trans in transactions"
+                  :key="trans.account_id"
+                  :class="{
+                    income: trans.type === 'Income',
+                    expense: trans.type === 'Expense',
+                  }"
                 >
-                  <td>{{ trans.description }}</td>
+                  <!-- <td>{{ trans.description }}</td> -->
+                  <td>{{ trans.name }}</td>
                   <td>{{ formattedDate(trans.date) }}</td>
                   <td v-if="selectedCurrency === 'USD'">
                     {{ formatCurrency(trans.amount.toFixed(2)) }}
@@ -181,7 +191,8 @@
                     {{ formatCurrency(convertToVND(trans.amount).toFixed(2)) }}
                   </td>
                   <td>
-                    {{ trans.type === "Income" ? "Credited" : "Debited" }}
+                    <!-- {{ trans.type === "Income" ? "Credited" : "Debited" }} -->
+                      {{ trans.amount < 0 ? "Credited" : "Debited" }}
                   </td>
                   <td class="buttons">
                     <button
@@ -193,8 +204,14 @@
                     >
                       Edit
                     </button>
-                    <button 
+                    <!-- <button 
                       @click="removeTransaction(trans._id)"
+                      style="
+                      padding: 6px 12px;
+                      "
+                    > -->
+                    <button 
+                      @click="removeTransaction(trans.account_id)"
                       style="
                       padding: 6px 12px;
                       "
@@ -447,7 +464,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       initialBalanceSet: false, // New state to track if initial balance is set
       showLineChart: true, // New state to toggle between line and bar chart
       selectedCurrency: "USD", // Default currency
-      totalRevenue: 0,
+      // totalRevenue: 0,
+      disabledConnect: false,
     };
   },
   computed: {
@@ -469,20 +487,25 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     
     totalRevenue() {
       return this.transactions
-        .filter((transaction) => transaction.type === "Income") // Only "Income"
-        .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
+        .filter((transaction) => transaction.amount < 0) // Only "Income"
+        .reduce((total, transaction) => total + Math.abs(transaction.amount), 0); // Sum amounts
     },
+    
     totalExpense() {
       return this.transactions
-        .filter((transaction) => transaction.type === "Expense") // Only "Expense"
+        .filter((transaction) => transaction.amount > 0) // Only "Expense"
         .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
+    },
+
+    accountBalance() {
+      return this.totalRevenue - this.totalExpense;
     },
   },
   mounted() {
     if (!this.isAuthenticated) {
       this.$router.push('/');
     }
-    this.getAccountBalance();
+    // this.getAccountBalance();
     this.retrieveGoals();
     this.fetchTransactions();
     this.processURLParams();
@@ -808,10 +831,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
         this.transactions = this.sortTransactionsByDate(response.data);
-        if (this.transactions.length > 0) {
-          this.accountBalance = this.transactions[0].balance; // Assuming the most recent transaction is the first one after sorting
-          this.initialBalanceSet = true;
-        }
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
@@ -1046,6 +1065,79 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       setTimeout(() => {
         this.recommendationsVisible = false;
       }, 100); //delay
+    },
+    async openPlaidLink() {
+      try {
+        const plaid = await this.loadPlaidScript();
+        await this.createLinkToken();
+      } catch (error) {
+        console.error("Error loading Plaid script:", error);
+      }
+    },
+    loadPlaidScript() {
+      return new Promise((resolve, reject) => {
+        if (window.Plaid) {
+          resolve(window.Plaid);
+        } else {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js';
+          script.onload = () => resolve(window.Plaid);
+          script.onerror = reject;
+          document.body.appendChild(script);
+        }
+      });
+    },
+    async createLinkToken() {
+      try {
+        // Make an API call to your backend to create a link token
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/create-link-token`);
+        const linkToken = response.data.link_token;
+        
+        // Initialize Plaid Link with the generated link token
+        const plaidLink = new window.Plaid.create({
+          token: linkToken,
+          onSuccess: (public_token, metadata) => {
+            // Handle the success scenario, exchange the public token
+            this.exchangeToken(public_token);
+          },
+          onExit: (err, metadata) => {
+            // Handle the exit scenario
+            console.error("Plaid Link exited", err);
+          },
+        });
+        plaidLink.open(); // Open Plaid Link
+      } catch (error) {
+        console.error("Error creating link token", error);
+      }
+    },
+
+    async exchangeToken(publicToken) {
+      try {
+        // Send the public token to the backend to exchange it for an access token
+        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/exchange-token`, {
+          public_token: publicToken
+        });
+
+        const { access_token, item_id } = response.data;
+        // Save the access token and item ID as required
+        this.fetchTransactions(access_token);
+      } catch (error) {
+        console.error("Error exchanging token", error);
+      }
+    },
+
+    async fetchTransactions(access_token) {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`, {
+          params: { access_token },
+        });
+
+        // Update your local transactions state with the latest transactions
+        this.transactions = response.data.latest_transactions;
+        console.log("Fetched transactions:", this.transactions);
+      } catch (error) {
+        console.error("Error fetching transactions", error);
+      }
     },
   },
 };
@@ -1443,6 +1535,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   height: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
+  max-width: 100px !important;
 }
 
 .headerText {
