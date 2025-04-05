@@ -99,6 +99,7 @@ export default {
 				}
 
 			}
+
 			//ONLY EXECUTE COMMAND/SHOW PROMPT IF THERE IS SOME MESSAGES IN THE USER INPUT
 			if (userMessage.length != 0) {
 				this.messages.push({
@@ -115,10 +116,75 @@ export default {
 				// Add thinking message
 				this.addTypingResponse("", false, [], [], [], true);
 
+				const gptDefine = await gptServices([
+					{
+						role: "user",
+						content: `You are an intelligent assistant. Given a natural language message from the user, detect which of the following 10 actions it belongs to. Then extract the necessary information and return a **formatted command** for that action if found.
+
+					### Supported Actions & Return Formats:
+
+					1. **Search**  
+					- User intent: General question or request for info  
+					- Format: **#search [term]**  
+					- Example: "What's happening with the stock market?" → "#search stock market"
+
+					2. **Stock Price Inquiry**  
+					- User intent: Ask for a stock price  
+					- Format: **[STOCK_CODE_IN_UPPERCASE]**  
+					- Example: "What's the price of tsla?" → "TSLA"
+
+					3. **Define Financial Term**  
+					- User intent: Ask for meaning of a financial term  
+					- Format: **#define [term]**  
+					- Example: "What does IPO mean?" → "#define IPO"
+
+					4. **Top 5 Cryptocurrencies**  
+					- User intent: Ask about top cryptocurrencies  
+					- Format: **#crypto**  
+					- Example: "Show me top cryptocurrencies" → "#crypto"
+
+					5. **Real Estate Lookup**  
+					- User intent: Ask for properties in an area  
+					- Format: **#realestate [area_name]**  
+					- Example: "Show me houses in New York" → "#realestate new york"  
+					- If no area is mentioned, default to: **#realestate San Jose**
+
+					6. **Add a Transaction**  
+					- User intent: Record a spending transaction  
+					- Format: **#add [description] [amount]**  
+					- Example: "I spent 125 on shopping" → "#add shopping 125"
+
+					7. **Track Spending**  
+					- User intent: Log or monitor an expense  
+					- Format: **#spend [description] [amount]**  
+					- Example: "Track 80 for groceries" → "#spend groceries 80"
+
+					8. **Buy Stock**  
+					- User intent: Buy a stock with quantity  
+					- Format: **#buy [STOCK_CODE_IN_UPPERCASE] [quantity]**  
+					- Example: "I want to buy 10 shares of Tesla" → "#buy TSLA 10"
+
+					9. **Sell Stock**  
+					- User intent: Sell a stock with quantity  
+					- Format: **#sell [STOCK_CODE_IN_UPPERCASE] [quantity]**  
+					- Example: "Sell 5 shares of AAPL" → "#sell AAPL 5"
+
+					10. **Add a Goal**  
+					- User intent: Create a goal  
+					- Format: **#create goal**  
+					- Example: "I want to create a savings goal" → "#create goal"
+
+					### Instruction:
+					Given the user message: "${newMessage}", respond with the correct formatted command according to the rules above.  
+					If no suitable category is found, return the original message unchanged: "${newMessage}".
+					`
+					}
+				]);
+
 				// HANDLE DEFINE(2)
-				if (userMessage.toLowerCase().includes("#define")) {
+				if (gptDefine.toLowerCase().includes("#define")) {
 					try {
-						const term = userMessage.substring(userMessage.toLowerCase().indexOf("define") + "define".length).trim();
+						const term = gptDefine.substring(gptDefine.toLowerCase().indexOf("define") + "define".length).trim();
 						const prompt = `Explain ${term} to me as if I'm 15.`;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
@@ -127,9 +193,9 @@ export default {
 					}
 				}
 				// HANDLE BUY (7)
-				else if (userMessage.toLowerCase().includes("#buy")) {
+				else if (gptDefine.toLowerCase().includes("#buy")) {
     				const buyRegex = /#buy\s+([A-Z]+)\s+(\d+)/i;
-    				const match = userMessage.match(buyRegex);
+    				const match = gptDefine.match(buyRegex);
     				if (match) {
         				const stockSymbol = match[1].toUpperCase();
         				const quantity = parseInt(match[2], 10);
@@ -156,10 +222,10 @@ export default {
 				}
 
 				// HANDLE SELL (8)
-				else if (userMessage.toLowerCase().includes("#sell")) {
+				else if (gptDefine.toLowerCase().includes("#sell")) {
     				try {
         				const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
-        				const match = userMessage.match(sellRegex);
+        				const match = gptDefine.match(sellRegex);
         				if (match) {
             				const stockSymbol = match[1].toUpperCase();
             				const quantity = parseInt(match[2], 10);
@@ -188,9 +254,9 @@ export default {
    					}
 			}
 				// HANDLE ADD TRANSACTION (6)
-				else if (userMessage.toLowerCase().includes("#add")) {
+				else if (gptDefine.toLowerCase().includes("#add")) {
 					try {
-						const match = userMessage.match(/#add\s+([\w\s]+)\s+(\d+)/i);
+						const match = gptDefine.match(/#add\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
 							const description = match[1].trim();
 							const amount = parseInt(match[2], 10);
@@ -205,9 +271,9 @@ export default {
 					}
 				}
 				// HANDLE SPEND TRANSACTION (7)
-				else if (userMessage.toLowerCase().includes("#spend")) {
+				else if (gptDefine.toLowerCase().includes("#spend")) {
 					try {
-						const match = userMessage.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
+						const match = gptDefine.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
 						if (match) {
 							const accountCheck = await this.checkAccountBalance();
 							if (!accountCheck) {
@@ -229,7 +295,7 @@ export default {
 					}
 				}
 				// RETURNS CRYPTO TABLE (3)
-				else if (userMessage.toLowerCase().includes("#crypto")) {
+				else if (gptDefine.toLowerCase().includes("#crypto")) {
 					//FETCHING COIN DATA
 					let coinData = [];
 					try {
@@ -277,8 +343,8 @@ export default {
 					});
 				}
 				// // RETURNS REALESTATE TABLE
-				else if (userMessage.includes("#realestate")) {
-					let userInputToken = userMessage.split(/\s+/);
+				else if (gptDefine.includes("#realestate")) {
+					let userInputToken = gptDefine.split(/\s+/);
 					let searchLocation;
 
 					const capitalizeLocation = (word) => {
@@ -369,20 +435,20 @@ export default {
 					});
 				}
 				// HANDLE SEARCH
-				else if (userMessage.toLowerCase().includes("#search")) {
+				else if (gptDefine.toLowerCase().includes("#search")) {
 					//Search for sources, videos, and relevant questions
-					const searchResults = await getSources(userMessage);
+					const searchResults = await getSources(gptDefine);
 					newSources = searchResults;
-					newVideos = await getVideos(userMessage);
+					newVideos = await getVideos(gptDefine);
 					newRelevantQuestions = await getRelevantQuestions(searchResults);
 					//Normal GTP response
-					const gptResponse = await gptServices([{ role: "user", content: userMessage }]);
+					const gptResponse = await gptServices([{ role: "user", content: gptDefine }]);
 					answers.push(gptResponse);
 				}
 				// HANDLE STOCK
-				else if (this.extractStockCode(userMessage)) {
+				else if (this.extractStockCode(gptDefine)) {
 					try {
-						const stockCode = this.extractStockCode(userMessage)[0];
+						const stockCode = this.extractStockCode(gptDefine)[0];
 						const stockResponse = await axios.get(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockCode}&apikey=${process.env.VUE_APP_ALPHA_VANTAGE_API_KEY}`);
 						const price = stockResponse.data["Global Quote"]["05. price"];
 						const timeStamp = new Date().toLocaleTimeString();
@@ -408,10 +474,10 @@ export default {
 					}
 				}
 				// HANDLE CREATE (10)
-				else if (userMessage.includes("#create")) {
+				else if (gptDefine.includes("#create")) {
 					try {
 						const createRegex = /#create\s+goal/i;
-						const match = userMessage.match(createRegex);
+						const match = gptDefine.match(createRegex);
 						if (match) {
 							const baseUrl = window.location.origin.includes("localhost")
 								? "http://localhost:8888"
