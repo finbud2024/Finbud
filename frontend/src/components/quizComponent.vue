@@ -113,7 +113,6 @@
           <button 
             class="carousel-nav left" 
             @click="scrollLeft"
-            :disabled="isAtStart"
             aria-label="Scroll left"
           >
             &lt;
@@ -134,7 +133,6 @@
         <button 
           class="carousel-nav right" 
           @click="scrollRight"
-          :disabled="isAtEnd"
           aria-label="Scroll right"
         >
           &gt;
@@ -805,7 +803,7 @@ export default {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Generate 10 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Just provide the keywords as a comma-separated list and nothing else.`,
+          content: `Generate exactly 10 related keywords for "${this.currentKeyword}" in finance, used in CFA context. Respond with only the keywords, comma-separated. Do not include any introduction, explanation, or additional text.`,
         },
       ]);
       this.relatedKeyword = response.split(",");

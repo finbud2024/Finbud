@@ -200,7 +200,7 @@ export default {
 				if (gptDefine.toLowerCase().includes("#define")) {
 					try {
 						const term = gptDefine.substring(gptDefine.toLowerCase().indexOf("define") + "define".length).trim();
-						const prompt = `Explain ${term} to me as if I'm 15.`;
+						const prompt = `Use the same language detected in this message: "${newMessage}". Explain ${term} to me as if I'm 15 in `;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
@@ -455,9 +455,10 @@ export default {
 					const searchResults = await getSources(gptDefine);
 					newSources = searchResults;
 					newVideos = await getVideos(gptDefine);
-					newRelevantQuestions = await getRelevantQuestions(searchResults);
+					const lan = await gptServices([{ role: "user", content: `Detect the language used in the following message and return only the name of the language: "${newMessage}"`}]);
+					newRelevantQuestions = await getRelevantQuestions(searchResults, lan);
 					//Normal GTP response
-					const gptResponse = await gptServices([{ role: "user", content: gptDefine }]);
+					const gptResponse = await gptServices([{ role: "user", content: `Response in the same language detected in this message: "${newMessage}" to search for ${gptDefine}.` }]);
 					answers.push(gptResponse);
 				}
 				// HANDLE STOCK
@@ -469,9 +470,10 @@ export default {
 						const timeStamp = new Date().toLocaleTimeString();
 						console.log(price, timeStamp, stockCode)
 						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+						const alphavantageResponsegpt = await gptServices([{ role: "user", content: `Translate "${alphavantageResponse}" into the language detected from this message: "${newMessage}".` }]);
 						answers.push(alphavantageResponse);
 						//chatgpt api
-						const prompt = `Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+						const prompt = `Responose in the same language detected in this message: "${newMessage}". Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 						
@@ -520,7 +522,7 @@ export default {
 				else {
 					try {
 						const prompt = userMessage;
-						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
+						const gptResponse = await gptServices([{ role: "user", content: `${prompt}. Use the same language detected in this message: "${newMessage}"` }]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in general message:", err.message);
@@ -528,7 +530,7 @@ export default {
 				}
 
 				// Remove the thinking message
-        this.messages = this.messages.filter(msg => !msg.isThinking);
+				this.messages = this.messages.filter(msg => !msg.isThinking);
 				await this.$nextTick();
 
 				answers.forEach((answer) => { this.addTypingResponse(answer, false, newSources, newVideos, newRelevantQuestions) });
