@@ -12,7 +12,7 @@
           :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
           class="forum-icon" 
         />
-        <span class="forum-name">{{ $t('forums.' + forum.name) }}</span>
+        <span class="forum-name">{{ forum.name }}</span>
       </li>
     </ul>
   </aside>
@@ -49,9 +49,9 @@ export default {
       }
     });
 
-    watch(() => {
-      if (props.activeForumSlug) {
-        activeForum.value = props.activeForumSlug;
+    watch(() => props.activeForumSlug, (newSlug) => {
+      if (newSlug) {
+        activeForum.value = newSlug;
       }
     });
 
