@@ -80,15 +80,27 @@ export default {
     const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
     onMounted(async () => {
-      await store.dispatch("users/fetchCurrentUser");
-
-      if (!isAuthenticated.value) {
-        router.push("/login");
-        return;
+      try {
+        await store.dispatch("users/fetchCurrentUser");
+        
+        if (!isAuthenticated.value) {
+          router.push("/login");
+          return;
+        }
+        
+        // Only fetch data if we're authenticated
+        await Promise.all([
+          fetchForums(),
+          fetchThreads()
+        ]);
+      } catch (error) {
+        // Only redirect to login if it's a true authentication error
+        if (error.response && error.response.status === 401) {
+          router.push("/login");
+        } else {
+          console.error("Error in forum setup:", error);
+        }
       }
-
-      await fetchForums(); // only once
-      await fetchThreads();
     });
 
     return {

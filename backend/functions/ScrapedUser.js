@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const scrapedUserSchema = new mongoose.Schema({
   username: {
@@ -12,4 +12,4 @@ const scrapedUserSchema = new mongoose.Schema({
 });
 
 const ScrapedUser = mongoose.models.ScrapedUser || mongoose.model('ScrapedUser', scrapedUserSchema);
-module.exports = ScrapedUser;
+export default ScrapedUser;
