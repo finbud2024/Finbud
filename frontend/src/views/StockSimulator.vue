@@ -341,6 +341,11 @@
               v-html="currentPortfolioTypedMessage"
             ></div>
           </div>
+          <div class="bot-controls" v-if="!isPortfolioTyping && showPortfolioMessage">
+            <button class="refresh-insights" @click="refreshPortfolioInsights">
+              <i class="fas fa-sync-alt"></i> Refresh Insights
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -475,7 +480,7 @@ export default {
       portfolioMessageManuallyToggled: false,
       currentPortfolioTypedMessage: "",
       portfolioBotObserver: null,
-      portfolioBotMessage: `Hey there! I'm your investment assistant. I can help you with your portfolio insights. Just click on me to get started!`,
+      portfolioBotMessage: ``,
       portfolioTypingSpeed: 20, // ms per character
       portfolioWordByWordTyping: true,
       portfolioBotHideTimeout: null,
@@ -676,15 +681,63 @@ export default {
     },
     async GeneratePortfolioInsights() {
       try {
-        const response = await gptServices.generatePortfolioInsights(
-          this.userHoldings
+        if (!this.userHoldings || this.userHoldings.length === 0) {
+          this.portfolioBotMessage = "I don't see any stocks in your portfolio yet. When you make your first purchase, I'll provide personalized insights here!";
+          return;
+        }
+        
+        if (!this.portfolioBotMessage) {
+          this.portfolioBotMessage = "Analyzing your portfolio...";
+        } else {
+          this.portfolioBotMessage = "Generating insights...";
+        }
+        
+        // Format holdings data for the API
+        const portfolioData = this.userHoldings.map(holding => ({
+          symbol: holding.symbol,
+          quantity: holding.quantity,
+          purchasePrice: holding.purchasePrice,
+          currentPrice: holding.currentPrice,
+          percentChange: ((holding.currentPrice - holding.purchasePrice) / holding.purchasePrice * 100).toFixed(2)
+        }));
+        
+        const url = "https://openrouter.ai/api/v1/chat/completions";
+        
+        const response = await axios.post(
+          url,
+          {
+            model: "deepseek/deepseek-chat:free",
+            messages: [
+              {
+                role: "system",
+                content: "You are FinBud, a friendly investment assistant. Analyze the user's portfolio data and provide concise, personalized insights. Format your response with Markdown: use ### for headings, **bold** for emphasis, and numbered lists for recommendations. Focus on diversification, performance trends, risk assessment, and 1-2 specific improvement suggestions. Keep your analysis under 30 words and use a conversational tone."
+              },
+              {
+                role: "user",
+                content: `Analyze my investment portfolio and provide insights: ${JSON.stringify(portfolioData)}`
+              }
+            ]
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            }
+          }
         );
-        this.portfolioBotMessage = response;
-        console.log("Portfolio insights:", this.portfolioBotMessage); 
+        
+        const insightResponse = response.data.choices[0].message.content;
+        // Format the response before saving it
+        this.portfolioBotMessage = this.formatPortfolioInsights(insightResponse);
+        console.log("Portfolio insights:", this.portfolioBotMessage);
+        return this.portfolioBotMessage;
+        
       } catch (error) {
-        console.log("Error generating portfolio insights", error);
+        console.log("Error generating portfolio insights:", error);
+        this.portfolioBotMessage = "I'm having trouble analyzing your portfolio right now. Please try again later.";
       }
-    }, 
+    },
 
     handleScroll() {
       if (this.chatbotTriggeredByScroll) return;
@@ -956,21 +1009,12 @@ export default {
 
     startPortfolioWordByWordTyping() {
       this.currentPortfolioTypedMessage = "";
-      const words = this.portfolioBotMessage.split(" ");
-      let wordIndex = 0;
-
-      const typeNextWord = () => {
-        if (wordIndex < words.length) {
-          this.currentPortfolioTypedMessage += words[wordIndex] + " ";
-          wordIndex++;
-          const delay = Math.random() * 100 + 50;
-          setTimeout(typeNextWord, delay);
-        } else {
-          this.isPortfolioTyping = false;
-        }
-      };
-
-      typeNextWord();
+      
+      // Just pass the entire formatted message instead of splitting by words
+      setTimeout(() => {
+        this.currentPortfolioTypedMessage = this.portfolioBotMessage;
+        this.isPortfolioTyping = false;
+      }, 1000); // Show the entire formatted message after a brief delay
     },
 
     startPortfolioCharacterByCharacterTyping() {
@@ -1084,10 +1128,12 @@ export default {
             purchasePrice: holding.purchasePrice,
             currentPrice:
               holding.currentPrice ||
-              holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)), // Temporary: use current price or generate one with random variation
+              holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)),
           }));
 
           this.updateCurrentPrices();
+          
+          // Don't show the bot message yet - GeneratePortfolioInsights will be called separately
         } else {
           this.userHoldings = [];
         }
@@ -1385,6 +1431,46 @@ export default {
         console.log("No more questions available.");
       }
     },
+    async refreshPortfolioInsights() {
+      // Show loading state
+      this.isPortfolioTyping = true;
+      this.currentPortfolioTypedMessage = "";
+      this.portfolioBotMessage = "Refreshing your portfolio insights...";
+      
+      // Wait a moment to show the loading message
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Generate new insights
+      await this.GeneratePortfolioInsights();
+      
+      // Display new insights
+      if (this.portfolioWordByWordTyping) {
+        this.startPortfolioWordByWordTyping();
+      } else {
+        this.startPortfolioCharacterByCharacterTyping();
+      }
+    },
+    formatPortfolioInsights(text) {
+      if (!text) return '';
+      
+      // Format headings (### Heading)
+      text = text.replace(/### (.*?)(?:\n|$)/g, '<h3 class="insight-heading">$1</h3>');
+      
+      // Format bold text (**text**)
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="highlight">$1</strong>');
+      
+      // Format numbered lists (1. Item)
+      text = text.replace(/(\d+)\. (.*?)(?:\n|$)/g, '<div class="insight-item"><span class="insight-number">$1.</span> $2</div>');
+      
+      // Add paragraph styling
+      const paragraphs = text.split('\n\n');
+      return paragraphs.map(p => {
+        if (!p.includes('insight-item') && !p.includes('insight-heading')) {
+          return `<p class="insight-paragraph">${p}</p>`;
+        }
+        return p;
+      }).join('');
+    }
   },
   watch: {
     "$route.query": {
@@ -1417,7 +1503,7 @@ export default {
       }
     },
     activeSection: {
-      handler(newSection) {
+      async handler(newSection) {
         console.log("Active section changed to:", newSection);
 
         // Clear any existing timers to prevent conflicts
@@ -1431,41 +1517,43 @@ export default {
           // Reset bot states to ensure it can appear
           this.showPortfolioBot = false;
           this.hidingPortfolioBot = false;
-          this.showPortfolioMessage = false; // <-- Reset message state
-          this.hidingPortfolioMessage = false; // <-- Reset message state
-          this.portfolioMessageManuallyToggled = false; // <-- Reset toggle state
+          this.showPortfolioMessage = false;
+          this.hidingPortfolioMessage = false;
+          this.portfolioMessageManuallyToggled = false;
 
-          // Force show the bot with a slight delay
+          // Fetch holdings first to load data
+          await this.fetchUserHoldings();
+          
+          // Now show the bot (but not the message yet)
           setTimeout(() => {
             console.log("Showing portfolio bot now");
             this.showPortfolioBot = true;
             this.hidingPortfolioBot = false;
-
-            setTimeout(() => {
-              this.showPortfolioMessage = true;
-              this.hidingPortfolioMessage = false;
-              this.isPortfolioTyping = true;
-
-              // Start typing animation
-              setTimeout(() => {
-                if (this.portfolioWordByWordTyping) {
-                  this.startPortfolioWordByWordTyping();
-                } else {
-                  this.startPortfolioCharacterByCharacterTyping();
-                }
-              }, 500);
-            }, 300);
+            
+            // Generate insights and only show message when complete
+            this.isPortfolioTyping = true;
+            
+            // First show the bot with "thinking" animation
+            this.showPortfolioMessage = true;
+            this.hidingPortfolioMessage = false;
+            
+            // Now generate insights
+            this.GeneratePortfolioInsights().then(() => {
+              // After insights are generated, start typing animation
+              if (this.portfolioWordByWordTyping) {
+                this.startPortfolioWordByWordTyping();
+              } else {
+                this.startPortfolioCharacterByCharacterTyping();
+              }
+            });
           }, 500);
-
-          console.log("Fetching user holdings...");
-          this.fetchUserHoldings();
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
         } else if (newSection === 'quiz') {
-        this.generateTradingQuestions(); // Call method when quiz section is activated
+          this.generateTradingQuestions();
         }
       },
-      immediate: true, // Make it run immediately on component creation
+      immediate: true,
     },
   },
   async mounted() {
@@ -2365,6 +2453,8 @@ h1 {
   transform: scale(0.8) translateY(10px);
   transition: opacity 0.7s ease, transform 0.7s ease;
   transition-delay: 0.3s;
+  font-size: 0.85rem;
+  line-height: 1; 
 }
 
 .bot-message.message-visible {
@@ -2452,5 +2542,74 @@ h1 {
 
 .error-message {
   color: #dc3545;
+}
+
+.bot-controls {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.refresh-insights {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.refresh-insights:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Add these to your existing styles */
+
+.typed-message {
+  line-height: 1.4;
+}
+
+.insight-heading {
+  margin: 8px 0 4px;
+  color: #ffffff;
+  font-size: 0.95rem; /* Reduced from 1rem */
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 2px;
+}
+
+.insight-item {
+  margin: 5px 0;
+  padding-left: 18px;
+  position: relative;
+}
+
+.insight-number {
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+}
+
+.highlight {
+  color: #ffeb3b;
+  font-weight: 600;
+}
+
+.insight-paragraph {
+  margin: 8px 0;
+}
+
+/* Fix v-html styling issue by targeting the container */
+.bot-message :deep(.insight-heading),
+.bot-message :deep(.insight-item),
+.bot-message :deep(.insight-number),
+.bot-message :deep(.highlight),
+.bot-message :deep(.insight-paragraph) {
+  color: inherit;
+}
+
+.bot-message :deep(.highlight) {
+  color: #ffeb3b;
 }
 </style>
