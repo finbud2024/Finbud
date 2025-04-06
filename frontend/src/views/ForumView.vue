@@ -88,13 +88,11 @@ export default {
           return;
         }
         
-        // Only fetch data if we're authenticated
         await Promise.all([
           fetchForums(),
           fetchThreads()
         ]);
       } catch (error) {
-        // Only redirect to login if it's a true authentication error
         if (error.response && error.response.status === 401) {
           router.push("/login");
         } else {

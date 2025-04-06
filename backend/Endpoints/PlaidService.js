@@ -1,12 +1,13 @@
 'use strict';
 
-import 'dotenv/config';
-import { Configuration, PlaidApi, Products, PlaidEnvironments, CraCheckReportProduct } from 'plaid';
-import { Router } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import moment from 'moment';
+// read env vars from .env file
+require('dotenv').config();
+const { Configuration, PlaidApi, Products, PlaidEnvironments, CraCheckReportProduct } = require('plaid');
+const util = require('util');
+const { v4: uuidv4 } = require('uuid');
+const moment = require('moment');
 
-const plaidRoute = Router();
+const plaidRoute = require('express').Router();
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_SECRET = process.env.PLAID_SECRET;
