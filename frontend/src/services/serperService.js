@@ -130,7 +130,7 @@ export async function getVideos(message) {
   }
 }
 
-export async function getRelevantQuestions(sources) {
+export async function getRelevantQuestions(sources, lan) {
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -138,7 +138,7 @@ export async function getRelevantQuestions(sources) {
         {
           role: "system",
           content: `
-            You are a Question generator who generates in JSON an array of 3 follow-up questions.
+            You are a Question generator who generates in JSON an array of 3 follow-up questions in this language: ${lan}.
             The JSON schema should include {
               "followUp": [
                 "Question 1",

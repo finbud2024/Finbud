@@ -23,11 +23,17 @@ export default {
   },
   methods: {
     generateChart() {
-      // Find the initial balance from the transactions
-      let initialBalance =
-        this.transactions.find((transaction) => transaction.type === "Initial")
-          ?.amount || 0;
-      let cumulativeBalance = initialBalance; // Initialize cumulative balance with the initial balance
+      // Transform API transactions to our format
+      const formattedTransactions = this.transactions.map(tx => ({
+        type: tx.amount > 0 ? "Expense" : "Income",
+        amount: Math.abs(tx.amount), // Use absolute value and determine type based on sign
+        date: tx.date, // Use the date field from API
+        description: tx.name || tx.merchant_name || "Transaction"
+      }));
+
+      // Find the initial balance (assuming no initial balance in API, start from 0)
+      let initialBalance = 0;
+      let cumulativeBalance = initialBalance;
 
       // Create arrays for labels and data
       const labels = [];
@@ -48,11 +54,7 @@ export default {
       }
 
       // Process each transaction to update the cumulative balance
-      this.transactions.forEach((transaction) => {
-        if (transaction.type === "Initial") {
-          return; // Skip processing the initial balance again
-        }
-
+      formattedTransactions.forEach((transaction) => {
         // Format the date for the x-axis labels
         const dateLabel = new Date(transaction.date).toLocaleDateString();
         labels.push(dateLabel);
@@ -122,7 +124,7 @@ export default {
 
                   // Format the amount with a minus sign for expenses
                   const formattedAmount =
-                    type === "Expense" ? `-${amount}` : amount;
+                    type === "Expense" ? `-${amount}` : `+${amount}`;
                   const typeLabel =
                     type === "Income"
                       ? "Income"
@@ -132,9 +134,9 @@ export default {
 
                   return [
                     `Transaction Type: ${typeLabel}`,
-                    `Change Amount: ${formattedAmount}`,
-                    `Transaction: ${description}`,
-                    `Account Balance: ${balance}`,
+                    `Change Amount: $${formattedAmount}`,
+                    `Description: ${description}`,
+                    `Account Balance: $${balance.toFixed(2)}`,
                   ];
                 },
               },
@@ -144,14 +146,15 @@ export default {
             x: {
               title: {
                 display: true,
-                text: "Time Series",
+                text: "Date",
               },
             },
             y: {
               title: {
                 display: true,
-                text: "Account Balance",
-              }
+                text: "Account Balance ($)",
+              },
+              beginAtZero: true
             },
           },
           elements: {
