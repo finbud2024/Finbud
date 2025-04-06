@@ -255,7 +255,7 @@
             <div class="overview-value">${{ formatCurrency(cash) }}</div>
           </div>
         </div>
-        <PortfolioPerformance/>
+        <PortfolioPerformance :language="$i18n.locale"/>
         <div class="holdings-section">
           <h3>{{ $t('yourHoldings') }}</h3>
           <div class="holdings-table">

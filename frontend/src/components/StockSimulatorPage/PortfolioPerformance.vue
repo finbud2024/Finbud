@@ -1,11 +1,11 @@
 <template>
   <section class="chart-section">
     <header class="chart-header">
-      <h1>Portfolio Performance</h1>
+      <h1>{{ translations.portfolioPerformance }}</h1>
       <div class="header-content">
         <div class="portfolio-summary">
           <div class="summary-item">
-            <span class="summary-label">Total Value</span>
+            <span class="summary-label">{{ translations.totalValue }}</span>
             <span class="summary-value">
               ${{ 
                 portfolioTotalValue.toLocaleString('en-US', { 
@@ -20,7 +20,7 @@
             class="summary-item" 
             :class="getDynamicClass(portfolioDailyChange.isPositive)"
           >
-            <span class="summary-label">Today</span>
+            <span class="summary-label">{{ translations.today }}</span>
             <span class="summary-value">
               {{ portfolioDailyChange.isPositive ? '+' : '-' }}
               ${{ 
@@ -43,7 +43,7 @@
             class="summary-item" 
             :class="getDynamicClass(portfolioOverallChange.isPositive)"
           >
-            <span class="summary-label">Overall</span>
+            <span class="summary-label">{{ translations.overall }}</span>
             <span class="summary-value">
               {{ portfolioOverallChange.isPositive ? '+' : '-' }}
               ${{ 
@@ -65,7 +65,7 @@
 
         <div class="portfolio-metrics">
           <div class="metric-card">
-            <div class="metric-title">Annual Return</div>
+            <div class="metric-title">{{ translations.annualReturn }}</div>
             <div :class="getValueClass(calculateAnnualReturn)">
               {{ calculateAnnualReturn > 0 ? '+' : '' }}
               {{ 
@@ -77,7 +77,7 @@
             </div>
           </div>
           <div class="metric-card">
-            <div class="metric-title">Volatility</div>
+            <div class="metric-title">{{ translations.volatility }}</div>
             <div class="metric-value">
               {{ 
                 calculateVolatility.toLocaleString('en-US', { 
@@ -88,7 +88,7 @@
             </div>
           </div>
           <div class="metric-card">
-            <div class="metric-title">Sharpe Ratio</div>
+            <div class="metric-title">{{ translations.sharpeRatio }}</div>
             <div :class="getValueClass(calculateSharpeRatio)">
               {{ 
                 calculateSharpeRatio.toLocaleString('en-US', { 
@@ -116,7 +116,7 @@
       
       <div v-if="!noData" class="performance-summary">
         <div :class="['performance-badge', getDynamicClass(selectedRangePerformance.isPositive)]">
-          <span>{{ selectedRange }} Performance:</span>
+          <span>{{ selectedRange }} {{ translations.performance }}:</span>
           <span>
             {{ selectedRangePerformance.isPositive ? '+' : '-' }}
             {{ 
@@ -143,8 +143,8 @@
           <line x1="12" y1="8" x2="12" y2="12"></line>
           <line x1="12" y1="16" x2="12.01" y2="16"></line>
         </svg>
-        <p>No historical data available. Start investing to see your portfolio performance.</p>
-        <button class="get-started-btn">Get Started</button>
+        <p>{{ translations.noDataMessage }}</p>
+        <button class="get-started-btn">{{ translations.getStarted }}</button>
       </div>
     </div>
   </section>
@@ -156,6 +156,12 @@ import axios from "axios";
 
 export default {
   name: "PortfolioPerformance",
+  props: {
+    language: {
+      type: String,
+      default: 'en'
+    }
+  },
   
   data() {
     return {
@@ -179,8 +185,48 @@ export default {
       selectedRangePerformance: { percent: 0, isPositive: true }
     };
   },
-
+  
   computed: {
+    translations() {
+      return {
+        en: {
+          portfolioPerformance: 'Portfolio Performance',
+          totalValue: 'Total Value',
+          today: 'Today',
+          overall: 'Overall',
+          annualReturn: 'Annual Return',
+          volatility: 'Volatility',
+          sharpeRatio: 'Sharpe Ratio',
+          performance: 'Performance',
+          noDataMessage: 'No historical data available. Start investing to see your portfolio performance.',
+          getStarted: 'Get Started'
+        },
+        vi: {
+          portfolioPerformance: 'Hiệu Suất Danh Mục',
+          totalValue: 'Tổng Giá Trị',
+          today: 'Hôm Nay',
+          overall: 'Tổng Thể',
+          annualReturn: 'Lợi Nhuận Hàng Năm',
+          volatility: 'Biến Động',
+          sharpeRatio: 'Tỷ Số Sharpe',
+          performance: 'Hiệu Suất',
+          noDataMessage: 'Không có dữ liệu lịch sử. Bắt đầu đầu tư để xem hiệu suất danh mục của bạn.',
+          getStarted: 'Bắt Đầu'
+        }
+      }[this.language] || {
+        // Default to English if language not supported
+        portfolioPerformance: 'Portfolio Performance',
+        totalValue: 'Total Value',
+        today: 'Today',
+        overall: 'Overall',
+        annualReturn: 'Annual Return',
+        volatility: 'Volatility',
+        sharpeRatio: 'Sharpe Ratio',
+        performance: 'Performance',
+        noDataMessage: 'No historical data available. Start investing to see your portfolio performance.',
+        getStarted: 'Get Started'
+      }
+    },
     portfolioTotalValue() {
       const latestData = this.candlestickData[this.candlestickData.length - 1];
       return latestData ? latestData.close : 0;
