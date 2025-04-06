@@ -475,16 +475,7 @@ export default {
       portfolioMessageManuallyToggled: false,
       currentPortfolioTypedMessage: "",
       portfolioBotObserver: null,
-      portfolioBotMessage: `📊 <strong>Portfolio Analysis:</strong><br><br>
-Your portfolio is showing impressive performance with a total value of $24,892.31 and overall gain of 18.5%.<br><br>
-<strong>Strengths:</strong><br>
-✅ Strong tech sector allocation (AAPL, MSFT, GOOGL) driving growth<br>
-✅ All positions showing positive returns (17.5%-26.7%)<br>
-✅ Healthy cash position of $8,438.52 (33.9% of portfolio)<br><br>
-<strong>Suggestions:</strong><br>
-1. Consider diversifying beyond tech to reduce sector risk<br>
-2. Look into dividend-paying stocks to balance growth<br>
-3. Set up regular investment schedule to optimize dollar-cost averaging`,
+      portfolioBotMessage: `Hey there! I'm your investment assistant. I can help you with your portfolio insights. Just click on me to get started!`,
       portfolioTypingSpeed: 20, // ms per character
       portfolioWordByWordTyping: true,
       portfolioBotHideTimeout: null,
@@ -683,6 +674,17 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         console.log("Error giving insights", error);
       }
     },
+    async GeneratePortfolioInsights() {
+      try {
+        const response = await gptServices.generatePortfolioInsights(
+          this.userHoldings
+        );
+        this.portfolioBotMessage = response;
+        console.log("Portfolio insights:", this.portfolioBotMessage); 
+      } catch (error) {
+        console.log("Error generating portfolio insights", error);
+      }
+    }, 
 
     handleScroll() {
       if (this.chatbotTriggeredByScroll) return;
