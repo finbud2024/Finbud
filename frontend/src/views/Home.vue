@@ -474,7 +474,7 @@ export default {
 .button {
   padding: 10px 20px;
   margin-top: 10px;
-  background-color: #007bff;
+  background-color: #000000;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   color: white;
   text-decoration: none;
@@ -631,7 +631,7 @@ h1 {
 h1,
 h2,
 h3 {
-  color: #007bff;
+  color: #000000;
   opacity: 1;
   animation: none;
 }

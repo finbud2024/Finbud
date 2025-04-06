@@ -328,20 +328,20 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
-  --finbudBotMessageBG: #007bff;
+  --finbudBotMessageBG: #000000;
   --finbudBotMessageColor: white;
-  --finbudBotMessageBorderColor: #007bff;
+  --finbudBotMessageBorderColor: #000000;
   --bg-primary: #ffffff;
-  --text-primary: #333333;
+  --text-primary: #333333; /* was #333333 */
   --nav-bg: #ffffff;
   --border-color: #dddddd;
-  --link-color: #007bff;
+  --link-color: #000000;
   --hover-bg: #024384;
   --card-bg: #ffffff;
   --content-bg: #ffffff;
   --shadow-color: #e9e2e2;
   --progress-color: #c8c5c5;
-  --logo-color: #007bff;
+  --logo-color: #000000;
 }
 
 :root.dark-mode,
@@ -351,12 +351,12 @@ body.dark-mode {
   --text-primary: #ffffff;
   --nav-bg: #242424;
   --border-color: #404040;
-  --link-color: #4da3ff;
-  --hover-bg: #024384;
+  --link-color: #000000; /* was 4da3ff */
+  --hover-bg: #000000; /* was #024384 */
   --card-bg: #2d2d2d;
   --shadow-color: #0a6b10;
   --progress-color: #e9e2e2;
-  --logo-color: #007bff;
+  --logo-color: #000000; /* was #007bff */
   --content-bg: #736969;
 }
 
@@ -418,8 +418,8 @@ html {
 
 a {
   text-decoration: none;
-  color: blue;
-  border: 1px solid blue;
+  color: black;
+  border: 1px solid black;
 }
 
 a:hover {
