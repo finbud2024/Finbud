@@ -26,6 +26,9 @@ const passportConfig = (app) => {
           done(err);
         }
       });
+      
+    const isNetlifyDev = process.env.NETLIFY_DEV === 'true';
+    const isProduction = process.env.NODE_ENV === 'production';
 
     app.use(session({
                 secret: process.env.SESSION_SECRET, 
@@ -34,8 +37,8 @@ const passportConfig = (app) => {
                 cookie: {
                   maxAge: 1000 * 60 * 60 * 24, // 24 hours instead of 1 minute
                   httpOnly: true, // Prevents client-side JS from reading the cookie
-                  sameSite: 'lax',
-                  secure: process.env.NODE_ENV === 'production' // Uncomment in production
+                  sameSite: isProduction || isNetlifyDev ? 'none' : 'lax',
+                  secure: isProduction || isNetlifyDev // true if prod or netlify dev
                 }
               }))
   
