@@ -20,12 +20,8 @@ const messages = {
     loan30: "30-year fixed",
     loan15: "15-year fixed",
     loan5: "5-year ARM",
-    greeting: {
-      morning: "Good Morning",
-      afternoon: "Good Afternoon",
-      evening: "Good Evening"
-    },
-    slogan: "Manage your wallet wisely to reach your goals with ease"
+    proficiencyLevel: "Proficiency level",
+    placeholder: "What do you want to learn today..."
   },
   vi: {
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
@@ -46,19 +42,16 @@ const messages = {
     loan30: "Lãi suất cố định 30 năm",
     loan15: "Lãi suất cố định 15 năm ",
     loan5: "Lãi suất điều chỉnh 5 năm",
-    greeting: {
-      morning: "Chào buổi sáng",
-      afternoon: "Chào buổi chiều",
-      evening: "Chào buổi tối"
-    },
-    slogan: "Quản lý ví tiền của bạn một cách khôn ngoan để đạt được mục tiêu một cách dễ dàng."
+    proficiencyLevel: "Mức độ thành thạo",
+    placeholder: "Hôm nay bạn muốn học gì..."
   }
 };
 
 const i18n = createI18n({
   locale: 'en',
   fallbackLocale: 'en',
-  messages
+  messages: {
+  }
 });
 
 export default i18n;

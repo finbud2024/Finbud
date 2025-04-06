@@ -9,32 +9,32 @@
     <search-input
       v-model="searchQuery"
       @search="createRoadmap"
-      placeholder="What do you want to learn today..."
+      :placeholder="translations[language].placeholderText"
       data-aos="flip-right"
     />
 
     <div class="goal-form-card" data-aos="zoom-in-up">
-      <h1 class="title">What's your goal?</h1>
+      <h1 class="title">{{ translations[language].goalLabel }} </h1>
 
       <div class="form-group">
-        <label for="proficiency">Proficiency level</label>
+        <label for="proficiency">{{ proficiencyLabelText }}</label>
         <select id="proficiency" v-model="proficiency" class="form-select">
           <option value="" disabled selected>---</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
+          <option value="beginner">{{ translations[language].beginner }}</option>
+          <option value="intermediate">{{ translations[language].intermediate }}</option>
+          <option value="advanced">{{ translations[language].advanced }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="learning-hours">You will learn</label>
+        <label for="learning-hours">{{ translations[language].learningHoursLabel }}</label>
         <div class="input-row">
           <div class="input-group input-half-width">
             <input
               type="number"
               id="hours-per-day"
               v-model="hoursPerDay"
-              placeholder="Hours per day"
+              :placeholder="translations[language].hoursPerDayPlaceholder"
               min="0"
               class="form-input"
             />
@@ -44,7 +44,7 @@
               type="number"
               id="days-per-week"
               v-model="daysPerWeek"
-              placeholder="Days per week"
+              :placeholder="translations[language].daysPerWeekPlaceholder"
               min="0"
               max="7"
               class="form-input"
@@ -54,23 +54,23 @@
       </div>
 
       <div class="form-group">
-        <label>In period</label>
+        <label>{{ translations[language].durationLabel }}</label>
         <div class="input-row">
           <div class="input-group duration-input">
             <input
               type="number"
               v-model="duration"
-              placeholder="Duration"
+              :placeholder="translations[language].durationPlaceholder"
               min="1"
               class="form-input"
             />
           </div>
           <div class="input-group period-select">
             <select v-model="period" class="form-select">
-              <option value="" disabled selected>Select period</option>
-              <option value="days">Days</option>
-              <option value="weeks">Weeks</option>
-              <option value="months">Months</option>
+              <option value="" disabled selected>{{ translations[language].selectPeriod }}</option>
+              <option value="days">{{ translations[language].days }}</option>
+              <option value="weeks">{{ translations[language].weeks }}</option>
+              <option value="months">{{ translations[language].months }}</option>
             </select>
           </div>
         </div>
@@ -83,8 +83,8 @@
       >
         {{
           is_generating_roadmap
-            ? "Personalizing your roadmap..."
-            : "Create my roadmap"
+            ? translations[language].personalizingRoadmap
+            : translations[language].createRoadmap
         }}
       </button>
     </div>
@@ -92,19 +92,19 @@
 
   <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
-      <h1 class="title">Keyword-Based Quiz</h1>
+      <h1 class="title">{{ translations[language].keywordBaseQuiz}} </h1>
       <div class="form-group">
-        <label for="search-keyword">Put your own keyword</label>
+        <label for="search-keyword">{{ translations[language].keyword }}</label>
         <div id="search-keyword" class="search-container">
           <input
             style="height: 100%; margin-bottom: 0"
             type="text"
             v-model="searchKeyword"
             :disabled="isLoading"
-            placeholder="Enter a finance-related keyword"
+            :placeholder="translations[language].financekeyword"
             @keyup.enter="GenerateQuiz"
           />
-          <button class="button" @click="GenerateQuiz">Generate Quiz</button>
+          <button class="button" @click="GenerateQuiz">{{ translations[language].generateQuiz}}</button>
         </div>
       </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
@@ -206,8 +206,8 @@
 
   <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
-      <span class="category-label">COURSE CATEGORIES</span>
-      <h2 class="category-title">Popular Topics To Learn</h2>
+      <span class="category-label">{{ translations[language].coursecategories}}</span>
+      <h2 class="category-title">{{ translations[language].topictolearn}}</h2>
 
       <div class="categories-grid">
         <div
@@ -234,8 +234,8 @@
     <div class="courses-container">
       <!-- Header Section -->
       <div class="courses-header">
-        <h4 class="courses-subtitle">POPULAR COURSES</h4>
-        <h2 class="courses-title">Our Popular Courses</h2>
+        <h4 class="courses-subtitle">{{ translations[language].popularcourses}}</h4>
+        <h2 class="courses-title">{{ translations[language].ourpopularcourses}}</h2>
       </div>
 
       <!-- Courses Grid -->
@@ -304,6 +304,14 @@
       </div>
     </div>
   </div>
+  <div class="language-switcher">
+    <button @click="switchLanguage('en')">
+      <img src="@/assets/us.png" alt="English" />
+    </button>
+    <button @click="switchLanguage('vi')">
+      <img src="@/assets/vn.png" alt="Tiếng Việt" />
+    </button>
+  </div>
 </template>
 
 <script>
@@ -321,6 +329,8 @@ export default {
   },
   data() {
     return {
+      language: "en",
+      proficiency: "",
       searchQuery: "",
       score: 0,
       timerCountdown: 0,
@@ -485,6 +495,63 @@ export default {
       ],
       rewardAmount: 1,
       showingReward: false,
+      translations: {
+        en: {
+          placeholderText: "What do you want to learn today...",
+          proficiencyLabelText: "Proficiency level",
+          goalLabel: "What's your goal?",
+          learningHoursLabel: "You will learn",
+          hoursPerDayPlaceholder: "Hours per day",
+          daysPerWeekPlaceholder: "Days per week",
+          durationLabel: "In period",
+          durationPlaceholder: "Duration",
+          selectPeriod: "Select period",
+          days: "Days",
+          weeks: "Weeks",
+          months: "Months",
+          beginner: "Beginner",
+          intermediate: "Intermediate",
+          advanced: "Advanced",
+          personalizingRoadmap: "Personalizing your roadmap...",
+          createRoadmap: "Create my roadmap",
+          keywordBaseQuiz: "Keyword-Based Quiz",
+          keyword: "Put your own keyword",
+          financekeyword: "Enter a finance-related keyword",
+          generateQuiz: "Generate Quiz",
+          topictolearn: "Popular Topics To Learn",
+          coursecategories: "Course Categories",
+          popularcourses: "POPULAR COURSES",
+          ourpopularcourses: "Our popular courses"
+        },
+        vi: {
+          placeholderText: "Hôm nay bạn muốn học gì...",
+          proficiencyLabelText: "Mức độ thành thạo",
+          goalLabel: "Mục tiêu của bạn là gì?",
+          learningHoursLabel: "Bạn sẽ học",
+          hoursPerDayPlaceholder: "Số giờ mỗi ngày",
+          daysPerWeekPlaceholder: "Số ngày mỗi tuần",
+          durationLabel: "Trong khoảng thời gian",
+          durationPlaceholder: "Thời gian",
+          selectPeriod: "Chọn khoảng thời gian",
+          days: "Ngày",
+          weeks: "Tuần",
+          months: "Tháng",
+          beginner: "Mới bắt đầu",
+          intermediate: "Trung cấp",
+          advanced: "Nâng cao",
+          personalizingRoadmap: "Đang tạo lộ trình...",
+          createRoadmap: "Tạo lộ trình của tôi",
+          keywordBaseQuiz: "Bài kiểm tra kiến thức",
+          keyword: "Nhập vào từ khoá của bạn",
+          financekeyword: "Nhập một từ khoá liên quan đến tài chính",
+          generateQuiz: "Tạo ra bài kiểm tra",
+          topictolearn: "Những chủ đề phổ biến",
+          coursecategories: "Danh mục khoá học",
+          popularcourses: "KHOÁ HỌC PHỔ BIẾN",
+          ourpopularcourses: "KHoá học phổ biến của chúng tôi"
+
+        },
+      },
     };
   },
   watch: {
@@ -499,6 +566,9 @@ export default {
     },
   },
   methods: {
+    switchLanguage(language) {
+      this.language = language;
+    },
     GenerateQuiz: debounce(async function () {
       if (!this.searchKeyword.trim()) return;
       this.isLoading = true;
@@ -903,6 +973,30 @@ export default {
 </script>
 
 <style scoped>
+.language-switcher {
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
+  display: flex;
+}
+
+.language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.language-switcher button:hover img {
+  transform: scale(1.1); /* Slightly enlarge the flag on hover */
+}
+
 .quiz-card {
   background: white;
   border-radius: 12px;

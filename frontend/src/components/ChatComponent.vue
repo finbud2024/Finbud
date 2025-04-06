@@ -116,7 +116,6 @@ export default {
 				// Add thinking message
 				this.addTypingResponse("", false, [], [], [], true);
 
-<<<<<<< HEAD
 				//HANDLE #TAX MESSAGE
 				if (userMessage.includes('#tax')) {
 				// Add a message in the chatbox before navigating
@@ -132,7 +131,6 @@ export default {
 
 				// HANDLE DEFINE(2)
 				else if (userMessage.toLowerCase().includes("#define")) {
-=======
 				const gptDefine = await gptServices([
 					{
 						role: "user",
@@ -200,7 +198,6 @@ export default {
 
 				// HANDLE DEFINE(2)
 				if (gptDefine.toLowerCase().includes("#define")) {
->>>>>>> ae20286888335b33fd89b4bb52177eb3be1ff5d5
 					try {
 						const term = gptDefine.substring(gptDefine.toLowerCase().indexOf("define") + "define".length).trim();
 						const prompt = `Explain ${term} to me as if I'm 15.`;
@@ -553,7 +550,8 @@ export default {
 				}
 				this.scrollChatFrameToBottom();
 			}
-		},
+		}
+	},
 		//------------------------- ULTILITIES FUNCTIONS ------------------------------------------------
 		addTypingResponse(text, isUser, sources = [], videos = [], relevantQuestions = [], isThinking = false) {
 			const typingMessage = {
