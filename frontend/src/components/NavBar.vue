@@ -162,6 +162,17 @@
               />
               <p>{{ isDarkMode ? "Dark Mode" : "Light Mode" }}</p>
             </router-link>
+
+            <router-link to="#" class="language-switcher" @click.prevent>
+              <font-awesome-icon icon="fa-solid fa-globe" class="icon" />
+              <p>
+                <span class="lang-options">
+                  <span :class="{ activeLang: currentLang === 'en' }" @click="changeLang('en')">ENG</span>
+                  <span :class="{ activeLang: currentLang === 'vi' }" @click="changeLang('vi')">VIE</span>
+                </span>
+              </p>
+            </router-link>
+
             <router-link to="#" class="logout" @click="logout">
               <font-awesome-icon
                 icon="fa-solid fa-right-from-bracket"
@@ -324,13 +335,16 @@ export default {
     finCoinBalance() {
       return this.$store.getters["finCoin/finCoinBalance"];
     },
-    watch: {
-      // Fetch FinCoin balance when user logs in
-      isAuthenticated(newVal) {
-        if (newVal) {
-          this.$store.dispatch("finCoin/fetchFinCoinBalance");
-        }
-      },
+    currentLang() {
+      return this.$i18n.locale;
+    },
+  },
+  watch: {
+    // Fetch FinCoin balance when user logs in
+    isAuthenticated(newVal) {
+      if (newVal) {
+        this.$store.dispatch("finCoin/fetchFinCoinBalance");
+      }
     },
   },
   methods: {
@@ -393,6 +407,10 @@ export default {
         }
       }
     },
+    changeLang(lang) {
+      this.$i18n.locale = lang;
+      localStorage.setItem('lang', lang);
+    },
   },
   async mounted() {
     await this.$store.dispatch("users/fetchCurrentUser");
@@ -411,6 +429,11 @@ export default {
     // Fetch FinCoin balance if user is authenticated
     if (this.isAuthenticated) {
       await this.$store.dispatch("finCoin/fetchFinCoinBalance");
+    }
+
+    const storedLang = localStorage.getItem("lang");
+    if (storedLang && storedLang !== this.$i18n.locale) {
+      this.changeLang(storedLang);
     }
 
     document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
@@ -602,6 +625,33 @@ export default {
   animation-timing-function: ease-in-out;
   animation-fill-mode: forwards;
 }
+
+.language-switcher p {
+  margin-left: 50px;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(0.75rem, 5.6vw, 1.25rem);
+}
+
+.lang-options {
+  display: flex;
+  gap: 10px;
+  font-weight: 400;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.lang-options span {
+  cursor: pointer;
+}
+
+.lang-options .activeLang {
+  font-weight: bold;
+  text-decoration: underline;
+  color: var(--accent-color);
+}
+
 
 @keyframes dropdown-animation {
   0% {

@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import * as faSolid from "@fortawesome/free-solid-svg-icons";
 import * as faRegular from "@fortawesome/free-regular-svg-icons";
 import * as faBrand from "@fortawesome/free-brands-svg-icons";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps"; 
 import i18n from "./i18n";
@@ -32,7 +33,8 @@ const icons = [
   faRegular.faStar,
   faRegular.faBell,
   faSolid.faMoon,    
-  faSolid.faSun
+  faSolid.faSun,
+  faGlobe
 ];
 library.add(...icons); // Use the spread operator to add the icons
 

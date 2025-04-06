@@ -7,11 +7,11 @@
         </button>
   
         <!-- Title -->
-        <h3 class="popup-title">Share this post</h3>
+        <h3 class="popup-title">{{ $t('share.title') }}</h3>
         <hr class="divider" />
   
         <!-- Share Options -->
-        <p class="share-title">Share</p>
+        <p class="share-title">{{ $t('share.section') }}</p>
         <div class="share-container">
           <a :href="facebookShare" target="_blank" class="share-btn facebook">
             <i class="fa-brands fa-facebook-f"></i>
@@ -36,10 +36,10 @@
         <!-- Copy Link Section -->
         <div class="copy-container">
           <input type="text" :value="shareURL" readonly class="copy-link-input" />
-          <button @click="copyLink" class="copy-button">Copy Link</button>
+          <button @click="copyLink" class="copy-button">{{ $t('share.copy') }}</button>
         </div>
   
-        <p v-if="copied" class="copy-success">Link Copied!</p>
+        <p v-if="copied" class="copy-success">{{ $t('share.copied') }}</p>
       </div>
     </div>
   </template>

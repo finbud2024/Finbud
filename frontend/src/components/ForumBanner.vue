@@ -1,47 +1,48 @@
 <template>
-  <div class="forum-banner">
+  <div v-if="forum" class="forum-banner">
     <div class="forum-info">
       <component 
-        :is="LucideIcons[forum?.logo] || LucideIcons['HelpCircle']" 
+        :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
         class="forum-icon" 
       />
       <div class="forum-text">
-        <h1>{{ forum?.name || "Unknown Forum" }}</h1>
-        <p>{{ forum?.description || "Forum details unavailable" }}</p>
+        <h1>{{ $t('forums.' + forum.name) }}</h1>
+        <p>{{ $t('forums.desc.' + forum.name) }}</p>
       </div>
     </div>
 
     <button @click="navigateToStartThread" class="start-thread-btn">
-      Start new thread
+      {{ $t('startThread') }}
     </button>
-
   </div>
 </template>
 
 <script>
-import { useRouter, useRoute} from "vue-router";
+import { useRouter } from "vue-router";
 import * as LucideIcons from "lucide-vue-next";
-import { ref, watchEffect } from "vue";
-
-const route = useRoute();
-const forum = ref(null);
 
 export default {
   props: {
-    forum: Object 
+    forum: Object
   },
   setup(props) {
     const router = useRouter();
-    const route = useRoute();  
 
     const navigateToStartThread = () => {
-      router.push({ path: "/start-thread", query: { forum: props.forum?.slug || "p/general" } });
+      router.push({
+        path: "/start-thread",
+        query: { forum: props.forum?.slug || "p/general" }
+      });
     };
 
-    return { LucideIcons, navigateToStartThread, route }; 
+    return {
+      LucideIcons,
+      navigateToStartThread
+    };
   }
 };
 </script>
+
 
 
 <style scoped>
