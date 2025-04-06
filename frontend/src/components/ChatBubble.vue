@@ -29,7 +29,7 @@ export default{
     height: 455px;
     width: 391px;
     bottom: 0;
-    right: 10%;
+    right: 7.5%;
     box-shadow: 0px 2px 4px rgb(0,0,0,0.7);
     background-color: white;
     z-index: 100;
