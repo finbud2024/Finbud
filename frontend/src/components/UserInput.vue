@@ -8,22 +8,12 @@
       </div>
 
       <!-- Text Input Field -->
-      <input 
-        type="text" 
-        v-model="messageText" 
-        @input="handleInput"
-        @keyup.enter="send" 
-        placeholder="Type your message here..."
-      />
+      <input type="text" v-model="messageText" @input="handleInput" @keyup.enter="send" placeholder="" />
+      <InitialSuggestions v-if="!messageText && !hasInteracted" class="typing-placeholder" />
 
       <!-- Voice Recording Button OR Send Button -->
-      <div v-if="!isTyping" 
-        @mousedown="startRecording" 
-        @mouseup="stopRecording" 
-        @mouseleave="stopRecording"
-        class="mic-btn"
-        :class="{ recording: isRecording }" 
-      >
+      <div v-if="!isTyping" @mousedown="startRecording" @mouseup="stopRecording" @mouseleave="stopRecording"
+        class="mic-btn" :class="{ recording: isRecording }">
         <i class="fa-solid fa-microphone-lines"></i>
       </div>
 
@@ -37,15 +27,20 @@
 <script>
 import axios from "axios";
 import OpenAI from 'openai';
+import InitialSuggestions from './InitialSuggestions.vue';
 
 export default {
   name: "UserInput",
   props: {
     newMessage: String,
   },
+  components: {
+    InitialSuggestions
+  },
   data() {
     return {
       messageText: "",
+      hasInteracted: false,
       isRecording: false,
       isTyping: false,
       mediaRecorder: null,
@@ -73,6 +68,9 @@ export default {
     },
 
     handleInput() {
+      if (!this.hasInteracted && this.messageText.length > 0) {
+        this.hasInteracted = true;
+      }
       this.isTyping = this.messageText.length > 0;
     },
 
@@ -140,6 +138,16 @@ export default {
   position: relative;
 }
 
+.typing-placeholder {
+  position: absolute;
+  top: 35%;
+  left: 15%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #aaa;
+  z-index: 1;
+}
+
 .user-input input[type="text"] {
   flex-grow: 1;
   margin-right: 10px;
@@ -157,15 +165,22 @@ export default {
   box-shadow: 0 0 5px var(--shadow-color);
 }
 
-.upload-btn, .mic-btn, .send-btn {
+.upload-btn,
+.mic-btn,
+.send-btn {
   position: absolute;
   cursor: pointer;
   color: var(--link-color);
   transition: color 0.3s, transform 0.2s;
 }
 
-.upload-btn { left: 30px; }
-.send-btn { right: 40px; }
+.upload-btn {
+  left: 30px;
+}
+
+.send-btn {
+  right: 40px;
+}
 
 /* Voice Recording Button */
 .mic-btn {
@@ -178,17 +193,28 @@ export default {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
-.upload-btn:hover, .mic-btn:hover, .send-btn:hover {
+.upload-btn:hover,
+.mic-btn:hover,
+.send-btn:hover {
   color: var(--link-color);
   transform: scale(1.1);
 }
 
-.upload-btn:focus, .send-btn:focus {
+.upload-btn:focus,
+.send-btn:focus {
   outline: none;
   box-shadow: 0 0 5px var(--shadow-color);
 }

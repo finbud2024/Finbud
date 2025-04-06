@@ -448,7 +448,7 @@ tr:nth-child(odd) {
   width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #000000;
   display: flex;
   justify-content: center;
   align-items: center;

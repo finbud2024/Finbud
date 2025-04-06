@@ -1,8 +1,12 @@
 <template>
   <nav class="nav-bar" id="app">
-    <router-link to="/" class="navbar-brand">FinBud</router-link>
-    <div class="nav-right">
+    <router-link to="/" class="navbar-brand"><img src="@/assets/finbud_ai_logo.jpg" alt="FinBud Logo" class="logo-image" /></router-link>
+    <div class="nav-bottom">
       <ul class="nav-items">
+        
+        <li>
+          <router-link to="/" class="navbar-brand">FinBud</router-link>
+        </li>
         <li>
           <router-link to="/chat-view" class="chatview">Chat</router-link>
         </li>
@@ -424,15 +428,26 @@ export default {
 
 .nav-bar {
   background-color: var(--bg-primary);
-  width: 100%;
+  height: 100%; 
+  width: var(--nav-collapse-width);
+  transition: width 0.3s ease, transform 0.3s ease;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0rem 2rem;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: left;
   font-family: "Space Grotesk", sans-serif;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: fixed;
-  z-index: 1000;
+  top: 0;
+  left: 0;
+  z-index: 10002; /* Make nav-bar overlay everything */
+}
+
+.nav-bar:hover {
+  width: var(--nav-width);
+  padding-left: 2rem;
+  padding-right: 2rem;
+  align-items: flex-start;
 }
 
 .navbar-brand {
@@ -443,16 +458,38 @@ export default {
   text-decoration: none;
 }
 
-.nav-right {
+.logo-image {
+  height: var(--nav-collapse-width); 
+  width: auto;
+}
+
+.nav-bar:hover .logo-image {
+  opacity: 1;
+  height: var(--nav-width);
+  transform: translateX(0%);
+  pointer-events: auto;
+}
+
+.nav-bottom {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 0.3s ease;
   display: flex;
-  align-items: center;
-  margin-right: 3rem;
+  flex-direction: column;
+  align-items: left;
+}
+
+.nav-bar:hover .nav-bottom {
+  opacity: 1;
+  transform: translateX(0%);
+  pointer-events: auto;
 }
 
 .nav-items {
   list-style: none;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: left;
   padding: 0.2rem;
   gap: 2rem;
 }
@@ -467,7 +504,7 @@ export default {
 .nav-items li .chatview {
   border-radius: 10px;
   padding: 5px 10px;
-  background-color: #45a049;
+  background-color: #616060;
   color: white;
   transition: background-color 0.3s ease, transform 0.3s ease;
   display: flex;
@@ -476,7 +513,7 @@ export default {
 }
 
 .nav-items li .login-button {
-  background-color: #45a049;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 10px;
@@ -528,6 +565,8 @@ export default {
   position: absolute;
   background-color: var(--bg-primary);
   min-width: 100px;
+  width: auto;
+  white-space: nowrap;
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
   z-index: 1;
   border-radius: 15px;
@@ -539,7 +578,7 @@ export default {
   min-width: 200px;
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
   z-index: 1;
-  transform: translate(-160px, 0px);
+  /* transform: translate(160px, 0px); */
   border-radius: 15px;
 }
 
@@ -565,20 +604,20 @@ export default {
   align-items: center;
   border-bottom: 1px dotted rgb(226, 215, 215);
   height: 20px;
-  border-left: 2px solid #007bff;
-  border-right: 2px solid #007bff;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #000000;
 }
 
 .dropdown-content a:nth-child(1),
 .dropdown-profile a:nth-child(1) {
-  border-top: 2px solid #007bff;
+  border-top: 2px solid #000000;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
 
 .dropdown-content a:last-child,
 .dropdown-profile a:last-child {
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid transparent;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
 }
@@ -683,33 +722,38 @@ export default {
 .dropdown.active .dropdown-content {
   display: block;
   opacity: 1;
-  transform: translate(-15px, 0px);
+  transform: translate(15px, 0px);
 }
 
 @media (max-width: 768px) {
   .nav-bar {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
     height: 7%;
   }
+
+  .nav-bar:hover {
+    height: 7%;
+  }
+
 
   .mobile-only {
     display: flex;
     width: 100%;
     height: 100%;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
+    align-items: left;
     position: relative;
   }
 
   .button-mobile {
     position: absolute;
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
     gap: 5px;
   }
 

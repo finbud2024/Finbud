@@ -1,4 +1,7 @@
 <template>
+  <div class="home-search-bar">
+    <UserInput @send-message="sendMessage" />
+  </div>
   <section id="main-content">
     <div class='intro-container'>
       <div class="intro-text">
@@ -169,6 +172,7 @@
 </template>
 
 <script>
+import UserInput from "@/components/UserInput.vue";
 import BigGreenButton from "../components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
@@ -177,6 +181,7 @@ import { useTypingEffect } from '@/composables/useTypingEffect';
 export default {
   name: 'MainContent',
   components: {
+    UserInput,
     BigGreenButton,
     TutorialOverlay
   },
@@ -184,11 +189,11 @@ export default {
     const { 
         typingText: signInTitle, 
         startTyping: startTypingSignInTitle 
-    } = useTypingEffect('Sign in to see more services')
+    } = useTypingEffect(['Sign in to see more services'])
     const { 
       typingText: signInDescription, 
       startTyping:  startTypingSignInDescription 
-    } = useTypingEffect('With FinBud, you can ask for the best financial advice anytime, anywhere', {
+    } = useTypingEffect(['With FinBud, you can ask for the best financial advice anytime, anywhere'], {
       reverseEffect: false
     })
     
@@ -280,6 +285,17 @@ export default {
 </script>
 
 <style scoped>
+.home-search-bar {
+  position: absolute;         
+  top: 0;                  
+  left: 0;                 
+  width: 100%;             
+  z-index: 1000;           
+  background-color: white;
+  padding: 2rem;           
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
 /* Add animations */
 .animate {
   opacity: 0;

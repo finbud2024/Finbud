@@ -334,6 +334,8 @@ export default {
   --bg-primary: #ffffff;
   --text-primary: #333333; /* was #333333 */
   --nav-bg: #ffffff;
+  --nav-collapse-width: 50px;
+  --nav-width: 168px;
   --border-color: #dddddd;
   --link-color: #000000;
   --hover-bg: #024384;
@@ -351,12 +353,12 @@ body.dark-mode {
   --text-primary: #ffffff;
   --nav-bg: #242424;
   --border-color: #404040;
-  --link-color: #000000; /* was 4da3ff */
-  --hover-bg: #000000; /* was #024384 */
+  --link-color: #ffffff; /* was 4da3ff */
+  --hover-bg: #9d9c9c; /* was #024384 */
   --card-bg: #2d2d2d;
-  --shadow-color: #0a6b10;
+  --shadow-color: #b9b9b9;
   --progress-color: #e9e2e2;
-  --logo-color: #000000; /* was #007bff */
+  --logo-color: #afafaf; /* was #007bff */
   --content-bg: #736969;
 }
 
@@ -391,9 +393,11 @@ body.dark-mode {
 }
 
 body {
+  background-color: var(--bg-primary);
   min-height: 100%;
   margin: 0;
   padding: 0;
+  margin-left: var(--nav-collapse-width);
   font-family: Noto sans, sans-serif;
   overflow-x: none;
 }
@@ -412,7 +416,8 @@ html {
 }
 
 .content {
-  padding-top: 80px;
+  margin-top: 80px;
+  margin-left: 80px;
   flex: 1;
 }
 
