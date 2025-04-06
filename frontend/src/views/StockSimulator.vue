@@ -1460,7 +1460,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         if (this.portfolioBotHideTimeout) {
           clearTimeout(this.portfolioBotHideTimeout);
         }
-
+        
         if (newSection === "portfolio") {
           console.log("Portfolio section activated");
 
@@ -1497,14 +1497,11 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           this.fetchUserHoldings();
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
+        } else if (newSection === 'quiz') {
+        this.generateTradingQuestions(); // Call method when quiz section is activated
         }
       },
       immediate: true, // Make it run immediately on component creation
-    },
-    activeSection(newSection) {
-      if (newSection === 'quiz') {
-        this.generateTradingQuestions(); // Call method when quiz section is activated
-      }
     },
   },
   async mounted() {

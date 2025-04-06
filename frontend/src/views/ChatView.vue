@@ -165,6 +165,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .home-container {
   display: flex;
