@@ -29,6 +29,7 @@ import superInvestorsRoute from '../Endpoints/superInvestorsRoute.js';
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
+import filingsRoute, { loadCompanies } from "../Endpoints/finData/filingsRoute.js";
 
 dotenv.config();
 
@@ -121,7 +122,6 @@ app.use(
 //   console.log(req.body);
 //   next();
 // });
-
 const router = express.Router();
 
 router.use("/", authRoute);
@@ -148,6 +148,7 @@ router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
+router.use("/", filingsRoute)
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
@@ -159,7 +160,9 @@ const handler = async (event, context) => {
   if (!mongoose.connection.readyState) {
     try {
       await connectToMongoDB();
+      await loadCompanies()
     } catch (error) {
+      console.log("Error starting the server")
       return {
         statusCode: 500,
         body: JSON.stringify({ error: "Failed to connect to database" }),
@@ -174,6 +177,7 @@ const handler = async (event, context) => {
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 8889;
   connectToMongoDB()
+  .then(() => loadCompanies())
     .then(() => {
       httpServer.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
