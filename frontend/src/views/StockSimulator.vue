@@ -226,44 +226,50 @@
     <section v-if="activeSection === 'portfolio'" class="portfolio-section">
       <div class="portfolio-container">
         <div class="portfolio-header">
-          <h2>Your Investment Portfolio</h2>
+          <h2>{{ activeSection === 'portfolio' ? $t('investmentPortfolio') : 'Your Investment Portfolio' }}</h2>
+          
+          <!-- Add language switcher here -->
+          <div class="portfolio-language-switcher">
+            <button @click="switchLanguage('en')" :class="{ active: $i18n.locale === 'en' }">
+              <img src="@/assets/us.png" alt="English" />
+            </button>
+            <button @click="switchLanguage('vi')" :class="{ active: $i18n.locale === 'vi' }">
+              <img src="@/assets/vn.png" alt="Tiếng Việt" />
+            </button>
+          </div>
         </div>
 
         <div class="portfolio-overview">
           <div class="overview-card total">
-            <div class="overview-title">Total Portfolio Value</div>
+            <div class="overview-title">{{ $t('totalPortfolioValue') }}</div>
             <div class="overview-value">${{ formatCurrency(accountBalance) }}</div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">Stocks</div>
+            <div class="overview-title">{{ $t('stocks') }}</div>
             <div class="overview-value">${{ formatCurrency(stockValue) }}</div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">Cash</div>
+            <div class="overview-title">{{ $t('cash') }}</div>
             <div class="overview-value">${{ formatCurrency(cash) }}</div>
           </div>
         </div>
-
-        <div class="portfolio-content">
-          <PortfolioPerformance />
-        </div>
-
+        <PortfolioPerformance/>
         <div class="holdings-section">
-          <h3>Your Holdings</h3>
+          <h3>{{ $t('yourHoldings') }}</h3>
           <div class="holdings-table">
             <table>
               <thead>
                 <tr>
-                  <th>Stock Ticker</th>
+                  <th>{{ $t('stockTicker') }}</th>
                   <!-- <th>Company Name</th> -->
-                  <th>Share Quantity</th>
-                  <th>Current Price per Share</th>
-                  <th>Total Purchased Value</th>
-                  <th>Current Market Value</th>
-                  <th>Gain/Loss</th>
-                  <th>% Change</th>
+                  <th>{{ $t('shareQuantity') }}</th>
+                  <th>{{ $t('currentPricePerShare') }}</th>
+                  <th>{{ $t('totalPurchasedValue') }}</th>
+                  <th>{{ $t('currentMarketValue') }}</th>
+                  <th>{{ $t('gainLoss') }}</th>
+                  <th>{{ $t('percentChange') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -680,65 +686,91 @@ export default {
       }
     },
     async GeneratePortfolioInsights() {
-      try {
-        if (!this.userHoldings || this.userHoldings.length === 0) {
-          this.portfolioBotMessage = "I don't see any stocks in your portfolio yet. When you make your first purchase, I'll provide personalized insights here!";
-          return;
-        }
-        
-        if (!this.portfolioBotMessage) {
-          this.portfolioBotMessage = "Analyzing your portfolio...";
-        } else {
-          this.portfolioBotMessage = "Generating insights...";
-        }
-        
-        // Format holdings data for the API
-        const portfolioData = this.userHoldings.map(holding => ({
-          symbol: holding.symbol,
-          quantity: holding.quantity,
-          purchasePrice: holding.purchasePrice,
-          currentPrice: holding.currentPrice,
-          percentChange: ((holding.currentPrice - holding.purchasePrice) / holding.purchasePrice * 100).toFixed(2)
-        }));
-        
-        const url = "https://openrouter.ai/api/v1/chat/completions";
-        
-        const response = await axios.post(
-          url,
+  try {
+    // Check if there are any holdings to analyze
+    if (!this.userHoldings || this.userHoldings.length === 0) {
+      this.portfolioBotMessage = this.$i18n.locale === 'vi' 
+        ? "Tôi không thấy cổ phiếu nào trong danh mục đầu tư của bạn. Khi bạn mua cổ phiếu đầu tiên, tôi sẽ cung cấp thông tin chi tiết ở đây!"
+        : "I don't see any stocks in your portfolio yet. When you make your first purchase, I'll provide personalized insights here!";
+      return this.portfolioBotMessage;
+    }
+    
+    // Set initial loading message
+    this.portfolioBotMessage = this.$i18n.locale === 'vi'
+      ? "Đang phân tích danh mục đầu tư của bạn..."
+      : "Analyzing your portfolio...";
+    
+    // Format holdings data for the API
+    const portfolioData = this.userHoldings.map(holding => ({
+      symbol: holding.symbol,
+      quantity: holding.quantity,
+      purchasePrice: holding.purchasePrice,
+      currentPrice: holding.currentPrice,
+      percentChange: ((holding.currentPrice - holding.purchasePrice) / holding.purchasePrice * 100).toFixed(2)
+    }));
+    
+    const url = "https://openrouter.ai/api/v1/chat/completions";
+    
+    // Determine language and set appropriate system message and user prompt
+    const isVietnamese = this.$i18n.locale === 'vi';
+    
+    // Define the correct system message and user prompt based on language
+    let systemMessage, userPrompt;
+    
+    if (isVietnamese) {
+      systemMessage = "Bạn là FinBud, một trợ lý đầu tư thân thiện. Hãy phân tích dữ liệu danh mục đầu tư của người dùng và đưa ra những nhận xét cá nhân hóa ngắn gọn. Định dạng phản hồi của bạn bằng Markdown: sử dụng ### cho tiêu đề, **in đậm** để nhấn mạnh, và danh sách đánh số cho các đề xuất. Tập trung vào đa dạng hóa, xu hướng hiệu suất, đánh giá rủi ro và 1-2 đề xuất cải thiện cụ thể. Giữ phân tích của bạn dưới 30 từ và sử dụng giọng điệu hội thoại.";
+      userPrompt = `Phân tích danh mục đầu tư của tôi và đưa ra nhận xét: ${JSON.stringify(portfolioData)}`;
+    } else {
+      systemMessage = "You are FinBud, a friendly investment assistant. Analyze the user's portfolio data and provide concise, personalized insights. Format your response with Markdown: use ### for headings, **bold** for emphasis, and numbered lists for recommendations. Focus on diversification, performance trends, risk assessment, and 1-2 specific improvement suggestions. Keep your analysis under 30 words and use a conversational tone.";
+      userPrompt = `Analyze my investment portfolio and provide insights: ${JSON.stringify(portfolioData)}`;
+    }
+    
+    // Make a single API call in the user's language
+    const response = await axios.post(
+      url,
+      {
+        model: "deepseek/deepseek-chat:free",
+        messages: [
           {
-            model: "deepseek/deepseek-chat:free",
-            messages: [
-              {
-                role: "system",
-                content: "You are FinBud, a friendly investment assistant. Analyze the user's portfolio data and provide concise, personalized insights. Format your response with Markdown: use ### for headings, **bold** for emphasis, and numbered lists for recommendations. Focus on diversification, performance trends, risk assessment, and 1-2 specific improvement suggestions. Keep your analysis under 30 words and use a conversational tone."
-              },
-              {
-                role: "user",
-                content: `Analyze my investment portfolio and provide insights: ${JSON.stringify(portfolioData)}`
-              }
-            ]
+            role: "system",
+            content: systemMessage
           },
           {
-            headers: {
-              Authorization: `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            }
+            role: "user",
+            content: userPrompt
           }
-        );
-        
-        const insightResponse = response.data.choices[0].message.content;
-        // Format the response before saving it
-        this.portfolioBotMessage = this.formatPortfolioInsights(insightResponse);
-        console.log("Portfolio insights:", this.portfolioBotMessage);
-        return this.portfolioBotMessage;
-        
-      } catch (error) {
-        console.log("Error generating portfolio insights:", error);
-        this.portfolioBotMessage = "I'm having trouble analyzing your portfolio right now. Please try again later.";
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
       }
-    },
+    );
 
+    // Process the response
+    if (response && response.data && response.data.choices && response.data.choices[0]) {
+      const insights = response.data.choices[0].message.content;
+      this.portfolioBotMessage = this.formatPortfolioInsights(insights);
+      console.log("Portfolio insights generated successfully");
+      return this.portfolioBotMessage;
+    } else {
+      console.error("Invalid API response format:", response);
+      throw new Error("Invalid API response format");
+    }
+  } catch (error) {
+    console.log("Error generating portfolio insights:", error);
+    
+    // Handle rate limit errors or other issues with simple error messages
+    this.portfolioBotMessage = this.$i18n.locale === 'vi'
+      ? "<h3 class='insight-heading'>Không thể tạo thông tin chi tiết</h3><p class='insight-paragraph'>Tôi đang gặp sự cố khi phân tích danh mục đầu tư của bạn. Điều này có thể do đã đạt đến giới hạn API. Vui lòng thử lại sau.</p>"
+      : "<h3 class='insight-heading'>Unable to Generate Insights</h3><p class='insight-paragraph'>I'm having trouble analyzing your portfolio right now. This may be due to API rate limits. Please try again later.</p>";
+    
+    return this.portfolioBotMessage;
+  }
+},
     handleScroll() {
       if (this.chatbotTriggeredByScroll) return;
 
@@ -1470,7 +1502,40 @@ export default {
         }
         return p;
       }).join('');
-    }
+    },
+    switchLanguage(lang) {
+ 
+      if (this.$i18n.locale !== lang) {
+     
+        this.$i18n.locale = lang;
+        
+        
+        if (this.activeSection === 'portfolio' && this.userHoldings && this.userHoldings.length > 0) {
+          
+          this.isPortfolioTyping = true;
+          this.currentPortfolioTypedMessage = "";
+          this.portfolioBotMessage = this.$i18n.locale === 'vi' 
+            ? "Đang cập nhật phân tích..."
+            : "Updating analysis...";
+          
+          
+          this.currentPortfolioTypedMessage = this.portfolioBotMessage;
+          
+        
+          setTimeout(async () => {
+          
+            await this.GeneratePortfolioInsights();
+            
+          
+            if (this.portfolioWordByWordTyping) {
+              this.startPortfolioWordByWordTyping();
+            } else {
+              this.startPortfolioCharacterByCharacterTyping();
+            }
+          }, 500);
+        }
+      }
+    },
   },
   watch: {
     "$route.query": {
@@ -1503,7 +1568,7 @@ export default {
       }
     },
     activeSection: {
-      async handler(newSection) {
+      async handler(newSection, oldSection) {
         console.log("Active section changed to:", newSection);
 
         // Clear any existing timers to prevent conflicts
@@ -1551,6 +1616,11 @@ export default {
           this.hidePortfolioBot();
         } else if (newSection === 'quiz') {
           this.generateTradingQuestions();
+        }
+
+        // Add this to reset language to English when leaving Portfolio section
+        if (oldSection === 'portfolio' && newSection !== 'portfolio') {
+          this.$i18n.locale = 'en';
         }
       },
       immediate: true,
@@ -2611,5 +2681,42 @@ h1 {
 
 .bot-message :deep(.highlight) {
   color: #ffeb3b;
+}
+
+/* Add at the appropriate location in your CSS */
+.portfolio-language-switcher {
+  display: flex;
+  gap: 10px;
+}
+
+.portfolio-language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.portfolio-language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.portfolio-language-switcher button:hover img {
+  transform: scale(1.1);
+}
+
+.portfolio-language-switcher button.active img {
+  border-color: #007bff;
+}
+
+/* Update portfolio header to accommodate language switcher */
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 </style>
