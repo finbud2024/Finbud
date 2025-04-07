@@ -1,14 +1,11 @@
-import { defineConfig } from '@vue/cli-service'
-
-export default defineConfig({
-  transpileDependencies: true,
+export default {
   chainWebpack: config => {
-    config.module
-      .rule('csv')
-      .test(/\.csv$/)
-      .use('csv-loader')
-      .loader('csv-loader')
-      .end();
+      config.module
+          .rule('csv')
+          .test(/\.csv$/)
+          .use('csv-loader')
+          .loader('csv-loader')
+          .end();
   },
   devServer: {
     proxy: {
@@ -22,4 +19,4 @@ export default defineConfig({
       }
     }
   }
-})
+};

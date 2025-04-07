@@ -9,16 +9,15 @@ puppeteer.use(StealthPlugin());
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });
 
-  console.log('🌐 Navigate to login page...');
+  console.log('Navigate to login page...');
   await page.goto('https://fireant.vn/dang-nhap', { waitUntil: 'domcontentloaded' });
 
-  // 🧠 YOU log in manually (within browser)
-  console.log('⏳ Please log in manually...');
-  await new Promise(resolve => setTimeout(resolve, 1000 * 60)); // wait 60s
+  console.log('Please log in manually...');
+  await new Promise(resolve => setTimeout(resolve, 1000 * 60)); 
 
   const cookies = await page.cookies();
   fs.writeFileSync('cookies.json', JSON.stringify(cookies, null, 2));
-  console.log('✅ Session cookies saved to cookies.json');
+  console.log('Session cookies saved to cookies.json');
 
   await browser.close();
 })();

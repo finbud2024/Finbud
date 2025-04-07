@@ -38,23 +38,25 @@ export default {
     const forums = ref([]);
     const threads = ref([]);
 
+    const userId = computed(() => store.getters["users/userId"]);
+
     const fetchForums = async () => {
       try {
-        const response = await api.get("/api/forums", { withCredentials: true });
+        const response = await api.get("/api/forums"); 
         forums.value = response.data;
       } catch (error) {
-        console.error("❌ Failed to fetch forums:", error);
+        console.error("Failed to fetch forums:", error);
       }
     };
 
     const fetchThreads = async () => {
       try {
         console.log(`Fetching threads for: ${activeForum.value}`);
-        const response = await api.get(`/api/posts/forum/${activeForum.value}`, { withCredentials: true });
-        console.log("✅ Fetched threads:", response.data);
+        const response = await api.get(`/api/posts/forum/${activeForum.value}?userId=${userId.value}`);
+        console.log("Fetched threads:", response.data);
         threads.value = response.data;
       } catch (error) {
-        console.error("❌ Error fetching threads:", error);
+        console.error("Error fetching threads:", error);
       }
     };
 
@@ -72,16 +74,13 @@ export default {
     const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
     onMounted(async () => {
-      // First ensure we have the current user data
       await store.dispatch("users/fetchCurrentUser");
-      
-      // Check if user is authenticated
+
       if (!store.getters["users/isAuthenticated"]) {
         router.push("/login");
         return;
       }
-      
-      // Then fetch forums and threads
+
       await fetchForums();
       await fetchThreads();
     });
