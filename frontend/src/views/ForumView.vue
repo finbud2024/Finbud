@@ -34,29 +34,35 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const store = useStore();
+
     const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
     const threads = ref([]);
 
     const userId = computed(() => store.getters["users/userId"]);
+    const userModel = computed(() => store.getters["users/userModel"]); // <== Add this line
+    const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
     const fetchForums = async () => {
       try {
-        const response = await api.get("/api/forums"); 
+        const response = await api.get("/api/forums", { withCredentials: true });
         forums.value = response.data;
       } catch (error) {
-        console.error("❌ Failed to fetch forums:", error);
+        console.error("Failed to fetch forums:", error);
       }
     };
 
     const fetchThreads = async () => {
       try {
         console.log(`Fetching threads for: ${activeForum.value}`);
-        const response = await api.get(`/api/posts/forum/${activeForum.value}?userId=${userId.value}`);
+        const response = await api.get(
+          `/api/posts/forum/${activeForum.value}?userId=${userId.value}`,
+          { withCredentials: true }
+        );
         console.log("Fetched threads:", response.data);
         threads.value = response.data;
       } catch (error) {
-        console.error("❌ Error fetching threads:", error);
+        console.error("Error fetching threads:", error);
       }
     };
 
@@ -66,20 +72,17 @@ export default {
     });
 
     const activeForumDetails = computed(() => {
-      return forums.value.find(forum => forum.slug === activeForum.value) || {};
+      return forums.value.find(f => f.slug === activeForum.value) || {};
     });
-
-    const filteredThreads = computed(() => threads.value);
-    
-    const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
     onMounted(async () => {
       await store.dispatch("users/fetchCurrentUser");
 
-      if (!store.getters["users/isAuthenticated"]) {
+      if (!isAuthenticated.value) {
         router.push("/login");
         return;
       }
+
       await fetchForums();
       await fetchThreads();
     });
@@ -87,12 +90,13 @@ export default {
     return {
       activeForum,
       activeForumDetails,
-      filteredThreads,
+      filteredThreads: computed(() => threads.value),
       isAuthenticated
     };
   }
 };
 </script>
+
 
 
 <style scoped>

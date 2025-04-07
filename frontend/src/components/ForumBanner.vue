@@ -19,30 +19,27 @@
 </template>
 
 <script>
-import { useRouter, useRoute} from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import * as LucideIcons from "lucide-vue-next";
-import { ref, watchEffect } from "vue";
-
-const route = useRoute();
-const forum = ref(null);
 
 export default {
   props: {
-    forum: Object 
+    forum: Object,
   },
   setup(props) {
     const router = useRouter();
-    const route = useRoute();  
 
     const navigateToStartThread = () => {
-      router.push({ path: "/start-thread", query: { forum: props.forum?.slug || "p/general" } });
+      router.push({
+        path: "/start-thread",
+        query: { forum: props.forum?.slug || "p/general" },
+      });
     };
 
-    return { LucideIcons, navigateToStartThread, route }; 
+    return { LucideIcons, navigateToStartThread };
   }
 };
 </script>
-
 
 <style scoped>
 .forum-banner {
