@@ -45,7 +45,7 @@ export default {
         const response = await api.get("/api/forums"); 
         forums.value = response.data;
       } catch (error) {
-        console.error("Failed to fetch forums:", error);
+        console.error("❌ Failed to fetch forums:", error);
       }
     };
 
@@ -56,7 +56,7 @@ export default {
         console.log("Fetched threads:", response.data);
         threads.value = response.data;
       } catch (error) {
-        console.error("Error fetching threads:", error);
+        console.error("❌ Error fetching threads:", error);
       }
     };
 
@@ -80,7 +80,6 @@ export default {
         router.push("/login");
         return;
       }
-
       await fetchForums();
       await fetchThreads();
     });

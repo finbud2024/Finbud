@@ -1,91 +1,82 @@
-<template>
-  <div v-if="!loading" class="forum-layout">
-    <ForumSidebar
-      v-if="forumDetails"
-      class="sidebar"
-      :activeForumSlug="forumDetails.slug"
-    />
+  <template>
+    <div class="forum-layout">
+      <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
+      <div class="content">
+        <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
-    <div class="content">
-      <ForumBanner
-        v-if="forumDetails"
-        :forum="forumDetails"
-        class="forum-banner"
-      />
-
-      <div v-if="thread" class="thread-container">
-        <div class="thread-content">
-          <div class="thread-header">
-            <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author Avatar" class="author-avatar" />
-            <div class="thread-meta">
-              <h1 class="thread-title">{{ thread?.title || "Untitled Thread" }}</h1>
-              <div class="thread-info">
-                <span class="author">{{ thread?.author?.displayName || "Anonymous" }}</span>
-                <span class="separator">•</span>
-                <span class="thread-date">{{ formatDate(thread?.createdAt) }}</span>
-              </div>
-            </div>
-          </div>
-
-          <p class="thread-body">{{ thread?.body || "No content available." }}</p>
-
-          <div class="thread-footer">
-            <span class="reaction like-reaction" @click="toggleLike">
-              <Heart class="icon" :class="{ 'liked': isLiked }" />
-              <span :class="{ 'liked-text': isLiked }">{{ thread.reactions.likes || 0 }}</span>
-            </span>
-            <span class="reaction">
-              <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
-            </span>
-            <span class="reaction" @click="toggleShare">
-              <Repeat class="icon" /> {{ thread.reactions.shares || 0 }}
-            </span>
-
-            <ShareButton v-if="showShare" :postId="thread._id" @close="toggleShare" />
-            <span class="reaction">
-              <Send class="icon" />
-            </span>
-          </div>
-
-          <div class="comment-box-container">
-            <textarea v-model="newComment" class="comment-box" placeholder="Add a comment..."></textarea>
-            <button @click="addComment" class="comment-button">Comment</button>
-          </div>
-
-          <div class="replies">
-            <h2>Replies</h2>
-            <div
-              v-for="(comment, index) in thread?.comments"
-              :key="comment?._id"
-              class="reply"
-            >
-              <img :src="comment?.author?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
-              <div class="reply-content">
-                <div class="reply-header">
-                  <strong class="reply-author">{{ comment?.author?.displayName || "Anonymous" }}</strong>
-                  <span class="reply-date">• {{ formatDate(comment?.createdAt) }}</span>
-                </div>
-
-                <p class="reply-text">{{ comment?.body || "No content available." }}</p>
-
-                <div class="reply-actions">
-                  <span class="reaction" @click="toggleCommentLike(index)">
-                    <Heart class="icon" :class="{ 'liked': comment.isLiked }" />
-                    <span :class="{ 'liked-text': comment.isLiked }">{{ comment.reactions.likes || 0 }}</span>
-                  </span>
+        <div class="thread-container" v-if="thread">
+          <div class="thread-content">
+            <div class="thread-header">
+              <img :src="thread?.author?.profilePicture || '/default-avatar.png'" alt="Author Avatar" class="author-avatar" />
+              <div class="thread-meta">
+                <h1 class="thread-title">{{ thread?.title || "Untitled Thread" }}</h1>
+                <div class="thread-info">
+                  <span class="author">{{ thread?.author?.displayName || "Anonymous" }}</span>
+                  <span class="separator">•</span>
+                  <span class="thread-date">{{ formatDate(thread?.createdAt) }}</span>
                 </div>
               </div>
             </div>
+
+            <p class="thread-body">{{ thread?.body || "No content available." }}</p>
+
+            <div class="thread-footer">
+              <span class="reaction like-reaction" @click="toggleLike">
+                <Heart class="icon" :class="{ 'liked': isLiked }" />
+                <span :class="{ 'liked-text': isLiked }">{{ thread.reactions.likes || 0 }}</span>
+              </span>
+              <span class="reaction">
+                <MessageCircle class="icon" /> {{ thread?.reactions?.comments || 0 }}
+              </span>
+
+              <span class="reaction" @click="toggleShare">
+                <Repeat class="icon" /> {{ thread.reactions.shares || 0 }}
+              </span>
+
+              <ShareButton v-if="showShare" :postId="thread._id" @close="toggleShare" />
+
+              <span class="reaction">
+                <Send class="icon" />
+              </span>
+            </div>
+
+            <div class="comment-box-container">
+              <textarea v-model="newComment" class="comment-box" placeholder="Add a comment..."></textarea>
+              <button @click="addComment" class="comment-button">Comment</button>
+            </div>
+
+            <div class="replies">
+              <h2>Replies</h2>
+              <div v-for="(comment, index) in thread?.comments" :key="comment?._id" class="reply">
+                <img :src="comment?.author?.profilePicture || '/default-avatar.png'" alt="Avatar" class="reply-avatar" />
+                <div class="reply-content">
+                  <div class="reply-header">
+                    <strong class="reply-author">{{ comment?.author?.displayName || "Anonymous" }}</strong>
+                    <span class="reply-date">• {{ formatDate(comment?.createdAt) }}</span>
+                  </div>
+
+                  <p class="reply-text">{{ comment?.body || "No content available." }}</p>
+
+                  <div class="reply-actions">
+                    <span class="reaction" @click="toggleCommentLike(index)">
+                      <Heart class="icon" :class="{ 'liked': comment.isLiked }" />
+                      <span :class="{ 'liked-text': comment.isLiked }">{{ comment.reactions.likes || 0 }}</span>
+
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-      </div>
 
-      <div v-else class="error-message">
-        <p>Thread not found.</p>
+        <div v-else class="error-message">
+          <p>Thread not found.</p>
+        </div>
       </div>
     </div>
-  </div>
-</template>
+  </template>
 
   <script>
   import api from "@/utils/api";
@@ -155,8 +146,7 @@
             forumDetails.value = {
               name: thread.value.forumId.name,
               logo: thread.value.forumId.logo,
-              slug: thread.value.forumId.slug,
-              description: thread.value.forumId.description
+              slug: thread.value.forumId.slug
             };
           }
 
@@ -292,7 +282,7 @@
       };
     }
   };
-</script>
+  </script>
 
 
 <style scoped>

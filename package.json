@@ -6,7 +6,7 @@
         "build": "cd frontend && vue-cli-service build",
         "client": "cd frontend && vue-cli-service serve",
         "start": "nodemon backend/functions/server.js",
-        "dev": "node build-functions.js && dotenv -e .env netlify dev",
+        "dev": "dotenv -e .env netlify dev",
         "seeding": "node backend/utils/stockSeeding.js",
         "install:python-deps": "pip install -r backend/functions/requirements.txt"
     },

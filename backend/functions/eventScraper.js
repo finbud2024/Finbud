@@ -9,45 +9,45 @@ let allEvents = [];
 
 const connectToMongoDB = async () => {
     try {
-        console.log("Connecting to MongoDB...");
+        console.log("🔍 Connecting to MongoDB...");
         await mongoose.connect(process.env.MONGO_URI, {
             serverSelectionTimeoutMS: 10000, 
         });
-        console.log("Connected to MongoDB!");
+        console.log("✅ Connected to MongoDB!");
     } catch (err) {
-        console.error("MongoDB Connection Error:", err.message);
+        console.error("❌ MongoDB Connection Error:", err.message);
         process.exit(1);
     }
 };
 
 async function saveToDatabase(events) {
     if (!events || events.length === 0) {
-        console.log("No events to save.");
+        console.log("⚠️ No events to save.");
         return;
     }
 
-    console.log(`Attempting to save ${events.length} events to MongoDB...`);
+    console.log(`💾 Attempting to save ${events.length} events to MongoDB...`);
 
     for (let event of events) {
         try {
             const existingEvent = await Event.findOne({ url: event.url });
             if (existingEvent) {
-                console.log(`Skipping duplicate: ${event.name}`);
+                console.log(`🔄 Skipping duplicate: ${event.name}`);
                 continue;
             }
 
             const newEvent = new Event(event);
             await newEvent.save();
-            console.log(`Inserted: ${event.name}`);
+            console.log(`✅ Inserted: ${event.name}`);
         } catch (error) {
-            console.error("Error saving event:", error);
+            console.error("❌ Error saving event:", error);
         }
     }
 }
 
 async function scrapeBloomberg() {
     const URL = "https://www.bloomberglive.com/calendar/";
-    console.log(`Fetching events from: ${URL}`);
+    console.log(`🔄 Fetching events from: ${URL}`);
 
     const browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
@@ -88,7 +88,7 @@ async function scrapeBloomberg() {
         }).filter(event => event !== null);
     }, today.toISOString());
 
-    console.log(`Found ${events.length} Bloomberg events!`);
+    console.log(`✅ Found ${events.length} Bloomberg events!`);
     await browser.close();
     return events;
 }
@@ -133,7 +133,7 @@ async function scrape10Times() {
                 createdAt: new Date(),
             }));
         } else {
-            console.warn(`No JSON-LD found on: ${url}, using fallback...`);
+            console.warn(`⚠️ No JSON-LD found on: ${url}, using fallback...`);
 
             await page.waitForSelector('.listing-item, .event-card', { timeout: 20000 });
 
@@ -155,16 +155,16 @@ async function scrape10Times() {
             });
 
             if (events.length === 0) {
-                console.error(`Still no events found on: ${url}.`);
+                console.error(`❌ Still no events found on: ${url}.`);
             }
         }
 
-        console.log(`Extracted ${events.length} events from ${url}`);
+        console.log(`✅ Extracted ${events.length} events from ${url}`);
 
         for (let event of events) {
             if (!event.url) continue;
 
-            console.log(`Visiting ${event.url} for additional details...`);
+            console.log(`🔍 Visiting ${event.url} for additional details...`);
             const eventPage = await browser.newPage();
             try {
                 await eventPage.goto(event.url, { timeout: 60000 });
@@ -176,7 +176,7 @@ async function scrape10Times() {
                     try {
                         return JSON.parse(scriptTag.innerText.trim());
                     } catch (error) {
-                        console.error("Error parsing JSON-LD:", error.message);
+                        console.error("❌ Error parsing JSON-LD:", error.message);
                         return null;
                     }
                 });
@@ -188,14 +188,14 @@ async function scrape10Times() {
                     event.image = Array.isArray(jsonData.image) && jsonData.image.length > 0 ? jsonData.image[0] : null;
                 }
             } catch (error) {
-                console.error(`Error fetching details for ${event.url}:`, error.message);
+                console.error(`❌ Error fetching details for ${event.url}:`, error.message);
             } finally {
                 await eventPage.close();
             }
         }
 
     } catch (error) {
-        console.error(`Error fetching ${url}:`, error.message);
+        console.error(`❌ Error fetching ${url}:`, error.message);
     }
 
     await browser.close();
@@ -203,7 +203,7 @@ async function scrape10Times() {
 }
 
 async function runScrapers() {
-    console.log("Starting Combined Event Scraper...");
+    console.log("🚀 Starting Combined Event Scraper...");
 
     await connectToMongoDB();
 
@@ -214,7 +214,7 @@ async function runScrapers() {
 
     await saveToDatabase(allEvents);
     mongoose.disconnect();
-    console.log("Disconnected from MongoDB");
+    console.log("✅ Disconnected from MongoDB");
 }
 
 runScrapers().catch(console.error);
