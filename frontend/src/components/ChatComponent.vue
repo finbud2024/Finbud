@@ -196,7 +196,7 @@ export default {
 				if (gptDefine.toLowerCase().includes("#define")) {
 					try {
 						const term = gptDefine.substring(gptDefine.toLowerCase().indexOf("define") + "define".length).trim();
-						const prompt = `Explain ${term} to me as if I'm 15 in ${language} `;
+						const prompt = `Explain ${term} to me as if I'm 15 in this language ${language} `;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
@@ -473,7 +473,7 @@ export default {
 					newVideos = await getVideos(gptDefine);
 					newRelevantQuestions = await getRelevantQuestions(searchResults, language);
 					//Normal GTP response
-					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language}.` }]);
+					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language} language.` }]);
 					answers.push(gptResponse);
 				}
 				// HANDLE STOCK
@@ -485,10 +485,10 @@ export default {
 						const timeStamp = new Date().toLocaleTimeString();
 						console.log(price, timeStamp, stockCode)
 						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-						const alphavantageResponsegpt = await gptServices([{ role: "user", content: `Translate "${alphavantageResponse}" into ${language}. Respond only with the translated text.` }]);
-						answers.push(alphavantageResponse);
+						const alphavantageResponsegpt = await gptServices([{ role: "user", content: `Translate "${alphavantageResponse}" into this language ${language}. Respond only with the translated text.` }]);
+						answers.push(alphavantageResponsegpt);
 						//chatgpt api
-						const prompt = `Responose in this language ${language}". Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+						const prompt = `Response in this language ${language}": generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 						
