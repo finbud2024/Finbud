@@ -50,7 +50,8 @@ postRouter.get("/forum/:forumSlug(*)", isAuthenticated, async (req, res) => {
         forumId: {
           name: post.forumId?.name || "Unknown Forum",
           logo: post.forumId?.logo || null,
-          slug: post.forumId?.slug || ""
+          slug: post.forumId?.slug || "",
+          description: post.forumId?.description || "No description available"
         },
         author
       };
@@ -94,7 +95,8 @@ postRouter.get("/post/:postId", isAuthenticated, async (req, res) => {
       forumId: {
         name: post.forumId?.name || "Unknown Forum",
         logo: post.forumId?.logo || null,
-        slug: post.forumId?.slug || ""
+        slug: post.forumId?.slug || "",
+        description: post.forumId?.description || "No description available"
       },
       author,
       comments: formattedComments

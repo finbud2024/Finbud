@@ -1,25 +1,25 @@
 <template>
-  <div class="forum-banner">
+  <div v-if="hasValidForum" class="forum-banner">
     <div class="forum-info">
       <component 
-        :is="LucideIcons[forum?.logo] || LucideIcons['HelpCircle']" 
+        :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
         class="forum-icon" 
       />
       <div class="forum-text">
-        <h1>{{ forum?.name || "Unknown Forum" }}</h1>
-        <p>{{ forum?.description || "Forum details unavailable" }}</p>
+        <h1>{{ forum.name }}</h1>
+        <p>{{ forum.description }}</p>
       </div>
     </div>
 
     <button @click="navigateToStartThread" class="start-thread-btn">
       Start new thread
     </button>
-
   </div>
 </template>
 
 <script>
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+import { computed } from "vue";
 import * as LucideIcons from "lucide-vue-next";
 
 export default {
@@ -29,6 +29,10 @@ export default {
   setup(props) {
     const router = useRouter();
 
+    const hasValidForum = computed(() => {
+      return props.forum && props.forum.name && props.forum.description;
+    });
+
     const navigateToStartThread = () => {
       router.push({
         path: "/start-thread",
@@ -36,10 +40,11 @@ export default {
       });
     };
 
-    return { LucideIcons, navigateToStartThread };
+    return { LucideIcons, navigateToStartThread, hasValidForum };
   }
 };
 </script>
+
 
 <style scoped>
 .forum-banner {

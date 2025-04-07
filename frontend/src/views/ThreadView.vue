@@ -1,9 +1,10 @@
-  <template>
-    <div class="forum-layout">
-      <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
-      <div class="content">
-        <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
+<template>
+  <div class="forum-layout">
+    <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
+    <div class="content">
+      <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
+      <div v-if="!loading">
         <div class="thread-container" v-if="thread">
           <div class="thread-content">
             <div class="thread-header">
@@ -61,13 +62,11 @@
                     <span class="reaction" @click="toggleCommentLike(index)">
                       <Heart class="icon" :class="{ 'liked': comment.isLiked }" />
                       <span :class="{ 'liked-text': comment.isLiked }">{{ comment.reactions.likes || 0 }}</span>
-
                     </span>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -76,7 +75,9 @@
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
+
 
 <script>
 import api from "@/utils/api";
