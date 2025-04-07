@@ -29,7 +29,7 @@
 <script>
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import { useRoute, useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import api from "@/utils/api";
 
@@ -43,7 +43,9 @@ export default {
     const body = ref("");
     const selectedForum = ref("");
     const forums = ref([]);
-    const userId = store.getters["users/userId"];
+
+    const userId = computed(() => store.getters["users/userId"]);
+    const userModel = computed(() => store.getters["users/userModel"]);
 
     const fetchForums = async () => {
       try {
@@ -61,7 +63,10 @@ export default {
       }
     };
 
-    onMounted(fetchForums);
+    onMounted(async () => {
+      await store.dispatch("users/fetchCurrentUser");
+      await fetchForums();
+    });
 
     const submitThread = async () => {
       if (!title.value.trim() || !body.value.trim() || !selectedForum.value) {
@@ -71,11 +76,12 @@ export default {
 
       try {
         const newThread = {
-          forumId: selectedForum.value,
-          userId: store.getters["users/userId"], 
-          title: title.value,
-          body: body.value,
-        };
+        forumId: selectedForum.value,
+        userId: store.getters["users/userId"],
+        userModel: store.getters["users/userModel"], 
+        title: title.value,
+        body: body.value,
+      };
 
         console.log("📤 Submitting Thread Data:", newThread);
 

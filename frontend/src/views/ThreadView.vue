@@ -1,9 +1,10 @@
-  <template>
-    <div class="forum-layout">
-      <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
-      <div class="content">
-        <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
+<template>
+  <div class="forum-layout">
+    <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
+    <div class="content">
+      <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
 
+      <div v-if="!loading">
         <div class="thread-container" v-if="thread">
           <div class="thread-content">
             <div class="thread-header">
@@ -61,13 +62,11 @@
                     <span class="reaction" @click="toggleCommentLike(index)">
                       <Heart class="icon" :class="{ 'liked': comment.isLiked }" />
                       <span :class="{ 'liked-text': comment.isLiked }">{{ comment.reactions.likes || 0 }}</span>
-
                     </span>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -76,213 +75,192 @@
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
-  <script>
-  import api from "@/utils/api";
-  import { ref, computed, onMounted } from "vue";
-  import { useRoute, useRouter } from "vue-router";
-  import { useStore } from "vuex";
-  import { useHead } from "@vueuse/head"; 
-  import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
-  import ShareButton from "@/components/ShareButton.vue";
-  import ForumSidebar from "@/components/ForumSidebar.vue";
-  import ForumBanner from "@/components/ForumBanner.vue";
 
-  export default {
-    components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send, ShareButton },
-    setup() {
-      const store = useStore();
-      const route = useRoute();
-      const router = useRouter();
+<script>
+import api from "@/utils/api";
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { useHead } from "@vueuse/head"; 
+import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
+import ShareButton from "@/components/ShareButton.vue";
+import ForumSidebar from "@/components/ForumSidebar.vue";
+import ForumBanner from "@/components/ForumBanner.vue";
 
-      const newComment = ref("");
-      const loading = ref(true);
-      const thread = ref(null);
-      const forumDetails = ref(null);
-      const isLiked = ref(false);
-      const showShare = ref(false);
+export default {
+  components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send, ShareButton },
+  setup() {
+    const store = useStore();
+    const route = useRoute();
+    const router = useRouter();
 
-      const toggleShare = () => {
-        showShare.value = !showShare.value;
-      };
+    const newComment = ref("");
+    const loading = ref(true);
+    const thread = ref(null);
+    const forumDetails = ref(null);
+    const isLiked = ref(false);
+    const showShare = ref(false);
 
-      const userId = computed(() => store.getters["users/userId"]);    
-      const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
+    const toggleShare = () => {
+      showShare.value = !showShare.value;
+    };
 
-      const updateMetaTags = (post) => {
-        if (!post) return;
+    const userId = computed(() => store.getters["users/userId"]);
+    const userModel = computed(() => store.getters["users/userModel"]);
+    const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
-        const postURL = `https://finbud.com/forum/thread/${post._id}`;
-        const defaultImage = "https://finbud.pro/img/botrmbg.50ade46a.png"; 
+    const updateMetaTags = (post) => {
+      if (!post) return;
+      const postURL = `https://finbud.com/forum/thread/${post._id}`;
+      const defaultImage = "https://finbud.pro/img/botrmbg.50ade46a.png"; 
 
-        useHead({
-          title: post.title || "FinBud - Discuss Finance & Investment",
-          meta: [
-            { name: "description", content: post.body.substring(0, 150) || "Join discussions on finance and investment." },
-            { property: "og:title", content: post.title || "FinBud" },
-            { property: "og:description", content: post.body.substring(0, 150) },
-            { property: "og:image", content: post.image || defaultImage },
-            { property: "og:url", content: postURL },
-            { property: "og:type", content: "article" },
-            { property: "twitter:card", content: "summary_large_image" },
-            { property: "twitter:title", content: post.title || "FinBud" },
-            { property: "twitter:description", content: post.body.substring(0, 150) },
-            { property: "twitter:image", content: post.image || defaultImage },
-          ],
-        });
-      };
-
-      const fetchThread = async () => {
-        try {
-          loading.value = true;
-          const postId = route.params.id;
-
-          const response = await api.get(`/api/posts/post/${postId}`, { withCredentials: true });
-
-          thread.value = response.data || null;
-
-          if (thread.value?.forumId) {
-            forumDetails.value = {
-              name: thread.value.forumId.name,
-              logo: thread.value.forumId.logo,
-              slug: thread.value.forumId.slug
-            };
-          }
-
-          thread.value.reactions = thread.value.reactions || { likes: 0, likedUsers: [] };
-          if (!Array.isArray(thread.value.reactions.likedUsers)) {
-            thread.value.reactions.likedUsers = [];
-          }
-
-          isLiked.value = thread.value.reactions.likedUsers.includes(userId.value); 
-
-          thread.value.comments.forEach(comment => {
-            comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
-
-            if (!Array.isArray(comment.reactions.likedUsers)) {
-              comment.reactions.likedUsers = [];
-            }
-
-            comment.isLiked = comment.reactions.likedUsers.includes(userId.value); 
-          });
-
-        } catch (error) {
-          console.error("Error fetching thread:", error);
-        } finally {
-          loading.value = false;  
-        }
-      };
-
-      onMounted(async () => {
-        // Always try to fetch the current user first
-        await store.dispatch("users/fetchCurrentUser");
-        
-        if (!store.getters["users/isAuthenticated"]) {
-          router.push("/login");
-          return;
-        }
-        
-        // Only fetch thread data if we're authenticated
-        await fetchThread();
+      useHead({
+        title: post.title || "FinBud - Discuss Finance & Investment",
+        meta: [
+          { name: "description", content: post.body.substring(0, 150) },
+          { property: "og:image", content: post.image || defaultImage },
+          { property: "og:url", content: postURL },
+        ],
       });
+    };
 
-      const formatDate = (dateString) => {
-        if (!dateString) return "Unknown Date";
-        const options = { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
-        return new Date(dateString).toLocaleString(undefined, options);
-      };
+    const fetchThread = async () => {
+      try {
+        loading.value = true;
+        const postId = route.params.id;
+        const response = await api.get(`/api/posts/post/${postId}`, { withCredentials: true });
 
-      const addComment = async () => {
-        if (!newComment.value.trim()) return;
+        thread.value = response.data || null;
 
-        try {
-          const response = await api.post(
-            `/api/posts/post/${thread.value._id}/add-comment`,
-            {
-              body: newComment.value,
-              userId: store.getters["users/userId"], 
-            }, { withCredentials: true }
-          );
-
-          const newCommentData = response.data.comment;
-          newCommentData.reactions = newCommentData.reactions || { likes: 0, likedUsers: [] };
-
-          if (!Array.isArray(newCommentData.reactions.likedUsers)) {
-            newCommentData.reactions.likedUsers = [];
-          }
-
-          thread.value.comments.push(newCommentData);
-          thread.value.reactions.comments += 1;
-          newComment.value = "";
-        } catch (error) {
-          console.error("Error adding comment:", error);
-        }
-      };
-
-      const toggleLike = async () => {
-        const action = isLiked.value ? "unlike" : "like";
-
-        try {
-          const response = await api.post(
-            `/api/posts/post/${thread.value._id}/like`,
-            { action, userId: userId.value }, { withCredentials: true }
-          );
-
-          thread.value.reactions.likes = response.data.likes;
-          thread.value.reactions.likedUsers = response.data.likedUsers;
-
-          isLiked.value = thread.value.reactions.likedUsers.includes(userId.value); 
-        } catch (error) {
-          console.error("Error toggling like:", error);
-        }
-      };
-
-      const toggleCommentLike = async (index) => {
-        const comment = thread.value.comments[index];
-
-        if (!comment.reactions) {
-          comment.reactions = { likes: 0, likedUsers: [] };
-        }
-        if (!Array.isArray(comment.reactions.likedUsers)) {
-          comment.reactions.likedUsers = [];
+        if (thread.value?.forumId) {
+          forumDetails.value = {
+            name: thread.value.forumId.name,
+            logo: thread.value.forumId.logo,
+            slug: thread.value.forumId.slug
+          };
         }
 
-        const isLiked = comment.reactions.likedUsers.includes(userId.value);
-        const action = isLiked ? "unlike" : "like";
+        thread.value.reactions = thread.value.reactions || { likes: 0, likedUsers: [] };
+        isLiked.value = thread.value.reactions.likedUsers?.includes(userId.value);
 
-        try {
-          const response = await api.post(
-            `/api/posts/post/${thread.value._id}/like-comment`,
-            { commentId: comment._id, action, userId: userId.value }, { withCredentials: true }
-          );
+        thread.value.comments.forEach(comment => {
+          comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
+          comment.isLiked = comment.reactions.likedUsers.includes(userId.value);
+        });
 
-          thread.value.comments[index].reactions.likes = response.data.likes;
-          thread.value.comments[index].reactions.likedUsers = response.data.likedUsers;
+        updateMetaTags(thread.value);
+      } catch (error) {
+        console.error("Error fetching thread:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
 
-          thread.value.comments[index].isLiked = thread.value.comments[index].reactions.likedUsers.includes(userId.value); 
-        } catch (error) {
-          console.error("Error toggling comment like:", error);
-        }
-      };
+    const addComment = async () => {
+      if (!newComment.value.trim()) return;
 
-      return {
-        newComment,
-        thread,
-        loading,
-        forumDetails,
-        isLiked,
-        userId,
-        addComment,
-        toggleLike,
-        toggleCommentLike,
-        formatDate,
-        showShare,
-        toggleShare
-      };
-    }
-  };
-  </script>
+      try {
+        const response = await api.post(
+          `/api/posts/post/${thread.value._id}/add-comment`,
+          {
+            body: newComment.value,
+            userId: userId.value,
+            userModel: userModel.value,
+          },
+          { withCredentials: true }
+        );
+
+        const newCommentData = response.data.comment;
+        newCommentData.reactions = newCommentData.reactions || { likes: 0, likedUsers: [] };
+        thread.value.comments.push(newCommentData);
+        thread.value.reactions.comments += 1;
+        newComment.value = "";
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
+    };
+
+    const toggleLike = async () => {
+      const action = isLiked.value ? "unlike" : "like";
+
+      try {
+        const response = await api.post(
+          `/api/posts/post/${thread.value._id}/like`,
+          { action, userId: userId.value, userModel: userModel.value },
+          { withCredentials: true }
+        );
+
+        thread.value.reactions.likes = response.data.likes;
+        thread.value.reactions.likedUsers = response.data.likedUsers;
+        isLiked.value = thread.value.reactions.likedUsers.includes(userId.value);
+      } catch (error) {
+        console.error("Error toggling like:", error);
+      }
+    };
+
+    const toggleCommentLike = async (index) => {
+      const comment = thread.value.comments[index];
+      const isLiked = comment.reactions.likedUsers.includes(userId.value);
+      const action = isLiked ? "unlike" : "like";
+
+      try {
+        const response = await api.post(
+          `/api/posts/post/${thread.value._id}/like-comment`,
+          {
+            commentId: comment._id,
+            action,
+            userId: userId.value,
+            userModel: userModel.value,
+          },
+          { withCredentials: true }
+        );
+
+        comment.reactions.likes = response.data.likes;
+        comment.reactions.likedUsers = response.data.likedUsers;
+        comment.isLiked = comment.reactions.likedUsers.includes(userId.value);
+      } catch (error) {
+        console.error("Error toggling comment like:", error);
+      }
+    };
+
+    onMounted(async () => {
+      await store.dispatch("users/fetchCurrentUser");
+
+      if (!isAuthenticated.value) {
+        router.push("/login");
+        return;
+      }
+
+      await fetchThread();
+    });
+
+    const formatDate = (dateString) => {
+      if (!dateString) return "Unknown Date";
+      const options = { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" };
+      return new Date(dateString).toLocaleString(undefined, options);
+    };
+
+    return {
+      newComment,
+      thread,
+      loading,
+      forumDetails,
+      isLiked,
+      userId,
+      addComment,
+      toggleLike,
+      toggleCommentLike,
+      formatDate,
+      showShare,
+      toggleShare
+    };
+  }
+};
+</script>
+
 
 
 <style scoped>

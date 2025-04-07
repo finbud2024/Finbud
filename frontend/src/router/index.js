@@ -122,6 +122,7 @@ const routes = [
     path: "/forum",
     name: "ForumView",
     component: ForumView,
+    meta: { requiresAuth: true },
     props: true,
   },
   {
@@ -148,7 +149,6 @@ const routes = [
     component: MortgageCalc,
     props: true,
   },
-  ,
   {
     path: "/super-investors",
     name: "SuperInvestors",
@@ -166,4 +166,4 @@ const router = createRouter({
   routes,
 });
 
-export default router;
+export default router
