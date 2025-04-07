@@ -1,8 +1,8 @@
 <template>
-  <div class="forum-layout">
+  <div class="forum-layout" v-if="ready">
     <ForumSidebar class="sidebar" :activeForumSlug="forumDetails?.slug" />
     <div class="content">
-      <ForumBanner v-if="forumDetails" :forum="forumDetails" class="forum-banner" />
+      <ForumBanner v-if="forumDetails?.name" :forum="forumDetails" class="forum-banner" />
 
       <div v-if="!loading">
         <div class="thread-container" v-if="thread">
@@ -96,6 +96,7 @@ export default {
     const store = useStore();
     const route = useRoute();
     const router = useRouter();
+    const ready = ref(false);
 
     const newComment = ref("");
     const loading = ref(true);
@@ -135,14 +136,16 @@ export default {
 
         thread.value = response.data || null;
 
-        if (thread.value?.forumId) {
-          forumDetails.value = {
-            name: thread.value.forumId.name,
-            logo: thread.value.forumId.logo,
-            slug: thread.value.forumId.slug
-          };
-        }
+        // Set forumDetails directly from thread.forumId
+        const f = thread.value?.forumId;
+        forumDetails.value = f && typeof f === 'object' ? {
+          name: f.name || "Unknown Forum",
+          logo: f.logo || null,
+          slug: f.slug || "",
+          description: f.description || "No description available"
+        } : null;
 
+        // Setup likes and comments
         thread.value.reactions = thread.value.reactions || { likes: 0, likedUsers: [] };
         isLiked.value = thread.value.reactions.likedUsers?.includes(userId.value);
 
@@ -235,6 +238,7 @@ export default {
       }
 
       await fetchThread();
+      ready.value = true;
     });
 
     const formatDate = (dateString) => {
@@ -255,12 +259,12 @@ export default {
       toggleCommentLike,
       formatDate,
       showShare,
-      toggleShare
+      toggleShare,
+      ready
     };
   }
 };
 </script>
-
 
 
 <style scoped>

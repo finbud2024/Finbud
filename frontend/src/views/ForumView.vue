@@ -1,5 +1,5 @@
 <template>
-  <div class="forum-layout">
+  <div class="forum-layout" v-if="ready">
     <!-- Sidebar -->
     <ForumSidebar class="sidebar" />
 
@@ -34,13 +34,14 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const store = useStore();
+    const ready = ref(false);
 
     const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
     const threads = ref([]);
 
     const userId = computed(() => store.getters["users/userId"]);
-    const userModel = computed(() => store.getters["users/userModel"]); // <== Add this line
+    const userModel = computed(() => store.getters["users/userModel"]);
     const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
     const fetchForums = async () => {
@@ -75,6 +76,7 @@ export default {
       return forums.value.find(f => f.slug === activeForum.value) || {};
     });
 
+
     onMounted(async () => {
       await store.dispatch("users/fetchCurrentUser");
 
@@ -85,18 +87,19 @@ export default {
 
       await fetchForums();
       await fetchThreads();
+      ready.value = true;
     });
 
     return {
       activeForum,
       activeForumDetails,
       filteredThreads: computed(() => threads.value),
-      isAuthenticated
+      isAuthenticated,
+      ready
     };
   }
 };
 </script>
-
 
 
 <style scoped>

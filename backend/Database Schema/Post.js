@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const CommentSchema = new mongoose.Schema({
   authorId: {
-    type: mongoose.Schema.Types.ObjectId, // ✅ NO destructuring here
+    type: mongoose.Schema.Types.ObjectId, 
     required: true,
     refPath: "comments.authorModel"
   },
@@ -26,7 +26,7 @@ const CommentSchema = new mongoose.Schema({
       default: 0
     },
     likedUsers: {
-      type: [mongoose.Schema.Types.ObjectId], // ✅ use full path
+      type: [mongoose.Schema.Types.ObjectId], 
       default: []
     }
   }
