@@ -29,6 +29,7 @@ import superInvestorsRoute from '../Endpoints/superInvestorsRoute.js';
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
+import articleRoute from "../Endpoints/articleRoute.js";
 
 dotenv.config();
 
@@ -155,6 +156,7 @@ router.use("/multiplier-simulator", multiplierSimulatorRoute);
 router.use('/', portfolioRoute);
 router.use("/api/investors", superInvestorsRoute);
 router.use("/api/forums", forumRoute);
+router.use("/api/articles", articleRoute);
 router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);

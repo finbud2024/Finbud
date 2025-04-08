@@ -115,6 +115,10 @@
                 </div>
             </section>
         </div>
+        <div class="articles-section">
+            <h3 class="text-2xl md:text-3xl mb-6">Latest Articles</h3>
+            <Articles :articles="articles" /> <!-- Pass articles to the Articles component -->
+        </div>
         <div class="frame3" data-aos="flip-left">
             <div class="events-container">
                 <h3 class="text-2xl md:text-3xl mb-6">All Events</h3>
@@ -151,6 +155,8 @@ import { gptNewsService } from '@/services/gptServices';
 import EventMap from '@/components/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import Articles from '@/components/Articles.vue'; // Adjust the path if necessary
+import api from "@/utils/api";
 
 export default {
     name: 'EventHub',
@@ -158,6 +164,7 @@ export default {
         Swiper,
         SwiperSlide,
         EventMap,
+        Articles,
     },
     data() {
         return {
@@ -174,7 +181,8 @@ export default {
                 { name: 'Webinars', image: require('@/assets/career fair.png') },
                 { name: 'Networking', image: require('@/assets/workshop.png') },
                 { name: 'Career Fairs', image: require('@/assets/career fair.png') }
-            ]
+            ],
+            articles: []
         };
     },
     computed: {
@@ -225,10 +233,29 @@ export default {
             if (!summary) return "";
             const maxLength = 106; // Length of the reference summary
             return summary.length > maxLength ? summary.substring(0, maxLength) + "..." : summary;
+        },
+        async fetchArticles() {
+            try {
+                const response = await api.get('/api/articles', { withCredentials: true }); // Use your api instance here
+                this.articles = response.data; // Assign the response data to 'articles'
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+                
+                // Detailed error handling
+                if (error.response) {
+                    console.error("Server responded with error:", error.response.status);
+                    console.error("Error data:", error.response.data);
+                } else if (error.request) {
+                    console.error("No response received from the server.");
+                } else {
+                    console.error("Request error:", error.message);
+                }
+            }
         }
     },
     mounted() {
         this.fetchHeadlines();
+        this.fetchArticles();
         this.checkMobile();
         window.addEventListener('resize', this.checkMobile);
         AOS.init({ duration: 1000, easing: "ease-out" });
