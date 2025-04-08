@@ -11,6 +11,8 @@ import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps"; 
 import i18n from "./i18n";
 
+import { MotionPlugin } from '@vueuse/motion';
+
 // Add specific icons to the library
 const icons = [
   faSolid.faCamera,
@@ -52,6 +54,7 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 app.use(router);
 app.use(store);
 app.use(i18n);
+app.use(MotionPlugin);
 
 // Mount the application to the DOM
 app.mount("#app");
