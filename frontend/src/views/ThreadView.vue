@@ -84,7 +84,7 @@ import api from "@/utils/api";
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { useHead } from "@vueuse/head"; 
+import { useHead } from "@vueuse/head";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
 import ShareButton from "@/components/ShareButton.vue";
 import ForumSidebar from "@/components/ForumSidebar.vue";
@@ -110,23 +110,8 @@ export default {
     };
 
     const userId = computed(() => store.getters["users/userId"]);
-    const userModel = computed(() => store.getters["users/userModel"]);
+    const userModel = computed(() => store.getters["users/userModel"] || "User"); 
     const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
-
-    const updateMetaTags = (post) => {
-      if (!post) return;
-      const postURL = `https://finbud.com/forum/thread/${post._id}`;
-      const defaultImage = "https://finbud.pro/img/botrmbg.50ade46a.png"; 
-
-      useHead({
-        title: post.title || "FinBud - Discuss Finance & Investment",
-        meta: [
-          { name: "description", content: post.body.substring(0, 150) },
-          { property: "og:image", content: post.image || defaultImage },
-          { property: "og:url", content: postURL },
-        ],
-      });
-    };
 
     const fetchThread = async () => {
       try {
@@ -153,8 +138,6 @@ export default {
           comment.reactions = comment.reactions || { likes: 0, likedUsers: [] };
           comment.isLiked = comment.reactions.likedUsers.includes(userId.value);
         });
-
-        updateMetaTags(thread.value);
       } catch (error) {
         console.error("Error fetching thread:", error);
       } finally {
@@ -238,6 +221,21 @@ export default {
       }
 
       await fetchThread();
+
+      if (thread.value) {
+        const postURL = `https://finbud.com/forum/thread/${thread.value._id}`;
+        const defaultImage = "https://finbud.pro/img/botrmbg.50ade46a.png";
+
+        useHead({
+          title: thread.value.title || "FinBud - Discuss Finance & Investment",
+          meta: [
+            { name: "description", content: thread.value.body.substring(0, 150) },
+            { property: "og:image", content: defaultImage },
+            { property: "og:url", content: postURL },
+          ],
+        });
+      }
+
       ready.value = true;
     });
 
@@ -265,6 +263,7 @@ export default {
   }
 };
 </script>
+
 
 
 <style scoped>

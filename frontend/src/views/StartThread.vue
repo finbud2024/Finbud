@@ -77,8 +77,8 @@ export default {
       try {
         const newThread = {
         forumId: selectedForum.value,
-        userId: store.getters["users/userId"],
-        userModel: store.getters["users/userModel"], 
+        userId: userId.value,
+        userModel: "User",  
         title: title.value,
         body: body.value,
       };
