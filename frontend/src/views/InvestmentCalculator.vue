@@ -273,7 +273,6 @@ export default {
     },
 
 
-      
 
     calculateInvestment() {
       if (!this.shouldCalculate) return;
