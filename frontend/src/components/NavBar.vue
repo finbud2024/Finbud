@@ -27,6 +27,7 @@
               @click="toggleAboutDropdown(false)"
               >Technology</router-link
             >
+           
           </div>
         </li>
 
@@ -48,6 +49,12 @@
               class="risk-analysis"
               @click="toggleDropdown(false)"
               >Risk Analysis</router-link
+            >
+            <router-link
+              to="/investment-calculator"
+              class="investment-calculator"
+              @click="toggleAboutDropdown(false)"
+              >Investment Calculator</router-link
             >
             <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
             

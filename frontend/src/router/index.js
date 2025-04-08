@@ -21,6 +21,8 @@ import ForumView from "@/views/ForumView.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/ThreadView.vue";
 import StartThread from "@/views/StartThread.vue";
+import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
+
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
@@ -158,7 +160,14 @@ const routes = [
     path: "/super-investors/:id",
     name: "InvestorDetails",
     component: InvestorDetail,
-  }
+  },
+  {
+    path: "/investment-calculator",
+    name: "InvestmentCalculator",
+    component: InvestmentCalculator,
+    props: true,
+  },
+
 ];
 
 const router = createRouter({
