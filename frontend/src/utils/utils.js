@@ -20,3 +20,11 @@ export function showReward(component, amount, type = "trade") {
     component.showingReward = false;
   }, duration);
 }
+
+import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs) {
+  return twMerge(clsx(...inputs));
+}
+
