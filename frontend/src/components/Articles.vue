@@ -23,21 +23,29 @@
   <script setup>
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
+  import api from '@/utils/api'
   
   const articles = ref([])
   const loading = ref(true)
   const error = ref(null)
   
   onMounted(async () => {
-    try {
-      const res = await axios.get('/api/articles') // adjust if backend URL is different
-      articles.value = res.data
-    } catch (err) {
-      error.value = err.message || "Failed to load articles"
-    } finally {
-      loading.value = false
+  try {
+    const res = await api.get('/api/articles', { withCredentials: true })
+    articles.value = res.data
+  } catch (err) {
+    error.value = err.message || "Failed to load articles"
+    
+    // Add more detailed error logging
+    if (err.response) {
+      console.error("Server responded with error:", err.response.status);
+      console.error("Error data:", err.response.data);
+      error.value = `Error ${err.response.status}: ${err.response.data.error || err.message}`;
     }
-  })
+  } finally {
+    loading.value = false
+  }
+})
   </script>
   
   <style scoped>

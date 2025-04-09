@@ -99,13 +99,13 @@ async function checkForAntiBot(page) {
 
 // Define the source to scrape
 const SOURCE_ID = '67d28bab5a9c17e61ac5555d'; // Replace with your actual source ID
-const VNEXPRESS_URL = 'https://vnexpress.net/';
+const VNEXPRESS_URL = 'https://vnexpress.net/kinh-doanh';
 
 // List of categories to scrape
 const categories = [
   { url: 'https://vnexpress.net/thoi-su', name: 'Thời sự' },
   { url: 'https://vnexpress.net/the-gioi', name: 'Thế giới' },
-  { url: 'https://vnexpress.net/kinh-doanh', name: 'Kinh doanh' },
+  { url: 'https://vnexpress.net/kinh-doanh/doanh-nghiep', name: 'Doanh Nghiep' },
   { url: 'https://vnexpress.net/giai-tri', name: 'Giải trí' }
 ];
 

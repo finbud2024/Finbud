@@ -16,12 +16,12 @@ const ArticleSchema = new Schema({
     required: true
   },
   authorId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'ScrapedUser',
     required: true
   },
   sourceId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Source',
     required: true
   },
