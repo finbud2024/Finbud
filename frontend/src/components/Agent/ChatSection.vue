@@ -3,7 +3,7 @@
     <div class="chat-header">
       <h2 class="chat-title">Financial Analysis</h2>
       <div class="powered-by">
-        Powered by <a href="#" class="provider-link">FinBud Agent<span class="arrow-icon">↗</span></a>
+        Powered by <a href="#" class="provider-link">FinBud<span class="arrow-icon">↗</span></a>
       </div>
       
       <div class="action-buttons">
@@ -364,7 +364,7 @@ export default {
 
 <style scoped>
 .chat-section {
-  background-color: white;
+  background-color: #2196f3;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 30px;
@@ -379,18 +379,18 @@ export default {
 .chat-title {
   font-size: 28px;
   font-weight: bold;
-  color: #1a1a1a;
+  color: #ffffff;
   margin: 0 0 8px 0;
 }
 
 .powered-by {
   font-size: 14px;
-  color: #666;
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
 .provider-link {
-  color: #0095ff;
+  color: #ffffff;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
@@ -427,7 +427,7 @@ export default {
 
 .ticker-button {
   background-color: #0095ff;
-  color: white;
+  color: #f8f9fa;
   box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
 
@@ -438,7 +438,7 @@ export default {
 
 .market-button {
   background-color: #0095ff;
-  color: white;
+  color: #f8f9fa;
   box-shadow: 0 4px 12px rgba(58, 12, 163, 0.2);
 }
 
@@ -504,17 +504,17 @@ export default {
 
 .twitter {
   background-color: #1DA1F2;
-  color: white;
+  color: #f8f9fa;
 }
 
 .facebook {
   background-color: #4267B2;
-  color: white;
+  color: #f8f9fa;
 }
 
 .linkedin {
   background-color: #0077B5;
-  color: white;
+  color: #f8f9fa;
 }
 
 .chat-content {

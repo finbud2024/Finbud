@@ -56,7 +56,7 @@ export default defineComponent({
   margin: 0 auto;
   padding: 20px 40px;
   color: #536f96;
-  background: #caeaff;
+  background: #f8f9fa;
   min-height: 100vh;
 }
 
