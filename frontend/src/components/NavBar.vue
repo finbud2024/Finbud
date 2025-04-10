@@ -123,6 +123,25 @@
           </div>
         </li>
 
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownAgent(true)"
+          @mouseleave="toggleDropdownAgent(false)"
+        >
+          <div class="services-dropdown dropbtn">
+            Fin Agent <span class="arrow-down"></span>
+          </div>
+           <div class="dropdown-content" v-show="isDropdownOpenAgent">
+            <router-link
+              to="/agent"
+              class="agent"
+              @click="toggleDropdownEdu(false)"
+              >Agent</router-link
+            >
+           </div>
+        </li>
+
         <li v-if="!isAuthenticated && !isAuthLoading">
           <router-link to="/login" class="login-button">Log In</router-link>
         </li>
@@ -288,6 +307,7 @@
 import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
+import { to } from "mathjs";
 export default {
   name: "NavBar",
   components: {
@@ -298,6 +318,7 @@ export default {
       isDropdownOpen: false,
       isDropdownOpenInvest: false,
       isDropdownOpenEdu: false,
+      isDropdownOpenAgent: false,
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
@@ -342,6 +363,9 @@ export default {
     },
     toggleDropdownEdu(open) {
       this.isDropdownOpenEdu = open;
+    },
+    toggleDropdownAgent(open) {
+      this.isDropdownOpenAgent = open;
     },
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;
