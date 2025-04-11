@@ -1,54 +1,70 @@
 <template>
-  <div class="form-container">
-    <h1 class="brand-name">Sign Up</h1>
-    <form @submit.prevent="register">
-      <!-- divide information into row -->
-      <div class="full-name">
+  <div class="signup-container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Sign Up</h1>
+    </div>
+
+    <!-- Form -->
+    <form class="signup-form" @submit.prevent="register">
+      <!-- Full Name Fields -->
+      <div class="name-fields">
         <div v-for="field in infoFields" :key="field.name" class="form-group">
           <label :for="field.name">{{ field.label }}</label>
-          <input :id="field.name"
-                  :type="field.type" 
-                  v-model="formData[field.name]" 
-                  :placeholder="field.placeholder" 
-                  :class="{'error-border': errors[field.name]}" 
-                  @blur="validateField(field.name)"
-                  @focus="showPasswordRequirement = false"
-                  :required="field.required" />
+          <input 
+            :id="field.name"
+            :type="field.type" 
+            v-model="formData[field.name]" 
+            :placeholder="field.placeholder" 
+            :class="{'error-border': errors[field.name]}" 
+            @blur="validateField(field.name)"
+            @focus="showPasswordRequirement = false"
+            :required="field.required" />
         </div>
       </div>
-      <!-- username/email -->
-      <div class="email">
-        <div class="form-group">
-          <label  for="email">Email Addresss</label>
-          <input  id="email"
-                  type="email" 
-                  v-model="formData.email" 
-                  placeholder="Email Address" 
-                  :class="{'error-border': errors.email}" 
-                  @blur="validateField('email')"
-                  required=true />
-        </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+          id="email"
+          type="email" 
+          v-model="formData.email" 
+          placeholder="Email Address" 
+          :class="{'error-border': errors.email}" 
+          @blur="validateField('email')"
+          required />
       </div>
-      <!-- password -->
-      <div class="password">
-        <div class="form-group">
-          <label  for="password">Password</label>
-          <input  id="password"
-                  :type="togglePassword? 'text' : 'password' " 
-                  v-model="formData.password" 
-                  placeholder="Password" 
-                  :class="{'error-border': errors.password}" 
-                  @blur="validateField('password')"
-                  @focus="showPasswordRequirement = true"
-                  required=true />
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-input-wrapper">
+          <input 
+            id="password"
+            :type="togglePassword ? 'text' : 'password'" 
+            v-model="formData.password" 
+            placeholder="Password" 
+            :class="{'error-border': errors.password}" 
+            @blur="validateField('password')"
+            @focus="showPasswordRequirement = true"
+            required />
           <!-- if password valid, checkmark animation will appear -->
-          <svg v-if="validPassword" class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
-          <!-- password toggle invisibility -->
-          <font-awesome-icon  class="invis-toggle-icon" 
-                              :icon="togglePassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"
-                              @click="togglePassword = !togglePassword" />
+          <svg v-if="validPassword" class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+          <!-- password toggle visibility -->
+          <button
+            type="button"
+            class="toggle-password"
+            @click="togglePassword = !togglePassword"
+          >
+            <i :class="togglePassword ? 'eye-off' : 'eye-on'"></i>
+          </button>
         </div>
       </div>
+
       <!-- Password requirements -->
       <div v-if="showPasswordRequirement && !validPassword" class="password-requirement-container">
         <p><b>Password must contain the following:</b></p>
@@ -71,24 +87,36 @@
           </li>
         </ul>
       </div>
-      <!-- confirm password -->
+
+      <!-- Confirm Password Field -->
       <div class="form-group">
         <label for="confirm-password">Re-enter your password</label>
-        <input id="confirm-password" 
-               type="password" 
-               v-model="formData.confirmPassword" 
-               placeholder="Re-enter your password" 
-               :class="{'error-border': errors.confirmPassword}" 
-               @blur="validateField('confirmPassword')"
-               required>
-        <span v-if="!formData.password" class="error-text"></span>
+        <div class="password-input-wrapper">
+          <input 
+            id="confirm-password" 
+            type="password" 
+            v-model="formData.confirmPassword" 
+            placeholder="Re-enter your password" 
+            :class="{'error-border': errors.confirmPassword}" 
+            @blur="validateField('confirmPassword')"
+            required />
+        </div>
       </div>
-      <button type="submit" class="register-button">Register</button>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn">Register</button>
+
+      <!-- Error Message -->
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
     </form>
-    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-    <p class="signin-text">
-      Already have an account? <router-link to="/login">Log in here</router-link>
-    </p>
+
+    <!-- Sign In Link -->
+    <div class="signin-link">
+      <span>Already have an account?</span>
+      <router-link to="/login">Sign in</router-link>
+    </div>
   </div>
 </template>
 
@@ -161,7 +189,7 @@ export default {
       this.loginFields.forEach(field => this.validateField(field.name));
       this.validateField('confirmPassword');
       if(this.errors.confirmPassword){
-        this.errorMessage = 'Password do not match!';
+        this.errorMessage = 'Passwords do not match!';
         return;
       }
       //check all value in errors object, if all false, then no error
@@ -214,141 +242,222 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
 
-.form-container {
-  max-width: 400px;
-  margin: 100px auto;
-  padding: 30px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-  border-radius: 15px;
-  background: rgb(248, 249, 254);
-  text-align: center;
+/* Main container */
+.signup-container {
+  width: 100%;
+  max-width: 448px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9pt;
 }
 
-.brand-name {
-  margin-bottom: 40px;
-  font-size: 40px;
+/* Header */
+.header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #111827;
+}
+
+/* Form */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
 }
 
 .form-group {
-  margin-bottom: 20px;
-  text-align: left;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.name-fields {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.name-fields .form-group {
+  flex: 1;
 }
 
 input {
   width: 100%;
-  padding: 12px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  height: 36px;
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  color: #111827;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9pt;
   box-sizing: border-box;
 }
 
-.form-group input::placeholder {
-  color: rgb(136, 152, 170);
+input:focus {
+  outline: 2px solid #3b82f6;
+  border-color: #3b82f6;
 }
 
-.form-group input:focus {
-  outline: 2px solid #007bff;
-}
-
-.full-name {
-  display: flex;
-  justify-content: space-between;
-}
-
-.full-name .form-group {
-  flex: 1;
-}
-
-.full-name .form-group:not(:last-child) {
-  margin-right: 20px;
-}
-
-.error-border {
-  outline: 2px solid red;
-}
-
-.register-button:hover {
-  cursor: pointer;
-}
-
-.register-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 50px;
-  background-color: #000;
-  color: white;
-}
-
-.error-message {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.password-requirement-container {
-  /* display: none; */
+.password-input-wrapper {
   position: relative;
-  text-align: left;
-  font-size: 15px;
+  width: 100%;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.toggle-password:hover {
+  color: #374151;
+}
+
+.eye-on, .eye-off {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Password requirements */
+.password-requirement-container {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.password-requirement-container p {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.password-requirement-container ul {
+  margin: 0;
+  padding: 0;
 }
 
 .password-requirement-container li {
   list-style: none;
-  position: relative;
-  left: -35px;
-  color: red;
+  color: #ef4444;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
 }
 
 .password-requirement-container li span {
-  margin-right: 20px;
+  margin-right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
 }
 
 .password-requirement-container .valid {
-  color: green;
+  color: #10b981;
 }
 
- /* .password{
-
-  */
-
-/* password invisibility toggle icon */
-.password{
-  position: relative;
-}
-
-.invis-toggle-icon {
-  position: absolute;
-  transform: translateY(-50%);
-  top: 70%;
-  right: 10px;
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  height: 44px;
+  margin: 0.75rem auto 0;
+  background-color: #111827;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: color 0.3s ease-in-out;
-  line-height: 1;
-  color: black;
+  transition: background-color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9pt;
 }
 
-.invis-toggle-icon:hover {
-  color: #007bff;
+.submit-btn:hover {
+  background-color: #1f2937;
 }
 
-/* start of check mark animation svg
-https://codepen.io/aurer/pen/jEGbA
+/* Error message */
+.error-message {
+  margin-top: 0.75rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+}
 
-*/
+/* Sign in link */
+.signin-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.signin-link a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.signin-link a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Error styles */
+.error-border {
+  border-color: #ef4444;
+  outline: 1px solid #ef4444;
+}
+
+/* Checkmark animation */
 .checkmark {
   position: absolute;
-  width: 30px;
-  height: 30px;
-  right: 40px;
-  bottom: 10%;
+  width: 20px;
+  height: 20px;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
   border-radius: 50%;
   display: block;
   stroke-width: 2;
-  stroke: green;
+  stroke: #10b981;
   stroke-miterlimit: 10;
   box-shadow: inset 0px 0px 0px #fff;
   animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
@@ -359,7 +468,7 @@ https://codepen.io/aurer/pen/jEGbA
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: green;
+  stroke: #10b981;
   fill: none;
   animation: stroke .6s cubic-bezier(0.650, 0.000, 0.450, 1.000) forwards;
 }
@@ -379,10 +488,10 @@ https://codepen.io/aurer/pen/jEGbA
 
 @keyframes scale {
   0%, 100% {
-    transform: none;
+    transform: translateY(-50%);
   }
   50% {
-    transform: scale3d(1.1, 1.1, 1);
+    transform: translateY(-50%) scale3d(1.1, 1.1, 1);
   }
 }
 
@@ -390,19 +499,5 @@ https://codepen.io/aurer/pen/jEGbA
   100% {
     box-shadow: inset 0px 0px 0px 30px #fff;
   }
-}
-/* end of check mark animation svg*/
-
-.signin-text {
-  margin-top: 20px;
-}
-
-.signin-text a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.signin-text a:hover {
-  text-decoration: underline;
 }
 </style>

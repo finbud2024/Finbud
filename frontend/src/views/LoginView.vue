@@ -160,7 +160,7 @@ export default {
 .header {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 10px; /* Set to exactly 30px as requested */
 }
 
 .header h1 {
@@ -204,7 +204,7 @@ export default {
   align-items: center;
   font-size: 0.8rem;
   color: #374151;
-  font-weight: 500;
+  font-weight: 500; /* Matching the form labels weight */
 }
 
 /* Icons */
@@ -233,7 +233,7 @@ export default {
 .or-separator {
   display: flex;
   align-items: center;
-  margin: 24px auto;
+  margin: 10px auto;
   color: #6b7280;
   font-size: 14px;
   width: 100%;
@@ -261,7 +261,7 @@ export default {
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem; /* Reduced from 1rem to bring fields closer */
   width: 100%;
 }
 
@@ -292,9 +292,9 @@ export default {
 }
 
 .form-input {
-  width: 100%;
-  height: 16px;
-  padding: 0.5rem;
+  width: 320px; /* Set width to 320px as requested */
+  height: 32px; /* Set height to 32px as requested */
+  padding: 0.5rem 0.75rem;
   background-color: white;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
@@ -306,12 +306,12 @@ export default {
 
 .password-input-wrapper {
   position: relative;
-  width: 100%;
+  width: 320px; /* Match the input width */
 }
 
 .toggle-password {
   position: absolute;
-  right: 0.5rem;
+  right: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -334,9 +334,9 @@ export default {
 
 /* Submit button */
 .submit-btn {
-  width: 100%;
+  width: 300px; /* Changed from 320px to 300px as requested */
   height: 44px;
-  margin: 0.75rem auto 0;
+  margin: 0.5rem auto 0; /* Reduced top margin to bring button closer */
   background-color: #111827;
   color: white;
   border: none;
@@ -360,8 +360,8 @@ export default {
 
 /* Error message */
 .error-message {
-  margin-top: 0.75rem;
-  width: 100%;
+  margin-top: 0.5rem; /* Reduced spacing */
+  width: 300px; /* Match submit button width */
   padding: 0.75rem;
   background-color: #fee2e2;
   color: #b91c1c;
