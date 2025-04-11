@@ -151,7 +151,7 @@
             { quizQuestionEnabled: question.length !== 0 },
           ]"
         >
-          {{ currentQuestion === -1 ? "Question will appear here" : question }}
+          {{ currentQuestion === -1 ? translations[language].questionPlaceholder : question }}
         </div>
         <div class="quizChoices">
           <button
@@ -519,7 +519,8 @@ export default {
           topictolearn: "Popular Topics To Learn",
           coursecategories: "Course Categories",
           popularcourses: "POPULAR COURSES",
-          ourpopularcourses: "Our popular courses"
+          ourpopularcourses: "Our popular courses",
+          questionPlaceholder: "Question will apear here"
         },
         vi: {
           placeholderText: "Hôm nay bạn muốn học gì...",
@@ -546,7 +547,8 @@ export default {
           topictolearn: "Những chủ đề phổ biến",
           coursecategories: "Danh mục khoá học",
           popularcourses: "KHOÁ HỌC PHỔ BIẾN",
-          ourpopularcourses: "KHoá học phổ biến của chúng tôi"
+          ourpopularcourses: "Khoá học phổ biến của chúng tôi",
+          questionPlaceholder: "Câu hỏi đã được tạo"
 
         },
       },

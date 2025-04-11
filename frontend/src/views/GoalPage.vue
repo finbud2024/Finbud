@@ -24,14 +24,14 @@
         <img class="profilePic" :src="profilePic" alt="profilePic" />
         <div class="headerText">
           <div class="greeting">
-            {{ $t('greeting.morning') }} {{ displayName }}
+            {{ (h => h < 12 ? "Good Morning " : h < 18 ? "Good Afternoon " : "Good Evening ")(new Date().getHours()) }}{{ displayName }}
           </div>
           <div class="slogan">
-            {{ $t('slogan') }}
+            {{ translations[language]?.slogan }}
           </div>
         </div>
       </div>
-      <button @click="openPlaidLink" :class="['add-goal-button', disabledConnect ? 'disabled' : null]">Connect Your Bank Account</button>
+      <button @click="openPlaidLink" :class="['add-goal-button', disabledConnect ? 'disabled' : null]">{{ translations[language]?.slogan }}</button>
       <div class="revenue-expense">
         <div class="total-spend revenue-card">
           <h2>{{
@@ -39,7 +39,7 @@
                     ? formatCurrency(totalRevenue)
                     : formatCurrency(convertToVND(totalRevenue))
                 }}</h2>
-          <p>Total Revenue</p>
+          <p>{{ translations[language]?.totalRevenue }}</p>
         </div>
 
         <div class="total-spend expense-card">
@@ -48,7 +48,7 @@
                     ? formatCurrency(totalExpense)
                     : formatCurrency(convertToVND(totalExpense))
                 }}</h2>
-          <p>Total Expense</p>
+          <p>{{ translations[language]?.totalExpense }}</p>
         </div>
         
         <div class="total-spend">
@@ -67,7 +67,7 @@
                   <option value="VND">VND</option>
                 </select>
           </div>
-          <p>Account Balance</p>
+          <p>{{ translations[language]?.accountBalance }}</p>
         </div>
       </div>
       
@@ -76,11 +76,11 @@
       </div>
       <section class="transactions">
         <div class="headline-buttons">
-          <h2>Daily Transactions</h2>
+          <h2>{{ translations[language]?.dailyTransaction }}</h2>
           <div class="buttons">
-              <button @click="openModal" style="font-weight: bold;">Add</button>
+              <button @click="openModal" style="font-weight: bold;">{{ translations[language]?.addButton }}</button>
               <button @click="showResetConfirmationModal = true" style="font-weight: bold;">
-                Reset
+                {{ translations[language]?.reset }}
               </button>
             </div>
         </div>
@@ -88,7 +88,7 @@
             <div v-if="showModal" class="modal-overlay">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h3>Add Transaction</h3>
+                  <h3>{{ translations[language]?.addTransaction }}</h3>
                 </div>
                 <div class="modal-body">
                   <div class="input-box">
@@ -157,11 +157,11 @@
             <table>
               <thead>
                 <tr>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Amount ({{ selectedCurrency }})</th>
-                  <th>Status</th>
-                  <th>Transaction</th>
+                  <th>{{ translations[language]?.description }}</th>
+                  <th>{{ translations[language]?.date }}</th>
+                  <th>{{ translations[language]?.amount }} ({{ selectedCurrency }})</th>
+                  <th>{{ translations[language]?.status }}</th>
+                  <th>{{ translations[language]?.transaction }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -229,8 +229,8 @@
       <div class="rightPanel">
         <section class="financial-goals" ref="financialGoalsSection">
           <div class="goal-upper-part">
-            <h3 class="goal-section-title">Goals</h3>
-            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">Add Goal</button>
+            <h3 class="goal-section-title">{{ translations[language]?.addButton }}</h3>
+            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">{{ translations[language]?.addGoals }}</button>
             </div>
 
             <div class="search-container">
@@ -365,6 +365,52 @@ export default {
   },
   data() {
     return {
+      language: 'en',
+      translations: {
+      en: {
+        greeting: 'Good Morning',
+        slogan: 'Manage your wallet wisely to reach your goals with ease.',
+        totalRevenue: 'Total Revenue',
+        totalExpense: 'Total Expense',
+        accountBalance: 'Account Balance',
+        addGoal: 'Add Goal',
+        searchGoals: 'Search goals...',
+        addTransaction: 'Add Transaction',
+        reset: 'Reset',
+        bankAccount: 'Connect Your Bank Account',
+        dailyTransaction: 'Daily Transaction',
+        addButton: 'Add',
+        date: 'Date',
+        amount: 'Amount (USA)',
+        status: 'Status',
+        transaction: 'Transaction',
+        goals: 'Goals',
+        addGoals: 'Add Goal'
+      },
+      // You can add other languages like Vietnamese (vi)
+      vi: {
+        greeting: 'Chào buổi sáng',
+        slogan: 'Quản lý ví của bạn một cách thông minh để đạt được mục tiêu dễ dàng.',
+        totalRevenue: 'Tổng thu nhập',
+        totalExpense: 'Tổng chi phí',
+        accountBalance: 'Số dư tài khoản',
+        addGoal: 'Thêm mục tiêu',
+        searchGoals: 'Tìm kiếm mục tiêu...',
+        addTransaction: 'Thêm giao dịch',
+        reset: 'Đặt lại',
+        bankAccount: 'Kết nối với tài khoản ngân hàng của bạn',
+        dailyTransaction: 'Giao dịch hằng ngày',
+        addButton: 'Thêm',
+        description: 'Mô tả',
+        date: 'Thời gian',
+        amount: 'Số tiền (USA)',
+        status: 'Tình trạng',
+        transaction: 'Giao dịch',
+        addGoals: 'Thêm mục tiêu'
+
+        // Add Vietnamese translations here...
+      },
+    },
       // Bot Chat data
       showBot: false,
       hidingBot: false,
@@ -477,9 +523,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     };
   },
   computed: {
-    displayName() {
-      return this.$store.getters['users/userDisplayName'];
-    },
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
@@ -513,10 +556,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     },
   },
   mounted() {
-    console.log(this.$t('slogan'));
-    this.$i18n.locale = 'vi';
-    console.log(this.$t('greeting.morning'));
-    
     if (!this.isAuthenticated) {
       this.$router.push('/');
     }
@@ -539,22 +578,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     }
   },
   methods: {
-
-    getGreeting() {
-      const hours = new Date().getHours();
-        let greetingKey = 'greeting.morning'; // Default to morning
-        if (hours >= 12 && hours < 18) {
-          greetingKey = 'greeting.afternoon';
-        } else if (hours >= 18) {
-          greetingKey = 'greeting.evening';
-        }
-      return this.$t(greetingKey);  // This ensures the correct key is used for translation
-    },
-
-    switchLanguage(lang) {
-      this.$i18n.locale = lang;
-      console.log('Current language:', this.$i18n.locale);
-    },
     // Bot Chat methods
     setupBotObserver() {
       this.$nextTick(() => {
@@ -574,6 +597,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           this.botObserver.observe(this.$refs.chatbotTriggerPoint);
         }
       });
+    },
+    switchLanguage(language) {
+            this.language = language;
     },
     
     startBotAnimation() {
@@ -853,77 +879,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         // Sort by date in descending order
         return dateB - dateA;
       });
-    },
-
-    async generateMortgageInsights() {
-      const url = "https://openrouter.ai/api/v1/chat/completions";
-      try {
-        // First get insights in English
-        const englishResponse = await axios.post(url, {
-          model: "deepseek/deepseek-chat:free",
-          messages: [
-            {
-              role: "system",
-              content: "You are a financial expert providing insights on mortgage payment."
-            },
-            {
-              role: "user",
-              content: `Analyze this mortgage data:
-              - Home Price: $${this.homePrice}
-              - Down Payment: $${this.downPayment} (${this.downPaymentPercentage}%)
-              - Loan Term: ${this.loanTerm} years
-              - Interest Rate: ${this.interestRate}%
-              - Property Tax: $${this.propertyTax}/month
-              - Home Insurance: $${this.homeInsurance}/month
-              - PMI: $${this.pmi}/month
-              - HOA Fees: $${this.hoaFees}/month
-              - Monthly Payment: $${this.calculateMonthlyPayment}
-              Provide 2-3 sentences of insights. Keep it concise and actionable.`
-            }
-          ]
-        }, {
-          headers: {
-            'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          }
-        });
-
-        const englishInsights = englishResponse.data.choices[0].message.content;
-
-        // If language is Vietnamese, translate the insights
-        if (this.$i18n.locale === "vi") {
-          const translationResponse = await axios.post(url, {
-            model: "deepseek/deepseek-chat:free",
-            messages: [
-              {
-                role: "system",
-                content: "Bạn là một chuyên gia dịch thuật. Hãy dịch văn bản sau từ tiếng Anh sang tiếng Việt một cách chính xác và tự nhiên, giữ nguyên ý nghĩa tài chính."
-              },
-              {
-                role: "user",
-                content: englishInsights
-              }
-            ]
-          }, {
-            headers: {
-              'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-            }
-          });
-
-          return translationResponse.data.choices[0].message.content;
-        }
-
-        // Return English by default
-        return englishInsights;
-      } catch (error) {
-        console.error("Error generating mortgage insights:", error);
-        return this.$i18n.locale === "vi" 
-          ? "Không thể tạo thông tin chi tiết vào lúc này. Vui lòng thử lại sau."
-          : "Unable to generate insights at the moment. Please try again later.";
-      }
     },
 
     // Example usage of the sorting function
@@ -1245,7 +1200,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 };
 </script>
 <style scoped>
-
 .language-switcher {
   position: fixed;
   bottom: 10px;

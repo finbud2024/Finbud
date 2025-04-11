@@ -1,5 +1,6 @@
 import { createI18n } from 'vue-i18n';
 
+
 const messages = {
   en: {
     title: "Mortgage Payment Calculator",
@@ -21,7 +22,7 @@ const messages = {
     loan15: "15-year fixed",
     loan5: "5-year ARM",
     proficiencyLevel: "Proficiency level",
-    placeholder: "What do you want to learn today..."
+    
   },
   vi: {
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
@@ -42,8 +43,7 @@ const messages = {
     loan30: "Lãi suất cố định 30 năm",
     loan15: "Lãi suất cố định 15 năm ",
     loan5: "Lãi suất điều chỉnh 5 năm",
-    proficiencyLevel: "Mức độ thành thạo",
-    placeholder: "Hôm nay bạn muốn học gì..."
+    proficiencyLevel: "Mức độ thành thạo"
   }
 };
 
