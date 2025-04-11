@@ -192,7 +192,6 @@ export default {
 					`
 					}
 				]);
-				//console.log(gptDefine)
 
 				// HANDLE DEFINE(2)
 				if (gptDefine.toLowerCase().includes("#define")) {
