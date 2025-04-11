@@ -29,7 +29,7 @@
 <script>
 import ForumSidebar from "@/components/ForumSidebar.vue";
 import { useRoute, useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import api from "@/utils/api";
 
@@ -43,7 +43,9 @@ export default {
     const body = ref("");
     const selectedForum = ref("");
     const forums = ref([]);
-    const userId = store.getters["users/userId"];
+
+    const userId = computed(() => store.getters["users/userId"]);
+    const userModel = computed(() => store.getters["users/userModel"] || "User");
 
     const fetchForums = async () => {
       try {
@@ -51,17 +53,23 @@ export default {
         forums.value = response.data;
 
         const forumFromQuery = response.data.find(f => f.slug === route.query.forum);
-        if (forumFromQuery) {
-          selectedForum.value = forumFromQuery._id;
-        } else {
-          selectedForum.value = response.data[0]?._id || "";
-        }
+        selectedForum.value = forumFromQuery?._id || response.data[0]?._id || "";
       } catch (error) {
         console.error("Failed to fetch forums:", error);
       }
     };
 
-    onMounted(fetchForums);
+    onMounted(async () => {
+      try {
+        if (!userId.value) {
+          await store.dispatch("users/fetchCurrentUser");
+        }
+        await fetchForums();
+      } catch (error) {
+        console.warn("Not authenticated, redirecting...");
+        router.push("/login");
+      }
+    });
 
     const submitThread = async () => {
       if (!title.value.trim() || !body.value.trim() || !selectedForum.value) {
@@ -69,14 +77,20 @@ export default {
         return;
       }
 
-      try {
-        const newThread = {
-          forumId: selectedForum.value,
-          userId: store.getters["users/userId"], 
-          title: title.value,
-          body: body.value,
-        };
+      if (!userId.value || !userModel.value) {
+        alert("You must be logged in to post.");
+        return;
+      }
 
+      const newThread = {
+        forumId: selectedForum.value,
+        userId: userId.value,
+        userModel: userModel.value,
+        title: title.value,
+        body: body.value,
+      };
+
+      try {
         console.log("📤 Submitting Thread Data:", newThread);
 
         const response = await api.post("/api/posts", newThread, { withCredentials: true });
@@ -89,7 +103,8 @@ export default {
         router.push({ path: "/forum", query: { forum: forumSlug } });
 
       } catch (error) {
-        console.error("Failed to submit thread:", error.response ? error.response.data : error.message);
+        console.error("Failed to submit thread:", error.response?.data || error.message);
+        alert("Failed to submit thread. Please try again.");
       }
     };
 
@@ -98,7 +113,7 @@ export default {
       body,
       selectedForum,
       forums,
-      submitThread
+      submitThread,
     };
   }
 };

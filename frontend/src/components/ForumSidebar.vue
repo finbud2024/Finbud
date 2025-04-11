@@ -26,7 +26,7 @@ import * as LucideIcons from "lucide-vue-next";
 
 export default {
   props: {
-    activeForumSlug: String, 
+    activeForumSlug: String,
   },
   setup(props) {
     const forums = ref([]);
