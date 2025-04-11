@@ -304,7 +304,7 @@ chatRoute.route("/chats/analyze-portfolio/:userId")
       const prompt = `
 You are a professional financial advisor analyzing a user's complete financial picture. Please provide a detailed analysis in a JSON format with TWO separate sections.
 
-EMPHASIZE: VERY DETAILED ANALYSIS in form of a paragaph, providing useful insights and suggestions. Makesure that people without finance background can understand your analysis. Use markdown formatting and highlight important points.
+EMPHASIZE: VERY DETAILED ANALYSIS in form of a paragaph, providing useful insights and suggestions. Makesure that people without finance background can understand your analysis. 
 
 PART 1: INVESTMENT ANALYSIS
 Analyze the following stock holdings and portfolio performance data:
@@ -316,7 +316,7 @@ USER PORTFOLIO SUMMARY:
 
 
 PART 2: TRANSACTION ANALYSIS
-Analyze the following income and expense transaction data:
+Analyze the following income and expense transaction data, look into the type and the description of the transactions, and provide insights into the user's spending patterns and financial health, give advice whether the user should change their spending habits or not.:
 
 TRANSACTION SUMMARY:
 - Total Income: $${totalIncome.toFixed(2)}
@@ -328,12 +328,12 @@ TRANSACTION SUMMARY:
 
 Your response must be a valid JSON with the following structure:
 {
-  "stock": "Your complete analysis of the portfolio and holdings with markdown formatting. For example can do more if you have idea: 1) Overall portfolio health and diversification, 2) Stock performance analysis (top/underperformers), 3) Risk assessment and volatility analysis, 4) Portfolio improvement recommendations, 5) Long-term investment outlook",
+  "stock": "<div class='analysis-section'><h2>Investment Portfolio Analysis</h2>YOUR DETAILED HTML ANALYSIS HERE. Use proper HTML tags for formatting (h3, p, ul, li, strong, etc.). Include sections for portfolio health, performance analysis, risk assessment, and recommendations.</div>",
   
-  "transaction": "Your complete analysis of the user's income and expenses with markdown formatting. For example can do more if you have idea: 1) Income vs expense patterns, 2) Spending analysis, 3) Detailed expense management suggestions, 4) Savings opportunities, 5) Financial planning recommendations"
+  "transaction": "<div class='analysis-section'><h2>Transaction Analysis</h2>YOUR DETAILED HTML ANALYSIS HERE. Use proper HTML tags for formatting (h3, p, ul, li, strong, etc.). Include sections for income vs expenses, spending patterns, and financial recommendations.</div>"
 }
 
-IMPORTANT: Ensure your response is properly formatted as valid JSON with escaped quotes in string values. Use markdown formatting, and highlightinh where is needed.
+IMPORTANT: Ensure your response is properly formatted as valid JSON with escaped quotes in string values. Use proper HTML formatting tags instead of markdown.
 `;
 
       const response = await openai.chat.completions.create({
@@ -341,7 +341,7 @@ IMPORTANT: Ensure your response is properly formatted as valid JSON with escaped
         messages: [
           {
             role: "system",
-            content: "You are a professional financial advisor specializing in portfolio analysis and personal finance. You always respond with properly formatted JSON."
+            content: "You are a professional financial advisor specializing in portfolio analysis and personal finance. You always respond with properly formatted JSON containing HTML content."
           },
           {
             role: "user",
