@@ -39,7 +39,7 @@ const passportConfig = (app) => {
             maxAge: 1000 * 60 * 60 * 24,
             httpOnly: true,
             path: "/",
-            sameSite: isProduction,
+            sameSite: isProduction || isNetlifyDev ? "none" : "lax",
             secure: isProduction || isNetlifyDev
           }
         })
