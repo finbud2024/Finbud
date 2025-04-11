@@ -134,11 +134,11 @@ export default {
 
 					### Supported Actions & Return Formats:
 
-					1. **Stock Price Inquiry**  
+					1. **Stock Price**  
 					- User intent: Ask for a stock price, return only the stock code (ticker symbol) in uppercase.
 					- Phrases may include: "giá cổ phiếu", "stock price of", "bao nhiêu tiền cổ phiếu", etc.
 					- Format: **[STOCK_CODE_IN_UPPERCASE]**  
-					- Example: "What's the price of tesla stock?" → "TSLA", "giá cổ phiếu của Coca Cola" → Return "KO"
+					- Example: "giá cổ phiếu của Coca Cola" → Return "KO", "What's the price of tesla stock?" → "TSLA", 
 
 					2. **Search**  
 					- Trigger only when the user is requesting for detailed information or definitions about specific concepts, terms, or topics that are not related to stock prices, not conversational questions.
@@ -479,17 +479,6 @@ export default {
 						timestamp: new Date().toLocaleTimeString(),
 					});
 				}
-				// HANDLE SEARCH
-				else if (gptDefine.toLowerCase().includes("#search")) {
-					//Search for sources, videos, and relevant questions
-					const searchResults = await getSources(gptDefine);
-					newSources = searchResults;
-					newVideos = await getVideos(gptDefine);
-					newRelevantQuestions = await getRelevantQuestions(searchResults, language);
-					//Normal GTP response
-					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language} language.` }]);
-					answers.push(gptResponse);
-				}
 				// HANDLE STOCK
 				else if (this.extractStockCode(gptDefine)) {
 					try {
@@ -519,6 +508,18 @@ export default {
 						console.error("Error in stock message:", err.message);
 					}
 				}
+				// HANDLE SEARCH
+				else if (gptDefine.toLowerCase().includes("#search")) {
+					//Search for sources, videos, and relevant questions
+					const searchResults = await getSources(gptDefine);
+					newSources = searchResults;
+					newVideos = await getVideos(gptDefine);
+					newRelevantQuestions = await getRelevantQuestions(searchResults, language);
+					//Normal GTP response
+					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language} language.` }]);
+					answers.push(gptResponse);
+				}
+				
 				// HANDLE CREATE (10)
 				else if (gptDefine.includes("#create")) {
 					try {
