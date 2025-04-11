@@ -29,6 +29,7 @@ const passportConfig = (app) => {
       
       const isProduction = process.env.NODE_ENV === "production";
       const isNetlifyDev = process.env.NETLIFY_DEV === "true";
+      console.log("NODE_ENV:", process.env.NODE_ENV);
       
       app.use(
         session({
@@ -39,8 +40,10 @@ const passportConfig = (app) => {
             maxAge: 1000 * 60 * 60 * 24,
             httpOnly: true,
             path: "/",
-            sameSite: isProduction || isNetlifyDev ? "none" : "lax",
-            secure: isProduction || isNetlifyDev
+            sameSite: "none",
+            secure: true
+            // sameSite: isProduction || isNetlifyDev ? "none" : "lax",
+            // secure: isProduction || isNetlifyDev
           }
         })
       )
