@@ -9,21 +9,21 @@
     <div class="auth-options">
       <button class="social-btn" @click="signInWithX">
         <span class="btn-content">
-          <i class="x-icon"></i>
+          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
           Sign in with Facebook
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithGoogle">
         <span class="btn-content">
-          <i class="google-icon"></i>
+          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
           Sign in with Google
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithApple">
         <span class="btn-content">
-          <i class="apple-icon"></i>
+          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
           Sign in with Apple
         </span>
       </button>

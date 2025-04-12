@@ -5,6 +5,37 @@
       <h1>Sign Up</h1>
     </div>
 
+    <div class="auth-options">
+      <button class="social-btn" @click="signInWithX">
+        <span class="btn-content">
+          <img src="@/assets/facebookLogo.png" class="google-logo" alt="Google Logo">
+          Sign up with Facebook
+        </span>
+      </button>
+
+      <button class="social-btn" @click="signInWithGoogle">
+        <span class="btn-content">
+          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+          Sign up with Google
+        </span>
+      </button>
+
+      <button class="social-btn" @click="signInWithApple">
+        <span class="btn-content">
+          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+          Sign up with Apple
+        </span>
+      </button>
+    </div>
+    
+    <!-- Divider -->
+    <div class="or-separator">
+      <hr class="line"/>
+      <span>or</span>
+      <hr class="line"/>
+    </div>
+
+
     <!-- Form -->
     <form class="signup-form" @submit.prevent="register">
       <!-- Full Name Fields -->
@@ -25,7 +56,7 @@
 
       <!-- Email Field -->
       <div class="form-group">
-        <label for="email">Email Address</label>
+        <label for="email">Email</label>
         <input 
           id="email"
           type="email" 
@@ -90,13 +121,13 @@
 
       <!-- Confirm Password Field -->
       <div class="form-group">
-        <label for="confirm-password">Re-enter your password</label>
+        <label for="confirm-password">Confirm password</label>
         <div class="password-input-wrapper">
           <input 
             id="confirm-password" 
             type="password" 
             v-model="formData.confirmPassword" 
-            placeholder="Re-enter your password" 
+            placeholder="Confirm password" 
             :class="{'error-border': errors.confirmPassword}" 
             @blur="validateField('confirmPassword')"
             required />
@@ -104,7 +135,7 @@
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" class="submit-btn">Register</button>
+      <button type="submit" class="submit-btn">Create account</button>
 
       <!-- Error Message -->
       <div v-if="errorMessage" class="error-message">
@@ -258,7 +289,7 @@ export default {
 .header {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0rem;
 }
 
 .header h1 {
@@ -279,7 +310,7 @@ export default {
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   width: 100%;
 }
 
@@ -385,6 +416,86 @@ input:focus {
   color: #10b981;
 }
 
+.auth-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 320px;
+}
+
+.social-btn {
+  width: 100%;
+  height: 44px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9pt;
+}
+
+.social-btn:hover {
+  background-color: #f9fafb;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  font-size: .875rem;
+  color: #374151;
+  font-weight: 500; /* Matching the form labels weight */
+}
+
+/* Icons */
+.facebook-icon, .google-icon, .apple-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.75rem;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.facebook-icon {
+  background-image: url("data:image/svg+xml,...");
+}
+
+.google-icon {
+  background-image: url("data:image/svg+xml,...");
+}
+
+.apple-icon {
+  background-image: url("data:image/svg+xml,...");
+}
+
+/* Divider */
+.or-separator {
+  display: flex;
+  align-items: center;
+  margin: 10px auto;
+  color: #6b7280;
+  font-size: 14px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.line {
+  flex: 1;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.or-separator span {
+  padding: 0 12px;
+}
+
+
 /* Submit button */
 .submit-btn {
   width: 100%;
@@ -398,7 +509,7 @@ input:focus {
   cursor: pointer;
   transition: background-color 0.2s;
   font-family: 'DM Sans', sans-serif;
-  font-size: 9pt;
+  font-size: 10pt;
 }
 
 .submit-btn:hover {
