@@ -1,5 +1,5 @@
 // src/services/cryptoService.js
-import axios from 'axios';
+import a from 'axios';
 
 const API_URL = 'https://rest.coinapi.io/v1';
 const API_KEY = process.env.COINAPI_KEY;

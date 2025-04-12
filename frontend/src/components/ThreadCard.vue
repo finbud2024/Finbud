@@ -62,23 +62,28 @@ export default {
     return {
       isHovered: false,
       isLiked: false,
-      showShare: false,  // <-- Added to track share popup visibility
+      showShare: false,
     };
   },
   computed: {
     ...mapGetters({
-      userId: "users/userId"
-    })
+      userId: "users/userId",
+      userModel: "users/userModel",
+    }),
   },
   watch: {
     thread: {
       immediate: true,
       handler(newThread) {
-        if (newThread && newThread.reactions && Array.isArray(newThread.reactions.likedUsers)) {
+        if (
+          newThread &&
+          newThread.reactions &&
+          Array.isArray(newThread.reactions.likedUsers)
+        ) {
           this.isLiked = newThread.reactions.likedUsers.includes(this.userId);
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     goToThread() {
@@ -101,7 +106,12 @@ export default {
       try {
         const response = await api.post(
           `/api/posts/post/${this.thread._id}/like`,
-          { userId: this.userId, action }, { withCredentials: true }
+          {
+            userId: this.userId,
+            userModel: this.userModel, 
+            action,
+          },
+          { withCredentials: true }
         );
 
         this.thread.reactions.likes = response.data.likes;
@@ -119,7 +129,7 @@ export default {
           }
         }
       } catch (error) {
-        console.error("❌ Error liking post:", error);
+        console.error("Error liking post:", error);
       }
     },
   },
