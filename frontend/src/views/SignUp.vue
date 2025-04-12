@@ -296,14 +296,31 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
 
-/* Main container */
+/* Styles for full height and vertical centering */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main container with vertical centering */
 .signup-container {
   width: 100%;
   max-width: 448px;
-  margin: 0 auto;
+  margin: auto;
   padding: 1rem;
   font-family: 'DM Sans', sans-serif;
   font-size: 9pt;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh; /* Make container take full viewport height */
 }
 
 /* Header */

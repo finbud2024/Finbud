@@ -153,13 +153,31 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
 
+/* Added styles for vertical centering */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Parent container needs to be full height */
+#app {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .signin-container {
   width: 100%;
   max-width: 448px;
-  margin: 0 auto;
+  margin: auto;
   padding: 1rem;
   font-family: 'DM Sans', sans-serif;
   font-size: 9pt;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh; /* Make container take full viewport height */
 }
 
 .header {
