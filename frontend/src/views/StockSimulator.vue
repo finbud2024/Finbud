@@ -418,13 +418,19 @@
         <div v-if="currentQuestion">
           <p>{{ currentQuestion.text }}</p>
           <div class="options">
-            <button v-for="(option, index) in currentQuestion.options" :key="index" @click="handleQuizOption(option)">
+            <button
+              v-for="(option, index) in currentQuestion.options"
+              :key="index"
+              @click="handleQuizOption(option)"
+            >
               {{ option.text }}
             </button>
           </div>
         </div>
         <div v-else>
-          <p>Loading more questions... (Reload if action take more than 1 minute)</p>
+          <p>
+            Loading more questions... (Reload if action take more than 1 minute)
+          </p>
         </div>
       </div>
     </section>
@@ -451,7 +457,6 @@ import axios from "axios";
 import { showReward } from "../utils/utils";
 import { gptServices } from "@/services/gptServices";
 import QuizRewards from "@/components/QuizRewards.vue";
-
 
 export default {
   name: "StockDashboard",
@@ -498,7 +503,7 @@ export default {
       partialMessage: "",
       isThinking: true,
       typingComplete: false,
-      typingSpeed: 30,
+      typingSpeed: 10, // Updated from 30 to 10 (faster)
       showChatBubble: true,
       todaysChange: "+$23.45",
       annualReturn: "12.5",
@@ -531,7 +536,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 1. Consider diversifying beyond tech to reduce sector risk<br>
 2. Look into dividend-paying stocks to balance growth<br>
 3. Set up regular investment schedule to optimize dollar-cost averaging`,
-      portfolioTypingSpeed: 20, // ms per character
+      portfolioTypingSpeed: 5,
       portfolioWordByWordTyping: true,
       portfolioBotHideTimeout: null,
       userHoldings: [],
@@ -580,42 +585,80 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
       this.headerChatbotMessage = fullMessage; // Store the full message for later
 
-      // Format the message for better readability
-      const lines = [
+      // Create a more natural typing effect
+      const sentences = [
         `Hey ${userName}, here's my quick take on these stock stats:`,
-        `- The Open at $${this.stockData.open} and Prev Close at $${this.stockData.close} show it's starting today just a bit lower than yesterday, pretty stable so far.`,
+        `- The Open at $${this.stockData.open} and Prev Close at $${this.stockData.close} show it's starting today just a tad lower than yesterday—pretty stable so far.`,
         `- The 52 Week High of $${this.stockData.high} and Low of $${this.stockData.low} mean it's near the bottom of its yearly range, but still has room to climb.`,
         `- That Market Cap of $${this.stockData.marketCap} is huge, marking it as a major player, way bigger than smaller stocks.`,
       ];
 
-      // Modified typing logic to create "upward" typing effect
-      // Start with the last line and work backward to create the upward effect
-      let lineIndex = lines.length - 1;
-      let linesTyped = [];
+      let currentSentenceIndex = 0;
+      let currentCharIndex = 0;
+      let displayText = "";
 
-      const typeLine = () => {
-        if (lineIndex >= 0) {
-          // Add the current line to the beginning of our array
-          linesTyped.unshift(lines[lineIndex]);
-
-          // Update the partial message with all currently typed lines
-          this.headerPartialMessage = linesTyped.join("<br>");
-
-          // Move to the previous line (going upward)
-          lineIndex--;
-
-          // Delay before typing the next line
-          this.headerTypingInterval = setTimeout(typeLine, 500);
-        } else {
-          // Typing is complete
+      // Enhanced typing function with variable speeds and occasional pauses
+      const typeCharacter = () => {
+        if (currentSentenceIndex >= sentences.length) {
+          // Typing complete
           this.headerTypingComplete = true;
-          this.headerTypingInterval = null;
+          return;
+        }
+
+        const currentSentence = sentences[currentSentenceIndex];
+
+        if (currentCharIndex < currentSentence.length) {
+          // Add the next character
+          displayText += currentSentence.charAt(currentCharIndex);
+          this.headerPartialMessage = displayText;
+          currentCharIndex++;
+
+          // Determine the next typing delay
+          let nextDelay;
+
+          // Create pauses at punctuation marks for more realistic typing
+          const currentChar = currentSentence.charAt(currentCharIndex - 1);
+          if ([",", ".", "!", "?", ":"].includes(currentChar)) {
+            // Longer pause after punctuation
+            nextDelay = Math.random() * 80 + 60;
+          } else if (currentChar === " ") {
+            // Slight pause between words
+            nextDelay = Math.random() * 40 + 10;
+          } else {
+            // Variable typing speed
+            nextDelay = Math.random() * 15 + 8;
+          }
+
+          // Occasional "thinking" pause (2% chance)
+          if (Math.random() < 0.02) {
+            nextDelay += Math.random() * 120 + 80;
+          }
+
+          this.headerTypingInterval = setTimeout(typeCharacter, nextDelay);
+        } else {
+          // Move to next sentence
+          if (currentSentenceIndex < sentences.length - 1) {
+            displayText += "<br>";
+            this.headerPartialMessage = displayText;
+            currentSentenceIndex++;
+            currentCharIndex = 0;
+
+            // Pause between sentences
+            const betweenSentenceDelay = Math.random() * 150 + 100;
+            this.headerTypingInterval = setTimeout(
+              typeCharacter,
+              betweenSentenceDelay
+            );
+          } else {
+            // All sentences complete
+            this.headerTypingComplete = true;
+          }
         }
       };
-      // Start typing
-      typeLine();
 
-      // Ensure the bot is visible
+      // Start typing with a small initial delay
+      this.headerTypingInterval = setTimeout(typeCharacter, 150);
+
       this.headerBotVisible = true;
     },
     toggleHeaderChatBubble() {
@@ -642,24 +685,88 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           }
 
           this.isThinking = false;
-          let charIndex = 0;
 
+          // Clear any existing typing interval
           if (this.typingInterval) {
             clearInterval(this.typingInterval);
+            this.typingInterval = null;
           }
-          this.typingInterval = setInterval(() => {
-            if (charIndex < message.length) {
-              this.partialMessage += message.charAt(charIndex);
-              charIndex++;
-            } else {
-              clearInterval(this.typingInterval);
-              this.typingInterval = null;
+
+          // Break message into sentences for more natural typing
+          const sentences = message.split(/(?<=[.!?])\s+/);
+          let currentSentenceIndex = 0;
+          let currentCharIndex = 0;
+
+          const typeNextCharacter = () => {
+            if (currentSentenceIndex >= sentences.length) {
+              // All sentences typed
               this.chatbotMessage = message;
               this.typingComplete = true;
+              return;
             }
-          }, this.typingSpeed);
+
+            const currentSentence = sentences[currentSentenceIndex];
+
+            if (currentCharIndex < currentSentence.length) {
+              // Add the next character to the partial message
+              this.partialMessage += currentSentence.charAt(currentCharIndex);
+              currentCharIndex++;
+
+              // Calculate the delay for the next character
+              let nextDelay;
+
+              // Get the character just typed
+              const currentChar = currentSentence.charAt(currentCharIndex - 1);
+
+              // Vary typing speed based on punctuation
+              if ([".", "!", "?"].includes(currentChar)) {
+                // End of sentence
+                nextDelay = Math.random() * 120 + 80;
+              } else if ([",", ":", ";"].includes(currentChar)) {
+                // Mid-sentence break
+                nextDelay = Math.random() * 60 + 40;
+              } else if (currentChar === " ") {
+                // Space between words
+                nextDelay = Math.random() * 30 + 15;
+              } else {
+                // Regular character - variable typing speed
+                nextDelay = Math.random() * 15 + 5;
+              }
+
+              // Occasional "thinking" pause (1% chance)
+              if (Math.random() < 0.01) {
+                nextDelay += Math.random() * 150 + 50;
+              }
+
+              // Occasionally type faster in bursts (15% chance)
+              if (Math.random() < 0.15) {
+                nextDelay *= 0.5;
+              }
+
+              // Numbers often typed slower as people double-check them
+              if (!isNaN(parseInt(currentChar))) {
+                nextDelay *= 0.8; // Make numbers faster (was 1.2)
+              }
+
+              setTimeout(typeNextCharacter, nextDelay);
+            } else {
+              // Move to next sentence
+              currentSentenceIndex++;
+              currentCharIndex = 0;
+
+              // Pause between sentences
+              const betweenSentenceDelay = Math.random() * 150 + 100;
+              setTimeout(typeNextCharacter, betweenSentenceDelay);
+            }
+          };
+
+          // Start typing with an initial delay
+          setTimeout(typeNextCharacter, 150);
         } catch (error) {
           console.log("Error getting message balance", error);
+          this.isThinking = false;
+          this.partialMessage = "Unable to retrieve insights at this time.";
+          this.typingComplete = true;
         }
       });
     },
@@ -901,7 +1008,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         userId: this.fixedUserId,
       };
 
-
       console.log("Submitting order with data:", transactionData);
 
       try {
@@ -910,7 +1016,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           transactionData
         );
         console.log("Order response:", response);
-        
+
         toast.success("Order submitted successfully", { autoClose: 1000 });
         this.showModal = false;
         this.fetchBankingAccountBalance();
@@ -932,12 +1038,15 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         this.showModal = false;
         console.error("Error submitting order:", error);
         console.error("Error details:", error.response?.data);
-        
+
         // Toast error but don't show it for quiz flow - we handle that in the caller
         if (!this.currentQuestion) {
-          toast.error(`Order failed: ${error.response?.data || "Unknown error"}`, { autoClose: 2000 });
+          toast.error(
+            `Order failed: ${error.response?.data || "Unknown error"}`,
+            { autoClose: 2000 }
+          );
         }
-        
+
         // Re-throw the error so the caller can handle it specifically for quiz flow
         throw error;
       }
@@ -992,29 +1101,165 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           } else {
             this.startPortfolioCharacterByCharacterTyping();
           }
-        }, 1000);
+        }, 300); // Faster (was 1000)
 
         this.scheduleHidePortfolioBot();
-      }, 500);
+      }, 200); // Faster (was 500)
     },
 
     startPortfolioWordByWordTyping() {
       this.currentPortfolioTypedMessage = "";
-      const words = this.portfolioBotMessage.split(" ");
+      const words = this.portfolioBotMessage.split(/\s+/);
       let wordIndex = 0;
+      let isBackspacing = false;
+      let mistakeWordIndex = -1;
+
+      // Randomly select 1-2 positions where we'll simulate a "mistake"
+      const mistakePositions = [];
+      if (words.length > 10) {
+        // Only add mistakes if the message is long enough
+        const numMistakes = Math.floor(Math.random() * 2) + 1; // 1 or 2 mistakes
+        for (let i = 0; i < numMistakes; i++) {
+          // Avoid first few words and last few words
+          const pos = Math.floor(Math.random() * (words.length - 6)) + 3;
+          if (!mistakePositions.includes(pos)) {
+            mistakePositions.push(pos);
+          }
+        }
+      }
 
       const typeNextWord = () => {
+        // Handle backspacing (simulating error correction)
+        if (isBackspacing) {
+          // Remove the last character
+          this.currentPortfolioTypedMessage =
+            this.currentPortfolioTypedMessage.slice(0, -1);
+
+          // If we've backspaced enough characters
+          if (
+            !this.currentPortfolioTypedMessage.endsWith(
+              words[wordIndex - 1] + " "
+            )
+          ) {
+            isBackspacing = false;
+            // Short pause after backspacing before starting to type the correct word
+            setTimeout(typeNextWord, Math.random() * 100 + 80);
+          } else {
+            // Continue backspacing
+            setTimeout(typeNextWord, Math.random() * 15 + 10);
+          }
+          return;
+        }
+
         if (wordIndex < words.length) {
-          this.currentPortfolioTypedMessage += words[wordIndex] + " ";
+          let word = words[wordIndex];
+          const nextWord =
+            wordIndex + 1 < words.length ? words[wordIndex + 1] : "";
+
+          // Check if we should simulate a typing mistake
+          if (mistakePositions.includes(wordIndex) && word.length > 3) {
+            // Create a "mistake" version of the word (swap or add a character)
+            const mistakeType = Math.random();
+            let mistakeWord;
+
+            if (mistakeType < 0.5 && word.length > 3) {
+              // Swap two adjacent characters
+              const pos = Math.floor(Math.random() * (word.length - 2)) + 1;
+              mistakeWord =
+                word.substring(0, pos) +
+                word.charAt(pos + 1) +
+                word.charAt(pos) +
+                word.substring(pos + 2);
+            } else {
+              // Add an extra character
+              const pos = Math.floor(Math.random() * word.length);
+              const extraChar = "aeiourstln"[Math.floor(Math.random() * 10)];
+              mistakeWord =
+                word.substring(0, pos) + extraChar + word.substring(pos);
+            }
+
+            // Use the mistake word instead
+            word = mistakeWord;
+            mistakeWordIndex = wordIndex;
+          }
+
+          // Add the word to the message
+          this.currentPortfolioTypedMessage += word + " ";
           wordIndex++;
-          const delay = Math.random() * 100 + 50;
+
+          // Determine next delay based on various factors
+          let delay;
+
+          // If we just typed a mistake word, we'll need to backspace after a short pause
+          if (wordIndex - 1 === mistakeWordIndex) {
+            delay = Math.random() * 150 + 150; // Pause before noticing the "mistake"
+            isBackspacing = true;
+            mistakeWordIndex = -1; // Reset so we don't try to correct it again
+          } else {
+            // Normal word typing
+            // Longer words should take proportionally longer to type
+            const baseDelay = Math.random() * 30 + 40;
+
+            // Add pauses at punctuation or line breaks
+            const lastChar = word.charAt(word.length - 1);
+            if ([".", "!", "?"].includes(lastChar)) {
+              // End of sentence pause
+              delay = baseDelay + Math.random() * 120 + 80;
+            } else if ([",", ":", ";"].includes(lastChar)) {
+              // Mid-sentence punctuation pause
+              delay = baseDelay + Math.random() * 60 + 50;
+            } else if (word.includes("<br>") || word.includes("</")) {
+              // Line break or HTML tag pause
+              delay = baseDelay + Math.random() * 80 + 60;
+            } else if (word.startsWith("<")) {
+              // Beginning of HTML tag, type faster
+              delay = baseDelay * 0.4;
+            } else {
+              // Regular word
+              delay = baseDelay;
+            }
+
+            // Occasional "thinking" pause (2% chance)
+            if (
+              Math.random() < 0.02 &&
+              ![".", ",", ";", ":"].includes(lastChar)
+            ) {
+              delay += Math.random() * 150 + 80;
+            }
+
+            // Type common short words faster
+            if (
+              [
+                "a",
+                "an",
+                "the",
+                "of",
+                "to",
+                "in",
+                "is",
+                "and",
+                "or",
+                "with",
+              ].includes(word.toLowerCase())
+            ) {
+              delay *= 0.6;
+            }
+
+            // Handle numbers differently
+            if (!isNaN(parseFloat(word))) {
+              // Numbers often take longer to type as people check them
+              delay *= 1.3;
+            }
+          }
+
           setTimeout(typeNextWord, delay);
         } else {
           this.isPortfolioTyping = false;
         }
       };
 
-      typeNextWord();
+      // Start typing after a short initial delay
+      setTimeout(typeNextWord, 400);
     },
 
     startPortfolioCharacterByCharacterTyping() {
@@ -1026,13 +1271,58 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           this.currentPortfolioTypedMessage +=
             this.portfolioBotMessage.charAt(charIndex);
           charIndex++;
-          setTimeout(typeNextChar, this.portfolioTypingSpeed);
+
+          // Determine the next typing delay based on the current character
+          let nextDelay;
+
+          // Current character (the one we just added)
+          const currentChar = this.portfolioBotMessage.charAt(charIndex - 1);
+
+          // Create natural pauses at punctuation marks
+          if ([".", "!", "?"].includes(currentChar)) {
+            // Longer pause after end of sentences
+            nextDelay = Math.random() * 100 + 60;
+          } else if ([",", ":", ";", "-"].includes(currentChar)) {
+            // Medium pause after commas and other mid-sentence punctuation
+            nextDelay = Math.random() * 50 + 30;
+          } else if (currentChar === " ") {
+            // Brief pause between words
+            nextDelay = Math.random() * 20 + 10;
+          } else if (
+            currentChar === "<" &&
+            this.portfolioBotMessage.substring(charIndex - 4, charIndex) ===
+              "<br>"
+          ) {
+            // Pause at line breaks
+            nextDelay = Math.random() * 80 + 60;
+          } else {
+            // Variable typing speed for normal characters
+            nextDelay = Math.random() * 8 + 4;
+          }
+
+          // Occasional "thinking" pause (1% chance)
+          if (Math.random() < 0.01) {
+            nextDelay += Math.random() * 100 + 50;
+          }
+
+          // If typing a number, go a bit faster
+          if (!isNaN(parseInt(currentChar))) {
+            nextDelay *= 0.6;
+          }
+
+          // Bursty typing - occasionally type a few characters very quickly
+          if (Math.random() < 0.15) {
+            nextDelay *= 0.4;
+          }
+
+          setTimeout(typeNextChar, nextDelay);
         } else {
           this.isPortfolioTyping = false;
         }
       };
 
-      typeNextChar();
+      // Start with a small initial delay
+      setTimeout(typeNextChar, 150);
     },
 
     scheduleHidePortfolioBot() {
@@ -1089,7 +1379,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         setTimeout(() => {
           this.showPortfolioMessage = false;
           this.hidingPortfolioMessage = false;
-        }, 500);
+        }, 250); // Faster (was 500)
       } else {
         this.hidingPortfolioMessage = false;
         this.showPortfolioMessage = true;
@@ -1103,7 +1393,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             } else {
               this.startPortfolioCharacterByCharacterTyping();
             }
-          }, 500);
+          }, 250); // Faster (was 500)
         } else {
           this.isPortfolioTyping = false;
         }
@@ -1216,31 +1506,35 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
 
     async generateTradingQuestions() {
-      console.log("Generating trading questions..."); 
+      console.log("Generating trading questions...");
       try {
         // First, ensure we have the latest user data
         await this.fetchBankingAccountBalance();
         await this.fetchUserHoldings();
-        
+
         // Create a summary of user's financial situation
         const userFinancialSummary = {
           cash: this.cash,
           stockValue: this.stockValue,
           totalBalance: this.accountBalance,
-          holdings: this.userHoldings.map(h => ({
+          holdings: this.userHoldings.map((h) => ({
             symbol: h.symbol,
             quantity: h.quantity,
-            currentPrice: h.currentPrice
-          }))
+            currentPrice: h.currentPrice,
+          })),
         };
-        
-        console.log("User financial data for quiz generation:", userFinancialSummary);
-        
+
+        console.log(
+          "User financial data for quiz generation:",
+          userFinancialSummary
+        );
+
         // Create a prompt that includes the user's financial data
         const response = await gptServices([
           {
             role: "system",
-            content: "You are a financial assistant generating quiz questions. Use actual S&P 500 company names and tickers in your scenarios."
+            content:
+              "You are a financial assistant generating quiz questions. Use actual S&P 500 company names and tickers in your scenarios.",
           },
           {
             role: "user",
@@ -1248,9 +1542,14 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
                     USER'S FINANCIAL INFORMATION:
                     Available Cash: $${this.cash.toFixed(2)}
-                    Stock Holdings: ${JSON.stringify(this.userHoldings.map(h => 
-                      `${h.quantity} shares of ${h.symbol} at $${h.currentPrice.toFixed(2)} per share`
-                    ))}
+                    Stock Holdings: ${JSON.stringify(
+                      this.userHoldings.map(
+                        (h) =>
+                          `${h.quantity} shares of ${
+                            h.symbol
+                          } at $${h.currentPrice.toFixed(2)} per share`
+                      )
+                    )}
 
                     IMPORTANT GUIDELINES:
                     - For BUY options, suggest amounts the user can afford. The maximum single purchase should be no more than 80% of available cash.
@@ -1277,14 +1576,16 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         ]);
 
         console.log("API Response:", response);
-        
+
         // Parse the text response
-        if (response && typeof response === 'string') {
-          const questionBlocks = response.split(/Question: /).filter(block => block.trim());
-          const parsedQuestions = questionBlocks.map(block => {
+        if (response && typeof response === "string") {
+          const questionBlocks = response
+            .split(/Question: /)
+            .filter((block) => block.trim());
+          const parsedQuestions = questionBlocks.map((block) => {
             // Extract the question text (everything before the first option)
             const questionText = block.split(/\nA\./)[0].trim();
-            
+
             // Extract all options
             const optionsRegex = /([A-E])\. ([^\n]+)/g;
             const options = [];
@@ -1292,33 +1593,33 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             while ((match = optionsRegex.exec(block)) !== null) {
               const letter = match[1];
               const text = match[2].trim();
-              
+
               // Determine action and amount based on option text
-              let action = 'none';
+              let action = "none";
               let amount = 0;
-              
-              if (text.toLowerCase().includes('buy')) {
-                action = 'buy';
+
+              if (text.toLowerCase().includes("buy")) {
+                action = "buy";
                 const amountMatch = text.match(/\d+/);
                 amount = amountMatch ? parseInt(amountMatch[0]) : 0;
-              } else if (text.toLowerCase().includes('sell')) {
-                action = 'sell';
+              } else if (text.toLowerCase().includes("sell")) {
+                action = "sell";
                 const amountMatch = text.match(/\d+/);
                 amount = amountMatch ? parseInt(amountMatch[0]) : 0;
               }
-              
+
               options.push({ text, action, amount });
             }
-            
+
             return {
               text: questionText,
-              options: options
+              options: options,
             };
           });
-          
+
           this.questions = parsedQuestions;
           console.log("Questions generated:", this.questions);
-          
+
           if (this.questions.length > 0) {
             this.currentQuestion = this.questions[0];
           } else {
@@ -1334,7 +1635,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
               amount: option.amount,
             })),
           }));
-          
+
           if (this.questions.length > 0) {
             this.currentQuestion = this.questions[0];
           }
@@ -1351,53 +1652,71 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           // Extract stock symbol from the question (e.g., "AAPL")
           const symbolMatch = this.currentQuestion.text.match(/\(([A-Z]+)\)/);
           const stockSymbol = symbolMatch ? symbolMatch[1] : "AAPL"; // Default to AAPL if no symbol found
-          
+
           // Save values to component data
           this.stockSymbol = stockSymbol;
           this.quantity = option.amount || 1; // Ensure quantity is not 0
           this.action = option.action;
-          
+
           // Fetch the current price for this stock
           const success = await this.updateEstimatedPrice(stockSymbol);
-          
+
           if (success) {
             // Now try to submit the real order through the API
             try {
               await this.submitOrder(option.action);
               // If successful, the transaction will appear in history automatically
-              toast.success(`Successfully ${option.action === 'buy' ? 'bought' : 'sold'} ${this.quantity} shares of ${stockSymbol}`, { autoClose: 2000 });
+              toast.success(
+                `Successfully ${option.action === "buy" ? "bought" : "sold"} ${
+                  this.quantity
+                } shares of ${stockSymbol}`,
+                { autoClose: 2000 }
+              );
             } catch (error) {
               console.log("Quiz trade API error:", error);
-              
+
               // Handle specific error cases with user-friendly messages
               if (error.response?.data?.includes("Insufficient cash")) {
-                toast.warning(`You don't have enough cash to buy ${this.quantity} shares of ${stockSymbol}. The quiz will continue.`, { autoClose: 3000 });
-              } 
-              else if (error.response?.data?.includes("Not enough stock")) {
-                toast.warning(`You don't own enough shares of ${stockSymbol} to sell. The quiz will continue.`, { autoClose: 3000 });
-              }
-              else {
-                toast.warning(`Couldn't execute this trade: ${error.response?.data || error.message}. The quiz will continue.`, { autoClose: 3000 });
+                toast.warning(
+                  `You don't have enough cash to buy ${this.quantity} shares of ${stockSymbol}. The quiz will continue.`,
+                  { autoClose: 3000 }
+                );
+              } else if (error.response?.data?.includes("Not enough stock")) {
+                toast.warning(
+                  `You don't own enough shares of ${stockSymbol} to sell. The quiz will continue.`,
+                  { autoClose: 3000 }
+                );
+              } else {
+                toast.warning(
+                  `Couldn't execute this trade: ${
+                    error.response?.data || error.message
+                  }. The quiz will continue.`,
+                  { autoClose: 3000 }
+                );
               }
             }
           } else {
             console.error("Could not get price for", stockSymbol);
-            toast.error(`Could not get current price for ${stockSymbol}`, { autoClose: 1000 });
+            toast.error(`Could not get current price for ${stockSymbol}`, {
+              autoClose: 1000,
+            });
           }
         } catch (error) {
           console.error("Error processing quiz option:", error);
         }
       } else {
         // For "do nothing" options, show a message
-        toast.info("You chose to take no action for this scenario", { autoClose: 1500 });
+        toast.info("You chose to take no action for this scenario", {
+          autoClose: 1500,
+        });
       }
-      
+
       // Move to next question regardless of outcome
       this.nextQuestion();
     },
     updateBalances(option) {
       if (option.action === "none") return;
-      
+
       const total = option.amount * this.estimatedPrice;
       if (option.action === "buy") {
         // Simulate purchase
@@ -1408,7 +1727,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         this.cash += total;
         this.stockValue -= total;
       }
-      
+
       // Update total balance
       this.accountBalance = this.cash + this.stockValue;
     },
@@ -1460,7 +1779,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         if (this.portfolioBotHideTimeout) {
           clearTimeout(this.portfolioBotHideTimeout);
         }
-        
+
         if (newSection === "portfolio") {
           console.log("Portfolio section activated");
 
@@ -1497,8 +1816,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           this.fetchUserHoldings();
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
-        } else if (newSection === 'quiz') {
-        this.generateTradingQuestions(); // Call method when quiz section is activated
+        } else if (newSection === "quiz") {
+          this.generateTradingQuestions(); // Call method when quiz section is activated
         }
       },
       immediate: true, // Make it run immediately on component creation
@@ -1507,7 +1826,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   async mounted() {
     setTimeout(() => {
       this.startHeaderTypingEffect();
-    }, 500);
+    }, 200); // Faster initial delay (was 500)
 
     this.startTypingEffect();
 
@@ -1547,7 +1866,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         if (previewButton) {
           previewButton.click();
         }
-      }, 1000);
+      }, 500); // Faster click (was 1000)
     }
     this.fetchBankingAccountBalance();
     this.fetchTransactions();
@@ -1568,11 +1887,11 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       setTimeout(() => {
         console.log("Portfolio is initial section, showing bot");
         this.startPortfolioBotAnimation();
-      }, 1000);
+      }, 500); // Faster (was 1000)
     }
 
     // Ensure the method is called when the component is mounted
-    if (this.activeSection === 'quiz') {
+    if (this.activeSection === "quiz") {
       this.generateTradingQuestions();
     }
   },
@@ -2213,7 +2532,6 @@ h1 {
 .options button:hover {
   background: var(--hover-bg);
   transform: translateY(-2px);
-  
 }
 
 .options button:active {
