@@ -1,7 +1,6 @@
 import { monthsToYears } from 'date-fns';
 import { createI18n } from 'vue-i18n';
 
-
 const messages = {
   en: {
     title: "Mortgage Payment Calculator",
@@ -22,7 +21,7 @@ const messages = {
     loan30: "30-year fixed",
     loan15: "15-year fixed",
     loan5: "5-year ARM",
-    proficiencyLevel: "Proficiency level",
+
 
   //Investment calculator
       investmentTitle: "Investment Calculator",
@@ -87,7 +86,6 @@ const messages = {
     loan30: "Lãi suất cố định 30 năm",
     loan15: "Lãi suất cố định 15 năm ",
     loan5: "Lãi suất điều chỉnh 5 năm",
-    proficiencyLevel: "Mức độ thành thạo",
 
      // Investment calculator
      investmentTitle: "Máy Tính Đầu Tư",
@@ -140,8 +138,7 @@ const messages = {
 const i18n = createI18n({
   locale: 'en',
   fallbackLocale: 'en',
-  messages: {
-  }
+  messages
 });
 
 export default i18n;
