@@ -24,9 +24,8 @@ import StartThread from "@/views/StartThread.vue";
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
-import ForgotPassword from "@/views/ForgotPassword.vue"
 import AgentPage from "@/views/AgentPage.vue";
-
+import ForgotPassword from "@/views/ForgotPassword.vue";
 const routes = [
   {
     path: "/",
@@ -163,10 +162,9 @@ const routes = [
     component: InvestorDetail,
   },
   {
-    path: "/investment-calculator",
-    name: "InvestmentCalculator",
-    component: InvestmentCalculator,
-    props: true,
+    path: "/agent/",
+    name: "AgentPage",
+    component: AgentPage,
   },
   {
     path: "/forgot-password",
