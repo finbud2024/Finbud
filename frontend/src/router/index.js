@@ -26,6 +26,7 @@ import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
+import ForgotPassword from "@/views/ForgotPassword.vue"
 const routes = [
   {
     path: "/",
@@ -166,6 +167,11 @@ const routes = [
     name: "InvestmentCalculator",
     component: InvestmentCalculator,
     props: true,
+  },
+  {
+    path: "/forgot-password",
+    name: "ForgotPassword",
+    component: ForgotPassword,
   },
 
 ];

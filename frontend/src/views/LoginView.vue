@@ -9,21 +9,21 @@
     <div class="auth-options">
       <button class="social-btn" @click="signInWithX">
         <span class="btn-content">
-          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+          <img src="@/assets/facebookLogo.png" class="facebook-logo" alt="Google Logo">
           Sign in with Facebook
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithGoogle">
         <span class="btn-content">
-          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+          <img src="@/assets/googleLogo.png" class="google-logo" alt="Google Logo">
           Sign in with Google
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithApple">
         <span class="btn-content">
-          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+          <img src="@/assets/appleLogo.png" class="apple-logo" alt="Google Logo">
           Sign in with Apple
         </span>
       </button>
@@ -41,7 +41,7 @@
       <!-- Email Field -->
       <div class="form-group">
         <label for="email">Email</label>
-        <input class="form-input" type="text" id="username" v-model="username" placeholder="Username" required>
+        <input class="form-input" type="text" id="username" v-model="username" placeholder="Email address" required>
       </div>
 
       <!-- Password Field -->
@@ -52,16 +52,18 @@
         </div>
         <div class="password-input-wrapper">
           <input 
-          class="form-input"
-          :type="togglePassword? 'text' : 'password'" 
-          id="password" 
-          v-model="password" 
-          placeholder="Password" 
-          required >
+            class="form-input"
+            :type="showPassword ? 'text' : 'password'" 
+            id="password" 
+            v-model="password" 
+            placeholder="Password" 
+            required
+          >
           <button
             type="button"
             class="toggle-password"
             @click="toggleShowPassword"
+            aria-label="Toggle password visibility"
           >
             <i :class="showPassword ? 'eye-off' : 'eye-on'"></i>
           </button>
@@ -96,12 +98,17 @@ export default {
     return {
       username: '',
       password: '',
-      togglePassword: false
+      showPassword: false,
+      isLoading: false,
+      errorMessage: ''
     };
   },
   methods: {
     async onLogin() {
       try {
+        this.isLoading = true;
+        this.errorMessage = '';
+        
         const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
         const reqBody = {
           "username": this.username,
@@ -109,19 +116,19 @@ export default {
         };
         const response = await axios.post(api, reqBody, { withCredentials: true });
         
-        // Store user data in Vuex store
         this.$store.dispatch("users/login", response.data.user);
         
-        // Check if this is a new user from the server response
         const isNewUser = response.data.isNewUser;
         if (isNewUser) {
           this.$router.push('/?showTutorial=true');
         } else {
-          this.$router.push('/'); // Redirect to the main page after login
+          this.$router.push('/');
         }
       } catch (err) {
         console.error('Login Error:', err.response ? err.response.data : err.message);
-        document.getElementById('errorMessage').classList.remove('wrong-password');
+        this.errorMessage = err.response?.data?.message || 'Login failed. Please try again.';
+      } finally {
+        this.isLoading = false;
       }
     },
     signInWithGoogle() {
@@ -137,7 +144,7 @@ export default {
       window.location.href = api;
     },
     toggleShowPassword() {
-      this.togglePassword = !this.togglePassword;
+      this.showPassword = !this.showPassword;
     }
   },
 }
@@ -146,7 +153,6 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
 
-/* Main container */
 .signin-container {
   width: 100%;
   max-width: 448px;
@@ -156,11 +162,10 @@ export default {
   font-size: 9pt;
 }
 
-/* Header */
 .header {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px; /* Set to exactly 30px as requested */
+  margin-bottom: 10px;
 }
 
 .header h1 {
@@ -170,7 +175,6 @@ export default {
   color: #111827;
 }
 
-/* Social buttons */
 .auth-options {
   display: flex;
   flex-direction: column;
@@ -202,34 +206,23 @@ export default {
 .btn-content {
   display: flex;
   align-items: center;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: #374151;
-  font-weight: 500; /* Matching the form labels weight */
+  font-weight: 500;
 }
 
-/* Icons */
-.x-icon, .google-icon, .apple-icon {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.75rem;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+.facebook-logo, .apple-logo {
+  width: 2rem;
+  height: 2rem;
+  margin-right:0.5rem;
 }
 
-.x-icon {
-  background-image: url("data:image/svg+xml,...");
+.google-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right:0.5rem;
 }
 
-.google-icon {
-  background-image: url("data:image/svg+xml,...");
-}
-
-.apple-icon {
-  background-image: url("data:image/svg+xml,...");
-}
-
-/* Divider */
 .or-separator {
   display: flex;
   align-items: center;
@@ -250,7 +243,6 @@ export default {
   padding: 0 12px;
 }
 
-/* Form */
 .signin-form {
   display: flex;
   flex-direction: column;
@@ -261,7 +253,7 @@ export default {
 }
 
 .form-group {
-  margin-bottom: 0.5rem; /* Reduced from 1rem to bring fields closer */
+  margin-bottom: 0.5rem;
   width: 100%;
 }
 
@@ -291,52 +283,65 @@ export default {
   text-decoration: underline;
 }
 
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 .form-input {
-  width: 320px; /* Set width to 320px as requested */
-  height: 32px; /* Set height to 32px as requested */
-  padding: 0.5rem 0.75rem;
+  width: 100%;
+  height: 32px;
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
   background-color: white;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   color: #111827;
   font-family: 'DM Sans', sans-serif;
-  font-size: 9pt;
+  font-size: 0.875rem;
   box-sizing: border-box;
-}
-
-.password-input-wrapper {
-  position: relative;
-  width: 320px; /* Match the input width */
 }
 
 .toggle-password {
   position: absolute;
-  right: 0.75rem;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   color: #6b7280;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toggle-password:hover {
   color: #374151;
 }
 
+/* Eye icons using SVG data URLs - matching signup page */
 .eye-on, .eye-off {
   width: 1.25rem;
   height: 1.25rem;
   display: inline-block;
   background-size: contain;
   background-repeat: no-repeat;
+  background-position: center;
 }
 
-/* Submit button */
+.eye-on {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' /%3E%3C/svg%3E");
+}
+
+.eye-off {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21' /%3E%3C/svg%3E");
+}
+
 .submit-btn {
-  width: 300px; /* Changed from 320px to 300px as requested */
+  width: 70%;
   height: 44px;
-  margin: 0.5rem auto 0; /* Reduced top margin to bring button closer */
+  margin: 0.5rem auto 0;
   background-color: #111827;
   color: white;
   border: none;
@@ -345,7 +350,7 @@ export default {
   cursor: pointer;
   transition: background-color 0.2s;
   font-family: 'DM Sans', sans-serif;
-  font-size: 9pt;
+  font-size: 0.875rem;
   box-sizing: border-box;
 }
 
@@ -358,10 +363,9 @@ export default {
   cursor: not-allowed;
 }
 
-/* Error message */
 .error-message {
-  margin-top: 0.5rem; /* Reduced spacing */
-  width: 300px; /* Match submit button width */
+  margin-top: 0.5rem;
+  width: 100%;
   padding: 0.75rem;
   background-color: #fee2e2;
   color: #b91c1c;
@@ -371,11 +375,10 @@ export default {
   box-sizing: border-box;
 }
 
-/* Sign up link */
 .signup-link {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  gap: 0.5rem;
   margin-top: 1rem;
   font-size: 0.875rem;
   color: #4b5563;

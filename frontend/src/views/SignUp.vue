@@ -8,21 +8,21 @@
     <div class="auth-options">
       <button class="social-btn" @click="signInWithX">
         <span class="btn-content">
-          <img src="@/assets/facebookLogo.png" class="google-logo" alt="Google Logo">
+          <img src="@/assets/facebookLogo.png" class="facebook-logo" alt="Facebook Logo">
           Sign up with Facebook
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithGoogle">
         <span class="btn-content">
-          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+          <img src="@/assets/googleLogo.png" class="google-logo" alt="Google Logo">
           Sign up with Google
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithApple">
         <span class="btn-content">
-          <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+          <img src="@/assets/appleLogo.png" class="apple-logo" alt="Apple Logo">
           Sign up with Apple
         </span>
       </button>
@@ -61,7 +61,7 @@
           id="email"
           type="email" 
           v-model="formData.email" 
-          placeholder="Email Address" 
+          placeholder="Email address" 
           :class="{'error-border': errors.email}" 
           @blur="validateField('email')"
           required />
@@ -91,7 +91,7 @@
             class="toggle-password"
             @click="togglePassword = !togglePassword"
           >
-            <i :class="togglePassword ? 'eye-off' : 'eye-on'"></i>
+            <i :class="togglePassword ? 'eye-off=' : 'eye-on'"></i>
           </button>
         </div>
       </div>
@@ -125,12 +125,20 @@
         <div class="password-input-wrapper">
           <input 
             id="confirm-password" 
-            type="password" 
+            :type="toggleConfirmPassword ? 'text' : 'password'" 
             v-model="formData.confirmPassword" 
             placeholder="Confirm password" 
             :class="{'error-border': errors.confirmPassword}" 
             @blur="validateField('confirmPassword')"
             required />
+          <!-- password toggle visibility for confirm password -->
+          <button
+            type="button"
+            class="toggle-password"
+            @click="toggleConfirmPassword = !toggleConfirmPassword"
+          >
+            <i :class="toggleConfirmPassword ? 'eye-off' : 'eye-on'"></i>
+          </button>
         </div>
       </div>
 
@@ -174,16 +182,17 @@ export default {
         confirmPassword: false
       },
       loginFields: [
-        { name: 'email', label: 'Email Address', type: 'email', placeholder: 'Email Address', required: true },
+        { name: 'email', label: 'Email', type: 'email', placeholder: 'Email address', required: true },
         { name: 'password', label: 'Password', type: 'password', placeholder: 'Password', required: true },
       ],
       infoFields: [
-        { name: 'firstName', label: 'First Name', type: 'text', placeholder: 'First Name', required: true },
-        { name: 'lastName', label: 'Last Name', type: 'text', placeholder: 'Last Name', required: true },
+        { name: 'firstName', label: 'First name', type: 'text', placeholder: 'First name', required: true },
+        { name: 'lastName', label: 'Last name', type: 'text', placeholder: 'Last name', required: true },
       ],
       showPasswordRequirement: false,
       minLength: 8,
-      togglePassword: false
+      togglePassword: false,
+      toggleConfirmPassword: false
     };
   },
   computed: {
@@ -340,7 +349,7 @@ input {
   border-radius: 0.5rem;
   color: #111827;
   font-family: 'DM Sans', sans-serif;
-  font-size: 9pt;
+  font-size: 0.875rem;
   box-sizing: border-box;
 }
 
@@ -363,18 +372,32 @@ input:focus {
   border: none;
   cursor: pointer;
   color: #6b7280;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toggle-password:hover {
   color: #374151;
 }
 
-.eye-on, .eye-off {
+.eye-off, .eye-on {
   width: 1.25rem;
   height: 1.25rem;
   display: inline-block;
   background-size: contain;
   background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Eye icons using SVG data URLs */
+.eye-on {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' /%3E%3C/svg%3E");
+}
+
+.eye-off {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21' /%3E%3C/svg%3E");
 }
 
 /* Password requirements */
@@ -461,17 +484,15 @@ input:focus {
   background-repeat: no-repeat;
   background-position: center;
 }
-
-.facebook-icon {
-  background-image: url("data:image/svg+xml,...");
+.facebook-logo, .apple-logo{
+  width: 2rem;
+  height: 2rem;
+  margin-right:0.5rem;
 }
-
-.google-icon {
-  background-image: url("data:image/svg+xml,...");
-}
-
-.apple-icon {
-  background-image: url("data:image/svg+xml,...");
+.google-logo{
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right:0.5rem;
 }
 
 /* Divider */
