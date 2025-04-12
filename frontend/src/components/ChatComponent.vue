@@ -792,7 +792,7 @@ export default {
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	fxlex: 1;
+	flex: 1;
 	position: relative;
 	container-type: size;
 	container-name: messageComponent userInputComponent;

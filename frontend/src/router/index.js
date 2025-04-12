@@ -25,6 +25,7 @@ import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 import TaxCalculator from "@/components/tax&chat/TaxCalculator.vue";
+import ChatComponent from "@/components/ChatComponent.vue"; 
 
 // Defining routes
 import AgentPage from "@/views/AgentPage.vue";
@@ -171,7 +172,12 @@ const routes = [
     path: "/agent/",
     name: "AgentPage",
     component: AgentPage,
+  },
+  {
+    path: '/chat-view',
+    component: ChatComponent,  // Ensure ChatComponent is imported
   }
+  
 ];
 
 const router = createRouter({
