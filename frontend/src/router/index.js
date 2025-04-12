@@ -114,6 +114,11 @@ const routes = [
     component: ProfilePage,
   },
   {
+    path: "/tax-calculator",
+    name: "Calculator",
+    component: TaxCalculator,
+  },
+  {
     path: "/event",
     name: "EventHub",
     component: EventHub,
