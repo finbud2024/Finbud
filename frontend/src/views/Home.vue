@@ -2,26 +2,24 @@
   <section id="main-content">
     <div class='intro-container'>
       <div class="intro-text">
-        <div class="intro-text1">
           <div class="title animate fade-in">Empowering smarter finance decisions </div>
           <div class="description animate fade-in">
             Anytime answers for finance questions with FinBud
           </div>
           <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton>
-        </div>
       </div>
       
     </div>
 
     <section class="introduction-section">
       <header>
-        <h1 class="animate fade-in">
+        <h1>
           From Learning to Implementation, Partnering with You to Achieve Your Financial Goals
         </h1>
       </header>
       <div class="grid-container">
         <!-- first row -->
-        <div class="text-section text-left animate slide-in-left">
+        <div class="text-section text-left ">
           <h2>Enhance Your Financial Awareness</h2>
           <p>
             Complex financial concepts and challenging knowledge are no longer a concern. Finbud's advanced AI chatbot
@@ -29,14 +27,14 @@
           </p>
           <a href="/quizz" class="button">Learn more</a>
         </div>
-        <div class="image-section animate slide-in-right">
+        <div class="image-section">
           <div class="quizz-image introduction-image"></div>
         </div>
         <!-- second row -->
-        <div class="image-section animate slide-in-left">
+        <div class="image-section">
           <div class="goal-image introduction-image"></div>
         </div>
-        <div class="text-section text-right animate slide-in-right">
+        <div class="text-section text-right ">
           <h2>Optimize Your Financial Planning & Operations</h2>
           <p>
             Is your spending often out of control?
@@ -47,7 +45,7 @@
           <a href="/goal" class="button">Learn more</a>
         </div>
         <!-- third row -->
-        <div class="text-section text-left animate slide-in-left">
+        <div class="text-section text-left ">
           <h2>Maximize Your Investment Efficiency</h2>
           <p>
             Interested in investing but unsure where to start or worried about risks?
@@ -57,7 +55,7 @@
           </p>
           <a href="/stock-simulator" class="button">Learn more</a>
         </div>
-        <div class="image-section animate slide-in-right">
+        <div class="image-section">
           <div class="simulator-image introduction-image"></div>
         </div>
       </div>
@@ -66,7 +64,7 @@
     <!-- Features Section -->
     <section class="feature-section">
       <header>
-        <h1 class="animate fade-in">Choose Finbud as your <br>
+        <h1>Choose Finbud as your <br>
           Everyday Wealth Management Advisor!
         </h1>
       </header>
@@ -75,28 +73,28 @@
         of features that suits all your needs.
       </div>
       <div class="grid-container">
-        <div class="feature-chatbot animate slide-in-left">
+        <div class="feature-chatbot">
           <img class="feature-icon" src="@/assets/home-page/chatbot.png" alt="chatbot image">
           <h2>Advanced AI Chatbot immediately Solve All Your Financial Concerns</h2>
           <p>With just simple commands and access to a vast source of accurate and reliable information, all your
             financial queries can be answered instantly.</p>
           <a href="/chat-view" class="button">Chat now!</a>
         </div>
-        <div class="feature-investment-tracking animate slide-in-right">
+        <div class="feature-investment-tracking ">
           <img class="feature-icon" src="@/assets/home-page/investment-tracking.png" alt="chatbot image">
           <h2>Investment Guidance, Tracker and Market Report </h2>
           <p>Track how your investments are performing in real-time, provide actionable insights from your investment
             and the market to make better investment decisions.</p>
           <a href="/stock-simulator" class="button">Try Simulator now!</a>
         </div>
-        <div class="feature-budget-projection animate slide-in-left">
+        <div class="feature-budget-projection">
           <img class="feature-icon" src="@/assets/home-page/budget-projection.png" alt="chatbot image">
           <h2>Future Expense Projections through Spending Habit Analysis</h2>
           <p>Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive
             tips for better budget management.</p>
           <a href="/goal" class="button">Try Goal now! </a>
         </div>
-        <div class="feature-financial-knowledge animate slide-in-right">
+        <div class="feature-financial-knowledge">
           <img class="feature-icon" src="@/assets/home-page/financial-knowledge.png" alt="chatbot image">
           <h2>Financial Knowledge Review with Keyword-based Quiz </h2>
           <p>Financial Quiz with different topics related to different keywords help you practice and learn financial
@@ -109,21 +107,21 @@
     <!-- Technology Section -->
     <section class="technology-section">
       <header>
-        <h1 class="animate fade-in">With Finbud, easily notice the impact starting from today!</h1>
+        <h1>With Finbud, easily notice the impact starting from today!</h1>
       </header>
       <div class="technology-grid">
-        <div class="animate slide-in-up technology-card">
+        <div class="technology-card">
           <h3>20% Savings Increase</h3>
           <p>average per user</p>
         </div>
-        <div class="animate slide-in-down technology-card">
+        <div class="technology-card">
           <h3>25% Financial <br> Awareness Increase</h3>
         </div>
-        <div class="animate slide-in-up technology-card">
+        <div class="technology-card">
           <h3>30% Debt Reduction</h3>
           <p>after 1 year</p>
         </div>
-        <div class="animate slide-in-down technology-card">
+        <div class="technology-card">
           <h3>Improved Credit Score</h3>
           <p>within 6 months</p>
         </div>
@@ -264,8 +262,10 @@ export default {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('animate-visible');
-          observer.unobserve(entry.target);
-        }
+          // observer.unobserve(entry.target);
+        } else {
+        entry.target.classList.remove('animate-visible');
+      }
       });
     }, observerOptions);
 
@@ -279,7 +279,7 @@ export default {
 /* Add animations */
 .animate {
   opacity: 0;
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 1s ease 1s, transform 1s ease 1s;
 }
 
 .animate-visible {
@@ -329,19 +329,14 @@ export default {
 /* General Styling */
 .intro-text {
   display: flex;
-  flex-direction: row;
-  width: auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   opacity: 1;
+  width: 100%;
+  height: 100vh;
   animation: none;
   padding: 2rem;
-}
-
-.intro-text1 {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding-left: 10%;
 }
 
 .last-li {
