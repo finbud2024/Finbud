@@ -814,7 +814,7 @@
       totalTax: approximateTax
     });
   }
-  
+  a
   async function updateCharts(data) {
     // Wait for DOM to update so canvas elements exist
     await nextTick();
