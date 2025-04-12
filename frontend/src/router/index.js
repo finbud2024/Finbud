@@ -53,9 +53,11 @@ const routes = [
   {
     path: "/chat-view",
     name: "ChatView",
+    components: {
       default: ChatView,
       sidebar: SideBar,
     },
+  },
   {
     path: "/tech",
     name: "TechnologyPage",
@@ -162,11 +164,6 @@ const routes = [
     path: "/super-investors/:id",
     name: "InvestorDetails",
     component: InvestorDetail,
-  },
-  {
-    path: "/tax-calculator",
-    name: "TaxCalculator",
-    component: TaxCalculator, 
   },
   {
     path: "/agent/",

@@ -64,13 +64,6 @@
               @click="toggleDropdownInvest(false)"
               >Super Investors</router-link
             >
-
-            <router-link
-              to="/tax-calculator"
-              class="tax-calculator"
-              @click="toggleDropdownMobile"
-              >Calculator</router-link>
-
           </div>
         </li>
 
@@ -264,13 +257,6 @@
               @click="toggleDropdownMobile"
               >Super Investors</router-link
             >
-
-            <router-link
-              to="/tax-calculator"
-              class="tax-calculator"
-              @click="toggleDropdownMobile"
-            >Calculator</router-link>
-
 
             <strong>Fin Invest</strong>
             <router-link
