@@ -93,7 +93,7 @@
 <script>
 import axios from 'axios';
 export default {
-  name: 'LoginView',
+  name: "LoginView",
   data() {
     return {
       username: '',
@@ -111,8 +111,8 @@ export default {
         
         const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
         const reqBody = {
-          "username": this.username,
-          "password": this.password
+          username: this.username,
+          password: this.password,
         };
         const response = await axios.post(api, reqBody, { withCredentials: true });
         
@@ -120,7 +120,7 @@ export default {
         
         const isNewUser = response.data.isNewUser;
         if (isNewUser) {
-          this.$router.push('/?showTutorial=true');
+          this.$router.push("/?showTutorial=true");
         } else {
           this.$router.push('/');
         }

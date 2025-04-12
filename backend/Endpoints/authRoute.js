@@ -138,6 +138,10 @@ authRoute.get('/auth/current-user', (req, res) => {
   console.log("/auth/current-user reached.");
   if (req.isAuthenticated()) {
     console.log("User is authenticated, returning user data");
+
+    console.log("Session ID:", req.sessionID);
+    console.log("Session Data:", req.session);
+    console.log("User Data:", req.user);
     return res.status(200).json({ 
       isAuthenticated: true, 
       user: req.user 
@@ -154,6 +158,11 @@ authRoute.get('/auth/current-user', (req, res) => {
 // NEW ENDPOINT: Check if user is new
 authRoute.get('/auth/is-new-user', (req, res) => {
   console.log("/auth/is-new-user reached.");
+
+  console.log("Session ID:", req.sessionID);
+  console.log("Session Data:", req.session);
+  console.log("User Data:", req.user);
+  
   if (req.isAuthenticated()) {
     const isNewUser = req.session.isNewUser || false;
     console.log("Is new user:", isNewUser);
