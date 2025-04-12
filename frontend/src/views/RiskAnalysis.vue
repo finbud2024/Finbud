@@ -1,9 +1,21 @@
 <template>
   <div>
     <!-- Bot Chat Component - Placed outside the main container -->
-    <div class="bot-chat-container" :class="{ 'bot-visible': activeTab === 'realEstate', 'bot-hidden': hidingBot }">
+    <div
+      class="bot-chat-container"
+      :class="{
+        'bot-visible': activeTab === 'realEstate',
+        'bot-hidden': hidingBot,
+      }"
+    >
       <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
-      <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
+      <div
+        class="bot-message"
+        :class="{
+          'message-visible': showMessage,
+          'message-hidden': hidingMessage,
+        }"
+      >
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -12,7 +24,7 @@
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
     </div>
-    
+
     <div class="container">
       <!-- Market Data Section -->
       <section class="content">
@@ -20,8 +32,8 @@
 
         <!-- Sub Navigation Bar -->
         <div class="sub-nav">
-          <button 
-            v-for="tab in ['stock', 'crypto', 'realEstate']" 
+          <button
+            v-for="tab in ['stock', 'crypto', 'realEstate']"
             :key="tab"
             :class="['tab-button', { active: activeTab === tab }]"
             @click="activeTab = tab"
@@ -39,14 +51,15 @@
               <div class="margin-box">
                 <CryptoWatch class="margin-box-content" />
               </div>
-            
-              
+
               <!-- Crypto Quotes Section -->
               <div class="section-title">Crypto Quotes</div>
               <div class="margin-box">
                 <div class="margin-box-content">
-                  <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div> 
-                  <div v-else-if="loadingCrypto" class="loading">Loading...</div>
+                  <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div>
+                  <div v-else-if="loadingCrypto" class="loading">
+                    Loading...
+                  </div>
                   <div v-else>
                     <table>
                       <thead>
@@ -60,8 +73,14 @@
                         </tr>
                       </thead>
                       <tbody v-if="paginatedCryptoList.length">
-                        <tr v-for="crypto in paginatedCryptoList" :key="crypto.uuid">
-                          <td><img :src="crypto.iconUrl" :alt="crypto.name"> {{ crypto.name }}</td>
+                        <tr
+                          v-for="crypto in paginatedCryptoList"
+                          :key="crypto.uuid"
+                        >
+                          <td>
+                            <img :src="crypto.iconUrl" :alt="crypto.name" />
+                            {{ crypto.name }}
+                          </td>
                           <td>{{ crypto.rank }}</td>
                           <td>{{ crypto.tier }}</td>
                           <td>{{ formatPrice(crypto.price) }} B</td>
@@ -70,7 +89,11 @@
                         </tr>
                       </tbody>
                     </table>
-                    <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />
+                    <Pagination
+                      :currentPage.sync="currentCryptoPage"
+                      :totalPages="cryptoTotalPages"
+                      @update:currentPage="updateCryptoCurrentPage"
+                    />
                   </div>
                 </div>
               </div>
@@ -105,17 +128,24 @@
                         </tr>
                       </thead>
                       <tbody v-if="paginatedStockQuotes.length">
-                        <tr v-for="stock in paginatedStockQuotes" :key="stock['01. symbol']">
-                          <td>{{ stock['01. symbol'] }}</td>
-                          <td>{{ stock['05. price'] }}</td>
-                          <td>{{ stock['06. volume'] }}</td>
-                          <td>{{ stock['08. previous close'] }}</td>
-                          <td>{{ stock['09. change'] }}</td>
-                          <td>{{ stock['10. change percent'] }}</td>
+                        <tr
+                          v-for="stock in paginatedStockQuotes"
+                          :key="stock['01. symbol']"
+                        >
+                          <td>{{ stock["01. symbol"] }}</td>
+                          <td>{{ stock["05. price"] }}</td>
+                          <td>{{ stock["06. volume"] }}</td>
+                          <td>{{ stock["08. previous close"] }}</td>
+                          <td>{{ stock["09. change"] }}</td>
+                          <td>{{ stock["10. change percent"] }}</td>
                         </tr>
                       </tbody>
                     </table>
-                    <Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages" @update:currentPage="updateStockCurrentPage" />
+                    <Pagination
+                      :currentPage.sync="currentStockPage"
+                      :totalPages="stockTotalPages"
+                      @update:currentPage="updateStockCurrentPage"
+                    />
                   </div>
                 </div>
               </div>
@@ -128,7 +158,6 @@
                   <p>Stock History Component (Coming Soon)</p>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -141,8 +170,12 @@
                 <div class="margin-box">
                   <RealEstateMap class="margin-box-content" />
                   <div class="margin-box-content">
-                    <div v-if="errorRealEstate" class="error">{{ errorRealEstate }}</div> 
-                    <div v-else-if="loadingRealEstate" class="loading">Loading...</div>
+                    <div v-if="errorRealEstate" class="error">
+                      {{ errorRealEstate }}
+                    </div>
+                    <div v-else-if="loadingRealEstate" class="loading">
+                      Loading...
+                    </div>
                     <div v-else>
                       <table>
                         <thead>
@@ -154,18 +187,42 @@
                           </tr>
                         </thead>
                         <tbody v-if="paginatedRealEstate.length">
-                          <tr v-for="estate in paginatedRealEstate" :key="estate.id">
-                            <td>{{ estate.propertyType && !isNaN(estate.propertyType) ? estate.propertyType : "Single-family"}}</td>
+                          <tr
+                            v-for="estate in paginatedRealEstate"
+                            :key="estate.id"
+                          >
+                            <td>
+                              {{
+                                estate.propertyType &&
+                                !isNaN(estate.propertyType)
+                                  ? estate.propertyType
+                                  : "Single-family"
+                              }}
+                            </td>
                             <td>{{ estate.formattedAddress }}</td>
                             <td>
-                              {{ estate.lastSalePrice && !isNaN(estate.lastSalePrice) ? 
-                              '$' + estate.lastSalePrice.toLocaleString() : "N/A" }}
+                              {{
+                                estate.lastSalePrice &&
+                                !isNaN(estate.lastSalePrice)
+                                  ? "$" + estate.lastSalePrice.toLocaleString()
+                                  : "N/A"
+                              }}
                             </td>
-                            <td>{{ estate.ownerOccupied === true ? 'Inactive' : 'Active'}}</td>
+                            <td>
+                              {{
+                                estate.ownerOccupied === true
+                                  ? "Inactive"
+                                  : "Active"
+                              }}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
-                      <Pagination :currentPage.sync="currentRealEstatePage" :totalPages="realEstateTotalPages" @update:currentPage="updateRealEstateCurrentPage" />
+                      <Pagination
+                        :currentPage.sync="currentRealEstatePage"
+                        :totalPages="realEstateTotalPages"
+                        @update:currentPage="updateRealEstateCurrentPage"
+                      />
                     </div>
                   </div>
                 </div>
@@ -181,19 +238,19 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Pagination from '../components/Risk&Chat/Pagination.vue';
-import RiskChat from '../components/Risk&Chat/RiskChat.vue';
-import CryptoWatch from '@/components/marketPage/CryptoWatch.vue';
-import StockWatch from '@/components/marketPage/StockWatch.vue';
-import RealEstateMap from '@/components/marketPage/RealEstateMap.vue';
+import axios from "axios";
+import Pagination from "../components/Risk&Chat/Pagination.vue";
+import RiskChat from "../components/Risk&Chat/RiskChat.vue";
+import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
+import StockWatch from "@/components/marketPage/StockWatch.vue";
+import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
 
-const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY; 
+const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
 const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
 const apiKeyRealEstate = process.env.VUE_APP_REAL_ESTATE_KEY;
 
 export default {
-  name: 'RiskAnalysis',
+  name: "RiskAnalysis",
   components: {
     Pagination,
     CryptoWatch,
@@ -203,7 +260,7 @@ export default {
   },
   data() {
     return {
-      activeTab: 'stock',
+      activeTab: "stock",
       // Bot Chat data
       showBot: false,
       hidingBot: false,
@@ -228,36 +285,36 @@ export default {
       errorCrypto: null,
       cryptoList: [],
       realEstateList: [
-      {
-						propertyType: "Single Family Home",
-						formattedAddress: "123 Main St, San Jose, CA 95112",
-						price: "$1,200,000",
-						status: "For Sale"
-					},
-					{
-						propertyType: "Condo",
-						formattedAddress: "456 Elm St, San Jose, CA 95126",
-						price: "$850,000",
-						status: "Pending"
-					},
-					{
-						propertyType: "Townhouse",
-						formattedAddress: "789 Oak Ave, San Jose, CA 95128",
-						price: "$975,000",
-						status: "Sold"
-					},
-					{
-						propertyType: "Apartment",
-						formattedAddress: "101 Pine St, San Jose, CA 95110",
-						price: "$3,200/mo",
-						status: "For Rent"
-					},
-					{
-						propertyType: "Duplex",
-						formattedAddress: "202 Maple Dr, San Jose, CA 95125",
-						price: "$1,050,000",
-						status: "For Sale"
-					}
+        {
+          propertyType: "Single Family Home",
+          formattedAddress: "123 Main St, San Jose, CA 95112",
+          price: "$1,200,000",
+          status: "For Sale",
+        },
+        {
+          propertyType: "Condo",
+          formattedAddress: "456 Elm St, San Jose, CA 95126",
+          price: "$850,000",
+          status: "Pending",
+        },
+        {
+          propertyType: "Townhouse",
+          formattedAddress: "789 Oak Ave, San Jose, CA 95128",
+          price: "$975,000",
+          status: "Sold",
+        },
+        {
+          propertyType: "Apartment",
+          formattedAddress: "101 Pine St, San Jose, CA 95110",
+          price: "$3,200/mo",
+          status: "For Rent",
+        },
+        {
+          propertyType: "Duplex",
+          formattedAddress: "202 Maple Dr, San Jose, CA 95125",
+          price: "$1,050,000",
+          status: "For Sale",
+        },
       ],
       loadingRealEstate: true,
       errorRealEstate: null,
@@ -274,7 +331,7 @@ export default {
     cryptoTotalPages() {
       return Math.ceil(this.cryptoList.length / this.itemsPerPage);
     },
-    realEstateTotalPages(){
+    realEstateTotalPages() {
       return Math.ceil(this.realEstateList.length / this.itemsPerPage);
     },
     paginatedStockQuotes() {
@@ -294,13 +351,13 @@ export default {
     activeTab: {
       immediate: true,
       handler(newTab) {
-        if (newTab === 'realEstate') {
+        if (newTab === "realEstate") {
           this.startBotAnimation();
         } else {
           this.hideBot();
         }
-      }
-    }
+      },
+    },
   },
   mounted() {
     this.fetchStockQuote();
@@ -326,16 +383,24 @@ export default {
       this.$nextTick(() => {
         // Make sure DOM is loaded and data is ready
         if (!this.$refs.realEstateSection) return;
-        
-        this.botObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting && !this.showBot && 
-                !this.loading && !this.loadingCrypto && !this.loadingRealEstate) {
-              this.startBotAnimation();
-            }
-          });
-        }, { threshold: 0.2 }); // Trigger when 20% of real estate section is visible
-        
+
+        this.botObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (
+                entry.isIntersecting &&
+                !this.showBot &&
+                !this.loading &&
+                !this.loadingCrypto &&
+                !this.loadingRealEstate
+              ) {
+                this.startBotAnimation();
+              }
+            });
+          },
+          { threshold: 0.2 }
+        ); // Trigger when 20% of real estate section is visible
+
         this.botObserver.observe(this.$refs.realEstateSection);
       });
     },
@@ -347,15 +412,19 @@ export default {
 
       if (this.realEstateList && this.realEstateList.length) {
         summary += "🏠 Here are some properties you might like:\n";
-        this.realEstateList.slice(0, 3).forEach(estate => {
-          summary += `${estate.propertyType || 'Home'} at ${estate.formattedAddress}\n`;
+        this.realEstateList.slice(0, 3).forEach((estate) => {
+          summary += `${estate.propertyType || "Home"} at ${
+            estate.formattedAddress
+          }\n`;
           if (estate.lastSalePrice && !isNaN(estate.lastSalePrice)) {
             summary += `Price: $${estate.lastSalePrice.toLocaleString()}\n`;
           }
-          summary += `Status: ${estate.ownerOccupied === true ? 'Inactive' : 'Active'}\n\n`;
+          summary += `Status: ${
+            estate.ownerOccupied === true ? "Inactive" : "Active"
+          }\n\n`;
         });
       }
-      
+
       summary += "Can I help you find your dream home?";
       return summary;
     },
@@ -368,81 +437,108 @@ export default {
       if (this.botHideTimer) {
         clearTimeout(this.botHideTimer);
       }
-      
+
       // Reset states
       this.hidingBot = false;
       this.hidingMessage = false;
       this.typedContent = "";
-      
+
       // First show the bot avatar sliding in with enhanced smoothness
       this.showBot = true;
-      
+
       // After bot slides in, show typing animation
       setTimeout(() => {
         this.showMessage = true;
         this.isTyping = true;
-        
-        // After typing animation, start word-by-word typing
+
+        // After typing animation, start character-by-character typing
         setTimeout(() => {
           this.isTyping = false;
           this.botMessage = this.formatMarketSummary();
-          this.startWordByWordTyping();
-        }, 1500);
-      }, 800); // Wait for bot slide-in animation to complete
-      
+          this.startRealisticTyping();
+        }, 500);
+      }, 400); // Wait for bot slide-in animation to complete
+
       // Disconnect the observer after triggering the animation
       if (this.botObserver) {
         this.botObserver.disconnect();
       }
     },
-    
-    startWordByWordTyping() {
-      // Split the message by spaces and newlines to get words
-      // This regex splits by spaces but keeps newlines as separate "words"
-      this.words = this.botMessage.split(/( |\n)/g).filter(word => word !== "");
-      this.currentWordIndex = 0;
+
+    startRealisticTyping() {
+      // Use character-by-character typing for more realistic effect
       this.typedContent = "";
-      this.typeNextWord();
-    },
-    
-    typeNextWord() {
-      if (this.currentWordIndex < this.words.length) {
-        const word = this.words[this.currentWordIndex];
-        
-        // Add the word to the content
-        if (word === "\n") {
-          this.typedContent += "<br>";
+      let charIndex = 0;
+
+      // Simplified version to address potential issues
+      const typeNextChar = () => {
+        if (charIndex < this.botMessage.length) {
+          // Get the current character for typing
+          const currentChar = this.botMessage.charAt(charIndex);
+
+          // Add character to typed content with HTML handling
+          if (currentChar === "\n") {
+            this.typedContent += "<br>";
+          } else {
+            this.typedContent += currentChar;
+          }
+
+          charIndex++;
+
+          // Calculate a simpler typing speed based on character type
+          let delay;
+
+          // Basic delays based on character type
+          if ([".", "!", "?"].includes(currentChar)) {
+            delay = Math.random() * 100 + 80; // End of sentence
+          } else if ([",", ":", ";"].includes(currentChar)) {
+            delay = Math.random() * 60 + 40; // Mid-sentence pause
+          } else if (currentChar === " ") {
+            delay = Math.random() * 20 + 10; // Word break
+          } else if (currentChar === "\n") {
+            delay = Math.random() * 120 + 80; // Line break
+          } else if (!isNaN(parseInt(currentChar))) {
+            delay = Math.random() * 25 + 15; // Numbers
+          } else {
+            // Regular characters with occasional speed variation
+            delay =
+              Math.random() < 0.3
+                ? Math.random() * 8 + 5 // Fast typing (30% chance)
+                : Math.random() * 15 + 10; // Normal typing (70% chance)
+          }
+
+          // Add occasional small thinking pause (2% chance)
+          if (Math.random() < 0.02) {
+            delay += Math.random() * 150 + 50;
+          }
+
+          // Schedule typing the next character
+          this.typingTimer = setTimeout(typeNextChar, delay);
         } else {
-          this.typedContent += word;
+          // Typing complete, schedule the hide after a delay
+          this.scheduleHideBot();
         }
-        
-        this.currentWordIndex++;
-        
-        // Schedule the next word with a delay
-        this.typingTimer = setTimeout(() => {
-          this.typeNextWord();
-        }, this.typingSpeed * (word.length / 2 + 1)); // Delay proportional to word length
-      } else {
-        // Typing complete, schedule the hide after 1 minute
-        this.scheduleHideBot();
-      }
+      };
+
+      // Start typing with a small initial delay
+      setTimeout(typeNextChar, 300);
     },
-    
+
     scheduleHideBot() {
-      // Set a timeout to hide the bot after 1 minute (60000ms)
+      // Set a timeout to hide the bot after 30 seconds (30000ms)
       this.botHideTimer = setTimeout(() => {
         this.hideBot();
-      }, 60000);
+      }, 30000);
     },
-    
+
     hideBot() {
       // Start fade-out animations
       this.hidingMessage = true;
-      
+
       // Wait for message to fade out, then hide bot
       setTimeout(() => {
         this.hidingBot = true;
-        
+
         // Reset states after animations complete
         setTimeout(() => {
           this.showBot = false;
@@ -450,31 +546,54 @@ export default {
           this.hidingBot = false;
           this.hidingMessage = false;
           this.typedContent = "";
-        }, 1000);
-      }, 500);
+        }, 500);
+      }, 300);
     },
 
     // Existing market data methods
     async fetchStockQuote() {
-      const symbols = ['IBM', 'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'FB', 'TSLA', 'NFLX', 'NVDA', 'INTC', 'CSCO', 'ORCL', 'ADBE', 'CRM', 'PYPL', 'AMD', 'QCOM', 'TXN', 'AVGO', 'SHOP'];
+      const symbols = [
+        "IBM",
+        "AAPL",
+        "GOOGL",
+        "MSFT",
+        "AMZN",
+        "FB",
+        "TSLA",
+        "NFLX",
+        "NVDA",
+        "INTC",
+        "CSCO",
+        "ORCL",
+        "ADBE",
+        "CRM",
+        "PYPL",
+        "AMD",
+        "QCOM",
+        "TXN",
+        "AVGO",
+        "SHOP",
+      ];
       const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
       try {
-        const requests = symbols.map(symbol => {
+        const requests = symbols.map((symbol) => {
           const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
           return axios.get(url);
         });
         const responses = await Promise.all(requests);
-        this.stockQuotes = responses.map(response => {
-          const quote = response.data['Global Quote'];
-          if (quote && Object.keys(quote).length > 0) {
-            return quote;
-          } else {
-            return null; 
-          }
-        }).filter(quote => quote !== null);
+        this.stockQuotes = responses
+          .map((response) => {
+            const quote = response.data["Global Quote"];
+            if (quote && Object.keys(quote).length > 0) {
+              return quote;
+            } else {
+              return null;
+            }
+          })
+          .filter((quote) => quote !== null);
         this.loading = false;
       } catch (error) {
-        this.error = 'Failed to fetch stock quotes';
+        this.error = "Failed to fetch stock quotes";
         this.loading = false;
       }
     },
@@ -483,13 +602,13 @@ export default {
       try {
         const res = await axios.get(url, {
           headers: {
-            'x-access-token': apiKeyCrypto,
-          }
+            "x-access-token": apiKeyCrypto,
+          },
         });
         this.cryptoList = res.data.data.coins;
         this.loadingCrypto = false;
       } catch (error) {
-        this.errorCrypto = 'Failed to fetch crypto quotes';
+        this.errorCrypto = "Failed to fetch crypto quotes";
         this.loadingCrypto = false;
       }
     },
@@ -499,7 +618,7 @@ export default {
     updateStockCurrentPage(newPage) {
       this.currentStockPage = newPage;
     },
-    updateRealEstateCurrentPage(newPage){
+    updateRealEstateCurrentPage(newPage) {
       this.currentRealEstatePage = newPage;
     },
     formatPrice(price) {
@@ -526,7 +645,7 @@ export default {
     //   }
     // },
     formatTabName(tab) {
-      if (tab === 'realEstate') return 'Real Estate';
+      if (tab === "realEstate") return "Real Estate";
       return tab.charAt(0).toUpperCase() + tab.slice(1);
     },
   },
@@ -605,7 +724,8 @@ thead {
   background-color: #f8f8f8;
 }
 
-th, td {
+th,
+td {
   padding: 12px 15px;
   text-align: left;
   border: 1px solid #ddd;
@@ -659,7 +779,8 @@ img {
   align-items: flex-start;
   padding: 15px;
   z-index: 100;
-  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.6s ease;
   opacity: 0;
   transform: translateX(0);
   pointer-events: none; /* Prevents interaction with elements behind it */
@@ -674,7 +795,7 @@ img {
 .bot-chat-container.bot-hidden {
   transform: translateX(350px) translateY(50px);
   opacity: 0;
-  transition: transform 1s ease, opacity 1s ease;
+  transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
 .bot-image {
@@ -683,23 +804,33 @@ img {
   display: block;
   position: relative;
   background: transparent;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 .bot-visible .bot-image {
-  animation: botBounce 1s ease-out;
+  animation: botBounce 0.6s ease-out;
 }
 
 @keyframes botBounce {
-  0% { transform: translateY(20px); opacity: 0; }
-  60% { transform: translateY(-5px); }
-  80% { transform: translateY(2px); }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+  80% {
+    transform: translateY(2px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .bot-message {
   margin-top: 10px;
-  background: #2196F3;
+  background: #2196f3;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 18px;
@@ -707,8 +838,8 @@ img {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0; /* Start hidden */
   transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
-  transition: opacity 0.7s ease, transform 0.7s ease;
-  transition-delay: 0.3s; /* Reduced delay for smoother appearance */
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition-delay: 0.2s; /* Reduced delay for smoother appearance */
 }
 
 .bot-message.message-visible {
@@ -719,7 +850,7 @@ img {
 .bot-message.message-hidden {
   opacity: 0;
   transform: scale(0.8) translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Typing animation */
@@ -755,11 +886,12 @@ img {
 }
 
 @keyframes typing {
-  0%, 100% { 
-    opacity: 0.3; 
+  0%,
+  100% {
+    opacity: 0.3;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 1;
     transform: scale(1.2);
   }
@@ -783,12 +915,12 @@ img {
   .margin-box {
     padding: 0.75rem;
   }
-  
+
   /* Adjust bot position for smaller screens */
   .bot-chat-container {
     left: -300px;
   }
-  
+
   .bot-chat-container.bot-visible {
     transform: translateX(310px);
   }
@@ -832,7 +964,7 @@ img {
   .margin-box {
     padding: 0.5rem;
   }
-  
+
   /* For mobile, position the bot at the bottom of the screen */
   .bot-chat-container {
     left: auto;
@@ -840,11 +972,11 @@ img {
     bottom: 20px;
     top: auto;
   }
-  
+
   .bot-chat-container.bot-visible {
     transform: translateX(-310px);
   }
-  
+
   .bot-chat-container.bot-hidden {
     transform: translateX(-310px) translateY(50px);
   }
@@ -868,12 +1000,12 @@ img {
   .margin-box {
     padding: 0.25rem;
   }
-  
+
   /* Further adjustments for very small screens */
   .bot-chat-container {
     width: 250px;
   }
-  
+
   .bot-message {
     max-width: 220px;
   }
