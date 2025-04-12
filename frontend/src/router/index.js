@@ -24,6 +24,8 @@ import StartThread from "@/views/StartThread.vue";
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
+import AgentPage from "@/views/AgentPage.vue";
+
 const routes = [
   {
     path: "/",
@@ -122,7 +124,6 @@ const routes = [
     path: "/forum",
     name: "ForumView",
     component: ForumView,
-    meta: { requiresAuth: true },
     props: true,
   },
   {
@@ -149,6 +150,7 @@ const routes = [
     component: MortgageCalc,
     props: true,
   },
+  ,
   {
     path: "/super-investors",
     name: "SuperInvestors",
@@ -158,6 +160,11 @@ const routes = [
     path: "/super-investors/:id",
     name: "InvestorDetails",
     component: InvestorDetail,
+  },
+  {
+    path: "/agent/",
+    name: "AgentPage",
+    component: AgentPage,
   }
 ];
 
@@ -166,4 +173,4 @@ const router = createRouter({
   routes,
 });
 
-export default router
+export default router;
