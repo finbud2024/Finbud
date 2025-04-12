@@ -430,14 +430,13 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .nav-bar {
-  background-color: var(--bg-primary);
+  background-color: transparent;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0rem 2rem;
   font-family: "Space Grotesk", sans-serif;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: fixed;
   z-index: 1000;
 }
