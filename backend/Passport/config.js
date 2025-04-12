@@ -3,6 +3,7 @@ import session from 'express-session';
 import googleStrategy from './googleStrategy.js';
 import localStrategy from  './localStrategy.js';
 import User from '../Database Schema/User.js'
+import MongoStore from 'connect-mongo';
 
 const passportConfig = (app) => {
     passport.use(localStrategy);
@@ -27,20 +28,30 @@ const passportConfig = (app) => {
         }
       });
       
-    const isNetlifyDev = process.env.NETLIFY_DEV === 'true';
-    const isProduction = process.env.NODE_ENV === 'production';
-
-    app.use(session({
-                secret: process.env.SESSION_SECRET, 
-                resave: false,
-                saveUninitialized: false,
-                cookie: {
-                  maxAge: 1000 * 60 * 60 * 24, // 24 hours instead of 1 minute
-                  httpOnly: true, // Prevents client-side JS from reading the cookie
-                  sameSite: isProduction || isNetlifyDev ? 'none' : 'lax',
-                  secure: isProduction || isNetlifyDev // true if prod or netlify dev
-                }
-              }))
+      const isProduction = process.env.NODE_ENV === "production";
+      const isNetlifyDev = process.env.NETLIFY_DEV === "true";
+      console.log("NODE_ENV:", process.env.NODE_ENV);
+      
+      app.use(
+        session({
+          secret: process.env.SESSION_SECRET,
+          resave: false,
+          saveUninitialized: false,
+          store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI, // MongoDB connection string
+            ttl: 24 * 60 * 60, // Session expiration time in seconds (e.g., 1 day)
+          }),
+          cookie: {
+            maxAge: 1000 * 60 * 60 * 24,
+            httpOnly: true,
+            path: "/",
+            sameSite: "none",
+            secure: true
+            // sameSite: isProduction || isNetlifyDev ? "none" : "lax",
+            // secure: isProduction || isNetlifyDev
+          }
+        })
+      )
   
         .use(passport.initialize())
         .use(passport.session());

@@ -34,6 +34,23 @@ dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
 const app = express();
+
+const allowedOrigins = [
+  "http://localhost:8888",       
+  "https://finbud.pro",         
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
 const httpServer = createServer(app);
 // Create Socket.io instance with CORS configuration
 const io = new Server(httpServer, {
@@ -108,14 +125,8 @@ const connectToMongoDB = async () => {
 
 passportConfig(app);
 
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
-app.use(bodyParser.json({ limit: "10mb" }));
-app.use(
-  cors({
-    origin: "https://finbud.pro",
-    credentials: true,
-  })
-);
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({limit: '10mb'}));
 
 // app.use((req, res, next) => {
 //   console.log(req.body);

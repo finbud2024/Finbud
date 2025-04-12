@@ -226,90 +226,50 @@
     <section v-if="activeSection === 'portfolio'" class="portfolio-section">
       <div class="portfolio-container">
         <div class="portfolio-header">
-          <h2>Your Investment Portfolio</h2>
-          <div class="portfolio-actions">
-            <button class="refresh-btn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <polyline points="23 20 23 14 17 14"></polyline>
-                <path
-                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-                ></path>
-                <path
-                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-                ></path>
-              </svg>
-              Refresh
+          <h2>{{ activeSection === 'portfolio' ? $t('investmentPortfolio') : 'Your Investment Portfolio' }}</h2>
+          
+          <!-- Add language switcher here -->
+          <div class="portfolio-language-switcher">
+            <button @click="switchLanguage('en')" :class="{ active: $i18n.locale === 'en' }">
+              <img src="@/assets/us.png" alt="English" />
             </button>
-            <button class="export-btn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Export
+            <button @click="switchLanguage('vi')" :class="{ active: $i18n.locale === 'vi' }">
+              <img src="@/assets/vn.png" alt="Tiếng Việt" />
             </button>
           </div>
         </div>
 
         <div class="portfolio-overview">
           <div class="overview-card total">
-            <div class="overview-title">Total Portfolio Value</div>
-            <div class="overview-value">$24,892.31</div>
-            <div class="overview-change positive">+$3,892.31 (18.5%)</div>
+            <div class="overview-title">{{ $t('totalPortfolioValue') }}</div>
+            <div class="overview-value">${{ formatCurrency(accountBalance) }}</div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">Stocks</div>
-            <div class="overview-value">$16,453.79</div>
-            <div class="overview-change positive">+$2,731.42 (19.9%)</div>
+            <div class="overview-title">{{ $t('stocks') }}</div>
+            <div class="overview-value">${{ formatCurrency(stockValue) }}</div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">Cash</div>
-            <div class="overview-value">$8,438.52</div>
-            <div class="overview-change neutral">+$0.00 (0.0%)</div>
+            <div class="overview-title">{{ $t('cash') }}</div>
+            <div class="overview-value">${{ formatCurrency(cash) }}</div>
           </div>
         </div>
-
-        <div class="portfolio-content">
-          <PortfolioPerformance />
-        </div>
-
+        <PortfolioPerformance :language="$i18n.locale"/>
         <div class="holdings-section">
-          <h3>Your Holdings</h3>
+          <h3>{{ $t('yourHoldings') }}</h3>
           <div class="holdings-table">
             <table>
               <thead>
                 <tr>
-                  <th>Stock Ticker</th>
+                  <th>{{ $t('stockTicker') }}</th>
                   <!-- <th>Company Name</th> -->
-                  <th>Share Quantity</th>
-                  <th>Current Price per Share</th>
-                  <th>Total Purchased Value</th>
-                  <th>Current Market Value</th>
-                  <th>Gain/Loss</th>
-                  <th>% Change</th>
+                  <th>{{ $t('shareQuantity') }}</th>
+                  <th>{{ $t('currentPricePerShare') }}</th>
+                  <th>{{ $t('totalPurchasedValue') }}</th>
+                  <th>{{ $t('currentMarketValue') }}</th>
+                  <th>{{ $t('gainLoss') }}</th>
+                  <th>{{ $t('percentChange') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -386,6 +346,11 @@
               class="typed-message"
               v-html="currentPortfolioTypedMessage"
             ></div>
+          </div>
+          <div class="bot-controls" v-if="!isPortfolioTyping && showPortfolioMessage">
+            <button class="refresh-insights" @click="refreshPortfolioInsights">
+              <i class="fas fa-sync-alt"></i> Refresh Insights
+            </button>
           </div>
         </div>
       </div>
@@ -521,16 +486,7 @@ export default {
       portfolioMessageManuallyToggled: false,
       currentPortfolioTypedMessage: "",
       portfolioBotObserver: null,
-      portfolioBotMessage: `📊 <strong>Portfolio Analysis:</strong><br><br>
-Your portfolio is showing impressive performance with a total value of $24,892.31 and overall gain of 18.5%.<br><br>
-<strong>Strengths:</strong><br>
-✅ Strong tech sector allocation (AAPL, MSFT, GOOGL) driving growth<br>
-✅ All positions showing positive returns (17.5%-26.7%)<br>
-✅ Healthy cash position of $8,438.52 (33.9% of portfolio)<br><br>
-<strong>Suggestions:</strong><br>
-1. Consider diversifying beyond tech to reduce sector risk<br>
-2. Look into dividend-paying stocks to balance growth<br>
-3. Set up regular investment schedule to optimize dollar-cost averaging`,
+      portfolioBotMessage: ``,
       portfolioTypingSpeed: 20, // ms per character
       portfolioWordByWordTyping: true,
       portfolioBotHideTimeout: null,
@@ -729,7 +685,92 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         console.log("Error giving insights", error);
       }
     },
+    async GeneratePortfolioInsights() {
+  try {
+    // Check if there are any holdings to analyze
+    if (!this.userHoldings || this.userHoldings.length === 0) {
+      this.portfolioBotMessage = this.$i18n.locale === 'vi' 
+        ? "Tôi không thấy cổ phiếu nào trong danh mục đầu tư của bạn. Khi bạn mua cổ phiếu đầu tiên, tôi sẽ cung cấp thông tin chi tiết ở đây!"
+        : "I don't see any stocks in your portfolio yet. When you make your first purchase, I'll provide personalized insights here!";
+      return this.portfolioBotMessage;
+    }
+    
+    // Set initial loading message
+    this.portfolioBotMessage = this.$i18n.locale === 'vi'
+      ? "Đang phân tích danh mục đầu tư của bạn..."
+      : "Analyzing your portfolio...";
+    
+    // Format holdings data for the API
+    const portfolioData = this.userHoldings.map(holding => ({
+      symbol: holding.symbol,
+      quantity: holding.quantity,
+      purchasePrice: holding.purchasePrice,
+      currentPrice: holding.currentPrice,
+      percentChange: ((holding.currentPrice - holding.purchasePrice) / holding.purchasePrice * 100).toFixed(2)
+    }));
+    
+    const url = "https://openrouter.ai/api/v1/chat/completions";
+    
+    // Determine language and set appropriate system message and user prompt
+    const isVietnamese = this.$i18n.locale === 'vi';
+    
+    // Define the correct system message and user prompt based on language
+    let systemMessage, userPrompt;
+    
+    if (isVietnamese) {
+      systemMessage = "Bạn là FinBud, một trợ lý đầu tư thân thiện. Hãy phân tích dữ liệu danh mục đầu tư của người dùng và đưa ra những nhận xét cá nhân hóa ngắn gọn. Định dạng phản hồi của bạn bằng Markdown: sử dụng ### cho tiêu đề, **in đậm** để nhấn mạnh, và danh sách đánh số cho các đề xuất. Tập trung vào đa dạng hóa, xu hướng hiệu suất, đánh giá rủi ro và 1-2 đề xuất cải thiện cụ thể. Giữ phân tích của bạn dưới 30 từ và sử dụng giọng điệu hội thoại.";
+      userPrompt = `Phân tích danh mục đầu tư của tôi và đưa ra nhận xét: ${JSON.stringify(portfolioData)}`;
+    } else {
+      systemMessage = "You are FinBud, a friendly investment assistant. Analyze the user's portfolio data and provide concise, personalized insights. Format your response with Markdown: use ### for headings, **bold** for emphasis, and numbered lists for recommendations. Focus on diversification, performance trends, risk assessment, and 1-2 specific improvement suggestions. Keep your analysis under 30 words and use a conversational tone.";
+      userPrompt = `Analyze my investment portfolio and provide insights: ${JSON.stringify(portfolioData)}`;
+    }
+    
+    // Make a single API call in the user's language
+    const response = await axios.post(
+      url,
+      {
+        model: "deepseek/deepseek-chat:free",
+        messages: [
+          {
+            role: "system",
+            content: systemMessage
+          },
+          {
+            role: "user",
+            content: userPrompt
+          }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      }
+    );
 
+    // Process the response
+    if (response && response.data && response.data.choices && response.data.choices[0]) {
+      const insights = response.data.choices[0].message.content;
+      this.portfolioBotMessage = this.formatPortfolioInsights(insights);
+      console.log("Portfolio insights generated successfully");
+      return this.portfolioBotMessage;
+    } else {
+      console.error("Invalid API response format:", response);
+      throw new Error("Invalid API response format");
+    }
+  } catch (error) {
+    console.log("Error generating portfolio insights:", error);
+    
+    // Handle rate limit errors or other issues with simple error messages
+    this.portfolioBotMessage = this.$i18n.locale === 'vi'
+      ? "<h3 class='insight-heading'>Không thể tạo thông tin chi tiết</h3><p class='insight-paragraph'>Tôi đang gặp sự cố khi phân tích danh mục đầu tư của bạn. Điều này có thể do đã đạt đến giới hạn API. Vui lòng thử lại sau.</p>"
+      : "<h3 class='insight-heading'>Unable to Generate Insights</h3><p class='insight-paragraph'>I'm having trouble analyzing your portfolio right now. This may be due to API rate limits. Please try again later.</p>";
+    
+    return this.portfolioBotMessage;
+  }
+},
     handleScroll() {
       if (this.chatbotTriggeredByScroll) return;
 
@@ -1000,21 +1041,12 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
     startPortfolioWordByWordTyping() {
       this.currentPortfolioTypedMessage = "";
-      const words = this.portfolioBotMessage.split(" ");
-      let wordIndex = 0;
-
-      const typeNextWord = () => {
-        if (wordIndex < words.length) {
-          this.currentPortfolioTypedMessage += words[wordIndex] + " ";
-          wordIndex++;
-          const delay = Math.random() * 100 + 50;
-          setTimeout(typeNextWord, delay);
-        } else {
-          this.isPortfolioTyping = false;
-        }
-      };
-
-      typeNextWord();
+      
+      // Just pass the entire formatted message instead of splitting by words
+      setTimeout(() => {
+        this.currentPortfolioTypedMessage = this.portfolioBotMessage;
+        this.isPortfolioTyping = false;
+      }, 1000); // Show the entire formatted message after a brief delay
     },
 
     startPortfolioCharacterByCharacterTyping() {
@@ -1128,10 +1160,12 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             purchasePrice: holding.purchasePrice,
             currentPrice:
               holding.currentPrice ||
-              holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)), // Temporary: use current price or generate one with random variation
+              holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)),
           }));
 
           this.updateCurrentPrices();
+          
+          // Don't show the bot message yet - GeneratePortfolioInsights will be called separately
         } else {
           this.userHoldings = [];
         }
@@ -1213,6 +1247,14 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       if (!value) return "0.0%";
       const prefix = value >= 0 ? "+" : "-";
       return `${prefix}${Math.abs(value).toFixed(1)}%`;
+    },
+
+    formatCurrency(value) {
+      if (!value && value !== 0) return '0.00';
+      return parseFloat(value).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     },
 
     async generateTradingQuestions() {
@@ -1421,6 +1463,79 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         console.log("No more questions available.");
       }
     },
+    async refreshPortfolioInsights() {
+      // Show loading state
+      this.isPortfolioTyping = true;
+      this.currentPortfolioTypedMessage = "";
+      this.portfolioBotMessage = "Refreshing your portfolio insights...";
+      
+      // Wait a moment to show the loading message
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Generate new insights
+      await this.GeneratePortfolioInsights();
+      
+      // Display new insights
+      if (this.portfolioWordByWordTyping) {
+        this.startPortfolioWordByWordTyping();
+      } else {
+        this.startPortfolioCharacterByCharacterTyping();
+      }
+    },
+    formatPortfolioInsights(text) {
+      if (!text) return '';
+      
+      // Format headings (### Heading)
+      text = text.replace(/### (.*?)(?:\n|$)/g, '<h3 class="insight-heading">$1</h3>');
+      
+      // Format bold text (**text**)
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="highlight">$1</strong>');
+      
+      // Format numbered lists (1. Item)
+      text = text.replace(/(\d+)\. (.*?)(?:\n|$)/g, '<div class="insight-item"><span class="insight-number">$1.</span> $2</div>');
+      
+      // Add paragraph styling
+      const paragraphs = text.split('\n\n');
+      return paragraphs.map(p => {
+        if (!p.includes('insight-item') && !p.includes('insight-heading')) {
+          return `<p class="insight-paragraph">${p}</p>`;
+        }
+        return p;
+      }).join('');
+    },
+    switchLanguage(lang) {
+ 
+      if (this.$i18n.locale !== lang) {
+     
+        this.$i18n.locale = lang;
+        
+        
+        if (this.activeSection === 'portfolio' && this.userHoldings && this.userHoldings.length > 0) {
+          
+          this.isPortfolioTyping = true;
+          this.currentPortfolioTypedMessage = "";
+          this.portfolioBotMessage = this.$i18n.locale === 'vi' 
+            ? "Đang cập nhật phân tích..."
+            : "Updating analysis...";
+          
+          
+          this.currentPortfolioTypedMessage = this.portfolioBotMessage;
+          
+        
+          setTimeout(async () => {
+          
+            await this.GeneratePortfolioInsights();
+            
+          
+            if (this.portfolioWordByWordTyping) {
+              this.startPortfolioWordByWordTyping();
+            } else {
+              this.startPortfolioCharacterByCharacterTyping();
+            }
+          }, 500);
+        }
+      }
+    },
   },
   watch: {
     "$route.query": {
@@ -1453,7 +1568,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       }
     },
     activeSection: {
-      handler(newSection) {
+      async handler(newSection, oldSection) {
         console.log("Active section changed to:", newSection);
 
         // Clear any existing timers to prevent conflicts
@@ -1467,41 +1582,48 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           // Reset bot states to ensure it can appear
           this.showPortfolioBot = false;
           this.hidingPortfolioBot = false;
-          this.showPortfolioMessage = false; // <-- Reset message state
-          this.hidingPortfolioMessage = false; // <-- Reset message state
-          this.portfolioMessageManuallyToggled = false; // <-- Reset toggle state
+          this.showPortfolioMessage = false;
+          this.hidingPortfolioMessage = false;
+          this.portfolioMessageManuallyToggled = false;
 
-          // Force show the bot with a slight delay
+          // Fetch holdings first to load data
+          await this.fetchUserHoldings();
+          
+          // Now show the bot (but not the message yet)
           setTimeout(() => {
             console.log("Showing portfolio bot now");
             this.showPortfolioBot = true;
             this.hidingPortfolioBot = false;
-
-            setTimeout(() => {
-              this.showPortfolioMessage = true;
-              this.hidingPortfolioMessage = false;
-              this.isPortfolioTyping = true;
-
-              // Start typing animation
-              setTimeout(() => {
-                if (this.portfolioWordByWordTyping) {
-                  this.startPortfolioWordByWordTyping();
-                } else {
-                  this.startPortfolioCharacterByCharacterTyping();
-                }
-              }, 500);
-            }, 300);
+            
+            // Generate insights and only show message when complete
+            this.isPortfolioTyping = true;
+            
+            // First show the bot with "thinking" animation
+            this.showPortfolioMessage = true;
+            this.hidingPortfolioMessage = false;
+            
+            // Now generate insights
+            this.GeneratePortfolioInsights().then(() => {
+              // After insights are generated, start typing animation
+              if (this.portfolioWordByWordTyping) {
+                this.startPortfolioWordByWordTyping();
+              } else {
+                this.startPortfolioCharacterByCharacterTyping();
+              }
+            });
           }, 500);
-
-          console.log("Fetching user holdings...");
-          this.fetchUserHoldings();
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
         } else if (newSection === 'quiz') {
-        this.generateTradingQuestions(); // Call method when quiz section is activated
+          this.generateTradingQuestions();
+        }
+
+        // Add this to reset language to English when leaving Portfolio section
+        if (oldSection === 'portfolio' && newSection !== 'portfolio') {
+          this.$i18n.locale = 'en';
         }
       },
-      immediate: true, // Make it run immediately on component creation
+      immediate: true,
     },
   },
   async mounted() {
@@ -2401,6 +2523,8 @@ h1 {
   transform: scale(0.8) translateY(10px);
   transition: opacity 0.7s ease, transform 0.7s ease;
   transition-delay: 0.3s;
+  font-size: 0.85rem;
+  line-height: 1; 
 }
 
 .bot-message.message-visible {
@@ -2488,5 +2612,111 @@ h1 {
 
 .error-message {
   color: #dc3545;
+}
+
+.bot-controls {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.refresh-insights {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.refresh-insights:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Add these to your existing styles */
+
+.typed-message {
+  line-height: 1.4;
+}
+
+.insight-heading {
+  margin: 8px 0 4px;
+  color: #ffffff;
+  font-size: 0.95rem; /* Reduced from 1rem */
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 2px;
+}
+
+.insight-item {
+  margin: 5px 0;
+  padding-left: 18px;
+  position: relative;
+}
+
+.insight-number {
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+}
+
+.highlight {
+  color: #ffeb3b;
+  font-weight: 600;
+}
+
+.insight-paragraph {
+  margin: 8px 0;
+}
+
+/* Fix v-html styling issue by targeting the container */
+.bot-message :deep(.insight-heading),
+.bot-message :deep(.insight-item),
+.bot-message :deep(.insight-number),
+.bot-message :deep(.highlight),
+.bot-message :deep(.insight-paragraph) {
+  color: inherit;
+}
+
+.bot-message :deep(.highlight) {
+  color: #ffeb3b;
+}
+
+/* Add at the appropriate location in your CSS */
+.portfolio-language-switcher {
+  display: flex;
+  gap: 10px;
+}
+
+.portfolio-language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.portfolio-language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.portfolio-language-switcher button:hover img {
+  transform: scale(1.1);
+}
+
+.portfolio-language-switcher button.active img {
+  border-color: #007bff;
+}
+
+/* Update portfolio header to accommodate language switcher */
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 </style>

@@ -348,29 +348,29 @@ export default {
         const englishInsights = englishResponse.data.choices[0].message.content;
 
         // If language is Vietnamese, translate the insights
-        if (this.$i18n.locale === "vi") {
-          const translationResponse = await axios.post(url, {
-            model: "deepseek/deepseek-chat:free",
-            messages: [
-              {
-                role: "system",
-                content: "Bạn là một chuyên gia dịch thuật. Hãy dịch văn bản sau từ tiếng Anh sang tiếng Việt một cách chính xác và tự nhiên, giữ nguyên ý nghĩa tài chính."
-              },
-              {
-                role: "user",
-                content: englishInsights
-              }
-            ]
-          }, {
-            headers: {
-              'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-            }
-          });
+        // if (this.$i18n.locale === "vi") {
+        //   const translationResponse = await axios.post(url, {
+        //     model: "deepseek/deepseek-chat:free",
+        //     messages: [
+        //       {
+        //         role: "system",
+        //         content: "Bạn là một chuyên gia dịch thuật. Hãy dịch văn bản sau từ tiếng Anh sang tiếng Việt một cách chính xác và tự nhiên, giữ nguyên ý nghĩa tài chính."
+        //       },
+        //       {
+        //         role: "user",
+        //         content: englishInsights
+        //       }
+        //     ]
+        //   }, {
+        //     headers: {
+        //       'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+        //       "Content-Type": "application/json",
+        //       "Accept": "application/json"
+        //     }
+        //   });
 
-          return translationResponse.data.choices[0].message.content;
-        }
+        //   return translationResponse.data.choices[0].message.content;
+        // }
 
         // Return English by default
         return englishInsights;

@@ -71,6 +71,17 @@ export default {
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async sendMessage(newMessage) {
 			const userMessage = newMessage.trim();
+			const language = await gptServices([
+				{
+				role: "user",
+				content: `Detect the language of this message and return only the language name in English. Examples:
+					- For "Hello": "English"
+					- For "Xin chào": "Vietnamese"
+					Now detect this message: "${userMessage}"`
+				}
+			]);
+
+
 			//UPDATE THREAD NAME BASED ON FIRST MESSAGE
 			if (this.messages.length === 1) {
 				const response = await gptServices([
@@ -138,15 +149,16 @@ export default {
 
 					### Supported Actions & Return Formats:
 
-					1. **Search**  
-					- User intent: General question or request for info  
-					- Format: **#search [term]**  
-					- Example: "What's happening with the stock market?" → "#search stock market"
-
-					2. **Stock Price Inquiry**  
-					- User intent: Ask for a stock price  
+					1. **Stock Price**  
+					- User intent: Ask for a stock price, return only the stock code (ticker symbol) in uppercase.
+					- Phrases may include: "giá cổ phiếu", "stock price of", "bao nhiêu tiền cổ phiếu", etc.
 					- Format: **[STOCK_CODE_IN_UPPERCASE]**  
-					- Example: "What's the price of tsla?" → "TSLA"
+					- Example: "giá cổ phiếu của Coca Cola" → Return "KO", "What's the price of tesla stock?" → "TSLA", 
+
+					2. **Search**  
+					- Trigger only when the user is requesting for detailed information or definitions about specific concepts, terms, or topics that are not related to stock prices, not conversational questions.
+					- Example triggers: "Explain ROI", "What is inflation?", "Tell me about compound interest"
+					- Format: #search [term]					
 
 					3. **Define Financial Term**  
 					- User intent: Ask for meaning of a financial term  
@@ -165,14 +177,14 @@ export default {
 					- If no area is mentioned, default to: **#realestate San Jose**
 
 					6. **Add a Transaction**  
-					- User intent: Record a spending transaction  
+					- User intent: Add money to the account (e.g., income, deposit, or refund).
 					- Format: **#add [description] [amount]**  
-					- Example: "I spent 125 on shopping" → "#add shopping 125"
+					- Example: "I received 125 from a refund" → "#add refund 125"
 
 					7. **Track Spending**  
-					- User intent: Log or monitor an expense  
+					- User intent: Subtract money from the account for something spent (e.g., purchase or bill). 
 					- Format: **#spend [description] [amount]**  
-					- Example: "Track 80 for groceries" → "#spend groceries 80"
+					- Example: "I spend 80 on groceries" → "#spend groceries 80", "Tao mua xe máy với giá 10 dollar" → #spend xe máy 10
 
 					8. **Buy Stock**  
 					- User intent: Buy a stock with quantity  
@@ -200,7 +212,7 @@ export default {
 				if (gptDefine.toLowerCase().includes("#define")) {
 					try {
 						const term = gptDefine.substring(gptDefine.toLowerCase().indexOf("define") + "define".length).trim();
-						const prompt = `Use the same language detected in this message: "${newMessage}". Explain ${term} to me as if I'm 15 in `;
+						const prompt = `Explain ${term} to me as if I'm 15 in this language ${language} `;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 					} catch (err) {
@@ -229,10 +241,14 @@ export default {
                 				});
             				}, 2000);
         				} else {
-            				this.addTypingResponse("Invalid stock symbol or quantity", false);
+							const res = "Invalid stock symbol or quantity";
+							const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".` }]);
+            				this.addTypingResponse(Responsegpt, false);
         				}
     				} else {
-        				this.addTypingResponse("Invalid buy command format", false);
+						const res = "Invalid stock symbol or quantity";
+						const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".` }]);
+						this.addTypingResponse(Responsegpt, false);
     				}
 				}
 
@@ -259,10 +275,14 @@ export default {
                 					});
             					}, 2000);
             				} else {
-                				this.addTypingResponse("Invalid stock symbol or quantity", false);
+								const res = "Invalid stock symbol or quantity";
+								const Responsegpt = await gptServices([{ role: "user", content: `Translate "${res}" into the language detected from this message: "${newMessage}".` }]);
+								this.addTypingResponse(Responsegpt, false);
             				}
         				} else {
-            				this.addTypingResponse("Invalid sell command format", false);
+							const res = "Invalid sell command format";
+							const Responsegpt = await gptServices([{ role: "user", content: `Translate "${res}" into the language detected from this message: "${newMessage}".` }]);
+							this.addTypingResponse(Responsegpt, false);
         				}
     				} catch (err) {
         				console.error("Error in sell message:", err.message);
@@ -271,15 +291,21 @@ export default {
 				// HANDLE ADD TRANSACTION (6)
 				else if (gptDefine.toLowerCase().includes("#add")) {
 					try {
-						const match = gptDefine.match(/#add\s+([\w\s]+)\s+(\d+)/i);
+						const match = gptDefine.match(/#add\s+([\p{L}\p{N}\s]+)\s+(\d+)/iu);
 						if (match) {
 							const description = match[1].trim();
 							const amount = parseInt(match[2], 10);
 							const balance = await this.calculateNewBalance(amount);
 							await this.addTransaction(description, amount, balance);
-							answers.push(`Transaction added: ${description}, $${amount}. New balance: $${balance}.`);
+							const res = `Transaction added: ${description}, $${amount}. New balance: $${balance}....`;
+							console.log(res);
+							const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text` }]);
+							console.log(Responsegpt);
+							answers.push(Responsegpt);
 						} else {
-							answers.push("Please specify the description and amount you want to add.");
+							const res = "Please specify the description and amount you want to add.";
+							const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text` }]);
+							answers.push(Responsegpt);
 						}
 					} catch (err) {
 						console.error("Error in add transaction:", err.message);
@@ -288,22 +314,40 @@ export default {
 				// HANDLE SPEND TRANSACTION (7)
 				else if (gptDefine.toLowerCase().includes("#spend")) {
 					try {
-						const match = gptDefine.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
+						const match = gptDefine.match(/#spend\s+([\p{L}\p{N}\s]+)\s+(\d+)/iu);
 						if (match) {
 							const accountCheck = await this.checkAccountBalance();
 							if (!accountCheck) {
-								answers.push(`Account balance is not set yet, please set your account balance first`);
+								const res = `Account balance is not set yet, please set your account balance first`;
+								const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text.` }]);
+								answers.push(Responsegpt);
 								// this.openNewWindow("/goal");
 							} else {
 								const description = match[1].trim();
 								const amount = -parseInt(match[2], 10);
 								const balance = await this.calculateNewBalance(amount);
 								await this.addTransaction(description, amount, balance);
-								answers.push(`Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`);
+								const res = `Transaction spent: ${description}, $${Math.abs(amount)}. New balance: $${balance}.`;
+								const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text` }]);
+								answers.push(Responsegpt);
 							}
-							// this.openNewWindow("/goal");
+							//this.openNewWindow("/goal");
+							const baseUrl = window.location.origin.includes("localhost")
+								? "http://localhost:8888"
+								: "https://finbud.pro";
+			
+							const url = `${baseUrl}/goal/`;
+							window.open(url);
+							setTimeout(() => {
+                				window.addEventListener("load", () => {
+                    				const previewButton = document.querySelector(".preview-btn");
+                    				if (previewButton) previewButton.click();
+                				});
+            				}, 2000);
 						} else {
-							answers.push("Please specify the description and amount you want to spend.");
+							const res = "Please specify the description and amount you want to spend.";
+							const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text` }]);
+							answers.push(Responsegpt);
 						}
 					} catch (err) {
 						console.error("Error in spend transaction:", err.message);
@@ -449,18 +493,6 @@ export default {
 						timestamp: new Date().toLocaleTimeString(),
 					});
 				}
-				// HANDLE SEARCH
-				else if (gptDefine.toLowerCase().includes("#search")) {
-					//Search for sources, videos, and relevant questions
-					const searchResults = await getSources(gptDefine);
-					newSources = searchResults;
-					newVideos = await getVideos(gptDefine);
-					const lan = await gptServices([{ role: "user", content: `Detect the language used in the following message and return only the name of the language: "${newMessage}"`}]);
-					newRelevantQuestions = await getRelevantQuestions(searchResults, lan);
-					//Normal GTP response
-					const gptResponse = await gptServices([{ role: "user", content: `Response in the same language detected in this message: "${newMessage}" to search for ${gptDefine}.` }]);
-					answers.push(gptResponse);
-				}
 				// HANDLE STOCK
 				else if (this.extractStockCode(gptDefine)) {
 					try {
@@ -470,10 +502,10 @@ export default {
 						const timeStamp = new Date().toLocaleTimeString();
 						console.log(price, timeStamp, stockCode)
 						let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
-						const alphavantageResponsegpt = await gptServices([{ role: "user", content: `Translate "${alphavantageResponse}" into the language detected from this message: "${newMessage}".` }]);
-						answers.push(alphavantageResponse);
+						const alphavantageResponsegpt = await gptServices([{ role: "user", content: `Translate "${alphavantageResponse}" into this language ${language}. Respond only with the translated text.` }]);
+						answers.push(alphavantageResponsegpt);
 						//chatgpt api
-						const prompt = `Responose in the same language detected in this message: "${newMessage}". Generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+						const prompt = `Response in this language ${language}": generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
 						const gptResponse = await gptServices([{ role: "user", content: prompt }]);
 						answers.push(gptResponse);
 						
@@ -490,6 +522,18 @@ export default {
 						console.error("Error in stock message:", err.message);
 					}
 				}
+				// HANDLE SEARCH
+				else if (gptDefine.toLowerCase().includes("#search")) {
+					//Search for sources, videos, and relevant questions
+					const searchResults = await getSources(gptDefine);
+					newSources = searchResults;
+					newVideos = await getVideos(gptDefine);
+					newRelevantQuestions = await getRelevantQuestions(searchResults, language);
+					//Normal GTP response
+					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language} language.` }]);
+					answers.push(gptResponse);
+				}
+				
 				// HANDLE CREATE (10)
 				else if (gptDefine.includes("#create")) {
 					try {
@@ -522,7 +566,7 @@ export default {
 				else {
 					try {
 						const prompt = userMessage;
-						const gptResponse = await gptServices([{ role: "user", content: `${prompt}. Use the same language detected in this message: "${newMessage}"` }]);
+						const gptResponse = await gptServices([{ role: "user", content: `${prompt}. Response in this language ${language}` }]);
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in general message:", err.message);
@@ -574,7 +618,7 @@ export default {
 			}, 1000);
 		},
 		extractStockCode(message) {
-			const pattern = /\b[A-Z]{3,5}\b/g;
+			const pattern = /\b[A-Z]{2,5}\b/g;
 			const matches = message.match(pattern);
 			return matches;
 		},

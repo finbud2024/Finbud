@@ -17,7 +17,6 @@ import QuantAnalysis from "@/views/QuantAnalysis.vue";
 import EventHub from "@/views/EventHub.vue";
 import LearningRoadMap from "@/views/LearningRoadMap.vue";
 import QuantSimulator from "@/views/QuantSimulator.vue";
-import TaxCalculator from "@/components/tax&chat/TaxCalculator.vue"; 
 import ForumView from "@/views/ForumView.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/ThreadView.vue";
@@ -27,6 +26,8 @@ import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 
 // Defining routes
+import AgentPage from "@/views/AgentPage.vue";
+
 const routes = [
   {
     path: "/",
@@ -50,11 +51,9 @@ const routes = [
   {
     path: "/chat-view",
     name: "ChatView",
-    components: {
       default: ChatView,
       sidebar: SideBar,
     },
-  },
   {
     path: "/tech",
     name: "TechnologyPage",
@@ -151,6 +150,7 @@ const routes = [
     component: MortgageCalc,
     props: true,
   },
+  ,
   {
     path: "/super-investors",
     name: "SuperInvestors",
@@ -165,10 +165,14 @@ const routes = [
     path: "/tax-calculator",
     name: "TaxCalculator",
     component: TaxCalculator, 
+  },
+  {
+    path: "/agent/",
+    name: "AgentPage",
+    component: AgentPage,
   }
 ];
 
-// Create router instance
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
