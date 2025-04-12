@@ -139,9 +139,9 @@ authRoute.get('/auth/current-user', (req, res) => {
   if (req.isAuthenticated()) {
     console.log("User is authenticated, returning user data");
 
-    console.log("Session ID:", req.sessionID);
-    console.log("Session Data:", req.session);
-    console.log("User Data:", req.user);
+    // console.log("Session ID:", req.sessionID);
+    // console.log("Session Data:", req.session);
+    // console.log("User Data:", req.user);
     return res.status(200).json({ 
       isAuthenticated: true, 
       user: req.user 

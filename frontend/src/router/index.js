@@ -54,6 +54,7 @@ const routes = [
     name: "ChatView",
       default: ChatView,
       sidebar: SideBar,
+    component: ChatView,
     },
   {
     path: "/tech",

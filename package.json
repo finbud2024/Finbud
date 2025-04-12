@@ -10,7 +10,6 @@
         "seeding": "node backend/utils/stockSeeding.js",
         "install:python-deps": "pip install -r backend/functions/requirements.txt",
         "lint": "vue-cli-service lint"
-
     },
     "dependencies": {
         "@canvasjs/charts": "^3.10.0",
