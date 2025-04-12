@@ -333,7 +333,7 @@ export default {
   --finbudBotMessageBorderColor: #007bff;
   --bg-primary: #ffffff;
   --text-primary: #333333;
-  --nav-bg: #ffffff;
+  --nav-bg: transparent;
   --border-color: #dddddd;
   --link-color: #007bff;
   --hover-bg: #024384;
@@ -349,7 +349,7 @@ body.dark-mode {
   /* Dark theme */
   --bg-primary: #1a1a1a;
   --text-primary: #ffffff;
-  --nav-bg: #242424;
+  --nav-bg: transparent;
   --border-color: #404040;
   --link-color: #4da3ff;
   --hover-bg: #024384;
@@ -412,7 +412,7 @@ html {
 }
 
 .content {
-  padding-top: 80px;
+  /* padding-top: 80px; */
   flex: 1;
 }
 

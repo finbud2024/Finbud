@@ -279,7 +279,7 @@ export default {
 /* Add animations */
 .animate {
   opacity: 0;
-  transition: opacity 1s ease 1s, transform 1s ease 1s;
+  transition: opacity 2s ease 1s, transform 2s ease 1s;
 }
 
 .animate-visible {
@@ -287,7 +287,7 @@ export default {
 }
 
 .fade-in {
-  transform: translateY(20px);
+  transform: translateY(50px);
 }
 
 .fade-in.animate-visible {
@@ -351,7 +351,6 @@ export default {
   flex-direction: column;
   font-size: clamp(3rem, 2.5vw, 4rem);
   flex-wrap: wrap;
-  opacity: 1;
   animation: none;
   font-weight: 700;
 }
@@ -364,7 +363,6 @@ export default {
   font-size: 1.2rem;
   padding-top: 20px;
   flex-wrap: wrap;
-  opacity: 1;
   animation: none;
   font-weight: 300;
 }
