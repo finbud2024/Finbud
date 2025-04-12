@@ -14,49 +14,35 @@
     <section class="introduction-section">
       <header>
         <h1>
-          From Learning to Implementation, Partnering with You to Achieve Your Financial Goals
+          Partnering to Achieve Financial Goals
         </h1>
       </header>
       <div class="grid-container">
-        <!-- first row -->
+        <!-- first grid box -->
         <div class="text-section text-left ">
           <h2>Enhance Your Financial Awareness</h2>
           <p>
-            Complex financial concepts and challenging knowledge are no longer a concern. Finbud's advanced AI chatbot
-            will help you review, explore financial topics, and answer all your questions.
+            Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your questions.
           </p>
-          <a href="/quizz" class="button">Learn more</a>
+          <!-- <a href="/quizz" class="button">Learn more</a> -->
         </div>
-        <div class="image-section">
-          <div class="quizz-image introduction-image"></div>
-        </div>
-        <!-- second row -->
-        <div class="image-section">
-          <div class="goal-image introduction-image"></div>
-        </div>
-        <div class="text-section text-right ">
-          <h2>Optimize Your Financial Planning & Operations</h2>
+        
+        <!-- second grid box -->
+        
+        <div class="text-section text-left ">
+          <h2>Optimize Your Financial Planning</h2>
           <p>
-            Is your spending often out of control?
-            <br>
-            Finbud helps you track and manage expenses, record income and spending, and tailor financial management to
-            your specific goals.
+            Finbud helps you track and manage expenses, record income and spending, and tailor financial management to your specific goals.
           </p>
-          <a href="/goal" class="button">Learn more</a>
+          <!-- <a href="/goal" class="button">Learn more</a> -->
         </div>
-        <!-- third row -->
+        <!-- third grid box -->
         <div class="text-section text-left ">
           <h2>Maximize Your Investment Efficiency</h2>
           <p>
-            Interested in investing but unsure where to start or worried about risks?
-            <br>
-            Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital
-            confidently.
+            Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital confidently.
           </p>
-          <a href="/stock-simulator" class="button">Learn more</a>
-        </div>
-        <div class="image-section">
-          <div class="simulator-image introduction-image"></div>
+          <!-- <a href="/stock-simulator" class="button">Learn more</a> -->
         </div>
       </div>
     </section>
@@ -165,6 +151,7 @@ import BigGreenButton from "../components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
 import { useTypingEffect } from '@/composables/useTypingEffect';
+import { LucideAsteriskSquare } from "lucide-vue-next";
 
 export default {
   name: 'MainContent',
@@ -182,7 +169,7 @@ export default {
     const { 
       typingText: signInDescription, 
       startTyping:  startTypingSignInDescription 
-    } = useTypingEffect('Anytime answers for finance questions with FinBud', {
+    } = useTypingEffect('[Note to devs, this part has been removed in display. It\'s too closely intertwined with everything else and will crash the app if this part is removed, so I left this note to show that it should be removed LucideAsteriskSquare]', {
       reverseEffect: false
     })
     
@@ -406,7 +393,7 @@ export default {
 /*grid*/
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   padding: 0 10%;
 }
 
@@ -417,29 +404,30 @@ export default {
   flex-direction: column;
 }
 
-.introduction-image {
+/* Removed */
+/* .introduction-image {
   height: 100%;
   border: 2px solid var(--border-color);
   border-radius: 20px;
-}
+} */
 
-.quizz-image {
+/* .quizz-image {
   background-image: url("@/assets/home-page/quizz.png");
   background-size: cover;
   background-position: top center;
-}
+} */
 
-.goal-image {
+/* .goal-image {
   background-image: url("@/assets/home-page/goal.png");
   background-size: cover;
   background-position: center center;
-}
+} */
 
-.simulator-image {
+/* .simulator-image {
   background-image: url("@/assets/home-page/simulator.png");
   background-size: cover;
   background-position: top center;
-}
+} */
 
 .text-left p,
 .text-left h2 {
@@ -463,19 +451,33 @@ export default {
 .button {
   padding: 10px 20px;
   margin-top: 10px;
-  background-color: #007bff;
+  background-color: transparent;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  color: white;
+  color: black;
   text-decoration: none;
-  font-weight: bold;
+  /* font-weight: bold; */
   cursor: pointer;
   max-width: 220px;
-  border-radius: 50px;
+  border-radius: 6px;
   transition: transform 0.3s;
 }
 
+:root.dark-mode .button {
+  background-color: transparent;
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.458);
+  color: white;
+}
+
 .button:hover {
-  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333; /* slightly darker text */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-mode .button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ddd; /* slightly lighter text */
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.6);
 }
 
 /* Important - make the tutorial button accessible for clicks */
