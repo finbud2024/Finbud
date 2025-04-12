@@ -23,8 +23,6 @@ const messages = {
     loan15: "15-year fixed",
     loan5: "5-year ARM",
     proficiencyLevel: "Proficiency level",
-    ,
-
 
   //Investment calculator
       investmentTitle: "Investment Calculator",

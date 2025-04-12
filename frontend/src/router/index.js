@@ -24,6 +24,7 @@ import StartThread from "@/views/StartThread.vue";
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
+import TaxCalculator from "@/components/tax&chat/TaxCalculator.vue";
 
 // Defining routes
 import AgentPage from "@/views/AgentPage.vue";
