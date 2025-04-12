@@ -2,48 +2,62 @@
   <div class="login-container">
     <h1 class="brand-name">Sign in</h1>
     <button @click="signInWithGoogle" class="login-google">
-      <img src="@/assets/google.png" class="google-logo" alt="Google Logo">
+      <img src="@/assets/google.png" class="google-logo" alt="Google Logo" />
       Sign in with Google
     </button>
     <div class="or-separator">
-      <hr class="line"/> or sign in with email <hr class="line"/>
+      <hr class="line" />
+      or sign in with email
+      <hr class="line" />
     </div>
     <form @submit.prevent="onLogin">
       <div class="input-group">
         <label for="username">Username or Email:</label>
-        <input type="text" id="username" v-model="username" placeholder="Username" required>
+        <input
+          type="text"
+          id="username"
+          v-model="username"
+          placeholder="Username"
+          required
+        />
       </div>
       <div class="input-group password">
         <label for="password">Password:</label>
-        <input 
-          :type="togglePassword? 'text' : 'password'" 
-          id="password" 
-          v-model="password" 
-          placeholder="Password" 
-          required >
-        <font-awesome-icon  
-          class="invis-toggle-icon" 
+        <input
+          :type="togglePassword ? 'text' : 'password'"
+          id="password"
+          v-model="password"
+          placeholder="Password"
+          required
+        />
+        <font-awesome-icon
+          class="invis-toggle-icon"
           :icon="togglePassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"
-          @click="togglePassword = !togglePassword" />
-        <p id="errorMessage" class="wrong-password"> wrong username or password!</p>
+          @click="togglePassword = !togglePassword"
+        />
+        <p id="errorMessage" class="wrong-password">
+          wrong username or password!
+        </p>
       </div>
       <div class="forgot-password"><a href="#">Forgot?</a></div>
       <button type="submit" class="login-button">Sign In</button>
     </form>
-    <p class="signup-link">Don't have an account? <router-link to="/signup">Sign up</router-link></p>
+    <p class="signup-link">
+      Don't have an account? <router-link to="/signup">Sign up</router-link>
+    </p>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  name: 'LoginView',
+  name: "LoginView",
   data() {
     return {
-      username: '',
-      password: '',
-      togglePassword: false
+      username: "",
+      password: "",
+      togglePassword: false,
     };
   },
   methods: {
@@ -51,36 +65,42 @@ export default {
       try {
         const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
         const reqBody = {
-          "username": this.username,
-          "password": this.password
+          username: this.username,
+          password: this.password,
         };
-        const response = await axios.post(api, reqBody, { withCredentials: true });
-        
+        const response = await axios.post(api, reqBody, {
+          withCredentials: true,
+        });
+
         // Store user data in Vuex store
         this.$store.dispatch("users/login", response.data.user);
-        
+
         // Check if this is a new user from the server response
         const isNewUser = response.data.isNewUser;
         if (isNewUser) {
-          this.$router.push('/?showTutorial=true');
+          this.$router.push("/?showTutorial=true");
         } else {
-          this.$router.push('/'); // Redirect to the main page after login
+          this.$router.push("/"); // Redirect to the main page after login
         }
       } catch (err) {
-        console.error('Login Error:', err.response ? err.response.data : err.message);
-        document.getElementById('errorMessage').classList.remove('wrong-password');
+        console.error(
+          "Login Error:",
+          err.response ? err.response.data : err.message
+        );
+        document
+          .getElementById("errorMessage")
+          .classList.remove("wrong-password");
       }
     },
     signInWithGoogle() {
       const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
       window.location.href = api;
-    }
+    },
   },
 };
 </script>
 
 <style scoped>
-
 /* Container for the login page */
 .login-container {
   max-width: 400px;
@@ -217,7 +237,7 @@ input:focus {
   text-decoration: underline;
 }
 
-#errorMessage{
+#errorMessage {
   color: red;
 }
 
