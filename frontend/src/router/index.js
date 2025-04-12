@@ -21,11 +21,14 @@ import ForumView from "@/views/ForumView.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/ThreadView.vue";
 import StartThread from "@/views/StartThread.vue";
-import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
-
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
+import TaxCalculator from "@/components/tax&chat/TaxCalculator.vue";
+
+// Defining routes
+import AgentPage from "@/views/AgentPage.vue";
+
 const routes = [
   {
     path: "/",
@@ -49,11 +52,9 @@ const routes = [
   {
     path: "/chat-view",
     name: "ChatView",
-    components: {
       default: ChatView,
       sidebar: SideBar,
     },
-  },
   {
     path: "/tech",
     name: "TechnologyPage",
@@ -124,7 +125,6 @@ const routes = [
     path: "/forum",
     name: "ForumView",
     component: ForumView,
-    meta: { requiresAuth: true },
     props: true,
   },
   {
@@ -151,6 +151,7 @@ const routes = [
     component: MortgageCalc,
     props: true,
   },
+  ,
   {
     path: "/super-investors",
     name: "SuperInvestors",
@@ -162,12 +163,15 @@ const routes = [
     component: InvestorDetail,
   },
   {
-    path: "/investment-calculator",
-    name: "InvestmentCalculator",
-    component: InvestmentCalculator,
-    props: true,
+    path: "/tax-calculator",
+    name: "TaxCalculator",
+    component: TaxCalculator, 
   },
-
+  {
+    path: "/agent/",
+    name: "AgentPage",
+    component: AgentPage,
+  }
 ];
 
 const router = createRouter({
@@ -175,4 +179,4 @@ const router = createRouter({
   routes,
 });
 
-export default router
+export default router;
