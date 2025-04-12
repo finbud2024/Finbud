@@ -6,7 +6,7 @@
                     <input 
                         type="text" 
                         v-model="searchQuery" 
-                        :placeholder="isMobile ? '' : translations[language].searchPlaceholder" 
+                        :placeholder="isMobile ? '' : 'Search events...'" 
                         class="search-bar w-full"
                         @focus="searchExpanded = true"
                         @blur="searchExpanded = false"
@@ -22,17 +22,17 @@
                         <div class="round">
                             <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
                         </div>
-                        <p v-if="!isMobile">{{ translations[language]?.exploreNearYou }} </p>
+                        <p v-if="!isMobile">Explore Near You</p>
                     </div>
                     <div class="event-btn">
                         <div class="round-star">
                             <font-awesome-icon icon="fa-regular fa-star" class="btn-icon" />
                         </div>
-                        <p v-if="!isMobile">{{ translations[language]?.saved || 'Saved' }}</p>
+                        <p v-if="!isMobile">Saved</p>
                     </div>
                     <div class="event-btn">
                         <font-awesome-icon icon="fa-regular fa-bell" class="btn-icon" />
-                        <p v-if="!isMobile">{{ translations[language]?.allEvents || 'All Events' }}</p>
+                        <p v-if="!isMobile">All Events</p>
                     </div>
                 </div>
             </div>
@@ -41,7 +41,7 @@
             <img :src="require('@/assets/Banner.png')" alt="Banner" class="banner-img" />
         </div>
         <div class="event-category" data-aos="fade-right">
-            <h3 class="text-2xl md:text-3xl text-center">{{ translations[language]?.eventCategoriesTitle || 'Event Categories You May Like' }}</h3>
+            <h3 class="text-2xl md:text-3xl text-center">Event Categories You May Like</h3>
             <div class="event-category-bg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div v-for="(category, index) in categories" :key="index" class="category-btn">
                     <img :src="category.image" :alt="category.name" class="category-img" />
@@ -53,7 +53,7 @@
             <section class="events-section">
                 <div class="content-wrapper flex flex-col md:flex-row">
                     <div class="left-div w-full md:w-1/4 mb-6 md:mb-0">
-                        <h2 class="trending-title">{{ translations[language]?.trendingTitle }}</h2>
+                        <h2 class="trending-title">Trending</h2>
                         <div v-for="(event, index) in topTrendingEvents" :key="index" class="event-item">
                             <a :href="event.url" class="event-link">
                                 <span class="event-number">{{ index + 1 }}. {{ event.title }}</span>
@@ -117,7 +117,7 @@
         </div>
         <div class="frame3" data-aos="flip-left">
             <div class="events-container">
-                <h3 class="text-2xl md:text-3xl mb-6">{{ translations[language]?.allEvents }}</h3>
+                <h3 class="text-2xl md:text-3xl mb-6">All Events</h3>
                 <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card" data-aos="fade-left">
                         <img v-if="event.image" :src="event.image" alt="Event image" class="event-image"/>
@@ -138,14 +138,6 @@
         <!-- <div v-if="loading" class="loading-spinner">Loading...</div> -->
         <EventMap />
     </div>
-    <div class="language-switcher">
-    <button @click="switchLanguage('en')">
-      <img src="@/assets/us.png" alt="English" />
-    </button>
-    <button @click="switchLanguage('vi')">
-      <img src="@/assets/vn.png" alt="Tiếng Việt" />
-    </button>
-  </div>
 </template>
 
 <script>
@@ -177,51 +169,12 @@ export default {
             searchExpanded: false,
             isMobile: false,
             categories: [
-                { 
-                    name: this.language === 'en' ? 'Conference & Summit' : 'Hội nghị & Thượng đỉnh', 
-                    image: require('@/assets/career fair.png') 
-                },
-                { 
-                    name: this.language === 'en' ? 'Workshop & Training' : 'Hội thảo & Đào tạo', 
-                    image: require('@/assets/workshop.png') 
-                },
-                { 
-                    name: this.language === 'en' ? 'Webinars' : 'Hội thảo trực tuyến', 
-                    image: require('@/assets/career fair.png') 
-                },
-                { 
-                    name: this.language === 'en' ? 'Networking' : 'Mạng lưới', 
-                    image: require('@/assets/workshop.png') 
-                },
-                { 
-                    name: this.language === 'en' ? 'Career Fairs' : 'Hội chợ việc làm', 
-                    image: require('@/assets/career fair.png') 
-                }
-                ],
-
-            language: 'en',
-            translations: {
-                en: {
-                    searchPlaceholder: "Search events...",
-                    exploreNearYou: "Explore Near You",
-                    saved: "Saved",
-                    allEvents: "All Events",
-                    eventCategoriesTitle: "Event Categories You May Like",
-                    trendingTitle: "Trending",
-                    readMore: "Read more",
-                    allEventsTitle: "All Events",
-                },
-                vi: {
-                searchPlaceholder: "Tìm kiếm sự kiện...",
-                exploreNearYou: "Khám phá gần bạn",
-                saved: "Đã lưu",
-                allEvents: "Tất cả sự kiện",
-                eventCategoriesTitle: "Danh mục sự kiện bạn có thể thích",
-                trendingTitle: "Sự kiện thịnh hành",
-                readMore: "Đọc thêm",
-                allEventsTitle: "Tất cả sự kiện",
-                }
-            }
+                { name: 'Conference & Summit', image: require('@/assets/career fair.png') },
+                { name: 'Workshop & Training', image: require('@/assets/workshop.png') },
+                { name: 'Webinars', image: require('@/assets/career fair.png') },
+                { name: 'Networking', image: require('@/assets/workshop.png') },
+                { name: 'Career Fairs', image: require('@/assets/career fair.png') }
+            ]
         };
     },
     computed: {
@@ -230,41 +183,11 @@ export default {
         },
         remainingEvents() {
             return this.trendingEvents.slice(3, 6);
-        },
-        currentTranslation() {
-            return this.translations[this.language] || {};
-        },
-        categories() {
-            return [
-            { 
-                name: this.language === 'en' ? 'Conference & Summit' : 'Hội nghị & Thượng đỉnh', 
-                image: require('@/assets/career fair.png') 
-            },
-            { 
-                name: this.language === 'en' ? 'Workshop & Training' : 'Hội thảo & Đào tạo', 
-                image: require('@/assets/workshop.png') 
-            },
-            { 
-                name: this.language === 'en' ? 'Webinars' : 'Hội thảo trực tuyến', 
-                image: require('@/assets/career fair.png') 
-            },
-            { 
-                name: this.language === 'en' ? 'Networking' : 'Mạng lưới', 
-                image: require('@/assets/workshop.png') 
-            },
-            { 
-                name: this.language === 'en' ? 'Career Fairs' : 'Hội chợ việc làm', 
-                image: require('@/assets/career fair.png') 
-            }
-        ];
-    }
+        }
     },
     methods: {
         checkMobile() {
             this.isMobile = window.innerWidth <= 768;
-        },
-        switchLanguage(language) {
-            this.language = language;
         },
         async fetchHeadlines() {
             this.loading = true;
@@ -318,31 +241,6 @@ export default {
 
 <style scoped>
 @import "swiper/swiper-bundle.css";
-
-.language-switcher {
-  position: fixed;
-  bottom: 10px;
-  left: 20px;
-  display: flex;
-}
-
-.language-switcher button {
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.language-switcher button img {
-  width: 40px;
-  height: auto;
-  transition: transform 0.2s ease;
-}
-
-.language-switcher button:hover img {
-  transform: scale(1.1); /* Slightly enlarge the flag on hover */
-}
-
 
 .EventHubContainer {
     width: 100%;
