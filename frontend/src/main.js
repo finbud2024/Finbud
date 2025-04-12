@@ -11,6 +11,8 @@ import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps"; 
 import i18n from "./i18n";
 
+
+
 // Add specific icons to the library
 const icons = [
   faSolid.faCamera,
