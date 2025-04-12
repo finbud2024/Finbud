@@ -7,7 +7,7 @@
 
     <!-- Social Auth Buttons -->
     <div class="auth-options">
-      <button class="social-btn" @click="signInWithX">
+      <button class="social-btn" @click="signInWithFacebook">
         <span class="btn-content">
           <img src="@/assets/facebookLogo.png" class="facebook-logo" alt="Google Logo">
           Sign in with Facebook
@@ -135,11 +135,11 @@ export default {
       const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
       window.location.href = api;
     },
-    signInWithX() {
+    signInWithFacebook() {
       const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
       window.location.href = api;
     },
-    signInWithFacebook() {
+    signInWithApple() {
       const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
       window.location.href = api;
     },

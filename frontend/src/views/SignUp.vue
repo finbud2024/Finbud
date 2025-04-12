@@ -6,21 +6,21 @@
     </div>
 
     <div class="auth-options">
-      <button class="social-btn" @click="signInWithX">
+      <button class="social-btn" @click="signUpWithFacebook">
         <span class="btn-content">
           <img src="@/assets/facebookLogo.png" class="facebook-logo" alt="Facebook Logo">
           Sign up with Facebook
         </span>
       </button>
 
-      <button class="social-btn" @click="signInWithGoogle">
+      <button class="social-btn" @click="signUpWithGoogle">
         <span class="btn-content">
           <img src="@/assets/googleLogo.png" class="google-logo" alt="Google Logo">
           Sign up with Google
         </span>
       </button>
 
-      <button class="social-btn" @click="signInWithApple">
+      <button class="social-btn" @click="signUpWithApple">
         <span class="btn-content">
           <img src="@/assets/appleLogo.png" class="apple-logo" alt="Apple Logo">
           Sign up with Apple
@@ -223,6 +223,18 @@ export default {
       } else {
         this.errors[field] = !this.formData[field];
       }
+    },
+    signUpWithGoogle() {
+      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      window.location.href = api;
+    },
+    signUpWithFacebook() {
+      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      window.location.href = api;
+    },
+    signUpWithApple() {
+      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      window.location.href = api;
     },
     async register() {
       this.infoFields.forEach(field => this.validateField(field.name));
