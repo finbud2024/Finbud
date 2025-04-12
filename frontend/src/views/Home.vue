@@ -3,20 +3,14 @@
     <div class='intro-container'>
       <div class="intro-text">
         <div class="intro-text1">
-          <li class="title animate fade-in">Making the most informed financial choices</li>
-          <li class="animate fade-in" :style="{ minHeight: '41px', fontSize: '30px', fontWeight: 'bold', listStyleType: 'none' }">
-            {{ signInTitle }}
-          </li>
-          <li class="description animate fade-in last-li">
-            {{  signInDescription }}
-          </li>
+          <div class="title animate fade-in">Empowering smarter finance decisions </div>
+          <div class="description animate fade-in">
+            Anytime answers for finance questions with FinBud
+          </div>
           <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton>
         </div>
-
-        <div class="photo">
-          <img src='@/assets/botrmbg.png' alt="placeholder">
-        </div>
       </div>
+      
     </div>
 
     <section class="introduction-section">
@@ -184,11 +178,13 @@ export default {
     const { 
         typingText: signInTitle, 
         startTyping: startTypingSignInTitle 
-    } = useTypingEffect('Sign in to see more services')
+    } = useTypingEffect('Anytime answers for finance questions with FinBud', {
+      reverseEffect: false
+    })
     const { 
       typingText: signInDescription, 
       startTyping:  startTypingSignInDescription 
-    } = useTypingEffect('With FinBud, you can ask for the best financial advice anytime, anywhere', {
+    } = useTypingEffect('Anytime answers for finance questions with FinBud', {
       reverseEffect: false
     })
     
@@ -341,7 +337,7 @@ export default {
 }
 
 .intro-text1 {
-  width: 66%;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -356,10 +352,9 @@ export default {
   font-weight: bold;
   color: var(--text-primary);
   display: flex;
-  text-align: left;
+  text-align: center;
   flex-direction: column;
   font-size: clamp(3rem, 2.5vw, 4rem);
-  max-width: 30rem;
   flex-wrap: wrap;
   opacity: 1;
   animation: none;
@@ -369,7 +364,8 @@ export default {
 .description {
   color: var(--text-primary);
   display: flex;
-  text-align: left;
+  justify-content: center;
+  /* align-items: center; */
   font-size: 1.2rem;
   padding-top: 20px;
   flex-wrap: wrap;
