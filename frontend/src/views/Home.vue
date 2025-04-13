@@ -2,13 +2,13 @@
   <section id="main-content">
     <div class='intro-container'>
       <div class="intro-text">
-          <div class="title animate fade-in">Empowering smarter finance decisions </div>
-          <div class="description animate fade-in">
-            Anytime answers for finance questions with FinBud
-          </div>
-          <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton>
+        <div class="title animate fade-in">Empowering smarter finance decisions </div>
+        <div class="description animate fade-in">
+          Anytime answers for finance questions with FinBud
+        </div>
+        <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton>
       </div>
-      
+
     </div>
 
     <section class="introduction-section">
@@ -20,27 +20,32 @@
       <div class="grid-container">
         <!-- first grid box -->
         <div class="text-section text-left ">
+          <img class="intro-icon" src="@/assets/home-page/Lightbulb.png" alt="Financial Awareness Icon">
           <h2>Enhance Your Financial Awareness</h2>
           <p>
             Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your questions.
           </p>
           <!-- <a href="/quizz" class="button">Learn more</a> -->
         </div>
-        
+
         <!-- second grid box -->
-        
+
         <div class="text-section text-left ">
+          <img class="intro-icon" src="@/assets/home-page/Bars.png" alt="Financial Planning Icon">
           <h2>Optimize Your Financial Planning</h2>
           <p>
-            Finbud helps you track and manage expenses, record income and spending, and tailor financial management to your specific goals.
+            Finbud helps you track and manage expenses, record income and spending, and tailor financial management to
+            your specific goals.
           </p>
           <!-- <a href="/goal" class="button">Learn more</a> -->
         </div>
         <!-- third grid box -->
         <div class="text-section text-left ">
+          <img class="intro-icon" src="@/assets/home-page/CircleArrowUp.png" alt="Financial Efficiency Icon">
           <h2>Maximize Your Investment Efficiency</h2>
           <p>
-            Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital confidently.
+            Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital
+            confidently.
           </p>
           <!-- <a href="/stock-simulator" class="button">Learn more</a> -->
         </div>
@@ -121,7 +126,7 @@
       </header>
       <div class="question-container">
         <div v-for="(item, index) in faqsData" :key="index" @click="toggleExpansion(item)"
-        :class="{ 'expanded': expandedItem === item}">
+          :class="{ 'expanded': expandedItem === item }">
           <div class="question">
             <h4>{{ item.question }}</h4>
             <span v-if="expandedItem === item">
@@ -137,12 +142,8 @@
         </div>
       </div>
     </section>
-    <TutorialOverlay 
-      :steps="tutorialSteps" 
-      storageKey="finbudHomeTutorialShown" 
-      :autoStart="true"
-      @tutorial-completed="onTutorialCompleted" 
-      ref="tutorialOverlay" />
+    <TutorialOverlay :steps="tutorialSteps" storageKey="finbudHomeTutorialShown" :autoStart="true"
+      @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
   </section>
 </template>
 
@@ -160,22 +161,22 @@ export default {
     TutorialOverlay
   },
   setup() {
-    const { 
-        typingText: signInTitle, 
-        startTyping: startTypingSignInTitle 
+    const {
+      typingText: signInTitle,
+      startTyping: startTypingSignInTitle
     } = useTypingEffect('Anytime answers for finance questions with FinBud', {
       reverseEffect: false
     })
-    const { 
-      typingText: signInDescription, 
-      startTyping:  startTypingSignInDescription 
+    const {
+      typingText: signInDescription,
+      startTyping: startTypingSignInDescription
     } = useTypingEffect('[Note to devs, this part has been removed in display. It\'s too closely intertwined with everything else and will crash the app if this part is removed, so I left this note to show that it should be removed LucideAsteriskSquare]', {
       reverseEffect: false
     })
-    
+
     return {
       signInTitle,
-      signInDescription, 
+      signInDescription,
       startTypingSignInTitle,
       startTypingSignInDescription
     }
@@ -198,7 +199,7 @@ export default {
     };
   },
   computed: {
-    isAuthenticated(){
+    isAuthenticated() {
       return this.$store.getters['users/isAuthenticated'];
     },
     displayText() {
@@ -230,7 +231,7 @@ export default {
       if (this.isAuthenticated) {
         this.$router.push({
           path: '/chat-view',
-          query: {showTutorial: 'true'}
+          query: { showTutorial: 'true' }
         });
       } else {
         this.$router.push('login');
@@ -238,9 +239,9 @@ export default {
     }
   },
   mounted() {
-    this.startTypingSignInTitle(); 
+    this.startTypingSignInTitle();
     this.startTypingSignInDescription();
-    
+
     const observerOptions = {
       threshold: 0.1,
     };
@@ -251,8 +252,8 @@ export default {
           entry.target.classList.add('animate-visible');
           // observer.unobserve(entry.target);
         } else {
-        entry.target.classList.remove('animate-visible');
-      }
+          entry.target.classList.remove('animate-visible');
+        }
       });
     }, observerOptions);
 
@@ -394,36 +395,66 @@ export default {
 .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  padding: 0 10%;
+  padding: 0 3%;
+  gap: 1rem;
 }
 
 .grid-container>div {
   text-align: center;
-  padding: 20px 10px;
+  padding: 20px 30px;
+  border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
 }
 
-/* Removed */
+.intro-icon {
+  width: 40px;
+  aspect-ratio: 1;
+}
+
+/* Dark mode specific styles for PNG icons */
+:root.dark-mode .intro-icon {
+  filter: brightness(0) invert(1);
+  /* This will make the PNG icons white */
+}
+
+.text-section {
+  /* border: 1px solid var(--border-color);
+  border-radius: 6px; 
+  padding: 1rem;  */
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--card-bg);
+  /* box-shadow: 0 4px 8px 0 var(--shadow-color); */
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  /* height: 150px; */
+  /* padding: 40px; */
+}
+
 /* .introduction-image {
   height: 100%;
   border: 2px solid var(--border-color);
   border-radius: 20px;
-} */
+}
 
-/* .quizz-image {
+.quizz-image {
   background-image: url("@/assets/home-page/quizz.png");
   background-size: cover;
   background-position: top center;
-} */
+}
 
-/* .goal-image {
+.goal-image {
   background-image: url("@/assets/home-page/goal.png");
   background-size: cover;
   background-position: center center;
-} */
+}
 
-/* .simulator-image {
+.simulator-image {
   background-image: url("@/assets/home-page/simulator.png");
   background-size: cover;
   background-position: top center;
@@ -432,11 +463,13 @@ export default {
 .text-left p,
 .text-left h2 {
   text-align: left;
+  margin: 0.5rem 0;
 }
 
 .text-right p,
 .text-right h2 {
   text-align: right;
+  margin: 0.5rem 0;
 }
 
 .text-right a {
@@ -470,13 +503,15 @@ export default {
 
 .button:hover {
   background-color: rgba(0, 0, 0, 0.05);
-  color: #333; /* slightly darker text */
+  color: #333;
+  /* slightly darker text */
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
 }
 
 :root.dark-mode .button:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  color: #ddd; /* slightly lighter text */
+  color: #ddd;
+  /* slightly lighter text */
   box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.6);
 }
 
@@ -492,9 +527,10 @@ export default {
 }
 
 /* Dark mode specific styles for PNG icons */
-:root.dark-mode .feature-icon,
+:root.dark-mode .feature-icon, 
 body.dark-mode .feature-icon {
-  filter: brightness(0) invert(1); /* This will make the PNG icons white */
+  filter: brightness(0) invert(1);
+  /* This will make the PNG icons white */
 }
 
 .feature-section .grid-container>div {
@@ -507,7 +543,7 @@ body.dark-mode .feature-icon {
 
 /* technology section */
 .technology-section {
-  padding: 0 10%;
+  padding: 0 5%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -518,12 +554,12 @@ body.dark-mode .feature-icon {
 .technology-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  /* gap: 20px; */
   padding-bottom: 50px;
 }
 
 .technology-card {
-  display: flex;
+  /* display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -532,7 +568,13 @@ body.dark-mode .feature-icon {
   color: var(--text-primary);
   border-radius: 30px;
   height: 150px;
+  padding: 20px; */
+  border-right: 1px solid var(--border-color);
   padding: 20px;
+}
+
+.technology-card:nth-child(4n) {
+  border-right: none;
 }
 
 .technology-card h3,
@@ -563,6 +605,7 @@ body.dark-mode .feature-icon {
 .question-container {
   transition: all 0.3s ease;
 }
+
 .question {
   display: flex;
   justify-content: space-between;
@@ -622,7 +665,7 @@ h1 {
 h1,
 h2,
 h3 {
-  color: #007bff;
+  /* color: #007bff; */
   opacity: 1;
   animation: none;
 }
@@ -641,7 +684,7 @@ img {
   .grid-container {
     grid-template-columns: 1fr;
   }
-  
+
   .grid-container>div {
     height: 300px;
     width: 100%;
@@ -650,13 +693,13 @@ img {
 
   .introduction-section .grid-container>div {
     margin-bottom: 0;
-  } 
+  }
 
-  .grid-container > div:nth-child(odd) {
+  .grid-container>div:nth-child(odd) {
     order: 1;
   }
 
-  .grid-container > div:nth-child(even) {
+  .grid-container>div:nth-child(even) {
     order: 2;
   }
 
@@ -686,7 +729,7 @@ img {
   .text-right h2 {
     text-align: center;
   }
-  
+
   .feature-section .grid-container>div {
     padding: 50px 0;
   }
