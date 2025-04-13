@@ -52,73 +52,127 @@
       </div>
     </section>
 
+    <!-- Technology Section -->
+    <section class="technology-section">
+      <header>
+        <h1>Easily notice the impact</h1>
+      </header>
+      <div class="technology-grid">
+        <div class="technology-card">
+          <div class="technology-card-title">Savings Increase</div>
+          <div class="technology-card-content">
+            <div class="technology-stat">
+              <p>20% </p>
+            </div>
+            <div class="technology-stat-details">
+              <p>average per user </p>
+            </div>
+          </div>
+        </div>
+        <div class="technology-card">
+          <div class="technology-card-title">Financial Awareness</div>
+          <div class="technology-card-content">
+            <div class="technology-stat">
+              <p>25% </p>
+            </div>
+            <div class="technology-stat-details">
+              <p>increase </p>
+            </div>
+          </div>
+        </div>
+        <div class="technology-card">
+          <div class="technology-card-title">Debt Reduction</div>
+          <div class="technology-card-content">
+            <div class="technology-stat">
+              <p>30% </p>
+            </div>
+            <div class="technology-stat-details">
+              <p>after 1 year </p>
+            </div>
+          </div>
+        </div>
+        <div class="technology-card">
+          <div class="technology-card-title">Improved Credit Score</div>
+          <div class="technology-card-content">
+            <div class="technology-stat">
+              <p>6 </p>
+            </div>
+            <div class="technology-stat-details">
+              <p>months within</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- Not in the sample frontpage, but still functional once uncommented -->
+      <!-- <a href="/tech" class="button">Learn more about Finbud</a> -->
+    </section>
+
     <!-- Features Section -->
     <section class="feature-section">
-      <header>
-        <h1>Choose Finbud as your <br>
-          Everyday Wealth Management Advisor!
-        </h1>
-      </header>
-      <div class="sub-header">
-        Paired with advanced AI technology, tailored for individual financial needs, Finbud has a comprehensive package
-        of features that suits all your needs.
-      </div>
-      <div class="grid-container">
-        <div class="feature-chatbot">
-          <img class="feature-icon" src="@/assets/home-page/chatbot.png" alt="chatbot image">
-          <h2>Advanced AI Chatbot immediately Solve All Your Financial Concerns</h2>
-          <p>With just simple commands and access to a vast source of accurate and reliable information, all your
-            financial queries can be answered instantly.</p>
-          <a href="/chat-view" class="button">Chat now!</a>
+      <div class="feature-container">
+        <!-- Feature 1 -->
+        <div class="feature-row">
+          <div class="feature-text">
+            <h2>Solve Financial Worries with AI Chatbot,</h2>
+            <p>
+              With just simple commands and access to a vast source of accurate and reliable information, all your
+              financial queries can be answered instantly.
+            </p>
+            <a href="/chat-view" class="button">Chat now</a>
+          </div>
+          <div class="feature-image">
+            <img class="feature-icon" src="@/assets/home-page/FinBudPix.png" alt="Chatbot Icon">
+          </div>
         </div>
-        <div class="feature-investment-tracking ">
-          <img class="feature-icon" src="@/assets/home-page/investment-tracking.png" alt="chatbot image">
-          <h2>Investment Guidance, Tracker and Market Report </h2>
-          <p>Track how your investments are performing in real-time, provide actionable insights from your investment
-            and the market to make better investment decisions.</p>
-          <a href="/stock-simulator" class="button">Try Simulator now!</a>
+        <!-- Feature 2 -->
+        <div class="feature-row">
+          <div class="feature-text">
+            <h2>Master Your Investments with FinBud Simulator,</h2>
+            <p>
+              Track how your investments are performing in real-time, provide actionable insights from your investment
+              and the market to make better investment decisions.
+            </p>
+            <a href="/stock-simulator" class="button">Simulator now</a>
+          </div>
+          <div class="feature-image">
+            <img class="feature-icon" src="@/assets/home-page/investment-tracking.png" alt="Investment Tracking Icon">
+          </div>
         </div>
-        <div class="feature-budget-projection">
-          <img class="feature-icon" src="@/assets/home-page/budget-projection.png" alt="chatbot image">
-          <h2>Future Expense Projections through Spending Habit Analysis</h2>
-          <p>Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive
-            tips for better budget management.</p>
-          <a href="/goal" class="button">Try Goal now! </a>
+        <!-- Feature 3 -->
+        <div class="feature-row">
+          <div class="feature-text">
+            <h2>Predict Your Costs with FinBud Goal,</h2>
+            <p>
+              Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive
+              tips
+              for better budget management.
+            </p>
+            <a href="/goal" class="button">Set Goal now</a>
+          </div>
+          <div class="feature-image">
+            <img class="feature-icon" src="@/assets/home-page/budget-projection.png" alt="Budget Projection Icon">
+          </div>
         </div>
-        <div class="feature-financial-knowledge">
-          <img class="feature-icon" src="@/assets/home-page/financial-knowledge.png" alt="chatbot image">
-          <h2>Financial Knowledge Review with Keyword-based Quiz </h2>
-          <p>Financial Quiz with different topics related to different keywords help you practice and learn financial
-            knowledge in a smart and interactive way.</p>
-          <a href="/quizz" class="button">Try Quiz now!</a>
+        <!-- Feature 4 -->
+        <div class="feature-row">
+          <div class="feature-text">
+            <h2>Boost Your Finance Skills with FinBud Quiz,</h2>
+            <p>
+              Financial Quiz with different topics related to various keywords helps you practice and learn financial
+              knowledge in a smart and interactive way.
+            </p>
+            <a href="/quizz" class="button">Try Quiz now</a>
+          </div>
+          <div class="feature-image">
+            <img class="feature-icon" src="@/assets/home-page/financial-knowledge.png" alt="Financial Knowledge Icon">
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Technology Section -->
-    <section class="technology-section">
-      <header>
-        <h1>With Finbud, easily notice the impact starting from today!</h1>
-      </header>
-      <div class="technology-grid">
-        <div class="technology-card">
-          <h3>20% Savings Increase</h3>
-          <p>average per user</p>
-        </div>
-        <div class="technology-card">
-          <h3>25% Financial <br> Awareness Increase</h3>
-        </div>
-        <div class="technology-card">
-          <h3>30% Debt Reduction</h3>
-          <p>after 1 year</p>
-        </div>
-        <div class="technology-card">
-          <h3>Improved Credit Score</h3>
-          <p>within 6 months</p>
-        </div>
-      </div>
-      <a href="/tech" class="button">Learn more about Finbud</a>
-    </section>
+
+
     <!-- Commonly Asked Question -->
     <section class="question-section">
       <header>
@@ -483,7 +537,7 @@ export default {
 /* Button styling */
 .button {
   padding: 10px 20px;
-  margin-top: 10px;
+  /* margin: 20px; */
   background-color: transparent;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   color: black;
@@ -527,23 +581,15 @@ export default {
 }
 
 /* Dark mode specific styles for PNG icons */
-:root.dark-mode .feature-icon, 
+:root.dark-mode .feature-icon,
 body.dark-mode .feature-icon {
   filter: brightness(0) invert(1);
   /* This will make the PNG icons white */
 }
 
-.feature-section .grid-container>div {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
 /* technology section */
 .technology-section {
-  padding: 0 5%;
+  padding: 10% 5%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -569,6 +615,7 @@ body.dark-mode .feature-icon {
   border-radius: 30px;
   height: 150px;
   padding: 20px; */
+  text-align: left;
   border-right: 1px solid var(--border-color);
   padding: 20px;
 }
@@ -577,7 +624,20 @@ body.dark-mode .feature-icon {
   border-right: none;
 }
 
-.technology-card h3,
+.technology-card-title {
+  text-align: left;
+  margin-bottom: 3rem;
+  /* font-weight: bold; */
+}
+
+.technology-card-content {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+/* .technology-card h3,
 .technology-card p {
   color: var(--text-primary);
   text-align: center;
@@ -585,6 +645,74 @@ body.dark-mode .feature-icon {
 
 .technology-card p {
   margin-top: -20px;
+} */
+
+.technology-stat p {
+  font-size: 3rem;
+  margin: 0;
+  /* line-height: 1; */
+}
+
+
+.technology-stat-details p {
+  font-size: 1rem;
+  margin: 0;
+  white-space: normal;
+  word-wrap: break-word;
+  flex: 1;
+}
+
+.feature-container {
+  display: flex;
+  flex-direction: column;
+  /* gap: 1rem; */
+  padding: 0 3%;
+}
+
+.feature-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  /* border-radius: 6px;*/
+  overflow: hidden;
+}
+
+.feature-image {
+  flex: 0 0 auto;
+  /* width: 150px; */
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  flex: 1;
+}
+
+.feature-icon {
+  max-width: 100%;
+  height: auto;
+}
+
+.feature-text {
+  flex: 1;
+  padding: 3rem;
+  text-align: left;
+}
+
+
+.feature-text h2 {
+  /* margin: 3rem; */
+  font-size: 3rem;
+  padding-bottom: 3rem;
+}
+
+/* In case you want specific styling for paragraphs and buttons, adjust as needed */
+.feature-text p {
+  /* margin: 30px; */
+  padding-bottom: 2rem;
+  /* Allow wrapping naturally */
+  white-space: normal;
 }
 
 /* question section*/
