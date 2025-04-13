@@ -114,7 +114,8 @@
         <!-- Feature 1 -->
         <div class="feature-row">
           <div class="feature-text">
-            <h2>Solve Financial Worries with AI Chatbot,</h2>
+            <h2>Solve Financial Worries with <div class="feature-name">AI Chatbot,</div>
+            </h2>
             <p>
               With just simple commands and access to a vast source of accurate and reliable information, all your
               financial queries can be answered instantly.
@@ -122,13 +123,15 @@
             <a href="/chat-view" class="button">Chat now</a>
           </div>
           <div class="feature-image">
-            <img class="feature-icon" src="@/assets/home-page/FinBudPix.png" alt="Chatbot Icon">
+            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
         <!-- Feature 2 -->
         <div class="feature-row">
           <div class="feature-text">
-            <h2>Master Your Investments with FinBud Simulator,</h2>
+            <h2>Master Your Investments with
+              <div class="feature-name">FinBud Simulator</div> ,
+            </h2>
             <p>
               Track how your investments are performing in real-time, provide actionable insights from your investment
               and the market to make better investment decisions.
@@ -136,13 +139,14 @@
             <a href="/stock-simulator" class="button">Simulator now</a>
           </div>
           <div class="feature-image">
-            <img class="feature-icon" src="@/assets/home-page/investment-tracking.png" alt="Investment Tracking Icon">
+            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
         <!-- Feature 3 -->
         <div class="feature-row">
           <div class="feature-text">
-            <h2>Predict Your Costs with FinBud Goal,</h2>
+            <h2>Predict Your Costs with <div class="feature-name">FinBud Goal,</div>
+            </h2>
             <p>
               Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive
               tips
@@ -151,13 +155,14 @@
             <a href="/goal" class="button">Set Goal now</a>
           </div>
           <div class="feature-image">
-            <img class="feature-icon" src="@/assets/home-page/budget-projection.png" alt="Budget Projection Icon">
+            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
         <!-- Feature 4 -->
         <div class="feature-row">
           <div class="feature-text">
-            <h2>Boost Your Finance Skills with FinBud Quiz,</h2>
+            <h2>Boost Your Finance Skills with <div class="feature-name">FinBud Quiz,</div>
+            </h2>
             <p>
               Financial Quiz with different topics related to various keywords helps you practice and learn financial
               knowledge in a smart and interactive way.
@@ -165,7 +170,7 @@
             <a href="/quizz" class="button">Try Quiz now</a>
           </div>
           <div class="feature-image">
-            <img class="feature-icon" src="@/assets/home-page/financial-knowledge.png" alt="Financial Knowledge Icon">
+            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
       </div>
@@ -196,6 +201,17 @@
         </div>
       </div>
     </section>
+
+    <footer class="site-footer">
+      <div class="footer-image">
+        <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
+      </div>
+      <div class="footer-text">
+        © Copyright 2025, All Rights Reserved by FinBud
+      </div>
+    </footer>
+
+
     <TutorialOverlay :steps="tutorialSteps" storageKey="finbudHomeTutorialShown" :autoStart="true"
       @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
   </section>
@@ -575,10 +591,10 @@ export default {
   z-index: 10001;
 }
 
-.feature-icon {
+/* .feature-icon {
   width: 100px;
   aspect-ratio: 1;
-}
+} */
 
 /* Dark mode specific styles for PNG icons */
 :root.dark-mode .feature-icon,
@@ -680,19 +696,21 @@ body.dark-mode .feature-icon {
 
 .feature-image {
   flex: 0 0 auto;
-  /* width: 150px; */
+  width: 150px;
   border-left: 1px solid var(--border-color);
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 2rem;
   flex: 1;
 }
 
-.feature-icon {
-  max-width: 100%;
-  height: auto;
+.feature-image img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
 }
+
 
 .feature-text {
   flex: 1;
@@ -703,15 +721,19 @@ body.dark-mode .feature-icon {
 
 .feature-text h2 {
   /* margin: 3rem; */
-  font-size: 3rem;
+  font-size: 2rem;
   padding-bottom: 3rem;
+  font-weight: normal;
 }
 
-/* In case you want specific styling for paragraphs and buttons, adjust as needed */
+.feature-name {
+  color: blue;
+}
+
+
 .feature-text p {
   /* margin: 30px; */
   padding-bottom: 2rem;
-  /* Allow wrapping naturally */
   white-space: normal;
 }
 
@@ -727,7 +749,7 @@ body.dark-mode .feature-icon {
 }
 
 .question-section header h1 {
-  text-align: left;
+  text-align: center;
 }
 
 .question-container {
@@ -760,6 +782,24 @@ body.dark-mode .feature-icon {
 .answer {
   height: fit-content;
 }
+
+.site-footer {
+  border-top: 1px solid var(--border-color, #ccc);
+  padding: 3rem 2rem;
+  text-align: left; 
+}
+
+.footer-image img {
+  max-width: 150px;
+  height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.footer-text {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+}
+
 
 /* Global settings and the main content area */
 #main-content {
