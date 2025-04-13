@@ -134,15 +134,16 @@ export default {
 
 					### Supported Actions & Return Formats:
 
-					1. **Search**  
-					- Trigger only when the user is requesting detailed information about a specific concept, topic, or term not conversational questions.
-					- Example triggers: "Explain ROI", "What is inflation?", "Tell me about compound interest"
-					- Format: #search [term]
-					
-					2. **Stock Price Inquiry**  
-					- User intent: Ask for a stock price  
+					1. **Stock Price**  
+					- User intent: Ask for a stock price, return only the stock code (ticker symbol) in uppercase.
+					- Phrases may include: "giá cổ phiếu", "stock price of", "bao nhiêu tiền cổ phiếu", etc.
 					- Format: **[STOCK_CODE_IN_UPPERCASE]**  
-					- Example: "What's the price of tesla stock?" → "TSLA"
+					- Example: "giá cổ phiếu của Coca Cola" → Return "KO", "What's the price of tesla stock?" → "TSLA", 
+
+					2. **Search**  
+					- Trigger only when the user is requesting for detailed information or definitions about specific concepts, terms, or topics that are not related to stock prices, not conversational questions.
+					- Example triggers: "Explain ROI", "What is inflation?", "Tell me about compound interest"
+					- Format: #search [term]					
 
 					3. **Define Financial Term**  
 					- User intent: Ask for meaning of a financial term  
@@ -161,14 +162,14 @@ export default {
 					- If no area is mentioned, default to: **#realestate San Jose**
 
 					6. **Add a Transaction**  
-					- User intent: Record a spending transaction  
+					- User intent: Add money to the account (e.g., income, deposit, or refund).
 					- Format: **#add [description] [amount]**  
-					- Example: "I spent 125 on shopping" → "#add shopping 125"
+					- Example: "I received 125 from a refund" → "#add refund 125"
 
 					7. **Track Spending**  
-					- User intent: Log or monitor an expense  
+					- User intent: Subtract money from the account for something spent (e.g., purchase or bill). 
 					- Format: **#spend [description] [amount]**  
-					- Example: "Track 80 for groceries" → "#spend groceries 80"
+					- Example: "I spend 80 on groceries" → "#spend groceries 80", "Tao mua xe máy với giá 10 dollar" → #spend xe máy 10
 
 					8. **Buy Stock**  
 					- User intent: Buy a stock with quantity  
@@ -275,7 +276,7 @@ export default {
 				// HANDLE ADD TRANSACTION (6)
 				else if (gptDefine.toLowerCase().includes("#add")) {
 					try {
-						const match = gptDefine.match(/#add\s+([\w\s]+)\s+(\d+)/i);
+						const match = gptDefine.match(/#add\s+([\p{L}\p{N}\s]+)\s+(\d+)/iu);
 						if (match) {
 							const description = match[1].trim();
 							const amount = parseInt(match[2], 10);
@@ -298,7 +299,7 @@ export default {
 				// HANDLE SPEND TRANSACTION (7)
 				else if (gptDefine.toLowerCase().includes("#spend")) {
 					try {
-						const match = gptDefine.match(/#spend\s+([\w\s]+)\s+(\d+)/i);
+						const match = gptDefine.match(/#spend\s+([\p{L}\p{N}\s]+)\s+(\d+)/iu);
 						if (match) {
 							const accountCheck = await this.checkAccountBalance();
 							if (!accountCheck) {
@@ -315,7 +316,19 @@ export default {
 								const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text` }]);
 								answers.push(Responsegpt);
 							}
-							// this.openNewWindow("/goal");
+							//this.openNewWindow("/goal");
+							const baseUrl = window.location.origin.includes("localhost")
+								? "http://localhost:8888"
+								: "https://finbud.pro";
+			
+							const url = `${baseUrl}/goal/`;
+							window.open(url);
+							setTimeout(() => {
+                				window.addEventListener("load", () => {
+                    				const previewButton = document.querySelector(".preview-btn");
+                    				if (previewButton) previewButton.click();
+                				});
+            				}, 2000);
 						} else {
 							const res = "Please specify the description and amount you want to spend.";
 							const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text` }]);
@@ -465,17 +478,6 @@ export default {
 						timestamp: new Date().toLocaleTimeString(),
 					});
 				}
-				// HANDLE SEARCH
-				else if (gptDefine.toLowerCase().includes("#search")) {
-					//Search for sources, videos, and relevant questions
-					const searchResults = await getSources(gptDefine);
-					newSources = searchResults;
-					newVideos = await getVideos(gptDefine);
-					newRelevantQuestions = await getRelevantQuestions(searchResults, language);
-					//Normal GTP response
-					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language} language.` }]);
-					answers.push(gptResponse);
-				}
 				// HANDLE STOCK
 				else if (this.extractStockCode(gptDefine)) {
 					try {
@@ -505,6 +507,18 @@ export default {
 						console.error("Error in stock message:", err.message);
 					}
 				}
+				// HANDLE SEARCH
+				else if (gptDefine.toLowerCase().includes("#search")) {
+					//Search for sources, videos, and relevant questions
+					const searchResults = await getSources(gptDefine);
+					newSources = searchResults;
+					newVideos = await getVideos(gptDefine);
+					newRelevantQuestions = await getRelevantQuestions(searchResults, language);
+					//Normal GTP response
+					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language} language.` }]);
+					answers.push(gptResponse);
+				}
+				
 				// HANDLE CREATE (10)
 				else if (gptDefine.includes("#create")) {
 					try {
@@ -674,7 +688,7 @@ export default {
 			}, 1000);
 		},
 		extractStockCode(message) {
-			const pattern = /\b[A-Z]{3,5}\b/g;
+			const pattern = /\b[A-Z]{2,5}\b/g;
 			const matches = message.match(pattern);
 			return matches;
 		},
