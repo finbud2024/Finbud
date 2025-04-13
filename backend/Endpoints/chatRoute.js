@@ -258,7 +258,7 @@ chatRoute.route('/chats/t/:threadId')
     }
   });
 
-// POST: Analyze User Portfolio
+// GET: Analyze User Portfolio
 chatRoute.route("/chats/analyze-portfolio/:userId")
   .get(async (req, res) => {
     const userId = req.params.userId;
@@ -310,7 +310,7 @@ PART 1: INVESTMENT ANALYSIS
 Analyze the following stock holdings and portfolio performance data:
 
 USER PORTFOLIO SUMMARY:
-- Portfolio: ${portfolioData}. NOTE, the most recent 365 days of data is provided. Last element is the most recent day.
+- Portfolio: ${portfolioData}. NOTE, the most recent 365 days of data is provided. Sort the portfolio by date in ascending order.
 - Stock Holdings: ${userHolding}. NOTE, the field purchasedPrice is the TOTAL value that the user paid for stocks of that quantities.
 - Portfolio Performance Data Points: ${portfolioData.length} days
 
