@@ -120,6 +120,7 @@ export default {
 					timestamp: new Date().toLocaleTimeString(),
 				});
 				const answers = [];
+				const htmlContents = [];
 				let newSources = [];
 				let newVideos = [];
 				let newRelevantQuestions = [];
@@ -394,6 +395,7 @@ export default {
 						typing: true,
 						timestamp: new Date().toLocaleTimeString(),
 					});
+					htmlContents.push(tableTemplate);
 				}
 				// // RETURNS REALESTATE TABLE
 				else if (gptDefine.includes("#realestate")) {
@@ -479,6 +481,7 @@ export default {
 				    </tr>`;
 					});
 					tableTemplate += `</tbody></table>`;
+					htmlContents.push(tableTemplate);
 					this.messages.push({
 						text: ``,
 						htmlContent: tableTemplate,
@@ -595,6 +598,7 @@ export default {
 										videos: [],
 										relevantQuestions: []
 									});
+									htmlContents.push(analysisData.analysis.stock);	
 								}
 								
 								
@@ -611,6 +615,7 @@ export default {
 										videos: [],
 										relevantQuestions: []
 									});
+									htmlContents.push(analysisData.analysis.transaction);
 								}
 								
 								if (!analysisData.analysis.stock && !analysisData.analysis.transaction) {
@@ -672,10 +677,12 @@ export default {
 						const reqBody = {
 							prompt: userMessage,
 							response: answers,
+							htmlContent: htmlContents,
 							sources: newSources,
 							videos: newVideos,
 							threadId: this.currentThreadID,
 						};
+						console.log(reqBody)
 						await axios.post(chatApi, reqBody);
 					} catch (err) {
 						console.error("Error on saving chat:", err.message);
@@ -849,6 +856,21 @@ export default {
 									relevantQuestions: chat.followUpQuestions
 								};
 								this.messages.push(response);
+							});
+						}
+						if (chat.htmlContent) {
+							chat.htmlContent.forEach((htmlContent) => {
+								const htmlResponse = {
+									text: "",
+									isUser: false,
+									typing: false,
+									timestamp: chat.creationDate,
+									htmlContent: htmlContent,
+									sources: chat.sources,
+									videos: chat.videos,
+									relevantQuestions: chat.followUpQuestions
+								};
+								this.messages.push(htmlResponse);
 							});
 						}
 					});

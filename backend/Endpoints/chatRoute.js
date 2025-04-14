@@ -62,6 +62,10 @@ chatRoute.route('/chats')
         chatBody.followUpQuestions = req.body.followUpQuestions;
       }
 
+      if (req.body.htmlContent) {
+        chatBody.htmlContent = req.body.htmlContent;
+      }
+
       const chat = new Chat(chatBody);
       await chat.save();
       return res.status(200).json(chat);
