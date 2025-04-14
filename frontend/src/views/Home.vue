@@ -187,13 +187,7 @@
         <div v-for="(item, index) in faqsData" :key="index" @click="toggleExpansion(item)"
           :class="{ 'expanded': expandedItem === item }">
           <div class="question">
-            <h4>{{ item.question }}</h4>
-            <span v-if="expandedItem === item">
-              <font-awesome-icon icon="fa-solid fa-chevron-up" />
-            </span>
-            <span v-else>
-              <font-awesome-icon icon="fa-solid fa-chevron-down" />
-            </span>
+            <p>{{ item.question }}</p>
           </div>
           <div class="expanded-content">
             <p class="answer">{{ item.answer }}</p>
@@ -739,13 +733,13 @@ body.dark-mode .feature-icon {
 
 /* question section*/
 .question-section {
-  padding: 0 10%;
+  padding: 0 3%;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
 
 .question-section header {
-  padding: 40px 0 0 0;
+  padding: 0 20px;
 }
 
 .question-section header h1 {
@@ -753,21 +747,53 @@ body.dark-mode .feature-icon {
 }
 
 .question-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; 
   transition: all 0.3s ease;
 }
 
-.question {
+.question-container > div {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0px 3%;
+}
+
+/* When expanded, style the overall container (both question & answer) */
+.question-container > div:hover,
+.question-container > div.expanded {
+  background-color: rgb(226, 242, 251);
+  border: 1px solid darkblue; 
+}
+
+
+/* .question {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 0;
   border-bottom: 1px solid var(--border-color);
   cursor: pointer;
+} */
+
+/* Styling for the question bar (the clickable header) */
+.question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.expanded-content {
+.question-container > div.expanded .question{
+  color: blue;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+/* .expanded-content {
   transition: all 0.5s ease;
-  /* opacity, max-height*/
   border-radius: 4px;
   max-height: 0;
   overflow: hidden;
@@ -777,7 +803,23 @@ body.dark-mode .feature-icon {
 
 .expanded .expanded-content {
   max-height: 100px;
+} */
+
+.expanded-content {
+  max-height: 0;
+  padding-top: 0px;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
+
+.expanded .expanded-content {
+  max-height: 200px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 .answer {
   height: fit-content;

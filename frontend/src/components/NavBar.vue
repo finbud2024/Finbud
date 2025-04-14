@@ -1,6 +1,8 @@
 <template>
   <nav class="nav-bar" id="app">
-    <router-link to="/" class="navbar-brand">FinBud</router-link>
+    <router-link to="/">
+        <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo">
+      </router-link>
     <div class="nav-right">
       <ul class="nav-items">
         <li>
@@ -456,6 +458,7 @@ export default {
 .nav-bar {
   background-color: transparent;
   width: 100%;
+  height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -466,11 +469,16 @@ export default {
 }
 
 .navbar-brand {
-  font-size: 2.5rem;
+  font-size: 4rem;
   font-weight: bold;
   color: var(--logo-color);
   cursor: pointer;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
 }
 
 .nav-right {
