@@ -6,7 +6,12 @@
         <div class="description animate fade-in">
           Anytime answers for finance questions with FinBud
         </div>
-        <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton>
+        <div class="animate fade-in">
+          <UserInput @send-message="chatNow" class="front-search-bar" />
+        </div>
+        
+        <!-- <UserInput @send-message="sendMessage" /> -->
+        <!-- <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton> -->
       </div>
 
     </div>
@@ -217,12 +222,14 @@ import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
 import { useTypingEffect } from '@/composables/useTypingEffect';
 import { LucideAsteriskSquare } from "lucide-vue-next";
+import UserInput from '@/components/UserInput.vue';
 
 export default {
   name: 'MainContent',
   components: {
     BigGreenButton,
-    TutorialOverlay
+    TutorialOverlay,
+    UserInput,
   },
   setup() {
     const {
@@ -429,6 +436,20 @@ export default {
   flex-direction: row;
   opacity: 1;
   animation: none;
+  font-weight: 300;
+}
+
+.front-search-bar {
+  position: relative;
+  width: 1000px;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  font-size: 1.2rem;
+  padding-top: 20px;
+  /* flex-wrap: wrap;
+  animation: none; */
   font-weight: 300;
 }
 
@@ -749,21 +770,21 @@ body.dark-mode .feature-icon {
 .question-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem; 
+  gap: 1rem;
   transition: all 0.3s ease;
 }
 
-.question-container > div {
+.question-container>div {
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 0px 3%;
 }
 
 /* When expanded, style the overall container (both question & answer) */
-.question-container > div:hover,
-.question-container > div.expanded {
+.question-container>div:hover,
+.question-container>div.expanded {
   background-color: rgb(226, 242, 251);
-  border: 1px solid darkblue; 
+  border: 1px solid darkblue;
 }
 
 
@@ -786,7 +807,7 @@ body.dark-mode .feature-icon {
   transition: all 0.3s ease;
 }
 
-.question-container > div.expanded .question{
+.question-container>div.expanded .question {
   color: blue;
   padding-bottom: 0px;
   margin-bottom: 0px;
@@ -828,7 +849,7 @@ body.dark-mode .feature-icon {
 .site-footer {
   border-top: 1px solid var(--border-color, #ccc);
   padding: 3rem 2rem;
-  text-align: left; 
+  text-align: left;
 }
 
 .footer-image img {
