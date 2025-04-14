@@ -9,7 +9,8 @@
         <div class="animate fade-in">
           <UserInput @send-message="chatNow" class="front-search-bar" />
         </div>
-        
+
+
         <!-- <UserInput @send-message="sendMessage" /> -->
         <!-- <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton> -->
       </div>
@@ -24,18 +25,22 @@
       </header>
       <div class="grid-container">
         <!-- first grid box -->
-        <div class="text-section text-left ">
-          <img class="intro-icon" src="@/assets/home-page/Lightbulb.png" alt="Financial Awareness Icon">
-          <h2>Enhance Your Financial Awareness</h2>
-          <p>
-            Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your questions.
-          </p>
-          <!-- <a href="/quizz" class="button">Learn more</a> -->
+        <div class="dynamic-border">
+          <div class="text-section text-left ">
+            <img class="intro-icon" src="@/assets/home-page/Lightbulb.png" alt="Financial Awareness Icon">
+            <h2>Enhance Your Financial Awareness</h2>
+            <p>
+              Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your
+              questions.
+            </p>
+            <!-- <a href="/quizz" class="button">Learn more</a> -->
+          </div>
         </div>
 
-        <!-- second grid box -->
 
-        <div class="text-section text-left ">
+        <!-- second grid box -->
+         <div class="dynamic-border">
+          <div class="text-section text-left">
           <img class="intro-icon" src="@/assets/home-page/Bars.png" alt="Financial Planning Icon">
           <h2>Optimize Your Financial Planning</h2>
           <p>
@@ -44,8 +49,11 @@
           </p>
           <!-- <a href="/goal" class="button">Learn more</a> -->
         </div>
+         </div>
+        
         <!-- third grid box -->
-        <div class="text-section text-left ">
+         <div class="dynamic-border">
+          <div class="text-section text-left">
           <img class="intro-icon" src="@/assets/home-page/CircleArrowUp.png" alt="Financial Efficiency Icon">
           <h2>Maximize Your Investment Efficiency</h2>
           <p>
@@ -54,6 +62,8 @@
           </p>
           <!-- <a href="/stock-simulator" class="button">Learn more</a> -->
         </div>
+         </div>
+        
       </div>
     </section>
 
@@ -266,7 +276,12 @@ export default {
           message: "Click here to start chatting with FinBud, your personal finance assistant!",
           title: "Welcome to FinBud"
         }
-      ]
+      ],
+      mouseX: 0,
+      mouseY: 0,
+      elementStyle: {
+        backgroundColor: 'lightblue'
+      }
     };
   },
   computed: {
@@ -307,6 +322,26 @@ export default {
       } else {
         this.$router.push('login');
       }
+    },
+    // handleMouseMove(e) {
+    //   const el = e.currentTarget;
+    //   const rect = el.getBoundingClientRect();
+    //   const x = e.clientX - rect.left;
+    //   const y = e.clientY - rect.top;
+    //   // Update CSS custom properties on the element
+    //   el.style.setProperty("--mouse-x", x + "px");
+    //   el.style.setProperty("--mouse-y", y + "px");
+    // },
+    handleGlobalMouseMove(e) {
+      // This global handler updates all elements with the "dynamic-border" class.
+      const containers = document.querySelectorAll(".dynamic-border");
+      containers.forEach((container) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        container.style.setProperty("--mouse-x", x + "px");
+        container.style.setProperty("--mouse-y", y + "px");
+      });
     }
   },
   mounted() {
@@ -330,7 +365,26 @@ export default {
 
     const elements = document.querySelectorAll('.animate');
     elements.forEach(el => observer.observe(el));
+
+    // const containers = document.querySelectorAll(".dynamic-border");
+
+    // this._mouseMoveHandler = this.handleMouseMove.bind(this);
+
+    // containers.forEach((container) => {
+    //   container.addEventListener("mousemove", this._mouseMoveHandler);
+
+    // });
+    this._globalMouseMoveHandler = this.handleGlobalMouseMove.bind(this);
+    window.addEventListener("mousemove", this._globalMouseMoveHandler);
   },
+  beforeUnmount() {
+    // const containers = document.querySelectorAll(".dynamic-border");
+    // containers.forEach((container) => {
+    //   container.removeEventListener("mousemove", this._mouseMoveHandler);
+    // });
+    window.removeEventListener("mousemove", this._globalMouseMoveHandler);
+  },
+
 };
 </script>
 
@@ -503,47 +557,51 @@ export default {
   /* This will make the PNG icons white */
 }
 
-.text-section {
-  /* border: 1px solid var(--border-color);
-  border-radius: 6px; 
-  padding: 1rem;  */
+.dynamic-border {
+  position: relative;
+  /* border: 2px solid #ccc; */
+  border-radius: 12px;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+}
 
+.dynamic-border::before {
+  content: "";
+  position: absolute;
+  /* margin: 20px; */
+  /* top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px; */
+  /* top: 0; left: 0; right: 0; bottom: 0; */
+  inset: 0px;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(circle 100px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(0, 0, 255, 0.8) 0,
+      transparent 100%);
+  transition: background 0.1s ease;
+  z-index: 1;
+}
+
+.text-section {
+  position: relative;
+  z-index: 2;
+  margin: 0px;
+  padding: 10px; 
+  background-color: var(--card-bg);
+  border-radius: inherit;
+  text-align: left;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  background-color: var(--card-bg);
   /* box-shadow: 0 4px 8px 0 var(--shadow-color); */
   color: var(--text-primary);
-  border: 2px solid var(--border-color);
-  border-radius: 20px;
-  /* height: 150px; */
-  /* padding: 40px; */
 }
 
-/* .introduction-image {
-  height: 100%;
-  border: 2px solid var(--border-color);
-  border-radius: 20px;
-}
 
-.quizz-image {
-  background-image: url("@/assets/home-page/quizz.png");
-  background-size: cover;
-  background-position: top center;
-}
-
-.goal-image {
-  background-image: url("@/assets/home-page/goal.png");
-  background-size: cover;
-  background-position: center center;
-}
-
-.simulator-image {
-  background-image: url("@/assets/home-page/simulator.png");
-  background-size: cover;
-  background-position: top center;
-} */
 
 .text-left p,
 .text-left h2 {
