@@ -456,7 +456,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .nav-bar {
-  background-color: transparent;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
   width: 100%;
   height: 80px;
   display: flex;
@@ -466,6 +466,10 @@ export default {
   font-family: "Space Grotesk", sans-serif;
   position: fixed;
   z-index: 1000;
+}
+
+:root.dark-mode .nav-bar{
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
 }
 
 .navbar-brand {
@@ -479,6 +483,11 @@ export default {
   height: 100%;
   width: auto;
   object-fit: contain;
+}
+
+:root.dark-mode .navbar-brand {
+  filter: invert(1);
+  /* This will make the PNG icons white */
 }
 
 .nav-right {
