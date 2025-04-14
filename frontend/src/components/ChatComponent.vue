@@ -133,6 +133,10 @@ export default {
 						content: `You are an intelligent assistant. Given a natural language message from the user, detect which of the following 10 actions it belongs to. Then extract the necessary information and return a **formatted command** for that action if found.
 
 					### Supported Actions & Return Formats:
+					0. **General Message** MAJORITY OF THE MESSAGE WILL BE THIS ONE 
+					- User intent: General message, not related to any specific action.
+					- Format: **[user_message]**
+					- Example: "Tell me about the weather today" → "Tell me about the weather today"
 
 					1. **Stock Price**  
 					- User intent: Ask for a stock price, return only the stock code (ticker symbol) in uppercase.
@@ -185,6 +189,11 @@ export default {
 					- User intent: Create a goal  
 					- Format: **#create goal**  
 					- Example: "I want to create a savings goal" → "#create goal"
+
+					11. **Analyze Portfolio**
+					- User intent: Analyze portfolio
+					- Format: **#analyze**
+					- Example: "Analyze my portfolio" → "#analyze"
 
 					### Instruction:
 					Given the user message: "${newMessage}", respond with the correct formatted command according to the rules above.  
@@ -546,7 +555,8 @@ export default {
         				console.error("Error in create message:", err.message);
    					}
 				}
-			
+				
+				// HANDLE ANALYZE (11)
 				else if (gptDefine.toLowerCase().includes("#analyze")) {
 					try {
 						
@@ -636,8 +646,14 @@ export default {
 	
 				else {
 					try {
+						const historyChat = this.messages.slice(-10).map(msg => {
+							return { role: msg.isUser ? "user" : "assistant", content: msg.text };
+						});
+						console.log(historyChat)
 						const prompt = userMessage;
-						const gptResponse = await gptServices([{ role: "user", content: `${prompt}. Response in this language ${language}` }]);
+						const gptResponse = await gptServices([{ role: "user", content: `${prompt}. 
+						Response in this language ${language}. Previous Context to refer to if user asks ${historyChat}` }]);
+						
 						answers.push(gptResponse);
 					} catch (err) {
 						console.error("Error in general message:", err.message);
