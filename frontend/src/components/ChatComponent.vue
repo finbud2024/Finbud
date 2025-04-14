@@ -1,6 +1,7 @@
 <template>
 	<div class="chat-container">
 	  <ChatFrame>
+		<div class="top-spacer"></div>
 		<div v-for="(message, index) in messages" :key="index">
 		  <MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
 			:is-thinking="message.isThinking"
@@ -780,5 +781,9 @@ export default {
 	position: relative;
 	container-type: size;
 	container-name: messageComponent userInputComponent;
+}
+
+.top-spacer {
+  height: 100px;  /* Or any height you desire to push content down */
 }
 </style>
