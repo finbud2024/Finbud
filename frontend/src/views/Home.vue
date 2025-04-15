@@ -434,7 +434,7 @@ export default {
   display: flex;
   text-align: center;
   flex-direction: column;
-  font-size: clamp(6rem, 5vw, 8rem);
+  font-size: clamp(5rem, 4vw, 7rem);
   flex-wrap: wrap;
   animation: none;
   font-weight: 700;
@@ -466,7 +466,7 @@ export default {
 
 .front-search-bar {
   position: relative;
-  width: min(2000px, 100vw);
+  width: min(2000px, 90vw);
   height: auto;
   color: var(--text-primary);
   display: flex;
@@ -496,7 +496,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-right: 8%;
+  /* padding-right: 8%; */
 }
 
 /*grid*/
@@ -551,7 +551,7 @@ export default {
   position: relative;
   z-index: 2;
   margin: 0px;
-  padding: 10px; 
+  padding: 0px; 
   background-color: var(--card-bg);
   border-radius: inherit;
   text-align: left;
@@ -830,6 +830,11 @@ body.dark-mode .feature-icon {
 
 
 /* Global settings and the main content area */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 #main-content {
   display: flex;
   flex-direction: column;
