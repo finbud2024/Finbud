@@ -317,18 +317,16 @@ export default {
 								answers.push(Responsegpt);
 							}
 							//this.openNewWindow("/goal");
-							const baseUrl = window.location.origin.includes("localhost")
-								? "http://localhost:8888"
-								: "https://finbud.pro";
 			
-							const url = `${baseUrl}/goal/`;
-							window.open(url);
-							setTimeout(() => {
-                				window.addEventListener("load", () => {
-                    				const previewButton = document.querySelector(".preview-btn");
-                    				if (previewButton) previewButton.click();
-                				});
-            				}, 2000);
+							this.userId = this.$store.getters['users/userId']
+							if (this.$store.getters['users/userId']) {
+								this.$router.push('/goal');
+							} 
+							else {
+								alert('Please log in first!');
+								this.$router.push('/login');
+							}
+							
 						} else {
 							const res = "Please specify the description and amount you want to spend.";
 							const Responsegpt = await gptServices([{ role: "user", content: `Translate the following text "${res}" into ${language}. Respond only with the translated text` }]);

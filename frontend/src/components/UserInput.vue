@@ -135,6 +135,8 @@ export default {
             }
           ],
         });
+        // delete file
+        //await this.openai.files.del(uploadedFile.id);
         console.log(response.output_text)
         return response.output_text;
       } catch (error) {
