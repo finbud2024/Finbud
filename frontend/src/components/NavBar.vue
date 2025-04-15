@@ -510,18 +510,6 @@ export default {
   background-color: var(--bg-secondary);
 }
 
-/* .dropdown:hover .dropdown-content {
-  display: block;
-  opacity: 1;
-  transform: translate(-10px, 0px);
-}
-
-.dropdown:hover .dropdown-profile {
-  display: block;
-  opacity: 1;
-  transform: translate(-160px, 0px);
-} */
-
 .user-image {
   position: relative;
   width: 35px;

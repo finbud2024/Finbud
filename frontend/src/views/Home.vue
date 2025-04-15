@@ -9,12 +9,7 @@
         <div class="animate fade-in">
           <UserInput @send-message="chatNow" class="front-search-bar" />
         </div>
-
-
-        <!-- <UserInput @send-message="sendMessage" /> -->
-        <!-- <BigGreenButton @click="chatNow" id="tutorial-main-button">{{ displayText }}</BigGreenButton> -->
       </div>
-
     </div>
 
     <section class="introduction-section">
@@ -33,6 +28,7 @@
               Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your
               questions.
             </p>
+            <!-- Not in the sample frontpage, but it was in the original front page and is still functional once uncommented -->
             <!-- <a href="/quizz" class="button">Learn more</a> -->
           </div>
         </div>
@@ -119,7 +115,6 @@
 
         </div>
       </div>
-      <!-- Not in the sample frontpage, but still functional once uncommented -->
       <!-- <a href="/tech" class="button">Learn more about Finbud</a> -->
     </section>
 
@@ -323,17 +318,7 @@ export default {
         this.$router.push('login');
       }
     },
-    // handleMouseMove(e) {
-    //   const el = e.currentTarget;
-    //   const rect = el.getBoundingClientRect();
-    //   const x = e.clientX - rect.left;
-    //   const y = e.clientY - rect.top;
-    //   // Update CSS custom properties on the element
-    //   el.style.setProperty("--mouse-x", x + "px");
-    //   el.style.setProperty("--mouse-y", y + "px");
-    // },
     handleGlobalMouseMove(e) {
-      // This global handler updates all elements with the "dynamic-border" class.
       const containers = document.querySelectorAll(".dynamic-border");
       containers.forEach((container) => {
         const rect = container.getBoundingClientRect();
@@ -356,7 +341,6 @@ export default {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('animate-visible');
-          // observer.unobserve(entry.target);
         } else {
           entry.target.classList.remove('animate-visible');
         }
@@ -366,22 +350,10 @@ export default {
     const elements = document.querySelectorAll('.animate');
     elements.forEach(el => observer.observe(el));
 
-    // const containers = document.querySelectorAll(".dynamic-border");
-
-    // this._mouseMoveHandler = this.handleMouseMove.bind(this);
-
-    // containers.forEach((container) => {
-    //   container.addEventListener("mousemove", this._mouseMoveHandler);
-
-    // });
     this._globalMouseMoveHandler = this.handleGlobalMouseMove.bind(this);
     window.addEventListener("mousemove", this._globalMouseMoveHandler);
   },
   beforeUnmount() {
-    // const containers = document.querySelectorAll(".dynamic-border");
-    // containers.forEach((container) => {
-    //   container.removeEventListener("mousemove", this._mouseMoveHandler);
-    // });
     window.removeEventListener("mousemove", this._globalMouseMoveHandler);
   },
 
@@ -472,7 +444,6 @@ export default {
   color: var(--text-primary);
   display: flex;
   justify-content: center;
-  /* align-items: center; */
   font-size: 2.4rem;
   padding-top: 20px;
   flex-wrap: wrap;
@@ -495,16 +466,13 @@ export default {
 
 .front-search-bar {
   position: relative;
-  width: 2000px;
+  width: min(2000px, 100vw);
   height: auto;
   color: var(--text-primary);
   display: flex;
   justify-content: center;
-  /* align-items: center; */
   font-size: 1.2rem;
   padding-top: 20px;
-  /* flex-wrap: wrap;
-  animation: none; */
   font-weight: 300;
 }
 
@@ -560,7 +528,6 @@ export default {
 
 .dynamic-border {
   position: relative;
-  /* border: 2px solid #ccc; */
   border-radius: 12px;
   display: flex;
   justify-content: center; 
@@ -570,12 +537,6 @@ export default {
 .dynamic-border::before {
   content: "";
   position: absolute;
-  /* margin: 20px; */
-  /* top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px; */
-  /* top: 0; left: 0; right: 0; bottom: 0; */
   inset: 0px;
   pointer-events: none;
   border-radius: inherit;
@@ -598,7 +559,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  /* box-shadow: 0 4px 8px 0 var(--shadow-color); */
   color: var(--text-primary);
 }
 
@@ -627,12 +587,10 @@ export default {
 /* Button styling */
 .button {
   padding: 10px 20px;
-  /* margin: 20px; */
   background-color: transparent;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   color: black;
   text-decoration: none;
-  /* font-weight: bold; */
   cursor: pointer;
   max-width: 220px;
   border-radius: 6px;
@@ -665,11 +623,6 @@ export default {
   z-index: 10001;
 }
 
-/* .feature-icon {
-  width: 100px;
-  aspect-ratio: 1;
-} */
-
 /* Dark mode specific styles for PNG icons */
 :root.dark-mode .feature-icon,
 body.dark-mode .feature-icon {
@@ -690,21 +643,10 @@ body.dark-mode .feature-icon {
 .technology-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* gap: 20px; */
   padding-bottom: 50px;
 }
 
 .technology-card {
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--card-bg);
-  box-shadow: 0 4px 8px 0 var(--shadow-color);
-  color: var(--text-primary);
-  border-radius: 30px;
-  height: 150px;
-  padding: 20px; */
   text-align: left;
   border-right: 1px solid var(--border-color);
   padding: 20px;
@@ -717,7 +659,6 @@ body.dark-mode .feature-icon {
 .technology-card-title {
   text-align: left;
   margin-bottom: 3rem;
-  /* font-weight: bold; */
 }
 
 .technology-card-content {
@@ -727,20 +668,10 @@ body.dark-mode .feature-icon {
   gap: 1rem;
 }
 
-/* .technology-card h3,
-.technology-card p {
-  color: var(--text-primary);
-  text-align: center;
-}
-
-.technology-card p {
-  margin-top: -20px;
-} */
-
 .technology-stat p {
   font-size: 3rem;
   margin: 0;
-  /* line-height: 1; */
+  line-height: 1;
 }
 
 
@@ -794,7 +725,6 @@ body.dark-mode .feature-icon {
 
 
 .feature-text h2 {
-  /* margin: 3rem; */
   font-size: 2rem;
   padding-bottom: 3rem;
   font-weight: normal;
@@ -806,7 +736,6 @@ body.dark-mode .feature-icon {
 
 
 .feature-text p {
-  /* margin: 30px; */
   padding-bottom: 2rem;
   white-space: normal;
 }
@@ -846,16 +775,6 @@ body.dark-mode .feature-icon {
   border: 1px solid darkblue;
 }
 
-
-/* .question {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid var(--border-color);
-  cursor: pointer;
-} */
-
 /* Styling for the question bar (the clickable header) */
 .question {
   display: flex;
@@ -871,19 +790,6 @@ body.dark-mode .feature-icon {
   padding-bottom: 0px;
   margin-bottom: 0px;
 }
-
-/* .expanded-content {
-  transition: all 0.5s ease;
-  border-radius: 4px;
-  max-height: 0;
-  overflow: hidden;
-  display: flex;
-  justify-content: end;
-}
-
-.expanded .expanded-content {
-  max-height: 100px;
-} */
 
 .expanded-content {
   max-height: 0;
@@ -955,7 +861,6 @@ h1 {
 h1,
 h2,
 h3 {
-  /* color: #007bff; */
   opacity: 1;
   animation: none;
 }
