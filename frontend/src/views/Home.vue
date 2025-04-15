@@ -434,7 +434,7 @@ export default {
   display: flex;
   text-align: center;
   flex-direction: column;
-  font-size: clamp(5rem, 4vw, 7rem);
+  font-size: clamp(3rem, 5vw, 8rem);
   flex-wrap: wrap;
   animation: none;
   font-weight: 700;
@@ -537,6 +537,7 @@ export default {
 .dynamic-border::before {
   content: "";
   position: absolute;
+  width: 100%;
   inset: 0px;
   pointer-events: none;
   border-radius: inherit;
