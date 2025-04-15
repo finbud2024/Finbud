@@ -207,7 +207,7 @@ export default {
   width: 25%;
   height: 80%;
   margin-top: 7%;
-  border: 3px solid #007bff;
+  border: 3px solid black;
   overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transform: translateX(100%);
@@ -257,7 +257,7 @@ export default {
 
 .brand-name {
   font-weight: bolder;
-  color: #007bff;
+  color: black;
 }
 
 .guidance-text ol {
@@ -279,7 +279,7 @@ export default {
 }
 
 .command {
-  background-color: rgb(0, 123, 255, 0.7);
+  background-color: rgb(0, 0, 0, 0.7);
   padding: 2px 5px;
   border-radius: 5px;
   line-height: normal;
@@ -306,7 +306,7 @@ export default {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  border-right: 2px solid #007bff;
+  border-right: 2px solid black;
   display: flex;
   justify-content: end;
 }
