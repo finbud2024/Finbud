@@ -145,7 +145,7 @@
         <div class="feature-row">
           <div class="feature-text">
             <h2>Master Your Investments with
-              <div class="feature-name">FinBud Simulator</div> ,
+              <div class="feature-name">FinBud Simulator,</div>
             </h2>
             <p>
               Track how your investments are performing in real-time, provide actionable insights from your investment
@@ -462,7 +462,7 @@ export default {
   display: flex;
   text-align: center;
   flex-direction: column;
-  font-size: clamp(3rem, 2.5vw, 4rem);
+  font-size: clamp(6rem, 5vw, 8rem);
   flex-wrap: wrap;
   animation: none;
   font-weight: 700;
@@ -473,7 +473,7 @@ export default {
   display: flex;
   justify-content: center;
   /* align-items: center; */
-  font-size: 1.2rem;
+  font-size: 2.4rem;
   padding-top: 20px;
   flex-wrap: wrap;
   animation: none;
@@ -495,7 +495,8 @@ export default {
 
 .front-search-bar {
   position: relative;
-  width: 1000px;
+  width: 2000px;
+  height: auto;
   color: var(--text-primary);
   display: flex;
   justify-content: center;

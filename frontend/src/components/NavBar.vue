@@ -356,7 +356,7 @@ export default {
 .nav-items li .chatview {
   border-radius: 10px;
   padding: 5px 10px;
-  background-color: #45a049;
+  background-color: black;
   color: white;
   transition: background-color 0.3s ease, transform 0.3s ease;
   display: flex;
@@ -365,7 +365,7 @@ export default {
 }
 
 .nav-items li .login-button {
-  background-color: #45a049;
+  background-color: black;
   color: white;
   border: none;
   border-radius: 10px;
@@ -416,6 +416,7 @@ export default {
   height: 0;
   position: absolute;
   background-color: var(--bg-primary);
+  border-color: black;
   min-width: 100px;
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
   z-index: 1;
@@ -454,20 +455,20 @@ export default {
   align-items: center;
   border-bottom: 1px dotted rgb(226, 215, 215);
   height: 20px;
-  border-left: 2px solid #007bff;
-  border-right: 2px solid #007bff;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
 }
 
 .dropdown-content a:nth-child(1),
 .dropdown-profile a:nth-child(1) {
-  border-top: 2px solid #007bff;
+  border-top: 2px solid black;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
 
 .dropdown-content a:last-child,
 .dropdown-profile a:last-child {
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid black;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
 }
