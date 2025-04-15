@@ -537,6 +537,7 @@ export default {
 .dynamic-border::before {
   content: "";
   position: absolute;
+  width: 100%;
   inset: 0px;
   pointer-events: none;
   border-radius: inherit;
