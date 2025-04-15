@@ -170,6 +170,7 @@ export default {
 </script>
 
 <style scoped>
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -280,7 +281,6 @@ tr:nth-child(odd) {
 .user .message-content.markdown-content :deep(li) {
   color: #000;
 }
-
 .message-wrapper {
   display: flex;
   align-items: flex-end;
@@ -340,8 +340,10 @@ tr:nth-child(odd) {
   flex-direction: column;
   padding: 10px;
   border-radius: 16px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: #efefef;
+  color: #000000;
+  /* background-color: papayawhip;
+    color: black; */
   border: 1px solid transparent;
   text-align: left;
   white-space: pre-wrap;
