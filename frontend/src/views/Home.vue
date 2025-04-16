@@ -4,7 +4,7 @@
       <div class="intro-text">
         <div class="title animate fade-in">Empowering smarter finance decisions </div>
         <div class="description animate fade-in">
-          Anytime answers for finance questions with FinBud
+          {{  signInTitle }}
         </div>
         <div class="animate fade-in">
           <UserInput @send-message="chatNow" class="front-search-bar" />
@@ -240,9 +240,7 @@ export default {
     const {
       typingText: signInTitle,
       startTyping: startTypingSignInTitle
-    } = useTypingEffect('Anytime answers for finance questions with FinBud', {
-      reverseEffect: false
-    })
+    } = useTypingEffect('Anytime answers for finance questions with FinBud')
     const {
       typingText: signInDescription,
       startTyping: startTypingSignInDescription
