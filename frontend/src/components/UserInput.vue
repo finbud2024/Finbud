@@ -129,7 +129,7 @@ export default {
                 },
                 {
                   type: "input_text",
-                  text: "Analyze this PDF and provide key insights."
+                  text: "give me what the pdf have"
                 }
               ]
             }
