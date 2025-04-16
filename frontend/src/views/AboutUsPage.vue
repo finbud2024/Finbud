@@ -24,6 +24,11 @@
           clickable: true,
         }"
         :navigation="true"
+        :autoplay="{
+          delay: 0,
+          disableOnInteraction: false
+        }"
+        :speed="3000"
         :modules="modules"
         class="mySwiper"
         :breakpoints="{
@@ -152,6 +157,7 @@
 <script>
 
 import { Swiper, SwiperSlide } from "swiper/vue";
+
 
 import "swiper/css";
 

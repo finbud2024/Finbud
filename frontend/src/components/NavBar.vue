@@ -1,8 +1,19 @@
 <template>
   <nav class="nav-bar" id="app">
     <router-link to="/" class="navbar-brand">FinBud</router-link>
+
     <div class="nav-right">
       <ul class="nav-items">
+        <li>
+          <div class="language-switcher">
+            <button @click="switchLanguage('en')">
+              <img src="@/assets/us.png" alt="English" />
+            </button>
+            <button @click="switchLanguage('vi')">
+              <img src="@/assets/vn.png" alt="Tiếng Việt" />
+            </button>
+          </div>
+        </li>
         <li>
           <router-link to="/chat-view" class="chatview">Chat</router-link>
         </li>
@@ -12,20 +23,20 @@
           @mouseleave="toggleAboutDropdown(false)"
         >
           <div class="services-dropdown dropbtn">
-            Overview <span class="arrow-down"></span>
+            {{ $t('overview') }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
             <router-link
               to="/about"
               class="about"
               @click="toggleAboutDropdown(false)"
-              >About</router-link
+              >{{ $t('about') }}</router-link
             >
             <router-link
               to="/tech"
               class="technology"
               @click="toggleAboutDropdown(false)"
-              >Technology</router-link
+              >{{ $t('technology') }}</router-link
             >
            
           </div>
@@ -362,6 +373,10 @@ export default {
     },
   },
   methods: {
+    switchLanguage(lang) {
+      this.$i18n.locale = lang;
+      localStorage.setItem('language', lang);
+    },
     toggleDropdown(open) {
       this.isDropdownOpen = open;
     },
@@ -426,6 +441,10 @@ export default {
     },
   },
   async mounted() {
+    // Set initial language from localStorage or default to 'en'
+    const savedLang = localStorage.getItem('language') || 'en';
+    this.$i18n.locale = savedLang;
+
     await this.$store.dispatch("users/fetchCurrentUser");
     const storedDarkMode = localStorage.getItem("darkMode");
     if (storedDarkMode !== null) {
@@ -452,7 +471,28 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
+.language-switcher {
+  
 
+  display: flex;
+}
+
+.language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.language-switcher button:hover img {
+  transform: scale(1.1); /* Slightly enlarge the flag on hover */
+}
 .nav-bar {
   background-color: var(--bg-primary);
   width: 100%;
