@@ -434,7 +434,7 @@ export default {
   display: flex;
   text-align: center;
   flex-direction: column;
-  font-size: clamp(3rem, 5vw, 8rem);
+  font-size: clamp(3rem, 4.5vw, 8rem);
   flex-wrap: wrap;
   animation: none;
   font-weight: 700;
@@ -444,7 +444,7 @@ export default {
   color: var(--text-primary);
   display: flex;
   justify-content: center;
-  font-size: 2.4rem;
+  font-size: 2rem;
   padding-top: 20px;
   flex-wrap: wrap;
   animation: none;
@@ -503,7 +503,7 @@ export default {
 .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  padding: 0 3%;
+  padding: 0 10%;
   gap: 1rem;
 }
 
@@ -552,7 +552,7 @@ export default {
   position: relative;
   z-index: 2;
   margin: 0px;
-  padding: 0px; 
+  padding: 10px; 
   background-color: var(--card-bg);
   border-radius: inherit;
   text-align: left;
@@ -633,7 +633,7 @@ body.dark-mode .feature-icon {
 
 /* technology section */
 .technology-section {
-  padding: 10% 5%;
+  padding: 10% 10%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -644,6 +644,7 @@ body.dark-mode .feature-icon {
 .technology-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
   padding-bottom: 50px;
 }
 
@@ -688,7 +689,7 @@ body.dark-mode .feature-icon {
   display: flex;
   flex-direction: column;
   /* gap: 1rem; */
-  padding: 0 3%;
+  padding: 0 10%;
 }
 
 .feature-row {
@@ -743,7 +744,8 @@ body.dark-mode .feature-icon {
 
 /* question section*/
 .question-section {
-  padding: 0 3%;
+  padding: 0 10%;
+  padding-bottom: 10%;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
