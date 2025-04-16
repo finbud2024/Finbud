@@ -25,7 +25,7 @@ import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 import AgentPage from "@/views/AgentPage.vue";
-
+import ForgotPassword from "@/views/ForgotPassword.vue";
 const routes = [
   {
     path: "/",
@@ -165,7 +165,13 @@ const routes = [
     path: "/agent/",
     name: "AgentPage",
     component: AgentPage,
-  }
+  },
+  {
+    path: "/forgot-password",
+    name: "ForgotPassword",
+    component: ForgotPassword,
+  },
+
 ];
 
 const router = createRouter({
