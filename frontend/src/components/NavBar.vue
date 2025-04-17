@@ -27,7 +27,6 @@
               @click="toggleAboutDropdown(false)"
               >Technology</router-link
             >
-           
           </div>
         </li>
 
@@ -56,8 +55,13 @@
               @click="toggleAboutDropdown(false)"
               >Investment Calculator</router-link
             >
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
-            
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdown(false)"
+              >Mortgage Calculator</router-link
+            >
+
             <router-link
               to="/super-investors"
               class="super-investors"
@@ -139,14 +143,14 @@
           <div class="services-dropdown dropbtn">
             Fin Agent <span class="arrow-down"></span>
           </div>
-           <div class="dropdown-content" v-show="isDropdownOpenAgent">
+          <div class="dropdown-content" v-show="isDropdownOpenAgent">
             <router-link
               to="/agent"
               class="agent"
               @click="toggleDropdownEdu(false)"
               >Agent</router-link
             >
-           </div>
+          </div>
         </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">
