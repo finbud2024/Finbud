@@ -5,6 +5,9 @@ import axios from "axios";
 import dotenv from "dotenv";
 import { BraveSearch } from "@langchain/community/tools/brave_search";
 import { isAuthenticated, isAdmin } from '../middleware/auth.js';
+import Transaction from "../Database Schema/Transaction.js";
+import UserHolding from "../Database Schema/UserHolding.js";
+import Portfolio from "../Database Schema/Portfolio.js";
 import OpenAI from 'openai';
 // import { YoutubeTranscript } from 'youtube-transcript';
 // import { getVideoId } from '../utils/getVideoId.js';
@@ -57,6 +60,10 @@ chatRoute.route('/chats')
 
       if (req.body.followUpQuestions) {
         chatBody.followUpQuestions = req.body.followUpQuestions;
+      }
+
+      if (req.body.htmlContent) {
+        chatBody.htmlContent = req.body.htmlContent;
       }
 
       const chat = new Chat(chatBody);
@@ -254,5 +261,139 @@ chatRoute.route('/chats/t/:threadId')
       return res.status(501).send("Unexpected error occurred when deleting chats with threadId: " + threadId + " in database: " + err);
     }
   });
+
+// GET: Analyze User Portfolio
+chatRoute.route("/chats/analyze-portfolio/:userId")
+  .get(async (req, res) => {
+    const userId = req.params.userId;
+    console.log('in /analyze-portfolio/:userId Route (POST) analyze portfolio for userId:' + JSON.stringify(userId));
+    try {
+      const userHolding = await UserHolding.find({ userId: userId });
+      const userPortfolio = await Portfolio.find({ userId: userId }); 
+      const transactions = await Transaction.find({ userId: userId });
+      
+      let totalValue = 0;
+      transactions.forEach((transaction) => {
+        if (transaction.type === "Income"){
+          totalValue += transaction.amount;
+        } else {
+          totalValue -= transaction.amount; 
+        }
+      })
+      console.log("Total value of transactions: ", totalValue);
+
+      if (userPortfolio.length > 0 && userPortfolio[0].portfolio) {
+        userPortfolio[0].portfolio = userPortfolio[0].portfolio.slice(0, 365);
+      }
+      console.log("User Holdings: ", userPortfolio[0].portfolio);    
+      
+
+      const openai = new OpenAI({
+        apiKey: process.env.VUE_APP_OPENAI_API_KEY
+      });
+      
+      
+      const portfolioData = userPortfolio[0].portfolio
+
+      
+    
+     
+      const incomeTransactions = transactions.filter(t => t.type === "Income");
+      const expenseTransactions = transactions.filter(t => t.type !== "Income");
+      
+      const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
+      const totalExpenses = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
+      
+  
+      const prompt = `
+      You are a professional financial advisor analyzing a user's complete financial picture. Please provide a detailed analysis in a JSON format with TWO separate sections.
+      
+      EMPHASIZE: VERY DETAILED ANALYSIS in form of a paragraph, providing useful insights and suggestions. Make sure that people without finance background can understand your analysis. 
+      
+      Be friendly, energetic and youthful in your response. Use simple, easy-to-understand language without complex terminology. Skip any missing or illogical data without mentioning gaps. Include specific calls to action at the end of each section. Be detailed but concise - don't be verbose.
+      
+      USE HTML FORMATTING: Use colors, bold, and other HTML elements to highlight key information:
+      - Use <span style="color:#4CAF50;"><strong>green text</strong></span> for positive trends and insights
+      - Use <span style="color:#F44336;"><strong>red text</strong></span> for warnings or negative trends
+      - Use <span style="color:#FFD700;"><strong>yellow text</strong></span> for important tips and recommendations
+      - Use <strong>bold text</strong> for key metrics and figures
+      - Use <h3> and <h4> tags for section headers
+      - Use <ul> and <li> for structured lists
+      - Use <div style="background-color:#E3F2FD; padding:10px; border-radius:5px; margin:10px 0;"> for callout boxes with important information
+      
+      PART 1: INVESTMENT ANALYSIS
+      Analyze the following stock holdings and portfolio performance data:
+      
+      USER PORTFOLIO SUMMARY:
+      - Portfolio: ${portfolioData}. NOTE, the most recent 365 days of data is provided. Sort the portfolio by date in ascending order.
+      - Stock Holdings: ${userHolding}. NOTE, the field purchasedPrice is the TOTAL value that the user paid for stocks of that quantities.
+      - Portfolio Performance Data Points: ${portfolioData.length} days
+      
+      
+      PART 2: TRANSACTION ANALYSIS
+      Analyze the following income and expense transaction data, look into the type and the description of the transactions, and provide insights into the user's spending patterns and financial health, give advice whether the user should change their spending habits or not.:
+      
+      TRANSACTION SUMMARY:
+      - Total Income: $${totalIncome.toFixed(2)}
+      - Total Expenses: $${totalExpenses.toFixed(2)}
+      - Net Cash Flow: $${(totalIncome - totalExpenses).toFixed(2)}
+      - Income Transactions: ${incomeTransactions.length}
+      - Expense Transactions: ${expenseTransactions.length}
+      - Every transaction: ${transactions}
+      
+      Your response must be a valid JSON with the following structure:
+      {
+        "stock": "<div class='analysis-section'><h2>Investment Portfolio Analysis</h2>YOUR DETAILED HTML ANALYSIS HERE. Use proper HTML tags for formatting (h3, p, ul, li, strong, etc.). Include sections for portfolio health, performance analysis, risk assessment, and recommendations.</div>",
+        
+        "transaction": "<div class='analysis-section'><h2>Transaction Analysis</h2>YOUR DETAILED HTML ANALYSIS HERE. Use proper HTML tags for formatting (h3, p, ul, li, strong, etc.). Include sections for income vs expenses, spending patterns, and financial recommendations.</div>"
+      }
+      
+      IMPORTANT: Ensure your response is properly formatted as valid JSON with escaped quotes in string values. Use proper HTML formatting tags instead of markdown. Do not use any icons in your response.
+      `;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional financial advisor specializing in portfolio analysis and personal finance. You always respond with properly formatted JSON containing HTML content."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 4096,
+        response_format: { type: "json_object" } 
+      });
+
+      let analysis;
+      try {
+       
+        analysis = JSON.parse(response.choices[0].message.content);
+      } catch (err) {
+        console.error("Error parsing JSON response:", err);
+    
+        analysis = {
+          stock: "Error parsing analysis. Please try again.",
+          transaction: "Error parsing analysis. Please try again."
+        };
+      }
+
+      return res.status(200).json({
+        analysis,
+        portfolio: userPortfolio[0].portfolio,
+        holdings: userHolding,
+        transactions: {
+          income: incomeTransactions,
+          expenses: expenseTransactions
+        },
+      });
+    } catch (error) {
+      console.error("Error analyzing portfolio:", error);
+      return res.status(500).send("Error analyzing portfolio: " + error.message);
+    }
+  })
 
 export default chatRoute;

@@ -29,7 +29,7 @@ import ChatComponent from "@/components/ChatComponent.vue";
 
 // Defining routes
 import AgentPage from "@/views/AgentPage.vue";
-
+import ForgotPassword from "@/views/ForgotPassword.vue";
 const routes = [
   {
     path: "/",
@@ -178,7 +178,13 @@ const routes = [
   {
     path: '/chat-view',
     component: ChatComponent,  // Ensure ChatComponent is imported
-  }
+  },
+  {
+    path: "/forgot-password",
+    name: "ForgotPassword",
+    component: ForgotPassword,
+  },
+
   
 ];
 
