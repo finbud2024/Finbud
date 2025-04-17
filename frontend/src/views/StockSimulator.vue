@@ -1,44 +1,44 @@
 <template>
   <div class="dashboard">
     <!-- Combined header section with both dashboard header and chatbot side by side -->
-    <h1>Stock Simulator</h1>
+    <h1>{{ $t('stockSimulator') }}</h1>
     <nav class="navbar">
       <ul>
         <li
           @click="activeSection = 'investment'"
           :class="{ active: activeSection === 'investment' }"
         >
-          Investment
+          {{ $t('investment') }}
         </li>
         <li
           @click="activeSection = 'portfolio'"
           :class="{ active: activeSection === 'portfolio' }"
         >
-          Your Portfolio
+          {{ $t('portfolio') }}
         </li>
         <li
           @click="activeSection = 'transactionHistory'"
           :class="{ active: activeSection === 'transactionHistory' }"
         >
-          Transaction History
+          {{ $t('transactionHistory') }}
         </li>
         <li
           @click="activeSection = 'filters'"
           :class="{ active: activeSection === 'filters' }"
         >
-          Filters
+          {{ $t('filters') }}
         </li>
         <li
           @click="activeSection = 'quiz'"
           :class="{ active: activeSection === 'quiz' }"
         >
-          Quiz
+          {{ $t('quiz') }}
         </li>
         <li
           @click="activeSection = 'predictiveCalc'"
           :class="{ active: activeSection === 'predictiveCalc' }"
         >
-          Predictive Calculator
+          {{ $t('predictiveCalc') }}
         </li>
       </ul>
     </nav>
