@@ -245,7 +245,7 @@
 
             <div class="goals">
             <div v-for="goal in filteredGoals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
-                <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
+                <img :src="getGoalImage(goal.category)" alt="Goal Image" class="goal-image"/>
                 <div class="goal-content">
                 <div class="goal-icon">
                     <i :class="goal.icon"></i>
@@ -654,6 +654,20 @@ methods: {
         } finally {
           this.isAnalyzingCategory = false;
         }
+      },
+
+      getGoalImage(category) {
+        const categoryImages = {
+          'Savings': require('@/assets/goal-categories/savings.webp'),
+          'Investment': require('@/assets/goal-categories/investment.png'),
+          'Entertainment': require('@/assets/goal-categories/entertainment.png'),
+          'Education':require('@/assets/goal-categories/education.png'),
+          'Vehicle': require('@/assets/goal-categories/vehicle.png'),
+          'Health': require('@/assets/goal-categories/health.png'),
+          'Default': require('@/assets/goal-categories/default.png') // Fallback image
+        };
+        
+        return categoryImages[category] || categoryImages['Default'];
       },
 
     // Bot Chat methods
@@ -1443,8 +1457,9 @@ methods: {
 }
 
 .goal-image {
-  width: 100%;
-  height: auto;
+  width: 50%;
+  height: 50%;
+  margin: auto;
   border-radius: 10px 10px 0 0;
 }
 
