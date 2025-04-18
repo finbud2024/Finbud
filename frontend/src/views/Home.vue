@@ -4,7 +4,7 @@
       <div class="intro-text">
         <div class="title animate fade-in">Empowering smarter finance decisions </div>
         <div class="description animate fade-in">
-          Anytime answers for finance questions with FinBud
+          {{  signInTitle }}
         </div>
         <div class="animate fade-in">
           <UserInput @send-message="chatNow" class="front-search-bar" />
@@ -240,9 +240,7 @@ export default {
     const {
       typingText: signInTitle,
       startTyping: startTypingSignInTitle
-    } = useTypingEffect('Anytime answers for finance questions with FinBud', {
-      reverseEffect: false
-    })
+    } = useTypingEffect('Anytime answers for finance questions with FinBud')
     const {
       typingText: signInDescription,
       startTyping: startTypingSignInDescription
@@ -434,7 +432,7 @@ export default {
   display: flex;
   text-align: center;
   flex-direction: column;
-  font-size: clamp(6rem, 5vw, 8rem);
+  font-size: clamp(3rem, 4.5vw, 8rem);
   flex-wrap: wrap;
   animation: none;
   font-weight: 700;
@@ -444,7 +442,7 @@ export default {
   color: var(--text-primary);
   display: flex;
   justify-content: center;
-  font-size: 2.4rem;
+  font-size: 2rem;
   padding-top: 20px;
   flex-wrap: wrap;
   animation: none;
@@ -466,7 +464,7 @@ export default {
 
 .front-search-bar {
   position: relative;
-  width: min(2000px, 100vw);
+  width: min(2000px, 90vw);
   height: auto;
   color: var(--text-primary);
   display: flex;
@@ -496,14 +494,14 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-right: 8%;
+  /* padding-right: 8%; */
 }
 
 /*grid*/
 .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  padding: 0 3%;
+  padding: 0 10%;
   gap: 1rem;
 }
 
@@ -537,6 +535,7 @@ export default {
 .dynamic-border::before {
   content: "";
   position: absolute;
+  width: 100%;
   inset: 0px;
   pointer-events: none;
   border-radius: inherit;
@@ -632,7 +631,7 @@ body.dark-mode .feature-icon {
 
 /* technology section */
 .technology-section {
-  padding: 10% 5%;
+  padding: 10% 10%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -643,6 +642,7 @@ body.dark-mode .feature-icon {
 .technology-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
   padding-bottom: 50px;
 }
 
@@ -687,7 +687,7 @@ body.dark-mode .feature-icon {
   display: flex;
   flex-direction: column;
   /* gap: 1rem; */
-  padding: 0 3%;
+  padding: 0 10%;
 }
 
 .feature-row {
@@ -742,7 +742,8 @@ body.dark-mode .feature-icon {
 
 /* question section*/
 .question-section {
-  padding: 0 3%;
+  padding: 0 10%;
+  padding-bottom: 10%;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
@@ -830,6 +831,11 @@ body.dark-mode .feature-icon {
 
 
 /* Global settings and the main content area */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 #main-content {
   display: flex;
   flex-direction: column;

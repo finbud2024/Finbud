@@ -363,6 +363,7 @@ body.dark-mode {
 
 /* Update content area */
 .content {
+  margin-top: 5%;
   background-color: var(--content-bg);
 }
 
