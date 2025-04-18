@@ -8,7 +8,7 @@ import * as faSolid from "@fortawesome/free-solid-svg-icons";
 import * as faRegular from "@fortawesome/free-regular-svg-icons";
 import * as faBrand from "@fortawesome/free-brands-svg-icons";
 import store from "./store"; // Import the vuex store
-import VueGoogleMaps from "@fawmi/vue-google-maps"; 
+import VueGoogleMaps from "@fawmi/vue-google-maps";
 import i18n from "./i18n";
 
 // Add specific icons to the library
@@ -31,8 +31,8 @@ const icons = [
   faSolid.faLocationDot,
   faRegular.faStar,
   faRegular.faBell,
-  faSolid.faMoon,    
-  faSolid.faSun
+  faSolid.faMoon,
+  faSolid.faSun,
 ];
 library.add(...icons); // Use the spread operator to add the icons
 
@@ -41,7 +41,7 @@ const app = createApp(App);
 
 app.use(VueGoogleMaps, {
   load: {
-      key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY, 
+    key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
   },
 });
 

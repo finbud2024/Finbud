@@ -1,77 +1,161 @@
 <template>
   <nav class="nav-bar" id="app">
     <router-link to="/">
-      <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo">
+      <img
+        src="@/assets/home-page/FinbudSmallLogo.png"
+        class="navbar-brand"
+        alt="FinBud Logo"
+      />
     </router-link>
     <div class="nav-right">
       <ul class="nav-items">
         <li>
           <router-link to="/chat-view" class="chatview">Chat</router-link>
         </li>
-        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
+        <li
+          class="dropdown"
+          @mouseenter="toggleAboutDropdown(true)"
+          @mouseleave="toggleAboutDropdown(false)"
+        >
           <div class="services-dropdown dropbtn">
             Overview <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
-            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">About</router-link>
-            <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">Technology</router-link>
-
+            <router-link
+              to="/about"
+              class="about"
+              @click="toggleAboutDropdown(false)"
+              >About</router-link
+            >
+            <router-link
+              to="/tech"
+              class="technology"
+              @click="toggleAboutDropdown(false)"
+              >Technology</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)"
-          @mouseleave="toggleDropdown(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdown(true)"
+          @mouseleave="toggleDropdown(false)"
+        >
           <div class="services-dropdown dropbtn">
             Fin Manage <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">Goal</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">Risk
-              Analysis</router-link>
-            <router-link to="/investment-calculator" class="investment-calculator"
-              @click="toggleAboutDropdown(false)">Investment Calculator</router-link>
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage
-              Calculator</router-link>
+            <router-link to="/goal" class="goal" @click="toggleDropdown(false)"
+              >Goal</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdown(false)"
+              >Risk Analysis</router-link
+            >
+            <router-link
+              to="/investment-calculator"
+              class="investment-calculator"
+              @click="toggleAboutDropdown(false)"
+              >Investment Calculator</router-link
+            >
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdown(false)"
+              >Mortgage Calculator</router-link
+            >
 
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">Super
-              Investors</router-link>
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownInvest(false)"
+              >Super Investors</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownInvest(true)"
-          @mouseleave="toggleDropdownInvest(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownInvest(true)"
+          @mouseleave="toggleDropdownInvest(false)"
+        >
           <div class="services-dropdown dropbtn">
             Fin Invest <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
-            <router-link to="/stock-simulator" class="simulator"
-              @click="toggleDropdownInvest(false)">Simulator</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdownInvest(false)">Quant</router-link>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownInvest(false)"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownInvest(false)"
+              >Quant</router-link
+            >
 
-            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownInvest(false)">Quant
-              Simulator</router-link>
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownInvest(false)"
+              >Quant Simulator</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownEdu(true)"
-          @mouseleave="toggleDropdownEdu(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownEdu(true)"
+          @mouseleave="toggleDropdownEdu(false)"
+        >
           <div class="services-dropdown dropbtn">
             Fin Edu <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenEdu">
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownEdu(false)">Quiz</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdownEdu(false)">Event</router-link>
-            <router-link to="/forum" class="forum" @click="toggleDropdownEdu(false)">Forum</router-link>
+            <router-link
+              to="/quizz"
+              class="quizz"
+              @click="toggleDropdownEdu(false)"
+              >Quiz</router-link
+            >
+            <router-link
+              to="/event"
+              class="event"
+              @click="toggleDropdownEdu(false)"
+              >Event</router-link
+            >
+            <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdownEdu(false)"
+              >Forum</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownAgent(true)"
-          @mouseleave="toggleDropdownAgent(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownAgent(true)"
+          @mouseleave="toggleDropdownAgent(false)"
+        >
           <div class="services-dropdown dropbtn">
             Fin Agent <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenAgent">
-            <router-link to="/agent" class="agent" @click="toggleDropdownEdu(false)">Agent</router-link>
+            <router-link
+              to="/agent"
+              class="agent"
+              @click="toggleDropdownEdu(false)"
+              >Agent</router-link
+            >
           </div>
         </li>
 
@@ -83,20 +167,42 @@
           <FinCoinDisplay :balance="finCoinBalance" />
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)"
-          @mouseleave="toggleProfileDropdown(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleProfileDropdown(true)"
+          @mouseleave="toggleProfileDropdown(false)"
+        >
           <img :src="profileImage" alt="User Image" class="user-image" />
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-            <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-              <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image" />
+            <router-link
+              to="/profile"
+              class="profile"
+              @click="toggleProfileDropdown(false)"
+            >
+              <img
+                :src="profileImage"
+                alt="User Image"
+                class="inside-dropdown-user-image"
+              />
               <p>{{ profileName }}</p>
             </router-link>
-            <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-              <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
+            <router-link
+              to="#"
+              class="dark-mode-toggle"
+              @click="toggleDarkMode"
+            >
+              <font-awesome-icon
+                :icon="isDarkMode ? 'fa-moon' : 'fa-sun'"
+                class="icon"
+              />
               <p>{{ isDarkMode ? "Dark Mode" : "Light Mode" }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
-              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
+              <font-awesome-icon
+                icon="fa-solid fa-right-from-bracket"
+                class="icon"
+              />
               <p>Log Out</p>
             </router-link>
           </div>
@@ -108,43 +214,103 @@
       </ul>
 
       <!-- Mobile version -->
-      <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
+      <div
+        class="dropdown mobile-only"
+        :class="{ active: isDropdownOpenMobile }"
+      >
         <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
           <div class="brand-mobile">FinBud</div>
           <font-awesome-icon icon="fa-solid fa-chevron-down" />
         </div>
-        <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
-          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">Chat</router-link>
-          <router-link to="/about" class="about" @click="toggleDropdownMobile">About</router-link>
-          <router-link to="/tech" class="technology" @click="toggleDropdownMobile">Technology</router-link>
+        <div
+          class="dropdown-content"
+          v-show="isDropdownOpenMobile"
+          @mouseleave="closeDropdownMobile"
+        >
+          <router-link
+            to="/chat-view"
+            class="chatview"
+            @click="toggleDropdownMobile"
+            >Chat</router-link
+          >
+          <router-link to="/about" class="about" @click="toggleDropdownMobile"
+            >About</router-link
+          >
+          <router-link
+            to="/tech"
+            class="technology"
+            @click="toggleDropdownMobile"
+            >Technology</router-link
+          >
           <div class="authenticated" v-if="isAuthenticated">
             <strong>Fin Manage</strong>
-            <router-link to="/goal" class="goal" @click="toggleDropdownMobile">Goal</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">Risk
-              Analysis</router-link>
+            <router-link to="/goal" class="goal" @click="toggleDropdownMobile"
+              >Goal</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdownMobile"
+              >Risk Analysis</router-link
+            >
 
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdownMobile">Mortgage
-              Calculator</router-link>
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdownMobile"
+              >Mortgage Calculator</router-link
+            >
 
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">Super
-              Investors</router-link>
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownMobile"
+              >Super Investors</router-link
+            >
 
             <strong>Fin Invest</strong>
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">Quant</router-link>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownMobile"
+              >Simulator</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownMobile"
+              >Quant</router-link
+            >
 
-            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">Quant
-              Simulator</router-link>
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownMobile"
+              >Quant Simulator</router-link
+            >
 
             <strong>Fin Edu</strong>
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">Quiz</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdownMobile">Event</router-link>
-            <router-link to="/forum" class="forum" @click="toggleDropdownMobile">Forum</router-link>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
+              >Quiz</router-link
+            >
+            <router-link to="/event" class="event" @click="toggleDropdownMobile"
+              >Event</router-link
+            >
+            <router-link to="/forum" class="forum" @click="toggleDropdownMobile"
+              >Forum</router-link
+            >
 
-            <router-link to="#" @click="logout" class="logout">Log Out</router-link>
+            <router-link to="#" @click="logout" class="logout"
+              >Log Out</router-link
+            >
           </div>
-          <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button"
-            @click="toggleDropdownMobile">Log In</router-link>
+          <router-link
+            to="/login"
+            v-if="!isAuthenticated && !isAuthLoading"
+            class="login-button"
+            @click="toggleDropdownMobile"
+            >Log In</router-link
+          >
           <div v-if="isAuthLoading" class="auth-loading-mobile">
             <div class="loading-indicator"></div>
           </div>
@@ -298,7 +464,11 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .nav-bar {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0));
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0)
+  );
   width: 100%;
   height: 80px;
   display: flex;
