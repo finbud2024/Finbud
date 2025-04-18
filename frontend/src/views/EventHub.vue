@@ -2,19 +2,29 @@
     <div class="EventHubContainer">
         <nav class="w-full p-4 bg-white shadow-sm" data-aos="fade-left">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="event-navbar relative w-full md:w-1/2">
-                    <input 
-                        type="text" 
-                        v-model="searchQuery" 
-                        :placeholder="isMobile ? '' : 'Search events...'" 
-                        class="search-bar w-full"
-                        @focus="searchExpanded = true"
-                        @blur="searchExpanded = false"
-                    />
-                    <font-awesome-icon 
-                        icon="fa-solid fa-magnifying-glass" 
-                        class="search-icon"
-                    />
+                <div style = "display:flex; justify-content: space-around;">
+                    <div class="event-navbar relative w-full md:w-1/2">
+                        <input 
+                            type="text" 
+                            v-model="searchQuery" 
+                            :placeholder="isMobile ? '' : $t('eventHub.searchPlaceholder')" 
+                            class="search-bar w-full"
+                            @focus="searchExpanded = true"
+                            @blur="searchExpanded = false"
+                        />
+                        <font-awesome-icon 
+                            icon="fa-solid fa-magnifying-glass" 
+                            class="search-icon"
+                        />
+                    </div>
+                    <div class="portfolio-language-switcher">
+                        <button @click="switchLanguage('en')" :class="{ active: $i18n.locale === 'en' }">
+                        <img src="@/assets/us.png" alt="English" />
+                        </button>
+                        <button @click="switchLanguage('vi')" :class="{ active: $i18n.locale === 'vi' }">
+                        <img src="@/assets/vn.png" alt="Tiếng Việt" />
+                        </button>
+                    </div>
                 </div>
 
                 <div class="event-navbar nav-btn">
@@ -22,17 +32,17 @@
                         <div class="round">
                             <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
                         </div>
-                        <p v-if="!isMobile">Explore Near You</p>
+                        <p v-if="!isMobile">{{ $t('eventHub.exploreNearby') }}</p>
                     </div>
                     <div class="event-btn">
                         <div class="round-star">
                             <font-awesome-icon icon="fa-regular fa-star" class="btn-icon" />
                         </div>
-                        <p v-if="!isMobile">Saved</p>
+                        <p v-if="!isMobile">{{ $t('eventHub.saved') }}</p>
                     </div>
                     <div class="event-btn">
                         <font-awesome-icon icon="fa-regular fa-bell" class="btn-icon" />
-                        <p v-if="!isMobile">All Events</p>
+                        <p v-if="!isMobile">{{ $t('eventHub.allEvents') }}</p>
                     </div>
                 </div>
             </div>
@@ -41,7 +51,7 @@
             <img :src="require('@/assets/Banner.png')" alt="Banner" class="banner-img" />
         </div>
         <div class="event-category" data-aos="fade-right">
-            <h3 class="text-2xl md:text-3xl text-center">Event Categories You May Like</h3>
+            <h3 class="text-2xl md:text-3xl text-center">{{ $t('eventHub.eventCategories') }}</h3>
             <div class="event-category-bg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div v-for="(category, index) in categories" :key="index" class="category-btn">
                     <img :src="category.image" :alt="category.name" class="category-img" />
@@ -53,7 +63,7 @@
             <section class="events-section">
                 <div class="content-wrapper flex flex-col md:flex-row">
                     <div class="left-div w-full md:w-1/4 mb-6 md:mb-0">
-                        <h2 class="trending-title">Trending</h2>
+                        <h2 class="trending-title">{{ $t('eventHub.trending') }}</h2>
                         <div v-for="(event, index) in topTrendingEvents" :key="index" class="event-item">
                             <a :href="event.url" class="event-link">
                                 <span class="event-number">{{ index + 1 }}. {{ event.title }}</span>
@@ -117,7 +127,7 @@
         </div>
         <div class="frame3" data-aos="flip-left">
             <div class="events-container">
-                <h3 class="text-2xl md:text-3xl mb-6">All Events</h3>
+                <h3 class="text-2xl md:text-3xl mb-6">{{ $t('eventHub.allEvents') }}</h3>
                 <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card" data-aos="fade-left">
                         <img v-if="event.image" :src="event.image" alt="Event image" class="event-image"/>
@@ -128,7 +138,7 @@
                         <div class="event-actions">
                             <button class="star-button">⭐</button>
                             <button class="read-more-button" @click="openEventUrl(event.url)">
-                                Read more
+                                {{ $t('eventHub.readMore') }}
                             </button>
                         </div>
                     </div>
@@ -168,13 +178,7 @@ export default {
             searchQuery: '',
             searchExpanded: false,
             isMobile: false,
-            categories: [
-                { name: 'Conference & Summit', image: require('@/assets/career fair.png') },
-                { name: 'Workshop & Training', image: require('@/assets/workshop.png') },
-                { name: 'Webinars', image: require('@/assets/career fair.png') },
-                { name: 'Networking', image: require('@/assets/workshop.png') },
-                { name: 'Career Fairs', image: require('@/assets/career fair.png') }
-            ]
+            
         };
     },
     computed: {
@@ -183,6 +187,15 @@ export default {
         },
         remainingEvents() {
             return this.trendingEvents.slice(3, 6);
+        },
+        categories() {
+            return [
+                { name: this.$t('eventHub.categories.conference'), image: require('@/assets/career fair.png') },
+                { name: this.$t('eventHub.categories.workshop'), image: require('@/assets/workshop.png') },
+                { name: this.$t('eventHub.categories.webinars'), image: require('@/assets/career fair.png') },
+                { name: this.$t('eventHub.categories.networking'), image: require('@/assets/workshop.png') },
+                { name: this.$t('eventHub.categories.careerFairs'), image: require('@/assets/career fair.png') }
+            ];
         }
     },
     methods: {
@@ -193,8 +206,14 @@ export default {
             this.loading = true;
             try {
                 const apiKey = process.env.VUE_APP_NEWS_API_KEY;
+                
+                // Calculate date 30 days ago because freeAPI does not allow us to get news furthur than 30 days ago
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const dateString = thirtyDaysAgo.toISOString().split('T')[0];
+                
                 const response = await axios.get(
-                    `https://api.worldnewsapi.com/search-news?country=us&language=en&categories=business,technology&earliest-publish-date=2025-02-24&number=8&api-key=${apiKey}`
+                    `https://api.worldnewsapi.com/search-news?country=us&language=en&categories=business,technology&earliest-publish-date=${dateString}&number=8&api-key=${apiKey}`
                 );
                 if (response.data.news) {
                     this.trendingEvents = response.data.news.filter(article => article.image);
@@ -225,6 +244,9 @@ export default {
             if (!summary) return "";
             const maxLength = 106; // Length of the reference summary
             return summary.length > maxLength ? summary.substring(0, maxLength) + "..." : summary;
+        },
+        switchLanguage(lang) {
+        this.$i18n.locale = lang;
         }
     },
     mounted() {
@@ -547,6 +569,34 @@ export default {
 
 .close-button:hover {
     background-color: #0056b3;
+}
+
+.portfolio-language-switcher {
+  display: flex;
+  gap: 10px;
+}
+
+.portfolio-language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.portfolio-language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.portfolio-language-switcher button:hover img {
+  transform: scale(1.1);
+}
+
+.portfolio-language-switcher button.active img {
+  border-color: #007bff;
 }
 
 @media (max-width: 768px) {

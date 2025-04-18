@@ -65,7 +65,42 @@ const messages = {
     totalPurchasedValue: "Total Purchased Value",
     currentMarketValue: "Current Market Value",
     gainLoss: "Gain/Loss",
-    percentChange: "% Change"
+    percentChange: "% Change",
+
+    //Stock simulator navbar
+    stockSimulator: "Stock Simulator",
+    investment: "Investment",
+    portfolio: "Your Portfolio",
+    transactionHistory: "Transaction History",
+    filters: "Filters",
+    quiz: "Quiz",
+    predictiveCalc: "Predictive Calculator",
+
+    //Envent Hub
+    eventHub: {
+      searchPlaceholder: "Search events...",
+      exploreNearby: "Explore Near You",
+      saved: "Saved",
+      allEvents: "All Events",
+      eventCategories: "Event Categories You May Like",
+      trending: "Trending",
+      readMore: "Read more",
+      categories: {
+        conference: "Conference & Summit",
+        workshop: "Workshop & Training",
+        webinars: "Webinars",
+        networking: "Networking",
+        careerFairs: "Career Fairs"
+      },
+      eventMap: {
+        upcomingEvents: "Upcoming Events",
+        eventImage: "Event Image",
+        date: "Date",
+        host: "Host",
+        location: "Location",
+        tba: "TBA"
+      }
+    }
   },
   vi: {
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
@@ -131,7 +166,42 @@ const messages = {
     totalPurchasedValue: "Tổng Giá Trị Mua",
     currentMarketValue: "Giá Trị Thị Trường",
     gainLoss: "Lãi/Lỗ",
-    percentChange: "% Thay Đổi"
+    percentChange: "% Thay Đổi",
+
+    //Stock simulator navbar
+    stockSimulator: "Mô Phỏng Chứng Khoán",
+    investment: "Đầu Tư",
+    portfolio: "Danh Mục",
+    transactionHistory: "Lịch Sử Giao Dịch",
+    filters: "Bộ Lọc",
+    quiz: "Câu Hỏi",
+    predictiveCalc: "Máy Tính Phỏng Đoán",
+
+    //Event Hub
+    eventHub: {
+      searchPlaceholder: "Tìm kiếm sự kiện...",
+      exploreNearby: "Khám phá gần bạn",
+      saved: "Đã lưu",
+      allEvents: "Tất cả sự kiện",
+      eventCategories: "Danh mục sự kiện bạn có thể thích",
+      trending: "Xu hướng",
+      readMore: "Xem thêm",
+      categories: {
+        conference: "Hội nghị & Hội thảo",
+        workshop: "Workshop & Đào tạo",
+        webinars: "Hội thảo trực tuyến",
+        networking: "Kết nối mạng lưới",
+        careerFairs: "Ngày hội việc làm"
+      },
+      eventMap: {
+        upcomingEvents: "Sự kiện sắp tới",
+        eventImage: "Hình ảnh sự kiện",
+        date: "Ngày",
+        host: "Người tổ chức",
+        location: "Địa điểm",
+        tba: "Chưa xác định"
+      }
+    }
   }
 };
 

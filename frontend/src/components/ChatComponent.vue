@@ -263,6 +263,14 @@ export default {
                 
 								const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=sell`;
                 				window.open(url, "_blank");
+
+								const res = `We've created the sell request for ${quantity} ${stockSymbol} shares.`;
+								const Responsegpt = await gptServices([{ 
+									role: "user", 
+									content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
+								}]);
+								answers.push(Responsegpt);
+
 								// Wait for the page to load and auto-click the Preview Order button
 								setTimeout(() => {
                 					window.addEventListener("load", () => {
@@ -567,6 +575,14 @@ export default {
 				
 							const url = `${baseUrl}/goal`;
 							window.open(url, "_blank");
+
+							// Create response in user's language
+							const res = "We've created the goal section for you to add your goals.";
+							const Responsegpt = await gptServices([{ 
+								role: "user", 
+								content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
+							}]);
+							answers.push(Responsegpt);
 
 							setTimeout(() => {
 								window.addEventListener("load", () => {
