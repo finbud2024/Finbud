@@ -1,7 +1,10 @@
 <template>
   <aside class="side-bar">
     <div class="sidebar-header">
-      <span>Chat Threads</span>
+      <!-- <span>Chat Threads</span> -->
+      <router-link to="/">
+        <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo">
+      </router-link>
     </div>
     <button class="add-thread-btn" @click="addThread()">
       <font-awesome-icon icon="fa-solid fa-plus" />
@@ -68,7 +71,7 @@ export default {
       immediate: true,
       handler(newName) {
         if (newName.length === 0 || newName === null) return;
-        this.threads.forEach( (thread, index) => {
+        this.threads.forEach((thread, index) => {
           if (thread.id === this.$store.getters['threads/getThreadID']) {
             thread.editedName = newName;
             this.saveThreadName(thread, index);

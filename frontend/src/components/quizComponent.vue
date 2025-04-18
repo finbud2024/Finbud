@@ -10,7 +10,6 @@
       v-model="searchQuery"
       @search="createRoadmap"
       placeholder="What do you want to learn today..."
-      data-aos="flip-right"
     />
 
     <div class="goal-form-card" data-aos="zoom-in-up">

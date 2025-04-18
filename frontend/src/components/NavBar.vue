@@ -1,6 +1,12 @@
 <template>
   <nav class="nav-bar" id="app">
-    <router-link to="/" class="navbar-brand">FinBud</router-link>
+    <router-link to="/">
+      <img
+        src="@/assets/home-page/FinbudSmallLogo.png"
+        class="navbar-brand"
+        alt="FinBud Logo"
+      />
+    </router-link>
     <div class="nav-right">
       <ul class="nav-items">
         <li>
@@ -27,7 +33,6 @@
               @click="toggleAboutDropdown(false)"
               >Technology</router-link
             >
-           
           </div>
         </li>
 
@@ -56,8 +61,13 @@
               @click="toggleAboutDropdown(false)"
               >Investment Calculator</router-link
             >
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
-            
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdown(false)"
+              >Mortgage Calculator</router-link
+            >
+
             <router-link
               to="/super-investors"
               class="super-investors"
@@ -139,14 +149,14 @@
           <div class="services-dropdown dropbtn">
             Fin Agent <span class="arrow-down"></span>
           </div>
-           <div class="dropdown-content" v-show="isDropdownOpenAgent">
+          <div class="dropdown-content" v-show="isDropdownOpenAgent">
             <router-link
               to="/agent"
               class="agent"
               @click="toggleDropdownEdu(false)"
               >Agent</router-link
             >
-           </div>
+          </div>
         </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">
@@ -454,24 +464,42 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .nav-bar {
-  background-color: var(--bg-primary);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0)
+  );
   width: 100%;
+  height: 80px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0rem 2rem;
   font-family: "Space Grotesk", sans-serif;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   position: fixed;
   z-index: 1000;
 }
 
+:root.dark-mode .nav-bar {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+}
+
 .navbar-brand {
-  font-size: 2.5rem;
+  font-size: 4rem;
   font-weight: bold;
   color: var(--logo-color);
   cursor: pointer;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+:root.dark-mode .navbar-brand {
+  filter: invert(1);
+  /* This will make the PNG icons white */
 }
 
 .nav-right {
@@ -498,7 +526,7 @@ export default {
 .nav-items li .chatview {
   border-radius: 10px;
   padding: 5px 10px;
-  background-color: #45a049;
+  background-color: black;
   color: white;
   transition: background-color 0.3s ease, transform 0.3s ease;
   display: flex;
@@ -507,7 +535,7 @@ export default {
 }
 
 .nav-items li .login-button {
-  background-color: #45a049;
+  background-color: black;
   color: white;
   border: none;
   border-radius: 10px;
@@ -558,6 +586,7 @@ export default {
   height: 0;
   position: absolute;
   background-color: var(--bg-primary);
+  border-color: black;
   min-width: 100px;
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
   z-index: 1;
@@ -596,20 +625,20 @@ export default {
   align-items: center;
   border-bottom: 1px dotted rgb(226, 215, 215);
   height: 20px;
-  border-left: 2px solid #007bff;
-  border-right: 2px solid #007bff;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
 }
 
 .dropdown-content a:nth-child(1),
 .dropdown-profile a:nth-child(1) {
-  border-top: 2px solid #007bff;
+  border-top: 2px solid black;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 }
 
 .dropdown-content a:last-child,
 .dropdown-profile a:last-child {
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid black;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
 }
@@ -650,18 +679,6 @@ export default {
 .dropdown-profile a:hover {
   background-color: var(--bg-secondary);
 }
-
-/* .dropdown:hover .dropdown-content {
-  display: block;
-  opacity: 1;
-  transform: translate(-10px, 0px);
-}
-
-.dropdown:hover .dropdown-profile {
-  display: block;
-  opacity: 1;
-  transform: translate(-160px, 0px);
-} */
 
 .user-image {
   position: relative;
@@ -788,6 +805,7 @@ export default {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

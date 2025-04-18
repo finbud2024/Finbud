@@ -60,16 +60,16 @@ export default {
   },
   data() {
     return {
-      botSize: { width: 60, height: 60},
+      botSize: { width: 60, height: 60 },
       threadId: "",
       chatBubbleActive: false,
       botMessage: "",
       displayedMessage: "",
       showBotMessage: true,
-      typingSpeed: 20, 
+      typingSpeed: 20,
       isTyping: false,
-      messageVisible: false, 
-      botPosition: { right: '20px', bottom: '20px' },
+      messageVisible: false,
+      botPosition: { right: "20px", bottom: "20px" },
     };
   },
   async mounted() {
@@ -169,9 +169,9 @@ export default {
       },
       { immediate: true } // Check immediately on mount
     );
-    
+
     // Load saved position if exists
-    const savedPosition = localStorage.getItem('finbudBotPosition');
+    const savedPosition = localStorage.getItem("finbudBotPosition");
     if (savedPosition) {
       try {
         const parsed = JSON.parse(savedPosition);
@@ -180,7 +180,7 @@ export default {
           this.botPosition = parsed;
         }
       } catch (e) {
-        console.warn('Invalid saved position', e);
+        console.warn("Invalid saved position", e);
       }
     }
 
@@ -207,7 +207,8 @@ export default {
       return this.$route.path === "/about";
     },
     showHeader() {
-      return true;
+      // return true;
+      return this.$route.path !== "/chat-view";
     },
   },
   methods: {
@@ -333,9 +334,9 @@ export default {
   --finbudBotMessageBorderColor: #007bff;
   --bg-primary: #ffffff;
   --text-primary: #333333;
-  --nav-bg: #ffffff;
+  --nav-bg: transparent;
   --border-color: #dddddd;
-  --link-color: #007bff;
+  --link-color: black;
   --hover-bg: #024384;
   --card-bg: #ffffff;
   --content-bg: #ffffff;
@@ -349,7 +350,7 @@ body.dark-mode {
   /* Dark theme */
   --bg-primary: #1a1a1a;
   --text-primary: #ffffff;
-  --nav-bg: #242424;
+  --nav-bg: transparent;
   --border-color: #404040;
   --link-color: #4da3ff;
   --hover-bg: #024384;
@@ -362,6 +363,7 @@ body.dark-mode {
 
 /* Update content area */
 .content {
+  margin-top: 5%;
   background-color: var(--content-bg);
 }
 
@@ -412,7 +414,7 @@ html {
 }
 
 .content {
-  padding-top: 80px;
+  /* padding-top: 80px; */
   flex: 1;
 }
 
@@ -434,7 +436,7 @@ a:hover {
   transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
   cursor: grab;
   user-select: none;
-  touch-action: none; 
+  touch-action: none;
 }
 
 .finbudBot:active {
