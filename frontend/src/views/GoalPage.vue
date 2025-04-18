@@ -39,7 +39,7 @@
                     ? formatCurrency(totalRevenue)
                     : formatCurrency(convertToVND(totalRevenue))
                 }}</h2>
-          <p>Total Revenue</p>
+          <p>Total Income</p>
         </div>
 
         <div class="total-spend expense-card">
@@ -160,7 +160,8 @@
                   <th>Description</th>
                   <th>Date</th>
                   <th>Amount ({{ selectedCurrency }})</th>
-                  <th>Status</th>
+                  <th>Transaction Type</th>  
+                  <!-- Food & Groceries, Housing & Utilities, Transportation, Health & Medical, Shopping & Personal, Entertainment & Subscriptions, Education & Childcare -->
                   <th>Transaction</th>
                 </tr>
               </thead>

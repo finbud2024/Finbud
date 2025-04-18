@@ -108,7 +108,7 @@ export default {
             },
             title: {
               display: true,
-              text: "DAILY TRANSACTION OVERVIEW",
+              text: "DAILY BALANCE CHANGE",
             },
             tooltip: {
               callbacks: {
