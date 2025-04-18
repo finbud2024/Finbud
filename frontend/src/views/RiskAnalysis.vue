@@ -109,6 +109,12 @@
                 <StockWatch class="margin-box-content" />
               </div>
 
+              <!-- Vietnam Stock Watch Section -->
+              <div class="section-title">Vietnam Stock Watch</div>
+              <div class="margin-box">
+                <VietnamStockWatch class="margin-box-content" />
+              </div>
+
               <!-- Stock Quotes Section -->
               <div class="section-title">Stock Quotes</div>
               <div class="margin-box">
@@ -243,6 +249,7 @@ import Pagination from "../components/Risk&Chat/Pagination.vue";
 import RiskChat from "../components/Risk&Chat/RiskChat.vue";
 import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
 import StockWatch from "@/components/marketPage/StockWatch.vue";
+import VietnamStockWatch from "@/components/marketPage/VietnamStockWatch.vue";
 import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
@@ -255,6 +262,7 @@ export default {
     Pagination,
     CryptoWatch,
     StockWatch,
+    VietnamStockWatch,
     RealEstateMap,
     RiskChat,
   },
