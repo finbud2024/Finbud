@@ -2,13 +2,6 @@
   <div class="GoalDashBoardContainer">
     <!-- Bot Chat Component - Updated with toggle functionality -->
     <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-      <img 
-        class="bot-image" 
-        src="@/assets/botrmbg.png" 
-        alt="Bot" 
-        @click="toggleBotMessage"
-        :class="{ 'clickable': showBot }"
-      />
       <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
@@ -17,6 +10,13 @@
         </div>
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
+      <img 
+        class="bot-image" 
+        src="@/assets/botrmbg.png" 
+        alt="Bot" 
+        @click="toggleBotMessage"
+        :class="{ 'clickable': showBot }"
+      />
     </div>
     
     <div class="leftPanel">
@@ -245,7 +245,7 @@
 
             <div class="goals">
             <div v-for="goal in filteredGoals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
-                <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
+                <img :src="getGoalImage(goal.category)" alt="Goal Image" class="goal-image"/>
                 <div class="goal-content">
                 <div class="goal-icon">
                     <i :class="goal.icon"></i>
@@ -299,26 +299,39 @@
                             <input id="currentAmount" type="number" placeholder="Money already have" v-model="newGoal.currentAmount">
                         </div>
                         <div class="form-group">
-                            <label for="startDate">Start Date</label>
-                            <input id="startDate" type="date" v-model="newGoal.startDate" required>
+                            <div class="start-end-date-group">
+                              <div class="start-end-date-input">
+                                  <label for="startDate">Start Date</label>
+                                  <input id="startDate" type="date" v-model="newGoal.startDate" required>
+                              </div>
+                              <div class="start-end-date-input">
+                                  <label for="endDate">End Date</label>
+                                  <input id="endDate" type="date" v-model="newGoal.endDate" required>
+                              </div>
+                            </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="endDate">End Date</label>
-                            <input id="endDate" type="date" v-model="newGoal.endDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="goalCategory">Category</label>
-                            <select id="goalCategory" v-model="selectedCategory">
-                                <option v-for="category in categories" :key="category" :value="category">
-                                    {{ category }}
-                                </option>
-                                <option value="new">Add New Category</option>
-                            </select>
-                        </div>
-                        <div v-if="selectedCategory === 'new'" class="form-group">
-                            <label for="newCategory">New Category</label>
-                            <input id="newCategory" type="text" placeholder="Enter new category" v-model="newCategory">
-                        </div>
+                          <label for="goalCategory">Category</label>
+                          <input
+                            id="goalCategory"
+                            type="text"
+                            v-model="selectedCategory"
+                            placeholder="Category will be suggested based on your description"
+                            @input="handleCategoryInput"
+                          >
+                          <div v-if="isAnalyzingCategory" class="category-loading">
+                            <span class="loading-spinner"></span> Analyzing description to suggest category...
+                          </div>
+                          <div v-if="aiSuggestionUsed" class="category-hint">
+                            <small>AI-suggested category (you can edit)</small>
+                          </div>
+                          </div>
+
+                          <div v-if="selectedCategory === 'new'" class="form-group">
+                              <label for="newCategory">New Category</label>
+                              <input id="newCategory" type="text" placeholder="Enter new category" v-model="newCategory">
+                          </div>
                         <button class="add-goal-button" @click="addGoal">Add Goal</button>
                     </div>
                 </div>
@@ -409,7 +422,19 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       addAmount: 0,
       goalTitle: '',
       goalProgress: 0,
-      categories: ['Savings', 'Investment', 'Emergency Fund', 'Vacation'],
+      categories: [
+      'Savings', 
+      'Investment', 
+      'Entertainment',
+      'Education',
+      'Vehicle',
+      'Health'
+      ],
+      selectedCategory: '',
+      isAnalyzingCategory: false,
+      userModifiedCategory: false,
+      aiSuggestionUsed: false,
+      debounceTimer: null,
       goals: [],
       selectedCategory: '',
       newCategory: '',
@@ -501,10 +526,12 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       return this.totalRevenue - this.totalExpense;
     },
   },
+  
   mounted() {
-    if (!this.isAuthenticated) {
-      this.$router.push('/');
-    }
+    // if (!this.isAuthenticated) {
+    //   this.$router.push('/');
+    // }
+
     // this.getAccountBalance();
     this.retrieveGoals();
     this.fetchTransactions();
@@ -523,7 +550,126 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       clearTimeout(this.botHideTimer);
     }
   },
-  methods: {
+  watch: {
+  'newGoal.description': {
+    handler(newDesc) {
+      // Only analyze if >=3 chars
+      if (newDesc && newDesc.trim().length >= 3) {
+        if (this.debounceTimer) {
+          clearTimeout(this.debounceTimer);
+        }
+        this.debounceTimer = setTimeout(() => {
+          this.generateCategoryRecommendation();
+        }, 800); 
+      } else {
+        this.selectedCategory = 'Default';
+        this.aiSuggestionUsed = false;
+      }
+    },
+    immediate: false
+  },
+  
+  // Reset the manual edit flag when modal opens
+  showAddGoalModal(newVal) {
+    if (newVal) {
+      this.userModifiedCategory = false;
+    }
+  }
+},
+methods: {
+  async generateCategoryRecommendation() {
+    const description = this.newGoal.description?.trim();
+    const DEFAULT_CATEGORY = 'Default';
+    
+    // Set default if no description or user modified category
+    if (!description || description.length < 3 || this.userModifiedCategory) {
+      this.selectedCategory = DEFAULT_CATEGORY;
+      this.isAnalyzingCategory = false;
+      return;
+    }
+
+    try {
+      this.isAnalyzingCategory = true;
+
+      // Call AI directly 
+      const response = await axios.post(
+        "https://openrouter.ai/api/v1/chat/completions", 
+        {
+          model: "deepseek/deepseek-chat-v3-0324:free",
+          messages: [
+            {
+              role: "system",
+              content: `Select ONLY ONE category from this list: ${this.categories.join(', ')}. 
+              Return JUST the category name with no other text or explanations.
+              If uncertain, return "${DEFAULT_CATEGORY}".`
+            },
+            {
+              role: "user",
+              content: `Categorize this financial goal: "${description}"`
+            }
+          ],
+          temperature: 0.3,  // Slightly higher for flexibility
+        }, 
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK2_API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": window.location.href
+          },
+        }
+      );
+      console.log("[DEBUG] Full API response:", response);
+
+      if (response.data?.error?.code === 429) {
+        console.log("[DEBUG] Run out of message");
+      }
+
+      // Process AI response
+      const aiResponse = response.data?.choices?.[0]?.message?.content?.trim();
+      console.log("[DEBUG] AI response:", aiResponse);
+
+      // Improved matching with fallbacks
+      let matchedCategory;
+      if (aiResponse) {
+        // Try exact match first
+        matchedCategory = this.categories.find(cat => 
+          cat.toLowerCase() === aiResponse.toLowerCase()
+        );
+        
+        // If no exact match, try partial match
+        if (!matchedCategory) {
+          matchedCategory = this.categories.find(cat => 
+            cat.toLowerCase().includes(aiResponse.toLowerCase()) ||
+            aiResponse.toLowerCase().includes(cat.toLowerCase())
+          );
+        }
+      }
+
+      console.log("[DEBUG] Matched category:", matchedCategory);
+      this.selectedCategory = matchedCategory || DEFAULT_CATEGORY;
+      this.aiSuggestionUsed = true;
+        } catch (error) {
+          console.error("AI categorization failed:", error);
+          this.selectedCategory = DEFAULT_CATEGORY;
+        } finally {
+          this.isAnalyzingCategory = false;
+        }
+      },
+
+      getGoalImage(category) {
+        const categoryImages = {
+          'Savings': require('@/assets/goal-categories/savings.webp'),
+          'Investment': require('@/assets/goal-categories/investment.png'),
+          'Entertainment': require('@/assets/goal-categories/entertainment.png'),
+          'Education':require('@/assets/goal-categories/education.png'),
+          'Vehicle': require('@/assets/goal-categories/vehicle.png'),
+          'Health': require('@/assets/goal-categories/health.png'),
+          'Default': require('@/assets/goal-categories/default.png') // Fallback image
+        };
+        
+        return categoryImages[category] || categoryImages['Default'];
+      },
+
     // Bot Chat methods
     setupBotObserver() {
       this.$nextTick(() => {
@@ -1311,8 +1457,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 .goal-image {
-  width: 100%;
-  height: auto;
+  width: 50%;
+  height: 50%;
+  margin: auto;
   border-radius: 10px 10px 0 0;
 }
 
@@ -1392,10 +1539,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   border-bottom-right-radius: 10px;
 }
 
-.modal-text-content {
-  padding: 20px;
-}
-
 .add-money-form {
   margin-top: 20px;
 }
@@ -1422,7 +1565,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 /* Add Goal Modal Styles */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-family: 'Space Grotesk', sans-serif;
 }
 
@@ -1435,7 +1578,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 .form-group input,
 .form-group textarea {
-  width: 100%;
+  width: 80%;
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
@@ -1458,11 +1601,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 .currency-input {
   display: flex;
   align-items: center;
+  width: 80%;
+  margin-left: 50px;
 }
 
 .currency-input input {
   margin-right: 10px;
   flex: 1;
+  width: 75px;
 }
 
 .currency-input select {
@@ -1474,6 +1620,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   transition: border-color 0.3s ease;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  width: 75px;
+  margin-bottom: 0px;
+  height: 42px;
 }
 
 .currency-input select:focus {
@@ -1491,6 +1640,50 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   color: #666;
   margin-top: 5px;
   text-align: right;
+  width:90%;
+}
+
+.start-end-date-group {
+  display: flex;
+  margin-left: 28px;
+}
+
+.start-end-date-group .start-end-date-input {
+  width: 222px;
+}
+
+#goalCategory {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+#goalCategory:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+}
+
+.category-loading {
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 5px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top-color: #007bff;
+  animation: spin 1s linear infinite;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Mobile-specific styles */
@@ -1919,7 +2112,6 @@ hr {
 }
 
 .add-goal-button {
-  margin-bottom: 20px;
   padding: 10px 20px;
   background-color: var(--link-color);
   color: white;
@@ -1976,20 +2168,18 @@ hr {
 
 .modal-content {
   background: var(--card-bg);
-  padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 90%;
-  max-width: 500px;
+  max-width: 1000px;
 }
 
 .modal-content input {
   padding: 10px;
-  margin: 10px 0;
   border: 1px solid var(--border-color);
   border-radius: 5px;
-  width: 100%;
+  width: 80%;
 }
 
 .modal-content button {
@@ -2054,10 +2244,11 @@ hr {
 
 .modal-content {
   background: var(--card-bg);
-  padding: 20px;
   border-radius: 5px;
   width: 500px;
   max-width: 90%;
+  height: 630px;
+  margin-top: 80px;
 }
 
 .modal-header {
@@ -2216,11 +2407,6 @@ hr {
     padding: 6px;
     font-size: 13px;
   }
-
-  .modal-text-content h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
 }
 
 /* Scrollbar Customization */
@@ -2310,13 +2496,15 @@ hr {
 }
 
 .bot-message {
-  margin-top: 10px;
+  margin-bottom: 10px;
   margin-left: 10px;
   background: #007bff;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 18px;
   max-width: 280px;
+  max-height: 200px; 
+  overflow-y: auto; /* Enable vertical scrolling */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0; /* Start hidden */
   transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */

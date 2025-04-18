@@ -748,7 +748,7 @@ tr:hover {
 }
 
 img {
-  max-width: 30px;
+  max-width: 60px;
   height: auto;
   vertical-align: middle;
   margin-right: 8px;
