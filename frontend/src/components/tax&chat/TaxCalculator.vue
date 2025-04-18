@@ -316,9 +316,6 @@
           
           <!-- Continue with remaining content as needed -->
         </section>
-        <div class="tax-chat">
-          <TaxChat />
-        </div>
         <div class="bubble-chat">
           <BubbleChat />
         </div>
@@ -339,7 +336,6 @@
   import MessageComponent from './MessageComponent.vue';
   import ChatFrame from './ChatFrame.vue';
   import UserInput from './UserInput.vue';
-  import TaxChat from './TaxChat.vue'; // if you want to use the full tax chat functionality
   import BubbleChat from './chatbox.vue';
   
   
@@ -350,7 +346,6 @@
       MessageComponent,
       ChatFrame,
       UserInput,
-      TaxChat,
       BubbleChat, // If needed, add the full tax chat functionality here
     },
     data() {
@@ -814,7 +809,7 @@
       totalTax: approximateTax
     });
   }
-  a
+  
   async function updateCharts(data) {
     // Wait for DOM to update so canvas elements exist
     await nextTick();

@@ -531,6 +531,28 @@ export default {
 					const gptResponse = await gptServices([{ role: "user", content: `Search for ${gptDefine} and response in ${language} language.` }]);
 					answers.push(gptResponse);
 				}
+
+				//HANDLE TAX CALCULATOR
+				// Check if the message is about tax calculation
+				const taxRegex = /#tax\b|\btax\b/i;
+				if (taxRegex.test(userMessage)) {
+					const baseUrl = window.location.origin.includes("localhost")
+						? "http://localhost:8888"
+						: "https://finbud.pro";
+
+					const url = `${baseUrl}/tax-calculator`;
+					window.open(url, "_blank");
+
+					// Optionally, push a confirmation message
+					this.messages.push({
+						text: `Opening the Tax Calculator for you! 🧾`,
+						isUser: false,
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+						username: "FinBud Bot"
+					});
+					return; // Exit early so the message doesn't go through GPT
+				}
 				
 				// HANDLE CREATE (10)
 				else if (gptDefine.includes("#create")) {

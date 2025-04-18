@@ -2,6 +2,7 @@
   <div class="chat-section">
     <div class="chat-header">
       <h2 class="chat-title">Financial Analysis</h2>
+
       <div class="powered-by">
         Powered by <a href="#" class="provider-link">FinBud<span class="arrow-icon">↗</span></a>
       </div>
@@ -13,6 +14,19 @@
         
         <button class="analysis-button market-button" @click="startFinancialNewsAnalysis('', 'general')">
           <span class="market-icon">📊</span> Market Overview
+        </button>
+
+        <button
+          :class="['model-btn', selectedModel === 'chatgpt' ? 'active' : '']"
+          @click="selectedModel = 'chatgpt'"
+        >
+          ChatGPT
+        </button>
+        <button
+          :class="['model-btn', selectedModel === 'deepseek' ? 'active' : '']"
+          @click="selectedModel = 'deepseek'"
+        >
+          DeepSeek
         </button>
         
         <div class="social-share">
@@ -30,6 +44,9 @@
               <span class="icon-linkedin"></span>
             </button>
           </div>
+          <div class="model-toggle">
+</div>
+
         </div>
       </div>
     </div>
@@ -59,7 +76,7 @@
         </div>
         
         <!-- Splitting Document Step -->
-        <div v-if="completedSteps.loading" class="workflow-step">
+        <div v-if="stepsVisible.splitting" class="workflow-step">
           <div class="step-icon">✂️</div>
           <div class="step-content">
             <div class="step-header" @click="toggleStep('splitting')">
@@ -81,7 +98,7 @@
         </div>
         
         <!-- Data Extraction Step -->
-        <div v-if="completedSteps.splitting" class="workflow-step">
+        <div v-if="stepsVisible.extraction" class="workflow-step">
           <div class="step-icon">🔍</div>
           <div class="step-content">
             <div class="step-header" @click="toggleStep('extraction')">
@@ -103,7 +120,7 @@
         </div>
         
         <!-- Summary Generation Step -->
-        <div v-if="completedSteps.extraction" class="workflow-step">
+        <div v-if="stepsVisible.summary" class="workflow-step">
           <div class="step-icon">📝</div>
           <div class="step-content">
             <div class="step-header" @click="toggleStep('summary')">
@@ -121,6 +138,7 @@
               </div>
               
               <div v-if="completedSteps.summary" class="summary-content">
+              <div id="pdf-report-content">
                 <div class="summary-section">
                   <h4 class="summary-heading">Executive Summary</h4>
                   <div class="summary-text" v-html="analysisResults.executiveSummary"></div>
@@ -131,12 +149,13 @@
                   <div class="summary-text" v-html="analysisResults.summary"></div>
                 </div>
               </div>
+              </div>
             </div>
           </div>
         </div>
         
         <!-- Recommendations Step -->
-        <div v-if="completedSteps.summary" class="workflow-step">
+        <div v-if="stepsVisible.recommendations" class="workflow-step">
           <div class="step-icon">🔗</div>
           <div class="step-content">
             <div class="step-header" @click="toggleStep('recommendations')">
@@ -181,6 +200,7 @@
 <script>
 import { processFinancialNews } from '@/components/Agent/agent.js'
 import SocialShare from './SocialShare.vue';
+import html2pdf from 'html2pdf.js';
 
 export default {
   name: 'ChatSection',
@@ -189,6 +209,7 @@ export default {
   },
   data() {
     return {
+      selectedModel: 'chatgpt',
       processingSteps: {
         loading: false,
         splitting: false,
@@ -205,10 +226,10 @@ export default {
       },
       stepsVisible: {
         loading: true,
-        splitting: true,
-        extraction: true,
-        summary: true,
-        recommendations: true
+        splitting: false,
+        extraction: false,
+        summary: false,
+        recommendations: false
       },
       processingMessages: {
         loading: '',
@@ -229,15 +250,23 @@ export default {
     };
   },
   methods: {
+    // Delay method for workflow
+    delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
     // Added the missing resetState method
     resetState() {
-      // Reset all processing and completion states
       for (const key in this.processingSteps) {
         this.processingSteps[key] = false;
         this.completedSteps[key] = false;
       }
-      
-      // Reset messages
+
+      for (const key in this.stepsVisible) {
+        this.stepsVisible[key] = false;
+      }
+      this.stepsVisible.loading = true;
+
       for (const key in this.processingMessages) {
         this.processingMessages[key] = '';
       }
@@ -262,18 +291,60 @@ export default {
       this.resetState();
       this.selectedFile = { name: ticker ? `${ticker} News Analysis` : `${category.charAt(0).toUpperCase() + category.slice(1)} Market News` };
       
+      //Step 1: Loading
+      this.stepsVisible.loading = true;
       this.processingSteps.loading = true;
       this.processingMessages.loading = `Loading financial news for ${ticker || category}...`;
+      await this.$nextTick();
       
       try {
-        const results = await processFinancialNews(ticker, category);
+        const results = await processFinancialNews(ticker, category, this.selectedModel);
+        this.processingMessages.loading = `Loaded: ${this.selectedFile.name}`;
+        this.processingSteps.loading = false;
+        this.completedSteps.loading = true;
         this.processAnalysisResults(results);
+
+        //Step2: Splitting
+        this.stepsVisible.splitting = true;
+        this.processingSteps.splitting = true;
+        this.processingMessages.splitting = "Processing financial data...";
+        await this.delay(1000);
+        this.processingSteps.splitting = false;
+        this.completedSteps.splitting = true;
+
+        //Step3: Extraction
+        this.stepsVisible.extraction = true;
+        this.processingSteps.extraction = true;
+        this.processingMessages.extraction = "Extracting key financial indicators...";
+        await this.delay(1000);
+        this.processingSteps.extraction = false;
+        this.completedSteps.extraction = true;
+
+        // Step 4: Summary
+        this.stepsVisible.summary = true;
+        this.processingSteps.summary = true;
+        this.processingMessages.summary = "Generating comprehensive financial summary...";
+        await this.delay(1000);
+        this.analysisResults.summary = results.summary;
+        this.analysisResults.executiveSummary = results.executiveSummary;
+        this.processingSteps.summary = false;
+        this.completedSteps.summary = true;
+
+        // Step 5: Recommendations
+        this.stepsVisible.recommendations = true;
+        this.processingSteps.recommendations = true;
+        this.processingMessages.recommendations = "Finding related financial resources...";
+        await this.delay(1000);
+        this.analysisResults.recommendations = results.recommendations;
+        this.processingSteps.recommendations = false;
+        this.completedSteps.recommendations = true;
+
       } catch (error) {
         this.hasError = true;
         this.errorMessage = "Failed to process financial news: " + error.message;
         this.processingSteps.loading = false;
-      }
-    },
+    }
+  },
     
     processAnalysisResults(results) {
       if (!results) {
@@ -355,9 +426,18 @@ export default {
     },
     
     exportAnalysisAsPDF() {
-      alert('Exporting analysis as PDF...');
-      // In a real implementation, would use a library like jsPDF
-    }
+      const element = document.getElementById('pdf-report-content');
+
+      const opt = {
+        margin:       0.5,
+        filename:     'financial-analysis-report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(element).save();
+        }
   }
 }
 </script>
@@ -793,6 +873,48 @@ export default {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z'%3E%3C/path%3E%3Crect x='2' y='9' width='4' height='12'%3E%3C/rect%3E%3Ccircle cx='4' cy='4' r='2'%3E%3C/circle%3E%3C/svg%3E");
 }
 
+.chat-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.chat-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.model-toggle {
+  display: flex;
+  gap: 4 px;
+  margin-top: 4px;
+}
+
+.model-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #1f2937;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.model-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.model-btn.active {
+  background-color: #1e40af;
+  color: white;
+  border-color: #1e40af;
+}
+
+
 @keyframes pulse {
   0% { opacity: 1; }
   50% { opacity: 0.6; }
@@ -834,5 +956,16 @@ export default {
   .summary-heading {
     font-size: 16px;
   }
+
+  .chat-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .model-toggle {
+    align-self: flex-end;
+  }
+  
 }
 </style>

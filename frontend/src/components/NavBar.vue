@@ -32,9 +32,9 @@
               @click="toggleAboutDropdown(false)">Investment Calculator</router-link>
             <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage
               Calculator</router-link>
-
             <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">Super
               Investors</router-link>
+              <router-link to="/tax-calculator" class="tax-calculator" @click="toggleDropdownInvest(false)">Tax Calculator</router-link>
           </div>
         </li>
 
@@ -128,6 +128,8 @@
 
             <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">Super
               Investors</router-link>
+            
+              <router-link to="/tax-calculator" class="tax-calculator" @click="toggleDropdownMobile">Tax Calculator</router-link>
 
             <strong>Fin Invest</strong>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">Simulator</router-link>

@@ -11,6 +11,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'MainContent',
   emits: ['start-workflow']

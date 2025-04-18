@@ -7,7 +7,8 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const NEWS_API_KEY = process.env.VUE_APP_AGENT_API_KEY;
 
-export async function processFinancialNews(ticker = '', category = 'finance') {  
+export async function processFinancialNews(ticker, category, model = 'chatgpt') {
+  console.log("Using model:", model);
   try {
     const newsData = await fetchFinancialNews(ticker, category);
     const textSplitter = new RecursiveCharacterTextSplitter({
@@ -381,74 +382,97 @@ export async function generateReportSummary(summary, extractedData) {
   }
 }
 
-export function formatSummary(summary, isExecutive = false) {
+export function formatSummary(summary) {
   if (!summary) return '';
-  
-  if (isExecutive) {
-    let formattedContent = '<div class="executive-summary">';
-    
-    formattedContent += summary
-      .replace(/## EXECUTIVE SUMMARY/g, '<h1 class="text-2xl font-bold border-b pb-2 mb-4">Executive Summary</h1>')
-      .replace(/### MARKET INTELLIGENCE BRIEF/g, '<h2 class="text-xl font-semibold mt-6 mb-3">Market Intelligence Brief</h2>')
-      .replace(/### KEY METRICS/g, '<h2 class="text-xl font-semibold mt-6 mb-3">Key Metrics</h2>')
-      .replace(/### STRATEGIC POSITIONING/g, '<h2 class="text-xl font-semibold mt-6 mb-3">Strategic Positioning</h2>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    const listSections = formattedContent.split('\n- ');
-    
-    if (listSections.length > 1) {
-      formattedContent = listSections[0];
-      formattedContent += '<ul class="mt-3 mb-4 pl-5">';
-      for (let i = 1; i < listSections.length; i++) {
-        formattedContent += '<li class="mb-2">' + listSections[i].replace(/\n(?!\n- )/, ' ') + '</li>';
-      }
-      formattedContent += '</ul>';
-    }
-    
-    formattedContent = formattedContent
-      .replace(/\n\n/g, '</p><p class="my-3">') 
-      .replace(/\n/g, '<br>');
-    
-    return formattedContent + '</div>';
-  }
-  
-  let formattedContent = '<div class="summary-content">';
-  
-  formattedContent += summary
-    .replace(/##(.*?)(?=\n|$)/g, '<h2 class="text-lg font-medium mt-4 mb-2">$1</h2>')
-    .replace(/\n- (.*?)(?=\n- |\n\n|$)/g, '<ul class="my-3 pl-5"><li>$1</li></ul>')
-    .replace(/:\n/g, ':</p>\n<p class="my-2">')
-    .replace(/\n\n/g, '</p><p class="my-3">');
-  
-  return formattedContent + '</p></div>';
+
+  let html = summary.trim();
+
+  // Handle headers
+  html = html.replace(/^### (.*)$/gm, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>');
+  html = html.replace(/^## (.*)$/gm, '<h2 class="text-xl font-bold mt-6 mb-3">$1</h2>');
+  html = html.replace(/^# (.*)$/gm, '<h1 class="text-2xl font-bold mt-8 mb-4">$1</h1>');
+
+  // Handle bold text
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // Handle numbered lists
+  html = html.replace(/(^|\n)(\d+)\. (.*?)(?=\n\d+\. |\n\n|$)/gs, (match, p1, p2, p3) => {
+    const lines = match.trim().split(/\n(?=\d+\. )/g);
+    const listItems = lines.map(line => {
+      const parts = line.match(/^\d+\. (.*)/);
+      return parts ? `<li>${parts[1]}</li>` : '';
+    });
+    return `<ol class="list-decimal pl-6 space-y-2 mt-2 mb-4">${listItems.join('')}</ol>`;
+  });
+
+  // Handle inline bullet lists (e.g., multiple `- item` on one line)
+  html = html.replace(/- \*\*(.*?)\*\*: (.*?)(?= - \*\*|$)/gs, (_, key, value) => {
+    return `<li><strong>${key}</strong>: ${value.trim()}</li>`;
+  });
+
+  // Handle standalone bullets
+  html = html.replace(/(^|\n)- (.*?)(?=\n- |\n\n|$)/gs, (match, p1, p2) => {
+    const lines = match.trim().split(/\n(?=- )/g);
+    const listItems = lines.map(line => {
+      const parts = line.match(/^- (.*)/);
+      return parts ? `<li>${parts[1]}</li>` : '';
+    });
+    return `<ul class="list-disc pl-6 space-y-2 mt-2 mb-4">${listItems.join('')}</ul>`;
+  });
+
+  // Handle paragraphs and spacing
+  html = html
+    .replace(/\n{2,}/g, '</p><p class="my-3">') // paragraph break
+    .replace(/\n/g, ' ')                        // line break to space
+    .replace(/^/, '<p class="my-3">')
+    .concat('</p>');
+
+  return `<div class="summary-section">${html}</div>`;
 }
 
 export function formatRecommendations(recommendations) {
   if (!recommendations) return '';
-  
-  let formattedContent = '<div class="recommendations-section">';
-  
-  formattedContent += recommendations
-    .replace(/###(.*?)(?=\n|$)/g, '<h3 class="text-lg font-medium mt-5 mb-2">$1</h3>');
-  
-  const sections = formattedContent.split('\n- ');
-  
-  if (sections.length > 1) {
-    formattedContent = sections[0];
-    formattedContent += '<ul class="recommendation-list pl-5 my-3">';
-    for (let i = 1; i < sections.length; i++) {
-      formattedContent += '<li class="mb-2">' + sections[i].replace(/\n(?!\n- )/, ' ') + '</li>';
-    }
-    formattedContent += '</ul>';
-  }
-  
-  formattedContent = formattedContent
-    .replace(/:\n/g, ':</p><p class="my-2">')
-    .replace(/\n\n/g, '</p><p class="my-3">');
-  
-  return formattedContent + '</div>';
-}
 
+  let html = recommendations;
+
+  // Headings
+  html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>');
+  html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold mt-6 mb-3">$1</h2>');
+  html = html.replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-8 mb-4">$1</h1>');
+
+  // Bold text
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // Numbered lists (e.g., "1. Something")
+  html = html.replace(/(^|\n)(\d+)\. (.*?)(?=\n\d+\. |\n\n|$)/gs, (match, p1, p2, p3) => {
+    const lines = match.trim().split(/\n(?=\d+\. )/g);
+    const listItems = lines.map(line => {
+      const parts = line.match(/^\d+\. (.*)/);
+      return parts ? `<li>${parts[1]}</li>` : '';
+    });
+    return `<ol class="list-decimal pl-6 space-y-1 mt-2 mb-4">${listItems.join('')}</ol>`;
+  });
+
+  // Bullet point lists
+  html = html.replace(/(^|\n)- (.*?)(?=\n- |\n\n|$)/gs, (match, p1, p2) => {
+    const lines = match.trim().split(/\n(?=- )/g);
+    const listItems = lines.map(line => {
+      const parts = line.match(/^- (.*)/);
+      return parts ? `<li>${parts[1]}</li>` : '';
+    });
+    return `<ul class="list-disc pl-6 space-y-1 mt-2 mb-4">${listItems.join('')}</ul>`;
+  });
+
+  // Paragraphs
+  html = html
+    .replace(/\n{2,}/g, '</p><p class="my-3">') // double newlines → new paragraph
+    .replace(/\n/g, ' ')                         // single newlines → space
+    .replace(/^/, '<p class="my-3">')            // wrap first paragraph
+    .concat('</p>');
+
+  // Final wrapper
+  return `<div class="recommendations-section">${html}</div>`;
+}
 
 export function startFinancialAnalysis(ticker = 'AAPL', category = 'finance') {
   return processFinancialNews(ticker, category);
