@@ -4,34 +4,45 @@
     <div class="course-topics-panel">
       <h2>Course Topics</h2>
 
-      <div
-        v-for="(section, sectionIndex) in sections"
-        :key="sectionIndex"
-        class="topic-section"
-      >
+      <div v-for="(section, sectionIndex) in sections" :key="sectionIndex" class="topic-section">
         <div class="section-header" @click="toggleSection(sectionIndex)">
-          <i
-            :class="
-              section.collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-down'
-            "
-          ></i>
+          <i :class="section.collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-down'
+            "></i>
           <span class="section-title">{{ section.title }}</span>
         </div>
 
         <div v-show="!section.collapsed" class="section-content">
-          <div
-            v-for="(topic, topicIndex) in section.topics"
-            :key="topic.id"
-            class="topic-item"
-          >
+          <!-- <div v-for="(topic, topicIndex) in section.topics" :key="topic.id" class="topic-item"
+            @click="toggleTopic(sectionIndex, topicIndex)">
+            <i :class="topic.collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-down'
+              "></i>
             <div class="topic-title">{{ topic.title }}</div>
-            <button
-              class="delete-btn"
-              @click="deleteTopic(sectionIndex, topicIndex)"
-            >
+            <button class="delete-btn" @click="deleteTopic(sectionIndex, topicIndex)">
               <i class="fas fa-trash-alt"></i>
             </button>
+          </div> -->
+
+          <div v-for="(topic, topicIndex) in section.topics" :key="topic.id">
+            <!-- 1) Topic header (always visible) -->
+            <div class="topic-item" @click="toggleTopic(sectionIndex, topicIndex)">
+              <i :class="topic.collapsed
+                ? 'fas fa-chevron-right'
+                : 'fas fa-chevron-down'"></i>
+              <span class="topic-title">{{ topic.title }}</span>
+              <button class="delete-btn" @click.stop="deleteTopic(sectionIndex, topicIndex)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+
+            <!-- 2) Topic content (visible only when NOT collapsed) -->
+            <div class="topic-content-container" v-show="!topic.collapsed">
+              <p>
+                <!-- for example, you might eventually store a description: -->
+                {{ topic.description || "No details available." }}
+              </p>
+            </div>
           </div>
+
 
           <button class="add-topic-btn" @click="addTopic(sectionIndex)">
             <i class="fas fa-plus"></i> Add topic
@@ -47,11 +58,7 @@
     <!-- Right Column: Course Details -->
     <div class="course-details-panel">
       <div class="course-image-card">
-        <img
-          :src="require('@/assets/courses/course-01.jpg')"
-          alt="Students learning"
-          class="course-image"
-        />
+        <img :src="require('@/assets/courses/course-01.jpg')" alt="Students learning" class="course-image" />
       </div>
 
       <div class="course-info">
@@ -98,6 +105,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { searchVideos } from "@/services/braveSearch";
 
 const route = useRoute();
 const router = useRouter();
@@ -132,9 +140,10 @@ const processRoadmapData = () => {
           topics:
             module.topics && Array.isArray(module.topics)
               ? module.topics.map((topic, topicIndex) => ({
-                  id: index * 100 + topicIndex,
-                  title: topic,
-                }))
+                id: index * 100 + topicIndex,
+                title: topic,
+                collapsed: true,
+              }))
               : [],
         };
       });
@@ -158,9 +167,8 @@ const processRoadmapData = () => {
       lectures: `${roadmapData.modules?.length || 0} modules`,
       skillLevel: roadmapData.level || "Beginner",
       language: "English",
-      studyPlan: `${roadmapData.days_per_week || 0} days/week, ${
-        roadmapData.time_per_day || "Not specified"
-      }`,
+      studyPlan: `${roadmapData.days_per_week || 0} days/week, ${roadmapData.time_per_day || "Not specified"
+        }`,
       deadline: "4 weeks from today",
     };
   } else {
@@ -198,7 +206,14 @@ const addTopic = (sectionIndex) => {
   sections.value[sectionIndex].topics.push({
     id: newId,
     title: `New Topic ${newId}`,
+    collapsed: true,
   });
+};
+
+// Toggle topic collapse/expand
+const toggleTopic = (sectionIndex, topicIndex) => {
+  sections.value[sectionIndex].topics[topicIndex].collapsed =
+    !sections.value[sectionIndex].topics[topicIndex].collapsed;
 };
 
 // Delete a topic from a section
@@ -284,6 +299,7 @@ const saveAndCollectMaterials = () => {
 }
 
 .topic-title {
+  padding-left: 0.75rem;
   flex-grow: 1;
 }
 
