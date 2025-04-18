@@ -130,12 +130,18 @@ stockTransactionRoute.route('/stock-transactions')
         if (user.bankingAccountData.cash < totalCost) {
           return res.status(400).send("Insufficient cash to buy stocks");
         }
-        user.bankingAccountData.cash -= totalCost;
-        user.bankingAccountData.stockValue += totalCost;
+        user.bankingAccountData.cash = parseFloat(
+          (user.bankingAccountData.cash - totalCost).toFixed(2)
+        );
+        user.bankingAccountData.stockValue = parseFloat(
+          (user.bankingAccountData.stockValue + totalCost).toFixed(2)
+        );
         let stock = holding.stocks.find(stock => stock.stockSymbol === stockSymbol);
         if (stock) {
           stock.quantity += quantity;
-          stock.purchasePrice = stock.purchasePrice + totalCost;
+          stock.purchasePrice = parseFloat(
+            (stock.purchasePrice + totalCost).toFixed(2)
+          );
         }
         else {
           holding.stocks.push({ stockSymbol, quantity, purchasePrice: totalCost });
@@ -146,10 +152,16 @@ stockTransactionRoute.route('/stock-transactions')
         if (!stock || stock.quantity < quantity) {
           return res.status(400).send("Not enough stock value to sell");
         }
-        user.bankingAccountData.cash += totalCost;
-        user.bankingAccountData.stockValue -= totalCost;
+        user.bankingAccountData.cash = parseFloat(
+          (user.bankingAccountData.cash + totalCost).toFixed(2)
+        );
+        user.bankingAccountData.stockValue = parseFloat(
+          (user.bankingAccountData.stockValue - totalCost).toFixed(2)
+        );
         stock.quantity -= quantity;
-        stock.purchasePrice = stock.purchasePrice - totalCost
+        stock.purchasePrice = parseFloat(
+          (stock.purchasePrice - totalCost).toFixed(2)
+        );
 
         if (stock.quantity === 0) {
           holding.stocks = holding.stocks.filter(stock => stock.stockSymbol !== stockSymbol);

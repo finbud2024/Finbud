@@ -1,6 +1,6 @@
 <template>
   <section class="chart-section">
-    <header class="chart-header">
+    <header v-if="!showChartOnly" class="chart-header">
       <h1>{{ translations.portfolioPerformance }}</h1>
       <div class="header-content">
         <div class="portfolio-summary">
@@ -160,7 +160,11 @@ export default {
     language: {
       type: String,
       default: 'en'
-    }
+    },
+    showChartOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   
   data() {
