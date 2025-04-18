@@ -26,6 +26,13 @@
         </div>
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
+      <img 
+        class="bot-image" 
+        src="@/assets/botrmbg.png" 
+        alt="Bot" 
+        @click="toggleBotMessage"
+        :class="{ 'clickable': showBot }"
+      />
     </div>
 
     <div class="leftPanel">
@@ -521,7 +528,21 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       addAmount: 0,
       goalTitle: "",
       goalProgress: 0,
-      categories: ["Savings", "Investment", "Emergency Fund", "Vacation"],
+      categories: [
+      'Savings', 
+      'Investment', 
+      'Entertainment',
+      'Education',
+      'Emergency Fund',
+      'Vehicle',
+      'Vacation',
+      'Health'
+      ],
+      selectedCategory: '',
+      isAnalyzingCategory: false,
+      userModifiedCategory: false,
+      aiSuggestionUsed: false,
+      debounceTimer: null,
       goals: [],
       selectedCategory: "",
       newCategory: "",
@@ -644,13 +665,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       return this.totalRevenue - this.totalExpense;
     },
   },
+  
   mounted() {
-    if (!this.isAuthenticated) {
-      this.$router.push("/");
+    // if (!this.isAuthenticated) {
+    //   this.$router.push("/");
       return;
-    }
+    // }
 
-    // Thực thi các tác vụ khởi tạo
+
     this.retrieveGoals();
 
     // Lấy account balance từ server
@@ -674,7 +696,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     }, 10000);
   },
   beforeUnmount() {
-    // Clean up timers và observers khi component bị hủy
+    // Clean up timers and observers when the component is destroyed
     this.cleanupResources();
   },
   beforeRouteLeave(to, from, next) {
@@ -1598,8 +1620,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 .goal-image {
-  width: 100%;
-  height: auto;
+  width: 50%;
+  height: 50%;
+  margin: auto;
   border-radius: 10px 10px 0 0;
 }
 
@@ -1679,10 +1702,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   border-bottom-right-radius: 10px;
 }
 
-.modal-text-content {
-  padding: 20px;
-}
-
 .add-money-form {
   margin-top: 20px;
 }
@@ -1709,8 +1728,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 /* Add Goal Modal Styles */
 .form-group {
-  margin-bottom: 15px;
-  font-family: "Space Grotesk", sans-serif;
+  margin-bottom: 10px;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 .form-group label {
@@ -1722,7 +1741,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 .form-group input,
 .form-group textarea {
-  width: 100%;
+  width: 80%;
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
@@ -1745,11 +1764,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 .currency-input {
   display: flex;
   align-items: center;
+  width: 80%;
+  margin-left: 50px;
 }
 
 .currency-input input {
   margin-right: 10px;
   flex: 1;
+  width: 75px;
 }
 
 .currency-input select {
@@ -1761,6 +1783,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   transition: border-color 0.3s ease;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  width: 75px;
+  margin-bottom: 0px;
+  height: 42px;
 }
 
 .currency-input select:focus {
@@ -1778,6 +1803,50 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   color: #666;
   margin-top: 5px;
   text-align: right;
+  width:90%;
+}
+
+.start-end-date-group {
+  display: flex;
+  margin-left: 28px;
+}
+
+.start-end-date-group .start-end-date-input {
+  width: 222px;
+}
+
+#goalCategory {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+#goalCategory:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+}
+
+.category-loading {
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 5px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top-color: #007bff;
+  animation: spin 1s linear infinite;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Mobile-specific styles */
@@ -2220,7 +2289,6 @@ hr {
 }
 
 .add-goal-button {
-  margin-bottom: 20px;
   padding: 10px 20px;
   background-color: var(--link-color);
   color: white;
@@ -2277,20 +2345,18 @@ hr {
 
 .modal-content {
   background: var(--card-bg);
-  padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 90%;
-  max-width: 500px;
+  max-width: 1000px;
 }
 
 .modal-content input {
   padding: 10px;
-  margin: 10px 0;
   border: 1px solid var(--border-color);
   border-radius: 5px;
-  width: 100%;
+  width: 80%;
 }
 
 .modal-content button {
@@ -2355,10 +2421,11 @@ hr {
 
 .modal-content {
   background: var(--card-bg);
-  padding: 20px;
   border-radius: 5px;
   width: 500px;
   max-width: 90%;
+  height: 630px;
+  margin-top: 80px;
 }
 
 .modal-header {
@@ -2517,11 +2584,6 @@ hr {
     padding: 6px;
     font-size: 13px;
   }
-
-  .modal-text-content h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
 }
 
 /* Scrollbar Customization */
@@ -2622,13 +2684,15 @@ hr {
 }
 
 .bot-message {
-  margin-top: 10px;
+  margin-bottom: 10px;
   margin-left: 10px;
   background: #007bff;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 18px;
   max-width: 280px;
+  max-height: 200px; 
+  overflow-y: auto; /* Enable vertical scrolling */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0; /* Start hidden */
   transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */

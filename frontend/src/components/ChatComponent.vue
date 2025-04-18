@@ -140,6 +140,7 @@ export default {
           timestamp: new Date().toLocaleTimeString(),
         });
         const answers = [];
+				const htmlContents = [];
         let newSources = [];
         let newVideos = [];
         let newRelevantQuestions = [];
@@ -153,6 +154,10 @@ export default {
             content: `You are an intelligent assistant. Given a natural language message from the user, detect which of the following 10 actions it belongs to. Then extract the necessary information and return a **formatted command** for that action if found.
 
 					### Supported Actions & Return Formats:
+					0. **General Message** MAJORITY OF THE MESSAGE WILL BE THIS ONE 
+					- User intent: General message, not related to any specific action.
+					- Format: **[user_message]**
+					- Example: "Tell me about the weather today" → "Tell me about the weather today"
 
 					1. **Stock Price**  
 					- User intent: Ask for a stock price, return only the stock code (ticker symbol) in uppercase.
@@ -205,6 +210,11 @@ export default {
 					- User intent: Create a goal  
 					- Format: **#create goal**  
 					- Example: "I want to create a savings goal" → "#create goal"
+
+					11. **Analyze Portfolio**
+					- User intent: Analyze portfolio
+					- Format: **#analyze**
+					- Example: "Analyze my portfolio" → "#analyze"
 
 					### Instruction:
 					Given the user message: "${newMessage}", respond with the correct formatted command according to the rules above.  
@@ -288,6 +298,14 @@ export default {
 
                 const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=sell`;
                 window.open(url, "_blank");
+
+								const res = `We've created the sell request for ${quantity} ${stockSymbol} shares.`;
+								const Responsegpt = await gptServices([{ 
+									role: "user", 
+									content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
+								}]);
+								answers.push(Responsegpt);
+
                 // Wait for the page to load and auto-click the Preview Order button
                 setTimeout(() => {
                   window.addEventListener("load", () => {
@@ -469,6 +487,7 @@ export default {
             typing: true,
             timestamp: new Date().toLocaleTimeString(),
           });
+					htmlContents.push(tableTemplate);
         }
         // // RETURNS REALESTATE TABLE
         else if (gptDefine.includes("#realestate")) {
@@ -557,6 +576,7 @@ export default {
 				    </tr>`;
           });
           tableTemplate += `</tbody></table>`;
+					htmlContents.push(tableTemplate);
           this.messages.push({
             text: ``,
             htmlContent: tableTemplate,
@@ -637,7 +657,14 @@ export default {
               const url = `${baseUrl}/goal`;
               window.open(url, "_blank");
 
-              // Wait for the page to load and auto-click the Add Goal button
+              // Create response in user's language
+							const res = "We've created the goal section for you to add your goals.";
+							const Responsegpt = await gptServices([{ 
+								role: "user", 
+								content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
+							}]);
+							answers.push(Responsegpt);
+
               setTimeout(() => {
                 window.addEventListener("load", () => {
                   const addGoalButton =
@@ -652,16 +679,112 @@ export default {
             console.error("Error in create message:", err.message);
           }
         }
-        // HANDLE GENERAL
+				
+        // HANDLE ANALYZE (11)
+				else if (gptDefine.toLowerCase().includes("#analyze")) {
+					try {
+						
+						if (!this.isAuthenticated) {
+							const res = "You need to be logged in to analyze your portfolio.";
+							const responseGpt = await gptServices([{ 
+								role: "user", 
+								content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".` 
+							}]);
+							answers.push(responseGpt);
+						} else {
+					
+							this.addTypingResponse("", false, [], [], [], true);
+							
+							const userId = this.$store.getters["users/userId"];
+							const apiUrl = `${process.env.VUE_APP_DEPLOY_URL}/chats/analyze-portfolio/${userId}`;
+							
+						
+							const response = await axios.get(apiUrl);
+							const analysisData = response.data;
+							
+							if (analysisData && analysisData.analysis) {
+								
+								if (analysisData.analysis.stock) {
+									this.messages = this.messages.filter(msg => !msg.isThinking);
+									
+									
+									this.messages.push({
+										text: "",
+										isUser: false,
+										typing: false,
+										timestamp: new Date().toLocaleTimeString(),
+										htmlContent: analysisData.analysis.stock,
+										username: "FinBud Bot",
+										sources: [],
+										videos: [],
+										relevantQuestions: []
+									});
+									htmlContents.push(analysisData.analysis.stock);	
+								}
+								
+								
+								if (analysisData.analysis.transaction) {
+							
+									this.messages.push({
+										text: "",
+										isUser: false,
+										typing: false,
+										timestamp: new Date().toLocaleTimeString(),
+										htmlContent: analysisData.analysis.transaction,
+										username: "FinBud Bot",
+										sources: [],
+										videos: [],
+										relevantQuestions: []
+									});
+									htmlContents.push(analysisData.analysis.transaction);
+								}
+								
+								if (!analysisData.analysis.stock && !analysisData.analysis.transaction) {
+									const errorMsg = "Could not generate portfolio analysis. Please try again later.";
+									const translatedError = await gptServices([{ 
+										role: "user", 
+										content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".` 
+									}]);
+									answers.push(translatedError);
+								}
+							} else {
+								const noDataMsg = "No portfolio data available for analysis. Please add holdings or transactions first.";
+								const translatedNoData = await gptServices([{ 
+									role: "user", 
+									content: `Translate the following text into ${language}. Respond only with the translated text: "${noDataMsg}".` 
+								}]);
+								answers.push(translatedNoData);
+							}
+							
+							
+							this.messages = this.messages.filter(msg => !msg.isThinking);
+						}
+					} catch (err) {
+						console.error("Error in analyze portfolio:", err.message);
+						const errorMsg = "There was an error analyzing your portfolio. Please try again later.";
+						const translatedError = await gptServices([{ 
+							role: "user", 
+							content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".` 
+						}]);
+						answers.push(translatedError);
+					}
+				}
+	
         else {
           try {
+						const historyChat = this.messages.slice(-10).map(msg => {
+							return { role: msg.isUser ? "user" : "assistant", content: msg.text };
+						});
+						console.log(historyChat)
             const prompt = userMessage;
             const gptResponse = await gptServices([
               {
                 role: "user",
-                content: `${prompt}. Response in this language ${language}`,
+                content: `${prompt}. 
+						Response in this language ${language}. Previous Context to refer to if user asks ${historyChat}`,
               },
             ]);
+						
             answers.push(gptResponse);
           } catch (err) {
             console.error("Error in general message:", err.message);
@@ -805,7 +928,7 @@ export default {
 
       const userId = this.$store.getters["users/userId"]; // Get userId from store
       const date = new Date().toISOString(); // Get current date
-      const type = amount > 0 ? "Expense" : "Income"; // Đặt type dựa trên giá trị amount
+      const type = amount > 0 ? "Expense" : "Income";
 
       try {
         await api.post(`/transactions`, {
@@ -821,6 +944,7 @@ export default {
         this.addTypingResponse("Error adding transaction.", false);
       }
     },
+
 
     async scrollChatFrameToBottom() {
       await new Promise((r) => setTimeout(r, 200));
@@ -876,6 +1000,21 @@ export default {
                 this.messages.push(response);
               });
             }
+						if (chat.htmlContent) {
+							chat.htmlContent.forEach((htmlContent) => {
+								const htmlResponse = {
+									text: "",
+									isUser: false,
+									typing: false,
+									timestamp: chat.creationDate,
+									htmlContent: htmlContent,
+									sources: chat.sources,
+									videos: chat.videos,
+									relevantQuestions: chat.followUpQuestions
+								};
+								this.messages.push(htmlResponse);
+							});
+						}
           });
         } else {
           console.error("Error: chatsData is not an array");
@@ -907,5 +1046,42 @@ export default {
   position: relative;
   container-type: size;
   container-name: messageComponent userInputComponent;
+}
+
+.analysis-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.analysis-section h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 1.5em;
+}
+
+.analysis-section h3 {
+  color: #3498db;
+  margin: 15px 0 10px;
+  font-size: 1.2em;
+}
+
+.analysis-section p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.analysis-section ul {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+.analysis-section li {
+  margin-bottom: 5px;
+}
+
+.top-spacer {
+  height: 100px;  /* Or any height you desire to push content down */
 }
 </style>
