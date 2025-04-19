@@ -203,6 +203,7 @@ export default {
                 { name: this.$t('eventHub.categories.networking'), image: require('@/assets/workshop.png') },
                 { name: this.$t('eventHub.categories.careerFairs'), image: require('@/assets/career fair.png') }
             ];
+            articles: []
         }
     },
     methods: {
@@ -258,7 +259,6 @@ export default {
     },
     mounted() {
         this.fetchHeadlines();
-        this.fetchArticles();
         this.checkMobile();
         window.addEventListener('resize', this.checkMobile);
         AOS.init({ duration: 1000, easing: "ease-out" });
