@@ -1,44 +1,44 @@
 <template>
   <div class="dashboard">
     <!-- Combined header section with both dashboard header and chatbot side by side -->
-    <h1>Stock Simulator</h1>
+    <h1>{{ $t('stockSimulator') }}</h1>
     <nav class="navbar">
       <ul>
         <li
           @click="activeSection = 'investment'"
           :class="{ active: activeSection === 'investment' }"
         >
-          Investment
+          {{ $t('investment') }}
         </li>
         <li
           @click="activeSection = 'portfolio'"
           :class="{ active: activeSection === 'portfolio' }"
         >
-          Your Portfolio
+          {{ $t('portfolio') }}
         </li>
         <li
           @click="activeSection = 'transactionHistory'"
           :class="{ active: activeSection === 'transactionHistory' }"
         >
-          Transaction History
+          {{ $t('transactionHistory') }}
         </li>
         <li
           @click="activeSection = 'filters'"
           :class="{ active: activeSection === 'filters' }"
         >
-          Filters
+          {{ $t('filters') }}
         </li>
         <li
           @click="activeSection = 'quiz'"
           :class="{ active: activeSection === 'quiz' }"
         >
-          Quiz
+          {{ $t('quiz') }}
         </li>
         <li
           @click="activeSection = 'predictiveCalc'"
           :class="{ active: activeSection === 'predictiveCalc' }"
         >
-          Predictive Calculator
+          {{ $t('predictiveCalc') }}
         </li>
       </ul>
     </nav>
@@ -196,11 +196,7 @@
           </div>
         </section> -->
 
-        <PerformanceChart
-          :performanceData="performanceData"
-          @timeframeChanged="updatePerformanceData"
-          class="performance-chart"
-        />
+        <PortfolioPerformance :showChartOnly="true" />
       </div>
     </section>
 
@@ -364,6 +360,7 @@
       :remainingBalance="
         calculateRemainingBalance(action, estimatedPrice, quantity)
       "
+      :isSubmittingOrder="isSubmittingOrder"
       @close="showModal = false"
       @clear-order="clearForm"
       @submit-order="submitOrder(action)"
@@ -481,6 +478,7 @@ export default {
       showChatTransactionBubble: true,
       showingReward: false,
       rewardAmount: 1,
+      isSubmittingOrder: false,
 
       // New Portfolio Bot related data
       showPortfolioBot: false,
@@ -988,7 +986,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
     calculateRemainingBalance(action, price, quantity) {
       const total = this.calculateTotal(action, price, quantity);
-      return this.cash - (action === "buy" ? total : -total);
+      const remainingBalance = this.cash - (action === "buy" ? total : -total);
+      return parseFloat(remainingBalance.toFixed(2));
     },
     clearForm() {
       this.stockSymbol = "";
@@ -1050,6 +1049,12 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
 
     async submitOrder(action) {
+      if (this.isSubmittingOrder) {
+        return; // Prevent multiple submissions
+      }
+
+      this.isSubmittingOrder = true;
+
       const transactionData = {
         stockSymbol: this.stockSymbol,
         type: action,
@@ -1099,6 +1104,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
         // Re-throw the error so the caller can handle it specifically for quiz flow
         throw error;
+      } finally {
+        this.isSubmittingOrder = false;
       }
     },
     async fetchBankingAccountBalance() {
