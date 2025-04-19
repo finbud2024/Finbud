@@ -15,7 +15,7 @@
           </div>
         </li>
         <li>
-          <router-link to="/chat-view" class="chatview">Chat</router-link>
+          <router-link to="/chat-view" class="chatview">{{ $t('chat') }}</router-link>
         </li>
         <li
           class="dropdown"
@@ -38,7 +38,6 @@
               @click="toggleAboutDropdown(false)"
               >{{ $t('technology') }}</router-link
             >
-           
           </div>
         </li>
 
@@ -49,31 +48,31 @@
           @mouseleave="toggleDropdown(false)"
         >
           <div class="services-dropdown dropbtn">
-            Fin Manage <span class="arrow-down"></span>
+            {{ $t('finManage') }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)"
-              >Goal</router-link
+              >{{ $t('goal') }}</router-link
             >
             <router-link
               to="/riskanalysis"
               class="risk-analysis"
               @click="toggleDropdown(false)"
-              >Risk Analysis</router-link
+              >{{ $t('riskAnalysis') }}</router-link
             >
             <router-link
               to="/investment-calculator"
               class="investment-calculator"
               @click="toggleAboutDropdown(false)"
-              >Investment Calculator</router-link
+              >{{ $t('investmentCalculator') }}</router-link
             >
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">Mortgage Calculator</router-link>
-            
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">
+              {{ $t('mortgageCalculator') }}</router-link>
             <router-link
               to="/super-investors"
               class="super-investors"
               @click="toggleDropdownInvest(false)"
-              >Super Investors</router-link
+              >{{ $t('superInvestors') }}</router-link
             >
           </div>
         </li>
@@ -85,27 +84,26 @@
           @mouseleave="toggleDropdownInvest(false)"
         >
           <div class="services-dropdown dropbtn">
-            Fin Invest <span class="arrow-down"></span>
+            {{ $t('finInvest') }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
             <router-link
               to="/stock-simulator"
               class="simulator"
               @click="toggleDropdownInvest(false)"
-              >Simulator</router-link
+              >{{ $t('simulator') }}</router-link
             >
             <router-link
               to="/quant-analysis"
               class="home"
               @click="toggleDropdownInvest(false)"
-              >Quant</router-link
+              >{{ $t('quant') }}</router-link
             >
-
             <router-link
               to="/quant-simulator"
               class="quant-simulator"
               @click="toggleDropdownInvest(false)"
-              >Quant Simulator</router-link
+              >{{ $t('quantSimulator') }}</router-link
             >
           </div>
         </li>
@@ -117,26 +115,26 @@
           @mouseleave="toggleDropdownEdu(false)"
         >
           <div class="services-dropdown dropbtn">
-            Fin Edu <span class="arrow-down"></span>
+            {{ $t('finEdu') }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenEdu">
             <router-link
               to="/quizz"
               class="quizz"
               @click="toggleDropdownEdu(false)"
-              >Quiz</router-link
+              >{{ $t('quiz') }}</router-link
             >
             <router-link
               to="/event"
               class="event"
               @click="toggleDropdownEdu(false)"
-              >Event</router-link
+              >{{ $t('event') }}</router-link
             >
             <router-link
               to="/forum"
               class="forum"
               @click="toggleDropdownEdu(false)"
-              >Forum</router-link
+              >{{ $t('forum') }}</router-link
             >
           </div>
         </li>
@@ -148,20 +146,20 @@
           @mouseleave="toggleDropdownAgent(false)"
         >
           <div class="services-dropdown dropbtn">
-            Fin Agent <span class="arrow-down"></span>
+            {{ $t('finAgent') }} <span class="arrow-down"></span>
           </div>
-           <div class="dropdown-content" v-show="isDropdownOpenAgent">
+          <div class="dropdown-content" v-show="isDropdownOpenAgent">
             <router-link
               to="/agent"
               class="agent"
               @click="toggleDropdownEdu(false)"
-              >Agent</router-link
+              >{{ $t('agent') }}</router-link
             >
-           </div>
+          </div>
         </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">
-          <router-link to="/login" class="login-button">Log In</router-link>
+          <router-link to="/login" class="login-button">{{ $t('login') }}</router-link>
         </li>
 
         <li v-if="isAuthenticated" class="fincoin-container">
@@ -197,14 +195,14 @@
                 :icon="isDarkMode ? 'fa-moon' : 'fa-sun'"
                 class="icon"
               />
-              <p>{{ isDarkMode ? "Dark Mode" : "Light Mode" }}</p>
+              <p>{{ isDarkMode ? $t('darkMode') : $t('lightMode') }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
               <font-awesome-icon
                 icon="fa-solid fa-right-from-bracket"
                 class="icon"
               />
-              <p>Log Out</p>
+              <p>{{ $t('logout') }}</p>
             </router-link>
           </div>
         </li>
@@ -232,77 +230,74 @@
             to="/chat-view"
             class="chatview"
             @click="toggleDropdownMobile"
-            >Chat</router-link
+            >{{ $t('chat') }}</router-link
           >
           <router-link to="/about" class="about" @click="toggleDropdownMobile"
-            >About</router-link
+            >{{ $t('about') }}</router-link
           >
           <router-link
             to="/tech"
             class="technology"
             @click="toggleDropdownMobile"
-            >Technology</router-link
+            >{{ $t('technology') }}</router-link
           >
           <div class="authenticated" v-if="isAuthenticated">
-            <strong>Fin Manage</strong>
+            <strong>{{ $t('finManage') }}</strong>
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile"
-              >Goal</router-link
+              >{{ $t('goal') }}</router-link
             >
             <router-link
               to="/riskanalysis"
               class="risk-analysis"
               @click="toggleDropdownMobile"
-              >Risk Analysis</router-link
+              >{{ $t('riskAnalysis') }}</router-link
             >
-
             <router-link
               to="/mortgage-calc"
               class="mortgage-calc"
               @click="toggleDropdownMobile"
-              >Mortgage Calculator</router-link
+              >{{ $t('mortgageCalculator') }}</router-link
             >
-
             <router-link
               to="/super-investors"
               class="super-investors"
               @click="toggleDropdownMobile"
-              >Super Investors</router-link
+              >{{ $t('superInvestors') }}</router-link
             >
 
-            <strong>Fin Invest</strong>
+            <strong>{{ $t('finInvest') }}</strong>
             <router-link
               to="/stock-simulator"
               class="simulator"
               @click="toggleDropdownMobile"
-              >Simulator</router-link
+              >{{ $t('simulator') }}</router-link
             >
             <router-link
               to="/quant-analysis"
               class="home"
               @click="toggleDropdownMobile"
-              >Quant</router-link
+              >{{ $t('quant') }}</router-link
             >
-
             <router-link
               to="/quant-simulator"
               class="quant-simulator"
               @click="toggleDropdownMobile"
-              >Quant Simulator</router-link
+              >{{ $t('quantSimulator') }}</router-link
             >
 
-            <strong>Fin Edu</strong>
+            <strong>{{ $t('finEdu') }}</strong>
             <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile"
-              >Quiz</router-link
+              >{{ $t('quiz') }}</router-link
             >
             <router-link to="/event" class="event" @click="toggleDropdownMobile"
-              >Event</router-link
+              >{{ $t('event') }}</router-link
             >
             <router-link to="/forum" class="forum" @click="toggleDropdownMobile"
-              >Forum</router-link
+              >{{ $t('forum') }}</router-link
             >
 
             <router-link to="#" @click="logout" class="logout"
-              >Log Out</router-link
+              >{{ $t('logout') }}</router-link
             >
           </div>
           <router-link
@@ -310,7 +305,7 @@
             v-if="!isAuthenticated && !isAuthLoading"
             class="login-button"
             @click="toggleDropdownMobile"
-            >Log In</router-link
+            >{{ $t('login') }}</router-link
           >
           <div v-if="isAuthLoading" class="auth-loading-mobile">
             <div class="loading-indicator"></div>
