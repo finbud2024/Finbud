@@ -7,6 +7,13 @@
         <font-awesome-icon icon="fa-solid fa-paperclip" />
       </div>
 
+      <!-- Drop File -->
+      <div 
+          v-if="isDragging"
+          class="drag-overlay"
+        >
+      </div>
+
       <!-- Text Input Field -->
       <input 
         type="text" 
@@ -50,9 +57,23 @@ export default {
       isTyping: false,
       mediaRecorder: null,
       audioChunks: [],
-      selectedFile: null
+      selectedFile: null,
+      isDragging: false, 
     };
   },
+
+  mounted() {
+    window.addEventListener('dragover', this.onDragOver);
+    window.addEventListener('dragleave', this.onDragLeave);
+    window.addEventListener('drop', this.onFileDrop);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('dragover', this.onDragOver);
+    window.removeEventListener('dragleave', this.onDragLeave);
+    window.removeEventListener('drop', this.onFileDrop);
+  },
+
 
   methods: {
     send() {
@@ -89,6 +110,23 @@ export default {
     
     handleInput() {
       this.isTyping = this.messageText.length > 0;
+    },
+
+    onDragOver(event) {
+      event.preventDefault();
+      this.isDragging = true;
+    },
+    onDragLeave(event) {
+      event.preventDefault();
+      this.isDragging = false;
+    },
+    onFileDrop(event) {
+      event.preventDefault();
+      this.isDragging = false;
+      const file = event.dataTransfer.files[0];
+      if (file) {
+        this.selectedFile = file;
+      }
     },
 
     // Start Recording
@@ -136,6 +174,22 @@ export default {
 </script>
 
 <style scoped>
+.drag-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(100, 100, 100, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  z-index: 9999;
+  pointer-events: none; /* Allows clicks to pass through */
+}
+
 .user-input-container {
   display: flex;
   justify-content: center;
