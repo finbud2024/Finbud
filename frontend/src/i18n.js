@@ -357,7 +357,20 @@ const messages = {
       }
     },
     currencySymbol: "$",
-    shares: "shares"
+    shares: "shares",
+    chatComponent: {
+      rename: "Rename",
+      delete: "Delete",
+      deleteConfirm:"Delete Chat ?",
+      deleteConfirmMessage: "This will delete",
+      cancel: "Cancel",
+      guildence: "Guidence",
+      sendButton: "Send",
+      responsePlaceholder: "Phản hồi từ FinBud sẽ xuất hiện ở đây"
+    },
+
+    //Chat
+    message:"Type your message here... "
   },
   vi: {
 
@@ -365,27 +378,27 @@ const messages = {
     overview: "Tổng quan",
     about: "Giới thiệu",
     technology: "Công nghệ",
-    finManage: "Quản lý Tài chính",
-    goal: "Mục tiêu",
-    riskAnalysis: "Phân tích Rủi ro",
-    investmentCalculator: "Máy tính Đầu tư",
-    mortgageCalculator: "Máy tính Thế chấp",
-    superInvestors: "Nhà Đầu tư Hàng đầu",
-    finInvest: "Đầu tư Tài chính",
+    finManage: "Fin Quản lý",
+    goal: "Chi tiêu",
+    riskAnalysis: "Dữ liệu thị trường",
+    investmentCalculator: "Tính toán Đầu tư",
+    mortgageCalculator: "Tính toán Thế chấp",
+    superInvestors: "Đầu tư tài chính",
+    finInvest: "Fin Đầu tư",
     simulator: "Mô phỏng",
     quant: "Định lượng",
     quantSimulator: "Mô phỏng Định lượng",
-    finEdu: "Giáo dục Tài chính",
-    quiz: "Câu đố",
+    finEdu: "Fin Giáo dục",
+    quiz: "Quiz",
     event: "Sự kiện",
-    forum: "Diễn đàn",
-    finAgent: "Đại lý Tài chính",
-    agent: "Đại lý",
+    forum: "Forum",
+    finAgent: "Fin Tài chính",
+    agent: "Agent",
     login: "Đăng nhập",
     darkMode: "Chế độ tối",
     lightMode: "Chế độ sáng",
     logout: "Đăng xuất",
-    chat: "Trò chuyện",
+    chat: "Chat",
     //Old
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
     homePrice: "Giá nhà",
@@ -584,13 +597,13 @@ const messages = {
     // About Us Section
     aboutUsTitle: "Về chúng tôi",
     aboutUsDescription: "Chúng tôi là một đội ngũ công nghệ tại Việt Nam chuyên về tích hợp AI. FinBud là dự án đầu tiên của chúng tôi với mục tiêu hỗ trợ mọi người trong các quyết định tài chính, từ đầu tư, tiết kiệm đến chi tiêu thông minh. Đội ngũ của chúng tôi bao gồm các chuyên gia giàu kinh nghiệm với nền tảng đa dạng về công nghệ, tài chính và kinh doanh. Chúng tôi đam mê ứng dụng công nghệ để làm cho việc quản lý tài chính trở nên dễ dàng và dễ tiếp cận với tất cả mọi người.",
-    meetOurTeamTitle: "Gặp gỡ đội ngũ",
+    meetOurTeamTitle: "Đội Ngũ",
     
     // Testimonials Section
-    testimonialsTitle: "Nhận xét từ người dùng về FinBud",
+    testimonialsTitle: "Feedback",
     
     // Contact Section
-    contactHeader: "Chúng tôi rất muốn trao đổi về cách hợp tác cùng nhau.",
+    contactHeader: "Liên hệ ngay",
     contactSubheader: "Hãy cho chúng tôi biết cách chúng tôi có thể hỗ trợ bạn!",
     
     // Contact Form
@@ -710,13 +723,25 @@ const messages = {
       }
     },
     currencySymbol: "₫",
-    shares: "cổ phiếu"
-  }
+    shares: "cổ phiếu",
+    chatComponent: {
+      rename: "Đổi tên",
+      delete: "Xoá",
+      deleteConfirm:"Xóa cuộc trò chuyện?",
+      deleteConfirmMessage: "Điều này sẽ xóa",
+      cancel: "Hủy",
+      guildence: "Hướng dẫn",
+      sendButton: "Gửi",
+      responsePlaceholder: "Phản hồi từ FinBud sẽ xuất hiện ở đây"
+    }
+  },
+  //Chat
+  message:"Nhập tin nhắn của bạn ở đây... "
 };
 
 const i18n = createI18n({
-  locale: "en",
-  fallbackLocale: "en",
+  locale: "vi",
+  fallbackLocale: "vi",
   messages,
 });
 

@@ -9,37 +9,29 @@
     <div class="team-section">
       <li class="title">{{ $t('meetOurTeamTitle') }}</li>
       <swiper
-        :slidesPerView="slidesPerView"
-        :spaceBetween="30"
-        :keyboard="{
-          enabled: true,
-        }"
-        :pagination="{
-          clickable: true,
-        }"
-        :navigation="true"
-        :autoplay="{
-          delay: 0,
-          disableOnInteraction: false
-        }"
-        :speed="3000"
-        :modules="modules"
-        class="mySwiper"
-        :breakpoints="{
-          0: {
-            slidesPerView: 1,
-            spaceBetween: 10,
-          },
-          768: {
-            slidesPerView: 2,
-            spaceBetween: 20,
-          },
-          1024: {
-            slidesPerView: 3,
-            spaceBetween: 30,
-          },
-        }"
-      >
+      :slidesPerView="slidesPerView"
+      :spaceBetween="30"
+      :speed="2000" 
+      :autoplay="{
+        delay: 0,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true
+      }"
+      :loop="true"
+      :loopAdditionalSlides="4" 
+      :freeMode="{
+        enabled: true,
+        momentum: false
+      }"
+      :modules="modules"
+      class="mySwiper-linear"
+      :breakpoints="{
+        0: { slidesPerView: 1 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      }"
+    >
+     
         <swiper-slide v-for="member in teamMembers" :key="member.name">
           <div class="team-member">
             <div class="image-container">
@@ -754,6 +746,9 @@ body {
 
 .slide-in-up.animate-visible {
   transform: translateY(0);
+}
+.swiper-container-free-mode > .swiper-wrapper{
+  transition-timing-function : linear;
 }
 
 @media (max-width: 768px) {

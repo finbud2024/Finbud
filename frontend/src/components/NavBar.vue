@@ -75,7 +75,7 @@
               to="/mortgage-calc"
               class="mortgage-calc"
               @click="toggleDropdown(false)"
-              >Mortgage Calculator</router-link
+              >{{ $t('mortgageCalculator') }}</router-link
             >
 
             <router-link
@@ -598,6 +598,12 @@ export default {
   position: relative;
   font-size: clamp(0.75rem, 5.6vw, 1.25rem);
   color: var(--text-primary);
+  padding: 8px 12px; /* Add padding to give space around text */
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Space between text and arrow */
+  border-radius: 8px; /* Optional: rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .services-dropdown:hover {

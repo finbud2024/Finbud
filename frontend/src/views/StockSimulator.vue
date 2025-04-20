@@ -129,7 +129,7 @@
         </section>
 
         <section class="transactions">
-          <h3>Transaction History</h3>
+          
           <div class="transaction-form">
             <TransactionHistory :key="transactionKey" />
           </div>
@@ -224,14 +224,6 @@
           <h2>{{ activeSection === 'portfolio' ? $t('investmentPortfolio') : 'Your Investment Portfolio' }}</h2>
           
           <!-- Add language switcher here -->
-          <div class="portfolio-language-switcher">
-            <button @click="switchLanguage('en')" :class="{ active: $i18n.locale === 'en' }">
-              <img src="@/assets/us.png" alt="English" />
-            </button>
-            <button @click="switchLanguage('vi')" :class="{ active: $i18n.locale === 'vi' }">
-              <img src="@/assets/vn.png" alt="Tiếng Việt" />
-            </button>
-          </div>
         </div>
 
         <div class="portfolio-overview">
@@ -2276,7 +2268,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   border-radius: 8px;
   border: 1px solid #dee2e6;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  height: 700px; /* Set fixed height instead of min-height for better alignment */
+  height: 600px; /* Set fixed height instead of min-height for better alignment */
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
