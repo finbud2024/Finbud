@@ -13,7 +13,7 @@
         v-model="messageText" 
         @input="handleInput"
         @keyup.enter="send" 
-        placeholder="Type your message here..."
+        :placeholder="$t('messagePlaceholder')"
       />
 
       <!-- Voice Recording Button OR Send Button -->

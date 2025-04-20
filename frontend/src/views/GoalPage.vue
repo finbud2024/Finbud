@@ -50,7 +50,7 @@
             }}{{ displayName }}
           </div>
           <div class="slogan">
-            Manage your wallet wisely to reach your goals with ease.
+            {{ $t('dashboardSlogan') }}
           </div>
         </div>
       </div>
@@ -62,25 +62,21 @@
       </button>
       <div class="revenue-expense">
         <div class="total-spend revenue-card">
-          <h2>
-            {{
-              selectedCurrency === "USD"
-                ? formatCurrency(totalRevenue)
-                : formatCurrency(convertToVND(totalRevenue))
-            }}
-          </h2>
-          <p>Total Revenue</p>
+          <h2>{{
+                  selectedCurrency === "USD"
+                    ? formatCurrency(totalRevenue)
+                    : formatCurrency(convertToVND(totalRevenue))
+                }}</h2>
+          <p>{{ $t('totalRevenueLabel') }}</p>
         </div>
 
         <div class="total-spend expense-card">
-          <h2>
-            -{{
-              selectedCurrency === "USD"
-                ? formatCurrency(totalExpense)
-                : formatCurrency(convertToVND(totalExpense))
-            }}
-          </h2>
-          <p>Total Expense</p>
+          <h2>-{{
+                  selectedCurrency === "USD"
+                    ? formatCurrency(totalExpense)
+                    : formatCurrency(convertToVND(totalExpense))
+                }}</h2>
+          <p>{{ $t('totalExpenseLabel') }}</p>
         </div>
 
         <div class="total-spend">
@@ -101,7 +97,7 @@
               <option value="VND">VND</option>
             </select>
           </div>
-          <p>Account Balance</p>
+          <p>{{ $t('accountBalanceLabel') }}</p>
         </div>
       </div>
 
@@ -121,99 +117,96 @@
       </div>
       <section class="transactions">
         <div class="headline-buttons">
-          <h2>Daily Transactions</h2>
+          <h2>{{ $t('dailyTransactionsTitle') }}</h2>
           <div class="buttons">
-            <button @click="openModal" style="font-weight: bold">Add</button>
-            <button
-              @click="showResetConfirmationModal = true"
-              style="font-weight: bold"
-            >
-              Reset
-            </button>
-          </div>
+              <button @click="openModal" style="font-weight: bold;">{{ $t('addButton') }}</button>
+              <button @click="showResetConfirmationModal = true" style="font-weight: bold;">
+                {{ $t('resetButton') }}
+              </button>
+            </div>
         </div>
-        <div class="transaction-box">
-          <div v-if="showModal" class="modal-overlay">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h3>Add Transaction</h3>
-              </div>
-              <div class="modal-body">
-                <div class="input-box">
-                  <select
-                    v-model="transaction.type"
-                    class="input-box type-select"
-                    required
-                  >
-                    <option value="" disabled class="input-box-placeholder">
-                      Transaction Type
-                    </option>
-                    <option value="Income">Credited</option>
-                    <option value="Expense">Debited</option>
-                  </select>
-                  <input
-                    type="text"
-                    placeholder="Description"
-                    v-model="transaction.description"
-                    @input="generateRecommendations"
-                    @keydown="generateRecommendations"
-                    @focus="showRecommendations"
-                    @blur="hideRecommendations"
-                  />
-                  <ul
-                    v-if="recommendations.length && recommendationsVisible"
-                    class="recommendation-list"
-                    @mousedown.prevent
-                  >
-                    <li
-                      v-for="(recommendation, index) in recommendations"
-                      :key="index"
-                      @click="selectRecommendation(recommendation)"
-                      :class="{ highlighted: index === highlightedIndex }"
-                    >
-                      {{ recommendation }}
-                    </li>
-                  </ul>
-                  <div class="currency-input">
-                    <input
-                      type="number"
-                      placeholder="Amount"
-                      v-model="transaction.amount"
-                    />
-                    <select v-model="selectedCurrency" class="selectinside">
-                      <option value="USD">USD</option>
-                      <option value="VND">VND</option>
-                    </select>
-                  </div>
-                  <input
-                    type="date"
-                    placeholder="Date"
-                    v-model="transaction.date"
-                  />
+          <div class="transaction-box">
+            <div v-if="showModal" class="modal-overlay">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3>{{ $t('addTransactionTitle') }}</h3>
                 </div>
-              </div>
-              <div class="modal-footer">
-                <button @click="closeModal" style="margin-right: 10px">
-                  Cancel
-                </button>
-                <button @click="addTransaction">Add Transaction</button>
+                <div class="modal-body">
+                  <div class="input-box">
+                    <select
+                      v-model="transaction.type"
+                      class="input-box type-select"
+                      required
+                    >
+                      <option value="" disabled class="input-box-placeholder">
+                        {{ $t('transactionTypePlaceholder') }}
+                      </option>
+                      <option value="Income">{{ $t('creditedOption') }}</option>
+                      <option value="Expense">{{ $t('debitedOption') }}</option>
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Description"
+                      v-model="transaction.description"
+                      @input="generateRecommendations"
+                      @keydown="generateRecommendations"
+                      @focus="showRecommendations"
+                      @blur="hideRecommendations"
+                    />
+                    <ul
+                      v-if="recommendations.length && recommendationsVisible"
+                      class="recommendation-list"
+                      @mousedown.prevent
+                    >
+                      <li
+                        v-for="(recommendation, index) in recommendations"
+                        :key="index"
+                        @click="selectRecommendation(recommendation)"
+                        :class="{ highlighted: index === highlightedIndex }"
+                      >
+                        {{ recommendation }}
+                      </li>
+                    </ul>
+                    <div class="currency-input">
+                      <input
+                        type="number"
+                        placeholder="Amount"
+                        v-model="transaction.amount"
+                      />
+                      <select v-model="selectedCurrency" class="selectinside">
+                        <option value="USD">USD</option>
+                        <option value="VND">VND</option>
+                      </select>
+                    </div>
+                    <input
+                      type="date"
+                      placeholder="Date"
+                      v-model="transaction.date"
+                    />
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button @click="closeModal" style="margin-right: 10px">
+                    {{ $t('cancelButton') }}
+                  </button>
+                  <button @click="addTransaction">{{ $t('addTransactionButton') }}</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="transaction-list">
-          <table>
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Amount ({{ selectedCurrency }})</th>
-                <th>Status</th>
-                <th>Transaction</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- <tr
+          <div class="transaction-list">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ $t('descriptionHeader') }}</th>
+                  <th>{{ $t('dateHeader') }}</th>
+                  <th>{{ $t('amountHeader') }} ({{ selectedCurrency }})</th>
+                  <th>{{ $t('statusHeader') }}</th>
+                  <th>{{ $t('transactionHeader') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- <tr
                   v-for="trans in transactions"
                   :key="trans._id"
                   :class="{
@@ -267,32 +260,28 @@
                       padding: 6px 12px;
                       "
                     > -->
-                  <button
-                    @click="removeTransaction(trans.account_id)"
-                    style="padding: 6px 12px"
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                    <button 
+                      @click="removeTransaction(trans.account_id)"
+                      style="
+                      padding: 6px 12px;
+                      "
+                    >
+                    {{ $t('removeButton') }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
       </section>
     </div>
 
-    <div class="rightPanel">
-      <section class="financial-goals" ref="financialGoalsSection">
-        <div class="goal-upper-part">
-          <h3 class="goal-section-title">Goals</h3>
-          <button
-            class="add-goal-button"
-            @click="showAddGoalModal = true"
-            style="font-weight: bold"
-          >
-            Add Goal
-          </button>
-        </div>
+      <div class="rightPanel">
+        <section class="financial-goals" ref="financialGoalsSection">
+          <div class="goal-upper-part">
+            <h3 class="goal-section-title">{{ $t('goalsSectionTitle') }}</h3>
+            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">{{ $t('addGoalButton') }}</button>
+            </div>
 
         <div class="search-container">
           <input
@@ -303,164 +292,104 @@
           />
         </div>
 
-        <div class="goals">
-          <div
-            v-for="goal in filteredGoals"
-            :key="goal._id"
-            class="goal"
-            @click="showGoalProgress(goal)"
-          >
-            <img
-              src="../assets/financial-goal-mockup.jpg"
-              alt="Goal Image"
-              class="goal-image"
-            />
-            <div class="goal-content">
-              <div class="goal-icon">
-                <i :class="goal.icon"></i>
-              </div>
-              <div class="goal-info">
-                <h3>{{ goal.title }}</h3>
-                <p>Category: {{ goal.category }}</p>
-                <p>Total: {{ goal.targetAmount }} USD</p>
-                <p>Saved: {{ goal.currentAmount }} USD</p>
-              </div>
-              <div class="progress-bar-container">
-                <div
-                  class="progress-bar"
-                  :style="{
-                    width: (goal.currentAmount / goal.targetAmount) * 100 + '%',
-                  }"
-                ></div>
-              </div>
+            <div class="goals">
+            <div v-for="goal in filteredGoals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
+                <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
+                <div class="goal-content">
+                <div class="goal-icon">
+                    <i :class="goal.icon"></i>
+                </div>
+                <div class="goal-info">
+                  <h3>{{ goal.title }}</h3>
+                  <p>{{ $t('categoryLabel') }}: {{ goal.category }}</p>
+                  <p>{{ $t('totalLabel') }}: {{ goal.targetAmount }} USD</p>
+                  <p>{{ $t('savedLabel') }}: {{ goal.currentAmount }} USD</p>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" :style="{ width: (goal.currentAmount / goal.targetAmount * 100) + '%' }"></div>
+                </div>
+                </div>
             </div>
-          </div>
-        </div>
+            </div>
 
-        <div
-          v-if="showAddGoalModal"
-          class="modal"
-          @click="showAddGoalModal = false"
-        >
-          <div class="modal-content" @click.stop>
-            <div class="modal-text-content">
-              <h3>Add New Goal</h3>
-              <div class="form-group">
-                <label for="goalTitle">Goal Title</label>
-                <input
-                  id="goalTitle"
-                  type="text"
-                  placeholder="Enter your goal title"
-                  v-model="newGoal.title"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="goalDescription">Description (optional)</label>
-                <textarea
-                  id="goalDescription"
-                  placeholder="Describe your goal (max 500 words)"
-                  v-model="newGoal.description"
-                  maxlength="500"
-                  @input="updateDescriptionCount"
-                ></textarea>
-                <div class="character-counter">
-                  {{ descriptionCharCount }} / 500 characters
+
+            <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
+              <div class="modal-content" @click.stop>
+                <div class="modal-text-content">
+                  <h3>{{ $t('addNewGoalTitle') }}</h3>
+                  <div class="form-group">
+                    <label for="goalTitle">{{ $t('goalTitleLabel') }}</label>
+                    <input id="goalTitle" type="text" :placeholder="$t('goalTitlePlaceholder')" v-model="newGoal.title" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="goalDescription">{{ $t('descriptionLabel') }} ({{ $t('optionalLabel') }})</label>
+                    <textarea 
+                      id="goalDescription" 
+                      :placeholder="$t('descriptionPlaceholder')" 
+                      v-model="newGoal.description" 
+                      maxlength="500" 
+                      @input="updateDescriptionCount"></textarea>
+                    <div class="character-counter">{{ descriptionCharCount }} / 500 {{ $t('charactersLabel') }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="targetAmount">{{ $t('totalMoneyNeededLabel') }}</label>
+                    <div class="currency-input">
+                      <input id="targetAmount" type="number" :placeholder="$t('totalMoneyNeededPlaceholder')" v-model="newGoal.targetAmount" required>
+                      <select>
+                        <option value="USD">USD</option>
+                        <option value="VND">VND</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="currentAmount">{{ $t('moneyHaveLabel') }}</label>
+                    <input id="currentAmount" type="number" :placeholder="$t('moneyHavePlaceholder')" v-model="newGoal.currentAmount">
+                  </div>
+                  <div class="form-group">
+                    <label for="startDate">{{ $t('startDateLabel') }}</label>
+                    <input id="startDate" type="date" v-model="newGoal.startDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="endDate">{{ $t('endDateLabel') }}</label>
+                    <input id="endDate" type="date" v-model="newGoal.endDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="goalCategory">{{ $t('categoryLabel') }}</label>
+                    <select id="goalCategory" v-model="selectedCategory">
+                      <option v-for="category in categories" :key="category" :value="category">
+                        {{ category }}
+                      </option>
+                      <option value="new">{{ $t('addNewCategoryOption') }}</option>
+                    </select>
+                  </div>
+                  <div v-if="selectedCategory === 'new'" class="form-group">
+                    <label for="newCategory">{{ $t('newCategoryLabel') }}</label>
+                    <input id="newCategory" type="text" :placeholder="$t('newCategoryPlaceholder')" v-model="newCategory">
+                  </div>
+                  <button class="add-goal-button" @click="addGoal">{{ $t('addGoalButton') }}</button>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="targetAmount">Total Money Needed</label>
-                <div class="currency-input">
-                  <input
-                    id="targetAmount"
-                    type="number"
-                    placeholder="Total money needed"
-                    v-model="newGoal.targetAmount"
-                    required
-                  />
-                  <select>
-                    <option value="USD">USD</option>
-                    <option value="VND">VND</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="currentAmount">Money Already Have</label>
-                <input
-                  id="currentAmount"
-                  type="number"
-                  placeholder="Money already have"
-                  v-model="newGoal.currentAmount"
-                />
-              </div>
-              <div class="form-group">
-                <label for="startDate">Start Date</label>
-                <input
-                  id="startDate"
-                  type="date"
-                  v-model="newGoal.startDate"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="endDate">End Date</label>
-                <input
-                  id="endDate"
-                  type="date"
-                  v-model="newGoal.endDate"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="goalCategory">Category</label>
-                <select id="goalCategory" v-model="selectedCategory">
-                  <option
-                    v-for="category in categories"
-                    :key="category"
-                    :value="category"
-                  >
-                    {{ category }}
-                  </option>
-                  <option value="new">Add New Category</option>
-                </select>
-              </div>
-              <div v-if="selectedCategory === 'new'" class="form-group">
-                <label for="newCategory">New Category</label>
-                <input
-                  id="newCategory"
-                  type="text"
-                  placeholder="Enter new category"
-                  v-model="newCategory"
-                />
-              </div>
-              <button class="add-goal-button" @click="addGoal">Add Goal</button>
             </div>
+          </section>
+        </div>
+    
+        <!-- Reset Confirmation Modal -->
+        <div v-if="showResetConfirmationModal" class="modal">
+          <div class="modal-content">
+            <h3>{{ $t('resetAccountTitle') }}</h3>
+            <p>{{ $t('resetAccountMessage') }}</p>
+            <button @click="showResetConfirmationModal = false" style="margin-right: 10px">
+              {{ $t('noButton') }}
+            </button>
+            <button @click="resetAccountBalance">
+              {{ $t('yesButton') }}
+            </button>
           </div>
         </div>
-      </section>
-    </div>
-    <!-- Ghost div for chatbot trigger - placed at the very end of the page -->
-    <div ref="chatbotTriggerPoint" class="chatbot-trigger"></div>
-  </div>
-  <div v-if="showResetConfirmationModal" class="modal">
-    <div class="modal-content">
-      <h3>Reset Account Balance</h3>
-      <p>
-        Are you sure you want to reset your account balance? This action will
-        delete all your transactions.
-      </p>
-      <button
-        @click="showResetConfirmationModal = false"
-        style="margin-right: 10px"
-      >
-        No
-      </button>
-      <button @click="resetAccountBalance">Yes</button>
-    </div>
-  </div>
-</template>
+      </div>
+    </template>
 
 <script>
 import axios from "axios";
