@@ -1,13 +1,18 @@
 import express from 'express';
 import axios from 'axios';
 import Company from '../../Database Schema/finData/CompanySchema';
+import { fetchFilingsDocument } from '../../functions/filingsDocuments';
 import Filings from '../../Database Schema/finData/FilingsSchema';
+import csvtojson from "convert-csv-to-json"
+import { getRecentQuarter } from '../../utils/getRecentQuarter.js';
 
 const filingsRoute = express.Router();
 
 const SEC_HEADERS = {
     "User-Agent": "Anh Tran anhtrannd2004@gmail.com"
 }
+const ALPHAVANTAGE_API_KEY = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY
+
 
 // Load all companies json data into MongoDB
 export const loadCompanies = async () => {
@@ -29,6 +34,17 @@ export const loadCompanies = async () => {
     console.log("Error loading all companies", error)
 }
 }
+
+// Get all companies in the database 
+filingsRoute.get("/all-companies", async (req, res) => {
+    try {
+        const companies = await Company.find({})
+        return res.status(200).json(companies)
+    } catch (e){
+        console.log("Error in getting companies from database", e)
+        return res.status(500).json({error: "Error in getting companies from DB"})
+    }
+})
 
 // Search company by name
 filingsRoute.get("/search", async (req, res) => {
@@ -52,6 +68,7 @@ filingsRoute.get("/search", async (req, res) => {
 
 // Get CIK of 1 company 
 const getCIKForCompany = async (ticker) => {
+    console.log("curr ticker", ticker.toUpperCase())
     const companyName = await Company.findOne({ticker: ticker.toUpperCase()})
     if (!companyName) {
         throw new Error ("Company not found in DB")
@@ -64,30 +81,66 @@ filingsRoute.get("/company/:ticker", async (req, res) => {
         const {ticker} = req.params;
         const companyName = await getCIKForCompany(ticker)
         const cik = companyName.cik
-        const response = await axios.get(`https://data.sec.gov/submissions/CIK${cik}.json`, {
-            headers: SEC_HEADERS
-          });
-          const data = response.data
-        const needTypes = ["10-K", "10-Q", "8-K"]
-        for (let i = 0; i < data.filings.recent.accessionNumber.length; i++){
-            const currType = data.filings.recent.form[i];
-            if (!needTypes.includes(currType)) continue
-            const currAccessionNumber = data.filings.recent.accessionNumber[i]
-            const isExisted = await Filings.findOne({accessionNumber: currAccessionNumber})
-            if (isExisted) continue
-
-            const newFiling = new Filings({
-                cik: cik,
-                reportType: currType,
-                accessionNumber: currAccessionNumber,
-                documentUrl: `https://www.sec.gov/Archives/edgar/data/${parseInt(cik)}/${currAccessionNumber.replace(/-/g, "")}/${data.filings.recent.primaryDocument[i]}`
-            })
-            await newFiling.save()
-        }
-        return res.status(200).json({message: "Fetch filings successfully"})
+        res.status(202).json({ message: `Started fetching filings for ${ticker}` })
+        setTimeout(() => fetchFilingsDocument(cik), 0)
     } catch (error) {
         console.log("error fetching filings", error)
-        return res.status(500).json({message: "Error fetching filings"})
+        res.status(500).json({message: "Error fetching filings"})
+    }
+})
+
+// Get filings from DB
+filingsRoute.get("/filings/:ticker", async (req, res) => {
+    try {
+        const {ticker} = req.params;
+        const companyName = await getCIKForCompany(ticker)
+        if (!companyName){
+            return res.status(404).json({message: "Company not found"})
+        }
+        const filings = await Filings.find({ cik: companyName.cik})
+        return res.status(200).json(filings)
+    } catch (err) {
+        console.log("error getting filings from DB", err)
+        return res.status(500).json({message: "Error getting filings from DB"})
+    }
+})
+
+// get earning transcripts
+filingsRoute.get("/earnings-transcript/:ticker", async(req, res) => {
+    try {
+        const {ticker} = req.params
+        const needQuarters = getRecentQuarter()
+        const transcripts = []
+        for (let i = 0; i < needQuarters.length; i++){
+            const response = await axios.get(`https://www.alphavantage.co/query?function=EARNINGS_CALL_TRANSCRIPT&symbol=${ticker.toUpperCase()}&quarter=2024Q1&apikey=${process.env.VUE_APP_ALPHAVANTAGE2
+}`)
+console.log("response", response.data)
+            if (response.data.transcript){
+                transcripts.push({
+                    ...needQuarters[i],
+                    reportDate: response.data.quarter,
+                    transcript: response.data.transcript
+                })
+            }
+        }
+        console.log("transcript from be", transcripts)
+        return transcripts
+    } catch (err) {
+        console.log("error in getting earning transcripts")
+        return res.status(500).json({message: "Error getting earning transcript"})
+    }
+})
+// get earning calendar
+filingsRoute.get("/earnings-calendar", async (req, res) => {
+    try {
+        const csvResponse = await axios.get(`https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&horizon=6month&apikey=${ALPHAVANTAGE_API_KEY}`,
+            { responseType: 'text' }
+        )
+        const jsonResponse = csvtojson.fieldDelimiter(",").csvStringToJson(csvResponse.data)
+        return res.status(200).json(jsonResponse)
+    } catch (err){
+        console.log("fail to get calendar BE", err)
+        return res.status(500).json({message: "Error in get calendar"})
     }
 })
 export default filingsRoute

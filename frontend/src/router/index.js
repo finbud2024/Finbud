@@ -24,6 +24,7 @@ import StartThread from "@/views/StartThread.vue";
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
+import FinDataPage from "@/views/FinDataPage.vue"
 const routes = [
   {
     path: "/",
@@ -158,6 +159,15 @@ const routes = [
     path: "/super-investors/:id",
     name: "InvestorDetails",
     component: InvestorDetail,
+  },
+  {
+    path: "/docs",
+    redirect: "/docs/aapl"
+  },
+  {
+    path: "/docs/:ticker",
+    name: "Financial Docs",
+    component: FinDataPage
   }
 ];
 

@@ -122,7 +122,21 @@
             >
           </div>
         </li>
-
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownData(true)"
+          @mouseleave="toggleDropdownData(false)"
+        >
+        <div class="services-dropdown dropbtn">
+          Fin Data <span class="arrow-down"></span>
+          <div class="dropdown-content" v-show="isDataDropdownOpen">
+            <router-link to="/docs" class="docs" @click="toggleDropdownData(false)"
+              >Docs</router-link
+            >
+            </div>
+        </div>
+        </li>
         <li v-if="!isAuthenticated && !isAuthLoading">
           <router-link to="/login" class="login-button">Log In</router-link>
         </li>
@@ -301,6 +315,7 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
+      isDataDropdownOpen: false,
       isDarkMode: false,
       isAuthLoading: false,
     };
@@ -342,6 +357,9 @@ export default {
     },
     toggleDropdownEdu(open) {
       this.isDropdownOpenEdu = open;
+    },
+    toggleDropdownData(open){
+      this.isDataDropdownOpen = open;
     },
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;
