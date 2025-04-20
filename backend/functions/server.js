@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
+import Source from "../Database Schema/Source.js";  
+import Article from "../Database Schema/Article.js";
 import serverless from "serverless-http";
 import dotenv from "dotenv";
 import passportConfig from "../Passport/config.js";
@@ -25,16 +27,33 @@ import chatStockRoute from "../Endpoints/subChat/chatStockRoute.js";
 import multiplierSimulatorRoute from "../Endpoints/quantSimulator/multiplierSimulatorEndpoints.js";
 import forumRoute from "../Endpoints/forumRoute.js";
 import postRoute from "../Endpoints/postRoute.js";
-import superInvestorsRoute from '../Endpoints/superInvestorsRoute.js';
+import superInvestorsRoute from "../Endpoints/superInvestorsRoute.js";
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
 import filingsRoute, { loadCompanies } from "../Endpoints/finData/filingsRoute.js";
+import articleRoute from "../Endpoints/articleRoute.js";
 
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
 const app = express();
+
+const allowedOrigins = ["http://localhost:8888", "https://finbud.pro"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 const httpServer = createServer(app);
 // Create Socket.io instance with CORS configuration
 const io = new Server(httpServer, {
@@ -111,12 +130,6 @@ passportConfig(app);
 
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(bodyParser.json({ limit: "10mb" }));
-app.use(
-  cors({
-    origin: "https://finbud.pro",
-    credentials: true,
-  })
-);
 
 // app.use((req, res, next) => {
 //   console.log(req.body);
@@ -141,9 +154,10 @@ router.use("/", chatStockRoute);
 router.use("/multiplier-simulator", multiplierSimulatorRoute);
 // router.use('/', quantSimulatorRoute); // Commenting out undefined route
 // router.use('/', chatStockRoute); // Duplicate route - already registered above
-router.use('/', portfolioRoute);
+router.use("/", portfolioRoute);
 router.use("/api/investors", superInvestorsRoute);
 router.use("/api/forums", forumRoute);
+router.use("/api/articles", articleRoute);
 router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);

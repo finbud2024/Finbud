@@ -28,7 +28,14 @@
       </div>
       <div class="modal-actions">
         <button @click="clearOrder" class="clear-btn">CLEAR ORDER</button>
-        <button @click="submitOrder" class="submit-btn">SUBMIT ORDER</button>
+        <button @click="submitOrder" :disabled="isSubmittingOrder" class="submit-btn">
+          <span v-if="isSubmittingOrder">
+            <i class="fas fa-spinner fa-spin"></i> Submitting...
+          </span>
+          <span v-else>
+            Submit Order
+          </span>
+        </button>
       </div>
     </div>
   </div>
@@ -41,6 +48,7 @@ export default {
     quantity: Number,
     estimatedPrice: Number, // Assume the base price is passed as a prop
     remainingBalance: Number,
+    isSubmittingOrder: Boolean,
   },
   computed: {
     calculatedEstimatedPrice() {
@@ -129,6 +137,12 @@ export default {
 .submit-btn {
   background-color: #007bff;
   color: white;
+}
+
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .submit-btn:hover {

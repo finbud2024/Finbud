@@ -1,15 +1,24 @@
 <template>
   <div class="GoalDashBoardContainer">
     <!-- Bot Chat Component - Updated with toggle functionality -->
-    <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-      <img 
-        class="bot-image" 
-        src="@/assets/botrmbg.png" 
-        alt="Bot" 
+    <div
+      class="bot-chat-container"
+      :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }"
+    >
+      <img
+        class="bot-image"
+        src="@/assets/botrmbg.png"
+        alt="Bot"
         @click="toggleBotMessage"
-        :class="{ 'clickable': showBot }"
+        :class="{ clickable: showBot }"
       />
-      <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
+      <div
+        class="bot-message"
+        :class="{
+          'message-visible': showMessage,
+          'message-hidden': hidingMessage,
+        }"
+      >
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -17,21 +26,40 @@
         </div>
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
+      <img 
+        class="bot-image" 
+        src="@/assets/botrmbg.png" 
+        alt="Bot" 
+        @click="toggleBotMessage"
+        :class="{ 'clickable': showBot }"
+      />
     </div>
-    
+
     <div class="leftPanel">
       <div class="leftPanelHeader">
         <img class="profilePic" :src="profilePic" alt="profilePic" />
         <div class="headerText">
           <div class="greeting">
-            {{ (h => h < 12 ? "Good Morning " : h < 18 ? "Good Afternoon " : "Good Evening ")(new Date().getHours()) }}{{ displayName }}
+            {{
+              ((h) =>
+                h < 12
+                  ? "Good Morning "
+                  : h < 18
+                  ? "Good Afternoon "
+                  : "Good Evening ")(new Date().getHours())
+            }}{{ displayName }}
           </div>
           <div class="slogan">
-            Manage your wallet wisely to reach your goals with ease.
+            {{ $t('dashboardSlogan') }}
           </div>
         </div>
       </div>
-      <button @click="openPlaidLink" :class="['add-goal-button', disabledConnect ? 'disabled' : null]">Connect Your Bank Account</button>
+      <button
+        @click="openPlaidLink"
+        :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
+      >
+        Connect Your Bank Account
+      </button>
       <div class="revenue-expense">
         <div class="total-spend revenue-card">
           <h2>{{
@@ -39,7 +67,7 @@
                     ? formatCurrency(totalRevenue)
                     : formatCurrency(convertToVND(totalRevenue))
                 }}</h2>
-          <p>Total Revenue</p>
+          <p>{{ $t('totalRevenueLabel') }}</p>
         </div>
 
         <div class="total-spend expense-card">
@@ -48,39 +76,52 @@
                     ? formatCurrency(totalExpense)
                     : formatCurrency(convertToVND(totalExpense))
                 }}</h2>
-          <p>Total Expense</p>
+          <p>{{ $t('totalExpenseLabel') }}</p>
         </div>
-        
+
         <div class="total-spend">
           <div class="balance-header">
-          <h2>{{
-                  selectedCurrency === "USD"
-                    ? formatCurrency(accountBalance)
-                    : formatCurrency(convertToVND(accountBalance))
-                }}</h2>
-                <select
-                  v-model="selectedCurrency"
-                  @change="updateCurrency"
-                  class="selectoutside"
-                >
-                  <option value="USD">USD</option>
-                  <option value="VND">VND</option>
-                </select>
+            <h2>
+              {{
+                selectedCurrency === "USD"
+                  ? formatCurrency(accountBalance)
+                  : formatCurrency(convertToVND(accountBalance))
+              }}
+            </h2>
+            <select
+              v-model="selectedCurrency"
+              @change="updateCurrency"
+              class="selectoutside"
+            >
+              <option value="USD">USD</option>
+              <option value="VND">VND</option>
+            </select>
           </div>
-          <p>Account Balance</p>
+          <p>{{ $t('accountBalanceLabel') }}</p>
         </div>
       </div>
-      
-      <div class="chart-container">
-        <TransactionLine :transactions="transactions" />
+
+      <div
+        class="chart-container"
+        v-if="transactions && transactions.length > 0"
+      >
+        <TransactionLine
+          :transactions="transactions"
+          :key="`transaction-line-${transactions.length}-${Date.now()}`"
+        />
+      </div>
+      <div class="chart-container no-data" v-else>
+        <div class="no-data-message">
+          <p>No transaction data available to display.</p>
+        </div>
       </div>
       <section class="transactions">
         <div class="headline-buttons">
-          <h2>Daily Transactions</h2>
+          <h2>{{ $t('dailyTransactionsTitle') }}</h2>
           <div class="buttons">
-              <button @click="openModal" style="font-weight: bold;">Add</button>
+              <button @click="openModal" style="font-weight: bold;">{{ $t('addButton') }}</button>
               <button @click="showResetConfirmationModal = true" style="font-weight: bold;">
-                Reset
+                {{ $t('resetButton') }}
               </button>
             </div>
         </div>
@@ -88,7 +129,7 @@
             <div v-if="showModal" class="modal-overlay">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h3>Add Transaction</h3>
+                  <h3>{{ $t('addTransactionTitle') }}</h3>
                 </div>
                 <div class="modal-body">
                   <div class="input-box">
@@ -98,10 +139,10 @@
                       required
                     >
                       <option value="" disabled class="input-box-placeholder">
-                        Transaction Type
+                        {{ $t('transactionTypePlaceholder') }}
                       </option>
-                      <option value="Income">Credited</option>
-                      <option value="Expense">Debited</option>
+                      <option value="Income">{{ $t('creditedOption') }}</option>
+                      <option value="Expense">{{ $t('debitedOption') }}</option>
                     </select>
                     <input
                       type="text"
@@ -146,9 +187,9 @@
                 </div>
                 <div class="modal-footer">
                   <button @click="closeModal" style="margin-right: 10px">
-                    Cancel
+                    {{ $t('cancelButton') }}
                   </button>
-                  <button @click="addTransaction">Add Transaction</button>
+                  <button @click="addTransaction">{{ $t('addTransactionButton') }}</button>
                 </div>
               </div>
             </div>
@@ -157,11 +198,11 @@
             <table>
               <thead>
                 <tr>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Amount ({{ selectedCurrency }})</th>
-                  <th>Status</th>
-                  <th>Transaction</th>
+                  <th>{{ $t('descriptionHeader') }}</th>
+                  <th>{{ $t('dateHeader') }}</th>
+                  <th>{{ $t('amountHeader') }} ({{ selectedCurrency }})</th>
+                  <th>{{ $t('statusHeader') }}</th>
+                  <th>{{ $t('transactionHeader') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,38 +214,47 @@
                     expense: trans.type === 'Expense',
                   }"
                 > -->
-                <tr
-                  v-for="trans in transactions"
-                  :key="trans.account_id"
-                  :class="{
-                    income: trans.type === 'Income',
-                    expense: trans.type === 'Expense',
-                  }"
-                >
-                  <!-- <td>{{ trans.description }}</td> -->
-                  <td>{{ trans.name }}</td>
-                  <td>{{ formattedDate(trans.date) }}</td>
-                  <td v-if="selectedCurrency === 'USD'">
-                    {{ formatCurrency(trans.amount.toFixed(2)) }}
-                  </td>
-                  <td v-if="selectedCurrency === 'VND'">
-                    {{ formatCurrency(convertToVND(trans.amount).toFixed(2)) }}
-                  </td>
-                  <td>
-                    <!-- {{ trans.type === "Income" ? "Credited" : "Debited" }} -->
-                      {{ trans.amount < 0 ? "Credited" : "Debited" }}
-                  </td>
-                  <td class="buttons">
-                    <button
-                      @click="editTransaction(trans)"
-                      style="
-                      margin-right: 10px;
-                      padding: 6px 12px;
-                      "
-                    >
-                      Edit
-                    </button>
-                    <!-- <button 
+              <tr
+                v-for="trans in transactions"
+                :key="trans._id || trans.account_id"
+                :class="{
+                  income:
+                    trans.type === 'Income' ||
+                    (trans.type === 'revenue' && trans.amount < 0),
+                  expense:
+                    trans.type === 'Expense' ||
+                    (trans.type === 'revenue' && trans.amount > 0),
+                }"
+              >
+                <!-- <td>{{ trans.description }}</td> -->
+                <td>{{ trans.description || trans.name }}</td>
+                <td>{{ formattedDate(trans.date) }}</td>
+                <td v-if="selectedCurrency === 'USD'">
+                  {{ formatCurrency(Math.abs(trans.amount).toFixed(2)) }}
+                </td>
+                <td v-if="selectedCurrency === 'VND'">
+                  {{
+                    formatCurrency(
+                      convertToVND(Math.abs(trans.amount)).toFixed(2)
+                    )
+                  }}
+                </td>
+                <td>
+                  {{
+                    trans.type === "Expense" ||
+                    (trans.type === "revenue" && trans.amount > 0)
+                      ? "Debited"
+                      : "Credited"
+                  }}
+                </td>
+                <td class="buttons">
+                  <button
+                    @click="editTransaction(trans)"
+                    style="margin-right: 10px; padding: 6px 12px"
+                  >
+                    Edit
+                  </button>
+                  <!-- <button 
                       @click="removeTransaction(trans._id)"
                       style="
                       padding: 6px 12px;
@@ -216,7 +266,7 @@
                       padding: 6px 12px;
                       "
                     >
-                      Remove
+                    {{ $t('removeButton') }}
                     </button>
                   </td>
                 </tr>
@@ -229,19 +279,18 @@
       <div class="rightPanel">
         <section class="financial-goals" ref="financialGoalsSection">
           <div class="goal-upper-part">
-            <h3 class="goal-section-title">Goals</h3>
-            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">Add Goal</button>
+            <h3 class="goal-section-title">{{ $t('goalsSectionTitle') }}</h3>
+            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">{{ $t('addGoalButton') }}</button>
             </div>
 
-            <div class="search-container">
-            <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Search goals..."
-                class="search-input"
-            />
-            </div>
-
+        <div class="search-container">
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Search goals..."
+            class="search-input"
+          />
+        </div>
 
             <div class="goals">
             <div v-for="goal in filteredGoals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
@@ -251,10 +300,10 @@
                     <i :class="goal.icon"></i>
                 </div>
                 <div class="goal-info">
-                    <h3>{{ goal.title }}</h3>
-                    <p>Category: {{ goal.category }}</p>
-                    <p>Total: {{ goal.targetAmount }} USD</p>
-                    <p>Saved: {{ goal.currentAmount }} USD</p>
+                  <h3>{{ goal.title }}</h3>
+                  <p>{{ $t('categoryLabel') }}: {{ goal.category }}</p>
+                  <p>{{ $t('totalLabel') }}: {{ goal.targetAmount }} USD</p>
+                  <p>{{ $t('savedLabel') }}: {{ goal.currentAmount }} USD</p>
                 </div>
                 <div class="progress-bar-container">
                     <div class="progress-bar" :style="{ width: (goal.currentAmount / goal.targetAmount * 100) + '%' }"></div>
@@ -265,92 +314,90 @@
 
 
             <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
-                <div class="modal-content" @click.stop>
-                    <div class="modal-text-content">
-                        <h3>Add New Goal</h3>
-                        <div class="form-group">
-                            <label for="goalTitle">Goal Title</label>
-                            <input id="goalTitle" type="text" placeholder="Enter your goal title" v-model="newGoal.title" required>
-                        </div>
-                        <div class="form-group">
-                          <label for="goalDescription">Description (optional)</label>
-                          <textarea 
-                            id="goalDescription" 
-                            placeholder="Describe your goal (max 500 words)" 
-                            v-model="newGoal.description" 
-                            maxlength="500" 
-                            @input="updateDescriptionCount"></textarea>
-                          <div class="character-counter">{{ descriptionCharCount }} / 500 characters</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="targetAmount">Total Money Needed</label>
-                            <div class="currency-input">
-                                <input id="targetAmount" type="number" placeholder="Total money needed" v-model="newGoal.targetAmount" required>
-                                <select>
-                                    <option value="USD">USD</option>
-                                    <option value="VND">VND</option>
-                                    <option value="EUR">EUR</option>
-                                    <option value="GBP">GBP</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="currentAmount">Money Already Have</label>
-                            <input id="currentAmount" type="number" placeholder="Money already have" v-model="newGoal.currentAmount">
-                        </div>
-                        <div class="form-group">
-                            <label for="startDate">Start Date</label>
-                            <input id="startDate" type="date" v-model="newGoal.startDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="endDate">End Date</label>
-                            <input id="endDate" type="date" v-model="newGoal.endDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="goalCategory">Category</label>
-                            <select id="goalCategory" v-model="selectedCategory">
-                                <option v-for="category in categories" :key="category" :value="category">
-                                    {{ category }}
-                                </option>
-                                <option value="new">Add New Category</option>
-                            </select>
-                        </div>
-                        <div v-if="selectedCategory === 'new'" class="form-group">
-                            <label for="newCategory">New Category</label>
-                            <input id="newCategory" type="text" placeholder="Enter new category" v-model="newCategory">
-                        </div>
-                        <button class="add-goal-button" @click="addGoal">Add Goal</button>
+              <div class="modal-content" @click.stop>
+                <div class="modal-text-content">
+                  <h3>{{ $t('addNewGoalTitle') }}</h3>
+                  <div class="form-group">
+                    <label for="goalTitle">{{ $t('goalTitleLabel') }}</label>
+                    <input id="goalTitle" type="text" :placeholder="$t('goalTitlePlaceholder')" v-model="newGoal.title" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="goalDescription">{{ $t('descriptionLabel') }} ({{ $t('optionalLabel') }})</label>
+                    <textarea 
+                      id="goalDescription" 
+                      :placeholder="$t('descriptionPlaceholder')" 
+                      v-model="newGoal.description" 
+                      maxlength="500" 
+                      @input="updateDescriptionCount"></textarea>
+                    <div class="character-counter">{{ descriptionCharCount }} / 500 {{ $t('charactersLabel') }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="targetAmount">{{ $t('totalMoneyNeededLabel') }}</label>
+                    <div class="currency-input">
+                      <input id="targetAmount" type="number" :placeholder="$t('totalMoneyNeededPlaceholder')" v-model="newGoal.targetAmount" required>
+                      <select>
+                        <option value="USD">USD</option>
+                        <option value="VND">VND</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                      </select>
                     </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="currentAmount">{{ $t('moneyHaveLabel') }}</label>
+                    <input id="currentAmount" type="number" :placeholder="$t('moneyHavePlaceholder')" v-model="newGoal.currentAmount">
+                  </div>
+                  <div class="form-group">
+                    <label for="startDate">{{ $t('startDateLabel') }}</label>
+                    <input id="startDate" type="date" v-model="newGoal.startDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="endDate">{{ $t('endDateLabel') }}</label>
+                    <input id="endDate" type="date" v-model="newGoal.endDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="goalCategory">{{ $t('categoryLabel') }}</label>
+                    <select id="goalCategory" v-model="selectedCategory">
+                      <option v-for="category in categories" :key="category" :value="category">
+                        {{ category }}
+                      </option>
+                      <option value="new">{{ $t('addNewCategoryOption') }}</option>
+                    </select>
+                  </div>
+                  <div v-if="selectedCategory === 'new'" class="form-group">
+                    <label for="newCategory">{{ $t('newCategoryLabel') }}</label>
+                    <input id="newCategory" type="text" :placeholder="$t('newCategoryPlaceholder')" v-model="newCategory">
+                  </div>
+                  <button class="add-goal-button" @click="addGoal">{{ $t('addGoalButton') }}</button>
                 </div>
+              </div>
             </div>
-
-        </section>
+          </section>
+        </div>
+    
+        <!-- Reset Confirmation Modal -->
+        <div v-if="showResetConfirmationModal" class="modal">
+          <div class="modal-content">
+            <h3>{{ $t('resetAccountTitle') }}</h3>
+            <p>{{ $t('resetAccountMessage') }}</p>
+            <button @click="showResetConfirmationModal = false" style="margin-right: 10px">
+              {{ $t('noButton') }}
+            </button>
+            <button @click="resetAccountBalance">
+              {{ $t('yesButton') }}
+            </button>
+          </div>
+        </div>
       </div>
-      <!-- Ghost div for chatbot trigger - placed at the very end of the page -->
-      <div ref="chatbotTriggerPoint" class="chatbot-trigger"></div>
-      </div>
-  <div v-if="showResetConfirmationModal" class="modal">
-    <div class="modal-content">
-      <h3>Reset Account Balance</h3>
-      <p>
-        Are you sure you want to reset your account balance? This action will
-        delete all your transactions.
-      </p>
-      <button @click="showResetConfirmationModal = false" style="margin-right: 10px">No</button>
-      <button @click="resetAccountBalance">
-        Yes
-      </button>
-    </div>
-  </div>
-</template>
+    </template>
 
 <script>
 import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
-import { toast } from 'vue3-toastify';
+import { toast } from "vue3-toastify";
 import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
 export default {
-  name: 'GoalPage',
+  name: "GoalPage",
   components: {
     ChatBotTyping,
     TransactionLine,
@@ -373,10 +420,11 @@ export default {
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
 
-      userId: this.$store.getters['users/userId'],
-      firstName: this.$store.getters['users/currentUser']?.identityData?.firstName || '',
-      displayName: this.$store.getters['users/userDisplayName'],
-      profilePic: this.$store.getters['users/userProfileImage'],
+      userId: this.$store.getters["users/userId"],
+      firstName:
+        this.$store.getters["users/currentUser"]?.identityData?.firstName || "",
+      displayName: this.$store.getters["users/userDisplayName"],
+      profilePic: this.$store.getters["users/userProfileImage"],
       templateChat: `Hey "Tri"! 😊 Here's a closer look at your spending:
 
 📚 You spent $1,233 on books on 03/23/2333. If it's for learning, great! Otherwise, make sure it aligns with your financial goals.
@@ -394,26 +442,40 @@ Suggestions:
 Keep it chill, "Tri," and let's make smarter financial moves together!`,
       // goal data
       newGoal: {
-        title: '',
-        description: '',
-        targetAmount: '',
+        title: "",
+        description: "",
+        targetAmount: "",
         currentAmount: 0,
-        startDate: '',
-        endDate: '',
+        startDate: "",
+        endDate: "",
         isAchieved: false,
-        category: '',
+        category: "",
       },
       showModal: false,
       showAddGoalModal: false,
       showAddMoneyForm: false,
       addAmount: 0,
-      goalTitle: '',
+      goalTitle: "",
       goalProgress: 0,
-      categories: ['Savings', 'Investment', 'Emergency Fund', 'Vacation'],
-      goals: [],
+      categories: [
+      'Savings', 
+      'Investment', 
+      'Entertainment',
+      'Education',
+      'Emergency Fund',
+      'Vehicle',
+      'Vacation',
+      'Health'
+      ],
       selectedCategory: '',
-      newCategory: '',
-      searchQuery: '', 
+      isAnalyzingCategory: false,
+      userModifiedCategory: false,
+      aiSuggestionUsed: false,
+      debounceTimer: null,
+      goals: [],
+      selectedCategory: "",
+      newCategory: "",
+      searchQuery: "",
       descriptionCharCount: 0,
       showModal: false,
       showAddGoalModal: false,
@@ -466,6 +528,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       selectedCurrency: "USD", // Default currency
       // totalRevenue: 0,
       disabledConnect: false,
+      refreshInterval: null,
+      serverAccountBalance: 0, // New state to store account balance from server
     };
   },
   computed: {
@@ -475,7 +539,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // goal computed
     filteredGoals() {
-      return this.goals.filter(goal => {
+      return this.goals.filter((goal) => {
         const searchLower = this.searchQuery.toLowerCase();
         return (
           goal.title.toLowerCase().includes(searchLower) ||
@@ -484,67 +548,145 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       });
     },
 
-    
     totalRevenue() {
       return this.transactions
-        .filter((transaction) => transaction.amount < 0) // Only "Income"
-        .reduce((total, transaction) => total + Math.abs(transaction.amount), 0); // Sum amounts
-    },
-    
-    totalExpense() {
-      return this.transactions
-        .filter((transaction) => transaction.amount > 0) // Only "Expense"
-        .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
+        .filter((transaction) => {
+          // Income có amount âm
+          return (
+            transaction.type === "Income" ||
+            (transaction.type === "revenue" && transaction.amount < 0)
+          );
+        })
+        .reduce(
+          (total, transaction) => total + Math.abs(transaction.amount),
+          0
+        ); // Luôn dùng giá trị tuyệt đối
     },
 
+    totalExpense() {
+      return this.transactions
+        .filter((transaction) => {
+          // Expense có amount dương
+          return (
+            transaction.type === "Expense" ||
+            (transaction.type === "revenue" && transaction.amount > 0)
+          );
+        })
+        .reduce(
+          (total, transaction) => total + Math.abs(transaction.amount),
+          0
+        ); // Luôn dùng giá trị tuyệt đối
+    },
+
+    // Sửa cách tính accountBalance để lấy từ trường balance của transaction mới nhất
     accountBalance() {
+      // Ưu tiên giá trị từ server nếu có
+      if (this.serverAccountBalance !== 0) {
+        return this.serverAccountBalance;
+      }
+
+      // Khi không có giao dịch, trả về 0
+      if (!this.transactions || this.transactions.length === 0) {
+        return 0;
+      }
+
+      // Dựa trên tổng revenue và expense nếu không có giá trị server
       return this.totalRevenue - this.totalExpense;
     },
   },
+  
   mounted() {
-    if (!this.isAuthenticated) {
-      this.$router.push('/');
-    }
-    // this.getAccountBalance();
+    // if (!this.isAuthenticated) {
+    //   this.$router.push("/");
+      return;
+    // }
+
+
     this.retrieveGoals();
-    this.fetchTransactions();
-    this.processURLParams();
-    this.setupBotObserver(); // Add bot observer setup
+
+    // Lấy account balance từ server
+    this.getAccountBalance();
+
+    // Fetch transactions và đảm bảo nó hoàn thành trước khi thực hiện các bước tiếp theo
+    this.fetchTransactions().then(() => {
+      // Xử lý URL params sau khi đã có dữ liệu
+      this.processURLParams();
+
+      // Thiết lập bot observer sau khi dữ liệu đã được tải
+      this.$nextTick(() => {
+        this.setupBotObserver();
+      });
+    });
+
+    // Thiết lập auto-refresh
+    this.refreshInterval = setInterval(() => {
+      this.refreshData();
+      this.getAccountBalance(); // Cập nhật account balance mỗi lần refresh
+    }, 10000);
   },
   beforeUnmount() {
     // Clean up timers and observers when the component is destroyed
-    if (this.botObserver) {
-      this.botObserver.disconnect();
-    }
-    if (this.typingTimer) {
-      clearTimeout(this.typingTimer);
-    }
-    if (this.botHideTimer) {
-      clearTimeout(this.botHideTimer);
-    }
+    this.cleanupResources();
+  },
+  beforeRouteLeave(to, from, next) {
+    // Clean up resources trước khi rời khỏi trang
+    this.cleanupResources();
+    next();
   },
   methods: {
+    // ... existing methods ...
+
+    // Phương thức mới để dọn dẹp tài nguyên
+    cleanupResources() {
+      // Hủy các observers và timers
+      if (this.botObserver) {
+        this.botObserver.disconnect();
+        this.botObserver = null;
+      }
+
+      if (this.typingTimer) {
+        clearTimeout(this.typingTimer);
+        this.typingTimer = null;
+      }
+
+      if (this.botHideTimer) {
+        clearTimeout(this.botHideTimer);
+        this.botHideTimer = null;
+      }
+
+      // Hủy refresh interval
+      if (this.refreshInterval) {
+        clearInterval(this.refreshInterval);
+        this.refreshInterval = null;
+      }
+    },
+
+    // ... rest of your methods
+    // ... existing code ...
     // Bot Chat methods
     setupBotObserver() {
       this.$nextTick(() => {
         // Create an observer to watch when the user scrolls to the bottom of the page
-        this.botObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting && !this.showBot) {
-              this.startBotAnimation();
-              // Disconnect the observer after triggering to prevent multiple activations
-              this.botObserver.disconnect();
-            }
-          });
-        }, { threshold: 0.9 }); // Trigger when 50% of the element is visible
-        
+        this.botObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && !this.showBot) {
+                this.startBotAnimation();
+                // Disconnect the observer after triggering to prevent multiple activations
+                this.botObserver.disconnect();
+              }
+            });
+          },
+          { threshold: 0.9 }
+        ); // Trigger when 50% of the element is visible
+
         // Observe the ghost div at the end of the page
         if (this.$refs.chatbotTriggerPoint) {
           this.botObserver.observe(this.$refs.chatbotTriggerPoint);
         }
       });
     },
-    
+
     startBotAnimation() {
       // Reset any existing timers
       if (this.typingTimer) {
@@ -553,21 +695,21 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       if (this.botHideTimer) {
         clearTimeout(this.botHideTimer);
       }
-      
+
       // Reset states
       this.hidingBot = false;
       this.hidingMessage = false;
       this.typedContent = "";
       this.messageManuallyToggled = false; // Reset the toggle flag
-      
+
       // First show the bot avatar sliding in
       this.showBot = true;
-      
+
       // After bot slides in, show typing animation
       setTimeout(() => {
         this.showMessage = true;
         this.isTyping = true;
-        
+
         // After typing animation, start actual message typing
         setTimeout(() => {
           this.isTyping = false;
@@ -576,29 +718,31 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         }, 1500);
       }, 800); // Wait for bot slide-in animation to complete
     },
-    
+
     startWordByWordTyping() {
       // Split the message by spaces and newlines to get words
       // This regex splits by spaces but keeps newlines as separate "words"
-      this.words = this.botMessage.split(/( |\n)/g).filter(word => word !== "");
+      this.words = this.botMessage
+        .split(/( |\n)/g)
+        .filter((word) => word !== "");
       this.currentWordIndex = 0;
       this.typedContent = "";
       this.typeNextWord();
     },
-    
+
     typeNextWord() {
       if (this.currentWordIndex < this.words.length) {
         const word = this.words[this.currentWordIndex];
-        
+
         // Add the word to the content
         if (word === "\n") {
           this.typedContent += "<br>";
         } else {
           this.typedContent += word;
         }
-        
+
         this.currentWordIndex++;
-        
+
         // Schedule the next word with a delay
         this.typingTimer = setTimeout(() => {
           this.typeNextWord();
@@ -608,7 +752,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         this.scheduleHideBot();
       }
     },
-    
+
     scheduleHideBot() {
       // Only schedule auto-hiding if the message wasn't manually toggled
       if (!this.messageManuallyToggled) {
@@ -617,7 +761,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         }, 60000);
       }
     },
-    
+
     hideBot() {
       // If manually toggled, only hide the message
       if (this.messageManuallyToggled) {
@@ -641,19 +785,22 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         }, 500);
       }
     },
-    
+
     async getAccountBalance() {
       try {
-        const userId = this.$store.getters['users/userId'];
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`;
-        const response = await axios.get(api);
-        const data = response.data;
-        console.log(data);
-        
-        this.accountBalance = data.bankingAccountData.accountBalance;
-      } catch (error) {
-        console.error('Error fetching financial data:', error);
+        const userId = this.$store.getters["users/userId"];
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`
+        );
 
+        if (response && response.data && response.data.bankingAccountData) {
+          // Update accountBalance từ dữ liệu server
+          // Lưu vào biến riêng để đảm bảo không bị ảnh hưởng bởi computed property
+          this.serverAccountBalance =
+            response.data.bankingAccountData.accountBalance || 0;
+        }
+      } catch (error) {
+        console.error("Error fetching account balance:", error);
       }
     },
 
@@ -661,15 +808,15 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     toggleBotMessage() {
       // Only allow toggling if the bot is visible
       if (!this.showBot) return;
-      
+
       this.messageManuallyToggled = true;
-      
+
       // If hiding message timer is active, clear it
       if (this.botHideTimer) {
         clearTimeout(this.botHideTimer);
         this.botHideTimer = null;
       }
-      
+
       if (this.showMessage) {
         // Hide the message
         this.hidingMessage = true;
@@ -681,7 +828,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         // Show the message
         this.hidingMessage = false;
         this.showMessage = true;
-        
+
         // If the typing was already completed
         if (!this.isTyping && this.typedContent) {
           // Message is already typed, just show it
@@ -705,7 +852,12 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           this.goals = response.data;
         })
         .catch((error) => {
-          console.error('Error fetching goals:', error);
+          console.error("Error fetching goals:", error);
+          // Nếu lỗi 404, nghĩa là user chưa có goals nào
+          if (error.response && error.response.status === 404) {
+            this.goals = []; // Khởi tạo mảng rỗng để tránh lỗi
+            console.log("User has no goals yet");
+          }
         });
     },
 
@@ -718,7 +870,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         (this.selectedCategory || this.newCategory)
       ) {
         this.newGoal.category =
-          this.selectedCategory === 'new' ? this.newCategory : this.selectedCategory;
+          this.selectedCategory === "new"
+            ? this.newCategory
+            : this.selectedCategory;
 
         axios
           .post(`${process.env.VUE_APP_DEPLOY_URL}/goals`, {
@@ -729,40 +883,43 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
             this.goals.push(response.data);
             this.showAddGoalModal = false;
             this.newGoal = {
-              title: '',
-              description: '',
-              targetAmount: '',
+              title: "",
+              description: "",
+              targetAmount: "",
               currentAmount: 0,
-              startDate: '',
-              endDate: '',
+              startDate: "",
+              endDate: "",
               isAchieved: false,
-              category: '',
+              category: "",
             };
-            this.selectedCategory = '';
-            this.newCategory = '';
+            this.selectedCategory = "";
+            this.newCategory = "";
           })
           .catch((error) => {
-            console.error('Error adding goal:', error);
+            console.error("Error adding goal:", error);
           });
       } else {
-        alert('Please fill in all required fields.');
+        alert("Please fill in all required fields.");
       }
     },
 
     showGoalProgress(goal) {
-    this.goalId = goal._id;
-    this.goalTitle = goal.title;
-    this.goalDescription = goal.description;
-    this.goalTargetAmount = goal.targetAmount;
-    this.goalCurrentAmount = goal.currentAmount;
-    this.goalStartDate = goal.startDate;
-    this.goalEndDate = goal.endDate;
-    this.isAchieved = goal.isAchieved;
-    this.goalCategory = goal.category;  
-    this.goalProgress = ((goal.currentAmount / goal.targetAmount) * 100).toFixed(2);
-    this.showAddMoneyForm = false;
-    this.showModal = true;
-  },
+      this.goalId = goal._id;
+      this.goalTitle = goal.title;
+      this.goalDescription = goal.description;
+      this.goalTargetAmount = goal.targetAmount;
+      this.goalCurrentAmount = goal.currentAmount;
+      this.goalStartDate = goal.startDate;
+      this.goalEndDate = goal.endDate;
+      this.isAchieved = goal.isAchieved;
+      this.goalCategory = goal.category;
+      this.goalProgress = (
+        (goal.currentAmount / goal.targetAmount) *
+        100
+      ).toFixed(2);
+      this.showAddMoneyForm = false;
+      this.showModal = true;
+    },
 
     toggleAddMoneyForm() {
       this.showAddMoneyForm = !this.showAddMoneyForm;
@@ -774,37 +931,44 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
         try {
           // Send a PUT request to update the goal's currentAmount
-          const response = await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/goals/${this.goalId}`, {
-            userId: this.userId, // Include necessary fields
-            title: this.goalTitle,
-            description: this.goalDescription,
-            targetAmount: this.goalTargetAmount,
-            currentAmount: updatedAmount,
-            startDate: this.goalStartDate,
-            endDate: this.goalEndDate,
-            category: this.goalCategory,
-            isAchieved: updatedAmount >= this.goalTargetAmount ? true : this.isAchieved, // Update isAchieved if the target is reached
-          });
+          const response = await axios.put(
+            `${process.env.VUE_APP_DEPLOY_URL}/goals/${this.goalId}`,
+            {
+              userId: this.userId, // Include necessary fields
+              title: this.goalTitle,
+              description: this.goalDescription,
+              targetAmount: this.goalTargetAmount,
+              currentAmount: updatedAmount,
+              startDate: this.goalStartDate,
+              endDate: this.goalEndDate,
+              category: this.goalCategory,
+              isAchieved:
+                updatedAmount >= this.goalTargetAmount ? true : this.isAchieved, // Update isAchieved if the target is reached
+            }
+          );
 
           // Update the local state with the new currentAmount and progress
           this.goalCurrentAmount = updatedAmount;
-          this.goalProgress = ((updatedAmount / this.goalTargetAmount) * 100).toFixed(2);
+          this.goalProgress = (
+            (updatedAmount / this.goalTargetAmount) *
+            100
+          ).toFixed(2);
           this.addAmount = 0; // Reset the input
           this.showAddMoneyForm = false; // Hide the form after adding money
-          alert('Money added successfully!');
+          alert("Money added successfully!");
           this.retrieveGoals();
         } catch (error) {
-          console.error('Error updating goal:', error);
-          alert('An error occurred while adding money to the goal.');
+          console.error("Error updating goal:", error);
+          alert("An error occurred while adding money to the goal.");
         }
       } else {
-        alert('Please enter a valid amount.');
+        alert("Please enter a valid amount.");
       }
     },
     updateDescriptionCount() {
       this.descriptionCharCount = this.newGoal.description.length;
     },
-   
+
     convertToVND(amount) {
       const exchangeRate = 23000; // Example exchange rate, 1 USD = 23,000 VND
       return amount * exchangeRate;
@@ -830,9 +994,25 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         const response = await axios.get(
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
-        this.transactions = this.sortTransactionsByDate(response.data);
+
+        // Kiểm tra response đầy đủ trước khi cập nhật
+        if (response && response.data) {
+          // Sắp xếp transactions theo ngày mới nhất
+          const sortedTransactions = this.sortTransactionsByDate(response.data);
+
+          // Cập nhật mảng transactions
+          this.transactions = sortedTransactions;
+
+          // Nếu có transactions, thì recalculate balance để đảm bảo tính đúng
+          if (sortedTransactions.length > 0) {
+            this.recalculateBalances();
+          }
+        }
+        return response; // Trả về response để có thể sử dụng .then()
       } catch (error) {
         console.error("Error fetching transactions:", error);
+        this.transactions = []; // Đặt mảng rỗng nếu có lỗi
+        return null; // Trả về null trong trường hợp lỗi
       }
     },
     async addTransaction() {
@@ -843,30 +1023,30 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         this.transaction.type
       ) {
         try {
-          let amountInUSD = this.transaction.amount;
+          let amountInUSD = Math.abs(this.transaction.amount);
 
           // Convert amount to USD if the selected currency is VND
           if (this.selectedCurrency === "VND") {
-            amountInUSD = this.convertVNDToUSD(this.transaction.amount);
+            amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
 
-          const latestTransaction =
-            this.transactions.length > 0
-              ? this.transactions[0] // After sorting, the latest transaction is at the beginning
-              : null;
-          const latestBalance = latestTransaction
-            ? latestTransaction.balance
-            : 0;
+          // Xác định dấu của số tiền dựa vào type
+          // Income (ghi có) = số âm (thêm tiền vào tài khoản)
+          // Expense (ghi nợ) = số dương (lấy tiền ra khỏi tài khoản)
+          const signedAmount =
+            this.transaction.type === "Income" ? -amountInUSD : amountInUSD;
 
+          // Tính balance mới từ giao dịch mới nhất hoặc sử dụng computed property
           const newBalance =
-            latestBalance +
-            (this.transaction.type === "Income" ? amountInUSD : -amountInUSD); // Subtract for Expense
+            this.transactions.length > 0
+              ? this.transactions[0].balance - signedAmount
+              : -signedAmount;
 
           const response = await axios.post(
             `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
             {
               ...this.transaction,
-              amount: amountInUSD,
+              amount: signedAmount,
               balance: newBalance,
               userId: this.userId,
             }
@@ -874,11 +1054,17 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
           // Insert the new transaction at the beginning of the array
           this.transactions.unshift(response.data);
-          this.accountBalance = newBalance; // Update the balance with the new transaction
+
+          // Xóa dữ liệu form
           this.transaction.description = "";
           this.transaction.amount = null;
           this.transaction.date = "";
           this.transaction.type = "";
+
+          // Đảm bảo cập nhật lại balances
+          this.$nextTick(() => {
+            this.recalculateBalances();
+          });
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
@@ -977,12 +1163,32 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       this.showModal = true;
     },
     recalculateBalances() {
-      let balance = 0;
-      for (let transaction of this.transactions) {
-        balance += transaction.amount;
-        transaction.balance = balance;
+      // Kiểm tra nếu không có transactions thì trả về
+      if (!this.transactions || this.transactions.length === 0) {
+        return;
       }
-      this.accountBalance = balance;
+
+      // Sắp xếp giao dịch theo ngày tăng dần để tính balance đúng
+      const sortedTransactions = [...this.transactions].sort(
+        (a, b) => new Date(a.date) - new Date(b.date)
+      );
+
+      // Bắt đầu từ serverAccountBalance nếu có, nếu không thì từ 0
+      let balance = this.serverAccountBalance || 0;
+
+      for (let transaction of sortedTransactions) {
+        // Giá trị amount đúng (âm cho Income, dương cho Expense)
+        // Balance giảm khi amount dương (Expense) và tăng khi amount âm (Income)
+        if (transaction.amount) {
+          balance -= transaction.amount;
+          transaction.balance = balance;
+        }
+      }
+
+      // Cập nhật lại mảng transactions với dữ liệu đã tính toán lại
+      this.$nextTick(() => {
+        this.transactions = this.sortTransactionsByDate(sortedTransactions);
+      });
     },
     formattedDate(dateString) {
       const datePart = dateString.split("T")[0];
@@ -1079,8 +1285,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         if (window.Plaid) {
           resolve(window.Plaid);
         } else {
-          const script = document.createElement('script');
-          script.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js';
+          const script = document.createElement("script");
+          script.src =
+            "https://cdn.plaid.com/link/v2/stable/link-initialize.js";
           script.onload = () => resolve(window.Plaid);
           script.onerror = reject;
           document.body.appendChild(script);
@@ -1090,9 +1297,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     async createLinkToken() {
       try {
         // Make an API call to your backend to create a link token
-        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/create-link-token`);
+        const response = await axios.post(
+          `${process.env.VUE_APP_DEPLOY_URL}/api/plaid/create-link-token`
+        );
         const linkToken = response.data.link_token;
-        
+
         // Initialize Plaid Link with the generated link token
         const plaidLink = new window.Plaid.create({
           token: linkToken,
@@ -1114,29 +1323,58 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     async exchangeToken(publicToken) {
       try {
         // Send the public token to the backend to exchange it for an access token
-        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/exchange-token`, {
-          public_token: publicToken
-        });
+        const response = await axios.post(
+          `${process.env.VUE_APP_DEPLOY_URL}/api/plaid/exchange-token`,
+          {
+            public_token: publicToken,
+          }
+        );
 
         const { access_token, item_id } = response.data;
         // Save the access token and item ID as required
-        this.fetchTransactions(access_token);
+        this.fetchPlaidTransactions(access_token);
       } catch (error) {
         console.error("Error exchanging token", error);
       }
     },
 
-    async fetchTransactions(access_token) {
+    // Phương thức làm mới dữ liệu từ server
+    async refreshData() {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`, {
-          params: { access_token },
-        });
+        // Lấy account balance từ server trước
+        await this.getAccountBalance();
+
+        // Gọi API transaction thông thường
+        await this.fetchTransactions();
+
+        // Đợi một chút để đảm bảo dữ liệu đã được cập nhật
+        setTimeout(() => {
+          // Kiểm tra lại để đảm bảo transactions đã được cập nhật
+          if (this.transactions && this.transactions.length > 0) {
+            // Recalculate balances sau khi fetch data mới
+            this.recalculateBalances();
+          }
+        }, 100);
+      } catch (error) {
+        console.error("Error refreshing data:", error);
+      }
+    },
+
+    // Tạo hàm Plaid fetchTransactions riêng biệt để tránh nhầm lẫn
+    async fetchPlaidTransactions(access_token) {
+      try {
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`,
+          {
+            params: { access_token },
+          }
+        );
 
         // Update your local transactions state with the latest transactions
         this.transactions = response.data.latest_transactions;
-        console.log("Fetched transactions:", this.transactions);
+        console.log("Fetched Plaid transactions:", this.transactions);
       } catch (error) {
-        console.error("Error fetching transactions", error);
+        console.error("Error fetching Plaid transactions:", error);
       }
     },
   },
@@ -1144,7 +1382,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 </script>
 <style scoped>
 .GoalDashBoardContainer {
-  width: 100vw; 
+  width: 100vw;
   max-width: 100%;
   display: flex;
   flex-direction: row;
@@ -1311,8 +1549,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 .goal-image {
-  width: 100%;
-  height: auto;
+  width: 50%;
+  height: 50%;
+  margin: auto;
   border-radius: 10px 10px 0 0;
 }
 
@@ -1392,10 +1631,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   border-bottom-right-radius: 10px;
 }
 
-.modal-text-content {
-  padding: 20px;
-}
-
 .add-money-form {
   margin-top: 20px;
 }
@@ -1422,7 +1657,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 /* Add Goal Modal Styles */
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-family: 'Space Grotesk', sans-serif;
 }
 
@@ -1435,13 +1670,13 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 .form-group input,
 .form-group textarea {
-  width: 100%;
+  width: 80%;
   padding: 10px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
   box-sizing: border-box;
   font-size: 16px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   transition: border-color 0.3s ease;
   resize: none;
   background-color: var(--bg-primary);
@@ -1458,11 +1693,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 .currency-input {
   display: flex;
   align-items: center;
+  width: 80%;
+  margin-left: 50px;
 }
 
 .currency-input input {
   margin-right: 10px;
   flex: 1;
+  width: 75px;
 }
 
 .currency-input select {
@@ -1470,10 +1708,13 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   border: 1px solid var(--border-color);
   border-radius: 5px;
   font-size: 16px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   transition: border-color 0.3s ease;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  width: 75px;
+  margin-bottom: 0px;
+  height: 42px;
 }
 
 .currency-input select:focus {
@@ -1491,6 +1732,50 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   color: #666;
   margin-top: 5px;
   text-align: right;
+  width:90%;
+}
+
+.start-end-date-group {
+  display: flex;
+  margin-left: 28px;
+}
+
+.start-end-date-group .start-end-date-input {
+  width: 222px;
+}
+
+#goalCategory {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+#goalCategory:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+}
+
+.category-loading {
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 5px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top-color: #007bff;
+  animation: spin 1s linear infinite;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* Mobile-specific styles */
@@ -1503,14 +1788,18 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     background-color: var(--bg-primary);
   }
 
-  .leftPanel, .rightPanel {
+  .leftPanel,
+  .rightPanel {
     width: 100%;
     background-color: var(--bg-primary);
   }
 
-  .leftPanelHeader, .panelOverview, .graphContainer, .transactionContainer {
+  .leftPanelHeader,
+  .panelOverview,
+  .graphContainer,
+  .transactionContainer {
     width: 100%;
-    max-width: 100%; 
+    max-width: 100%;
   }
 }
 
@@ -1717,11 +2006,11 @@ hr {
 }
 
 .headline-buttons {
- display: flex;
- flex-direction: row;
- justify-content: space-between;
- margin-top: 10px;
- margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .headline-buttons h2 {
@@ -1730,7 +2019,7 @@ hr {
 }
 
 .buttons {
-  display:flex;
+  display: flex;
   flex-direction: row;
   gap: 20px;
   height: 100%;
@@ -1831,11 +2120,21 @@ hr {
 
 .chart-container {
   width: 100%;
-  /* max-height: 800px;  */
+  height: 350px;
+  min-height: 300px;
   box-sizing: border-box;
   border: 2px solid var(--border-color);
   border-radius: 10px;
   background-color: var(--card-bg);
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Đảm bảo biểu đồ hiển thị đúng trên các trình duyệt khác nhau */
+.chart-container > * {
+  width: 100%;
+  height: 100%;
 }
 
 .chart-wrapper {
@@ -1919,7 +2218,6 @@ hr {
 }
 
 .add-goal-button {
-  margin-bottom: 20px;
   padding: 10px 20px;
   background-color: var(--link-color);
   color: white;
@@ -1976,20 +2274,18 @@ hr {
 
 .modal-content {
   background: var(--card-bg);
-  padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 90%;
-  max-width: 500px;
+  max-width: 1000px;
 }
 
 .modal-content input {
   padding: 10px;
-  margin: 10px 0;
   border: 1px solid var(--border-color);
   border-radius: 5px;
-  width: 100%;
+  width: 80%;
 }
 
 .modal-content button {
@@ -2054,10 +2350,11 @@ hr {
 
 .modal-content {
   background: var(--card-bg);
-  padding: 20px;
   border-radius: 5px;
   width: 500px;
   max-width: 90%;
+  height: 630px;
+  margin-top: 80px;
 }
 
 .modal-header {
@@ -2105,7 +2402,7 @@ hr {
 
 .revenue-card {
   background-color: var(--card-bg);
-  border: 1px solid #4CAF50;
+  border: 1px solid #4caf50;
 }
 
 .expense-card {
@@ -2216,11 +2513,6 @@ hr {
     padding: 6px;
     font-size: 13px;
   }
-
-  .modal-text-content h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
 }
 
 /* Scrollbar Customization */
@@ -2270,7 +2562,8 @@ hr {
   align-items: flex-start;
   padding: 15px;
   z-index: 100;
-  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
+  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 1s ease;
   opacity: 0;
   transform: translateX(0);
   pointer-events: none; /* Prevents interaction with elements behind it */
@@ -2303,20 +2596,32 @@ hr {
 }
 
 @keyframes botBounce {
-  0% { transform: translateY(20px); opacity: 0; }
-  60% { transform: translateY(-5px); }
-  80% { transform: translateY(2px); }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+  80% {
+    transform: translateY(2px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .bot-message {
-  margin-top: 10px;
+  margin-bottom: 10px;
   margin-left: 10px;
   background: #007bff;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 18px;
   max-width: 280px;
+  max-height: 200px; 
+  overflow-y: auto; /* Enable vertical scrolling */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0; /* Start hidden */
   transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
@@ -2368,11 +2673,12 @@ hr {
 }
 
 @keyframes typing {
-  0%, 100% { 
-    opacity: 0.3; 
+  0%,
+  100% {
+    opacity: 0.3;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 1;
     transform: scale(1.2);
   }
@@ -2380,18 +2686,18 @@ hr {
 
 @media screen and (max-width: 768px) {
   /* ...existing code... */
-  
+
   /* For mobile, position the bot at the bottom of the screen */
   .bot-chat-container {
     left: auto;
     right: -300px;
     bottom: 20px;
   }
-  
+
   .bot-chat-container.bot-visible {
     transform: translateX(-310px);
   }
-  
+
   .bot-chat-container.bot-hidden {
     transform: translateX(-310px) translateY(50px);
   }
@@ -2431,5 +2737,23 @@ hr {
 
 .bot-image.clickable:hover {
   transform: scale(1.1);
+}
+
+.chart-container.no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 350px;
+}
+
+.no-data-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  color: #666;
+  font-size: 16px;
+  text-align: center;
 }
 </style>
