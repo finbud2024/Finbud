@@ -60,16 +60,16 @@ export default {
   },
   data() {
     return {
-      botSize: { width: 60, height: 60},
+      botSize: { width: 60, height: 60 },
       threadId: "",
       chatBubbleActive: false,
       botMessage: "",
       displayedMessage: "",
       showBotMessage: true,
-      typingSpeed: 20, 
+      typingSpeed: 20,
       isTyping: false,
-      messageVisible: false, 
-      botPosition: { right: '20px', bottom: '20px' },
+      messageVisible: false,
+      botPosition: { right: "20px", bottom: "20px" },
     };
   },
   async mounted() {
@@ -169,9 +169,9 @@ export default {
       },
       { immediate: true } // Check immediately on mount
     );
-    
+
     // Load saved position if exists
-    const savedPosition = localStorage.getItem('finbudBotPosition');
+    const savedPosition = localStorage.getItem("finbudBotPosition");
     if (savedPosition) {
       try {
         const parsed = JSON.parse(savedPosition);
@@ -180,7 +180,7 @@ export default {
           this.botPosition = parsed;
         }
       } catch (e) {
-        console.warn('Invalid saved position', e);
+        console.warn("Invalid saved position", e);
       }
     }
 
@@ -436,7 +436,7 @@ a:hover {
   transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
   cursor: grab;
   user-select: none;
-  touch-action: none; 
+  touch-action: none;
 }
 
 .finbudBot:active {

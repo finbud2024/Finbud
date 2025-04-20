@@ -9,31 +9,32 @@
     <search-input
       v-model="searchQuery"
       @search="createRoadmap"
-      placeholder="What do you want to learn today..."
+      :placeholder="$t('searchPlaceholder')"
+      data-aos="flip-right"
     />
 
     <div class="goal-form-card" data-aos="zoom-in-up">
-      <h1 class="title">What's your goal?</h1>
+      <h1 class="title">{{ $t('goalTitle') }}</h1>
 
       <div class="form-group">
-        <label for="proficiency">Proficiency level</label>
+        <label for="proficiency">{{ $t('proficiencyLabel') }}</label>
         <select id="proficiency" v-model="proficiency" class="form-select">
-          <option value="" disabled selected>---</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
+          <option value="" disabled selected>{{ $t('proficiencyPlaceholder') }}</option>
+          <option value="beginner">{{ $t('beginner') }}</option>
+          <option value="intermediate">{{ $t('intermediate') }}</option>
+          <option value="advanced">{{ $t('advanced') }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="learning-hours">You will learn</label>
+        <label for="learning-hours">{{ $t('learningLabel') }}</label>
         <div class="input-row">
           <div class="input-group input-half-width">
             <input
               type="number"
               id="hours-per-day"
               v-model="hoursPerDay"
-              placeholder="Hours per day"
+              :placeholder="$t('hoursPlaceholder')"
               min="0"
               class="form-input"
             />
@@ -43,7 +44,7 @@
               type="number"
               id="days-per-week"
               v-model="daysPerWeek"
-              placeholder="Days per week"
+              :placeholder="$t('daysPlaceholder')"
               min="0"
               max="7"
               class="form-input"
@@ -53,23 +54,23 @@
       </div>
 
       <div class="form-group">
-        <label>In period</label>
+        <label>{{ $t('periodLabel') }}</label>
         <div class="input-row">
           <div class="input-group duration-input">
             <input
               type="number"
               v-model="duration"
-              placeholder="Duration"
+              :placeholder="$t('durationPlaceholder')"
               min="1"
               class="form-input"
             />
           </div>
           <div class="input-group period-select">
             <select v-model="period" class="form-select">
-              <option value="" disabled selected>Select period</option>
-              <option value="days">Days</option>
-              <option value="weeks">Weeks</option>
-              <option value="months">Months</option>
+              <option value="" disabled selected>{{ $t('periodPlaceholder') }}</option>
+              <option value="days">{{ $t('days') }}</option>
+              <option value="weeks">{{ $t('weeks') }}</option>
+              <option value="months">{{ $t('months') }}</option>
             </select>
           </div>
         </div>
@@ -82,8 +83,8 @@
       >
         {{
           is_generating_roadmap
-            ? "Personalizing your roadmap..."
-            : "Create my roadmap"
+            ? $t('generatingButton')
+            : $t('generateButton')
         }}
       </button>
     </div>
@@ -91,28 +92,28 @@
 
   <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
-      <h1 class="title">Keyword-Based Quiz</h1>
+      <h1 class="title">{{ $t('quizTitle') }}</h1>
       <div class="form-group">
-        <label for="search-keyword">Put your own keyword</label>
+        <label for="search-keyword">{{ $t('keywordLabel') }}</label>
         <div id="search-keyword" class="search-container">
           <input
             style="height: 100%; margin-bottom: 0"
             type="text"
             v-model="searchKeyword"
             :disabled="isLoading"
-            placeholder="Enter a finance-related keyword"
+            :placeholder="$t('keywordPlaceholder')"
             @keyup.enter="GenerateQuiz"
           />
-          <button class="button" @click="GenerateQuiz">Generate Quiz</button>
+          <button class="button" @click="GenerateQuiz">{{ $t('generateQuizButton') }}</button>
         </div>
       </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
-        <label for="related-keyword">Related keyword</label>
+        <label for="related-keyword">{{ $t('relatedKeywordsLabel') }}</label>
         <div class="carousel-wrapper">
           <button 
             class="carousel-nav left" 
             @click="scrollLeft"
-            aria-label="Scroll left"
+            :aria-label="$t('scrollLeft')"
           >
             &lt;
           </button>
@@ -132,16 +133,16 @@
         <button 
           class="carousel-nav right" 
           @click="scrollRight"
-          aria-label="Scroll right"
+          :aria-label="$t('scrollRight')"
         >
           &gt;
         </button>
       </div>
     </div>
       <div v-if="currentKeyword" class="quiz-info">
-        <div>Current Keyword: {{ currentKeyword }}</div>
-        <div>Points: {{ score }}</div>
-        <div>Time Left: {{ timerCountdown }}</div>
+        <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+        <div>{{ $t('pointsLabel') }} {{ score }}</div>
+        <div>{{ $t('timeLeftLabel') }} {{ timerCountdown }}</div>
       </div>
       <div class="quiz-area">
         <div
@@ -150,7 +151,7 @@
             { quizQuestionEnabled: question.length !== 0 },
           ]"
         >
-          {{ currentQuestion === -1 ? "Question will appear here" : question }}
+          {{ currentQuestion === -1 ? $t('questionPlaceholder') : question }}
         </div>
         <div class="quizChoices">
           <button
@@ -165,36 +166,38 @@
           >
             {{
               answerOptions.length === 0
-                ? `Answer ${String.fromCharCode(64 + index)}`
+                ? $t('answerPlaceholder', { letter: String.fromCharCode(64 + index) })
                 : answerOptions[index - 1].replace(/\*$/, "")
             }}
           </button>
         </div>
         <div v-if="showExplaination" class="explanation-container">
           <div class="explanation-text">
-            <div class="explanation-title">Explanation:</div>
+            <div class="explanation-title">{{ $t('explanationTitle') }}</div>
             <div>{{ explanation }}</div>
           </div>
           <button class="button" @click="handleNextQuestion">
-            Next Question
+            {{ $t('nextQuestionButton') }}
           </button>
         </div>
       </div>
       <div v-if="modalDisplay" class="overlay">
         <div class="modal-container">
-          <div class="result-title">Quiz Result</div>
+          <div class="result-title">{{ $t('quizResultTitle') }}</div>
           <div>
-            <div>Keyword: {{ currentKeyword }}</div>
-            <div>score: {{ score }}/3</div>
+            <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+            <div>{{ $t('pointsLabel') }} {{ score }}/3</div>
           </div>
           <div class="result-button-container">
             <button class="button" @click="handleQuizResult('same')">
-              New Game With Same Keyword
+              {{ $t('sameKeywordButton') }}
             </button>
             <button class="button" @click="handleQuizResult('different')">
-              New Game With Different Keyword
+              {{ $t('differentKeywordButton') }}
             </button>
-            <button class="button" @click="handleQuizResult('end')">End</button>
+            <button class="button" @click="handleQuizResult('end')">
+              {{ $t('endQuizButton') }}
+            </button>
           </div>
         </div>
       </div>
@@ -203,8 +206,8 @@
 
   <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
-      <span class="category-label">COURSE CATEGORIES</span>
-      <h2 class="category-title">Popular Topics To Learn</h2>
+      <span class="category-label">{{ $t('categoriesLabel') }}</span>
+      <h2 class="category-title">{{ $t('popularTopicsTitle') }}</h2>
 
       <div class="categories-grid">
         <div
@@ -219,7 +222,7 @@
             </div>
             <div class="card-text">
               <h3>{{ category.name }}</h3>
-              <span>{{ category.courseCount }} Courses</span>
+              <span>{{ category.courseCount }} {{ $t('coursesLabel') }}</span>
             </div>
           </div>
         </div>
@@ -231,8 +234,8 @@
     <div class="courses-container">
       <!-- Header Section -->
       <div class="courses-header">
-        <h4 class="courses-subtitle">POPULAR COURSES</h4>
-        <h2 class="courses-title">Our Popular Courses</h2>
+        <h4 class="courses-subtitle">{{ $t('popularCoursesSubtitle') }}</h4>
+        <h2 class="courses-title">{{ $t('popularCoursesTitle') }}</h2>
       </div>
 
       <!-- Courses Grid -->
@@ -259,7 +262,7 @@
             <div class="course-meta">
               <div class="course-lessons">
                 <i class="fas fa-book"></i>
-                <span>{{ course.lessons }} Lessons</span>
+                <span>{{ course.lessons }} {{ $t('lessonsLabel') }}</span>
               </div>
               <div class="course-duration">
                 <i class="fas fa-clock"></i>
@@ -282,7 +285,7 @@
 
             <div class="course-price">
               <template v-if="course.isFree">
-                <span class="free-price">Free</span>
+                <span class="free-price">{{ $t('freeLabel') }}</span>
               </template>
               <template v-else>
                 <span class="current-price">${{ course.price }}</span>
@@ -294,7 +297,7 @@
 
             <div class="course-students">
               <i class="fas fa-user"></i>
-              <span>{{ course.students }} Students</span>
+              <span>{{ course.students }} {{ $t('studentsLabel') }}</span>
             </div>
           </div>
         </div>
