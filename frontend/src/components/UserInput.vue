@@ -1,5 +1,11 @@
 <template>
   <div class="user-input-container">
+    <!-- File label -->
+    <div v-if="selectedFile" class="file-label">
+      <span>{{ selectedFile.name }}</span>
+      <button @click="removeFile">×</button>
+    </div>
+
     <div class="user-input">
       <!-- File Upload Button -->
       <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
@@ -20,7 +26,7 @@
         v-model="messageText" 
         @input="handleInput"
         @keyup.enter="send" 
-        placeholder="Type your message here..."
+        placeholder="Type your message here and drop a file..."
       />
 
       <!-- Voice Recording Button OR Send Button -->
@@ -129,6 +135,11 @@ export default {
       }
     },
 
+    removeFile() {
+      this.selectedFile = null;
+      this.$refs.fileInput.value = '';
+    },
+
     // Start Recording
     async startRecording() {
       this.isRecording = true;
@@ -192,12 +203,53 @@ export default {
 
 .user-input-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   position: absolute;
   width: 100%;
   bottom: 0;
   background-color: var(--bg-primary);
+  padding-bottom: 15px;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 6px 12px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-label span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.file-label button {
+  background: none;
+  border: none;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--link-color);
+}
+
+.user-input {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
 
 .user-input {
@@ -235,6 +287,7 @@ export default {
 
 .upload-btn { left: 30px; }
 .send-btn { right: 40px; }
+
 
 /* Voice Recording Button */
 .mic-btn {
