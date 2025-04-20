@@ -2,7 +2,7 @@
   <div class="user-input-container">
     <div class="user-input">
       <!-- File Upload Button -->
-      <input type="file" ref="fileInput" @change="handleImageUpload" style="display: none;" />
+      <input type="file" ref="fileInput" @change="handleFileUpload" style="display: none;" />
       <div @click="triggerFileInput" class="upload-btn">
         <font-awesome-icon icon="fa-solid fa-paperclip" />
       </div>
@@ -49,128 +49,44 @@ export default {
       isRecording: false,
       isTyping: false,
       mediaRecorder: null,
-      audioChunks: []
+      audioChunks: [],
+      selectedFile: null
     };
-  },
-
-  created() {
-    this.openai = new OpenAI({
-      apiKey: process.env.VUE_APP_OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true
-    });
   },
 
   methods: {
     send() {
-      if (!this.messageText.trim()) return;
-      this.$emit("send-message", this.messageText);
+      // If no file uploaded
+      if (!this.messageText.trim() && !this.selectedFile) return;
+
+      this.$emit("send-message", 
+        {
+          message: this.messageText.trim(),
+          file: this.selectedFile
+        }
+      );
+
+      // Reset
       this.messageText = "";
       this.isTyping = false; // Reset to show mic button again
+      this.selectedFile = null;
+      this.$refs.fileInput.value = '';
     },
 
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
 
-    async handleImageUpload(event) {
-      const file = event.target.files[0];
+    async handleFileChange(event) {
+      this.selectedFile = event.target.files[0] || null;
       if (!file) return;
-      
-      this.isLoading = true;
-      this.error = null;
-      this.result = null;
-      
-      try {
-        if (file.type.startsWith('image/')) {
-          const base64Image = await this.readFileAsBase64(file);
-          this.result = await this.analyzeImageWithOpenAI(base64Image);
-        }
-        else if (file.type === 'application/pdf') {
-          // const base64PDF = await this.readFileAsBase64(file);
-          // console.log(base64PDF)
-          this.result = await this.analyzePDFWithOpenAI(file);
-        }
-        // const msg = await gptServices([
-				// {
-				// role: "user",
-				// content: this.result
-				// }
-        // ]);
-        this.messageText += this.result;
-      } catch (err) {
-        this.error = err.message || 'Failed to analyze image';
-        console.error('Error:', err);
-      }
-      this.isLoading = false;
-      this.$refs.fileInput.value = '';
+    },
+
+    async handleFileUpload(event) {
+      this.selectedFile = event.target.files[0] || null;
       
     },
-    readFileAsBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    },
-    async analyzePDFWithOpenAI(file) {
-      try {
-        const uploadedFile = await this.openai.files.create({file, purpose: "user_data"});
-        // Use the newer API format you provided
-        const response = await this.openai.responses.create({
-          model: "gpt-4o",
-          input: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "input_file",
-                  file_id: uploadedFile.id
-                },
-                {
-                  type: "input_text",
-                  text: "give me what the pdf have"
-                }
-              ]
-            }
-          ],
-        });
-        // delete file
-        //await this.openai.files.del(uploadedFile.id);
-        console.log(response.output_text)
-        return response.output_text;
-      } catch (error) {
-        console.error('API Error:', error);
-        throw new Error('Failed to analyze PDF. Please try again.');
-      }
-    },
-    async analyzeImageWithOpenAI(base64Image) {
-      try {
-        const response = await this.openai.chat.completions.create({
-          model: "gpt-4o",  
-          messages: [
-            {
-              role: "user",
-              content: [
-                { type: "text", text: "What's in this image?" },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: `data:image/jpeg;base64,${base64Image}`
-                  }
-                }
-              ]
-            }
-          ],
-          max_tokens: 300
-        });
-        console.log(response.choices[0].message.content);
-        return response.choices[0].message.content;
-      } catch (error) {
-        console.error('API Error:', error);
-        throw new Error('Failed to analyze image. Please try again.');
-      }
-    },
+    
     handleInput() {
       this.isTyping = this.messageText.length > 0;
     },
