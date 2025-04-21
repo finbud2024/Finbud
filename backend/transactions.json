@@ -1,0 +1,1388 @@
+[
+  {
+    "Description": "Dental Cleaning - Kim Dental",
+    "Date": "2025-03-28",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 12.81
+  },
+  {
+    "Description": "Gas Cylinder Recharge",
+    "Date": "2025-03-08",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 73.91
+  },
+  {
+    "Description": "GrabFood - Com Tam",
+    "Date": "2025-04-12",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.32
+  },
+  {
+    "Description": "Cho Long Bien",
+    "Date": "2025-03-13",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.25
+  },
+  {
+    "Description": "Family Support",
+    "Date": "2025-03-28",
+    "Category": "Allowance",
+    "Transaction Type": "Income",
+    "Amount (USD)": 91.6
+  },
+  {
+    "Description": "Parking Fee - Vincom",
+    "Date": "2025-04-05",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.61
+  },
+  {
+    "Description": "Tieng Nhat - Trung tam Mina",
+    "Date": "2025-04-09",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 35.86
+  },
+  {
+    "Description": "Finance Inc",
+    "Date": "2025-03-21",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 337.63
+  },
+  {
+    "Description": "Shopee.vn - Clothes",
+    "Date": "2025-04-03",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 38.82
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-04-12",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 412.62
+  },
+  {
+    "Description": "Tiki.vn - Sach giao trinh",
+    "Date": "2025-03-01",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.8
+  },
+  {
+    "Description": "Gas Station - Petrolimex",
+    "Date": "2025-03-01",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.1
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-04-11",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 76.82
+  },
+  {
+    "Description": "Internet - VNPT",
+    "Date": "2025-04-07",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 154.53
+  },
+  {
+    "Description": "Apartment Rent - Hoang Quoc Viet",
+    "Date": "2025-03-03",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 91.31
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-04-11",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 111.84
+  },
+  {
+    "Description": "Pho Thin - Lo Đuc",
+    "Date": "2025-03-06",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.08
+  },
+  {
+    "Description": "Gas Cylinder Recharge",
+    "Date": "2025-03-24",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 92.72
+  },
+  {
+    "Description": "Netflix",
+    "Date": "2025-03-19",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 6.0
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-04-14",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 44.77
+  },
+  {
+    "Description": "Company Payroll",
+    "Date": "2025-03-16",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 506.81
+  },
+  {
+    "Description": "Shopee.vn - Clothes",
+    "Date": "2025-04-02",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 39.97
+  },
+  {
+    "Description": "Watsons - Skincare",
+    "Date": "2025-03-18",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 16.59
+  },
+  {
+    "Description": "Parent Transfer",
+    "Date": "2025-04-02",
+    "Category": "Allowance",
+    "Transaction Type": "Income",
+    "Amount (USD)": 64.41
+  },
+  {
+    "Description": "Netflix",
+    "Date": "2025-03-06",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 8.28
+  },
+  {
+    "Description": "Aeon Mall - Daiso",
+    "Date": "2025-03-09",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.47
+  },
+  {
+    "Description": "Udemy - Data Science",
+    "Date": "2025-04-03",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 6.32
+  },
+  {
+    "Description": "Book Purchase - Fahasa",
+    "Date": "2025-03-03",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 11.82
+  },
+  {
+    "Description": "Now.vn - Banh Mi",
+    "Date": "2025-04-05",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.64
+  },
+  {
+    "Description": "TocoToco - Nguyen Trai",
+    "Date": "2025-04-14",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.48
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-04-01",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.49
+  },
+  {
+    "Description": "Company Payroll",
+    "Date": "2025-03-25",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 331.23
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-04-05",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 370.19
+  },
+  {
+    "Description": "Pharmacy - Phano",
+    "Date": "2025-03-08",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 19.14
+  },
+  {
+    "Description": "CGV Vincom",
+    "Date": "2025-04-11",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.76
+  },
+  {
+    "Description": "Tieng Nhat - Trung tam Mina",
+    "Date": "2025-04-07",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 38.06
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-03-08",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 123.66
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-04-15",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.76
+  },
+  {
+    "Description": "Cho Long Bien",
+    "Date": "2025-03-13",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.93
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-05",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 455.87
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-03-06",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 105.73
+  },
+  {
+    "Description": "Company Payroll",
+    "Date": "2025-03-20",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 312.95
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-04-10",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.61
+  },
+  {
+    "Description": "Bus Card Recharge",
+    "Date": "2025-04-07",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.71
+  },
+  {
+    "Description": "Pho Thin - Lo Đuc",
+    "Date": "2025-03-20",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.38
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-04-05",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 57.53
+  },
+  {
+    "Description": "Cho Long Bien",
+    "Date": "2025-03-13",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.7
+  },
+  {
+    "Description": "BeCar Ride",
+    "Date": "2025-04-14",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.3
+  },
+  {
+    "Description": "Aeon Mall - Daiso",
+    "Date": "2025-04-16",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 13.56
+  },
+  {
+    "Description": "Apartment Rent - Hoang Quoc Viet",
+    "Date": "2025-03-20",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 117.61
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-22",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 476.46
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-03-18",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.83
+  },
+  {
+    "Description": "Udemy - Data Science",
+    "Date": "2025-04-09",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.44
+  },
+  {
+    "Description": "Now.vn - Banh Mi",
+    "Date": "2025-03-13",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.55
+  },
+  {
+    "Description": "Health Supplement - Guardian",
+    "Date": "2025-03-18",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 13.98
+  },
+  {
+    "Description": "Company Payroll",
+    "Date": "2025-03-25",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 424.82
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-03-02",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 119.49
+  },
+  {
+    "Description": "Spotify",
+    "Date": "2025-04-15",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 10.73
+  },
+  {
+    "Description": "Web Project",
+    "Date": "2025-03-12",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 6.58
+  },
+  {
+    "Description": "Electricity Bill - EVN Hanoi",
+    "Date": "2025-04-01",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 78.49
+  },
+  {
+    "Description": "Lazada.vn - Accessories",
+    "Date": "2025-03-26",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 39.27
+  },
+  {
+    "Description": "Udemy - Data Science",
+    "Date": "2025-03-29",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 21.89
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-04-18",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 457.59
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-03-31",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 112.02
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-03-24",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 164.73
+  },
+  {
+    "Description": "UNIQLO - Vincom",
+    "Date": "2025-03-05",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.14
+  },
+  {
+    "Description": "Tieng Nhat - Trung tam Mina",
+    "Date": "2025-04-18",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 45.3
+  },
+  {
+    "Description": "Netflix",
+    "Date": "2025-03-02",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.94
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-01",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 532.2
+  },
+  {
+    "Description": "Parking Fee - Vincom",
+    "Date": "2025-03-16",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.93
+  },
+  {
+    "Description": "Health Supplement - Guardian",
+    "Date": "2025-03-06",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 8.8
+  },
+  {
+    "Description": "Fiverr",
+    "Date": "2025-03-04",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 64.98
+  },
+  {
+    "Description": "Health Supplement - Guardian",
+    "Date": "2025-03-27",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 16.59
+  },
+  {
+    "Description": "Fiverr",
+    "Date": "2025-03-03",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 32.09
+  },
+  {
+    "Description": "Bus Card Recharge",
+    "Date": "2025-03-19",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.8
+  },
+  {
+    "Description": "Dental Cleaning - Kim Dental",
+    "Date": "2025-04-13",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.43
+  },
+  {
+    "Description": "Spotify",
+    "Date": "2025-04-19",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 7.36
+  },
+  {
+    "Description": "UNIQLO - Vincom",
+    "Date": "2025-03-18",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 31.74
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-03-09",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.11
+  },
+  {
+    "Description": "Pho Thin - Lo Đuc",
+    "Date": "2025-03-06",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.17
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-04-15",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 365.65
+  },
+  {
+    "Description": "Parking Fee - Vincom",
+    "Date": "2025-04-09",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.28
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-03-14",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 104.67
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-03-02",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.03
+  },
+  {
+    "Description": "Electricity Bill - EVN Hanoi",
+    "Date": "2025-04-12",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 99.41
+  },
+  {
+    "Description": "VinMart Online",
+    "Date": "2025-03-20",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.24
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-03-02",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.97
+  },
+  {
+    "Description": "Health Supplement - Guardian",
+    "Date": "2025-04-13",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.3
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-04-08",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.4
+  },
+  {
+    "Description": "VinMart Online",
+    "Date": "2025-03-18",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.51
+  },
+  {
+    "Description": "Company Payroll",
+    "Date": "2025-03-11",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 316.05
+  },
+  {
+    "Description": "Spotify",
+    "Date": "2025-03-05",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.04
+  },
+  {
+    "Description": "Pharmacy - Phano",
+    "Date": "2025-03-30",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 9.58
+  },
+  {
+    "Description": "Shopee.vn - Clothes",
+    "Date": "2025-03-04",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 19.9
+  },
+  {
+    "Description": "Netflix",
+    "Date": "2025-03-03",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 11.84
+  },
+  {
+    "Description": "Now.vn - Banh Mi",
+    "Date": "2025-03-31",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.96
+  },
+  {
+    "Description": "Apartment Rent - Hoang Quoc Viet",
+    "Date": "2025-04-19",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 148.78
+  },
+  {
+    "Description": "TocoToco - Nguyen Trai",
+    "Date": "2025-04-19",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.9
+  },
+  {
+    "Description": "Web Project",
+    "Date": "2025-04-10",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 134.13
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-04-07",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 73.21
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-04-02",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 303.13
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-04-14",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.07
+  },
+  {
+    "Description": "Apartment Rent - Hoang Quoc Viet",
+    "Date": "2025-03-14",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 127.63
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-04-08",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 97.99
+  },
+  {
+    "Description": "Company Payroll",
+    "Date": "2025-04-04",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 516.08
+  },
+  {
+    "Description": "Now.vn - Banh Mi",
+    "Date": "2025-03-30",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.4
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-03-24",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.65
+  },
+  {
+    "Description": "Health Supplement - Guardian",
+    "Date": "2025-03-22",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 8.4
+  },
+  {
+    "Description": "UNIQLO - Vincom",
+    "Date": "2025-04-09",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.46
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-04-08",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.37
+  },
+  {
+    "Description": "Highlands Coffee - Trang Tien",
+    "Date": "2025-03-05",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.89
+  },
+  {
+    "Description": "Finance Inc",
+    "Date": "2025-04-05",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 559.08
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-03-06",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 105.34
+  },
+  {
+    "Description": "Web Project",
+    "Date": "2025-04-07",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 48.99
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-28",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 444.39
+  },
+  {
+    "Description": "Juno - Shoes",
+    "Date": "2025-04-20",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 38.15
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-03-30",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.35
+  },
+  {
+    "Description": "Pharmacy - Phano",
+    "Date": "2025-04-04",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 17.58
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-04-19",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.02
+  },
+  {
+    "Description": "Fiverr",
+    "Date": "2025-04-09",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 139.91
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-03-07",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.44
+  },
+  {
+    "Description": "Gas Cylinder Recharge",
+    "Date": "2025-04-01",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 119.17
+  },
+  {
+    "Description": "Web Project",
+    "Date": "2025-03-04",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 129.01
+  },
+  {
+    "Description": "Watsons - Skincare",
+    "Date": "2025-04-05",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 36.72
+  },
+  {
+    "Description": "CGV Vincom",
+    "Date": "2025-04-03",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.64
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-03-26",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 84.03
+  },
+  {
+    "Description": "Gas Cylinder Recharge",
+    "Date": "2025-03-26",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 128.36
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-03-20",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 0.29
+  },
+  {
+    "Description": "Bus Card Recharge",
+    "Date": "2025-03-24",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 0.93
+  },
+  {
+    "Description": "Gas Station - Petrolimex",
+    "Date": "2025-04-10",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.33
+  },
+  {
+    "Description": "Coursera Course",
+    "Date": "2025-03-13",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.68
+  },
+  {
+    "Description": "Spotify",
+    "Date": "2025-03-05",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.43
+  },
+  {
+    "Description": "Amazon Refund",
+    "Date": "2025-03-10",
+    "Category": "Refund",
+    "Transaction Type": "Income",
+    "Amount (USD)": 105.27
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-04-08",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 113.28
+  },
+  {
+    "Description": "Electricity Bill - EVN Hanoi",
+    "Date": "2025-03-12",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 97.48
+  },
+  {
+    "Description": "Company Payroll",
+    "Date": "2025-03-31",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 306.68
+  },
+  {
+    "Description": "Watsons - Skincare",
+    "Date": "2025-03-21",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 27.78
+  },
+  {
+    "Description": "Gas Station - Petrolimex",
+    "Date": "2025-03-07",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.97
+  },
+  {
+    "Description": "Bus Card Recharge",
+    "Date": "2025-03-08",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.42
+  },
+  {
+    "Description": "Watsons - Skincare",
+    "Date": "2025-04-01",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 9.27
+  },
+  {
+    "Description": "Gas Cylinder Recharge",
+    "Date": "2025-04-14",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 170.15
+  },
+  {
+    "Description": "Spotify",
+    "Date": "2025-04-18",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.09
+  },
+  {
+    "Description": "BeCar Ride",
+    "Date": "2025-03-10",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.39
+  },
+  {
+    "Description": "Friend Transfer",
+    "Date": "2025-04-16",
+    "Category": "Gift",
+    "Transaction Type": "Income",
+    "Amount (USD)": 180.52
+  },
+  {
+    "Description": "Apartment Rent - Hoang Quoc Viet",
+    "Date": "2025-04-06",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 102.65
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-03-22",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.0
+  },
+  {
+    "Description": "Parent Transfer",
+    "Date": "2025-03-21",
+    "Category": "Allowance",
+    "Transaction Type": "Income",
+    "Amount (USD)": 21.69
+  },
+  {
+    "Description": "Health Supplement - Guardian",
+    "Date": "2025-04-04",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.14
+  },
+  {
+    "Description": "Coursera Course",
+    "Date": "2025-03-25",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 45.19
+  },
+  {
+    "Description": "Cho Long Bien",
+    "Date": "2025-04-03",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.9
+  },
+  {
+    "Description": "Pharmacy - Phano",
+    "Date": "2025-04-03",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 6.61
+  },
+  {
+    "Description": "Pho Thin - Lo Đuc",
+    "Date": "2025-03-24",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.25
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-19",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 379.06
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-04-09",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 130.21
+  },
+  {
+    "Description": "Birthday Gift",
+    "Date": "2025-03-30",
+    "Category": "Gift",
+    "Transaction Type": "Income",
+    "Amount (USD)": 197.13
+  },
+  {
+    "Description": "Internet - VNPT",
+    "Date": "2025-03-27",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 67.3
+  },
+  {
+    "Description": "Lazada.vn - Accessories",
+    "Date": "2025-03-08",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 32.94
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-04-18",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.34
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-04-14",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 399.86
+  },
+  {
+    "Description": "Bus Card Recharge",
+    "Date": "2025-03-17",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.81
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-03-31",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.3
+  },
+  {
+    "Description": "GrabFood - Com Tam",
+    "Date": "2025-04-02",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.07
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-04-04",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.86
+  },
+  {
+    "Description": "Gas Station - Petrolimex",
+    "Date": "2025-03-04",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 0.78
+  },
+  {
+    "Description": "Friend Transfer",
+    "Date": "2025-04-01",
+    "Category": "Gift",
+    "Transaction Type": "Income",
+    "Amount (USD)": 116.14
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-04-19",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 128.23
+  },
+  {
+    "Description": "Highlands Coffee - Trang Tien",
+    "Date": "2025-03-29",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.78
+  },
+  {
+    "Description": "Parking Fee - Vincom",
+    "Date": "2025-04-14",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.08
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-04-13",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.15
+  },
+  {
+    "Description": "Lazada.vn - Accessories",
+    "Date": "2025-03-11",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 12.81
+  },
+  {
+    "Description": "Family Support",
+    "Date": "2025-04-20",
+    "Category": "Allowance",
+    "Transaction Type": "Income",
+    "Amount (USD)": 130.48
+  },
+  {
+    "Description": "Upwork",
+    "Date": "2025-03-02",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 101.49
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-29",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 419.12
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-04-16",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.82
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-01",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 332.7
+  },
+  {
+    "Description": "Tieng Nhat - Trung tam Mina",
+    "Date": "2025-03-30",
+    "Category": "Education & Learning",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 30.0
+  },
+  {
+    "Description": "Pharmacy - Phano",
+    "Date": "2025-03-15",
+    "Category": "Health & Medical",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.13
+  },
+  {
+    "Description": "BeCar Ride",
+    "Date": "2025-03-11",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.98
+  },
+  {
+    "Description": "Water Bill - Cong ty Nuoc sach HN",
+    "Date": "2025-04-06",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 154.61
+  },
+  {
+    "Description": "Family Support",
+    "Date": "2025-04-05",
+    "Category": "Allowance",
+    "Transaction Type": "Income",
+    "Amount (USD)": 20.11
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-03-15",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.73
+  },
+  {
+    "Description": "Juno - Shoes",
+    "Date": "2025-04-07",
+    "Category": "Shopping & Personal",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 31.62
+  },
+  {
+    "Description": "Baemin - Bun Cha",
+    "Date": "2025-03-25",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.75
+  },
+  {
+    "Description": "Tech Corp",
+    "Date": "2025-03-01",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 352.49
+  },
+  {
+    "Description": "GrabFood - Com Tam",
+    "Date": "2025-04-01",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 3.68
+  },
+  {
+    "Description": "GrabBike",
+    "Date": "2025-03-02",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.27
+  },
+  {
+    "Description": "CGV Vincom",
+    "Date": "2025-04-19",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 7.81
+  },
+  {
+    "Description": "Book Purchase - Fahasa",
+    "Date": "2025-04-10",
+    "Category": "Entertainment & Subscriptions",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.65
+  },
+  {
+    "Description": "Gas Station - Petrolimex",
+    "Date": "2025-03-05",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 1.66
+  },
+  {
+    "Description": "Finance Inc",
+    "Date": "2025-04-07",
+    "Category": "Salary",
+    "Transaction Type": "Income",
+    "Amount (USD)": 330.83
+  },
+  {
+    "Description": "GrabFood - Com Tam",
+    "Date": "2025-03-19",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.05
+  },
+  {
+    "Description": "Highlands Coffee - Trang Tien",
+    "Date": "2025-04-05",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.76
+  },
+  {
+    "Description": "GrabFood - Com Tam",
+    "Date": "2025-03-01",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 5.14
+  },
+  {
+    "Description": "Circle K - Giai Phong",
+    "Date": "2025-04-05",
+    "Category": "Food & Groceries",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 4.33
+  },
+  {
+    "Description": "Electricity Bill - EVN Hanoi",
+    "Date": "2025-04-14",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 66.18
+  },
+  {
+    "Description": "Fiverr",
+    "Date": "2025-03-11",
+    "Category": "Freelance & Side Job",
+    "Transaction Type": "Income",
+    "Amount (USD)": 171.62
+  },
+  {
+    "Description": "Internet - VNPT",
+    "Date": "2025-03-12",
+    "Category": "Housing & Utilities",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 97.14
+  },
+  {
+    "Description": "Bus Card Recharge",
+    "Date": "2025-04-09",
+    "Category": "Transportation",
+    "Transaction Type": "Expense",
+    "Amount (USD)": 2.44
+  }
+]

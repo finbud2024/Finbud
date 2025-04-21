@@ -26,13 +26,6 @@
         </div>
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
-      <img 
-        class="bot-image" 
-        src="@/assets/botrmbg.png" 
-        alt="Bot" 
-        @click="toggleBotMessage"
-        :class="{ 'clickable': showBot }"
-      />
     </div>
 
     <div class="leftPanel">
@@ -62,12 +55,14 @@
       </button>
       <div class="revenue-expense">
         <div class="total-spend revenue-card">
-          <h2>{{
-                  selectedCurrency === "USD"
-                    ? formatCurrency(totalRevenue)
-                    : formatCurrency(convertToVND(totalRevenue))
-                }}</h2>
-          <p>Total Revenue</p>
+          <h2>
+            {{
+              selectedCurrency === "USD"
+                ? formatCurrency(totalRevenue)
+                : formatCurrency(convertToVND(totalRevenue))
+            }}
+          </h2>
+          <p>Total Income</p>
         </div>
 
         <div class="total-spend expense-card">
@@ -103,14 +98,27 @@
         </div>
       </div>
 
+      <div v-if="transactions && transactions.length > 0">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+          <label style="font-weight: bold; margin-right: 10px;">Show Forecast</label>
+          <input type="checkbox" v-model="showForecast" />
+        </div>
+
+        <div class="chart-container">
+          <TransactionLine
+            :transactions="transactions"
+            :showForecast="showForecast"
+            :key="`transaction-line-${transactions.length}-${showForecast}`"
+          />
+        </div>
+      </div>
+      <!-- TransactionPie -->
       <div
-        class="chart-container"
+        class="pie-chart-row"
         v-if="transactions && transactions.length > 0"
       >
-        <TransactionLine
-          :transactions="transactions"
-          :key="`transaction-line-${transactions.length}-${Date.now()}`"
-        />
+        <TransactionPie :transactions="transactions" chartType="Income" />
+        <TransactionPie :transactions="transactions" chartType="Expense" />
       </div>
       <div class="chart-container no-data" v-else>
         <div class="no-data-message">
@@ -130,152 +138,29 @@
             </button>
           </div>
         </div>
-          <div class="transaction-box">
-            <div v-if="showModal" class="modal-overlay">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h3>Add Transaction</h3>
-                </div>
-                <div class="modal-body">
-                  <div class="input-box">
-                    <select
-                      v-model="transaction.type"
-                      class="input-box type-select"
-                      required
-                    >
-                      <option value="" disabled class="input-box-placeholder">
-                        Transaction Type
-                      </option>
-                      <option value="Income">Credited</option>
-                      <option value="Expense">Debited</option>
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Description"
-                      v-model="transaction.description"
-                      @input="generateRecommendations"
-                      @keydown="generateRecommendations"
-                      @focus="showRecommendations"
-                      @blur="hideRecommendations"
-                    />
-                    <ul
-                      v-if="recommendations.length && recommendationsVisible"
-                      class="recommendation-list"
-                      @mousedown.prevent
-                    >
-                      <li
-                        v-for="(recommendation, index) in recommendations"
-                        :key="index"
-                        @click="selectRecommendation(recommendation)"
-                        :class="{ highlighted: index === highlightedIndex }"
-                      >
-                        {{ recommendation }}
-                      </li>
-                    </ul>
-                    <div class="currency-input">
-                      <input
-                        type="number"
-                        placeholder="Amount"
-                        v-model="transaction.amount"
-                      />
-                      <select v-model="selectedCurrency" class="selectinside">
-                        <option value="USD">USD</option>
-                        <option value="VND">VND</option>
-                      </select>
-                    </div>
-                    <input
-                      type="date"
-                      placeholder="Date"
-                      v-model="transaction.date"
-                    />
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button @click="closeModal" style="margin-right: 10px">
-                    Cancel
-                  </button>
-                  <button @click="addTransaction">Add Transaction</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="transaction-list">
-            <table>
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Amount ({{ selectedCurrency }})</th>
-                  <th>Status</th>
-                  <th>Transaction</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- <tr
-                  v-for="trans in transactions"
-                  :key="trans._id"
-                  :class="{
-                    income: trans.type === 'Income',
-                    expense: trans.type === 'Expense',
-                  }"
-                > -->
-              <tr
-                v-for="trans in transactions"
-                :key="trans._id || trans.account_id"
-                :class="{
-                  income:
-                    trans.type === 'Income' ||
-                    (trans.type === 'revenue' && trans.amount < 0),
-                  expense:
-                    trans.type === 'Expense' ||
-                    (trans.type === 'revenue' && trans.amount > 0),
-                }"
-              >
-                <!-- <td>{{ trans.description }}</td> -->
-                <td>{{ trans.description || trans.name }}</td>
-                <td>{{ formattedDate(trans.date) }}</td>
-                <td v-if="selectedCurrency === 'USD'">
-                  {{ formatCurrency(Math.abs(trans.amount).toFixed(2)) }}
-                </td>
-                <td v-if="selectedCurrency === 'VND'">
-                  {{
-                    formatCurrency(
-                      convertToVND(Math.abs(trans.amount)).toFixed(2)
-                    )
-                  }}
-                </td>
-                <td>
-                  {{
-                    trans.type === "Expense" ||
-                    (trans.type === "revenue" && trans.amount > 0)
-                      ? "Debited"
-                      : "Credited"
-                  }}
-                </td>
-                <td class="buttons">
-                  <button
-                    @click="editTransaction(trans)"
-                    style="margin-right: 10px; padding: 6px 12px"
-                  >
-                    Edit
-                  </button>
-                  <!-- <button 
-                      @click="removeTransaction(trans._id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    > -->
-                  <button
-                    @click="removeTransaction(trans.account_id)"
-                    style="padding: 6px 12px"
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="transaction-box">
+          <TransactionModal
+            v-if="showModal"
+            :transaction="transaction"
+            :selectedCurrency="selectedCurrency"
+            :recommendations="recommendations"
+            :recommendationsVisible="recommendationsVisible"
+            :highlightedIndex="highlightedIndex"
+            @update:selectedCurrency="selectedCurrency = $event"  
+            @close="closeModal"
+            @submit="addTransaction"
+            @generate-recommendations="generateRecommendations"
+            @select-recommendation="selectRecommendation"
+            @show-recommendations="showRecommendations"
+            @hide-recommendations="hideRecommendations"
+          />
         </div>
+        <TransactionTable
+          :transactions="transactions"
+          :selectedCurrency="selectedCurrency"
+          @edit="editTransaction"
+          @remove="removeTransaction"
+        />
       </section>
     </div>
 
@@ -463,6 +348,9 @@
 <script>
 import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
+import TransactionTable from "../components/goalPage/TransactionTable.vue";
+import TransactionModal from "../components/goalPage/TransactionModal.vue";
+import TransactionPie from "../components/goalPage/TransactionPie.vue";
 import { toast } from "vue3-toastify";
 import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
 export default {
@@ -470,6 +358,9 @@ export default {
   components: {
     ChatBotTyping,
     TransactionLine,
+    TransactionTable,
+    TransactionModal,
+    TransactionPie
   },
   data() {
     return {
@@ -649,17 +540,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // Sửa cách tính accountBalance để lấy từ trường balance của transaction mới nhất
     accountBalance() {
-      // Ưu tiên giá trị từ server nếu có
-      if (this.serverAccountBalance !== 0) {
-        return this.serverAccountBalance;
-      }
-
-      // Khi không có giao dịch, trả về 0
-      if (!this.transactions || this.transactions.length === 0) {
-        return 0;
-      }
-
-      // Dựa trên tổng revenue và expense nếu không có giá trị server
       return this.totalRevenue - this.totalExpense;
     },
   },
@@ -667,7 +547,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   mounted() {
     // if (!this.isAuthenticated) {
     //   this.$router.push("/");
-      return;
+      // return;
     // }
 
 
@@ -1063,6 +943,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         const response = await axios.get(
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
+        
+        console.log("✅ API response:", response); // 🪵 Log full response
+        console.log("✅ Raw data:", response.data); // 🪵 Log data array
 
         // Kiểm tra response đầy đủ trước khi cập nhật
         if (response && response.data) {
@@ -1070,8 +953,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           const sortedTransactions = this.sortTransactionsByDate(response.data);
 
           // Cập nhật mảng transactions
-          this.transactions = sortedTransactions;
-
+          this.transactions = sortedTransactions.filter(
+            (tx) => tx.amount != null && !isNaN(tx.amount) && tx.date
+          );
+          
           // Nếu có transactions, thì recalculate balance để đảm bảo tính đúng
           if (sortedTransactions.length > 0) {
             this.recalculateBalances();
@@ -1084,6 +969,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         return null; // Trả về null trong trường hợp lỗi
       }
     },
+
     async addTransaction() {
       if (
         this.transaction.description &&
@@ -1094,54 +980,50 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         try {
           let amountInUSD = Math.abs(this.transaction.amount);
 
-          // Convert amount to USD if the selected currency is VND
+          // Convert to USD if needed
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
 
-          // Xác định dấu của số tiền dựa vào type
-          // Income (ghi có) = số âm (thêm tiền vào tài khoản)
-          // Expense (ghi nợ) = số dương (lấy tiền ra khỏi tài khoản)
           const signedAmount =
             this.transaction.type === "Income" ? -amountInUSD : amountInUSD;
-
-          // Tính balance mới từ giao dịch mới nhất hoặc sử dụng computed property
-          const newBalance =
-            this.transactions.length > 0
-              ? this.transactions[0].balance - signedAmount
-              : -signedAmount;
 
           const response = await axios.post(
             `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
             {
-              ...this.transaction,
+              description: this.transaction.description,
               amount: signedAmount,
-              balance: newBalance,
               userId: this.userId,
+              date: this.transaction.date || new Date().toISOString().split("T")[0],
+              type: this.transaction.type,
+              category: this.transaction.category || "Uncategorized"
             }
           );
 
-          // Insert the new transaction at the beginning of the array
-          this.transactions.unshift(response.data);
+          console.log("Transaction added:", response.data);
+          this.transactions.unshift(response.data); 
 
-          // Xóa dữ liệu form
-          this.transaction.description = "";
-          this.transaction.amount = null;
-          this.transaction.date = "";
-          this.transaction.type = "";
+          // Reset form
+          this.transaction = {
+            description: "",
+            amount: null,
+            date: "",
+            type: "",
+            category: ""
+          };
+          this.showModal = false;
 
-          // Đảm bảo cập nhật lại balances
           this.$nextTick(() => {
             this.recalculateBalances();
           });
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
-        this.showModal = false;
       } else {
         console.error("Transaction description, amount, and date are required");
       }
     },
+
     async setInitialBalance() {
       // Provide default values if they are not set
       const date =
@@ -1229,8 +1111,20 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       }
     },
     openModal() {
+      const today = new Date().toISOString().split("T")[0]; // format: YYYY-MM-DD
+      this.transaction = {
+        description: "",
+        amount: null,
+        date: today,
+        type: "",
+        category: ""
+      };
+      this.recommendations = [];
+      this.recommendationsVisible = false;
+      this.highlightedIndex = -1;
       this.showModal = true;
     },
+
     recalculateBalances() {
       // Kiểm tra nếu không có transactions thì trả về
       if (!this.transactions || this.transactions.length === 0) {
@@ -1535,6 +1429,22 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   overflow-x: auto;
 }
 
+.pie-chart-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; 
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.pie-chart-row > * {
+  flex: 1 1 45%;
+  max-width: 45%;
+  min-width: 320px;
+}
+
 /* Right Panel - Financial goals */
 .rightPanel {
   width: 30%;
@@ -1700,14 +1610,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   border-bottom-right-radius: 10px;
 }
 
-.add-money-form {
-  margin-top: 20px;
-}
-
-.add-money-form input {
-  margin-top: 10px;
-}
-
 .search-container {
   margin: 20px 0;
   text-align: center;
@@ -1728,89 +1630,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 .form-group {
   margin-bottom: 10px;
   font-family: 'Space Grotesk', sans-serif;
-}
-
-.form-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--text-primary);
-}
-
-.form-group input,
-.form-group textarea {
-  width: 80%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 16px;
-  font-family: "Space Grotesk", sans-serif;
-  transition: border-color 0.3s ease;
-  resize: none;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: var(--link-color);
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.currency-input {
-  display: flex;
-  align-items: center;
-  width: 80%;
-  margin-left: 50px;
-}
-
-.currency-input input {
-  margin-right: 10px;
-  flex: 1;
-  width: 75px;
-}
-
-.currency-input select {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  font-size: 16px;
-  font-family: "Space Grotesk", sans-serif;
-  transition: border-color 0.3s ease;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  width: 75px;
-  margin-bottom: 0px;
-  height: 42px;
-}
-
-.currency-input select:focus {
-  border-color: var(--link-color);
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-#addAmount {
-  margin-bottom: 10px;
-}
-
-.character-counter {
-  font-size: 0.9em;
-  color: #666;
-  margin-top: 5px;
-  text-align: right;
-  width:90%;
-}
-
-.start-end-date-group {
-  display: flex;
-  margin-left: 28px;
-}
-
-.start-end-date-group .start-end-date-input {
-  width: 222px;
 }
 
 #goalCategory {
@@ -2341,15 +2160,6 @@ hr {
   z-index: 20;
 }
 
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 90%;
-  max-width: 1000px;
-}
-
 .modal-content input {
   padding: 10px;
   border: 1px solid var(--border-color);
@@ -2531,56 +2341,6 @@ hr {
 
   .chart-wrapper {
     height: auto;
-  }
-}
-
-/* Responsive Modal Adjustments */
-@media (max-width: 768px) {
-  .modal-content {
-    width: 95%;
-    max-width: 400px;
-    padding: 15px;
-    margin: 10px;
-  }
-
-  .form-group {
-    margin-bottom: 10px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 8px;
-    font-size: 14px;
-  }
-
-  .currency-input {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .currency-input select {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .modal-content {
-    width: 95%;
-    max-width: 320px;
-    padding: 10px;
-    margin: 5px;
-  }
-
-  .form-group label {
-    font-size: 14px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 6px;
-    font-size: 13px;
   }
 }
 
@@ -2825,4 +2585,5 @@ hr {
   font-size: 16px;
   text-align: center;
 }
+
 </style>
