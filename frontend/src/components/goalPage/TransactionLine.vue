@@ -31,7 +31,7 @@ export default {
       chartInitialized: false,
       chartReady: false,
       mountTimer: null,
-      resizeTimer: null,
+      // resizeTimer: null,
       activatedTimer: null,
       chartId: "transaction-line-chart",
       retryCount: 0,
@@ -208,14 +208,14 @@ export default {
     },
 
     // Xử lý resize với debounce để tránh gọi quá nhiều lần
-    handleResize() {
-      if (this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-      }
-      this.resizeTimer = setTimeout(() => {
-        this.reinitializeChart();
-      }, 300);
-    },
+    // handleResize() {
+    //   if (this.resizeTimer) {
+    //     clearTimeout(this.resizeTimer);
+    //   }
+    //   this.resizeTimer = setTimeout(() => {
+    //     this.reinitializeChart();
+    //   }, 300);
+    // },
 
     // Tách method riêng để dễ tái sử dụng
     cleanupResources() {
@@ -225,10 +225,10 @@ export default {
         this.mountTimer = null;
       }
 
-      if (this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-        this.resizeTimer = null;
-      }
+      // if (this.resizeTimer) {
+      //   clearTimeout(this.resizeTimer);
+      //   this.resizeTimer = null;
+      // }
 
       if (this.activatedTimer) {
         clearTimeout(this.activatedTimer);
@@ -244,7 +244,7 @@ export default {
       this.retryCount = 0;
 
       // Hủy event listener
-      window.removeEventListener("resize", this.handleResize);
+      // window.removeEventListener("resize", this.handleResize);
 
       // Hủy chart
       this.destroyChart();
@@ -273,7 +273,7 @@ export default {
   },
 
   mounted() {
-    window.addEventListener("resize", this.handleResize);
+    // window.addEventListener("resize", this.handleResize);
   },
 
   activated() {
