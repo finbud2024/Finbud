@@ -26,7 +26,7 @@
         v-model="messageText" 
         @input="handleInput"
         @keyup.enter="send" 
-        placeholder="Type your message here and drop a file..."
+        :placeholder="$t('messagePlaceholder')"
       />
 
       <!-- Voice Recording Button OR Send Button -->

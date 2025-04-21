@@ -125,6 +125,10 @@
                 </div>
             </section>
         </div>
+        <div class="articles-section">
+            <h3 class="text-2xl md:text-3xl mb-6">Latest Articles</h3>
+            <Articles :articles="articles" /> <!-- Pass articles to the Articles component -->
+        </div>
         <div class="frame3" data-aos="flip-left">
             <div class="events-container">
                 <h3 class="text-2xl md:text-3xl mb-6">{{ $t('eventHub.allEvents') }}</h3>
@@ -161,6 +165,8 @@ import { gptNewsService } from '@/services/gptServices';
 import EventMap from '@/components/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import Articles from '@/components/Articles.vue'; // Adjust the path if necessary
+import api from "@/utils/api";
 
 export default {
     name: 'EventHub',
@@ -168,6 +174,7 @@ export default {
         Swiper,
         SwiperSlide,
         EventMap,
+        Articles,
     },
     data() {
         return {
@@ -196,6 +203,7 @@ export default {
                 { name: this.$t('eventHub.categories.networking'), image: require('@/assets/workshop.png') },
                 { name: this.$t('eventHub.categories.careerFairs'), image: require('@/assets/career fair.png') }
             ];
+            articles: []
         }
     },
     methods: {
