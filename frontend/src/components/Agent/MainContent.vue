@@ -23,7 +23,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #2196f3;
+  background: var(--black-in-light-mode);
   border-radius: 12px;
   padding: 60px 40px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -35,19 +35,19 @@ export default {
 .title {
   font-size: 32px;
   font-weight: 700;
-  color: white;
+  color: var(--white-in-dark-mode);
   margin-bottom: 15px;
   text-align: center;
 }
 
 .powered-by {
   font-size: 14px;
-  color: white;
+  color: var(--white-in-dark-mode);
   margin-bottom: 40px;
 }
 
 .mindpal-link {
-  color: white;
+  color: var(--white-in-dark-mode);
   text-decoration: none;
   font-weight: 500;
 }
@@ -57,8 +57,8 @@ export default {
 }
 
 .start-button {
-  background-color: #0075c8;
-  color: white;
+  background-color: #007bff;
+  color: var(--white-in-dark-mode);
   font-size: 16px;
   font-weight: 500;
   padding: 14px 70px;

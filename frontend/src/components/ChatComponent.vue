@@ -22,7 +22,7 @@
         />
       </div>
     </ChatFrame>
-    <UserInput @send-message="sendMessage" />
+    <UserInput @send-message="handleUserSubmit" />
   </div>
 </template>
 
@@ -41,6 +41,7 @@ import {
   getRelevantQuestions,
 } from "@/services/serperService.js";
 import api from "@/utils/api";
+import OpenAI from 'openai';
 export default {
   name: "ChatComponent",
   props: {},
@@ -87,8 +88,24 @@ export default {
       },
     },
   },
+  created() {
+    this.openai = new OpenAI({
+      apiKey: process.env.VUE_APP_OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true
+    });
+  },
   methods: {
     // ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
+    handleUserSubmit({ message, file }) {
+      if(file) {
+        this.handleFileUpload(message, file);
+      }
+      else if(message) {
+        this.sendMessage(message);
+      }
+    },
+
+    // ---------------------------- RESPONSE MESSGE ----------------------------
     async sendMessage(newMessage) {
       const userMessage = newMessage.trim();
       const language = await gptServices([
@@ -822,6 +839,101 @@ export default {
         }
         this.scrollChatFrameToBottom();
       }
+    },
+    // --------------------------- READ FILE -----------------------------------------------------
+    async handleFileUpload(newMessage, file) {
+      this.isLoading = true;
+      this.messages.push({
+          text: newMessage,
+          isUser: true,
+          typing: true,
+          timestamp: new Date().toLocaleTimeString(),
+        });
+      try {
+        if (file.type.startsWith('image/')) {
+          const result = await this.analyzeImage(file, newMessage);
+          this.messages.push({
+            text: result,
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString()
+          });
+        } 
+        else if (file.type === 'application/pdf') {
+          const result = await this.analyzePDF(file, newMessage);
+          this.messages.push({
+            text: result,
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString()
+          });
+        }
+      } catch (err) {
+        console.error('Error processing file:', err);
+        this.addTypingResponse("Failed to process file", false);
+      }
+      
+      this.isLoading = false;
+    },
+
+    async analyzeImage(file, newMessage) {
+      const base64Image = await this.readFileAsBase64(file);
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o",  
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: newMessage },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${base64Image}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 300
+      });
+      return response.choices[0].message.content;
+    },
+
+    async analyzePDF(file, newMessage) {
+      const uploadedFile = await this.openai.files.create({
+        file, 
+        purpose: "user_data"
+      });
+      
+      const response = await this.openai.responses.create({
+        model: "gpt-4o",
+        input: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "input_file",
+                file_id: uploadedFile.id
+              },
+              {
+                type: "input_text",
+                text: newMessage
+              }
+            ]
+          }
+        ],
+      });
+      
+      // Clean up
+      await this.openai.files.del(uploadedFile.id);
+      return response.output_text;
+    },
+
+    readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
     },
     //------------------------- ULTILITIES FUNCTIONS ------------------------------------------------
     addTypingResponse(
