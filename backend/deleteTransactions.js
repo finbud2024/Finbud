@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 
 import mongoose from 'mongoose';
-import Transaction from './Database Schema/Transaction.js'; // adjust the path if needed
+import Transaction from './Database Schema/Transaction.js'; 
 
 dotenv.config();
 
