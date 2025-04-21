@@ -9,32 +9,32 @@
     <search-input
       v-model="searchQuery"
       @search="createRoadmap"
-      :placeholder="translations[language].placeholderText"
+      :placeholder="$t('searchPlaceholder')"
       data-aos="flip-right"
     />
 
     <div class="goal-form-card" data-aos="zoom-in-up">
-      <h1 class="title">{{ translations[language].goalLabel }} </h1>
+      <h1 class="title">{{ $t('goalTitle') }}</h1>
 
       <div class="form-group">
-        <label for="proficiency">{{ proficiencyLabelText }}</label>
+        <label for="proficiency">{{ $t('proficiencyLabel') }}</label>
         <select id="proficiency" v-model="proficiency" class="form-select">
-          <option value="" disabled selected>---</option>
-          <option value="beginner">{{ translations[language].beginner }}</option>
-          <option value="intermediate">{{ translations[language].intermediate }}</option>
-          <option value="advanced">{{ translations[language].advanced }}</option>
+          <option value="" disabled selected>{{ $t('proficiencyPlaceholder') }}</option>
+          <option value="beginner">{{ $t('beginner') }}</option>
+          <option value="intermediate">{{ $t('intermediate') }}</option>
+          <option value="advanced">{{ $t('advanced') }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="learning-hours">{{ translations[language].learningHoursLabel }}</label>
+        <label for="learning-hours">{{ $t('learningLabel') }}</label>
         <div class="input-row">
           <div class="input-group input-half-width">
             <input
               type="number"
               id="hours-per-day"
               v-model="hoursPerDay"
-              :placeholder="translations[language].hoursPerDayPlaceholder"
+              :placeholder="$t('hoursPlaceholder')"
               min="0"
               class="form-input"
             />
@@ -44,7 +44,7 @@
               type="number"
               id="days-per-week"
               v-model="daysPerWeek"
-              :placeholder="translations[language].daysPerWeekPlaceholder"
+              :placeholder="$t('daysPlaceholder')"
               min="0"
               max="7"
               class="form-input"
@@ -54,23 +54,23 @@
       </div>
 
       <div class="form-group">
-        <label>{{ translations[language].durationLabel }}</label>
+        <label>{{ $t('periodLabel') }}</label>
         <div class="input-row">
           <div class="input-group duration-input">
             <input
               type="number"
               v-model="duration"
-              :placeholder="translations[language].durationPlaceholder"
+              :placeholder="$t('durationPlaceholder')"
               min="1"
               class="form-input"
             />
           </div>
           <div class="input-group period-select">
             <select v-model="period" class="form-select">
-              <option value="" disabled selected>{{ translations[language].selectPeriod }}</option>
-              <option value="days">{{ translations[language].days }}</option>
-              <option value="weeks">{{ translations[language].weeks }}</option>
-              <option value="months">{{ translations[language].months }}</option>
+              <option value="" disabled selected>{{ $t('periodPlaceholder') }}</option>
+              <option value="days">{{ $t('days') }}</option>
+              <option value="weeks">{{ $t('weeks') }}</option>
+              <option value="months">{{ $t('months') }}</option>
             </select>
           </div>
         </div>
@@ -83,8 +83,8 @@
       >
         {{
           is_generating_roadmap
-            ? translations[language].personalizingRoadmap
-            : translations[language].createRoadmap
+            ? $t('generatingButton')
+            : $t('generateButton')
         }}
       </button>
     </div>
@@ -92,28 +92,28 @@
 
   <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
-      <h1 class="title">{{ translations[language].keywordBaseQuiz}} </h1>
+      <h1 class="title">{{ $t('quizTitle') }}</h1>
       <div class="form-group">
-        <label for="search-keyword">{{ translations[language].keyword }}</label>
+        <label for="search-keyword">{{ $t('keywordLabel') }}</label>
         <div id="search-keyword" class="search-container">
           <input
             style="height: 100%; margin-bottom: 0"
             type="text"
             v-model="searchKeyword"
             :disabled="isLoading"
-            :placeholder="translations[language].financekeyword"
+            :placeholder="$t('keywordPlaceholder')"
             @keyup.enter="GenerateQuiz"
           />
-          <button class="button" @click="GenerateQuiz">{{ translations[language].generateQuiz}}</button>
+          <button class="button" @click="GenerateQuiz">{{ $t('generateQuizButton') }}</button>
         </div>
       </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
-        <label for="related-keyword">Related keyword</label>
+        <label for="related-keyword">{{ $t('relatedKeywordsLabel') }}</label>
         <div class="carousel-wrapper">
           <button 
             class="carousel-nav left" 
             @click="scrollLeft"
-            aria-label="Scroll left"
+            :aria-label="$t('scrollLeft')"
           >
             &lt;
           </button>
@@ -133,16 +133,16 @@
         <button 
           class="carousel-nav right" 
           @click="scrollRight"
-          aria-label="Scroll right"
+          :aria-label="$t('scrollRight')"
         >
           &gt;
         </button>
       </div>
     </div>
       <div v-if="currentKeyword" class="quiz-info">
-        <div>Current Keyword: {{ currentKeyword }}</div>
-        <div>Points: {{ score }}</div>
-        <div>Time Left: {{ timerCountdown }}</div>
+        <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+        <div>{{ $t('pointsLabel') }} {{ score }}</div>
+        <div>{{ $t('timeLeftLabel') }} {{ timerCountdown }}</div>
       </div>
       <div class="quiz-area">
         <div
@@ -151,7 +151,7 @@
             { quizQuestionEnabled: question.length !== 0 },
           ]"
         >
-          {{ currentQuestion === -1 ? translations[language].questionPlaceholder : question }}
+          {{ currentQuestion === -1 ? $t('questionPlaceholder') : question }}
         </div>
         <div class="quizChoices">
           <button
@@ -166,36 +166,38 @@
           >
             {{
               answerOptions.length === 0
-                ? `Answer ${String.fromCharCode(64 + index)}`
+                ? $t('answerPlaceholder', { letter: String.fromCharCode(64 + index) })
                 : answerOptions[index - 1].replace(/\*$/, "")
             }}
           </button>
         </div>
         <div v-if="showExplaination" class="explanation-container">
           <div class="explanation-text">
-            <div class="explanation-title">Explanation:</div>
+            <div class="explanation-title">{{ $t('explanationTitle') }}</div>
             <div>{{ explanation }}</div>
           </div>
           <button class="button" @click="handleNextQuestion">
-            Next Question
+            {{ $t('nextQuestionButton') }}
           </button>
         </div>
       </div>
       <div v-if="modalDisplay" class="overlay">
         <div class="modal-container">
-          <div class="result-title">Quiz Result</div>
+          <div class="result-title">{{ $t('quizResultTitle') }}</div>
           <div>
-            <div>Keyword: {{ currentKeyword }}</div>
-            <div>score: {{ score }}/3</div>
+            <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+            <div>{{ $t('pointsLabel') }} {{ score }}/3</div>
           </div>
           <div class="result-button-container">
             <button class="button" @click="handleQuizResult('same')">
-              New Game With Same Keyword
+              {{ $t('sameKeywordButton') }}
             </button>
             <button class="button" @click="handleQuizResult('different')">
-              New Game With Different Keyword
+              {{ $t('differentKeywordButton') }}
             </button>
-            <button class="button" @click="handleQuizResult('end')">End</button>
+            <button class="button" @click="handleQuizResult('end')">
+              {{ $t('endQuizButton') }}
+            </button>
           </div>
         </div>
       </div>
@@ -204,8 +206,8 @@
 
   <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
-      <span class="category-label">{{ translations[language].coursecategories}}</span>
-      <h2 class="category-title">{{ translations[language].topictolearn}}</h2>
+      <span class="category-label">{{ $t('categoriesLabel') }}</span>
+      <h2 class="category-title">{{ $t('popularTopicsTitle') }}</h2>
 
       <div class="categories-grid">
         <div
@@ -220,7 +222,7 @@
             </div>
             <div class="card-text">
               <h3>{{ category.name }}</h3>
-              <span>{{ category.courseCount }} Courses</span>
+              <span>{{ category.courseCount }} {{ $t('coursesLabel') }}</span>
             </div>
           </div>
         </div>
@@ -232,8 +234,8 @@
     <div class="courses-container">
       <!-- Header Section -->
       <div class="courses-header">
-        <h4 class="courses-subtitle">{{ translations[language].popularcourses}}</h4>
-        <h2 class="courses-title">{{ translations[language].ourpopularcourses}}</h2>
+        <h4 class="courses-subtitle">{{ $t('popularCoursesSubtitle') }}</h4>
+        <h2 class="courses-title">{{ $t('popularCoursesTitle') }}</h2>
       </div>
 
       <!-- Courses Grid -->
@@ -260,7 +262,7 @@
             <div class="course-meta">
               <div class="course-lessons">
                 <i class="fas fa-book"></i>
-                <span>{{ course.lessons }} Lessons</span>
+                <span>{{ course.lessons }} {{ $t('lessonsLabel') }}</span>
               </div>
               <div class="course-duration">
                 <i class="fas fa-clock"></i>
@@ -283,7 +285,7 @@
 
             <div class="course-price">
               <template v-if="course.isFree">
-                <span class="free-price">Free</span>
+                <span class="free-price">{{ $t('freeLabel') }}</span>
               </template>
               <template v-else>
                 <span class="current-price">${{ course.price }}</span>
@@ -295,20 +297,12 @@
 
             <div class="course-students">
               <i class="fas fa-user"></i>
-              <span>{{ course.students }} Students</span>
+              <span>{{ course.students }} {{ $t('studentsLabel') }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="language-switcher">
-    <button @click="switchLanguage('en')">
-      <img src="@/assets/us.png" alt="English" />
-    </button>
-    <button @click="switchLanguage('vi')">
-      <img src="@/assets/vn.png" alt="Tiếng Việt" />
-    </button>
   </div>
 </template>
 
@@ -327,8 +321,6 @@ export default {
   },
   data() {
     return {
-      language: "en",
-      proficiency: "",
       searchQuery: "",
       score: 0,
       timerCountdown: 0,
@@ -493,65 +485,6 @@ export default {
       ],
       rewardAmount: 1,
       showingReward: false,
-      translations: {
-        en: {
-          placeholderText: "What do you want to learn today...",
-          proficiencyLabelText: "Proficiency level",
-          goalLabel: "What's your goal?",
-          learningHoursLabel: "You will learn",
-          hoursPerDayPlaceholder: "Hours per day",
-          daysPerWeekPlaceholder: "Days per week",
-          durationLabel: "In period",
-          durationPlaceholder: "Duration",
-          selectPeriod: "Select period",
-          days: "Days",
-          weeks: "Weeks",
-          months: "Months",
-          beginner: "Beginner",
-          intermediate: "Intermediate",
-          advanced: "Advanced",
-          personalizingRoadmap: "Personalizing your roadmap...",
-          createRoadmap: "Create my roadmap",
-          keywordBaseQuiz: "Keyword-Based Quiz",
-          keyword: "Put your own keyword",
-          financekeyword: "Enter a finance-related keyword",
-          generateQuiz: "Generate Quiz",
-          topictolearn: "Popular Topics To Learn",
-          coursecategories: "Course Categories",
-          popularcourses: "POPULAR COURSES",
-          ourpopularcourses: "Our popular courses",
-          questionPlaceholder: "Question will apear here"
-        },
-        vi: {
-          placeholderText: "Hôm nay bạn muốn học gì...",
-          proficiencyLabelText: "Mức độ thành thạo",
-          goalLabel: "Mục tiêu của bạn là gì?",
-          learningHoursLabel: "Bạn sẽ học",
-          hoursPerDayPlaceholder: "Số giờ mỗi ngày",
-          daysPerWeekPlaceholder: "Số ngày mỗi tuần",
-          durationLabel: "Trong khoảng thời gian",
-          durationPlaceholder: "Thời gian",
-          selectPeriod: "Chọn khoảng thời gian",
-          days: "Ngày",
-          weeks: "Tuần",
-          months: "Tháng",
-          beginner: "Mới bắt đầu",
-          intermediate: "Trung cấp",
-          advanced: "Nâng cao",
-          personalizingRoadmap: "Đang tạo lộ trình...",
-          createRoadmap: "Tạo lộ trình của tôi",
-          keywordBaseQuiz: "Bài kiểm tra kiến thức",
-          keyword: "Nhập vào từ khoá của bạn",
-          financekeyword: "Nhập một từ khoá liên quan đến tài chính",
-          generateQuiz: "Tạo ra bài kiểm tra",
-          topictolearn: "Những chủ đề phổ biến",
-          coursecategories: "Danh mục khoá học",
-          popularcourses: "KHOÁ HỌC PHỔ BIẾN",
-          ourpopularcourses: "Khoá học phổ biến của chúng tôi",
-          questionPlaceholder: "Câu hỏi đã được tạo"
-
-        },
-      },
     };
   },
   watch: {
@@ -566,9 +499,6 @@ export default {
     },
   },
   methods: {
-    switchLanguage(language) {
-      this.language = language;
-    },
     GenerateQuiz: debounce(async function () {
       if (!this.searchKeyword.trim()) return;
       this.isLoading = true;
@@ -973,30 +903,6 @@ export default {
 </script>
 
 <style scoped>
-.language-switcher {
-  position: fixed;
-  bottom: 10px;
-  left: 20px;
-  display: flex;
-}
-
-.language-switcher button {
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.language-switcher button img {
-  width: 40px;
-  height: auto;
-  transition: transform 0.2s ease;
-}
-
-.language-switcher button:hover img {
-  transform: scale(1.1); /* Slightly enlarge the flag on hover */
-}
-
 .quiz-card {
   background: white;
   border-radius: 12px;

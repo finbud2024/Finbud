@@ -27,6 +27,10 @@ const ChatSchema = new mongoose.Schema({
         type: [String],
         required: true
     },
+    htmlContent: {
+        type: [String],
+        required: true
+    },
     sources: [SourceSchema],
     videos: [VideoSchema],
     followUpQuestions: {

@@ -1,7 +1,12 @@
 <template>
   <aside class="side-bar">
     <div class="sidebar-header">
-      <span>Chat Threads</span>
+      <!-- <span>Chat Threads</span> -->
+      <router-link to="/">
+        <div class="footer-image">
+          <img src="@/assets/home-page/FinBudPix.png" class="navbar-brand" alt="FinBud Logo">
+        </div>
+      </router-link>
     </div>
     <button class="add-thread-btn" @click="addThread()">
       <font-awesome-icon icon="fa-solid fa-plus" />
@@ -17,11 +22,11 @@
           <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
             <div @click.stop="editThread(index)">
               <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
-              <div>Rename</div>
+              <div>{{ $t('chatComponent.rename') }}</div>
             </div>
             <div @click.stop="promptDelete(index)" class="delete-thread">
               <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
-              <div>Delete</div>
+              <div>{{ $t('chatComponent.delete') }}</div>
             </div>
           </div>
         </div>
@@ -31,12 +36,12 @@
     </ul>
     <div v-if="showConfirmDeleteModal" class="delete-prompt-overlay">
       <div class="delete-prompt-content">
-        <div class="delete-header">Delete chat?</div>
+        <div class="delete-header">{{ $t('chatComponent.deleteConfirm') }}</div>
         <div class="delete-body">
-          <p>This will delete <strong class="delete-thread-name">{{ threads[deleteIndex].name }}.</strong></p>
+          <p>{{ $t('chatComponent.deleteConfirmMessage') }} <strong class="delete-thread-name">{{ threads[deleteIndex].name }}.</strong></p>
           <div class="delete-button-container">
-            <button class="cancel-button" @click="cancelDelete">Cancel</button>
-            <button class="confirm-button" @click="confirmDelete">Delete</button>
+            <button class="cancel-button" @click="cancelDelete">{{ $t('chatComponent.cancel') }}</button>
+            <button class="confirm-button" @click="confirmDelete">{{ $t('chatComponent.delete') }}</button>
           </div>
         </div>
       </div>
@@ -68,7 +73,7 @@ export default {
       immediate: true,
       handler(newName) {
         if (newName.length === 0 || newName === null) return;
-        this.threads.forEach( (thread, index) => {
+        this.threads.forEach((thread, index) => {
           if (thread.id === this.$store.getters['threads/getThreadID']) {
             thread.editedName = newName;
             this.saveThreadName(thread, index);
@@ -465,5 +470,10 @@ export default {
 
 .cancel-button:hover {
   background: var(--hover-bg);
+}
+.footer-image img {
+  max-width: 200px;
+  height: auto;
+  margin-bottom: 0rem;
 }
 </style>
