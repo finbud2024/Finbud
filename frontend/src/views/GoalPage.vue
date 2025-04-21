@@ -84,8 +84,8 @@
             <h2>
               {{
                 selectedCurrency === "USD"
-                  ? formatCurrency(accountBalance)
-                  : formatCurrency(convertToVND(accountBalance))
+                  ? formatCurrency(accountBalanceTotal)
+                  : formatCurrency(convertToVND(accountBalanceTotal))
               }}
             </h2>
             <select
@@ -351,7 +351,11 @@
             </div>
           </section>
         </div>
-    
+        <goalNotiModal
+          :isVisible="showNoti"
+          :message="notiMessage"
+          @close="showNoti = false"
+        />
         <!-- Reset Confirmation Modal -->
         <div v-if="showResetConfirmationModal" class="modal">
           <div class="modal-content">
@@ -373,11 +377,14 @@ import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
 import { toast } from "vue3-toastify";
 import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
+import { messageToOpenAIRole } from "@langchain/openai";
 export default {
   name: "GoalPage",
   components: {
     ChatBotTyping,
     TransactionLine,
+    goalNotiModal
   },
   data() {
     return {
@@ -396,7 +403,8 @@ export default {
       typingSpeed: 50, // milliseconds between words
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
-
+      showNoti: false,
+      notiMessage: "",
       userId: this.$store.getters["users/userId"],
       firstName:
         this.$store.getters["users/currentUser"]?.identityData?.firstName || "",
@@ -555,7 +563,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         ); // Luôn dùng giá trị tuyệt đối
     },
 
-    accountBalance() {
+    accountBalanceTotal() {
       // Always calculate account balance as total revenue minus total expense
       return this.totalRevenue - this.totalExpense;
     },
@@ -982,6 +990,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       }
     },
     async addTransaction() {
+
       if (
         this.transaction.description &&
         this.transaction.amount !== null &&
@@ -990,26 +999,33 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       ) {
         try {
           let amountInUSD = Math.abs(this.transaction.amount);
-
+         
           // Convert amount to USD if the selected currency is VND
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
           
           let openNotification = false; // Flag to track if a notification should be shown
-          if (amountInUSD >= this.accountBalance) {
-            // show a notification if the amount is more than the account balance
-            openNotification = true;
-          } else if (amountInUSD >= this.accountBalance * 0.75) {
-            // show a notification if the amount is more than 75% of the account balance
-            openNotification = true;
-          } else if (amountInUSD >= this.accountBalance * 0.5) {
-            // show a notification if the amount is more than 50% of the account balance
-            openNotification = true;
-          } else if (amountInUSD >= this.accountBalance * 0.25) {
-            // show a notification if the amount is more than 25% of the account balance
-            openNotification = true;
-          }
+          if (this.transaction.type === "Expense") {
+            
+              const accountBalanceFormatted = this.formatCurrency(this.accountBalanceTotal);
+              const amountFormatted = this.formatCurrency(amountInUSD);
+              const percentSpent = ((amountInUSD / this.accountBalanceTotal) * 100).toFixed(1);
+                      
+              if (amountInUSD >= this.accountBalanceTotal) {
+                this.notiMessage = `Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.75) {
+                this.notiMessage = `Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.5) {
+                this.notiMessage = `Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.25) {
+                this.notiMessage = `FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
+                openNotification = true;
+              }
+            }
 
 
           // Xác định dấu của số tiền dựa vào type
@@ -1047,6 +1063,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           this.$nextTick(() => {
             this.recalculateBalances();
           });
+          
+          if (openNotification) {
+            this.showNoti = true; // Show the notification if the flag is set
+          }
+
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
@@ -1078,7 +1099,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
         // Update local state with the response data
         this.transactions.push(response.data);
-        this.accountBalance = parseFloat(this.initialBalance); // Update the account balance
+        this.accountBalanceTotal = parseFloat(this.initialBalance); // Update the account balance
         this.initialBalance = null; // Reset the initial balance input field
         this.showSetBalanceModal = false; // Close the modal
         this.initialBalanceSet = true; // Mark initial balance as set
@@ -1094,7 +1115,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
         this.transactions = [];
-        this.accountBalance = 0;
+        this.accountBalanceTotal = 0;
         this.initialBalanceSet = false;
         this.showResetConfirmationModal = false;
       } catch (error) {
