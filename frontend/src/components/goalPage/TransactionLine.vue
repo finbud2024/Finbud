@@ -113,6 +113,9 @@ export default {
         labels.push(futureLabel);
         forecastDataset.push({ x: futureLabel, y: slope * futureIndex + intercept });
       }
+
+      forecastDataset = forecastDataset.filter(pt => pt.x && typeof pt.y === "number" && !isNaN(pt.y));
+
     }
 
     const config = {
