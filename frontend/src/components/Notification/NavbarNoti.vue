@@ -81,21 +81,29 @@ export default {
     });
     
     const fetchNotifications = async () => {
-      if (!isAuthenticated.value || !userId.value) return;
-      
-      try {
-        loading.value = true;
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/notifications/${userId.value}`,
-          { withCredentials: true }
-        );
-        notifications.value = response.data;
-      } catch (error) {
-        console.error('Failed to fetch notifications:', error);
-      } finally {
-        loading.value = false;
-      }
-    };
+        if (!isAuthenticated.value || !userId.value) return;
+        
+        try {
+            loading.value = true;
+            const response = await axios.get(
+            `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}`,
+            { withCredentials: true }
+            );
+            
+            if (response.data && Array.isArray(response.data)) {
+            notifications.value = response.data;
+            console.log('Fetched notifications:', notifications.value.length);
+            } else {
+            console.error('Unexpected response format:', response.data);
+            notifications.value = [];
+            }
+        } catch (error) {
+            console.error('Failed to fetch notifications:', error);
+            notifications.value = [];
+        } finally {
+            loading.value = false;
+        }
+        };
     
     const markAllAsRead = async () => {
       if (!isAuthenticated.value || !userId.value) return;
