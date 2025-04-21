@@ -5,7 +5,7 @@
             <!-- Left Container for Stock History -->
             <div class="stock-history-container">
                 <div class="data-table">
-                    <h1>Stock History</h1>
+                    <h1 >Stock History</h1>
                     <div v-if="errorStock" class="error">{{ errorStock }}</div>
                     <div v-else-if="loadingStock" class="loadingStock">Loading...</div>
                     <div v-else>
@@ -166,10 +166,10 @@ export default {
 /* New styles for Stock History section title */
 .stock-history-container h1 {
     font-weight: bold;
-    color: #007bff; /* Blue color similar to Crypto Quotes section */
+    color: black; /* Blue color similar to Crypto Quotes section */
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
-    border-bottom: 2px solid #007bff; /* Underline similar to Crypto Quotes section */
+    border-bottom: 2px solid black; /* Underline similar to Crypto Quotes section */
     padding-bottom: 0.5rem;
     text-align: left;
 }
@@ -203,12 +203,12 @@ select, .VueDatePicker, input.styled {
 }
 
 select:focus, .VueDatePicker:focus {
-    border-color: #007bff;
+    border-color: black;
     outline: none;
 }
 
 input.styled {
-    background-color: #007bff;
+    background-color: black;
     color: #fff;
     font-size: 16px;
     cursor: pointer;
@@ -216,12 +216,12 @@ input.styled {
 }
 
 input.styled:hover {
-    background-color: #0056b3;
+    background-color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 input.styled:active {
-    background-color: #004494;
+    background-color: black;
 }
 
 table {
