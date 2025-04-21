@@ -1,3 +1,4 @@
+<!-- ChatFrame.vue -->
 <template>
     <div class="chat-frame-container">
         <div class="chat-frame">
@@ -13,7 +14,6 @@ export default {
 </script>
 
 <style scoped>
-
 .chat-frame-container {
     display: flex;
     flex-direction: column;
@@ -24,9 +24,15 @@ export default {
 }
 
 .chat-frame {
-    height: calc(100% - 30px - 4px - 1rem); /* Fixed height */
+    height: calc(100% - 100px); /* Fixed height */
     width: 100%; /* Fixed width */
     overflow-y: auto;
 }
-  
+
+@media (max-width: 768px) {
+    .chat-frame {
+        height: calc(100vh - 160px); /* Adjust height for mobile */
+        padding-bottom: 80px; /* More padding on mobile */
+    }
+}
 </style>

@@ -268,7 +268,7 @@ export default {
 .side-bar {
   width: 200px;
   background-color: var(--bg-primary);
-  padding: 20px;
+  padding: 100px;
   height: 100%;
   overflow-y: auto;
   color: var(--text-primary);

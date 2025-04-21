@@ -7,7 +7,7 @@ export const GPTService = {
     const {
       messages,
       json_schema,
-      model = "gpt-3.5-turbo",
+      model = "gpt-4o-mini",
       temperature = 0.7,
       maxTokens = 1500,
     } = options;
@@ -70,7 +70,7 @@ Always remember your name is FinBud, not "finance bro" or any other nickname, an
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
         messages: fullMessages,
         temperature: 0.7, // Giữ nguyên, nhưng có thể tăng lên 0.8-1.0 để thêm sáng tạo
         max_tokens: 1000,
@@ -136,7 +136,7 @@ export async function gptNewsService(payload, trendingEvents) {
     const response = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
         messages: fullMessages,
         temperature: 0.7,
         max_tokens: 1000,

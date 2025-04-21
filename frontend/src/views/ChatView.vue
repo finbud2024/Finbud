@@ -1,23 +1,26 @@
 <template>
-  <div class="home-container">
-    <div v-if="overlayEnabled" class="overlay" />
-    <div v-if="this.isAuthenticated" class="sidebar-container">
-      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
-      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar" />
-      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName" />
-    </div>
-    <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent" />
-    <div class="guidance-btn" id="tutorial-guidance-button" :class="{ 'is-guidance-visible': showGuidance }"
-      @click="showGuidance = true">
-      <div class="guidance-image-container">
-        <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
+  <div class="main-container">
+    <!-- Content container starts from top but has padding to avoid navbar overlap -->
+    <div class="home-container">
+      <div v-if="overlayEnabled" class="overlay" />
+      <div v-if="this.isAuthenticated" class="sidebar-container">
+        <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
+        <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar" />
+        <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName" />
       </div>
-      <span class="guidance-text">{{ $t('chatComponent.guildence') }}</span>
+      <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent" />
+      <div class="guidance-btn" id="tutorial-guidance-button" :class="{ 'is-guidance-visible': showGuidance }"
+        @click="showGuidance = true">
+        <div class="guidance-image-container">
+          <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
+        </div>
+        <span class="guidance-text">{{ $t('chatComponent.guildence') }}</span>
+      </div>
+      <GuidanceModal v-if="showGuidance" @close="showGuidance = false" @sendMessage="sendMessageToChat"
+        :showModal="showGuidance" />
+      <TutorialOverlay :steps="tutorialSteps" storageKey="finbudChatViewTutorialShown" :autoStart="true"
+        @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
     </div>
-    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" @sendMessage="sendMessageToChat"
-      :showModal="showGuidance" />
-    <TutorialOverlay :steps="tutorialSteps" storageKey="finbudChatViewTutorialShown" :autoStart="true"
-      @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
   </div>
 </template>
 
@@ -27,6 +30,7 @@ import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
+import NavBar from "@/components/NavBar.vue";
 //UTILITIES + LIB IMPORT
 
 export default {
@@ -38,7 +42,8 @@ export default {
     ChatComponent,
     SideBar,
     GuidanceModal,
-    TutorialOverlay
+    TutorialOverlay,
+    NavBar
   },
   data() {
     return {
@@ -141,29 +146,42 @@ export default {
       }
     }
   },
-  async mounted() {
+  mounted() {
     setInterval(() => { this.currentTime = new Date().toLocaleTimeString(); }, 500);
-    const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
-    document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
-
-    // Check if we've been redirected from Home page and show tutorial
-    if (this.$route.query.showTutorial) {
-      // A small delay to ensure the page is fully loaded
-      setTimeout(() => {
-        if (this.$refs.tutorialOverlay) {
-          this.$refs.tutorialOverlay.resetTutorial();
-        }
-      }, 500);
-    }
   },
 };
 </script>
 <style scoped>
+.main-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden; /* Prevent scrolling */
+}
+
+.navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: var(--bg-primary);
+  z-index: 1500; /* Higher z-index to ensure it stays on top */
+}
+
 .home-container {
+  position: absolute;
+  top: 0; /* Start from top, navbar will overlay */
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   width: 100%;
+  height: 100%;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  overflow: auto; /* Allow content to scroll if needed */
+  padding-top: 0; /* No padding needed as navbar floats above */
 }
 
 .sidebar-container {
@@ -175,7 +193,7 @@ export default {
 .toggle-sidebar-btn {
   display: none;
   position: absolute;
-  top: 15px;
+  top: 85px; /* Position below navbar */
   left: 10px;
   z-index: 1000;
   color: var(--text-primary);
@@ -226,9 +244,9 @@ export default {
   display: block;
   position: fixed;
   left: 0;
-  top: 0;
+  top: 70px; /* Position below navbar */
   width: 60%;
-  height: 100%;
+  height: calc(100% - 70px); /* Adjust height to account for navbar */
   background-color: var(--card-bg);
   z-index: 1001;
   transform: translateX(-100%);
