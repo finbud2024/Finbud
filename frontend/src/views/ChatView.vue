@@ -30,7 +30,6 @@ import ChatComponent from "@/components/ChatComponent.vue";
 import SideBar from "../components/SideBar.vue";
 import GuidanceModal from "../components/GuidanceModal.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
-import NavBar from "@/components/NavBar.vue";
 //UTILITIES + LIB IMPORT
 
 export default {
@@ -43,7 +42,6 @@ export default {
     SideBar,
     GuidanceModal,
     TutorialOverlay,
-    NavBar
   },
   data() {
     return {
@@ -157,16 +155,6 @@ export default {
   height: 100vh;
   width: 100%;
   overflow: hidden; /* Prevent scrolling */
-}
-
-.navbar-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  background-color: var(--bg-primary);
-  z-index: 1500; /* Higher z-index to ensure it stays on top */
 }
 
 .home-container {
