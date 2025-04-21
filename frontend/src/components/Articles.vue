@@ -1,6 +1,6 @@
 <template>
     <div class="articles">
-      <h1>Latest News</h1>
+      <h1 class="articles-title">Latest News</h1>
   
       <div v-if="loading">Loading...</div>
       <div v-else-if="error">{{ error }}</div>
@@ -54,12 +54,19 @@
     margin: 0 auto;
     padding: 1rem;
   }
+
+  .articles-title {
+    color: var(--text-primary);
+  }
+
   .article-card {
     border: 1px solid #ddd;
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 8px;
+    color: var(--text-primary);
   }
+
   .thumbnail {
     width: 100%;
     max-height: 200px;
@@ -69,6 +76,7 @@
   .read-more {
     color: blue;
     text-decoration: underline;
+    margin-left: 10px;
   }
   </style>
   
