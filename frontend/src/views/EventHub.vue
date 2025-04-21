@@ -126,12 +126,12 @@
             </section>
         </div>
         <div class="articles-section">
-            <h3 class="text-2xl md:text-3xl mb-6">Latest Articles</h3>
+            <h3 class="text-2xl md:text-3xl mb-6 articles-title">Latest Articles</h3>
             <Articles :articles="articles" /> <!-- Pass articles to the Articles component -->
         </div>
         <div class="frame3" data-aos="flip-left">
             <div class="events-container">
-                <h3 class="text-2xl md:text-3xl mb-6">{{ $t('eventHub.allEvents') }}</h3>
+                <h3 class="text-2xl md:text-3xl mb-6 all-events-title">{{ $t('eventHub.allEvents') }}</h3>
                 <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card" data-aos="fade-left">
                         <img v-if="event.image" :src="event.image" alt="Event image" class="event-image"/>
@@ -277,6 +277,7 @@ export default {
     height: fit-content;
     display: flex;
     flex-direction: column;
+    background-color: var(--bg-primary);
 }
 
 .frame1 {
@@ -337,10 +338,11 @@ export default {
 .event-btn {
     margin-top: 10px;
     cursor: pointer;
+    color: var(--text-primary);
 }
 
 .event-btn:hover {
-    color: #007bff;
+    color: var(--hover-bg);
 }
 
 .btn-icon {
@@ -363,6 +365,7 @@ export default {
 .event-category h3 {
     text-align: center;
     font-size: 3rem;
+    color: var(--text-primary);
 }
 
 .event-category-bg {
@@ -375,14 +378,29 @@ export default {
 }
 
 .category-btn {
-    color: #fff;
+    color: var(--text-primary);
     cursor: pointer;
     padding: 15px 40px 5px 40px;
 }
 
 .category-btn p {
     font-size: 15px;
+    color: white;
 }
+
+.category-btn p:hover {
+    color: var(--hover-bg);
+}
+
+.articles-title {
+    color: var(--text-primary);
+}
+
+.all-events-title {
+    color: var(--text-primary);
+}
+
+
 
 .category-img {
     width: 25%;
@@ -769,7 +787,7 @@ export default {
 }
 
 .trending-title {
-    color: #007bff;
+    color: var(--link-color);
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 20px;
@@ -783,12 +801,12 @@ export default {
 
 .event-link {
     text-decoration: none;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .event-link:hover {
     text-decoration: underline;
-    color: #0056b3; /* Change to a darker shade */
+    color: var(--link-color); /* Change to a darker shade */
 }
 
 .event-number {
@@ -797,7 +815,7 @@ export default {
 }
 
 .event-description {
-    color: #666;
+    color: var(--text-primary);
     margin-top: 8px;
     font-size: 0.95rem; /* Slightly larger for readability */
 }
