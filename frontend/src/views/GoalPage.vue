@@ -206,14 +206,6 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- <tr
-                  v-for="trans in transactions"
-                  :key="trans._id"
-                  :class="{
-                    income: trans.type === 'Income',
-                    expense: trans.type === 'Expense',
-                  }"
-                > -->
               <tr
                 v-for="trans in transactions"
                 :key="trans._id || trans.account_id"
@@ -226,7 +218,6 @@
                     (trans.type === 'revenue' && trans.amount > 0),
                 }"
               >
-                <!-- <td>{{ trans.description }}</td> -->
                 <td>{{ trans.description || trans.name }}</td>
                 <td>{{ formattedDate(trans.date) }}</td>
                 <td v-if="selectedCurrency === 'USD'">
@@ -248,28 +239,14 @@
                   }}
                 </td>
                 <td class="buttons">
-                  <button
-                    @click="editTransaction(trans)"
-                    style="margin-right: 10px; padding: 6px 12px"
-                  >
+                  <button class="edit-btn" @click="editTransaction(trans)">
                     Edit
                   </button>
-                  <!-- <button 
-                      @click="removeTransaction(trans._id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    > -->
-                    <button 
-                      @click="removeTransaction(trans.account_id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    >
+                  <button class="remove-btn" @click="removeTransaction(trans.account_id)">
                     {{ $t('removeButton') }}
-                    </button>
-                  </td>
-                </tr>
+                  </button>
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -578,28 +555,17 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         ); // Luôn dùng giá trị tuyệt đối
     },
 
-    // Sửa cách tính accountBalance để lấy từ trường balance của transaction mới nhất
     accountBalance() {
-      // Ưu tiên giá trị từ server nếu có
-      if (this.serverAccountBalance !== 0) {
-        return this.serverAccountBalance;
-      }
-
-      // Khi không có giao dịch, trả về 0
-      if (!this.transactions || this.transactions.length === 0) {
-        return 0;
-      }
-
-      // Dựa trên tổng revenue và expense nếu không có giá trị server
+      // Always calculate account balance as total revenue minus total expense
       return this.totalRevenue - this.totalExpense;
     },
   },
   
   mounted() {
-    // if (!this.isAuthenticated) {
-    //   this.$router.push("/");
+    if (!this.isAuthenticated) {
+      this.$router.push("/");
       return;
-    // }
+    }
 
 
     this.retrieveGoals();
@@ -1454,7 +1420,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(31, 126, 53);
+
 }
 
 .transactionContainer {
@@ -2116,6 +2082,35 @@ hr {
 
 .income {
   background-color: rgba(76, 175, 80, 0.1);
+}
+
+.transaction-list td.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 5px;
+  gap: 5px;
+}
+
+.transaction-list td.buttons button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  background-color: var(--link-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  min-width: 80px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.transaction-list td.buttons button:hover {
+  background-color: var(--button-hover-bg, #005bb5);
+  transform: translateY(-1px);
 }
 
 .chart-container {
