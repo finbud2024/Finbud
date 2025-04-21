@@ -29,7 +29,7 @@
         :placeholder="$t('messagePlaceholder')"
       />
 
-      <!-- Voice Recording Button OR Send Button -->
+      <!-- Voice Recording Button or Send Button -->
       <div v-if="!isTyping" 
         @mousedown="startRecording" 
         @mouseup="stopRecording" 
