@@ -84,6 +84,13 @@
               @click="toggleDropdownInvest(false)"
               >{{ $t('superInvestors') }}</router-link
             >
+
+            <router-link
+              to="/tax-calculator"
+              class="tax-calculator"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t('taxCalculator') }}</router-link
+            >
           </div>
         </li>
 
@@ -273,6 +280,12 @@
               class="super-investors"
               @click="toggleDropdownMobile"
               >{{ $t('superInvestors') }}</router-link
+            >
+            <router-link
+              to="/tax-calculator"
+              class="tax-calculator"
+              @click="toggleDropdownMobile"
+              >{{ $t('taxCalculator') }}</router-link
             >
 
             <strong>{{ $t('finInvest') }}</strong>

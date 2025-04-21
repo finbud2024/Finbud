@@ -5,17 +5,36 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
+const DEEPSEEK_API_KEY = process.env.VUE_APP_DEEPSEEK_KEY;
 const NEWS_API_KEY = process.env.VUE_APP_AGENT_API_KEY;
 
-export async function processFinancialNews(ticker, category, model = 'chatgpt') {
-  console.log("Using model:", model);
+function getLLM(modelName = 'chatgpt') {
+  if (modelName === 'deepseek') {
+    return new ChatOpenAI({
+      model: "deepseek-chat",
+      apiKey: DEEPSEEK_API_KEY,
+      temperature: 0.3
+    });
+  }
+  return new ChatOpenAI({
+    model: "gpt-4o",
+    apiKey: OPENAI_API_KEY,
+    temperature: 0.3
+  });
+}
+
+export async function* processFinancialNews(ticker, category, modelName = 'chatgpt') {
+  console.log("Using model:", modelName);
   try {
+    yield { step: 'loading', status: 'started' };
     const newsData = await fetchFinancialNews(ticker, category);
+    yield { step: 'loading', status: 'completed' };
+
+    yield { step: 'splitting', status: 'started' };
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 100,
     });
-    
     const documents = newsData.map(article => ({
       pageContent: `Title: ${article.title}\nDate: ${article.date || article.datetime ? new Date(article.datetime * 1000).toISOString() : 'Unknown'}\nSource: ${article.source || article.site || 'Unknown'}\nContent: ${article.description || article.summary || article.content || ''}`,
       metadata: {
@@ -24,31 +43,48 @@ export async function processFinancialNews(ticker, category, model = 'chatgpt') 
         date: article.date || (article.datetime ? new Date(article.datetime * 1000).toISOString() : 'Unknown')
       }
     }));
-    
     const splits = await textSplitter.splitDocuments(documents);
-    const data = await extractInsights(splits);
-    
-    const newsSummary = await generateSummary(data);
+    yield { step: 'splitting', status: 'completed' };
+
+    yield { step: 'extracting', status: 'started' };
+    const data = await extractInsights(splits, modelName);
+    yield { step: 'extracting', status: 'completed' };
+
+    yield { step: 'summarizing', status: 'started' };
+    const newsSummary = await generateSummary(data, modelName);
     const formattedSummary = formatSummary(newsSummary);
-    
-    const relatedContent = await findSimilarContent(newsSummary, splits);
-    const formattedRecommendations = formatRecommendations(relatedContent);
-    
-    const executiveSummary = await generateReportSummary(newsSummary, data);
+    yield { step: 'summarizing', status: 'completed', result: formattedSummary };
+
+    yield { step: 'executiveSummary', status: 'started' };
+    const executiveSummary = await generateReportSummary(newsSummary, data, modelName);
     const formattedExecutiveSummary = formatSummary(executiveSummary);
-    
-    return {
-      summary: formattedSummary,
-      rawSummary: newsSummary,
-      extractedData: data,
-      recommendations: formattedRecommendations,
-      rawRecommendations: relatedContent,
-      executiveSummary: formattedExecutiveSummary,
-      rawExecutiveSummary: executiveSummary
+    yield { step: 'executiveSummary', status: 'completed', result: formattedExecutiveSummary };
+
+    yield { step: 'recommending', status: 'started' };
+    const relatedContent = await findSimilarContent(newsSummary, splits, modelName);
+    const formattedRecommendations = formatRecommendations(relatedContent);
+    yield { step: 'recommending', status: 'completed', result: formattedRecommendations };
+
+    yield {
+      step: 'done',
+      status: 'completed',
+      result: {
+        summary: formattedSummary,
+        rawSummary: newsSummary,
+        extractedData: data,
+        recommendations: formattedRecommendations,
+        rawRecommendations: relatedContent,
+        executiveSummary: formattedExecutiveSummary,
+        rawExecutiveSummary: executiveSummary
+      }
     };
   } catch (error) {
     console.error("Error in news processing:", error);
-    throw new Error(`Error processing financial news: ${error.message}`);
+    yield {
+      step: 'error',
+      status: 'failed',
+      message: error.message
+    };
   }
 }
 
@@ -88,13 +124,8 @@ export function getDateString(daysAgo) {
   return date.toISOString().split('T')[0];
 }
 
-export async function extractInsights(chunks) {
-  const model = new ChatOpenAI({ 
-    model: "gpt-4o",
-    apiKey: OPENAI_API_KEY,
-    temperature: 0.2 
-  });
-  
+export async function extractInsights(chunks, modelName) {
+  const model = getLLM(modelName);
   const dataExtractionPrompt = ChatPromptTemplate.fromTemplate(`
     You are a senior financial analyst specializing in macroeconomic trends, equity markets, and sector-specific developments.
     You aim to help to help the Chief Investment Officer and the investment team to make informed decisions based on financial news.
@@ -168,17 +199,13 @@ export async function extractInsights(chunks) {
   return extractedData;
 }
 
-export async function generateSummary(extractedData) {
+export async function generateSummary(extractedData, modelName) {
   if (!extractedData || extractedData.length === 0) {
     throw new Error("No data available for summary generation");
   }
   
   try {
-    const model = new ChatOpenAI({ 
-      model: "gpt-4o",
-      apiKey: OPENAI_API_KEY,
-      temperature: 0.3
-    });
+    const model = getLLM(modelName)
     
     const summaryPrompt = ChatPromptTemplate.fromTemplate(`
       You are the Chief Investment Strategist at a prestigious asset management firm tasked with synthesizing financial intelligence into actionable insights for clients.
@@ -242,17 +269,13 @@ export async function generateSummary(extractedData) {
   }
 }
 
-export async function findSimilarContent(summary, docSplits) {
+export async function findSimilarContent(summary, docSplits, modelName) {
   if (!summary || summary.trim() === '') {
     throw new Error("No valid summary available for finding similar content");
   }
   
   try {
-    const model = new ChatOpenAI({ 
-      model: "gpt-4o",
-      apiKey: OPENAI_API_KEY,
-      temperature: 0.3
-    });
+    const model = getLLM(modelName);
     
     let similarContentSummary = "";
     
@@ -330,13 +353,9 @@ export async function findSimilarContent(summary, docSplits) {
   }
 }
 
-export async function generateReportSummary(summary, extractedData) {
+export async function generateReportSummary(summary, extractedData, modelName) {
   try {
-    const model = new ChatOpenAI({ 
-      model: "gpt-4o",
-      apiKey: OPENAI_API_KEY,
-      temperature: 0.2 
-    });
+    const model = getLLM(modelName)
     
     const reportSummaryPrompt = ChatPromptTemplate.fromTemplate(`
       You are the Chief Investment Officer at a major asset management firm responsible for translating complex financial analyses into clear executive guidance.

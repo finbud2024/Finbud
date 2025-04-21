@@ -193,6 +193,25 @@
           <span class="download-icon">↓</span> Export Analysis as PDF
         </button>
       </div>
+      <div class="summary-history-table" v-if="summaryHistory.length">
+        <h3>📁 Exported Summaries</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>📅 Date & Time</th>
+              <th>📄 File Name</th>
+              <th>🔗 Download Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(entry, index) in summaryHistory" :key="index">
+              <td>{{ entry.timestamp }}</td>
+              <td>{{ entry.fileName }}</td>
+              <td><a :href="entry.link" download :title="entry.fileName">Download</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -244,9 +263,11 @@ export default {
         extractedData: [],
         recommendations: ''
       },
+      summaryHistory: [],
       selectedFile: null,
       hasError: false,
       errorMessage: ''
+
     };
   },
   methods: {
@@ -288,61 +309,50 @@ export default {
     },
     
     async startFinancialNewsAnalysis(ticker = 'AAPL', category = 'finance') {
-      this.resetState();
-      this.selectedFile = { name: ticker ? `${ticker} News Analysis` : `${category.charAt(0).toUpperCase() + category.slice(1)} Market News` };
-      
-      //Step 1: Loading
-      this.stepsVisible.loading = true;
-      this.processingSteps.loading = true;
-      this.processingMessages.loading = `Loading financial news for ${ticker || category}...`;
-      await this.$nextTick();
-      
-      try {
-        const results = await processFinancialNews(ticker, category, this.selectedModel);
-        this.processingMessages.loading = `Loaded: ${this.selectedFile.name}`;
-        this.processingSteps.loading = false;
-        this.completedSteps.loading = true;
-        this.processAnalysisResults(results);
+    this.resetState();
+    this.selectedFile = {
+      name: ticker ? `${ticker} News Analysis` : `${category.charAt(0).toUpperCase() + category.slice(1)} Market News`
+    };
 
-        //Step2: Splitting
-        this.stepsVisible.splitting = true;
-        this.processingSteps.splitting = true;
-        this.processingMessages.splitting = "Processing financial data...";
-        await this.delay(1000);
-        this.processingSteps.splitting = false;
-        this.completedSteps.splitting = true;
+    try {
+      for await (const step of processFinancialNews(ticker, category, this.selectedModel)) {
+        // Make the current step visible
+        if (this.stepsVisible.hasOwnProperty(step.step)) {
+          this.stepsVisible[step.step] = true;
+        }
 
-        //Step3: Extraction
-        this.stepsVisible.extraction = true;
-        this.processingSteps.extraction = true;
-        this.processingMessages.extraction = "Extracting key financial indicators...";
-        await this.delay(1000);
-        this.processingSteps.extraction = false;
-        this.completedSteps.extraction = true;
+        // Mark processing state
+        if (this.processingSteps.hasOwnProperty(step.step)) {
+          this.processingSteps[step.step] = step.status === 'started';
+          this.completedSteps[step.step] = step.status === 'completed';
+          this.processingMessages[step.step] = step.status === 'started'
+            ? `Processing ${step.step}...`
+            : '';
+        }
 
-        // Step 4: Summary
-        this.stepsVisible.summary = true;
-        this.processingSteps.summary = true;
-        this.processingMessages.summary = "Generating comprehensive financial summary...";
-        await this.delay(1000);
-        this.analysisResults.summary = results.summary;
-        this.analysisResults.executiveSummary = results.executiveSummary;
-        this.processingSteps.summary = false;
-        this.completedSteps.summary = true;
+        // Capture partial results
+        if (step.result) {
+          if (step.step === 'summarizing') {
+            this.analysisResults.summary = step.result;
+          } else if (step.step === 'executiveSummary') {
+            this.analysisResults.executiveSummary = step.result;
+          } else if (step.step === 'recommending') {
+            this.analysisResults.recommendations = step.result;
+          } else if (step.step === 'done') {
+            Object.assign(this.analysisResults, step.result);
+          }
+        }
 
-        // Step 5: Recommendations
-        this.stepsVisible.recommendations = true;
-        this.processingSteps.recommendations = true;
-        this.processingMessages.recommendations = "Finding related financial resources...";
-        await this.delay(1000);
-        this.analysisResults.recommendations = results.recommendations;
-        this.processingSteps.recommendations = false;
-        this.completedSteps.recommendations = true;
-
-      } catch (error) {
-        this.hasError = true;
-        this.errorMessage = "Failed to process financial news: " + error.message;
-        this.processingSteps.loading = false;
+        // Handle error
+        if (step.status === 'failed') {
+          this.hasError = true;
+          this.errorMessage = step.message || 'An error occurred during analysis';
+          break;
+        }
+      }
+    } catch (err) {
+      this.hasError = true;
+      this.errorMessage = err.message || 'Unexpected error occurred.';
     }
   },
     
@@ -426,7 +436,15 @@ export default {
     },
     
     exportAnalysisAsPDF() {
+      const timestamp = new Date().toLocaleString();
       const element = document.getElementById('pdf-report-content');
+      const link = URL.createObjectURL(new Blob([], { type: 'application/pdf'}));
+
+      this.summaryHistory.push({
+        timestamp,
+        fileName,
+        link
+      });
 
       const opt = {
         margin:       0.5,
@@ -436,7 +454,9 @@ export default {
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
 
-      html2pdf().set(opt).from(element).save();
+      html2pdf().set(opt).from(element).save().then(() => {
+        this.saveSummaryToTable();
+      });
         }
   }
 }
@@ -783,6 +803,46 @@ export default {
   align-items: center;
   gap: 10px;
   box-shadow: 0 2px 8px rgba(185, 28, 28, 0.1);
+}
+
+.summary-history-table {
+  margin-top: 40px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.summary-history-table h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #1f2937;
+}
+
+.summary-history-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summary-history-table th, .summary-history-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-history-table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #374151;
+}
+
+.summary-history-table td a {
+  color: #1e40af;
+  text-decoration: none;
+}
+
+.summary-history-table td a:hover {
+  text-decoration: underline;
 }
 
 .error-icon {
