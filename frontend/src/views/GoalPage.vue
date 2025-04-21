@@ -995,6 +995,22 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
+          
+          let openNotification = false; // Flag to track if a notification should be shown
+          if (amountInUSD >= this.accountBalance) {
+            // show a notification if the amount is more than the account balance
+            openNotification = true;
+          } else if (amountInUSD >= this.accountBalance * 0.75) {
+            // show a notification if the amount is more than 75% of the account balance
+            openNotification = true;
+          } else if (amountInUSD >= this.accountBalance * 0.5) {
+            // show a notification if the amount is more than 50% of the account balance
+            openNotification = true;
+          } else if (amountInUSD >= this.accountBalance * 0.25) {
+            // show a notification if the amount is more than 25% of the account balance
+            openNotification = true;
+          }
+
 
           // Xác định dấu của số tiền dựa vào type
           // Income (ghi có) = số âm (thêm tiền vào tài khoản)
