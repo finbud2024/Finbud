@@ -108,7 +108,7 @@
           <TransactionLine
             :transactions="transactions"
             :showForecast="showForecast"
-            :key="`transaction-line-${transactions.length}-${showForecast}`"
+            :key="`transaction-line-${transactions.length}-${showForecast}`" 
           />
         </div>
       </div>
@@ -1340,6 +1340,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         console.error("Error fetching Plaid transactions:", error);
       }
     },
+    activated() {
+      if (this.transactions.length === 0) {
+        this.fetchTransactions();
+      }
+    }
   },
 };
 </script>
