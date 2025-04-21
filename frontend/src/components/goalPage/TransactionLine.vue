@@ -169,7 +169,22 @@ export default {
       }
     };
 
-    this.chart = new Chart(ctx, config);
+    if (Chart.getChart(canvas)) {
+      Chart.getChart(canvas).destroy();
+    }
+
+    requestAnimationFrame(() => {
+      try {
+        if (!ctx || !canvas || !canvas.ownerDocument.contains(canvas)) {
+          console.error("Canvas context or DOM check failed");
+          return;
+        }
+
+        this.chart = new Chart(ctx, config);
+      } catch (err) {
+        console.error("Chart creation failed:", err);
+      }
+    });
   });
 },
 
