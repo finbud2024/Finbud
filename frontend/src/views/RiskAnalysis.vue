@@ -100,14 +100,21 @@
 						</div>
 					</div>
 
-					<!-- Stock Tab Content -->
-					<div v-if="activeTab === 'stock'" class="tab-content">
-						<div class="market-section">
-							<!-- Stock Watch Section -->
-							<div class="section-title">Stock Watch</div>
-							<div class="margin-box">
-								<StockWatch class="margin-box-content" />
-							</div>
+          <!-- Stock Tab Content -->
+          <div v-if="activeTab === 'stock'" class="tab-content">
+            <div class="market-section">
+
+            <!-- Vietnam Stock Watch Section -->
+            <div class="section-title">Vietnam Stock Watch</div>
+              <div class="margin-box vietnam-stocks">
+                <VietnamStockWatch class="margin-box-content" />
+              </div>
+
+              <!-- Stock Watch Section -->
+              <div class="section-title">Stock Watch</div>
+              <div class="margin-box">
+                <StockWatch class="margin-box-content" />
+              </div>
 
 							<!-- Stock Quotes Section -->
 							<div class="section-title">Stock Quotes</div>
@@ -243,6 +250,7 @@ import Pagination from "../components/Risk&Chat/Pagination.vue";
 import RiskChat from "../components/Risk&Chat/RiskChat.vue";
 import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
 import StockWatch from "@/components/marketPage/StockWatch.vue";
+import VietnamStockWatch from "@/components/marketPage/VietnamStockWatch.vue";
 import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
@@ -250,32 +258,33 @@ const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
 const apiKeyRealEstate = process.env.VUE_APP_REAL_ESTATE_KEY;
 
 export default {
-	name: "RiskAnalysis",
-	components: {
-		Pagination,
-		CryptoWatch,
-		StockWatch,
-		RealEstateMap,
-		RiskChat,
-	},
-	data() {
-		return {
-			activeTab: "stock",
-			// Bot Chat data
-			showBot: false,
-			hidingBot: false,
-			showMessage: false,
-			hidingMessage: false,
-			isTyping: false,
-			botMessage: "",
-			typedContent: "",
-			botObserver: null,
-			typingSpeed: 50, // milliseconds between characters
-			typingIndex: 0,
-			typingTimer: null,
-			botHideTimer: null,
-			words: [],
-			currentWordIndex: 0,
+  name: "RiskAnalysis",
+  components: {
+    Pagination,
+    CryptoWatch,
+    StockWatch,
+    VietnamStockWatch,
+    RealEstateMap,
+    RiskChat,
+  },
+  data() {
+    return {
+      activeTab: "stock",
+      // Bot Chat data
+      showBot: false,
+      hidingBot: false,
+      showMessage: false,
+      hidingMessage: false,
+      isTyping: false,
+      botMessage: "",
+      typedContent: "",
+      botObserver: null,
+      typingSpeed: 50, // milliseconds between characters
+      typingIndex: 0,
+      typingTimer: null,
+      botHideTimer: null,
+      words: [],
+      currentWordIndex: 0,
 
 			// Market Data
 			loading: true,
@@ -706,6 +715,12 @@ export default {
 .margin-box-content {
 	overflow-x: auto;
 	white-space: nowrap;
+}
+
+/* Exception for Vietnam Stock Watch */
+.vietnam-stocks .margin-box-content {
+  overflow-x: visible;
+  white-space: normal;
 }
 
 .real-estate-section {
