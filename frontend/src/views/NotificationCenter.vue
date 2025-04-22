@@ -1,10 +1,27 @@
 <template>
   <div class="notification-center">
     <div class="notification-sidebar">
+      <!-- Header with just the title -->
       <div class="sidebar-header">
         <h2>{{ $t('notifications') || 'Notifications' }}</h2>
-        <button v-if="hasUnreadNotifications" @click="markAllAsRead" class="mark-all-btn">
+      </div>
+      
+      <!-- New separate action bar -->
+      <div v-if="notifications.length > 0" class="sidebar-actions-bar">
+        <button 
+          v-if="hasUnreadNotifications" 
+          @click="markAllAsRead" 
+          class="action-btn mark-all-btn"
+        >
+          <font-awesome-icon icon="check-double" />
           {{ $t('markAllAsRead') || 'Mark all as read' }}
+        </button>
+        <button 
+          @click="confirmDeleteAll" 
+          class="action-btn delete-all-btn"
+        >
+          <font-awesome-icon icon="trash" />
+          {{ $t('deleteAll') || 'Delete all' }}
         </button>
       </div>
 
@@ -15,7 +32,7 @@
 
       <div v-else-if="notifications.length === 0" class="empty-state">
         <font-awesome-icon icon="bell" size="2x" />
-        <p>{{ $t('noNotifications') || 'No notifications yet' }}</p>
+        <p>{{ 'No notifications yet' }}</p>
       </div>
 
       <div v-else class="notification-list">
@@ -64,6 +81,17 @@
         </div>
       </div>
     </div>
+
+    <div v-if="showDeleteConfirmation" class="delete-confirmation-modal">
+      <div class="modal-content">
+        <h3>{{ 'Delete all notifications?' }}</h3>
+        <p>{{ 'This action cannot be undone.' }}</p>
+        <div class="modal-actions">
+          <button @click="deleteAllNotifications" class="confirm-delete-btn">{{ $t('delete') || 'Delete' }}</button>
+          <button @click="showDeleteConfirmation = false" class="cancel-btn">{{ $t('cancel') || 'Cancel' }}</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -80,6 +108,7 @@ export default {
     const selectedNotification = ref(null);
     const loading = ref(true);
     const pollingInterval = ref(null);
+    const showDeleteConfirmation = ref(false);
     
     const userId = computed(() => {
       return store.getters['users/currentUser']?._id;
@@ -182,6 +211,28 @@ export default {
       }
     };
     
+    const confirmDeleteAll = () => {
+      showDeleteConfirmation.value = true;
+    };
+    
+    const deleteAllNotifications = async () => {
+      if (!isAuthenticated.value || !userId.value) return;
+      
+      try {
+        await axios.delete(
+          `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}`,
+          { withCredentials: true }
+        );
+        
+        // Clear all notifications
+        notifications.value = [];
+        selectedNotification.value = null;
+        showDeleteConfirmation.value = false;
+      } catch (error) {
+        console.error('Failed to delete all notifications:', error);
+      }
+    };
+    
     const formatTime = (timestamp) => {
       if (!timestamp) return '';
       
@@ -244,9 +295,12 @@ export default {
       selectedNotification,
       loading,
       hasUnreadNotifications,
+      showDeleteConfirmation,
       selectNotification,
       markAllAsRead,
       deleteNotification,
+      confirmDeleteAll,
+      deleteAllNotifications,
       formatTime,
       truncateContent
     };
@@ -270,9 +324,10 @@ export default {
   overflow: hidden;
 }
 
+/* Update these styles */
 .sidebar-header {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 16px 16px 12px;
+  border-bottom: none; /* Remove border here */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -283,18 +338,47 @@ export default {
   font-size: 1.2rem;
 }
 
-.mark-all-btn {
+/* New action bar styles */
+.sidebar-actions-bar {
+  display: flex;
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--border-color);
+  gap: 12px;
+}
+
+/* Make buttons more attractive */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: none;
-  border: none;
-  color: var(--accent-color);
-  font-size: 0.85rem;
+  border: 1px solid var(--border-color);
+  font-size: 0.8rem;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 6px 12px;
   border-radius: 4px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  flex: 1;
+  justify-content: center;
+}
+
+.mark-all-btn {
+  color: var(--accent-color);
 }
 
 .mark-all-btn:hover {
   background-color: var(--accent-color-light);
+  border-color: var(--accent-color);
+}
+
+.delete-all-btn {
+  color: #e74c3c;
+}
+
+.delete-all-btn:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-color: #e74c3c;
 }
 
 .notification-list {
@@ -507,6 +591,71 @@ export default {
   font-size: 0.95rem;
 }
 
+.delete-confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: var(--text-primary);
+}
+
+.modal-content p {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirm-delete-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.confirm-delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.cancel-btn {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background-color: var(--bg-tertiary);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .notification-center {
@@ -525,6 +674,11 @@ export default {
   .notification-detail {
     padding: 16px;
     min-height: 300px;
+  }
+
+  .sidebar-actions-bar {
+    flex-direction: column;
+    gap: 8px;
   }
 }
 

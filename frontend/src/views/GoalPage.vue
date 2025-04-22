@@ -1013,16 +1013,16 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
               const percentSpent = ((amountInUSD / this.accountBalanceTotal) * 100).toFixed(1);
                       
               if (amountInUSD >= this.accountBalanceTotal) {
-                this.notiMessage = `Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
+                this.notiMessage = `🚨💳 Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
                 openNotification = true;
               } else if (amountInUSD >= this.accountBalanceTotal * 0.75) {
-                this.notiMessage = `Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
+                this.notiMessage = `⚠️💳 Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
                 openNotification = true;
               } else if (amountInUSD >= this.accountBalanceTotal * 0.5) {
-                this.notiMessage = `Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
+                this.notiMessage = `📢💳 Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
                 openNotification = true;
               } else if (amountInUSD >= this.accountBalanceTotal * 0.25) {
-                this.notiMessage = `FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
+                this.notiMessage = `ℹ️💳 FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
                 openNotification = true;
               }
             }
@@ -1065,6 +1065,13 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           });
           
           if (openNotification) {
+            await axios.post(
+              `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${this.userId}`,
+              {
+                content: this.notiMessage,
+                title: "🚨🚨 SPENDING ALERT 🚨🚨",
+              }
+            );
             this.showNoti = true; // Show the notification if the flag is set
           }
 

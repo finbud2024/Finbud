@@ -50,6 +50,21 @@ notiRoute.route('/api/notis/:userId')
         }
     })
 
+    // Delete all notis for a user
+    .delete(async (req, res) => {
+        const userId = req.params.userId;
+        console.log('in /notis/:userId Route (DELETE) notis with userId: ' + JSON.stringify(userId));
+        try {
+            const notis = await Noti.deleteMany({ userId });
+            if (!notis) {
+                return res.status(404).send(`No notis with userId: ${userId} exists in the database.`);
+            }
+            return res.status(200).json(notis);
+        } catch (err) {
+            return res.status(501).send(`Unexpected error occurred when deleting notis with userId: ${userId} in database: ${err}`);
+        }
+    })
+
 
 notiRoute.route('/api/notis/:userId/:notiId')
     //Mark as read
