@@ -175,6 +175,10 @@
         <li v-if="isAuthenticated" class="fincoin-container">
           <FinCoinDisplay :balance="finCoinBalance" />
         </li>
+        
+        <li v-if="isAuthenticated">
+          <NavbarNoti />
+        </li>
 
         <li
           v-if="isAuthenticated"
@@ -330,11 +334,13 @@
 import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
+import NavbarNoti from "./Notification/NavbarNoti.vue";
 import { to } from "mathjs";
 export default {
   name: "NavBar",
   components: {
     FinCoinDisplay,
+    NavbarNoti, 
   },
   data() {
     return {
