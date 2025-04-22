@@ -104,6 +104,12 @@
               >{{ $t('simulator') }}</router-link
             >
             <router-link
+              to="/autotrade-ai"
+              class="autotrade"
+              @click="toggleDropdownInvest(false)"
+              >AutoTrade AI</router-link
+            >
+            <router-link
               to="/quant-analysis"
               class="home"
               @click="toggleDropdownInvest(false)"
@@ -285,6 +291,12 @@
               class="simulator"
               @click="toggleDropdownMobile"
               >{{ $t('simulator') }}</router-link
+            >
+            <router-link
+              to="/autotrade-ai"
+              class="autotrade"
+              @click="toggleDropdownMobile"
+              >AutoTrade AI</router-link
             >
             <router-link
               to="/quant-analysis"
