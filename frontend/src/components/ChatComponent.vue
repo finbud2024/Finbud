@@ -114,7 +114,8 @@ export default {
           content: `Detect the language of this message and return only the language name in English. Examples:
 					- For "Hello": "English"
 					- For "Xin chào": "Vietnamese"
-					Now detect this message: "${userMessage}"`,
+					Now detect this message: "${userMessage}"
+          Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
         },
       ]);
 
@@ -166,157 +167,158 @@ export default {
         this.addTypingResponse("", false, [], [], [], true);
 
         const gptDefine = await gptServices([
-  {
-    role: "user",
-    content: `You are FINBOT, an expert financial advisor with decades of experience in global markets, banking, investments, and personal finance. You have an encyclopedic knowledge of financial institutions, products, historical market events, and industry leaders. Your expertise spans across:
+        {
+          role: "user",
+          content: `You are FINBOT, an expert financial advisor with decades of experience in global markets, banking, investments, and personal finance. You have an encyclopedic knowledge of financial institutions, products, historical market events, and industry leaders. Your expertise spans across:
 
-    1. Stock markets and public companies worldwide
-    2. Financial terminology and concepts
-    3. Banking products and services
-    4. Investment strategies and portfolio management
-    5. Personal finance management and budgeting
-    6. Real estate markets
-    7. Cryptocurrency and blockchain technology
-    8. Financial history and famous business leaders
+          1. Stock markets and public companies worldwide
+          2. Financial terminology and concepts
+          3. Banking products and services
+          4. Investment strategies and portfolio management
+          5. Personal finance management and budgeting
+          6. Real estate markets
+          7. Cryptocurrency and blockchain technology
+          8. Financial history and famous business leaders
 
-    Given a natural language message from the user, detect which of the following actions it belongs to. Extract the necessary information and return a **formatted command** for that action if found. ALWAYS answer in Vietnamese unless explicitly directed otherwise.
-    
-    You can detect even vague descriptions, implied relationships, or contextual references. Examples:
-    - "Elon Musk's e-wallet company" → PayPal (PYPL)
-    - "The social network Zuckerberg created" → Meta (META)
-    - "The company with the bitten apple logo" → Apple (AAPL)
-    - "The big search engine company" → Google (GOOGL)
-    - "Warren Buffett's company" → Berkshire Hathaway (BRK.A, BRK.B)
-    - "The largest e-commerce site" → Amazon (AMZN)
-    - "That coffee chain with the green logo" → Starbucks (SBUX)
-    - "The company making the iPhone" → Apple (AAPL)
-    - "World's largest software company" → Microsoft (MSFT)
-    - "That sports company with the swoosh" → Nike (NKE)
-    
-    When detecting company references:
-    1. Consider both direct and indirect descriptions
-    2. Identify companies by their products, services, founders, CEOs, or distinctive features
-    3. Recognize company nicknames, slang terms, and cultural references
-    4. Connect vague industry descriptions to major players in that sector
-    
-    ### Supported Actions & Return Formats:
-    0. **General Message** (MAJORITY OF MESSAGES WILL BE THIS TYPE)
-    - User intent: General message, not related to any specific action.
-    - Format: **[user_message]**
-    - Example: "Tell me about the weather today" → "Tell me about the weather today"
-    - Example in Vietnamese: "Cho tôi biết về thời tiết hôm nay" → "Cho tôi biết về thời tiết hôm nay"
+          Given a natural language message from the user, detect which of the following actions it belongs to. Extract the necessary information and return a **formatted command** for that action if found. ALWAYS answer in Vietnamese unless explicitly directed otherwise.
+          
+          You can detect even vague descriptions, implied relationships, or contextual references. Examples:
+          - "Elon Musk's e-wallet company" → PayPal (PYPL)
+          - "The social network Zuckerberg created" → Meta (META)
+          - "The company with the bitten apple logo" → Apple (AAPL)
+          - "The big search engine company" → Google (GOOGL)
+          - "Warren Buffett's company" → Berkshire Hathaway (BRK.A, BRK.B)
+          - "The largest e-commerce site" → Amazon (AMZN)
+          - "That coffee chain with the green logo" → Starbucks (SBUX)
+          - "The company making the iPhone" → Apple (AAPL)
+          - "World's largest software company" → Microsoft (MSFT)
+          - "That sports company with the swoosh" → Nike (NKE)
+          
+          When detecting company references:
+          1. Consider both direct and indirect descriptions
+          2. Identify companies by their products, services, founders, CEOs, or distinctive features
+          3. Recognize company nicknames, slang terms, and cultural references
+          4. Connect vague industry descriptions to major players in that sector
+          
+          ### Supported Actions & Return Formats:
+          0. **General Message** (MAJORITY OF MESSAGES WILL BE THIS TYPE)
+          - User intent: General message, not related to any specific action.
+          - Format: **[user_message]**
+          - Example: "Tell me about the weather today" → "Tell me about the weather today"
+          - Example in Vietnamese: "Cho tôi biết về thời tiết hôm nay" → "Cho tôi biết về thời tiết hôm nay"
 
-    1. **Stock Price**  
-    - User intent: Ask for a stock price of any company (directly named or indirectly described)
-    - Format: **[STOCK_CODE_IN_UPPERCASE]**  
-    - Detect phrases like: "giá cổ phiếu", "stock price of", "bao nhiêu tiền cổ phiếu", "cổ phiếu ... giá bao nhiêu", "how much is ... trading for", "what's ... worth", etc.
-    - Example: "giá cổ phiếu của Coca Cola" → "KO"
-    - Example: "What's the price of tesla stock?" → "TSLA"
-    - Example: "How's the stock of that streaming company with the red logo doing?" → "NFLX"
-    - Example in Vietnamese: "Cổ phiếu của công ty làm iPhone đang giá bao nhiêu?" → "AAPL"
+          1. **Stock Price**  
+          - User intent: Ask for a stock price of any company (directly named or indirectly described)
+          - Format: **[STOCK_CODE_IN_UPPERCASE]**  
+          - Detect phrases like: "giá cổ phiếu", "stock price of", "bao nhiêu tiền cổ phiếu", "cổ phiếu ... giá bao nhiêu", "how much is ... trading for", "what's ... worth", etc.
+          - Example: "giá cổ phiếu của Coca Cola" → "KO"
+          - Example: "What's the price of tesla stock?" → "TSLA"
+          - Example: "How's the stock of that streaming company with the red logo doing?" → "NFLX"
+          - Example in Vietnamese: "Cổ phiếu của công ty làm iPhone đang giá bao nhiêu?" → "AAPL"
 
-    2. **Search**  
-    - Trigger for detailed information requests about financial concepts, market events, statistics, or comparisons
-    - Format: **#search [term]**
-    - Example: "Explain ROI compared to IRR" → "#search ROI vs IRR"
-    - Example: "What happened during the 2008 financial crisis?" → "#search 2008 financial crisis"
-    - Vietnamese: "Giải thích sự khác biệt giữa cổ phiếu và trái phiếu" → "#search sự khác biệt giữa cổ phiếu và trái phiếu"
+          2. **Search**  
+          - Trigger for detailed information requests about financial concepts, market events, statistics, or comparisons
+          - Format: **#search [term]**
+          - Example: "Explain ROI compared to IRR" → "#search ROI vs IRR"
+          - Example: "What happened during the 2008 financial crisis?" → "#search 2008 financial crisis"
+          - Vietnamese: "Giải thích sự khác biệt giữa cổ phiếu và trái phiếu" → "#search sự khác biệt giữa cổ phiếu và trái phiếu"
 
-    3. **Define Financial Term**  
-    - User intent: Ask for meaning of a specific financial term or concept  
-    - Format: **#define [term]**  
-    - Example: "What does IPO mean?" → "#define IPO"
-    - Example: "Explain what a bear market is" → "#define bear market"
-    - Example in Vietnamese: "Thị trường giá xuống là gì?" → "#define thị trường giá xuống"
+          3. **Define Financial Term**  
+          - User intent: Ask for meaning of a specific financial term or concept  
+          - Format: **#define [term]**  
+          - Example: "What does IPO mean?" → "#define IPO"
+          - Example: "Explain what a bear market is" → "#define bear market"
+          - Example in Vietnamese: "Thị trường giá xuống là gì?" → "#define thị trường giá xuống"
 
-    4. **Top 5 Cryptocurrencies**  
-    - User intent: Ask about top cryptocurrencies by market cap or performance
-    - Format: **#crypto**  
-    - Example: "Show me top cryptocurrencies" → "#crypto"
-    - Example: "What are the largest digital currencies right now?" → "#crypto"
-    - Example in Vietnamese: "Những đồng tiền số có giá trị nhất hiện nay?" → "#crypto"
+          4. **Top 5 Cryptocurrencies**  
+          - User intent: Ask about top cryptocurrencies by market cap or performance
+          - Format: **#crypto**  
+          - Example: "Show me top cryptocurrencies" → "#crypto"
+          - Example: "What are the largest digital currencies right now?" → "#crypto"
+          - Example in Vietnamese: "Những đồng tiền số có giá trị nhất hiện nay?" → "#crypto"
 
-    5. **Real Estate Lookup**  
-    - User intent: Ask for properties in an area or housing market information
-    - Format: **#realestate [area_name]**  
-    - Example: "Show me houses in New York" → "#realestate new york"  
-    - Example: "What's the housing market like in Miami?" → "#realestate miami"
-    - Example in Vietnamese: "Cho tôi xem bất động sản ở quận 7" → "#realestate quan 7"
-    - If no area is mentioned, default to: **#realestate San Jose**
+          5. **Real Estate Lookup**  
+          - User intent: Ask for properties in an area or housing market information
+          - Format: **#realestate [area_name]**  
+          - Example: "Show me houses in New York" → "#realestate new york"  
+          - Example: "What's the housing market like in Miami?" → "#realestate miami"
+          - Example in Vietnamese: "Cho tôi xem bất động sản ở quận 7" → "#realestate quan 7"
+          - If no area is mentioned, default to: **#realestate San Jose**
 
-    6. **Add a Transaction**  
-    - User intent: Add money to the account (income, deposit, refund, salary, etc.)
-    - Format: **#add [description] [amount]**  
-    - Example: "I received 125 from a refund" → "#add refund 125"
-    - Example: "Got my paycheck of $2,500 today" → "#add paycheck 2500"
-    - Example in Vietnamese: "Tôi vừa nhận lương 15 triệu đồng" → "#add lương 15000000"
+          6. **Add a Transaction**  
+          - User intent: Add money to the account (income, deposit, refund, salary, etc.)
+          - Format: **#add [description] [amount]**  
+          - Example: "I received 125 from a refund" → "#add refund 125"
+          - Example: "Got my paycheck of $2,500 today" → "#add paycheck 2500"
+          - Example in Vietnamese: "Tôi vừa nhận lương 15 triệu đồng" → "#add lương 15000000"
 
-    7. **Track Spending**  
-    - User intent: Record an expense or purchase
-    - Format: **#spend [description] [amount]**  
-    - Example: "I spent 80 on groceries" → "#spend groceries 80"
-    - Example: "Just paid $120 for electricity bill" → "#spend electricity bill 120"
-    - Example in Vietnamese: "Tao mua xe máy với giá 10 triệu" → "#spend xe máy 10000000"
+          7. **Track Spending**  
+          - User intent: Record an expense or purchase
+          - Format: **#spend [description] [amount]**  
+          - Example: "I spent 80 on groceries" → "#spend groceries 80"
+          - Example: "Just paid $120 for electricity bill" → "#spend electricity bill 120"
+          - Example in Vietnamese: "Tao mua xe máy với giá 10 triệu" → "#spend xe máy 10000000"
 
-    8. **Buy Stock**  
-    - User intent: Buy shares of a company (directly named or vaguely described)
-    - Format: **#buy [STOCK_CODE_IN_UPPERCASE] [quantity]**  
-    - Example: "I want to buy 10 shares of Tesla" → "#buy TSLA 10"
-    - Example: "Purchase 5 shares of that online retail giant" → "#buy AMZN 5"
-    - Example in Vietnamese: "Mua 20 cổ phiếu của công ty điện thoại táo khuyết" → "#buy AAPL 20"
+          8. **Buy Stock**  
+          - User intent: Buy shares of a company (directly named or vaguely described)
+          - Format: **#buy [STOCK_CODE_IN_UPPERCASE] [quantity]**  
+          - Example: "I want to buy 10 shares of Tesla" → "#buy TSLA 10"
+          - Example: "Purchase 5 shares of that online retail giant" → "#buy AMZN 5"
+          - Example in Vietnamese: "Mua 20 cổ phiếu của công ty điện thoại táo khuyết" → "#buy AAPL 20"
 
-    9. **Sell Stock**  
-    - User intent: Sell shares of a company (directly named or vaguely described)
-    - Format: **#sell [STOCK_CODE_IN_UPPERCASE] [quantity]**  
-    - Example: "Sell 5 shares of AAPL" → "#sell AAPL 5"
-    - Example: "I want to get rid of my 10 shares in that social media company" → "#sell META 10"
-    - Example in Vietnamese: "Bán 15 cổ phiếu của công ty xe điện của Elon Musk" → "#sell TSLA 15"
+          9. **Sell Stock**  
+          - User intent: Sell shares of a company (directly named or vaguely described)
+          - Format: **#sell [STOCK_CODE_IN_UPPERCASE] [quantity]**  
+          - Example: "Sell 5 shares of AAPL" → "#sell AAPL 5"
+          - Example: "I want to get rid of my 10 shares in that social media company" → "#sell META 10"
+          - Example in Vietnamese: "Bán 15 cổ phiếu của công ty xe điện của Elon Musk" → "#sell TSLA 15"
 
-    10. **Add a Goal**  
-    - User intent: Create a financial goal or savings target
-    - Format: **#create goal**  
-    - Example: "I want to create a savings goal for a house" → "#create goal"
-    - Example: "Help me start a retirement plan" → "#create goal"
-    - Example in Vietnamese: "Tôi muốn lập kế hoạch tiết kiệm cho con đi học" → "#create goal"
+          10. **Add a Goal**  
+          - User intent: Create a financial goal or savings target
+          - Format: **#create goal**  
+          - Example: "I want to create a savings goal for a house" → "#create goal"
+          - Example: "Help me start a retirement plan" → "#create goal"
+          - Example in Vietnamese: "Tôi muốn lập kế hoạch tiết kiệm cho con đi học" → "#create goal"
 
-    11. **Analyze Portfolio**
-    - User intent: Request analysis of investments or portfolio performance
-    - Format: **#analyze**
-    - Example: "Analyze my portfolio" → "#analyze"
-    - Example: "How balanced are my investments?" → "#analyze"
-    - Example in Vietnamese: "Đánh giá danh mục đầu tư của tôi có hợp lý không" → "#analyze"
+          11. **Analyze Portfolio**
+          - User intent: Request analysis of investments or portfolio performance
+          - Format: **#analyze**
+          - Example: "Analyze my portfolio" → "#analyze"
+          - Example: "How balanced are my investments?" → "#analyze"
+          - Example in Vietnamese: "Đánh giá danh mục đầu tư của tôi có hợp lý không" → "#analyze"
 
-    12. **Compare Investments**
-    - User intent: Compare performance or potential of different investment options
-    - Format: **#compare [option1] [option2]**
-    - Example: "Which is better, Tesla or Ford stock?" → "#compare TSLA F"
-    - Example: "Compare Bitcoin with Ethereum" → "#compare BTC ETH"
-    - Example in Vietnamese: "So sánh cổ phiếu Apple với Microsoft" → "#compare AAPL MSFT"
-    
-    13. **Financial News**
-    - User intent: Request latest financial news or updates about markets/companies
-    - Format: **#news [topic/company]**
-    - Example: "What's happening with tech stocks today?" → "#news tech stocks"
-    - Example: "Latest news about Netflix" → "#news NFLX"
-    - Example in Vietnamese: "Tin tức mới nhất về thị trường chứng khoán" → "#news thị trường chứng khoán"
+          12. **Compare Investments**
+          - User intent: Compare performance or potential of different investment options
+          - Format: **#compare [option1] [option2]**
+          - Example: "Which is better, Tesla or Ford stock?" → "#compare TSLA F"
+          - Example: "Compare Bitcoin with Ethereum" → "#compare BTC ETH"
+          - Example in Vietnamese: "So sánh cổ phiếu Apple với Microsoft" → "#compare AAPL MSFT"
+          
+          13. **Financial News**
+          - User intent: Request latest financial news or updates about markets/companies
+          - Format: **#news [topic/company]**
+          - Example: "What's happening with tech stocks today?" → "#news tech stocks"
+          - Example: "Latest news about Netflix" → "#news NFLX"
+          - Example in Vietnamese: "Tin tức mới nhất về thị trường chứng khoán" → "#news thị trường chứng khoán"
 
-    ### Decision-Making Logic:
-    - For ambiguous messages, use this priority order: Stock Price > Define > Search > Compare > General
-    - If detecting company references for stock operations, map to the correct ticker symbol:
-      * Major tech companies: Apple (AAPL), Microsoft (MSFT), Google/Alphabet (GOOGL), Amazon (AMZN), Meta/Facebook (META), Tesla (TSLA), etc.
-      * Financial institutions: JPMorgan (JPM), Bank of America (BAC), Wells Fargo (WFC), Visa (V), etc.
-      * Retail: Walmart (WMT), Target (TGT), Costco (COST), etc.
-      * Vietnamese companies: Vingroup (VIC), Vietcombank (VCB), FPT (FPT), etc.
-    - For messages mentioning money without specific actions, treat as general inquiry
-    - When amounts are unclear or missing, still identify the command type but note the missing information
+          ### Decision-Making Logic:
+          - For ambiguous messages, use this priority order: Stock Price > Define > Search > Compare > General
+          - If detecting company references for stock operations, map to the correct ticker symbol:
+            * Major tech companies: Apple (AAPL), Microsoft (MSFT), Google/Alphabet (GOOGL), Amazon (AMZN), Meta/Facebook (META), Tesla (TSLA), etc.
+            * Financial institutions: JPMorgan (JPM), Bank of America (BAC), Wells Fargo (WFC), Visa (V), etc.
+            * Retail: Walmart (WMT), Target (TGT), Costco (COST), etc.
+            * Vietnamese companies: Vingroup (VIC), Vietcombank (VCB), FPT (FPT), etc.
+          - For messages mentioning money without specific actions, treat as general inquiry
+          - When amounts are unclear or missing, still identify the command type but note the missing information
 
-    ### Important Note:
-    Given the user message: "${newMessage}", respond ONLY with the correct formatted command according to the rules above.
-    If no suitable category is found, return the original message unchanged: "${newMessage}".
-    Your response will be processed further to generate a complete answer in Vietnamese.
-    `,
-  },
-]);
+          ### Important Note:
+          Given the user message: "${newMessage}", respond ONLY with the correct formatted command according to the rules above.
+          If no suitable category is found, return the original message unchanged: "${newMessage}".
+          Your response will be processed further to generate a complete answer in Vietnamese.
+          Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output
+          `,
+        },
+      ]);
 
         // HANDLE DEFINE(2)
         if (gptDefine.toLowerCase().includes("#define")) {
@@ -361,7 +363,8 @@ export default {
               const Responsegpt = await gptServices([
                 {
                   role: "user",
-                  content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
+                  content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".
+                  Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                 },
               ]);
               this.addTypingResponse(Responsegpt, false);
@@ -371,7 +374,8 @@ export default {
             const Responsegpt = await gptServices([
               {
                 role: "user",
-                content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
+                content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".
+                Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
               },
             ]);
             this.addTypingResponse(Responsegpt, false);
@@ -397,7 +401,8 @@ export default {
 								const res = `We've created the sell request for ${quantity} ${stockSymbol} shares.`;
 								const Responsegpt = await gptServices([{ 
 									role: "user", 
-									content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
+                  content: `Translate the following text ${res} into ${language}. Respond only with the translated text.
+                  Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`
 								}]);
 								answers.push(Responsegpt);
 
@@ -414,7 +419,8 @@ export default {
                 const Responsegpt = await gptServices([
                   {
                     role: "user",
-                    content: `Translate "${res}" into the language detected from this message: "${newMessage}".`,
+                    content: `Translate "${res}" into the language detected from this message: "${newMessage}".
+                    Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                   },
                 ]);
                 this.addTypingResponse(Responsegpt, false);
@@ -424,7 +430,8 @@ export default {
               const Responsegpt = await gptServices([
                 {
                   role: "user",
-                  content: `Translate "${res}" into the language detected from this message: "${newMessage}".`,
+                  content: `Translate "${res}" into the language detected from this message: "${newMessage}".
+                  Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                 },
               ]);
               this.addTypingResponse(Responsegpt, false);
@@ -447,7 +454,8 @@ export default {
               const Responsegpt = await gptServices([
                 {
                   role: "user",
-                  content: `Translate the following text "${res}" into ${language}. Respond only with the translated text`,
+                  content: `Translate the following text "${res}" into ${language}. Respond only with the translated text
+                  Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                 },
               ]);
               console.log(Responsegpt);
@@ -458,7 +466,8 @@ export default {
               const Responsegpt = await gptServices([
                 {
                   role: "user",
-                  content: `Translate the following text "${res}" into ${language}. Respond only with the translated text`,
+                  content: `Translate the following text "${res}" into ${language}. Respond only with the translated text
+                  Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                 },
               ]);
               answers.push(Responsegpt);
@@ -480,7 +489,8 @@ export default {
                 const Responsegpt = await gptServices([
                   {
                     role: "user",
-                    content: `Translate the following text "${res}" into ${language}. Respond only with the translated text.`,
+                    content: `Translate the following text "${res}" into ${language}. Respond only with the translated text.
+                    Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                   },
                 ]);
                 answers.push(Responsegpt);
@@ -496,7 +506,8 @@ export default {
                 const Responsegpt = await gptServices([
                   {
                     role: "user",
-                    content: `Translate the following text "${res}" into ${language}. Respond only with the translated text`,
+                    content: `Translate the following text "${res}" into ${language}. Respond only with the translated text.
+                    Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                   },
                 ]);
                 answers.push(Responsegpt);
@@ -520,7 +531,8 @@ export default {
               const Responsegpt = await gptServices([
                 {
                   role: "user",
-                  content: `Translate the following text "${res}" into ${language}. Respond only with the translated text`,
+                  content: `Translate the following text "${res}" into ${language}. Respond only with the translated text.
+                  Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
                 },
               ]);
               answers.push(Responsegpt);
@@ -694,12 +706,14 @@ export default {
             const alphavantageResponsegpt = await gptServices([
               {
                 role: "user",
-                content: `Translate "${alphavantageResponse}" into this language ${language}. Respond only with the translated text.`,
+                content: `Translate "${alphavantageResponse}" into this language ${language}. Respond only with the translated text.
+                Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
               },
             ]);
             answers.push(alphavantageResponsegpt);
             //chatgpt api
-            const prompt = `Response in this language ${language}": generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
+            const prompt = `Response in this language ${language}": generate a detailed analysis of ${stockCode} which currently trades at $${price}.
+            Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`;
             const gptResponse = await gptServices([
               { role: "user", content: prompt },
             ]);
@@ -756,7 +770,8 @@ export default {
 							const res = "We've created the goal section for you to add your goals.";
 							const Responsegpt = await gptServices([{ 
 								role: "user", 
-								content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
+                content: `Translate the following text ${res} into ${language}. Respond only with the translated text.
+                Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`
 							}]);
 							answers.push(Responsegpt);
 
@@ -783,7 +798,8 @@ export default {
 							const res = "You need to be logged in to analyze your portfolio.";
 							const responseGpt = await gptServices([{ 
 								role: "user", 
-								content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".` 
+                content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".
+                Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output` 
 							}]);
 							answers.push(responseGpt);
 						} else {
@@ -838,7 +854,8 @@ export default {
 									const errorMsg = "Could not generate portfolio analysis. Please try again later.";
 									const translatedError = await gptServices([{ 
 										role: "user", 
-										content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".` 
+                    content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".
+                    Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output` 
 									}]);
 									answers.push(translatedError);
 								}
@@ -846,7 +863,8 @@ export default {
 								const noDataMsg = "No portfolio data available for analysis. Please add holdings or transactions first.";
 								const translatedNoData = await gptServices([{ 
 									role: "user", 
-									content: `Translate the following text into ${language}. Respond only with the translated text: "${noDataMsg}".` 
+                  content: `Translate the following text into ${language}. Respond only with the translated text: "${noDataMsg}".
+                  Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output` 
 								}]);
 								answers.push(translatedNoData);
 							}
@@ -859,7 +877,8 @@ export default {
 						const errorMsg = "There was an error analyzing your portfolio. Please try again later.";
 						const translatedError = await gptServices([{ 
 							role: "user", 
-							content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".` 
+              content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".
+              Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output` 
 						}]);
 						answers.push(translatedError);
 					}
@@ -876,7 +895,8 @@ export default {
               {
                 role: "user",
                 content: `${prompt}. 
-						Response in this language ${language}. Previous Context to refer to if user asks ${historyChat}`,
+						Response in this language ${language}. Previous Context to refer to if user asks ${historyChat}
+            Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
               },
             ]);
 						
