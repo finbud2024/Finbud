@@ -1,44 +1,44 @@
 <template>
   <div class="dashboard">
     <!-- Combined header section with both dashboard header and chatbot side by side -->
-    <h1>{{ $t('stockSimulator') }}</h1>
+    <h1>{{ $t('appTitle') }}</h1>
     <nav class="navbar">
       <ul>
         <li
           @click="activeSection = 'investment'"
           :class="{ active: activeSection === 'investment' }"
         >
-          {{ $t('investment') }}
+        {{ $t(`navigation.investment`) }}
         </li>
         <li
           @click="activeSection = 'portfolio'"
           :class="{ active: activeSection === 'portfolio' }"
         >
-          {{ $t('portfolio') }}
+        {{ $t(`navigation.portfolio`) }}
         </li>
         <li
           @click="activeSection = 'transactionHistory'"
           :class="{ active: activeSection === 'transactionHistory' }"
         >
-          {{ $t('transactionHistory') }}
+        {{ $t(`navigation.transactionHistory`) }}
         </li>
         <li
           @click="activeSection = 'filters'"
           :class="{ active: activeSection === 'filters' }"
         >
-          {{ $t('filters') }}
+        {{ $t(`navigation.filters`) }}
         </li>
         <li
           @click="activeSection = 'quiz'"
           :class="{ active: activeSection === 'quiz' }"
         >
-          {{ $t('quiz') }}
+        {{ $t(`navigation.quiz`) }}
         </li>
         <li
           @click="activeSection = 'predictiveCalc'"
           :class="{ active: activeSection === 'predictiveCalc' }"
         >
-          {{ $t('predictiveCalc') }}
+        {{ $t(`navigation.predictiveCalc`) }}
         </li>
       </ul>
     </nav>
@@ -77,31 +77,31 @@
 
       <div class="main-content">
         <section class="key-statistics">
-          <h3>Key Statistics</h3>
+          <h3>{{ $t('investment.keyStatistics') }}</h3>
           <div class="stats-grid">
             <div class="stat">
-              <span class="label">Open: </span>
+              <span class="label">{{ $t('investment.stats.open') }}: </span>
               <span class="value">${{ stockData.open }}</span>
             </div>
             <div class="stat">
-              <span class="label">Prev Close: </span>
+              <span class="label">{{ $t('investment.stats.prevClose') }}: </span>
               <span class="value">${{ stockData.close }}</span>
             </div>
             <div class="stat">
-              <span class="label">52 Week High: </span>
+              <span class="label">{{ $t('investment.stats.week52High') }}: </span>
               <span class="value">${{ stockData.high }}</span>
             </div>
             <div class="stat">
-              <span class="label">52 Week Low: </span>
+              <span class="label">{{ $t('investment.stats.week52Low') }}: </span>
               <span class="value">${{ stockData.low }}</span>
             </div>
             <div class="stat">
-              <span class="label">Market Cap: </span>
+              <span class="label">{{ $t('investment.stats.marketCap') }}: </span>
               <span class="value">${{ stockData.marketCap }}</span>
             </div>
             <div class="stat">
-              <span class="label">Volume: </span>
-              <span class="value">{{ stockData.volume }} shares</span>
+              <span class="label">{{ $t('investment.stats.volume') }}: </span>
+              <span class="value">{{ stockData.volume }} {{ $t('investment.stats.volume') }}</span>
             </div>
           </div>
         </section>
@@ -116,15 +116,22 @@
             />
             <input v-model="quantity" type="number" placeholder="Quantity" />
             <select v-model="action">
-              <option value="buy">Buy</option>
-              <option value="sell">Sell</option>
+              <option value="buy">{{ $t('investment.actionForm.buy') }}</option>
+              <option value="sell">{{ $t('investment.actionForm.sell') }}</option>
             </select>
             <div class="buttons">
-              <button class="clear-btn" @click="clearForm">CLEAR</button>
+              <button class="clear-btn" @click="clearForm">{{ $t('investment.actionForm.clear') }}</button>
               <button class="preview-btn" @click="previewOrder">
-                Preview Order
+                {{ $t('investment.actionForm.preview') }}
               </button>
             </div>
+          </div>
+        </section>
+
+        <section class="transactions">
+          
+          <div class="transaction-form">
+            <TransactionHistory :key="transactionKey" />
           </div>
         </section>
       </div>
@@ -134,23 +141,23 @@
           <div class="account-info-container">
             <div class="account-grid">
               <div class="stat">
-                <span class="label">ACCOUNT BALANCE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.accountBalance`) }}:</span>
                 <span class="value">{{ accountBalance }}</span>
               </div>
               <div class="stat">
-                <span class="label">CASH BALANCE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.cashBalance`) }}:</span>
                 <span class="value">{{ cash }}</span>
               </div>
               <div class="stat">
-                <span class="label">STOCK VALUE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.stockValue`) }}:</span>
                 <span class="value">{{ stockValue }}</span>
               </div>
               <div class="stat">
-                <span class="label">TODAY'S CHANGE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.todaysChange`) }}:</span>
                 <span class="value">{{ todaysChange }}</span>
               </div>
               <div class="stat">
-                <span class="label">ANNUAL RETURN:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.annualReturn`) }}:</span>
                 <span class="value">{{ annualReturn }}%</span>
               </div>
             </div>
@@ -183,18 +190,6 @@
           </div>
         </section>
 
-        <!-- </div>
-          <div class="chat-bot-container">
-            <div class="chatbot-content">
-              <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
-              <div v-else class="chat-message typing">
-                <span v-html="formatChatMessage(partialMessage)"></span>
-                <span class="typing-cursor">|</span>
-              </div>
-            </div>
-            <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
-          </div>
-        </section> -->
 
         <PerformanceChart
           :performanceData="performanceData"
@@ -229,14 +224,6 @@
           <h2>{{ activeSection === 'portfolio' ? $t('investmentPortfolio') : 'Your Investment Portfolio' }}</h2>
           
           <!-- Add language switcher here -->
-          <div class="portfolio-language-switcher">
-            <button @click="switchLanguage('en')" :class="{ active: $i18n.locale === 'en' }">
-              <img src="@/assets/us.png" alt="English" />
-            </button>
-            <button @click="switchLanguage('vi')" :class="{ active: $i18n.locale === 'vi' }">
-              <img src="@/assets/vn.png" alt="Tiếng Việt" />
-            </button>
-          </div>
         </div>
 
         <div class="portfolio-overview">
@@ -364,6 +351,7 @@
       :remainingBalance="
         calculateRemainingBalance(action, estimatedPrice, quantity)
       "
+      :isSubmittingOrder="isSubmittingOrder"
       @close="showModal = false"
       @clear-order="clearForm"
       @submit-order="submitOrder(action)"
@@ -481,6 +469,7 @@ export default {
       showChatTransactionBubble: true,
       showingReward: false,
       rewardAmount: 1,
+      isSubmittingOrder: false,
 
       // New Portfolio Bot related data
       showPortfolioBot: false,
@@ -988,7 +977,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
     calculateRemainingBalance(action, price, quantity) {
       const total = this.calculateTotal(action, price, quantity);
-      return this.cash - (action === "buy" ? total : -total);
+      const remainingBalance = this.cash - (action === "buy" ? total : -total);
+      return parseFloat(remainingBalance.toFixed(2));
     },
     clearForm() {
       this.stockSymbol = "";
@@ -1050,6 +1040,12 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
 
     async submitOrder(action) {
+      if (this.isSubmittingOrder) {
+        return; // Prevent multiple submissions
+      }
+
+      this.isSubmittingOrder = true;
+
       const transactionData = {
         stockSymbol: this.stockSymbol,
         type: action,
@@ -1099,6 +1095,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
         // Re-throw the error so the caller can handle it specifically for quiz flow
         throw error;
+      } finally {
+        this.isSubmittingOrder = false;
       }
     },
     async fetchBankingAccountBalance() {
@@ -2037,6 +2035,10 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   },
   beforeUnmount() {
     // Clean up all event listeners
+    if (this.chart) {
+    this.chart.remove();
+    this.chart = null;
+  }
     window.removeEventListener("resize", this.adjustChartHeight);
     window.removeEventListener("scroll", this.handleScroll);
     if (this.headerTypingInterval) {
@@ -2254,6 +2256,27 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
 .key-statistics h3,
 .actions h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #007bff;
+  font-size: 1.5rem;
+}
+.transactions {
+  width: calc(100% - 10px); 
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 600px; /* Set fixed height instead of min-height for better alignment */
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.key-statistics h3,
+.transactions h3 {
   margin-top: 0;
   margin-bottom: 20px;
   color: #007bff;

@@ -310,6 +310,11 @@ tr:nth-child(odd) {
   max-width: 60%;
 }
 
+.user .message-content {
+  background-color: var(--chat-user-bg-color);
+  color: var(--chat-user-text-color);
+}
+
 .bot .avatar {
   width: 41px;
   aspect-ratio: 1;
@@ -340,8 +345,8 @@ tr:nth-child(odd) {
   flex-direction: column;
   padding: 10px;
   border-radius: 16px;
-  background-color: #efefef;
-  color: #000000;
+  background-color: var(--chat-message-bg-color);
+  color: var(--chat-text-color);
   /* background-color: papayawhip;
     color: black; */
   border: 1px solid transparent;
@@ -349,6 +354,7 @@ tr:nth-child(odd) {
   white-space: pre-wrap;
   line-height: 1.3;
 }
+
 
 /* Make sure markdown content also uses flex layout */
 .markdown-content {

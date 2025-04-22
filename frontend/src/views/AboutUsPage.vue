@@ -1,54 +1,45 @@
 <template>
   <div class="container">
     <div class="team-section">
-      <li class="title">About us</li>
+      <li class="title">{{ $t('aboutUsTitle') }}</li>
       <li class="description">
-        We are a Vietnam-based tech team working on AI integrations. FinBud is
-        our first project with an aim to aid people with their financial
-        decisions, from investing, accruing savings, to smart expenditures. Our
-        team consists of experienced professionals with diverse backgrounds in
-        technology, finance, and business. We are passionate about leveraging
-        technology to make financial management accessible and straightforward
-        for everyone.
+        {{ $t('aboutUsDescription') }}
       </li>
     </div>
     <div class="team-section">
-      <li class="title">Meet Our Team</li>
+      <li class="title">{{ $t('meetOurTeamTitle') }}</li>
       <swiper
-        :slidesPerView="slidesPerView"
-        :spaceBetween="30"
-        :keyboard="{
-          enabled: true,
-        }"
-        :pagination="{
-          clickable: true,
-        }"
-        :navigation="true"
-        :modules="modules"
-        class="mySwiper"
-        :breakpoints="{
-          0: {
-            slidesPerView: 1,
-            spaceBetween: 10,
-          },
-          768: {
-            slidesPerView: 2,
-            spaceBetween: 20,
-          },
-          1024: {
-            slidesPerView: 3,
-            spaceBetween: 30,
-          },
-        }"
-      >
+      :slidesPerView="slidesPerView"
+      :spaceBetween="30"
+      :speed="2000" 
+      :autoplay="{
+        delay: 0,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true
+      }"
+      :loop="true"
+      :loopAdditionalSlides="4" 
+      :freeMode="{
+        enabled: true,
+        momentum: false
+      }"
+      :modules="modules"
+      class="mySwiper-linear"
+      :breakpoints="{
+        0: { slidesPerView: 1 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      }"
+    >
+     
         <swiper-slide v-for="member in teamMembers" :key="member.name">
           <div class="team-member">
             <div class="image-container">
               <img :src="member.img" :alt="member.name" class="fade-in" />
             </div>
             <h3>{{ member.name }}</h3>
-            <p>{{ member.role }}</p>
-            <h2>{{ member.intro }}</h2>
+            <p>{{ $t(member.roleKey) }}</p>
+            <h2>{{ $t(member.introKey) }}</h2>
             <div class="social-icons">
               <a
                 v-for="icon in member.socialIcons"
@@ -66,7 +57,7 @@
 
     <!-- Testimonials Section -->
     <div class="testimonials-section">
-      <li class="title">What our users say about FinBud</li>
+      <li class="title">{{ $t('testimonialsTitle') }}</li>
       <div class="testimonials-container">
         <div
           class="testimonial-card"
@@ -77,70 +68,76 @@
           <div class="stars">
             <span v-for="star in 5" :key="star" class="star">&#9733;</span>
           </div>
-          <p>{{ testimonial.feedback }}</p>
+          <p>{{ $t(testimonial.feedbackKey) }}</p>
         </div>
       </div>
     </div>
 
     <section id="contact-page" class="animate fade-in">
       <div class="contact-header animate slide-in-up">
-        <h1>We'd love to talk about how we can work together.</h1>
-        <p>Let us know how we can help (or if we can't, tell us)!</p>
+        <h1>{{ $t('contactHeader') }}</h1>
+        <p>{{ $t('contactSubheader') }}</p>
       </div>
 
       <form class="contact-form animate slide-in-up">
         <div class="input-group">
-          <label for="full-name">Full name</label>
+          <label for="full-name">{{ $t('fullNameLabel') }}</label>
           <input
             type="text"
             id="full-name"
-            placeholder="Frank Castle"
+            :placeholder="$t('fullNamePlaceholder')"
             required
           />
         </div>
 
         <div class="input-group">
-          <label for="email">Your email</label>
+          <label for="email">{{ $t('emailLabel') }}</label>
           <input
             type="email"
             id="email"
-            placeholder="franklyfrank@example.com"
+            :placeholder="$t('emailPlaceholder')"
             required
           />
         </div>
 
         <div class="input-group">
-          <label for="company-name">Company name</label>
-          <input type="text" id="company-name" placeholder="The P-Corp." />
+          <label for="company-name">{{ $t('companyNameLabel') }}</label>
+          <input 
+            type="text" 
+            id="company-name" 
+            :placeholder="$t('companyNamePlaceholder')" 
+          />
         </div>
 
         <div class="input-group">
-          <label for="mobile-number">Mobile number</label>
-          <input type="tel" id="mobile-number" placeholder="+1 012 345 6789" />
+          <label for="mobile-number">{{ $t('mobileNumberLabel') }}</label>
+          <input 
+            type="tel" 
+            id="mobile-number" 
+            :placeholder="$t('mobileNumberPlaceholder')" 
+          />
         </div>
 
         <div class="input-group">
-          <label for="message">Your message</label>
+          <label for="message">{{ $t('messageLabel') }}</label>
           <textarea
             id="message"
-            placeholder="How can we help you?"
+            :placeholder="$t('messagePlaceholder')"
             required
           ></textarea>
         </div>
 
-        <button type="submit">Send message</button>
+        <button type="submit">{{ $t('sendMessageButton') }}</button>
       </form>
       <div class="contact-info animate fade-in">
         <div class="info-block">
           <div class="icon">&#x2709;</div>
-          <!-- Mail icon -->
-          <p>Message us</p>
+          <p>{{ $t('messageUsLabel') }}</p>
           <a href="mailto:contact@detectauto.com">contact@detectauto.com</a>
         </div>
         <div class="info-block">
           <div class="icon">&#x260E;</div>
-          <!-- Phone icon -->
-          <p>Call us</p>
+          <p>{{ $t('callUsLabel') }}</p>
           <a href="tel:+17632679917">+1 763-267-9917</a>
         </div>
       </div>
@@ -150,6 +147,7 @@
 
 <script>
 import { Swiper, SwiperSlide } from "swiper/vue";
+
 
 import "swiper/css";
 
@@ -171,9 +169,8 @@ export default {
       teamMembers: [
         {
           name: "Tri Dinh Bui",
-          role: "Founder & CEO",
-          intro:
-            "Bachelor of Quantitative Economics and Computer Science from Macslester College with passion creating a startup that merges Finance, Technology, and Business to benefit Vietnam community",
+          roleKey: "roles.ceo",
+          introKey: "team.intros.tri",
           img: require("@/assets/profile/tri.jpeg"),
           socialIcons: [
             {
@@ -185,9 +182,8 @@ export default {
         },
         {
           name: "Dung Hoang Le",
-          role: "Project Manager",
-          intro:
-            "Full Stack Software Developer with 2 years of experience at F5 Networks and SVB, holding a Bachelor of Science degree in Computer Science from Washington State University",
+          roleKey: "roles.pm",
+          introKey: "team.intros.dung",
           img: require("@/assets/profile/Dung.jpg"),
           socialIcons: [
             {
@@ -199,9 +195,8 @@ export default {
         },
         {
           name: "Minh Nguyen",
-          role: "Chief Technology Officer (CTO)",
-          intro:
-            "Master Degree in Computer Science and Economics from University of Iowa with an addition of Bachelor os Science in Statistics at Grinell College. Passionate about AI/ML, software engineering, and the intersection of technology and economics.",
+          roleKey: "roles.cto",
+          introKey: "team.intros.minh",
           img: require("@/assets/profile/MinhNguyen.jpg"),
           socialIcons: [
             {
@@ -213,9 +208,8 @@ export default {
         },
         {
           name: "Phu Tien",
-          role: "Data Division Lead",
-          intro:
-            "Honours Bachelor of Business & Marketing from IBD@NEU, focused on applying advanced analysis techniques and strategies in FinTech.",
+          roleKey: "roles.dataLead",
+          introKey: "team.intros.phu",
           img: require("@/assets/profile/tien.jpg"),
           socialIcons: [
             {
@@ -227,9 +221,8 @@ export default {
         },
         {
           name: "Huy Phung",
-          role: "Front-end Engineer/Back-end Lead",
-          intro:
-            "Computer Scienctist and Mathematics from DePauw University. Dedicated full stack developer passionate about new technologies and solving complex problems, driven to innovate and create impactful solutions.",
+          roleKey: "roles.fullstack",
+          introKey: "team.intros.huy",
           img: require("@/assets/profile/HuyPhung.jpg"),
           socialIcons: [
             {
@@ -241,9 +234,8 @@ export default {
         },
         {
           name: "Linh Ha",
-          role: "Fullstack Engineer",
-          intro:
-            "Computer Science student from University of South Florida, specializing in full-stack software development with a focus on scalability. Deeply passionate about software engineering and exploring its potential applications in AI.",
+          roleKey: "roles.fullstack",
+          introKey: "team.intros.linh",
           img: require("@/assets/profile/linh.jpg"),
           socialIcons: [
             { name: "LinkedIn", link: "https://www.linkedin.com/in/liam-ha/" },
@@ -252,9 +244,8 @@ export default {
         },
         {
           name: "Dung Pham",
-          role: "Fullstack Engineer",
-          intro:
-            "Computer Science student at University of South Florida, skilled in fullstack web development and wanting to dive into the fields of AI/ML, Fintech and Cloud Computing",
+          roleKey: "roles.fullstack",
+          introKey: "team.intros.dungpham",
           img: require("@/assets/profile/dungpham.jpg"),
           socialIcons: [
             { name: "LinkedIn", link: "https://www.linkedin.com/in/dungap25/" },
@@ -263,9 +254,8 @@ export default {
         },
         {
           name: "Khoi Anh Tran",
-          role: "FullStack Engineer",
-          intro:
-            "Pursuing a Bachelor of Computer Science at the New Jersey Institute of Technology. Enthusiastic about applying my skills to innovative projects and exploring new opportunities in the tech industry",
+          roleKey: "roles.fullstack",
+          introKey: "team.intros.khoi",
           img: require("@/assets/profile/khoi.jpg"),
           socialIcons: [
             {
@@ -277,9 +267,8 @@ export default {
         },
         {
           name: "Minh Binh Tran",
-          role: "Front-end Engineer",
-          intro:
-            "Bachelor of  Computer Science from VinUniversity with passion everage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy",
+          roleKey: "roles.frontend",
+          introKey: "team.intros.binh",
           img: require("@/assets/profile/BinhMinh.png"),
           socialIcons: [
             {
@@ -291,9 +280,8 @@ export default {
         },
         {
           name: "Huy Quang Dao",
-          role: "Data Analysis Engineer",
-          intro:
-            "Business Management at Foreign Trade University and participated in an Exchange Program in Statistics and Econometrics at Uppsala University",
+          roleKey: "roles.dataScientist",
+          introKey: "team.intros.quang",
           img: require("@/assets/profile/QuangHuy.jpg"),
           socialIcons: [
             {
@@ -305,9 +293,8 @@ export default {
         },
         {
           name: "Khoa Dang Nguyen",
-          role: "Artificial Inteligence(AI) Engineer",
-          intro:
-            "Applied LLM Developer with a Bachelor's degree in Data Science from the University of Rochester. Passionate about information retrieval and recommendation systems",
+          roleKey: "roles.aiEngineer",
+          introKey: "team.intros.khoa",
           img: require("@/assets/profile/DangKhoa.png"),
           socialIcons: [
             {
@@ -319,9 +306,8 @@ export default {
         },
         {
           name: "Anh Tuan Nguyen",
-          role: "Fullstack Engineer",
-          intro:
-            "Pursuing a major in Computer Science at the University of Science, actively developing features for Finbud, a financial management project. Passionate about AI/ML and software engineering.",
+          roleKey: "roles.fullstack",
+          introKey: "team.intros.tuan",
           img: require("@/assets/profile/TuanAnh.png"),
           socialIcons: [
             {
@@ -333,9 +319,8 @@ export default {
         },
         {
           name: "Krystal Nguyen",
-          role: "Data Analytics/Data Scientist",
-          intro:
-            "Bachelor of Data Science student at Deakin University, dedicated to transforming data into impactful solutions. Passionate about addressing real-world challenges through data-driven approaches, always striving to make a meaningful difference.",
+          roleKey: "roles.dataScientist",
+          introKey: "team.intros.krystal",
           img: require("@/assets/profile/thu.jpg"),
           socialIcons: [
             {
@@ -347,8 +332,8 @@ export default {
         },
         {
           name: "Bach Hoang Truong",
-          role: "Front-end Engineer",
-          intro: "Pursuing Computer Science Degree at VinUniversity",
+          roleKey: "roles.frontend",
+          introKey: "team.intros.bach",
           img: require("@/assets/profile/bach.jpg"),
           socialIcons: [
             { name: "LinkedIn", link: "https://www.linkedin.com" },
@@ -359,23 +344,23 @@ export default {
       testimonials: [
         {
           name: "John Doe",
-          feedback:
-            "FinBud has completely transformed my financial management. The AI chatbot provides spot-on advice and helps me stay on top of my investments and expenses.",
+          feedbackKey: "testimonials.john",
+
         },
         {
           name: "Jane Smith",
-          feedback:
-            "I love using FinBud! It's like having a personal financial advisor available 24/7. The insights and tips are incredibly useful and easy to understand.",
+          feedbackKey: "testimonials.jane",
+          
         },
         {
           name: "Michael Johnson",
-          feedback:
-            "The best financial tool I have ever used. FinBud's AI is amazing at predicting market trends and giving personalized advice.",
+          feedbackKey: "testimonials.michael",
+
         },
         {
           name: "Emily Davis",
-          feedback:
-            "FinBud has helped me save so much money. The budgeting tools and financial insights are top-notch.",
+          feedbackKey: "testimonials.emily",
+
         },
       ],
     };
@@ -769,6 +754,9 @@ body {
 
 .slide-in-up.animate-visible {
   transform: translateY(0);
+}
+.swiper-container-free-mode > .swiper-wrapper{
+  transition-timing-function : linear;
 }
 
 @media (max-width: 768px) {

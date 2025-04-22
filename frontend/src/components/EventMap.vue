@@ -169,6 +169,10 @@ export default defineComponent({
   max-height: 600px;
 }
 
+.event-list h2 {
+  color: var(--text-primary);
+}
+
 .map-container {
   width: 60%;
   height: 100%;

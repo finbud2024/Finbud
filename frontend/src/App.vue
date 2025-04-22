@@ -329,8 +329,8 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
-  --finbudBotMessageBG: #007bff;
-  --finbudBotMessageColor: white;
+  --finbudBotMessageBG: #c8c5c5;
+  --finbudBotMessageColor: #007bff;
   --finbudBotMessageBorderColor: #007bff;
   --bg-primary: #ffffff;
   --text-primary: #333333;
@@ -343,6 +343,12 @@ export default {
   --shadow-color: #e9e2e2;
   --progress-color: #c8c5c5;
   --logo-color: #007bff;
+  --chat-text-color: #000000;
+  --chat-message-bg-color: #f8f4f4;
+  --chat-user-bg-color: #007bff;
+  --chat-user-text-color: #ffffff;
+  --black-in-light-mode: #000000;
+  --white-in-dark-mode: #ffffff;
 }
 
 :root.dark-mode,
@@ -359,6 +365,12 @@ body.dark-mode {
   --progress-color: #e9e2e2;
   --logo-color: #007bff;
   --content-bg: #736969;
+  --chat-text-color: #ffffff;
+  --chat-message-bg-color: #2d2d2d;
+  --chat-user-bg-color: #007bff;
+  --chat-user-text-color: #ffffff;
+  --black-in-light-mode: #ffffff;
+  --white-in-dark-mode: #000000;
 }
 
 /* Update content area */
@@ -473,7 +485,7 @@ a:hover {
   border: 2px solid var(--finbudBotMessageBorderColor);
   border-radius: 15px;
   max-width: 300px;
-  background-color: var(--finbudBotMessageBG);
+  background-color: black;
   color: #ffffff;
 }
 

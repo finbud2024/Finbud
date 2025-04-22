@@ -8,29 +8,35 @@
       </div>
     </div>
     <button class="transaction-btn" @click="goToTransactionHistory">All Transactions</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Stock Name</th>
-          <th>Quantity</th>
-          <th>Action</th>
-          <th>Amount</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="transaction in filteredTransactions" :key="transaction._id">
-          <td>{{ transaction.stockSymbol }}</td>
-          <td>{{ transaction.quantity }}</td>
-          <td>{{ transaction.type }}</td>
-          <td :class="transaction.type === 'buy' ? 'minus' : 'plus'">
-            {{ transaction.type === 'buy' ? '-' : '+' }}${{ calculateTotal(transaction.type, transaction.price,
-              transaction.quantity).toFixed(2) }}
-          </td>
-          <td>{{ formatDate(transaction.date) }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Stock Name</th>
+            <th>Quantity</th>
+            <th>Action</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+      </table>
+      <div class="table-body-scroll">
+        <table>
+          <tbody>
+            <tr v-for="transaction in filteredTransactions" :key="transaction._id">
+              <td>{{ transaction.stockSymbol }}</td>
+              <td>{{ transaction.quantity }}</td>
+              <td>{{ transaction.type }}</td>
+              <td :class="transaction.type === 'buy' ? 'minus' : 'plus'">
+                {{ transaction.type === 'buy' ? '-' : '+' }}${{ calculateTotal(transaction.type, transaction.price,
+                  transaction.quantity).toFixed(2) }}
+              </td>
+              <td>{{ formatDate(transaction.date) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -125,6 +131,7 @@ export default {
   padding: 0 20px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  padding-bottom: 100px;
 }
 
 /* Header */
@@ -211,6 +218,10 @@ export default {
   .transaction-history-header {
     flex-direction: column;
   }
+}
+.table-body-scroll {
+  max-height: 250px; /* Adjust depending on row height */
+  overflow-y: auto;
 }
 
 </style>

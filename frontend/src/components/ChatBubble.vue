@@ -73,7 +73,7 @@ export default{
 .chatBubbleTittle{
     width: 100%;
     height: 100%;
-    color: #000;
+    color: var(--text-primary);
     padding-left: 10px;
     font-size: 25px;
     display: flex;
