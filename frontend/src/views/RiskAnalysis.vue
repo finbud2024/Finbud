@@ -103,16 +103,17 @@
           <!-- Stock Tab Content -->
           <div v-if="activeTab === 'stock'" class="tab-content">
             <div class="market-section">
+
+            <!-- Vietnam Stock Watch Section -->
+            <div class="section-title">Vietnam Stock Watch</div>
+              <div class="margin-box vietnam-stocks">
+                <VietnamStockWatch class="margin-box-content" />
+              </div>
+
               <!-- Stock Watch Section -->
               <div class="section-title">Stock Watch</div>
               <div class="margin-box">
                 <StockWatch class="margin-box-content" />
-              </div>
-
-              <!-- Vietnam Stock Watch Section -->
-              <div class="section-title">Vietnam Stock Watch</div>
-              <div class="margin-box">
-                <VietnamStockWatch class="margin-box-content" />
               </div>
 
               <!-- Stock Quotes Section -->
@@ -714,6 +715,12 @@ export default {
 .margin-box-content {
   overflow-x: auto;
   white-space: nowrap;
+}
+
+/* Exception for Vietnam Stock Watch */
+.vietnam-stocks .margin-box-content {
+  overflow-x: visible;
+  white-space: normal;
 }
 
 .real-estate-section {
