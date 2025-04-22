@@ -3,15 +3,23 @@
     <div class="sidebar-header">
       <!-- <span>Chat Threads</span> -->
       <router-link to="/">
-        <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo">
+        <img
+          src="@/assets/home-page/FinbudSmallLogo.png"
+          class="navbar-brand"
+          alt="FinBud Logo"
+        />
       </router-link>
     </div>
     <button class="add-thread-btn" @click="addThread()">
       <font-awesome-icon icon="fa-solid fa-plus" />
     </button>
     <ul class="thread-list">
-      <li v-for="(thread, index) in threads" :key="index" :class="['thread', { clicked: thread.clicked }]"
-        @click="handleClick(index)">
+      <li
+        v-for="(thread, index) in threads"
+        :key="index"
+        :class="['thread', { clicked: thread.clicked }]"
+        @click="handleClick(index)"
+      >
         <div v-if="!thread.editing" class="thread-item">
           <div class="thread-name">{{ thread.name }}</div>
           <div class="edit-btn" @click.stop="toggleDropdown(index)">
@@ -28,18 +36,30 @@
             </div>
           </div>
         </div>
-        <input v-else :ref="`editInput-${index}`" v-model="thread.editedName"
-          @keyup.enter="saveThreadName(thread, index)" @blur="cancelEdit(index)" />
+        <input
+          v-else
+          :ref="`editInput-${index}`"
+          v-model="thread.editedName"
+          @keyup.enter="saveThreadName(thread, index)"
+          @blur="cancelEdit(index)"
+        />
       </li>
     </ul>
     <div v-if="showConfirmDeleteModal" class="delete-prompt-overlay">
       <div class="delete-prompt-content">
         <div class="delete-header">Delete chat?</div>
         <div class="delete-body">
-          <p>This will delete <strong class="delete-thread-name">{{ threads[deleteIndex].name }}.</strong></p>
+          <p>
+            This will delete
+            <strong class="delete-thread-name"
+              >{{ threads[deleteIndex].name }}.</strong
+            >
+          </p>
           <div class="delete-button-container">
             <button class="cancel-button" @click="cancelDelete">Cancel</button>
-            <button class="confirm-button" @click="confirmDelete">Delete</button>
+            <button class="confirm-button" @click="confirmDelete">
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -63,7 +83,7 @@ export default {
   },
   computed: {
     isAuthenticated() {
-      return this.$store.getters['users/isAuthenticated'];
+      return this.$store.getters["users/isAuthenticated"];
     },
   },
   watch: {
@@ -72,11 +92,11 @@ export default {
       handler(newName) {
         if (newName.length === 0 || newName === null) return;
         this.threads.forEach((thread, index) => {
-          if (thread.id === this.$store.getters['threads/getThreadID']) {
+          if (thread.id === this.$store.getters["threads/getThreadID"]) {
             thread.editedName = newName;
             this.saveThreadName(thread, index);
           }
-        })
+        });
       },
     },
   },
@@ -91,7 +111,7 @@ export default {
           openDropdown: false,
         };
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = this.$store.getters['users/userId'];
+        const userId = this.$store.getters["users/userId"];
         const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
         newThread.id = thread.data._id;
@@ -143,7 +163,7 @@ export default {
         const deleteThreadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
         await axios.delete(deleteThreadApi);
       } catch (err) {
-        console.error('Error on deleting thread or its associated chats:', err);
+        console.error("Error on deleting thread or its associated chats:", err);
       }
     },
     //EDIT THREAD HANDLE
@@ -202,20 +222,24 @@ export default {
     },
     //FUNCTION TO HANDLE CLICK OUTSIDE OF DROPDOWN
     handleOutsideClick(event) {
-      let isClickInside = this.$refs.dropdowns && Array.from(this.$refs.dropdowns).some(ref => ref.contains(event.target));
+      let isClickInside =
+        this.$refs.dropdowns &&
+        Array.from(this.$refs.dropdowns).some((ref) =>
+          ref.contains(event.target)
+        );
       if (!isClickInside) {
         this.closeDropdowns();
       }
     },
     closeDropdowns() {
-      this.threads.forEach(thread => {
+      this.threads.forEach((thread) => {
         thread.openDropdown = false;
       });
     },
   },
   async mounted() {
     if (this.isAuthenticated) {
-      const userId = this.$store.getters['users/userId'];
+      const userId = this.$store.getters["users/userId"];
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
       const historyThreads = await axios.get(threadApi);
       const historyThreadsData = historyThreads.data;
@@ -242,11 +266,14 @@ export default {
         });
       }
       console.log(this.threads);
-      if (this.$store.getters['threads/getThreadID'] === null) {
+      if (this.$store.getters["threads/getThreadID"] === null) {
         this.selectThread(0);
       } else {
         for (let i = 0; i < historyThreadsData.length; i++) {
-          if (historyThreadsData[i]._id === this.$store.getters['threads/getThreadID']) {
+          if (
+            historyThreadsData[i]._id ===
+            this.$store.getters["threads/getThreadID"]
+          ) {
             this.selectThread(historyThreadsData.length - i - 1);
             break;
           }
@@ -254,10 +281,10 @@ export default {
       }
     }
     // Add event listener to handle click outside of dropdown
-    document.addEventListener('click', this.handleOutsideClick);
+    document.addEventListener("click", this.handleOutsideClick);
   },
   beforeDestroy() {
-    document.removeEventListener('click', this.handleOutsideClick);
+    document.removeEventListener("click", this.handleOutsideClick);
   },
 };
 </script>
@@ -296,8 +323,8 @@ export default {
 }
 
 .add-thread-btn:hover {
-  background-color: var(--hover-bg);
-  color: var(--text-primary);
+  background-color: var(--text-primary);
+  color: white;
 }
 
 .edit-btn {
@@ -335,9 +362,12 @@ export default {
 }
 
 .thread-list li:hover {
-  color: var(--text-primary);
+  color: white;
   cursor: pointer;
-  background-color: var(--hover-bg);
+  background-color: var(--text-primary);
+  .edit-btn {
+    color: white;
+  }
 }
 
 .thread-list input {
@@ -345,13 +375,16 @@ export default {
   padding: 8px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
-  background-color: var(--card-bg);
-  color: var(--text-primary);
+  background-color: white;
+  color: black;
 }
 
 .thread.clicked {
-  background-color: var(--hover-bg);
-  color: var(--text-primary);
+  background-color: black;
+  color: white;
+  .edit-btn {
+    color: white;
+  }
 }
 
 /* Dropdown */
@@ -368,7 +401,7 @@ export default {
   border-radius: 10px;
 }
 
-.dropdown>div {
+.dropdown > div {
   display: flex;
   flex-direction: row;
   margin: 5px;
@@ -383,7 +416,7 @@ export default {
   margin-right: 15px;
 }
 
-.dropdown>div:hover {
+.dropdown > div:hover {
   background-color: var(--hover-bg);
   border-radius: 10px;
 }
@@ -444,7 +477,7 @@ export default {
 }
 
 .delete-button-container button {
-  padding: .75rem .875rem;
+  padding: 0.75rem 0.875rem;
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   cursor: pointer;

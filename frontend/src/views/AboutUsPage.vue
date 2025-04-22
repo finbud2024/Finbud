@@ -146,11 +146,9 @@
       </div>
     </section>
   </div>
-
 </template>
 
 <script>
-
 import { Swiper, SwiperSlide } from "swiper/vue";
 
 import "swiper/css";
@@ -425,7 +423,8 @@ body {
 
 .title {
   text-align: center;
-  color: #007bff;
+  /* color: #007bff; */
+  color: var(--text-primary);
   font-size: 2.5rem;
   margin-bottom: 1rem;
   animation: fadeInDown 1s ease-in-out;
@@ -506,13 +505,16 @@ body {
 
 .social-icons a {
   font-size: 1rem;
-  color: #007bff;
+  color: var(--text-primary);
   margin: 0 5px;
   transition: color 0.3s;
+  text-decoration: none;
 }
 
 .social-icons a:hover {
-  color: #0056b3;
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: font-weight 0.3s;
 }
 
 .testimonials-section {
@@ -632,7 +634,7 @@ body {
 
 .contact-form {
   background: #f9f9f9;
-  padding: 40px;
+  padding: 40px 70px 40px 40px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 40px;
@@ -683,13 +685,14 @@ body {
 .contact-form input[type="email"]:focus,
 .contact-form input[type="tel"]:focus,
 .contact-form textarea:focus {
-  border-color: #007bff;
+  border-color: var(--text-primary);
   outline: none;
 }
 
 .contact-form button {
   padding: 15px 30px;
-  background-color: #0056b3;
+  /* background-color: #0056b3; */
+  background-color: black;
   color: white;
   border: none;
   border-radius: 8px;
@@ -699,7 +702,8 @@ body {
 }
 
 .contact-form button:hover {
-  background-color: #003975;
+  /* background-color: #003975; */
+  background-color: var(--text-primary);
 }
 
 .contact-info {
@@ -730,12 +734,15 @@ body {
 
 .info-block a {
   font-size: 16px;
-  color: #0056b3;
+  /* color: #0056b3; */
+  color: var(--text-primary);
   text-decoration: none;
 }
 
 .info-block a:hover {
-  text-decoration: underline;
+  /* text-decoration: underline; */
+  font-weight: 500;
+  transition: font-weight 0.3s;
 }
 
 /* Add animations */

@@ -2,22 +2,42 @@
   <div class="home-container">
     <div v-if="overlayEnabled" class="overlay" />
     <div v-if="this.isAuthenticated" class="sidebar-container">
-      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
+      <font-awesome-icon
+        class="toggle-sidebar-btn"
+        @click="toggleSidebar"
+        icon="fa-solid fa-bars"
+      />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar" />
-      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName" />
+      <SideBar
+        :class="{ 'is-visible': isSidebarVisible }"
+        :initialThreadName="newThreadName"
+      />
     </div>
     <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent" />
-    <div class="guidance-btn" id="tutorial-guidance-button" :class="{ 'is-guidance-visible': showGuidance }"
-      @click="showGuidance = true">
+    <div
+      class="guidance-btn"
+      id="tutorial-guidance-button"
+      :class="{ 'is-guidance-visible': showGuidance }"
+      @click="showGuidance = true"
+    >
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
       <span class="guidance-text">Guidance</span>
     </div>
-    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" @sendMessage="sendMessageToChat"
-      :showModal="showGuidance" />
-    <TutorialOverlay :steps="tutorialSteps" storageKey="finbudChatViewTutorialShown" :autoStart="true"
-      @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
+    <GuidanceModal
+      v-if="showGuidance"
+      @close="showGuidance = false"
+      @sendMessage="sendMessageToChat"
+      :showModal="showGuidance"
+    />
+    <TutorialOverlay
+      :steps="tutorialSteps"
+      storageKey="finbudChatViewTutorialShown"
+      :autoStart="true"
+      @tutorial-completed="onTutorialCompleted"
+      ref="tutorialOverlay"
+    />
   </div>
 </template>
 
@@ -32,13 +52,13 @@ import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 export default {
   name: "ChatView",
   props: {
-    chatBubbleThreadID: String
+    chatBubbleThreadID: String,
   },
   components: {
     ChatComponent,
     SideBar,
     GuidanceModal,
-    TutorialOverlay
+    TutorialOverlay,
   },
   data() {
     return {
@@ -55,11 +75,11 @@ export default {
       newThreadName: "",
       tutorialSteps: [
         {
-          element: '#tutorial-guidance-button',
+          element: "#tutorial-guidance-button",
           message: "Click here for guidance on how to ask questions to FinBud!",
-          title: "Need help with queries?"
-        }
-      ]
+          title: "Need help with queries?",
+        },
+      ],
     };
   },
   computed: {
@@ -70,10 +90,13 @@ export default {
       return this.$store.getters["users/userDisplayName"];
     },
     userAvatar() {
-      return this.$store.getters["users/userProfileImage"] || require("@/assets/anonymous.png");
+      return (
+        this.$store.getters["users/userProfileImage"] ||
+        require("@/assets/anonymous.png")
+      );
     },
     threadID() {
-      return this.$store.getters['threads/getThreadID'];
+      return this.$store.getters["threads/getThreadID"];
     },
   },
   methods: {
@@ -139,12 +162,16 @@ export default {
       if (this.$refs.tutorialOverlay) {
         this.$refs.tutorialOverlay.resetTutorial();
       }
-    }
+    },
   },
   async mounted() {
-    setInterval(() => { this.currentTime = new Date().toLocaleTimeString(); }, 500);
+    setInterval(() => {
+      this.currentTime = new Date().toLocaleTimeString();
+    }, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
-    document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
+    document.querySelector(
+      ".home-container"
+    ).style.height = `calc(100vh - ${navbarHeight}px)`;
 
     // Check if we've been redirected from Home page and show tutorial
     if (this.$route.query.showTutorial) {
