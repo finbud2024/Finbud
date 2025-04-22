@@ -207,8 +207,8 @@ export default {
       return this.$route.path === "/about";
     },
     showHeader() {
-      // return true;
-      return this.$route.path !== "/chat-view";
+      return true;
+      // return this.$route.path !== "/chat-view";
     },
   },
   methods: {
