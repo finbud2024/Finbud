@@ -67,7 +67,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
-  name: 'NotificationCenter', // Change from 'Notification' to 'NotificationCenter'
+  name: 'NotificationCenter', 
   setup() {
     const store = useStore();
     const notifications = ref([]);
@@ -121,7 +121,7 @@ export default {
         try {
           // Update the read status on the backend
           await axios.put(
-            `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${notification._id}/read`,
+            `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}/${notification._id}`,
             {},
             { withCredentials: true }
           );
@@ -142,7 +142,7 @@ export default {
       
       try {
         await axios.put(
-          `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}/read-all`,
+          `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}`,
           {},
           { withCredentials: true }
         );
@@ -160,7 +160,7 @@ export default {
     const deleteNotification = async (notificationId) => {
       try {
         await axios.delete(
-          `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${notificationId}`,
+          `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}/${notificationId}`,
           { withCredentials: true }
         );
         

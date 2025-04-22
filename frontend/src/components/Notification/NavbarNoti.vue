@@ -109,9 +109,9 @@ export default {
       if (!isAuthenticated.value || !userId.value) return;
       
       try {
-        await axios.post(
-          `${process.env.VUE_APP_DEPLOY_URL}/notifications/mark-all-read/${userId.value}`,
-          {}, 
+        await axios.put(
+          `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}`,
+          {},
           { withCredentials: true }
         );
         
@@ -128,9 +128,9 @@ export default {
     const handleNotificationClick = async (notification) => {
       if (!notification.isRead) {
         try {
-          await axios.put(
-            `${process.env.VUE_APP_DEPLOY_URL}/notifications/${notification._id}/read`,
-            {}, 
+            await axios.put(
+            `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}/${notification._id}`,
+            {},
             { withCredentials: true }
           );
           
