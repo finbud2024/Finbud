@@ -26,12 +26,12 @@
         </div>
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
-      <img 
-        class="bot-image" 
-        src="@/assets/botrmbg.png" 
-        alt="Bot" 
+      <img
+        class="bot-image"
+        src="@/assets/botrmbg.png"
+        alt="Bot"
         @click="toggleBotMessage"
-        :class="{ 'clickable': showBot }"
+        :class="{ clickable: showBot }"
       />
     </div>
 
@@ -443,16 +443,16 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       goalTitle: "",
       goalProgress: 0,
       categories: [
-      'Savings', 
-      'Investment', 
-      'Entertainment',
-      'Education',
-      'Emergency Fund',
-      'Vehicle',
-      'Vacation',
-      'Health'
+        "Savings",
+        "Investment",
+        "Entertainment",
+        "Education",
+        "Emergency Fund",
+        "Vehicle",
+        "Vacation",
+        "Health",
       ],
-      selectedCategory: '',
+      selectedCategory: "",
       isAnalyzingCategory: false,
       userModifiedCategory: false,
       aiSuggestionUsed: false,
@@ -514,7 +514,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       // totalRevenue: 0,
       disabledConnect: false,
       refreshInterval: null,
-      serverAccountBalance: 0, // New state to store account balance from server
+      serverAccountBalance: null, // Biến lưu giá trị từ server
     };
   },
   computed: {
@@ -568,25 +568,24 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       return this.totalRevenue - this.totalExpense;
     },
   },
-  
+
   mounted() {
     if (!this.isAuthenticated) {
       this.$router.push("/");
       return;
     }
 
-
     this.retrieveGoals();
 
     // Lấy account balance từ server
     this.getAccountBalance();
 
+    // Các tác vụ khởi tạo
+    this.retrieveGoals();
+
     // Fetch transactions và đảm bảo nó hoàn thành trước khi thực hiện các bước tiếp theo
     this.fetchTransactions().then(() => {
-      // Xử lý URL params sau khi đã có dữ liệu
       this.processURLParams();
-
-      // Thiết lập bot observer sau khi dữ liệu đã được tải
       this.$nextTick(() => {
         this.setupBotObserver();
       });
@@ -595,7 +594,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     // Thiết lập auto-refresh
     this.refreshInterval = setInterval(() => {
       this.refreshData();
-      this.getAccountBalance(); // Cập nhật account balance mỗi lần refresh
+      this.getAccountBalance(); // Cập nhật balance từ server định kỳ
     }, 10000);
   },
   beforeUnmount() {
@@ -762,16 +761,18 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     async getAccountBalance() {
       try {
-        const userId = this.$store.getters["users/userId"];
         const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`
+          `${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`
         );
 
         if (response && response.data && response.data.bankingAccountData) {
-          // Update accountBalance từ dữ liệu server
-          // Lưu vào biến riêng để đảm bảo không bị ảnh hưởng bởi computed property
+          // Cập nhật giá trị từ server
           this.serverAccountBalance =
             response.data.bankingAccountData.accountBalance || 0;
+          console.log(
+            "Account balance fetched from server:",
+            this.serverAccountBalance
+          );
         }
       } catch (error) {
         console.error("Error fetching account balance:", error);
@@ -1029,16 +1030,17 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 
           // Xác định dấu của số tiền dựa vào type
-          // Income (ghi có) = số âm (thêm tiền vào tài khoản)
-          // Expense (ghi nợ) = số dương (lấy tiền ra khỏi tài khoản)
+          // Expense (ghi nợ) = số dương (lấy tiền ra)
+          // Income (ghi có) = số âm (thêm tiền vào)
           const signedAmount =
             this.transaction.type === "Income" ? -amountInUSD : amountInUSD;
 
-          // Tính balance mới từ giao dịch mới nhất hoặc sử dụng computed property
-          const newBalance =
-            this.transactions.length > 0
-              ? this.transactions[0].balance - signedAmount
-              : -signedAmount;
+          // Tính balance mới từ account balance hiện tại
+          const newBalance = this.serverAccountBalance
+            ? this.serverAccountBalance - signedAmount
+            : this.transactions.length > 0
+            ? this.transactions[0].balance - signedAmount
+            : -signedAmount;
 
           const response = await axios.post(
             `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
@@ -1052,6 +1054,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
           // Insert the new transaction at the beginning of the array
           this.transactions.unshift(response.data);
+
+          // Cập nhật server account balance
+          this.serverAccountBalance = newBalance;
 
           // Xóa dữ liệu form
           this.transaction.description = "";
@@ -1067,7 +1072,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           if (openNotification) {
             this.showNoti = true; // Show the notification if the flag is set
           }
-
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
@@ -1341,23 +1345,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       }
     },
 
-    // Phương thức làm mới dữ liệu từ server
+    // Sửa phương thức refreshData
     async refreshData() {
       try {
         // Lấy account balance từ server trước
         await this.getAccountBalance();
 
-        // Gọi API transaction thông thường
+        // Gọi API transaction
         await this.fetchTransactions();
-
-        // Đợi một chút để đảm bảo dữ liệu đã được cập nhật
-        setTimeout(() => {
-          // Kiểm tra lại để đảm bảo transactions đã được cập nhật
-          if (this.transactions && this.transactions.length > 0) {
-            // Recalculate balances sau khi fetch data mới
-            this.recalculateBalances();
-          }
-        }, 100);
       } catch (error) {
         console.error("Error refreshing data:", error);
       }
@@ -1661,7 +1656,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 /* Add Goal Modal Styles */
 .form-group {
   margin-bottom: 10px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .form-group label {
@@ -1735,7 +1730,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   color: #666;
   margin-top: 5px;
   text-align: right;
-  width:90%;
+  width: 90%;
 }
 
 .start-end-date-group {
@@ -1757,7 +1752,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 #goalCategory:focus {
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .category-loading {
@@ -1770,7 +1765,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: inline-block;
   width: 12px;
   height: 12px;
-  border: 2px solid rgba(0,0,0,0.1);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   border-top-color: #007bff;
   animation: spin 1s linear infinite;
@@ -1778,7 +1773,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile-specific styles */
@@ -2652,7 +2649,7 @@ hr {
   padding: 12px 18px;
   border-radius: 18px;
   max-width: 280px;
-  max-height: 200px; 
+  max-height: 200px;
   overflow-y: auto; /* Enable vertical scrolling */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0; /* Start hidden */
