@@ -33,9 +33,15 @@
           @click="handleNotificationClick(notification)"
         >
           <div class="notification-content">
-            <h4>{{ notification.title }}</h4>
+            <div class="notification-header-row">
+              <h4>{{ notification.title }}</h4>
+              <div v-if="!notification.isRead" class="unread-dot-indicator"></div>
+            </div>
             <p>{{ notification.content }}</p>
-            <small>{{ formatTime(notification.createdAt) }}</small>
+            <div class="notification-footer-row">
+              <small>{{ formatTime(notification.createdAt) }}</small>
+              <span v-if="!notification.isRead" class="unread-label">New</span>
+            </div>
           </div>
         </div>
       </div>
@@ -345,6 +351,19 @@ export default {
 .notification-item.unread {
   background-color: rgba(66, 139, 202, 0.1);
   border-left: 3px solid var(--accent-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-item.unread::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(231, 76, 60, 0.05), transparent 70%);
+  z-index: -1;
 }
 
 .notification-content h4 {
@@ -362,6 +381,49 @@ export default {
 .notification-content small {
   font-size: 0.75rem;
   color: var(--text-tertiary);
+}
+
+.notification-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.unread-dot-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #e74c3c;
+  box-shadow: 0 0 4px #e74c3c;
+  animation: pulse-dot 1.5s infinite;
+}
+
+.unread-label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: white;
+  background-color: #e74c3c;
+  padding: 2px 6px;
+  border-radius: 10px;
+  animation: pulse-label 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse-label {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
 }
 
 .notification-footer {

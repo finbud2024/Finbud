@@ -26,11 +26,18 @@
           @click="selectNotification(notification)"
         >
           <div class="notification-preview">
-            <h4>{{ notification.title }}</h4>
+            <div class="notification-header-flex">
+              <h4>{{ notification.title }}</h4>
+              <div v-if="!notification.isRead" class="unread-badge">New</div>
+            </div>
             <p class="notification-preview-content">{{ truncateContent(notification.content) }}</p>
             <div class="notification-meta">
               <span class="notification-time">{{ formatTime(notification.createdAt) }}</span>
-              <span v-if="!notification.isRead" class="unread-indicator"></span>
+              <div v-if="!notification.isRead" class="priority-indicator">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
             </div>
           </div>
         </div>
@@ -40,7 +47,6 @@
     <div class="notification-detail">
       <div v-if="!selectedNotification" class="empty-detail-state">
         <font-awesome-icon icon="bell" size="3x" />
-        
       </div>
 
       <div v-else class="notification-detail-content">
@@ -297,10 +303,15 @@ export default {
 }
 
 .notification-item {
+  position: relative;
   padding: 16px;
   border-bottom: 1px solid var(--border-color);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+}
+
+.notification-item:not(.active):hover {
+  transform: translateX(5px);
 }
 
 .notification-item:hover {
@@ -312,14 +323,44 @@ export default {
   border-left: 3px solid var(--accent-color);
 }
 
+/* Enhanced unread styling with both color change and left border */
 .notification-item.unread {
   background-color: rgba(66, 139, 202, 0.1);
+  border-left: 3px solid var(--accent-color);
+  animation: subtle-pulse 2s infinite;
+}
+
+/* Add this keyframe animation for subtle pulsing effect on unread items */
+@keyframes subtle-pulse {
+  0%, 100% { background-color: rgba(66, 139, 202, 0.1); }
+  50% { background-color: rgba(66, 139, 202, 0.2); }
 }
 
 .notification-preview h4 {
   margin: 0 0 6px;
   font-size: 0.95rem;
   font-weight: 600;
+}
+
+.notification-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* Make the unread badge more noticeable */
+.unread-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: var(--accent-color);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  animation: highlight 2s infinite;
+  box-shadow: 0 0 5px rgba(66, 139, 202, 0.3);
 }
 
 .notification-preview-content {
@@ -340,11 +381,42 @@ export default {
   color: var(--text-tertiary);
 }
 
-.unread-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+/* Make dots more visible */
+.priority-indicator {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.priority-indicator .dot {
+  width: 5px;
+  height: 5px;
   background-color: var(--accent-color);
+  border-radius: 50%;
+  opacity: 0.7;
+  box-shadow: 0 0 3px var(--accent-color);
+}
+
+.priority-indicator .dot:nth-child(1) {
+  animation: blink 1.5s infinite 0s;
+}
+
+.priority-indicator .dot:nth-child(2) {
+  animation: blink 1.5s infinite 0.5s;
+}
+
+.priority-indicator .dot:nth-child(3) {
+  animation: blink 1.5s infinite 1s;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes highlight {
+  0%, 100% { background-color: var(--accent-color); }
+  50% { background-color: #e74c3c; }
 }
 
 .notification-detail {
@@ -464,5 +536,19 @@ export default {
 
 :root.dark-mode .notification-item.unread {
   background-color: rgba(66, 139, 202, 0.15);
+  box-shadow: inset 0 0 10px rgba(66, 139, 202, 0.1);
+}
+
+:root.dark-mode .unread-badge {
+  box-shadow: 0 0 5px rgba(66, 139, 202, 0.5);
+}
+
+@keyframes subtle-pulse-dark {
+  0%, 100% { background-color: rgba(66, 139, 202, 0.15); }
+  50% { background-color: rgba(66, 139, 202, 0.25); }
+}
+
+:root.dark-mode .notification-item.unread {
+  animation: subtle-pulse-dark 2s infinite;
 }
 </style>
