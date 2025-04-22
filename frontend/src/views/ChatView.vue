@@ -12,7 +12,7 @@
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
-      <span class="guidance-text">Guidance</span>
+      <span class="guidance-text">{{ $t('chatComponent.guildence') }}</span>
     </div>
     <GuidanceModal v-if="showGuidance" @close="showGuidance = false" @sendMessage="sendMessageToChat"
       :showModal="showGuidance" />

@@ -500,7 +500,7 @@ export default {
 
 .pagination-button {
   padding: 8px 20px;
-  background-color: #007bff;
+  background-color: #171717;
   color: white;
   border: none;
   border-radius: 4px;

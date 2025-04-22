@@ -55,8 +55,8 @@ export default defineComponent({
   font-family: 'Inter', 'Arial', sans-serif;
   margin: 0 auto;
   padding: 20px 40px;
-  color: #536f96;
-  background: #f8f9fa;
+  color: var(--text-primary);
+  background: var(--bg-primary);
   min-height: 100vh;
 }
 

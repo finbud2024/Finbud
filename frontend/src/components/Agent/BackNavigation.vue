@@ -22,7 +22,7 @@ export default {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: #718096;
+  color: var(--text-primary);
   font-size: 14px;
   transition: color 0.2s;
   background-color: rgba(229, 231, 235, 0.5);
