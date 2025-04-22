@@ -10,6 +10,7 @@ import * as faBrand from "@fortawesome/free-brands-svg-icons";
 import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import i18n from "./i18n";
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 
 // Add specific icons to the library
 const icons = [
@@ -35,7 +36,7 @@ const icons = [
   faSolid.faSun,
 ];
 library.add(...icons); // Use the spread operator to add the icons
-
+library.add(faBell);
 // Create the application
 const app = createApp(App);
 

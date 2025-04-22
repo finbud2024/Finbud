@@ -84,8 +84,8 @@
             <h2>
               {{
                 selectedCurrency === "USD"
-                  ? formatCurrency(accountBalance)
-                  : formatCurrency(convertToVND(accountBalance))
+                  ? formatCurrency(accountBalanceTotal)
+                  : formatCurrency(convertToVND(accountBalanceTotal))
               }}
             </h2>
             <select
@@ -206,14 +206,6 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- <tr
-                  v-for="trans in transactions"
-                  :key="trans._id"
-                  :class="{
-                    income: trans.type === 'Income',
-                    expense: trans.type === 'Expense',
-                  }"
-                > -->
               <tr
                 v-for="trans in transactions"
                 :key="trans._id || trans.account_id"
@@ -226,7 +218,6 @@
                     (trans.type === 'revenue' && trans.amount > 0),
                 }"
               >
-                <!-- <td>{{ trans.description }}</td> -->
                 <td>{{ trans.description || trans.name }}</td>
                 <td>{{ formattedDate(trans.date) }}</td>
                 <td v-if="selectedCurrency === 'USD'">
@@ -248,28 +239,14 @@
                   }}
                 </td>
                 <td class="buttons">
-                  <button
-                    @click="editTransaction(trans)"
-                    style="margin-right: 10px; padding: 6px 12px"
-                  >
+                  <button class="edit-btn" @click="editTransaction(trans)">
                     Edit
                   </button>
-                  <!-- <button 
-                      @click="removeTransaction(trans._id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    > -->
-                    <button 
-                      @click="removeTransaction(trans.account_id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    >
+                  <button class="remove-btn" @click="removeTransaction(trans.account_id)">
                     {{ $t('removeButton') }}
-                    </button>
-                  </td>
-                </tr>
+                  </button>
+                </td>
+              </tr>
               </tbody>
             </table>
           </div>
@@ -374,7 +351,11 @@
             </div>
           </section>
         </div>
-    
+        <goalNotiModal
+          :isVisible="showNoti"
+          :message="notiMessage"
+          @close="showNoti = false"
+        />
         <!-- Reset Confirmation Modal -->
         <div v-if="showResetConfirmationModal" class="modal">
           <div class="modal-content">
@@ -396,11 +377,14 @@ import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
 import { toast } from "vue3-toastify";
 import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
+import { messageToOpenAIRole } from "@langchain/openai";
 export default {
   name: "GoalPage",
   components: {
     ChatBotTyping,
     TransactionLine,
+    goalNotiModal
   },
   data() {
     return {
@@ -419,7 +403,8 @@ export default {
       typingSpeed: 50, // milliseconds between words
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
-
+      showNoti: false,
+      notiMessage: "",
       userId: this.$store.getters["users/userId"],
       firstName:
         this.$store.getters["users/currentUser"]?.identityData?.firstName || "",
@@ -578,28 +563,17 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         ); // Luôn dùng giá trị tuyệt đối
     },
 
-    // Sửa cách tính accountBalance để lấy từ trường balance của transaction mới nhất
-    accountBalance() {
-      // Ưu tiên giá trị từ server nếu có
-      if (this.serverAccountBalance !== 0) {
-        return this.serverAccountBalance;
-      }
-
-      // Khi không có giao dịch, trả về 0
-      if (!this.transactions || this.transactions.length === 0) {
-        return 0;
-      }
-
-      // Dựa trên tổng revenue và expense nếu không có giá trị server
+    accountBalanceTotal() {
+      // Always calculate account balance as total revenue minus total expense
       return this.totalRevenue - this.totalExpense;
     },
   },
   
   mounted() {
-    // if (!this.isAuthenticated) {
-    //   this.$router.push("/");
+    if (!this.isAuthenticated) {
+      this.$router.push("/");
       return;
-    // }
+    }
 
 
     this.retrieveGoals();
@@ -1016,6 +990,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       }
     },
     async addTransaction() {
+
       if (
         this.transaction.description &&
         this.transaction.amount !== null &&
@@ -1024,11 +999,34 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       ) {
         try {
           let amountInUSD = Math.abs(this.transaction.amount);
-
+         
           // Convert amount to USD if the selected currency is VND
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
+          
+          let openNotification = false; // Flag to track if a notification should be shown
+          if (this.transaction.type === "Expense") {
+            
+              const accountBalanceFormatted = this.formatCurrency(this.accountBalanceTotal);
+              const amountFormatted = this.formatCurrency(amountInUSD);
+              const percentSpent = ((amountInUSD / this.accountBalanceTotal) * 100).toFixed(1);
+                      
+              if (amountInUSD >= this.accountBalanceTotal) {
+                this.notiMessage = `Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.75) {
+                this.notiMessage = `Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.5) {
+                this.notiMessage = `Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.25) {
+                this.notiMessage = `FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
+                openNotification = true;
+              }
+            }
+
 
           // Xác định dấu của số tiền dựa vào type
           // Income (ghi có) = số âm (thêm tiền vào tài khoản)
@@ -1065,6 +1063,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           this.$nextTick(() => {
             this.recalculateBalances();
           });
+          
+          if (openNotification) {
+            this.showNoti = true; // Show the notification if the flag is set
+          }
+
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
@@ -1096,7 +1099,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
         // Update local state with the response data
         this.transactions.push(response.data);
-        this.accountBalance = parseFloat(this.initialBalance); // Update the account balance
+        this.accountBalanceTotal = parseFloat(this.initialBalance); // Update the account balance
         this.initialBalance = null; // Reset the initial balance input field
         this.showSetBalanceModal = false; // Close the modal
         this.initialBalanceSet = true; // Mark initial balance as set
@@ -1112,7 +1115,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
         this.transactions = [];
-        this.accountBalance = 0;
+        this.accountBalanceTotal = 0;
         this.initialBalanceSet = false;
         this.showResetConfirmationModal = false;
       } catch (error) {
@@ -1454,7 +1457,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(31, 126, 53);
+
 }
 
 .transactionContainer {
@@ -2116,6 +2119,35 @@ hr {
 
 .income {
   background-color: rgba(76, 175, 80, 0.1);
+}
+
+.transaction-list td.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 5px;
+  gap: 5px;
+}
+
+.transaction-list td.buttons button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  background-color: var(--link-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  min-width: 80px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.transaction-list td.buttons button:hover {
+  background-color: var(--button-hover-bg, #005bb5);
+  transform: translateY(-1px);
 }
 
 .chart-container {
