@@ -1,10 +1,6 @@
 <template>
-  <div class="chart-wrapper">
-    <canvas
-      ref="transactionChart"
-      id="transaction-line-chart"
-      v-if="hasData"
-    ></canvas>
+  <div class="chart-wrapper" :key="`chart-wrapper-${chartKey}`">
+    <canvas ref="transactionChart" :id="chartId" v-if="hasData"></canvas>
     <div v-else class="no-data-message">
       <p>No transaction data available to display.</p>
     </div>
@@ -36,9 +32,27 @@ export default {
       retryCount: 0,
       maxRetries: 3,
       watchTimer: null,
+      chartKey: Date.now(), // Thêm key để force re-render khi cần
     };
   },
   methods: {
+    // Thêm phương thức để reset component hoàn toàn
+    resetComponent() {
+      this.destroyChart();
+      this.chartKey = Date.now(); // Update key to force re-render
+      this.retryCount = 0;
+      this.hasData = this.transactions && this.transactions.length > 0;
+
+      // Đợi DOM cập nhật sau khi thay đổi key
+      this.$nextTick(() => {
+        if (this.hasData) {
+          setTimeout(() => {
+            this.generateChart();
+          }, 300);
+        }
+      });
+    },
+
     generateChart() {
       // Kiểm tra xem có dữ liệu giao dịch không
       if (!this.transactions || this.transactions.length === 0) {
@@ -59,6 +73,7 @@ export default {
             `Maximum retry attempts (${this.maxRetries}) reached for chart generation. Giving up.`
           );
           this.retryCount = 0; // Reset for next time
+          this.resetComponent(); // Reset và thử lại
           return;
         }
 
@@ -68,18 +83,23 @@ export default {
         // Xóa chart cũ trước khi khởi tạo bất kỳ thứ gì mới
         this.destroyChart();
 
-        // Đảm bảo canvas element tồn tại
-        const canvas = document.getElementById(this.chartId);
+        // Đảm bảo canvas element tồn tại - thử cả ref và getElementById
+        let canvas = this.$refs.transactionChart;
+
+        // Nếu không tìm thấy qua ref, thử getElementById
+        if (!canvas) {
+          canvas = document.getElementById(this.chartId);
+        }
+
         if (!canvas) {
           console.error(
             `Canvas element reference not found (attempt ${this.retryCount}/${this.maxRetries})`
           );
           if (this.retryCount < this.maxRetries) {
-            setTimeout(() => this.generateChart(), 300);
+            setTimeout(() => this.generateChart(), 500); // Tăng thời gian chờ
           } else {
-            // Nếu đã thử hết số lần, set hasData về false để hiển thị "No data" message
-            this.hasData = false;
-            this.retryCount = 0;
+            // Nếu đã thử hết số lần, reset component
+            this.resetComponent();
           }
           return;
         }
