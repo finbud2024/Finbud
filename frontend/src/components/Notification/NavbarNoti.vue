@@ -9,7 +9,7 @@
       <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
     </div>
 
-    <div v-if="isOpen" class="notification-panel">
+    <div v-if="isOpen" class="notification-panel" ref="notificationPanelRef">
       <div class="notification-header">
         <h3>{{ $t('notifications') }}</h3>
         <button v-if="hasUnread" @click="markAllAsRead" class="mark-all-read">
@@ -17,17 +17,35 @@
         </button>
       </div>
       
+      <div class="notification-filters">
+        <button 
+          class="filter-btn" 
+          :class="{ 'active': currentFilter === 'all' }" 
+          @click="setFilter('all')"
+        >
+          {{ $t('all') || 'All' }}
+        </button>
+        <button 
+          class="filter-btn" 
+          :class="{ 'active': currentFilter === 'unread' }" 
+          @click="setFilter('unread')"
+        >
+          {{ $t('unread') || 'Unread' }} 
+          <span v-if="unreadCount > 0" class="filter-count">{{ unreadCount }}</span>
+        </button>
+      </div>
+      
       <div v-if="loading" class="notification-loading">
         <div class="loading-spinner"></div>
       </div>
       
-      <div v-else-if="notifications.length === 0" class="no-notifications">
-        {{ $t('noNotifications') }}
+      <div v-else-if="filteredNotifications.length === 0" class="no-notifications">
+        {{ currentFilter === 'unread' ? ($t('noUnreadNotifications') || 'No unread notifications') : ($t('noNotifications') || 'No notifications') }}
       </div>
       
       <div v-else class="notification-list">
         <div 
-          v-for="notification in notifications" 
+          v-for="notification in filteredNotifications" 
           :key="notification._id"
           :class="['notification-item', { 'unread': !notification.isRead }]"
           @click="handleNotificationClick(notification)"
@@ -68,7 +86,9 @@ export default {
     const loading = ref(true);
     const isOpen = ref(false);
     const notificationIconRef = ref(null);
+    const notificationPanelRef = ref(null);
     const pollingInterval = ref(null);
+    const currentFilter = ref('all'); // Default filter
     
     const userId = computed(() => {
       return store.getters['users/currentUser']?._id;
@@ -85,6 +105,17 @@ export default {
     const hasUnread = computed(() => {
       return unreadCount.value > 0;
     });
+    
+    const filteredNotifications = computed(() => {
+      if (currentFilter.value === 'unread') {
+        return notifications.value.filter(note => !note.isRead);
+      }
+      return notifications.value;
+    });
+    
+    const setFilter = (filter) => {
+      currentFilter.value = filter;
+    };
     
     const fetchNotifications = async () => {
         if (!isAuthenticated.value || !userId.value) return;
@@ -121,7 +152,6 @@ export default {
           { withCredentials: true }
         );
         
-        // Update local state
         notifications.value = notifications.value.map(note => ({
           ...note,
           isRead: true
@@ -140,15 +170,11 @@ export default {
             { withCredentials: true }
           );
           
-          // Update local state
           notification.isRead = true;
         } catch (error) {
           console.error('Failed to mark notification as read:', error);
         }
       }
-      
-      // You could implement additional logic here to navigate to relevant pages
-      // based on notification type/content
     };
     
     const toggleNotificationPanel = () => {
@@ -168,24 +194,25 @@ export default {
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       
       if (diffDays === 0) {
-        // Today - show time
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       } else if (diffDays === 1) {
-        // Yesterday
         return 'Yesterday';
       } else if (diffDays < 7) {
-        // Within a week
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days[date.getDay()];
       } else {
-        // More than a week
         return date.toLocaleDateString();
       }
     };
     
-    // Close notification panel when clicking outside
     const handleClickOutside = (event) => {
-      if (isOpen.value && notificationIconRef.value && !notificationIconRef.value.contains(event.target)) {
+      if (
+        isOpen.value && 
+        notificationIconRef.value && 
+        !notificationIconRef.value.contains(event.target) &&
+        notificationPanelRef.value &&
+        !notificationPanelRef.value.contains(event.target)
+      ) {
         isOpen.value = false;
       }
     };
@@ -194,12 +221,11 @@ export default {
       if (isAuthenticated.value) {
         fetchNotifications();
         
-        // Setup polling for new notifications every minute
         pollingInterval.value = setInterval(() => {
-          if (!isOpen.value) { // Don't poll if panel is open to avoid interrupting user
+          if (!isOpen.value) {
             fetchNotifications();
           }
-        }, 60000); // 1 minute
+        }, 60000);
       }
       
       document.addEventListener('click', handleClickOutside);
@@ -214,11 +240,15 @@ export default {
     
     return {
       notifications,
+      filteredNotifications,
       loading,
       isOpen,
       unreadCount,
       hasUnread,
       notificationIconRef,
+      notificationPanelRef,
+      currentFilter,
+      setFilter,
       toggleNotificationPanel,
       markAllAsRead,
       handleNotificationClick,
@@ -330,6 +360,42 @@ export default {
 
 .mark-all-read:hover {
   text-decoration: underline;
+}
+
+.notification-filters {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filter-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.filter-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  background-color: var(--accent-color);
+}
+
+.filter-btn:hover {
+  background-color: var(--bg-secondary);
 }
 
 .notification-list {
