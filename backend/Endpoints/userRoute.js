@@ -116,37 +116,57 @@ userRoute.get("/users", isAdmin, async (req, res) => {
 
 // POST: save a new user into database
 userRoute.post("/users", validateRequest(User.schema), async (req, res) => {
-    console.log(req.body);
-    if (!req.body.accountData.username) {
-        console.log(req.body);
-        return res.status(404).send("Unable to save new user to database due to missing username");
+    console.log("Received registration request:", req.body);
+    
+    // Validate required fields
+    if (!req.body.accountData?.username) {
+        return res.status(400).send("Username is required");
     }
-    if (!req.body.accountData.password) {
-        return res.status(404).send("Unable to save new user to database due to missing password");
+    if (!req.body.accountData?.password) {
+        return res.status(400).send("Password is required");
     }
+    if (!req.body.accountData?.username.includes('@')) {
+        return res.status(400).send("Invalid email format");
+    }
+
     try {
-        console.log("in /users route (POST) new user to database");
-        let user = await User.findOne({ "accountData.username": req.body.accountData.username });
-        if (user) { // checking for user availability ---- user existed
-            return res.status(400).send("Username: " + req.body.accountData.username + " already existed in database");
+        console.log("Processing new user registration");
+        
+        // Check if user already exists by email
+        const existingUser = await User.findOne({ email: req.body.accountData.username });
+        if (existingUser) {
+            return res.status(400).send("Email already registered");
         }
-        // user has not been used. Good to add
-        let newUserData = {};
-        if (req.body.accountData) {
-            for (const key in req.body.accountData) {
-                newUserData[`accountData.${key}`] = req.body.accountData[key];
+
+        // Prepare user data
+        const newUserData = {
+            email: req.body.accountData.username, // Store email in top-level field
+            accountData: {
+                username: req.body.accountData.username,
+                password: req.body.accountData.password,
+                priviledge: "user"
             }
-        }
+        };
+
+        // Add identity data if provided
         if (req.body.identityData) {
-            for (const key in req.body.identityData) {
-                newUserData[`identityData.${key}`] = req.body.identityData[key];
-            }
+            newUserData.identityData = req.body.identityData;
         }
-        let newUser = await new User(newUserData).save();
-        return res.status(200).json(newUser);
+
+        // Create and save new user
+        const newUser = await new User(newUserData).save();
+        
+        // Remove sensitive data before sending response
+        const userResponse = newUser.toObject();
+        delete userResponse.accountData.password;
+        
+        return res.status(200).json(userResponse);
     } catch (err) {
-        console.log(err);
-        return res.status(500).send("Unexpected error occurred when saving user to database: " + err);
+        console.error("Registration error:", err);
+        if (err.code === 11000) {
+            return res.status(400).send("Email already registered");
+        }
+        return res.status(500).send("An error occurred during registration");
     }
 });
 
