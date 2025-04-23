@@ -74,9 +74,7 @@ const messages = {
     month: "month",
     year: "year",
 
-    // Results and graphs
-    calculate: "Calculate",
-    finAmount: "Final Amount: ",
+   
     // Results and graphs
     calculate: "Calculate",
     finAmount: "Final Amount: ",

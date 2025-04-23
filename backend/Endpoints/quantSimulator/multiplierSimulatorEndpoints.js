@@ -531,7 +531,7 @@ class TradingSimulator {
         // Update the last update timestamp
         this.lastUpdateTimestamp = Date.now();
         
-        console.log(`Displaying time ${this.current_time.toFixed(1)} min: ${JSON.stringify(this.collection_progress)}, Market Multiplier=${this.current_multiplier}`);
+        // console.log(`Displaying time ${this.current_time.toFixed(1)} min: ${JSON.stringify(this.collection_progress)}, Market Multiplier=${this.current_multiplier}`);
         
         // Calculate the next step time with correction for any processing delay
         const nextStepTime = Math.max(10, stepDuration - (Date.now() % stepDuration));
