@@ -158,6 +158,7 @@ export async function gptNewsService(payload, trendingEvents) {
     );
     throw err;
   }
+}
 // }
 // import axios from "axios";
 // import { OpenAI } from "openai";
