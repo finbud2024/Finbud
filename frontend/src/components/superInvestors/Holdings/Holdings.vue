@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import InvestorStats from '../InvestorStats/InvestorStats.vue';
 import StockHoldings from '../StockHoldings/StockHoldings.vue';
 import { getDistinctQuarters, fetchInvestorData } from '@/services/investorService';

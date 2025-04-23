@@ -655,9 +655,11 @@ class TradingSimulator {
       jsExpr = jsExpr.replace(regex, value);
     }
     
-    // Evaluate the expression safely using eval
+    // Evaluate the expression safely using Function constructor instead of eval
     try {
-      return eval(jsExpr);
+      // Create a new function that returns the result of the expression
+      const func = new Function('Math', `return ${jsExpr};`);
+      return func(Math);
     } catch (error) {
       console.error(`Error evaluating expression: ${jsExpr}`, error);
       return 0;

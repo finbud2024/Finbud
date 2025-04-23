@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 import './StockHolding.css';
 
 const props = defineProps({
