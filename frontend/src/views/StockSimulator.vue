@@ -1,44 +1,44 @@
 <template>
   <div class="dashboard">
     <!-- Combined header section with both dashboard header and chatbot side by side -->
-    <h1>Stock Simulator</h1>
+    <h1>{{ $t('appTitle') }}</h1>
     <nav class="navbar">
       <ul>
         <li
           @click="activeSection = 'investment'"
           :class="{ active: activeSection === 'investment' }"
         >
-          Investment
+        {{ $t(`navigation.investment`) }}
         </li>
         <li
           @click="activeSection = 'portfolio'"
           :class="{ active: activeSection === 'portfolio' }"
         >
-          Your Portfolio
+        {{ $t(`navigation.portfolio`) }}
         </li>
         <li
           @click="activeSection = 'transactionHistory'"
           :class="{ active: activeSection === 'transactionHistory' }"
         >
-          Transaction History
+        {{ $t(`navigation.transactionHistory`) }}
         </li>
         <li
           @click="activeSection = 'filters'"
           :class="{ active: activeSection === 'filters' }"
         >
-          Filters
+        {{ $t(`navigation.filters`) }}
         </li>
         <li
           @click="activeSection = 'quiz'"
           :class="{ active: activeSection === 'quiz' }"
         >
-          Quiz
+        {{ $t(`navigation.quiz`) }}
         </li>
         <li
           @click="activeSection = 'predictiveCalc'"
           :class="{ active: activeSection === 'predictiveCalc' }"
         >
-          Predictive Calculator
+        {{ $t(`navigation.predictiveCalc`) }}
         </li>
       </ul>
     </nav>
@@ -77,31 +77,31 @@
 
       <div class="main-content">
         <section class="key-statistics">
-          <h3>Key Statistics</h3>
+          <h3>{{ $t('investment.keyStatistics') }}</h3>
           <div class="stats-grid">
             <div class="stat">
-              <span class="label">Open: </span>
+              <span class="label">{{ $t('investment.stats.open') }}: </span>
               <span class="value">${{ stockData.open }}</span>
             </div>
             <div class="stat">
-              <span class="label">Prev Close: </span>
+              <span class="label">{{ $t('investment.stats.prevClose') }}: </span>
               <span class="value">${{ stockData.close }}</span>
             </div>
             <div class="stat">
-              <span class="label">52 Week High: </span>
+              <span class="label">{{ $t('investment.stats.week52High') }}: </span>
               <span class="value">${{ stockData.high }}</span>
             </div>
             <div class="stat">
-              <span class="label">52 Week Low: </span>
+              <span class="label">{{ $t('investment.stats.week52Low') }}: </span>
               <span class="value">${{ stockData.low }}</span>
             </div>
             <div class="stat">
-              <span class="label">Market Cap: </span>
+              <span class="label">{{ $t('investment.stats.marketCap') }}: </span>
               <span class="value">${{ stockData.marketCap }}</span>
             </div>
             <div class="stat">
-              <span class="label">Volume: </span>
-              <span class="value">{{ stockData.volume }} shares</span>
+              <span class="label">{{ $t('investment.stats.volume') }}: </span>
+              <span class="value">{{ stockData.volume }} {{ $t('investment.stats.volume') }}</span>
             </div>
           </div>
         </section>
@@ -116,15 +116,22 @@
             />
             <input v-model="quantity" type="number" placeholder="Quantity" />
             <select v-model="action">
-              <option value="buy">Buy</option>
-              <option value="sell">Sell</option>
+              <option value="buy">{{ $t('investment.actionForm.buy') }}</option>
+              <option value="sell">{{ $t('investment.actionForm.sell') }}</option>
             </select>
             <div class="buttons">
-              <button class="clear-btn" @click="clearForm">CLEAR</button>
+              <button class="clear-btn" @click="clearForm">{{ $t('investment.actionForm.clear') }}</button>
               <button class="preview-btn" @click="previewOrder">
-                Preview Order
+                {{ $t('investment.actionForm.preview') }}
               </button>
             </div>
+          </div>
+        </section>
+
+        <section class="transactions">
+          
+          <div class="transaction-form">
+            <TransactionHistory :key="transactionKey" />
           </div>
         </section>
       </div>
@@ -134,23 +141,23 @@
           <div class="account-info-container">
             <div class="account-grid">
               <div class="stat">
-                <span class="label">ACCOUNT BALANCE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.accountBalance`) }}:</span>
                 <span class="value">{{ accountBalance }}</span>
               </div>
               <div class="stat">
-                <span class="label">CASH BALANCE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.cashBalance`) }}:</span>
                 <span class="value">{{ cash }}</span>
               </div>
               <div class="stat">
-                <span class="label">STOCK VALUE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.stockValue`) }}:</span>
                 <span class="value">{{ stockValue }}</span>
               </div>
               <div class="stat">
-                <span class="label">TODAY'S CHANGE:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.todaysChange`) }}:</span>
                 <span class="value">{{ todaysChange }}</span>
               </div>
               <div class="stat">
-                <span class="label">ANNUAL RETURN:</span>
+                <span class="label">{{ $t(`investment.accountPerformance.annualReturn`) }}:</span>
                 <span class="value">{{ annualReturn }}%</span>
               </div>
             </div>
@@ -183,18 +190,6 @@
           </div>
         </section>
 
-        <!-- </div>
-          <div class="chat-bot-container">
-            <div class="chatbot-content">
-              <div v-if="typingComplete" class="chat-message" v-html="formatChatMessage(chatbotMessage)"></div>
-              <div v-else class="chat-message typing">
-                <span v-html="formatChatMessage(partialMessage)"></span>
-                <span class="typing-cursor">|</span>
-              </div>
-            </div>
-            <img v-if="showChatBubble" class="finbudBot" src="../assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble" />
-          </div>
-        </section> -->
 
         <PerformanceChart
           :performanceData="performanceData"
@@ -226,90 +221,42 @@
     <section v-if="activeSection === 'portfolio'" class="portfolio-section">
       <div class="portfolio-container">
         <div class="portfolio-header">
-          <h2>Your Investment Portfolio</h2>
-          <div class="portfolio-actions">
-            <button class="refresh-btn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <polyline points="23 20 23 14 17 14"></polyline>
-                <path
-                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-                ></path>
-                <path
-                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-                ></path>
-              </svg>
-              Refresh
-            </button>
-            <button class="export-btn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Export
-            </button>
-          </div>
+          <h2>{{ activeSection === 'portfolio' ? $t('investmentPortfolio') : 'Your Investment Portfolio' }}</h2>
+          
+          <!-- Add language switcher here -->
         </div>
 
         <div class="portfolio-overview">
           <div class="overview-card total">
-            <div class="overview-title">Total Portfolio Value</div>
-            <div class="overview-value">$24,892.31</div>
-            <div class="overview-change positive">+$3,892.31 (18.5%)</div>
+            <div class="overview-title">{{ $t('totalPortfolioValue') }}</div>
+            <div class="overview-value">${{ formatCurrency(accountBalance) }}</div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">Stocks</div>
-            <div class="overview-value">$16,453.79</div>
-            <div class="overview-change positive">+$2,731.42 (19.9%)</div>
+            <div class="overview-title">{{ $t('stocks') }}</div>
+            <div class="overview-value">${{ formatCurrency(stockValue) }}</div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">Cash</div>
-            <div class="overview-value">$8,438.52</div>
-            <div class="overview-change neutral">+$0.00 (0.0%)</div>
+            <div class="overview-title">{{ $t('cash') }}</div>
+            <div class="overview-value">${{ formatCurrency(cash) }}</div>
           </div>
         </div>
-
-        <div class="portfolio-content">
-          <PortfolioPerformance />
-        </div>
-
+        <PortfolioPerformance :language="$i18n.locale"/>
         <div class="holdings-section">
-          <h3>Your Holdings</h3>
+          <h3>{{ $t('yourHoldings') }}</h3>
           <div class="holdings-table">
             <table>
               <thead>
                 <tr>
-                  <th>Stock Ticker</th>
+                  <th>{{ $t('stockTicker') }}</th>
                   <!-- <th>Company Name</th> -->
-                  <th>Share Quantity</th>
-                  <th>Current Price per Share</th>
-                  <th>Total Purchased Value</th>
-                  <th>Current Market Value</th>
-                  <th>Gain/Loss</th>
-                  <th>% Change</th>
+                  <th>{{ $t('shareQuantity') }}</th>
+                  <th>{{ $t('currentPricePerShare') }}</th>
+                  <th>{{ $t('totalPurchasedValue') }}</th>
+                  <th>{{ $t('currentMarketValue') }}</th>
+                  <th>{{ $t('gainLoss') }}</th>
+                  <th>{{ $t('percentChange') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -387,6 +334,11 @@
               v-html="currentPortfolioTypedMessage"
             ></div>
           </div>
+          <div class="bot-controls" v-if="!isPortfolioTyping && showPortfolioMessage">
+            <button class="refresh-insights" @click="refreshPortfolioInsights">
+              <i class="fas fa-sync-alt"></i> Refresh Insights
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -399,6 +351,7 @@
       :remainingBalance="
         calculateRemainingBalance(action, estimatedPrice, quantity)
       "
+      :isSubmittingOrder="isSubmittingOrder"
       @close="showModal = false"
       @clear-order="clearForm"
       @submit-order="submitOrder(action)"
@@ -418,13 +371,19 @@
         <div v-if="currentQuestion">
           <p>{{ currentQuestion.text }}</p>
           <div class="options">
-            <button v-for="(option, index) in currentQuestion.options" :key="index" @click="handleQuizOption(option)">
+            <button
+              v-for="(option, index) in currentQuestion.options"
+              :key="index"
+              @click="handleQuizOption(option)"
+            >
               {{ option.text }}
             </button>
           </div>
         </div>
         <div v-else>
-          <p>Loading more questions... (Reload if action take more than 1 minute)</p>
+          <p>
+            Loading more questions... (Reload if action take more than 1 minute)
+          </p>
         </div>
       </div>
     </section>
@@ -451,7 +410,6 @@ import axios from "axios";
 import { showReward } from "../utils/utils";
 import { gptServices } from "@/services/gptServices";
 import QuizRewards from "@/components/QuizRewards.vue";
-
 
 export default {
   name: "StockDashboard",
@@ -498,7 +456,7 @@ export default {
       partialMessage: "",
       isThinking: true,
       typingComplete: false,
-      typingSpeed: 30,
+      typingSpeed: 10, // Updated from 30 to 10 (faster)
       showChatBubble: true,
       todaysChange: "+$23.45",
       annualReturn: "12.5",
@@ -511,6 +469,7 @@ export default {
       showChatTransactionBubble: true,
       showingReward: false,
       rewardAmount: 1,
+      isSubmittingOrder: false,
 
       // New Portfolio Bot related data
       showPortfolioBot: false,
@@ -531,7 +490,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 1. Consider diversifying beyond tech to reduce sector risk<br>
 2. Look into dividend-paying stocks to balance growth<br>
 3. Set up regular investment schedule to optimize dollar-cost averaging`,
-      portfolioTypingSpeed: 20, // ms per character
+      portfolioTypingSpeed: 5,
       portfolioWordByWordTyping: true,
       portfolioBotHideTimeout: null,
       userHoldings: [],
@@ -580,42 +539,80 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
       this.headerChatbotMessage = fullMessage; // Store the full message for later
 
-      // Format the message for better readability
-      const lines = [
+      // Create a more natural typing effect
+      const sentences = [
         `Hey ${userName}, here's my quick take on these stock stats:`,
-        `- The Open at $${this.stockData.open} and Prev Close at $${this.stockData.close} show it's starting today just a bit lower than yesterday, pretty stable so far.`,
+        `- The Open at $${this.stockData.open} and Prev Close at $${this.stockData.close} show it's starting today just a tad lower than yesterday—pretty stable so far.`,
         `- The 52 Week High of $${this.stockData.high} and Low of $${this.stockData.low} mean it's near the bottom of its yearly range, but still has room to climb.`,
         `- That Market Cap of $${this.stockData.marketCap} is huge, marking it as a major player, way bigger than smaller stocks.`,
       ];
 
-      // Modified typing logic to create "upward" typing effect
-      // Start with the last line and work backward to create the upward effect
-      let lineIndex = lines.length - 1;
-      let linesTyped = [];
+      let currentSentenceIndex = 0;
+      let currentCharIndex = 0;
+      let displayText = "";
 
-      const typeLine = () => {
-        if (lineIndex >= 0) {
-          // Add the current line to the beginning of our array
-          linesTyped.unshift(lines[lineIndex]);
-
-          // Update the partial message with all currently typed lines
-          this.headerPartialMessage = linesTyped.join("<br>");
-
-          // Move to the previous line (going upward)
-          lineIndex--;
-
-          // Delay before typing the next line
-          this.headerTypingInterval = setTimeout(typeLine, 500);
-        } else {
-          // Typing is complete
+      // Enhanced typing function with variable speeds and occasional pauses
+      const typeCharacter = () => {
+        if (currentSentenceIndex >= sentences.length) {
+          // Typing complete
           this.headerTypingComplete = true;
-          this.headerTypingInterval = null;
+          return;
+        }
+
+        const currentSentence = sentences[currentSentenceIndex];
+
+        if (currentCharIndex < currentSentence.length) {
+          // Add the next character
+          displayText += currentSentence.charAt(currentCharIndex);
+          this.headerPartialMessage = displayText;
+          currentCharIndex++;
+
+          // Determine the next typing delay
+          let nextDelay;
+
+          // Create pauses at punctuation marks for more realistic typing
+          const currentChar = currentSentence.charAt(currentCharIndex - 1);
+          if ([",", ".", "!", "?", ":"].includes(currentChar)) {
+            // Longer pause after punctuation
+            nextDelay = Math.random() * 80 + 60;
+          } else if (currentChar === " ") {
+            // Slight pause between words
+            nextDelay = Math.random() * 40 + 10;
+          } else {
+            // Variable typing speed
+            nextDelay = Math.random() * 15 + 8;
+          }
+
+          // Occasional "thinking" pause (2% chance)
+          if (Math.random() < 0.02) {
+            nextDelay += Math.random() * 120 + 80;
+          }
+
+          this.headerTypingInterval = setTimeout(typeCharacter, nextDelay);
+        } else {
+          // Move to next sentence
+          if (currentSentenceIndex < sentences.length - 1) {
+            displayText += "<br>";
+            this.headerPartialMessage = displayText;
+            currentSentenceIndex++;
+            currentCharIndex = 0;
+
+            // Pause between sentences
+            const betweenSentenceDelay = Math.random() * 150 + 100;
+            this.headerTypingInterval = setTimeout(
+              typeCharacter,
+              betweenSentenceDelay
+            );
+          } else {
+            // All sentences complete
+            this.headerTypingComplete = true;
+          }
         }
       };
-      // Start typing
-      typeLine();
 
-      // Ensure the bot is visible
+      // Start typing with a small initial delay
+      this.headerTypingInterval = setTimeout(typeCharacter, 150);
+
       this.headerBotVisible = true;
     },
     toggleHeaderChatBubble() {
@@ -642,24 +639,88 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           }
 
           this.isThinking = false;
-          let charIndex = 0;
 
+          // Clear any existing typing interval
           if (this.typingInterval) {
             clearInterval(this.typingInterval);
+            this.typingInterval = null;
           }
-          this.typingInterval = setInterval(() => {
-            if (charIndex < message.length) {
-              this.partialMessage += message.charAt(charIndex);
-              charIndex++;
-            } else {
-              clearInterval(this.typingInterval);
-              this.typingInterval = null;
+
+          // Break message into sentences for more natural typing
+          const sentences = message.split(/(?<=[.!?])\s+/);
+          let currentSentenceIndex = 0;
+          let currentCharIndex = 0;
+
+          const typeNextCharacter = () => {
+            if (currentSentenceIndex >= sentences.length) {
+              // All sentences typed
               this.chatbotMessage = message;
               this.typingComplete = true;
+              return;
             }
-          }, this.typingSpeed);
+
+            const currentSentence = sentences[currentSentenceIndex];
+
+            if (currentCharIndex < currentSentence.length) {
+              // Add the next character to the partial message
+              this.partialMessage += currentSentence.charAt(currentCharIndex);
+              currentCharIndex++;
+
+              // Calculate the delay for the next character
+              let nextDelay;
+
+              // Get the character just typed
+              const currentChar = currentSentence.charAt(currentCharIndex - 1);
+
+              // Vary typing speed based on punctuation
+              if ([".", "!", "?"].includes(currentChar)) {
+                // End of sentence
+                nextDelay = Math.random() * 120 + 80;
+              } else if ([",", ":", ";"].includes(currentChar)) {
+                // Mid-sentence break
+                nextDelay = Math.random() * 60 + 40;
+              } else if (currentChar === " ") {
+                // Space between words
+                nextDelay = Math.random() * 30 + 15;
+              } else {
+                // Regular character - variable typing speed
+                nextDelay = Math.random() * 15 + 5;
+              }
+
+              // Occasional "thinking" pause (1% chance)
+              if (Math.random() < 0.01) {
+                nextDelay += Math.random() * 150 + 50;
+              }
+
+              // Occasionally type faster in bursts (15% chance)
+              if (Math.random() < 0.15) {
+                nextDelay *= 0.5;
+              }
+
+              // Numbers often typed slower as people double-check them
+              if (!isNaN(parseInt(currentChar))) {
+                nextDelay *= 0.8; // Make numbers faster (was 1.2)
+              }
+
+              setTimeout(typeNextCharacter, nextDelay);
+            } else {
+              // Move to next sentence
+              currentSentenceIndex++;
+              currentCharIndex = 0;
+
+              // Pause between sentences
+              const betweenSentenceDelay = Math.random() * 150 + 100;
+              setTimeout(typeNextCharacter, betweenSentenceDelay);
+            }
+          };
+
+          // Start typing with an initial delay
+          setTimeout(typeNextCharacter, 150);
         } catch (error) {
           console.log("Error getting message balance", error);
+          this.isThinking = false;
+          this.partialMessage = "Unable to retrieve insights at this time.";
+          this.typingComplete = true;
         }
       });
     },
@@ -729,7 +790,92 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         console.log("Error giving insights", error);
       }
     },
+    async GeneratePortfolioInsights() {
+  try {
+    // Check if there are any holdings to analyze
+    if (!this.userHoldings || this.userHoldings.length === 0) {
+      this.portfolioBotMessage = this.$i18n.locale === 'vi' 
+        ? "Tôi không thấy cổ phiếu nào trong danh mục đầu tư của bạn. Khi bạn mua cổ phiếu đầu tiên, tôi sẽ cung cấp thông tin chi tiết ở đây!"
+        : "I don't see any stocks in your portfolio yet. When you make your first purchase, I'll provide personalized insights here!";
+      return this.portfolioBotMessage;
+    }
+    
+    // Set initial loading message
+    this.portfolioBotMessage = this.$i18n.locale === 'vi'
+      ? "Đang phân tích danh mục đầu tư của bạn..."
+      : "Analyzing your portfolio...";
+    
+    // Format holdings data for the API
+    const portfolioData = this.userHoldings.map(holding => ({
+      symbol: holding.symbol,
+      quantity: holding.quantity,
+      purchasePrice: holding.purchasePrice,
+      currentPrice: holding.currentPrice,
+      percentChange: ((holding.currentPrice - holding.purchasePrice) / holding.purchasePrice * 100).toFixed(2)
+    }));
+    
+    const url = "https://openrouter.ai/api/v1/chat/completions";
+    
+    // Determine language and set appropriate system message and user prompt
+    const isVietnamese = this.$i18n.locale === 'vi';
+    
+    // Define the correct system message and user prompt based on language
+    let systemMessage, userPrompt;
+    
+    if (isVietnamese) {
+      systemMessage = "Bạn là FinBud, một trợ lý đầu tư thân thiện. Hãy phân tích dữ liệu danh mục đầu tư của người dùng và đưa ra những nhận xét cá nhân hóa ngắn gọn. Định dạng phản hồi của bạn bằng Markdown: sử dụng ### cho tiêu đề, **in đậm** để nhấn mạnh, và danh sách đánh số cho các đề xuất. Tập trung vào đa dạng hóa, xu hướng hiệu suất, đánh giá rủi ro và 1-2 đề xuất cải thiện cụ thể. Giữ phân tích của bạn dưới 30 từ và sử dụng giọng điệu hội thoại.";
+      userPrompt = `Phân tích danh mục đầu tư của tôi và đưa ra nhận xét: ${JSON.stringify(portfolioData)}`;
+    } else {
+      systemMessage = "You are FinBud, a friendly investment assistant. Analyze the user's portfolio data and provide concise, personalized insights. Format your response with Markdown: use ### for headings, **bold** for emphasis, and numbered lists for recommendations. Focus on diversification, performance trends, risk assessment, and 1-2 specific improvement suggestions. Keep your analysis under 30 words and use a conversational tone.";
+      userPrompt = `Analyze my investment portfolio and provide insights: ${JSON.stringify(portfolioData)}`;
+    }
+    
+    // Make a single API call in the user's language
+    const response = await axios.post(
+      url,
+      {
+        model: "deepseek/deepseek-chat:free",
+        messages: [
+          {
+            role: "system",
+            content: systemMessage
+          },
+          {
+            role: "user",
+            content: userPrompt
+          }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      }
+    );
 
+    // Process the response
+    if (response && response.data && response.data.choices && response.data.choices[0]) {
+      const insights = response.data.choices[0].message.content;
+      this.portfolioBotMessage = this.formatPortfolioInsights(insights);
+      console.log("Portfolio insights generated successfully");
+      return this.portfolioBotMessage;
+    } else {
+      console.error("Invalid API response format:", response);
+      throw new Error("Invalid API response format");
+    }
+  } catch (error) {
+    console.log("Error generating portfolio insights:", error);
+    
+    // Handle rate limit errors or other issues with simple error messages
+    this.portfolioBotMessage = this.$i18n.locale === 'vi'
+      ? "<h3 class='insight-heading'>Không thể tạo thông tin chi tiết</h3><p class='insight-paragraph'>Tôi đang gặp sự cố khi phân tích danh mục đầu tư của bạn. Điều này có thể do đã đạt đến giới hạn API. Vui lòng thử lại sau.</p>"
+      : "<h3 class='insight-heading'>Unable to Generate Insights</h3><p class='insight-paragraph'>I'm having trouble analyzing your portfolio right now. This may be due to API rate limits. Please try again later.</p>";
+    
+    return this.portfolioBotMessage;
+  }
+},
     handleScroll() {
       if (this.chatbotTriggeredByScroll) return;
 
@@ -831,7 +977,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
     calculateRemainingBalance(action, price, quantity) {
       const total = this.calculateTotal(action, price, quantity);
-      return this.cash - (action === "buy" ? total : -total);
+      const remainingBalance = this.cash - (action === "buy" ? total : -total);
+      return parseFloat(remainingBalance.toFixed(2));
     },
     clearForm() {
       this.stockSymbol = "";
@@ -893,6 +1040,12 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
 
     async submitOrder(action) {
+      if (this.isSubmittingOrder) {
+        return; // Prevent multiple submissions
+      }
+
+      this.isSubmittingOrder = true;
+
       const transactionData = {
         stockSymbol: this.stockSymbol,
         type: action,
@@ -900,7 +1053,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         price: this.estimatedPrice,
         userId: this.fixedUserId,
       };
-
 
       console.log("Submitting order with data:", transactionData);
 
@@ -910,7 +1062,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           transactionData
         );
         console.log("Order response:", response);
-        
+
         toast.success("Order submitted successfully", { autoClose: 1000 });
         this.showModal = false;
         this.fetchBankingAccountBalance();
@@ -932,14 +1084,19 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         this.showModal = false;
         console.error("Error submitting order:", error);
         console.error("Error details:", error.response?.data);
-        
+
         // Toast error but don't show it for quiz flow - we handle that in the caller
         if (!this.currentQuestion) {
-          toast.error(`Order failed: ${error.response?.data || "Unknown error"}`, { autoClose: 2000 });
+          toast.error(
+            `Order failed: ${error.response?.data || "Unknown error"}`,
+            { autoClose: 2000 }
+          );
         }
-        
+
         // Re-throw the error so the caller can handle it specifically for quiz flow
         throw error;
+      } finally {
+        this.isSubmittingOrder = false;
       }
     },
     async fetchBankingAccountBalance() {
@@ -992,29 +1149,165 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           } else {
             this.startPortfolioCharacterByCharacterTyping();
           }
-        }, 1000);
+        }, 300); // Faster (was 1000)
 
         this.scheduleHidePortfolioBot();
-      }, 500);
+      }, 200); // Faster (was 500)
     },
 
     startPortfolioWordByWordTyping() {
       this.currentPortfolioTypedMessage = "";
-      const words = this.portfolioBotMessage.split(" ");
+      const words = this.portfolioBotMessage.split(/\s+/);
       let wordIndex = 0;
+      let isBackspacing = false;
+      let mistakeWordIndex = -1;
+
+      // Randomly select 1-2 positions where we'll simulate a "mistake"
+      const mistakePositions = [];
+      if (words.length > 10) {
+        // Only add mistakes if the message is long enough
+        const numMistakes = Math.floor(Math.random() * 2) + 1; // 1 or 2 mistakes
+        for (let i = 0; i < numMistakes; i++) {
+          // Avoid first few words and last few words
+          const pos = Math.floor(Math.random() * (words.length - 6)) + 3;
+          if (!mistakePositions.includes(pos)) {
+            mistakePositions.push(pos);
+          }
+        }
+      }
 
       const typeNextWord = () => {
+        // Handle backspacing (simulating error correction)
+        if (isBackspacing) {
+          // Remove the last character
+          this.currentPortfolioTypedMessage =
+            this.currentPortfolioTypedMessage.slice(0, -1);
+
+          // If we've backspaced enough characters
+          if (
+            !this.currentPortfolioTypedMessage.endsWith(
+              words[wordIndex - 1] + " "
+            )
+          ) {
+            isBackspacing = false;
+            // Short pause after backspacing before starting to type the correct word
+            setTimeout(typeNextWord, Math.random() * 100 + 80);
+          } else {
+            // Continue backspacing
+            setTimeout(typeNextWord, Math.random() * 15 + 10);
+          }
+          return;
+        }
+
         if (wordIndex < words.length) {
-          this.currentPortfolioTypedMessage += words[wordIndex] + " ";
+          let word = words[wordIndex];
+          const nextWord =
+            wordIndex + 1 < words.length ? words[wordIndex + 1] : "";
+
+          // Check if we should simulate a typing mistake
+          if (mistakePositions.includes(wordIndex) && word.length > 3) {
+            // Create a "mistake" version of the word (swap or add a character)
+            const mistakeType = Math.random();
+            let mistakeWord;
+
+            if (mistakeType < 0.5 && word.length > 3) {
+              // Swap two adjacent characters
+              const pos = Math.floor(Math.random() * (word.length - 2)) + 1;
+              mistakeWord =
+                word.substring(0, pos) +
+                word.charAt(pos + 1) +
+                word.charAt(pos) +
+                word.substring(pos + 2);
+            } else {
+              // Add an extra character
+              const pos = Math.floor(Math.random() * word.length);
+              const extraChar = "aeiourstln"[Math.floor(Math.random() * 10)];
+              mistakeWord =
+                word.substring(0, pos) + extraChar + word.substring(pos);
+            }
+
+            // Use the mistake word instead
+            word = mistakeWord;
+            mistakeWordIndex = wordIndex;
+          }
+
+          // Add the word to the message
+          this.currentPortfolioTypedMessage += word + " ";
           wordIndex++;
-          const delay = Math.random() * 100 + 50;
+
+          // Determine next delay based on various factors
+          let delay;
+
+          // If we just typed a mistake word, we'll need to backspace after a short pause
+          if (wordIndex - 1 === mistakeWordIndex) {
+            delay = Math.random() * 150 + 150; // Pause before noticing the "mistake"
+            isBackspacing = true;
+            mistakeWordIndex = -1; // Reset so we don't try to correct it again
+          } else {
+            // Normal word typing
+            // Longer words should take proportionally longer to type
+            const baseDelay = Math.random() * 30 + 40;
+
+            // Add pauses at punctuation or line breaks
+            const lastChar = word.charAt(word.length - 1);
+            if ([".", "!", "?"].includes(lastChar)) {
+              // End of sentence pause
+              delay = baseDelay + Math.random() * 120 + 80;
+            } else if ([",", ":", ";"].includes(lastChar)) {
+              // Mid-sentence punctuation pause
+              delay = baseDelay + Math.random() * 60 + 50;
+            } else if (word.includes("<br>") || word.includes("</")) {
+              // Line break or HTML tag pause
+              delay = baseDelay + Math.random() * 80 + 60;
+            } else if (word.startsWith("<")) {
+              // Beginning of HTML tag, type faster
+              delay = baseDelay * 0.4;
+            } else {
+              // Regular word
+              delay = baseDelay;
+            }
+
+            // Occasional "thinking" pause (2% chance)
+            if (
+              Math.random() < 0.02 &&
+              ![".", ",", ";", ":"].includes(lastChar)
+            ) {
+              delay += Math.random() * 150 + 80;
+            }
+
+            // Type common short words faster
+            if (
+              [
+                "a",
+                "an",
+                "the",
+                "of",
+                "to",
+                "in",
+                "is",
+                "and",
+                "or",
+                "with",
+              ].includes(word.toLowerCase())
+            ) {
+              delay *= 0.6;
+            }
+
+            // Handle numbers differently
+            if (!isNaN(parseFloat(word))) {
+              // Numbers often take longer to type as people check them
+              delay *= 1.3;
+            }
+          }
+
           setTimeout(typeNextWord, delay);
         } else {
           this.isPortfolioTyping = false;
         }
       };
 
-      typeNextWord();
+      // Start typing after a short initial delay
+      setTimeout(typeNextWord, 400);
     },
 
     startPortfolioCharacterByCharacterTyping() {
@@ -1026,13 +1319,58 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           this.currentPortfolioTypedMessage +=
             this.portfolioBotMessage.charAt(charIndex);
           charIndex++;
-          setTimeout(typeNextChar, this.portfolioTypingSpeed);
+
+          // Determine the next typing delay based on the current character
+          let nextDelay;
+
+          // Current character (the one we just added)
+          const currentChar = this.portfolioBotMessage.charAt(charIndex - 1);
+
+          // Create natural pauses at punctuation marks
+          if ([".", "!", "?"].includes(currentChar)) {
+            // Longer pause after end of sentences
+            nextDelay = Math.random() * 100 + 60;
+          } else if ([",", ":", ";", "-"].includes(currentChar)) {
+            // Medium pause after commas and other mid-sentence punctuation
+            nextDelay = Math.random() * 50 + 30;
+          } else if (currentChar === " ") {
+            // Brief pause between words
+            nextDelay = Math.random() * 20 + 10;
+          } else if (
+            currentChar === "<" &&
+            this.portfolioBotMessage.substring(charIndex - 4, charIndex) ===
+              "<br>"
+          ) {
+            // Pause at line breaks
+            nextDelay = Math.random() * 80 + 60;
+          } else {
+            // Variable typing speed for normal characters
+            nextDelay = Math.random() * 8 + 4;
+          }
+
+          // Occasional "thinking" pause (1% chance)
+          if (Math.random() < 0.01) {
+            nextDelay += Math.random() * 100 + 50;
+          }
+
+          // If typing a number, go a bit faster
+          if (!isNaN(parseInt(currentChar))) {
+            nextDelay *= 0.6;
+          }
+
+          // Bursty typing - occasionally type a few characters very quickly
+          if (Math.random() < 0.15) {
+            nextDelay *= 0.4;
+          }
+
+          setTimeout(typeNextChar, nextDelay);
         } else {
           this.isPortfolioTyping = false;
         }
       };
 
-      typeNextChar();
+      // Start with a small initial delay
+      setTimeout(typeNextChar, 150);
     },
 
     scheduleHidePortfolioBot() {
@@ -1089,7 +1427,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         setTimeout(() => {
           this.showPortfolioMessage = false;
           this.hidingPortfolioMessage = false;
-        }, 500);
+        }, 250); // Faster (was 500)
       } else {
         this.hidingPortfolioMessage = false;
         this.showPortfolioMessage = true;
@@ -1103,7 +1441,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             } else {
               this.startPortfolioCharacterByCharacterTyping();
             }
-          }, 500);
+          }, 250); // Faster (was 500)
         } else {
           this.isPortfolioTyping = false;
         }
@@ -1128,10 +1466,12 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             purchasePrice: holding.purchasePrice,
             currentPrice:
               holding.currentPrice ||
-              holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)), // Temporary: use current price or generate one with random variation
+              holding.purchasePrice * (1 + (Math.random() * 0.4 - 0.1)),
           }));
 
           this.updateCurrentPrices();
+          
+          // Don't show the bot message yet - GeneratePortfolioInsights will be called separately
         } else {
           this.userHoldings = [];
         }
@@ -1215,32 +1555,44 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       return `${prefix}${Math.abs(value).toFixed(1)}%`;
     },
 
+    formatCurrency(value) {
+      if (!value && value !== 0) return '0.00';
+      return parseFloat(value).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    },
+
     async generateTradingQuestions() {
-      console.log("Generating trading questions..."); 
+      console.log("Generating trading questions...");
       try {
         // First, ensure we have the latest user data
         await this.fetchBankingAccountBalance();
         await this.fetchUserHoldings();
-        
+
         // Create a summary of user's financial situation
         const userFinancialSummary = {
           cash: this.cash,
           stockValue: this.stockValue,
           totalBalance: this.accountBalance,
-          holdings: this.userHoldings.map(h => ({
+          holdings: this.userHoldings.map((h) => ({
             symbol: h.symbol,
             quantity: h.quantity,
-            currentPrice: h.currentPrice
-          }))
+            currentPrice: h.currentPrice,
+          })),
         };
-        
-        console.log("User financial data for quiz generation:", userFinancialSummary);
-        
+
+        console.log(
+          "User financial data for quiz generation:",
+          userFinancialSummary
+        );
+
         // Create a prompt that includes the user's financial data
         const response = await gptServices([
           {
             role: "system",
-            content: "You are a financial assistant generating quiz questions. Use actual S&P 500 company names and tickers in your scenarios."
+            content:
+              "You are a financial assistant generating quiz questions. Use actual S&P 500 company names and tickers in your scenarios.",
           },
           {
             role: "user",
@@ -1248,9 +1600,14 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
                     USER'S FINANCIAL INFORMATION:
                     Available Cash: $${this.cash.toFixed(2)}
-                    Stock Holdings: ${JSON.stringify(this.userHoldings.map(h => 
-                      `${h.quantity} shares of ${h.symbol} at $${h.currentPrice.toFixed(2)} per share`
-                    ))}
+                    Stock Holdings: ${JSON.stringify(
+                      this.userHoldings.map(
+                        (h) =>
+                          `${h.quantity} shares of ${
+                            h.symbol
+                          } at $${h.currentPrice.toFixed(2)} per share`
+                      )
+                    )}
 
                     IMPORTANT GUIDELINES:
                     - For BUY options, suggest amounts the user can afford. The maximum single purchase should be no more than 80% of available cash.
@@ -1277,14 +1634,16 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         ]);
 
         console.log("API Response:", response);
-        
+
         // Parse the text response
-        if (response && typeof response === 'string') {
-          const questionBlocks = response.split(/Question: /).filter(block => block.trim());
-          const parsedQuestions = questionBlocks.map(block => {
+        if (response && typeof response === "string") {
+          const questionBlocks = response
+            .split(/Question: /)
+            .filter((block) => block.trim());
+          const parsedQuestions = questionBlocks.map((block) => {
             // Extract the question text (everything before the first option)
             const questionText = block.split(/\nA\./)[0].trim();
-            
+
             // Extract all options
             const optionsRegex = /([A-E])\. ([^\n]+)/g;
             const options = [];
@@ -1292,33 +1651,33 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
             while ((match = optionsRegex.exec(block)) !== null) {
               const letter = match[1];
               const text = match[2].trim();
-              
+
               // Determine action and amount based on option text
-              let action = 'none';
+              let action = "none";
               let amount = 0;
-              
-              if (text.toLowerCase().includes('buy')) {
-                action = 'buy';
+
+              if (text.toLowerCase().includes("buy")) {
+                action = "buy";
                 const amountMatch = text.match(/\d+/);
                 amount = amountMatch ? parseInt(amountMatch[0]) : 0;
-              } else if (text.toLowerCase().includes('sell')) {
-                action = 'sell';
+              } else if (text.toLowerCase().includes("sell")) {
+                action = "sell";
                 const amountMatch = text.match(/\d+/);
                 amount = amountMatch ? parseInt(amountMatch[0]) : 0;
               }
-              
+
               options.push({ text, action, amount });
             }
-            
+
             return {
               text: questionText,
-              options: options
+              options: options,
             };
           });
-          
+
           this.questions = parsedQuestions;
           console.log("Questions generated:", this.questions);
-          
+
           if (this.questions.length > 0) {
             this.currentQuestion = this.questions[0];
           } else {
@@ -1334,7 +1693,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
               amount: option.amount,
             })),
           }));
-          
+
           if (this.questions.length > 0) {
             this.currentQuestion = this.questions[0];
           }
@@ -1351,53 +1710,71 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           // Extract stock symbol from the question (e.g., "AAPL")
           const symbolMatch = this.currentQuestion.text.match(/\(([A-Z]+)\)/);
           const stockSymbol = symbolMatch ? symbolMatch[1] : "AAPL"; // Default to AAPL if no symbol found
-          
+
           // Save values to component data
           this.stockSymbol = stockSymbol;
           this.quantity = option.amount || 1; // Ensure quantity is not 0
           this.action = option.action;
-          
+
           // Fetch the current price for this stock
           const success = await this.updateEstimatedPrice(stockSymbol);
-          
+
           if (success) {
             // Now try to submit the real order through the API
             try {
               await this.submitOrder(option.action);
               // If successful, the transaction will appear in history automatically
-              toast.success(`Successfully ${option.action === 'buy' ? 'bought' : 'sold'} ${this.quantity} shares of ${stockSymbol}`, { autoClose: 2000 });
+              toast.success(
+                `Successfully ${option.action === "buy" ? "bought" : "sold"} ${
+                  this.quantity
+                } shares of ${stockSymbol}`,
+                { autoClose: 2000 }
+              );
             } catch (error) {
               console.log("Quiz trade API error:", error);
-              
+
               // Handle specific error cases with user-friendly messages
               if (error.response?.data?.includes("Insufficient cash")) {
-                toast.warning(`You don't have enough cash to buy ${this.quantity} shares of ${stockSymbol}. The quiz will continue.`, { autoClose: 3000 });
-              } 
-              else if (error.response?.data?.includes("Not enough stock")) {
-                toast.warning(`You don't own enough shares of ${stockSymbol} to sell. The quiz will continue.`, { autoClose: 3000 });
-              }
-              else {
-                toast.warning(`Couldn't execute this trade: ${error.response?.data || error.message}. The quiz will continue.`, { autoClose: 3000 });
+                toast.warning(
+                  `You don't have enough cash to buy ${this.quantity} shares of ${stockSymbol}. The quiz will continue.`,
+                  { autoClose: 3000 }
+                );
+              } else if (error.response?.data?.includes("Not enough stock")) {
+                toast.warning(
+                  `You don't own enough shares of ${stockSymbol} to sell. The quiz will continue.`,
+                  { autoClose: 3000 }
+                );
+              } else {
+                toast.warning(
+                  `Couldn't execute this trade: ${
+                    error.response?.data || error.message
+                  }. The quiz will continue.`,
+                  { autoClose: 3000 }
+                );
               }
             }
           } else {
             console.error("Could not get price for", stockSymbol);
-            toast.error(`Could not get current price for ${stockSymbol}`, { autoClose: 1000 });
+            toast.error(`Could not get current price for ${stockSymbol}`, {
+              autoClose: 1000,
+            });
           }
         } catch (error) {
           console.error("Error processing quiz option:", error);
         }
       } else {
         // For "do nothing" options, show a message
-        toast.info("You chose to take no action for this scenario", { autoClose: 1500 });
+        toast.info("You chose to take no action for this scenario", {
+          autoClose: 1500,
+        });
       }
-      
+
       // Move to next question regardless of outcome
       this.nextQuestion();
     },
     updateBalances(option) {
       if (option.action === "none") return;
-      
+
       const total = option.amount * this.estimatedPrice;
       if (option.action === "buy") {
         // Simulate purchase
@@ -1408,7 +1785,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         this.cash += total;
         this.stockValue -= total;
       }
-      
+
       // Update total balance
       this.accountBalance = this.cash + this.stockValue;
     },
@@ -1419,6 +1796,79 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       } else {
         this.currentQuestion = null;
         console.log("No more questions available.");
+      }
+    },
+    async refreshPortfolioInsights() {
+      // Show loading state
+      this.isPortfolioTyping = true;
+      this.currentPortfolioTypedMessage = "";
+      this.portfolioBotMessage = "Refreshing your portfolio insights...";
+      
+      // Wait a moment to show the loading message
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Generate new insights
+      await this.GeneratePortfolioInsights();
+      
+      // Display new insights
+      if (this.portfolioWordByWordTyping) {
+        this.startPortfolioWordByWordTyping();
+      } else {
+        this.startPortfolioCharacterByCharacterTyping();
+      }
+    },
+    formatPortfolioInsights(text) {
+      if (!text) return '';
+      
+      // Format headings (### Heading)
+      text = text.replace(/### (.*?)(?:\n|$)/g, '<h3 class="insight-heading">$1</h3>');
+      
+      // Format bold text (**text**)
+      text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="highlight">$1</strong>');
+      
+      // Format numbered lists (1. Item)
+      text = text.replace(/(\d+)\. (.*?)(?:\n|$)/g, '<div class="insight-item"><span class="insight-number">$1.</span> $2</div>');
+      
+      // Add paragraph styling
+      const paragraphs = text.split('\n\n');
+      return paragraphs.map(p => {
+        if (!p.includes('insight-item') && !p.includes('insight-heading')) {
+          return `<p class="insight-paragraph">${p}</p>`;
+        }
+        return p;
+      }).join('');
+    },
+    switchLanguage(lang) {
+ 
+      if (this.$i18n.locale !== lang) {
+     
+        this.$i18n.locale = lang;
+        
+        
+        if (this.activeSection === 'portfolio' && this.userHoldings && this.userHoldings.length > 0) {
+          
+          this.isPortfolioTyping = true;
+          this.currentPortfolioTypedMessage = "";
+          this.portfolioBotMessage = this.$i18n.locale === 'vi' 
+            ? "Đang cập nhật phân tích..."
+            : "Updating analysis...";
+          
+          
+          this.currentPortfolioTypedMessage = this.portfolioBotMessage;
+          
+        
+          setTimeout(async () => {
+          
+            await this.GeneratePortfolioInsights();
+            
+          
+            if (this.portfolioWordByWordTyping) {
+              this.startPortfolioWordByWordTyping();
+            } else {
+              this.startPortfolioCharacterByCharacterTyping();
+            }
+          }, 500);
+        }
       }
     },
   },
@@ -1453,61 +1903,68 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       }
     },
     activeSection: {
-      handler(newSection) {
+      async handler(newSection, oldSection) {
         console.log("Active section changed to:", newSection);
 
         // Clear any existing timers to prevent conflicts
         if (this.portfolioBotHideTimeout) {
           clearTimeout(this.portfolioBotHideTimeout);
         }
-        
+
         if (newSection === "portfolio") {
           console.log("Portfolio section activated");
 
           // Reset bot states to ensure it can appear
           this.showPortfolioBot = false;
           this.hidingPortfolioBot = false;
-          this.showPortfolioMessage = false; // <-- Reset message state
-          this.hidingPortfolioMessage = false; // <-- Reset message state
-          this.portfolioMessageManuallyToggled = false; // <-- Reset toggle state
+          this.showPortfolioMessage = false;
+          this.hidingPortfolioMessage = false;
+          this.portfolioMessageManuallyToggled = false;
 
-          // Force show the bot with a slight delay
+          // Fetch holdings first to load data
+          await this.fetchUserHoldings();
+          
+          // Now show the bot (but not the message yet)
           setTimeout(() => {
             console.log("Showing portfolio bot now");
             this.showPortfolioBot = true;
             this.hidingPortfolioBot = false;
-
-            setTimeout(() => {
-              this.showPortfolioMessage = true;
-              this.hidingPortfolioMessage = false;
-              this.isPortfolioTyping = true;
-
-              // Start typing animation
-              setTimeout(() => {
-                if (this.portfolioWordByWordTyping) {
-                  this.startPortfolioWordByWordTyping();
-                } else {
-                  this.startPortfolioCharacterByCharacterTyping();
-                }
-              }, 500);
-            }, 300);
+            
+            // Generate insights and only show message when complete
+            this.isPortfolioTyping = true;
+            
+            // First show the bot with "thinking" animation
+            this.showPortfolioMessage = true;
+            this.hidingPortfolioMessage = false;
+            
+            // Now generate insights
+            this.GeneratePortfolioInsights().then(() => {
+              // After insights are generated, start typing animation
+              if (this.portfolioWordByWordTyping) {
+                this.startPortfolioWordByWordTyping();
+              } else {
+                this.startPortfolioCharacterByCharacterTyping();
+              }
+            });
           }, 500);
-
-          console.log("Fetching user holdings...");
-          this.fetchUserHoldings();
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
         } else if (newSection === 'quiz') {
-        this.generateTradingQuestions(); // Call method when quiz section is activated
+          this.generateTradingQuestions();
+        }
+
+        // Add this to reset language to English when leaving Portfolio section
+        if (oldSection === 'portfolio' && newSection !== 'portfolio') {
+          this.$i18n.locale = 'en';
         }
       },
-      immediate: true, // Make it run immediately on component creation
+      immediate: true,
     },
   },
   async mounted() {
     setTimeout(() => {
       this.startHeaderTypingEffect();
-    }, 500);
+    }, 200); // Faster initial delay (was 500)
 
     this.startTypingEffect();
 
@@ -1547,7 +2004,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         if (previewButton) {
           previewButton.click();
         }
-      }, 1000);
+      }, 500); // Faster click (was 1000)
     }
     this.fetchBankingAccountBalance();
     this.fetchTransactions();
@@ -1568,16 +2025,20 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       setTimeout(() => {
         console.log("Portfolio is initial section, showing bot");
         this.startPortfolioBotAnimation();
-      }, 1000);
+      }, 500); // Faster (was 1000)
     }
 
     // Ensure the method is called when the component is mounted
-    if (this.activeSection === 'quiz') {
+    if (this.activeSection === "quiz") {
       this.generateTradingQuestions();
     }
   },
   beforeUnmount() {
     // Clean up all event listeners
+    if (this.chart) {
+    this.chart.remove();
+    this.chart = null;
+  }
     window.removeEventListener("resize", this.adjustChartHeight);
     window.removeEventListener("scroll", this.handleScroll);
     if (this.headerTypingInterval) {
@@ -1795,6 +2256,27 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
 .key-statistics h3,
 .actions h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #007bff;
+  font-size: 1.5rem;
+}
+.transactions {
+  width: calc(100% - 10px); 
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 600px; /* Set fixed height instead of min-height for better alignment */
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.key-statistics h3,
+.transactions h3 {
   margin-top: 0;
   margin-bottom: 20px;
   color: #007bff;
@@ -2213,7 +2695,6 @@ h1 {
 .options button:hover {
   background: var(--hover-bg);
   transform: translateY(-2px);
-  
 }
 
 .options button:active {
@@ -2401,6 +2882,8 @@ h1 {
   transform: scale(0.8) translateY(10px);
   transition: opacity 0.7s ease, transform 0.7s ease;
   transition-delay: 0.3s;
+  font-size: 0.85rem;
+  line-height: 1; 
 }
 
 .bot-message.message-visible {
@@ -2488,5 +2971,111 @@ h1 {
 
 .error-message {
   color: #dc3545;
+}
+
+.bot-controls {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.refresh-insights {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.refresh-insights:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Add these to your existing styles */
+
+.typed-message {
+  line-height: 1.4;
+}
+
+.insight-heading {
+  margin: 8px 0 4px;
+  color: #ffffff;
+  font-size: 0.95rem; /* Reduced from 1rem */
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 2px;
+}
+
+.insight-item {
+  margin: 5px 0;
+  padding-left: 18px;
+  position: relative;
+}
+
+.insight-number {
+  position: absolute;
+  left: 0;
+  font-weight: 600;
+}
+
+.highlight {
+  color: #ffeb3b;
+  font-weight: 600;
+}
+
+.insight-paragraph {
+  margin: 8px 0;
+}
+
+/* Fix v-html styling issue by targeting the container */
+.bot-message :deep(.insight-heading),
+.bot-message :deep(.insight-item),
+.bot-message :deep(.insight-number),
+.bot-message :deep(.highlight),
+.bot-message :deep(.insight-paragraph) {
+  color: inherit;
+}
+
+.bot-message :deep(.highlight) {
+  color: #ffeb3b;
+}
+
+/* Add at the appropriate location in your CSS */
+.portfolio-language-switcher {
+  display: flex;
+  gap: 10px;
+}
+
+.portfolio-language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.portfolio-language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.portfolio-language-switcher button:hover img {
+  transform: scale(1.1);
+}
+
+.portfolio-language-switcher button.active img {
+  border-color: #007bff;
+}
+
+/* Update portfolio header to accommodate language switcher */
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 </style>

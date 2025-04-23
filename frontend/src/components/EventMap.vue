@@ -22,7 +22,7 @@
     </div>
 
     <div class="event-list">
-      <h2>Upcoming Events</h2>
+      <h2>{{ $t('eventHub.eventMap.upcomingEvents') }}</h2>
 
       <div v-for="event in events" 
            :key="event._id" 
@@ -33,9 +33,9 @@
         <img :src="event.image" alt="Event Image" class="event-image" />
         <div class="event-details">
           <h3>{{ event.name }}</h3>
-          <p><strong>Date:</strong> {{ formatDate(event.date) }}</p>
-          <p><strong>Host:</strong> {{ event.host }}</p>
-          <p><strong>Location:</strong> {{ event.location }}</p>
+          <p><strong>{{ $t('eventHub.eventMap.date') }}:</strong> {{ formatDate(event.date) }}</p>
+          <p><strong>{{ $t('eventHub.eventMap.host') }}:</strong> {{ event.host }}</p>
+          <p><strong>{{ $t('eventHub.eventMap.location') }}:</strong> {{ event.location }}</p>
           <!-- <p><strong>Price:</strong> {{ event.price }}</p> -->
         </div>
       </div>
@@ -48,6 +48,7 @@ import { defineComponent, ref, onMounted, nextTick } from "vue";
 // import { GMapMap, GMapMarker } from "@fawmi/vue-google-maps";
 import { Map, Marker } from '@fawmi/vue-google-maps';
 import axios from "axios";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "EventMap",
@@ -60,6 +61,7 @@ export default defineComponent({
     const mapZoom = ref(2);
     const highlightedEventId = ref(null);
     const eventRefs = ref({});
+    const { t, locale } = useI18n();
 
     const fetchEvents = async () => {
       try {
@@ -129,7 +131,16 @@ export default defineComponent({
     };
 
     const formatDate = (date) => {
-      return date ? new Date(date).toLocaleDateString("en-US", { weekday: "short", month: "long", day: "numeric", year: "numeric" }) : "TBA";
+      if (!date) return t('eventHub.eventMap.tba')
+      
+      const options = {
+        weekday: "short",
+        month: "long", 
+        day: "numeric",
+        year: "numeric"
+      }
+      
+      return new Date(date).toLocaleDateString(locale.value, options)
     };
 
     onMounted(fetchEvents);
@@ -161,6 +172,10 @@ export default defineComponent({
   padding: 20px;
   overflow-y: auto;
   max-height: 600px;
+}
+
+.event-list h2 {
+  color: var(--text-primary);
 }
 
 .map-container {

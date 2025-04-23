@@ -1,30 +1,43 @@
 <template>
   <div class="home-container">
-    <div v-if="overlayEnabled" class="overlay"/>
+    <div v-if="overlayEnabled" class="overlay" />
     <div v-if="this.isAuthenticated" class="sidebar-container">
-      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars"/>
-      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar"/>
-      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName"/>
+      <font-awesome-icon
+        class="toggle-sidebar-btn"
+        @click="toggleSidebar"
+        icon="fa-solid fa-bars"
+      />
+      <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar" />
+      <SideBar
+        :class="{ 'is-visible': isSidebarVisible }"
+        :initialThreadName="newThreadName"
+      />
     </div>
-    <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent"/>
-    <div class="guidance-btn" id="tutorial-guidance-button" :class="{ 'is-guidance-visible': showGuidance }" @click="showGuidance = true">
+    <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent" />
+    <div
+      class="guidance-btn"
+      id="tutorial-guidance-button"
+      :class="{ 'is-guidance-visible': showGuidance }"
+      @click="showGuidance = true"
+    >
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
-      <span class="guidance-text">Guidance</span>
+      <span class="guidance-text">{{ $t('chatComponent.guildence') }}</span>
     </div>
-    <GuidanceModal  
-      v-if="showGuidance" 
-      @close="showGuidance = false" 
+    <GuidanceModal
+      v-if="showGuidance"
+      @close="showGuidance = false"
       @sendMessage="sendMessageToChat"
-      :showModal="showGuidance" 
+      :showModal="showGuidance"
     />
-    <TutorialOverlay 
-      :steps="tutorialSteps" 
-      storageKey="finbudChatViewTutorialShown" 
+    <TutorialOverlay
+      :steps="tutorialSteps"
+      storageKey="finbudChatViewTutorialShown"
       :autoStart="true"
-      @tutorial-completed="onTutorialCompleted" 
-      ref="tutorialOverlay" />
+      @tutorial-completed="onTutorialCompleted"
+      ref="tutorialOverlay"
+    />
   </div>
 </template>
 
@@ -38,14 +51,14 @@ import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 
 export default {
   name: "ChatView",
-  props:{
-    chatBubbleThreadID: String
+  props: {
+    chatBubbleThreadID: String,
   },
   components: {
     ChatComponent,
     SideBar,
     GuidanceModal,
-    TutorialOverlay
+    TutorialOverlay,
   },
   data() {
     return {
@@ -62,11 +75,11 @@ export default {
       newThreadName: "",
       tutorialSteps: [
         {
-          element: '#tutorial-guidance-button',
+          element: "#tutorial-guidance-button",
           message: "Click here for guidance on how to ask questions to FinBud!",
-          title: "Need help with queries?"
-        }
-      ]
+          title: "Need help with queries?",
+        },
+      ],
     };
   },
   computed: {
@@ -77,10 +90,13 @@ export default {
       return this.$store.getters["users/userDisplayName"];
     },
     userAvatar() {
-      return this.$store.getters["users/userProfileImage"] || require("@/assets/anonymous.png");
+      return (
+        this.$store.getters["users/userProfileImage"] ||
+        require("@/assets/anonymous.png")
+      );
     },
     threadID() {
-      return this.$store.getters['threads/getThreadID'];
+      return this.$store.getters["threads/getThreadID"];
     },
   },
   methods: {
@@ -131,7 +147,7 @@ export default {
       this.overlayEnabled = false;
       this.newWindow = null;
     },
-    initialThreadName(newThreadName){
+    initialThreadName(newThreadName) {
       this.newThreadName = newThreadName;
     },
     sendMessageToChat(message) {
@@ -146,13 +162,17 @@ export default {
       if (this.$refs.tutorialOverlay) {
         this.$refs.tutorialOverlay.resetTutorial();
       }
-    }
+    },
   },
   async mounted() {
-    setInterval(() => {this.currentTime = new Date().toLocaleTimeString();}, 500);
+    setInterval(() => {
+      this.currentTime = new Date().toLocaleTimeString();
+    }, 500);
     const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
-    document.querySelector(".home-container").style.height = `calc(100vh - ${navbarHeight}px)`;
-    
+    document.querySelector(
+      ".home-container"
+    ).style.height = `calc(100vh - ${navbarHeight}px)`;
+
     // Check if we've been redirected from Home page and show tutorial
     if (this.$route.query.showTutorial) {
       // A small delay to ensure the page is fully loaded
@@ -245,6 +265,7 @@ export default {
 .side-bar.is-visible {
   transform: translateX(0);
 }
+
 /*______________________*/
 /* Guidance CSS class*/
 
@@ -260,14 +281,16 @@ export default {
   cursor: pointer;
   transition: transform 0.3s ease, right 0.3s ease, z-index 0.3s ease;
   display: flex;
-  z-index: 999; /* Default z-index */
+  z-index: 999;
+  /* Default z-index */
 }
 
 /* Make button visible during tutorial with higher z-index */
 .guidance-btn.tutorial-active {
   transform: translateX(-100px) !important;
   right: -105px !important;
-  z-index: 10001 !important; /* Higher z-index during tutorial */
+  z-index: 10001 !important;
+  /* Higher z-index during tutorial */
 }
 
 .guidance-btn:hover {
@@ -276,7 +299,8 @@ export default {
 
 .is-guidance-visible {
   right: calc(50% + 19px - 80px);
-  z-index: 999; /* Normal z-index when visible */
+  z-index: 999;
+  /* Normal z-index when visible */
 }
 
 /* Make the guidance button always visible during tutorial */
@@ -328,6 +352,7 @@ export default {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -338,6 +363,7 @@ export default {
   0% {
     background-color: var(--hover-bg);
   }
+
   100% {
     background-color: transparent;
   }

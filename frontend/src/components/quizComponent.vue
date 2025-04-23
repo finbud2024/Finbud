@@ -9,32 +9,32 @@
     <search-input
       v-model="searchQuery"
       @search="createRoadmap"
-      placeholder="What do you want to learn today..."
+      :placeholder="$t('searchPlaceholder')"
       data-aos="flip-right"
     />
 
     <div class="goal-form-card" data-aos="zoom-in-up">
-      <h1 class="title">What's your goal?</h1>
+      <h1 class="title">{{ $t('goalTitle') }}</h1>
 
       <div class="form-group">
-        <label for="proficiency">Proficiency level</label>
+        <label for="proficiency">{{ $t('proficiencyLabel') }}</label>
         <select id="proficiency" v-model="proficiency" class="form-select">
-          <option value="" disabled selected>---</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
+          <option value="" disabled selected>{{ $t('proficiencyPlaceholder') }}</option>
+          <option value="beginner">{{ $t('beginner') }}</option>
+          <option value="intermediate">{{ $t('intermediate') }}</option>
+          <option value="advanced">{{ $t('advanced') }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="learning-hours">You will learn</label>
+        <label for="learning-hours">{{ $t('learningLabel') }}</label>
         <div class="input-row">
           <div class="input-group input-half-width">
             <input
               type="number"
               id="hours-per-day"
               v-model="hoursPerDay"
-              placeholder="Hours per day"
+              :placeholder="$t('hoursPlaceholder')"
               min="0"
               class="form-input"
             />
@@ -44,7 +44,7 @@
               type="number"
               id="days-per-week"
               v-model="daysPerWeek"
-              placeholder="Days per week"
+              :placeholder="$t('daysPlaceholder')"
               min="0"
               max="7"
               class="form-input"
@@ -54,23 +54,23 @@
       </div>
 
       <div class="form-group">
-        <label>In period</label>
+        <label>{{ $t('periodLabel') }}</label>
         <div class="input-row">
           <div class="input-group duration-input">
             <input
               type="number"
               v-model="duration"
-              placeholder="Duration"
+              :placeholder="$t('durationPlaceholder')"
               min="1"
               class="form-input"
             />
           </div>
           <div class="input-group period-select">
             <select v-model="period" class="form-select">
-              <option value="" disabled selected>Select period</option>
-              <option value="days">Days</option>
-              <option value="weeks">Weeks</option>
-              <option value="months">Months</option>
+              <option value="" disabled selected>{{ $t('periodPlaceholder') }}</option>
+              <option value="days">{{ $t('days') }}</option>
+              <option value="weeks">{{ $t('weeks') }}</option>
+              <option value="months">{{ $t('months') }}</option>
             </select>
           </div>
         </div>
@@ -83,8 +83,8 @@
       >
         {{
           is_generating_roadmap
-            ? "Personalizing your roadmap..."
-            : "Create my roadmap"
+            ? $t('generatingButton')
+            : $t('generateButton')
         }}
       </button>
     </div>
@@ -92,48 +92,33 @@
 
   <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
-      <h1 class="title">Keyword-Based Quiz</h1>
+      <h1 class="title">{{ $t('quizTitle') }}</h1>
       <div class="form-group">
-        <label for="search-keyword">Put your own keyword</label>
+        <label for="search-keyword">{{ $t('keywordLabel') }}</label>
         <div id="search-keyword" class="search-container">
           <input
             style="height: 100%; margin-bottom: 0"
             type="text"
             v-model="searchKeyword"
             :disabled="isLoading"
-            placeholder="Enter a finance-related keyword"
+            :placeholder="$t('keywordPlaceholder')"
             @keyup.enter="GenerateQuiz"
           />
-          <button class="button" @click="GenerateQuiz">Generate Quiz</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="suggest-topic">OR recieve a suggestion</label>
-        <div id="suggest-topic" class="suggest-keyword-container">
-          <select v-model="suggestTopic">
-            <option value="">Select a quiz type (optional)</option>
-            <option value="Saving Vs Investing">Saving vs Investing</option>
-            <option value="Budgeting">Budgeting</option>
-            <option value="Asset Allocation">Asset Allocation</option>
-          </select>
-          <select v-model="suggestDifficulty">
-            <option value="">Select difficulty (optional)</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-          <button
-            class="button"
-            :disabled="isLoading"
-            @click="keywordSuggestion"
-          >
-            Suggest
-          </button>
+          <button class="button" @click="GenerateQuiz">{{ $t('generateQuizButton') }}</button>
         </div>
       </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
-        <label for="related-keyword">Related keyword</label>
-        <div id="related-keyword" class="related-keyword-container">
+        <label for="related-keyword">{{ $t('relatedKeywordsLabel') }}</label>
+        <div class="carousel-wrapper">
+          <button 
+            class="carousel-nav left" 
+            @click="scrollLeft"
+            :aria-label="$t('scrollLeft')"
+          >
+            &lt;
+          </button>
+          
+        <div class="related-keyword-container" ref="carousel">
           <button
             v-for="keyword in relatedKeyword"
             :key="keyword"
@@ -144,11 +129,20 @@
             {{ keyword }}
           </button>
         </div>
+        
+        <button 
+          class="carousel-nav right" 
+          @click="scrollRight"
+          :aria-label="$t('scrollRight')"
+        >
+          &gt;
+        </button>
       </div>
+    </div>
       <div v-if="currentKeyword" class="quiz-info">
-        <div>Current Keyword: {{ currentKeyword }}</div>
-        <div>Points: {{ score }}</div>
-        <div>Time Left: {{ timerCountdown }}</div>
+        <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+        <div>{{ $t('pointsLabel') }} {{ score }}</div>
+        <div>{{ $t('timeLeftLabel') }} {{ timerCountdown }}</div>
       </div>
       <div class="quiz-area">
         <div
@@ -157,7 +151,7 @@
             { quizQuestionEnabled: question.length !== 0 },
           ]"
         >
-          {{ currentQuestion === -1 ? "Question will appear here" : question }}
+          {{ currentQuestion === -1 ? $t('questionPlaceholder') : question }}
         </div>
         <div class="quizChoices">
           <button
@@ -172,36 +166,38 @@
           >
             {{
               answerOptions.length === 0
-                ? `Answer ${String.fromCharCode(64 + index)}`
+                ? $t('answerPlaceholder', { letter: String.fromCharCode(64 + index) })
                 : answerOptions[index - 1].replace(/\*$/, "")
             }}
           </button>
         </div>
         <div v-if="showExplaination" class="explanation-container">
           <div class="explanation-text">
-            <div class="explanation-title">Explanation:</div>
+            <div class="explanation-title">{{ $t('explanationTitle') }}</div>
             <div>{{ explanation }}</div>
           </div>
           <button class="button" @click="handleNextQuestion">
-            Next Question
+            {{ $t('nextQuestionButton') }}
           </button>
         </div>
       </div>
       <div v-if="modalDisplay" class="overlay">
         <div class="modal-container">
-          <div class="result-title">Quiz Result</div>
+          <div class="result-title">{{ $t('quizResultTitle') }}</div>
           <div>
-            <div>Keyword: {{ currentKeyword }}</div>
-            <div>score: {{ score }}/3</div>
+            <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+            <div>{{ $t('pointsLabel') }} {{ score }}/3</div>
           </div>
           <div class="result-button-container">
             <button class="button" @click="handleQuizResult('same')">
-              New Game With Same Keyword
+              {{ $t('sameKeywordButton') }}
             </button>
             <button class="button" @click="handleQuizResult('different')">
-              New Game With Different Keyword
+              {{ $t('differentKeywordButton') }}
             </button>
-            <button class="button" @click="handleQuizResult('end')">End</button>
+            <button class="button" @click="handleQuizResult('end')">
+              {{ $t('endQuizButton') }}
+            </button>
           </div>
         </div>
       </div>
@@ -210,8 +206,8 @@
 
   <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
-      <span class="category-label">COURSE CATEGORIES</span>
-      <h2 class="category-title">Popular Topics To Learn</h2>
+      <span class="category-label">{{ $t('categoriesLabel') }}</span>
+      <h2 class="category-title">{{ $t('popularTopicsTitle') }}</h2>
 
       <div class="categories-grid">
         <div
@@ -226,7 +222,7 @@
             </div>
             <div class="card-text">
               <h3>{{ category.name }}</h3>
-              <span>{{ category.courseCount }} Courses</span>
+              <span>{{ category.courseCount }} {{ $t('coursesLabel') }}</span>
             </div>
           </div>
         </div>
@@ -238,8 +234,8 @@
     <div class="courses-container">
       <!-- Header Section -->
       <div class="courses-header">
-        <h4 class="courses-subtitle">POPULAR COURSES</h4>
-        <h2 class="courses-title">Our Popular Courses</h2>
+        <h4 class="courses-subtitle">{{ $t('popularCoursesSubtitle') }}</h4>
+        <h2 class="courses-title">{{ $t('popularCoursesTitle') }}</h2>
       </div>
 
       <!-- Courses Grid -->
@@ -266,7 +262,7 @@
             <div class="course-meta">
               <div class="course-lessons">
                 <i class="fas fa-book"></i>
-                <span>{{ course.lessons }} Lessons</span>
+                <span>{{ course.lessons }} {{ $t('lessonsLabel') }}</span>
               </div>
               <div class="course-duration">
                 <i class="fas fa-clock"></i>
@@ -289,7 +285,7 @@
 
             <div class="course-price">
               <template v-if="course.isFree">
-                <span class="free-price">Free</span>
+                <span class="free-price">{{ $t('freeLabel') }}</span>
               </template>
               <template v-else>
                 <span class="current-price">${{ course.price }}</span>
@@ -301,7 +297,7 @@
 
             <div class="course-students">
               <i class="fas fa-user"></i>
-              <span>{{ course.students }} Students</span>
+              <span>{{ course.students }} {{ $t('studentsLabel') }}</span>
             </div>
           </div>
         </div>
@@ -331,8 +327,6 @@ export default {
       searchKeyword: "",
       currentKeyword: "",
       relatedKeyword: [],
-      suggestTopic: "",
-      suggestDifficulty: "",
       currentQuestion: -1,
       questionList: [],
       question: "",
@@ -345,6 +339,8 @@ export default {
       isLoading: false,
       modalDisplay: false,
       is_generating_roadmap: false,
+      scrollPosition: 0,
+      maxScroll: 0,
       categories: [
         {
           name: "Corporate Finance",
@@ -504,58 +500,102 @@ export default {
   },
   methods: {
     GenerateQuiz: debounce(async function () {
-      if (this.searchKeyword.length === 0) return;
+      if (!this.searchKeyword.trim()) return;
       this.isLoading = true;
       this.answerButtonDisabled = true;
       this.currentQuestion = -1;
       this.question = "";
       this.answerOptions = [];
       this.relatedKeyword = [];
-      //this part below setup to start the quiz
+      this.resetQuizState(); // Reset all quiz-related variables
+
       this.currentKeyword = this.searchKeyword.toUpperCase();
       this.searchKeyword = "";
-      const buttons = document.querySelectorAll(".quizChoices button");
-      buttons.forEach((button) => {
-        button.classList.remove("answer-button-incorrect");
-        button.classList.remove("answer-button-correct");
+
+      try {
+        const response = await gptServices([
+          {
+            role: "system",
+            content: "You are a finance quiz generator. Return questions in EXACTLY this format:\n\n" +
+                    "Question: [question]\n" +
+                    "A. [option1]\n" +
+                    "B. [option2]\n" +
+                    "C. [option3]\n" +
+                    "D. [option4]\n" +
+                    "Correct Answer: [A/B/C/D]\n" +
+                    "Explanation: [explanation]\n\n" +
+                    "[Repeat for 3 questions]"
+          },
+          {
+            role: "user",
+            content: `Generate 3 multiple-choice questions about ${this.currentKeyword} in finance.`
+          }
+        ]);
+
+        // Improved parsing
+        this.questionList = this.parseQuizResponse(response);
+        
+        if (this.questionList.length === 0) {
+          throw new Error("No valid questions found in response");
+        }
+
+        this.currentQuestion = 0;
+        this.loadCurrentQuestion();
+        await this.generateRelatedKeywords();
+
+      } catch (error) {
+        console.error("Quiz generation failed:", error);
+        this.question = "Failed to generate questions. Please try again.";
+      } finally {
+        this.isLoading = false;
+        this.answerButtonDisabled = false;
+        this.startTimer();
+      }
+    }, 300),
+
+    // New helper method
+    parseQuizResponse(response) {
+      const blocks = response.split(/\n\n+/);
+      const questions = [];
+
+      blocks.forEach(block => {
+        const lines = block.split('\n').filter(l => l.trim());
+        if (lines.length < 7) return; // Skip incomplete questions
+
+        questions.push({
+          question: lines[0].replace('Question:', '').trim(),
+          options: lines.slice(1, 5).map(opt => opt.replace(/^[A-D]\.\s*/, '').trim()),
+          correctAnswer: lines[5].replace('Correct Answer:', '').trim(),
+          explanation: lines[6].replace('Explanation:', '').trim()
+        });
       });
+
+      return questions;
+    },
+
+    // Improved question loading
+    loadCurrentQuestion() {
+      if (this.currentQuestion >= this.questionList.length) return;
+
+      const q = this.questionList[this.currentQuestion];
+      this.question = q.question;
+      this.answerOptions = q.options;
+      this.correctAnswer = q.correctAnswer;
+      this.explanation = q.explanation;
+    },
+
+    // Reset quiz state properly
+    resetQuizState() {
+      this.questionList = [];
+      this.currentQuestion = -1;
+      this.question = "";
+      this.answerOptions = [];
+      this.correctAnswer = "";
+      this.explanation = "";
       this.showExplaination = false;
       this.score = 0;
       this.stopTimer();
-      // ------------------------------------------------------
-      const response = await gptServices([
-        {
-          role: "system",
-          content:
-            "You are a helpful assistant specializing in finance education.",
-        },
-        {
-          role: "user",
-          content: `Generate 3 finance-related multiple-choice quiz focusing on the keyword: ${this.currentKeyword}.
-                        For each question:
-                        - Provide a clear and concise question, along with four distinct answer options.
-                        - Include a detailed explanation for the answer, which should be factually accurate and relevant to the question.
-                        - The question genereated should be generated right behind the word "question"
-                        - There should be not extra space in between the question, the options, and the exaplinataion
-                        - Provide the Correct Answer in the field Called Correct Answer, and it should either be A,B, C, or D
-                        - It should follow exactly how the format is as below:
-                        Question: <question>
-                        A. <option1>
-                        B. <option2>
-                        C. <option3>
-                        D. <option4>
-                        Correct Answer: <A,B,C,D>
-                        Explanation: <explanation>`,
-        },
-      ]);
-      this.questionList = response.split(/\n\n+/);
-      this.currentQuestion = 0;
-      this.parseCurrentQuestion();
-      await this.generateRelatedKeywords();
-      this.isLoading = false;
-      this.answerButtonDisabled = false;
-      this.startTimer();
-    }, 300),
+    },
 
     generateLearningRoadmap: async function (roadmapData) {
       try {
@@ -669,35 +709,6 @@ export default {
         this.is_generating_roadmap = false;
       }
     },
-
-    keywordSuggestion: debounce(async function () {
-      if (this.suggestTopic.length === 0 || this.suggestDifficulty.length === 0)
-        return;
-      this.searchKeyword = await gptServices([
-        { role: "system", content: "You are a helpful assistant." },
-        {
-          role: "user",
-          content: `Generate a single keyword in finance about
-                        ${
-                          this.selectedQuiz
-                            ? this.selectedQuiz
-                            : "Saving Vs Investing"
-                        }
-                        at a
-                        ${
-                          this.suggestDifficulty
-                            ? this.suggestDifficulty
-                            : "hard"
-                        }
-                        difficulty level. The keyword should be specific and relevant to create a quiz question about finance.
-                        - no need to add extra question, only the keyword is needed for the response. Please strictly follow the requirement`,
-        },
-      ]);
-      this.suggestTopic = "";
-      this.suggestDifficulty = "";
-
-      await this.GenerateQuiz();
-    }, 300),
     handleSuggestedChoice: debounce(async function (keyword) {
       this.searchKeyword = keyword;
       this.GenerateQuiz();
@@ -724,40 +735,22 @@ export default {
         { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: `Generate 3 related keywords for "${this.currentKeyword}" in finance and is used in CFA. Provide the keywords as a comma-separated list.`,
+          content: `Generate exactly 10 related keywords for "${this.currentKeyword}" in finance, used in CFA context. Respond with only the keywords, comma-separated. Do not include any introduction, explanation, or additional text.`,
         },
       ]);
       this.relatedKeyword = response.split(",");
     },
-    parseCurrentQuestion() {
+    loadCurrentQuestion() {
       if (this.currentQuestion >= this.questionList.length) {
         return;
       }
 
-      const questionBlock = this.questionList[this.currentQuestion]
-        .trim()
-        .split("\n");
+      const q = this.questionList[this.currentQuestion];
+      this.question = q.question;
+      this.answerOptions = q.options;
+      this.correctAnswer = q.correctAnswer;
+      this.explanation = q.explanation;
 
-      this.question = questionBlock[0].toLowerCase().startsWith("question")
-        ? questionBlock[0].substring(10)
-        : questionBlock[0];
-
-      this.answerOptions = questionBlock
-        .slice(1, 5)
-        .map((option) => option.trim());
-
-      const correctAnswerLine = questionBlock.find((line) =>
-        line.startsWith("Correct Answer:")
-      );
-      this.correctAnswer = correctAnswerLine
-        ? correctAnswerLine.split(":")[1].trim()
-        : "";
-
-      this.explanation =
-        questionBlock
-          .find((line) => line.startsWith("Explanation:"))
-          ?.substring("Explanation:".length)
-          .trim() || "";
     },
     handleUserChoice(index) {
       this.stopTimer();
@@ -801,19 +794,19 @@ export default {
     },
     handleNextQuestion() {
       this.showExplaination = false;
-      //reset buton style;
-      const buttons = document.querySelectorAll(".quizChoices button");
-      buttons.forEach((button) => {
-        button.classList.remove("answer-button-incorrect");
-        button.classList.remove("answer-button-correct");
+      
+      // Reset button styles
+      document.querySelectorAll('.quizChoices button').forEach(button => {
+        button.classList.remove('answer-button-incorrect', 'answer-button-correct');
       });
+
       this.currentQuestion += 1;
       if (this.currentQuestion >= this.questionList.length) {
         this.modalDisplay = true;
         this.answerButtonDisabled = true;
         return;
       }
-      this.parseCurrentQuestion();
+      this.loadCurrentQuestion(); // Use the new method
       this.answerButtonDisabled = false;
       this.startTimer();
     },
@@ -827,9 +820,6 @@ export default {
       } else if (setting === "different") {
         const temp = this.currentKeyword;
         this.stateReset();
-        this.suggestTopic = "random";
-        this.suggestDifficulty = "random";
-        this.keywordSuggestion();
       } else {
         this.currentKeyword = "";
         this.stateReset();
@@ -867,6 +857,47 @@ export default {
         description: "Completed full quiz session",
       });
     },
+    calculateMaxScroll() {
+      if (this.$refs.carousel) {
+        const container = this.$refs.carousel;
+        this.maxScroll = container.scrollWidth - container.clientWidth;
+      }
+    },
+    scrollLeft() {
+      this.scrollTo(this.scrollPosition - 200);
+    },
+    scrollRight() {
+      this.scrollTo(this.scrollPosition + 200);
+    },
+    scrollTo(position) {
+      const container = this.$refs.carousel;
+      if (!container) return;
+      
+      // Smooth scroll animation
+      container.scrollTo({
+        left: position,
+        behavior: 'smooth'
+      });
+      
+      this.scrollPosition = position;
+    }
+  },
+
+  computed: {
+    isAtStart() {
+      return this.scrollPosition <= 0;
+    },
+    isAtEnd() {
+      return this.scrollPosition >= this.maxScroll;
+    }
+  },
+
+  mounted() {
+    this.calculateMaxScroll();
+    window.addEventListener('resize', this.calculateMaxScroll);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.calculateMaxScroll);
   },
 };
 </script>
@@ -926,34 +957,63 @@ export default {
   transition: background-color 0.2s ease;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background: #2c5282;
   transform: none;
 }
 
-.suggest-keyword-container {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  width: 60vw;
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.suggest-keyword-container > select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  background: white;
-}
-
-.related-keyword-container {
+.carousel-nav {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: white;
+  border: 1px solid #ddd;
+  cursor: pointer;
   display: flex;
-  flex-direction: row;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.carousel-nav:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.carousel-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Animation for button appearance */
+.button {
+  animation: slideIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .carousel-nav {
+    display: none; /* Hide arrows on mobile */
+  }
+  
+  .related-keyword-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
 }
 
 .quiz-area {
@@ -1113,6 +1173,8 @@ export default {
 
 .form-group {
   margin-bottom: 1.5rem;
+  margin: 1rem 0;
+  position: relative;
 }
 
 .form-group label {
@@ -1750,12 +1812,26 @@ export default {
   color: var(--text-primary);
 }
 
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
 .related-keyword-container {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  flex: 1;
+  padding: 0.5rem 0;
+}
+
+.related-keyword-container::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .quiz-area {
