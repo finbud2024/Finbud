@@ -2,42 +2,22 @@
   <div class="home-container">
     <div v-if="overlayEnabled" class="overlay" />
     <div v-if="this.isAuthenticated" class="sidebar-container">
-      <font-awesome-icon
-        class="toggle-sidebar-btn"
-        @click="toggleSidebar"
-        icon="fa-solid fa-bars"
-      />
+      <font-awesome-icon class="toggle-sidebar-btn" @click="toggleSidebar" icon="fa-solid fa-bars" />
       <div v-if="isSidebarVisible" class="overlay" @click="closeSidebar" />
-      <SideBar
-        :class="{ 'is-visible': isSidebarVisible }"
-        :initialThreadName="newThreadName"
-      />
+      <SideBar :class="{ 'is-visible': isSidebarVisible }" :initialThreadName="newThreadName" />
     </div>
     <ChatComponent @initialThreadName="initialThreadName" ref="chatComponent" />
-    <div
-      class="guidance-btn"
-      id="tutorial-guidance-button"
-      :class="{ 'is-guidance-visible': showGuidance }"
-      @click="showGuidance = true"
-    >
+    <div class="guidance-btn" id="tutorial-guidance-button" :class="{ 'is-guidance-visible': showGuidance }"
+      @click="showGuidance = true">
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
       <span class="guidance-text">{{ $t('chatComponent.guildence') }}</span>
     </div>
-    <GuidanceModal
-      v-if="showGuidance"
-      @close="showGuidance = false"
-      @sendMessage="sendMessageToChat"
-      :showModal="showGuidance"
-    />
-    <TutorialOverlay
-      :steps="tutorialSteps"
-      storageKey="finbudChatViewTutorialShown"
-      :autoStart="true"
-      @tutorial-completed="onTutorialCompleted"
-      ref="tutorialOverlay"
-    />
+    <GuidanceModal v-if="showGuidance" @close="showGuidance = false" @sendMessage="sendMessageToChat"
+      :showModal="showGuidance" />
+    <TutorialOverlay :steps="tutorialSteps" storageKey="finbudChatViewTutorialShown" :autoStart="true"
+      @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
   </div>
 </template>
 
@@ -172,6 +152,13 @@ export default {
     document.querySelector(
       ".home-container"
     ).style.height = `calc(100vh - ${navbarHeight}px)`;
+    //HANDLE REDIRECT MESSAGE FROM HOMEPAGE
+    const autoMessage = this.$route.query.autoMessage;
+    // if (autoMessage && this.$refs.chatComponent) {
+    //   console.log("📩 Redirected message from Home:", autoMessage); // 👈 DEBUG
+    //   this.$refs.chatComponent.handleUserSubmit({ message: autoMessage }); // 👈 GỬI NGAY
+    //   this.$router.replace({ query: {} }); // xoá query sau khi gửi
+    // }
 
     // Check if we've been redirected from Home page and show tutorial
     if (this.$route.query.showTutorial) {

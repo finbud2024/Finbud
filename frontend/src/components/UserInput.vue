@@ -14,29 +14,16 @@
       </div>
 
       <!-- Drop File -->
-      <div 
-          v-if="isDragging"
-          class="drag-overlay"
-        >
+      <div v-if="isDragging" class="drag-overlay">
       </div>
 
       <!-- Text Input Field -->
-      <input 
-        type="text" 
-        v-model="messageText" 
-        @input="handleInput"
-        @keyup.enter="send" 
-        :placeholder="$t('messagePlaceholder')"
-      />
+      <input type="text" v-model="messageText" @input="handleInput" @keyup.enter="send"
+        :placeholder="typingPlaceholder" />
 
       <!-- Voice Recording Button or Send Button -->
-      <div v-if="!isTyping" 
-        @mousedown="startRecording" 
-        @mouseup="stopRecording" 
-        @mouseleave="stopRecording"
-        class="mic-btn"
-        :class="{ recording: isRecording }" 
-      >
+      <div v-if="!isTyping" @mousedown="startRecording" @mouseup="stopRecording" @mouseleave="stopRecording"
+        class="mic-btn" :class="{ recording: isRecording }">
         <i class="fa-solid fa-microphone-lines"></i>
       </div>
 
@@ -55,6 +42,10 @@ export default {
   name: "UserInput",
   props: {
     newMessage: String,
+    redirectOnSend: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -64,7 +55,32 @@ export default {
       mediaRecorder: null,
       audioChunks: [],
       selectedFile: null,
-      isDragging: false, 
+      isDragging: false,
+      typingPlaceholder: "",
+      placeholderTexts: [
+        "Hỏi giá cổ phiếu AAPL",
+        "Tìm hiểu về lạm phát",
+        "Mua 5 cổ phiếu của TSLA",
+        "Theo dõi chi tiêu hôm nay",
+        "Thêm giao dịch: ăn trưa 50k",
+        "Tìm bất động sản ở TP. HCM",
+        "Xem top 5 đồng tiền ảo",
+        "Định nghĩa thuật ngữ IPO",
+        "Xem xu hướng thị trường tuần này",
+        "Gợi ý danh mục đầu tư ngắn hạn",
+        "Tạo kế hoạch tiết kiệm 6 tháng",
+        "Tính toán lợi nhuận đầu tư cổ phiếu",
+        "Hỏi giá vàng hôm nay",
+        "Tìm công ty có ROE cao nhất",
+        "Giải thích chỉ số P/E",
+        "So sánh ETF và cổ phiếu",
+        "Có nên đầu tư vào Bitcoin lúc này?",
+        "Lên danh sách cổ phiếu tăng trưởng",
+        "Đề xuất chia tỷ lệ đầu tư 60/30/10",
+      ],
+      typingIndex: 0,
+      charIndex: 0,
+      isDeleting: false,
     };
   },
 
@@ -72,6 +88,7 @@ export default {
     window.addEventListener('dragover', this.onDragOver);
     window.addEventListener('dragleave', this.onDragLeave);
     window.addEventListener('drop', this.onFileDrop);
+    this.startTypingPlaceholder();
   },
 
   beforeUnmount() {
@@ -83,23 +100,54 @@ export default {
 
   methods: {
     send() {
-      // If no file uploaded
       if (!this.messageText.trim() && !this.selectedFile) return;
 
-      this.$emit("send-message", 
-        {
+      if (this.redirectOnSend) {
+        // Emit to parent to handle redirect + send
+        this.$emit("send-message", this.messageText.trim());
+      } else {
+        // Normal mode: just send directly
+        this.$emit("send-message", {
           message: this.messageText.trim(),
           file: this.selectedFile
-        }
-      );
+        });
+      }
 
-      // Reset
       this.messageText = "";
-      this.isTyping = false; // Reset to show mic button again
+      this.isTyping = false;
       this.selectedFile = null;
       this.$refs.fileInput.value = '';
     },
+    startTypingPlaceholder() {
+      const currentText = this.placeholderTexts[this.typingIndex];
+      const typingSpeed = this.isDeleting ? 15 : 15;
 
+      if (!this.isDeleting) {
+        this.typingPlaceholder = currentText.substring(0, this.charIndex + 1);
+        this.charIndex++;
+      } else {
+        this.typingPlaceholder = currentText.substring(0, this.charIndex - 1);
+        this.charIndex--;
+      }
+
+      if (!this.isDeleting && this.charIndex === currentText.length) {
+        setTimeout(() => {
+          this.isDeleting = true;
+          this.startTypingPlaceholder();
+        }, 1000); // pause before deleting
+        return;
+      }
+
+      if (this.isDeleting && this.charIndex === 0) {
+        this.isDeleting = false;
+        this.typingIndex = (this.typingIndex + 1) % this.placeholderTexts.length;
+      }
+
+      setTimeout(this.startTypingPlaceholder, typingSpeed);
+    },
+    clearInput() {
+      this.inputText = "";
+    },
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
@@ -111,9 +159,9 @@ export default {
 
     async handleFileUpload(event) {
       this.selectedFile = event.target.files[0] || null;
-      
+
     },
-    
+
     handleInput() {
       this.isTyping = this.messageText.length > 0;
     },
@@ -198,7 +246,8 @@ export default {
   color: var(--text-primary);
   font-size: 1.5rem;
   z-index: 9999;
-  pointer-events: none; /* Allows clicks to pass through */
+  pointer-events: none;
+  /* Allows clicks to pass through */
 }
 
 .user-input-container {
@@ -278,15 +327,22 @@ export default {
   box-shadow: 0 0 5px var(--shadow-color);
 }
 
-.upload-btn, .mic-btn, .send-btn {
+.upload-btn,
+.mic-btn,
+.send-btn {
   position: absolute;
   cursor: pointer;
   color: var(--link-color);
   transition: color 0.3s, transform 0.2s;
 }
 
-.upload-btn { left: 30px; }
-.send-btn { right: 40px; }
+.upload-btn {
+  left: 30px;
+}
+
+.send-btn {
+  right: 40px;
+}
 
 
 /* Voice Recording Button */
@@ -300,19 +356,41 @@ export default {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
-.upload-btn:hover, .mic-btn:hover, .send-btn:hover {
+.upload-btn:hover,
+.mic-btn:hover,
+.send-btn:hover {
   color: var(--link-color);
   transform: scale(1.1);
 }
 
-.upload-btn:focus, .send-btn:focus {
+.upload-btn:focus,
+.send-btn:focus {
   outline: none;
   box-shadow: 0 0 5px var(--shadow-color);
+}
+
+/* Hiệu ứng nháy cho placeholder giống như con trỏ */
+input::placeholder {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @media (max-width: 768px) {
