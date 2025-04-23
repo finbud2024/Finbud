@@ -557,17 +557,86 @@ export default {
 
 @media (max-width: 768px) {
   .stock-row {
-    flex-wrap: wrap;
-  }
-  
-  .stock-item {
-    width: calc(50% - 10px); /* 2 items per row on mobile */
-    padding: 14px;
+    flex-direction: column;
+    gap: 15px;
     margin-bottom: 15px;
   }
   
+  .stock-item {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  
+  .card-content {
+    flex-direction: row;
+    min-height: auto;
+    padding: 8px 0;
+  }
+  
+  .stock-company {
+    width: 40%;
+  }
+  
+  .stock-details {
+    width: 60%;
+  }
+  
+  .detail-key {
+    min-width: 70px;
+    font-size: 0.85em;
+  }
+  
+  .pagination-container {
+    gap: 10px;
+  }
+  
+  .pagination-button {
+    min-width: 80px;
+    padding: 6px 12px;
+    font-size: 0.9em;
+  }
+  
+  .page-info {
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-content {
+    flex-direction: column;
+  }
+  
+  .stock-company {
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 8px;
+  }
+  
+  .stock-details {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #eee;
+    padding-left: 0;
+    padding-top: 8px;
+  }
+  
   .company-name {
-    font-size: 1.15em;
+    font-size: 1em;
+    text-align: center;
+  }
+  
+  .detail-item {
+    justify-content: space-between;
+  }
+  
+  .detail-key {
+    min-width: auto;
+  }
+  
+  .pagination-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
 }
 

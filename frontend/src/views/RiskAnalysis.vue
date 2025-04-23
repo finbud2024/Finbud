@@ -962,50 +962,18 @@ img {
 }
 
 @media screen and (max-width: 768px) {
-	.market-data-center,
-	.quotes-section {
+	.container {
+		padding: 10px;
+	}
+
+	.market-data-center {
 		padding: 1rem;
 		margin: 1rem auto;
 	}
 
 	.headtitle {
-		font-size: 1.75rem;
-	}
-
-	.section-title {
-		font-size: 1.3rem;
-	}
-
-	.margin-box {
-		padding: 0.5rem;
-	}
-
-	/* For mobile, position the bot at the bottom of the screen */
-	.bot-chat-container {
-		left: auto;
-		right: -300px;
-		bottom: 20px;
-		top: auto;
-	}
-
-	.bot-chat-container.bot-visible {
-		transform: translateX(-310px);
-	}
-
-	.bot-chat-container.bot-hidden {
-		transform: translateX(-310px) translateY(50px);
-	}
-}
-
-@media screen and (max-width: 576px) {
-	.market-data-center,
-	.quotes-section {
-		padding: 0.5rem;
-		margin: 0.5rem auto;
-	}
-
-	.headtitle {
-		font-size: 1.75rem;
+		font-size: 1.5rem;
+		margin-bottom: 0.5rem;
 	}
 
 	.section-title {
@@ -1013,16 +981,121 @@ img {
 	}
 
 	.margin-box {
-		padding: 0.25rem;
+		padding: 0.5rem;
 	}
 
-	/* Further adjustments for very small screens */
+	/* Adjust table for mobile */
+	table {
+		font-size: 0.8rem;
+	}
+
+	th, td {
+		padding: 8px 10px;
+	}
+
+	/* Make tables scrollable horizontally */
+	.margin-box-content {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	/* Bot chat adjustments */
 	.bot-chat-container {
-		width: 250px;
+		left: auto;
+		right: 0;
+		bottom: 20px;
+		top: auto;
+		width: 100%;
+		max-width: 300px;
+		transform: translateY(100%);
+	}
+
+	.bot-chat-container.bot-visible {
+		transform: translateY(0);
+	}
+
+	.bot-chat-container.bot-hidden {
+		transform: translateY(100%);
 	}
 
 	.bot-message {
-		max-width: 220px;
+		max-width: 250px;
+	}
+
+	/* Sub navigation adjustments */
+	.sub-nav {
+		width: 100%;
+		padding: 0.3rem;
+		margin: 0.5rem auto 1.5rem;
+	}
+
+	.tab-button {
+		padding: 0.5rem;
+		font-size: 0.9rem;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.container {
+		padding: 5px;
+	}
+
+	.market-data-center {
+		padding: 0.5rem;
+		margin: 0.5rem auto;
+	}
+
+	.headtitle {
+		font-size: 1.3rem;
+	}
+
+	.section-title {
+		font-size: 1.1rem;
+	}
+
+	.margin-box {
+		padding: 0.25rem;
+		margin-bottom: 0.5rem;
+	}
+
+	table {
+		font-size: 0.75rem;
+	}
+
+	th, td {
+		padding: 6px 8px;
+	}
+
+	/* Sub navigation adjustments */
+	.sub-nav {
+		flex-direction: column;
+		gap: 5px;
+		border-width: 1px;
+	}
+
+	.tab-button {
+		width: 100%;
+		padding: 0.4rem;
+		font-size: 0.85rem;
+		margin: 0;
+	}
+
+	.tab-button.active {
+		border-radius: 4px;
+	}
+
+	/* Bot chat adjustments */
+	.bot-chat-container {
+		max-width: 250px;
+	}
+
+	.bot-message {
+		max-width: 200px;
+		font-size: 0.9rem;
+	}
+
+	.bot-image {
+		width: 60px;
 	}
 }
 
