@@ -622,6 +622,7 @@ export default {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow: hidden; /* Prevent scrolling on the background */
 }
 
 .popup-content {
@@ -631,14 +632,15 @@ export default {
   position: relative;
   width: 95%;
   max-width: 1400px;
-  height: 90%; /* Increased from 75% to 90% to accommodate income statement */
+  height: 90vh;
   min-width: 800px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow-y: auto; /* Add vertical scrolling */
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   box-sizing: border-box;
 }
 
@@ -651,6 +653,8 @@ export default {
   margin-bottom: 15px;
   width: 100%;
   flex-shrink: 0;
+  position: relative;
+  padding-top: 10px;
 }
 
 .stock-header h2 {
@@ -695,28 +699,26 @@ export default {
 
 .chart-container {
   width: 98%;
-  height: 55%; /* Reduced from 100% - 80px to make room for income statement */
+  height: 400px; /* Fixed height instead of percentage */
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
-  flex: 0 0 auto; /* Changed from flex: 1 to prevent stretching */
+  margin: 0 auto 20px auto; /* Added bottom margin */
+  flex: 0 0 auto;
   overflow: hidden;
-  min-height: 400px; /* Add minimum height to ensure chart is visible */
 }
 
 /* Income Statement Styles */
 .income-statement-container {
-  width: 98%;
-  margin-top: 20px; 
+  width: 100%; /* Changed from 98% to 100% */
+  margin-top: 20px;
   border-top: 1px solid #eee;
   padding-top: 15px;
-  flex: 1;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 300px; /* Add minimum height for the table */
+  box-sizing: border-box; /* Add box-sizing */
+  padding-right: 15px; /* Add padding for scrollbar */
 }
 
 .income-statement-title {
@@ -727,9 +729,30 @@ export default {
 }
 
 .income-statement-scroll {
-  overflow-x: auto;
   width: 100%;
-  flex: 1;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+  box-sizing: border-box;
+}
+
+/* Style the scrollbar for webkit browsers */
+.income-statement-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.income-statement-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.income-statement-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.income-statement-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .income-statement-table {
@@ -825,62 +848,85 @@ export default {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
+  background: #333;
   border: none;
   font-size: 1.5em;
   cursor: pointer;
   z-index: 10;
+  padding: 8px;
+  color: #fff;
+  transition: all 0.3s ease;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(50, 50, 50, 0.2);
+}
+
+.close-btn:hover {
+  background: #5e5757;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 992px) {
   .popup-content {
     min-width: auto;
     width: 95%;
-    height: 90%;
-  }
-  
-  .chart-container {
-    min-height: 350px;
-  }
-  
-  .income-statement-container {
-    min-height: 250px;
+    height: 90vh;
+    padding: 15px;
   }
 }
 
 @media (max-width: 768px) {
   .popup-content {
     width: 100%;
-    height: 100%;
-    padding: 15px;
+    height: 100vh;
     border-radius: 0;
-    min-width: auto;
+    padding: 15px;
+    margin: 0;
   }
 
   .stock-header {
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+    padding-top: 0;
+    margin-top: -10px;
   }
 
   .stock-header h2 {
     font-size: 1.3rem;
+    width: 100%;
+    text-align: center;
+    margin-top: 0;
   }
 
-  .chart-container {
-    height: 45%;
-    min-height: 250px;
+  .stock-details {
+    gap: 6px;
+  }
+
+  .detail-row {
+    font-size: 0.9rem;
+  }
+
+  .detail-key {
+    min-width: 100px;
+    width: 100px;
+    margin-right: 10px;
   }
 
   .income-statement-container {
-    margin-top: 15px;
+    padding-right: 10px;
   }
 
   .income-statement-title {
     font-size: 1.1rem;
+    margin-bottom: 10px;
   }
 
   .income-statement-table {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
 
   .income-statement-table th,
@@ -888,11 +934,18 @@ export default {
     padding: 6px 8px;
   }
 
+  .chart-container {
+    height: 350px;
+  }
+
   .close-btn {
-    top: 10px;
-    right: 10px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
     font-size: 1.8em;
-    padding: 5px 10px;
+    width: 38px;
+    height: 38px;
+    background: #222;
   }
 }
 
@@ -906,23 +959,26 @@ export default {
   }
 
   .detail-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    font-size: 0.85rem;
   }
 
   .detail-key {
-    min-width: auto;
-    margin-right: 0;
+    min-width: 90px;
+    width: 90px;
+    margin-right: 8px;
   }
 
-  .chart-container {
-    height: 40%;
-    min-height: 200px;
+  .income-statement-container {
+    padding-right: 5px;
+  }
+
+  .income-statement-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
   }
 
   .income-statement-table {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   .income-statement-table th,
@@ -931,14 +987,60 @@ export default {
   }
 
   .income-statement-table .sticky-column {
-    max-width: 120px;
+    max-width: 100px;
     white-space: normal;
   }
 
+  .chart-container {
+    height: 300px;
+  }
+
   .close-btn {
-    top: 5px;
-    right: 5px;
-    font-size: 1.6em;
+    top: 12px;
+    right: 12px;
+    font-size: 2em;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 360px) {
+  .popup-content {
+    padding: 8px;
+  }
+
+  .stock-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .detail-row {
+    font-size: 0.8rem;
+  }
+
+  .detail-key {
+    min-width: 80px;
+    width: 80px;
+    margin-right: 6px;
+  }
+
+  .income-statement-table {
+    font-size: 0.75rem;
+  }
+
+  .income-statement-table .sticky-column {
+    max-width: 90px;
+  }
+
+  .chart-container {
+    height: 250px;
+  }
+
+  .close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 1.8em;
+    width: 42px;
+    height: 42px;
   }
 }
 </style> 

@@ -77,15 +77,15 @@
 													v-for="crypto in paginatedCryptoList"
 													:key="crypto.uuid"
 												>
-													<td>
+													<td data-label="Name">
 														<img :src="crypto.iconUrl" :alt="crypto.name" />
 														{{ crypto.name }}
 													</td>
-													<td>{{ crypto.rank }}</td>
-													<td>{{ crypto.tier }}</td>
-													<td>{{ formatPrice(crypto.price) }} B</td>
-													<td>{{ crypto.symbol }}</td>
-													<td>{{ crypto.change }}</td>
+													<td data-label="Rank">{{ crypto.rank }}</td>
+													<td data-label="Tier">{{ crypto.tier }}</td>
+													<td data-label="Price">{{ formatPrice(crypto.price) }} B</td>
+													<td data-label="Symbol">{{ crypto.symbol }}</td>
+													<td data-label="Change">{{ crypto.change }}</td>
 												</tr>
 											</tbody>
 										</table>
@@ -106,9 +106,7 @@
 
             <!-- Vietnam Stock Watch Section -->
             <div class="section-title">Vietnam Stock Watch</div>
-              <div class="margin-box vietnam-stocks">
                 <VietnamStockWatch class="margin-box-content" />
-              </div>
 
               <!-- Stock Watch Section -->
               <div class="section-title">Stock Watch</div>
@@ -139,12 +137,12 @@
 													v-for="stock in paginatedStockQuotes"
 													:key="stock['01. symbol']"
 												>
-													<td>{{ stock["01. symbol"] }}</td>
-													<td>{{ stock["05. price"] }}</td>
-													<td>{{ stock["06. volume"] }}</td>
-													<td>{{ stock["08. previous close"] }}</td>
-													<td>{{ stock["09. change"] }}</td>
-													<td>{{ stock["10. change percent"] }}</td>
+													<td data-label="Symbol">{{ stock["01. symbol"] }}</td>
+													<td data-label="Price">{{ stock["05. price"] }}</td>
+													<td data-label="Volume">{{ stock["06. volume"] }}</td>
+													<td data-label="Previous Close">{{ stock["08. previous close"] }}</td>
+													<td data-label="Change">{{ stock["09. change"] }}</td>
+													<td data-label="Change Percent">{{ stock["10. change percent"] }}</td>
 												</tr>
 											</tbody>
 										</table>
@@ -198,7 +196,7 @@
 														v-for="estate in paginatedRealEstate"
 														:key="estate.id"
 													>
-														<td>
+														<td data-label="Type">
 															{{
 																estate.propertyType &&
 																!isNaN(estate.propertyType)
@@ -206,8 +204,8 @@
 																	: "Single-family"
 															}}
 														</td>
-														<td>{{ estate.formattedAddress }}</td>
-														<td>
+														<td data-label="Address">{{ estate.formattedAddress }}</td>
+														<td data-label="Price">
 															{{
 																estate.lastSalePrice &&
 																!isNaN(estate.lastSalePrice)
@@ -215,7 +213,7 @@
 																	: "N/A"
 															}}
 														</td>
-														<td>
+														<td data-label="Status">
 															{{
 																estate.ownerOccupied === true
 																	? "Inactive"
@@ -667,6 +665,10 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	padding: 20px;
+	width: 100%;
+	max-width: 100%;
+	overflow-x: hidden;
+	box-sizing: border-box;
 }
 
 .header {
@@ -689,9 +691,11 @@ export default {
 	padding: 2rem;
 	background: var(--bg-primary);
 	margin: 2rem auto;
+	width: 100%;
 	max-width: 1200px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	border-radius: 8px;
+	box-sizing: border-box;
 }
 
 .section-title {
@@ -710,17 +714,19 @@ export default {
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	margin-bottom: 1rem;
 	background-color: #fff;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .margin-box-content {
-	overflow-x: auto;
-	white-space: nowrap;
+	width: 100%;
+	box-sizing: border-box;
 }
 
 /* Exception for Vietnam Stock Watch */
 .vietnam-stocks .margin-box-content {
-  overflow-x: visible;
-  white-space: normal;
+	overflow: hidden;
+	width: 100%;
 }
 
 .real-estate-section {
@@ -969,6 +975,7 @@ img {
 	.market-data-center {
 		padding: 1rem;
 		margin: 1rem auto;
+		gap: 1rem;
 	}
 
 	.headtitle {
@@ -978,25 +985,83 @@ img {
 
 	.section-title {
 		font-size: 1.2rem;
+		margin-bottom: 0.5rem;
 	}
 
 	.margin-box {
 		padding: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.margin-box-content {
+		width: 100%;
+		overflow: hidden;
 	}
 
 	/* Adjust table for mobile */
 	table {
 		font-size: 0.8rem;
+		width: 100%;
+		border: none;
 	}
 
-	th, td {
-		padding: 8px 10px;
+	tr {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 1rem;
+		border: 1px solid #ddd;
+		padding: 0.5rem;
+		background: #fff;
 	}
 
-	/* Make tables scrollable horizontally */
-	.margin-box-content {
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
+	td {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5rem;
+		border: none;
+		border-bottom: 1px solid #eee;
+		width: 100%;
+		align-items: center;
+	}
+
+	td:last-child {
+		border-bottom: none;
+	}
+
+	td:before {
+		content: attr(data-label);
+		font-weight: bold;
+		padding-right: 1rem;
+		text-align: left;
+	}
+
+	thead {
+		display: none;
+	}
+
+	/* Ensure Vietnam Stocks section is responsive */
+	.vietnam-stocks {
+		width: 100%;
+		overflow: hidden;
+	}
+
+	.vietnam-stocks .margin-box-content {
+		overflow: hidden;
+		width: 100%;
+	}
+
+	/* Sub navigation adjustments */
+	.sub-nav {
+		width: 100%;
+		padding: 0.3rem;
+		margin: 0.5rem auto 1.5rem;
+		overflow: hidden;
+	}
+
+	.tab-button {
+		padding: 0.5rem;
+		font-size: 0.9rem;
+		white-space: nowrap;
 	}
 
 	/* Bot chat adjustments */
@@ -1021,18 +1086,6 @@ img {
 	.bot-message {
 		max-width: 250px;
 	}
-
-	/* Sub navigation adjustments */
-	.sub-nav {
-		width: 100%;
-		padding: 0.3rem;
-		margin: 0.5rem auto 1.5rem;
-	}
-
-	.tab-button {
-		padding: 0.5rem;
-		font-size: 0.9rem;
-	}
 }
 
 @media screen and (max-width: 480px) {
@@ -1043,6 +1096,7 @@ img {
 	.market-data-center {
 		padding: 0.5rem;
 		margin: 0.5rem auto;
+		gap: 0.5rem;
 	}
 
 	.headtitle {
@@ -1051,19 +1105,29 @@ img {
 
 	.section-title {
 		font-size: 1.1rem;
+		margin-bottom: 0.25rem;
 	}
 
 	.margin-box {
 		padding: 0.25rem;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.25rem;
 	}
 
 	table {
 		font-size: 0.75rem;
 	}
 
-	th, td {
-		padding: 6px 8px;
+	tr {
+		padding: 0.25rem;
+	}
+
+	td {
+		padding: 0.25rem;
+		font-size: 0.8rem;
+	}
+
+	td:before {
+		font-size: 0.8rem;
 	}
 
 	/* Sub navigation adjustments */
@@ -1071,6 +1135,7 @@ img {
 		flex-direction: column;
 		gap: 5px;
 		border-width: 1px;
+		padding: 0.25rem;
 	}
 
 	.tab-button {
@@ -1084,19 +1149,38 @@ img {
 		border-radius: 4px;
 	}
 
-	/* Bot chat adjustments */
-	.bot-chat-container {
-		max-width: 250px;
+	/* Adjust crypto list for mobile */
+	td img {
+		width: 20px;
+		height: 20px;
+		margin-right: 5px;
 	}
+}
 
-	.bot-message {
-		max-width: 200px;
-		font-size: 0.9rem;
-	}
+/* Add these styles to ensure proper table cell alignment */
+td[data-label]:before {
+	min-width: 40%;
+	max-width: 40%;
+}
 
-	.bot-image {
-		width: 60px;
-	}
+td[data-label] {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/* Special handling for cells with images */
+td[data-label="Name"] {
+	display: flex;
+	align-items: center;
+}
+
+td[data-label="Name"]:before {
+	margin-right: 10px;
+}
+
+td[data-label="Name"] img {
+	margin-right: 5px;
 }
 
 /* Add these new styles for the sub-navigation */
