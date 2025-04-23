@@ -108,7 +108,7 @@
       >
         <TransactionLine
           :transactions="transactions"
-          :key="`transaction-line-${transactions.length}-${Date.now()}`"
+          :key="`transaction-line-${transactions.length}`"
         />
       </div>
       <div class="chart-container no-data" v-else>
@@ -202,6 +202,7 @@
                   <th>{{ $t('descriptionHeader') }}</th>
                   <th>{{ $t('dateHeader') }}</th>
                   <th>{{ $t('amountHeader') }} ({{ selectedCurrency }})</th>
+                  <th>{{ $t('sourceHeader') }}</th>
                   <th>{{ $t('statusHeader') }}</th>
                   <th>{{ $t('transactionHeader') }}</th>
                 </tr>
@@ -558,22 +559,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         .filter((transaction) => !(transaction.amount < 0 || transaction.type === "Income")) // Only "Expense"
         .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
     },
-
-    totalExpense() {
-      return this.transactions
-        .filter((transaction) => {
-          // Expense có amount dương
-          return (
-            transaction.type === "Expense" ||
-            (transaction.type === "revenue" && transaction.amount > 0)
-          );
-        })
-        .reduce(
-          (total, transaction) => total + Math.abs(transaction.amount),
-          0
-        ); // Luôn dùng giá trị tuyệt đối
-    },
-
     accountBalanceTotal() {
       // Always calculate account balance as total revenue minus total expense
       return this.totalRevenue - this.totalExpense;
@@ -603,10 +588,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     });
 
     // Thiết lập auto-refresh
-    this.refreshInterval = setInterval(() => {
-      this.refreshData();
-      this.getAccountBalance(); // Cập nhật balance từ server định kỳ
-    }, 10000);
+    // this.refreshInterval = setInterval(() => {
+    //   this.refreshData();
+    //   this.getAccountBalance(); // Cập nhật balance từ server định kỳ
+    // }, 10000);
   },
   beforeUnmount() {
     // Clean up timers and observers when the component is destroyed
@@ -1440,24 +1425,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         await this.fetchTransactions();
       } catch (error) {
         console.error("Error refreshing data:", error);
-      }
-    },
-
-    // Tạo hàm Plaid fetchTransactions riêng biệt để tránh nhầm lẫn
-    async fetchPlaidTransactions(access_token) {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`,
-          {
-            params: { access_token },
-          }
-        );
-
-        // Update your local transactions state with the latest transactions
-        this.transactions = response.data.latest_transactions;
-        console.log("Fetched Plaid transactions:", this.transactions);
-      } catch (error) {
-        console.error("Error fetching Plaid transactions:", error);
       }
     },
   },

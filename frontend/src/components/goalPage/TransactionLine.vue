@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-wrapper" :key="`chart-wrapper-${chartKey}`">
+  <div class="chart-wrapper">
     <canvas ref="transactionChart" :id="chartId" v-if="hasData"></canvas>
     <div v-else class="no-data-message">
       <p>No transaction data available to display.</p>
@@ -32,14 +32,12 @@ export default {
       retryCount: 0,
       maxRetries: 3,
       watchTimer: null,
-      chartKey: Date.now(), // Thêm key để force re-render khi cần
     };
   },
   methods: {
     // Thêm phương thức để reset component hoàn toàn
     resetComponent() {
       this.destroyChart();
-      this.chartKey = Date.now(); // Update key to force re-render
       this.retryCount = 0;
       this.hasData = this.transactions && this.transactions.length > 0;
 
@@ -56,12 +54,13 @@ export default {
     generateChart() {
       // Transform API transactions to our format
       const formattedTransactions = this.transactions.map(tx => ({
-        type: tx.amount > 0 ? "Expense" : "Income",
+        type: (tx.type === "Income" || tx.amount < 0) ? "Income"  : "Expense",
         amount: Math.abs(tx.amount), // Use absolute value and determine type based on sign
         date: tx.date, // Use the date field from API
         description: tx.name || tx.merchant_name || "Transaction"
       }));
       formattedTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+      console.log("Formatted Transactions:", formattedTransactions);
 
       // Find the initial balance (assuming no initial balance in API, start from 0)
       let initialBalance = 0;
@@ -136,20 +135,6 @@ export default {
 
         // Nếu đã tìm thấy canvas, reset retry count
         this.retryCount = 0;
-
-        // Transform API transactions to our format
-        const formattedTransactions = this.transactions.map((tx) => ({
-          type: tx.amount > 0 ? "Expense" : "Income",
-          amount: Math.abs(tx.amount), // Use absolute value and determine type based on sign
-          date: tx.date, // Use the date field from API
-          description:
-            tx.name || tx.description || tx.merchant_name || "Transaction",
-        }));
-
-        // Find the initial balance (assuming no initial balance in API, start from 0)
-        let initialBalance = 0;
-        let cumulativeBalance = initialBalance;
-
         // Create arrays for labels and data
         const labels = [];
         const data = [];
@@ -359,11 +344,12 @@ export default {
       this.destroyChart();
 
       // Đợi một chút rồi tạo chart mới
-      setTimeout(() => {
-        if (this.transactions && this.transactions.length > 0) {
-          this.generateChart();
-        }
-      }, 300);
+      // setTimeout(() => {
+      //   if (this.transactions && this.transactions.length > 0) {
+      //     this.generateChart();
+      //   }
+      // }, 300);
+      this.generateChart();
     },
 
     // Xử lý resize với debounce để tránh gọi quá nhiều lần
@@ -438,17 +424,19 @@ export default {
   },
   mounted() {
     // Đảm bảo DOM đã render hoàn tất trước khi tạo chart
-    this.$nextTick(() => {
-      // Đợi một chút để đảm bảo DOM đã hiển thị hoàn toàn
-      this.mountTimer = setTimeout(() => {
-        if (this.transactions && this.transactions.length > 0) {
-          this.generateChart();
-        }
-      }, 300); // Tăng thời gian chờ lên 300ms
+    // this.$nextTick(() => {
+    //   // Đợi một chút để đảm bảo DOM đã hiển thị hoàn toàn
+    //   this.mountTimer = setTimeout(() => {
+    //     if (this.transactions && this.transactions.length > 0) {
+    //       this.generateChart();
+    //     }
+    //   }, 300); // Tăng thời gian chờ lên 300ms
 
-      // Đăng ký sự kiện resize để vẽ lại chart khi kích thước thay đổi
-      window.addEventListener("resize", this.handleResize);
-    });
+    //   // Đăng ký sự kiện resize để vẽ lại chart khi kích thước thay đổi
+    //   window.addEventListener("resize", this.handleResize);
+    // });
+    window.addEventListener("resize", this.handleResize);
+
   },
   activated() {
     // Khi component được kích hoạt lại (với keep-alive), kiểm tra và vẽ lại chart nếu cần
