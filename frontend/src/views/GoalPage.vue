@@ -31,7 +31,13 @@
           </div>
         </div>
       </div>
-      <button @click="openPlaidLink" :class="['add-goal-button', disabledConnect ? 'disabled' : null]">Connect Your Bank Account</button>
+      <button 
+        v-if="accountNotConnected === true" 
+        @click="openPlaidLink" 
+        :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
+      >
+        Connect Your Bank Account
+      </button>
       <div class="revenue-expense">
         <div class="total-spend revenue-card">
           <h2>{{
@@ -160,6 +166,7 @@
                   <th>Description</th>
                   <th>Date</th>
                   <th>Amount ({{ selectedCurrency }})</th>
+                  <th>Source</th>
                   <th>Status</th>
                   <th>Transaction</th>
                 </tr>
@@ -175,26 +182,29 @@
                 > -->
                 <tr
                   v-for="trans in transactions"
-                  :key="trans.account_id"
+                  :key="trans._id"
                   :class="{
                     income: trans.type === 'Income',
                     expense: trans.type === 'Expense',
                   }"
                 >
                   <!-- <td>{{ trans.description }}</td> -->
-                  <td>{{ trans.name }}</td>
+                  <td>{{ trans.description }}</td>
                   <td>{{ formattedDate(trans.date) }}</td>
                   <td v-if="selectedCurrency === 'USD'">
-                    {{ formatCurrency(trans.amount.toFixed(2)) }}
+                    {{ formatCurrency(Math.abs(trans.amount).toFixed(2)) }}
                   </td>
                   <td v-if="selectedCurrency === 'VND'">
-                    {{ formatCurrency(convertToVND(trans.amount).toFixed(2)) }}
+                    {{ formatCurrency(convertToVND(Math.abs(trans.amount)).toFixed(2)) }}
                   </td>
                   <td>
-                    <!-- {{ trans.type === "Income" ? "Credited" : "Debited" }} -->
-                      {{ trans.amount < 0 ? "Credited" : "Debited" }}
+                    {{ trans.source ? trans.source : "manual" }}
                   </td>
-                  <td class="buttons">
+                  <td>
+                    {{ (trans.type === "Income" || trans.amount < 0) ? "Credited" : "Debited" }}
+                  </td>
+                  <td>
+                    <div class="buttons">
                     <button
                       @click="editTransaction(trans)"
                       style="
@@ -204,20 +214,15 @@
                     >
                       Edit
                     </button>
-                    <!-- <button 
-                      @click="removeTransaction(trans._id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    > -->
                     <button 
-                      @click="removeTransaction(trans.account_id)"
+                      @click="removeTransaction(trans._id)"
                       style="
                       padding: 6px 12px;
                       "
                     >
                       Remove
                     </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -363,6 +368,7 @@ export default {
       showMessage: false,
       hidingMessage: false,
       isTyping: false,
+      accountNotConnected: false,
       botMessage: "",
       typedContent: "", // Add this for the typing effect
       botObserver: null,
@@ -487,13 +493,13 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     
     totalRevenue() {
       return this.transactions
-        .filter((transaction) => transaction.amount < 0) // Only "Income"
+        .filter((transaction) => (transaction.amount < 0 || transaction.type === "Income")) // Only "Income"
         .reduce((total, transaction) => total + Math.abs(transaction.amount), 0); // Sum amounts
     },
     
     totalExpense() {
       return this.transactions
-        .filter((transaction) => transaction.amount > 0) // Only "Expense"
+        .filter((transaction) => !(transaction.amount < 0 || transaction.type === "Income")) // Only "Expense"
         .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
     },
 
@@ -523,7 +529,31 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       clearTimeout(this.botHideTimer);
     }
   },
+
+  async created() {
+    // populate the flag as soon as the component mounts
+    this.accountNotConnected = await this.fetchAccountStatus();
+  },
+
   methods: {
+    async fetchAccountStatus() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return true;            // safest default
+      }
+
+      try {
+        const { data: user } = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`
+        );
+
+        return !user.bank_accounts || user.bank_accounts.length === 0;
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        return true;            // safest default
+      }
+    },
+
     // Bot Chat methods
     setupBotObserver() {
       this.$nextTick(() => {
@@ -699,6 +729,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // goal methods
     retrieveGoals() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return;
+      }
       axios
         .get(`${process.env.VUE_APP_DEPLOY_URL}/goals/u/${this.userId}`)
         .then((response) => {
@@ -826,6 +860,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // Example usage of the sorting function
     async fetchTransactions() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return;
+      }
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
@@ -902,7 +940,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
             amount: this.initialBalance,
             date: date,
             balance: this.initialBalance,
-
+            source: "manual",
             userId: this.userId,
             type: type,
           }
@@ -933,7 +971,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         console.error("Error resetting account balance:", error);
       }
     },
-    editTransaction(trans) {
+
+    async editTransaction(trans) {
       this.editTransactionData = { ...trans };
       this.showEditTransactionModal = true;
     },
@@ -1119,22 +1158,49 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         });
 
         const { access_token, item_id } = response.data;
+        console.log("Access token:", access_token);
         // Save the access token and item ID as required
-        this.fetchTransactions(access_token);
+        await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`, 
+        {
+          bank_accounts: access_token,
+        },
+        { withCredentials: true }
+      );
+        const user = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`);
+        this.reloadTransactions(access_token);
+        this.accountNotConnected = await this.fetchAccountStatus();
       } catch (error) {
         console.error("Error exchanging token", error);
       }
     },
 
-    async fetchTransactions(access_token) {
+    async reloadTransactions(access_token) {
       try {
         const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`, {
           params: { access_token },
         });
-
-        // Update your local transactions state with the latest transactions
-        this.transactions = response.data.latest_transactions;
+        const currentTransactions = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`);
+        if (currentTransactions.data.length > 0) {
+          await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`, {
+            data: { source: 'bank' }
+          });
+        }
+        const transactions = response.data.latest_transactions;
+        await Promise.all(transactions.map(async (transaction) => {
+          await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+            description: transaction.name,
+            amount: transaction.amount,
+            date: transaction.date,
+            type: transaction.category[0],
+            balance: transaction.amount,
+            userId: this.userId,
+            source: 'bank'
+          });
+          console.log("added transaction", transaction);
+        }));
+        
         console.log("Fetched transactions:", this.transactions);
+        await this.fetchTransactions();
       } catch (error) {
         console.error("Error fetching transactions", error);
       }

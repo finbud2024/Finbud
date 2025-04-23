@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { defineProps } from 'vue';
+// import { defineProps } from 'vue';
 
 const props = defineProps({
   _id: String,

@@ -1,13 +1,19 @@
-'use strict';
+// 'use strict';
 
 // read env vars from .env file
-require('dotenv').config();
-const { Configuration, PlaidApi, Products, PlaidEnvironments, CraCheckReportProduct } = require('plaid');
-const util = require('util');
-const { v4: uuidv4 } = require('uuid');
-const moment = require('moment');
+// require('dotenv').config();
+// const { Configuration, PlaidApi, Products, PlaidEnvironments, CraCheckReportProduct } = require('plaid');
+// const util = require('util');
+// const moment = require('moment');
+// const plaidRoute = require('express').Router();
 
-const plaidRoute = require('express').Router();
+import dotenv from 'dotenv';
+import { Configuration, PlaidApi, Products, PlaidEnvironments } from 'plaid';
+import util from 'util';
+import moment from 'moment';
+import express from 'express';
+const plaidRoute = express.Router();
+dotenv.config();
 
 const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
 const PLAID_SECRET = process.env.PLAID_SECRET;
@@ -118,7 +124,7 @@ plaidRoute.post('/create-link-token', function (request, response, next) {
         configs.consumer_report_permissible_purpose = 'ACCOUNT_REVIEW_CREDIT';
       }
       const createTokenResponse = await client.linkTokenCreate(configs);
-      prettyPrintResponse(createTokenResponse);
+      // prettyPrintResponse(createTokenResponse);
       response.json(createTokenResponse.data);
     })
     .catch(next);
@@ -136,7 +142,7 @@ plaidRoute.post('/exchange-token', function (request, response, next) {
       const tokenResponse = await client.itemPublicTokenExchange({
         public_token: PUBLIC_TOKEN,
       });
-      prettyPrintResponse(tokenResponse);
+      // prettyPrintResponse(tokenResponse);
       ACCESS_TOKEN = tokenResponse.data.access_token;
       ITEM_ID = tokenResponse.data.item_id;
       response.json({
@@ -190,7 +196,7 @@ plaidRoute.get('/transactions', function (request, response, next) {
         removed = removed.concat(data.removed);
         hasMore = data.has_more;
 
-        prettyPrintResponse(response);
+        // prettyPrintResponse(response);
       }
 
       const compareTxnsByDateAscending = (a, b) => (a.date > b.date) - (a.date < b.date);
@@ -201,7 +207,7 @@ plaidRoute.get('/transactions', function (request, response, next) {
     .catch(next);
 });
 
-const prettyPrintResponse = (response) => {
-  console.log(util.inspect(response.data, { colors: true, depth: 4 }));
-};
+// const prettyPrintResponse = (response) => {
+//   console.log(util.inspect(response.data, { colors: true, depth: 4 }));
+// };
 export default plaidRoute;

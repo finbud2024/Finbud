@@ -74,6 +74,19 @@ userRoute.put("/users/:userId", isOwnerOrAdmin, validateRequest(User.schema), as
             }
         }
 
+        if (req.body.bank_accounts) {
+            console.log('Adding bank account:', req.body.bank_accounts);
+            const user = await User.findById(userId);
+            const hashedBankAccount = Buffer.from(req.body.bank_accounts).toString('base64');
+            if (user.bank_accounts){
+                const userBanksAccounts = user.bank_accounts;
+                updatedUser.bank_accounts = userBanksAccounts.concat(hashedBankAccount);
+            }
+            else {
+                updatedUser.bank_accounts = [hashedBankAccount];
+            }
+        }
+
         const user = await User.updateOne(filter, updatedUser, {
             new: true
         });

@@ -11,6 +11,7 @@
 
 [functions]
   node_bundler = "esbuild"
+  esbuild_options = { format = "esm" }
 
 # Adding environment variables for the development environment
 [dev.environment]

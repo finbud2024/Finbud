@@ -30,6 +30,7 @@ export default {
         date: tx.date, // Use the date field from API
         description: tx.name || tx.merchant_name || "Transaction"
       }));
+      formattedTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
 
       // Find the initial balance (assuming no initial balance in API, start from 0)
       let initialBalance = 0;

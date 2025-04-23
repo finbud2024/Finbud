@@ -111,7 +111,7 @@ transactionRoute.route('/transactions')
   // POST a new transaction
   .post(validateRequest(Transaction.schema), async (req, res) => {
     console.log('in /transactions Route (POST) new transaction to database');
-    const { description, amount, balance, userId, date, type } = req.body;
+    const { description, amount, balance, userId, date, type, source } = req.body;
 
     
     if (!description || amount === undefined || balance === undefined || !userId || !date || !type) {
@@ -125,6 +125,7 @@ transactionRoute.route('/transactions')
       balance: balance,
       type: type,
       date: date,
+      source: source
     });
 
     try {
@@ -168,15 +169,22 @@ transactionRoute.route('/transactions/u/:userId')
   // DELETE all transactions for a specific userId, RESET account balance of specific user
   .delete(async (req, res) => {
     const userId = req.params.userId;
+    const source = req.body.source
     if (!userId) {
       return res.status(400).send("Missing userId in request parameters");
     }
     console.log('In /transactions/u/:userId Route (DELETE) for transactions with userId: ' + userId);
     try {
-      let transactions = await Transaction.deleteMany({ "userId": userId });
-      if (!transactions.deletedCount) {
-        return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      let transactions = [];
+      if (!source) {
+        transactions = await Transaction.deleteMany({ "userId": userId });
       }
+      else {
+        transactions = await Transaction.deleteMany({ "userId": userId, "source": source });
+      }
+      // if (!transactions.deletedCount) {
+      //   return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      // }
       return res.status(200).send(`All transactions with userId: ${userId} deleted successfully`);
     } catch (err) {
       return res.status(501).send(`Unexpected error occurred when deleting transactions with userId: ${userId} from database: ${err}`);

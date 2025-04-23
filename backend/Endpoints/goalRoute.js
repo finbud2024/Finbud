@@ -144,9 +144,9 @@ goalRoute.route('/goals/u/:userId')
     console.log('in /goals/u/:userId Route (GET) goals with userId:' + userId);
     try {
       let goals = await Goal.find({ userId });
-      if (!goals.length) {
-        return res.status(404).send(`No goals with userId: ${userId} existed in database`);
-      }
+      // if (!goals.length) {
+      //   return res.status(404).send(`No goals with userId: ${userId} existed in database`);
+      // }
       return res.status(200).json(goals);
     } catch (err) {
       return res.status(501).send(`Unexpected error occurred when looking for goals with userId: ${userId} in database: ${err}`);

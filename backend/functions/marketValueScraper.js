@@ -390,9 +390,9 @@ async function runScrapers() {
     }
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    runScrapers().catch(console.error);
-}
+// if (process.argv[1] === fileURLToPath(import.meta.url)) {
+//     runScrapers().catch(console.error);
+// }
 
 export { 
     scrapeTopInvestorsMarketValue, 

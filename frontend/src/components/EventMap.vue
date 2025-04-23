@@ -1,21 +1,24 @@
-\<template>
+<template>
   <div class="event-map-container">
     <div class="map-container">
-      <GMapMap
+      <!-- <GMapMap -->
+      <Map
         :center="mapCenter"
         :zoom="mapZoom"
         map-type-id="roadmap"
         :style="{ width: '100%', height: mapHeight }"
         :options="{ disableDefaultUI: false }"
       >
-        <GMapMarker
+        <!-- <GMapMarker -->
+        <Marker
           v-for="event in events"
           :key="event._id"
           :position="{ lat: event.lat, lng: event.lng }"
           :title="event.name"
           @click="highlightEvent(event._id)"
         />
-      </GMapMap>
+        </Map>
+      <!-- </GMapMap> -->
     </div>
 
     <div class="event-list">
@@ -42,12 +45,14 @@
 
 <script>
 import { defineComponent, ref, onMounted, nextTick } from "vue";
-import { GMapMap, GMapMarker } from "@fawmi/vue-google-maps";
+// import { GMapMap, GMapMarker } from "@fawmi/vue-google-maps";
+import { Map, Marker } from '@fawmi/vue-google-maps';
 import axios from "axios";
 
 export default defineComponent({
   name: "EventMap",
-  components: { GMapMap, GMapMarker },
+  // components: { GMapMap, GMapMarker },
+  components: { Map, Marker },
   setup() {
     const events = ref([]);
     const mapHeight = ref("580px");
