@@ -2,27 +2,16 @@
   <div class="chat-container">
     <ChatFrame>
       <div v-for="(message, index) in messages" :key="index">
-        <MessageComponent
-          :is-user="message.isUser"
-          :text="message.text"
-          :typing="message.typing"
-          :is-thinking="message.isThinking"
-          :htmlContent="message.htmlContent"
-          :username="message.isUser ? displayName : 'FinBud Bot'"
-          :avatar-src="message.isUser ? userAvatar : botAvatar"
-          :sources="message.isUser ? [] : message.sources"
-          :videos="message.isUser ? [] : message.videos"
-          :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
-          @question-click="handleQuestionClick"
-        />
+        <MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
+          :is-thinking="message.isThinking" :htmlContent="message.htmlContent"
+          :username="message.isUser ? displayName : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar"
+          :sources="message.isUser ? [] : message.sources" :videos="message.isUser ? [] : message.videos"
+          :relevantQuestions="message.isUser ? [] : message.relevantQuestions" @question-click="handleQuestionClick" />
         <!-- Add TradingView widget after stock messages -->
-        <TradingViewWidget
-          v-if="message.showChart"
-          :symbol="message.stockSymbol"
-        />
+        <TradingViewWidget v-if="message.showChart" :symbol="message.stockSymbol" />
       </div>
     </ChatFrame>
-    <UserInput @send-message="handleUserSubmit" />
+    <UserInput ref="userInput" @send-message="handleUserSubmit" />
   </div>
 </template>
 
@@ -97,11 +86,12 @@ export default {
   methods: {
     // ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
     handleUserSubmit({ message, file }) {
-      if(file) {
+      if (file) {
         this.handleFileUpload(message, file);
       }
-      else if(message) {
+      else if (message) {
         this.sendMessage(message);
+        this.$refs.userInput && this.$refs.userInput.clearInput?.();
       }
     },
 
@@ -118,17 +108,19 @@ export default {
         },
       ]);
 
+      
+
       //UPDATE THREAD NAME BASED ON FIRST MESSAGE
       if (this.messages.length === 1) {
         const response = await gptServices([
           {
             role: "system",
-            content: `I am a highly efficient summarizer. 
-												Here are examples: 'Best vacation in Europe' from 
-												'What are the best vacation spots in Europe?'; 
-												'Discussing project deadline' from 
-												'We need to extend the project deadline by two weeks due to unforeseen issues.' 
-												Now, summarize the following user message within 3 to 4 words into a title:`,
+            content: `Bạn là một trợ lý đặt tên hội thoại bằng tiếng Việt ngắn gọn, mang tính mô tả chủ đề.
+Đây là vài ví dụ:
+- 'Kỳ nghỉ ở châu Âu' từ 'Các địa điểm du lịch châu Âu nên đi?'
+- 'Gia hạn dự án' từ 'Chúng ta cần lùi deadline 2 tuần do có vấn đề.'
+
+Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, không quá 5 từ:`
           },
           {
             role: "user",
@@ -471,25 +463,24 @@ export default {
             console.error("Failed to fetch cr quotes:", err);
           }
           let tableTemplate = `
-				<div style="font-weight: 900; font-size: 30px"> Top 10 Ranking Coins </div>
+				<div style="font-weight: 900; font-size: 30px"> Top 10 đồng Coin vốn hóa lớn nhất </div>
 				<table>
 				<thead>
 				    <tr>
-				    <th>Name</th>
-				    <th>Rank</th>
-				    <th>Tier</th>
-				    <th>Price</th>
-				    <th>Symbol</th>
-				    <th>Change</th>
+				    <th>Tên</th>
+				    <th>Hạng</th>
+				    <th>Cấp</th>
+				    <th>Giá</th>
+				    <th>Kí hiệu</th>
+				    <th>Biến động</th>
 				    </tr>
 				</thead>
 				<tbody id="tableBody" class="table-body">`;
           coinData.slice(0, 10).map((item) => {
             tableTemplate += `
 				    <tr>
-				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${
-              item.name
-            }>${item.name}</td>
+				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${item.name
+              }>${item.name}</td>
 				    <td>${item.rank}</td>
 				    <td>${item.tier}</td>
 				    <td>${parseFloat(item.price).toFixed(2)}$</td>
@@ -574,14 +565,14 @@ export default {
           // 	console.error("Error fetching property data:", err);
           // }
           let tableTemplate = `
-				<div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
+				<div style="font-weight: 900; font-size: 30px"> Danh sách 5 Bất động sản ở ${searchLocation} </div>
 				<table>
 				<thead>
 				    <tr>
-				    <th>Type</th>
-				    <th>Address</th>
-				    <th>Price</th>
-				    <th>Status</th>
+				    <th>Loại</th>
+				    <th>Địa chỉ</th>
+				    <th>Giá</th>
+				    <th>Tình trạng</th>
 				    </tr>
 				</thead>
 				<tbody id="tableBody" class="table-body">`;
@@ -858,11 +849,11 @@ export default {
     async handleFileUpload(newMessage, file) {
       this.isLoading = true;
       this.messages.push({
-          text: newMessage,
-          isUser: true,
-          typing: true,
-          timestamp: new Date().toLocaleTimeString(),
-        });
+        text: newMessage,
+        isUser: true,
+        typing: true,
+        timestamp: new Date().toLocaleTimeString(),
+      });
       try {
         if (file.type.startsWith('image/')) {
           const result = await this.analyzeImage(file, newMessage);
@@ -871,7 +862,7 @@ export default {
             isUser: false,
             timestamp: new Date().toLocaleTimeString()
           });
-        } 
+        }
         else if (file.type === 'application/pdf') {
           const result = await this.analyzePDF(file, newMessage);
           this.messages.push({
@@ -884,14 +875,14 @@ export default {
         console.error('Error processing file:', err);
         this.addTypingResponse("Failed to process file", false);
       }
-      
+
       this.isLoading = false;
     },
 
     async analyzeImage(file, newMessage) {
       const base64Image = await this.readFileAsBase64(file);
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4o",  
+        model: "gpt-4o",
         messages: [
           {
             role: "user",
@@ -913,10 +904,10 @@ export default {
 
     async analyzePDF(file, newMessage) {
       const uploadedFile = await this.openai.files.create({
-        file, 
+        file,
         purpose: "user_data"
       });
-      
+
       const response = await this.openai.responses.create({
         model: "gpt-4o",
         input: [
@@ -935,7 +926,7 @@ export default {
           }
         ],
       });
-      
+
       // Clean up
       await this.openai.files.del(uploadedFile.id);
       return response.output_text;
@@ -1093,7 +1084,7 @@ export default {
     async updateCurrentThread(threadID) {
       try {
         this.messages = [];
-        const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
+        const botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" để khám phá cách trò chuyện siêu xịn với FinBud nhé!`;
         this.addTypingResponse(botInstruction, false);
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
         const chats = await axios.get(chatApi);
@@ -1152,8 +1143,15 @@ export default {
     },
   },
   mounted() {
+    const autoMessage = this.$route.query.autoMessage;
+    if (autoMessage && !this.autoMessageSent) {
+      this.autoMessageSent = true;
+      this.handleUserSubmit({ message: autoMessage }); // gửi 1 lần
+      this.$router.replace({ query: null }); // xoá query để reload ko gửi lại
+    }
+
     if (!this.isAuthenticated) {
-      const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+      const botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
       this.addTypingResponse(botInstruction, false);
     }
   },
@@ -1207,6 +1205,7 @@ export default {
 }
 
 .top-spacer {
-  height: 100px; /* Or any height you desire to push content down */
+  height: 100px;
+  /* Or any height you desire to push content down */
 }
 </style>
