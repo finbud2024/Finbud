@@ -12,7 +12,7 @@
         
         <!-- Show loading state only for initial load -->
         <div v-if="loading && rows.length === 0" class="loading-state">
-          <p>Loading stocks data...</p>
+          <p>Đang tải dữ liệu cổ phiếu...</p>
         </div>
         <div v-else-if="error" class="error-state">
           <p>{{ error }}</p>
@@ -35,23 +35,23 @@
                   <!-- Company name and details in a flex row layout -->
                   <div class="card-content">
                     <div class="stock-company">
-                      <h3 class="company-name">{{ stock.organ_name || 'Unknown Company' }}</h3>
+                      <h3 class="company-name">{{ stock.organ_name || 'Chưa có tên công ty' }}</h3>
                     </div>
                     
                     <!-- Key-value pairs for details -->
                     <div class="stock-details">
                       <p class="detail-item">
-                        <span class="detail-key">Symbol:</span> 
+                        <span class="detail-key">Mã CP:</span> 
                         <span class="symbol-value">{{ stock.symbol }}</span>
                       </p>
                       
                       <p class="detail-item price-item">
-                        <span class="detail-key">Price:</span> 
+                        <span class="detail-key">Giá:</span> 
                         <span class="price-value">{{ formatPrice(stock.price) }}</span>
                       </p>
                       
                       <p class="detail-item">
-                        <span class="detail-key">Change:</span> 
+                        <span class="detail-key">Thay đổi:</span> 
                         <span :class="{
                           'positive': stock.change > 0, 
                           'negative': stock.change < 0,
@@ -65,7 +65,7 @@
                       </p>
                       
                       <p class="detail-item">
-                        <span class="detail-key">Change (%):</span> 
+                        <span class="detail-key">Thay đổi (%):</span> 
                         <span :class="{
                           'positive': stock.change_percent > 0, 
                           'negative': stock.change_percent < 0,
@@ -94,9 +94,9 @@
             :class="{'loading-button': loading}"
           >
             <span v-if="loading && navigationDirection === 'prev'" class="button-loader"></span>
-            <span v-else>Previous</span>
+            <span v-else>Trước</span>
           </button>
-          <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+          <span class="page-info">Trang {{ currentPage }} / {{ totalPages }}</span>
           <button 
             @click="nextPage" 
             :disabled="currentPage >= totalPages || loading"
@@ -104,7 +104,7 @@
             :class="{'loading-button': loading}"
           >
             <span v-if="loading && navigationDirection === 'next'" class="button-loader"></span>
-            <span v-else>Next</span>
+            <span v-else>Sau</span>
           </button>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default {
   methods: {
     async fetchStockSymbols() {
       try {
-        const response = await axios.get(`https://self-surfaces-dylan-usc.trycloudflare.com/api/vn-stock/symbols?page=${this.currentPage}&page_size=${this.pageSize}`);
+        const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/symbols?page=${this.currentPage}&page_size=${this.pageSize}`);
         
         if (response.data && response.data.stocks) {
           this.stockSymbols = response.data.stocks;
@@ -164,7 +164,7 @@ export default {
     },
     async fetchStockPrices(symbols) {
       try {
-        const response = await axios.get(`https://self-surfaces-dylan-usc.trycloudflare.com/api/vn-stock/prices?symbols=${symbols}`);
+        const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/prices?symbols=${symbols}`);
         
         if (response.data && response.data.data) {
           // Create a map of symbols to organ_names
