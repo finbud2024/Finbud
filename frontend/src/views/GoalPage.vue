@@ -54,8 +54,9 @@
           </div>
         </div>
       </div>
-      <button
-        @click="openPlaidLink"
+      <button 
+        v-if="accountNotConnected === true" 
+        @click="openPlaidLink" 
         :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
       >
         Connect Your Bank Account
@@ -107,7 +108,7 @@
       >
         <TransactionLine
           :transactions="transactions"
-          :key="`transaction-line-${transactions.length}-${Date.now()}`"
+          :key="`transaction-line-${transactions.length}`"
         />
       </div>
       <div class="chart-container no-data" v-else>
@@ -201,52 +202,65 @@
                   <th>{{ $t('descriptionHeader') }}</th>
                   <th>{{ $t('dateHeader') }}</th>
                   <th>{{ $t('amountHeader') }} ({{ selectedCurrency }})</th>
+                  <th>{{ $t('sourceHeader') }}</th>
                   <th>{{ $t('statusHeader') }}</th>
                   <th>{{ $t('transactionHeader') }}</th>
                 </tr>
               </thead>
               <tbody>
-              <tr
-                v-for="trans in transactions"
-                :key="trans._id || trans.account_id"
-                :class="{
-                  income:
-                    trans.type === 'Income' ||
-                    (trans.type === 'revenue' && trans.amount < 0),
-                  expense:
-                    trans.type === 'Expense' ||
-                    (trans.type === 'revenue' && trans.amount > 0),
-                }"
-              >
-                <td>{{ trans.description || trans.name }}</td>
-                <td>{{ formattedDate(trans.date) }}</td>
-                <td v-if="selectedCurrency === 'USD'">
-                  {{ formatCurrency(Math.abs(trans.amount).toFixed(2)) }}
-                </td>
-                <td v-if="selectedCurrency === 'VND'">
-                  {{
-                    formatCurrency(
-                      convertToVND(Math.abs(trans.amount)).toFixed(2)
-                    )
-                  }}
-                </td>
-                <td>
-                  {{
-                    trans.type === "Expense" ||
-                    (trans.type === "revenue" && trans.amount > 0)
-                      ? "Debited"
-                      : "Credited"
-                  }}
-                </td>
-                <td class="buttons">
-                  <button class="edit-btn" @click="editTransaction(trans)">
-                    Edit
-                  </button>
-                  <button class="remove-btn" @click="removeTransaction(trans.account_id)">
-                    {{ $t('removeButton') }}
-                  </button>
-                </td>
-              </tr>
+                <!-- <tr
+                  v-for="trans in transactions"
+                  :key="trans._id"
+                  :class="{
+                    income: trans.type === 'Income',
+                    expense: trans.type === 'Expense',
+                  }"
+                > -->
+                <tr
+                  v-for="trans in transactions"
+                  :key="trans._id"
+                  :class="{
+                    income: trans.type === 'Income',
+                    expense: trans.type === 'Expense',
+                  }"
+                >
+                  <!-- <td>{{ trans.description }}</td> -->
+                  <td>{{ trans.description }}</td>
+                  <td>{{ formattedDate(trans.date) }}</td>
+                  <td v-if="selectedCurrency === 'USD'">
+                    {{ formatCurrency(Math.abs(trans.amount).toFixed(2)) }}
+                  </td>
+                  <td v-if="selectedCurrency === 'VND'">
+                    {{ formatCurrency(convertToVND(Math.abs(trans.amount)).toFixed(2)) }}
+                  </td>
+                  <td>
+                    {{ trans.source ? trans.source : "manual" }}
+                  </td>
+                  <td>
+                    {{ (trans.type === "Income" || trans.amount < 0) ? "Credited" : "Debited" }}
+                  </td>
+                  <td>
+                    <div class="buttons">
+                    <button
+                      @click="editTransaction(trans)"
+                      style="
+                      margin-right: 10px;
+                      padding: 6px 12px;
+                      "
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      @click="removeTransaction(trans._id)"
+                      style="
+                      padding: 6px 12px;
+                      "
+                    >
+                      {{ $t('removeButton') }}
+                    </button>
+                    </div>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -394,6 +408,7 @@ export default {
       showMessage: false,
       hidingMessage: false,
       isTyping: false,
+      accountNotConnected: false,
       botMessage: "",
       typedContent: "", // Add this for the typing effect
       botObserver: null,
@@ -535,34 +550,15 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     totalRevenue() {
       return this.transactions
-        .filter((transaction) => {
-          // Income có amount âm
-          return (
-            transaction.type === "Income" ||
-            (transaction.type === "revenue" && transaction.amount < 0)
-          );
-        })
-        .reduce(
-          (total, transaction) => total + Math.abs(transaction.amount),
-          0
-        ); // Luôn dùng giá trị tuyệt đối
+        .filter((transaction) => (transaction.amount < 0 || transaction.type === "Income")) // Only "Income"
+        .reduce((total, transaction) => total + Math.abs(transaction.amount), 0); // Sum amounts
     },
-
+    
     totalExpense() {
       return this.transactions
-        .filter((transaction) => {
-          // Expense có amount dương
-          return (
-            transaction.type === "Expense" ||
-            (transaction.type === "revenue" && transaction.amount > 0)
-          );
-        })
-        .reduce(
-          (total, transaction) => total + Math.abs(transaction.amount),
-          0
-        ); // Luôn dùng giá trị tuyệt đối
+        .filter((transaction) => !(transaction.amount < 0 || transaction.type === "Income")) // Only "Expense"
+        .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
     },
-
     accountBalanceTotal() {
       // Always calculate account balance as total revenue minus total expense
       return this.totalRevenue - this.totalExpense;
@@ -592,10 +588,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     });
 
     // Thiết lập auto-refresh
-    this.refreshInterval = setInterval(() => {
-      this.refreshData();
-      this.getAccountBalance(); // Cập nhật balance từ server định kỳ
-    }, 10000);
+    // this.refreshInterval = setInterval(() => {
+    //   this.refreshData();
+    //   this.getAccountBalance(); // Cập nhật balance từ server định kỳ
+    // }, 10000);
   },
   beforeUnmount() {
     // Clean up timers and observers when the component is destroyed
@@ -606,7 +602,31 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     this.cleanupResources();
     next();
   },
+
+  async created() {
+    // populate the flag as soon as the component mounts
+    this.accountNotConnected = await this.fetchAccountStatus();
+  },
+
   methods: {
+    async fetchAccountStatus() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return true;            // safest default
+      }
+
+      try {
+        const { data: user } = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`
+        );
+
+        return !user.bank_accounts || user.bank_accounts.length === 0;
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        return true;            // safest default
+      }
+    },
+
     // ... existing methods ...
 
     // Phương thức mới để dọn dẹp tài nguyên
@@ -821,6 +841,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // goal methods
     retrieveGoals() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return;
+      }
       axios
         .get(`${process.env.VUE_APP_DEPLOY_URL}/goals/u/${this.userId}`)
         .then((response) => {
@@ -965,6 +989,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // Example usage of the sorting function
     async fetchTransactions() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return;
+      }
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
@@ -1095,7 +1123,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
             amount: this.initialBalance,
             date: date,
             balance: this.initialBalance,
-
+            source: "manual",
             userId: this.userId,
             type: type,
           }
@@ -1126,7 +1154,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         console.error("Error resetting account balance:", error);
       }
     },
-    editTransaction(trans) {
+
+    async editTransaction(trans) {
       this.editTransactionData = { ...trans };
       this.showEditTransactionModal = true;
     },
@@ -1338,13 +1367,54 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         );
 
         const { access_token, item_id } = response.data;
+        console.log("Access token:", access_token);
         // Save the access token and item ID as required
-        this.fetchPlaidTransactions(access_token);
+        await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`, 
+        {
+          bank_accounts: access_token,
+        },
+        { withCredentials: true }
+      );
+        const user = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`);
+        this.reloadTransactions(access_token);
+        this.accountNotConnected = await this.fetchAccountStatus();
       } catch (error) {
         console.error("Error exchanging token", error);
       }
     },
 
+    async reloadTransactions(access_token) {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`, {
+          params: { access_token },
+        });
+        const currentTransactions = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`);
+        if (currentTransactions.data.length > 0) {
+          await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`, {
+            data: { source: 'bank' }
+          });
+        }
+        const transactions = response.data.latest_transactions;
+        await Promise.all(transactions.map(async (transaction) => {
+          await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+            description: transaction.name,
+            amount: transaction.amount,
+            date: transaction.date,
+            type: transaction.category[0],
+            balance: transaction.amount,
+            userId: this.userId,
+            source: 'bank'
+          });
+          console.log("added transaction", transaction);
+        }));
+        
+        console.log("Fetched transactions:", this.transactions);
+        await this.fetchTransactions();
+      }
+      catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    },
     // Sửa phương thức refreshData
     async refreshData() {
       try {
@@ -1355,24 +1425,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         await this.fetchTransactions();
       } catch (error) {
         console.error("Error refreshing data:", error);
-      }
-    },
-
-    // Tạo hàm Plaid fetchTransactions riêng biệt để tránh nhầm lẫn
-    async fetchPlaidTransactions(access_token) {
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`,
-          {
-            params: { access_token },
-          }
-        );
-
-        // Update your local transactions state with the latest transactions
-        this.transactions = response.data.latest_transactions;
-        console.log("Fetched Plaid transactions:", this.transactions);
-      } catch (error) {
-        console.error("Error fetching Plaid transactions:", error);
       }
     },
   },

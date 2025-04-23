@@ -573,7 +573,7 @@ export default {
   color: var(--text-primary);
   text-decoration: none;
   transition: color 0.3s ease;
-  font-size: clamp(0.75rem, 5.6vw, 1.25rem);
+  font-size: clamp(0.5rem, 5vw, 1rem);
 }
 
 .nav-items li .chatview {
@@ -614,7 +614,7 @@ export default {
 .services-dropdown {
   cursor: pointer;
   position: relative;
-  font-size: clamp(0.75rem, 5.6vw, 1.25rem);
+  font-size: clamp(0.6rem, 5.1vw, 1rem);
   color: var(--text-primary);
   padding: 8px 12px; /* Add padding to give space around text */
   display: flex;

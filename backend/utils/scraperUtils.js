@@ -1,13 +1,20 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
+import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
-// Get the directory path of the current module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// Get the directory path of the current module - with fallback
+let __dirname;
+try {
+  const __filename = fileURLToPath(import.meta.url);
+  __dirname = path.dirname(__filename);
+} catch (e) {
+  // Fallback for environments where import.meta is not available
+  __dirname = path.resolve();
+}
+
 // Load .env file from backend directory
-dotenv.config({ path: join(__dirname, '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 export const browserConfig = {
     headless: true,

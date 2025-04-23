@@ -10,7 +10,12 @@ const transactionSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     require: true
-  }
+  },
+  source: {
+    type: String,
+    enum: ['bank', 'manual'],
+    default: 'manual',
+  },
 });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);

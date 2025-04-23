@@ -74,9 +74,7 @@ const messages = {
     month: "month",
     year: "year",
 
-    // Results and graphs
-    calculate: "Calculate",
-    finAmount: "Final Amount: ",
+   
     // Results and graphs
     calculate: "Calculate",
     finAmount: "Final Amount: ",
@@ -193,6 +191,7 @@ const messages = {
     descriptionHeader: "Description",
     dateHeader: "Date",
     amountHeader: "Amount",
+    sourceHeader: "Source",
     statusHeader: "Status",
     transactionHeader: "Transaction",
     creditedStatus: "Credited",
@@ -559,6 +558,7 @@ const messages = {
     descriptionHeader: "Mô tả",
     dateHeader: "Ngày",
     amountHeader: "Số tiền",
+    sourceHeader: "Nguồn",
     statusHeader: "Trạng thái",
     transactionHeader: "Giao dịch",
     creditedStatus: "Ghi có",

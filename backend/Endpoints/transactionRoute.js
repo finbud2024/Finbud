@@ -155,8 +155,8 @@ transactionRoute
 
   // POST a new transaction
   .post(validateRequest(Transaction.schema), async (req, res) => {
-    console.log("in /transactions Route (POST) new transaction to database");
-    const { description, amount, balance, userId, date, type } = req.body;
+    console.log('in /transactions Route (POST) new transaction to database');
+    const { description, amount, balance, userId, date, type, source } = req.body;
 
     if (
       !description ||
@@ -180,6 +180,7 @@ transactionRoute
       balance: balance,
       type: type,
       date: date,
+      source: source
     });
 
     try {
@@ -236,6 +237,7 @@ transactionRoute
   // DELETE all transactions for a specific userId, RESET account balance of specific user
   .delete(async (req, res) => {
     const userId = req.params.userId;
+    const source = req.body.source
     if (!userId) {
       return res.status(400).send("Missing userId in request parameters");
     }
@@ -244,15 +246,17 @@ transactionRoute
         userId
     );
     try {
-      let transactions = await Transaction.deleteMany({ userId: userId });
-      if (!transactions.deletedCount) {
-        return res
-          .status(404)
-          .send(`No transactions with userId: ${userId} existed in database`);
+      let transactions = [];
+      if (!source) {
+        transactions = await Transaction.deleteMany({ "userId": userId });
       }
-      return res
-        .status(200)
-        .send(`All transactions with userId: ${userId} deleted successfully`);
+      else {
+        transactions = await Transaction.deleteMany({ "userId": userId, "source": source });
+      }
+      // if (!transactions.deletedCount) {
+      //   return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      // }
+      return res.status(200).send(`All transactions with userId: ${userId} deleted successfully`);
     } catch (err) {
       return res
         .status(501)
