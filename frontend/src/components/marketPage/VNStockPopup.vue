@@ -850,33 +850,95 @@ export default {
 
 @media (max-width: 768px) {
   .popup-content {
-    width: 95%;
-    height: 90%;
-    padding: 15px 15px 25px 15px;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    border-radius: 0;
+    min-width: auto;
   }
-  
+
   .stock-header {
-    margin-bottom: 10px;
     padding-bottom: 10px;
+    margin-bottom: 10px;
   }
-  
+
+  .stock-header h2 {
+    font-size: 1.3rem;
+  }
+
   .chart-container {
-    height: 50%;
-    min-height: 300px;
+    height: 45%;
+    min-height: 250px;
   }
-  
-  .close-btn {
-    top: 5px;
-    right: 5px;
+
+  .income-statement-container {
+    margin-top: 15px;
   }
-  
+
+  .income-statement-title {
+    font-size: 1.1rem;
+  }
+
   .income-statement-table {
     font-size: 0.8rem;
   }
-  
-  .income-statement-table th, 
+
+  .income-statement-table th,
   .income-statement-table td {
     padding: 6px 8px;
+  }
+
+  .close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 1.8em;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-content {
+    padding: 10px;
+  }
+
+  .stock-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .detail-key {
+    min-width: auto;
+    margin-right: 0;
+  }
+
+  .chart-container {
+    height: 40%;
+    min-height: 200px;
+  }
+
+  .income-statement-table {
+    font-size: 0.75rem;
+  }
+
+  .income-statement-table th,
+  .income-statement-table td {
+    padding: 4px 6px;
+  }
+
+  .income-statement-table .sticky-column {
+    max-width: 120px;
+    white-space: normal;
+  }
+
+  .close-btn {
+    top: 5px;
+    right: 5px;
+    font-size: 1.6em;
   }
 }
 </style> 
