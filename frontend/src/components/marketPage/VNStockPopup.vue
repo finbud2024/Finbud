@@ -6,17 +6,17 @@
         <h2>{{ stock.name || stock.symbol }}</h2>
         <div class="stock-details">
           <div class="detail-row">
-            <span class="detail-key">Price:</span>
+            <span class="detail-key">Giá:</span>
             <span class="detail-value">{{ stock['05. price'] }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-key">Change (đồng):</span>
+            <span class="detail-key">Thay đổi (đồng):</span>
             <span class="detail-value" :class="{'positive': parseFloat(stock['09. change']) > 0, 'negative': parseFloat(stock['09. change']) < 0}">
               {{ parseFloat(stock['09. change']) > 0 ? '+' : '' }}{{ stock['09. change'] }}
             </span>
           </div>
           <div class="detail-row">
-            <span class="detail-key">Change (%):</span>
+            <span class="detail-key">Thay đổi (%):</span>
             <span class="detail-value" :class="{'positive': parseFloat(stock['10. change percent']) > 0, 'negative': parseFloat(stock['10. change percent']) < 0}">
               {{ stock['10. change percent'] }}
             </span>
@@ -27,10 +27,10 @@
       
       <!-- Income Statement Section -->
       <div class="income-statement-container">
-        <h3 class="income-statement-title">Income Statement (Đơn vị: đồng)</h3>
-        <div v-if="loadingIncomeStatement" class="loading-indicator">Loading income statement data...</div>
+        <h3 class="income-statement-title">Báo Cáo Kết Quả Kinh Doanh (Đơn vị: đồng)</h3>
+        <div v-if="loadingIncomeStatement" class="loading-indicator">Đang tải dữ liệu báo cáo tài chính...</div>
         <div v-else-if="incomeStatementError" class="error-message">{{ incomeStatementError }}</div>
-        <div v-else-if="incomeStatementData.length === 0" class="no-data-message">No income statement data available</div>
+        <div v-else-if="incomeStatementData.length === 0" class="no-data-message">Không có dữ liệu báo cáo tài chính</div>
         <div v-else class="income-statement-scroll">
           <table class="income-statement-table">
             <thead>
@@ -152,7 +152,7 @@ export default {
     async fetchOHLCVData(symbol) {
       try {
         this.loading = true;
-        const response = await axios.get(`https://self-surfaces-dylan-usc.trycloudflare.com/api/vn-stock/ohlcv/${symbol}`);
+        const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/ohlcv/${symbol}`);
         // const response = await axios.get(`${process.env.VUE_STOCK_API_BASE_URL}/api/vn-stock/ohlcv/${symbol}`);
         
         if (response.data && response.data.data) {
@@ -188,7 +188,7 @@ export default {
         this.loadingIncomeStatement = true;
         this.incomeStatementError = null;
         
-        const response = await axios.get(`https://self-surfaces-dylan-usc.trycloudflare.com/api/vn-stock/income-statement/${symbol}`);
+        const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/income-statement/${symbol}`);
         
         if (response.data && response.data.data) {
           this.incomeStatementData = response.data.data // data is already sorted by year in descending order
@@ -441,9 +441,9 @@ export default {
       
       // Set legend content
       legendContainer.innerHTML = `
-        <div>Last Price: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${latest.close.toFixed(2)}</span></div>
-        <div>Change: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${changeSign}${change.toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%)</span></div>
-        <div>Volume: <span>${latest.volume.toLocaleString()}</span></div>
+        <div>Giá gần nhất: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${latest.close.toFixed(2)}</span></div>
+        <div>Thay đổi: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${changeSign}${change.toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%)</span></div>
+        <div>Khối lượng: <span>${latest.volume.toLocaleString()}</span></div>
       `;
     },
     
@@ -497,27 +497,27 @@ export default {
       detailedInfo.innerHTML = `
         <div style="font-weight: bold; margin-bottom: 5px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 3px;">${formattedDate}</div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Open:</span>
+          <span style="font-weight: 600;">Mở cửa:</span>
           <span>${point.open.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">High:</span>
+          <span style="font-weight: 600;">Cao nhất:</span>
           <span>${point.high.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Low:</span>
+          <span style="font-weight: 600;">Thấp nhất:</span>
           <span>${point.low.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Close:</span>
+          <span style="font-weight: 600;">Đóng cửa:</span>
           <span>${point.close.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Change:</span>
+          <span style="font-weight: 600;">Thay đổi:</span>
           <span style="color: ${changeColor};">${changeSign}${change.toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%)</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Volume:</span>
+          <span style="font-weight: 600;">Khối lượng:</span>
           <span>${point.volume.toLocaleString()}</span>
         </div>
       `;
