@@ -53,6 +53,10 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  bank_accounts: {
+    type: [String],
+    default: [],
+  }
 });
 
 // Hash password before saving user

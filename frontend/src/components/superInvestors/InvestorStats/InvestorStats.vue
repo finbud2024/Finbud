@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, onMounted, ref, computed, watch } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import './InvestorStats.css';
 
