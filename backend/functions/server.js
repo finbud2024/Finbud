@@ -187,7 +187,10 @@ const handler = async (event, context) => {
 };
 
 // Start the server for local development if not in production
-if (process.env.NODE_ENV !== "production") {
+if (
+  process.env.NODE_ENV !== "production" &&
+  process.env.NETLIFY_DEV !== "true"
+) {
   const PORT = process.env.PORT || 8889;
   connectToMongoDB()
     .then(() => {

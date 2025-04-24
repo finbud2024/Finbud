@@ -6,17 +6,17 @@
         <h2>{{ stock.name || stock.symbol }}</h2>
         <div class="stock-details">
           <div class="detail-row">
-            <span class="detail-key">Price:</span>
+            <span class="detail-key">Giá:</span>
             <span class="detail-value">{{ stock['05. price'] }}</span>
           </div>
           <div class="detail-row">
-            <span class="detail-key">Change (đồng):</span>
+            <span class="detail-key">Thay đổi (đồng):</span>
             <span class="detail-value" :class="{'positive': parseFloat(stock['09. change']) > 0, 'negative': parseFloat(stock['09. change']) < 0}">
               {{ parseFloat(stock['09. change']) > 0 ? '+' : '' }}{{ stock['09. change'] }}
             </span>
           </div>
           <div class="detail-row">
-            <span class="detail-key">Change (%):</span>
+            <span class="detail-key">Thay đổi (%):</span>
             <span class="detail-value" :class="{'positive': parseFloat(stock['10. change percent']) > 0, 'negative': parseFloat(stock['10. change percent']) < 0}">
               {{ stock['10. change percent'] }}
             </span>
@@ -27,10 +27,10 @@
       
       <!-- Income Statement Section -->
       <div class="income-statement-container">
-        <h3 class="income-statement-title">Income Statement (Đơn vị: đồng)</h3>
-        <div v-if="loadingIncomeStatement" class="loading-indicator">Loading income statement data...</div>
+        <h3 class="income-statement-title">Báo Cáo Kết Quả Kinh Doanh (Đơn vị: đồng)</h3>
+        <div v-if="loadingIncomeStatement" class="loading-indicator">Đang tải dữ liệu báo cáo tài chính...</div>
         <div v-else-if="incomeStatementError" class="error-message">{{ incomeStatementError }}</div>
-        <div v-else-if="incomeStatementData.length === 0" class="no-data-message">No income statement data available</div>
+        <div v-else-if="incomeStatementData.length === 0" class="no-data-message">Không có dữ liệu báo cáo tài chính</div>
         <div v-else class="income-statement-scroll">
           <table class="income-statement-table">
             <thead>
@@ -152,7 +152,7 @@ export default {
     async fetchOHLCVData(symbol) {
       try {
         this.loading = true;
-        const response = await axios.get(`https://self-surfaces-dylan-usc.trycloudflare.com/api/vn-stock/ohlcv/${symbol}`);
+        const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/ohlcv/${symbol}`);
         // const response = await axios.get(`${process.env.VUE_STOCK_API_BASE_URL}/api/vn-stock/ohlcv/${symbol}`);
         
         if (response.data && response.data.data) {
@@ -188,7 +188,7 @@ export default {
         this.loadingIncomeStatement = true;
         this.incomeStatementError = null;
         
-        const response = await axios.get(`https://self-surfaces-dylan-usc.trycloudflare.com/api/vn-stock/income-statement/${symbol}`);
+        const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/income-statement/${symbol}`);
         
         if (response.data && response.data.data) {
           this.incomeStatementData = response.data.data // data is already sorted by year in descending order
@@ -441,9 +441,9 @@ export default {
       
       // Set legend content
       legendContainer.innerHTML = `
-        <div>Last Price: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${latest.close.toFixed(2)}</span></div>
-        <div>Change: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${changeSign}${change.toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%)</span></div>
-        <div>Volume: <span>${latest.volume.toLocaleString()}</span></div>
+        <div>Giá gần nhất: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${latest.close.toFixed(2)}</span></div>
+        <div>Thay đổi: <span style="color: ${change >= 0 ? '#28a745' : '#dc3545'}">${changeSign}${change.toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%)</span></div>
+        <div>Khối lượng: <span>${latest.volume.toLocaleString()}</span></div>
       `;
     },
     
@@ -497,27 +497,27 @@ export default {
       detailedInfo.innerHTML = `
         <div style="font-weight: bold; margin-bottom: 5px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 3px;">${formattedDate}</div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Open:</span>
+          <span style="font-weight: 600;">Mở cửa:</span>
           <span>${point.open.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">High:</span>
+          <span style="font-weight: 600;">Cao nhất:</span>
           <span>${point.high.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Low:</span>
+          <span style="font-weight: 600;">Thấp nhất:</span>
           <span>${point.low.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Close:</span>
+          <span style="font-weight: 600;">Đóng cửa:</span>
           <span>${point.close.toFixed(2)}</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Change:</span>
+          <span style="font-weight: 600;">Thay đổi:</span>
           <span style="color: ${changeColor};">${changeSign}${change.toFixed(2)} (${changeSign}${changePercent.toFixed(2)}%)</span>
         </div>
         <div style="display: flex; justify-content: space-between; margin: 3px 0;">
-          <span style="font-weight: 600;">Volume:</span>
+          <span style="font-weight: 600;">Khối lượng:</span>
           <span>${point.volume.toLocaleString()}</span>
         </div>
       `;
@@ -622,6 +622,7 @@ export default {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow: hidden; /* Prevent scrolling on the background */
 }
 
 .popup-content {
@@ -631,14 +632,15 @@ export default {
   position: relative;
   width: 95%;
   max-width: 1400px;
-  height: 90%; /* Increased from 75% to 90% to accommodate income statement */
+  height: 90vh;
   min-width: 800px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow-y: auto; /* Add vertical scrolling */
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   box-sizing: border-box;
 }
 
@@ -651,6 +653,8 @@ export default {
   margin-bottom: 15px;
   width: 100%;
   flex-shrink: 0;
+  position: relative;
+  padding-top: 10px;
 }
 
 .stock-header h2 {
@@ -695,28 +699,26 @@ export default {
 
 .chart-container {
   width: 98%;
-  height: 55%; /* Reduced from 100% - 80px to make room for income statement */
+  height: 400px; /* Fixed height instead of percentage */
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
-  flex: 0 0 auto; /* Changed from flex: 1 to prevent stretching */
+  margin: 0 auto 20px auto; /* Added bottom margin */
+  flex: 0 0 auto;
   overflow: hidden;
-  min-height: 400px; /* Add minimum height to ensure chart is visible */
 }
 
 /* Income Statement Styles */
 .income-statement-container {
-  width: 98%;
-  margin-top: 20px; 
+  width: 100%; /* Changed from 98% to 100% */
+  margin-top: 20px;
   border-top: 1px solid #eee;
   padding-top: 15px;
-  flex: 1;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 300px; /* Add minimum height for the table */
+  box-sizing: border-box; /* Add box-sizing */
+  padding-right: 15px; /* Add padding for scrollbar */
 }
 
 .income-statement-title {
@@ -727,9 +729,30 @@ export default {
 }
 
 .income-statement-scroll {
-  overflow-x: auto;
   width: 100%;
-  flex: 1;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+  box-sizing: border-box;
+}
+
+/* Style the scrollbar for webkit browsers */
+.income-statement-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.income-statement-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.income-statement-scroll::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.income-statement-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .income-statement-table {
@@ -825,58 +848,199 @@ export default {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: none;
+  background: #333;
   border: none;
   font-size: 1.5em;
   cursor: pointer;
   z-index: 10;
+  padding: 8px;
+  color: #fff;
+  transition: all 0.3s ease;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(50, 50, 50, 0.2);
+}
+
+.close-btn:hover {
+  background: #5e5757;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 992px) {
   .popup-content {
     min-width: auto;
     width: 95%;
-    height: 90%;
-  }
-  
-  .chart-container {
-    min-height: 350px;
-  }
-  
-  .income-statement-container {
-    min-height: 250px;
+    height: 90vh;
+    padding: 15px;
   }
 }
 
 @media (max-width: 768px) {
   .popup-content {
-    width: 95%;
-    height: 90%;
-    padding: 15px 15px 25px 15px;
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    padding: 15px;
+    margin: 0;
   }
-  
+
   .stock-header {
+    padding-top: 0;
+    margin-top: -10px;
+  }
+
+  .stock-header h2 {
+    font-size: 1.3rem;
+    width: 100%;
+    text-align: center;
+    margin-top: 0;
+  }
+
+  .stock-details {
+    gap: 6px;
+  }
+
+  .detail-row {
+    font-size: 0.9rem;
+  }
+
+  .detail-key {
+    min-width: 100px;
+    width: 100px;
+    margin-right: 10px;
+  }
+
+  .income-statement-container {
+    padding-right: 10px;
+  }
+
+  .income-statement-title {
+    font-size: 1.1rem;
     margin-bottom: 10px;
-    padding-bottom: 10px;
   }
-  
+
+  .income-statement-table {
+    font-size: 0.85rem;
+  }
+
+  .income-statement-table th,
+  .income-statement-table td {
+    padding: 6px 8px;
+  }
+
   .chart-container {
-    height: 50%;
-    min-height: 300px;
+    height: 350px;
   }
-  
+
   .close-btn {
-    top: 5px;
-    right: 5px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.8em;
+    width: 38px;
+    height: 38px;
+    background: #222;
   }
-  
+}
+
+@media (max-width: 480px) {
+  .popup-content {
+    padding: 10px;
+  }
+
+  .stock-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .detail-row {
+    font-size: 0.85rem;
+  }
+
+  .detail-key {
+    min-width: 90px;
+    width: 90px;
+    margin-right: 8px;
+  }
+
+  .income-statement-container {
+    padding-right: 5px;
+  }
+
+  .income-statement-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+
   .income-statement-table {
     font-size: 0.8rem;
   }
-  
-  .income-statement-table th, 
+
+  .income-statement-table th,
   .income-statement-table td {
-    padding: 6px 8px;
+    padding: 4px 6px;
+  }
+
+  .income-statement-table .sticky-column {
+    max-width: 100px;
+    white-space: normal;
+  }
+
+  .chart-container {
+    height: 300px;
+  }
+
+  .close-btn {
+    top: 12px;
+    right: 12px;
+    font-size: 2em;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 360px) {
+  .popup-content {
+    padding: 8px;
+  }
+
+  .stock-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .detail-row {
+    font-size: 0.8rem;
+  }
+
+  .detail-key {
+    min-width: 80px;
+    width: 80px;
+    margin-right: 6px;
+  }
+
+  .income-statement-table {
+    font-size: 0.75rem;
+  }
+
+  .income-statement-table .sticky-column {
+    max-width: 90px;
+  }
+
+  .chart-container {
+    height: 250px;
+  }
+
+  .close-btn {
+    top: 10px;
+    right: 10px;
+    font-size: 1.8em;
+    width: 42px;
+    height: 42px;
   }
 }
 </style> 

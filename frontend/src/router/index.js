@@ -27,8 +27,10 @@ import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 import AgentPage from "@/views/AgentPage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
+import AutoTradeAI from "@/views/AutoTradeAI.vue";
 import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
 import NotificationCenter from "@/views/NotificationCenter.vue";
+
 
 const routes = [
   {
@@ -97,6 +99,11 @@ const routes = [
     path: "/quant-simulator",
     name: "QuantSimulator",
     component: QuantSimulator,
+  },
+  {
+    path: "/autotrade-ai",
+    name: "AutoTradeAI",
+    component: AutoTradeAI,
   },
   {
     path: "/goal",
@@ -184,7 +191,6 @@ const routes = [
     name: "NotificationCenter",
     component: NotificationCenter, 
   }
-
 ];
 
 const router = createRouter({
