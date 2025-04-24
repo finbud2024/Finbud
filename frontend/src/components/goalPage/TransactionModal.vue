@@ -118,10 +118,8 @@ export default {
         "Food & Groceries",
         "Housing & Utilities",
         "Transportation",
-        "Health & Medical",
-        "Shopping & Personal",
-        "Entertainment & Subscriptions",
-        "Education & Childcare"
+        "Health & Wellness",
+        "Lifestyle & Subscriptions"
       ],
       incomeCategories: [
         "Salary",
