@@ -53,6 +53,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  color: var(--text-primary);
 }
 
 .header-bottom {
@@ -62,7 +63,7 @@ export default {
 }
 
 h1 {
-  color: #1a202c;
+  color: var(--text-primary);
   font-size: 36px;
   font-weight: 700;
   margin: 0;
@@ -79,7 +80,7 @@ h1 {
 }
 
 .customize-button {
-  background-color: #0095ff;
+  background-color: var(--link-color);
   color: white;
   padding: 10px 20px;
   border-radius: 24px;
@@ -94,7 +95,7 @@ h1 {
 }
 
 .customize-button:hover {
-  background-color: #0095ff;
+  background-color: var(--hover-bg);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(140, 125, 247, 0.3);
 }

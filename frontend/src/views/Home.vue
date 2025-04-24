@@ -4,10 +4,10 @@
       <div class="intro-text">
         <div class="title animate fade-in">Empowering smarter finance decisions </div>
         <div class="description animate fade-in">
-          {{  signInTitle }}
+          {{ signInTitle }}
         </div>
         <div class="animate fade-in">
-          <UserInput @send-message="chatNow" class="front-search-bar" />
+          <UserInput @send-message="chatNow" :redirectOnSend="true" class="front-search-bar" />
         </div>
       </div>
     </div>
@@ -35,31 +35,31 @@
 
 
         <!-- second grid box -->
-         <div class="dynamic-border">
+        <div class="dynamic-border">
           <div class="text-section text-left">
-          <img class="intro-icon" src="@/assets/home-page/Bars.png" alt="Financial Planning Icon">
-          <h2>Optimize Your Financial Planning</h2>
-          <p>
-            Finbud helps you track and manage expenses, record income and spending, and tailor financial management to
-            your specific goals.
-          </p>
-          <!-- <a href="/goal" class="button">Learn more</a> -->
+            <img class="intro-icon" src="@/assets/home-page/Bars.png" alt="Financial Planning Icon">
+            <h2>Optimize Your Financial Planning</h2>
+            <p>
+              Finbud helps you track and manage expenses, record income and spending, and tailor financial management to
+              your specific goals.
+            </p>
+            <!-- <a href="/goal" class="button">Learn more</a> -->
+          </div>
         </div>
-         </div>
-        
+
         <!-- third grid box -->
-         <div class="dynamic-border">
+        <div class="dynamic-border">
           <div class="text-section text-left">
-          <img class="intro-icon" src="@/assets/home-page/CircleArrowUp.png" alt="Financial Efficiency Icon">
-          <h2>Maximize Your Investment Efficiency</h2>
-          <p>
-            Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital
-            confidently.
-          </p>
-          <!-- <a href="/stock-simulator" class="button">Learn more</a> -->
+            <img class="intro-icon" src="@/assets/home-page/CircleArrowUp.png" alt="Financial Efficiency Icon">
+            <h2>Maximize Your Investment Efficiency</h2>
+            <p>
+              Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital
+              confidently.
+            </p>
+            <!-- <a href="/stock-simulator" class="button">Learn more</a> -->
+          </div>
         </div>
-         </div>
-        
+
       </div>
     </section>
 
@@ -289,9 +289,12 @@ export default {
     learnMore() {
       this.$router.push('/tech');
     },
-    chatNow() {
+    chatNow(message) {
       if (this.isAuthenticated) {
-        this.$router.push('/chat-view');
+        this.$router.push({
+          path: '/chat-view',
+          query: { autoMessage: message }
+        });
       } else {
         this.$router.push('/login');
       }
@@ -528,7 +531,7 @@ export default {
   position: relative;
   border-radius: 12px;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
 }
 
@@ -550,7 +553,7 @@ export default {
   position: relative;
   z-index: 2;
   margin: 0px;
-  padding: 10px; 
+  padding: 10px;
   background-color: var(--card-bg);
   border-radius: inherit;
   text-align: left;
@@ -832,7 +835,9 @@ body.dark-mode .feature-icon {
 
 /* Global settings and the main content area */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 

@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
+import Source from "../Database Schema/Source.js";  
+import Article from "../Database Schema/Article.js";
 import serverless from "serverless-http";
 import dotenv from "dotenv";
 import passportConfig from "../Passport/config.js";
@@ -29,6 +31,7 @@ import superInvestorsRoute from "../Endpoints/superInvestorsRoute.js";
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
+import articleRoute from "../Endpoints/articleRoute.js";
 
 dotenv.config();
 
@@ -154,6 +157,7 @@ router.use("/multiplier-simulator", multiplierSimulatorRoute);
 router.use("/", portfolioRoute);
 router.use("/api/investors", superInvestorsRoute);
 router.use("/api/forums", forumRoute);
+router.use("/api/articles", articleRoute);
 router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
@@ -181,7 +185,10 @@ const handler = async (event, context) => {
 };
 
 // Start the server for local development if not in production
-if (process.env.NODE_ENV !== "production") {
+if (
+  process.env.NODE_ENV !== "production" &&
+  process.env.NETLIFY_DEV !== "true"
+) {
   const PORT = process.env.PORT || 8889;
   connectToMongoDB()
     .then(() => {

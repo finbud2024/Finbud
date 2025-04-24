@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import store from "@/store";
 import LoginView from "@/views/LoginView.vue";
 import SignUp from "@/views/SignUp.vue";
 import Home from "@/views/Home.vue";
@@ -26,6 +27,9 @@ import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 import AgentPage from "@/views/AgentPage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
+import AutoTradeAI from "@/views/AutoTradeAI.vue";
+import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
+
 const routes = [
   {
     path: "/",
@@ -95,6 +99,11 @@ const routes = [
     component: QuantSimulator,
   },
   {
+    path: "/autotrade-ai",
+    name: "AutoTradeAI",
+    component: AutoTradeAI,
+  },
+  {
     path: "/goal",
     name: "GoalPage",
     component: GoalPage,
@@ -150,7 +159,6 @@ const routes = [
     component: MortgageCalc,
     props: true,
   },
-  ,
   {
     path: "/super-investors",
     name: "SuperInvestors",
@@ -171,12 +179,24 @@ const routes = [
     name: "ForgotPassword",
     component: ForgotPassword,
   },
-
+  {
+    path: "/investment-calculator",
+    name: "InvestmentCalculator",
+    component: InvestmentCalculator,
+  }
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+// Add navigation guard
+router.beforeEach(async (to, from, next) => {
+  if (!store.getters["users/isAuthenticated"]) {
+    await store.dispatch("users/fetchCurrentUser");
+  }
+  next();
 });
 
 export default router;

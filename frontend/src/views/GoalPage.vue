@@ -43,12 +43,13 @@
             }}{{ displayName }}
           </div>
           <div class="slogan">
-            Manage your wallet wisely to reach your goals with ease.
+            {{ $t('dashboardSlogan') }}
           </div>
         </div>
       </div>
-      <button
-        @click="openPlaidLink"
+      <button 
+        v-if="accountNotConnected === true" 
+        @click="openPlaidLink" 
         :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
       >
         Connect Your Bank Account
@@ -66,14 +67,12 @@
         </div>
 
         <div class="total-spend expense-card">
-          <h2>
-            -{{
-              selectedCurrency === "USD"
-                ? formatCurrency(totalExpense)
-                : formatCurrency(convertToVND(totalExpense))
-            }}
-          </h2>
-          <p>Total Expense</p>
+          <h2>-{{
+                  selectedCurrency === "USD"
+                    ? formatCurrency(totalExpense)
+                    : formatCurrency(convertToVND(totalExpense))
+                }}</h2>
+          <p>{{ $t('totalExpenseLabel') }}</p>
         </div>
 
         <div class="total-spend">
@@ -81,8 +80,8 @@
             <h2>
               {{
                 selectedCurrency === "USD"
-                  ? formatCurrency(accountBalance)
-                  : formatCurrency(convertToVND(accountBalance))
+                  ? formatCurrency(accountBalanceTotal)
+                  : formatCurrency(convertToVND(accountBalanceTotal))
               }}
             </h2>
             <select
@@ -94,7 +93,7 @@
               <option value="VND">VND</option>
             </select>
           </div>
-          <p>Account Balance</p>
+          <p>{{ $t('accountBalanceLabel') }}</p>
         </div>
       </div>
 
@@ -127,16 +126,13 @@
       </div>
       <section class="transactions">
         <div class="headline-buttons">
-          <h2>Daily Transactions</h2>
+          <h2>{{ $t('dailyTransactionsTitle') }}</h2>
           <div class="buttons">
-            <button @click="openModal" style="font-weight: bold">Add</button>
-            <button
-              @click="showResetConfirmationModal = true"
-              style="font-weight: bold"
-            >
-              Reset
-            </button>
-          </div>
+              <button @click="openModal" style="font-weight: bold;">{{ $t('addButton') }}</button>
+              <button @click="showResetConfirmationModal = true" style="font-weight: bold;">
+                {{ $t('resetButton') }}
+              </button>
+            </div>
         </div>
         <div class="transaction-box">
           <TransactionModal
@@ -164,18 +160,12 @@
       </section>
     </div>
 
-    <div class="rightPanel">
-      <section class="financial-goals" ref="financialGoalsSection">
-        <div class="goal-upper-part">
-          <h3 class="goal-section-title">Goals</h3>
-          <button
-            class="add-goal-button"
-            @click="showAddGoalModal = true"
-            style="font-weight: bold"
-          >
-            Add Goal
-          </button>
-        </div>
+      <div class="rightPanel">
+        <section class="financial-goals" ref="financialGoalsSection">
+          <div class="goal-upper-part">
+            <h3 class="goal-section-title">{{ $t('goalsSectionTitle') }}</h3>
+            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">{{ $t('addGoalButton') }}</button>
+            </div>
 
         <div class="search-container">
           <input
@@ -186,164 +176,108 @@
           />
         </div>
 
-        <div class="goals">
-          <div
-            v-for="goal in filteredGoals"
-            :key="goal._id"
-            class="goal"
-            @click="showGoalProgress(goal)"
-          >
-            <img
-              src="../assets/financial-goal-mockup.jpg"
-              alt="Goal Image"
-              class="goal-image"
-            />
-            <div class="goal-content">
-              <div class="goal-icon">
-                <i :class="goal.icon"></i>
-              </div>
-              <div class="goal-info">
-                <h3>{{ goal.title }}</h3>
-                <p>Category: {{ goal.category }}</p>
-                <p>Total: {{ goal.targetAmount }} USD</p>
-                <p>Saved: {{ goal.currentAmount }} USD</p>
-              </div>
-              <div class="progress-bar-container">
-                <div
-                  class="progress-bar"
-                  :style="{
-                    width: (goal.currentAmount / goal.targetAmount) * 100 + '%',
-                  }"
-                ></div>
-              </div>
+            <div class="goals">
+            <div v-for="goal in filteredGoals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
+                <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
+                <div class="goal-content">
+                <div class="goal-icon">
+                    <i :class="goal.icon"></i>
+                </div>
+                <div class="goal-info">
+                  <h3>{{ goal.title }}</h3>
+                  <p>{{ $t('categoryLabel') }}: {{ goal.category }}</p>
+                  <p>{{ $t('totalLabel') }}: {{ goal.targetAmount }} USD</p>
+                  <p>{{ $t('savedLabel') }}: {{ goal.currentAmount }} USD</p>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" :style="{ width: (goal.currentAmount / goal.targetAmount * 100) + '%' }"></div>
+                </div>
+                </div>
             </div>
-          </div>
-        </div>
+            </div>
 
-        <div
-          v-if="showAddGoalModal"
-          class="modal"
-          @click="showAddGoalModal = false"
-        >
-          <div class="modal-content" @click.stop>
-            <div class="modal-text-content">
-              <h3>Add New Goal</h3>
-              <div class="form-group">
-                <label for="goalTitle">Goal Title</label>
-                <input
-                  id="goalTitle"
-                  type="text"
-                  placeholder="Enter your goal title"
-                  v-model="newGoal.title"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="goalDescription">Description (optional)</label>
-                <textarea
-                  id="goalDescription"
-                  placeholder="Describe your goal (max 500 words)"
-                  v-model="newGoal.description"
-                  maxlength="500"
-                  @input="updateDescriptionCount"
-                ></textarea>
-                <div class="character-counter">
-                  {{ descriptionCharCount }} / 500 characters
+
+            <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
+              <div class="modal-content" @click.stop>
+                <div class="modal-text-content">
+                  <h3>{{ $t('addNewGoalTitle') }}</h3>
+                  <div class="form-group">
+                    <label for="goalTitle">{{ $t('goalTitleLabel') }}</label>
+                    <input id="goalTitle" type="text" :placeholder="$t('goalTitlePlaceholder')" v-model="newGoal.title" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="goalDescription">{{ $t('descriptionLabel') }} ({{ $t('optionalLabel') }})</label>
+                    <textarea 
+                      id="goalDescription" 
+                      :placeholder="$t('descriptionPlaceholder')" 
+                      v-model="newGoal.description" 
+                      maxlength="500" 
+                      @input="updateDescriptionCount"></textarea>
+                    <div class="character-counter">{{ descriptionCharCount }} / 500 {{ $t('charactersLabel') }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="targetAmount">{{ $t('totalMoneyNeededLabel') }}</label>
+                    <div class="currency-input">
+                      <input id="targetAmount" type="number" :placeholder="$t('totalMoneyNeededPlaceholder')" v-model="newGoal.targetAmount" required>
+                      <select>
+                        <option value="USD">USD</option>
+                        <option value="VND">VND</option>
+                        <option value="EUR">EUR</option>
+                        <option value="GBP">GBP</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="currentAmount">{{ $t('moneyHaveLabel') }}</label>
+                    <input id="currentAmount" type="number" :placeholder="$t('moneyHavePlaceholder')" v-model="newGoal.currentAmount">
+                  </div>
+                  <div class="form-group">
+                    <label for="startDate">{{ $t('startDateLabel') }}</label>
+                    <input id="startDate" type="date" v-model="newGoal.startDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="endDate">{{ $t('endDateLabel') }}</label>
+                    <input id="endDate" type="date" v-model="newGoal.endDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="goalCategory">{{ $t('categoryLabel') }}</label>
+                    <select id="goalCategory" v-model="selectedCategory">
+                      <option v-for="category in categories" :key="category" :value="category">
+                        {{ category }}
+                      </option>
+                      <option value="new">{{ $t('addNewCategoryOption') }}</option>
+                    </select>
+                  </div>
+                  <div v-if="selectedCategory === 'new'" class="form-group">
+                    <label for="newCategory">{{ $t('newCategoryLabel') }}</label>
+                    <input id="newCategory" type="text" :placeholder="$t('newCategoryPlaceholder')" v-model="newCategory">
+                  </div>
+                  <button class="add-goal-button" @click="addGoal">{{ $t('addGoalButton') }}</button>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="targetAmount">Total Money Needed</label>
-                <div class="currency-input">
-                  <input
-                    id="targetAmount"
-                    type="number"
-                    placeholder="Total money needed"
-                    v-model="newGoal.targetAmount"
-                    required
-                  />
-                  <select>
-                    <option value="USD">USD</option>
-                    <option value="VND">VND</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="currentAmount">Money Already Have</label>
-                <input
-                  id="currentAmount"
-                  type="number"
-                  placeholder="Money already have"
-                  v-model="newGoal.currentAmount"
-                />
-              </div>
-              <div class="form-group">
-                <label for="startDate">Start Date</label>
-                <input
-                  id="startDate"
-                  type="date"
-                  v-model="newGoal.startDate"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="endDate">End Date</label>
-                <input
-                  id="endDate"
-                  type="date"
-                  v-model="newGoal.endDate"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="goalCategory">Category</label>
-                <select id="goalCategory" v-model="selectedCategory">
-                  <option
-                    v-for="category in categories"
-                    :key="category"
-                    :value="category"
-                  >
-                    {{ category }}
-                  </option>
-                  <option value="new">Add New Category</option>
-                </select>
-              </div>
-              <div v-if="selectedCategory === 'new'" class="form-group">
-                <label for="newCategory">New Category</label>
-                <input
-                  id="newCategory"
-                  type="text"
-                  placeholder="Enter new category"
-                  v-model="newCategory"
-                />
-              </div>
-              <button class="add-goal-button" @click="addGoal">Add Goal</button>
             </div>
+          </section>
+        </div>
+        <goalNotiModal
+          :isVisible="showNoti"
+          :message="notiMessage"
+          @close="showNoti = false"
+        />
+        <!-- Reset Confirmation Modal -->
+        <div v-if="showResetConfirmationModal" class="modal">
+          <div class="modal-content">
+            <h3>{{ $t('resetAccountTitle') }}</h3>
+            <p>{{ $t('resetAccountMessage') }}</p>
+            <button @click="showResetConfirmationModal = false" style="margin-right: 10px">
+              {{ $t('noButton') }}
+            </button>
+            <button @click="resetAccountBalance">
+              {{ $t('yesButton') }}
+            </button>
           </div>
         </div>
-      </section>
-    </div>
-    <!-- Ghost div for chatbot trigger - placed at the very end of the page -->
-    <div ref="chatbotTriggerPoint" class="chatbot-trigger"></div>
-  </div>
-  <div v-if="showResetConfirmationModal" class="modal">
-    <div class="modal-content">
-      <h3>Reset Account Balance</h3>
-      <p>
-        Are you sure you want to reset your account balance? This action will
-        delete all your transactions.
-      </p>
-      <button
-        @click="showResetConfirmationModal = false"
-        style="margin-right: 10px"
-      >
-        No
-      </button>
-      <button @click="resetAccountBalance">Yes</button>
-    </div>
-  </div>
-</template>
+      </div>
+    </template>
 
 <script>
 import axios from "axios";
@@ -353,6 +287,8 @@ import TransactionModal from "../components/goalPage/TransactionModal.vue";
 import TransactionPie from "../components/goalPage/TransactionPie.vue";
 import { toast } from "vue3-toastify";
 import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
+import { messageToOpenAIRole } from "@langchain/openai";
 export default {
   name: "GoalPage",
   components: {
@@ -370,6 +306,7 @@ export default {
       showMessage: false,
       hidingMessage: false,
       isTyping: false,
+      accountNotConnected: false,
       botMessage: "",
       typedContent: "", // Add this for the typing effect
       botObserver: null,
@@ -379,7 +316,8 @@ export default {
       typingSpeed: 50, // milliseconds between words
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
-
+      showNoti: false,
+      notiMessage: "",
       userId: this.$store.getters["users/userId"],
       firstName:
         this.$store.getters["users/currentUser"]?.identityData?.firstName || "",
@@ -418,16 +356,16 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       goalTitle: "",
       goalProgress: 0,
       categories: [
-      'Savings', 
-      'Investment', 
-      'Entertainment',
-      'Education',
-      'Emergency Fund',
-      'Vehicle',
-      'Vacation',
-      'Health'
+        "Savings",
+        "Investment",
+        "Entertainment",
+        "Education",
+        "Emergency Fund",
+        "Vehicle",
+        "Vacation",
+        "Health",
       ],
-      selectedCategory: '',
+      selectedCategory: "",
       isAnalyzingCategory: false,
       userModifiedCategory: false,
       aiSuggestionUsed: false,
@@ -489,7 +427,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       // totalRevenue: 0,
       disabledConnect: false,
       refreshInterval: null,
-      serverAccountBalance: 0, // New state to store account balance from server
+      serverAccountBalance: null, // Biến lưu giá trị từ server
     };
   },
   computed: {
@@ -510,32 +448,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     totalRevenue() {
       return this.transactions
-        .filter((transaction) => {
-          // Income có amount âm
-          return (
-            transaction.type === "Income" ||
-            (transaction.type === "revenue" && transaction.amount < 0)
-          );
-        })
-        .reduce(
-          (total, transaction) => total + Math.abs(transaction.amount),
-          0
-        ); // Luôn dùng giá trị tuyệt đối
+        .filter((transaction) => (transaction.amount < 0 || transaction.type === "Income")) // Only "Income"
+        .reduce((total, transaction) => total + Math.abs(transaction.amount), 0); // Sum amounts
     },
-
+    
     totalExpense() {
       return this.transactions
-        .filter((transaction) => {
-          // Expense có amount dương
-          return (
-            transaction.type === "Expense" ||
-            (transaction.type === "revenue" && transaction.amount > 0)
-          );
-        })
-        .reduce(
-          (total, transaction) => total + Math.abs(transaction.amount),
-          0
-        ); // Luôn dùng giá trị tuyệt đối
+        .filter((transaction) => !(transaction.amount < 0 || transaction.type === "Income")) // Only "Expense"
+        .reduce((total, transaction) => total + transaction.amount, 0); // Sum amounts
     },
 
     // Sửa cách tính accountBalance để lấy từ trường balance của transaction mới nhất
@@ -545,34 +465,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   },
   
   mounted() {
-    // if (!this.isAuthenticated) {
-    //   this.$router.push("/");
-      // return;
-    // }
-
-
-    this.retrieveGoals();
-
-    // Lấy account balance từ server
-    this.getAccountBalance();
-
-    // Fetch transactions và đảm bảo nó hoàn thành trước khi thực hiện các bước tiếp theo
-    this.fetchTransactions().then(() => {
-      // Xử lý URL params sau khi đã có dữ liệu
-      this.processURLParams();
-
-      // Thiết lập bot observer sau khi dữ liệu đã được tải
-      this.$nextTick(() => {
-        this.setupBotObserver();
-      });
-    });
-
-    // Thiết lập auto-refresh
-    this.refreshInterval = setInterval(() => {
-      this.refreshData();
-      this.getAccountBalance(); // Cập nhật account balance mỗi lần refresh
-    }, 10000);
   },
+
   beforeUnmount() {
     // Clean up timers and observers when the component is destroyed
     this.cleanupResources();
@@ -582,7 +476,31 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     this.cleanupResources();
     next();
   },
+
+  async created() {
+    // populate the flag as soon as the component mounts
+    this.accountNotConnected = await this.fetchAccountStatus();
+  },
+
   methods: {
+    async fetchAccountStatus() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return true;            // safest default
+      }
+
+      try {
+        const { data: user } = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`
+        );
+
+        return !user.bank_accounts || user.bank_accounts.length === 0;
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        return true;            // safest default
+      }
+    },
+
     // ... existing methods ...
 
     // Phương thức mới để dọn dẹp tài nguyên
@@ -737,16 +655,18 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     async getAccountBalance() {
       try {
-        const userId = this.$store.getters["users/userId"];
         const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}`
+          `${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`
         );
 
         if (response && response.data && response.data.bankingAccountData) {
-          // Update accountBalance từ dữ liệu server
-          // Lưu vào biến riêng để đảm bảo không bị ảnh hưởng bởi computed property
+          // Cập nhật giá trị từ server
           this.serverAccountBalance =
             response.data.bankingAccountData.accountBalance || 0;
+          console.log(
+            "Account balance fetched from server:",
+            this.serverAccountBalance
+          );
         }
       } catch (error) {
         console.error("Error fetching account balance:", error);
@@ -795,6 +715,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // goal methods
     retrieveGoals() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return;
+      }
       axios
         .get(`${process.env.VUE_APP_DEPLOY_URL}/goals/u/${this.userId}`)
         .then((response) => {
@@ -939,6 +863,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
     // Example usage of the sorting function
     async fetchTransactions() {
+      if (!this.userId) {
+        console.error('User ID is not available.');
+        return;
+      }
       try {
         const response = await axios.get(
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
@@ -971,6 +899,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     },
 
     async addTransaction() {
+
       if (
         this.transaction.description &&
         this.transaction.amount !== null &&
@@ -984,6 +913,29 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
+          
+          let openNotification = false; // Flag to track if a notification should be shown
+          if (this.transaction.type === "Expense") {
+            
+              const accountBalanceFormatted = this.formatCurrency(this.accountBalanceTotal);
+              const amountFormatted = this.formatCurrency(amountInUSD);
+              const percentSpent = ((amountInUSD / this.accountBalanceTotal) * 100).toFixed(1);
+                      
+              if (amountInUSD >= this.accountBalanceTotal) {
+                this.notiMessage = `Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.75) {
+                this.notiMessage = `Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.5) {
+                this.notiMessage = `Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalanceTotal * 0.25) {
+                this.notiMessage = `FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
+                openNotification = true;
+              }
+            }
+
 
           const signedAmount =
             this.transaction.type === "Income" ? -amountInUSD : amountInUSD;
@@ -1016,6 +968,10 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           this.$nextTick(() => {
             this.recalculateBalances();
           });
+          
+          if (openNotification) {
+            this.showNoti = true; // Show the notification if the flag is set
+          }
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
@@ -1039,7 +995,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
             amount: this.initialBalance,
             date: date,
             balance: this.initialBalance,
-
+            source: "manual",
             userId: this.userId,
             type: type,
           }
@@ -1047,7 +1003,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
         // Update local state with the response data
         this.transactions.push(response.data);
-        this.accountBalance = parseFloat(this.initialBalance); // Update the account balance
+        this.accountBalanceTotal = parseFloat(this.initialBalance); // Update the account balance
         this.initialBalance = null; // Reset the initial balance input field
         this.showSetBalanceModal = false; // Close the modal
         this.initialBalanceSet = true; // Mark initial balance as set
@@ -1063,14 +1019,15 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
         this.transactions = [];
-        this.accountBalance = 0;
+        this.accountBalanceTotal = 0;
         this.initialBalanceSet = false;
         this.showResetConfirmationModal = false;
       } catch (error) {
         console.error("Error resetting account balance:", error);
       }
     },
-    editTransaction(trans) {
+
+    async editTransaction(trans) {
       this.editTransactionData = { ...trans };
       this.showEditTransactionModal = true;
     },
@@ -1294,30 +1251,62 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         );
 
         const { access_token, item_id } = response.data;
+        console.log("Access token:", access_token);
         // Save the access token and item ID as required
-        this.fetchPlaidTransactions(access_token);
+        await axios.put(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`, 
+        {
+          bank_accounts: access_token,
+        },
+        { withCredentials: true }
+      );
+        const user = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/users/${this.userId}`);
+        this.reloadTransactions(access_token);
+        this.accountNotConnected = await this.fetchAccountStatus();
       } catch (error) {
         console.error("Error exchanging token", error);
       }
     },
 
-    // Phương thức làm mới dữ liệu từ server
+    async reloadTransactions(access_token) {
+      try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/plaid/transactions`, {
+          params: { access_token },
+        });
+        const currentTransactions = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`);
+        if (currentTransactions.data.length > 0) {
+          await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`, {
+            data: { source: 'bank' }
+          });
+        }
+        const transactions = response.data.latest_transactions;
+        await Promise.all(transactions.map(async (transaction) => {
+          await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+            description: transaction.name,
+            amount: transaction.amount,
+            date: transaction.date,
+            type: transaction.category[0],
+            balance: transaction.amount,
+            userId: this.userId,
+            source: 'bank'
+          });
+          console.log("added transaction", transaction);
+        }));
+        
+        console.log("Fetched transactions:", this.transactions);
+        await this.fetchTransactions();
+      }
+      catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    },
+    // Sửa phương thức refreshData
     async refreshData() {
       try {
         // Lấy account balance từ server trước
         await this.getAccountBalance();
 
-        // Gọi API transaction thông thường
+        // Gọi API transaction
         await this.fetchTransactions();
-
-        // Đợi một chút để đảm bảo dữ liệu đã được cập nhật
-        setTimeout(() => {
-          // Kiểm tra lại để đảm bảo transactions đã được cập nhật
-          if (this.transactions && this.transactions.length > 0) {
-            // Recalculate balances sau khi fetch data mới
-            this.recalculateBalances();
-          }
-        }, 100);
       } catch (error) {
         console.error("Error refreshing data:", error);
       }
@@ -1422,7 +1411,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(31, 126, 53);
+
 }
 
 .transactionContainer {
@@ -1634,7 +1623,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 /* Add Goal Modal Styles */
 .form-group {
   margin-bottom: 10px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 #goalCategory {
@@ -1647,7 +1636,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 #goalCategory:focus {
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .category-loading {
@@ -1660,7 +1649,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: inline-block;
   width: 12px;
   height: 12px;
-  border: 2px solid rgba(0,0,0,0.1);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   border-top-color: #007bff;
   animation: spin 1s linear infinite;
@@ -1668,7 +1657,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile-specific styles */
@@ -2009,6 +2000,35 @@ hr {
 
 .income {
   background-color: rgba(76, 175, 80, 0.1);
+}
+
+.transaction-list td.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 5px;
+  gap: 5px;
+}
+
+.transaction-list td.buttons button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  background-color: var(--link-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  min-width: 80px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.transaction-list td.buttons button:hover {
+  background-color: var(--button-hover-bg, #005bb5);
+  transform: translateY(-1px);
 }
 
 .chart-container {
@@ -2454,7 +2474,7 @@ hr {
   padding: 12px 18px;
   border-radius: 18px;
   max-width: 280px;
-  max-height: 200px; 
+  max-height: 200px;
   overflow-y: auto; /* Enable vertical scrolling */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0; /* Start hidden */

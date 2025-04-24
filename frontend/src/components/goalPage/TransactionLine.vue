@@ -40,6 +40,22 @@ export default {
     };
   },
   methods: {
+    // Thêm phương thức để reset component hoàn toàn
+    resetComponent() {
+      this.destroyChart();
+      this.retryCount = 0;
+      this.hasData = this.transactions && this.transactions.length > 0;
+
+      // Đợi DOM cập nhật sau khi thay đổi key
+      this.$nextTick(() => {
+        if (this.hasData) {
+          setTimeout(() => {
+            this.generateChart();
+          }, 300);
+        }
+      });
+    },
+
     generateChart() {
   if (!this.transactions || this.transactions.length === 0) {
     this.hasData = false;

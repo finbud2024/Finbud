@@ -2,27 +2,16 @@
   <div class="chat-container">
     <ChatFrame>
       <div v-for="(message, index) in messages" :key="index">
-        <MessageComponent
-          :is-user="message.isUser"
-          :text="message.text"
-          :typing="message.typing"
-          :is-thinking="message.isThinking"
-          :htmlContent="message.htmlContent"
-          :username="message.isUser ? displayName : 'FinBud Bot'"
-          :avatar-src="message.isUser ? userAvatar : botAvatar"
-          :sources="message.isUser ? [] : message.sources"
-          :videos="message.isUser ? [] : message.videos"
-          :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
-          @question-click="handleQuestionClick"
-        />
+        <MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
+          :is-thinking="message.isThinking" :htmlContent="message.htmlContent"
+          :username="message.isUser ? displayName : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar"
+          :sources="message.isUser ? [] : message.sources" :videos="message.isUser ? [] : message.videos"
+          :relevantQuestions="message.isUser ? [] : message.relevantQuestions" @question-click="handleQuestionClick" />
         <!-- Add TradingView widget after stock messages -->
-        <TradingViewWidget
-          v-if="message.showChart"
-          :symbol="message.stockSymbol"
-        />
+        <TradingViewWidget v-if="message.showChart" :symbol="message.stockSymbol" />
       </div>
     </ChatFrame>
-    <UserInput @send-message="sendMessage" />
+    <UserInput ref="userInput" @send-message="handleUserSubmit" />
   </div>
 </template>
 
@@ -41,6 +30,7 @@ import {
   getRelevantQuestions,
 } from "@/services/serperService.js";
 import api from "@/utils/api";
+import OpenAI from 'openai';
 export default {
   name: "ChatComponent",
   props: {},
@@ -87,8 +77,25 @@ export default {
       },
     },
   },
+  created() {
+    this.openai = new OpenAI({
+      apiKey: process.env.VUE_APP_OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true
+    });
+  },
   methods: {
     // ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
+    handleUserSubmit({ message, file }) {
+      if (file) {
+        this.handleFileUpload(message, file);
+      }
+      else if (message) {
+        this.sendMessage(message);
+        this.$refs.userInput && this.$refs.userInput.clearInput?.();
+      }
+    },
+
+    // ---------------------------- RESPONSE MESSGE ----------------------------
     async sendMessage(newMessage) {
       const userMessage = newMessage.trim();
       const language = await gptServices([
@@ -101,17 +108,19 @@ export default {
         },
       ]);
 
+      
+
       //UPDATE THREAD NAME BASED ON FIRST MESSAGE
       if (this.messages.length === 1) {
         const response = await gptServices([
           {
             role: "system",
-            content: `I am a highly efficient summarizer. 
-												Here are examples: 'Best vacation in Europe' from 
-												'What are the best vacation spots in Europe?'; 
-												'Discussing project deadline' from 
-												'We need to extend the project deadline by two weeks due to unforeseen issues.' 
-												Now, summarize the following user message within 3 to 4 words into a title:`,
+            content: `Bạn là một trợ lý đặt tên hội thoại bằng tiếng Việt ngắn gọn, mang tính mô tả chủ đề.
+Đây là vài ví dụ:
+- 'Kỳ nghỉ ở châu Âu' từ 'Các địa điểm du lịch châu Âu nên đi?'
+- 'Gia hạn dự án' từ 'Chúng ta cần lùi deadline 2 tuần do có vấn đề.'
+
+Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, không quá 5 từ:`
           },
           {
             role: "user",
@@ -140,7 +149,7 @@ export default {
           timestamp: new Date().toLocaleTimeString(),
         });
         const answers = [];
-				const htmlContents = [];
+        const htmlContents = [];
         let newSources = [];
         let newVideos = [];
         let newRelevantQuestions = [];
@@ -299,12 +308,14 @@ export default {
                 const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=sell`;
                 window.open(url, "_blank");
 
-								const res = `We've created the sell request for ${quantity} ${stockSymbol} shares.`;
-								const Responsegpt = await gptServices([{ 
-									role: "user", 
-									content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
-								}]);
-								answers.push(Responsegpt);
+                const res = `We've created the sell request for ${quantity} ${stockSymbol} shares.`;
+                const Responsegpt = await gptServices([
+                  {
+                    role: "user",
+                    content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`,
+                  },
+                ]);
+                answers.push(Responsegpt);
 
                 // Wait for the page to load and auto-click the Preview Order button
                 setTimeout(() => {
@@ -452,25 +463,24 @@ export default {
             console.error("Failed to fetch cr quotes:", err);
           }
           let tableTemplate = `
-				<div style="font-weight: 900; font-size: 30px"> Top 10 Ranking Coins </div>
+				<div style="font-weight: 900; font-size: 30px"> Top 10 đồng Coin vốn hóa lớn nhất </div>
 				<table>
 				<thead>
 				    <tr>
-				    <th>Name</th>
-				    <th>Rank</th>
-				    <th>Tier</th>
-				    <th>Price</th>
-				    <th>Symbol</th>
-				    <th>Change</th>
+				    <th>Tên</th>
+				    <th>Hạng</th>
+				    <th>Cấp</th>
+				    <th>Giá</th>
+				    <th>Kí hiệu</th>
+				    <th>Biến động</th>
 				    </tr>
 				</thead>
 				<tbody id="tableBody" class="table-body">`;
           coinData.slice(0, 10).map((item) => {
             tableTemplate += `
 				    <tr>
-				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${
-              item.name
-            }>${item.name}</td>
+				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${item.name
+              }>${item.name}</td>
 				    <td>${item.rank}</td>
 				    <td>${item.tier}</td>
 				    <td>${parseFloat(item.price).toFixed(2)}$</td>
@@ -487,7 +497,7 @@ export default {
             typing: true,
             timestamp: new Date().toLocaleTimeString(),
           });
-					htmlContents.push(tableTemplate);
+          htmlContents.push(tableTemplate);
         }
         // // RETURNS REALESTATE TABLE
         else if (gptDefine.includes("#realestate")) {
@@ -555,14 +565,14 @@ export default {
           // 	console.error("Error fetching property data:", err);
           // }
           let tableTemplate = `
-				<div style="font-weight: 900; font-size: 30px"> Listing of 5 Properties in ${searchLocation} </div>
+				<div style="font-weight: 900; font-size: 30px"> Danh sách 5 Bất động sản ở ${searchLocation} </div>
 				<table>
 				<thead>
 				    <tr>
-				    <th>Type</th>
-				    <th>Address</th>
-				    <th>Price</th>
-				    <th>Status</th>
+				    <th>Loại</th>
+				    <th>Địa chỉ</th>
+				    <th>Giá</th>
+				    <th>Tình trạng</th>
 				    </tr>
 				</thead>
 				<tbody id="tableBody" class="table-body">`;
@@ -576,7 +586,7 @@ export default {
 				    </tr>`;
           });
           tableTemplate += `</tbody></table>`;
-					htmlContents.push(tableTemplate);
+          htmlContents.push(tableTemplate);
           this.messages.push({
             text: ``,
             htmlContent: tableTemplate,
@@ -658,12 +668,15 @@ export default {
               window.open(url, "_blank");
 
               // Create response in user's language
-							const res = "We've created the goal section for you to add your goals.";
-							const Responsegpt = await gptServices([{ 
-								role: "user", 
-								content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`
-							}]);
-							answers.push(Responsegpt);
+              const res =
+                "We've created the goal section for you to add your goals.";
+              const Responsegpt = await gptServices([
+                {
+                  role: "user",
+                  content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`,
+                },
+              ]);
+              answers.push(Responsegpt);
 
               setTimeout(() => {
                 window.addEventListener("load", () => {
@@ -679,103 +692,112 @@ export default {
             console.error("Error in create message:", err.message);
           }
         }
-				
+
         // HANDLE ANALYZE (11)
-				else if (gptDefine.toLowerCase().includes("#analyze")) {
-					try {
-						
-						if (!this.isAuthenticated) {
-							const res = "You need to be logged in to analyze your portfolio.";
-							const responseGpt = await gptServices([{ 
-								role: "user", 
-								content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".` 
-							}]);
-							answers.push(responseGpt);
-						} else {
-					
-							this.addTypingResponse("", false, [], [], [], true);
-							
-							const userId = this.$store.getters["users/userId"];
-							const apiUrl = `${process.env.VUE_APP_DEPLOY_URL}/chats/analyze-portfolio/${userId}`;
-							
-						
-							const response = await axios.get(apiUrl);
-							const analysisData = response.data;
-							
-							if (analysisData && analysisData.analysis) {
-								
-								if (analysisData.analysis.stock) {
-									this.messages = this.messages.filter(msg => !msg.isThinking);
-									
-									
-									this.messages.push({
-										text: "",
-										isUser: false,
-										typing: false,
-										timestamp: new Date().toLocaleTimeString(),
-										htmlContent: analysisData.analysis.stock,
-										username: "FinBud Bot",
-										sources: [],
-										videos: [],
-										relevantQuestions: []
-									});
-									htmlContents.push(analysisData.analysis.stock);	
-								}
-								
-								
-								if (analysisData.analysis.transaction) {
-							
-									this.messages.push({
-										text: "",
-										isUser: false,
-										typing: false,
-										timestamp: new Date().toLocaleTimeString(),
-										htmlContent: analysisData.analysis.transaction,
-										username: "FinBud Bot",
-										sources: [],
-										videos: [],
-										relevantQuestions: []
-									});
-									htmlContents.push(analysisData.analysis.transaction);
-								}
-								
-								if (!analysisData.analysis.stock && !analysisData.analysis.transaction) {
-									const errorMsg = "Could not generate portfolio analysis. Please try again later.";
-									const translatedError = await gptServices([{ 
-										role: "user", 
-										content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".` 
-									}]);
-									answers.push(translatedError);
-								}
-							} else {
-								const noDataMsg = "No portfolio data available for analysis. Please add holdings or transactions first.";
-								const translatedNoData = await gptServices([{ 
-									role: "user", 
-									content: `Translate the following text into ${language}. Respond only with the translated text: "${noDataMsg}".` 
-								}]);
-								answers.push(translatedNoData);
-							}
-							
-							
-							this.messages = this.messages.filter(msg => !msg.isThinking);
-						}
-					} catch (err) {
-						console.error("Error in analyze portfolio:", err.message);
-						const errorMsg = "There was an error analyzing your portfolio. Please try again later.";
-						const translatedError = await gptServices([{ 
-							role: "user", 
-							content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".` 
-						}]);
-						answers.push(translatedError);
-					}
-				}
-	
-        else {
+        else if (gptDefine.toLowerCase().includes("#analyze")) {
           try {
-						const historyChat = this.messages.slice(-10).map(msg => {
-							return { role: msg.isUser ? "user" : "assistant", content: msg.text };
-						});
-						console.log(historyChat)
+            if (!this.isAuthenticated) {
+              const res = "You need to be logged in to analyze your portfolio.";
+              const responseGpt = await gptServices([
+                {
+                  role: "user",
+                  content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
+                },
+              ]);
+              answers.push(responseGpt);
+            } else {
+              this.addTypingResponse("", false, [], [], [], true);
+
+              const userId = this.$store.getters["users/userId"];
+              const apiUrl = `${process.env.VUE_APP_DEPLOY_URL}/chats/analyze-portfolio/${userId}`;
+
+              const response = await axios.get(apiUrl);
+              const analysisData = response.data;
+
+              if (analysisData && analysisData.analysis) {
+                if (analysisData.analysis.stock) {
+                  this.messages = this.messages.filter(
+                    (msg) => !msg.isThinking
+                  );
+
+                  this.messages.push({
+                    text: "",
+                    isUser: false,
+                    typing: false,
+                    timestamp: new Date().toLocaleTimeString(),
+                    htmlContent: analysisData.analysis.stock,
+                    username: "FinBud Bot",
+                    sources: [],
+                    videos: [],
+                    relevantQuestions: [],
+                  });
+                  htmlContents.push(analysisData.analysis.stock);
+                }
+
+                if (analysisData.analysis.transaction) {
+                  this.messages.push({
+                    text: "",
+                    isUser: false,
+                    typing: false,
+                    timestamp: new Date().toLocaleTimeString(),
+                    htmlContent: analysisData.analysis.transaction,
+                    username: "FinBud Bot",
+                    sources: [],
+                    videos: [],
+                    relevantQuestions: [],
+                  });
+                  htmlContents.push(analysisData.analysis.transaction);
+                }
+
+                if (
+                  !analysisData.analysis.stock &&
+                  !analysisData.analysis.transaction
+                ) {
+                  const errorMsg =
+                    "Could not generate portfolio analysis. Please try again later.";
+                  const translatedError = await gptServices([
+                    {
+                      role: "user",
+                      content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".`,
+                    },
+                  ]);
+                  answers.push(translatedError);
+                }
+              } else {
+                const noDataMsg =
+                  "No portfolio data available for analysis. Please add holdings or transactions first.";
+                const translatedNoData = await gptServices([
+                  {
+                    role: "user",
+                    content: `Translate the following text into ${language}. Respond only with the translated text: "${noDataMsg}".`,
+                  },
+                ]);
+                answers.push(translatedNoData);
+              }
+
+              this.messages = this.messages.filter((msg) => !msg.isThinking);
+            }
+          } catch (err) {
+            console.error("Error in analyze portfolio:", err.message);
+            const errorMsg =
+              "There was an error analyzing your portfolio. Please try again later.";
+            const translatedError = await gptServices([
+              {
+                role: "user",
+                content: `Translate the following text into ${language}. Respond only with the translated text: "${errorMsg}".`,
+              },
+            ]);
+            answers.push(translatedError);
+          }
+        } else {
+          try {
+            const historyChat = this.messages.slice(-10).map((msg) => {
+              return {
+                role: msg.isUser ? "user" : "assistant",
+                content: msg.text,
+              };
+            });
+            console.log(historyChat);
             const prompt = userMessage;
             const gptResponse = await gptServices([
               {
@@ -784,7 +806,7 @@ export default {
 						Response in this language ${language}. Previous Context to refer to if user asks ${historyChat}`,
               },
             ]);
-						
+
             answers.push(gptResponse);
           } catch (err) {
             console.error("Error in general message:", err.message);
@@ -822,6 +844,101 @@ export default {
         }
         this.scrollChatFrameToBottom();
       }
+    },
+    // --------------------------- READ FILE -----------------------------------------------------
+    async handleFileUpload(newMessage, file) {
+      this.isLoading = true;
+      this.messages.push({
+        text: newMessage,
+        isUser: true,
+        typing: true,
+        timestamp: new Date().toLocaleTimeString(),
+      });
+      try {
+        if (file.type.startsWith('image/')) {
+          const result = await this.analyzeImage(file, newMessage);
+          this.messages.push({
+            text: result,
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString()
+          });
+        }
+        else if (file.type === 'application/pdf') {
+          const result = await this.analyzePDF(file, newMessage);
+          this.messages.push({
+            text: result,
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString()
+          });
+        }
+      } catch (err) {
+        console.error('Error processing file:', err);
+        this.addTypingResponse("Failed to process file", false);
+      }
+
+      this.isLoading = false;
+    },
+
+    async analyzeImage(file, newMessage) {
+      const base64Image = await this.readFileAsBase64(file);
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: newMessage },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${base64Image}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 300
+      });
+      return response.choices[0].message.content;
+    },
+
+    async analyzePDF(file, newMessage) {
+      const uploadedFile = await this.openai.files.create({
+        file,
+        purpose: "user_data"
+      });
+
+      const response = await this.openai.responses.create({
+        model: "gpt-4o",
+        input: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "input_file",
+                file_id: uploadedFile.id
+              },
+              {
+                type: "input_text",
+                text: newMessage
+              }
+            ]
+          }
+        ],
+      });
+
+      // Clean up
+      await this.openai.files.del(uploadedFile.id);
+      return response.output_text;
+    },
+
+    readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
     },
     //------------------------- ULTILITIES FUNCTIONS ------------------------------------------------
     addTypingResponse(
@@ -945,7 +1062,6 @@ export default {
       }
     },
 
-
     async scrollChatFrameToBottom() {
       await new Promise((r) => setTimeout(r, 200));
       const chatFrame = document.querySelector(".chat-frame");
@@ -968,7 +1084,7 @@ export default {
     async updateCurrentThread(threadID) {
       try {
         this.messages = [];
-        const botInstruction = `Hello ${this.displayName}!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.`;
+        const botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" để khám phá cách trò chuyện siêu xịn với FinBud nhé!`;
         this.addTypingResponse(botInstruction, false);
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
         const chats = await axios.get(chatApi);
@@ -1000,21 +1116,21 @@ export default {
                 this.messages.push(response);
               });
             }
-						if (chat.htmlContent) {
-							chat.htmlContent.forEach((htmlContent) => {
-								const htmlResponse = {
-									text: "",
-									isUser: false,
-									typing: false,
-									timestamp: chat.creationDate,
-									htmlContent: htmlContent,
-									sources: chat.sources,
-									videos: chat.videos,
-									relevantQuestions: chat.followUpQuestions
-								};
-								this.messages.push(htmlResponse);
-							});
-						}
+            if (chat.htmlContent) {
+              chat.htmlContent.forEach((htmlContent) => {
+                const htmlResponse = {
+                  text: "",
+                  isUser: false,
+                  typing: false,
+                  timestamp: chat.creationDate,
+                  htmlContent: htmlContent,
+                  sources: chat.sources,
+                  videos: chat.videos,
+                  relevantQuestions: chat.followUpQuestions,
+                };
+                this.messages.push(htmlResponse);
+              });
+            }
           });
         } else {
           console.error("Error: chatsData is not an array");
@@ -1027,8 +1143,15 @@ export default {
     },
   },
   mounted() {
+    const autoMessage = this.$route.query.autoMessage;
+    if (autoMessage && !this.autoMessageSent) {
+      this.autoMessageSent = true;
+      this.handleUserSubmit({ message: autoMessage }); // gửi 1 lần
+      this.$router.replace({ query: null }); // xoá query để reload ko gửi lại
+    }
+
     if (!this.isAuthenticated) {
-      const botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+      const botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
       this.addTypingResponse(botInstruction, false);
     }
   },
@@ -1082,6 +1205,7 @@ export default {
 }
 
 .top-spacer {
-  height: 100px;  /* Or any height you desire to push content down */
+  height: 100px;
+  /* Or any height you desire to push content down */
 }
 </style>

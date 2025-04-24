@@ -92,7 +92,7 @@ export default {
     },
     isMobile() {
       return this.windowWidth < 768;
-    }
+    },
   },
   mounted() {
     if (this.autoStart) {
@@ -108,41 +108,42 @@ export default {
     this.removeStepEventListeners();
     this.enableScrolling(); // Make sure scrolling is re-enabled
     this.removeOverlayEventListener(); // Remove overlay event listener
-    
+
     // Make sure we clean up any special classes
-    const guidanceButton = document.querySelector('#tutorial-guidance-button');
+    const guidanceButton = document.querySelector("#tutorial-guidance-button");
     if (guidanceButton) {
-      guidanceButton.classList.remove('tutorial-active');
+      guidanceButton.classList.remove("tutorial-active");
     }
   },
   methods: {
     // Disable scrolling on the body
     disableScrolling() {
       // Store current scroll position
-      this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-      
+      this.scrollPosition =
+        window.pageYOffset || document.documentElement.scrollTop;
+
       // Add styles to prevent scrolling
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
       document.body.style.top = `-${this.scrollPosition}px`;
-      document.body.style.width = '100%';
+      document.body.style.width = "100%";
     },
-    
+
     // Re-enable scrolling on the body
     enableScrolling() {
       // Remove styles that prevent scrolling
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+
       // Restore scroll position
       window.scrollTo(0, this.scrollPosition);
     },
-    
+
     // Add event listener to the overlay to prevent interactions outside spotlight
     addOverlayEventListener() {
-      const overlay = document.getElementById('tutorial-overlay');
+      const overlay = document.getElementById("tutorial-overlay");
       if (overlay) {
         this.overlayEventListener = (event) => {
           // Prevent all default actions on the overlay
@@ -150,36 +151,58 @@ export default {
           event.stopPropagation();
           return false;
         };
-        
+
         // Add listeners for all common interaction events
-        overlay.addEventListener('click', this.overlayEventListener, true);
-        overlay.addEventListener('mousedown', this.overlayEventListener, true);
-        overlay.addEventListener('mouseup', this.overlayEventListener, true);
-        overlay.addEventListener('touchstart', this.overlayEventListener, true);
-        overlay.addEventListener('touchend', this.overlayEventListener, true);
-        overlay.addEventListener('touchmove', this.overlayEventListener, true);
-        overlay.addEventListener('wheel', this.overlayEventListener, { passive: false, capture: true });
+        overlay.addEventListener("click", this.overlayEventListener, true);
+        overlay.addEventListener("mousedown", this.overlayEventListener, true);
+        overlay.addEventListener("mouseup", this.overlayEventListener, true);
+        overlay.addEventListener("touchstart", this.overlayEventListener, true);
+        overlay.addEventListener("touchend", this.overlayEventListener, true);
+        overlay.addEventListener("touchmove", this.overlayEventListener, true);
+        overlay.addEventListener("wheel", this.overlayEventListener, {
+          passive: false,
+          capture: true,
+        });
       }
     },
-    
+
     // Remove overlay event listener
     removeOverlayEventListener() {
-      const overlay = document.getElementById('tutorial-overlay');
+      const overlay = document.getElementById("tutorial-overlay");
       if (overlay && this.overlayEventListener) {
-        overlay.removeEventListener('click', this.overlayEventListener, true);
-        overlay.removeEventListener('mousedown', this.overlayEventListener, true);
-        overlay.removeEventListener('mouseup', this.overlayEventListener, true);
-        overlay.removeEventListener('touchstart', this.overlayEventListener, true);
-        overlay.removeEventListener('touchend', this.overlayEventListener, true);
-        overlay.removeEventListener('touchmove', this.overlayEventListener, true);
-        overlay.removeEventListener('wheel', this.overlayEventListener, { passive: false, capture: true });
+        overlay.removeEventListener("click", this.overlayEventListener, true);
+        overlay.removeEventListener(
+          "mousedown",
+          this.overlayEventListener,
+          true
+        );
+        overlay.removeEventListener("mouseup", this.overlayEventListener, true);
+        overlay.removeEventListener(
+          "touchstart",
+          this.overlayEventListener,
+          true
+        );
+        overlay.removeEventListener(
+          "touchend",
+          this.overlayEventListener,
+          true
+        );
+        overlay.removeEventListener(
+          "touchmove",
+          this.overlayEventListener,
+          true
+        );
+        overlay.removeEventListener("wheel", this.overlayEventListener, {
+          passive: false,
+          capture: true,
+        });
       }
     },
-    
+
     handleResize() {
       this.windowWidth = window.innerWidth;
       this.windowHeight = window.innerHeight;
-      
+
       // Update the spotlight and tooltip positions
       if (this.active) {
         this.updateSpotlight();
@@ -187,34 +210,41 @@ export default {
     },
     startTutorial() {
       console.log("startTutorial called");
-      
+
       // Check if we should show the tutorial based on the query parameter
       if (this.showOnlyOnce) {
         // Check for the showTutorial query parameter
         const showTutorialParam = this.$route.query.showTutorial;
         console.log("showTutorial query param:", showTutorialParam);
-        
+
         // Accept both string 'true' and boolean true values
-        const showTutorial = showTutorialParam === 'true' || showTutorialParam === true;
-        
+        const showTutorial =
+          showTutorialParam === "true" || showTutorialParam === true;
+
         if (!showTutorial) {
-          console.log("Tutorial not shown - showTutorial param not present or not true");
+          console.log(
+            "Tutorial not shown - showTutorial param not present or not true"
+          );
           return;
         }
       }
 
       console.log("Starting tutorial");
-      const currentTheme = document.documentElement.classList.contains('dark-mode') ? 'dark' : 'light';
-      localStorage.setItem('tutorial-previous-theme', currentTheme);
+      const currentTheme = document.documentElement.classList.contains(
+        "dark-mode"
+      )
+        ? "dark"
+        : "light";
+      localStorage.setItem("tutorial-previous-theme", currentTheme);
 
       // Force light mode for tutorial
-      document.documentElement.classList.remove('dark-mode');
-      document.body.classList.remove('dark-mode');
+      document.documentElement.classList.remove("dark-mode");
+      document.body.classList.remove("dark-mode");
 
       this.active = true;
       this.disableScrolling();
       this.addOverlayEventListener();
-      
+
       // Add a small delay before showing the first step
       setTimeout(() => {
         this.showStep(0);
@@ -242,29 +272,29 @@ export default {
 
       if (spotlight && targetElement) {
         const rect = targetElement.getBoundingClientRect();
-        
+
         // Responsive padding based on screen size
         const paddingHorizontal = this.isMobile ? 20 : 40;
         const paddingVertical = this.isMobile ? 5 : 10;
 
         // Position the spotlight with responsive padding
-        spotlight.style.left = (rect.left - paddingHorizontal) + "px";
-        spotlight.style.top = (rect.top - paddingVertical) + "px";
-        spotlight.style.width = (rect.width + (paddingHorizontal * 2)) + "px";
-        spotlight.style.height = (rect.height + (paddingVertical * 2)) + "px";
-        
+        spotlight.style.left = rect.left - paddingHorizontal + "px";
+        spotlight.style.top = rect.top - paddingVertical + "px";
+        spotlight.style.width = rect.width + paddingHorizontal * 2 + "px";
+        spotlight.style.height = rect.height + paddingVertical * 2 + "px";
+
         // Create a hole in the overlay for the spotlight
         // This is done by making the spotlight have pointer-events: auto
         // but making a hole in the overlay using clip-path
         spotlight.style.pointerEvents = "auto";
-        
+
         // Create a clip path for the overlay to create a "hole" for the spotlight
         if (overlay) {
           const spotlightLeft = rect.left - paddingHorizontal;
           const spotlightTop = rect.top - paddingVertical;
           const spotlightRight = rect.right + paddingHorizontal;
           const spotlightBottom = rect.bottom + paddingVertical;
-          
+
           // Create an inset clip-path that creates a hole where the spotlight is
           overlay.style.clipPath = `path('M0,0 L${window.innerWidth},0 L${window.innerWidth},${window.innerHeight} L0,${window.innerHeight} Z M${spotlightLeft},${spotlightTop} L${spotlightRight},${spotlightTop} L${spotlightRight},${spotlightBottom} L${spotlightLeft},${spotlightBottom} Z')`;
         }
@@ -273,35 +303,50 @@ export default {
         if (tooltip) {
           // On mobile, place tooltip below element
           // On desktop, place to the right if there's space
-          if (this.isMobile || rect.left + rect.width + 320 > this.windowWidth) {
+          if (
+            this.isMobile ||
+            rect.left + rect.width + 320 > this.windowWidth
+          ) {
             // Place below with a slight offset
-            tooltip.style.left = Math.max(10, Math.min(this.windowWidth - 320, rect.left)) + "px";
-            tooltip.style.top = (rect.bottom + 15) + "px";
-            
+            tooltip.style.left =
+              Math.max(10, Math.min(this.windowWidth - 320, rect.left)) + "px";
+            tooltip.style.top = rect.bottom + 15 + "px";
+
             // Adjust arrow position
-            const arrow = tooltip.querySelector('.tutorial-tooltip-arrow');
+            const arrow = tooltip.querySelector(".tutorial-tooltip-arrow");
             if (arrow) {
-              arrow.style.left = Math.max(20, Math.min(rect.left + (rect.width / 2) - tooltip.getBoundingClientRect().left, tooltip.offsetWidth - 20)) + "px";
+              arrow.style.left =
+                Math.max(
+                  20,
+                  Math.min(
+                    rect.left +
+                      rect.width / 2 -
+                      tooltip.getBoundingClientRect().left,
+                    tooltip.offsetWidth - 20
+                  )
+                ) + "px";
             }
           } else {
             // Place to the right of the element
-            tooltip.style.left = (rect.right + 15) + "px";
+            tooltip.style.left = rect.right + 15 + "px";
             tooltip.style.top = rect.top + "px";
-            
+
             // Adjust arrow for left side positioning
-            const arrow = tooltip.querySelector('.tutorial-tooltip-arrow');
+            const arrow = tooltip.querySelector(".tutorial-tooltip-arrow");
             if (arrow) {
               arrow.style.left = "-10px";
               arrow.style.top = "20px";
               arrow.style.borderWidth = "10px 10px 10px 0";
-              arrow.style.borderColor = "transparent white transparent transparent";
+              arrow.style.borderColor =
+                "transparent white transparent transparent";
             }
           }
-          
+
           // Check if tooltip goes off screen bottom and adjust
           const tooltipRect = tooltip.getBoundingClientRect();
           if (tooltipRect.bottom > this.windowHeight - 20) {
-            tooltip.style.top = (this.windowHeight - tooltipRect.height - 20) + "px";
+            tooltip.style.top =
+              this.windowHeight - tooltipRect.height - 20 + "px";
           }
         }
       }
@@ -311,23 +356,27 @@ export default {
       if (!this.currentStep || !this.currentStep.element) {
         return; // Exit early if no valid selector
       }
-      
+
       const targetElement = document.querySelector(this.currentStep.element);
       if (targetElement) {
         // For special handling of the guidance button
-        if (this.currentStep.element === '#tutorial-guidance-button') {
+        if (this.currentStep.element === "#tutorial-guidance-button") {
           // Add a class to make it always visible during tutorial
-          targetElement.classList.add('tutorial-active');
-          
+          targetElement.classList.add("tutorial-active");
+
           // For the guidance button, we don't want to block its normal click behavior
           // So we use a different approach to add the event listener
           targetElement.addEventListener("click", this.handleStepClick);
         } else {
           // For other elements, use capture phase to ensure our handler runs first
           targetElement.addEventListener("click", this.handleStepClick, true);
-          
+
           // For mobile, add touch events
-          targetElement.addEventListener("touchend", this.handleStepClick, true);
+          targetElement.addEventListener(
+            "touchend",
+            this.handleStepClick,
+            true
+          );
         }
       }
     },
@@ -336,69 +385,85 @@ export default {
       if (!this.currentStep || !this.currentStep.element) {
         return; // Exit early if no valid selector
       }
-      
+
       const targetElement = document.querySelector(this.currentStep.element);
       if (targetElement) {
-        if (this.currentStep.element === '#tutorial-guidance-button') {
+        if (this.currentStep.element === "#tutorial-guidance-button") {
           // Remove the regular event listener for guidance button
           targetElement.removeEventListener("click", this.handleStepClick);
         } else {
           // Remove both click and touch listeners
-          targetElement.removeEventListener("click", this.handleStepClick, true);
-          targetElement.removeEventListener("touchend", this.handleStepClick, true);
+          targetElement.removeEventListener(
+            "click",
+            this.handleStepClick,
+            true
+          );
+          targetElement.removeEventListener(
+            "touchend",
+            this.handleStepClick,
+            true
+          );
         }
       }
     },
 
     handleStepClick(event) {
       // First check if this is the guidance button
-      if (this.currentStep && this.currentStep.element === '#tutorial-guidance-button') {
+      if (
+        this.currentStep &&
+        this.currentStep.element === "#tutorial-guidance-button"
+      ) {
         // For guidance button, we want to end the tutorial completely
         // but still allow the original click event to proceed
-        
+
         // Don't prevent default or stop propagation
         // This will allow the guidance modal to open
-        
+
         // Get a reference to the button for later cleanup
-        const guidanceButton = document.querySelector('#tutorial-guidance-button');
-        
+        const guidanceButton = document.querySelector(
+          "#tutorial-guidance-button"
+        );
+
         // End the tutorial after a brief delay
         setTimeout(() => {
           this.endTutorial();
-          
+
           // Additional cleanup directly in this handler
           if (guidanceButton) {
             // Reset all potentially problematic styles
-            guidanceButton.style.zIndex = '';
-            guidanceButton.style.transform = '';
-            guidanceButton.style.right = '';
-            guidanceButton.classList.remove('tutorial-active');
-            
+            guidanceButton.style.zIndex = "";
+            guidanceButton.style.transform = "";
+            guidanceButton.style.right = "";
+            guidanceButton.classList.remove("tutorial-active");
+
             // Apply correct styles based on current state
-            if (this.$parent && typeof this.$parent.showGuidance === 'boolean') {
+            if (
+              this.$parent &&
+              typeof this.$parent.showGuidance === "boolean"
+            ) {
               if (this.$parent.showGuidance) {
-                guidanceButton.classList.add('is-guidance-visible');
+                guidanceButton.classList.add("is-guidance-visible");
               } else {
-                guidanceButton.classList.remove('is-guidance-visible');
+                guidanceButton.classList.remove("is-guidance-visible");
               }
             }
           }
         }, 50);
-        
+
         return; // Exit early
       }
-      
+
       // For other elements, keep the default behavior
       // Prevent the default action if this is a link or button
       if (event && event.preventDefault) {
         event.preventDefault();
       }
-      
+
       // Stop event propagation to prevent unexpected behavior
       if (event && event.stopPropagation) {
         event.stopPropagation();
       }
-      
+
       // Add a small delay to allow the original click action to complete
       // This helps with custom components or buttons that might do their own navigation
       setTimeout(() => {
@@ -421,21 +486,32 @@ export default {
               this.endTutorial();
               return;
             }
-            
-            const targetElement = document.querySelector(this.currentStep.element);
+
+            const targetElement = document.querySelector(
+              this.currentStep.element
+            );
             if (targetElement) {
               // Scroll to make sure element is visible for next step
-              targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+
               // Wait a bit longer on mobile devices
-              setTimeout(() => {
-                this.updateSpotlight();
-                this.showTooltip = true;
-                this.addStepEventListeners();
-                this.addOverlayEventListener(); // Add overlay event listener for new step
-              }, this.isMobile ? 500 : 300);
+              setTimeout(
+                () => {
+                  this.updateSpotlight();
+                  this.showTooltip = true;
+                  this.addStepEventListeners();
+                  this.addOverlayEventListener(); // Add overlay event listener for new step
+                },
+                this.isMobile ? 500 : 300
+              );
             } else {
-              console.error("Target element not found for next step:", this.currentStep.element);
+              console.error(
+                "Target element not found for next step:",
+                this.currentStep.element
+              );
               this.endTutorial();
               return;
             }
@@ -453,24 +529,26 @@ export default {
       this.enableScrolling(); // Re-enable scrolling
 
       // Restore previous theme
-      const previousTheme = localStorage.getItem('tutorial-previous-theme');
-      if (previousTheme === 'dark') {
-        document.documentElement.classList.add('dark-mode');
-        document.body.classList.add('dark-mode');
+      const previousTheme = localStorage.getItem("tutorial-previous-theme");
+      if (previousTheme === "dark") {
+        document.documentElement.classList.add("dark-mode");
+        document.body.classList.add("dark-mode");
       }
-      localStorage.removeItem('tutorial-previous-theme');
+      localStorage.removeItem("tutorial-previous-theme");
 
       // Remove special classes and reset styles for guidance button
-      const guidanceButton = document.querySelector('#tutorial-guidance-button');
+      const guidanceButton = document.querySelector(
+        "#tutorial-guidance-button"
+      );
       if (guidanceButton) {
-        guidanceButton.classList.remove('tutorial-active');
-        
+        guidanceButton.classList.remove("tutorial-active");
+
         // Explicitly reset z-index to its original value
-        guidanceButton.style.zIndex = ''; // This removes any inline style
-        
+        guidanceButton.style.zIndex = ""; // This removes any inline style
+
         // Also reset any transform or right properties that might be stuck
-        guidanceButton.style.transform = '';
-        guidanceButton.style.right = '';
+        guidanceButton.style.transform = "";
+        guidanceButton.style.right = "";
       }
 
       this.active = false;
@@ -479,7 +557,7 @@ export default {
       if (this.$route.query.showTutorial) {
         const query = { ...this.$route.query };
         delete query.showTutorial;
-        
+
         // Use router to update URL without the showTutorial parameter
         this.$router.replace({ query });
         console.log("Removed showTutorial from URL");
@@ -491,11 +569,11 @@ export default {
     resetTutorial() {
       console.log("Resetting tutorial");
       this.currentStepIndex = 0;
-      
+
       // Add the showTutorial query parameter to the URL
-      const query = { ...this.$route.query, showTutorial: 'true' };
+      const query = { ...this.$route.query, showTutorial: "true" };
       this.$router.replace({ query });
-      
+
       this.startTutorial();
     },
 
@@ -510,18 +588,21 @@ export default {
           this.endTutorial();
           return;
         }
-        
+
         const targetElement = document.querySelector(this.currentStep.element);
         if (targetElement) {
           // Scroll to make sure element is visible
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          
+          targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+
           // For mobile devices, ensure we wait for scrolling to complete
-          setTimeout(() => {
-            this.updateSpotlight();
-            this.showTooltip = true;
-            this.addStepEventListeners();
-          }, this.isMobile ? 500 : 300);
+          setTimeout(
+            () => {
+              this.updateSpotlight();
+              this.showTooltip = true;
+              this.addStepEventListeners();
+            },
+            this.isMobile ? 500 : 300
+          );
         } else {
           console.error("Target element not found:", this.currentStep.element);
           this.endTutorial();
@@ -679,23 +760,23 @@ body.dark-mode .tutorial-tooltip-arrow {
     left: 20px !important; /* Override any dynamic positioning */
     right: 20px;
   }
-  
+
   .tutorial-tooltip-arrow {
     left: 50% !important;
     margin-left: -10px;
   }
-  
+
   .tutorial-skip-button {
     top: 10px;
     right: 10px;
     padding: 6px 12px;
     font-size: 12px;
   }
-  
+
   .tutorial-progress-bar {
     bottom: 10px;
   }
-  
+
   .tutorial-progress-dot {
     width: 8px;
     height: 8px;
