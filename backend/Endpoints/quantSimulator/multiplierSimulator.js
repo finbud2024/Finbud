@@ -328,7 +328,7 @@ class TradingSimulator {
           'B_lithium': timeStep.collections.B_lemons
         };
         
-        console.log(`Displaying time ${this.current_time.toFixed(1)} min: ${JSON.stringify(this.collection_progress)}, Market Multiplier=${this.current_multiplier}`);
+        // console.log(`Displaying time ${this.current_time.toFixed(1)} min: ${JSON.stringify(this.collection_progress)}, Market Multiplier=${this.current_multiplier}`);
       } else {
         // Simulation complete
         this.finish();

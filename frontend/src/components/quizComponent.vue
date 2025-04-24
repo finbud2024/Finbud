@@ -1,89 +1,60 @@
 <template>
   <div class="section-container">
-    <QuizRewards
-      v-if="showingReward"
-      :reward-amount="rewardAmount"
-      @close="showingReward = false"
-    />
+    <QuizRewards v-if="showingReward" :reward-amount="rewardAmount" @close="showingReward = false" />
 
-    <search-input
-      v-model="searchQuery"
-      @search="createRoadmap"
-      placeholder="What do you want to learn today..."
-    />
+    <search-input v-model="searchQuery" @search="createRoadmap" :placeholder="$t('searchPlaceholder')"
+      data-aos="flip-right" />
 
     <div class="goal-form-card" data-aos="zoom-in-up">
-      <h1 class="title">What's your goal?</h1>
+      <h1 class="title">{{ $t('goalTitle') }}</h1>
 
       <div class="form-group">
-        <label for="proficiency">Proficiency level</label>
+        <label for="proficiency">{{ $t('proficiencyLabel') }}</label>
         <select id="proficiency" v-model="proficiency" class="form-select">
-          <option value="" disabled selected>---</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
+          <option value="" disabled selected>{{ $t('proficiencyPlaceholder') }}</option>
+          <option value="beginner">{{ $t('beginner') }}</option>
+          <option value="intermediate">{{ $t('intermediate') }}</option>
+          <option value="advanced">{{ $t('advanced') }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="learning-hours">You will learn</label>
+        <label for="learning-hours">{{ $t('learningLabel') }}</label>
         <div class="input-row">
           <div class="input-group input-half-width">
-            <input
-              type="number"
-              id="hours-per-day"
-              v-model="hoursPerDay"
-              placeholder="Hours per day"
-              min="0"
-              class="form-input"
-            />
+            <input type="number" id="hours-per-day" v-model="hoursPerDay" :placeholder="$t('hoursPlaceholder')" min="0"
+              class="form-input" />
           </div>
           <div class="input-group input-half-width">
-            <input
-              type="number"
-              id="days-per-week"
-              v-model="daysPerWeek"
-              placeholder="Days per week"
-              min="0"
-              max="7"
-              class="form-input"
-            />
+            <input type="number" id="days-per-week" v-model="daysPerWeek" :placeholder="$t('daysPlaceholder')" min="0"
+              max="7" class="form-input" />
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label>In period</label>
+        <label>{{ $t('periodLabel') }}</label>
         <div class="input-row">
           <div class="input-group duration-input">
-            <input
-              type="number"
-              v-model="duration"
-              placeholder="Duration"
-              min="1"
-              class="form-input"
-            />
+            <input type="number" v-model="duration" :placeholder="$t('durationPlaceholder')" min="1"
+              class="form-input" />
           </div>
           <div class="input-group period-select">
             <select v-model="period" class="form-select">
-              <option value="" disabled selected>Select period</option>
-              <option value="days">Days</option>
-              <option value="weeks">Weeks</option>
-              <option value="months">Months</option>
+              <option value="" disabled selected>{{ $t('periodPlaceholder') }}</option>
+              <option value="days">{{ $t('days') }}</option>
+              <option value="weeks">{{ $t('weeks') }}</option>
+              <option value="months">{{ $t('months') }}</option>
             </select>
           </div>
         </div>
       </div>
 
-      <button
-        class="submit-button"
-        @click="createRoadmap"
-        :disabled="!searchQuery.trim() || is_generating_roadmap"
-      >
+      <button class="submit-button" @click="createRoadmap" :disabled="!searchQuery.trim() || is_generating_roadmap">
         {{
           is_generating_roadmap
-            ? "Personalizing your roadmap..."
-            : "Create my roadmap"
+            ? $t('generatingButton')
+            : $t('generateButton')
         }}
       </button>
     </div>
@@ -91,110 +62,86 @@
 
   <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
-      <h1 class="title">Keyword-Based Quiz</h1>
+      <h1 class="title">{{ $t('quizTitle') }}</h1>
       <div class="form-group">
-        <label for="search-keyword">Put your own keyword</label>
+        <label for="search-keyword">{{ $t('currentKeywordLabel') }}</label>
         <div id="search-keyword" class="search-container">
-          <input
-            style="height: 100%; margin-bottom: 0"
-            type="text"
-            v-model="searchKeyword"
-            :disabled="isLoading"
-            placeholder="Enter a finance-related keyword"
-            @keyup.enter="GenerateQuiz"
-          />
-          <button class="button" @click="GenerateQuiz">Generate Quiz</button>
+          <input style="height: 100%; margin-bottom: 0" type="text" v-model="searchKeyword" :disabled="isLoading"
+            :placeholder="$t('keywordPlaceholder')" @keyup.enter="GenerateQuiz" />
+          <button class="button" @click="GenerateQuiz">{{ $t('generateQuizButton') }}</button>
         </div>
       </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
-        <label for="related-keyword">Related keyword</label>
+        <label for="related-keyword">{{ $t('relatedKeywordsLabel') }}</label>
         <div class="carousel-wrapper">
-          <button 
-            class="carousel-nav left" 
-            @click="scrollLeft"
-            aria-label="Scroll left"
-          >
+          <button class="carousel-nav left" @click="scrollLeft" :aria-label="$t('scrollLeft')">
             &lt;
           </button>
-          
-        <div class="related-keyword-container" ref="carousel">
-          <button
-            v-for="keyword in relatedKeyword"
-            :key="keyword"
-            :disabled="isLoading"
-            class="button"
-            @click="handleSuggestedChoice(keyword)"
-          >
-            {{ keyword }}
+
+          <div class="related-keyword-container" ref="carousel">
+            <button v-for="keyword in relatedKeyword" :key="keyword" :disabled="isLoading" class="button"
+              @click="handleSuggestedChoice(keyword)">
+              {{ keyword }}
+            </button>
+          </div>
+
+          <button class="carousel-nav right" @click="scrollRight" :aria-label="$t('scrollRight')">
+            &gt;
           </button>
         </div>
-        
-        <button 
-          class="carousel-nav right" 
-          @click="scrollRight"
-          aria-label="Scroll right"
-        >
-          &gt;
-        </button>
       </div>
-    </div>
       <div v-if="currentKeyword" class="quiz-info">
-        <div>Current Keyword: {{ currentKeyword }}</div>
-        <div>Points: {{ score }}</div>
-        <div>Time Left: {{ timerCountdown }}</div>
+        <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+        <div>{{ $t('pointsLabel') }} {{ score }}</div>
+        <div>{{ $t('timeLeftLabel') }} {{ timerCountdown }}</div>
       </div>
       <div class="quiz-area">
-        <div
-          :class="[
-            'quizQuestion',
-            { quizQuestionEnabled: question.length !== 0 },
-          ]"
-        >
-          {{ currentQuestion === -1 ? "Question will appear here" : question }}
+        <div :class="[
+          'quizQuestion',
+          { quizQuestionEnabled: question.length !== 0 },
+        ]">
+          {{ currentQuestion === -1 ? $t('questionPlaceholder') : question }}
         </div>
         <div class="quizChoices">
-          <button
-            v-for="index in 4"
-            :key="index"
-            :disabled="answerButtonDisabled"
-            @click="handleUserChoice(index)"
+          <button v-for="index in 4" :key="index" :disabled="answerButtonDisabled" @click="handleUserChoice(index)"
             :class="[
               'answerButton',
               { answerButtonActive: answerOptions.length !== 0 },
-            ]"
-          >
+            ]">
             {{
               answerOptions.length === 0
-                ? `Answer ${String.fromCharCode(64 + index)}`
+                ? $t('answerPlaceholder', { letter: String.fromCharCode(64 + index) })
                 : answerOptions[index - 1].replace(/\*$/, "")
             }}
           </button>
         </div>
         <div v-if="showExplaination" class="explanation-container">
           <div class="explanation-text">
-            <div class="explanation-title">Explanation:</div>
+            <div class="explanation-title">{{ $t('explanationTitle') }}</div>
             <div>{{ explanation }}</div>
           </div>
           <button class="button" @click="handleNextQuestion">
-            Next Question
+            {{ $t('nextQuestionButton') }}
           </button>
         </div>
       </div>
       <div v-if="modalDisplay" class="overlay">
         <div class="modal-container">
-          <div class="result-title">Quiz Result</div>
+          <div class="result-title">{{ $t('quizResultTitle') }}</div>
           <div>
-            <div>Keyword: {{ currentKeyword }}</div>
-            <div>score: {{ score }}/3</div>
+            <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
+            <div>{{ $t('pointsLabel') }} {{ score }}/3</div>
           </div>
           <div class="result-button-container">
             <button class="button" @click="handleQuizResult('same')">
-              New Game With Same Keyword
+              {{ $t('sameKeywordButton') }}
             </button>
             <button class="button" @click="handleQuizResult('different')">
-              New Game With Different Keyword
+              {{ $t('differentKeywordButton') }}
             </button>
-            <button class="button" @click="handleQuizResult('end')">End</button>
+            <button class="button" @click="handleQuizResult('end')">
+              {{ $t('endQuizButton') }}
+            </button>
           </div>
         </div>
       </div>
@@ -203,23 +150,19 @@
 
   <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
-      <span class="category-label">COURSE CATEGORIES</span>
-      <h2 class="category-title">Popular Topics To Learn</h2>
+      <span class="category-label">{{ $t('categoriesLabel') }}</span>
+      <h2 class="category-title">{{ $t('popularTopicsTitle') }}</h2>
 
       <div class="categories-grid">
-        <div
-          v-for="(category, index) in categories"
-          :key="index"
-          :class="['category-card', { active: category.isActive }]"
-          @click="setActiveCategory(index)"
-        >
+        <div v-for="(category, index) in categories" :key="index"
+          :class="['category-card', { active: category.isActive }]" @click="setActiveCategory(index)">
           <div class="card-content">
             <div class="icon-wrapper">
               <i :class="category.icon"></i>
             </div>
             <div class="card-text">
               <h3>{{ category.name }}</h3>
-              <span>{{ category.courseCount }} Courses</span>
+              <span>{{ category.courseCount }} {{ $t('coursesLabel') }}</span>
             </div>
           </div>
         </div>
@@ -231,8 +174,8 @@
     <div class="courses-container">
       <!-- Header Section -->
       <div class="courses-header">
-        <h4 class="courses-subtitle">POPULAR COURSES</h4>
-        <h2 class="courses-title">Our Popular Courses</h2>
+        <h4 class="courses-subtitle">{{ $t('popularCoursesSubtitle') }}</h4>
+        <h2 class="courses-title">{{ $t('popularCoursesTitle') }}</h2>
       </div>
 
       <!-- Courses Grid -->
@@ -243,15 +186,11 @@
           <div class="course-card-top">
             <span class="course-level" :class="course.level.toLowerCase()">{{
               course.level
-            }}</span>
+              }}</span>
             <button class="favorite-btn">
               <i class="fas fa-heart"></i>
             </button>
-            <img
-              :src="require(`@/assets/${course.image}`)"
-              :alt="course.title"
-              class="course-image"
-            />
+            <img :src="require(`@/assets/${course.image}`)" :alt="course.title" class="course-image" />
           </div>
 
           <!-- Details Section -->
@@ -259,7 +198,7 @@
             <div class="course-meta">
               <div class="course-lessons">
                 <i class="fas fa-book"></i>
-                <span>{{ course.lessons }} Lessons</span>
+                <span>{{ course.lessons }} {{ $t('lessonsLabel') }}</span>
               </div>
               <div class="course-duration">
                 <i class="fas fa-clock"></i>
@@ -271,30 +210,24 @@
 
             <div class="course-rating">
               <div class="stars">
-                <i
-                  v-for="n in 5"
-                  :key="n"
-                  :class="['fas', n <= course.rating ? 'fa-star' : 'fa-star-o']"
-                ></i>
+                <i v-for="n in 5" :key="n" :class="['fas', n <= course.rating ? 'fa-star' : 'fa-star-o']"></i>
               </div>
               <span class="reviews">({{ course.reviews }})</span>
             </div>
 
             <div class="course-price">
               <template v-if="course.isFree">
-                <span class="free-price">Free</span>
+                <span class="free-price">{{ $t('freeLabel') }}</span>
               </template>
               <template v-else>
                 <span class="current-price">${{ course.price }}</span>
-                <span class="original-price" v-if="course.originalPrice"
-                  >${{ course.originalPrice }}</span
-                >
+                <span class="original-price" v-if="course.originalPrice">${{ course.originalPrice }}</span>
               </template>
             </div>
 
             <div class="course-students">
               <i class="fas fa-user"></i>
-              <span>{{ course.students }} Students</span>
+              <span>{{ course.students }} {{ $t('studentsLabel') }}</span>
             </div>
           </div>
         </div>
@@ -514,14 +447,14 @@ export default {
           {
             role: "system",
             content: "You are a finance quiz generator. Return questions in EXACTLY this format:\n\n" +
-                    "Question: [question]\n" +
-                    "A. [option1]\n" +
-                    "B. [option2]\n" +
-                    "C. [option3]\n" +
-                    "D. [option4]\n" +
-                    "Correct Answer: [A/B/C/D]\n" +
-                    "Explanation: [explanation]\n\n" +
-                    "[Repeat for 3 questions]"
+              "Question: [question]\n" +
+              "A. [option1]\n" +
+              "B. [option2]\n" +
+              "C. [option3]\n" +
+              "D. [option4]\n" +
+              "Correct Answer: [A/B/C/D]\n" +
+              "Explanation: [explanation]\n\n" +
+              "[Repeat for 3 questions]"
           },
           {
             role: "user",
@@ -531,7 +464,7 @@ export default {
 
         // Improved parsing
         this.questionList = this.parseQuizResponse(response);
-        
+
         if (this.questionList.length === 0) {
           throw new Error("No valid questions found in response");
         }
@@ -791,7 +724,7 @@ export default {
     },
     handleNextQuestion() {
       this.showExplaination = false;
-      
+
       // Reset button styles
       document.querySelectorAll('.quizChoices button').forEach(button => {
         button.classList.remove('answer-button-incorrect', 'answer-button-correct');
@@ -866,18 +799,25 @@ export default {
     scrollRight() {
       this.scrollTo(this.scrollPosition + 200);
     },
+    setActiveCategory(index) {
+      this.categories = this.categories.map((category, i) => ({
+        ...category,
+        isActive: i === index
+      }));
+    },
     scrollTo(position) {
       const container = this.$refs.carousel;
       if (!container) return;
-      
+
       // Smooth scroll animation
       container.scrollTo({
         left: position,
         behavior: 'smooth'
       });
-      
+
       this.scrollPosition = position;
-    }
+    },
+
   },
 
   computed: {
@@ -924,7 +864,7 @@ export default {
   gap: 0.75rem;
 }
 
-.search-container > input {
+.search-container>input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #e2e8f0;
@@ -935,7 +875,7 @@ export default {
   margin-bottom: 0.75rem;
 }
 
-.search-container > input:focus {
+.search-container>input:focus {
   outline: none;
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
@@ -1004,12 +944,14 @@ export default {
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .carousel-nav {
-    display: none; /* Hide arrows on mobile */
+    display: none;
+    /* Hide arrows on mobile */
   }
-  
+
   .related-keyword-container {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on iOS */
   }
 }
 
@@ -1377,7 +1319,7 @@ export default {
     gap: 10px;
   }
 
-  .search-container > input {
+  .search-container>input {
     width: 100%;
   }
 
@@ -1385,7 +1327,7 @@ export default {
     flex-direction: column;
   }
 
-  .suggest-keyword-container > select {
+  .suggest-keyword-container>select {
     width: 100%;
   }
 }
@@ -1663,18 +1605,21 @@ export default {
 
 .goal-form-card,
 .quiz-card {
-  background: var(--card-bg); /* Thay màu trắng tĩnh bằng biến */
+  background: var(--card-bg);
+  /* Thay màu trắng tĩnh bằng biến */
   border-radius: 12px;
   padding: 2.5rem;
   width: 100%;
-  box-shadow: 0 4px 6px var(--shadow-color); /* Dùng biến cho shadow */
+  box-shadow: 0 4px 6px var(--shadow-color);
+  /* Dùng biến cho shadow */
 }
 
 .title {
   font-family: sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--text-primary); /* Thay #2c3e50 bằng biến */
+  color: var(--text-primary);
+  /* Thay #2c3e50 bằng biến */
   margin-bottom: 2rem;
   text-align: left;
 }
@@ -1687,7 +1632,8 @@ export default {
   display: block;
   font-family: sans-serif;
   font-weight: 500;
-  color: var(--text-primary); /* Thay #2c3e50 bằng biến */
+  color: var(--text-primary);
+  /* Thay #2c3e50 bằng biến */
   margin-bottom: 0.5rem;
   font-size: 1rem;
 }
@@ -1719,17 +1665,21 @@ export default {
 .form-select {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid var(--border-color); /* Thay #e2e8f0 bằng biến */
+  border: 1px solid var(--border-color);
+  /* Thay #e2e8f0 bằng biến */
   border-radius: 6px;
   font-size: 1rem;
   transition: all 0.2s ease;
-  background: var(--card-bg); /* Thay trắng bằng biến */
-  color: var(--text-primary); /* Thêm màu chữ */
+  background: var(--card-bg);
+  /* Thay trắng bằng biến */
+  color: var(--text-primary);
+  /* Thêm màu chữ */
 }
 
 .form-input::placeholder {
   font-style: italic;
-  color: #a0aec0; /* Giữ màu này hoặc thay bằng biến nếu muốn */
+  color: #a0aec0;
+  /* Giữ màu này hoặc thay bằng biến nếu muốn */
 }
 
 .form-input:focus,
@@ -1751,7 +1701,8 @@ export default {
 .button {
   width: 100%;
   padding: 0.875rem;
-  background: #3182ce; /* Giữ màu này hoặc dùng biến nếu muốn */
+  background: #3182ce;
+  /* Giữ màu này hoặc dùng biến nếu muốn */
   color: white;
   border: none;
   border-radius: 6px;
@@ -1773,19 +1724,21 @@ export default {
   gap: 0.75rem;
 }
 
-.search-container > input {
+.search-container>input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid var(--border-color); /* Thay #e2e8f0 */
+  border: 1px solid var(--border-color);
+  /* Thay #e2e8f0 */
   border-radius: 6px;
   font-size: 1rem;
   transition: all 0.2s ease;
-  background: var(--card-bg); /* Thay trắng */
+  background: var(--card-bg);
+  /* Thay trắng */
   color: var(--text-primary);
   margin-bottom: 0.75rem;
 }
 
-.search-container > input:focus {
+.search-container>input:focus {
   outline: none;
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
@@ -1798,14 +1751,16 @@ export default {
   width: 60vw;
 }
 
-.suggest-keyword-container > select {
+.suggest-keyword-container>select {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid var(--border-color); /* Thay #e2e8f0 */
+  border: 1px solid var(--border-color);
+  /* Thay #e2e8f0 */
   border-radius: 6px;
   font-size: 1rem;
   transition: all 0.2s ease;
-  background: var(--card-bg); /* Thay trắng */
+  background: var(--card-bg);
+  /* Thay trắng */
   color: var(--text-primary);
 }
 
@@ -1821,18 +1776,22 @@ export default {
   gap: 10px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
   flex: 1;
   padding: 0.5rem 0;
 }
 
 .related-keyword-container::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  display: none;
+  /* Chrome/Safari */
 }
 
 .quiz-area {
-  background: var(--card-bg); /* Thay trắng */
+  background: var(--card-bg);
+  /* Thay trắng */
   border-radius: 12px;
   width: 60vw;
   max-width: 60vw;
@@ -1841,12 +1800,14 @@ export default {
 .quizQuestion {
   font-family: sans-serif;
   font-size: 1.2rem;
-  color: var(--text-primary); /* Thay #2c3e50 */
+  color: var(--text-primary);
+  /* Thay #2c3e50 */
   margin-bottom: 1.5rem;
 }
 
 .quizQuestionEnabled {
-  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+  color: var(--text-primary);
+  /* Đảm bảo màu chữ thay đổi */
 }
 
 .quizChoices {
@@ -1860,9 +1821,12 @@ export default {
 .answerButton {
   width: 100%;
   padding: 0.875rem;
-  background: var(--card-bg); /* Thay trắng */
-  color: var(--text-primary); /* Thay #2c3e50 */
-  border: 1px solid var(--border-color); /* Thay #e2e8f0 */
+  background: var(--card-bg);
+  /* Thay trắng */
+  color: var(--text-primary);
+  /* Thay #2c3e50 */
+  border: 1px solid var(--border-color);
+  /* Thay #e2e8f0 */
   border-radius: 6px;
   font-weight: 500;
   font-size: 1rem;
@@ -1872,7 +1836,8 @@ export default {
 }
 
 .answerButton:hover {
-  background: var(--hover-bg); /* Thay #f7fafc */
+  background: var(--hover-bg);
+  /* Thay #f7fafc */
 }
 
 .answer-button-correct {
@@ -1886,29 +1851,35 @@ export default {
 }
 
 .answerButtonActive {
-  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+  color: var(--text-primary);
+  /* Đảm bảo màu chữ thay đổi */
 }
 
 .explanation-container {
-  background: var(--content-bg); /* Thay #f8fafc */
+  background: var(--content-bg);
+  /* Thay #f8fafc */
   padding: 1.5rem;
   border-radius: 8px;
   margin-top: 1.5rem;
-  color: var(--text-primary); /* Thêm màu chữ */
+  color: var(--text-primary);
+  /* Thêm màu chữ */
 }
 
 .explanation-title {
   font-size: 1.17em;
   font-weight: bold;
-  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+  color: var(--text-primary);
+  /* Đảm bảo màu chữ thay đổi */
 }
 
 .quiz-info {
-  background: var(--content-bg); /* Thay #f8fafc */
+  background: var(--content-bg);
+  /* Thay #f8fafc */
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  color: var(--text-primary); /* Thay #2c3e50 */
+  color: var(--text-primary);
+  /* Thay #2c3e50 */
 }
 
 .overlay {
@@ -1918,7 +1889,8 @@ export default {
   top: 0;
   left: 0;
   position: fixed;
-  background-color: rgba(0, 0, 0, 0.5); /* Giữ nguyên vì là overlay */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Giữ nguyên vì là overlay */
 }
 
 .modal-container {
@@ -1928,7 +1900,8 @@ export default {
   width: fit-content;
   height: fit-content;
   transform: translate(-50%, -50%);
-  background: var(--card-bg); /* Thay trắng */
+  background: var(--card-bg);
+  /* Thay trắng */
   border: 2px solid red;
   border-radius: 15px;
   display: flex;
@@ -1937,13 +1910,15 @@ export default {
   align-items: center;
   padding: 20px;
   gap: 10px;
-  color: var(--text-primary); /* Thêm màu chữ */
+  color: var(--text-primary);
+  /* Thêm màu chữ */
 }
 
 .result-title {
   font-size: 40px;
   font-weight: 600;
-  color: var(--text-primary); /* Đảm bảo màu chữ thay đổi */
+  color: var(--text-primary);
+  /* Đảm bảo màu chữ thay đổi */
 }
 
 .result-button-container {
@@ -1961,7 +1936,8 @@ export default {
 
 .category-label {
   display: block;
-  color: #4299e1; /* Giữ màu này hoặc dùng biến nếu muốn */
+  color: #4299e1;
+  /* Giữ màu này hoặc dùng biến nếu muốn */
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 1px;
@@ -1970,7 +1946,8 @@ export default {
 
 .category-title {
   font-size: 2.5rem;
-  color: var(--text-primary); /* Thay #1a365d */
+  color: var(--text-primary);
+  /* Thay #1a365d */
   font-weight: 700;
   text-align: center;
   margin: 1.5rem 0;
@@ -1984,7 +1961,8 @@ export default {
 }
 
 .category-card {
-  background: var(--content-bg); /* Thay #f7fafc */
+  background: var(--content-bg);
+  /* Thay #f7fafc */
   border-radius: 12px;
   padding: 1.5rem 1rem;
   cursor: pointer;
@@ -1992,11 +1970,13 @@ export default {
 }
 
 .category-card:hover:not(.active) {
-  background: var(--hover-bg); /* Thay #edf2f7 */
+  background: var(--hover-bg);
+  /* Thay #edf2f7 */
 }
 
 .category-card.active {
-  background: #4299e1; /* Giữ màu này hoặc dùng biến */
+  background: #4299e1;
+  /* Giữ màu này hoặc dùng biến */
   color: white;
 }
 
@@ -2027,12 +2007,14 @@ export default {
   font-weight: 600;
   margin: 0;
   margin-bottom: 0.25rem;
-  color: var(--text-primary); /* Thêm màu chữ */
+  color: var(--text-primary);
+  /* Thêm màu chữ */
 }
 
 .card-text span {
   font-size: 0.875rem;
-  color: #718096; /* Giữ màu này hoặc dùng biến */
+  color: #718096;
+  /* Giữ màu này hoặc dùng biến */
 }
 
 .active .card-text span {
@@ -2041,6 +2023,7 @@ export default {
 
 /* Responsive Styles */
 @media (max-width: 640px) {
+
   .goal-form-card,
   .quiz-card {
     padding: 1.5rem;
@@ -2066,7 +2049,7 @@ export default {
     gap: 10px;
   }
 
-  .search-container > input {
+  .search-container>input {
     width: 100%;
   }
 
@@ -2074,7 +2057,7 @@ export default {
     flex-direction: column;
   }
 
-  .suggest-keyword-container > select {
+  .suggest-keyword-container>select {
     width: 100%;
   }
 }
@@ -2129,7 +2112,8 @@ export default {
 
 .courses-title {
   font-size: 2.5rem;
-  color: var(--text-primary); /* Thay #2d3748 */
+  color: var(--text-primary);
+  /* Thay #2d3748 */
   font-weight: 700;
   margin: 0;
 }
@@ -2141,10 +2125,12 @@ export default {
 }
 
 .course-card {
-  background: var(--card-bg); /* Thay trắng */
+  background: var(--card-bg);
+  /* Thay trắng */
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 5px 15px var(--shadow-color); /* Dùng biến shadow */
+  box-shadow: 0 5px 15px var(--shadow-color);
+  /* Dùng biến shadow */
   transition: all 0.3s ease;
 }
 
@@ -2187,7 +2173,8 @@ export default {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: var(--card-bg); /* Thay trắng */
+  background: var(--card-bg);
+  /* Thay trắng */
   border: none;
   width: 35px;
   height: 35px;
@@ -2225,7 +2212,8 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
-  color: #718096; /* Giữ màu này hoặc dùng biến */
+  color: #718096;
+  /* Giữ màu này hoặc dùng biến */
   font-size: 0.875rem;
 }
 
@@ -2237,7 +2225,8 @@ export default {
 .course-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-primary); /* Thay #2d3748 */
+  color: var(--text-primary);
+  /* Thay #2d3748 */
   margin: 0 0 1rem 0;
   line-height: 1.4;
   height: 3.5rem;
@@ -2264,7 +2253,8 @@ export default {
 }
 
 .reviews {
-  color: #718096; /* Giữ màu này hoặc dùng biến */
+  color: #718096;
+  /* Giữ màu này hoặc dùng biến */
   font-size: 0.875rem;
 }
 
@@ -2282,13 +2272,15 @@ export default {
 
 .current-price {
   font-weight: 700;
-  color: var(--text-primary); /* Thay #2d3748 */
+  color: var(--text-primary);
+  /* Thay #2d3748 */
   font-size: 1.25rem;
   margin-right: 0.75rem;
 }
 
 .original-price {
-  color: #a0aec0; /* Giữ màu này hoặc dùng biến */
+  color: #a0aec0;
+  /* Giữ màu này hoặc dùng biến */
   text-decoration: line-through;
   font-size: 0.875rem;
 }
@@ -2296,7 +2288,8 @@ export default {
 .course-students {
   display: flex;
   align-items: center;
-  color: #718096; /* Giữ màu này hoặc dùng biến */
+  color: #718096;
+  /* Giữ màu này hoặc dùng biến */
   font-size: 0.875rem;
 }
 

@@ -30,7 +30,7 @@
     "axios": "^1.8.4",
     "buffer": "^6.0.3",
     "canvasjs": "^1.8.3",
-    "chart.js": "^4.4.8",
+    "chart.js": "^4.4.9",
     "cheerio": "^1.0.0",
     "connect-mongo": "^5.1.0",
     "copy-webpack-plugin": "^12.0.2",
@@ -179,5 +179,6 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ]
+  ],
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
