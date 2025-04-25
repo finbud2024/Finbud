@@ -288,7 +288,7 @@ tr:nth-child(odd) {
   margin-bottom: 16px;
   overflow: hidden;
   word-wrap: break-word;
-  padding: 0 17.42%;
+  padding: 0;
   container-name: chatComponent;
 }
 
@@ -310,10 +310,6 @@ tr:nth-child(odd) {
   max-width: 60%;
 }
 
-.user .message-content {
-  background-color: var(--chat-user-bg-color);
-  color: var(--chat-user-text-color);
-}
 
 .bot .avatar {
   width: 41px;

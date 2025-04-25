@@ -57,40 +57,48 @@
       <canvas id="investmentChart"></canvas>
     </div>
 
-
-    <!-- Language switch  -->
-    <div class="language-switcher">
-    <button @click="switchLanguage('en')">
-      <img src="@/assets/us.png" alt="English" />
-    </button>
-    <button @click="switchLanguage('vi')">
-      <img src="@/assets/vn.png" alt="Tiếng Việt" />
-    </button>
-  </div>
-
   </div>
 </template>
 
 <script>
-import Chart from 'chart.js/auto';
+import { Chart } from 'chart.js/auto';
 import axios from 'axios';
+import { debounce } from 'lodash';
 // this.$i18n.locale = 'vi'; // to change language
+
+// Chart configuration constants
+const CHART_COLORS = ['#4CAF50', '#FFC107', '#2196F3'];
+const BASE_OPTIONS = {
+  animation: { duration: 500 },
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: { 
+    x: { stacked: true }, 
+    y: { stacked: true } 
+  }
+};
 
 export default {
   data() {
     return {
+      // Core input data
       initialInvestment: 1000,
       interestRate: 5,
       years: 10,
       compoundingFrequency: 1,
       contribution: 0,
-      contributionTiming: "end", 
-      contributionPeriod: "month", 
+      contributionTiming: "end",
+      contributionPeriod: "month",
       finalAmount: 0,
-      chartInstance: null,
       shouldCalculate: false,
       
-      // Chatbot related properties
+      // Chart data
+      rawYears: [],
+      rawInit: [],
+      rawContrib: [],
+      rawProfit: [],
+      
+      // Bot state
       showBot: false,
       showMessage: false,
       typedContent: "",
@@ -105,82 +113,131 @@ export default {
       typingSpeed: 60,
     };
   },
-  watch: {
-    // Watch all input values
-    initialInvestment: 'setShouldCalculate',
-    interestRate: 'setShouldCalculate',
-    years: 'setShouldCalculate',
-    compoundingFrequency: 'setShouldCalculate',
-    contribution: 'setShouldCalculate',
-    contributionTiming: 'setShouldCalculate',
-    contributionPeriod: 'setShouldCalculate',
-  },
-  methods: {
-    setShouldCalculate() {
-      this.shouldCalculate = true;
-    },
 
-    switchLanguage(lang) {
-      this.$i18n.locale = lang;
-      if (this.chartInstance) {
-        // Instead of directly updating, we'll destroy and recreate the chart
-        this.chartInstance.destroy();
-        this.$nextTick(() => {
-          const canvas = document.getElementById('investmentChart');
-          if (canvas) {
-            const ctx = canvas.getContext('2d');
-            // Recreate the chart with the same data
-            const data = this.chartInstance.data;
-            this.chartInstance = new Chart(ctx, {
-              type: 'bar',
-              data: data,
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                  x: { stacked: true },
-                  y: { stacked: true }
-                }
-              }
-            });
-          }
-        });
+  created() {
+    this._chart = null;
+  },
+
+  computed: {
+    inputs() {
+      return {
+        initialInvestment: this.initialInvestment,
+        interestRate: this.interestRate,
+        years: this.years,
+        compoundingFrequency: this.compoundingFrequency,
+        contribution: this.contribution,
+        contributionTiming: this.contributionTiming,
+        contributionPeriod: this.contributionPeriod
+      };
+    }
+  },
+
+  watch: {
+    inputs: {
+      handler: debounce(function() {
+        if (this.shouldCalculate) {
+          this.calculateInvestment();
+        }
+      }, 300),
+      deep: true,
+      immediate: true
+    },
+    '$i18n.locale'() {
+      this.updateChartLabels();
+    }
+  },
+
+  methods: {
+    calculateInvestment() {
+      const P = this.initialInvestment;
+      const r = this.interestRate / 100;
+      const t = this.years;
+      const n = this.compoundingFrequency;
+      const m = this.contributionPeriod === "month" ? 12 : 1;
+      const PMT = this.contribution;
+      const isBeginning = this.contributionTiming === "beginning";
+
+      let yearsArray = [], initialArray = [], contributionArray = [], profitArray = [];
+      let total = 0;
+
+      for (let i = 1; i <= t; i++) {
+        const baseAmount = P * Math.pow(1 + r / n, n * i);
+        let contributionFactor = (Math.pow(1 + r / m, m * i) - 1) / (r / m);
+        if (isBeginning) {
+          contributionFactor *= (1 + r / m);
+        }
+        const contributionTotal = PMT * contributionFactor;
+        const totalYear = baseAmount + contributionTotal;
+        const profit = totalYear - P - (PMT * m * i);
+
+        yearsArray.push(i);
+        initialArray.push(P);
+        contributionArray.push(PMT * m * i);
+        profitArray.push(profit);
+
+        total = totalYear;
       }
+
+      this.finalAmount = total;
+      this.rawYears = yearsArray;
+      this.rawInit = initialArray;
+      this.rawContrib = contributionArray;
+      this.rawProfit = profitArray;
+
+      this.buildChart(this.rawYears, this.rawInit, this.rawContrib, this.rawProfit);
+      this.shouldCalculate = false;
       this.startBotAnimation();
     },
 
-    // Chatbot animation
-    async startBotAnimation() {
-      if (this.typingTimer) {
-        clearTimeout(this.typingTimer);
+    buildChart(years, init, contrib, profit) {
+      if (this._chart) {
+        this._chart.destroy();
       }
-      if (this.botHideTimer) {
-        clearTimeout(this.botHideTimer);
-      }
+      const ctx = document.getElementById('investmentChart').getContext('2d');
+      const labels = years.map(i => this.$t('yearNumber', { number: i }));
+      
+      this._chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: this.$t('initialInvestmentLabel'),
+              data: [...init],
+              backgroundColor: CHART_COLORS[0],
+              stack: 'combined'
+            },
+            {
+              label: this.$t('additionalContributionLabel'),
+              data: [...contrib],
+              backgroundColor: CHART_COLORS[1],
+              stack: 'combined'
+            },
+            {
+              label: this.$t('profitEarnedLabel'),
+              data: [...profit],
+              backgroundColor: CHART_COLORS[2],
+              stack: 'combined'
+            }
+          ]
+        },
+        options: BASE_OPTIONS
+      });
+    },
 
-      this.hidingBot = false;
-      this.hidingMessage = false;
-      this.typedContent = "";
-
+    startBotAnimation() {
       this.showBot = true;
+      this.showMessage = true;
+      this.isTyping = true;
 
-      setTimeout(async () => {
-        this.showMessage = true;
-        this.isTyping = true;
-
-        // Fetch insights from DeepSeek API
-        const insights = await this.generateMortgageInsights();
-        this.botMessage = insights; // Update the bot message with the generated insights
-
-        setTimeout(() => {
-          this.isTyping = false;
-          this.startWordByWordTyping();
-        }, 1500);
-      }, 800);
+      setTimeout(() => {
+        this.isTyping = false;
+        this.startWordByWordTyping();
+      }, 1500);
     },
 
     startWordByWordTyping() {
-      this.words = this.botMessage.split(/( |\n)/g).filter(word => word !== "");
+      this.words = this.generateInsightMessage().split(/( |\n)/g).filter(word => word !== "");
       this.currentWordIndex = 0;
       this.typedContent = "";
       this.typeNextWord();
@@ -192,18 +249,17 @@ export default {
         this.typedContent += word === "\n" ? "<br>" : word;
         this.currentWordIndex++;
 
-        this.typingTimer = setTimeout(() => {
+        setTimeout(() => {
           this.typeNextWord();
         }, this.typingSpeed * (word.length / 2 + 1));
-      } else {
-        this.scheduleHideBot();
       }
     },
 
-    scheduleHideBot() {
-      this.botHideTimer = setTimeout(() => {
-        this.hideBot();
-      }, 60000);
+    generateInsightMessage() {
+      return `Investment Analysis:
+      Initial: $${this.initialInvestment}
+      Rate: ${this.interestRate}%
+      Final: $${this.finalAmount.toFixed(2)}`;
     },
 
     hideMessage() {
@@ -226,11 +282,11 @@ export default {
       }, 500);
     },
 
-    async generateMortgageInsights() {
+    async generateInvestmentInsights() {
       const url = "https://openrouter.ai/api/v1/chat/completions";
       try {
         // Prepare investment data for analysis
-        let investmentData = this.chartInstance.data.datasets.map((dataset, index) => {
+        let investmentData = this._chart.data.datasets.map((dataset, index) => {
           return {
             label: dataset.label,
             values: dataset.data.join(", ")
@@ -272,157 +328,31 @@ export default {
       }
     },
 
-
-
-    calculateInvestment() {
-      if (!this.shouldCalculate) return;
-
-      const P = this.initialInvestment;
-      const r = this.interestRate / 100;
-      const t = this.years;
-      const n = this.compoundingFrequency;
-      const m = this.contributionPeriod === "month" ? 12 : 1;
-      const PMT = this.contribution;
-      const isBeginning = this.contributionTiming === "beginning";
-
-      let yearsArray = [], initialArray = [], contributionArray = [], profitArray = [];
-      let total = 0;
-
-      for (let i = 1; i <= t; i++) {
-        const baseAmount = P * Math.pow(1 + r / n, n * i);
-
-        let contributionFactor = (Math.pow(1 + r / m, m * i) - 1) / (r / m);
-        if (isBeginning) {
-          contributionFactor *= (1 + r / m);
-        }
-        const contributionTotal = PMT * contributionFactor;
-
-        const totalYear = baseAmount + contributionTotal;
-        const profit = totalYear - P - (PMT * m * i);
-
-        yearsArray.push(`Year ${i}`);
-        initialArray.push(P);
-        contributionArray.push(PMT * m * i);
-        profitArray.push(profit);
-
-        total = totalYear;
-      }
-
-      this.finalAmount = total;
-
-      // Properly clean up the existing chart
-      if (this.chartInstance) {
-        this.chartInstance.destroy();
-        this.chartInstance = null;
-      }
-
-      this.$nextTick(() => {
-        const canvas = document.getElementById('investmentChart');
-        if (canvas) {
-          const ctx = canvas.getContext('2d');
-          this.chartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: yearsArray,
-              datasets: [
-                {
-                  label: 'Initial Investment',
-                  data: initialArray,
-                  backgroundColor: '#4CAF50',
-                  stack: 'combined'
-                },
-                {
-                  label: 'Additional Contribution',
-                  data: contributionArray,
-                  backgroundColor: '#FFC107',
-                  stack: 'combined'
-                },
-                {
-                  label: 'Profit Earned',
-                  data: profitArray,
-                  backgroundColor: '#2196F3',
-                  stack: 'combined'
-                },
-              ],
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: {
-                x: { stacked: true },
-                y: { stacked: true }
-              }
-            },
-          });
-        }
-        this.startBotAnimation();
-        this.shouldCalculate = false;
-      });
+    updateChartLabels() {
+      if (!this._chart) return;
+      this._chart.data.datasets[0].label = this.$t('initialInvestmentLabel');
+      this._chart.data.datasets[1].label = this.$t('additionalContributionLabel');
+      this._chart.data.datasets[2].label = this.$t('profitEarnedLabel');
+      const count = this.rawYears.length;
+      this._chart.data.labels = Array.from({length: count}, (_, idx) =>
+        this.$t('yearNumber', { number: idx + 1 })
+      );
+      this._chart.update();
     },
-
-    renderChart(years, initial, contribution, profit) {
-      if (this.chartInstance) {
-        this.chartInstance.destroy();
-      }
-      const ctx = document.getElementById('investmentChart').getContext('2d');
-      this.chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: years,
-          datasets: [
-            {
-              label: 'Initial Investment',
-              data: initial,
-              backgroundColor: '#4CAF50',
-              stack: 'combined'
-            },
-            {
-              label: 'Additional Contribution',
-              data: contribution,
-              backgroundColor: '#FFC107',
-              stack: 'combined'
-            },
-            {
-              label: 'Profit Earned',
-              data: profit,
-              backgroundColor: '#2196F3',
-              stack: 'combined'
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: { stacked: true },
-            y: { stacked: true }
-          }
-        },
-      });
-    },
-
-    
   },
 
   beforeDestroy() {
     // Clean up chart instance when component is destroyed
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-      this.chartInstance = null;
+    if (this._chart) {
+      this._chart.destroy();
+      this._chart = null;
     }
   },
 
   mounted() {
-    // Initialize with empty chart
-    this.renderChart([], [], [], []);
-    // Set shouldCalculate to true for first-time calculation
     this.shouldCalculate = true;
+    this.calculateInvestment();
   }
-  // mounted() {
-  // this.$nextTick(() => {
-  //   this.renderChart([], [], [], []);
-  // });
-
 };
 </script>
 
