@@ -410,6 +410,7 @@ export default {
 	box-sizing: border-box;
 	outline: none;
 	box-shadow: none;
+	font-size: 16px;
 }
 
 .user-input input[type="text"]:focus {

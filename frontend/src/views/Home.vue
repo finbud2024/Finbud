@@ -266,14 +266,12 @@ export default {
       this.$router.push('/tech');
     },
     chatNow(message) {
-      if (this.isAuthenticated) {
-        this.$router.push({
-          path: '/chat-view',
-          query: { autoMessage: message }
-        });
-      } else {
-        this.$router.push('/login');
-      }
+
+      this.$router.push({
+        path: '/chat-view',
+        query: { autoMessage: message }
+      });
+
     },
     onTutorialCompleted() {
       console.log("Tutorial completed!");
