@@ -3,7 +3,7 @@
     <div class="notification-sidebar">
       <!-- Header with just the title -->
       <div class="sidebar-header">
-        <h2>{{ $t('notifications') || 'Notifications' }}</h2>
+        <h2>Notifications</h2>
       </div>
       
       <!-- New separate action bar -->
@@ -14,25 +14,25 @@
           class="action-btn mark-all-btn"
         >
           <font-awesome-icon icon="check-double" />
-          {{ $t('markAllAsRead') || 'Mark all as read' }}
+          Mark all as read
         </button>
         <button 
           @click="confirmDeleteAll" 
           class="action-btn delete-all-btn"
         >
           <font-awesome-icon icon="trash" />
-          {{ $t('deleteAll') || 'Delete all' }}
+          Delete all
         </button>
       </div>
 
       <div v-if="loading" class="loading-container">
         <div class="loading-spinner"></div>
-        <span>{{ $t('loading') || 'Loading...' }}</span>
+        <span>Loading...</span>
       </div>
 
       <div v-else-if="notifications.length === 0" class="empty-state">
         <font-awesome-icon icon="bell" size="2x" />
-        <p>{{ 'No notifications yet' }}</p>
+        <p>No notifications yet</p>
       </div>
 
       <div v-else class="notification-list">
@@ -84,11 +84,11 @@
 
     <div v-if="showDeleteConfirmation" class="delete-confirmation-modal">
       <div class="modal-content">
-        <h3>{{ 'Delete all notifications?' }}</h3>
-        <p>{{ 'This action cannot be undone.' }}</p>
+        <h3>Delete all notifications?</h3>
+        <p>This action cannot be undone.</p>
         <div class="modal-actions">
-          <button @click="deleteAllNotifications" class="confirm-delete-btn">{{ $t('delete') || 'Delete' }}</button>
-          <button @click="showDeleteConfirmation = false" class="cancel-btn">{{ $t('cancel') || 'Cancel' }}</button>
+          <button @click="deleteAllNotifications" class="confirm-delete-btn">Delete</button>
+          <button @click="showDeleteConfirmation = false" class="cancel-btn">Cancel</button>
         </div>
       </div>
     </div>

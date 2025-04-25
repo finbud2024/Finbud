@@ -11,9 +11,9 @@
 
     <div v-if="isOpen" class="notification-panel" ref="notificationPanelRef">
       <div class="notification-header">
-        <h3>{{ $t('notifications') }}</h3>
+        <h3>Notifications</h3>
         <button v-if="hasUnread" @click="markAllAsRead" class="mark-all-read">
-          {{ $t('markAllAsRead') }}
+          Mark as all read
         </button>
       </div>
       
@@ -40,7 +40,7 @@
       </div>
       
       <div v-else-if="filteredNotifications.length === 0" class="no-notifications">
-        {{ currentFilter === 'unread' ? ($t('noUnreadNotifications') || 'No unread notifications') : ($t('noNotifications') || 'No notifications') }}
+        {{ currentFilter === 'unread' ? ('No unread notifications') : ('No notifications') }}
       </div>
       
       <div v-else class="notification-list">
@@ -66,7 +66,7 @@
       
       <div class="notification-footer">
         <router-link to="/notifications" @click="isOpen = false">
-          {{ $t('viewAllNotifications') }}
+         View all notifications
         </router-link>
       </div>
     </div>
@@ -320,19 +320,22 @@ export default {
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   animation: slideDown 0.3s ease forwards;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.notification-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(400px - 89px); /* Account for header, filters, and footer */
+}
+
+.notification-footer {
+  padding: 10px 16px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
 }
 
 .notification-header {
@@ -396,11 +399,6 @@ export default {
 
 .filter-btn:hover {
   background-color: var(--bg-secondary);
-}
-
-.notification-list {
-  max-height: 300px;
-  overflow-y: auto;
 }
 
 .notification-item {
@@ -490,22 +488,6 @@ export default {
   0% { opacity: 1; }
   50% { opacity: 0.7; }
   100% { opacity: 1; }
-}
-
-.notification-footer {
-  padding: 10px 16px;
-  text-align: center;
-  border-top: 1px solid var(--border-color);
-}
-
-.notification-footer a {
-  color: var(--accent-color);
-  font-size: 0.85rem;
-  text-decoration: none;
-}
-
-.notification-footer a:hover {
-  text-decoration: underline;
 }
 
 .notification-loading {
