@@ -192,13 +192,13 @@
                class="faq-item"
                :class="{ 'expanded': expandedItem === index }">
             <div class="question" @click="toggleExpansion(index)">
-              <p>{{ item.question }}</p>
+            <p>{{ item.question }}</p>
               <span class="expand-icon">{{ expandedItem === index ? '−' : '+' }}</span>
-            </div>
+          </div>
             <transition name="fade">
               <div class="answer" v-if="expandedItem === index">
                 <p>{{ item.answer }}</p>
-              </div>
+          </div>
             </transition>
           </div>
         </template>
