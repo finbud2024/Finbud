@@ -2,6 +2,7 @@
   <div class="chat-container">
     <ChatFrame>
       <div v-for="(message, index) in messages" :key="index">
+        <FileIndicator v-if="message.containFile" :file="message.file" />
         <MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
           :is-thinking="message.isThinking" :htmlContent="message.htmlContent"
           :username="message.isUser ? displayName : 'FinBud Bot'" :avatar-src="message.isUser ? userAvatar : botAvatar"
@@ -11,6 +12,7 @@
         <TradingViewWidget v-if="message.showChart" :symbol="message.stockSymbol" />
       </div>
     </ChatFrame>
+    <ChatSuggestion :lan="this.$i18n.locale" class="suggestion-wrapper" />
     <UserInput ref="userInput" @send-message="handleUserSubmit" />
   </div>
 </template>
@@ -21,6 +23,8 @@ import ChatFrame from "./ChatFrame.vue";
 import MessageComponent from "./MessageComponent.vue";
 import UserInput from "./UserInput.vue";
 import TradingViewWidget from "./TradingViewWidget.vue";
+import FileIndicator from "./FileIndicator.vue";
+import ChatSuggestion from "./ChatSuggestion.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -34,7 +38,7 @@ import OpenAI from 'openai';
 export default {
   name: "ChatComponent",
   props: {},
-  components: { ChatFrame, MessageComponent, UserInput, TradingViewWidget },
+  components: { ChatFrame, MessageComponent, UserInput, TradingViewWidget, FileIndicator, ChatSuggestion },
   data() {
     return {
       messages: [],
@@ -853,6 +857,8 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
         isUser: true,
         typing: true,
         timestamp: new Date().toLocaleTimeString(),
+        containFile: true,
+        file: file
       });
       try {
         if (file.type.startsWith('image/')) {
@@ -885,6 +891,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
         model: "gpt-4o",
         messages: [
           {
+            role: "system",
+            content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+            Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
+            Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
+            Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
             role: "user",
             content: [
               { type: "text", text: newMessage },
@@ -912,6 +923,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
         model: "gpt-4o",
         input: [
           {
+            role: "system",
+            content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+            Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
+            Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
+            Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
             role: "user",
             content: [
               {
@@ -1151,7 +1167,10 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
     }
 
     if (!this.isAuthenticated) {
-      const botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+      let botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+      if (this.$i18n.locale === 'vi') {
+        botInstruction = `Xin chào, Khách!\nVui lòng nhấp vào \"Hướng dẫn\" để biết hướng dẫn chi tiết về cách sử dụng chatbot.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
+      }
       this.addTypingResponse(botInstruction, false);
     }
   },
@@ -1208,4 +1227,10 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
   height: 100px;
   /* Or any height you desire to push content down */
 }
+
+.suggestion-wrapper {
+  width: 90%;
+  margin-bottom: 80px;
+}
+
 </style>
