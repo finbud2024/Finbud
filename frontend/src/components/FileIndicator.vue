@@ -8,7 +8,7 @@
   
       <!-- Otherwise show file info and download link -->
       <div v-else class="file-info">
-        <p>📄 {{ file.name }}</p>
+        <img src="./assets/pdfIcon.png">📄 {{ file.name }}</img>
         <a :href="fileUrl" target="_blank" download>Download</a>
       </div>
     </div>
@@ -45,6 +45,9 @@
   justify-content: flex-end; /* Force right alignment */
   margin-bottom: 8px;
   width: 100%;
+  /* position: fixed;
+	z-index: 99999; */
+	right: calc(3.125vw + 60px);
 }
 
 .file-indicator {
