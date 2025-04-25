@@ -88,7 +88,7 @@ export default {
 }
 
 .start-thread-btn {
-  background: #007bff;
+  background: black;
   color: white;
   padding: 12px 22px; 
   border: none;
@@ -103,7 +103,7 @@ export default {
 }
 
 .start-thread-btn:hover {
-  background: #0056b3;
+  background: black;
 }
 
 .icon {
