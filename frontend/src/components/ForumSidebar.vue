@@ -1,13 +1,18 @@
 <template>
   <aside class="sidebar">
     <h2>Forums</h2>
-    <ul>
+
+    <div v-if="loading" class="skeleton-list">
+      <div v-for="n in 5" :key="n" class="skeleton-item"></div>
+    </div>
+
+    <ul v-else>
       <li 
         v-for="forum in forums" 
         :key="forum._id"
-        :class="{ 'selected': activeForumSlug === forum.slug }"
-        @click="selectForum(forum.slug)">
-        
+        :class="{ 'selected': forum.slug === activeForumSlug }"
+        @click="selectForum(forum.slug)"
+      >
         <component 
           :is="LucideIcons[forum.logo] || LucideIcons['HelpCircle']" 
           class="forum-icon" 
@@ -19,8 +24,8 @@
 </template>
 
 <script>
-import { ref, watch, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import api from "@/utils/api"; 
 import * as LucideIcons from "lucide-vue-next";
 
@@ -30,39 +35,35 @@ export default {
   },
   setup(props) {
     const forums = ref([]);
-    const route = useRoute();
+    const loading = ref(true);
     const router = useRouter();
-    const activeForum = ref(route.query.forum || "p/general");
 
     const fetchForums = async () => {
       try {
         const response = await api.get("/api/forums", { withCredentials: true });
         forums.value = response.data;
-      } catch (error) {
-        console.error("❌ Failed to fetch forums:", error);
+      } catch (err) {
+        console.error("❌ Failed to fetch forums:", err);
+      } finally {
+        loading.value = false;
       }
     };
 
-    watch(() => route.query.forum, (newForum) => {
-      if (newForum) {
-        activeForum.value = newForum;
-      }
-    });
-
-    watch(() => props.activeForumSlug, (newSlug) => {
-      if (newSlug) {
-        activeForum.value = newSlug;
-      }
-    });
-
     const selectForum = (forumSlug) => {
-      activeForum.value = forumSlug;
-      router.push({ path: "/forum", query: { forum: forumSlug } }); 
+      if (forumSlug !== props.activeForumSlug) {
+        router.push({ path: "/forum", query: { forum: forumSlug } });
+      }
     };
 
     onMounted(fetchForums);
 
-    return { forums, activeForumSlug: activeForum, LucideIcons, selectForum };
+    return {
+      forums,
+      loading,
+      LucideIcons,
+      activeForumSlug: props.activeForumSlug,
+      selectForum
+    };
   }
 };
 </script>
@@ -106,5 +107,25 @@ export default {
   width: 24px;
   height: 24px;
   margin-right: 8px;
+}
+
+/* Skeleton loading */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-item {
+  height: 36px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
 }
 </style>

@@ -292,10 +292,16 @@ const messages = {
     
     // Testimonials
     testimonials: {
-      john: "FinBud has completely transformed my financial management. The AI chatbot provides spot-on advice and helps me stay on top of my investments and expenses.",
+      daniel: "FinBud helped me understand where my money goes each month. Simple insights, big impact.",   
+      rachel: "I’ve tried several money apps before, but none felt as intuitive as FinBud. It helped me figure out where my paycheck was going. The AI guidance makes a big difference—it feels personal. Now I’ve started building savings and even planning for retirement. I finally feel like I’m making smart choices with my money.",
       jane: "I love using FinBud! It's like having a personal financial advisor available 24/7. The insights and tips are incredibly useful and easy to understand.",
-      michael: "The best financial tool I have ever used. FinBud's AI is amazing at predicting market trends and giving personalized advice.",
-      emily: "FinBud has helped me save so much money. The budgeting tools and financial insights are top-notch."
+      julian: "I was always intimidated by financial planning. Spreadsheets overwhelmed me, and I never knew where to start.FinBud took that stress away with its clean interface and smart AI support. It categorized my spending automatically and gave me goals I could actually reach. After six months of using it, I’ve paid off two credit cards and started building an emergency fund. I finally feel like I’m in control of my finances instead of the other way around. It’s more than an app—it’s like having a coach that keeps me accountable. Highly recommend it to anyone feeling stuck or lost with money.",
+      amelia: "FinBud’s personalized advice was the game-changer I didn’t know I needed. It adapts to my financial habits and pushes me gently in the right direction. From budgeting to investing, every feature feels thoughtful and well-designed. What really surprised me was how much I’ve learned just by using the app. The daily insights taught me more than any finance blog or YouTube video ever has. My relationship with money has completely shifted—from stress to confidence. FinBud truly empowers users to take charge.",
+      marcus: "I used to bounce between multiple finance apps—one for spending, one for saving, another for investments. FinBud brought everything together in one sleek platform. It tracks my goals, shows me real-time progress, and gives advice that actually works. I’ve reduced unnecessary subscriptions, started a travel fund, and even put money into a Roth IRA. I don’t need to be a finance expert anymore. FinBud makes complex decisions feel manageable. This app respects your time and rewards consistency. It’s been a game-changer for how I handle money.",
+      tyler: "The budgeting tool alone is worth it, but the real-time alerts are what keep me on track. It’s like having a financial assistant watching out for me. I never miss a due date anymore.",
+      ten: "FinBud doesn’t just show you numbers—it explains them. I get clear, actionable tips that help me adjust my habits without guilt. It feels like I’m getting smarter about money every day. Even my partner started using it after seeing my progress. It’s been a financial glow-up for both of us.",
+      claire: "Tracking expenses used to stress me out, but FinBud simplified it all. The daily summaries help me stay accountable without being overwhelmed. I love how it celebrates milestones—it’s motivating. It’s the only finance app I’ve actually stuck with. Definitely recommend for anyone trying to build better habits.",
+      sophie: "FinBud gives me confidence in every financial decision I make. It’s easy to use and always spot-on with its advice. I’ve already saved more in 3 months than I did all last year.",
     },
     //Stock Simulator
     //Nav Bar
@@ -368,8 +374,110 @@ const messages = {
       responsePlaceholder: "Phản hồi từ FinBud sẽ xuất hiện ở đây"
     },
 
+    //Envent Hub
+    eventHub: {
+      searchPlaceholder: "Search events...",
+      exploreNearby: "Explore Near You",
+      saved: "Saved",
+      allEvents: "All Events",
+      eventCategories: "Event Categories You May Like",
+      trending: "Trending",
+      readMore: "Read more",
+      dontMiss: "DON'T MISS OUT!",
+      finDiscover: "Discover Top Financial Events Near You",
+      categories: {
+        conference: "Conference & Summit",
+        workshop: "Workshop & Training",
+        webinars: "Webinars",
+        networking: "Networking",
+        careerFairs: "Career Fairs"
+      },
+      eventMap: {
+        upcomingEvents: "Upcoming Events",
+        eventImage: "Event Image",
+        date: "Date",
+        host: "Host",
+        location: "Location",
+        tba: "TBA"
+      }
+    },
+
     //Chat
-    message:"Type your message here... "
+    message:"Type your message here... ",
+
+    // Main Page Content
+    empoweringTitle: "Empowering smarter finance decisions",
+    anytimeAnswers: "Anytime answers for finance questions with FinBud",
+    partneringTitle: "Partnering to Achieve Financial Goals",
+    
+    // Financial Awareness Section
+    enhanceFinancialTitle: "Enhance Your Financial Awareness",
+    enhanceFinancialDesc: "Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your questions.",
+    
+    // Financial Planning Section
+    optimizeFinancialTitle: "Optimize Your Financial Planning",
+    optimizeFinancialDesc: "Finbud helps you track and manage expenses, record income and spending, and tailor financial management to your specific goals.",
+    
+    // Investment Section
+    maximizeInvestmentTitle: "Maximize Your Investment Efficiency",
+    maximizeInvestmentDesc: "Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital confidently.",
+    
+    // Impact Section
+    impactTitle: "Easily notice the impact",
+    savingsIncrease: "Savings Increase",
+    savingsDesc: "average per user",
+    financialAwareness: "Financial Awareness",
+    awarenessDesc: "increase",
+    debtReduction: "Debt Reduction",
+    debtDesc: "after 1 year",
+    creditScore: "Improved Credit Score",
+    creditDesc: "months within",
+    
+    // Features Section
+    chatbotFeatureTitle: "Solve Financial Worries with",
+    chatbotFeatureName: "AI Chatbot,",
+    chatbotDesc: "With just simple commands and access to a vast source of accurate and reliable information, all your financial queries can be answered instantly.",
+    chatNow: "Chat now",
+    
+    simulatorFeatureTitle: "Master Your Investments with",
+    simulatorFeatureName: "FinBud Simulator,",
+    simulatorDesc: "Track how your investments are performing in real-time, provide actionable insights from your investment and the market to make better investment decisions.",
+    simulatorNow: "Simulator now",
+    
+    goalFeatureTitle: "Predict Your Costs with",
+    goalFeatureName: "FinBud Goal,",
+    goalDesc: "Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive tips for better budget management.",
+    goalNow: "Set Goal now",
+    
+    quizFeatureTitle: "Boost Your Finance Skills with",
+    quizFeatureName: "FinBud Quiz,",
+    quizDesc: "Financial Quiz with different topics related to various keywords helps you practice and learn financial knowledge in a smart and interactive way.",
+    quizNow: "Try Quiz now",
+    
+    // FAQ Section
+    faqTitle: "Frequently Asked Questions",
+    faqs: {
+      pricing: {
+        question: "Is FinBud free to use, or are there any subscription plans?",
+        answer: "FinBud offers both a free package with basic features and a subscription plan for some advanced features. Let's register to try all the free financial tools of FinBud before looking for more advanced options from us."
+      },
+      chatbot: {
+        question: "What kind of questions can the FinBud chatbot solve?",
+        answer: "The FinBud chatbot is designed to assist with a wide range of inquiries, covering both financial and non-financial topics. Additionally, the chatbot allows you to directly execute various commands within FinBud's financial management, investment, and educational features. For example, you can buy or sell stocks, manage your budget, or look up financial terms. Simply click on the chat icon and follow the guidance to explore the full capabilities of the FinBud chatbot."
+      },
+      investment: {
+        question: "Does FinBud support investment tracking and management?",
+        answer: "Yes, our Quant and Simulator pages provide an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and even practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience."
+      },
+      goals: {
+        question: "Can I set financial goals with FinBud and track my progress?",
+        answer: "Absolutely! With FinBud, you can set specific financial goals by defining details such as the category, target date, required amount, and current savings. On the Goal page, we help you stay on track by monitoring your daily transactions and providing detailed charts, ensuring you can reach each goal more effectively."
+      },
+      mobile: {
+        question: "Is FinBud available on mobile devices, and does it sync across platforms?",
+        answer: "Yes, FinBud is available on both mobile devices and laptops. Simply log in to your account, and your data will automatically sync across all platforms for seamless access."
+      }
+    }
   },
   vi: {
 
@@ -659,10 +767,16 @@ const messages = {
     
     // Testimonials
     testimonials: {
-      john: "FinBud đã hoàn toàn thay đổi cách tôi quản lý tài chính. Chatbot AI đưa ra lời khuyên chính xác và giúp tôi kiểm soát đầu tư và chi tiêu.",
-      jane: "Tôi rất thích sử dụng FinBud! Như có một cố vấn tài chính cá nhân 24/7. Các thông tin chi tiết và mẹo vô cùng hữu ích và dễ hiểu.",
-      michael: "Công cụ tài chính tốt nhất tôi từng sử dụng. AI của FinBud rất tuyệt vời trong việc dự đoán xu hướng thị trường và đưa ra lời khuyên cá nhân hóa.",
-      emily: "FinBud đã giúp tôi tiết kiệm rất nhiều tiền. Các công cụ lập ngân sách và thông tin tài chính đều hàng đầu."
+      daniel: "FinBud giúp tôi hiểu rõ tiền của mình đi đâu mỗi tháng. Những phân tích đơn giản nhưng tạo ra khác biệt lớn.",   
+      rachel: "Tôi đã thử nhiều ứng dụng tài chính, nhưng không cái nào trực quan như FinBud. Nó giúp tôi biết tiền lương của mình đã được chi vào đâu. Hướng dẫn AI tạo nên khác biệt lớn — cảm giác rất cá nhân. Giờ tôi đã bắt đầu tiết kiệm và lên kế hoạch nghỉ hưu. Cuối cùng tôi cũng cảm thấy mình đang đưa ra những quyết định thông minh với tiền bạc.",
+      jane: "Tôi yêu FinBud! Giống như có một cố vấn tài chính cá nhân 24/7 vậy. Những phân tích và mẹo đều cực kỳ hữu ích và dễ hiểu.",
+      julian: "Tôi từng rất sợ lập kế hoạch tài chính. Bảng tính làm tôi choáng ngợp và tôi không biết bắt đầu từ đâu. FinBud giúp tôi thoát khỏi căng thẳng đó nhờ giao diện đơn giản và hỗ trợ AI thông minh. Nó tự động phân loại chi tiêu và đặt ra các mục tiêu khả thi. Sau 6 tháng sử dụng, tôi đã trả hết 2 thẻ tín dụng và bắt đầu xây dựng quỹ khẩn cấp. Cuối cùng tôi cũng cảm thấy kiểm soát được tài chính thay vì bị nó chi phối. Không chỉ là một ứng dụng — nó giống như một huấn luyện viên giúp tôi có trách nhiệm hơn. Rất đáng dùng cho ai cảm thấy bế tắc về tiền bạc.",
+      amelia: "Lời khuyên cá nhân hóa từ FinBud chính là điều tôi không ngờ mình cần. Nó điều chỉnh theo thói quen tài chính của tôi và nhẹ nhàng định hướng đúng đắn. Từ ngân sách đến đầu tư, mọi tính năng đều được thiết kế tỉ mỉ. Điều bất ngờ nhất là lượng kiến thức tôi học được chỉ từ việc dùng app. Những phân tích hàng ngày dạy tôi nhiều hơn cả blog hay video tài chính. Mối quan hệ của tôi với tiền bạc đã thay đổi hoàn toàn — từ căng thẳng sang tự tin. FinBud thực sự trao quyền cho người dùng.",
+      marcus: "Tôi từng dùng nhiều app tài chính cùng lúc — một để theo dõi chi tiêu, một để tiết kiệm, một khác để đầu tư. FinBud kết hợp tất cả trong một nền tảng mượt mà. Nó theo dõi mục tiêu, hiển thị tiến độ thời gian thực và đưa ra lời khuyên hiệu quả. Tôi đã cắt giảm các gói đăng ký không cần thiết, bắt đầu quỹ du lịch và cả đầu tư vào Roth IRA. Giờ tôi không cần phải là chuyên gia tài chính nữa. FinBud biến những quyết định phức tạp thành đơn giản. Ứng dụng này tôn trọng thời gian của bạn và khuyến khích sự kiên trì. Nó thay đổi hoàn toàn cách tôi quản lý tiền.",
+      tyler: "Chỉ riêng công cụ lập ngân sách đã đáng giá, nhưng cảnh báo thời gian thực mới là thứ giữ tôi đi đúng hướng. Giống như có một trợ lý tài chính luôn theo sát vậy. Tôi không bao giờ quên hạn thanh toán nữa.",
+      ben: "FinBud không chỉ hiển thị con số — nó còn giải thích chúng. Tôi nhận được mẹo hành động rõ ràng để điều chỉnh thói quen mà không cảm thấy tội lỗi. Cảm giác như mỗi ngày tôi đều hiểu hơn về tiền bạc. Ngay cả bạn đời của tôi cũng bắt đầu dùng sau khi thấy sự tiến bộ của tôi. Đó là một bước ngoặt tài chính cho cả hai chúng tôi.",
+      claire: "Theo dõi chi tiêu từng khiến tôi căng thẳng, nhưng FinBud đã đơn giản hóa mọi thứ. Bản tóm tắt hàng ngày giúp tôi có trách nhiệm mà không bị quá tải. Tôi thích cách nó ăn mừng các cột mốc — rất có động lực. Đây là ứng dụng tài chính duy nhất tôi kiên trì dùng. Rất đáng để thử nếu bạn muốn xây dựng thói quen tốt hơn.",
+      sophie: "FinBud cho tôi tự tin vào mọi quyết định tài chính. Dễ sử dụng và luôn đưa ra lời khuyên chính xác. Chỉ sau 3 tháng, tôi đã tiết kiệm được nhiều hơn cả năm ngoái.",
     },
     //Stock Simulator
     //Nav Bar
@@ -733,16 +847,120 @@ const messages = {
       guildence: "Hướng dẫn",
       sendButton: "Gửi",
       responsePlaceholder: "Phản hồi từ FinBud sẽ xuất hiện ở đây"
+    },
+    //Event Hub
+    eventHub: {
+      searchPlaceholder: "Tìm kiếm sự kiện...",
+      exploreNearby: "Khám phá gần bạn",
+      saved: "Đã lưu",
+      allEvents: "Tất cả sự kiện",
+      eventCategories: "Danh mục sự kiện bạn có thể thích",
+      trending: "Xu hướng",
+      readMore: "Xem thêm",
+      dontMiss: "Đừng bỏ lỡ!",
+      finDiscover: "Khám phá các sự kiện tài chính nổi bật gần bạn",
+      categories: {
+        conference: "Hội nghị & Hội thảo",
+        workshop: "Workshop & Đào tạo",
+        webinars: "Hội thảo trực tuyến",
+        networking: "Kết nối mạng lưới",
+        careerFairs: "Ngày hội việc làm"
+      },
+      eventMap: {
+        upcomingEvents: "Sự kiện sắp tới",
+        eventImage: "Hình ảnh sự kiện",
+        date: "Ngày",
+        host: "Người tổ chức",
+        location: "Địa điểm",
+        tba: "Chưa xác định"
+      }
+    },
+
+    //Chat
+    message:"Nhập tin nhắn của bạn ở đây... ",
+
+    // Main Page Content
+    empoweringTitle: "Tự tin với mỗi quyết định tài chính",
+    anytimeAnswers: "FinBud – trợ lý tài chính của bạn, sẵn sàng giải đáp mọi thắc mắc 24/7",
+    partneringTitle: "Hợp tác để đạt được mục tiêu tài chính",
+    
+    // Financial Awareness Section
+    enhanceFinancialTitle: "Nâng cao nhận thức tài chính của bạn",
+    enhanceFinancialDesc: "Chatbot AI tiên tiến của Finbud sẽ giúp bạn xem xét, khám phá các chủ đề tài chính và trả lời mọi câu hỏi của bạn.",
+    
+    // Financial Planning Section
+    optimizeFinancialTitle: "Tối ưu hóa kế hoạch tài chính của bạn",
+    optimizeFinancialDesc: "Finbud giúp bạn theo dõi và quản lý chi phí, ghi lại thu nhập và chi tiêu, và điều chỉnh quản lý tài chính theo mục tiêu cụ thể của bạn.",
+    
+    // Investment Section
+    maximizeInvestmentTitle: "Tối đa hóa hiệu quả đầu tư của bạn",
+    maximizeInvestmentDesc: "Finbud cung cấp tổng quan toàn diện về thị trường tài chính, hướng dẫn bạn tối ưu hóa vốn một cách tự tin.",
+    
+    // Impact Section
+    impactTitle: "Dễ dàng nhận thấy tác động",
+    savingsIncrease: "Tăng tiết kiệm",
+    savingsDesc: "trung bình mỗi người dùng",
+    financialAwareness: "Nhận thức tài chính",
+    awarenessDesc: "tăng",
+    debtReduction: "Giảm nợ",
+    debtDesc: "sau 1 năm",
+    creditScore: "Cải thiện điểm tín dụng",
+    creditDesc: "tháng",
+    
+    // Features Section
+    chatbotFeatureTitle: "Giải quyết lo lắng tài chính với",
+    chatbotFeatureName: "Chatbot AI,",
+    chatbotDesc: "Với các lệnh đơn giản và truy cập vào nguồn thông tin chính xác và đáng tin cậy, mọi thắc mắc tài chính của bạn đều có thể được trả lời ngay lập tức.",
+    chatNow: "Chat ngay",
+    
+    simulatorFeatureTitle: "Làm chủ đầu tư của bạn với",
+    simulatorFeatureName: "FinBud Simulator,",
+    simulatorDesc: "Theo dõi hiệu suất đầu tư của bạn theo thời gian thực, cung cấp thông tin chi tiết từ đầu tư của bạn và thị trường để đưa ra quyết định đầu tư tốt hơn.",
+    simulatorNow: "Mô phỏng ngay",
+    
+    goalFeatureTitle: "Dự đoán chi phí của bạn với",
+    goalFeatureName: "FinBud Goal,",
+    goalDesc: "AI của chúng tôi dự đoán chi phí sắp tới để giúp bạn lên kế hoạch trước, hiểu mô hình chi tiêu của bạn và nhận các mẹo quản lý ngân sách tốt hơn.",
+    goalNow: "Đặt mục tiêu ngay",
+    
+    quizFeatureTitle: "Nâng cao kỹ năng tài chính của bạn với",
+    quizFeatureName: "FinBud Quiz,",
+    quizDesc: "Bài kiểm tra tài chính với các chủ đề khác nhau liên quan đến các từ khóa khác nhau giúp bạn thực hành và học kiến thức tài chính một cách thông minh và tương tác.",
+    quizNow: "Thử Quiz ngay",
+    
+    // FAQ Section
+    faqTitle: "Câu hỏi thường gặp",
+    faqs: {
+      pricing: {
+        question: "FinBud có miễn phí để sử dụng không, hay có các gói đăng ký?",
+        answer: "FinBud cung cấp cả gói miễn phí với các tính năng cơ bản và gói đăng ký cho một số tính năng nâng cao. Hãy đăng ký để thử tất cả các công cụ tài chính miễn phí của FinBud trước khi tìm hiểu thêm các tùy chọn nâng cao từ chúng tôi."
+      },
+      chatbot: {
+        question: "Chatbot FinBud có thể giải quyết những câu hỏi nào?",
+        answer: "Chatbot FinBud được thiết kế để hỗ trợ nhiều loại câu hỏi, bao gồm cả chủ đề tài chính và phi tài chính. Ngoài ra, chatbot cho phép bạn trực tiếp thực hiện các lệnh khác nhau trong các tính năng quản lý tài chính, đầu tư và giáo dục của FinBud. Ví dụ, bạn có thể mua hoặc bán cổ phiếu, quản lý ngân sách hoặc tra cứu các thuật ngữ tài chính. Chỉ cần nhấp vào biểu tượng chat và làm theo hướng dẫn để khám phá đầy đủ khả năng của chatbot FinBud."
+      },
+      investment: {
+        question: "FinBud có hỗ trợ theo dõi và quản lý đầu tư không?",
+        answer: "Có, các trang Quant và Simulator của chúng tôi cung cấp trải nghiệm chuyên sâu cho những người khám phá tài chính nâng cao. Bạn có thể quản lý danh mục đầu tư, truy cập phân tích cổ phiếu chuyên sâu và thậm chí thực hành giao dịch cổ phiếu thực thông qua Simulator - hoàn hảo cho người mới bắt đầu muốn có kinh nghiệm đầu tư thực tế."
+      },
+      goals: {
+        question: "Tôi có thể đặt mục tiêu tài chính với FinBud và theo dõi tiến trình của mình không?",
+        answer: "Hoàn toàn có thể! Với FinBud, bạn có thể đặt các mục tiêu tài chính cụ thể bằng cách xác định chi tiết như danh mục, ngày mục tiêu, số tiền cần thiết và tiết kiệm hiện tại. Trên trang Goal, chúng tôi giúp bạn theo dõi bằng cách giám sát các giao dịch hàng ngày và cung cấp biểu đồ chi tiết, đảm bảo bạn có thể đạt được từng mục tiêu hiệu quả hơn."
+      },
+      mobile: {
+        question: "FinBud có khả dụng trên thiết bị di động và có đồng bộ hóa trên các nền tảng không?",
+        answer: "Có, FinBud có sẵn trên cả thiết bị di động và laptop. Chỉ cần đăng nhập vào tài khoản của bạn, và dữ liệu của bạn sẽ tự động đồng bộ hóa trên tất cả các nền tảng để truy cập liền mạch."
+      }
     }
   },
-  //Chat
-  message:"Nhập tin nhắn của bạn ở đây... "
 };
 
 const i18n = createI18n({
-  locale: "vi",
-  fallbackLocale: "vi",
+  legacy: false,
+  locale: "en",
+  fallbackLocale: "en",
   messages,
+  globalInjection: true,
 });
 
 export default i18n;
