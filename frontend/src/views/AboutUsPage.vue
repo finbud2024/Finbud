@@ -342,27 +342,47 @@ export default {
         },
       ],
       testimonials: [
-        {
-          name: "John Doe",
-          feedbackKey: "testimonials.john",
-
-        },
-        {
-          name: "Jane Smith",
-          feedbackKey: "testimonials.jane",
-          
-        },
-        {
-          name: "Michael Johnson",
-          feedbackKey: "testimonials.michael",
-
-        },
-        {
-          name: "Emily Davis",
-          feedbackKey: "testimonials.emily",
-
-        },
-      ],
+      {
+        name: "Daniel Doe",
+        feedbackKey: "testimonials.daniel"
+      },
+      {
+        name: "Jane Patel",
+        feedbackKey: "testimonials.jane"
+      },
+      {
+        name: "Julian Davis",
+        feedbackKey: "testimonials.julian"
+      },
+      {
+        name: "Amelia Nguyen",
+        feedbackKey: "testimonials.amelia"
+      },
+      {
+        name: "Marcus Lee",
+        feedbackKey: "testimonials.marcus"
+      },
+      {
+        name: "Sophie Chen",
+        feedbackKey: "testimonials.sophie"
+      },
+      {
+        name: "Tyler Brooks",
+        feedbackKey: "testimonials.tyler"
+      },
+      {
+        name: "Rachel Johnson",
+        feedbackKey: "testimonials.rachel"
+      },
+      {
+        name: "Ben Carter",
+        feedbackKey: "testimonials.ben"
+      },
+      {
+        name: "Claire Thompson",
+        feedbackKey: "testimonials.claire"
+      }
+    ],
     };
   },
   mounted() {
@@ -408,7 +428,6 @@ body {
 
 .title {
   text-align: center;
-  /* color: #007bff; */
   color: var(--text-primary);
   font-size: 2.5rem;
   margin-bottom: 1rem;
@@ -442,7 +461,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 100%; /* Make all team-member divs take full height of their container */
+  height: auto; /* Ensure the height is dynamic */
 }
 
 .image-container {
@@ -505,13 +524,12 @@ body {
 .testimonials-section {
   background-color: white;
   margin: 2rem 0;
-  padding: 2rem;
+  padding: 2rem 13%; /* Adds spacing to the left and right */
 }
 
 .testimonials-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
+  column-count: 3;
+  column-gap: 4rem;
 }
 
 .testimonial-card {
@@ -520,16 +538,71 @@ body {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
-  animation: fadeIn 1s ease-in-out;
+  font-weight: 300;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.testimonial-card h3 {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
 }
 
 .stars {
-  color: gold;
+  display: flex;
+  justify-content: center;
   margin: 0.5rem 0;
 }
 
 .star {
+  color: gold;
   font-size: 1.2rem;
+}
+
+.testimonial-card p {
+  font-size: 1rem;
+  color: #777;
+}
+
+@media (max-width: 1024px) {
+  .testimonials-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    grid-template-columns: 1fr;
+  }
+
+  .testimonial-card {
+    width: 100%;
+    height: auto; /* Ensures cards can adjust height dynamically */
+    margin: 10px 0;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .team-section {
+    align-items: center;
+  }
+  .team-member {
+    margin-bottom: 20px;
+  }
+
+  .team-container,
+  .testimonials-container {
+    padding: 0 10px;
+  }
+
+  .contact-form {
+    padding: 20px;
+  }
 }
 
 @keyframes fadeIn {
@@ -571,27 +644,6 @@ body {
   to {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-@media (max-width: 768px) {
-  .testimonial-card {
-    width: 100%;
-  }
-  .team-section {
-    align-items: center;
-  }
-  .team-member {
-    margin-bottom: 20px;
-  }
-
-  .team-container,
-  .testimonials-container {
-    padding: 0 10px;
-  }
-
-  .contact-form {
-    padding: 20px;
   }
 }
 
@@ -638,9 +690,6 @@ body {
 .mySwiper {
   height: 550px; /* Set your custom height here */
 }
-.team-member {
-  height: 85%;
-}
 
 .swiper-slide {
   display: flex;
@@ -676,7 +725,6 @@ body {
 
 .contact-form button {
   padding: 15px 30px;
-  /* background-color: #0056b3; */
   background-color: black;
   color: white;
   border: none;
@@ -687,7 +735,6 @@ body {
 }
 
 .contact-form button:hover {
-  /* background-color: #003975; */
   background-color: var(--text-primary);
 }
 
@@ -719,13 +766,11 @@ body {
 
 .info-block a {
   font-size: 16px;
-  /* color: #0056b3; */
   color: var(--text-primary);
   text-decoration: none;
 }
 
 .info-block a:hover {
-  /* text-decoration: underline; */
   font-weight: 500;
   transition: font-weight 0.3s;
 }
@@ -755,24 +800,8 @@ body {
 .slide-in-up.animate-visible {
   transform: translateY(0);
 }
-.swiper-container-free-mode > .swiper-wrapper{
+
+.swiper-container-free-mode > .swiper-wrapper {
   transition-timing-function : linear;
-}
-
-@media (max-width: 768px) {
-  .testimonials-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .testimonial-card {
-    width: 100%; /* Ensure the testimonial card takes the full width */
-    height: 100%; /* Ensure the testimonial card takes the full height */
-    margin: 10px 0; /* Adjust as needed */
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-  }
 }
 </style>
