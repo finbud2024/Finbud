@@ -65,6 +65,7 @@ const messages = {
     monthly: "Monthly",
     weekly: "Weekly",
     daily: "Daily",
+    profitEarned: "Profit Earned",
     
     // For contribution options
     contributionAtThe: "Contribution at the",
@@ -477,7 +478,13 @@ const messages = {
         question: "Is FinBud available on mobile devices, and does it sync across platforms?",
         answer: "Yes, FinBud is available on both mobile devices and laptops. Simply log in to your account, and your data will automatically sync across all platforms for seamless access."
       }
-    }
+    },
+    // Chart Labels
+    initialInvestmentLabel: "Initial Investment",
+    additionalContributionLabel: "Additional Contribution",
+    profitEarnedLabel: "Profit Earned",
+    zillowNote: "Interest rate provided via Zillow.",
+    yearNumber: "Year {number}",
   },
   vi: {
 
@@ -528,14 +535,15 @@ const messages = {
 
     // Investment calculator
     investmentTitle: "Máy Tính Đầu Tư",
-    initialInvestment: "Khoản Đầu Tư Ban Đầu",
-    annualInterestRate: "Lãi Suất Hằng Năm (%)",
-    years: "Số Năm",
-    compoundingFrequency: "Tần Suất Gộp Lãi",
-    contributionAmount: "Khoản Đóng Góp",
+    initialInvestment: "Khoản Đầu Tư Ban Đầu ($)",
+    annualInterestRate: "Lãi Suất Hàng Năm (%)",
+    years: "Năm",
+    compoundingFrequency: "Tần Suất Ghép Lãi",
+    contributionAmount: "Khoản Đóng Góp Thêm",
+    profitEarned: "Lợi Nhuận Thu Được",
     contributionPeriod: "Chu Kỳ Đóng Góp",
     contributionTiming: "Thời Điểm Đóng Góp",
-    calculate: "Tính Toán",
+    calculate: "Tính",
     finalAmount: "Tổng Giá Trị Cuối",
     annually: "Theo năm",
     quarterly: "Theo quý",
@@ -951,8 +959,15 @@ const messages = {
         question: "FinBud có khả dụng trên thiết bị di động và có đồng bộ hóa trên các nền tảng không?",
         answer: "Có, FinBud có sẵn trên cả thiết bị di động và laptop. Chỉ cần đăng nhập vào tài khoản của bạn, và dữ liệu của bạn sẽ tự động đồng bộ hóa trên tất cả các nền tảng để truy cập liền mạch."
       }
-    }
-  },
+    },
+    
+    // Investment Calculator Chart Labels
+    initialInvestmentLabel: "Số vốn ban đầu",
+    additionalContributionLabel: "Đóng góp bổ sung",
+    profitEarnedLabel: "Lợi nhuận thu được",
+    zillowNote: "Lãi suất được cung cấp bởi Zillow.",
+    yearNumber: "Năm {number}"
+  }
 };
 
 const i18n = createI18n({
