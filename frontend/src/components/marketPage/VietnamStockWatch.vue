@@ -246,6 +246,9 @@ export default {
   width: 100%;
   max-width: 1200px; /* Adjusted for 3 columns */
   overflow: hidden;
+  margin: 0 auto; /* Center the container */
+  padding: 0 15px; /* Add padding for mobile */
+  box-sizing: border-box;
 }
 
 .header {
@@ -556,29 +559,39 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .stock-watch {
+    padding: 0 10px;
+  }
+
   .stock-row {
     flex-direction: column;
     gap: 15px;
     margin-bottom: 15px;
+    width: 100%;
   }
   
   .stock-item {
     width: 100%;
     margin-bottom: 0;
+    min-height: auto;
+    box-sizing: border-box;
   }
   
   .card-content {
     flex-direction: row;
     min-height: auto;
     padding: 8px 0;
+    width: 100%;
   }
   
   .stock-company {
     width: 40%;
+    padding-right: 10px;
   }
   
   .stock-details {
     width: 60%;
+    padding-left: 10px;
   }
   
   .detail-key {
@@ -602,8 +615,17 @@ export default {
 }
 
 @media (max-width: 480px) {
+  .stock-watch {
+    padding: 0 8px;
+  }
+
+  .stock-item {
+    padding: 8px;
+  }
+  
   .card-content {
     flex-direction: column;
+    gap: 10px;
   }
   
   .stock-company {
@@ -621,22 +643,45 @@ export default {
   }
   
   .company-name {
-    font-size: 1em;
-    text-align: center;
+    font-size: 0.95em;
+    text-align: left;
+    -webkit-line-clamp: 2;
+    max-height: 2.6em;
   }
   
   .detail-item {
     justify-content: space-between;
+    font-size: 0.85em;
+    padding: 3px 0;
   }
   
   .detail-key {
     min-width: auto;
+    margin-right: 8px;
   }
   
   .pagination-container {
     flex-direction: column;
     align-items: center;
     gap: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .stock-watch {
+    padding: 0 5px;
+  }
+
+  .stock-item {
+    padding: 6px;
+  }
+
+  .company-name {
+    font-size: 0.9em;
+  }
+
+  .detail-item {
+    font-size: 0.8em;
   }
 }
 
