@@ -162,7 +162,7 @@ import EventMap from '@/components/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Articles from '@/components/Articles.vue'; // Adjust the path if necessary
-import api from "@/utils/api";
+// import api from "@/utils/api";
 
 export default {
     name: 'EventHub',

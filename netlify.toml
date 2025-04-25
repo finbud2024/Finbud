@@ -2,6 +2,7 @@
   functions = "backend/functions"
   publish = "frontend/dist"
   command = "npm run build"
+  node_version = "22"
 
 [dev]
   port = 8888
@@ -13,7 +14,6 @@
   node_bundler = "esbuild"
   esbuild_options = { format = "esm" }
 
-# Adding environment variables for the development environment
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
   PORT = "8000"
