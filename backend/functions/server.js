@@ -42,10 +42,12 @@ const allowedOrigins = ["http://localhost:8888", "https://finbud.pro"];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
+      // ✅ Allow undefined origins (like Postman, curl, or internal requests)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.warn(`CORS blocked request from origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
