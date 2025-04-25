@@ -1,6 +1,6 @@
 <template>
-  <div class="chat-container">
-    <ChatFrame class="chat-frame-content">
+	<div class="chat-container">
+		<ChatFrame class="chat-frame-content">
 			<div v-for="(message, index) in messages" :key="index">
 				<FileIndicator v-if="message.containFile" :file="message.file" />
         <MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
@@ -18,9 +18,9 @@
 			<ChatAgent ref="chatAgent" v-if="showAgentWorkflow" @workflow-complete="handleWorkflowComplete"
 				:scroll-to-bottom="scrollChatFrameToBottom" />
 		</ChatFrame>
-    <ChatSuggestion :lan="this.$i18n.locale" class="suggestion-wrapper" />
-    <UserInput ref="userInput" @send-message="handleUserSubmit" />
-  </div>
+		<ChatSuggestion :lan="this.$i18n.locale" class="suggestion-wrapper" />
+    <UserInput ref="userInput" @send-message="handleUserSubmit" @agent-mode="handleAgentMode" />
+	</div>
 </template>
 
 <script>
@@ -954,6 +954,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				model: "gpt-4o",
 				messages: [
 					{
+            role: "system",
+            content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+            Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
+            Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
+            Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
 						role: "user",
 						content: [
 							{ type: "text", text: newMessage },
@@ -970,33 +975,6 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			});
 			return response.choices[0].message.content;
 		},
-    async analyzeImage(file, newMessage) {
-      const base64Image = await this.readFileAsBase64(file);
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
-            Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
-            Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
-            Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
-            role: "user",
-            content: [
-              { type: "text", text: newMessage },
-              {
-                type: "image_url",
-                image_url: {
-                  url: `data:image/jpeg;base64,${base64Image}`
-                }
-              }
-            ]
-          }
-        ],
-        max_tokens: 300
-      });
-      return response.choices[0].message.content;
-    },
 
 		async analyzePDF(file, newMessage) {
 			const uploadedFile = await this.openai.files.create({
@@ -1021,17 +999,17 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
               },
               {
                 type: "input_text",
-                text: newMessage
-              }
-            ]
-          }
+                text: newMessage,
+              },
+            ],
+          },
         ],
       });
 
-			// Clean up
-			await this.openai.files.del(uploadedFile.id);
-			return response.output_text;
-		},
+      // Clean up
+      await this.openai.files.del(uploadedFile.id);
+      return response.output_text;
+    },
 
 		readFileAsBase64(file) {
 			return new Promise((resolve, reject) => {
