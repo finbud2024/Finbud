@@ -282,7 +282,7 @@ export default {
       }, 500);
     },
 
-    async generateMortgageInsights() {
+    async generateInvestmentInsights() {
       const url = "https://openrouter.ai/api/v1/chat/completions";
       try {
         // Prepare investment data for analysis

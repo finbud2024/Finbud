@@ -3,32 +3,16 @@
 		<NavBar v-if="showHeader" ref="headerBar" />
 		<div class="content"></div>
 	</div>
-	<router-view
-		@chatviewSelectingThread="loadThread"
-		@finbudBotResponse="displayMessage"
-		:chatBubbleThreadID="threadId"
-	/>
+	<router-view @chatviewSelectingThread="loadThread" @finbudBotResponse="displayMessage"
+		:chatBubbleThreadID="threadId" />
 	<FooterBar v-if="showFooter" ref="footerBar" />
-	<ChatBubble
-		v-if="showChatBubble && chatBubbleActive"
-		@closeChatBubble="toggleChatBubble"
-		:chatViewThreadID="threadId"
-	/>
-	<img
-		v-if="showChatBubble"
-		class="finbudBot"
-		src="./assets/botrmbg.png"
-		alt="Finbud"
-		@click="toggleChatBubble"
-		:style="botPosition"
-	/>
+	<ChatBubble v-if="showChatBubble && chatBubbleActive" @closeChatBubble="toggleChatBubble"
+		:chatViewThreadID="threadId" />
+	<img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble"
+		:style="botPosition" />
 
 	<div v-if="showBotMessage" class="bot-message-container">
-		<div
-			class="finbudBotMessage"
-			ref="botMessage"
-			:class="{ 'message-visible': messageVisible }"
-		>
+		<div class="finbudBotMessage" ref="botMessage" :class="{ 'message-visible': messageVisible }">
 			<div class="message-content" v-html="displayedMessage"></div>
 			<div class="messageConnector"></div>
 		</div>
@@ -124,12 +108,9 @@ export default {
 
 			// Check if user is new
 			await this.checkIfUserIsNew();
-
-			// Check localStorage for dark mode preference first
+			// First, check localStorage
 			const storedDarkMode = localStorage.getItem("darkMode");
-
 			if (storedDarkMode !== null) {
-				console.log("Applying dark mode from localStorage:", storedDarkMode);
 				if (storedDarkMode === "true") {
 					document.documentElement.classList.add("dark-mode");
 					document.body.classList.add("dark-mode");
@@ -137,19 +118,12 @@ export default {
 					document.documentElement.classList.remove("dark-mode");
 					document.body.classList.remove("dark-mode");
 				}
+			} else {
+				document.documentElement.classList.remove("dark-mode");
+				document.body.classList.remove("dark-mode");
+				localStorage.setItem("darkMode", "false");
 			}
-			// If no localStorage setting, fall back to user settings
-			else if (userData.settings) {
-				if (userData.settings.darkMode) {
-					console.log("Applying dark mode from user settings");
-					document.documentElement.classList.add("dark-mode");
-					document.body.classList.add("dark-mode");
-				} else {
-					console.log("Applying light mode from user settings");
-					document.documentElement.classList.remove("dark-mode");
-					document.body.classList.remove("dark-mode");
-				}
-			}
+			
 		}
 
 		// If showTutorial query parameter is present, ensure light mode for tutorial
@@ -531,7 +505,8 @@ a:hover {
 
 .blinking-cursor {
 	font-weight: 100;
-	font-size: 16px; /* Reduced cursor size to match new text size */
+	font-size: 16px;
+	/* Reduced cursor size to match new text size */
 	color: #2e3d48;
 	-webkit-animation: 1s blink step-end infinite;
 	-moz-animation: 1s blink step-end infinite;
@@ -564,10 +539,12 @@ a:hover {
 
 /* Keep existing animation keyframes */
 @keyframes blink {
+
 	from,
 	to {
 		color: transparent;
 	}
+
 	50% {
 		color: #2e3d48;
 	}
