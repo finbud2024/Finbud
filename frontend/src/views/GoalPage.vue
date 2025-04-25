@@ -162,6 +162,12 @@
           @remove="removeTransaction"
         />
       </section>
+      <goalNotiModal
+        v-if="showGoalNotiModal"
+        :isVisible="showGoalNotiModal"
+        :message="notiMessage"
+        @close="showGoalNotiModal = false"  
+      />
     </div>
 
     <div class="rightPanel">
@@ -353,6 +359,7 @@ import TransactionModal from "../components/goalPage/TransactionModal.vue";
 import TransactionPie from "../components/goalPage/TransactionPie.vue";
 import { toast } from "vue3-toastify";
 import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
 export default {
   name: "GoalPage",
   components: {
@@ -360,11 +367,14 @@ export default {
     TransactionLine,
     TransactionTable,
     TransactionModal,
-    TransactionPie
+    TransactionPie,
+    goalNotiModal,
   },
   data() {
     return {
       // Bot Chat data
+      notiMessage: "",
+      showGoalNotiModal: false,
       showBot: false,
       hidingBot: false,
       showMessage: false,
@@ -542,6 +552,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     accountBalance() {
       return this.totalRevenue - this.totalExpense;
     },
+
+    // for the goal modal
+    accountBalancev2(){
+      return this.totalRevenue - this.totalExpense
+    }
   },
   
   mounted() {
@@ -984,7 +999,33 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
+          
+          let openNotification = false; // Flag to track if a notification should be shown
+          if (this.transaction.type === "Expense") {
+            
+              const accountBalanceFormatted = this.formatCurrency(this.accountBalancev2); 
+              const amountFormatted = this.formatCurrency(amountInUSD);
+              const percentSpent = ((amountInUSD / this.accountBalancev2) * 100).toFixed(1);
+                      
+              if (amountInUSD >= this.accountBalancev2) {
+                this.notiMessage = `🚨 Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalancev2 * 0.75) {
+                this.notiMessage = `⚠️ Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalancev2 * 0.5) {
+                this.notiMessage = `📢 Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
+                openNotification = true;
+              } else if (amountInUSD >= this.accountBalancev2 * 0.25) {
+                this.notiMessage = `ℹ️ FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
+                openNotification = true;
+              }
+            }
 
+
+          // Xác định dấu của số tiền dựa vào type
+          // Income (ghi có) = số âm (thêm tiền vào tài khoản)
+          // Expense (ghi nợ) = số dương (lấy tiền ra khỏi tài khoản)
           const signedAmount =
             this.transaction.type === "Income" ? -amountInUSD : amountInUSD;
 
@@ -1016,6 +1057,18 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           this.$nextTick(() => {
             this.recalculateBalances();
           });
+          
+          if (openNotification) {
+            await axios.post(
+              `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${this.userId}`,
+              {
+                content: this.notiMessage,
+                title: "🚨 SPENDING ALERT 🚨",
+              }
+            );
+            this.showGoalNotiModal = true; // Show the notification if the flag is set
+          }
+
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
