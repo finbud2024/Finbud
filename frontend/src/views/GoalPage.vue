@@ -552,6 +552,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     accountBalance() {
       return this.totalRevenue - this.totalExpense;
     },
+
+    // for the goal modal
+    accountBalancev2(){
+      return this.totalRevenue - this.totalExpense
+    }
   },
   
   mounted() {
@@ -998,20 +1003,20 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           let openNotification = false; // Flag to track if a notification should be shown
           if (this.transaction.type === "Expense") {
             
-              const accountBalanceFormatted = this.formatCurrency(this.accountBalance);
+              const accountBalanceFormatted = this.formatCurrency(this.accountBalancev2); 
               const amountFormatted = this.formatCurrency(amountInUSD);
-              const percentSpent = ((amountInUSD / this.accountBalance) * 100).toFixed(1);
+              const percentSpent = ((amountInUSD / this.accountBalancev2) * 100).toFixed(1);
                       
-              if (amountInUSD >= this.accountBalance) {
+              if (amountInUSD >= this.accountBalancev2) {
                 this.notiMessage = `🚨 Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
                 openNotification = true;
-              } else if (amountInUSD >= this.accountBalance * 0.75) {
+              } else if (amountInUSD >= this.accountBalancev2 * 0.75) {
                 this.notiMessage = `⚠️ Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
                 openNotification = true;
-              } else if (amountInUSD >= this.accountBalance * 0.5) {
+              } else if (amountInUSD >= this.accountBalancev2 * 0.5) {
                 this.notiMessage = `📢 Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
                 openNotification = true;
-              } else if (amountInUSD >= this.accountBalance * 0.25) {
+              } else if (amountInUSD >= this.accountBalancev2 * 0.25) {
                 this.notiMessage = `ℹ️ FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
                 openNotification = true;
               }

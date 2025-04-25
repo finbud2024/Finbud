@@ -4,7 +4,7 @@ const notiSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Investor",
+      ref: "User",
       required: true,
     },
     title: {
