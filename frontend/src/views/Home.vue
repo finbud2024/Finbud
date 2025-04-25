@@ -1,174 +1,136 @@
 <template>
   <section id="main-content">
-    <div class='intro-container'>
+    <div class="intro-container animate">
       <div class="intro-text">
-        <div class="title animate fade-in">{{ t('empoweringTitle') }}</div>
-        <div class="description animate fade-in">
-          {{ t('anytimeAnswers') }}
-        </div>
-        <div class="animate fade-in ">
+        <div class="title animate">{{ t('empoweringTitle') }}</div>
+        <div class="description animate">{{ t('anytimeAnswers') }}</div>
+        <div class="animate">
           <UserInput @send-message="chatNow" :redirectOnSend="true" class="front-search-bar" />
         </div>
       </div>
     </div>
 
-    <section class="introduction-section">
-      <header>
-        <h1>
-          {{ t('partneringTitle') }}
-        </h1>
+    <section class="introduction-section animate">
+      <header class="animate">
+        <h1>{{ t('partneringTitle') }}</h1>
       </header>
       <div class="grid-container">
-        <!-- first grid box -->
-        <div class="dynamic-border">
-          <div class="text-section text-left ">
+        <div class="dynamic-border animate">
+          <div class="text-section text-left">
             <img class="intro-icon" src="@/assets/home-page/Lightbulb.png" alt="Financial Awareness Icon">
             <h2>{{ t('enhanceFinancialTitle') }}</h2>
-            <p>
-              {{ t('enhanceFinancialDesc') }}
-            </p>
-            <!-- Not in the sample frontpage, but it was in the original front page and is still functional once uncommented -->
-            <!-- <a href="/quizz" class="button">Learn more</a> -->
+            <p>{{ t('enhanceFinancialDesc') }}</p>
           </div>
         </div>
-
-
-        <!-- second grid box -->
-        <div class="dynamic-border">
+        <div class="dynamic-border animate">
           <div class="text-section text-left">
             <img class="intro-icon" src="@/assets/home-page/Bars.png" alt="Financial Planning Icon">
             <h2>{{ t('optimizeFinancialTitle') }}</h2>
-            <p>
-              {{ t('optimizeFinancialDesc') }}
-            </p>
-            <!-- <a href="/goal" class="button">Learn more</a> -->
+            <p>{{ t('optimizeFinancialDesc') }}</p>
           </div>
         </div>
-
-        <!-- third grid box -->
-        <div class="dynamic-border">
+        <div class="dynamic-border animate">
           <div class="text-section text-left">
             <img class="intro-icon" src="@/assets/home-page/CircleArrowUp.png" alt="Financial Efficiency Icon">
             <h2>{{ t('maximizeInvestmentTitle') }}</h2>
-            <p>
-              {{ t('maximizeInvestmentDesc') }}
-            </p>
-            <!-- <a href="/stock-simulator" class="button">Learn more</a> -->
+            <p>{{ t('maximizeInvestmentDesc') }}</p>
           </div>
         </div>
-
       </div>
     </section>
 
-    <!-- Technology Section -->
-    <section class="technology-section">
-      <header>
+    <section class="technology-section animate">
+      <header class="animate">
         <h1>{{ t('impactTitle') }}</h1>
       </header>
       <div class="technology-grid">
-        <div class="technology-card">
+        <div class="technology-card animate">
           <div class="technology-card-title">{{ t('savingsIncrease') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>20% </p>
+              <p>20%</p>
             </div>
             <div class="technology-stat-details">
               <p>{{ t('savingsDesc') }}</p>
             </div>
           </div>
         </div>
-        <div class="technology-card">
+        <div class="technology-card animate">
           <div class="technology-card-title">{{ t('financialAwareness') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>25% </p>
+              <p>25%</p>
             </div>
             <div class="technology-stat-details">
               <p>{{ t('awarenessDesc') }}</p>
             </div>
           </div>
         </div>
-        <div class="technology-card">
+        <div class="technology-card animate">
           <div class="technology-card-title">{{ t('debtReduction') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>30% </p>
+              <p>30%</p>
             </div>
             <div class="technology-stat-details">
               <p>{{ t('debtDesc') }}</p>
             </div>
           </div>
         </div>
-        <div class="technology-card">
+        <div class="technology-card animate">
           <div class="technology-card-title">{{ t('creditScore') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>6 </p>
+              <p>6</p>
             </div>
             <div class="technology-stat-details">
               <p>{{ t('creditDesc') }}</p>
             </div>
           </div>
-
         </div>
       </div>
-      <!-- <a href="/tech" class="button">Learn more about Finbud</a> -->
     </section>
 
-    <!-- Features Section -->
-    <section class="feature-section">
+    <section class="feature-section animate">
       <div class="feature-container">
-        <!-- Feature 1 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
             <h2>{{ t('chatbotFeatureTitle') }} <div class="feature-name">{{ t('chatbotFeatureName') }}</div>
             </h2>
-            <p>
-              {{ t('chatbotDesc') }}
-            </p>
+            <p>{{ t('chatbotDesc') }}</p>
             <a href="/chat-view" class="button">{{ t('chatNow') }}</a>
           </div>
           <div class="feature-image">
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
-        <!-- Feature 2 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
-            <h2>{{ t('simulatorFeatureTitle') }}
-              <div class="feature-name">{{ t('simulatorFeatureName') }}</div>
+            <h2>{{ t('simulatorFeatureTitle') }} <div class="feature-name">{{ t('simulatorFeatureName') }}</div>
             </h2>
-            <p>
-              {{ t('simulatorDesc') }}
-            </p>
+            <p>{{ t('simulatorDesc') }}</p>
             <a href="/stock-simulator" class="button">{{ t('simulatorNow') }}</a>
           </div>
           <div class="feature-image">
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
-        <!-- Feature 3 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
             <h2>{{ t('goalFeatureTitle') }} <div class="feature-name">{{ t('goalFeatureName') }}</div>
             </h2>
-            <p>
-              {{ t('goalDesc') }}
-            </p>
+            <p>{{ t('goalDesc') }}</p>
             <a href="/goal" class="button">{{ t('goalNow') }}</a>
           </div>
           <div class="feature-image">
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
-        <!-- Feature 4 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
             <h2>{{ t('quizFeatureTitle') }} <div class="feature-name">{{ t('quizFeatureName') }}</div>
             </h2>
-            <p>
-              {{ t('quizDesc') }}
-            </p>
+            <p>{{ t('quizDesc') }}</p>
             <a href="/quizz" class="button">{{ t('quizNow') }}</a>
           </div>
           <div class="feature-image">
@@ -178,37 +140,32 @@
       </div>
     </section>
 
-
-
-    <!-- Commonly Asked Question -->
-    <section class="question-section">
-      <header>
+    <section class="question-section animate">
+      <header class="animate">
         <h1>{{ t('faqTitle') }}</h1>
       </header>
       <div class="question-container">
         <template v-if="faqsData && faqsData.length > 0">
-          <div v-for="(item, index) in faqsData" 
-               :key="index" 
-               class="faq-item"
-               :class="{ 'expanded': expandedItem === index }">
+          <div v-for="(item, index) in faqsData" :key="index" class="faq-item animate"
+            :class="{ 'expanded': expandedItem === index }">
             <div class="question" @click="toggleExpansion(index)">
-            <p>{{ item.question }}</p>
+              <p>{{ item.question }}</p>
               <span class="expand-icon">{{ expandedItem === index ? '−' : '+' }}</span>
-          </div>
+            </div>
             <transition name="fade">
               <div class="answer" v-if="expandedItem === index">
                 <p>{{ item.answer }}</p>
-          </div>
+              </div>
             </transition>
           </div>
         </template>
-        <div v-else class="no-faqs">
+        <div v-else class="no-faqs animate">
           <p>No FAQs available at the moment.</p>
         </div>
       </div>
     </section>
 
-    <footer class="site-footer">
+    <footer class="site-footer animate">
       <div class="footer-image">
         <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
       </div>
@@ -216,7 +173,6 @@
         © Copyright 2025, All Rights Reserved by FinBud
       </div>
     </footer>
-
 
     <TutorialOverlay :steps="tutorialSteps" storageKey="finbudHomeTutorialShown" :autoStart="true"
       @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
@@ -230,7 +186,6 @@ import { useStore } from 'vuex';
 import BigGreenButton from "../components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import { useTypingEffect } from '@/composables/useTypingEffect';
-import { LucideAsteriskSquare } from "lucide-vue-next";
 import UserInput from '@/components/UserInput.vue';
 
 export default {
@@ -262,7 +217,7 @@ export default {
       try {
         const faqs = tm('faqs') || {};
         console.log('Raw FAQs:', faqs);
-        
+
         return Object.entries(faqs).map(([_, value]) => ({
           question: value.question || '',
           answer: value.answer || ''
@@ -347,11 +302,11 @@ export default {
     this.startTypingSignInDescription();
 
     const observerOptions = {
-      threshold: 0.1,
+      threshold: 0.1, // Bao giờ thấy 10% block => animate
     };
 
-    const observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('animate-visible');
         } else {
@@ -360,8 +315,8 @@ export default {
       });
     }, observerOptions);
 
-    const elements = document.querySelectorAll('.animate');
-    elements.forEach(el => observer.observe(el));
+    const animatedElements = document.querySelectorAll('.animate');
+    animatedElements.forEach((el) => observer.observe(el));
 
     this._globalMouseMoveHandler = this.handleGlobalMouseMove.bind(this);
     window.addEventListener("mousemove", this._globalMouseMoveHandler);
@@ -375,53 +330,64 @@ export default {
 
 <style scoped>
 /* Add animations */
+/* Animation Base */
 .animate {
   opacity: 0;
-  transition: opacity 2s ease 1s, transform 2s ease 1s;
+  transform: translateY(40px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
 }
 
+/* Khi visible */
 .animate-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide directions */
+.slide-left {
+  transform: translateX(-40px);
+}
+
+.slide-right {
+  transform: translateX(40px);
+}
+
+.slide-up {
+  transform: translateY(40px);
+}
+
+.slide-down {
+  transform: translateY(-40px);
+}
+
+/* Khi xuất hiện */
+.animate-visible.slide-left,
+.animate-visible.slide-right,
+.animate-visible.slide-up,
+.animate-visible.slide-down {
+  transform: translate(0, 0);
   opacity: 1;
 }
 
-.fade-in {
-  transform: translateY(50px);
+/* Delay nếu muốn đẹp hơn */
+[data-delay="100"] {
+  transition-delay: 0.1s;
 }
 
-.fade-in.animate-visible {
-  transform: translateY(0);
+[data-delay="200"] {
+  transition-delay: 0.2s;
 }
 
-.slide-in-left {
-  transform: translateX(-20px);
+[data-delay="300"] {
+  transition-delay: 0.3s;
 }
 
-.slide-in-left.animate-visible {
-  transform: translateX(0);
+[data-delay="400"] {
+  transition-delay: 0.4s;
 }
 
-.slide-in-right {
-  transform: translateX(20px);
-}
-
-.slide-in-right.animate-visible {
-  transform: translateX(0);
-}
-
-.slide-in-up {
-  transform: translateY(20px);
-}
-
-.slide-in-up.animate-visible {
-  transform: translateY(0);
-}
-
-.slide-in-down {
-  transform: translateY(-20px);
-}
-
-.slide-in-down.animate-visible {
-  transform: translateY(0);
+[data-delay="500"] {
+  transition-delay: 0.5s;
 }
 
 /* General Styling */
@@ -479,7 +445,7 @@ export default {
 
 .front-search-bar {
   position: relative;
-  width: min(2000px, 90vw);
+  width: min(2000px, 95vw);
   height: auto;
   color: var(--text-primary);
   display: flex;
@@ -832,11 +798,13 @@ body.dark-mode .feature-icon {
   font-size: 1rem;
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: all 0.3s ease;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
@@ -985,24 +953,47 @@ img {
   .question-section {
     padding: 3rem 5%;
   }
-  
+
   .question-section header h1 {
     font-size: 2rem;
   }
-  
+
   .question p {
     font-size: 1rem;
   }
-  
+
   .answer p {
     font-size: 0.9rem;
   }
+
+  .front-search-bar {
+    width: 95vw;
+    padding: 10px 5%;
+    margin-top: 2rem;
+    /* thêm margin cách chữ trên */
+  }
+
+  .title {
+    font-size: clamp(2.5rem, 5vw, 5rem);
+  }
+
+  .description {
+    font-size: 1.3rem;
+    text-align: center;
+    padding: 1rem;
+  }
+
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (max-width: 992px) {
 
   .intro-text {
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    /* thêm khoảng trắng phía dưới nếu muốn */
+
+    /* thay vì 100vh */
     flex-direction: column;
     padding: 0;
     align-items: center;
@@ -1011,6 +1002,7 @@ img {
 
   .intro-text1 {
     padding-left: 0;
+    padding-top: 10vh;
     gap: 10px;
   }
 
@@ -1045,5 +1037,92 @@ img {
 :root.dark-mode .debug-info {
   background-color: #2a2a2a;
   color: #ccc;
+}
+
+/* Responsive for technology section */
+@media (max-width: 992px) {
+  .technology-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0;
+  }
+
+  .technology-card {
+    border: none;
+    padding: 1rem;
+  }
+
+  .technology-card-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .technology-stat p {
+    font-size: 2.2rem;
+  }
+
+  .technology-stat-details p {
+    font-size: 0.9rem;
+  }
+
+  .feature-container {
+    padding: 0 5%;
+  }
+
+  .feature-row {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+    gap: 2rem;
+  }
+
+  .feature-text {
+    padding: 1rem;
+  }
+
+  .feature-text h2 {
+    font-size: 1.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .feature-text p {
+    font-size: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .feature-image {
+    width: 100%;
+    padding: 1rem 0;
+    border: none;
+  }
+
+  .feature-image img {
+    width: 60%;
+    height: auto;
+  }
+
+  .button {
+    width: 100%;
+    max-width: 250px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .technology-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .technology-stat p {
+    font-size: 2rem;
+  }
+
+  .feature-text h2 {
+    font-size: 1.3rem;
+  }
+
+  .feature-text p {
+    font-size: 0.95rem;
+  }
 }
 </style>
