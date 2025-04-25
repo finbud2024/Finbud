@@ -6,7 +6,7 @@
         <div class="description animate fade-in">
           {{ t('anytimeAnswers') }}
         </div>
-        <div class="animate fade-in">
+        <div class="animate fade-in ">
           <UserInput @send-message="chatNow" :redirectOnSend="true" class="front-search-bar" />
         </div>
       </div>
@@ -485,7 +485,7 @@ export default {
   display: flex;
   justify-content: center;
   font-size: 1.2rem;
-  padding-top: 20px;
+  padding: 20px 17% 0;
   font-weight: 300;
 }
 
