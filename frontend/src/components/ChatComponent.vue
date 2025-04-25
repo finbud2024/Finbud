@@ -2,39 +2,22 @@
 	<div class="chat-container">
 		<ChatFrame class="chat-frame-content">
 			<div v-for="(message, index) in messages" :key="index">
-				<MessageComponent
-					:is-user="message.isUser"
-					:text="message.text"
-					:typing="message.typing"
-					:is-thinking="message.isThinking"
-					:htmlContent="message.htmlContent"
+				<MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
+					:is-thinking="message.isThinking" :htmlContent="message.htmlContent"
 					:username="message.isUser ? displayName : 'FinBud Bot'"
 					:avatar-src="message.isUser ? userAvatar : botAvatar"
-					:sources="message.isUser ? [] : message.sources"
-					:videos="message.isUser ? [] : message.videos"
+					:sources="message.isUser ? [] : message.sources" :videos="message.isUser ? [] : message.videos"
 					:relevantQuestions="message.isUser ? [] : message.relevantQuestions"
-					@question-click="handleQuestionClick"
-				/>
+					@question-click="handleQuestionClick" />
 
 				<!-- Add TradingView widget after stock messages -->
-				<TradingViewWidget
-					v-if="message.showChart"
-					:symbol="message.stockSymbol"
-				/>
+				<TradingViewWidget v-if="message.showChart" :symbol="message.stockSymbol" />
 			</div>
 			<!-- Agent Mode work flow - Only show when workflow starts -->
-			<ChatAgent
-				ref="chatAgent"
-				v-if="showAgentWorkflow"
-				@workflow-complete="handleWorkflowComplete"
-				:scroll-to-bottom="scrollChatFrameToBottom"
-			/>
+			<ChatAgent ref="chatAgent" v-if="showAgentWorkflow" @workflow-complete="handleWorkflowComplete"
+				:scroll-to-bottom="scrollChatFrameToBottom" />
 		</ChatFrame>
-		<UserInput
-			ref="userInput"
-			@send-message="handleUserSubmit"
-			@agent-mode="handleAgentMode"
-		/>
+		<UserInput ref="userInput" @send-message="handleUserSubmit" @agent-mode="handleAgentMode" />
 	</div>
 </template>
 
@@ -538,9 +521,8 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 					coinData.slice(0, 10).map((item) => {
 						tableTemplate += `
 				    <tr>
-				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${
-							item.name
-						}
+				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${item.name
+							}
 						}>${item.name}</td>
 				    <td>${item.rank}</td>
 				    <td>${item.tier}</td>
@@ -1169,7 +1151,12 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 		async updateCurrentThread(threadID) {
 			try {
 				this.messages = [];
-				const botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" để khám phá cách trò chuyện siêu xịn với FinBud nhé!`;
+				const botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat:
+"Ghi lại thu nhập 12.500.000 VNĐ", 
+"Phân tích ngân sách của tôi <3", 
+"Chi 70.000 VNĐ mua sáchhhhhh", 
+"Mua 5 cổ phiếu Apple cho tui nè", 
+"Giá cổ phiếu Tesla là bao nhiêu á Bud ơii"`;
 				this.addTypingResponse(botInstruction, false);
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
 				const chats = await axios.get(chatApi);
@@ -1253,8 +1240,10 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 	container-type: size;
 	container-name: messageComponent userInputComponent;
 
-	--content-max-width: 800px; /* Define max width */
-	--content-padding-horizontal: 15px; /* Define horizontal padding */
+	--content-max-width: 800px;
+	/* Define max width */
+	--content-padding-horizontal: 15px;
+	/* Define horizontal padding */
 }
 
 .chat-frame-content {
@@ -1340,7 +1329,8 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 	flex: 1;
 	border-radius: 12px;
 	overflow: hidden;
-	max-width: 100%; /* Ensure content doesn't overflow */
+	max-width: 100%;
+	/* Ensure content doesn't overflow */
 }
 
 .step-header {
@@ -1379,8 +1369,10 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 	border-radius: 0 0 12px 12px;
 	padding: 16px;
 	margin-top: 2px;
-	max-width: 100%; /* Ensure content doesn't overflow */
-	word-wrap: break-word; /* Allow text to wrap */
+	max-width: 100%;
+	/* Ensure content doesn't overflow */
+	word-wrap: break-word;
+	/* Allow text to wrap */
 }
 
 .step-message {
@@ -1407,9 +1399,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 	0% {
 		opacity: 1;
 	}
+
 	50% {
 		opacity: 0.6;
 	}
+
 	100% {
 		opacity: 1;
 	}
@@ -1419,6 +1413,7 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 	0% {
 		transform: rotate(0deg);
 	}
+
 	100% {
 		transform: rotate(360deg);
 	}
