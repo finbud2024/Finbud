@@ -84,6 +84,7 @@
               @click="toggleDropdownInvest(false)"
               >{{ $t('superInvestors') }}</router-link
             >
+            
           </div>
         </li>
 
@@ -121,6 +122,12 @@
               @click="toggleDropdownInvest(false)"
               >{{ $t('quantSimulator') }}</router-link
             >
+            <router-link
+            to="/fund-letter"
+            class="fund-letter"
+            @click="toggleDropdownInvest(false)"
+            >Fund Letter</router-link
+          >
           </div>
         </li>
 
