@@ -46,6 +46,7 @@
     "file-saver": "^2.0.5",
     "FinBud-AI-bot": "file:",
     "font-awesome": "^4.7.0",
+    "fuse.js": "^7.1.0",
     "glob": "^10.4.1",
     "google-finance": "^0.1.12",
     "http-proxy-middleware": "^3.0.0",
