@@ -135,7 +135,7 @@ transactionRoute
   .post(validateRequest(Transaction.schema), async (req, res) => {
     console.log("Incoming POST body:", req.body);
     console.log("in /transactions Route (POST) new transaction to database");
-    const { description, amount, userId, date, type, category } = req.body;
+    const { description, amount, userId, date, type, category, balance } = req.body;
     
     if (
       !description ||
@@ -153,6 +153,7 @@ transactionRoute
       userId,
       description,
       amount,
+      balance,
       type,
       date,
       category, 
