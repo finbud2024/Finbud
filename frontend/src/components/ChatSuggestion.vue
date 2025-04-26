@@ -28,8 +28,7 @@ import { string } from 'mathjs';
             'Giao dịch giá chứng khoán',
             'REALESTATE',
             'Phân tích ngân sách của tôi',
-            'Xem 5 bất động sản khu vực',
-            'Xem 5 bất động sản khu vực'
+        
           ]
         } else {
           return [

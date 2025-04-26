@@ -306,6 +306,10 @@ tr:nth-child(odd) {
   padding-right: calc(1% + 30px + 18px);
 }
 
+.user .message-content {
+  background-color: var(--chat-user-bg-color);
+}
+
 .user .message-content-wrapper {
   max-width: 60%;
 }
@@ -341,7 +345,7 @@ tr:nth-child(odd) {
   flex-direction: column;
   padding: 10px;
   border-radius: 16px;
-  /* background-color: var(--chat-message-bg-color); */
+  background-color: var(--chat-message-bg-color);
   color: var(--chat-text-color);
   /* background-color: papayawhip;
     color: black; */
@@ -496,7 +500,7 @@ tr:nth-child(odd) {
   flex-direction: column;
   flex: 1;
   position: relative;
-  /* background-color: #fff; Added background color for chat container */
+  background-color: #fff; /* Added background color for chat container */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
   border-radius: 8px; /* Added border-radius for rounded corners */
   padding: 20px; /* Added padding for spacing */
