@@ -237,12 +237,12 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 					- Example: "Show me houses in New York" → "#realestate new york"  
 					- If no area is mentioned, default to: **#realestate San Jose**
 
-					6. **Add a Transaction**  
+					6. **Income**  
 					- User intent: Add money to the account (e.g., income, deposit, or refund).
 					- Format: **#add [description] [amount]**  
 					- Example: "I received 125 from a refund" → "#add refund 125"
 
-					7. **Track Spending**  
+					7. **Expense**  
 					- User intent: Subtract money from the account for something spent (e.g., purchase or bill). 
 					- Format: **#spend [description] [amount]**  
 					- Example: "I spend 80 on groceries" → "#spend groceries 80", "Tao mua xe máy với giá 10 dollar" → #spend xe máy 10
@@ -398,9 +398,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 						if (match) {
 							const description = match[1].trim();
 							const amount = parseInt(match[2], 10);
+							const type = "Income";
 							const balance = await this.calculateNewBalance(amount);
-							await this.addTransaction(description, amount, balance);
-							const res = `Transaction added: ${description}, $${amount}. New balance: $${balance}....`;
+							const category = await this.categorizeTransaction(description, type);
+							await this.addTransaction(description, amount, type, category);
+							const res = `Transaction added: "${description}" as a ${type} in category "${category}" with amount $${Math.abs(amount)}. Your new balance is $${balance}.`;
 							console.log(res);
 							const Responsegpt = await gptServices([
 								{
@@ -410,6 +412,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 							]);
 							console.log(Responsegpt);
 							answers.push(Responsegpt);
+							const baseUrl = window.location.origin.includes("localhost")
+								? "http://localhost:8888"
+								: "https://finbud.pro";
+							const url = `${baseUrl}/goal/`;
+							// window.open(url, "_blank");
 						} else {
 							const res =
 								"Please specify the description and amount you want to add.";
@@ -420,6 +427,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 								},
 							]);
 							answers.push(Responsegpt);
+							const baseUrl = window.location.origin.includes("localhost")
+								? "http://localhost:8888"
+								: "https://finbud.pro";
+							const url = `${baseUrl}/goal/`;
+							window.open(url, "_blank");
 						}
 					} catch (err) {
 						console.error("Error in add transaction:", err.message);
@@ -446,11 +458,11 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 							} else {
 								const description = match[1].trim();
 								const amount = -parseInt(match[2], 10);
+								const type = "Expense";
 								const balance = await this.calculateNewBalance(amount);
-								await this.addTransaction(description, amount, balance);
-								const res = `Transaction spent: ${description}, $${Math.abs(
-									amount
-								)}. New balance: $${balance}.`;
+								const category = await this.categorizeTransaction(description, type);
+								await this.addTransaction(description, amount, type, category);
+								const res = `Transaction added: "${description}" as a ${type} in category "${category}" with amount $${Math.abs(amount)}. Your new balance is $${balance}.`;
 								const Responsegpt = await gptServices([
 									{
 										role: "user",
@@ -465,7 +477,7 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 								: "https://finbud.pro";
 
 							const url = `${baseUrl}/goal/`;
-							window.open(url);
+							// window.open(url);
 							setTimeout(() => {
 								window.addEventListener("load", () => {
 									const previewButton = document.querySelector(".preview-btn");
@@ -708,7 +720,7 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 
 							// Open the /goal page
 							const url = `${baseUrl}/goal`;
-							window.open(url, "_blank");
+							// window.open(url, "_blank");
 
 							// Create response in user's language
 							const res =
@@ -1063,27 +1075,42 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 		},
 		// TO BE USED IN SPEND + ADD
 		async calculateNewBalance(amount) {
-			const accountCheck = await this.checkAccountBalance();
-			if (!accountCheck) {
-				return;
-				// this.openNewWindow("/goal");
-			}
 			try {
 				const userId = this.$store.getters["users/userId"];
+				if (!userId) return 0;
+
 				const response = await api.get(`/transactions/u/${userId}`);
 				const transactions = response.data;
 
-				// Sắp xếp giao dịch theo ngày gần nhất (mới nhất) trước
+				if (!transactions || transactions.length === 0) {
+					// If no transactions exist, return just the new amount
+					return amount;
+				}
+
+				// Sort transactions by date (newest first)
 				transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-				// Lấy số dư tài khoản hiện tại từ giao dịch gần nhất, thay vì tính lại
-				const currentBalance =
-					transactions.length > 0 ? transactions[0].balance : 0;
+				// Get the current balance from the most recent transaction
+				const currentBalance = parseFloat(transactions[0].balance) || 0;
+				const newAmount = parseFloat(amount) || 0;
 
-				return currentBalance + amount;
+				// Calculate new balance
+				const newBalance = currentBalance + newAmount;
+
+				// Verify the result is a valid number
+				if (isNaN(newBalance)) {
+					console.error('Invalid balance calculation:', {
+						currentBalance,
+						amount: newAmount,
+						transactions: transactions[0]
+					});
+					return 0;
+				}
+
+				return newBalance;
 			} catch (err) {
 				console.error("Error calculating new balance:", err.message);
-				return 0; // Return 0 in case of error
+				return 0;
 			}
 		},
 		async checkAccountBalance() {
@@ -1104,31 +1131,40 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 		},
 
 		// TO BE USED IN SPEND + ADD
-		async addTransaction(description, amount, balance) {
-			const accountCheck = await this.checkAccountBalance();
-			if (!accountCheck) {
-				return;
-			}
-
-			const userId = this.$store.getters["users/userId"]; // Get userId from store
-			const date = new Date().toISOString(); // Get current date
-			const type = amount > 0 ? "Expense" : "Income";
-
+		async addTransaction(description, amount, type, category) {
 			try {
-				await api.post(`/transactions`, {
+				const userId = this.$store.getters["users/userId"];
+				if (!userId) {
+					throw new Error("User not authenticated");
+				}
+
+				// Calculate new balance first
+				const newBalance = await this.calculateNewBalance(amount);
+				const date = new Date().toISOString();
+
+
+				// Make API call with all required fields
+				const response = await api.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
+					userId,
 					description,
 					amount,
-					balance,
+					balance: newBalance,
 					date,
-					userId,
 					type,
+					category,
 				});
+
+				// Emit event to update other components
+
+				return {
+					category,
+					balance: newBalance,
+				};
 			} catch (err) {
 				console.error("Error adding transaction:", err.message);
-				this.addTypingResponse("Error adding transaction.", false);
+				throw err; // Re-throw to handle in calling code
 			}
 		},
-
 		async scrollChatFrameToBottom() {
 			await new Promise((r) => setTimeout(r, 200));
 			const chatFrame = document.querySelector(".chat-frame");
@@ -1213,6 +1249,59 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				console.error("Error on updating to current thread:", err.message);
 			}
 		},
+		async categorizeTransaction(description, type) {
+  const categories = type === "Income"
+    ? [
+      "Salary",
+      "Freelance & Side Job",
+      "Allowance",
+      "Investment Return",
+      "Gift",
+      "Refund",
+    ]
+    : [
+      "Food & Groceries",
+      "Housing & Utilities",
+      "Transportation",
+      "Health & Wellness",
+      "Lifestyle & Subscriptions"
+    ];
+
+  let category = "";
+  let attempts = 0;
+  const maxAttempts = 3;
+
+  while (!categories.includes(category) && attempts < maxAttempts) {
+    const prompt = `You are a smart finance assistant. Given the transaction description: ${description}, and the type: ${type}, select the most appropriate category from the following list:
+${categories.map((c, i) => `${i + 1}. ${c}`).join("\n")}
+
+Respond ONLY with the category name, and nothing else.`;
+
+    const response = await gptServices([
+      { role: "user", content: prompt }
+    ]);
+
+    category = response.trim().replace(/^"(.*)"$/, '$1');
+
+    if (!categories.includes(category)) {
+      // Nếu chưa phân loại được --> Gọi API tạo câu trả lời tự động giải thích tại sao
+      const explanationPrompt = `You are a smart finance assistant. The user described the transaction as: "${description}". 
+You tried to categorize it into type "${type}" but none of the expected categories match correctly.
+Please write a short, friendly explanation (in Vietnamese) telling the user why you cannot categorize this yet and politely ask them to clarify more.`;
+
+      const explanation = await gptServices([
+        { role: "user", content: explanationPrompt }
+      ]);
+
+      await this.addTypingResponse(explanation.trim(), false);
+      return null; // Ngưng luôn, chờ user clarify
+    }
+
+    attempts++;
+  }
+
+  return category;
+}
 	},
 	mounted() {
 		const autoMessage = this.$route.query.autoMessage;
