@@ -2,6 +2,37 @@ import { Builder, By, until } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome.js';
 import fs from 'fs';
 
+async function scrapeInvestorCards(driver) {
+  console.log("\n🔍 Scraping investor cards...");
+
+  try {
+    await driver.sleep(3000); // wait for cards to load
+
+    const cardElements = await driver.findElements(By.css('li[data-sentry-component="ContentCard"]'));
+
+    const investorCards = [];
+
+    for (let card of cardElements) {
+      try {
+        const anchor = await card.findElement(By.css('a'));
+        const name = await card.findElement(By.css('h3')).getText();
+        const description = await card.findElement(By.css('p')).getText();
+        const url = await anchor.getAttribute('href');
+
+        investorCards.push({ name, description, url });
+      } catch (e) {
+        console.warn("⚠️ Skipped a card due to missing elements.");
+      }
+    }
+
+    const investorFilePath = 'investorCards.json';
+    fs.writeFileSync(investorFilePath, JSON.stringify(investorCards, null, 2), 'utf-8');
+    console.log(`✅ Investor cards saved to '${investorFilePath}'.`);
+  } catch (e) {
+    console.error(`❌ Failed to scrape investor cards: ${e}`);
+  }
+}
+
 async function main() {
   const options = new chrome.Options().addArguments('--headless'); // Remove '--headless' to see the browser
   const driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
@@ -86,7 +117,7 @@ async function main() {
             }
 
             // Create a unique entry for the letter
-            const letterEntry = `${letter.title} (${letter.quarter} ${letter.year}) - ${letter.link}`;
+            const letterEntry = `${letter.title} (${letter.date})  - ${letter.link}`;
 
             // Add the letter only if it doesn't already exist
             if (!groupedData[year][quarter].includes(letterEntry)) {
@@ -103,6 +134,9 @@ async function main() {
     const outputFilePath = 'fundLetterData.json';
     fs.writeFileSync(outputFilePath, JSON.stringify(groupedData, null, 2), 'utf-8');
     console.log(`\n✅ Grouped data saved to '${outputFilePath}'.`);
+
+    // Now scrape investor cards as well
+    await scrapeInvestorCards(driver);
   } catch (e) {
     console.error(`❌ An error occurred: ${e}`);
   } finally {
