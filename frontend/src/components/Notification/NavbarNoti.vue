@@ -9,11 +9,29 @@
       <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
     </div>
 
-    <div v-if="isOpen" class="notification-panel">
+    <div v-if="isOpen" class="notification-panel" ref="notificationPanelRef">
       <div class="notification-header">
-        <h3>{{ $t('notifications') }}</h3>
+        <h3>Notifications</h3>
         <button v-if="hasUnread" @click="markAllAsRead" class="mark-all-read">
-          {{ $t('markAllAsRead') }}
+          Mark as all read
+        </button>
+      </div>
+      
+      <div class="notification-filters">
+        <button 
+          class="filter-btn" 
+          :class="{ 'active': currentFilter === 'all' }" 
+          @click="setFilter('all')"
+        >
+          {{ $t('all') || 'All' }}
+        </button>
+        <button 
+          class="filter-btn" 
+          :class="{ 'active': currentFilter === 'unread' }" 
+          @click="setFilter('unread')"
+        >
+          {{ $t('unread') || 'Unread' }} 
+          <span v-if="unreadCount > 0" class="filter-count">{{ unreadCount }}</span>
         </button>
       </div>
       
@@ -21,28 +39,34 @@
         <div class="loading-spinner"></div>
       </div>
       
-      <div v-else-if="notifications.length === 0" class="no-notifications">
-        {{ $t('noNotifications') }}
+      <div v-else-if="filteredNotifications.length === 0" class="no-notifications">
+        {{ currentFilter === 'unread' ? ('No unread notifications') : ('No notifications') }}
       </div>
       
       <div v-else class="notification-list">
         <div 
-          v-for="notification in notifications" 
+          v-for="notification in filteredNotifications" 
           :key="notification._id"
           :class="['notification-item', { 'unread': !notification.isRead }]"
           @click="handleNotificationClick(notification)"
         >
           <div class="notification-content">
-            <h4>{{ notification.title }}</h4>
+            <div class="notification-header-row">
+              <h4>{{ notification.title }}</h4>
+              <div v-if="!notification.isRead" class="unread-dot-indicator"></div>
+            </div>
             <p>{{ notification.content }}</p>
-            <small>{{ formatTime(notification.createdAt) }}</small>
+            <div class="notification-footer-row">
+              <small>{{ formatTime(notification.createdAt) }}</small>
+              <span v-if="!notification.isRead" class="unread-label">New</span>
+            </div>
           </div>
         </div>
       </div>
       
       <div class="notification-footer">
         <router-link to="/notifications" @click="isOpen = false">
-          {{ $t('viewAllNotifications') }}
+         View all notifications
         </router-link>
       </div>
     </div>
@@ -62,7 +86,9 @@ export default {
     const loading = ref(true);
     const isOpen = ref(false);
     const notificationIconRef = ref(null);
+    const notificationPanelRef = ref(null);
     const pollingInterval = ref(null);
+    const currentFilter = ref('all'); // Default filter
     
     const userId = computed(() => {
       return store.getters['users/currentUser']?._id;
@@ -80,34 +106,52 @@ export default {
       return unreadCount.value > 0;
     });
     
-    const fetchNotifications = async () => {
-      if (!isAuthenticated.value || !userId.value) return;
-      
-      try {
-        loading.value = true;
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/notifications/${userId.value}`,
-          { withCredentials: true }
-        );
-        notifications.value = response.data;
-      } catch (error) {
-        console.error('Failed to fetch notifications:', error);
-      } finally {
-        loading.value = false;
+    const filteredNotifications = computed(() => {
+      if (currentFilter.value === 'unread') {
+        return notifications.value.filter(note => !note.isRead);
       }
+      return notifications.value;
+    });
+    
+    const setFilter = (filter) => {
+      currentFilter.value = filter;
     };
+    
+    const fetchNotifications = async () => {
+        if (!isAuthenticated.value || !userId.value) return;
+        
+        try {
+            loading.value = true;
+            const response = await axios.get(
+            `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}`,
+            { withCredentials: true }
+            );
+            
+            if (response.data && Array.isArray(response.data)) {
+            notifications.value = response.data;
+            console.log('Fetched notifications:', notifications.value.length);
+            } else {
+            console.error('Unexpected response format:', response.data);
+            notifications.value = [];
+            }
+        } catch (error) {
+            console.error('Failed to fetch notifications:', error);
+            notifications.value = [];
+        } finally {
+            loading.value = false;
+        }
+        };
     
     const markAllAsRead = async () => {
       if (!isAuthenticated.value || !userId.value) return;
       
       try {
-        await axios.post(
-          `${process.env.VUE_APP_DEPLOY_URL}/notifications/mark-all-read/${userId.value}`,
-          {}, 
+        await axios.put(
+          `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}`,
+          {},
           { withCredentials: true }
         );
         
-        // Update local state
         notifications.value = notifications.value.map(note => ({
           ...note,
           isRead: true
@@ -120,21 +164,17 @@ export default {
     const handleNotificationClick = async (notification) => {
       if (!notification.isRead) {
         try {
-          await axios.put(
-            `${process.env.VUE_APP_DEPLOY_URL}/notifications/${notification._id}/read`,
-            {}, 
+            await axios.put(
+            `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${userId.value}/${notification._id}`,
+            {},
             { withCredentials: true }
           );
           
-          // Update local state
           notification.isRead = true;
         } catch (error) {
           console.error('Failed to mark notification as read:', error);
         }
       }
-      
-      // You could implement additional logic here to navigate to relevant pages
-      // based on notification type/content
     };
     
     const toggleNotificationPanel = () => {
@@ -154,24 +194,25 @@ export default {
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       
       if (diffDays === 0) {
-        // Today - show time
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       } else if (diffDays === 1) {
-        // Yesterday
         return 'Yesterday';
       } else if (diffDays < 7) {
-        // Within a week
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days[date.getDay()];
       } else {
-        // More than a week
         return date.toLocaleDateString();
       }
     };
     
-    // Close notification panel when clicking outside
     const handleClickOutside = (event) => {
-      if (isOpen.value && notificationIconRef.value && !notificationIconRef.value.contains(event.target)) {
+      if (
+        isOpen.value && 
+        notificationIconRef.value && 
+        !notificationIconRef.value.contains(event.target) &&
+        notificationPanelRef.value &&
+        !notificationPanelRef.value.contains(event.target)
+      ) {
         isOpen.value = false;
       }
     };
@@ -180,12 +221,11 @@ export default {
       if (isAuthenticated.value) {
         fetchNotifications();
         
-        // Setup polling for new notifications every minute
         pollingInterval.value = setInterval(() => {
-          if (!isOpen.value) { // Don't poll if panel is open to avoid interrupting user
+          if (!isOpen.value) {
             fetchNotifications();
           }
-        }, 60000); // 1 minute
+        }, 60000);
       }
       
       document.addEventListener('click', handleClickOutside);
@@ -200,11 +240,15 @@ export default {
     
     return {
       notifications,
+      filteredNotifications,
       loading,
       isOpen,
       unreadCount,
       hasUnread,
       notificationIconRef,
+      notificationPanelRef,
+      currentFilter,
+      setFilter,
       toggleNotificationPanel,
       markAllAsRead,
       handleNotificationClick,
@@ -276,19 +320,22 @@ export default {
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   animation: slideDown 0.3s ease forwards;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.notification-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(400px - 89px); /* Account for header, filters, and footer */
+}
+
+.notification-footer {
+  padding: 10px 16px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
 }
 
 .notification-header {
@@ -318,9 +365,40 @@ export default {
   text-decoration: underline;
 }
 
-.notification-list {
-  max-height: 300px;
-  overflow-y: auto;
+.notification-filters {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filter-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.filter-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  background-color: var(--accent-color);
+}
+
+.filter-btn:hover {
+  background-color: var(--bg-secondary);
 }
 
 .notification-item {
@@ -337,6 +415,19 @@ export default {
 .notification-item.unread {
   background-color: rgba(66, 139, 202, 0.1);
   border-left: 3px solid var(--accent-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-item.unread::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(231, 76, 60, 0.05), transparent 70%);
+  z-index: -1;
 }
 
 .notification-content h4 {
@@ -356,20 +447,47 @@ export default {
   color: var(--text-tertiary);
 }
 
-.notification-footer {
-  padding: 10px 16px;
-  text-align: center;
-  border-top: 1px solid var(--border-color);
+.notification-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.notification-footer a {
-  color: var(--accent-color);
-  font-size: 0.85rem;
-  text-decoration: none;
+.notification-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.notification-footer a:hover {
-  text-decoration: underline;
+.unread-dot-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #e74c3c;
+  box-shadow: 0 0 4px #e74c3c;
+  animation: pulse-dot 1.5s infinite;
+}
+
+.unread-label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: white;
+  background-color: #e74c3c;
+  padding: 2px 6px;
+  border-radius: 10px;
+  animation: pulse-label 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse-label {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
 }
 
 .notification-loading {

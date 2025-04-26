@@ -30,6 +30,8 @@ import ForgotPassword from "@/views/ForgotPassword.vue";
 import AutoTradeAI from "@/views/AutoTradeAI.vue";
 import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
 import FundLetterPage from "@/views/FundLetterPage.vue";
+import NotificationCenter from "@/views/NotificationCenter.vue";
+
 
 const routes = [
   {
@@ -189,6 +191,11 @@ const routes = [
     path: "/fund-letter",
     name: "FundLetter",
     component: FundLetterPage,
+  },
+  {
+    path: "/notifications",
+    name: "NotificationCenter",
+    component: NotificationCenter, 
   }
 ];
 
