@@ -36,13 +36,14 @@ async function tryWithFallback(actionFn, providersToTry, options = {}) {
       console.warn(`❌ ERROR WITH ${currentProvider.toUpperCase()} API: ${err.message}`);
       
       // Check if this is a rate limit error (429) or token exhaustion
-      const isRateLimit = err.response?.status === 429;
+      const isRateLimit = err.response?.status === 429 || err.response?.status === 401; // <-- thêm 401 ở đây
       const isTokenExhaustion = 
         err.message.includes("rate limit") || 
         err.message.includes("quota exceeded") || 
         err.message.includes("token") || 
-        err.message.includes("limit");
-      
+        err.message.includes("limit") ||
+        err.response?.status === 401; 
+        
       if (isRateLimit || isTokenExhaustion) {
         if (providers.length > 0) {
           console.log(`⚠️ RATE LIMIT OR TOKEN EXHAUSTION DETECTED. SWITCHING TO NEXT PROVIDER... ⚠️`);
