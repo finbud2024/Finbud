@@ -32,6 +32,7 @@ import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
 import articleRoute from "../Endpoints/articleRoute.js";
+import notiRoute from "../Endpoints/notiRoute.js";
 import reportRoute from "../\/Endpoints/reportRoute.js";
 
 
@@ -42,16 +43,20 @@ const app = express();
 
 const allowedOrigins = ["http://localhost:8888", "https://finbud.pro"];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // ✅ Allow undefined origins (like Postman, curl, or internal requests)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`CORS blocked request from origin: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 const httpServer = createServer(app);
 // Create Socket.io instance with CORS configuration
@@ -162,6 +167,7 @@ router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
+router.use("/", notiRoute);
 router.use("/", reportRoute);
 
 
@@ -189,7 +195,10 @@ app.use('/pdfs', express.static(path.join(process.cwd(), 'public/pdfs')));
 
 
 // Start the server for local development if not in production
-if (process.env.NODE_ENV !== "production") {
+if (
+  process.env.NODE_ENV !== "production" &&
+  process.env.NETLIFY_DEV !== "true"
+) {
   const PORT = process.env.PORT || 8889;
   connectToMongoDB()
     .then(() => {

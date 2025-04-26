@@ -10,8 +10,16 @@ import Source from "../Database Schema/Source.js";
 
 puppeteer.use(StealthPlugin());
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Get the directory path of the current module - with fallback
+let __dirname;
+try {
+  const __filename = fileURLToPath(import.meta.url);
+  __dirname = path.dirname(__filename);
+} catch (e) {
+  // Fallback for environments where import.meta is not available
+  __dirname = path.resolve();
+}
+
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const MONGO_URI = process.env.MONGO_URI;

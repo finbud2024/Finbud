@@ -1,27 +1,18 @@
-\<template>
+<template>
   <div class="event-map-container">
-    <div class="map-container">
-      <GMapMap
-        :center="mapCenter"
-        :zoom="mapZoom"
-        map-type-id="roadmap"
-        :style="{ width: '100%', height: mapHeight }"
-        :options="{ disableDefaultUI: false }"
-      >
-        <GMapMarker
-          v-for="event in events"
-          :key="event._id"
-          :position="{ lat: event.lat, lng: event.lng }"
-          :title="event.name"
-          @click="highlightEvent(event._id)"
-        />
-      </GMapMap>
-    </div>
-
     <div class="event-list">
-      <h2>{{ $t('eventHub.eventMap.upcomingEvents') }}</h2>
+      <div class="search-container">
+        <h2>{{ $t('eventHub.eventMap.upcomingEvents') }}</h2>
+        <input
+          v-model="searchQuery"
+          type="text"
+          :placeholder="$t('eventHub.searchPlaceholder')"
+          class="search-input"
+          @input="handleSearch"
+        />
+      </div>
 
-      <div v-for="event in events" 
+      <div v-for="event in filteredEvents"
            :key="event._id" 
            :ref="el => eventRefs[event._id] = el"
            class="event-card"
@@ -33,22 +24,44 @@
           <p><strong>{{ $t('eventHub.eventMap.date') }}:</strong> {{ formatDate(event.date) }}</p>
           <p><strong>{{ $t('eventHub.eventMap.host') }}:</strong> {{ event.host }}</p>
           <p><strong>{{ $t('eventHub.eventMap.location') }}:</strong> {{ event.location }}</p>
-          <!-- <p><strong>Price:</strong> {{ event.price }}</p> -->
         </div>
       </div>
+
+      <div v-if="filteredEvents.length === 0" class="no-results">
+        {{ $t('eventHub.eventMap.noResults') }}
+      </div>
+    </div>
+    <div class="map-container">
+      <Map
+        :center="mapCenter"
+        :zoom="mapZoom"
+        map-type-id="roadmap"
+        :style="{ width: '100%', height: mapHeight }"
+        :options="{ disableDefaultUI: false }"
+      >
+        <Marker
+          v-for="event in filteredEvents"
+          :key="event._id"
+          :position="{ lat: event.lat, lng: event.lng }"
+          :title="event.name"
+          @click="highlightEvent(event._id)"
+        />
+      </Map>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, nextTick } from "vue";
-import { GMapMap, GMapMarker } from "@fawmi/vue-google-maps";
+import { defineComponent, ref, computed, onMounted, nextTick } from "vue";
+import { Map, Marker } from '@fawmi/vue-google-maps';
 import axios from "axios";
+import Fuse from "fuse.js";
+import { debounce } from "lodash";
 import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   name: "EventMap",
-  components: { GMapMap, GMapMarker },
+  components: { Map, Marker },
   setup() {
     const events = ref([]);
     const mapHeight = ref("580px");
@@ -56,13 +69,41 @@ export default defineComponent({
     const mapZoom = ref(2);
     const highlightedEventId = ref(null);
     const eventRefs = ref({});
+    const searchQuery = ref("");
     const { t, locale } = useI18n();
 
+    // Debounced search function to prevent excessive calls
+    const debouncedSearch = debounce((query) => {
+      adjustMapToFitMarkers();
+    }, 300); // 300ms debounce time
+
+    // Fuzzy search options
+    const fuseOptions = {
+      includeScore: true,
+      threshold: 0.3,  // Allow for fuzzy matches
+      distance: 100,   // Limit the distance for matches, allowing partial word matching
+      keys: [
+        { name: "name", weight: 0.6 },    // Prioritize name field
+        { name: "host", weight: 0.2 },    // Secondary priority on host
+        { name: "location", weight: 0.1 },  // Location is less important
+        { name: "date", weight: 0.1 }
+      ],
+    };
+
+    // Computed property for filtered events
+    const filteredEvents = computed(() => {
+      if (!searchQuery.value) return events.value;
+
+      const fuse = new Fuse(events.value, fuseOptions);
+      return fuse.search(searchQuery.value).map((result) => result.item);
+    });
+
+    // Fetch events from the API
     const fetchEvents = async () => {
       try {
         const response = await axios.get("/.netlify/functions/server/events");
         events.value = response.data;
-        events.value.sort((a, b) => new Date(a.date) - new Date(b.date));
+        events.value.sort((a, b) => new Date(b.date) - new Date(a.date));
         if (events.value.length > 0) {
           adjustMapToFitMarkers();
         }
@@ -71,13 +112,14 @@ export default defineComponent({
       }
     };
 
+    // Adjust map zoom and center based on the filtered events
     const adjustMapToFitMarkers = () => {
-      if (events.value.length === 0) return;
+      if (filteredEvents.value.length === 0) return;
 
       let latSum = 0, lngSum = 0;
       let latMin = 90, latMax = -90, lngMin = 180, lngMax = -180;
 
-      events.value.forEach((event) => {
+      filteredEvents.value.forEach((event) => {
         if (event.lat && event.lng) {
           latSum += event.lat;
           lngSum += event.lng;
@@ -88,7 +130,7 @@ export default defineComponent({
         }
       });
 
-      const numEvents = events.value.length;
+      const numEvents = filteredEvents.value.length;
       mapCenter.value = {
         lat: latSum / numEvents,
         lng: lngSum / numEvents,
@@ -105,9 +147,10 @@ export default defineComponent({
       }
     };
 
+    // Highlight an event in the list
     const highlightEvent = async (eventId) => {
       highlightedEventId.value = eventId;
-      await nextTick(); 
+      await nextTick();
 
       const eventElement = eventRefs.value[eventId];
       if (eventElement) {
@@ -116,44 +159,55 @@ export default defineComponent({
 
       setTimeout(() => {
         highlightedEventId.value = null;
-      }, 3000); 
+      }, 3000);
     };
 
+    // Go to the event URL
     const goToEvent = (url) => {
       if (url && url.startsWith("http")) {
         window.open(url, "_blank");
       }
     };
 
+    // Format date
     const formatDate = (date) => {
-      if (!date) return t('eventHub.eventMap.tba')
-      
+      if (!date) return t("eventHub.eventMap.tba");
+
       const options = {
         weekday: "short",
-        month: "long", 
+        month: "long",
         day: "numeric",
-        year: "numeric"
-      }
-      
-      return new Date(date).toLocaleDateString(locale.value, options)
+        year: "numeric",
+      };
+
+      return new Date(date).toLocaleDateString(locale.value, options);
+    };
+
+    // Handle search query input
+    const handleSearch = () => {
+      debouncedSearch(searchQuery.value);
     };
 
     onMounted(fetchEvents);
 
-    return { 
-      events, 
-      mapHeight, 
-      mapCenter, 
-      mapZoom, 
-      highlightEvent, 
-      goToEvent, 
-      formatDate, 
-      highlightedEventId, 
-      eventRefs 
+    return {
+      events,
+      filteredEvents,
+      mapHeight,
+      mapCenter,
+      mapZoom,
+      highlightEvent,
+      goToEvent,
+      formatDate,
+      highlightedEventId,
+      eventRefs,
+      searchQuery,
+      handleSearch,
     };
   },
 });
 </script>
+
 
 <style scoped>
 .event-map-container {
@@ -171,6 +225,26 @@ export default defineComponent({
 
 .event-list h2 {
   color: var(--text-primary);
+  margin-bottom: 15px;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid black;
+  width: 94%;
+  border-radius: 28px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px black;
 }
 
 .map-container {
@@ -210,6 +284,12 @@ export default defineComponent({
 
 .event-details {
   flex: 1;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px;
+  color: #666;
 }
 
 /* Mobile Styling */

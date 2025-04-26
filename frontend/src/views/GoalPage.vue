@@ -2,23 +2,22 @@
   <div class="GoalDashBoardContainer">
     <!-- Bot Chat Component - Updated with toggle functionality -->
     <div
-      class="bot-chat-container"
-      :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }"
-    >
-      <img
-        class="bot-image"
-        src="@/assets/botrmbg.png"
-        alt="Bot"
-        @click="toggleBotMessage"
-        :class="{ clickable: showBot }"
-      />
-      <div
-        class="bot-message"
-        :class="{
-          'message-visible': showMessage,
-          'message-hidden': hidingMessage,
-        }"
-      >
+  ref="botChatContainer"
+  class="bot-chat-container"
+  :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }"
+  :style="{ transform: `translate(${xOffset}px, ${yOffset}px)` }"
+>
+    <img
+      class="bot-image"
+      src="@/assets/botrmbg.png"
+      alt="Bot"
+      @click="toggleBotMessage"
+      :class="{ clickable: showBot }"
+    />
+      <div class="bot-message" :class="{
+        'message-visible': showMessage,
+        'message-hidden': hidingMessage,
+      }">
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -26,13 +25,6 @@
         </div>
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
-      <img 
-        class="bot-image" 
-        src="@/assets/botrmbg.png" 
-        alt="Bot" 
-        @click="toggleBotMessage"
-        :class="{ 'clickable': showBot }"
-      />
     </div>
 
     <div class="leftPanel">
@@ -42,369 +34,241 @@
           <div class="greeting">
             {{
               ((h) =>
-                h < 12
-                  ? "Good Morning "
-                  : h < 18
-                  ? "Good Afternoon "
-                  : "Good Evening ")(new Date().getHours())
-            }}{{ displayName }}
-          </div>
-          <div class="slogan">
-            {{ $t('dashboardSlogan') }}
+                h < 12 ? "Good Morning " : h < 18 ? "Good Afternoon " : "Good Evening ")(new Date().getHours())}}{{
+              displayName }} </div>
+              <div class="slogan">
+                Manage your wallet wisely to reach your goals with ease.
+              </div>
           </div>
         </div>
-      </div>
-      <button
-        @click="openPlaidLink"
-        :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
-      >
-        Connect Your Bank Account
-      </button>
-      <div class="revenue-expense">
-        <div class="total-spend revenue-card">
-          <h2>{{
-                  selectedCurrency === "USD"
-                    ? formatCurrency(totalRevenue)
-                    : formatCurrency(convertToVND(totalRevenue))
-                }}</h2>
-          <p>{{ $t('totalRevenueLabel') }}</p>
-        </div>
-
-        <div class="total-spend expense-card">
-          <h2>-{{
-                  selectedCurrency === "USD"
-                    ? formatCurrency(totalExpense)
-                    : formatCurrency(convertToVND(totalExpense))
-                }}</h2>
-          <p>{{ $t('totalExpenseLabel') }}</p>
-        </div>
-
-        <div class="total-spend">
-          <div class="balance-header">
+        <button @click="openPlaidLink" :class="['add-goal-button', disabledConnect ? 'disabled' : null]">
+          Connect Your Bank Account
+        </button>
+        <div class="revenue-expense">
+          <div class="total-spend revenue-card">
             <h2>
               {{
                 selectedCurrency === "USD"
-                  ? formatCurrency(accountBalance)
-                  : formatCurrency(convertToVND(accountBalance))
+                  ? formatCurrency(totalRevenue)
+                  : formatCurrency(convertToVND(totalRevenue))
               }}
             </h2>
-            <select
-              v-model="selectedCurrency"
-              @change="updateCurrency"
-              class="selectoutside"
-            >
-              <option value="USD">USD</option>
-              <option value="VND">VND</option>
-            </select>
+            <p>Total Income</p>
           </div>
-          <p>{{ $t('accountBalanceLabel') }}</p>
-        </div>
-      </div>
 
-      <div
-        class="chart-container"
-        v-if="transactions && transactions.length > 0"
-      >
-        <TransactionLine
-          :transactions="transactions"
-          :key="`transaction-line-${transactions.length}-${Date.now()}`"
-        />
-      </div>
-      <div class="chart-container no-data" v-else>
-        <div class="no-data-message">
-          <p>No transaction data available to display.</p>
+          <div class="total-spend expense-card">
+            <h2>
+              -{{
+                selectedCurrency === "USD"
+                  ? formatCurrency(totalExpense)
+                  : formatCurrency(convertToVND(totalExpense))
+              }}
+            </h2>
+            <p>Total Expense</p>
+          </div>
+
+          <div class="total-spend">
+            <div class="balance-header">
+              <h2>
+                {{
+                  selectedCurrency === "USD"
+                    ? formatCurrency(calculatedAccountBalance)
+                    : formatCurrency(convertToVND(calculatedAccountBalance))
+                }}
+              </h2>
+              <select v-model="selectedCurrency" @change="updateCurrency" class="selectoutside">
+                <option value="USD">USD</option>
+                <option value="VND">VND</option>
+              </select>
+            </div>
+            <p>Account Balance</p>
+          </div>
         </div>
-      </div>
-      <section class="transactions">
-        <div class="headline-buttons">
-          <h2>{{ $t('dailyTransactionsTitle') }}</h2>
-          <div class="buttons">
-              <button @click="openModal" style="font-weight: bold;">{{ $t('addButton') }}</button>
-              <button @click="showResetConfirmationModal = true" style="font-weight: bold;">
-                {{ $t('resetButton') }}
+
+        <div v-if="transactions && transactions.length > 0">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+            <label style="font-weight: bold; margin-right: 10px;">Show Forecast</label>
+            <input type="checkbox" v-model="showForecast" />
+          </div>
+
+          <div class="chart-container">
+            <TransactionLine :transactions="transactions" :showForecast="showForecast"
+              :key="`transaction-line-${transactions.length}-${showForecast}`" />
+          </div>
+        </div>
+        <!-- TransactionPie -->
+        <div class="pie-chart-row" v-if="transactions && transactions.length > 0">
+          <TransactionPie :transactions="transactions" chartType="Income" />
+          <TransactionPie :transactions="transactions" chartType="Expense" />
+        </div>
+        <div class="chart-container no-data" v-else>
+          <div class="no-data-message">
+            <p>No transaction data available to display.</p>
+          </div>
+        </div>
+        <section class="transactions">
+          <div class="headline-buttons">
+            <h2>Daily Transactions</h2>
+            <div class="buttons">
+              <button @click="openModal" style="font-weight: bold">Add</button>
+              <button @click="showResetConfirmationModal = true" style="font-weight: bold">
+                Reset
               </button>
             </div>
-        </div>
+          </div>
           <div class="transaction-box">
-            <div v-if="showModal" class="modal-overlay">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h3>{{ $t('addTransactionTitle') }}</h3>
-                </div>
-                <div class="modal-body">
-                  <div class="input-box">
-                    <select
-                      v-model="transaction.type"
-                      class="input-box type-select"
-                      required
-                    >
-                      <option value="" disabled class="input-box-placeholder">
-                        {{ $t('transactionTypePlaceholder') }}
-                      </option>
-                      <option value="Income">{{ $t('creditedOption') }}</option>
-                      <option value="Expense">{{ $t('debitedOption') }}</option>
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Description"
-                      v-model="transaction.description"
-                      @input="generateRecommendations"
-                      @keydown="generateRecommendations"
-                      @focus="showRecommendations"
-                      @blur="hideRecommendations"
-                    />
-                    <ul
-                      v-if="recommendations.length && recommendationsVisible"
-                      class="recommendation-list"
-                      @mousedown.prevent
-                    >
-                      <li
-                        v-for="(recommendation, index) in recommendations"
-                        :key="index"
-                        @click="selectRecommendation(recommendation)"
-                        :class="{ highlighted: index === highlightedIndex }"
-                      >
-                        {{ recommendation }}
-                      </li>
-                    </ul>
-                    <div class="currency-input">
-                      <input
-                        type="number"
-                        placeholder="Amount"
-                        v-model="transaction.amount"
-                      />
-                      <select v-model="selectedCurrency" class="selectinside">
-                        <option value="USD">USD</option>
-                        <option value="VND">VND</option>
-                      </select>
-                    </div>
-                    <input
-                      type="date"
-                      placeholder="Date"
-                      v-model="transaction.date"
-                    />
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button @click="closeModal" style="margin-right: 10px">
-                    {{ $t('cancelButton') }}
-                  </button>
-                  <button @click="addTransaction">{{ $t('addTransactionButton') }}</button>
-                </div>
-              </div>
-            </div>
+            <TransactionModal v-if="showModal" :transaction="transaction" :selectedCurrency="selectedCurrency"
+              :recommendations="recommendations" :recommendationsVisible="recommendationsVisible"
+              :highlightedIndex="highlightedIndex" @update:selectedCurrency="selectedCurrency = $event"
+              @close="closeModal" @submit="addTransaction" @generate-recommendations="generateRecommendations"
+              @select-recommendation="selectRecommendation" @show-recommendations="showRecommendations"
+              @hide-recommendations="hideRecommendations" />
           </div>
-          <div class="transaction-list">
-            <table>
-              <thead>
-                <tr>
-                  <th>{{ $t('descriptionHeader') }}</th>
-                  <th>{{ $t('dateHeader') }}</th>
-                  <th>{{ $t('amountHeader') }} ({{ selectedCurrency }})</th>
-                  <th>{{ $t('statusHeader') }}</th>
-                  <th>{{ $t('transactionHeader') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- <tr
-                  v-for="trans in transactions"
-                  :key="trans._id"
-                  :class="{
-                    income: trans.type === 'Income',
-                    expense: trans.type === 'Expense',
-                  }"
-                > -->
-              <tr
-                v-for="trans in transactions"
-                :key="trans._id || trans.account_id"
-                :class="{
-                  income:
-                    trans.type === 'Income' ||
-                    (trans.type === 'revenue' && trans.amount < 0),
-                  expense:
-                    trans.type === 'Expense' ||
-                    (trans.type === 'revenue' && trans.amount > 0),
-                }"
-              >
-                <!-- <td>{{ trans.description }}</td> -->
-                <td>{{ trans.description || trans.name }}</td>
-                <td>{{ formattedDate(trans.date) }}</td>
-                <td v-if="selectedCurrency === 'USD'">
-                  {{ formatCurrency(Math.abs(trans.amount).toFixed(2)) }}
-                </td>
-                <td v-if="selectedCurrency === 'VND'">
-                  {{
-                    formatCurrency(
-                      convertToVND(Math.abs(trans.amount)).toFixed(2)
-                    )
-                  }}
-                </td>
-                <td>
-                  {{
-                    trans.type === "Expense" ||
-                    (trans.type === "revenue" && trans.amount > 0)
-                      ? "Debited"
-                      : "Credited"
-                  }}
-                </td>
-                <td class="buttons">
-                  <button
-                    @click="editTransaction(trans)"
-                    style="margin-right: 10px; padding: 6px 12px"
-                  >
-                    Edit
-                  </button>
-                  <!-- <button 
-                      @click="removeTransaction(trans._id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    > -->
-                    <button 
-                      @click="removeTransaction(trans.account_id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    >
-                    {{ $t('removeButton') }}
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-      </section>
-    </div>
+          <TransactionTable :transactions="transactions" :selectedCurrency="selectedCurrency" @edit="editTransaction"
+            @remove="removeTransaction" />
+        </section>
+        <goalNotiModal v-if="showGoalNotiModal" :isVisible="showGoalNotiModal" :message="notiMessage"
+          @close="showGoalNotiModal = false" />
+      </div>
 
       <div class="rightPanel">
         <section class="financial-goals" ref="financialGoalsSection">
           <div class="goal-upper-part">
-            <h3 class="goal-section-title">{{ $t('goalsSectionTitle') }}</h3>
-            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold;">{{ $t('addGoalButton') }}</button>
-            </div>
+            <h3 class="goal-section-title">Goals</h3>
+            <button class="add-goal-button" @click="showAddGoalModal = true" style="font-weight: bold">
+              Add Goal
+            </button>
+          </div>
 
-        <div class="search-container">
-          <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Search goals..."
-            class="search-input"
-          />
-        </div>
+          <div class="search-container">
+            <input type="text" v-model="searchQuery" placeholder="Search goals..." class="search-input" />
+          </div>
 
-            <div class="goals">
+          <div class="goals">
             <div v-for="goal in filteredGoals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
-                <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
-                <div class="goal-content">
+              <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
+              <div class="goal-content">
                 <div class="goal-icon">
-                    <i :class="goal.icon"></i>
+                  <i :class="goal.icon"></i>
                 </div>
                 <div class="goal-info">
                   <h3>{{ goal.title }}</h3>
-                  <p>{{ $t('categoryLabel') }}: {{ goal.category }}</p>
-                  <p>{{ $t('totalLabel') }}: {{ goal.targetAmount }} USD</p>
-                  <p>{{ $t('savedLabel') }}: {{ goal.currentAmount }} USD</p>
+                  <p>Category: {{ goal.category }}</p>
+                  <p>Total: {{ goal.targetAmount }} USD</p>
+                  <p>Saved: {{ goal.currentAmount }} USD</p>
                 </div>
                 <div class="progress-bar-container">
-                    <div class="progress-bar" :style="{ width: (goal.currentAmount / goal.targetAmount * 100) + '%' }"></div>
-                </div>
-                </div>
-            </div>
-            </div>
-
-
-            <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
-              <div class="modal-content" @click.stop>
-                <div class="modal-text-content">
-                  <h3>{{ $t('addNewGoalTitle') }}</h3>
-                  <div class="form-group">
-                    <label for="goalTitle">{{ $t('goalTitleLabel') }}</label>
-                    <input id="goalTitle" type="text" :placeholder="$t('goalTitlePlaceholder')" v-model="newGoal.title" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="goalDescription">{{ $t('descriptionLabel') }} ({{ $t('optionalLabel') }})</label>
-                    <textarea 
-                      id="goalDescription" 
-                      :placeholder="$t('descriptionPlaceholder')" 
-                      v-model="newGoal.description" 
-                      maxlength="500" 
-                      @input="updateDescriptionCount"></textarea>
-                    <div class="character-counter">{{ descriptionCharCount }} / 500 {{ $t('charactersLabel') }}</div>
-                  </div>
-                  <div class="form-group">
-                    <label for="targetAmount">{{ $t('totalMoneyNeededLabel') }}</label>
-                    <div class="currency-input">
-                      <input id="targetAmount" type="number" :placeholder="$t('totalMoneyNeededPlaceholder')" v-model="newGoal.targetAmount" required>
-                      <select>
-                        <option value="USD">USD</option>
-                        <option value="VND">VND</option>
-                        <option value="EUR">EUR</option>
-                        <option value="GBP">GBP</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="currentAmount">{{ $t('moneyHaveLabel') }}</label>
-                    <input id="currentAmount" type="number" :placeholder="$t('moneyHavePlaceholder')" v-model="newGoal.currentAmount">
-                  </div>
-                  <div class="form-group">
-                    <label for="startDate">{{ $t('startDateLabel') }}</label>
-                    <input id="startDate" type="date" v-model="newGoal.startDate" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="endDate">{{ $t('endDateLabel') }}</label>
-                    <input id="endDate" type="date" v-model="newGoal.endDate" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="goalCategory">{{ $t('categoryLabel') }}</label>
-                    <select id="goalCategory" v-model="selectedCategory">
-                      <option v-for="category in categories" :key="category" :value="category">
-                        {{ category }}
-                      </option>
-                      <option value="new">{{ $t('addNewCategoryOption') }}</option>
-                    </select>
-                  </div>
-                  <div v-if="selectedCategory === 'new'" class="form-group">
-                    <label for="newCategory">{{ $t('newCategoryLabel') }}</label>
-                    <input id="newCategory" type="text" :placeholder="$t('newCategoryPlaceholder')" v-model="newCategory">
-                  </div>
-                  <button class="add-goal-button" @click="addGoal">{{ $t('addGoalButton') }}</button>
+                  <div class="progress-bar" :style="{
+                    width: (goal.currentAmount / goal.targetAmount) * 100 + '%',
+                  }"></div>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
-    
-        <!-- Reset Confirmation Modal -->
-        <div v-if="showResetConfirmationModal" class="modal">
-          <div class="modal-content">
-            <h3>{{ $t('resetAccountTitle') }}</h3>
-            <p>{{ $t('resetAccountMessage') }}</p>
-            <button @click="showResetConfirmationModal = false" style="margin-right: 10px">
-              {{ $t('noButton') }}
-            </button>
-            <button @click="resetAccountBalance">
-              {{ $t('yesButton') }}
-            </button>
           </div>
-        </div>
+
+          <div v-if="showAddGoalModal" class="modal" @click="showAddGoalModal = false">
+            <div class="modal-content" @click.stop>
+              <div class="modal-text-content">
+                <h3>Add New Goal</h3>
+                <div class="form-group">
+                  <label for="goalTitle">Goal Title</label>
+                  <input id="goalTitle" type="text" placeholder="Enter your goal title" v-model="newGoal.title"
+                    required />
+                </div>
+                <div class="form-group">
+                  <label for="goalDescription">Description (optional)</label>
+                  <textarea id="goalDescription" placeholder="Describe your goal (max 500 words)"
+                    v-model="newGoal.description" maxlength="500" @input="updateDescriptionCount"></textarea>
+                  <div class="character-counter">
+                    {{ descriptionCharCount }} / 500 characters
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="targetAmount">Total Money Needed</label>
+                  <div class="currency-input">
+                    <input id="targetAmount" type="number" placeholder="Total money needed"
+                      v-model="newGoal.targetAmount" required />
+                    <select>
+                      <option value="USD">USD</option>
+                      <option value="VND">VND</option>
+                      <option value="EUR">EUR</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="currentAmount">Money Already Have</label>
+                  <input id="currentAmount" type="number" placeholder="Money already have"
+                    v-model="newGoal.currentAmount" />
+                </div>
+                <div class="form-group">
+                  <label for="startDate">Start Date</label>
+                  <input id="startDate" type="date" v-model="newGoal.startDate" required />
+                </div>
+                <div class="form-group">
+                  <label for="endDate">End Date</label>
+                  <input id="endDate" type="date" v-model="newGoal.endDate" required />
+                </div>
+                <div class="form-group">
+                  <label for="goalCategory">Category</label>
+                  <select id="goalCategory" v-model="selectedCategory">
+                    <option v-for="category in categories" :key="category" :value="category">
+                      {{ category }}
+                    </option>
+                    <option value="new">Add New Category</option>
+                  </select>
+                </div>
+                <div v-if="selectedCategory === 'new'" class="form-group">
+                  <label for="newCategory">New Category</label>
+                  <input id="newCategory" type="text" placeholder="Enter new category" v-model="newCategory" />
+                </div>
+                <button class="add-goal-button" @click="addGoal">Add Goal</button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-    </template>
+      <!-- Ghost div for chatbot trigger - placed at the very end of the page -->
+      <div ref="chatbotTriggerPoint" class="chatbot-trigger"></div>
+    </div>
+    <div v-if="showResetConfirmationModal" class="modal">
+      <div class="modal-content">
+        <h3>Reset Account Balance</h3>
+        <p>
+          Are you sure you want to reset your account balance? This action will
+          delete all your transactions.
+        </p>
+        <button @click="showResetConfirmationModal = false" style="margin-right: 10px">
+          No
+        </button>
+        <button @click="resetAccountBalance">Yes</button>
+      </div>
+    </div>
+</template>
 
 <script>
 import axios from "axios";
 import TransactionLine from "../components/goalPage/TransactionLine.vue";
-import { toast } from "vue3-toastify";
+import TransactionTable from "../components/goalPage/TransactionTable.vue";
+import TransactionModal from "../components/goalPage/TransactionModal.vue";
+import TransactionPie from "../components/goalPage/TransactionPie.vue";
 import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
 export default {
   name: "GoalPage",
   components: {
     ChatBotTyping,
     TransactionLine,
+    TransactionTable,
+    TransactionModal,
+    TransactionPie,
+    goalNotiModal,
   },
   data() {
     return {
       // Bot Chat data
+      notiMessage: "",
+      showGoalNotiModal: false,
       showBot: false,
       hidingBot: false,
       showMessage: false,
@@ -458,14 +322,14 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       goalTitle: "",
       goalProgress: 0,
       categories: [
-      'Savings', 
-      'Investment', 
-      'Entertainment',
-      'Education',
-      'Emergency Fund',
-      'Vehicle',
-      'Vacation',
-      'Health'
+        'Savings',
+        'Investment',
+        'Entertainment',
+        'Education',
+        'Emergency Fund',
+        'Vehicle',
+        'Vacation',
+        'Health'
       ],
       selectedCategory: '',
       isAnalyzingCategory: false,
@@ -529,7 +393,15 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       // totalRevenue: 0,
       disabledConnect: false,
       refreshInterval: null,
-      serverAccountBalance: 0, // New state to store account balance from server
+      serverAccountBalance: 0,
+      isDragging: false,
+      currentX: 0,
+      currentY: 0,
+      initialX: 0,
+      initialY: 0,
+      xOffset: 0,
+      yOffset: 0,
+
     };
   },
   computed: {
@@ -548,60 +420,65 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       });
     },
 
-    totalRevenue() {
-      return this.transactions
-        .filter((transaction) => {
-          // Income có amount âm
-          return (
-            transaction.type === "Income" ||
-            (transaction.type === "revenue" && transaction.amount < 0)
-          );
-        })
-        .reduce(
-          (total, transaction) => total + Math.abs(transaction.amount),
-          0
-        ); // Luôn dùng giá trị tuyệt đối
-    },
-
     totalExpense() {
-      return this.transactions
-        .filter((transaction) => {
-          // Expense có amount dương
-          return (
-            transaction.type === "Expense" ||
-            (transaction.type === "revenue" && transaction.amount > 0)
-          );
-        })
-        .reduce(
-          (total, transaction) => total + Math.abs(transaction.amount),
-          0
-        ); // Luôn dùng giá trị tuyệt đối
-    },
-
+  return this.transactions
+    .filter((transaction) => {
+      return (
+        transaction.type?.toLowerCase() === "expense"
+      );
+    })
+    .reduce((total, transaction) => total + Math.abs(transaction.amount), 0);
+},
+totalRevenue() {
+  return this.transactions
+    .filter((transaction) => {
+      return (
+        transaction.type?.toLowerCase() === "income"
+      );
+    })
+    .reduce((total, transaction) => total + Math.abs(transaction.amount), 0);
+},
     // Sửa cách tính accountBalance để lấy từ trường balance của transaction mới nhất
-    accountBalance() {
-      // Ưu tiên giá trị từ server nếu có
-      if (this.serverAccountBalance !== 0) {
-        return this.serverAccountBalance;
-      }
-
-      // Khi không có giao dịch, trả về 0
-      if (!this.transactions || this.transactions.length === 0) {
-        return 0;
-      }
-
-      // Dựa trên tổng revenue và expense nếu không có giá trị server
+    calculatedAccountBalance() {
       return this.totalRevenue - this.totalExpense;
     },
+
+    // for the goal modal
+    accountBalancev2() {
+      return this.totalRevenue - this.totalExpense
+    }
   },
-  
+  watch: {
+  // Watch for route changes
+  '$route': {
+    immediate: true,
+    handler() {
+      // Refresh transactions when route changes
+      this.fetchTransactions();
+    }
+  }
+},
+
   mounted() {
     // if (!this.isAuthenticated) {
     //   this.$router.push("/");
-      return;
+    // return;
     // }
+ // Clean up event listeners
+ this.$nextTick(() => {
+  const botContainer = this.$refs.botChatContainer;
+  if (botContainer) {
+    botContainer.addEventListener('mousedown', this.dragStart);
+    botContainer.addEventListener('touchstart', this.dragStart);
+    document.addEventListener('mousemove', this.drag);
+    document.addEventListener('touchmove', this.drag);
+    document.addEventListener('mouseup', this.dragEnd);
+    document.addEventListener('touchend', this.dragEnd);
+  } else {
+    console.warn("🤖 botChatContainer ref is null – check if it's conditionally rendered.");
+  }
 
-
+  });
     this.retrieveGoals();
 
     // Lấy account balance từ server
@@ -624,6 +501,19 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       this.getAccountBalance(); // Cập nhật account balance mỗi lần refresh
     }, 10000);
   },
+
+  beforeDestroy() {
+  // Clean up event listeners
+  const botContainer = this.$refs.botChatContainer;
+  if (botContainer) {
+    botContainer.removeEventListener('mousedown', this.dragStart);
+    botContainer.removeEventListener('touchstart', this.dragStart);
+    document.removeEventListener('mousemove', this.drag);
+    document.removeEventListener('touchmove', this.drag);
+    document.removeEventListener('mouseup', this.dragEnd);
+    document.removeEventListener('touchend', this.dragEnd);
+  }
+},
   beforeUnmount() {
     // Clean up timers and observers when the component is destroyed
     this.cleanupResources();
@@ -634,8 +524,55 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     next();
   },
   methods: {
-    // ... existing methods ...
+    dragStart(e) {
+    e.preventDefault();
+    
+    if (e.type === "touchstart") {
+      this.initialX = e.touches[0].clientX - this.xOffset;
+      this.initialY = e.touches[0].clientY - this.yOffset;
+    } else {
+      this.initialX = e.clientX - this.xOffset;
+      this.initialY = e.clientY - this.yOffset;
+    }
 
+    if (e.target.classList.contains('bot-image')) {
+      this.isDragging = true;
+    }
+  },
+  drag(e) {
+    if (!this.isDragging) return;
+    
+    e.preventDefault();
+    
+    let currentX, currentY;
+    
+    if (e.type === "touchmove") {
+      currentX = e.touches[0].clientX - this.initialX;
+      currentY = e.touches[0].clientY - this.initialY;
+    } else {
+      currentX = e.clientX - this.initialX;
+      currentY = e.clientY - this.initialY;
+    }
+
+    const botContainer = this.$refs.botChatContainer;
+    if (!botContainer) return;
+
+    // Calculate bounds
+    const bounds = {
+      left: 0,
+      top: 0,
+      right: window.innerWidth - botContainer.offsetWidth,
+      bottom: window.innerHeight - botContainer.offsetHeight
+    };
+
+    // Keep within bounds
+    this.xOffset = Math.min(Math.max(currentX, 0), bounds.right);
+    this.yOffset = Math.min(Math.max(currentY, 0), bounds.bottom);
+  },
+
+  dragEnd() {
+    this.isDragging = false;
+  },
     // Phương thức mới để dọn dẹp tài nguyên
     cleanupResources() {
       // Hủy các observers và timers
@@ -995,19 +932,26 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
 
+        console.log("✅ API response:", response); // 🪵 Log full response
+        console.log("✅ Raw data:", response.data); // 🪵 Log data array
+        
+
         // Kiểm tra response đầy đủ trước khi cập nhật
         if (response && response.data) {
           // Sắp xếp transactions theo ngày mới nhất
           const sortedTransactions = this.sortTransactionsByDate(response.data);
 
           // Cập nhật mảng transactions
-          this.transactions = sortedTransactions;
+          this.transactions = sortedTransactions.filter(
+            (tx) => tx.amount != null && !isNaN(tx.amount) && tx.date
+          );
 
           // Nếu có transactions, thì recalculate balance để đảm bảo tính đúng
           if (sortedTransactions.length > 0) {
             this.recalculateBalances();
           }
         }
+        console.log("🧹 Transactions:", this.transactions);
         return response; // Trả về response để có thể sử dụng .then()
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -1015,6 +959,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         return null; // Trả về null trong trường hợp lỗi
       }
     },
+
     async addTransaction() {
       if (
         this.transaction.description &&
@@ -1025,10 +970,34 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         try {
           let amountInUSD = Math.abs(this.transaction.amount);
 
-          // Convert amount to USD if the selected currency is VND
+          // Convert to USD if needed
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
+
+          let openNotification = false; // Flag to track if a notification should be shown
+          if (this.transaction.type === "Expense") {
+
+            const accountBalanceFormatted = this.formatCurrency(this.accountBalancev2);
+            const amountFormatted = this.formatCurrency(amountInUSD);
+            const percentSpent = ((amountInUSD / this.accountBalancev2) * 100).toFixed(1);
+
+            if (amountInUSD >= this.accountBalancev2) {
+              this.notiMessage = `🚨 Warning: You are spending ${amountFormatted} which exceeds your current balance of ${accountBalanceFormatted}!`;
+              openNotification = true;
+            } else if (amountInUSD >= this.accountBalancev2 * 0.75) {
+              this.notiMessage = `⚠️ Caution: This ${amountFormatted} expense represents ${percentSpent}% of your account balance (${accountBalanceFormatted})!`;
+              openNotification = true;
+            } else if (amountInUSD >= this.accountBalancev2 * 0.5) {
+              this.notiMessage = `📢 Notice: You're spending ${amountFormatted}, which is ${percentSpent}% of your available funds (${accountBalanceFormatted}).`;
+              openNotification = true;
+            } else if (amountInUSD >= this.accountBalancev2 * 0.25) {
+              this.notiMessage = `ℹ️ FYI: This ${amountFormatted} transaction is ${percentSpent}% of your total balance (${accountBalanceFormatted}).`;
+              openNotification = true;
+
+            }
+          }
+
 
           // Xác định dấu của số tiền dựa vào type
           // Income (ghi có) = số âm (thêm tiền vào tài khoản)
@@ -1036,43 +1005,54 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
           const signedAmount =
             this.transaction.type === "Income" ? -amountInUSD : amountInUSD;
 
-          // Tính balance mới từ giao dịch mới nhất hoặc sử dụng computed property
-          const newBalance =
-            this.transactions.length > 0
-              ? this.transactions[0].balance - signedAmount
-              : -signedAmount;
-
           const response = await axios.post(
             `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
             {
-              ...this.transaction,
+              description: this.transaction.description,
               amount: signedAmount,
-              balance: newBalance,
               userId: this.userId,
+              date: this.transaction.date || new Date().toISOString().split("T")[0],
+              type: this.transaction.type,
+              category: this.transaction.category || "Uncategorized"
             }
           );
 
-          // Insert the new transaction at the beginning of the array
+          console.log("Transaction added:", response.data);
           this.transactions.unshift(response.data);
 
-          // Xóa dữ liệu form
-          this.transaction.description = "";
-          this.transaction.amount = null;
-          this.transaction.date = "";
-          this.transaction.type = "";
+          // Reset form
+          this.transaction = {
+            description: "",
+            amount: null,
+            date: "",
+            type: "",
+            category: ""
+          };
+          this.showModal = false;
 
-          // Đảm bảo cập nhật lại balances
           this.$nextTick(() => {
             this.recalculateBalances();
           });
+
+          if (openNotification) {
+            await axios.post(
+              `${process.env.VUE_APP_DEPLOY_URL}/api/notis/${this.userId}`,
+              {
+                content: this.notiMessage,
+                title: "🚨 SPENDING ALERT 🚨",
+              }
+            );
+            this.showGoalNotiModal = true; // Show the notification if the flag is set
+          }
+
         } catch (error) {
           console.error("Error adding transaction:", error);
         }
-        this.showModal = false;
       } else {
         console.error("Transaction description, amount, and date are required");
       }
     },
+
     async setInitialBalance() {
       // Provide default values if they are not set
       const date =
@@ -1096,7 +1076,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
         // Update local state with the response data
         this.transactions.push(response.data);
-        this.accountBalance = parseFloat(this.initialBalance); // Update the account balance
+        this.calculatedAccountBalance = parseFloat(this.initialBalance); // Update the account balance
         this.initialBalance = null; // Reset the initial balance input field
         this.showSetBalanceModal = false; // Close the modal
         this.initialBalanceSet = true; // Mark initial balance as set
@@ -1160,8 +1140,20 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       }
     },
     openModal() {
+      const today = new Date().toISOString().split("T")[0]; // format: YYYY-MM-DD
+      this.transaction = {
+        description: "",
+        amount: null,
+        date: today,
+        type: "",
+        category: ""
+      };
+      this.recommendations = [];
+      this.recommendationsVisible = false;
+      this.highlightedIndex = -1;
       this.showModal = true;
     },
+
     recalculateBalances() {
       // Kiểm tra nếu không có transactions thì trả về
       if (!this.transactions || this.transactions.length === 0) {
@@ -1377,12 +1369,19 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
         console.error("Error fetching Plaid transactions:", error);
       }
     },
+    activated() {
+      if (this.transactions.length === 0) {
+        this.fetchTransactions();
+      }
+    }
   },
 };
 </script>
+
 <style scoped>
 .GoalDashBoardContainer {
-  width: 100vw;
+  width: 100%;
+  /* Change from 100vw to 100% */
   max-width: 100%;
   display: flex;
   flex-direction: row;
@@ -1390,6 +1389,22 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   overflow-x: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  margin: 0;
+  /* Add this */
+  padding: 0;
+  /* Add this */
+  position: relative;
+  /* Add this */
+  left: 0;
+  /* Add this */
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .leftPanel {
@@ -1454,7 +1469,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(31, 126, 53);
+
 }
 
 .transactionContainer {
@@ -1464,6 +1479,22 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   justify-content: center;
   align-items: center;
   overflow-x: auto;
+}
+
+.pie-chart-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.pie-chart-row>* {
+  flex: 1 1 45%;
+  max-width: 45%;
+  min-width: 320px;
 }
 
 /* Right Panel - Financial goals */
@@ -1492,7 +1523,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   width: 100%;
   height: auto;
   border-radius: 10px 10px 0 0;
-  margin-bottom: -20px; /* Overlap with goal-content */
+  margin-bottom: -20px;
+  /* Overlap with goal-content */
 }
 
 .goal-upper-part {
@@ -1599,44 +1631,26 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   transition: width 0.5s ease-in-out;
 }
 
-.modal {
+.modal,
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.5);
   z-index: 20;
 }
 
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px var(--shadow-color);
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh; /* Limit height to 90% of viewport */
-  overflow-y: auto; /* Add scroll for overflow content */
-  padding: 20px;
-}
-
-.modal-content img {
-  width: 100%;
-  height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-.add-money-form {
-  margin-top: 20px;
-}
-
-.add-money-form input {
-  margin-top: 10px;
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
 }
 
 .search-container {
@@ -1658,90 +1672,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 /* Add Goal Modal Styles */
 .form-group {
   margin-bottom: 10px;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-.form-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--text-primary);
-}
-
-.form-group input,
-.form-group textarea {
-  width: 80%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 16px;
   font-family: "Space Grotesk", sans-serif;
-  transition: border-color 0.3s ease;
-  resize: none;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: var(--link-color);
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.currency-input {
-  display: flex;
-  align-items: center;
-  width: 80%;
-  margin-left: 50px;
-}
-
-.currency-input input {
-  margin-right: 10px;
-  flex: 1;
-  width: 75px;
-}
-
-.currency-input select {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  font-size: 16px;
-  font-family: "Space Grotesk", sans-serif;
-  transition: border-color 0.3s ease;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  width: 75px;
-  margin-bottom: 0px;
-  height: 42px;
-}
-
-.currency-input select:focus {
-  border-color: var(--link-color);
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-#addAmount {
-  margin-bottom: 10px;
-}
-
-.character-counter {
-  font-size: 0.9em;
-  color: #666;
-  margin-top: 5px;
-  text-align: right;
-  width:90%;
-}
-
-.start-end-date-group {
-  display: flex;
-  margin-left: 28px;
-}
-
-.start-end-date-group .start-end-date-input {
-  width: 222px;
 }
 
 #goalCategory {
@@ -1754,7 +1685,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 #goalCategory:focus {
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .category-loading {
@@ -1767,7 +1698,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: inline-block;
   width: 12px;
   height: 12px;
-  border: 2px solid rgba(0,0,0,0.1);
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
   border-top-color: #007bff;
   animation: spin 1s linear infinite;
@@ -1775,33 +1706,11 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Mobile-specific styles */
-@media (max-width: 1024px) {
-  .GoalDashBoardContainer {
-    flex-direction: column;
-    height: auto;
-    width: 100vw;
-    max-width: 100%;
-    background-color: var(--bg-primary);
-  }
-
-  .leftPanel,
-  .rightPanel {
-    width: 100%;
-    background-color: var(--bg-primary);
-  }
-
-  .leftPanelHeader,
-  .panelOverview,
-  .graphContainer,
-  .transactionContainer {
-    width: 100%;
-    max-width: 100%;
+  to {
+    transform: rotate(360deg);
   }
 }
+
 
 .financial-goals {
   text-align: center;
@@ -1880,21 +1789,28 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 .alldata1 {
   padding: 20px;
   display: flex;
-  background-color: #f9f9f9; /* Light background color */
+  background-color: #f9f9f9;
+  /* Light background color */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 42px;
   justify-content: space-between;
   width: 40%;
-  flex-wrap: wrap; /* Allow wrapping to a new line */
+  flex-wrap: wrap;
+  /* Allow wrapping to a new line */
 }
 
 .total-spend {
-  display: flex; /* Use flexbox for alignment */
-  flex-direction: column; /* Stack elements vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Align items to the top */
-  margin-left: 0; /* Push to the far right within the wrapper */
+  display: flex;
+  /* Use flexbox for alignment */
+  flex-direction: column;
+  /* Stack elements vertically */
+  align-items: center;
+  /* Center items horizontally */
+  justify-content: center;
+  /* Align items to the top */
+  margin-left: 0;
+  /* Push to the far right within the wrapper */
   padding: 10px;
   border-radius: 9px;
   background-color: var(--card-bg);
@@ -1924,16 +1840,23 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 hr {
-  width: 100%; /* Make the <hr> span the full width of its container */
-  border: 0; /* Remove default border */
-  height: 0.5px; /* Set the height of the line */
-  background: #ccc; /* Set the color of the line */
-  margin: 20px 0; /* Add space above and below the line */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  width: 100%;
+  /* Make the <hr> span the full width of its container */
+  border: 0;
+  /* Remove default border */
+  height: 0.5px;
+  /* Set the height of the line */
+  background: #ccc;
+  /* Set the color of the line */
+  margin: 20px 0;
+  /* Add space above and below the line */
+  box-sizing: border-box;
+  /* Include padding and border in the element's total width and height */
 }
 
 .total-spend:hover {
-  background-color: #ddd; /* Change to your hover background color */
+  background-color: #ddd;
+  /* Change to your hover background color */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -1946,13 +1869,17 @@ hr {
 }
 
 .categories-container {
-  align-items: flex-start; /* Align items to the start */
-  width: fit-content; /* Container width fits the content */
+  align-items: flex-start;
+  /* Align items to the start */
+  width: fit-content;
+  /* Container width fits the content */
 }
 
 .categories-container h2 {
-  margin: 0; /* Remove default margins */
-  padding-bottom: 10px; /* Space between heading and icons */
+  margin: 0;
+  /* Remove default margins */
+  padding-bottom: 10px;
+  /* Space between heading and icons */
 }
 
 .category-icon {
@@ -1965,22 +1892,26 @@ hr {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #f0f0f0; /* Change to your desired background color */
+  background-color: #f0f0f0;
+  /* Change to your desired background color */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   font-size: 24px;
-  color: #333; /* Icon color */
+  color: #333;
+  /* Icon color */
   transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .category-icon:hover {
-  background-color: #ddd; /* Change to your hover background color */
+  background-color: #ddd;
+  /* Change to your hover background color */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .amount-popup {
   display: none;
   position: absolute;
-  bottom: -30px; /* Adjust as needed */
+  bottom: -30px;
+  /* Adjust as needed */
   background-color: #333;
   color: #fff;
   padding: 5px;
@@ -2025,6 +1956,7 @@ hr {
   height: 100%;
   margin: 0;
 }
+
 .buttons button {
   height: 100%;
   padding: 10px 20px;
@@ -2118,6 +2050,35 @@ hr {
   background-color: rgba(76, 175, 80, 0.1);
 }
 
+.transaction-list td.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 5px;
+  gap: 5px;
+}
+
+.transaction-list td.buttons button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  background-color: var(--link-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  min-width: 80px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.transaction-list td.buttons button:hover {
+  background-color: var(--button-hover-bg, #005bb5);
+  transform: translateY(-1px);
+}
+
 .chart-container {
   width: 100%;
   height: 350px;
@@ -2132,7 +2093,7 @@ hr {
 }
 
 /* Đảm bảo biểu đồ hiển thị đúng trên các trình duyệt khác nhau */
-.chart-container > * {
+.chart-container>* {
   width: 100%;
   height: 100%;
 }
@@ -2150,23 +2111,33 @@ hr {
 
 .chart-toggle-buttons {
   display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  align-items: center; /* Center buttons horizontally */
+  flex-direction: column;
+  /* Stack buttons vertically */
+  align-items: center;
+  /* Center buttons horizontally */
   margin-top: 3px;
-  height: 100%; /* Adjust height as needed */
+  height: 100%;
+  /* Adjust height as needed */
 }
 
 .chart-toggle-buttons button {
   padding: 10px 20px;
-  margin: 5px 0; /* Adjust margin to space buttons vertically */
+  margin: 5px 0;
+  /* Adjust margin to space buttons vertically */
   background-color: var(--link-color);
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  min-width: 150px; /* Ensure both buttons have the same minimum width */
-  text-align: center; /* Center text inside buttons */
+  min-width: 150px;
+  /* Ensure both buttons have the same minimum width */
+  text-align: center;
+  /* Center text inside buttons */
+}
+
+.chart-toggle-buttons button:hover {
+  background-color: var(--hover-bg);
 }
 
 .chart-toggle-buttons button.active {
@@ -2272,15 +2243,6 @@ hr {
   z-index: 20;
 }
 
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 90%;
-  max-width: 1000px;
-}
-
 .modal-content input {
   padding: 10px;
   border: 1px solid var(--border-color);
@@ -2335,28 +2297,6 @@ hr {
   text-align: center;
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 5px;
-  width: 500px;
-  max-width: 90%;
-  height: 630px;
-  margin-top: 80px;
-}
-
 .modal-header {
   align-items: center;
   margin-bottom: 10px;
@@ -2378,26 +2318,10 @@ hr {
 
 .revenue-expense {
   display: flex;
-  gap: 40px; /* Adjust the gap between cards */
+  gap: 40px;
+  /* Adjust the gap between cards */
   margin-top: 0;
   margin-bottom: 20px;
-}
-
-.total-spend {
-  width: 27%;
-  padding: 10px;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px var(--shadow-color);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Align items to the start (left) */
-  justify-content: flex-start; /* Align items to the top */
-  margin: 10px;
-}
-
-.total-spend h2 {
-  margin: 0;
-  margin-bottom: 10px;
 }
 
 .revenue-card {
@@ -2433,90 +2357,49 @@ hr {
   }
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-  }
 
-  .header-icons {
-    margin-top: 10px;
-  }
-
-  .header-greeting h1 {
-    font-size: 1.5em;
-  }
-
-  .header-greeting p {
-    font-size: 1em;
-  }
-
-  .assets-value {
-    font-size: 1.2em;
-  }
-
-  .goal {
-    flex: 1 1 100%;
-  }
-
-  .chart-wrapper {
-    height: auto;
-  }
+/* Tối ưu total-spend styles */
+.total-spend {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  width: 27%;
+  margin: 10px;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
 }
 
-/* Responsive Modal Adjustments */
-@media (max-width: 768px) {
-  .modal-content {
-    width: 95%;
-    max-width: 400px;
-    padding: 15px;
-    margin: 10px;
-  }
-
-  .form-group {
-    margin-bottom: 10px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 8px;
-    font-size: 14px;
-  }
-
-  .currency-input {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .currency-input select {
-    width: 100%;
-  }
+.total-spend h2 {
+  margin: 0 0 10px 0;
 }
 
-@media (max-width: 480px) {
-  .modal-content {
-    width: 95%;
-    max-width: 320px;
-    padding: 10px;
-    margin: 5px;
-  }
-
-  .form-group label {
-    font-size: 14px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 6px;
-    font-size: 13px;
-  }
+/* Tối ưu modal styles */
+.modal,
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Scrollbar Customization */
-/* For Webkit browsers (Chrome, Safari, newer Edge) */
+.modal {
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+}
+
+/* Tối ưu scrollbar styles */
+/* Webkit scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -2536,7 +2419,7 @@ hr {
   background: var(--link-color);
 }
 
-/* For Firefox */
+/* Firefox scrollbar - áp dụng globally */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) var(--bg-primary);
@@ -2553,42 +2436,32 @@ hr {
 
 /* Bot Chat Styles */
 .bot-chat-container {
-  position: fixed; /* Fixed positioning relative to viewport */
-  left: -350px; /* Start off-screen to the left */
-  bottom: 30px;
+  position: fixed;
+  left: 20px;  
   width: 300px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 15px;
-  z-index: 100;
-  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    opacity 1s ease;
-  opacity: 0;
-  transform: translateX(0);
-  pointer-events: none; /* Prevents interaction with elements behind it */
+  z-index: 1000;
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+  transform: translate(0, 0); /* Reset transform */
 }
 
-.bot-chat-container.bot-visible {
-  transform: translateX(350px); /* Move to the right */
-  opacity: 1;
-  pointer-events: auto; /* Re-enable interaction when visible */
-}
 
-.bot-chat-container.bot-hidden {
-  transform: translateX(350px) translateY(50px);
-  opacity: 0;
-  transition: transform 1s ease, opacity 1s ease;
-}
 
 .bot-image {
   width: 60px;
-  height: auto;
-  display: block;
-  position: relative;
-  background: transparent;
-  transition: transform 0.5s ease;
-  border-radius: 50%;
+  height: 60px;
+  cursor: grab;
+  /* Change cursor to indicate grabbable */
+}
+
+.bot-image:active {
+  cursor: grabbing;
+  /* Change cursor while dragging */
 }
 
 .bot-visible .bot-image {
@@ -2600,12 +2473,15 @@ hr {
     transform: translateY(20px);
     opacity: 0;
   }
+
   60% {
     transform: translateY(-5px);
   }
+
   80% {
     transform: translateY(2px);
   }
+
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -2620,13 +2496,17 @@ hr {
   padding: 12px 18px;
   border-radius: 18px;
   max-width: 280px;
-  max-height: 200px; 
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 200px;
+  overflow-y: auto;
+  /* Enable vertical scrolling */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0; /* Start hidden */
-  transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
+  opacity: 0;
+  /* Start hidden */
+  transform: scale(0.8) translateY(10px);
+  /* Start slightly smaller and lower */
   transition: opacity 0.7s ease, transform 0.7s ease;
-  transition-delay: 0.3s; /* Reduced delay for smoother appearance */
+  transition-delay: 0.3s;
+  /* Reduced delay for smoother appearance */
 }
 
 .bot-message.message-visible {
@@ -2673,26 +2553,75 @@ hr {
 }
 
 @keyframes typing {
+
   0%,
   100% {
     opacity: 0.3;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.2);
   }
 }
 
+
+/* Ghost div for chatbot trigger */
+.chatbot-trigger {
+  height: 20px;
+  /* Small height to be less intrusive */
+  width: 100%;
+  opacity: 0;
+  /* Invisible */
+  pointer-events: none;
+  /* Won't interfere with user interaction */
+  position: relative;
+  margin-top: 20px;
+  /* Space after the last visible element */
+  margin-bottom: 20px;
+  /* Space at the bottom of the page */
+}
+
+/* Ghost div for chatbot trigger - truly invisible */
+.chatbot-trigger {
+  height: 1px;
+  /* Minimal height */
+  width: 1px;
+  /* Minimal width */
+  opacity: 0;
+  /* Invisible */
+  pointer-events: none;
+  /* Won't interfere with user interaction */
+  position: absolute;
+  /* Take out of normal document flow */
+  bottom: 20px;
+  /* Position near the bottom of the container */
+  left: 0;
+  /* Align to the left */
+  margin: 0;
+  /* Remove margins */
+  padding: 0;
+  /* Remove padding */
+  border: none;
+  /* Remove borders */
+  background: transparent;
+  /* Transparent background */
+}
+
 @media screen and (max-width: 768px) {
-  /* ...existing code... */
+
+
 
   /* For mobile, position the bot at the bottom of the screen */
   .bot-chat-container {
     left: auto;
-    right: -300px;
-    bottom: 20px;
+    right: 10px;
+    transition: transform 0.05s ease-out; /* Quick transition while dragging */
   }
+  .bot-chat-container:active {
+  transition: none; /* No transition while actively dragging */
+}
 
   .bot-chat-container.bot-visible {
     transform: translateX(-310px);
@@ -2703,57 +2632,182 @@ hr {
   }
 }
 
-/* Ghost div for chatbot trigger */
-.chatbot-trigger {
-  height: 20px; /* Small height to be less intrusive */
-  width: 100%;
-  opacity: 0; /* Invisible */
-  pointer-events: none; /* Won't interfere with user interaction */
-  position: relative;
-  margin-top: 20px; /* Space after the last visible element */
-  margin-bottom: 20px; /* Space at the bottom of the page */
+/* Responsive design */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header-icons {
+    margin-top: 10px;
+  }
+
+  .header-greeting h1 {
+    font-size: 1.5em;
+  }
+
+  .header-greeting p {
+    font-size: 1em;
+  }
+
+  .assets-value {
+    font-size: 1.2em;
+  }
+
+  .goal {
+    flex: 1 1 100%;
+  }
+
+  .chart-wrapper {
+    height: auto;
+  }
 }
 
-/* Ghost div for chatbot trigger - truly invisible */
-.chatbot-trigger {
-  height: 1px; /* Minimal height */
-  width: 1px; /* Minimal width */
-  opacity: 0; /* Invisible */
-  pointer-events: none; /* Won't interfere with user interaction */
-  position: absolute; /* Take out of normal document flow */
-  bottom: 20px; /* Position near the bottom of the container */
-  left: 0; /* Align to the left */
-  margin: 0; /* Remove margins */
-  padding: 0; /* Remove padding */
-  border: none; /* Remove borders */
-  background: transparent; /* Transparent background */
+/* Mobile-specific styles */
+@media (max-width: 1024px) {
+  .GoalDashBoardContainer {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .leftPanel,
+  .rightPanel {
+    width: 100%;
+    padding: 10px;
+    margin: 0;
+    /* Add this */
+    box-sizing: border-box;
+    /* Add this */
+  }
+
+  .rightPanel {
+    margin-top: 20px;
+  }
+
+  .leftPanelHeader,
+  .panelOverview,
+  .graphContainer,
+  .transactionContainer {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
-/* ...existing code... */
-.bot-image.clickable {
-  cursor: pointer;
-  transition: transform 0.3s ease;
+
+
+/* Responsive Daily Transactions */
+@media screen and (max-width: 768px) {
+  .transactions {
+    overflow-x: auto;
+    padding: 10px;
+  }
+
+  .transaction-list {
+    min-width: 600px;
+    /* Ensure minimum width for table content */
+  }
+
+  .headline-buttons {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .buttons button {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  /* Make table cells stack better on mobile */
+  .transaction-list td,
+  .transaction-list th {
+    padding: 8px 5px;
+    font-size: 14px;
+  }
+
+  .transaction-list td.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
 }
 
-.bot-image.clickable:hover {
-  transform: scale(1.1);
+/* Responsive Goals Section */
+@media screen and (max-width: 768px) {
+  .goals {
+    padding: 10px;
+  }
+
+  .goal {
+    flex: 1 1 100%;
+    margin: 10px 0;
+    padding: 20px;
+  }
+
+  .goal-upper-part {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .goal-section-title {
+    font-size: 1.5em;
+    text-align: center;
+  }
+
+  .add-goal-button {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+    margin: 10px 0;
+  }
 }
 
-.chart-container.no-data {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 350px;
-}
+/* Improve container responsiveness */
+@media screen and (max-width: 1024px) {
+  .GoalDashBoardContainer {
+    padding: 10px;
+  }
 
-.no-data-message {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  color: #666;
-  font-size: 16px;
-  text-align: center;
+  .leftPanel,
+  .rightPanel {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .total-spend {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .revenue-expense {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .total-spend {
+    flex: 1 1 calc(33.33% - 15px);
+    min-width: 150px;
+  }
+
+  .chart-container {
+    min-height: 250px;
+  }
+
 }
 </style>
