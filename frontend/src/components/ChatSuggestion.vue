@@ -1,6 +1,5 @@
 <template>
     <div class="suggestion-bar">
-        <div>Ask Finbud a question to get started. </div>
       <div class="suggestion-scroll">
         <div
           class="suggestion-item"
@@ -23,11 +22,14 @@ import { string } from 'mathjs';
     computed: {
       localizedSuggestions() {
         if (this.lan === 'vi') {
+            console.log("hi");
           return [
-            'Mua stock',
+            'Mua cổ phiếu',
             'Giao dịch giá chứng khoán',
             'REALESTATE',
-            'Phân tích ngân sách của tôi'
+            'Phân tích ngân sách của tôi',
+            'Xem 5 bất động sản khu vực',
+            'Xem 5 bất động sản khu vực'
           ]
         } else {
           return [

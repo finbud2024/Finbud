@@ -30,6 +30,7 @@ import MessageComponent from "./MessageComponent.vue";
 import UserInput from "./UserInput.vue";
 import TradingViewWidget from "./TradingViewWidget.vue";
 import ChatAgent from "./ChatAgent.vue";
+import ChatSuggestion from "./ChatSuggestion.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -49,6 +50,7 @@ export default {
 		UserInput,
 		TradingViewWidget,
 		ChatAgent,
+    ChatSuggestion
 	},
 	data() {
 		return {
@@ -1163,12 +1165,20 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 		async updateCurrentThread(threadID) {
 			try {
 				this.messages = [];
-				const botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat:
+				let botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat:
 "Ghi lại thu nhập 12.500.000 VNĐ", 
 "Phân tích ngân sách của tôi <3", 
 "Chi 70.000 VNĐ mua sáchhhhhh", 
 "Mua 5 cổ phiếu Apple cho tui nè", 
 "Giá cổ phiếu Tesla là bao nhiêu á Bud ơii"`;
+        if (this.$i18n.locale != 'vi') {
+                botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot:
+"Record income 12,500,000 VND", 
+"Analyze my budget <3", 
+"Spend 70,000 VND to buy bookshhhhh", 
+"Buy me 5 Apple shares", 
+"How much is Tesla stock, Bud"`;
+              }
 				this.addTypingResponse(botInstruction, false);
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
 				const chats = await axios.get(chatApi);
@@ -1237,7 +1247,7 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
     if (!this.isAuthenticated) {
       let botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
       if (this.$i18n.locale === 'vi') {
-        botInstruction = `Xin chào, Khách!\nVui lòng nhấp vào \"Hướng dẫn\" để biết hướng dẫn chi tiết về cách sử dụng chatbot.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
+        botInstruction = `Hế lô, bạn!\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
       }
       this.addTypingResponse(botInstruction, false);
     }
@@ -1436,7 +1446,6 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 
 .suggestion-wrapper {
   width: 90%;
-  margin-bottom: 80px;
 }
 
 </style>
