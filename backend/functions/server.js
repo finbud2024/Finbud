@@ -32,6 +32,8 @@ import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
 import articleRoute from "../Endpoints/articleRoute.js";
+import reportRoute from "../\/Endpoints/reportRoute.js";
+
 
 dotenv.config();
 
@@ -40,18 +42,16 @@ const app = express();
 
 const allowedOrigins = ["http://localhost:8888", "https://finbud.pro"];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
 const httpServer = createServer(app);
 // Create Socket.io instance with CORS configuration
@@ -162,6 +162,8 @@ router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
+router.use("/", reportRoute);
+
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
@@ -183,6 +185,8 @@ const handler = async (event, context) => {
 
   return serverless(app)(event, context);
 };
+app.use('/pdfs', express.static(path.join(process.cwd(), 'public/pdfs')));
+
 
 // Start the server for local development if not in production
 if (process.env.NODE_ENV !== "production") {

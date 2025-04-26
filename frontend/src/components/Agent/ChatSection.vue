@@ -193,25 +193,27 @@
           <span class="download-icon">↓</span> Export Analysis as PDF
         </button>
       </div>
-      <div class="summary-history-table" v-if="summaryHistory.length">
-        <h3>📁 Exported Summaries</h3>
-        <table>
-          <thead>
+      <div class="exported-reports">
+        <h2>Exported Reports</h2>
+        <table class="min-w-full border mt-2">
+          <thead class="bg-gray-200">
             <tr>
-              <th>📅 Date & Time</th>
-              <th>📄 File Name</th>
-              <th>🔗 Download Link</th>
+              <th class="px-4 py-2 text-left">Date & Time</th>
+              <th class="px-4 py-2 text-left">File Name</th>
+              <th class="px-4 py-2 text-left">Download</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(entry, index) in summaryHistory" :key="index">
-              <td>{{ entry.timestamp }}</td>
-              <td>{{ entry.fileName }}</td>
-              <td><a :href="entry.link" download :title="entry.fileName">Download</a></td>
+            <tr v-for="(file, index) in exportedReports" :key="index" class="border-t">
+              <td class="px-4 py-2">{{ file.timestamp }}</td>
+              <td class="px-4 py-2">{{ file.filename }}</td>
+              <td class="px-4 py-2">
+                <a :href="file.url" download :title="file.filename" class="text-blue-500 underline">Download</a>
+              </td>
             </tr>
           </tbody>
         </table>
-      </div>
+        </div>
     </div>
   </div>
 </template>
@@ -263,18 +265,31 @@ export default {
         extractedData: [],
         recommendations: ''
       },
-      summaryHistory: [],
       selectedFile: null,
       hasError: false,
-      errorMessage: ''
-
+      errorMessage: '',
+      exportedReports: []
     };
+  },
+  mounted() {
+    // ✅ Fetch exported reports when component is mounted
+    fetch('https://finbud.pro/api/reports')
+      .then(res => res.json())
+      .then(data => {
+        this.exportedReports = data;
+      })
+      .catch(err => {
+        console.error('Failed to fetch reports:', err);
+      });
   },
   methods: {
     // Delay method for workflow
     delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     },
+    processPDF() {
+    console.log("TODO: implement PDF logic");
+  },
 
     // Added the missing resetState method
     resetState() {
@@ -309,162 +324,202 @@ export default {
     },
     
     async startFinancialNewsAnalysis(ticker = 'AAPL', category = 'finance') {
-    this.resetState();
-    this.selectedFile = {
-      name: ticker ? `${ticker} News Analysis` : `${category.charAt(0).toUpperCase() + category.slice(1)} Market News`
-    };
-
-    try {
-      for await (const step of processFinancialNews(ticker, category, this.selectedModel)) {
-        // Make the current step visible
-        if (this.stepsVisible.hasOwnProperty(step.step)) {
-          this.stepsVisible[step.step] = true;
-        }
-
-        // Mark processing state
-        if (this.processingSteps.hasOwnProperty(step.step)) {
-          this.processingSteps[step.step] = step.status === 'started';
-          this.completedSteps[step.step] = step.status === 'completed';
-          this.processingMessages[step.step] = step.status === 'started'
-            ? `Processing ${step.step}...`
-            : '';
-        }
-
-        // Capture partial results
-        if (step.result) {
-          if (step.step === 'summarizing') {
-            this.analysisResults.summary = step.result;
-          } else if (step.step === 'executiveSummary') {
-            this.analysisResults.executiveSummary = step.result;
-          } else if (step.step === 'recommending') {
-            this.analysisResults.recommendations = step.result;
-          } else if (step.step === 'done') {
-            Object.assign(this.analysisResults, step.result);
-          }
-        }
-
-        // Handle error
-        if (step.status === 'failed') {
-          this.hasError = true;
-          this.errorMessage = step.message || 'An error occurred during analysis';
-          break;
-        }
-      }
-    } catch (err) {
-      this.hasError = true;
-      this.errorMessage = err.message || 'Unexpected error occurred.';
-    }
-  },
-    
-    processAnalysisResults(results) {
-      if (!results) {
-        this.hasError = true;
-        this.errorMessage = "No results received from analysis";
-        this.processingSteps.loading = false;
-        return;
-      }
+      this.resetState();
+      this.selectedFile = { name: ticker ? `${ticker} News Analysis` : `${category.charAt(0).toUpperCase() + category.slice(1)} Market News` };
       
-      this.processingMessages.loading = `Loaded: ${this.selectedFile.name}`;
-      this.completedSteps.loading = true;
-      this.processingSteps.loading = false;
-      
-      this.processingSteps.splitting = true;
-      this.processingMessages.splitting = "Processing financial data...";
-      setTimeout(() => {
-        this.completedSteps.splitting = true;
-        this.processingSteps.splitting = false;
-        
-        this.processingSteps.extraction = true;
-        this.processingMessages.extraction = "Extracting key financial indicators...";
-        setTimeout(() => {
-          this.completedSteps.extraction = true;
-          this.processingSteps.extraction = false;
-          
-          this.processingSteps.summary = true;
-          this.processingMessages.summary = "Generating comprehensive financial summary...";
-          setTimeout(() => {
-            this.analysisResults.summary = results.summary;
-            this.analysisResults.executiveSummary = results.executiveSummary;
-            this.completedSteps.summary = true;
+      try {
+      const generator = processFinancialNews(ticker, category, this.selectedModel);
+
+      for await (const result of generator) {
+        switch (result.step) {
+          case 'fetchingNews':
+            this.stepsVisible.loading = true;
+            this.processingSteps.loading = true;
+            this.processingMessages.loading = result.message;
+            break;
+
+          case 'splittingText':
+            this.stepsVisible.splitting = true;
+            this.processingSteps.loading = false;
+            this.completedSteps.loading = true;
+            this.processingSteps.splitting = true;
+            this.processingMessages.splitting = result.message;
+            break;
+
+          case 'extractingInsights':
+            this.processingSteps.splitting = false;
+            this.completedSteps.splitting = true;
+            this.stepsVisible.extraction = true;
+            this.processingSteps.extraction = true;
+            this.processingMessages.extraction = result.message;
+            break;
+
+          case 'generatingSummary':
+            this.processingSteps.extraction = false;
+            this.completedSteps.extraction = true;
+            this.stepsVisible.summary = true;
+            this.processingSteps.summary = true;
+            this.processingMessages.summary = result.message;
+            break;
+
+          case 'findingSimilar':
             this.processingSteps.summary = false;
-            
+            this.completedSteps.summary = true;
+            this.stepsVisible.recommendations = true;
             this.processingSteps.recommendations = true;
-            this.processingMessages.recommendations = "Finding related financial resources...";
+            this.processingMessages.recommendations = result.message;
+            break;
+
+          case 'executiveSummary':
+            this.processingSteps.recommendations = false;
+            this.completedSteps.recommendations = true;
+            break;
+
+          case 'done':
+            this.analysisResults.summary = result.summary;
+            this.analysisResults.executiveSummary = result.executiveSummary;
+            this.analysisResults.recommendations = result.recommendations;
+            break;
+
+          case 'error':
+            this.hasError = true;
+            this.errorMessage = "Failed to process: " + result.error;
+            return;
+        }
+
+        // Allow the DOM to update between steps
+        await this.$nextTick();
+      }
+    } catch (error) {
+      this.hasError = true;
+      this.errorMessage = "Failed to process financial news: " + error.message;
+      this.processingSteps.loading = false;
+    }
+    },
+      
+      processAnalysisResults(results) {
+        if (!results) {
+          this.hasError = true;
+          this.errorMessage = "No results received from analysis";
+          this.processingSteps.loading = false;
+          return;
+        }
+        
+        this.processingMessages.loading = `Loaded: ${this.selectedFile.name}`;
+        this.completedSteps.loading = true;
+        this.processingSteps.loading = false;
+        
+        this.processingSteps.splitting = true;
+        this.processingMessages.splitting = "Processing financial data...";
+        setTimeout(() => {
+          this.completedSteps.splitting = true;
+          this.processingSteps.splitting = false;
+          
+          this.processingSteps.extraction = true;
+          this.processingMessages.extraction = "Extracting key financial indicators...";
+          setTimeout(() => {
+            this.completedSteps.extraction = true;
+            this.processingSteps.extraction = false;
+            
+            this.processingSteps.summary = true;
+            this.processingMessages.summary = "Generating comprehensive financial summary...";
             setTimeout(() => {
-              this.analysisResults.recommendations = results.recommendations;
-              this.completedSteps.recommendations = true;
-              this.processingSteps.recommendations = false;
+              this.analysisResults.summary = results.summary;
+              this.analysisResults.executiveSummary = results.executiveSummary;
+              this.completedSteps.summary = true;
+              this.processingSteps.summary = false;
+              
+              this.processingSteps.recommendations = true;
+              this.processingMessages.recommendations = "Finding related financial resources...";
+              setTimeout(() => {
+                this.analysisResults.recommendations = results.recommendations;
+                this.completedSteps.recommendations = true;
+                this.processingSteps.recommendations = false;
+              }, 1000);
             }, 1000);
           }, 1000);
         }, 1000);
-      }, 1000);
-    },
-    
-    copyResultLink() {
-      const analysisText = `Financial Analysis Summary:\n\n${this.getTextContent(this.analysisResults.executiveSummary)}\n\n${this.getTextContent(this.analysisResults.summary)}\n\nRecommendations:\n${this.getTextContent(this.analysisResults.recommendations)}`;
+      },
       
-      navigator.clipboard.writeText(analysisText)
-        .then(() => {
-          alert('Analysis copied to clipboard!');
-        })
-        .catch(err => {
-          console.error('Failed to copy analysis: ', err);
-          alert('Failed to copy analysis to clipboard');
-        });
-    },
-    
-    getTextContent(html) {
-      if (!html) return '';
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      return div.textContent || div.innerText || '';
-    },
-    
-    shareOnTwitter() {
-      const tweetText = `Check out this financial analysis: ${this.getTextContent(this.analysisResults.executiveSummary).substring(0, 180)}...`;
-      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`, '_blank');
-    },
-    
-    shareOnFacebook() {
-      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
-    },
-    
-    shareOnLinkedin() {
-      const title = this.selectedFile?.name || 'Financial Analysis';
-      const summary = this.getTextContent(this.analysisResults.executiveSummary).substring(0, 250);
-      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(summary)}`, '_blank');
-    },
-    
-    exportAnalysisAsPDF() {
-      const timestamp = new Date().toLocaleString();
-      const element = document.getElementById('pdf-report-content');
-      const link = URL.createObjectURL(new Blob([], { type: 'application/pdf'}));
+      copyResultLink() {
+        const analysisText = `Financial Analysis Summary:\n\n${this.getTextContent(this.analysisResults.executiveSummary)}\n\n${this.getTextContent(this.analysisResults.summary)}\n\nRecommendations:\n${this.getTextContent(this.analysisResults.recommendations)}`;
+        
+        navigator.clipboard.writeText(analysisText)
+          .then(() => {
+            alert('Analysis copied to clipboard!');
+          })
+          .catch(err => {
+            console.error('Failed to copy analysis: ', err);
+            alert('Failed to copy analysis to clipboard');
+          });
+      },
+      
+      getTextContent(html) {
+        if (!html) return '';
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        return div.textContent || div.innerText || '';
+      },
+      
+      shareOnTwitter() {
+        const tweetText = `Check out this financial analysis: ${this.getTextContent(this.analysisResults.executiveSummary).substring(0, 180)}...`;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`, '_blank');
+      },
+      
+      shareOnFacebook() {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+      },
+      
+      shareOnLinkedin() {
+        const title = this.selectedFile?.name || 'Financial Analysis';
+        const summary = this.getTextContent(this.analysisResults.executiveSummary).substring(0, 250);
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(summary)}`, '_blank');
+      },
+      
+      exportAnalysisAsPDF() {
+      const element = document.getElementById('financial-report');
 
-      this.summaryHistory.push({
-        timestamp,
-        fileName,
-        link
-      });
+      const plainText = this.analysisResults.summary?.replace(/<[^>]+>/g, '') || '';
+      const keywords = plainText.split(' ').slice(0, 3).join('_');
+      const timestamp = new Date().toLocaleString();
+      const filename = `${keywords || 'Financial_Report'}_${Date.now()}.pdf`;  // ✅ define here
 
       const opt = {
-        margin:       0.5,
-        filename:     'financial-analysis-report.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        margin: 0.5,
+        filename, // ✅ now filename is defined
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
 
       html2pdf().set(opt).from(element).save().then(() => {
-        this.saveSummaryToTable();
-      });
+        fetch('/api/save-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename,                     // ✅ filename used again here
+            html: element.innerHTML,
+            timestamp
+          })
+            })
+            .then(res => res.json())
+            .then(data => {
+              this.exportedReports.unshift({
+                filename,
+                timestamp,
+                url: data.url
+              });
+            });
+          });
         }
-  }
-}
+      }
+    }
+
 </script>
 
 <style scoped>
 .chat-section {
-  background-color: #2196f3;
+  background-color: #000000;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 30px;
@@ -482,6 +537,7 @@ export default {
   color: #ffffff;
   margin: 0 0 8px 0;
 }
+
 
 .powered-by {
   font-size: 14px;
@@ -526,8 +582,8 @@ export default {
 }
 
 .ticker-button {
-  background-color: #0095ff;
-  color: #f8f9fa;
+  background-color: #ffffff;
+  color: #000000;
   box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
 
@@ -537,13 +593,13 @@ export default {
 }
 
 .market-button {
-  background-color: #0095ff;
-  color: #f8f9fa;
+  background-color: #ffffff;
+  color: #000000;
   box-shadow: 0 4px 12px rgba(58, 12, 163, 0.2);
 }
 
 .market-button:hover {
-  background-color: #2d0a7a;
+  background-color: #3a56d4;
   transform: translateY(-2px);
 }
 
@@ -679,7 +735,7 @@ export default {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: #000000;
 }
 
 .toggle-button {
@@ -803,46 +859,6 @@ export default {
   align-items: center;
   gap: 10px;
   box-shadow: 0 2px 8px rgba(185, 28, 28, 0.1);
-}
-
-.summary-history-table {
-  margin-top: 40px;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-}
-
-.summary-history-table h3 {
-  font-size: 18px;
-  margin-bottom: 12px;
-  color: #1f2937;
-}
-
-.summary-history-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.summary-history-table th, .summary-history-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.summary-history-table th {
-  background-color: #f3f4f6;
-  font-weight: 600;
-  color: #374151;
-}
-
-.summary-history-table td a {
-  color: #1e40af;
-  text-decoration: none;
-}
-
-.summary-history-table td a:hover {
-  text-decoration: underline;
 }
 
 .error-icon {
@@ -973,6 +989,15 @@ export default {
   color: white;
   border-color: #1e40af;
 }
+
+.exported-reports {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 30px;
+}
+
 
 
 @keyframes pulse {
