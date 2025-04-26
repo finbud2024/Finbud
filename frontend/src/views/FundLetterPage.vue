@@ -1,4 +1,6 @@
 <template>
+  <div class="fund-archive-background">
+
   <div class="fund-archive-container">
     <div class="fund-archive-content">
       <div class="fund-archive-header">
@@ -20,7 +22,7 @@
         </select>
 
         <select v-model="selectedQuarter" class="dropdown">
-          <option value="">All Quarters</option>
+          <option value="">All Quarters</option>      
           <option v-for="q in quarters" :key="q">{{ q }}</option>
         </select>
       </div>
@@ -50,32 +52,17 @@
       </div>
     </div>
   </div>
-  <div class="custom-flex">
-
-    <li class="content-card">
-      <!-- Overlay -->
-      <span class="overlay" aria-hidden="true"></span>
-  
-      <!-- Clickable Card Content -->
-      <a
-        class="card-link"
-        href="https://drive.google.com/file/d/1zAOSxXnO1T-TDLHP62eg72Cq7PRE5obl/view?usp=sharing"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <img
-          class="profile-image"
-          src="/assets/images/investors/compilations/buffett.webp"
-          alt="Everything Warren Buffett profile picture"
-        />
-        <h3 class="card-title">Everything Warren Buffett</h3>
-        <p class="card-description">
-          Partnership letters, Berkshire Hathaway letters, annual meeting transcripts, memos, and articles.
-        </p>
-      </a>
-    </li>
-    <!--Testing-->
-    <li v-for="(card, index) in investorCards" :key="index" class="content-card">
+  <div class="fund-archive-header" style="margin-bottom: 1rem;">
+    <h1>Greatest Investor Compilations</h1>
+  </div>
+  <div class="custom-flex" style="flex-wrap: wrap; gap: 0.5rem; margin-top: 0;">
+    
+    <li
+      v-for="card in investorCards"
+      :key="card.name"
+      class="content-card"
+      style="flex: 1 1 calc(33.333% - 0.5rem); max-width: 200px; height: 250px;"
+    >
       <!-- Overlay -->
       <span class="overlay" aria-hidden="true"></span>
       
@@ -88,17 +75,17 @@
       >
         <img
           class="profile-image"
-          :src="getImagePath(card.name)"
+          :src="require(`@/assets/investorCards/${card.img}`)"
           :alt="`${card.name} profile picture`"
         />
-        <h3 class="card-title">{{ card.name }}</h3>
+        <h3 class="card-title">{{card.name}}</h3>
         <p class="card-description">
           {{ card.description }}
         </p>
       </a>
     </li>
-
   </div>
+</div>
 </template>
 
 <script setup>
@@ -106,7 +93,8 @@ import { ref, computed } from 'vue'
 import rawData from '../../../backend/functions/fundLetterData.json'
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
-import investorData from '../../../backend/functions/investorCards.json'
+import investorData from '../../../backend/functions/investorCards.json';
+const investorCards = investorData;
 const selectedYear = ref('')
 const selectedQuarter = ref('')
 const searchTerm = ref('')
@@ -142,6 +130,10 @@ const filteredLetters = computed(() => {
 </script>
 
 <style scoped>
+.fund-archive-background {
+  margin-bottom: 10rem;
+  background-color: #111827;
+}
 .fund-archive-container {
   min-height: 100vh;
   background-color: #111827;
@@ -166,7 +158,7 @@ const filteredLetters = computed(() => {
 .fund-archive-header h1 {
   font-size: 2.25rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  color: white;
 }
 
 .fund-archive-header p {
@@ -174,14 +166,14 @@ const filteredLetters = computed(() => {
 }
 
 .search-input {
-  width: 100%;
+  width: 97%;
   padding: 12px 16px;
   border-radius: 8px;
   background-color: #1f2937;
   color: white;
   border: none;
-  outline: none;
   font-size: 1rem;
+
 }
 
 .search-input::placeholder {
@@ -285,6 +277,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 1rem; /* or use a CSS variable if you have one */
+  margin:10rem;
 }
 .content-card {
   position: relative;
@@ -338,8 +331,10 @@ a {
 .card-title {
   font-family: "Space Grotesk", sans-serif;
   font-weight: bold;
-  font-size: 1.125rem;
-  margin: 0.5rem 0 0;
+  font-size: 1rem;
+  margin: 1rem 0 0;
+  color:white;
+  text-align: center;
 }
 
 .card-description {
