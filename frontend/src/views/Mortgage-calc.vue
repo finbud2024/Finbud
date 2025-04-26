@@ -218,8 +218,7 @@ export default {
   methods: {
     switchLanguage(lang) {
       this.$i18n.locale = lang;
-      this.renderChart(); 
-      this.startBotAnimation();
+      this.renderChart();
     },
     // async fetchInterestRates() {
     //   try {
@@ -310,27 +309,44 @@ export default {
     async generateMortgageInsights() {
       const url = "https://openrouter.ai/api/v1/chat/completions";
       try {
-        // First get insights in English
-        const englishResponse = await axios.post(url, {
+        const systemPrompt = this.$i18n.locale === "vi" 
+          ? "Bạn là một chuyên gia tài chính đang phân tích khoản vay thế chấp. Hãy đưa ra lời khuyên bằng tiếng Việt."
+          : "You are a financial expert providing insights on mortgage payment.";
+
+        const userPrompt = this.$i18n.locale === "vi"
+          ? `Phân tích dữ liệu khoản vay thế chấp sau:
+            - Giá nhà: $${this.homePrice}
+            - Trả trước: $${this.downPayment} (${this.downPaymentPercentage}%)
+            - Thời hạn vay: ${this.loanTerm} năm
+            - Lãi suất: ${this.interestRate}%
+            - Thuế tài sản: $${this.propertyTax}/tháng
+            - Bảo hiểm nhà: $${this.homeInsurance}/tháng
+            - PMI: $${this.pmi}/tháng
+            - Phí HOA: $${this.hoaFees}/tháng
+            - Thanh toán hàng tháng: $${this.calculateMonthlyPayment}
+            Đưa ra 2-3 câu nhận xét. Giữ ngắn gọn và thực tế.`
+          : `Analyze this mortgage data:
+            - Home Price: $${this.homePrice}
+            - Down Payment: $${this.downPayment} (${this.downPaymentPercentage}%)
+            - Loan Term: ${this.loanTerm} years
+            - Interest Rate: ${this.interestRate}%
+            - Property Tax: $${this.propertyTax}/month
+            - Home Insurance: $${this.homeInsurance}/month
+            - PMI: $${this.pmi}/month
+            - HOA Fees: $${this.hoaFees}/month
+            - Monthly Payment: $${this.calculateMonthlyPayment}
+            Provide 2-3 sentences of insights. Keep it concise and actionable.`;
+
+        const response = await axios.post(url, {
           model: "deepseek/deepseek-chat:free",
           messages: [
             {
               role: "system",
-              content: "You are a financial expert providing insights on mortgage payment."
+              content: systemPrompt
             },
             {
               role: "user",
-              content: `Analyze this mortgage data:
-              - Home Price: $${this.homePrice}
-              - Down Payment: $${this.downPayment} (${this.downPaymentPercentage}%)
-              - Loan Term: ${this.loanTerm} years
-              - Interest Rate: ${this.interestRate}%
-              - Property Tax: $${this.propertyTax}/month
-              - Home Insurance: $${this.homeInsurance}/month
-              - PMI: $${this.pmi}/month
-              - HOA Fees: $${this.hoaFees}/month
-              - Monthly Payment: $${this.calculateMonthlyPayment}
-              Provide 2-3 sentences of insights. Keep it concise and actionable.`
+              content: userPrompt
             }
           ]
         }, {
@@ -341,35 +357,7 @@ export default {
           }
         });
 
-        const englishInsights = englishResponse.data.choices[0].message.content;
-
-        // If language is Vietnamese, translate the insights
-        // if (this.$i18n.locale === "vi") {
-        //   const translationResponse = await axios.post(url, {
-        //     model: "deepseek/deepseek-chat:free",
-        //     messages: [
-        //       {
-        //         role: "system",
-        //         content: "Bạn là một chuyên gia dịch thuật. Hãy dịch văn bản sau từ tiếng Anh sang tiếng Việt một cách chính xác và tự nhiên, giữ nguyên ý nghĩa tài chính."
-        //       },
-        //       {
-        //         role: "user",
-        //         content: englishInsights
-        //       }
-        //     ]
-        //   }, {
-        //     headers: {
-        //       'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-        //       "Content-Type": "application/json",
-        //       "Accept": "application/json"
-        //     }
-        //   });
-
-        //   return translationResponse.data.choices[0].message.content;
-        // }
-
-        // Return English by default
-        return englishInsights;
+        return response.data.choices[0].message.content;
       } catch (error) {
         console.error("Error generating mortgage insights:", error);
         return this.$i18n.locale === "vi" 
@@ -500,7 +488,18 @@ export default {
       };
       
       this._chart.update();
-    }
+    },
+
+    // Add new method for updating bot message
+    async updateBotMessage() {
+      this.isTyping = true;
+      const insights = await this.generateMortgageInsights();
+      this.botMessage = insights;
+      this.isTyping = false;
+      this.words = this.botMessage.split(/( |\n)/g).filter(word => word !== "");
+      this.currentWordIndex = this.words.length; // Set to end to show full message
+      this.typedContent = this.botMessage.replace(/\n/g, '<br>');
+    },
   },
   watch: {
     homePrice() {
@@ -535,15 +534,24 @@ export default {
       this.renderChart();
       this.startBotAnimation(); // Trigger chatbot on HOA fees change
     },
-    '$i18n.locale'() {
-      this.updateChartLabels();
+    '$i18n.locale': {
+      immediate: true,
+      async handler() {
+        this.updateChartLabels();
+        // Update bot message if it's visible
+        if (this.showBot && this.showMessage) {
+          await this.updateBotMessage();
+        } else {
+          // If bot is not visible, trigger a new animation
+          await this.startBotAnimation();
+        }
+      }
     }
   },
 
 
   mounted() {
     this.renderChart();
-    this.startBotAnimation();
   }
 };
 </script>
