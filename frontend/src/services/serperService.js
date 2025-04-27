@@ -90,43 +90,100 @@ export async function processAndVectorizeContent(contents, query) {
   return allVectors;
 }
 
-export async function getVideos(message) {
-  const data = JSON.stringify({ q: message });
+// export async function getVideos(message) {
+//   const data = JSON.stringify({ q: message });
+//   try {
+//     // axios post request to the proxy endpoint
+//     const response = await axios.post(`${DEPLOY_URL}/proxy`, {
+//       method: 'POST',
+//       url: 'https://google.serper.dev/videos',
+//       headers: {
+//         'X-API-KEY': SERPER_API_KEY,
+//         'Content-Type': 'application/json',
+//       },
+//       data: data,
+//     });
+//     if (response.status === 403) {
+//       console.error("Forbidden: Check your API key and permissions.");
+//       return [];
+//     }
+//     const responseData = response.data;
+//     // Filter out videos without images
+//     const validLinks = await Promise.all(responseData.videos.map(async video => {
+//       const imageUrl = video.imageUrl;
+//       if(!imageUrl) return null;
+//       // Check if the image URL is valid
+//       const imageResponse = await axios.post(`${DEPLOY_URL}/proxy`, {
+//         method: 'HEAD',
+//         url: imageUrl,
+//       });
+//       if (imageResponse.status === 200) {
+//         return { title: video.title, imageUrl, link: video.link };
+//       }
+//       return null;
+//     }));
+//     console.log('validLinks:', validLinks);
+//     return validLinks.filter(link => link !== null).slice(0, 4);
+//   } catch (error) {
+//     console.error('Error fetching videos:', error);
+//     throw error;
+//   }
+// }
+
+export async function getVideos(message, count = 1) {
+  // 1) build your POST body with both q & num
+  const body = JSON.stringify({ q: message, num: count });
+
   try {
-    // axios post request to the proxy endpoint
+    // 2) hit your proxy exactly as before
     const response = await axios.post(`${DEPLOY_URL}/proxy`, {
       method: 'POST',
-      url: 'https://google.serper.dev/videos',
-      headers: {
-        'X-API-KEY': SERPER_API_KEY,
-        'Content-Type': 'application/json',
+      url:    'https://google.serper.dev/videos',
+      headers:{
+        'X-API-KEY':      SERPER_API_KEY,
+        'Content-Type':   'application/json',
       },
-      data: data,
+      data: body,
     });
+
     if (response.status === 403) {
       console.error("Forbidden: Check your API key and permissions.");
       return [];
     }
-    const responseData = response.data;
-    // Filter out videos without images
-    const validLinks = await Promise.all(responseData.videos.map(async video => {
-      const imageUrl = video.imageUrl;
-      if(!imageUrl) return null;
-      // Check if the image URL is valid
-      const imageResponse = await axios.post(`${DEPLOY_URL}/proxy`, {
-        method: 'HEAD',
-        url: imageUrl,
-      });
-      if (imageResponse.status === 200) {
-        return { title: video.title, imageUrl, link: video.link };
-      }
-      return null;
-    }));
-    console.log('validLinks:', validLinks);
-    return validLinks.filter(link => link !== null).slice(0, 4);
-  } catch (error) {
+
+    const apiVideos = Array.isArray(response.data.videos)
+      ? response.data.videos.slice(0, count)    // <-- only look at the first `count` items
+      : [];
+
+    // 3) head-check only those first `count` videos
+    const validLinks = await Promise.all(
+      apiVideos.map(async (video) => {
+        if (!video.imageUrl) return null;
+        try {
+          const headRes = await axios.post(`${DEPLOY_URL}/proxy`, {
+            method: 'HEAD',
+            url:    video.imageUrl,
+          });
+          if (headRes.status === 200) {
+            return {
+              title:    video.title,
+              imageUrl: video.imageUrl,
+              link:     video.link,
+            };
+          }
+        } catch {
+          // network or 404 on image, skip it
+        }
+        return null;
+      })
+    );
+
+    // 4) filter out any nulls
+    return validLinks.filter((l) => l !== null);
+  }
+  catch (error) {
     console.error('Error fetching videos:', error);
-    throw error;
+    return [];  
   }
 }
 

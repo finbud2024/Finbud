@@ -2,9 +2,9 @@
   <div class="section-container">
     <QuizRewards v-if="showingReward" :reward-amount="rewardAmount" @close="showingReward = false" />
 
-    <search-input v-model="searchQuery" @search="createRoadmap" :placeholder="$t('searchPlaceholder')"
-      data-aos="flip-right" />
-
+    <search-input v-model="searchQuery" @search="createRoadmap" :placeholder="$t('searchPlaceholder')" />
+    <!-- data-aos="flip-right" -->
+     
     <div class="goal-form-card" data-aos="zoom-in-up">
       <h1 class="title">{{ $t('goalTitle') }}</h1>
 
