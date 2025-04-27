@@ -3,11 +3,12 @@
 
 		<div class="user-input">
 			<!-- File label -->
-			<div v-if="selectedFile" class="file-label">
+			<div v-if="selectedFile" class="file-label left-align">
 				<span>{{ selectedFile.name }}</span>
 				<button @click="removeFile">×</button>
 			</div>
 			<div class="input-container">
+				
 				<!-- Text Input Field -->
 				<input
 					type="text"
@@ -348,6 +349,7 @@ export default {
 
 .file-label {
 	display: flex;
+	align-items: center;
 	background-color: var(--card-bg);
 	color: var(--text-primary);
 	border: 1px solid var(--border-color);
@@ -355,16 +357,13 @@ export default {
 	padding: 6px 12px;
 	margin-bottom: 8px;
 	font-size: 0.9rem;
-	max-width: 60%;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	max-width: 100%; /* Allow full width */
 }
 
 .file-label span {
 	overflow: hidden;
-	white-space: nowrap;
 	text-overflow: ellipsis;
-	max-width: 200px;
+	max-width: calc(100% - 30px);
 }
 
 .file-label button {
@@ -395,6 +394,13 @@ export default {
 	width: 100%;
 	position: relative;
 	margin-bottom: 0;
+	align-items: flex-start;
+}
+
+.left-align {
+  align-self: flex-start; /* Force left alignment */
+  margin-left: 0; /* Remove any default margin */
+  margin-right: auto; /* Push to left */
 }
 
 .user-input input[type="text"] {
