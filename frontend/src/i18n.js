@@ -1000,8 +1000,6 @@ const messages = {
     greatestInvestors: "Tuyển Tập Nhà Đầu Tư Vĩ Đại",
     learnFromMasters: "Học hỏi từ các bậc thầy đầu tư giá trị",
   }
-  //Fund Letter
-
 };
 
 const i18n = createI18n({
