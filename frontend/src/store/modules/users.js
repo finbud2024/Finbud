@@ -7,6 +7,7 @@ export default {
     userData: null,
     isLoading: true,
     error: null,
+    _promise: null,
   },
   mutations: {
     setLoading(state, isLoading) {
@@ -25,30 +26,53 @@ export default {
     },
   },
   actions: {
-    async fetchCurrentUser({ commit }) {
+    async fetchCurrentUser({ state, commit }) {
+      if (state.userData)  return state.userData;    // already cached
+      if (state._promise)  return state._promise;    // request in flight
       commit("setLoading", true);
       commit("setError", null);
+      
+      state._promise = axios
+        .get(`${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`, {
+          withCredentials: true,
+        })
+        .then(({ data }) => {
+          data.isAuthenticated && data.user
+            ? commit('setUserData', data.user)
+            : commit('clearUserData');
+          return state.userData;
+        })
+        .catch(err => {
+          commit('setError', err.message);
+          commit('clearUserData');
+          throw err;
+        })
+        .finally(() => {
+          commit('setLoading', false);
+          state._promise = null;      // reset for the next page load
+        });
 
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`,
-          {
-            withCredentials: true,
-          }
-        );
+      return state._promise;
+      // try {
+      //   const response = await axios.get(
+      //     `${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`,
+      //     {
+      //       withCredentials: true,
+      //     }
+      //   );
 
-        if (response.data.isAuthenticated && response.data.user) {
-          commit("setUserData", response.data.user);
-        } else {
-          commit("clearUserData");
-        }
-      } catch (error) {
-        console.error("Error fetching current user:", error);
-        commit("setError", error.message || "Failed to fetch user data");
-        commit("clearUserData");
-      } finally {
-        commit("setLoading", false);
-      }
+      //   if (response.data.isAuthenticated && response.data.user) {
+      //     commit("setUserData", response.data.user);
+      //   } else {
+      //     commit("clearUserData");
+      //   }
+      // } catch (error) {
+      //   console.error("Error fetching current user:", error);
+      //   commit("setError", error.message || "Failed to fetch user data");
+      //   commit("clearUserData");
+      // } finally {
+      //   commit("setLoading", false);
+      // }
     },
     async login({ commit, dispatch }, userData) {
       commit("setUserData", userData);
