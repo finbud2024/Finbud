@@ -485,6 +485,12 @@ const messages = {
     profitEarnedLabel: "Profit Earned",
     zillowNote: "Interest rate provided via Zillow.",
     yearNumber: "Year {number}",
+
+    // Investment Calculator Bot Messages
+    investmentAnalysis: "Investment Analysis:",
+    initialAmount: "Initial:",
+    rateAmount: "Rate:",
+    finalAmountBot: "Final:",
   },
   vi: {
 
@@ -966,7 +972,13 @@ const messages = {
     additionalContributionLabel: "Đóng góp bổ sung",
     profitEarnedLabel: "Lợi nhuận thu được",
     zillowNote: "Lãi suất được cung cấp bởi Zillow.",
-    yearNumber: "Năm {number}"
+    yearNumber: "Năm {number}",
+
+    // Investment Calculator Bot Messages
+    investmentAnalysis: "Phân tích đầu tư:",
+    initialAmount: "Ban đầu:",
+    rateAmount: "Lãi suất:",
+    finalAmountBot: "Cuối cùng:",
   }
 };
 
