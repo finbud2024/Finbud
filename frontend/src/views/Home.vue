@@ -229,7 +229,11 @@ export default {
     });
 
     const toggleExpansion = (index) => {
-      expandedItem.value = expandedItem.value === index ? null : index;
+      if (expandedItem.value === index) {
+        expandedItem.value = null;
+      } else {
+        expandedItem.value = index;
+      }
     };
 
     return {
