@@ -37,8 +37,11 @@ const icons = [
 ];
 library.add(...icons); // Use the spread operator to add the icons
 library.add(faBell);
+
 // Create the application
 const app = createApp(App);
+
+
 
 app.use(VueGoogleMaps, {
   load: {
