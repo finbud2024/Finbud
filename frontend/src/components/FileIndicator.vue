@@ -1,6 +1,6 @@
 <template>
-    <div class="file-indicator-wrapper">
-        <div class="file-indicator">
+  <div class="file-indicator-wrapper">
+    <div class="file-indicator">
       <!-- Show image preview if file is an image -->
       <div v-if="isImage" class="image-preview">
         <img :src="fileUrl" alt="Uploaded image" />
@@ -14,62 +14,56 @@
         </div>
       </div>
     </div>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'FileIndicator',
-    props: {
-      file: {
-        type: Object,
-        required: true
-      }
-    },
+  </div>
+</template>
 
-    methods: {
-      downloadFile(file) {
-        const link = document.createElement('a');
-        link.href = this.fileUrl;
-        link.download = file.name;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    },
-
-    computed: {
-      fileUrl() {
-        // If your backend returns a path, adjust accordingly
-        return typeof this.file === 'string' ? this.file : URL.createObjectURL(this.file);
-      },
-      isImage() {
-        const name = this.file.name || this.file;
-        return /\.(png|jpe?g|gif|bmp|webp)$/i.test(name);
-      }
+<script>
+export default {
+  name: 'FileIndicator',
+  props: {
+    file: {
+      type: Object,
+      required: true
     }
-  };
-  </script>
-  
-  <style scoped>
+  },
+  methods: {
+    downloadFile(file) {
+      const link = document.createElement('a');
+      link.href = this.fileUrl;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  },
+  computed: {
+    fileUrl() {
+      return typeof this.file === 'string' ? this.file : URL.createObjectURL(this.file);
+    },
+    isImage() {
+      const name = this.file.name || this.file;
+      return /\.(png|jpe?g|gif|bmp|webp)$/i.test(name);
+    }
+  }
+};
+</script>
+
+<style scoped>
 .file-indicator-wrapper {
   display: flex;
   margin-right: 100px;
-  justify-content: flex-end; /* Force right alignment */
+  justify-content: flex-end;
   margin-bottom: 8px;
   width: 100%;
-  /* position: fixed;
-	z-index: 99999; */
-	right: calc(3.125vw + 60px);
+  right: calc(3.125vw + 60px);
 }
 
 .file-indicator {
-  max-width: 80%; /* Prevent too wide files */
+  max-width: 80%;
   padding: 8px 12px;
-  background-color: #e6f0ff;
+  background-color: #f8f4f4;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  border: 1px solid #d0e3ff;
 }
 
 .image-preview img {
@@ -86,45 +80,38 @@
 .file-info a {
   font-size: 0.8rem;
   text-decoration: underline;
-  color: #007bff;
+  color: #f8f4f4;
 }
 
 .pdf-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  width: 200px;
-  text-align: center;
 }
 
 .pdf-display:hover {
-  background-color: #f5f5f5;
-  border-color: #bdbdbd;
+  background-color: #fffcfc;
 }
 
+/* Modified styles for inline icon and filename */
 .pdf-preview {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 8px;
+  gap: 8px;
+  max-width: 100%;
 }
 
 .pdf-icon {
-  width: 38px;
-  height: 38px;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .pdf-name {
   font-size: 14px;
-  word-break: break-word;
-  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  text-align: left;
 }
-
-.pdf-download-hint {
-  color: #666;
-  margin-top: 4px;
-}
-  </style>
-  
+</style>
