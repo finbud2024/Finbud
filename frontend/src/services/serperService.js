@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { load } from "cheerio";
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { VectorStore } from '@langchain/core/vectorstores';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
