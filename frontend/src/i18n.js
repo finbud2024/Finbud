@@ -485,6 +485,19 @@ const messages = {
     profitEarnedLabel: "Profit Earned",
     zillowNote: "Interest rate provided via Zillow.",
     yearNumber: "Year {number}",
+    // FundLetterPage Component
+    fundLetters: "Fund Letters",
+    fundLettersArchive: "Fund Letters Archive",
+    curatedListSubtitle: "Curated List of Quarterly Hedge Fund Letters",
+    searchPlaceholder: "Search by name of fund",
+    allYears: "All Years",
+    allQuarters: "All Quarters",
+    fundName: "Fund Name",
+    date: "Date",
+    noResults: "No letters found for selected filters.",
+    resetFilters: "Reset Filters",
+    greatestInvestors: "Greatest Investor Compilations",
+    learnFromMasters: "Learn from the masters of value investing",
   },
   vi: {
 
@@ -966,8 +979,23 @@ const messages = {
     additionalContributionLabel: "Đóng góp bổ sung",
     profitEarnedLabel: "Lợi nhuận thu được",
     zillowNote: "Lãi suất được cung cấp bởi Zillow.",
-    yearNumber: "Năm {number}"
+    yearNumber: "Năm {number}",
+    // Fund Letter
+    fundLetters: "Thư Quỹ",
+    fundLettersArchive: "Lưu Trữ Thư Quỹ",
+    curatedListSubtitle: "Danh sách các thư quỹ hàng quý được chọn lọc",
+    searchPlaceholder: "Tìm kiếm theo tên quỹ",
+    allYears: "Tất cả các năm",
+    allQuarters: "Tất cả các quý",
+    fundName: "Tên Quỹ",
+    date: "Ngày",
+    noResults: "Không tìm thấy thư nào với bộ lọc đã chọn.",
+    resetFilters: "Đặt lại bộ lọc",
+    greatestInvestors: "Tuyển Tập Nhà Đầu Tư Vĩ Đại",
+    learnFromMasters: "Học hỏi từ các bậc thầy đầu tư giá trị",
   }
+  //Fund Letter
+
 };
 
 const i18n = createI18n({
