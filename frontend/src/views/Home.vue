@@ -147,14 +147,13 @@
       </header>
       <div class="question-container">
         <template v-if="faqsData && faqsData.length > 0">
-          <div v-for="(item, index) in faqsData" :key="index" class="faq-item animate"
-            :class="{ 'expanded': expandedItem === index }">
+          <div v-for="(item, index) in faqsData" :key="index" class="faq-item" :class="{ 'expanded': expandedItem === index }">
             <div class="question" @click="toggleExpansion(index)">
               <p>{{ item.question }}</p>
               <span class="expand-icon">{{ expandedItem === index ? '−' : '+' }}</span>
             </div>
             <transition name="fade">
-              <div class="answer" v-if="expandedItem === index">
+              <div class="answer" v-show="expandedItem === index">
                 <p>{{ item.answer }}</p>
               </div>
             </transition>
@@ -230,7 +229,11 @@ export default {
     });
 
     const toggleExpansion = (index) => {
-      expandedItem.value = expandedItem.value === index ? null : index;
+      if (expandedItem.value === index) {
+        expandedItem.value = null;
+      } else {
+        expandedItem.value = index;
+      }
     };
 
     return {
@@ -723,7 +726,10 @@ body.dark-mode .feature-icon {
 
 /* question section*/
 .question-section {
-  padding: 4rem 10%;
+  padding: 10% 10%;  /* Match other sections padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   width: 100%;
@@ -732,18 +738,21 @@ body.dark-mode .feature-icon {
 .question-section header {
   text-align: center;
   margin-bottom: 3rem;
+  padding: 0;  /* Remove extra padding */
 }
 
 .question-section header h1 {
   font-size: 2.5rem;
   font-weight: 600;
   color: var(--text-primary);
+  margin: 0;  /* Remove default margin */
 }
 
 .question-container {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
+  padding-bottom: 50px;  /* Add padding to match other sections */
 }
 
 .faq-item {
@@ -764,12 +773,19 @@ body.dark-mode .feature-icon {
   cursor: pointer;
   font-weight: 500;
   width: 100%;
+  background-color: var(--bg-secondary);
+  transition: background-color 0.3s ease;
+}
+
+.question:hover {
+  background-color: var(--bg-hover);
 }
 
 .question p {
   margin: 0;
   font-size: 1.1rem;
   flex: 1;
+  color: var(--text-primary);
 }
 
 .expand-icon {
@@ -780,7 +796,7 @@ body.dark-mode .feature-icon {
   flex-shrink: 0;
 }
 
-.expanded .expand-icon {
+.faq-item.expanded .expand-icon {
   transform: rotate(180deg);
 }
 
@@ -796,17 +812,21 @@ body.dark-mode .feature-icon {
 .answer p {
   margin: 0;
   font-size: 1rem;
+  white-space: normal;  /* Match text wrapping with other sections */
+  word-wrap: break-word;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  max-height: 1000px;
+  overflow: hidden;
 }
 
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  max-height: 0;
 }
 
 .no-faqs {
@@ -1126,4 +1146,36 @@ img {
   }
 }
 
+/* Add responsive styles for FAQ section to match other sections */
+@media (max-width: 992px) {
+  .question-section {
+    padding: 10% 5%;
+  }
+
+  .question-section header h1 {
+    font-size: 2rem;
+  }
+
+  .question p {
+    font-size: 1rem;
+  }
+
+  .answer p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .question-section {
+    padding: 10% 5%;
+  }
+
+  .question p {
+    font-size: 0.95rem;
+  }
+
+  .answer p {
+    font-size: 0.9rem;
+  }
+}
 </style>

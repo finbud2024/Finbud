@@ -313,9 +313,11 @@ export default {
     },
   },
   async mounted() {
-    // Set initial language from localStorage or default to 'en'
-    const savedLang = localStorage.getItem('language') || 'vi';
-    this.$i18n.locale = savedLang;
+    // Set initial language from localStorage only if it exists
+    const savedLang = localStorage.getItem('language');
+    if (savedLang) {
+      this.$i18n.locale = savedLang;
+    }
 
     await this.$store.dispatch("users/fetchCurrentUser");
     const storedDarkMode = localStorage.getItem("darkMode");

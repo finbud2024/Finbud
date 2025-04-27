@@ -498,6 +498,12 @@ const messages = {
     resetFilters: "Reset Filters",
     greatestInvestors: "Greatest Investor Compilations",
     learnFromMasters: "Learn from the masters of value investing",
+
+    // Investment Calculator Bot Messages
+    investmentAnalysis: "Investment Analysis:",
+    initialAmount: "Initial:",
+    rateAmount: "Rate:",
+    finalAmountBot: "Final:",
   },
   vi: {
 

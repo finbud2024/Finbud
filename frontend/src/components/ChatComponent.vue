@@ -2,7 +2,8 @@
 	<div class="chat-container">
 		<ChatFrame class="chat-frame-content">
 			<div v-for="(message, index) in messages" :key="index">
-				<MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
+				<FileIndicator v-if="message.containFile" :file="message.file" />
+        		<MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
 					:is-thinking="message.isThinking" :htmlContent="message.htmlContent"
 					:username="message.isUser ? displayName : 'FinBud Bot'"
 					:avatar-src="message.isUser ? userAvatar : botAvatar"
@@ -17,7 +18,8 @@
 			<ChatAgent ref="chatAgent" v-if="showAgentWorkflow" @workflow-complete="handleWorkflowComplete"
 				:scroll-to-bottom="scrollChatFrameToBottom" />
 		</ChatFrame>
-		<UserInput ref="userInput" @send-message="handleUserSubmit" @agent-mode="handleAgentMode" />
+		<ChatSuggestion v-if="showSuggestion" :lan="this.$i18n.locale" class="suggestion-wrapper" @suggestion-selected="handleSuggestion"/>
+    <UserInput ref="userInput" @send-message="handleUserSubmit" @agent-mode="handleAgentMode" />
 	</div>
 </template>
 
@@ -28,6 +30,8 @@ import MessageComponent from "./MessageComponent.vue";
 import UserInput from "./UserInput.vue";
 import TradingViewWidget from "./TradingViewWidget.vue";
 import ChatAgent from "./ChatAgent.vue";
+import ChatSuggestion from "./ChatSuggestion.vue";
+import FileIndicator from "./FileIndicator.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -38,6 +42,14 @@ import {
 } from "@/services/serperService.js";
 import api from "@/utils/api";
 import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+import * as pdfjsLib from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
+
+const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
+const geminiAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
 export default {
 	name: "ChatComponent",
 	props: {},
@@ -47,6 +59,8 @@ export default {
 		UserInput,
 		TradingViewWidget,
 		ChatAgent,
+		FileIndicator,
+    ChatSuggestion
 	},
 	data() {
 		return {
@@ -75,6 +89,9 @@ export default {
 				this.$store.getters["users/userProfileImage"] ||
 				require("@/assets/anonymous.png")
 			);
+		},
+		showSuggestion() {
+			return this.messages.length === 1;
 		},
 	},
 	watch: {
@@ -925,6 +942,16 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			}
 		},
 
+		async handleSuggestion(suggestion) {
+			this.messages.push({
+				text: suggestion,
+				isUser: true,
+				timestamp: new Date().toLocaleTimeString(),
+			});			
+			this.sendMessage(suggestion);
+			
+		},
+
 		// --------------------------- READ FILE -----------------------------------------------------
 		async handleFileUpload(newMessage, file) {
 			this.isLoading = true;
@@ -933,23 +960,38 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				isUser: true,
 				typing: true,
 				timestamp: new Date().toLocaleTimeString(),
+				containFile: true,
+				file: file,
 			});
 			try {
+				let result = null;
 				if (file.type.startsWith("image/")) {
-					const result = await this.analyzeImage(file, newMessage);
-					this.messages.push({
-						text: result,
-						isUser: false,
-						timestamp: new Date().toLocaleTimeString(),
-					});
+					try {
+						result = await this.analyzeImageOpenAI(file, newMessage);
+					}
+					catch (err) {
+						console.error("OpenAI failed to anylyze image, switching to Gemini:", err);
+						result = await this.analyzeImageGemini(file, newMessage);
+					}
 				} else if (file.type === "application/pdf") {
-					const result = await this.analyzePDF(file, newMessage);
-					this.messages.push({
+					try {
+						result = await this.analyzePDFOpenAI(file, newMessage);
+						new Promise((_, reject) => 
+							setTimeout(() => reject(new Error("OpenAI timeout")), 3000)
+						);	
+					}
+					catch (err) {
+						console.error("OpenAI failed to anylyze pdf, switching to Gemini:", err);
+						result = await this.analyzePDFGemini(file, newMessage);
+					}
+				} else {
+					throw new Error("Unsupported file type");
+				}
+				this.messages.push({
 						text: result,
 						isUser: false,
 						timestamp: new Date().toLocaleTimeString(),
 					});
-				}
 			} catch (err) {
 				console.error("Error processing file:", err);
 				this.addTypingResponse("Failed to process file", false);
@@ -958,12 +1000,17 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			this.isLoading = false;
 		},
 
-		async analyzeImage(file, newMessage) {
+		async analyzeImageOpenAI(file, newMessage) {
 			const base64Image = await this.readFileAsBase64(file);
 			const response = await this.openai.chat.completions.create({
 				model: "gpt-4o",
 				messages: [
 					{
+            role: "system",
+            content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+            Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
+            Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
+            Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
 						role: "user",
 						content: [
 							{ type: "text", text: newMessage },
@@ -981,7 +1028,36 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			return response.choices[0].message.content;
 		},
 
-		async analyzePDF(file, newMessage) {
+		async analyzeImageGemini(file, newMessage) {
+			const base64Image = await this.readFileAsBase64(file);
+			const model = geminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+			const systemPrompt = `
+Bạn là FinBud — trợ lý tài chính. 
+**QUY TẮC**:
+1. Nếu người dùng hỏi bằng tiếng Việt → trả lời bằng tiếng Việt.
+2. Nếu hỏi bằng ngôn ngữ khác → trả lời bằng ngôn ngữ đó.
+3. Luôn thân thiện, vui vẻ! 😊
+`;
+			const result = await model.generateContent({
+				contents: [{
+					role: "user",
+					parts: [
+					{ text: systemPrompt },
+					{ text: "Câu hỏi của người dùng: " + newMessage },
+					{
+						inlineData: {
+						mimeType: file.type,
+						data: base64Image,
+						},
+					},
+					],
+				
+				}],	
+			})
+			return result.response.candidates[0].content.parts[0].text;
+		},
+
+		async analyzePDFOpenAI(file, newMessage) {
 			const uploadedFile = await this.openai.files.create({
 				file,
 				purpose: "user_data",
@@ -990,25 +1066,75 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			const response = await this.openai.responses.create({
 				model: "gpt-4o",
 				input: [
+				{
+					role: "system",
+					content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+					Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
+					Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
+					Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
+					role: "user",
+					content: [
 					{
-						role: "user",
-						content: [
-							{
-								type: "input_file",
-								file_id: uploadedFile.id,
-							},
-							{
-								type: "input_text",
-								text: newMessage,
-							},
-						],
+						type: "input_file",
+						file_id: uploadedFile.id
 					},
+					{
+						type: "input_text",
+						text: newMessage,
+					},
+					],
+				},
 				],
 			});
 
 			// Clean up
 			await this.openai.files.del(uploadedFile.id);
 			return response.output_text;
+		},
+
+		async analyzePDFGemini(file, newMessage) {
+			const textFromPDF = await this.extractTextFromPDF(file);
+			const model = geminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+			const systemPrompt = `
+Bạn là FinBud — trợ lý tài chính. 
+**QUY TẮC**:
+1. Nếu người dùng hỏi bằng tiếng Việt → trả lời bằng tiếng Việt.
+2. Nếu hỏi bằng ngôn ngữ khác → trả lời bằng ngôn ngữ đó.
+3. Luôn thân thiện, vui vẻ! 😊
+`;
+
+			const result = await model.generateContent({
+				contents: [{
+					role: "user",
+					parts: [
+					{ text: systemPrompt },
+					{ text: `${newMessage}\n${textFromPDF}` },
+					],
+				
+				}],	
+			});
+
+			return result.response.candidates[0].content.parts[0].text;
+		},
+
+		async extractTextFromPDF(file) {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = async (e) => {
+				const typedarray = new Uint8Array(e.target.result);
+				const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+				let textContent = "";
+				for (let i = 1; i <= pdf.numPages; i++) {
+					const page = await pdf.getPage(i);
+					const content = await page.getTextContent();
+					const pageText = content.items.map(item => item.str).join(" ");
+					textContent += pageText + "\n";
+				}
+				resolve(textContent);
+				};
+				reader.onerror = reject;
+				reader.readAsArrayBuffer(file);
+			});
 		},
 
 		readFileAsBase64(file) {
@@ -1187,12 +1313,20 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 		async updateCurrentThread(threadID) {
 			try {
 				this.messages = [];
-				const botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat:
+				let botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat:
 "Ghi lại thu nhập 12.500.000 VNĐ", 
 "Phân tích ngân sách của tôi <3", 
 "Chi 70.000 VNĐ mua sáchhhhhh", 
 "Mua 5 cổ phiếu Apple cho tui nè", 
 "Giá cổ phiếu Tesla là bao nhiêu á Bud ơii"`;
+        if (this.$i18n.locale != 'vi') {
+                botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot:
+"Record income 12,500,000 VND", 
+"Analyze my budget <3", 
+"Spend 70,000 VND to buy bookshhhhh", 
+"Buy me 5 Apple shares", 
+"How much is Tesla stock, Bud"`;
+              }
 				this.addTypingResponse(botInstruction, false);
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
 				const chats = await axios.get(chatApi);
@@ -1311,11 +1445,14 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 			this.$router.replace({ query: null }); // xoá query để reload ko gửi lại
 		}
 
-		if (!this.isAuthenticated) {
-			const botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
-			this.addTypingResponse(botInstruction, false);
-		}
-	},
+    if (!this.isAuthenticated) {
+      let botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+      if (this.$i18n.locale === 'vi') {
+        botInstruction = `Hế lô, bạn!\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
+      }
+      this.addTypingResponse(botInstruction, false);
+    }
+  },
 };
 </script>
 
@@ -1507,4 +1644,9 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 		transform: rotate(360deg);
 	}
 }
+
+.suggestion-wrapper {
+  width: 90%;
+}
+
 </style>
