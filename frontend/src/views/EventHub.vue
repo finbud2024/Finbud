@@ -527,7 +527,7 @@ export default {
 }
 
 .read-more-button, .event-button:hover {
-    background-color: ;
+    background-color: black;
 }
 
 .star-button {

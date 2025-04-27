@@ -1,5 +1,6 @@
 <template>
   <section id="main-content">
+    <div class="blur-background"></div>
     <div class="intro-container animate">
       <div class="intro-text">
         <div class="title animate">{{ t('empoweringTitle') }}</div>
@@ -339,6 +340,7 @@ export default {
   opacity: 1;
   transform: translateY(0);
 }
+
 
 /* Slide directions */
 .slide-left {
