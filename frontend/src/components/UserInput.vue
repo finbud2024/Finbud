@@ -1,12 +1,12 @@
 <template>
 	<div class="user-input-container">
-		<!-- File label -->
-		<div v-if="selectedFile" class="file-label">
-			<span>{{ selectedFile.name }}</span>
-			<button @click="removeFile">×</button>
-		</div>
 
 		<div class="user-input">
+			<!-- File label -->
+			<div v-if="selectedFile" class="file-label">
+				<span>{{ selectedFile.name }}</span>
+				<button @click="removeFile">×</button>
+			</div>
 			<div class="input-container">
 				<!-- Text Input Field -->
 				<input
@@ -348,7 +348,6 @@ export default {
 
 .file-label {
 	display: flex;
-	align-items: center;
 	background-color: var(--card-bg);
 	color: var(--text-primary);
 	border: 1px solid var(--border-color);

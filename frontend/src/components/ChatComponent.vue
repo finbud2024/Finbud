@@ -18,7 +18,7 @@
 			<ChatAgent ref="chatAgent" v-if="showAgentWorkflow" @workflow-complete="handleWorkflowComplete"
 				:scroll-to-bottom="scrollChatFrameToBottom" />
 		</ChatFrame>
-		<ChatSuggestion :lan="this.$i18n.locale" class="suggestion-wrapper" />
+		<ChatSuggestion v-if="showSuggestion" :lan="this.$i18n.locale" class="suggestion-wrapper" @suggestion-selected="handleSuggestion"/>
     <UserInput ref="userInput" @send-message="handleUserSubmit" @agent-mode="handleAgentMode" />
 	</div>
 </template>
@@ -89,6 +89,9 @@ export default {
 				this.$store.getters["users/userProfileImage"] ||
 				require("@/assets/anonymous.png")
 			);
+		},
+		showSuggestion() {
+			return this.messages.length === 1;
 		},
 	},
 	watch: {
@@ -937,6 +940,16 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 					"[ChatComponent] Workflow completed, but no pending message found"
 				);
 			}
+		},
+
+		async handleSuggestion(suggestion) {
+			this.messages.push({
+				text: suggestion,
+				isUser: true,
+				timestamp: new Date().toLocaleTimeString(),
+			});			
+			this.sendMessage(suggestion);
+			
 		},
 
 		// --------------------------- READ FILE -----------------------------------------------------
