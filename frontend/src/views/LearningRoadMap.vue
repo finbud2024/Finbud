@@ -1,5 +1,5 @@
 <template>
-  <div class="course-details-container">
+  <div class="course-details-container" id="element-to-convert">
     <!-- Left Column: Course Topics -->
     <div class="course-topics-panel">
       <h2>Course Topics</h2>
@@ -36,10 +36,16 @@
 
             <!-- 2) Topic content (visible only when NOT collapsed) -->
             <div class="topic-content-container" v-show="!topic.collapsed">
-              <p>
-                <!-- for example, you might eventually store a description: -->
-                {{ topic.description || "No details available." }}
-              </p>
+              <div v-if="videoResults[`${sectionIndex}-${topicIndex}`]?.length" class="video-results-container">
+                <div v-for="video in videoResults[`${sectionIndex}-${topicIndex}`]" :key="video.url" class="video-card">
+                  <a :href="video.url" target="_blank" rel="noopener">
+                    ▶ {{ video.title }}
+                  </a>
+                </div>
+              </div>
+              <div v-else>
+                <p>Loading video for “{{ topic.title }}”…</p>
+              </div>
             </div>
           </div>
 
@@ -105,7 +111,8 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { searchVideos } from "@/services/braveSearch";
+import { searchBraveVideos } from "@/services/videoSearch.js";
+import html2pdf from "html2pdf.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -178,6 +185,17 @@ const processRoadmapData = () => {
   }
 };
 
+const doVideoSearch = async () => {
+  const resp = await searchVideos('Vue tutorial', 1);
+  console.log(resp.results[0]);
+};
+
+/// Store an array of videos per topic:
+const videoResults = ref({});
+
+// How many videos to fetch per topic (we’ll keep this at 1 for now)
+const VIDEO_COUNT = 1;
+
 // Process data on initial mount
 onMounted(() => {
   processRoadmapData();
@@ -211,9 +229,24 @@ const addTopic = (sectionIndex) => {
 };
 
 // Toggle topic collapse/expand
-const toggleTopic = (sectionIndex, topicIndex) => {
-  sections.value[sectionIndex].topics[topicIndex].collapsed =
-    !sections.value[sectionIndex].topics[topicIndex].collapsed;
+const toggleTopic = async (sectionIndex, topicIndex) => {
+  const topic = sections.value[sectionIndex].topics[topicIndex];
+  topic.collapsed = !topic.collapsed;
+
+  // Only fetch when opening, and if we haven’t fetched yet:
+  if (!topic.collapsed) {
+    const key = `${sectionIndex}-${topicIndex}`;
+    if (!videoResults.value[key]) {
+      try {
+        const resp = await searchBraveVideos(topic.title, VIDEO_COUNT);
+        // Always store as an array, even if count = 1
+        videoResults.value[key] = resp.results ?? [];
+      } catch (err) {
+        console.error('Video fetch error for', topic.title, err);
+        videoResults.value[key] = [];
+      }
+    }
+  }
 };
 
 // Delete a topic from a section
@@ -232,11 +265,28 @@ const addSection = () => {
 
 // Save and collect materials
 const saveAndCollectMaterials = () => {
-  // This would connect to your backend or state management system
-  console.log("Saving course details:", courseDetails.value);
-  console.log("Course sections and topics:", sections.value);
-  alert("Course saved successfully! Materials are being collected.");
+  const element = document.getElementById("element-to-convert");
+  // Measure the element on screen
+  const { width, height } = element.getBoundingClientRect();
+
+  // Decide orientation based on aspect ratio
+  const orientation = width > height ? "landscape" : "portrait";
+
+  html2pdf()
+    .set({
+      margin:       0,
+      filename:     "generated-pdf.pdf",
+      html2canvas:  { scale: 2 },        // bump resolution if you like
+      jsPDF: {
+        unit:        "px",
+        format:      [width, height],     // match the element’s dimensions
+        orientation,                      // "portrait" or "landscape"
+      },
+    })
+    .from(element)
+    .save();
 };
+
 </script>
 
 <style scoped>
@@ -288,6 +338,10 @@ const saveAndCollectMaterials = () => {
   background-color: white;
 }
 
+.topic-content-container {
+  padding: 0.75rem 1rem;
+}
+
 .topic-item {
   display: flex;
   align-items: center;
@@ -301,6 +355,37 @@ const saveAndCollectMaterials = () => {
 .topic-title {
   padding-left: 0.75rem;
   flex-grow: 1;
+}
+
+.video-results-container {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  /* optional: hide scrollbar in some browsers */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.video-results-container::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
+}
+
+.video-card {
+  flex: 0 0 auto;
+  min-width: 200px; 
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.video-card a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+}
+.video-card a:hover {
+  text-decoration: underline;
 }
 
 .delete-btn {
