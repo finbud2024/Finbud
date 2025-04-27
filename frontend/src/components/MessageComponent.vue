@@ -306,6 +306,10 @@ tr:nth-child(odd) {
   padding-right: calc(1% + 30px + 18px);
 }
 
+.user .message-content {
+  background-color: var(--chat-user-bg-color);
+}
+
 .user .message-content-wrapper {
   max-width: 60%;
 }

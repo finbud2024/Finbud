@@ -318,8 +318,8 @@ export default {
 	--progress-color: #c8c5c5;
 	--logo-color: #007bff;
 	--chat-text-color: #000000;
-	--chat-message-bg-color: #f8f4f4;
-	--chat-user-bg-color: #007bff;
+	/* --chat-message-bg-color: #f8f4f4; */
+	--chat-user-bg-color: #f8f4f4;
 	--chat-user-text-color: #ffffff;
 	--black-in-light-mode: #000000;
 	--white-in-light-mode: #ffffff;
