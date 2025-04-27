@@ -22,7 +22,6 @@ import { string } from 'mathjs';
     computed: {
       localizedSuggestions() {
         if (this.lan === 'vi') {
-            console.log("hi");
           return [
             'Mua cổ phiếu',
             'Giao dịch giá chứng khoán',

@@ -41,6 +41,14 @@ import {
 } from "@/services/serperService.js";
 import api from "@/utils/api";
 import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+import * as pdfjsLib from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
+
+const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
+const geminiAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
 export default {
 	name: "ChatComponent",
 	props: {},
@@ -927,21 +935,34 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				timestamp: new Date().toLocaleTimeString(),
 			});
 			try {
+				let result = null;
 				if (file.type.startsWith("image/")) {
-					const result = await this.analyzeImage(file, newMessage);
-					this.messages.push({
-						text: result,
-						isUser: false,
-						timestamp: new Date().toLocaleTimeString(),
-					});
+					try {
+						result = await this.analyzeImageOpenAI(file, newMessage);
+					}
+					catch (err) {
+						console.error("OpenAI failed to anylyze image, switching to Gemini:", err);
+						result = await this.analyzeImageGemini(file, newMessage);
+					}
 				} else if (file.type === "application/pdf") {
-					const result = await this.analyzePDF(file, newMessage);
-					this.messages.push({
+					try {
+						result = await this.analyzePDFOpenAI(file, newMessage);
+						new Promise((_, reject) => 
+							setTimeout(() => reject(new Error("OpenAI timeout")), 3000)
+						);	
+					}
+					catch (err) {
+						console.error("OpenAI failed to anylyze pdf, switching to Gemini:", err);
+						result = await this.analyzePDFGemini(file, newMessage);
+					}
+				} else {
+					throw new Error("Unsupported file type");
+				}
+				this.messages.push({
 						text: result,
 						isUser: false,
 						timestamp: new Date().toLocaleTimeString(),
 					});
-				}
 			} catch (err) {
 				console.error("Error processing file:", err);
 				this.addTypingResponse("Failed to process file", false);
@@ -950,7 +971,7 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			this.isLoading = false;
 		},
 
-		async analyzeImage(file, newMessage) {
+		async analyzeImageOpenAI(file, newMessage) {
 			const base64Image = await this.readFileAsBase64(file);
 			const response = await this.openai.chat.completions.create({
 				model: "gpt-4o",
@@ -978,40 +999,104 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			return response.choices[0].message.content;
 		},
 
-		async analyzePDF(file, newMessage) {
+		async analyzeImageGemini(file, newMessage) {
+			const base64Image = await this.readFileAsBase64(file);
+			const model = geminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+			const result = await model.generateContent({
+				contents: [{
+					parts: [
+					{ text: newMessage },
+					{
+						inlineData: {
+						mimeType: file.type,
+						data: base64Image,
+						},
+					},
+					],
+				}],	
+			})
+			return result.response.candidates[0].content.parts[0].text;
+		},
+
+		async analyzePDFOpenAI(file, newMessage) {
 			const uploadedFile = await this.openai.files.create({
 				file,
 				purpose: "user_data",
 			});
 
-      const response = await this.openai.responses.create({
-        model: "gpt-4o",
-        input: [
-          {
-            role: "system",
-            content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
-            Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
-            Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
-            Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
-            role: "user",
-            content: [
-              {
-                type: "input_file",
-                file_id: uploadedFile.id
-              },
-              {
-                type: "input_text",
-                text: newMessage,
-              },
-            ],
-          },
-        ],
-      });
+			const response = await this.openai.responses.create({
+				model: "gpt-4o",
+				input: [
+				{
+					role: "system",
+					content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+					Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
+					Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
+					Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
+					role: "user",
+					content: [
+					{
+						type: "input_file",
+						file_id: uploadedFile.id
+					},
+					{
+						type: "input_text",
+						text: newMessage,
+					},
+					],
+				},
+				],
+			});
 
-      // Clean up
-      await this.openai.files.del(uploadedFile.id);
-      return response.output_text;
-    },
+			// Clean up
+			await this.openai.files.del(uploadedFile.id);
+			return response.output_text;
+		},
+
+		async analyzePDFGemini(file, newMessage) {
+			const textFromPDF = await this.extractTextFromPDF(file);
+			const model = geminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+			const result = await model.generateContent({
+				contents: [
+					{
+						role: "model",
+						parts: [
+							{ text: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+						Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
+						Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
+						Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`, },
+						],
+						role: "user",
+						parts: [
+							{ text: `${newMessage}\n${textFromPDF}` },
+						],
+					},
+				],
+			});
+
+			return result.response.candidates[0].content.parts[0].text;
+		},
+
+		async extractTextFromPDF(file) {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = async (e) => {
+				const typedarray = new Uint8Array(e.target.result);
+				const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+				let textContent = "";
+				for (let i = 1; i <= pdf.numPages; i++) {
+					const page = await pdf.getPage(i);
+					const content = await page.getTextContent();
+					const pageText = content.items.map(item => item.str).join(" ");
+					textContent += pageText + "\n";
+				}
+				resolve(textContent);
+				};
+				reader.onerror = reject;
+				reader.readAsArrayBuffer(file);
+			});
+		},
 
 		readFileAsBase64(file) {
 			return new Promise((resolve, reject) => {
