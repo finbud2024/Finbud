@@ -7,9 +7,11 @@
       </div>
   
       <!-- Otherwise show file info and download link -->
-      <div v-else class="file-info">
-        <img src="./assets/pdfIcon.png">📄 {{ file.name }}</img>
-        <a :href="fileUrl" target="_blank" download>Download</a>
+      <div v-else class="file-info pdf-display" @click="downloadFile(file)">
+        <div class="pdf-preview">
+          <img src="@/assets/PDF_file_icon.png" alt="PDF Icon" class="pdf-icon">
+          <span class="pdf-name">{{ file.name }}</span>
+        </div>
       </div>
     </div>
     </div>
@@ -24,7 +26,18 @@
         required: true
       }
     },
-    
+
+    methods: {
+      downloadFile(file) {
+        const link = document.createElement('a');
+        link.href = this.fileUrl;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    },
+
     computed: {
       fileUrl() {
         // If your backend returns a path, adjust accordingly
@@ -74,6 +87,44 @@
   font-size: 0.8rem;
   text-decoration: underline;
   color: #007bff;
+}
+
+.pdf-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 200px;
+  text-align: center;
+}
+
+.pdf-display:hover {
+  background-color: #f5f5f5;
+  border-color: #bdbdbd;
+}
+
+.pdf-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pdf-icon {
+  width: 38px;
+  height: 38px;
+}
+
+.pdf-name {
+  font-size: 14px;
+  word-break: break-word;
+  text-align: center;
+}
+
+.pdf-download-hint {
+  color: #666;
+  margin-top: 4px;
 }
   </style>
   

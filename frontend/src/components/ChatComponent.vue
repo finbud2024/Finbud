@@ -3,7 +3,7 @@
 		<ChatFrame class="chat-frame-content">
 			<div v-for="(message, index) in messages" :key="index">
 				<FileIndicator v-if="message.containFile" :file="message.file" />
-        <MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
+        		<MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
 					:is-thinking="message.isThinking" :htmlContent="message.htmlContent"
 					:username="message.isUser ? displayName : 'FinBud Bot'"
 					:avatar-src="message.isUser ? userAvatar : botAvatar"
@@ -31,6 +31,7 @@ import UserInput from "./UserInput.vue";
 import TradingViewWidget from "./TradingViewWidget.vue";
 import ChatAgent from "./ChatAgent.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
+import FileIndicator from "./FileIndicator.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -58,6 +59,7 @@ export default {
 		UserInput,
 		TradingViewWidget,
 		ChatAgent,
+		FileIndicator,
     ChatSuggestion
 	},
 	data() {
@@ -945,6 +947,8 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				isUser: true,
 				typing: true,
 				timestamp: new Date().toLocaleTimeString(),
+				containFile: true,
+				file: file,
 			});
 			try {
 				let result = null;
@@ -1014,10 +1018,19 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 		async analyzeImageGemini(file, newMessage) {
 			const base64Image = await this.readFileAsBase64(file);
 			const model = geminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+			const systemPrompt = `
+Bạn là FinBud — trợ lý tài chính. 
+**QUY TẮC**:
+1. Nếu người dùng hỏi bằng tiếng Việt → trả lời bằng tiếng Việt.
+2. Nếu hỏi bằng ngôn ngữ khác → trả lời bằng ngôn ngữ đó.
+3. Luôn thân thiện, vui vẻ! 😊
+`;
 			const result = await model.generateContent({
 				contents: [{
+					role: "user",
 					parts: [
-					{ text: newMessage },
+					{ text: systemPrompt },
+					{ text: "Câu hỏi của người dùng: " + newMessage },
 					{
 						inlineData: {
 						mimeType: file.type,
@@ -1025,6 +1038,7 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 						},
 					},
 					],
+				
 				}],	
 			})
 			return result.response.candidates[0].content.parts[0].text;
@@ -1068,23 +1082,23 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 		async analyzePDFGemini(file, newMessage) {
 			const textFromPDF = await this.extractTextFromPDF(file);
 			const model = geminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+			const systemPrompt = `
+Bạn là FinBud — trợ lý tài chính. 
+**QUY TẮC**:
+1. Nếu người dùng hỏi bằng tiếng Việt → trả lời bằng tiếng Việt.
+2. Nếu hỏi bằng ngôn ngữ khác → trả lời bằng ngôn ngữ đó.
+3. Luôn thân thiện, vui vẻ! 😊
+`;
 
 			const result = await model.generateContent({
-				contents: [
-					{
-						role: "model",
-						parts: [
-							{ text: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
-						Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
-						Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
-						Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`, },
-						],
-						role: "user",
-						parts: [
-							{ text: `${newMessage}\n${textFromPDF}` },
-						],
-					},
-				],
+				contents: [{
+					role: "user",
+					parts: [
+					{ text: systemPrompt },
+					{ text: `${newMessage}\n${textFromPDF}` },
+					],
+				
+				}],	
 			});
 
 			return result.response.candidates[0].content.parts[0].text;
