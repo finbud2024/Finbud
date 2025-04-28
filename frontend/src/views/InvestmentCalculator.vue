@@ -144,6 +144,10 @@ export default {
     },
     '$i18n.locale'() {
       this.updateChartLabels();
+      // Update bot message if it's visible
+      if (this.showBot && this.showMessage) {
+        this.updateBotMessage();
+      }
     }
   },
 
@@ -256,10 +260,10 @@ export default {
     },
 
     generateInsightMessage() {
-      return `Investment Analysis:
-      Initial: $${this.initialInvestment}
-      Rate: ${this.interestRate}%
-      Final: $${this.finalAmount.toFixed(2)}`;
+      return `${this.$t('investmentAnalysis')}
+      ${this.$t('initialAmount')} $${this.initialInvestment}
+      ${this.$t('rateAmount')} ${this.interestRate}%
+      ${this.$t('finalAmountBot')} $${this.finalAmount.toFixed(2)}`;
     },
 
     hideMessage() {
@@ -338,6 +342,13 @@ export default {
         this.$t('yearNumber', { number: idx + 1 })
       );
       this._chart.update();
+    },
+
+    updateBotMessage() {
+      const newMessage = this.generateInsightMessage();
+      this.words = newMessage.split(/( |\n)/g).filter(word => word !== "");
+      this.currentWordIndex = this.words.length; // Set to end to show full message
+      this.typedContent = newMessage.replace(/\n/g, '<br>');
     },
   },
 
