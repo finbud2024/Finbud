@@ -573,11 +573,28 @@ const messages = {
           secure: "Our proprietary system utilizes neural networks to identify the information that matters most. Think of it like the way your brain works, only it never gets tired (or needs 3 cups of coffee to get through the day)."
         }
       },
+      // partners: {
+      //   description: " <a href='mailto:contact@yourdomain.com'></a>",
+      //   left: "<a href='#'></a>",
+      //   right: " <a href='#'>Learn more</a>"
+      // }
       partners: {
         title: "Integrate with the best tools in the market",
-        description: "Check out our connected partners. Don’t see your software on the list of partners? <a href='mailto:contact@yourdomain.com'>Drop us a note</a> and we’ll get them added.",
-        left: "Shop-Ware enables users to take advantage of their lightning-fast workflows to repair more cars every month. <a href='#'>Learn more</a>",
-        right: "Tekmetric lets you unleash your shop’s potential with their streamlined workflow settings. <a href='#'>Learn more</a>"
+        descriptionParts: [
+          "Check out our connected partners. Don’t see your software on the list of partners?",
+          { type: "link", text: " Drop us a note", href: "mailto:contact@yourdomain.com" },
+          " and we’ll get them added."
+        ],
+        left: {
+          text: "Shop-Ware enables users to take advantage of their lightning-fast workflows to repair more cars every month.",
+          linkText: "Learn more",
+          linkHref: "#"
+        },
+        right: {
+          text: "Tekmetric lets you unleash your shop’s potential with their streamlined workflow settings.",
+          linkText: "Learn more",
+          linkHref: "#"
+        }
       }
     }
 
@@ -1146,9 +1163,21 @@ const messages = {
       },
       partners: {
         title: "Tích hợp với những công cụ tốt nhất trên thị trường",
-        description: "Khám phá các đối tác liên kết với chúng tôi. Không thấy phần mềm bạn đang dùng? <a href='mailto:contact@yourdomain.com'>Liên hệ với chúng tôi</a> và chúng tôi sẽ hỗ trợ tích hợp ngay.",
-        left: "Shop-Ware giúp bạn tận dụng quy trình siêu tốc để sửa chữa được nhiều xe hơn mỗi tháng. <a href='#'>Tìm hiểu thêm</a>",
-        right: "Tekmetric giúp bạn khai phá tối đa tiềm năng xưởng sửa chữa với quy trình vận hành tinh gọn. <a href='#'>Tìm hiểu thêm</a>"
+        descriptionParts: [
+          "Khám phá các đối tác liên kết với chúng tôi. Không thấy phần mềm bạn đang dùng?",
+          { type: "link", text: " Liên hệ với chúng tôi", href: "mailto:contact@yourdomain.com" },
+          " và chúng tôi sẽ hỗ trợ tích hợp ngay."
+        ],
+        left: {
+          text: "Shop-Ware giúp bạn tận dụng quy trình siêu tốc để sửa chữa được nhiều xe hơn mỗi tháng.",
+          linkText: "Tìm hiểu thêm",
+          linkHref: "#"
+        },
+        right: {
+          text: "Tekmetric giúp bạn khai phá tối đa tiềm năng xưởng sửa chữa với quy trình vận hành tinh gọn.",
+          linkText: "Tìm hiểu thêm",
+          linkHref: "#"
+        }
       }
     }
   },
