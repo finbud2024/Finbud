@@ -9,11 +9,28 @@
 
       <!-- List of Threads -->
       <div class="thread-list">
-        <ThreadCard 
-          v-for="thread in filteredThreads" 
-          :key="thread._id" 
-          :thread="thread" 
+        <!-- Skeleton Loader -->
+        <div v-if="loadingThreads">
+          <div v-for="n in 5" :key="n" class="skeleton-card"></div>
+        </div>
+
+        <!-- Actual Threads -->
+        <ThreadCard
+          v-else
+          v-for="thread in visibleThreads"
+          :key="thread._id"
+          :thread="thread"
+          v-memo="[thread]"
         />
+
+        <!-- Load More Button -->
+        <button
+          v-if="visibleThreads.length < allThreads.length && !loadingThreads"
+          @click="loadMore"
+          class="load-more"
+        >
+          Load More
+        </button>
       </div>
     </div>
   </div>
@@ -28,20 +45,25 @@ import { computed, ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
+const INITIAL_LOAD = 10;
+const LOAD_STEP = 10;
+
 export default {
   components: { ThreadCard, ForumSidebar, ForumBanner },
   setup() {
     const route = useRoute();
     const router = useRouter();
     const store = useStore();
+
     const ready = ref(false);
+    const loadingThreads = ref(true);
 
     const activeForum = ref(route.query.forum || "p/general");
     const forums = ref([]);
-    const threads = ref([]);
+    const allThreads = ref([]);
+    const visibleCount = ref(INITIAL_LOAD);
 
     const userId = computed(() => store.getters["users/userId"]);
-    const userModel = computed(() => store.getters["users/userModel"]);
     const isAuthenticated = computed(() => store.getters["users/isAuthenticated"]);
 
     const fetchForums = async () => {
@@ -55,52 +77,67 @@ export default {
 
     const fetchThreads = async () => {
       try {
-        console.log(`Fetching threads for: ${activeForum.value}`);
+        loadingThreads.value = true;
         const response = await api.get(
           `/api/posts/forum/${activeForum.value}?userId=${userId.value}`,
           { withCredentials: true }
         );
-        console.log("Fetched threads:", response.data);
-        threads.value = response.data;
+        allThreads.value = response.data;
+        visibleCount.value = INITIAL_LOAD;
+        loadingThreads.value = false;
       } catch (error) {
         console.error("Error fetching threads:", error);
+        loadingThreads.value = false;
       }
     };
 
-    watch(() => route.query.forum, (newForum) => {
-      activeForum.value = newForum || "p/general";
-      fetchThreads();
-    });
+    const loadMore = () => {
+      visibleCount.value += LOAD_STEP;
+    };
+
+    const visibleThreads = computed(() =>
+      allThreads.value.slice(0, visibleCount.value)
+    );
 
     const activeForumDetails = computed(() => {
       return forums.value.find(f => f.slug === activeForum.value) || {};
     });
 
+    watch(() => route.query.forum, async (newForum, oldForum) => {
+      if (newForum !== oldForum) {
+        activeForum.value = newForum || "p/general";
+        await fetchThreads();
+      }
+    });
 
     onMounted(async () => {
-      await store.dispatch("users/fetchCurrentUser");
-
+      // Show UI immediately
+      ready.value = true;
+      
+      // First check auth
+      store.dispatch("users/fetchCurrentUser");
       if (!isAuthenticated.value) {
         router.push("/login");
         return;
       }
 
-      await fetchForums();
-      await fetchThreads();
-      ready.value = true;
+      fetchForums();
+      fetchThreads();
     });
 
     return {
       activeForum,
       activeForumDetails,
-      filteredThreads: computed(() => threads.value),
+      visibleThreads,
+      allThreads,
       isAuthenticated,
-      ready
+      ready,
+      loadMore,
+      loadingThreads,
     };
   }
 };
 </script>
-
 
 <style scoped>
 .forum-layout {
@@ -109,7 +146,7 @@ export default {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  gap: 64px; 
+  gap: 64px;
 }
 
 .sidebar {
@@ -132,5 +169,33 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.load-more {
+  margin: 10px auto 0;
+  padding: 10px 20px;
+  border: none;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+/* Inline Skeleton Style */
+.skeleton-card {
+  height: 120px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
 }
 </style>

@@ -1,8 +1,6 @@
 <template>
-    <div class="chat-frame-container">
-        <div class="chat-frame">
-            <slot></slot> <!-- Content from parent component will be inserted here -->
-        </div>
+    <div class="chat-frame">
+        <slot></slot> <!-- Content from parent component will be inserted here -->
     </div>
 </template>
 
@@ -12,21 +10,13 @@ export default {
 }
 </script>
 
-<style scoped>
-
-.chat-frame-container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
+<style>
 .chat-frame {
-    height: calc(100% - 30px - 4px - 1rem); /* Fixed height */
-    width: 100%; /* Fixed width */
-    overflow-y: auto;
+    height: 50vh; /* Fixed height */
+    overflow-y: auto; /* Enables vertical scrolling */
+	max-width: 150%;
+	width: 100%;
+    /* padding: 0 10px; */
+    /* border: 1px solid #ccc;  */
 }
-  
 </style>

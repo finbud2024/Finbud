@@ -288,7 +288,7 @@ tr:nth-child(odd) {
   margin-bottom: 16px;
   overflow: hidden;
   word-wrap: break-word;
-  padding: 0 17.42%;
+  padding: 0;
   container-name: chatComponent;
 }
 
@@ -306,9 +306,14 @@ tr:nth-child(odd) {
   padding-right: calc(1% + 30px + 18px);
 }
 
+.user .message-content {
+  background-color: var(--chat-user-bg-color);
+}
+
 .user .message-content-wrapper {
   max-width: 60%;
 }
+
 
 .bot .avatar {
   width: 41px;
@@ -340,8 +345,8 @@ tr:nth-child(odd) {
   flex-direction: column;
   padding: 10px;
   border-radius: 16px;
-  background-color: #efefef;
-  color: #000000;
+  background-color: var(--chat-message-bg-color);
+  color: var(--chat-text-color);
   /* background-color: papayawhip;
     color: black; */
   border: 1px solid transparent;
@@ -349,6 +354,7 @@ tr:nth-child(odd) {
   white-space: pre-wrap;
   line-height: 1.3;
 }
+
 
 /* Make sure markdown content also uses flex layout */
 .markdown-content {

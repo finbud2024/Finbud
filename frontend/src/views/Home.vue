@@ -1,183 +1,138 @@
 <template>
   <section id="main-content">
-    <div class='intro-container'>
+    <div class="blur-background"></div>
+    <div class="intro-container animate">
       <div class="intro-text">
-        <div class="title animate fade-in">Empowering smarter finance decisions </div>
-        <div class="description animate fade-in">
-          {{  signInTitle }}
-        </div>
-        <div class="animate fade-in">
-          <UserInput @send-message="chatNow" class="front-search-bar" />
+        <div class="title animate">{{ t('empoweringTitle') }}</div>
+        <div class="description animate">{{ t('anytimeAnswers') }}</div>
+        <div class="animate">
+          <UserInput @send-message="chatNow" :redirectOnSend="true" class="front-search-bar" />
         </div>
       </div>
     </div>
 
-    <section class="introduction-section">
-      <header>
-        <h1>
-          Partnering to Achieve Financial Goals
-        </h1>
+    <section class="introduction-section animate">
+      <header class="animate">
+        <h1>{{ t('partneringTitle') }}</h1>
       </header>
       <div class="grid-container">
-        <!-- first grid box -->
-        <div class="dynamic-border">
-          <div class="text-section text-left ">
+        <div class="dynamic-border animate">
+          <div class="text-section text-left">
             <img class="intro-icon" src="@/assets/home-page/Lightbulb.png" alt="Financial Awareness Icon">
-            <h2>Enhance Your Financial Awareness</h2>
-            <p>
-              Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your
-              questions.
-            </p>
-            <!-- Not in the sample frontpage, but it was in the original front page and is still functional once uncommented -->
-            <!-- <a href="/quizz" class="button">Learn more</a> -->
+            <h2>{{ t('enhanceFinancialTitle') }}</h2>
+            <p>{{ t('enhanceFinancialDesc') }}</p>
           </div>
         </div>
-
-
-        <!-- second grid box -->
-         <div class="dynamic-border">
+        <div class="dynamic-border animate">
           <div class="text-section text-left">
-          <img class="intro-icon" src="@/assets/home-page/Bars.png" alt="Financial Planning Icon">
-          <h2>Optimize Your Financial Planning</h2>
-          <p>
-            Finbud helps you track and manage expenses, record income and spending, and tailor financial management to
-            your specific goals.
-          </p>
-          <!-- <a href="/goal" class="button">Learn more</a> -->
+            <img class="intro-icon" src="@/assets/home-page/Bars.png" alt="Financial Planning Icon">
+            <h2>{{ t('optimizeFinancialTitle') }}</h2>
+            <p>{{ t('optimizeFinancialDesc') }}</p>
+          </div>
         </div>
-         </div>
-        
-        <!-- third grid box -->
-         <div class="dynamic-border">
+        <div class="dynamic-border animate">
           <div class="text-section text-left">
-          <img class="intro-icon" src="@/assets/home-page/CircleArrowUp.png" alt="Financial Efficiency Icon">
-          <h2>Maximize Your Investment Efficiency</h2>
-          <p>
-            Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital
-            confidently.
-          </p>
-          <!-- <a href="/stock-simulator" class="button">Learn more</a> -->
+            <img class="intro-icon" src="@/assets/home-page/CircleArrowUp.png" alt="Financial Efficiency Icon">
+            <h2>{{ t('maximizeInvestmentTitle') }}</h2>
+            <p>{{ t('maximizeInvestmentDesc') }}</p>
+          </div>
         </div>
-         </div>
-        
       </div>
     </section>
 
-    <!-- Technology Section -->
-    <section class="technology-section">
-      <header>
-        <h1>Easily notice the impact</h1>
+    <section class="technology-section animate">
+      <header class="animate">
+        <h1>{{ t('impactTitle') }}</h1>
       </header>
       <div class="technology-grid">
-        <div class="technology-card">
-          <div class="technology-card-title">Savings Increase</div>
+        <div class="technology-card animate">
+          <div class="technology-card-title">{{ t('savingsIncrease') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>20% </p>
+              <p>20%</p>
             </div>
             <div class="technology-stat-details">
-              <p>average per user </p>
+              <p>{{ t('savingsDesc') }}</p>
             </div>
           </div>
         </div>
-        <div class="technology-card">
-          <div class="technology-card-title">Financial Awareness</div>
+        <div class="technology-card animate">
+          <div class="technology-card-title">{{ t('financialAwareness') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>25% </p>
+              <p>25%</p>
             </div>
             <div class="technology-stat-details">
-              <p>increase </p>
+              <p>{{ t('awarenessDesc') }}</p>
             </div>
           </div>
         </div>
-        <div class="technology-card">
-          <div class="technology-card-title">Debt Reduction</div>
+        <div class="technology-card animate">
+          <div class="technology-card-title">{{ t('debtReduction') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>30% </p>
+              <p>30%</p>
             </div>
             <div class="technology-stat-details">
-              <p>after 1 year </p>
+              <p>{{ t('debtDesc') }}</p>
             </div>
           </div>
         </div>
-        <div class="technology-card">
-          <div class="technology-card-title">Improved Credit Score</div>
+        <div class="technology-card animate">
+          <div class="technology-card-title">{{ t('creditScore') }}</div>
           <div class="technology-card-content">
             <div class="technology-stat">
-              <p>6 </p>
+              <p>6</p>
             </div>
             <div class="technology-stat-details">
-              <p>months within</p>
+              <p>{{ t('creditDesc') }}</p>
             </div>
           </div>
-
         </div>
       </div>
-      <!-- <a href="/tech" class="button">Learn more about Finbud</a> -->
     </section>
 
-    <!-- Features Section -->
-    <section class="feature-section">
+    <section class="feature-section animate">
       <div class="feature-container">
-        <!-- Feature 1 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
-            <h2>Solve Financial Worries with <div class="feature-name">AI Chatbot,</div>
+            <h2>{{ t('chatbotFeatureTitle') }} <div class="feature-name">{{ t('chatbotFeatureName') }}</div>
             </h2>
-            <p>
-              With just simple commands and access to a vast source of accurate and reliable information, all your
-              financial queries can be answered instantly.
-            </p>
-            <a href="/chat-view" class="button">Chat now</a>
+            <p>{{ t('chatbotDesc') }}</p>
+            <a href="/chat-view" class="button">{{ t('chatNow') }}</a>
           </div>
           <div class="feature-image">
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
-        <!-- Feature 2 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
-            <h2>Master Your Investments with
-              <div class="feature-name">FinBud Simulator,</div>
+            <h2>{{ t('simulatorFeatureTitle') }} <div class="feature-name">{{ t('simulatorFeatureName') }}</div>
             </h2>
-            <p>
-              Track how your investments are performing in real-time, provide actionable insights from your investment
-              and the market to make better investment decisions.
-            </p>
-            <a href="/stock-simulator" class="button">Simulator now</a>
+            <p>{{ t('simulatorDesc') }}</p>
+            <a href="/stock-simulator" class="button">{{ t('simulatorNow') }}</a>
           </div>
           <div class="feature-image">
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
-        <!-- Feature 3 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
-            <h2>Predict Your Costs with <div class="feature-name">FinBud Goal,</div>
+            <h2>{{ t('goalFeatureTitle') }} <div class="feature-name">{{ t('goalFeatureName') }}</div>
             </h2>
-            <p>
-              Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive
-              tips
-              for better budget management.
-            </p>
-            <a href="/goal" class="button">Set Goal now</a>
+            <p>{{ t('goalDesc') }}</p>
+            <a href="/goal" class="button">{{ t('goalNow') }}</a>
           </div>
           <div class="feature-image">
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
-        <!-- Feature 4 -->
-        <div class="feature-row">
+        <div class="feature-row animate">
           <div class="feature-text">
-            <h2>Boost Your Finance Skills with <div class="feature-name">FinBud Quiz,</div>
+            <h2>{{ t('quizFeatureTitle') }} <div class="feature-name">{{ t('quizFeatureName') }}</div>
             </h2>
-            <p>
-              Financial Quiz with different topics related to various keywords helps you practice and learn financial
-              knowledge in a smart and interactive way.
-            </p>
-            <a href="/quizz" class="button">Try Quiz now</a>
+            <p>{{ t('quizDesc') }}</p>
+            <a href="/quizz" class="button">{{ t('quizNow') }}</a>
           </div>
           <div class="feature-image">
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
@@ -186,27 +141,31 @@
       </div>
     </section>
 
-
-
-    <!-- Commonly Asked Question -->
-    <section class="question-section">
-      <header>
-        <h1>Frequently Asked Questions</h1>
+    <section class="question-section animate">
+      <header class="animate">
+        <h1>{{ t('faqTitle') }}</h1>
       </header>
       <div class="question-container">
-        <div v-for="(item, index) in faqsData" :key="index" @click="toggleExpansion(item)"
-          :class="{ 'expanded': expandedItem === item }">
-          <div class="question">
-            <p>{{ item.question }}</p>
+        <template v-if="faqsData && faqsData.length > 0">
+          <div v-for="(item, index) in faqsData" :key="index" class="faq-item" :class="{ 'expanded': expandedItem === index }">
+            <div class="question" @click="toggleExpansion(index)">
+              <p>{{ item.question }}</p>
+              <span class="expand-icon">{{ expandedItem === index ? '−' : '+' }}</span>
+            </div>
+            <transition name="fade">
+              <div class="answer" v-show="expandedItem === index">
+                <p>{{ item.answer }}</p>
+              </div>
+            </transition>
           </div>
-          <div class="expanded-content">
-            <p class="answer">{{ item.answer }}</p>
-          </div>
+        </template>
+        <div v-else class="no-faqs animate">
+          <p>No FAQs available at the moment.</p>
         </div>
       </div>
     </section>
 
-    <footer class="site-footer">
+    <footer class="site-footer animate">
       <div class="footer-image">
         <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
       </div>
@@ -215,18 +174,18 @@
       </div>
     </footer>
 
-
     <TutorialOverlay :steps="tutorialSteps" storageKey="finbudHomeTutorialShown" :autoStart="true"
       @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
   </section>
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useStore } from 'vuex';
 import BigGreenButton from "../components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
-import faqs from "@/views/hardcodeData/FAQs.js";
 import { useTypingEffect } from '@/composables/useTypingEffect';
-import { LucideAsteriskSquare } from "lucide-vue-next";
 import UserInput from '@/components/UserInput.vue';
 
 export default {
@@ -237,35 +196,64 @@ export default {
     UserInput,
   },
   setup() {
+    const store = useStore();
+    const { t, tm } = useI18n();
+    const expandedItem = ref(null);
+
     const {
       typingText: signInTitle,
       startTyping: startTypingSignInTitle
-    } = useTypingEffect('Anytime answers for finance questions with FinBud')
+    } = useTypingEffect('Anytime answers for finance questions with FinBud');
+
     const {
       typingText: signInDescription,
       startTyping: startTypingSignInDescription
-    } = useTypingEffect('[Note to devs, this part has been removed in display. It\'s too closely intertwined with everything else and will crash the app if this part is removed, so I left this note to show that it should be removed LucideAsteriskSquare]', {
-      reverseEffect: false
-    })
+    } = useTypingEffect('[Note to devs, this part has been removed in display...]');
+
+    const isAuthenticated = computed(() => store.getters['users/isAuthenticated']);
+    const displayText = computed(() => isAuthenticated.value ? "Chat Now" : "Get Started!");
+
+    const faqsData = computed(() => {
+      try {
+        const faqs = tm('faqs') || {};
+        console.log('Raw FAQs:', faqs);
+
+        return Object.entries(faqs).map(([_, value]) => ({
+          question: value.question || '',
+          answer: value.answer || ''
+        })).filter(faq => faq.question && faq.answer);
+      } catch (error) {
+        console.error('Error loading FAQs:', error);
+        return [];
+      }
+    });
+
+    const toggleExpansion = (index) => {
+      if (expandedItem.value === index) {
+        expandedItem.value = null;
+      } else {
+        expandedItem.value = index;
+      }
+    };
 
     return {
+      isAuthenticated,
+      displayText,
+      faqsData,
+      expandedItem,
+      toggleExpansion,
       signInTitle,
       signInDescription,
       startTypingSignInTitle,
-      startTypingSignInDescription
-    }
+      startTypingSignInDescription,
+      t
+    };
   },
   data() {
     return {
-      faqsData: faqs.map(dataPoint => ({
-        question: dataPoint.question,
-        answer: dataPoint.answer,
-        isOpen: false,
-      })),
-      expandedItem: null,
       tutorialSteps: [
         {
-          element: '#tutorial-main-button', // Target the BigGreenButton in the intro
+          element: '#tutorial-main-button',
           message: "Click here to start chatting with FinBud, your personal finance assistant!",
           title: "Welcome to FinBud"
         }
@@ -277,33 +265,17 @@ export default {
       }
     };
   },
-  computed: {
-    isAuthenticated() {
-      return this.$store.getters['users/isAuthenticated'];
-    },
-    displayText() {
-      return this.isAuthenticated ? "Chat Now" : "Get Started!"
-    }
-  },
   methods: {
     learnMore() {
       this.$router.push('/tech');
     },
-    chatNow() {
-      if (this.isAuthenticated) {
-        this.$router.push('/chat-view');
-      } else {
-        this.$router.push('/login');
-      }
-    },
-    toggleExpansion(item) {
-      //if it is already expanded and click into it again:
-      if (this.expandedItem === item) {
-        this.expandedItem = null;
-      }
-      else {
-        this.expandedItem = item;
-      }
+    chatNow(message) {
+
+      this.$router.push({
+        path: '/chat-view',
+        query: { autoMessage: message }
+      });
+
     },
     onTutorialCompleted() {
       console.log("Tutorial completed!");
@@ -332,11 +304,11 @@ export default {
     this.startTypingSignInDescription();
 
     const observerOptions = {
-      threshold: 0.1,
+      threshold: 0.1, // Bao giờ thấy 10% block => animate
     };
 
-    const observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('animate-visible');
         } else {
@@ -345,8 +317,8 @@ export default {
       });
     }, observerOptions);
 
-    const elements = document.querySelectorAll('.animate');
-    elements.forEach(el => observer.observe(el));
+    const animatedElements = document.querySelectorAll('.animate');
+    animatedElements.forEach((el) => observer.observe(el));
 
     this._globalMouseMoveHandler = this.handleGlobalMouseMove.bind(this);
     window.addEventListener("mousemove", this._globalMouseMoveHandler);
@@ -360,53 +332,65 @@ export default {
 
 <style scoped>
 /* Add animations */
+/* Animation Base */
 .animate {
   opacity: 0;
-  transition: opacity 2s ease 1s, transform 2s ease 1s;
+  transform: translateY(40px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
 }
 
+/* Khi visible */
 .animate-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* Slide directions */
+.slide-left {
+  transform: translateX(-40px);
+}
+
+.slide-right {
+  transform: translateX(40px);
+}
+
+.slide-up {
+  transform: translateY(40px);
+}
+
+.slide-down {
+  transform: translateY(-40px);
+}
+
+/* Khi xuất hiện */
+.animate-visible.slide-left,
+.animate-visible.slide-right,
+.animate-visible.slide-up,
+.animate-visible.slide-down {
+  transform: translate(0, 0);
   opacity: 1;
 }
 
-.fade-in {
-  transform: translateY(50px);
+/* Delay nếu muốn đẹp hơn */
+[data-delay="100"] {
+  transition-delay: 0.1s;
 }
 
-.fade-in.animate-visible {
-  transform: translateY(0);
+[data-delay="200"] {
+  transition-delay: 0.2s;
 }
 
-.slide-in-left {
-  transform: translateX(-20px);
+[data-delay="300"] {
+  transition-delay: 0.3s;
 }
 
-.slide-in-left.animate-visible {
-  transform: translateX(0);
+[data-delay="400"] {
+  transition-delay: 0.4s;
 }
 
-.slide-in-right {
-  transform: translateX(20px);
-}
-
-.slide-in-right.animate-visible {
-  transform: translateX(0);
-}
-
-.slide-in-up {
-  transform: translateY(20px);
-}
-
-.slide-in-up.animate-visible {
-  transform: translateY(0);
-}
-
-.slide-in-down {
-  transform: translateY(-20px);
-}
-
-.slide-in-down.animate-visible {
-  transform: translateY(0);
+[data-delay="500"] {
+  transition-delay: 0.5s;
 }
 
 /* General Styling */
@@ -464,13 +448,13 @@ export default {
 
 .front-search-bar {
   position: relative;
-  width: min(2000px, 90vw);
+  width: min(2000px, 95vw);
   height: auto;
   color: var(--text-primary);
   display: flex;
   justify-content: center;
   font-size: 1.2rem;
-  padding-top: 20px;
+  padding: 20px 17% 0;
   font-weight: 300;
 }
 
@@ -528,7 +512,7 @@ export default {
   position: relative;
   border-radius: 12px;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
 }
 
@@ -550,7 +534,7 @@ export default {
   position: relative;
   z-index: 2;
   margin: 0px;
-  padding: 10px; 
+  padding: 10px;
   background-color: var(--card-bg);
   border-radius: inherit;
   text-align: left;
@@ -742,74 +726,115 @@ body.dark-mode .feature-icon {
 
 /* question section*/
 .question-section {
-  padding: 0 10%;
-  padding-bottom: 10%;
+  padding: 10% 10%;  /* Match other sections padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  width: 100%;
 }
 
 .question-section header {
-  padding: 0 20px;
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 0;  /* Remove extra padding */
 }
 
 .question-section header h1 {
-  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;  /* Remove default margin */
 }
 
 .question-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-bottom: 50px;  /* Add padding to match other sections */
 }
 
-.question-container>div {
+.faq-item {
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 0px 3%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 100%;
 }
 
-/* When expanded, style the overall container (both question & answer) */
-.question-container>div:hover,
-.question-container>div.expanded {
-  background-color: rgb(226, 242, 251);
-  border: 1px solid darkblue;
-}
-
-/* Styling for the question bar (the clickable header) */
 .question {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  padding: 1.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  width: 100%;
+  background-color: var(--bg-secondary);
+  transition: background-color 0.3s ease;
 }
 
-.question-container>div.expanded .question {
-  color: blue;
-  padding-bottom: 0px;
-  margin-bottom: 0px;
+.question:hover {
+  background-color: var(--bg-hover);
 }
 
-.expanded-content {
-  max-height: 0;
-  padding-top: 0px;
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.3s ease;
+.question p {
+  margin: 0;
+  font-size: 1.1rem;
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.expand-icon {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  margin-left: 1rem;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.faq-item.expanded .expand-icon {
+  transform: rotate(180deg);
+}
+
+.answer {
+  padding: 1.5rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.answer p {
+  margin: 0;
+  font-size: 1rem;
+  white-space: normal;  /* Match text wrapping with other sections */
+  word-wrap: break-word;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  max-height: 1000px;
   overflow: hidden;
 }
 
-.expanded .expanded-content {
-  max-height: 200px;
-  opacity: 1;
-  transform: translateY(0);
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  max-height: 0;
 }
 
-
-.answer {
-  height: fit-content;
+.no-faqs {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
 }
 
 .site-footer {
@@ -832,7 +857,9 @@ body.dark-mode .feature-icon {
 
 /* Global settings and the main content area */
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -942,12 +969,51 @@ img {
   .expanded .expanded-content {
     max-height: 300px;
   }
+
+  .question-section {
+    padding: 3rem 5%;
+  }
+
+  .question-section header h1 {
+    font-size: 2rem;
+  }
+
+  .question p {
+    font-size: 1rem;
+  }
+
+  .answer p {
+    font-size: 0.9rem;
+  }
+
+  .front-search-bar {
+    width: 95vw;
+    padding: 10px 5%;
+    margin-top: 2rem;
+    /* thêm margin cách chữ trên */
+  }
+
+  .title {
+    font-size: clamp(2.5rem, 5vw, 5rem);
+  }
+
+  .description {
+    font-size: 1.3rem;
+    text-align: center;
+    padding: 1rem;
+  }
+
 }
 
 /* Large devices (desktops, 992px and up) */
 @media (max-width: 992px) {
 
   .intro-text {
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    /* thêm khoảng trắng phía dưới nếu muốn */
+
+    /* thay vì 100vh */
     flex-direction: column;
     padding: 0;
     align-items: center;
@@ -956,6 +1022,7 @@ img {
 
   .intro-text1 {
     padding-left: 0;
+    padding-top: 10vh;
     gap: 10px;
   }
 
@@ -970,6 +1037,145 @@ img {
 
   .photo img {
     width: 100%;
+  }
+}
+
+.debug-info {
+  background-color: #f0f0f0;
+  padding: 1rem;
+  margin: 1rem auto;
+  max-width: 800px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.debug-info p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+:root.dark-mode .debug-info {
+  background-color: #2a2a2a;
+  color: #ccc;
+}
+
+/* Responsive for technology section */
+@media (max-width: 992px) {
+  .technology-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0;
+  }
+
+  .technology-card {
+    border: none;
+    padding: 1rem;
+  }
+
+  .technology-card-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .technology-stat p {
+    font-size: 2.2rem;
+  }
+
+  .technology-stat-details p {
+    font-size: 0.9rem;
+  }
+
+  .feature-container {
+    padding: 0 5%;
+  }
+
+  .feature-row {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 1rem;
+    gap: 2rem;
+  }
+
+  .feature-text {
+    padding: 1rem;
+  }
+
+  .feature-text h2 {
+    font-size: 1.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .feature-text p {
+    font-size: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .feature-image {
+    width: 100%;
+    padding: 1rem 0;
+    border: none;
+  }
+
+  .feature-image img {
+    width: 60%;
+    height: auto;
+  }
+
+  .button {
+    width: 100%;
+    max-width: 250px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .technology-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .technology-stat p {
+    font-size: 2rem;
+  }
+
+  .feature-text h2 {
+    font-size: 1.3rem;
+  }
+
+  .feature-text p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Add responsive styles for FAQ section to match other sections */
+@media (max-width: 992px) {
+  .question-section {
+    padding: 10% 5%;
+  }
+
+  .question-section header h1 {
+    font-size: 2rem;
+  }
+
+  .question p {
+    font-size: 1rem;
+  }
+
+  .answer p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .question-section {
+    padding: 10% 5%;
+  }
+
+  .question p {
+    font-size: 0.95rem;
+  }
+
+  .answer p {
+    font-size: 0.9rem;
   }
 }
 </style>

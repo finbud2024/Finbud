@@ -33,6 +33,7 @@ import plaidRoute from "../Endpoints/PlaidService.js";
 import filingsRoute, { loadCompanies } from "../Endpoints/finData/filingsRoute.js";
 import articleRoute from "../Endpoints/articleRoute.js";
 import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
+import notiRoute from "../Endpoints/notiRoute.js";
 
 dotenv.config();
 
@@ -43,10 +44,12 @@ const allowedOrigins = ["http://localhost:8888", "https://finbud.pro"];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
+      // ✅ Allow undefined origins (like Postman, curl, or internal requests)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.warn(`CORS blocked request from origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -163,6 +166,7 @@ router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
 router.use("/", filingsRoute);
 router.use("/", insiderTransactionRoute)
+router.use("/", notiRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
@@ -188,7 +192,10 @@ const handler = async (event, context) => {
 };
 
 // Start the server for local development if not in production
-if (process.env.NODE_ENV !== "production") {
+if (
+  process.env.NODE_ENV !== "production" &&
+  process.env.NETLIFY_DEV !== "true"
+) {
   const PORT = process.env.PORT || 8889;
   connectToMongoDB()
   .then(() => loadCompanies())

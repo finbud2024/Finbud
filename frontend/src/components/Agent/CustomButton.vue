@@ -45,6 +45,7 @@ export default {
   transition: all 0.2s ease;
   border-radius: 20px;
   padding: 10px 20px;
+  background-color: var(--link-color);
 }
 
 .custom-button:hover {

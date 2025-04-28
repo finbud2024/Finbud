@@ -15,6 +15,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { VueQueryPlugin } from '@tanstack/vue-query';
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 
 // Add specific icons to the library
 const icons = [
@@ -40,9 +41,12 @@ const icons = [
   faSolid.faSun,
 ];
 library.add(...icons); // Use the spread operator to add the icons
+library.add(faBell);
 
 // Create the application
 const app = createApp(App);
+
+
 
 app.use(VueGoogleMaps, {
   load: {
