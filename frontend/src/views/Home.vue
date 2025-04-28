@@ -187,6 +187,7 @@ import BigGreenButton from "../components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import { useTypingEffect } from '@/composables/useTypingEffect';
 import UserInput from '@/components/UserInput.vue';
+import axios from 'axios';
 
 export default {
   name: 'MainContent',
@@ -269,13 +270,24 @@ export default {
     learnMore() {
       this.$router.push('/tech');
     },
-    chatNow(message) {
+    async chatNow(message) {
+      try {
+        // Create a new thread by making an API call
+        const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+        const userId = this.$store.getters["users/userId"]; // Get the current user ID
+        const response = await axios.post(api, { userId });
 
-      this.$router.push({
-        path: '/chat-view',
-        query: { autoMessage: message }
-      });
+        // Extract the new thread ID from the response
+        const newThreadID = response.data._id;
 
+        // Navigate to the chat view with the new thread ID and the message
+        this.$router.push({
+          path: "/chat-view",
+          query: { autoMessage: message, threadID: newThreadID },
+        });
+      } catch (error) {
+        console.error("Error creating a new thread:", error);
+      }
     },
     onTutorialCompleted() {
       console.log("Tutorial completed!");

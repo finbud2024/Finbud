@@ -309,7 +309,7 @@ export default {
 	--bg-primary: #ffffff;
 	--text-primary: #333333;
 	--nav-bg: transparent;
-	--border-color: #ffffff;
+	--border-color: #f5f5f5;
 	--link-color: black;
 	--hover-bg: #024384;
 	--card-bg: #ffffff;
