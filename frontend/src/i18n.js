@@ -22,6 +22,7 @@ const messages = {
     event: "Event",
     forum: "Forum",
     finAgent: "Fin Agent",
+    finData: "Fin Data",
     agent: "Agent",
     login: "Log In",
     darkMode: "Dark Mode",

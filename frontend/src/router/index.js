@@ -29,6 +29,8 @@ import FinDataPage from "@/views/FinDataPage.vue"
 import AgentPage from "@/views/AgentPage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
 import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
+import InsiderTransactionPage from "@/views/InsiderTransactionPage.vue";
+import EarningCalendarPage from "@/views/EarningCalendarPage.vue";
 const routes = [
   {
     path: "/",
@@ -172,6 +174,14 @@ const routes = [
     path: "/docs/:ticker",
     name: "Financial Docs",
     component: FinDataPage
+  },
+  {
+    path: "/company-report/:ticker",
+    component: InsiderTransactionPage
+  },
+  {
+    path: "/earning-calendars",
+    component: EarningCalendarPage
   },
   {
     path: "/agent/",

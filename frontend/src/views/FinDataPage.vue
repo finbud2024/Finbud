@@ -4,7 +4,7 @@
         <div class="data-header">
             <h3 class="text-xl font-semibold">{{ ticker.toUpperCase() }} Documents</h3>
             <div class="buttons-header">
-                <BButton style="white-space: nowrap;" variant="primary">
+                <BButton style="white-space: nowrap;" variant="primary" @click="gotoCompanyReport">
                     View {{ ticker.toUpperCase() }} Company Report
                 </BButton>
 
@@ -59,13 +59,23 @@
       </DataCard>
 
         </div>
+        <div v-if="earningItems.length > 0">
+          <b-table :items="earningItems" :fields="fields" bordered striped small hover>
+        <template #cell(reportDate)="data">
+          {{ data.item.reportDate }}
+        </template>
+        <template #cell(fiscalDateEnding)="data">
+          {{ data.item.fiscalDateEnding }}
+        </template>
+      </b-table>
+        </div>
     </div>
 </template>
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import { ref, onMounted, watch, computed } from 'vue';
-import { BButton } from 'bootstrap-vue-3';
+import { BButton, BTable } from 'bootstrap-vue-3';
 import DataCard from '@/components/finDataPage/DataCard.vue';
 import TicketSearchModal from '@/components/finDataPage/TicketSearchModal.vue';
 import { getAllCompanies, fetchCompanyFilings, getCompanyFilingsFromDB, getEarningCalendars, getEarningTranscripts } from '@/services/finDataService';
@@ -80,6 +90,28 @@ const proxies = ref([])
 const form4 = ref([])
 const earningTranscripts = ref([])
 const news = ref([])
+const earningItems = ref([]);
+const fields = [
+    { key: 'symbol', label: 'Ticker' },
+    { key: 'name', label: 'Company Name' },
+    { key: 'reportDate', label: 'Report Date' },
+    { key: 'fiscalDateEnding', label: 'Fiscal Period Ending' },
+    { key: 'estimate', label: 'Estimate' },
+    { key: 'currency', label: 'Currency' },
+  ];
+
+  onMounted(async () => {
+    try {
+      const data = await getEarningCalendars(ticker.value.toUpperCase());
+      earningItems.value = data || [];
+    } catch (error) {
+      console.error('Error loading earning calendar', error);
+    }
+  });
+
+function gotoCompanyReport(){
+  router.push(`/company-report/${ticker.value.toLowerCase()}`);
+}
 const loadFilings = async () => {
   try {
     await fetchCompanyFilings(ticker.value)
@@ -87,10 +119,10 @@ const loadFilings = async () => {
     const filings = await getCompanyFilingsFromDB(ticker.value)
     console.log("filings in FE", filings)
     return {
-      financials: filings.filter(f => f.reportType === '10-K' || f.reportType === '10-Q'),
-      news: filings.filter(f => f.reportType === '8-K'),
-      proxies: filings.filter(f => f.reportType == 'DEF 14A' || f.reportType == 'DEFA14A'),
-      form4: filings.filter(f => f.reportType === '4')
+      financials: filings.filter(f => f.reportType === '10-K' || f.reportType === '10-Q').sort((a, b) => new Date(b.filingDate - a.filingDate)),
+      news: filings.filter(f => f.reportType === '8-K').sort((a, b) => new Date(b.filingDate - a.filingDate)),
+      proxies: filings.filter(f => f.reportType == 'DEF 14A' || f.reportType == 'DEFA14A').sort((a, b) => new Date(b.filingDate - a.filingDate)),
+      form4: filings.filter(f => f.reportType === '4').sort((a, b) => new Date(b.filingDate - a.filingDate)),
     }
   } catch (error){
     console.log("error fetching companies from BE", error)
@@ -107,17 +139,6 @@ const { data: companiesData } = useQuery({
   staleTime: 300000
 })
 const companies = computed(() => companiesData.value || []);
-
-// onMounted(async () => {
-//   try {
-//     // companies.value = await getAllCompanies()
-//     // await loadFilings()
-//     // await getEarningCalendars()
-//     // await loadEarningTranscripts()
-//   } catch(er){
-//     console.log("Error loading filings in FE", er)
-//   }
-// })
 
 watch(
   () => route.params.ticker,

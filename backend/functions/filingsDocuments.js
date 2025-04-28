@@ -24,8 +24,7 @@ export const fetchFilingsDocument = async (cik) => {
       accessionNumber: { $in: data.filings.recent.accessionNumber },
     })
     const existingSet = new Set(existing.map(f => f.accessionNumber))
-    
-    for (let i = 0; i < data.filings.recent.accessionNumber.length; i++){
+    for (let i = 0; i < data.filings.recent.form.length; i++){
         const currType = data.filings.recent.form[i];
         if (!needTypes.has(currType)) continue
         const currAccessionNumber = data.filings.recent.accessionNumber[i]
@@ -51,11 +50,10 @@ export const fetchFilingsDocument = async (cik) => {
                 cntForm4 += 1;
             }
             continue
-        }
-        if (cnt10K > 45 || cnt8K > 100 || cntDef > 50){
-            break
-        }
+        } 
+        
         const docUrl = `https://www.sec.gov/Archives/edgar/data/${parseInt(cik)}/${currAccessionNumber.replace(/-/g, "")}/${data.filings.recent.primaryDocument[i]}`
+        
         const currFilingDate = data.filings.recent.filingDate[i]
         filingsToSave.push({
             cik,
@@ -76,12 +74,14 @@ export const fetchFilingsDocument = async (cik) => {
         }
         else if (currType == '4'){
             cntForm4 += 1;
+    }
+        if (cnt10K > 45 || cnt8K > 100 || cntDef > 50){
+            break
         }
     }
     if (filingsToSave.length > 0){
         await Filings.insertMany(filingsToSave)
-    }
-    console.log("Fetch filing successfully")
+    } 
     const allFilings = [...existingFilings, ...filingsToSave]
     return allFilings
 } catch (error){

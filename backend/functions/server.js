@@ -17,7 +17,6 @@ import newsRoute from "../Endpoints/newsRoute.js";
 import chatRoute from "../Endpoints/chatRoute.js";
 import cryptoRoute from "../Endpoints/cryptoRoute.js";
 import stockRoute from "../Endpoints/stockRoute.js";
-import transactionRoute from "../Endpoints/transactionRoute.js";
 import stockTransactionRoute from "../Endpoints/stockTransactionRoute.js";
 import goalRoute from "../Endpoints/goalRoute.js";
 import proxyRoute from "../Endpoints/proxyRoute.js";
@@ -33,6 +32,7 @@ import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
 import filingsRoute, { loadCompanies } from "../Endpoints/finData/filingsRoute.js";
 import articleRoute from "../Endpoints/articleRoute.js";
+import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
 
 dotenv.config();
 
@@ -144,7 +144,6 @@ router.use("/", newsRoute);
 router.use("/", chatRoute);
 router.use("/", cryptoRoute);
 router.use("/", stockRoute);
-router.use("/", transactionRoute);
 router.use("/", stockTransactionRoute);
 router.use("/", goalRoute);
 router.use("/", proxyRoute);
@@ -162,7 +161,8 @@ router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
-router.use("/", filingsRoute)
+router.use("/", filingsRoute);
+router.use("/", insiderTransactionRoute)
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development

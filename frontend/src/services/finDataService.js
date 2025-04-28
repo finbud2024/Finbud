@@ -32,9 +32,9 @@ export async function getCompanyFilingsFromDB(ticker) {
 }
 
 // Get earning calendar API
-export async function getEarningCalendars() {
+export async function getEarningCalendars(ticker) {
     try{
-    const response = await axios.get("/.netlify/functions/server/earnings-calendar")
+    const response = await axios.get(`/.netlify/functions/server/earnings-calendar/${ticker}`)
     console.log("earning calendar from fe", response.data)
     return response.data
     } catch (err) {
@@ -43,8 +43,19 @@ export async function getEarningCalendars() {
 }
 
 // Get earning transcripts
-export async function getEarningTranscripts(ticker){
-    const response = await axios.get(`/.netlify/functions/server/earnings-transcript/${ticker}`)
-    console.log("earning transcripts from FE", response.data)
-    return response.data
+// export async function getEarningTranscripts(ticker){
+//     const response = await axios.get(`/.netlify/functions/server/earnings-transcript/${ticker}`)
+//     console.log("earning transcripts from FE", response.data)
+//     return response.data
+// }
+
+export async function getProcessForm4(ticker){
+    try {
+        const response = await axios.get(`/.netlify/functions/server/insider-transactions/${ticker}`)
+        console.log("process form 4 in FE", response.data)
+        return response.data
+    }
+    catch (error){
+        console.log("Error processing form 4 in FE", error)
+    }
 }

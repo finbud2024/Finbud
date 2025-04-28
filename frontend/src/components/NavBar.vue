@@ -174,10 +174,18 @@
           @mouseleave="toggleDropdownData(false)"
         >
         <div class="services-dropdown dropbtn">
-            <router-link to="/docs" class="docs" @click="toggleDropdownData(false)"
-              >Fin Data</router-link
-            >
-        </div>
+            {{ $t('finData') }} <span class="arrow-down"></span>
+            </div>
+            <div class="dropdown-content" v-show="isDataDropdownOpen">
+            <router-link
+              to="/docs"
+              class="docs"
+              @click="toggleDropdownData(false)"
+              >{{ $t('Docs') }}</router-link
+            > 
+            
+          </div>
+
         </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">

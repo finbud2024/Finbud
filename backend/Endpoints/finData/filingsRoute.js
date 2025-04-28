@@ -5,6 +5,7 @@ import { fetchFilingsDocument } from '../../functions/filingsDocuments';
 import Filings from '../../Database Schema/finData/FilingsSchema';
 import csvtojson from "convert-csv-to-json"
 import { getRecentQuarter } from '../../utils/getRecentQuarter.js';
+import EarningCalendar from '../../Database Schema/finData/EarningCalendar.js';
 
 const filingsRoute = express.Router();
 
@@ -105,38 +106,19 @@ filingsRoute.get("/filings/:ticker", async (req, res) => {
     }
 })
 
-// get earning transcripts
-filingsRoute.get("/earnings-transcript/:ticker", async(req, res) => {
+
+// get earning calendar
+filingsRoute.get("/earnings-calendar/:ticker", async (req, res) => {
     try {
         const {ticker} = req.params
-        const needQuarters = getRecentQuarter()
-        const transcripts = []
-        for (let i = 0; i < needQuarters.length; i++){
-            const response = await axios.get(`https://www.alphavantage.co/query?function=EARNINGS_CALL_TRANSCRIPT&symbol=${ticker.toUpperCase()}&quarter=2024Q1&apikey=${process.env.VUE_APP_ALPHAVANTAGE2
-}`)
-console.log("response", response.data)
-            if (response.data.transcript){
-                transcripts.push({
-                    ...needQuarters[i],
-                    reportDate: response.data.quarter,
-                    transcript: response.data.transcript
-                })
-            }
-        }
-        console.log("transcript from be", transcripts)
-        return transcripts
-    } catch (err) {
-        console.log("error in getting earning transcripts")
-        return res.status(500).json({message: "Error getting earning transcript"})
-    }
-})
-// get earning calendar
-filingsRoute.get("/earnings-calendar", async (req, res) => {
-    try {
-        const csvResponse = await axios.get(`https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&horizon=6month&apikey=${ALPHAVANTAGE_API_KEY}`,
+        // const existingCalendar = await EarningCalendar.find({ticker: ticker.toUpperCase()})
+        
+        const csvResponse = await axios.get(`https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&symbol=${ticker}&horizon=12month&apikey=${ALPHAVANTAGE_API_KEY}`,
             { responseType: 'text' }
         )
+        console.log("csv response", csvResponse.data)
         const jsonResponse = csvtojson.fieldDelimiter(",").csvStringToJson(csvResponse.data)
+        console.log("jsonResponse", jsonResponse)
         return res.status(200).json(jsonResponse)
     } catch (err){
         console.log("fail to get calendar BE", err)
