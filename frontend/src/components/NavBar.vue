@@ -108,6 +108,26 @@
             <router-link to="/agent" class="agent" @click="toggleDropdownEdu(false)">{{ $t('agent') }}</router-link>
           </div>
         </li>
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownData(true)"
+          @mouseleave="toggleDropdownData(false)"
+        >
+        <div class="services-dropdown dropbtn">
+            {{ $t('finData') }} <span class="arrow-down"></span>
+            </div>
+            <div class="dropdown-content" v-show="isDataDropdownOpen">
+            <router-link
+              to="/docs"
+              class="docs"
+              @click="toggleDropdownData(false)"
+              >{{ $t('Docs') }}</router-link
+            > 
+            
+          </div>
+
+        </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">
           <router-link to="/login" class="login-button">{{ $t('login') }}</router-link>
@@ -212,6 +232,7 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
+      isDataDropdownOpen: false,
       isDarkMode: false,
       isAuthLoading: false,
     };
@@ -260,6 +281,9 @@ export default {
     },
     toggleDropdownAgent(open) {
       this.isDropdownOpenAgent = open;
+    },
+    toggleDropdownData(open){
+      this.isDataDropdownOpen = open;
     },
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;
