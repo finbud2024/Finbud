@@ -90,26 +90,56 @@
 
     <div class="partners-section animate fade-in">
       <h2 class="section-title">{{ $t('technologyPage.partners.title') }}</h2>
-      <p class="section-description" v-html="$t('technologyPage.partners.description')"></p>
+      <p class="section-description">
+        <template v-for="(part, index) in $tm('technologyPage.partners.descriptionParts', { returnObjects: true })" :key="index">
+          <template v-if="typeof part === 'string'">
+            {{ part }}
+          </template>
+          <template v-else-if="part.type === 'link'">
+            <a :href="part.href">{{ part.text }}</a>
+          </template>
+        </template>
+      </p>
       <div class="partners">
-        <div class="partner animate slide-in-left">
-          <img src = "@/assets/shop.png"  alt="Shop-Ware Logo">
-          <p v-html="$t('technologyPage.partners.left')"></p>
-        </div>
-        <div class="partner animate slide-in-right">
-          <img src="@/assets/tek.png" alt="Tekmetric Logo">
-          <p v-html="$t('technologyPage.partners.right')"></p>
+        <div class="partner animate slide-in-left" v-for="partner in partners" :key="partner.id">
+          <img :src="partner.img" :alt="partner.alt" />
+          <p>
+            {{ $t(partner.text) }}
+            <a :href="$t(partner.linkHref)">{{ $t(partner.linkText) }}</a>
+          </p>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
+import shopImage from "@/assets/shop.png";
+import tekImage from "@/assets/tek.png";
+
 export default {
   name: 'FeaturesAndTechnologySection',
   data() {
     return {
+      partners: [
+        {
+          id: 1,
+          img: shopImage,
+          alt: "Shop-Ware Logo",
+          text: "technologyPage.partners.left.text",
+          linkText: "technologyPage.partners.left.linkText",
+          linkHref: "technologyPage.partners.left.linkHref"
+        },
+        {
+          id: 2,
+          img: tekImage,
+          alt: "Tekmetric Logo",
+          text: "technologyPage.partners.right.text",
+          linkText: "technologyPage.partners.right.linkText",
+          linkHref: "technologyPage.partners.right.linkHref"
+        }
+      ],
       features: [
         {
           id: 1,
