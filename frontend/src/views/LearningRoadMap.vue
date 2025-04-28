@@ -159,7 +159,7 @@ const courseDetails = ref({
   deadline: "4 weeks from today",
 });
 
-const VIDEO_COUNT = 1
+const VIDEO_COUNT = 2
 const videoResults = ref({})
 const topicDefinitions = ref({})
 
