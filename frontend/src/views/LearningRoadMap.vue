@@ -5,51 +5,60 @@
       <h2>Course Topics</h2>
 
       <div v-for="(section, sIdx) in sections" :key="sIdx">
-        <h3>{{ section.title }}</h3>
-        <div v-for="(topic, tIdx) in section.topics" :key="topic.id">
-          <!-- Header -->
-          <div class="topic-item" @click="toggleTopic(sIdx, tIdx)">
-            <i :class="topic.collapsed
-              ? 'fas fa-chevron-right'
-              : 'fas fa-chevron-down'"></i>
-            <span class="topic-title">{{ topic.title }}</span>
-            <!-- DELETE BUTTON -->
-            <button class="icon-btn delete-btn" @click.stop="deleteTopic(sIdx, tIdx)" title="Delete topic">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </div>
+        <div class="section-header" @click="toggleSection(sIdx)">
+          <i :class="section.collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-down'
+            "></i>
+          <span class="section-title">{{ section.title }}</span>
+        </div>
+        <div v-show="!section.collapsed">
+          <div v-for="(topic, tIdx) in section.topics" :key="topic.id">
+            <!-- Header -->
+            <div class="topic-item" @click="toggleTopic(sIdx, tIdx)">
+              <i :class="topic.collapsed
+                ? 'fas fa-chevron-right'
+                : 'fas fa-chevron-down'"></i>
+              <span class="topic-title">{{ topic.title }}</span>
+              <!-- DELETE BUTTON -->
+              <button class="icon-btn delete-btn" @click.stop="deleteTopic(sIdx, tIdx)" title="Delete topic">
+                <i class="fas fa-trash-alt"></i>
+              </button>
 
-          <!-- Expanded Panel -->
-          <div class="topic-content-container" v-show="!topic.collapsed">
-
-
-            <!-- 1) Definition Section -->
-            <div class="definition-block" v-if="topicDefinitions[keyFor(sIdx, tIdx)]">
-              <h3>Definition &amp; Key Lessons</h3>
-              <p>{{ topicDefinitions[keyFor(sIdx, tIdx)] }}</p>
             </div>
+            <!-- Expanded Panel -->
+            <div class="topic-content-container" v-show="!topic.collapsed">
 
-            <!-- 2) Video Section -->
-            <!-- 2.1) Searching -->
-            <p v-if="loadingVideos[keyFor(sIdx, tIdx)]" class="loading-videos">
-              🔍 Searching videos for “{{ topic.title }}”…
-            </p>
-            <!-- 2.2) Results -->
-            <div v-else-if="videoResults[keyFor(sIdx, tIdx)]?.length" class="video-results-container">
-              <div v-for="video in videoResults[keyFor(sIdx, tIdx)]" :key="video.link" class="video-card">
-                <a :href="video.link" target="_blank" rel="noopener">
-                  <img :src="video.imageUrl" :alt="video.title" class="video-thumb" />
-                </a>
-                <div class="video-caption">
-                  <a :href="video.link" target="_blank">{{ video.title }}</a>
+
+              <!-- 1) Definition Section -->
+              <div class="definition-block" v-if="topicDefinitions[keyFor(sIdx, tIdx)]">
+                <h3>Definition &amp; Key Lessons</h3>
+                <div v-html="topicDefinitions[keyFor(sIdx,tIdx)]"></div>
+              </div>
+
+              <!-- 2) Video Section -->
+              <!-- 2.1) Searching -->
+              <p v-if="loadingVideos[keyFor(sIdx, tIdx)]" class="loading-videos">
+                🔍 Searching for “{{ topic.title }}”…
+              </p>
+              <!-- 2.2) Results -->
+              <div v-else-if="videoResults[keyFor(sIdx, tIdx)]?.length" class="video-results-container">
+                <div v-for="video in videoResults[keyFor(sIdx, tIdx)]" :key="video.link" class="video-card">
+                  <a :href="video.link" target="_blank" rel="noopener">
+                    <img :src="video.imageUrl" :alt="video.title" class="video-thumb" />
+                  </a>
+                  <div class="video-caption">
+                    <a :href="video.link" target="_blank">{{ video.title }}</a>
+                  </div>
                 </div>
               </div>
+
+              <!-- 2.3) No results -->
+              <p v-else class="no-videos">
+                No videos found for “{{ topic.title }}.”
+              </p>
             </div>
 
-            <!-- 2.3) No results -->
-            <p v-else class="no-videos">
-              No videos found for “{{ topic.title }}.”
-            </p>
+
+
 
           </div>
         </div>
@@ -200,17 +209,73 @@ const processRoadmapData = () => {
     sections.value = [
       {
         title: "Generated Content",
-        collapsed: true,
-        topics: [{ id: 1, title: "No specific topics found" }],
+        collapsed: false,
+        topics: [{ id: 1, collapsed: true, title: "No specific topics found" }],
       },
     ];
     console.warn("No modules array found in roadmap data");
   }
 };
 
+/**
+ * @param {string} rawText 
+ * @param {number} count 
+ * @returns {string[]} 
+ */
+function parseDefs(rawText, count) {
+  const regex = /(?:^|\n)(\d+)\.\s*([\s\S]*?)(?=(?:\n\d+\.|$))/g;
+  const defs = [];
+  let match;
+
+  while ((match = regex.exec(rawText)) !== null) {
+    const idx = Number(match[1]) - 1;
+    const text = match[2].trim();
+    defs[idx] = text;
+  }
+
+  // Ensure we return exactly `count` entries (fill missing with empty string)
+  return Array.from({ length: count }, (_, i) => defs[i] || "");
+}
+
 // Process data on initial mount
-onMounted(() => {
+onMounted(async () => {
   processRoadmapData();
+
+  // Attempt to fetch all at once, but logistically unfeasible, since users can add topics at any time
+  //   // 1) gather titles
+  //   const allTitles = sections.value.flatMap((sec) =>
+  //     sec.topics.map((t) => t.title.trim())
+  //   );
+
+  //   // 2) fetch definitions in one go
+  //   const defsPrompt = `
+  // For each of the following topics, provide:
+  //   1) A one-sentence definition.
+  //   2) Three key beginner lessons.
+
+  // Topics:
+  // ${allTitles.map((t, i) => `${i + 1}. ${t}`).join("\n")}
+  // `;
+
+  //   const defsResponse = await gptServices([
+  //     { role: "user", content: defsPrompt }
+  //   ]);
+  //   const rawDefs = await gptServices([{ role: "user", content: defsPrompt }]);
+  //   const parsedDefs = parseDefs(rawDefs, allTitles.length);
+
+  //   const videoLists = await Promise.all(
+  //     allTitles.map((t) => getVideos(t, VIDEO_COUNT))
+  //   );
+
+  //   let idx = 0;
+  //   sections.value.forEach((sec, sIdx) => {
+  //     sec.topics.forEach((t, tIdx) => {
+  //       const key = `${sIdx}-${tIdx}`;
+  //       topicDefinitions.value[key] = parsedDefs[idx];
+  //       videoResults.value[key] = videoLists[idx];
+  //       idx++;
+  //     });
+  //   });
 });
 
 // Watch for route changes to handle navigation to the same route
@@ -246,9 +311,10 @@ const toggleTopic = async (sectionIndex, topicIndex) => {
 
   // Uncomment these so that the searches only happen when some topic was found
   const title = topic.title?.trim();
+  topic.collapsed = !topic.collapsed;
+
   if (!title || title === "No specific topics found") return;
 
-  topic.collapsed = !topic.collapsed
 
   const key = keyFor(sectionIndex, topicIndex)
 
@@ -265,12 +331,28 @@ const toggleTopic = async (sectionIndex, topicIndex) => {
     if (!topicDefinitions.value[key]) {
       topicDefinitions.value[key] = 'Loading definition…'
       try {
-        const definition = await gptServices([
-          {
-            role: 'user',
-            content: `Please give me a concise definition of "${topic.title}" and list 3 basic lessons or things a beginner should know about this topic.`
-          }
-        ])
+        const definition = await gptServices([{
+          role: 'user',
+          content: `
+Please give me a very concise definition of "${topic.title}", and then list 3 basic lessons or things a beginner should know.  
+**Return the entire response as a single HTML unordered list**, where:
+
+- the first <li> is the one-sentence definition  
+- the next three <li>​s are each lesson  
+
+Do **not** wrap it in any other tags or prose—just the <ul> with four <li> elements. _Do not_ include any markdown or code fences.
+
+Use HTML tags—**do not** use Markdown.  
+For example:
+<ul>
+  <li><strong>Definition text…</strong></li>
+  <li>Lesson 1</li>
+  <li>Lesson 2</li>
+  <li>Lesson 3</li>
+</ul>
+And only those bullet points—nothing else.  
+`
+        }])
         topicDefinitions.value[key] = definition.trim()
       }
       catch (err) {

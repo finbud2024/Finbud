@@ -621,6 +621,8 @@ export default {
       };
 
       try {
+        // output the roadmap data to console
+        console.log("Roadmap Data:", roadmapData);
         const roadmap = await this.generateLearningRoadmap(roadmapData);
         // Handle the roadmap data - perhaps emit an event or process it
 
