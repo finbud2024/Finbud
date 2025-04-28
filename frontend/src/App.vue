@@ -309,7 +309,7 @@ export default {
 	--bg-primary: #ffffff;
 	--text-primary: #333333;
 	--nav-bg: transparent;
-	--border-color: #dddddd;
+	--border-color: #ffffff;
 	--link-color: black;
 	--hover-bg: #024384;
 	--card-bg: #ffffff;
@@ -324,6 +324,8 @@ export default {
 	--black-in-light-mode: #000000;
 	--white-in-light-mode: #ffffff;
 	--agent-button-bg-active-color: #000000;
+	--black-in-dark-mode: #ffffff;
+	--white-in-dark-mode: #000000;
 }
 
 :root.dark-mode,
@@ -348,8 +350,10 @@ body.dark-mode {
 	--white-in-light-mode: #000000;
 	--agent-button-bg-color: #007bff;
 	--agent-button-bg-active-color: #ffffff;
+	--black-in-dark-mode: #0f0f14;
+	--white-in-dark-mode: #ffffff;
+	--dark-grey: #0f0f14
 }
-
 /* Update content area */
 .content {
 	margin-top: 5%;
@@ -381,6 +385,7 @@ body.dark-mode {
 	background-color: var(--hover-bg);
 }
 
+
 body {
 	min-height: 100%;
 	margin: 0;
@@ -393,6 +398,7 @@ html {
 	height: 100%;
 	scrollbar-gutter: auto;
 }
+
 </style>
 
 <style scoped>

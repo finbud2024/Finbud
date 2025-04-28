@@ -54,14 +54,36 @@
             {{ $t('finInvest') }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownInvest(false)">{{ $t('simulator')
-              }}</router-link>
-            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownInvest(false)">AutoTrade
-              AI</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdownInvest(false)">{{ $t('quant')
-              }}</router-link>
-            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownInvest(false)">{{
-              $t('quantSimulator') }}</router-link>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t('simulator') }}</router-link
+            >
+            <router-link
+              to="/autotrade-ai"
+              class="autotrade"
+              @click="toggleDropdownInvest(false)"
+              >AutoTrade AI</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t('quant') }}</router-link
+            >
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t('quantSimulator') }}</router-link
+            >
+            <router-link
+            to="/fund-letter"
+            class="fund-letter"
+            @click="toggleDropdownInvest(false)"
+            >Fund Letter</router-link
+          >
           </div>
         </li>
 
