@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
+import path from "path";
 import Source from "../Database Schema/Source.js";  
 import Article from "../Database Schema/Article.js";
 import serverless from "serverless-http";

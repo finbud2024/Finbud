@@ -10,11 +10,6 @@ const router = express.Router();
 const pdfDir = path.join(process.cwd(), "public/pdfs");
 if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
 
-html2pdf.create(html).toFile(filePath, (err, res) => {
-  if (err) return res.status(500).json({ error: "PDF generation failed" });
-  // Save to DB here
-});
-
 // POST /api/save-report
 router.post("/api/save-report", async (req, res) => {
   const { filename, html, timestamp } = req.body;
@@ -24,11 +19,19 @@ router.post("/api/save-report", async (req, res) => {
 
   const filePath = path.join(pdfDir, filename);
 
-  const url = `/pdfs/${filename}`;
-  const report = new ExportedReport({ filename, timestamp, url });
-  await report.save();
+  html2pdf.create(html).toFile(filePath, async (err, result) => {
+    if (err) {
+      console.error("PDF generation error:", err);
+      return res.status(500).json({ error: "PDF generation failed" });
+    }
 
-  res.json({ message: "Report saved", url });
+    // Only save to DB after PDF is successfully created
+    const url = `/pdfs/${filename}`;
+    const report = new ExportedReport({ filename, timestamp, url });
+    await report.save();
+
+    res.json({ message: "Report saved", url });
+  });
 });
 
 // GET /api/reports
