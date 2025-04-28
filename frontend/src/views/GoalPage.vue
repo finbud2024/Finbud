@@ -500,7 +500,7 @@ totalRevenue() {
       this.refreshData();
       this.getAccountBalance(); // Cập nhật account balance mỗi lần refresh
     }, 10000);
-  },
+  }, 
 
   beforeDestroy() {
   // Clean up event listeners

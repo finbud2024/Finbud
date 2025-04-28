@@ -22,6 +22,7 @@ const messages = {
     event: "Event",
     forum: "Forum",
     finAgent: "Fin Agent",
+    finData: "Fin Data",
     agent: "Agent",
     login: "Log In",
     darkMode: "Dark Mode",
@@ -49,7 +50,7 @@ const messages = {
     loan15: "15-year fixed",
     loan5: "5-year ARM",
 
-  //Investment calculator
+    //Investment calculator
     investmentTitle: "Investment Calculator",
     initialInvestment: "Initial Investment ($)",
     annualInterestRate: "Annual Interest Rate (%)",
@@ -66,7 +67,7 @@ const messages = {
     weekly: "Weekly",
     daily: "Daily",
     profitEarned: "Profit Earned",
-    
+
     // For contribution options
     contributionAtThe: "Contribution at the",
     ofEach: "of each",
@@ -75,7 +76,7 @@ const messages = {
     month: "month",
     year: "year",
 
-   
+
     // Results and graphs
     calculate: "Calculate",
     finAmount: "Final Amount: ",
@@ -154,13 +155,13 @@ const messages = {
     // Bot Section
     botAltText: "Chatbot",
     profilePicAlt: "Profile picture",
-    
+
     // Greetings
     morningGreeting: "Good Morning",
     afternoonGreeting: "Good Afternoon",
     eveningGreeting: "Good Evening",
     dashboardSlogan: "Manage your wallet wisely to reach your goals with ease",
-    
+
     // Buttons
     connectBankButton: "Connect Your Bank Account",
     addButton: "Add",
@@ -172,12 +173,12 @@ const messages = {
     removeButton: "Remove",
     addGoalButton: "Add Goal",
     addTransactionButton: "Add Transaction",
-    
+
     // Financial Summary
     totalRevenueLabel: "Total Revenue",
     totalExpenseLabel: "Total Expense",
     accountBalanceLabel: "Account Balance",
-    
+
     // Transactions
     dailyTransactionsTitle: "Daily Transactions",
     addTransactionTitle: "Add Transaction",
@@ -187,7 +188,7 @@ const messages = {
     descriptionPlaceholder: "Description",
     amountPlaceholder: "Amount",
     datePlaceholder: "Date",
-    
+
     // Table Headers
     descriptionHeader: "Description",
     dateHeader: "Date",
@@ -197,7 +198,7 @@ const messages = {
     transactionHeader: "Transaction",
     creditedStatus: "Credited",
     debitedStatus: "Debited",
-    
+
     // Goals Section
     goalsSectionTitle: "Goals",
     searchGoalsPlaceholder: "Search goals...",
@@ -205,7 +206,7 @@ const messages = {
     categoryLabel: "Category",
     totalLabel: "Total",
     savedLabel: "Saved",
-    
+
     // Add Goal Modal
     addNewGoalTitle: "Add New Goal",
     goalTitleLabel: "Goal Title",
@@ -223,7 +224,7 @@ const messages = {
     addNewCategoryOption: "Add New Category",
     newCategoryLabel: "New Category",
     newCategoryPlaceholder: "Enter new category",
-    
+
     // Reset Account Modal
     resetAccountTitle: "Reset Account Balance",
     resetAccountMessage: "Are you sure you want to reset your account balance? This action will delete all your transactions.",
@@ -232,14 +233,14 @@ const messages = {
     aboutUsTitle: "About us",
     aboutUsDescription: "We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures. Our team consists of experienced professionals with diverse backgrounds in technology, finance, and business. We are passionate about leveraging technology to make financial management accessible and straightforward for everyone.",
     meetOurTeamTitle: "Meet Our Team",
-    
+
     // Testimonials Section
     testimonialsTitle: "What our users say about FinBud",
-    
+
     // Contact Section
     contactHeader: "We'd love to talk about how we can work together.",
     contactSubheader: "Let us know how we can help (or if we can't, tell us)!",
-    
+
     // Contact Form
     fullNameLabel: "Full name",
     fullNamePlaceholder: "Frank Castle",
@@ -252,7 +253,7 @@ const messages = {
     messageLabel: "Your message",
     messagePlaceholder: "How can we help you?",
     sendMessageButton: "Send message",
-    
+
     // Contact Info
     messageUsLabel: "Message us",
     callUsLabel: "Call us",
@@ -270,7 +271,7 @@ const messages = {
       aiEngineer: "Artificial Intelligence (AI) Engineer",
       dataScientist: "Data Analytics/Data Scientist"
     },
-    
+
     // Team member introductions
     team: {
       intros: {
@@ -290,10 +291,10 @@ const messages = {
         bach: "Pursuing Computer Science Degree at VinUniversity"
       }
     },
-    
+
     // Testimonials
     testimonials: {
-      daniel: "FinBud helped me understand where my money goes each month. Simple insights, big impact.",   
+      daniel: "FinBud helped me understand where my money goes each month. Simple insights, big impact.",
       rachel: "I’ve tried several money apps before, but none felt as intuitive as FinBud. It helped me figure out where my paycheck was going. The AI guidance makes a big difference—it feels personal. Now I’ve started building savings and even planning for retirement. I finally feel like I’m making smart choices with my money.",
       jane: "I love using FinBud! It's like having a personal financial advisor available 24/7. The insights and tips are incredibly useful and easy to understand.",
       julian: "I was always intimidated by financial planning. Spreadsheets overwhelmed me, and I never knew where to start.FinBud took that stress away with its clean interface and smart AI support. It categorized my spending automatically and gave me goals I could actually reach. After six months of using it, I’ve paid off two credit cards and started building an emergency fund. I finally feel like I’m in control of my finances instead of the other way around. It’s more than an app—it’s like having a coach that keeps me accountable. Highly recommend it to anyone feeling stuck or lost with money.",
@@ -367,7 +368,7 @@ const messages = {
     chatComponent: {
       rename: "Rename",
       delete: "Delete",
-      deleteConfirm:"Delete Chat ?",
+      deleteConfirm: "Delete Chat ?",
       deleteConfirmMessage: "This will delete",
       cancel: "Cancel",
       guildence: "Guidence",
@@ -404,25 +405,25 @@ const messages = {
     },
 
     //Chat
-    message:"Type your message here... ",
+    message: "Type your message here... ",
 
     // Main Page Content
     empoweringTitle: "Empowering smarter finance decisions",
     anytimeAnswers: "Anytime answers for finance questions with FinBud",
     partneringTitle: "Partnering to Achieve Financial Goals",
-    
+
     // Financial Awareness Section
     enhanceFinancialTitle: "Enhance Your Financial Awareness",
     enhanceFinancialDesc: "Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your questions.",
-    
+
     // Financial Planning Section
     optimizeFinancialTitle: "Optimize Your Financial Planning",
     optimizeFinancialDesc: "Finbud helps you track and manage expenses, record income and spending, and tailor financial management to your specific goals.",
-    
+
     // Investment Section
     maximizeInvestmentTitle: "Maximize Your Investment Efficiency",
     maximizeInvestmentDesc: "Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital confidently.",
-    
+
     // Impact Section
     impactTitle: "Easily notice the impact",
     savingsIncrease: "Savings Increase",
@@ -433,28 +434,28 @@ const messages = {
     debtDesc: "after 1 year",
     creditScore: "Improved Credit Score",
     creditDesc: "months within",
-    
+
     // Features Section
     chatbotFeatureTitle: "Solve Financial Worries with",
     chatbotFeatureName: "AI Chatbot,",
     chatbotDesc: "With just simple commands and access to a vast source of accurate and reliable information, all your financial queries can be answered instantly.",
     chatNow: "Chat now",
-    
+
     simulatorFeatureTitle: "Master Your Investments with",
     simulatorFeatureName: "FinBud Simulator,",
     simulatorDesc: "Track how your investments are performing in real-time, provide actionable insights from your investment and the market to make better investment decisions.",
     simulatorNow: "Simulator now",
-    
+
     goalFeatureTitle: "Predict Your Costs with",
     goalFeatureName: "FinBud Goal,",
     goalDesc: "Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive tips for better budget management.",
     goalNow: "Set Goal now",
-    
+
     quizFeatureTitle: "Boost Your Finance Skills with",
     quizFeatureName: "FinBud Quiz,",
     quizDesc: "Financial Quiz with different topics related to various keywords helps you practice and learn financial knowledge in a smart and interactive way.",
     quizNow: "Try Quiz now",
-    
+
     // FAQ Section
     faqTitle: "Frequently Asked Questions",
     faqs: {
@@ -485,12 +486,119 @@ const messages = {
     profitEarnedLabel: "Profit Earned",
     zillowNote: "Interest rate provided via Zillow.",
     yearNumber: "Year {number}",
+    // FundLetterPage Component
+    fundLetters: "Fund Letters",
+    fundLettersArchive: "Fund Letters Archive",
+    curatedListSubtitle: "Curated List of Quarterly Hedge Fund Letters",
+    searchPlaceholder: "Search by name of fund",
+    allYears: "All Years",
+    allQuarters: "All Quarters",
+    fundName: "Fund Name",
+    date: "Date",
+    noResults: "No letters found for selected filters.",
+    resetFilters: "Reset Filters",
+    greatestInvestors: "Greatest Investor Compilations",
+    learnFromMasters: "Learn from the masters of value investing",
 
     // Investment Calculator Bot Messages
     investmentAnalysis: "Investment Analysis:",
     initialAmount: "Initial:",
     rateAmount: "Rate:",
     finalAmountBot: "Final:",
+
+    // Technology Page
+    technologyPage: {
+      title: "Analytics that drive your business.",
+      description: "Review your performance and drive change with our actionable insights provided via our intuitive web app.",
+      features: {
+        title: {
+          plan: "Financial Planning",
+          manage: "Debt and Investment Management",
+          edu: "Financial Education",
+          analyze: "Predictive Financial Analytics",
+        },
+        description: {
+          plan: "I help you create and maintain a perfect personal financial plan.",
+          manage: "Manage your debts and invest wisely with targeted advice tailored to your goals.",
+          edu: "Providing knowledge on basic and advanced financial concepts to empower your decisions.",
+          analyze: "Utilize AI to analyze and predict financial trends to make smart decisions.",
+        },
+      },
+      financialConsulting: {
+        title: "Financial Consulting",
+        note: "Personalized plans to secure your financial future.",
+        highlightsLeft: [
+          "Debt Management",
+          "Savings Strategies",
+          "Investment Advice"
+        ],
+        highlightsRight: [
+          "Custom Financial Planning",
+          "Goal-Oriented Guidance",
+          "Personal Wealth Management"
+        ],
+        button: "Start your 30-day free trial"
+      },
+      financialEducation: {
+        title: "Financial Education",
+        note: "Empower yourself with knowledge to make better financial decisions.",
+        highlights: [
+          "Basic to Advanced Financial Concepts",
+          "Interactive Lessons and Quizzes",
+          "Real-time Financial Trend Analysis",
+          "AI-Driven Insights"
+        ],
+        button: "Start your 30-day free trial"
+      },
+      insights: {
+        title: "ARTIFICIAL INTELLIGENCE",
+        subtitle: "Get real-time insights on your performance.",
+        description: "Empower your financial decisions with our cutting-edge AI technology.",
+        points: [
+          "Personalized Financial Analysis: Gain comprehensive insights with auto-generated reports tailored to your financial behavior, helping you optimize your budget and savings.",
+          "Trend Prediction: Our AI-driven tools analyze past spending and earning trends to forecast your financial future, enabling proactive financial planning."
+        ],
+        button: "Learn more"
+      },
+      computerVision: {
+        title: "ADVANCED AI CHATBOT",
+        subtitle: "Smart Financial Assistance at Your Fingertips.",
+        featuresTitle: {
+          analyze: "Instant Financial Insights",
+          plan: "Interactive Financial Planning",
+          secure: "Secure and Confidential"
+        },
+        featuresDescription: {
+          analyze: "Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.",
+          plan: "Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.",
+          secure: "Our proprietary system utilizes neural networks to identify the information that matters most. Think of it like the way your brain works, only it never gets tired (or needs 3 cups of coffee to get through the day)."
+        }
+      },
+      // partners: {
+      //   description: " <a href='mailto:contact@yourdomain.com'></a>",
+      //   left: "<a href='#'></a>",
+      //   right: " <a href='#'>Learn more</a>"
+      // }
+      partners: {
+        title: "Integrate with the best tools in the market",
+        descriptionParts: [
+          "Check out our connected partners. Don’t see your software on the list of partners?",
+          { type: "link", text: " Drop us a note", href: "mailto:contact@yourdomain.com" },
+          " and we’ll get them added."
+        ],
+        left: {
+          text: "Shop-Ware enables users to take advantage of their lightning-fast workflows to repair more cars every month.",
+          linkText: "Learn more",
+          linkHref: "#"
+        },
+        right: {
+          text: "Tekmetric lets you unleash your shop’s potential with their streamlined workflow settings.",
+          linkText: "Learn more",
+          linkHref: "#"
+        }
+      }
+    }
+
   },
   vi: {
 
@@ -642,13 +750,13 @@ const messages = {
     // Bot Section
     botAltText: "Chatbot trợ giúp",
     profilePicAlt: "Ảnh đại diện",
-    
+
     // Greetings
     morningGreeting: "Chào buổi sáng",
     afternoonGreeting: "Chào buổi chiều",
     eveningGreeting: "Chào buổi tối",
     dashboardSlogan: "Quản lý ví thông minh để đạt mục tiêu dễ dàng",
-    
+
     // Buttons
     connectBankButton: "Kết nối tài khoản ngân hàng",
     addButton: "Thêm",
@@ -660,12 +768,12 @@ const messages = {
     removeButton: "Xóa",
     addGoalButton: "Thêm mục tiêu",
     addTransactionButton: "Thêm giao dịch",
-    
+
     // Financial Summary
     totalRevenueLabel: "Tổng thu nhập",
     totalExpenseLabel: "Tổng chi tiêu",
     accountBalanceLabel: "Số dư tài khoản",
-    
+
     // Transactions
     dailyTransactionsTitle: "Giao dịch hàng ngày",
     addTransactionTitle: "Thêm giao dịch",
@@ -675,7 +783,7 @@ const messages = {
     descriptionPlaceholder: "Mô tả",
     amountPlaceholder: "Số tiền",
     datePlaceholder: "Ngày",
-    
+
     // Table Headers
     descriptionHeader: "Mô tả",
     dateHeader: "Ngày",
@@ -685,7 +793,7 @@ const messages = {
     transactionHeader: "Giao dịch",
     creditedStatus: "Ghi có",
     debitedStatus: "Ghi nợ",
-    
+
     // Goals Section
     goalsSectionTitle: "Mục tiêu",
     searchGoalsPlaceholder: "Tìm kiếm mục tiêu...",
@@ -693,7 +801,7 @@ const messages = {
     categoryLabel: "Danh mục",
     totalLabel: "Tổng",
     savedLabel: "Đã tiết kiệm",
-    
+
     // Add Goal Modal
     addNewGoalTitle: "Thêm mục tiêu mới",
     goalTitleLabel: "Tiêu đề mục tiêu",
@@ -711,7 +819,7 @@ const messages = {
     addNewCategoryOption: "Thêm danh mục mới",
     newCategoryLabel: "Danh mục mới",
     newCategoryPlaceholder: "Nhập danh mục mới",
-    
+
     // Reset Account Modal
     resetAccountTitle: "Đặt lại số dư tài khoản",
     resetAccountMessage: "Bạn có chắc muốn đặt lại số dư tài khoản? Hành động này sẽ xóa tất cả giao dịch của bạn.",
@@ -720,14 +828,14 @@ const messages = {
     aboutUsTitle: "Về chúng tôi",
     aboutUsDescription: "Chúng tôi là một đội ngũ công nghệ tại Việt Nam chuyên về tích hợp AI. FinBud là dự án đầu tiên của chúng tôi với mục tiêu hỗ trợ mọi người trong các quyết định tài chính, từ đầu tư, tiết kiệm đến chi tiêu thông minh. Đội ngũ của chúng tôi bao gồm các chuyên gia giàu kinh nghiệm với nền tảng đa dạng về công nghệ, tài chính và kinh doanh. Chúng tôi đam mê ứng dụng công nghệ để làm cho việc quản lý tài chính trở nên dễ dàng và dễ tiếp cận với tất cả mọi người.",
     meetOurTeamTitle: "Đội Ngũ",
-    
+
     // Testimonials Section
     testimonialsTitle: "Feedback",
-    
+
     // Contact Section
     contactHeader: "Liên hệ ngay",
     contactSubheader: "Hãy cho chúng tôi biết cách chúng tôi có thể hỗ trợ bạn!",
-    
+
     // Contact Form
     fullNameLabel: "Họ và tên",
     fullNamePlaceholder: "Nguyễn Văn A",
@@ -740,7 +848,7 @@ const messages = {
     messageLabel: "Lời nhắn của bạn",
     messagePlaceholder: "Chúng tôi có thể giúp gì cho bạn?",
     sendMessageButton: "Gửi tin nhắn",
-    
+
     // Contact Info
     messageUsLabel: "Gửi tin nhắn",
     callUsLabel: "Gọi điện thoại",
@@ -758,7 +866,7 @@ const messages = {
       aiEngineer: "Kỹ sư Trí tuệ nhân tạo (AI)",
       dataScientist: "Phân tích/Khoa học dữ liệu"
     },
-    
+
     // Team member introductions
     team: {
       intros: {
@@ -778,10 +886,10 @@ const messages = {
         bach: "Theo học bằng Cử nhân Khoa học Máy tính tại Đại học VinUni"
       }
     },
-    
+
     // Testimonials
     testimonials: {
-      daniel: "FinBud giúp tôi hiểu rõ tiền của mình đi đâu mỗi tháng. Những phân tích đơn giản nhưng tạo ra khác biệt lớn.",   
+      daniel: "FinBud giúp tôi hiểu rõ tiền của mình đi đâu mỗi tháng. Những phân tích đơn giản nhưng tạo ra khác biệt lớn.",
       rachel: "Tôi đã thử nhiều ứng dụng tài chính, nhưng không cái nào trực quan như FinBud. Nó giúp tôi biết tiền lương của mình đã được chi vào đâu. Hướng dẫn AI tạo nên khác biệt lớn — cảm giác rất cá nhân. Giờ tôi đã bắt đầu tiết kiệm và lên kế hoạch nghỉ hưu. Cuối cùng tôi cũng cảm thấy mình đang đưa ra những quyết định thông minh với tiền bạc.",
       jane: "Tôi yêu FinBud! Giống như có một cố vấn tài chính cá nhân 24/7 vậy. Những phân tích và mẹo đều cực kỳ hữu ích và dễ hiểu.",
       julian: "Tôi từng rất sợ lập kế hoạch tài chính. Bảng tính làm tôi choáng ngợp và tôi không biết bắt đầu từ đâu. FinBud giúp tôi thoát khỏi căng thẳng đó nhờ giao diện đơn giản và hỗ trợ AI thông minh. Nó tự động phân loại chi tiêu và đặt ra các mục tiêu khả thi. Sau 6 tháng sử dụng, tôi đã trả hết 2 thẻ tín dụng và bắt đầu xây dựng quỹ khẩn cấp. Cuối cùng tôi cũng cảm thấy kiểm soát được tài chính thay vì bị nó chi phối. Không chỉ là một ứng dụng — nó giống như một huấn luyện viên giúp tôi có trách nhiệm hơn. Rất đáng dùng cho ai cảm thấy bế tắc về tiền bạc.",
@@ -855,7 +963,7 @@ const messages = {
     chatComponent: {
       rename: "Đổi tên",
       delete: "Xoá",
-      deleteConfirm:"Xóa cuộc trò chuyện?",
+      deleteConfirm: "Xóa cuộc trò chuyện?",
       deleteConfirmMessage: "Điều này sẽ xóa",
       cancel: "Hủy",
       guildence: "Hướng dẫn",
@@ -891,25 +999,25 @@ const messages = {
     },
 
     //Chat
-    message:"Nhập tin nhắn của bạn ở đây... ",
+    message: "Nhập tin nhắn của bạn ở đây... ",
 
     // Main Page Content
     empoweringTitle: "Tự tin với mỗi quyết định tài chính",
     anytimeAnswers: "FinBud – trợ lý tài chính của bạn, sẵn sàng giải đáp mọi thắc mắc 24/7",
     partneringTitle: "Hợp tác để đạt được mục tiêu tài chính",
-    
+
     // Financial Awareness Section
     enhanceFinancialTitle: "Nâng cao nhận thức tài chính của bạn",
     enhanceFinancialDesc: "Chatbot AI tiên tiến của Finbud sẽ giúp bạn xem xét, khám phá các chủ đề tài chính và trả lời mọi câu hỏi của bạn.",
-    
+
     // Financial Planning Section
     optimizeFinancialTitle: "Tối ưu hóa kế hoạch tài chính của bạn",
     optimizeFinancialDesc: "Finbud giúp bạn theo dõi và quản lý chi phí, ghi lại thu nhập và chi tiêu, và điều chỉnh quản lý tài chính theo mục tiêu cụ thể của bạn.",
-    
+
     // Investment Section
     maximizeInvestmentTitle: "Tối đa hóa hiệu quả đầu tư của bạn",
     maximizeInvestmentDesc: "Finbud cung cấp tổng quan toàn diện về thị trường tài chính, hướng dẫn bạn tối ưu hóa vốn một cách tự tin.",
-    
+
     // Impact Section
     impactTitle: "Dễ dàng nhận thấy tác động",
     savingsIncrease: "Tăng tiết kiệm",
@@ -920,28 +1028,28 @@ const messages = {
     debtDesc: "sau 1 năm",
     creditScore: "Cải thiện điểm tín dụng",
     creditDesc: "tháng",
-    
+
     // Features Section
     chatbotFeatureTitle: "Giải quyết lo lắng tài chính với",
     chatbotFeatureName: "Chatbot AI,",
     chatbotDesc: "Với các lệnh đơn giản và truy cập vào nguồn thông tin chính xác và đáng tin cậy, mọi thắc mắc tài chính của bạn đều có thể được trả lời ngay lập tức.",
     chatNow: "Chat ngay",
-    
+
     simulatorFeatureTitle: "Làm chủ đầu tư của bạn với",
     simulatorFeatureName: "FinBud Simulator,",
     simulatorDesc: "Theo dõi hiệu suất đầu tư của bạn theo thời gian thực, cung cấp thông tin chi tiết từ đầu tư của bạn và thị trường để đưa ra quyết định đầu tư tốt hơn.",
     simulatorNow: "Mô phỏng ngay",
-    
+
     goalFeatureTitle: "Dự đoán chi phí của bạn với",
     goalFeatureName: "FinBud Goal,",
     goalDesc: "AI của chúng tôi dự đoán chi phí sắp tới để giúp bạn lên kế hoạch trước, hiểu mô hình chi tiêu của bạn và nhận các mẹo quản lý ngân sách tốt hơn.",
     goalNow: "Đặt mục tiêu ngay",
-    
+
     quizFeatureTitle: "Nâng cao kỹ năng tài chính của bạn với",
     quizFeatureName: "FinBud Quiz,",
     quizDesc: "Bài kiểm tra tài chính với các chủ đề khác nhau liên quan đến các từ khóa khác nhau giúp bạn thực hành và học kiến thức tài chính một cách thông minh và tương tác.",
     quizNow: "Thử Quiz ngay",
-    
+
     // FAQ Section
     faqTitle: "Câu hỏi thường gặp",
     faqs: {
@@ -966,20 +1074,114 @@ const messages = {
         answer: "Có, FinBud có sẵn trên cả thiết bị di động và laptop. Chỉ cần đăng nhập vào tài khoản của bạn, và dữ liệu của bạn sẽ tự động đồng bộ hóa trên tất cả các nền tảng để truy cập liền mạch."
       }
     },
-    
+
     // Investment Calculator Chart Labels
     initialInvestmentLabel: "Số vốn ban đầu",
     additionalContributionLabel: "Đóng góp bổ sung",
     profitEarnedLabel: "Lợi nhuận thu được",
     zillowNote: "Lãi suất được cung cấp bởi Zillow.",
     yearNumber: "Năm {number}",
+    // Fund Letter
+    fundLetters: "Thư Quỹ",
+    fundLettersArchive: "Lưu Trữ Thư Quỹ",
+    curatedListSubtitle: "Danh sách các thư quỹ hàng quý được chọn lọc",
+    searchPlaceholder: "Tìm kiếm theo tên quỹ",
+    allYears: "Tất cả các năm",
+    allQuarters: "Tất cả các quý",
+    fundName: "Tên Quỹ",
+    date: "Ngày",
+    noResults: "Không tìm thấy thư nào với bộ lọc đã chọn.",
+    resetFilters: "Đặt lại bộ lọc",
+    greatestInvestors: "Tuyển Tập Nhà Đầu Tư Vĩ Đại",
 
-    // Investment Calculator Bot Messages
-    investmentAnalysis: "Phân tích đầu tư:",
-    initialAmount: "Ban đầu:",
-    rateAmount: "Lãi suất:",
-    finalAmountBot: "Cuối cùng:",
-  }
+    // Technology Page
+    technologyPage: {
+      title: "Phân tích giúp phát triển doanh nghiệp của bạn.",
+      description: "Theo dõi hiệu quả hoạt động và thúc đẩy thay đổi tích cực với những phân tích thực tiễn bằng công nghệ của chúng tôi.",
+      features: {
+        title: {
+          plan: "Lập kế hoạch tài chính",
+          manage: "Quản lý nợ và đầu tư",
+          edu: "Giáo dục tài chính",
+          analyze: "Dự đoán và phân tích tài chính",
+        },
+        description: {
+          plan: "Đồng hành cùng bạn trong việc xây dựng và duy trì một kế hoạch tài chính cá nhân vững chắc.",
+          manage: "Giúp bạn kiểm soát nợ và đầu tư hiệu quả với những lời khuyên phù hợp với mục tiêu cá nhân.",
+          edu: "Trang bị cho bạn những kiến thức nền tảng và nâng cao về tài chính để tự tin ra quyết định.",
+          analyze: "Ứng dụng AI để phân tích và dự đoán xu hướng tài chính, hỗ trợ bạn đưa ra những quyết định thông minh và chính xác.",
+        },
+      },
+      financialConsulting: {
+        title: "Tư vấn tài chính",
+        note: "Kế hoạch cá nhân hóa để bảo vệ tương lai tài chính của bạn.",
+        highlightsLeft: [
+          "Quản lý nợ",
+          "Chiến lược tiết kiệm",
+          "Tư vấn đầu tư"
+        ],
+        highlightsRight: [
+          "Lập kế hoạch tài chính cá nhân",
+          "Định hướng theo mục tiêu",
+          "Quản lý tài sản cá nhân"
+        ],
+        button: "Bắt đầu dùng thử 30 ngày miễn phí"
+      },
+      financialEducation: {
+        title: "Giáo dục tài chính",
+        note: "Trang bị kiến thức để đưa ra những quyết định tài chính sáng suốt.",
+        highlights: [
+          "Kiến thức tài chính từ cơ bản đến nâng cao",
+          "Bài học và câu đố sinh động",
+          "Phân tích xu hướng tài chính theo thời gian thực",
+          "Thông tin chuyên sâu được hỗ trợ bởi AI"
+        ],
+        button: "Bắt đầu dùng thử 30 ngày miễn phí"
+      },
+      insights: {
+        title: "TRÍ TUỆ NHÂN TẠO",
+        subtitle: "Nhận phân tích tức thời về hiệu suất của bạn.",
+        description: "Nâng cấp quyết định tài chính với công nghệ AI tiên tiến của chúng tôi.",
+        points: [
+          "Cá nhân hoá phân tích tài chính: Báo cáo tự động theo dõi thói quen chi tiêu của bạn, giúp bạn tối ưu ngân sách và gia tăng tiết kiệm.",
+          "Dự đoán xu hướng: Công cụ AI phân tích dòng tiền quá khứ để dự báo tương lai tài chính, giúp bạn chủ động lên kế hoạch từ sớm."
+        ],
+        button: "Xem thêm"
+      },
+      computerVision: {
+        title: "CHATBOT AI TIÊN TIẾN",
+        subtitle: "Trợ lý tài chính thông minh chỉ với một chạm.",
+        featuresTitle: {
+          analyze: "Phân tích tài chính tức thì",
+          plan: "Lập kế hoạch tài chính linh hoạt",
+          secure: "An toàn và bảo mật tuyệt đối"
+        },
+        featuresDescription: {
+          analyze: "Bạn cần mẹo tiết kiệm hay tư vấn đầu tư? Hỏi ngay và nhận câu trả lời chính xác, dựa trên dữ liệu thực tế – nhanh chóng và dễ hiểu.",
+          plan: "Tương tác trực tiếp để thiết kế kế hoạch tài chính riêng cho bạn – đơn giản, nhanh gọn và cực kỳ hiệu quả.",
+          secure: "Hệ thống độc quyền của chúng tôi vận hành như một \"bộ não AI\" thông minh, tự động nhận diện những thông tin quan trọng nhất cho bạn. Hãy tưởng tượng nó giống như bộ não của bạn vậy — chỉ khác là nó không bao giờ mệt mỏi hay cần 3 ly cà phê để hoạt động mỗi ngày!."
+        }
+      },
+      partners: {
+        title: "Tích hợp với những công cụ tốt nhất trên thị trường",
+        descriptionParts: [
+          "Khám phá các đối tác liên kết với chúng tôi. Không thấy phần mềm bạn đang dùng?",
+          { type: "link", text: " Liên hệ với chúng tôi", href: "mailto:contact@yourdomain.com" },
+          " và chúng tôi sẽ hỗ trợ tích hợp ngay."
+        ],
+        left: {
+          text: "Shop-Ware giúp bạn tận dụng quy trình siêu tốc để sửa chữa được nhiều xe hơn mỗi tháng.",
+          linkText: "Tìm hiểu thêm",
+          linkHref: "#"
+        },
+        right: {
+          text: "Tekmetric giúp bạn khai phá tối đa tiềm năng xưởng sửa chữa với quy trình vận hành tinh gọn.",
+          linkText: "Tìm hiểu thêm",
+          linkHref: "#"
+        }
+      }
+    }
+  },
 };
 
 const i18n = createI18n({

@@ -54,14 +54,36 @@
             {{ $t('finInvest') }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownInvest(false)">{{ $t('simulator')
-              }}</router-link>
-            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownInvest(false)">AutoTrade
-              AI</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdownInvest(false)">{{ $t('quant')
-              }}</router-link>
-            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownInvest(false)">{{
-              $t('quantSimulator') }}</router-link>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t('simulator') }}</router-link
+            >
+            <router-link
+              to="/autotrade-ai"
+              class="autotrade"
+              @click="toggleDropdownInvest(false)"
+              >AutoTrade AI</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t('quant') }}</router-link
+            >
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t('quantSimulator') }}</router-link
+            >
+            <router-link
+            to="/fund-letter"
+            class="fund-letter"
+            @click="toggleDropdownInvest(false)"
+            >Fund Letter</router-link
+          >
           </div>
         </li>
 
@@ -85,6 +107,26 @@
           <div class="dropdown-content" v-show="isDropdownOpenAgent">
             <router-link to="/agent" class="agent" @click="toggleDropdownEdu(false)">{{ $t('agent') }}</router-link>
           </div>
+        </li>
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownData(true)"
+          @mouseleave="toggleDropdownData(false)"
+        >
+        <div class="services-dropdown dropbtn">
+            {{ $t('finData') }} <span class="arrow-down"></span>
+            </div>
+            <div class="dropdown-content" v-show="isDataDropdownOpen">
+            <router-link
+              to="/docs"
+              class="docs"
+              @click="toggleDropdownData(false)"
+              >{{ $t('Docs') }}</router-link
+            > 
+            
+          </div>
+
         </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">
@@ -190,6 +232,7 @@ export default {
       isAboutDropdownOpen: false,
       isDropdownOpenMobile: false,
       isProfileDropdownOpen: false,
+      isDataDropdownOpen: false,
       isDarkMode: false,
       isAuthLoading: false,
     };
@@ -238,6 +281,9 @@ export default {
     },
     toggleDropdownAgent(open) {
       this.isDropdownOpenAgent = open;
+    },
+    toggleDropdownData(open){
+      this.isDataDropdownOpen = open;
     },
     toggleProfileDropdown(open) {
       this.isProfileDropdownOpen = open;

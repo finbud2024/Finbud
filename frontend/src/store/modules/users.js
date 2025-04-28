@@ -8,6 +8,7 @@ export default {
     isLoading: true,
     error: null,
     _promise: null,
+    authChecked: false, 
   },
   mutations: {
     setLoading(state, isLoading) {
@@ -24,35 +25,54 @@ export default {
       state.userData = null;
       state.userID = null;
     },
+    setAuthChecked(state, val) {          
+      state.authChecked = val;
+    },
   },
   actions: {
-    async fetchCurrentUser({ state, commit }) {
-      if (state.userData)  return state.userData;    // already cached
-      if (state._promise)  return state._promise;    // request in flight
-      commit("setLoading", true);
-      commit("setError", null);
-      
-      state._promise = axios
-        .get(`${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`, {
-          withCredentials: true,
-        })
-        .then(({ data }) => {
-          data.isAuthenticated && data.user
-            ? commit('setUserData', data.user)
-            : commit('clearUserData');
-          return state.userData;
-        })
-        .catch(err => {
-          commit('setError', err.message);
+    async fetchCurrentUser ({ state, commit }) {
+      /* 1️⃣ already checked during this page-life? */
+      if (state.authChecked) return state.userData;
+  
+      /* 2️⃣ another call already in flight?  → just await it here */
+      if (state._promise) {
+        try {
+          await state._promise;          // swallow its own error handling
+        } catch (_) { /* nothing – original promise handler already did the work */ }
+        return state.userData;           // never expose the raw promise
+      }
+  
+      /* 3️⃣ first call today */
+      commit('setLoading', true);
+      commit('setError', null);
+  
+      state._promise = axios.get(
+        `${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`,
+        { withCredentials: true }
+      );
+  
+      try {
+        const { data } = await state._promise;
+  
+        if (data.isAuthenticated && data.user) {
+          commit('setUserData', data.user);
+        } else {
           commit('clearUserData');
-          throw err;
-        })
-        .finally(() => {
-          commit('setLoading', false);
-          state._promise = null;      // reset for the next page load
-        });
-
-      return state._promise;
+        }
+      } catch (err) {
+        if (err.response?.status === 401) {
+          commit('clearUserData');
+          // router.push('/login')  // optional
+        } else {
+          commit('setError', err.message || 'Failed to fetch user data');
+        }
+      } finally {
+        commit('setLoading', false);
+        commit('setAuthChecked', true);  // mark that we tried once
+        state._promise = null;           // reset so a manual refresh is possible
+      }
+  
+      return state.userData;     
       // try {
       //   const response = await axios.get(
       //     `${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`,
