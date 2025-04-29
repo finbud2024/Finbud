@@ -1,4 +1,5 @@
 <template>
+  <LoadingPage v-if="showLoadingPage" />
 	<div class="nav-actions">
 		<NavBar v-if="showHeader" ref="headerBar" />
 		<div class="content"></div>
@@ -36,6 +37,7 @@ import FooterBar from "./components/FooterBar.vue";
 import ChatBubble from "./components/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
+import LoadingPage from "./views/LoadingPage.vue";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {
@@ -52,6 +54,7 @@ export default {
 		NavBar,
 		FooterBar,
 		ChatBubble,
+    LoadingPage,
 	},
 	data() {
 		return {
@@ -65,9 +68,30 @@ export default {
 			isTyping: false,
 			messageVisible: false,
 			botPosition: { right: "20px", bottom: "20px" },
+      showLoadingPage: true,
 		};
 	},
 	async mounted() {
+    this.$router.beforeEach((to, from, next) => {
+      this.showLoadingPage = true;
+      this.loadingStartTime = Date.now();
+      next();
+    });
+
+    this.$router.afterEach(() => {
+      const elapsed = Date.now() - this.loadingStartTime;
+      const minLoadingTime = 1200;
+
+      if (elapsed < minLoadingTime) {
+        // If loading finished too fast, wait a bit
+        setTimeout(() => {
+          this.showLoadingPage = false;
+        }, minLoadingTime - elapsed);
+      } else {
+        this.showLoadingPage = false;
+      }
+    });
+
 		// Set the initial bot message
 		this.displayedMessage = "Hello! Welcome to FinBud.";
 		document.addEventListener("click", this.handleClickOutside);
@@ -154,7 +178,7 @@ export default {
 					this.showEventHubGreeting();
 				}
 			},
-			{ immediate: true } // Check immediately on mount
+			{ immediate: true }
 		);
 
 		// Load saved position if exists
