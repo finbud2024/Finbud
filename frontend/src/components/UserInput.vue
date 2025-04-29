@@ -72,7 +72,6 @@
 
 <script>
 import axios from "axios";
-import OpenAI from "openai";
 
 export default {
 	name: "UserInput",

@@ -45,7 +45,10 @@ import OpenAI from "openai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import * as pdfjsLib from "pdfjs-dist";
-import pdfjsWorker from "pdfjs-dist/build/pdf.worker.entry";
+import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf";
+
+GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+
 
 const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
 const geminiAI = new GoogleGenerativeAI(GEMINI_API_KEY);

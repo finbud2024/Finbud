@@ -25,10 +25,14 @@ import StartThread from "@/views/StartThread.vue";
 import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
+import FinDataPage from "@/views/FinDataPage.vue"
 import AgentPage from "@/views/AgentPage.vue";
+import PestlePage from "@/views/PestlePage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
 import AutoTradeAI from "@/views/AutoTradeAI.vue";
 import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
+import InsiderTransactionPage from "@/views/InsiderTransactionPage.vue";
+import EarningCalendarPage from "@/views/EarningCalendarPage.vue";
 import FundLetterPage from "@/views/FundLetterPage.vue";
 import NotificationCenter from "@/views/NotificationCenter.vue";
 
@@ -173,9 +177,31 @@ const routes = [
     component: InvestorDetail,
   },
   {
+    path: "/docs",
+    redirect: "/docs/aapl"
+  },
+  {
+    path: "/docs/:ticker",
+    name: "Financial Docs",
+    component: FinDataPage
+  },
+  {
+    path: "/company-report/:ticker",
+    component: InsiderTransactionPage
+  },
+  {
+    path: "/earning-calendars",
+    component: EarningCalendarPage
+  },
+  {
     path: "/agent/",
     name: "AgentPage",
     component: AgentPage,
+  },
+  {
+    path: "/pestle/",
+    name: "PestlePage",
+    component: PestlePage,
   },
   {
     path: "/forgot-password",

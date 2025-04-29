@@ -1,4 +1,5 @@
 <template>
+  <LoadingPage v-if="showLoadingPage" />
 	<div class="nav-actions">
 		<NavBar v-if="showHeader" ref="headerBar" />
 		<div class="content"></div>
@@ -8,9 +9,20 @@
 	<FooterBar v-if="showFooter" ref="footerBar" />
 	<ChatBubble v-if="showChatBubble && chatBubbleActive" @closeChatBubble="toggleChatBubble"
 		:chatViewThreadID="threadId" />
-	<img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble"
-		:style="botPosition" />
-
+	<!-- <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg_sm.webp" alt="Finbud" @click="toggleChatBubble"
+		:style="botPosition" /> -->
+		<img
+			class="finbudBot"
+			:class="{ hidden: !showChatBubble }"
+			src="@/assets/botrmbg_sm.webp"
+			alt="Finbud"
+			width="60"
+			height="60"
+			fetchpriority="high"
+			decoding="async"
+			@click="toggleChatBubble"
+			:style="botPosition"
+		/>
 	<div v-if="showBotMessage" class="bot-message-container">
 		<div class="finbudBotMessage" ref="botMessage" :class="{ 'message-visible': messageVisible }">
 			<div class="message-content" v-html="displayedMessage"></div>
@@ -25,6 +37,7 @@ import FooterBar from "./components/FooterBar.vue";
 import ChatBubble from "./components/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
+import LoadingPage from "./views/LoadingPage.vue";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {
@@ -41,6 +54,7 @@ export default {
 		NavBar,
 		FooterBar,
 		ChatBubble,
+    LoadingPage,
 	},
 	data() {
 		return {
@@ -54,9 +68,30 @@ export default {
 			isTyping: false,
 			messageVisible: false,
 			botPosition: { right: "20px", bottom: "20px" },
+      showLoadingPage: true,
 		};
 	},
 	async mounted() {
+    this.$router.beforeEach((to, from, next) => {
+      this.showLoadingPage = true;
+      this.loadingStartTime = Date.now();
+      next();
+    });
+
+    this.$router.afterEach(() => {
+      const elapsed = Date.now() - this.loadingStartTime;
+      const minLoadingTime = 1200;
+
+      if (elapsed < minLoadingTime) {
+        // If loading finished too fast, wait a bit
+        setTimeout(() => {
+          this.showLoadingPage = false;
+        }, minLoadingTime - elapsed);
+      } else {
+        this.showLoadingPage = false;
+      }
+    });
+
 		// Set the initial bot message
 		this.displayedMessage = "Hello! Welcome to FinBud.";
 		document.addEventListener("click", this.handleClickOutside);
@@ -79,7 +114,11 @@ export default {
 		}
 
 		// Fetch current user data
-		await this.$store.dispatch("users/fetchCurrentUser");
+		setTimeout(async () => {
+			await this.$store.dispatch("users/fetchCurrentUser");
+			await this.checkIfUserIsNew();
+			await this.checkDailyLoginReward();
+		}, 0);
 		const userData = this.$store.getters["users/currentUser"];
 
 		if (this.isAuthenticated && userData) {
@@ -106,8 +145,6 @@ export default {
 				console.error("Error fetching threads:", error);
 			}
 
-			// Check if user is new
-			await this.checkIfUserIsNew();
 			// First, check localStorage
 			const storedDarkMode = localStorage.getItem("darkMode");
 			if (storedDarkMode !== null) {
@@ -141,7 +178,7 @@ export default {
 					this.showEventHubGreeting();
 				}
 			},
-			{ immediate: true } // Check immediately on mount
+			{ immediate: true }
 		);
 
 		// Load saved position if exists
@@ -158,13 +195,13 @@ export default {
 			}
 		}
 
-		// Add new method to check if user is new
-		await this.checkIfUserIsNew();
+		// // Add new method to check if user is new
+		// await this.checkIfUserIsNew();
 
-		// Check for daily login rewards if user is authenticated
-		if (this.$store.getters["users/isAuthenticated"]) {
-			this.checkDailyLoginReward();
-		}
+		// // Check for daily login rewards if user is authenticated
+		// if (this.$store.getters["users/isAuthenticated"]) {
+		// 	this.checkDailyLoginReward();
+		// }
 	},
 	computed: {
 		isAuthenticated() {
@@ -309,7 +346,7 @@ export default {
 	--bg-primary: #ffffff;
 	--text-primary: #333333;
 	--nav-bg: transparent;
-	--border-color: #ffffff;
+	--border-color: #f5f5f5;
 	--link-color: black;
 	--hover-bg: #024384;
 	--card-bg: #ffffff;
@@ -557,4 +594,8 @@ a:hover {
 }
 
 /* Keep other existing animation keyframes */
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 </style>
