@@ -1,6 +1,10 @@
 <template>
-  <div class="chart-wrapper" :key="`chart-wrapper-${chartKey}`">
-    <canvas ref="transactionChart" :id="chartId" v-if="hasData"></canvas>
+  <div class="chart-wrapper">
+    <canvas
+      v-if="hasData"
+      ref="transactionChart"
+      id="transaction-line-chart"
+    ></canvas>
     <div v-else class="no-data-message">
       <p>No transaction data available to display.</p>
     </div>
@@ -18,6 +22,7 @@ export default {
       type: Array,
       required: true,
     },
+    showForecast: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -26,20 +31,18 @@ export default {
       chartInitialized: false,
       chartReady: false,
       mountTimer: null,
-      resizeTimer: null,
+      // resizeTimer: null,
       activatedTimer: null,
       chartId: "transaction-line-chart",
       retryCount: 0,
       maxRetries: 3,
       watchTimer: null,
-      chartKey: Date.now(), // Thêm key để force re-render khi cần
     };
   },
   methods: {
     // Thêm phương thức để reset component hoàn toàn
     resetComponent() {
       this.destroyChart();
-      this.chartKey = Date.now(); // Update key to force re-render
       this.retryCount = 0;
       this.hasData = this.transactions && this.transactions.length > 0;
 
@@ -54,247 +57,138 @@ export default {
     },
 
     generateChart() {
-      // Kiểm tra xem có dữ liệu giao dịch không
-      if (!this.transactions || this.transactions.length === 0) {
-        console.log("No transaction data available, skipping chart generation");
-        this.hasData = false;
-        this.retryCount = 0; // Reset retry count
-        return;
+  if (!this.transactions || this.transactions.length === 0) {
+    this.hasData = false;
+    return;
+  }
+
+  this.hasData = true;
+
+  this.$nextTick(() => {
+    const canvas = this.$refs.transactionChart;
+    if (!canvas) {
+      console.warn("Canvas not found, skipping chart generation.");
+      return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      console.warn("Canvas context not available.");
+      return;
+    }
+
+    this.destroyChart(); // Clean up any existing chart
+
+    const sortedTransactions = [...this.transactions].sort(
+      (a, b) => new Date(a.date) - new Date(b.date)
+    );
+
+    // Prepare chart data
+    const formatted = sortedTransactions.map(tx => ({
+      type: tx.amount > 0 ? "Expense" : "Income",
+      amount: Math.abs(tx.amount),
+      date: tx.date,
+      description: tx.name || tx.description || tx.merchant_name || "Transaction"
+    }));
+
+    let balance = 0;
+    const labels = [], data = [], pointColors = [];
+
+    const timePoints = [];
+    const balancePoints = [];
+
+    formatted.forEach((tx, i) => {
+      const label = new Date(tx.date).toLocaleDateString();
+      labels.push(label);
+      balance += tx.type === "Income" ? tx.amount : -tx.amount;
+
+      data.push({ x: label, y: balance, ...tx });
+      pointColors.push(
+        tx.type === "Income" ? "rgba(0,255,0,0.5)" : "rgba(255,0,0,0.5)"
+      );
+
+      timePoints.push(i);
+      balancePoints.push(balance);
+    });
+
+    // Linear forecast for next 90 days (if enabled)
+    let forecastDataset = [];
+    if (this.showForecast && timePoints.length >= 2) {
+      const n = timePoints.length;
+      const meanX = timePoints.reduce((sum, x) => sum + x, 0) / n;
+      const meanY = balancePoints.reduce((sum, y) => sum + y, 0) / n;
+      const numerator = timePoints.reduce((sum, x, i) => sum + (x - meanX) * (balancePoints[i] - meanY), 0);
+      const denominator = timePoints.reduce((sum, x) => sum + Math.pow(x - meanX, 2), 0);
+      const slope = numerator / denominator;
+      const intercept = meanY - slope * meanX;
+
+      for (let i = 1; i <= 90; i++) {
+        const futureIndex = timePoints.length + i;
+        const futureDate = new Date(new Date(sortedTransactions[sortedTransactions.length - 1].date).getTime() + i * 86400000);
+        const futureLabel = futureDate.toLocaleDateString();
+        labels.push(futureLabel);
+        forecastDataset.push({ x: futureLabel, y: slope * futureIndex + intercept });
       }
 
-      // Set hasData trước để đảm bảo template cập nhật và tạo canvas
-      this.hasData = true;
+      forecastDataset = forecastDataset.filter(pt => pt.x && typeof pt.y === "number" && !isNaN(pt.y));
 
-      // Đợi cho DOM cập nhật và tạo canvas
-      this.$nextTick(() => {
-        // Kiểm tra số lần thử lại
-        if (this.retryCount >= this.maxRetries) {
-          console.warn(
-            `Maximum retry attempts (${this.maxRetries}) reached for chart generation. Giving up.`
-          );
-          this.retryCount = 0; // Reset for next time
-          this.resetComponent(); // Reset và thử lại
-          return;
-        }
+    }
 
-        // Tăng số lần đã thử
-        this.retryCount++;
-
-        // Xóa chart cũ trước khi khởi tạo bất kỳ thứ gì mới
-        this.destroyChart();
-
-        // Đảm bảo canvas element tồn tại - thử cả ref và getElementById
-        let canvas = this.$refs.transactionChart;
-
-        // Nếu không tìm thấy qua ref, thử getElementById
-        if (!canvas) {
-          canvas = document.getElementById(this.chartId);
-        }
-
-        if (!canvas) {
-          console.error(
-            `Canvas element reference not found (attempt ${this.retryCount}/${this.maxRetries})`
-          );
-          if (this.retryCount < this.maxRetries) {
-            setTimeout(() => this.generateChart(), 500); // Tăng thời gian chờ
-          } else {
-            // Nếu đã thử hết số lần, reset component
-            this.resetComponent();
-          }
-          return;
-        }
-
-        // Nếu đã tìm thấy canvas, reset retry count
-        this.retryCount = 0;
-
-        // Transform API transactions to our format
-        const formattedTransactions = this.transactions.map((tx) => ({
-          type: tx.amount > 0 ? "Expense" : "Income",
-          amount: Math.abs(tx.amount), // Use absolute value and determine type based on sign
-          date: tx.date, // Use the date field from API
-          description:
-            tx.name || tx.description || tx.merchant_name || "Transaction",
-        }));
-
-        // Find the initial balance (assuming no initial balance in API, start from 0)
-        let initialBalance = 0;
-        let cumulativeBalance = initialBalance;
-
-        // Create arrays for labels and data
-        const labels = [];
-        const data = [];
-        const pointColors = [];
-
-        // Process each transaction to update the cumulative balance
-        formattedTransactions.forEach((transaction) => {
-          // Format the date for the x-axis labels
-          const dateLabel = new Date(transaction.date).toLocaleDateString();
-          labels.push(dateLabel);
-
-          // Update cumulative balance based on transaction type
-          if (transaction.type === "Income") {
-            cumulativeBalance += transaction.amount;
-          } else if (transaction.type === "Expense") {
-            cumulativeBalance -= transaction.amount;
-          }
-
-          // Push the data point including the cumulative balance
-          data.push({
-            x: dateLabel,
-            y: cumulativeBalance, // Use cumulative balance for y value
-            type: transaction.type,
-            amount: transaction.amount,
-            description: transaction.description,
-          });
-
-          // Determine point colors based on transaction type
-          pointColors.push(
-            transaction.type === "Income"
-              ? "rgba(0, 255, 0, 0.5)"
-              : "rgba(255, 0, 0, 0.5)"
-          );
-        });
-
-        const chartData = {
-          labels: labels,
-          datasets: [
-            {
-              label: "Balance Change",
-              data: data, // Data now holds cumulative balance
-              borderColor: "rgba(40, 42, 42, 0.5)",
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              pointBackgroundColor: pointColors,
-              pointBorderColor: pointColors,
-            },
-          ],
-        };
-
-        const config = {
-          type: "line",
-          data: chartData,
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: "top",
-              },
-              title: {
-                display: true,
-                text: "DAILY TRANSACTION OVERVIEW",
-              },
-              tooltip: {
-                callbacks: {
-                  title: function (context) {
-                    return context[0].label;
-                  },
-                  label: function (context) {
-                    const transaction = context.raw;
-                    const type = transaction.type || "N/A";
-                    const amount = transaction.amount || "N/A";
-                    const description = transaction.description || "N/A";
-                    const balance = transaction.y; // Y value represents cumulative balance
-
-                    // Format the amount with a minus sign for expenses
-                    const formattedAmount =
-                      type === "Expense" ? `-${amount}` : `+${amount}`;
-                    const typeLabel =
-                      type === "Income"
-                        ? "Income"
-                        : type === "Expense"
-                        ? "Expense"
-                        : type;
-
-                    return [
-                      `Transaction Type: ${typeLabel}`,
-                      `Change Amount: $${formattedAmount}`,
-                      `Description: ${description}`,
-                      `Account Balance: $${balance.toFixed(2)}`,
-                    ];
-                  },
-                },
-              },
-            },
-          },
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: "Date",
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: "Account Balance ($)",
-              },
-              beginAtZero: true,
-            },
-          },
-          elements: {
-            point: {
-              radius: 5,
-              hoverRadius: 5,
-            },
-          },
-          animation: {
-            onComplete: () => {
-              this.chartReady = true;
-            },
-          },
-        };
-
-        try {
-          // Dùng setTimeout để đảm bảo DOM đã render xong và canvas đã sẵn sàng
-          setTimeout(() => {
-            // Double check - đảm bảo canvas vẫn tồn tại
-            const canvas = document.getElementById(this.chartId);
-            if (!canvas) {
-              console.error("Canvas element not found by ID");
-              return;
-            }
-
-            // Kiểm tra kích thước canvas
-            const width = canvas.offsetWidth;
-            const height = canvas.offsetHeight;
-
-            if (width === 0 || height === 0) {
-              console.error(
-                "Canvas has zero width or height, cannot render chart"
-              );
-              return;
-            }
-
-            // Sử dụng requestAnimationFrame để đảm bảo canvas đã render trước khi lấy context
-            requestAnimationFrame(() => {
-              try {
-                const ctx = canvas.getContext("2d");
-                if (!ctx) {
-                  console.error("Could not get canvas context");
-                  return;
-                }
-
-                // Tạo chart mới
-                if (Chart.getChart(canvas)) {
-                  Chart.getChart(canvas).destroy();
-                }
-
-                this.chart = new Chart(ctx, config);
-                this.chartInitialized = true;
-              } catch (error) {
-                console.error(
-                  "Error creating chart inside animation frame:",
-                  error
-                );
+    const config = {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label: "Balance Change",
+          data,
+          borderColor: "rgba(40, 42, 42, 0.5)",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors,
+        },
+        ...(this.showForecast ? [{
+          label: "Forecast (Linear)",
+          data: forecastDataset,
+          borderColor: "rgba(0, 123, 255, 0.6)",
+          backgroundColor: "rgba(0, 123, 255, 0.2)",
+          borderDash: [5, 5],
+          pointRadius: 0,
+          fill: false
+        }] : [])
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: "top" },
+          title: { display: true, text: "DAILY TRANSACTION OVERVIEW" },
+          tooltip: {
+            callbacks: {
+              title: ctx => ctx[0].label,
+              label: ctx => {
+                const tx = ctx.raw;
+                return [
+                  `Transaction Type: ${tx.type || 'Forecast'}`,
+                  `Change Amount: ${tx.amount ? (tx.type === "Expense" ? "-" : "+") + "$" + tx.amount : ""}`,
+                  `Description: ${tx.description || ""}`,
+                  `Account Balance: $${tx.y?.toFixed(2) ?? ""}`
+                ];
               }
-            });
-          }, 100);
-        } catch (error) {
-          console.error("Error in chart generation process:", error);
-          this.chartInitialized = false;
+            }
+          }
+        },
+        scales: {
+          x: { title: { display: true, text: "Date" } },
+          y: { title: { display: true, text: "Account Balance ($)" }, beginAtZero: true }
         }
-      });
-    },
+      }
+    };
+
+    this.chart = new Chart(ctx, config);
+  });
+},
+
 
     // Destroy chart method
     destroyChart() {
@@ -306,7 +200,7 @@ export default {
         }
 
         // Also check using Chart.js utility for any chart in the canvas
-        const canvas = document.getElementById(this.chartId);
+        const canvas = this.$refs.transactionChart;
         if (canvas) {
           const existingChart = Chart.getChart(canvas);
           if (existingChart) {
@@ -322,29 +216,22 @@ export default {
 
     // Thêm phương thức để khởi tạo lại chart khi cần thiết
     reinitializeChart() {
-      // Reset retry count khi gọi lại
-      this.retryCount = 0;
-
-      // Trước khi tạo chart mới, hủy chart cũ
-      this.destroyChart();
-
-      // Đợi một chút rồi tạo chart mới
-      setTimeout(() => {
-        if (this.transactions && this.transactions.length > 0) {
-          this.generateChart();
-        }
-      }, 300);
+      if (this.watchTimer) clearTimeout(this.watchTimer);
+      this.watchTimer = setTimeout(() => {
+        this.destroyChart();
+        this.generateChart();
+      }, 300); // debounce to avoid rapid-fire re-renders
     },
 
     // Xử lý resize với debounce để tránh gọi quá nhiều lần
-    handleResize() {
-      if (this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-      }
-      this.resizeTimer = setTimeout(() => {
-        this.reinitializeChart();
-      }, 300);
-    },
+    // handleResize() {
+    //   if (this.resizeTimer) {
+    //     clearTimeout(this.resizeTimer);
+    //   }
+    //   this.resizeTimer = setTimeout(() => {
+    //     this.reinitializeChart();
+    //   }, 300);
+    // },
 
     // Tách method riêng để dễ tái sử dụng
     cleanupResources() {
@@ -354,10 +241,10 @@ export default {
         this.mountTimer = null;
       }
 
-      if (this.resizeTimer) {
-        clearTimeout(this.resizeTimer);
-        this.resizeTimer = null;
-      }
+      // if (this.resizeTimer) {
+      //   clearTimeout(this.resizeTimer);
+      //   this.resizeTimer = null;
+      // }
 
       if (this.activatedTimer) {
         clearTimeout(this.activatedTimer);
@@ -373,7 +260,7 @@ export default {
       this.retryCount = 0;
 
       // Hủy event listener
-      window.removeEventListener("resize", this.handleResize);
+      // window.removeEventListener("resize", this.handleResize);
 
       // Hủy chart
       this.destroyChart();
@@ -383,46 +270,30 @@ export default {
     transactions: {
       immediate: true,
       deep: true,
-      handler(newTransactions) {
-        if (newTransactions && newTransactions.length > 0) {
+      handler(newTransactions, oldTransactions) {
+        const newStr = JSON.stringify(newTransactions);
+        const oldStr = JSON.stringify(oldTransactions);
+
+        if (newStr !== oldStr) {
+          console.log("Valid transactions received, drawing chart...");
           this.hasData = true;
-          this.retryCount = 0; // Reset retry counter
-
-          // Timeout để đảm bảo DOM đã cập nhật
-          if (this.watchTimer) {
-            clearTimeout(this.watchTimer);
-            this.watchTimer = null;
-          }
-
-          this.watchTimer = setTimeout(() => {
-            this.reinitializeChart();
-          }, 300);
+          this.reinitializeChart();
         } else {
-          this.hasData = false;
-          // Xử lý trường hợp không có dữ liệu
-          this.destroyChart();
-          console.log("No transaction data to display in chart");
+          console.log("Transactions unchanged, skipping chart redraw");
         }
-      },
+      }
     },
+    showForecast() {
+      this.reinitializeChart();
+    }
   },
-  mounted() {
-    // Đảm bảo DOM đã render hoàn tất trước khi tạo chart
-    this.$nextTick(() => {
-      // Đợi một chút để đảm bảo DOM đã hiển thị hoàn toàn
-      this.mountTimer = setTimeout(() => {
-        if (this.transactions && this.transactions.length > 0) {
-          this.generateChart();
-        }
-      }, 300); // Tăng thời gian chờ lên 300ms
 
-      // Đăng ký sự kiện resize để vẽ lại chart khi kích thước thay đổi
-      window.addEventListener("resize", this.handleResize);
-    });
+  mounted() {
+    // window.addEventListener("resize", this.handleResize);
   },
+
   activated() {
-    // Khi component được kích hoạt lại (với keep-alive), kiểm tra và vẽ lại chart nếu cần
-    if (this.transactions && this.transactions.length > 0) {
+    if (!this.chart && this.transactions.length > 0) {
       this.$nextTick(() => {
         this.activatedTimer = setTimeout(() => {
           this.reinitializeChart();
@@ -430,6 +301,7 @@ export default {
       });
     }
   },
+
   deactivated() {
     // Khi component bị deactivate, hủy chart để tránh memory leak
     this.cleanupResources();

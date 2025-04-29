@@ -2,7 +2,6 @@
     <div class="EventHubContainer">
         <nav class="w-full p-4 bg-white shadow-sm" data-aos="fade-left">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div style = "display:flex; justify-content: space-around;">
                     <div class="event-navbar relative w-full md:w-1/2">
                         <input 
                             type="text" 
@@ -17,15 +16,6 @@
                             class="search-icon"
                         />
                     </div>
-                    <div class="portfolio-language-switcher">
-                        <button @click="switchLanguage('en')" :class="{ active: $i18n.locale === 'en' }">
-                        <img src="@/assets/us.png" alt="English" />
-                        </button>
-                        <button @click="switchLanguage('vi')" :class="{ active: $i18n.locale === 'vi' }">
-                        <img src="@/assets/vn.png" alt="Tiếng Việt" />
-                        </button>
-                    </div>
-                </div>
 
                 <div class="event-navbar nav-btn">
                     <div class="event-btn">
@@ -47,9 +37,16 @@
                 </div>
             </div>
         </nav>
-        <div class="event-banner" data-aos="flip-left">
-            <img :src="require('@/assets/Banner.png')" alt="Banner" class="banner-img" />
+        <div class="banner">
+            <div>
+                <div class="banner-content">
+                    <h1 class="main-heading">{{ $t('eventHub.dontMiss') }}</h1>
+                    <h2 class="sub-heading">{{ $t('eventHub.finDiscover') }}</h2>
+                </div>
+            </div>
+            <img src="https://media.istockphoto.com/id/1529811813/photo/team-building-asian-workshop-participants-in-small-group-discussion-brainstorming-during.jpg?s=612x612&w=0&k=20&c=20R95Z0NkiQJO2EwWGKivBUEwtdAYJrtclReELgoVsw=" alt="">
         </div>
+        <EventMap />
         <div class="event-category" data-aos="fade-right">
             <h3 class="text-2xl md:text-3xl text-center">{{ $t('eventHub.eventCategories') }}</h3>
             <div class="event-category-bg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -150,7 +147,6 @@
             </div>
         </div>
         <!-- <div v-if="loading" class="loading-spinner">Loading...</div> -->
-        <EventMap />
     </div>
 </template>
 
@@ -166,7 +162,7 @@ import EventMap from '@/components/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Articles from '@/components/Articles.vue'; // Adjust the path if necessary
-import api from "@/utils/api";
+// import api from "@/utils/api";
 
 export default {
     name: 'EventHub',
@@ -295,7 +291,7 @@ export default {
 .event-navbar {
     position: relative;
     width: 50%;
-    margin: 10px;
+    margin-left:100px;
 }
 
 .search-bar {
@@ -306,12 +302,12 @@ export default {
     box-sizing: border-box;
     z-index: 100;
     border-radius: 28px;
-    border: 4px solid #007bff;
+    border: 4px solid black;
 }
 
 .search-bar:focus {
     outline: none;
-    border: 4px solid #007bff;
+    border: 4px solid black;
 }
 
 .search-icon {
@@ -350,11 +346,36 @@ export default {
     padding: 5px;
 }
 
-.event-banner {
-    background-color: #007bff;
-    justify-content: center;
-    align-items: center;
-    height: auto;
+.banner {
+    display:flex;
+    background-color: black;
+    padding: 20px 20px;
+}
+
+.banner-content {
+    background-color: white;
+    color: black;
+    width: 100%;
+    margin-top: 15%;
+    padding: 10px 150px 10px 0;
+
+}
+
+.main-heading {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    margin-left: 150px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sub-heading {
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-left: 150px;
+    letter-spacing: 0.5px;
 }
 
 .banner-img {
@@ -374,7 +395,7 @@ export default {
     justify-content: center;
     text-align: center;
     margin: 0 50px 50px 50px;
-    background-color: #007bff;
+    background-color: black;
 }
 
 .category-btn {
@@ -497,7 +518,7 @@ export default {
 
 .read-more-button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: black;
     color: white;
     border: none;
     border-radius: 5px;
@@ -506,14 +527,14 @@ export default {
 }
 
 .read-more-button, .event-button:hover {
-    background-color: #005bb5;
+    background-color: black;
 }
 
 .star-button {
     width: 42px; 
     height: 42px; 
     border-radius: 50%; 
-    background-color: #007bff;
+    background-color: black;
     color: white;
     border: none;
     display: flex; 
@@ -525,7 +546,7 @@ export default {
 }
 
 .star-button:hover {
-    background-color: #005bb5;
+    background-color: black;
 }
 
 .modal-overlay {
@@ -575,7 +596,7 @@ export default {
 }
 
 .register-button:hover {
-    background-color: #0056b3;
+    background-color: black;
 }
 
 .modal-image {
@@ -585,7 +606,7 @@ export default {
 }
 
 .close-button {
-    background-color: #007bff;
+    background-color: black;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -594,7 +615,7 @@ export default {
 }
 
 .close-button:hover {
-    background-color: #0056b3;
+    background-color: black;
 }
 
 .portfolio-language-switcher {
@@ -622,7 +643,7 @@ export default {
 }
 
 .portfolio-language-switcher button.active img {
-  border-color: #007bff;
+  border-color: black;
 }
 
 @media (max-width: 768px) {
@@ -712,7 +733,7 @@ export default {
 }
 
 .event-button {
-    background-color: #007bff; 
+    background-color: black; 
     color: white; 
     border: none; 
     border-radius: 5px; 
@@ -737,7 +758,7 @@ export default {
 }
 
 .event-button {
-    background-color: #007bff; 
+    background-color: black; 
     color: white; 
     border: none; 
     border-radius: 5px; 

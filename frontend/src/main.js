@@ -10,6 +10,11 @@ import * as faBrand from "@fortawesome/free-brands-svg-icons";
 import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import i18n from "./i18n";
+import BootstrapVue3 from 'bootstrap-vue-3'
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { VueQueryPlugin } from '@tanstack/vue-query';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 
 // Add specific icons to the library
@@ -37,8 +42,11 @@ const icons = [
 ];
 library.add(...icons); // Use the spread operator to add the icons
 library.add(faBell);
+
 // Create the application
 const app = createApp(App);
+
+
 
 app.use(VueGoogleMaps, {
   load: {
@@ -53,6 +61,7 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 app.use(router);
 app.use(store);
 app.use(i18n);
-
+app.use(BootstrapVue3)
+app.use(VueQueryPlugin)
 // Mount the application to the DOM
 app.mount("#app");

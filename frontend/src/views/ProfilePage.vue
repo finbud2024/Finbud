@@ -503,7 +503,7 @@ export default {
 }
 
 .image-uploaded {
-  border: 3px solid #007bff;
+  border: 3px solid #000000;
 }
 
 .custom-file-upload {
@@ -543,7 +543,7 @@ export default {
   top: 0%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #007bff;
+  background-color: #000305;
   color: white;
 }
 
@@ -582,7 +582,7 @@ export default {
 }
 
 .form-group input:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid #000000;
 }
 
 .form-group input:read-only:focus {
@@ -648,9 +648,9 @@ export default {
 }
 
 .filter-btn.active {
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
-  border-color: #007bff;
+  border-color: #000001;
 }
 
 .leaderboard-table {
@@ -680,8 +680,8 @@ export default {
   display: flex;
   padding: 15px 0;
   margin-top: 20px;
-  border-top: 2px dashed #007bff;
-  border-bottom: 2px dashed #007bff;
+  border-top: 2px dashed #000000;
+  border-bottom: 2px dashed #000000;
   background-color: rgba(0, 123, 255, 0.1);
   border-radius: 8px;
   align-items: center;
@@ -709,7 +709,7 @@ export default {
   width: 20%;
   text-align: center;
   font-weight: bold;
-  color: #007bff;
+  color: #f6ff00;
 }
 
 .leaderboard-user-image {

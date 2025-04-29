@@ -56,7 +56,7 @@
             <span class="unit">%</span>
           </div>
           <span v-if="interestRate <= 0" class="error">{{ $t('errorInterestRate') }}</span>
-          <h3>Interest rate provided via Zillow.</h3>
+          <h3>{{ $t('zillowNote') }}</h3>
         </div>
 
         <div class="toggle-header">
@@ -71,28 +71,28 @@
             <label>{{ $t('propertyTax') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="propertyTax" @input="propertyTax = propertyTax || 0"/>
-              <span class="unit">$/month</span>
+              <span class="unit">${{ propertyTax }}/{{ $t ('month') }}</span>
             </div>
           </div>
           <div class="input-group">
             <label>{{ $t('homeownersInsurance') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="homeInsurance" @input="homeInsurance = homeInsurance || 0" />
-              <span class="unit">$/month</span>
+              <span class="unit">${{ homeInsurance }}/{{ $t ('month') }}</span>
             </div>
           </div>
           <div class="input-group">
             <label>{{ $t('pmi') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="pmi" @input="pmi = pmi || 0"/>
-              <span class="unit">$/month</span>
+              <span class="unit">${{ pmi }}/{{ $t ('month') }}</span>
             </div>
           </div>
           <div class="input-group">
             <label>{{ $t('hoaFees') }}</label>
             <div class="input-wrapper">
               <input type="number" v-model="hoaFees" @input="hoaFees = hoaFees || 0"/>
-              <span class="unit">$/month</span>
+              <span class="unit">${{ hoaFees }}/{{ $t ('month') }}</span>
             </div>
           </div>
         </div>
@@ -116,22 +116,22 @@
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.propertyTax / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                   <span class="label">{{ $t('propertyTax') }}</span>
-                  <span class="amount">${{ this.propertyTax }} /month</span>
+                  <span class="amount">${{ this.propertyTax }} /{{ $t('month') }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.homeInsurance / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                   <span class="label">{{ $t('homeownersInsurance') }}</span>
-                  <span class="amount">${{ this.homeInsurance }} /month</span>
+                  <span class="amount">${{ this.homeInsurance }} /{{ $t('month') }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.pmi / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                   <span class="label">{{ $t('pmi') }}</span>
-                  <span class="amount">${{ this.pmi }} /month</span>
+                  <span class="amount">${{ this.pmi }} /{{ $t('month') }}</span>
                 </div>
                 <div class="breakdown-item">
                   <span class="percentage">{{ ((this.hoaFees / calculateMonthlyPayment) * 100).toFixed(0) }}%</span>
                   <span class="label">{{ $t('hoaFees') }}</span>
-                  <span class="amount">${{ this.hoaFees }} /month</span>
+                  <span class="amount">${{ this.hoaFees }} /{{ $t('month') }}</span>
                 </div>
               </div>
             </div>
@@ -139,14 +139,6 @@
         </div>
       </div> 
     </div>
-  </div>
-  <div class="language-switcher">
-    <button @click="switchLanguage('en')">
-      <img src="@/assets/us.png" alt="English" />
-    </button>
-    <button @click="switchLanguage('vi')">
-      <img src="@/assets/vn.png" alt="Tiếng Việt" />
-    </button>
   </div>
 </template>
 
@@ -189,6 +181,10 @@ export default {
       showExtras: false,
     };
   },
+  created() {
+    // Non-reactive container for chart instance
+    this._chart = null;
+  },
   computed: {
     calculatePrincipalInterest() {
         const loanAmount = this.homePrice - this.downPayment;
@@ -222,8 +218,7 @@ export default {
   methods: {
     switchLanguage(lang) {
       this.$i18n.locale = lang;
-      this.renderChart(); 
-      this.startBotAnimation();
+      this.renderChart();
     },
     // async fetchInterestRates() {
     //   try {
@@ -314,27 +309,44 @@ export default {
     async generateMortgageInsights() {
       const url = "https://openrouter.ai/api/v1/chat/completions";
       try {
-        // First get insights in English
-        const englishResponse = await axios.post(url, {
+        const systemPrompt = this.$i18n.locale === "vi" 
+          ? "Bạn là một chuyên gia tài chính đang phân tích khoản vay thế chấp. Hãy đưa ra lời khuyên bằng tiếng Việt."
+          : "You are a financial expert providing insights on mortgage payment.";
+
+        const userPrompt = this.$i18n.locale === "vi"
+          ? `Phân tích dữ liệu khoản vay thế chấp sau:
+            - Giá nhà: $${this.homePrice}
+            - Trả trước: $${this.downPayment} (${this.downPaymentPercentage}%)
+            - Thời hạn vay: ${this.loanTerm} năm
+            - Lãi suất: ${this.interestRate}%
+            - Thuế tài sản: $${this.propertyTax}/tháng
+            - Bảo hiểm nhà: $${this.homeInsurance}/tháng
+            - PMI: $${this.pmi}/tháng
+            - Phí HOA: $${this.hoaFees}/tháng
+            - Thanh toán hàng tháng: $${this.calculateMonthlyPayment}
+            Đưa ra 2-3 câu nhận xét. Giữ ngắn gọn và thực tế.`
+          : `Analyze this mortgage data:
+            - Home Price: $${this.homePrice}
+            - Down Payment: $${this.downPayment} (${this.downPaymentPercentage}%)
+            - Loan Term: ${this.loanTerm} years
+            - Interest Rate: ${this.interestRate}%
+            - Property Tax: $${this.propertyTax}/month
+            - Home Insurance: $${this.homeInsurance}/month
+            - PMI: $${this.pmi}/month
+            - HOA Fees: $${this.hoaFees}/month
+            - Monthly Payment: $${this.calculateMonthlyPayment}
+            Provide 2-3 sentences of insights. Keep it concise and actionable.`;
+
+        const response = await axios.post(url, {
           model: "deepseek/deepseek-chat:free",
           messages: [
             {
               role: "system",
-              content: "You are a financial expert providing insights on mortgage payment."
+              content: systemPrompt
             },
             {
               role: "user",
-              content: `Analyze this mortgage data:
-              - Home Price: $${this.homePrice}
-              - Down Payment: $${this.downPayment} (${this.downPaymentPercentage}%)
-              - Loan Term: ${this.loanTerm} years
-              - Interest Rate: ${this.interestRate}%
-              - Property Tax: $${this.propertyTax}/month
-              - Home Insurance: $${this.homeInsurance}/month
-              - PMI: $${this.pmi}/month
-              - HOA Fees: $${this.hoaFees}/month
-              - Monthly Payment: $${this.calculateMonthlyPayment}
-              Provide 2-3 sentences of insights. Keep it concise and actionable.`
+              content: userPrompt
             }
           ]
         }, {
@@ -345,35 +357,7 @@ export default {
           }
         });
 
-        const englishInsights = englishResponse.data.choices[0].message.content;
-
-        // If language is Vietnamese, translate the insights
-        // if (this.$i18n.locale === "vi") {
-        //   const translationResponse = await axios.post(url, {
-        //     model: "deepseek/deepseek-chat:free",
-        //     messages: [
-        //       {
-        //         role: "system",
-        //         content: "Bạn là một chuyên gia dịch thuật. Hãy dịch văn bản sau từ tiếng Anh sang tiếng Việt một cách chính xác và tự nhiên, giữ nguyên ý nghĩa tài chính."
-        //       },
-        //       {
-        //         role: "user",
-        //         content: englishInsights
-        //       }
-        //     ]
-        //   }, {
-        //     headers: {
-        //       'Authorization': `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-        //       "Content-Type": "application/json",
-        //       "Accept": "application/json"
-        //     }
-        //   });
-
-        //   return translationResponse.data.choices[0].message.content;
-        // }
-
-        // Return English by default
-        return englishInsights;
+        return response.data.choices[0].message.content;
       } catch (error) {
         console.error("Error generating mortgage insights:", error);
         return this.$i18n.locale === "vi" 
@@ -407,15 +391,21 @@ export default {
       this.showExtras = !this.showExtras;
     },
     renderChart() {
-      if (this.chartInstance) {
-        this.chartInstance.destroy(); // Destroy previous chart instance
+      if (this._chart) {
+        this._chart.destroy(); // Destroy previous chart instance
       }
 
       const ctx = this.$refs.chart.getContext('2d');
-      this.chartInstance = new Chart(ctx, {
+      this._chart = new Chart(ctx, {
         type: 'pie',
         data: {
-          labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance', 'PMI', 'HOA Fees'],
+          labels: [
+            this.$t('principalInterest'),
+            this.$t('propertyTax'),
+            this.$t('homeownersInsurance'),
+            this.$t('pmi'),
+            this.$t('hoaFees')
+          ],
           datasets: [{
             data: [
               parseFloat(this.calculatePrincipalInterest), 
@@ -440,10 +430,6 @@ export default {
                   return `${context.label}: $${context.raw.toFixed(2)}`;
                 }
               }
-            },
-            // Custom Plugin for Center Text
-            centerText: {
-              text: `${this.$t('monthlyTotal')}<br><span style="font-size: 24px; font-weight: bold;">$${this.calculateMonthlyPayment}</span>`, 
             }
           }
         },
@@ -455,31 +441,65 @@ export default {
             const ctx = chart.ctx;
 
             ctx.restore();
-            const fontSize = (height / 10).toFixed(2);
-            ctx.font = `${fontSize}px Arial`;
+
+            // Clear the center area first
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) * 0.25;
+            ctx.clearRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+            // Calculate positions relative to center 
+            const titleY = centerY - 60; 
+            const amountY = centerY - 30; 
+
+            // Draw "Monthly total" text
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'center';
-
-            // Draw the custom text in two lines
+            ctx.fillStyle = '#333333';
+            ctx.font = '16px Arial';
             const text = this.$t('monthlyTotal');
-            const textX = Math.round(width / 2);
-            const textY = Math.round(height / 2) - 50;
+            ctx.fillText(text, centerX, titleY);
 
+            // Draw payment amount with larger, bold font
+            ctx.font = 'bold 28px Arial';
             const paymentText = `$${this.calculateMonthlyPayment}`;
-            const paymentTextY = Math.round(height / 2) - 10;
-
-            // Set the style for the larger payment amount text
-            ctx.font = '20px Arial';
-            ctx.fillText(text, textX, textY);
-            ctx.font = '36px Arial';
-            ctx.fillText(paymentText, textX, paymentTextY);
+            ctx.fillText(paymentText, centerX, amountY);
 
             ctx.save();
           }
         }]
       });
-    }
+    },
 
+    updateChartLabels() {
+      if (!this._chart) return;
+      
+      this._chart.data.labels = [
+        this.$t('principalInterest'),
+        this.$t('propertyTax'),
+        this.$t('homeownersInsurance'),
+        this.$t('pmi'),
+        this.$t('hoaFees')
+      ];
+
+      // Update tooltip to use translated month
+      this._chart.options.plugins.tooltip.callbacks.label = (context) => {
+        return `${context.label}: $${context.raw.toFixed(2)}/${this.$t('month')}`;
+      };
+      
+      this._chart.update();
+    },
+
+    // Add new method for updating bot message
+    async updateBotMessage() {
+      this.isTyping = true;
+      const insights = await this.generateMortgageInsights();
+      this.botMessage = insights;
+      this.isTyping = false;
+      this.words = this.botMessage.split(/( |\n)/g).filter(word => word !== "");
+      this.currentWordIndex = this.words.length; // Set to end to show full message
+      this.typedContent = this.botMessage.replace(/\n/g, '<br>');
+    },
   },
   watch: {
     homePrice() {
@@ -513,13 +533,25 @@ export default {
     hoaFees() {
       this.renderChart();
       this.startBotAnimation(); // Trigger chatbot on HOA fees change
+    },
+    '$i18n.locale': {
+      immediate: true,
+      async handler() {
+        this.updateChartLabels();
+        // Update bot message if it's visible
+        if (this.showBot && this.showMessage) {
+          await this.updateBotMessage();
+        } else {
+          // If bot is not visible, trigger a new animation
+          await this.startBotAnimation();
+        }
+      }
     }
   },
 
 
   mounted() {
     this.renderChart();
-    this.startBotAnimation();
   }
 };
 </script>

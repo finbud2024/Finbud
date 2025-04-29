@@ -51,7 +51,7 @@ export async function get10BlueLinksContents(sources) {
   }
 
   function extractMainContent(html) {
-    const $ = cheerio.load(html);
+    const $ = load(html);
     $("script, style, head, nav, footer, iframe, img").remove();
     return $("body").text().replace(/\s+/g, " ").trim();
   }

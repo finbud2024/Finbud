@@ -352,7 +352,7 @@ export default {
 <template>
   <div class="container">
     <div class="Navigation">
-      <div class="animated fadeInLeft">
+      <div class="animated no-fade">
         <h1 class="start">Dashboard</h1>
         <div class="form-group">
           <label>Time Period</label>
@@ -782,6 +782,11 @@ h5 {
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+.no-fade {
+  animation: none;       /* disables fade / opacity 0 → 1 */
+  transform: translateX(0); /* keep it static */
 }
 
 @import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");

@@ -17,7 +17,6 @@ import newsRoute from "../Endpoints/newsRoute.js";
 import chatRoute from "../Endpoints/chatRoute.js";
 import cryptoRoute from "../Endpoints/cryptoRoute.js";
 import stockRoute from "../Endpoints/stockRoute.js";
-import transactionRoute from "../Endpoints/transactionRoute.js";
 import stockTransactionRoute from "../Endpoints/stockTransactionRoute.js";
 import goalRoute from "../Endpoints/goalRoute.js";
 import proxyRoute from "../Endpoints/proxyRoute.js";
@@ -31,7 +30,10 @@ import superInvestorsRoute from "../Endpoints/superInvestorsRoute.js";
 import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
+import filingsRoute, { loadCompanies } from "../Endpoints/finData/filingsRoute.js";
 import articleRoute from "../Endpoints/articleRoute.js";
+import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
+import notiRoute from "../Endpoints/notiRoute.js";
 
 dotenv.config();
 
@@ -42,10 +44,12 @@ const allowedOrigins = ["http://localhost:8888", "https://finbud.pro"];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
+      // ✅ Allow undefined origins (like Postman, curl, or internal requests)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.warn(`CORS blocked request from origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -134,7 +138,6 @@ app.use(bodyParser.json({ limit: "10mb" }));
 //   console.log(req.body);
 //   next();
 // });
-
 const router = express.Router();
 
 router.use("/", authRoute);
@@ -144,7 +147,6 @@ router.use("/", newsRoute);
 router.use("/", chatRoute);
 router.use("/", cryptoRoute);
 router.use("/", stockRoute);
-router.use("/", transactionRoute);
 router.use("/", stockTransactionRoute);
 router.use("/", goalRoute);
 router.use("/", proxyRoute);
@@ -162,6 +164,9 @@ router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
+router.use("/", filingsRoute);
+router.use("/", insiderTransactionRoute)
+router.use("/", notiRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
@@ -173,7 +178,9 @@ const handler = async (event, context) => {
   if (!mongoose.connection.readyState) {
     try {
       await connectToMongoDB();
+      await loadCompanies()
     } catch (error) {
+      console.log("Error starting the server")
       return {
         statusCode: 500,
         body: JSON.stringify({ error: "Failed to connect to database" }),
@@ -185,9 +192,13 @@ const handler = async (event, context) => {
 };
 
 // Start the server for local development if not in production
-if (process.env.NODE_ENV !== "production") {
+if (
+  process.env.NODE_ENV !== "production" &&
+  process.env.NETLIFY_DEV !== "true"
+) {
   const PORT = process.env.PORT || 8889;
   connectToMongoDB()
+  .then(() => loadCompanies())
     .then(() => {
       httpServer.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
