@@ -23,7 +23,7 @@
       <div class="guidance-image-container">
         <img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
       </div>
-      <span class="guidance-text">{{ $t('chatComponent.guildence') }}</span>
+      <span class="guidance-text">{{ $t("chatComponent.guildence") }}</span>
     </div>
     <GuidanceModal
       v-if="showGuidance"
