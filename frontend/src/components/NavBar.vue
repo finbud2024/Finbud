@@ -1,7 +1,11 @@
 <template>
   <nav class="nav-bar" id="app">
-    <router-link to="/">
-      <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
+    <router-link to="/" @click.native="handleLogoClick">
+      <img
+        src="@/assets/home-page/FinbudSmallLogo.png"
+        class="navbar-brand"
+        alt="FinBud Logo"
+      />
     </router-link>
     <div class="nav-right">
       <ul class="nav-items">
@@ -16,49 +20,93 @@
           </div>
         </li>
         <li>
-          <router-link to="/chat-view" class="chatview">{{ $t('chat') }}</router-link>
+          <router-link to="/chat-view" class="chatview">{{
+            $t("chat")
+          }}</router-link>
         </li>
-        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
+        <li
+          class="dropdown"
+          @mouseenter="toggleAboutDropdown(true)"
+          @mouseleave="toggleAboutDropdown(false)"
+        >
           <div class="services-dropdown dropbtn">
-            {{ $t('overview') }} <span class="arrow-down"></span>
+            {{ $t("overview") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
-            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">{{ $t('about') }}</router-link>
-            <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">{{ $t('technology')
-              }}</router-link>
+            <router-link
+              to="/about"
+              class="about"
+              @click="toggleAboutDropdown(false)"
+              >{{ $t("about") }}</router-link
+            >
+            <router-link
+              to="/tech"
+              class="technology"
+              @click="toggleAboutDropdown(false)"
+              >{{ $t("technology") }}</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown(true)"
-          @mouseleave="toggleDropdown(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdown(true)"
+          @mouseleave="toggleDropdown(false)"
+        >
           <div class="services-dropdown dropbtn">
-            {{ $t('finManage') }} <span class="arrow-down"></span>
+            {{ $t("finManage") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">{{ $t('goal') }}</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">{{ $t('riskAnalysis')
-              }}</router-link>
-            <router-link to="/investment-calculator" class="investment-calculator"
-              @click="toggleAboutDropdown(false)">{{ $t('investmentCalculator') }}</router-link>
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">{{
-              $t('mortgageCalculator') }}</router-link>
+            <router-link
+              to="/goal"
+              class="goal"
+              @click="toggleDropdown(false)"
+              >{{ $t("goal") }}</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdown(false)"
+              >{{ $t("riskAnalysis") }}</router-link
+            >
+            <router-link
+              to="/investment-calculator"
+              class="investment-calculator"
+              @click="toggleAboutDropdown(false)"
+              >{{ $t("investmentCalculator") }}</router-link
+            >
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdown(false)"
+              >{{ $t("mortgageCalculator") }}</router-link
+            >
 
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">{{
-              $t('superInvestors') }}</router-link>
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t("superInvestors") }}</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownInvest(true)"
-          @mouseleave="toggleDropdownInvest(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownInvest(true)"
+          @mouseleave="toggleDropdownInvest(false)"
+        >
           <div class="services-dropdown dropbtn">
-            {{ $t('finInvest') }} <span class="arrow-down"></span>
+            {{ $t("finInvest") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
             <router-link
               to="/stock-simulator"
               class="simulator"
               @click="toggleDropdownInvest(false)"
-              >{{ $t('simulator') }}</router-link
+              >{{ $t("simulator") }}</router-link
             >
             <router-link
               to="/autotrade-ai"
@@ -70,42 +118,70 @@
               to="/quant-analysis"
               class="home"
               @click="toggleDropdownInvest(false)"
-              >{{ $t('quant') }}</router-link
+              >{{ $t("quant") }}</router-link
             >
             <router-link
               to="/quant-simulator"
               class="quant-simulator"
               @click="toggleDropdownInvest(false)"
-              >{{ $t('quantSimulator') }}</router-link
+              >{{ $t("quantSimulator") }}</router-link
             >
             <router-link
-            to="/fund-letter"
-            class="fund-letter"
-            @click="toggleDropdownInvest(false)"
-            >Fund Letter</router-link
-          >
+              to="/fund-letter"
+              class="fund-letter"
+              @click="toggleDropdownInvest(false)"
+              >Fund Letter</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownEdu(true)"
-          @mouseleave="toggleDropdownEdu(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownEdu(true)"
+          @mouseleave="toggleDropdownEdu(false)"
+        >
           <div class="services-dropdown dropbtn">
-            {{ $t('finEdu') }} <span class="arrow-down"></span>
+            {{ $t("finEdu") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenEdu">
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownEdu(false)">{{ $t('quiz') }}</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdownEdu(false)">{{ $t('event') }}</router-link>
-            <router-link to="/forum" class="forum" @click="toggleDropdownEdu(false)">{{ $t('forum') }}</router-link>
+            <router-link
+              to="/quizz"
+              class="quizz"
+              @click="toggleDropdownEdu(false)"
+              >{{ $t("quiz") }}</router-link
+            >
+            <router-link
+              to="/event"
+              class="event"
+              @click="toggleDropdownEdu(false)"
+              >{{ $t("event") }}</router-link
+            >
+            <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdownEdu(false)"
+              >{{ $t("forum") }}</router-link
+            >
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownAgent(true)"
-          @mouseleave="toggleDropdownAgent(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown"
+          @mouseenter="toggleDropdownAgent(true)"
+          @mouseleave="toggleDropdownAgent(false)"
+        >
           <div class="services-dropdown dropbtn">
-            {{ $t('finAgent') }} <span class="arrow-down"></span>
+            {{ $t("finAgent") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenAgent">
-            <router-link to="/agent" class="agent" @click="toggleDropdownEdu(false)">{{ $t('agent') }}</router-link>
+            <router-link
+              to="/agent"
+              class="agent"
+              @click="toggleDropdownEdu(false)"
+              >{{ $t("agent") }}</router-link
+            >
           </div>
         </li>
         <li
@@ -114,23 +190,23 @@
           @mouseenter="toggleDropdownData(true)"
           @mouseleave="toggleDropdownData(false)"
         >
-        <div class="services-dropdown dropbtn">
-            {{ $t('finData') }} <span class="arrow-down"></span>
-            </div>
-            <div class="dropdown-content" v-show="isDataDropdownOpen">
+          <div class="services-dropdown dropbtn">
+            {{ $t("finData") }} <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="isDataDropdownOpen">
             <router-link
               to="/docs"
               class="docs"
               @click="toggleDropdownData(false)"
-              >{{ $t('Docs') }}</router-link
-            > 
-            
+              >{{ $t("Docs") }}</router-link
+            >
           </div>
-
         </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">
-          <router-link to="/login" class="login-button">{{ $t('login') }}</router-link>
+          <router-link to="/login" class="login-button">{{
+            $t("login")
+          }}</router-link>
         </li>
 
         <li v-if="isAuthenticated" class="fincoin-container">
@@ -141,21 +217,43 @@
           <NavbarNoti />
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleProfileDropdown(true)"
-          @mouseleave="toggleProfileDropdown(false)">
+        <li
+          v-if="isAuthenticated"
+          class="dropdown profile-dropdown"
+          @mouseenter="toggleProfileDropdown(true)"
+          @mouseleave="toggleProfileDropdown(false)"
+        >
           <img :src="profileImage" alt="User Image" class="user-image" />
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-            <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-              <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image" />
+            <router-link
+              to="/profile"
+              class="profile"
+              @click="toggleProfileDropdown(false)"
+            >
+              <img
+                :src="profileImage"
+                alt="User Image"
+                class="inside-dropdown-user-image"
+              />
               <p>{{ profileName }}</p>
             </router-link>
-            <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-              <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-              <p>{{ isDarkMode ? $t('darkMode') : $t('lightMode') }}</p>
+            <router-link
+              to="#"
+              class="dark-mode-toggle"
+              @click="toggleDarkMode"
+            >
+              <font-awesome-icon
+                :icon="isDarkMode ? 'fa-moon' : 'fa-sun'"
+                class="icon"
+              />
+              <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
             </router-link>
             <router-link to="#" class="logout" @click="logout">
-              <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
-              <p>{{ $t('logout') }}</p>
+              <font-awesome-icon
+                icon="fa-solid fa-right-from-bracket"
+                class="icon"
+              />
+              <p>{{ $t("logout") }}</p>
             </router-link>
           </div>
         </li>
@@ -166,42 +264,121 @@
       </ul>
 
       <!-- Mobile version -->
-      <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
+      <div
+        class="dropdown mobile-only"
+        :class="{ active: isDropdownOpenMobile }"
+      >
         <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
           <div class="brand-mobile">FinBud</div>
           <font-awesome-icon icon="fa-solid fa-chevron-down" />
         </div>
-        <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
-          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">{{ $t('chat') }}</router-link>
-          <router-link to="/about" class="about" @click="toggleDropdownMobile">{{ $t('about') }}</router-link>
-          <router-link to="/tech" class="technology" @click="toggleDropdownMobile">{{ $t('technology') }}</router-link>
+        <div
+          class="dropdown-content"
+          v-show="isDropdownOpenMobile"
+          @mouseleave="closeDropdownMobile"
+        >
+          <router-link
+            to="/chat-view"
+            class="chatview"
+            @click="toggleDropdownMobile"
+            >{{ $t("chat") }}</router-link
+          >
+          <router-link
+            to="/about"
+            class="about"
+            @click="toggleDropdownMobile"
+            >{{ $t("about") }}</router-link
+          >
+          <router-link
+            to="/tech"
+            class="technology"
+            @click="toggleDropdownMobile"
+            >{{ $t("technology") }}</router-link
+          >
           <div class="authenticated" v-if="isAuthenticated">
-            <strong>{{ $t('finManage') }}</strong>
-            <router-link to="/goal" class="goal" @click="toggleDropdownMobile">{{ $t('goal') }}</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">{{ $t('riskAnalysis')
-              }}</router-link>
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdownMobile">{{
-              $t('mortgageCalculator') }}</router-link>
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">{{
-              $t('superInvestors') }}</router-link>
+            <strong>{{ $t("finManage") }}</strong>
+            <router-link
+              to="/goal"
+              class="goal"
+              @click="toggleDropdownMobile"
+              >{{ $t("goal") }}</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdownMobile"
+              >{{ $t("riskAnalysis") }}</router-link
+            >
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdownMobile"
+              >{{ $t("mortgageCalculator") }}</router-link
+            >
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownMobile"
+              >{{ $t("superInvestors") }}</router-link
+            >
 
-            <strong>{{ $t('finInvest') }}</strong>
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">{{ $t('simulator')
-              }}</router-link>
-            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownMobile">AutoTrade AI</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">{{ $t('quant') }}</router-link>
-            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">{{
-              $t('quantSimulator') }}</router-link>
+            <strong>{{ $t("finInvest") }}</strong>
+            <router-link
+              to="/stock-simulator"
+              class="simulator"
+              @click="toggleDropdownMobile"
+              >{{ $t("simulator") }}</router-link
+            >
+            <router-link
+              to="/autotrade-ai"
+              class="autotrade"
+              @click="toggleDropdownMobile"
+              >AutoTrade AI</router-link
+            >
+            <router-link
+              to="/quant-analysis"
+              class="home"
+              @click="toggleDropdownMobile"
+              >{{ $t("quant") }}</router-link
+            >
+            <router-link
+              to="/quant-simulator"
+              class="quant-simulator"
+              @click="toggleDropdownMobile"
+              >{{ $t("quantSimulator") }}</router-link
+            >
 
-            <strong>{{ $t('finEdu') }}</strong>
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">{{ $t('quiz') }}</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdownMobile">{{ $t('event') }}</router-link>
-            <router-link to="/forum" class="forum" @click="toggleDropdownMobile">{{ $t('forum') }}</router-link>
+            <strong>{{ $t("finEdu") }}</strong>
+            <router-link
+              to="/quizz"
+              class="quizz"
+              @click="toggleDropdownMobile"
+              >{{ $t("quiz") }}</router-link
+            >
+            <router-link
+              to="/event"
+              class="event"
+              @click="toggleDropdownMobile"
+              >{{ $t("event") }}</router-link
+            >
+            <router-link
+              to="/forum"
+              class="forum"
+              @click="toggleDropdownMobile"
+              >{{ $t("forum") }}</router-link
+            >
 
-            <router-link to="#" @click="logout" class="logout">{{ $t('logout') }}</router-link>
+            <router-link to="#" @click="logout" class="logout">{{
+              $t("logout")
+            }}</router-link>
           </div>
-          <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button"
-            @click="toggleDropdownMobile">{{ $t('login') }}</router-link>
+          <router-link
+            to="/login"
+            v-if="!isAuthenticated && !isAuthLoading"
+            class="login-button"
+            @click="toggleDropdownMobile"
+            >{{ $t("login") }}</router-link
+          >
           <div v-if="isAuthLoading" class="auth-loading-mobile">
             <div class="loading-indicator"></div>
           </div>
@@ -268,7 +445,7 @@ export default {
   methods: {
     switchLanguage(lang) {
       this.$i18n.locale = lang;
-      localStorage.setItem('language', lang);
+      localStorage.setItem("language", lang);
     },
     toggleDropdown(open) {
       this.isDropdownOpen = open;
@@ -282,7 +459,7 @@ export default {
     toggleDropdownAgent(open) {
       this.isDropdownOpenAgent = open;
     },
-    toggleDropdownData(open){
+    toggleDropdownData(open) {
       this.isDataDropdownOpen = open;
     },
     toggleProfileDropdown(open) {
@@ -335,16 +512,23 @@ export default {
         }
       }
     },
+    handleLogoClick(event) {
+      // Prevent default navigation
+      event.preventDefault();
+
+      // Emit logo-click event to parent component
+      this.$emit("logo-clicked");
+    },
   },
   async mounted() {
     // Set initial language from localStorage only if it exists
-    const savedLang = localStorage.getItem('language');
+    const savedLang = localStorage.getItem("language");
     if (savedLang) {
       this.$i18n.locale = savedLang;
     }
 
-    if (!this.$store.getters['users/currentUser']) {
-      await this.$store.dispatch('users/fetchCurrentUser');
+    if (!this.$store.getters["users/currentUser"]) {
+      await this.$store.dispatch("users/fetchCurrentUser");
     }
     const storedDarkMode = localStorage.getItem("darkMode");
     if (storedDarkMode !== null) {
@@ -369,9 +553,8 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .language-switcher {
-
-
   display: flex;
+  margin-left: 2rem;
 }
 
 .language-switcher button {
@@ -393,9 +576,11 @@ export default {
 }
 
 .nav-bar {
-  background: linear-gradient(to bottom,
-      rgba(255, 255, 255, 0.85),
-      rgba(255, 255, 255, 0));
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0)
+  );
   width: 100%;
   height: 80px;
   display: flex;
@@ -443,11 +628,18 @@ export default {
   gap: 2rem;
 }
 
+.nav-items li {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .nav-items li a {
   color: var(--text-primary);
   text-decoration: none;
   transition: color 0.3s ease;
   font-size: clamp(0.5rem, 5vw, 1rem);
+  white-space: nowrap;
 }
 
 .nav-items li .chatview {
@@ -491,15 +683,14 @@ export default {
   font-size: clamp(0.6rem, 5.1vw, 1rem);
   color: var(--text-primary);
   padding: 8px 12px;
-  /* Add padding to give space around text */
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
-  /* Space between text and arrow */
   border-radius: 8px;
-  /* Optional: rounded corners */
   transition: background-color 0.3s ease;
-  /* Smooth transition */
+  white-space: nowrap;
+  text-align: center;
 }
 
 .services-dropdown:hover {
@@ -507,11 +698,22 @@ export default {
 }
 
 .services-dropdown .arrow-down {
+  display: inline-block;
   width: 0;
   height: 0;
+  margin-left: 5px;
+  vertical-align: middle;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid var(--text-primary);
+}
+
+.services-dropdown:hover .arrow-down {
+  border-top-color: var(--accent-color);
+}
+
+.dropdown:hover .services-dropdown {
+  color: var(--accent-color);
 }
 
 .dropdown {
@@ -519,25 +721,115 @@ export default {
   display: inline-block;
 }
 
+/* Add pseudo-element to connect dropdown to trigger */
+.dropdown::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 20px; /* Height of connection area */
+  bottom: -20px; /* Position it below the dropdown trigger */
+  left: 0;
+  z-index: 1000;
+  pointer-events: none; /* Makes it not interfere with clicks */
+}
+
 .dropdown-content {
-  height: 0;
+  display: block;
   position: absolute;
   background-color: var(--bg-primary);
-  border-color: black;
-  min-width: 100px;
+  border: 2px solid var(--text-primary);
+  min-width: 180px; /* Increased from 160px to accommodate longer text */
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
-  z-index: 1;
+  z-index: 1001; /* Increased z-index to prevent overlap */
   border-radius: 15px;
+  top: 40px; /* Position below the navbar item */
+  left: 0; /* Align with left edge of the parent */
+  margin-top: 0; /* Reduced from 10px to eliminate gap */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transform-origin: top left;
+  transform: translateY(10px);
+  text-align: left;
+  overflow: hidden;
 }
 
 .dropdown-profile {
   position: absolute;
   background-color: var(--bg-primary);
-  min-width: 200px;
+  border: 2px solid var(--text-primary);
+  min-width: 220px; /* Increased width */
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
-  z-index: 1;
-  transform: translate(-160px, 0px);
+  z-index: 1001; /* Increased z-index */
+  right: 0;
+  top: 45px; /* Position below user image */
   border-radius: 15px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transform: translateY(10px);
+  left: auto; /* Ensure right alignment */
+  transform-origin: top right;
+  padding-top: 10px; /* Add padding to top of dropdown content */
+  margin-top: 0; /* No gap between trigger and content */
+  overflow: hidden; /* Ensure content stays within border radius */
+}
+
+.dropdown-content:before {
+  content: "";
+  position: absolute;
+  top: 0px; /* Moved up to account for padding */
+  left: 20px; /* Position arrow more to the left */
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--bg-primary);
+}
+
+/* Add class for profile-dropdown that will work in all browsers */
+.dropdown.profile-dropdown::after {
+  width: 35px;
+  height: 20px;
+  bottom: -20px;
+  right: 0;
+  left: auto;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown:hover .dropdown-profile {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Support for v-show="true" */
+.dropdown-content[style*="display: block"],
+.dropdown-profile[style*="display: block"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Support for v-if */
+.dropdown-content:not([style*="display: none"]),
+.dropdown-profile:not([style*="display: none"]) {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Mobile dropdown active state - keep for mobile toggle functionality */
+.dropdown.active .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .dropdown-content a:first-child:hover,
@@ -560,56 +852,47 @@ export default {
   text-decoration: none;
   display: flex;
   align-items: center;
-  border-bottom: 1px dotted rgb(226, 215, 215);
-  height: 20px;
-  border-left: 2px solid black;
-  border-right: 2px solid black;
+  border-bottom: 1px dotted var(--border-color, rgba(226, 215, 215, 0.5));
+  height: auto; /* Changed from fixed height */
+  min-height: 24px; /* Minimum height */
+  border-left: none;
+  border-right: none;
+  transition: background-color 0.2s ease;
+  margin: 2px 0; /* Added margin between items */
 }
 
 .dropdown-content a:nth-child(1),
 .dropdown-profile a:nth-child(1) {
-  border-top: 2px solid black;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top: none;
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+  margin-top: 0; /* No margin for first item */
 }
 
 .dropdown-content a:last-child,
 .dropdown-profile a:last-child {
-  border-bottom: 2px solid black;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
+  border-bottom: none;
+  border-bottom-left-radius: 13px;
+  border-bottom-right-radius: 13px;
+  margin-bottom: 0; /* No margin for last item */
 }
 
 .dropdown-content .authenticated a:last-child {
   border-bottom: none;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
 }
 
 .dropdown-content .authenticated a:nth-child(1) {
   border-top: none;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
 }
 
+.dropdown-content .authenticated {
+  width: 100%;
+}
+
+/* Remove animation that might cause issues */
 .dropdown-content,
 .dropdown-profile {
-  animation-name: dropdown-animation;
-  animation-duration: 0.3s;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: forwards;
-}
-
-@keyframes dropdown-animation {
-  0% {
-    opacity: 0;
-    height: 0;
-  }
-
-  100% {
-    opacity: 1;
-    height: fit-content;
-  }
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
 }
 
 .dropdown-content a:hover,
@@ -672,6 +955,16 @@ export default {
 }
 
 @media (max-width: 768px) {
+  /* Disable the hover connection for mobile */
+  .dropdown::after {
+    display: none;
+  }
+
+  .dropdown-content,
+  .dropdown-profile {
+    padding-top: 0;
+  }
+
   .nav-bar {
     display: flex;
     flex-direction: row;
@@ -714,11 +1007,37 @@ export default {
     display: none;
   }
 
-  .dropdown-content {
-    top: 30px;
-    width: fit-content;
-    display: flex;
-    flex-direction: column;
+  .mobile-only .dropdown-content {
+    top: 40px;
+    width: 200px;
+    max-height: 80vh; /* Limit height on mobile */
+    overflow-y: auto; /* Allow scrolling */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    transform-origin: top center;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--text-primary);
+  }
+
+  .mobile-only .dropdown-content a {
+    padding: 14px 16px; /* Larger touch targets on mobile */
+    border-left: none;
+    border-right: none;
+  }
+
+  .dropdown.active .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Fix for authenticated section in mobile dropdown */
+  .dropdown-content .authenticated strong {
+    display: block;
+    padding: 10px 16px;
+    background-color: var(--bg-secondary);
+    margin-top: 5px;
+    font-weight: bold;
   }
 }
 

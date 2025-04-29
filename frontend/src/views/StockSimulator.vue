@@ -1,44 +1,38 @@
 <template>
   <div class="dashboard">
     <!-- Combined header section with both dashboard header and chatbot side by side -->
-    <h1>{{ $t('appTitle') }}</h1>
+    <h1>{{ $t("appTitle") }}</h1>
     <nav class="navbar">
       <ul>
         <li
           @click="activeSection = 'investment'"
           :class="{ active: activeSection === 'investment' }"
         >
-        {{ $t(`navigation.investment`) }}
+          {{ $t(`navigation.investment`) }}
         </li>
         <li
           @click="activeSection = 'portfolio'"
           :class="{ active: activeSection === 'portfolio' }"
         >
-        {{ $t(`navigation.portfolio`) }}
-        </li>
-        <li
-          @click="activeSection = 'transactionHistory'"
-          :class="{ active: activeSection === 'transactionHistory' }"
-        >
-        {{ $t(`navigation.transactionHistory`) }}
+          {{ $t(`navigation.portfolio`) }}
         </li>
         <li
           @click="activeSection = 'filters'"
           :class="{ active: activeSection === 'filters' }"
         >
-        {{ $t(`navigation.filters`) }}
+          {{ $t(`navigation.filters`) }}
         </li>
         <li
           @click="activeSection = 'quiz'"
           :class="{ active: activeSection === 'quiz' }"
         >
-        {{ $t(`navigation.quiz`) }}
+          {{ $t(`navigation.quiz`) }}
         </li>
         <li
           @click="activeSection = 'predictiveCalc'"
           :class="{ active: activeSection === 'predictiveCalc' }"
         >
-        {{ $t(`navigation.predictiveCalc`) }}
+          {{ $t(`navigation.predictiveCalc`) }}
         </li>
       </ul>
     </nav>
@@ -77,31 +71,42 @@
 
       <div class="main-content">
         <section class="key-statistics">
-          <h3>{{ $t('investment.keyStatistics') }}</h3>
+          <h3>{{ $t("investment.keyStatistics") }}</h3>
           <div class="stats-grid">
             <div class="stat">
-              <span class="label">{{ $t('investment.stats.open') }}: </span>
+              <span class="label">{{ $t("investment.stats.open") }}: </span>
               <span class="value">${{ stockData.open }}</span>
             </div>
             <div class="stat">
-              <span class="label">{{ $t('investment.stats.prevClose') }}: </span>
+              <span class="label"
+                >{{ $t("investment.stats.prevClose") }}:
+              </span>
               <span class="value">${{ stockData.close }}</span>
             </div>
             <div class="stat">
-              <span class="label">{{ $t('investment.stats.week52High') }}: </span>
+              <span class="label"
+                >{{ $t("investment.stats.week52High") }}:
+              </span>
               <span class="value">${{ stockData.high }}</span>
             </div>
             <div class="stat">
-              <span class="label">{{ $t('investment.stats.week52Low') }}: </span>
+              <span class="label"
+                >{{ $t("investment.stats.week52Low") }}:
+              </span>
               <span class="value">${{ stockData.low }}</span>
             </div>
             <div class="stat">
-              <span class="label">{{ $t('investment.stats.marketCap') }}: </span>
+              <span class="label"
+                >{{ $t("investment.stats.marketCap") }}:
+              </span>
               <span class="value">${{ stockData.marketCap }}</span>
             </div>
             <div class="stat">
-              <span class="label">{{ $t('investment.stats.volume') }}: </span>
-              <span class="value">{{ stockData.volume }} {{ $t('investment.stats.volume') }}</span>
+              <span class="label">{{ $t("investment.stats.volume") }}: </span>
+              <span class="value"
+                >{{ stockData.volume }}
+                {{ $t("investment.stats.volume") }}</span
+              >
             </div>
           </div>
         </section>
@@ -116,22 +121,19 @@
             />
             <input v-model="quantity" type="number" placeholder="Quantity" />
             <select v-model="action">
-              <option value="buy">{{ $t('investment.actionForm.buy') }}</option>
-              <option value="sell">{{ $t('investment.actionForm.sell') }}</option>
+              <option value="buy">{{ $t("investment.actionForm.buy") }}</option>
+              <option value="sell">
+                {{ $t("investment.actionForm.sell") }}
+              </option>
             </select>
             <div class="buttons">
-              <button class="clear-btn" @click="clearForm">{{ $t('investment.actionForm.clear') }}</button>
+              <button class="clear-btn" @click="clearForm">
+                {{ $t("investment.actionForm.clear") }}
+              </button>
               <button class="preview-btn" @click="previewOrder">
-                {{ $t('investment.actionForm.preview') }}
+                {{ $t("investment.actionForm.preview") }}
               </button>
             </div>
-          </div>
-        </section>
-
-        <section class="transactions">
-          
-          <div class="transaction-form">
-            <TransactionHistory :key="transactionKey" />
           </div>
         </section>
       </div>
@@ -141,23 +143,35 @@
           <div class="account-info-container">
             <div class="account-grid">
               <div class="stat">
-                <span class="label">{{ $t(`investment.accountPerformance.accountBalance`) }}:</span>
+                <span class="label"
+                  >{{
+                    $t(`investment.accountPerformance.accountBalance`)
+                  }}:</span
+                >
                 <span class="value">{{ accountBalance }}</span>
               </div>
               <div class="stat">
-                <span class="label">{{ $t(`investment.accountPerformance.cashBalance`) }}:</span>
+                <span class="label"
+                  >{{ $t(`investment.accountPerformance.cashBalance`) }}:</span
+                >
                 <span class="value">{{ cash }}</span>
               </div>
               <div class="stat">
-                <span class="label">{{ $t(`investment.accountPerformance.stockValue`) }}:</span>
+                <span class="label"
+                  >{{ $t(`investment.accountPerformance.stockValue`) }}:</span
+                >
                 <span class="value">{{ stockValue }}</span>
               </div>
               <div class="stat">
-                <span class="label">{{ $t(`investment.accountPerformance.todaysChange`) }}:</span>
+                <span class="label"
+                  >{{ $t(`investment.accountPerformance.todaysChange`) }}:</span
+                >
                 <span class="value">{{ todaysChange }}</span>
               </div>
               <div class="stat">
-                <span class="label">{{ $t(`investment.accountPerformance.annualReturn`) }}:</span>
+                <span class="label"
+                  >{{ $t(`investment.accountPerformance.annualReturn`) }}:</span
+                >
                 <span class="value">{{ annualReturn }}%</span>
               </div>
             </div>
@@ -190,19 +204,12 @@
           </div>
         </section>
 
-
         <PerformanceChart
           :performanceData="performanceData"
           @timeframeChanged="updatePerformanceData"
           class="performance-chart"
         />
       </div>
-    </section>
-
-    <section v-if="activeSection === 'transactionHistory'">
-      <section class="transaction-history">
-        <TransactionHistory :key="transactionKey" />
-      </section>
     </section>
 
     <section v-if="activeSection === 'filters'">
@@ -221,42 +228,50 @@
     <section v-if="activeSection === 'portfolio'" class="portfolio-section">
       <div class="portfolio-container">
         <div class="portfolio-header">
-          <h2>{{ activeSection === 'portfolio' ? $t('investmentPortfolio') : 'Your Investment Portfolio' }}</h2>
-          
+          <h2>
+            {{
+              activeSection === "portfolio"
+                ? $t("investmentPortfolio")
+                : "Your Investment Portfolio"
+            }}
+          </h2>
+
           <!-- Add language switcher here -->
         </div>
 
         <div class="portfolio-overview">
           <div class="overview-card total">
-            <div class="overview-title">{{ $t('totalPortfolioValue') }}</div>
-            <div class="overview-value">${{ formatCurrency(accountBalance) }}</div>
+            <div class="overview-title">{{ $t("totalPortfolioValue") }}</div>
+            <div class="overview-value">
+              ${{ formatCurrency(accountBalance) }}
+            </div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">{{ $t('stocks') }}</div>
+            <div class="overview-title">{{ $t("stocks") }}</div>
             <div class="overview-value">${{ formatCurrency(stockValue) }}</div>
           </div>
 
           <div class="overview-card">
-            <div class="overview-title">{{ $t('cash') }}</div>
+            <div class="overview-title">{{ $t("cash") }}</div>
             <div class="overview-value">${{ formatCurrency(cash) }}</div>
           </div>
         </div>
-        <PortfolioPerformance :language="$i18n.locale"/>
+        <PortfolioPerformance :language="$i18n.locale" />
         <div class="holdings-section">
-          <h3>{{ $t('yourHoldings') }}</h3>
+          <h3>{{ $t("yourHoldings") }}</h3>
           <div class="holdings-table">
             <table>
               <thead>
                 <tr>
-                  <th>{{ $t('stockTicker') }}</th>
+                  <th>{{ $t("stockTicker") }}</th>
                   <!-- <th>Company Name</th> -->
-                  <th>{{ $t('shareQuantity') }}</th>
-                  <th>{{ $t('currentPricePerShare') }}</th>
-                  <th>{{ $t('totalPurchasedValue') }}</th>
-                  <th>{{ $t('currentMarketValue') }}</th>
-                  <th>{{ $t('gainLoss') }}</th>
-                  <th>{{ $t('percentChange') }}</th>
+                  <th>{{ $t("shareQuantity") }}</th>
+                  <th>{{ $t("currentPricePerShare") }}</th>
+                  <th>{{ $t("totalPurchasedValue") }}</th>
+                  <th>{{ $t("currentMarketValue") }}</th>
+                  <th>{{ $t("gainLoss") }}</th>
+                  <th>{{ $t("percentChange") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -334,7 +349,10 @@
               v-html="currentPortfolioTypedMessage"
             ></div>
           </div>
-          <div class="bot-controls" v-if="!isPortfolioTyping && showPortfolioMessage">
+          <div
+            class="bot-controls"
+            v-if="!isPortfolioTyping && showPortfolioMessage"
+          >
             <button class="refresh-insights" @click="refreshPortfolioInsights">
               <i class="fas fa-sync-alt"></i> Refresh Insights
             </button>
@@ -401,7 +419,6 @@ import CompanyCard from "@/components/CompanyCard.vue";
 import BannerCardSimulator from "@/components/BannerCardSimulator.vue";
 import stockData from "./hardcodeData/StockData.js";
 import PreviewOrderModal from "../components/StockSimulatorPage/PreviewOrderModal.vue";
-import TransactionHistory from "../components/StockSimulatorPage/TransactionHistory.vue";
 import PerformanceChart from "../components/PerformanceChart.vue";
 import PredicitveCalc from "../components/StockSimulatorPage/PredicitveCalc.vue";
 import PortfolioPerformance from "../components/StockSimulatorPage/PortfolioPerformance.vue";
@@ -417,7 +434,6 @@ export default {
     StockScreener,
     CompanyCard,
     PreviewOrderModal,
-    TransactionHistory,
     PerformanceChart,
     BannerCardSimulator,
     QuizRewards,
@@ -791,91 +807,109 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       }
     },
     async GeneratePortfolioInsights() {
-  try {
-    // Check if there are any holdings to analyze
-    if (!this.userHoldings || this.userHoldings.length === 0) {
-      this.portfolioBotMessage = this.$i18n.locale === 'vi' 
-        ? "Tôi không thấy cổ phiếu nào trong danh mục đầu tư của bạn. Khi bạn mua cổ phiếu đầu tiên, tôi sẽ cung cấp thông tin chi tiết ở đây!"
-        : "I don't see any stocks in your portfolio yet. When you make your first purchase, I'll provide personalized insights here!";
-      return this.portfolioBotMessage;
-    }
-    
-    // Set initial loading message
-    this.portfolioBotMessage = this.$i18n.locale === 'vi'
-      ? "Đang phân tích danh mục đầu tư của bạn..."
-      : "Analyzing your portfolio...";
-    
-    // Format holdings data for the API
-    const portfolioData = this.userHoldings.map(holding => ({
-      symbol: holding.symbol,
-      quantity: holding.quantity,
-      purchasePrice: holding.purchasePrice,
-      currentPrice: holding.currentPrice,
-      percentChange: ((holding.currentPrice - holding.purchasePrice) / holding.purchasePrice * 100).toFixed(2)
-    }));
-    
-    const url = "https://openrouter.ai/api/v1/chat/completions";
-    
-    // Determine language and set appropriate system message and user prompt
-    const isVietnamese = this.$i18n.locale === 'vi';
-    
-    // Define the correct system message and user prompt based on language
-    let systemMessage, userPrompt;
-    
-    if (isVietnamese) {
-      systemMessage = "Bạn là FinBud, một trợ lý đầu tư thân thiện. Hãy phân tích dữ liệu danh mục đầu tư của người dùng và đưa ra những nhận xét cá nhân hóa ngắn gọn. Định dạng phản hồi của bạn bằng Markdown: sử dụng ### cho tiêu đề, **in đậm** để nhấn mạnh, và danh sách đánh số cho các đề xuất. Tập trung vào đa dạng hóa, xu hướng hiệu suất, đánh giá rủi ro và 1-2 đề xuất cải thiện cụ thể. Giữ phân tích của bạn dưới 30 từ và sử dụng giọng điệu hội thoại.";
-      userPrompt = `Phân tích danh mục đầu tư của tôi và đưa ra nhận xét: ${JSON.stringify(portfolioData)}`;
-    } else {
-      systemMessage = "You are FinBud, a friendly investment assistant. Analyze the user's portfolio data and provide concise, personalized insights. Format your response with Markdown: use ### for headings, **bold** for emphasis, and numbered lists for recommendations. Focus on diversification, performance trends, risk assessment, and 1-2 specific improvement suggestions. Keep your analysis under 30 words and use a conversational tone.";
-      userPrompt = `Analyze my investment portfolio and provide insights: ${JSON.stringify(portfolioData)}`;
-    }
-    
-    // Make a single API call in the user's language
-    const response = await axios.post(
-      url,
-      {
-        model: "deepseek/deepseek-chat:free",
-        messages: [
+      try {
+        // Check if there are any holdings to analyze
+        if (!this.userHoldings || this.userHoldings.length === 0) {
+          this.portfolioBotMessage =
+            this.$i18n.locale === "vi"
+              ? "Tôi không thấy cổ phiếu nào trong danh mục đầu tư của bạn. Khi bạn mua cổ phiếu đầu tiên, tôi sẽ cung cấp thông tin chi tiết ở đây!"
+              : "I don't see any stocks in your portfolio yet. When you make your first purchase, I'll provide personalized insights here!";
+          return this.portfolioBotMessage;
+        }
+
+        // Set initial loading message
+        this.portfolioBotMessage =
+          this.$i18n.locale === "vi"
+            ? "Đang phân tích danh mục đầu tư của bạn..."
+            : "Analyzing your portfolio...";
+
+        // Format holdings data for the API
+        const portfolioData = this.userHoldings.map((holding) => ({
+          symbol: holding.symbol,
+          quantity: holding.quantity,
+          purchasePrice: holding.purchasePrice,
+          currentPrice: holding.currentPrice,
+          percentChange: (
+            ((holding.currentPrice - holding.purchasePrice) /
+              holding.purchasePrice) *
+            100
+          ).toFixed(2),
+        }));
+
+        const url = "https://openrouter.ai/api/v1/chat/completions";
+
+        // Determine language and set appropriate system message and user prompt
+        const isVietnamese = this.$i18n.locale === "vi";
+
+        // Define the correct system message and user prompt based on language
+        let systemMessage, userPrompt;
+
+        if (isVietnamese) {
+          systemMessage =
+            "Bạn là FinBud, một trợ lý đầu tư thân thiện. Hãy phân tích dữ liệu danh mục đầu tư của người dùng và đưa ra những nhận xét cá nhân hóa ngắn gọn. Định dạng phản hồi của bạn bằng Markdown: sử dụng ### cho tiêu đề, **in đậm** để nhấn mạnh, và danh sách đánh số cho các đề xuất. Tập trung vào đa dạng hóa, xu hướng hiệu suất, đánh giá rủi ro và 1-2 đề xuất cải thiện cụ thể. Giữ phân tích của bạn dưới 30 từ và sử dụng giọng điệu hội thoại.";
+          userPrompt = `Phân tích danh mục đầu tư của tôi và đưa ra nhận xét: ${JSON.stringify(
+            portfolioData
+          )}`;
+        } else {
+          systemMessage =
+            "You are FinBud, a friendly investment assistant. Analyze the user's portfolio data and provide concise, personalized insights. Format your response with Markdown: use ### for headings, **bold** for emphasis, and numbered lists for recommendations. Focus on diversification, performance trends, risk assessment, and 1-2 specific improvement suggestions. Keep your analysis under 30 words and use a conversational tone.";
+          userPrompt = `Analyze my investment portfolio and provide insights: ${JSON.stringify(
+            portfolioData
+          )}`;
+        }
+
+        // Make a single API call in the user's language
+        const response = await axios.post(
+          url,
           {
-            role: "system",
-            content: systemMessage
+            model: "deepseek/deepseek-chat:free",
+            messages: [
+              {
+                role: "system",
+                content: systemMessage,
+              },
+              {
+                role: "user",
+                content: userPrompt,
+              },
+            ],
           },
           {
-            role: "user",
-            content: userPrompt
+            headers: {
+              Authorization: `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
           }
-        ]
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.VUE_APP_DEEPSEEK_API_KEY}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        }
-      }
-    );
+        );
 
-    // Process the response
-    if (response && response.data && response.data.choices && response.data.choices[0]) {
-      const insights = response.data.choices[0].message.content;
-      this.portfolioBotMessage = this.formatPortfolioInsights(insights);
-      console.log("Portfolio insights generated successfully");
-      return this.portfolioBotMessage;
-    } else {
-      console.error("Invalid API response format:", response);
-      throw new Error("Invalid API response format");
-    }
-  } catch (error) {
-    console.log("Error generating portfolio insights:", error);
-    
-    // Handle rate limit errors or other issues with simple error messages
-    this.portfolioBotMessage = this.$i18n.locale === 'vi'
-      ? "<h3 class='insight-heading'>Không thể tạo thông tin chi tiết</h3><p class='insight-paragraph'>Tôi đang gặp sự cố khi phân tích danh mục đầu tư của bạn. Điều này có thể do đã đạt đến giới hạn API. Vui lòng thử lại sau.</p>"
-      : "<h3 class='insight-heading'>Unable to Generate Insights</h3><p class='insight-paragraph'>I'm having trouble analyzing your portfolio right now. This may be due to API rate limits. Please try again later.</p>";
-    
-    return this.portfolioBotMessage;
-  }
-},
+        // Process the response
+        if (
+          response &&
+          response.data &&
+          response.data.choices &&
+          response.data.choices[0]
+        ) {
+          const insights = response.data.choices[0].message.content;
+          this.portfolioBotMessage = this.formatPortfolioInsights(insights);
+          console.log("Portfolio insights generated successfully");
+          return this.portfolioBotMessage;
+        } else {
+          console.error("Invalid API response format:", response);
+          throw new Error("Invalid API response format");
+        }
+      } catch (error) {
+        console.log("Error generating portfolio insights:", error);
+
+        // Handle rate limit errors or other issues with simple error messages
+        this.portfolioBotMessage =
+          this.$i18n.locale === "vi"
+            ? "<h3 class='insight-heading'>Không thể tạo thông tin chi tiết</h3><p class='insight-paragraph'>Tôi đang gặp sự cố khi phân tích danh mục đầu tư của bạn. Điều này có thể do đã đạt đến giới hạn API. Vui lòng thử lại sau.</p>"
+            : "<h3 class='insight-heading'>Unable to Generate Insights</h3><p class='insight-paragraph'>I'm having trouble analyzing your portfolio right now. This may be due to API rate limits. Please try again later.</p>";
+
+        return this.portfolioBotMessage;
+      }
+    },
     handleScroll() {
       if (this.chatbotTriggeredByScroll) return;
 
@@ -1066,7 +1100,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         toast.success("Order submitted successfully", { autoClose: 1000 });
         this.showModal = false;
         this.fetchBankingAccountBalance();
-        this.fetchTransactions();
         this.transactionKey++;
 
         // Award 1 FinCoin for executing a trade
@@ -1117,18 +1150,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       }
     },
 
-    async fetchTransactions() {
-      const userId = this.fixedUserId;
-      try {
-        const response = await axios.get(
-          `${process.env.VUE_APP_DEPLOY_URL}/stock-transactions/u/${userId}`
-        );
-        this.transactions = response.data;
-        this.updatePerformanceData(this.selectedTimeFrame);
-      } catch (error) {
-        console.error("Error fetching transaction history:", error);
-      }
-    },
     // Portfolio Bot Methods
     setupPortfolioBotObserver() {
       // Using watcher instead
@@ -1470,7 +1491,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           }));
 
           this.updateCurrentPrices();
-          
+
           // Don't show the bot message yet - GeneratePortfolioInsights will be called separately
         } else {
           this.userHoldings = [];
@@ -1556,10 +1577,10 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
     },
 
     formatCurrency(value) {
-      if (!value && value !== 0) return '0.00';
-      return parseFloat(value).toLocaleString('en-US', {
+      if (!value && value !== 0) return "0.00";
+      return parseFloat(value).toLocaleString("en-US", {
         minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        maximumFractionDigits: 2,
       });
     },
 
@@ -1803,13 +1824,13 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       this.isPortfolioTyping = true;
       this.currentPortfolioTypedMessage = "";
       this.portfolioBotMessage = "Refreshing your portfolio insights...";
-      
+
       // Wait a moment to show the loading message
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Generate new insights
       await this.GeneratePortfolioInsights();
-      
+
       // Display new insights
       if (this.portfolioWordByWordTyping) {
         this.startPortfolioWordByWordTyping();
@@ -1818,50 +1839,58 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       }
     },
     formatPortfolioInsights(text) {
-      if (!text) return '';
-      
+      if (!text) return "";
+
       // Format headings (### Heading)
-      text = text.replace(/### (.*?)(?:\n|$)/g, '<h3 class="insight-heading">$1</h3>');
-      
+      text = text.replace(
+        /### (.*?)(?:\n|$)/g,
+        '<h3 class="insight-heading">$1</h3>'
+      );
+
       // Format bold text (**text**)
-      text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="highlight">$1</strong>');
-      
+      text = text.replace(
+        /\*\*(.*?)\*\*/g,
+        '<strong class="highlight">$1</strong>'
+      );
+
       // Format numbered lists (1. Item)
-      text = text.replace(/(\d+)\. (.*?)(?:\n|$)/g, '<div class="insight-item"><span class="insight-number">$1.</span> $2</div>');
-      
+      text = text.replace(
+        /(\d+)\. (.*?)(?:\n|$)/g,
+        '<div class="insight-item"><span class="insight-number">$1.</span> $2</div>'
+      );
+
       // Add paragraph styling
-      const paragraphs = text.split('\n\n');
-      return paragraphs.map(p => {
-        if (!p.includes('insight-item') && !p.includes('insight-heading')) {
-          return `<p class="insight-paragraph">${p}</p>`;
-        }
-        return p;
-      }).join('');
+      const paragraphs = text.split("\n\n");
+      return paragraphs
+        .map((p) => {
+          if (!p.includes("insight-item") && !p.includes("insight-heading")) {
+            return `<p class="insight-paragraph">${p}</p>`;
+          }
+          return p;
+        })
+        .join("");
     },
     switchLanguage(lang) {
- 
       if (this.$i18n.locale !== lang) {
-     
         this.$i18n.locale = lang;
-        
-        
-        if (this.activeSection === 'portfolio' && this.userHoldings && this.userHoldings.length > 0) {
-          
+
+        if (
+          this.activeSection === "portfolio" &&
+          this.userHoldings &&
+          this.userHoldings.length > 0
+        ) {
           this.isPortfolioTyping = true;
           this.currentPortfolioTypedMessage = "";
-          this.portfolioBotMessage = this.$i18n.locale === 'vi' 
-            ? "Đang cập nhật phân tích..."
-            : "Updating analysis...";
-          
-          
+          this.portfolioBotMessage =
+            this.$i18n.locale === "vi"
+              ? "Đang cập nhật phân tích..."
+              : "Updating analysis...";
+
           this.currentPortfolioTypedMessage = this.portfolioBotMessage;
-          
-        
+
           setTimeout(async () => {
-          
             await this.GeneratePortfolioInsights();
-            
-          
+
             if (this.portfolioWordByWordTyping) {
               this.startPortfolioWordByWordTyping();
             } else {
@@ -1870,6 +1899,14 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           }, 500);
         }
       }
+    },
+    processTransaction(response) {
+      this.showModal = false;
+      this.fetchBankingAccountBalance();
+      // Remove the fetchTransactions call here
+      this.transactionKey++;
+
+      // The rest of the method remains unchanged
     },
   },
   watch: {
@@ -1923,20 +1960,20 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
           // Fetch holdings first to load data
           await this.fetchUserHoldings();
-          
+
           // Now show the bot (but not the message yet)
           setTimeout(() => {
             console.log("Showing portfolio bot now");
             this.showPortfolioBot = true;
             this.hidingPortfolioBot = false;
-            
+
             // Generate insights and only show message when complete
             this.isPortfolioTyping = true;
-            
+
             // First show the bot with "thinking" animation
             this.showPortfolioMessage = true;
             this.hidingPortfolioMessage = false;
-            
+
             // Now generate insights
             this.GeneratePortfolioInsights().then(() => {
               // After insights are generated, start typing animation
@@ -1949,13 +1986,13 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
           }, 500);
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
-        } else if (newSection === 'quiz') {
+        } else if (newSection === "quiz") {
           this.generateTradingQuestions();
         }
 
         // Add this to reset language to English when leaving Portfolio section
-        if (oldSection === 'portfolio' && newSection !== 'portfolio') {
-          this.$i18n.locale = 'en';
+        if (oldSection === "portfolio" && newSection !== "portfolio") {
+          this.$i18n.locale = "en";
         }
       },
       immediate: true,
@@ -2007,7 +2044,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       }, 500); // Faster click (was 1000)
     }
     this.fetchBankingAccountBalance();
-    this.fetchTransactions();
 
     window.addEventListener("scroll", this.handleScroll);
 
@@ -2036,9 +2072,9 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   beforeUnmount() {
     // Clean up all event listeners
     if (this.chart) {
-    this.chart.remove();
-    this.chart = null;
-  }
+      this.chart.remove();
+      this.chart = null;
+    }
     window.removeEventListener("resize", this.adjustChartHeight);
     window.removeEventListener("scroll", this.handleScroll);
     if (this.headerTypingInterval) {
@@ -2260,107 +2296,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   margin-bottom: 20px;
   color: #007bff;
   font-size: 1.5rem;
-}
-.transactions {
-  width: calc(100% - 10px); 
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  height: 600px; /* Set fixed height instead of min-height for better alignment */
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  box-sizing: border-box;
-}
-
-.key-statistics h3,
-.transactions h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #007bff;
-  font-size: 1.5rem;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  padding: 10px;
-  flex-grow: 1;
-}
-
-.stat {
-  background-color: white;
-  padding: 15px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-}
-
-.stat .label {
-  font-size: 0.9rem;
-  color: #555;
-  font-weight: 600;
-  margin-bottom: 5px;
-  display: block;
-}
-
-.stat .value {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.action-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding: 10px;
-  flex-grow: 1;
-}
-
-.action-form input,
-.action-form select {
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #dee2e6;
-  font-size: 1rem;
-}
-
-.buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: auto;
-}
-
-.clear-btn,
-.preview-btn {
-  padding: 12px 20px;
-  border-radius: 6px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.clear-btn {
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  color: #555;
-}
-
-.preview-btn {
-  background-color: #007bff;
-  color: white;
-}
-
-.clear-btn:hover {
-  background-color: #e9ecef;
-}
-
-.preview-btn:hover {
-  background-color: #0069d9;
 }
 
 .account-performance {
@@ -2883,7 +2818,7 @@ h1 {
   transition: opacity 0.7s ease, transform 0.7s ease;
   transition-delay: 0.3s;
   font-size: 0.85rem;
-  line-height: 1; 
+  line-height: 1;
 }
 
 .bot-message.message-visible {
