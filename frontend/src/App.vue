@@ -8,9 +8,20 @@
 	<FooterBar v-if="showFooter" ref="footerBar" />
 	<ChatBubble v-if="showChatBubble && chatBubbleActive" @closeChatBubble="toggleChatBubble"
 		:chatViewThreadID="threadId" />
-	<img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg.png" alt="Finbud" @click="toggleChatBubble"
-		:style="botPosition" />
-
+	<!-- <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg_sm.webp" alt="Finbud" @click="toggleChatBubble"
+		:style="botPosition" /> -->
+		<img
+			class="finbudBot"
+			:class="{ hidden: !showChatBubble }"
+			src="@/assets/botrmbg_sm.webp"
+			alt="Finbud"
+			width="60"
+			height="60"
+			fetchpriority="high"
+			decoding="async"
+			@click="toggleChatBubble"
+			:style="botPosition"
+		/>
 	<div v-if="showBotMessage" class="bot-message-container">
 		<div class="finbudBotMessage" ref="botMessage" :class="{ 'message-visible': messageVisible }">
 			<div class="message-content" v-html="displayedMessage"></div>
@@ -79,7 +90,11 @@ export default {
 		}
 
 		// Fetch current user data
-		await this.$store.dispatch("users/fetchCurrentUser");
+		setTimeout(async () => {
+			await this.$store.dispatch("users/fetchCurrentUser");
+			await this.checkIfUserIsNew();
+			await this.checkDailyLoginReward();
+		}, 0);
 		const userData = this.$store.getters["users/currentUser"];
 
 		if (this.isAuthenticated && userData) {
@@ -106,8 +121,6 @@ export default {
 				console.error("Error fetching threads:", error);
 			}
 
-			// Check if user is new
-			await this.checkIfUserIsNew();
 			// First, check localStorage
 			const storedDarkMode = localStorage.getItem("darkMode");
 			if (storedDarkMode !== null) {
@@ -158,13 +171,13 @@ export default {
 			}
 		}
 
-		// Add new method to check if user is new
-		await this.checkIfUserIsNew();
+		// // Add new method to check if user is new
+		// await this.checkIfUserIsNew();
 
-		// Check for daily login rewards if user is authenticated
-		if (this.$store.getters["users/isAuthenticated"]) {
-			this.checkDailyLoginReward();
-		}
+		// // Check for daily login rewards if user is authenticated
+		// if (this.$store.getters["users/isAuthenticated"]) {
+		// 	this.checkDailyLoginReward();
+		// }
 	},
 	computed: {
 		isAuthenticated() {
@@ -557,4 +570,8 @@ a:hover {
 }
 
 /* Keep other existing animation keyframes */
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 </style>

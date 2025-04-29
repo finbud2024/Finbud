@@ -343,7 +343,9 @@ export default {
       this.$i18n.locale = savedLang;
     }
 
-    await this.$store.dispatch("users/fetchCurrentUser");
+    if (!this.$store.getters['users/currentUser']) {
+      await this.$store.dispatch('users/fetchCurrentUser');
+    }
     const storedDarkMode = localStorage.getItem("darkMode");
     if (storedDarkMode !== null) {
       this.isDarkMode = storedDarkMode === "true";

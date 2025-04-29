@@ -1,6 +1,7 @@
 <template>
 	<div class="home-container">
-		<div v-if="overlayEnabled" class="overlay" />
+		<div v-if="overlayEnabled" class="overlay">
+		</div>
 		<div v-if="this.isAuthenticated" class="sidebar-container">
 			<font-awesome-icon
 				class="toggle-sidebar-btn"

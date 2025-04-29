@@ -6,7 +6,6 @@
   
   <script>
   import { Line, Bar } from 'vue-chartjs'
-  import 'chartjs-chart-financial'
   
   export default {
     name: 'ChartComponent',
