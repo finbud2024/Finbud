@@ -34,16 +34,16 @@ async function tryWithFallback(actionFn, providersToTry, options = {}) {
     } catch (err) {
       lastError = err;
       console.warn(`❌ ERROR WITH ${currentProvider.toUpperCase()} API: ${err.message}`);
-      
+
       // Check if this is a rate limit error (429) or token exhaustion
       const isRateLimit = err.response?.status === 429 || err.response?.status === 401; // <-- thêm 401 ở đây
-      const isTokenExhaustion = 
-        err.message.includes("rate limit") || 
-        err.message.includes("quota exceeded") || 
-        err.message.includes("token") || 
+      const isTokenExhaustion =
+        err.message.includes("rate limit") ||
+        err.message.includes("quota exceeded") ||
+        err.message.includes("token") ||
         err.message.includes("limit") ||
-        err.response?.status === 401; 
-        
+        err.response?.status === 401;
+
       if (isRateLimit || isTokenExhaustion) {
         if (providers.length > 0) {
           console.log(`⚠️ RATE LIMIT OR TOKEN EXHAUSTION DETECTED. SWITCHING TO NEXT PROVIDER... ⚠️`);
@@ -60,7 +60,7 @@ async function tryWithFallback(actionFn, providersToTry, options = {}) {
       }
     }
   }
-  
+
   // If we get here, all providers failed
   throw lastError || new Error("All providers failed with unknown errors");
 }
@@ -123,8 +123,14 @@ export const GPTService = {
       gemini: "gemini-2.0-flash",
       deepseek: "deepseek/deepseek-chat:free"
     }[provider];
-    
-    const selectedModel = model || defaultModel;
+
+    // const selectedModel = model || defaultModel;
+    // console.log(`🤖 USING ${provider.toUpperCase()} WITH MODEL: ${selectedModel} 🤖`);
+
+    const selectedModel = (provider === "openai" && model)
+      ? model
+      : defaultModel;
+
     console.log(`🤖 USING ${provider.toUpperCase()} WITH MODEL: ${selectedModel} 🤖`);
 
     if (provider === "openai") {
@@ -170,14 +176,14 @@ export const GPTService = {
         console.log(`⏳ SENDING REQUEST TO GEMINI API...`);
         // For Gemini, convert chat messages to a format it can understand
         const geminiModel = geminiAI.getGenerativeModel({ model: selectedModel });
-        
+
         // Extract system prompt and user messages
         const systemPrompt = messages.find(msg => msg.role === "system")?.content || "";
         const userMessages = messages
           .filter(msg => msg.role === "user")
           .map(msg => msg.content)
           .join("\n\n");
-        
+
         // Format prompt with schema information
         const formattedPrompt = `
 ${systemPrompt}
@@ -187,22 +193,26 @@ User input: ${userMessages}
 Please generate a JSON response that strictly follows this schema:
 ${JSON.stringify(json_schema, null, 2)}
         `;
-        
+
         const result = await geminiModel.generateContent({
           contents: [{ role: "user", parts: [{ text: formattedPrompt }] }],
-          generationConfig: { 
+          generationConfig: {
             temperature: temperature,
             maxOutputTokens: maxTokens,
+            responseMimeType: 'application/json',
+            responseSchema: json_schema,
           },
         });
         console.log(`✅ GEMINI RESPONSE RECEIVED SUCCESSFULLY`);
-        
+
         const jsonString = result.response.text().trim() || "{}";
-        
+
         try {
           const jsonData = JSON.parse(jsonString);
           return jsonData;
         } catch (parseError) {
+          // Output jsonString for debugging
+          console.error("Gemini JSON response:", jsonString);
           console.error("Error parsing JSON response from Gemini:", parseError);
           return {}; // Return empty object on parse error
         }
@@ -284,7 +294,7 @@ export async function gptServices(payload, provider = "auto") {
 
 async function _gptServicesWithProvider(messages, provider) {
   console.log(`🤖 PROCESSING CHAT WITH ${provider.toUpperCase()} 🤖`);
-  
+
   if (provider === "openai") {
     try {
       console.log(`⏳ SENDING CHAT REQUEST TO OPENAI API...`);
@@ -314,28 +324,28 @@ async function _gptServicesWithProvider(messages, provider) {
     try {
       console.log(`⏳ SENDING CHAT REQUEST TO GEMINI API...`);
       const geminiModel = geminiAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      
+
       // Extract system message
       const systemPrompt = messages.find(msg => msg.role === "system")?.content || "";
-      
+
       // Convert user messages
       const userMessages = messages
         .filter(msg => msg.role === "user")
         .map(msg => msg.content)
         .join("\n\n");
-      
+
       // Format prompt with system instructions first
       const formattedPrompt = `${systemPrompt}\n\nUser input: ${userMessages}`;
-      
+
       const result = await geminiModel.generateContent({
         contents: [{ role: "user", parts: [{ text: formattedPrompt }] }],
-        generationConfig: { 
+        generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 1000,
         },
       });
       console.log(`✅ GEMINI CHAT RESPONSE RECEIVED SUCCESSFULLY`);
-      
+
       const answer = result.response.text().trim() || "";
       return answer;
     } catch (err) {
@@ -430,7 +440,7 @@ export async function gptNewsService(payload, trendingEvents, provider = "auto")
 
 async function _gptNewsServiceWithProvider(messages, provider) {
   console.log(`🤖 PROCESSING NEWS WITH ${provider.toUpperCase()} 🤖`);
-  
+
   if (provider === "openai") {
     try {
       console.log(`⏳ SENDING NEWS REQUEST TO OPENAI API...`);
@@ -460,30 +470,30 @@ async function _gptNewsServiceWithProvider(messages, provider) {
     try {
       console.log(`⏳ SENDING NEWS REQUEST TO GEMINI API...`);
       const geminiModel = geminiAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      
+
       // For news service, we'll format the prompt differently to maintain the strict output format
       const systemInstructions = messages.find(msg => msg.role === "system")?.content || "";
       const userMessages = messages
         .filter(msg => msg.role === "user")
         .map(msg => msg.content)
         .join("\n\n");
-      
+
       // Create a single prompt with all the necessary information
       const formattedPrompt = `
 ${systemInstructions}
 
 ${userMessages}
       `;
-      
+
       const result = await geminiModel.generateContent({
         contents: [{ role: "user", parts: [{ text: formattedPrompt }] }],
-        generationConfig: { 
+        generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 1000,
         },
       });
       console.log(`✅ GEMINI NEWS RESPONSE RECEIVED SUCCESSFULLY`);
-      
+
       const answer = result.response.text().trim() || "";
       return answer;
     } catch (err) {
