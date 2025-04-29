@@ -25,7 +25,7 @@
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
             <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">{{ $t('about') }}</router-link>
             <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">{{ $t('technology')
-              }}</router-link>
+            }}</router-link>
           </div>
         </li>
 
@@ -37,7 +37,7 @@
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link to="/goal" class="goal" @click="toggleDropdown(false)">{{ $t('goal') }}</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">{{ $t('riskAnalysis')
-              }}</router-link>
+            }}</router-link>
             <router-link to="/investment-calculator" class="investment-calculator"
               @click="toggleAboutDropdown(false)">{{ $t('investmentCalculator') }}</router-link>
             <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">{{
@@ -54,36 +54,16 @@
             {{ $t('finInvest') }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
-            <router-link
-              to="/stock-simulator"
-              class="simulator"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t('simulator') }}</router-link
-            >
-            <router-link
-              to="/autotrade-ai"
-              class="autotrade"
-              @click="toggleDropdownInvest(false)"
-              >AutoTrade AI</router-link
-            >
-            <router-link
-              to="/quant-analysis"
-              class="home"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t('quant') }}</router-link
-            >
-            <router-link
-              to="/quant-simulator"
-              class="quant-simulator"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t('quantSimulator') }}</router-link
-            >
-            <router-link
-            to="/fund-letter"
-            class="fund-letter"
-            @click="toggleDropdownInvest(false)"
-            >Fund Letter</router-link
-          >
+            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownInvest(false)">{{ $t('simulator')
+              }}</router-link>
+            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownInvest(false)">AutoTrade
+              AI</router-link>
+            <router-link to="/quant-analysis" class="home" @click="toggleDropdownInvest(false)">{{ $t('quant')
+              }}</router-link>
+            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownInvest(false)">{{
+              $t('quantSimulator') }}</router-link>
+            <router-link to="/fund-letter" class="fund-letter" @click="toggleDropdownInvest(false)">Fund
+              Letter</router-link>
           </div>
         </li>
 
@@ -106,25 +86,17 @@
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenAgent">
             <router-link to="/agent" class="agent" @click="toggleDropdownEdu(false)">{{ $t('agent') }}</router-link>
+            <router-link to="/pestle" class="pestle" @click="toggleDropdownEdu(false)">{{ $t('pestle') }}</router-link>
           </div>
         </li>
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdownData(true)"
-          @mouseleave="toggleDropdownData(false)"
-        >
-        <div class="services-dropdown dropbtn">
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownData(true)"
+          @mouseleave="toggleDropdownData(false)">
+          <div class="services-dropdown dropbtn">
             {{ $t('finData') }} <span class="arrow-down"></span>
-            </div>
-            <div class="dropdown-content" v-show="isDataDropdownOpen">
-            <router-link
-              to="/docs"
-              class="docs"
-              @click="toggleDropdownData(false)"
-              >{{ $t('Docs') }}</router-link
-            > 
-            
+          </div>
+          <div class="dropdown-content" v-show="isDataDropdownOpen">
+            <router-link to="/docs" class="docs" @click="toggleDropdownData(false)">{{ $t('Docs') }}</router-link>
+
           </div>
 
         </li>
@@ -179,7 +151,7 @@
             <strong>{{ $t('finManage') }}</strong>
             <router-link to="/goal" class="goal" @click="toggleDropdownMobile">{{ $t('goal') }}</router-link>
             <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">{{ $t('riskAnalysis')
-              }}</router-link>
+            }}</router-link>
             <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdownMobile">{{
               $t('mortgageCalculator') }}</router-link>
             <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">{{
@@ -187,7 +159,7 @@
 
             <strong>{{ $t('finInvest') }}</strong>
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">{{ $t('simulator')
-              }}</router-link>
+            }}</router-link>
             <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownMobile">AutoTrade AI</router-link>
             <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">{{ $t('quant') }}</router-link>
             <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">{{
@@ -282,7 +254,7 @@ export default {
     toggleDropdownAgent(open) {
       this.isDropdownOpenAgent = open;
     },
-    toggleDropdownData(open){
+    toggleDropdownData(open) {
       this.isDataDropdownOpen = open;
     },
     toggleProfileDropdown(open) {
