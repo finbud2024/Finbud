@@ -223,7 +223,13 @@
           @mouseenter="toggleProfileDropdown(true)"
           @mouseleave="toggleProfileDropdown(false)"
         >
-          <img :src="profileImage" alt="User Image" class="user-image" />
+          <img
+            :src="profileImage"
+            alt="User Image"
+            class="user-image"
+            @error="handleImageError"
+            loading="eager"
+          />
           <div class="dropdown-profile" v-show="isProfileDropdownOpen">
             <router-link
               to="/profile"
@@ -234,6 +240,8 @@
                 :src="profileImage"
                 alt="User Image"
                 class="inside-dropdown-user-image"
+                @error="handleImageError"
+                loading="eager"
               />
               <p>{{ profileName }}</p>
             </router-link>
@@ -425,7 +433,17 @@ export default {
       return this.$store.getters["users/currentUser"];
     },
     profileImage() {
-      return this.$store.getters["users/userProfileImage"] || defaultImage;
+      const userImage = this.$store.getters["users/userProfileImage"];
+      // Check if the image URL is valid
+      if (
+        userImage &&
+        typeof userImage === "string" &&
+        userImage.trim() !== ""
+      ) {
+        return userImage;
+      }
+      // Return the default image
+      return defaultImage;
     },
     profileName() {
       return this.$store.getters["users/userDisplayName"];
@@ -518,6 +536,9 @@ export default {
 
       // Emit logo-click event to parent component
       this.$emit("logo-clicked");
+    },
+    handleImageError(event) {
+      event.target.src = defaultImage;
     },
   },
   async mounted() {
@@ -907,6 +928,9 @@ export default {
   border-radius: 50%;
   cursor: pointer;
   transition: transform 0.3s ease;
+  object-fit: cover;
+  background-color: #f0f0f0;
+  border: 1px solid var(--border-color, rgba(226, 215, 215, 0.5));
 }
 
 .user-image:hover {
@@ -923,6 +947,8 @@ export default {
   margin-right: 10px;
   margin-left: 10px;
   cursor: pointer;
+  object-fit: cover;
+  background-color: #f0f0f0;
 }
 
 .dropdown-profile p {
