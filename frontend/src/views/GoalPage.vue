@@ -114,8 +114,7 @@
         </div>
 
       </div>
-
-      <div v-if="transactions && transactions.length > 0">
+      <div v-if="transactions && transactions.length > 0 && showForecast !== undefined">
         <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
           <label style="font-weight: bold; margin-right: 10px;">Show Forecast</label>
           <input type="checkbox" v-model="showForecast" />
@@ -390,6 +389,12 @@ export default {
     TransactionModal,
     TransactionPie
   },
+  // watch: {
+  //   showForecast(newVal) {
+  //     console.log("showForecast changed to:", newVal);
+  //     this.reinitializeChart();
+  //   }
+  // },
   data() {
     return {
       // Bot Chat data
@@ -408,6 +413,7 @@ export default {
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
       activePieChart: "Income",
+      showForecast: false,
 
       userId: this.$store.getters["users/userId"],
       firstName:
@@ -3568,10 +3574,13 @@ hr {
 }
 
 .revenue-expense {
-  display: flex;
+  /* display: flex;
   gap: 40px; /* Adjust the gap between cards */
-  margin-top: 0;
-  margin-bottom: 20px;
+  /* margin-top: 0;
+  margin-bottom: 20px; */
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
 }
 
 .total-spend {

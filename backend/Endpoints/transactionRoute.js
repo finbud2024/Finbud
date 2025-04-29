@@ -35,7 +35,7 @@ transactionRoute
 
   // PUT: update a transaction with a given ID
   .put(validateRequest(Transaction.schema), async (req, res) => {
-    const { description, amount, userId } = req.body;
+    const { description, amount, userId, category } = req.body;
     const transactionId = req.params.transactionId;
 
     if (!description || amount === undefined || !userId) {
@@ -61,7 +61,7 @@ transactionRoute
 
       const updatedTransaction = await Transaction.findByIdAndUpdate(
         transactionId,
-        { userId, description, amount, transaction: transactionType },
+        { userId, description, amount, type: transactionType, category },
         { new: true }
       );
 
@@ -135,7 +135,7 @@ transactionRoute
   .post(validateRequest(Transaction.schema), async (req, res) => {
     console.log("Incoming POST body:", req.body);
     console.log("in /transactions Route (POST) new transaction to database");
-    const { description, amount, userId, date, type, category } = req.body;
+    const { description, amount, userId, date, type, category, balance } = req.body;
     
     if (
       !description ||
@@ -153,6 +153,7 @@ transactionRoute
       userId,
       description,
       amount,
+      balance,
       type,
       date,
       category, 
