@@ -31,6 +31,7 @@ import ChatComponent from "@/components/ChatComponent.vue";
 // Defining routes
 import FinDataPage from "@/views/FinDataPage.vue"
 import AgentPage from "@/views/AgentPage.vue";
+import PestlePage from "@/views/PestlePage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
 import AutoTradeAI from "@/views/AutoTradeAI.vue";
 import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
@@ -207,8 +208,14 @@ const routes = [
     component: AgentPage,
   },
   {
+<<<<<<< HEAD
     path: '/chat-view',
     component: ChatComponent,  // Ensure ChatComponent is imported
+=======
+    path: "/pestle/",
+    name: "PestlePage",
+    component: PestlePage,
+>>>>>>> e761646099a3d1d75c1edcf33f1759c18222baba
   },
   {
     path: "/forgot-password",

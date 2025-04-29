@@ -3,9 +3,98 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OpenAIEmbeddings } from "@langchain/openai";
+import axios from "axios";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
+const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
+const DEEPSEEK_API_KEY = process.env.VUE_APP_DEEPSEEK_API_KEY;
 const NEWS_API_KEY = process.env.VUE_APP_AGENT_API_KEY;
+
+const geminiAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const PROVIDER_FALLBACK_ORDER = ["openai", "gemini", "deepseek"];
+const DEFAULT_MODELS = {
+  openai: "gpt-3.5-turbo",
+  gemini: "gemini-2.0-flash",
+  deepseek: "deepseek/deepseek-chat:free"
+};
+
+export async function gptFallbackChat(messages, provider = "auto") {
+  const providers = provider === "auto" ? [...PROVIDER_FALLBACK_ORDER] : [provider];
+  let lastError = null;
+
+  while (providers.length > 0) {
+    const currentProvider = providers.shift();
+    try {
+      console.log(`🤖 TRYING PROVIDER: ${currentProvider.toUpperCase()}`);
+      const result = await _gptFallbackChatWithProvider(messages, currentProvider);
+      console.log(`✅ SUCCESS WITH ${currentProvider.toUpperCase()}`);
+      return result;
+    } catch (err) {
+      console.warn(`❌ FAILED WITH ${currentProvider.toUpperCase()}: ${err.message}`);
+      lastError = err;
+      const isRateLimit = err.response?.status === 429 || err.response?.status === 401;
+      const isQuotaIssue = err.message.toLowerCase().includes("quota") || err.message.toLowerCase().includes("limit") || err.message.toLowerCase().includes("token");
+      if (!(isRateLimit || isQuotaIssue)) {
+        console.error(`🛑 Critical error: stop trying other providers.`);
+        throw err;
+      }
+    }
+  }
+  
+  throw lastError || new Error("All providers failed.");
+}
+
+async function _gptFallbackChatWithProvider(messages, provider) {
+  if (provider === "openai") {
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: DEFAULT_MODELS.openai,
+        messages,
+        temperature: 0.3,
+        max_tokens: 1500,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data.choices[0]?.message?.content.trim() || "";
+  } else if (provider === "gemini") {
+    const geminiModel = geminiAI.getGenerativeModel({ model: DEFAULT_MODELS.gemini });
+    const userText = messages.map(m => m.content).join("\n\n");
+    const result = await geminiModel.generateContent({
+      contents: [{ role: "user", parts: [{ text: userText }] }],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 1500,
+      },
+    });
+    return result.response.text().trim();
+  } else if (provider === "deepseek") {
+    const response = await axios.post(
+      "https://api.deepseek.com/v1/chat/completions",
+      {
+        model: DEFAULT_MODELS.deepseek,
+        messages,
+        temperature: 0.3,
+        max_tokens: 1500,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data.choices[0]?.message?.content.trim() || "";
+  } else {
+    throw new Error(`Unsupported provider: ${provider}`);
+  }
+}
 
 export async function* processFinancialNews(ticker, category, model = 'chatgpt') {
   console.log("Using model:", model);
@@ -104,14 +193,21 @@ export function getDateString(daysAgo) {
   return date.toISOString().split('T')[0];
 }
 
-export async function extractInsights(chunks) {
-  const model = new ChatOpenAI({ 
-    model: "gpt-4o",
-    apiKey: OPENAI_API_KEY,
-    temperature: 0.2 
-  });
+export async function extractInsights(chunks) {  
+  const extractedData = [];
+  const batchSize = 3; 
   
-  const dataExtractionPrompt = ChatPromptTemplate.fromTemplate(`
+  for (let i = 0; i < chunks.length; i += batchSize) {
+    const batch = chunks.slice(i, i + batchSize);
+    const batchPromises = batch.map(async (chunk, batchIndex) => {
+      try {
+        const index = i + batchIndex;
+        if (!chunk.pageContent || chunk.pageContent.trim() === '') {
+          console.log(`Skipping empty chunk ${index+1}`);
+          return null;
+        }
+
+        const systemPrompt = `
     You are a senior financial analyst specializing in macroeconomic trends, equity markets, and sector-specific developments.
     You aim to help to help the Chief Investment Officer and the investment team to make informed decisions based on financial news.
     Your task is to help the user to quickly analyze and extract key information from financial news articles.
@@ -143,29 +239,18 @@ export async function extractInsights(chunks) {
     
     ## POTENTIAL MARKET IMPACT
     Briefly assess potential market implications (1-2 sentences)
-  `);
-  
-  const extractionChain = dataExtractionPrompt.pipe(model);
-  
-  const extractedData = [];
-  const batchSize = 3; 
-  
-  for (let i = 0; i < chunks.length; i += batchSize) {
-    const batch = chunks.slice(i, i + batchSize);
-    const batchPromises = batch.map(async (chunk, batchIndex) => {
-      try {
-        const index = i + batchIndex;
-        if (!chunk.pageContent || chunk.pageContent.trim() === '') {
-          console.log(`Skipping empty chunk ${index+1}`);
-          return null;
-        }
-        
-        const result = await extractionChain.invoke({ text: chunk.pageContent });
-        return result.content;
-      } catch (error) {
-        console.error(`Error processing chunk ${i+batchIndex+1}:`, error);
-        return `[Error extracting data from news chunk ${i+batchIndex+1}]`;
-      }
+  `;
+      const messages = [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: chunk.pageContent }
+      ];
+
+      const result = await gptFallbackChat(messages);
+      return result;
+    } catch (error) {
+      console.error(`Error processing chunk ${i+batchIndex+1}:`, error);
+      return `[Error extracting data from news chunk ${i+batchIndex+1}]`;
+    }
     });
     
     // Add delay between batches to avoid rate limits
@@ -188,15 +273,9 @@ export async function generateSummary(extractedData) {
   if (!extractedData || extractedData.length === 0) {
     throw new Error("No data available for summary generation");
   }
-  
-  try {
-    const model = new ChatOpenAI({ 
-      model: "gpt-4o",
-      apiKey: OPENAI_API_KEY,
-      temperature: 0.3
-    });
+    const combinedData = extractedData.join("\n\n");
     
-    const summaryPrompt = ChatPromptTemplate.fromTemplate(`
+    const systemPrompt = `
       You are the Chief Investment Strategist at a prestigious asset management firm tasked with synthesizing financial intelligence into actionable insights for clients.
       
       # ANALYTICAL FRAMEWORK
@@ -244,34 +323,23 @@ export async function generateSummary(extractedData) {
       - Use precise financial terminology
       - Format with clear headings and strategic use of bullet points
       - Maintain objectivity while providing clear actionable insights
-    `);
+    `;
     
-    const summaryChain = summaryPrompt.pipe(model);
-    const combinedData = extractedData.join("\n\n");
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: combinedData }
+    ];
     
-    const summary = await summaryChain.invoke({ extracted_data: combinedData });
-    
-    return summary.content;
-  } catch (error) {
-    console.error("Error generating summary:", error);
-    throw new Error("Failed to generate financial report");
-  }
+    const summary = await gptFallbackChat(messages);
+    return summary;
 }
 
 export async function findSimilarContent(summary, docSplits) {
   if (!summary || summary.trim() === '') {
     throw new Error("No valid summary available for finding similar content");
   }
-  
-  try {
-    const model = new ChatOpenAI({ 
-      model: "gpt-4o",
-      apiKey: OPENAI_API_KEY,
-      temperature: 0.3
-    });
-    
-    let similarContentSummary = "";
-    
+
+  let similarContentSummary = "";  
     try {
       const embeddings = new OpenAIEmbeddings({
         apiKey: OPENAI_API_KEY
@@ -293,7 +361,7 @@ export async function findSimilarContent(summary, docSplits) {
       similarContentSummary = "Unable to perform similarity analysis due to technical limitations.";
     }
     
-    const recommendationPrompt = ChatPromptTemplate.fromTemplate(`
+    const systemPrompt = `
       You are the Director of Research at a global financial institution with extensive knowledge of financial data sources, publications, and expert networks.
       
       # TASK
@@ -334,27 +402,20 @@ export async function findSimilarContent(summary, docSplits) {
       - Be specific rather than generic in recommendations
       - Ensure all recommendations directly relate to the most significant insights in the report
       - Format as the final section of a professional financial report
-    `);
+    `;
+
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: summary }
+    ];
     
-    const recommendationChain = recommendationPrompt.pipe(model);
-    const recommendations = await recommendationChain.invoke({ summary });
-    
-    return recommendations.content;
-  } catch (error) {
-    console.error("Error finding similar content:", error);
-    throw new Error("Failed to generate supplementary resources");
+    const recommendations = await gptFallbackChat(messages);    
+    return recommendations;
   }
-}
 
 export async function generateReportSummary(summary, extractedData) {
-  try {
-    const model = new ChatOpenAI({ 
-      model: "gpt-4o",
-      apiKey: OPENAI_API_KEY,
-      temperature: 0.2 
-    });
     
-    const reportSummaryPrompt = ChatPromptTemplate.fromTemplate(`
+    const systemPrompt = `
       You are the Chief Investment Officer at a major asset management firm responsible for translating complex financial analyses into clear executive guidance.
       
       # TASK
@@ -386,16 +447,14 @@ export async function generateReportSummary(summary, extractedData) {
       - Use precise, impactful language appropriate for C-suite executives
       - Format this as the opening section of a professional financial report
       - Total length should not exceed one page equivalent (approximately 300-400 words)
-    `);
-    
-    const reportChain = reportSummaryPrompt.pipe(model);
-    const execSummary = await reportChain.invoke({ summary });
-    
-    return execSummary.content;
-  } catch (error) {
-    console.error("Error generating report summary:", error);
-    throw new Error("Failed to generate executive summary");
-  }
+    `;
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: summary }
+    ];
+
+    const execSummary = await gptFallbackChat(messages);
+    return execSummary; 
 }
 
 export function formatSummary(summary) {

@@ -1,42 +1,70 @@
 <template>
-  <div class="course-details-container">
+  <div class="course-details-container" id="element-to-convert">
     <!-- Left Column: Course Topics -->
     <div class="course-topics-panel">
       <h2>Course Topics</h2>
 
-      <div
-        v-for="(section, sectionIndex) in sections"
-        :key="sectionIndex"
-        class="topic-section"
-      >
-        <div class="section-header" @click="toggleSection(sectionIndex)">
-          <i
-            :class="
-              section.collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-down'
-            "
-          ></i>
+      <div v-for="(section, sIdx) in sections" :key="sIdx">
+        <div class="section-header" @click="toggleSection(sIdx)">
+          <i :class="section.collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-down'
+            "></i>
           <span class="section-title">{{ section.title }}</span>
         </div>
+        <div v-show="!section.collapsed">
+          <div v-for="(topic, tIdx) in section.topics" :key="topic.id">
+            <!-- Header -->
+            <div class="topic-item" @click="toggleTopic(sIdx, tIdx)">
+              <i :class="topic.collapsed
+                ? 'fas fa-chevron-right'
+                : 'fas fa-chevron-down'"></i>
+              <span class="topic-title">{{ topic.title }}</span>
+              <!-- DELETE BUTTON -->
+              <button class="icon-btn delete-btn" @click.stop="deleteTopic(sIdx, tIdx)" title="Delete topic">
+                <i class="fas fa-trash-alt"></i>
+              </button>
 
-        <div v-show="!section.collapsed" class="section-content">
-          <div
-            v-for="(topic, topicIndex) in section.topics"
-            :key="topic.id"
-            class="topic-item"
-          >
-            <div class="topic-title">{{ topic.title }}</div>
-            <button
-              class="delete-btn"
-              @click="deleteTopic(sectionIndex, topicIndex)"
-            >
-              <i class="fas fa-trash-alt"></i>
-            </button>
+            </div>
+            <!-- Expanded Panel -->
+            <div class="topic-content-container" v-show="!topic.collapsed">
+
+
+              <!-- 1) Definition Section -->
+              <div class="definition-block" v-if="topicDefinitions[keyFor(sIdx, tIdx)]">
+                <h3>Definition &amp; Key Lessons</h3>
+                <div v-html="topicDefinitions[keyFor(sIdx,tIdx)]"></div>
+              </div>
+
+              <!-- 2) Video Section -->
+              <!-- 2.1) Searching -->
+              <p v-if="loadingVideos[keyFor(sIdx, tIdx)]" class="loading-videos">
+                🔍 Searching for “{{ topic.title }}”…
+              </p>
+              <!-- 2.2) Results -->
+              <div v-else-if="videoResults[keyFor(sIdx, tIdx)]?.length" class="video-results-container">
+                <div v-for="video in videoResults[keyFor(sIdx, tIdx)]" :key="video.link" class="video-card">
+                  <a :href="video.link" target="_blank" rel="noopener">
+                    <img :src="video.imageUrl" :alt="video.title" class="video-thumb" />
+                  </a>
+                  <div class="video-caption">
+                    <a :href="video.link" target="_blank">{{ video.title }}</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2.3) No results -->
+              <p v-else class="no-videos">
+                No videos found for “{{ topic.title }}.”
+              </p>
+            </div>
+
+
+
+
           </div>
-
-          <button class="add-topic-btn" @click="addTopic(sectionIndex)">
-            <i class="fas fa-plus"></i> Add topic
-          </button>
         </div>
+        <button class="add-topic-btn" @click="addTopic(sIdx)">
+          <i class="fas fa-plus"></i> Add Topic
+        </button>
       </div>
 
       <button class="add-section-btn" @click="addSection">
@@ -47,11 +75,7 @@
     <!-- Right Column: Course Details -->
     <div class="course-details-panel">
       <div class="course-image-card">
-        <img
-          :src="require('@/assets/courses/course-01.jpg')"
-          alt="Students learning"
-          class="course-image"
-        />
+        <img :src="require('@/assets/courses/course-01.jpg')" alt="Students learning" class="course-image" />
       </div>
 
       <div class="course-info">
@@ -96,13 +120,35 @@
 </template>
 
 <script setup>
+
+/**
+ * @typedef {{ 
+ *   id: number;
+ *   title: string;
+ *   collapsed: boolean;
+ * }} Topic
+ *
+ * @typedef {{ 
+ *   title: string;
+ *   collapsed: boolean;
+ *   topics: Topic[];
+ * }} Section
+ */
+
 import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import html2pdf from "html2pdf.js";
+import { getVideos } from '@/services/serperService.js'
+import { gptServices } from '@/services/gptServices.js'
+import axios from "axios";
 
 const route = useRoute();
 const router = useRouter();
+const loadingVideos = ref({});
+
 
 // Initialize reactive refs
+/** @type {import('vue').Ref<Section[]>} */
 const sections = ref([]);
 const courseDetails = ref({
   duration: "Not specified",
@@ -113,44 +159,39 @@ const courseDetails = ref({
   deadline: "4 weeks from today",
 });
 
+const VIDEO_COUNT = 2
+const videoResults = ref({})
+const topicDefinitions = ref({})
+
+function keyFor(s, t) { return `${s}-${t}` }
+
 // Function to process roadmap data
 const processRoadmapData = () => {
   console.log("Processing roadmap data");
   const roadmapData = history.state?.roadmapData;
 
-  if (roadmapData) {
+  if (roadmapData?.modules?.length) {
     console.log("Found roadmap data:", roadmapData);
 
     // Process the modules structure with proper null checking
     // Adapting to the actual data structure (title and subtopics)
-    if (roadmapData.modules && Array.isArray(roadmapData.modules)) {
-      sections.value = roadmapData.modules.map((module, index) => {
-        console.log("Module:", module.topics);
-        return {
-          title: module.title || `Section ${index + 1}`,
-          collapsed: false,
-          topics:
-            module.topics && Array.isArray(module.topics)
-              ? module.topics.map((topic, topicIndex) => ({
-                  id: index * 100 + topicIndex,
-                  title: topic,
-                }))
-              : [],
-        };
-      });
+    sections.value = roadmapData.modules.map((module, index) => {
+      console.log("Module:", module.topics);
+      return {
+        title: module.title || `Section ${index + 1}`,
+        collapsed: false,
+        topics:
+          module.topics && Array.isArray(module.topics)
+            ? module.topics.map((topic, topicIndex) => ({
+              id: index * 100 + topicIndex,
+              title: topic,
+              collapsed: true,
+            }))
+            : [],
+      };
+    });
 
-      console.log("Sections:", sections.value);
-    } else {
-      // If no modules, create a default section
-      sections.value = [
-        {
-          title: "Generated Content",
-          collapsed: false,
-          topics: [{ id: 1, title: "No specific topics found" }],
-        },
-      ];
-      console.warn("No modules array found in roadmap data");
-    }
+    console.log("Sections:", sections.value);
 
     // Update course details with safe fallbacks, matching actual data structure
     courseDetails.value = {
@@ -158,21 +199,83 @@ const processRoadmapData = () => {
       lectures: `${roadmapData.modules?.length || 0} modules`,
       skillLevel: roadmapData.level || "Beginner",
       language: "English",
-      studyPlan: `${roadmapData.days_per_week || 0} days/week, ${
-        roadmapData.time_per_day || "Not specified"
-      }`,
+      studyPlan: `${roadmapData.days_per_week || 0} days/week, ${roadmapData.time_per_day || "Not specified"
+        }`,
       deadline: "4 weeks from today",
     };
   } else {
     console.warn("No roadmap data found in history state");
     // Set default empty sections
-    sections.value = [];
+    sections.value = [
+      {
+        title: "Generated Content",
+        collapsed: false,
+        topics: [{ id: 1, collapsed: true, title: "No specific topics found" }],
+      },
+    ];
+    console.warn("No modules array found in roadmap data");
   }
 };
 
+/**
+ * @param {string} rawText 
+ * @param {number} count 
+ * @returns {string[]} 
+ */
+function parseDefs(rawText, count) {
+  const regex = /(?:^|\n)(\d+)\.\s*([\s\S]*?)(?=(?:\n\d+\.|$))/g;
+  const defs = [];
+  let match;
+
+  while ((match = regex.exec(rawText)) !== null) {
+    const idx = Number(match[1]) - 1;
+    const text = match[2].trim();
+    defs[idx] = text;
+  }
+
+  // Ensure we return exactly `count` entries (fill missing with empty string)
+  return Array.from({ length: count }, (_, i) => defs[i] || "");
+}
+
 // Process data on initial mount
-onMounted(() => {
+onMounted(async () => {
   processRoadmapData();
+
+  // Attempt to fetch all at once, but logistically unfeasible, since users can add topics at any time
+  //   // 1) gather titles
+  //   const allTitles = sections.value.flatMap((sec) =>
+  //     sec.topics.map((t) => t.title.trim())
+  //   );
+
+  //   // 2) fetch definitions in one go
+  //   const defsPrompt = `
+  // For each of the following topics, provide:
+  //   1) A one-sentence definition.
+  //   2) Three key beginner lessons.
+
+  // Topics:
+  // ${allTitles.map((t, i) => `${i + 1}. ${t}`).join("\n")}
+  // `;
+
+  //   const defsResponse = await gptServices([
+  //     { role: "user", content: defsPrompt }
+  //   ]);
+  //   const rawDefs = await gptServices([{ role: "user", content: defsPrompt }]);
+  //   const parsedDefs = parseDefs(rawDefs, allTitles.length);
+
+  //   const videoLists = await Promise.all(
+  //     allTitles.map((t) => getVideos(t, VIDEO_COUNT))
+  //   );
+
+  //   let idx = 0;
+  //   sections.value.forEach((sec, sIdx) => {
+  //     sec.topics.forEach((t, tIdx) => {
+  //       const key = `${sIdx}-${tIdx}`;
+  //       topicDefinitions.value[key] = parsedDefs[idx];
+  //       videoResults.value[key] = videoLists[idx];
+  //       idx++;
+  //     });
+  //   });
 });
 
 // Watch for route changes to handle navigation to the same route
@@ -198,8 +301,68 @@ const addTopic = (sectionIndex) => {
   sections.value[sectionIndex].topics.push({
     id: newId,
     title: `New Topic ${newId}`,
+    collapsed: true,
   });
 };
+
+// Toggle topic collapse/expand
+const toggleTopic = async (sectionIndex, topicIndex) => {
+  const topic = sections.value[sectionIndex].topics[topicIndex]
+
+  // Uncomment these so that the searches only happen when some topic was found
+  const title = topic.title?.trim();
+  topic.collapsed = !topic.collapsed;
+
+  if (!title || title === "No specific topics found") return;
+
+
+  const key = keyFor(sectionIndex, topicIndex)
+
+  if (!topic.collapsed) {
+    // 1) Fetch video (as before)
+    if (!videoResults.value[key]) {
+      loadingVideos.value[key] = true;
+      const vids = await getVideos(topic.title, VIDEO_COUNT)
+      videoResults.value[key] = vids
+      loadingVideos.value[key] = false;
+    }
+
+    // 2) Fetch definition only once
+    if (!topicDefinitions.value[key]) {
+      topicDefinitions.value[key] = 'Loading definition…'
+      try {
+        const definition = await gptServices([{
+          role: 'user',
+          content: `
+Please give me a very concise definition of "${topic.title}", and then list 3 basic lessons or things a beginner should know.  
+**Return the entire response as a single HTML unordered list**, where:
+
+- the first <li> is the one-sentence definition  
+- the next three <li>​s are each lesson  
+
+Do **not** wrap it in any other tags or prose—just the <ul> with four <li> elements. _Do not_ include any markdown or code fences.
+
+Use HTML tags—**do not** use Markdown.  
+For example:
+<ul>
+  <li><strong>Definition text…</strong></li>
+  <li>Lesson 1</li>
+  <li>Lesson 2</li>
+  <li>Lesson 3</li>
+</ul>
+And only those bullet points—nothing else.  
+`
+        }])
+        topicDefinitions.value[key] = definition.trim()
+      }
+      catch (err) {
+        console.error('Error fetching definition:', err)
+        topicDefinitions.value[key] = 'Definition unavailable.'
+      }
+    }
+  }
+}
+
 
 // Delete a topic from a section
 const deleteTopic = (sectionIndex, topicIndex) => {
@@ -210,18 +373,35 @@ const deleteTopic = (sectionIndex, topicIndex) => {
 const addSection = () => {
   sections.value.push({
     title: `New Section ${sections.value.length + 1}`,
-    collapsed: false,
+    collapsed: true,
     topics: [],
   });
 };
 
 // Save and collect materials
 const saveAndCollectMaterials = () => {
-  // This would connect to your backend or state management system
-  console.log("Saving course details:", courseDetails.value);
-  console.log("Course sections and topics:", sections.value);
-  alert("Course saved successfully! Materials are being collected.");
+  const element = document.getElementById("element-to-convert");
+  // Measure the element on screen
+  const { width, height } = element.getBoundingClientRect();
+
+  // Decide orientation based on aspect ratio
+  const orientation = width > height ? "landscape" : "portrait";
+
+  html2pdf()
+    .set({
+      margin: 0,
+      filename: "generated-pdf.pdf",
+      html2canvas: { scale: 2 },        // bump resolution if you like
+      jsPDF: {
+        unit: "px",
+        format: [width, height],     // match the element’s dimensions
+        orientation,                      // "portrait" or "landscape"
+      },
+    })
+    .from(element)
+    .save();
 };
+
 </script>
 
 <style scoped>
@@ -273,6 +453,10 @@ const saveAndCollectMaterials = () => {
   background-color: white;
 }
 
+.topic-content-container {
+  padding: 0.75rem 1rem;
+}
+
 .topic-item {
   display: flex;
   align-items: center;
@@ -284,7 +468,65 @@ const saveAndCollectMaterials = () => {
 }
 
 .topic-title {
+  padding-left: 0.75rem;
   flex-grow: 1;
+}
+
+.definition-block {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #f9f9f9;
+  border-left: 4px solid #007bff;
+}
+
+.definition-block h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.definition-block p {
+  margin: 0;
+}
+
+.video-results-container {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+}
+
+.video-card {
+  flex: 0 0 auto;
+  width: 200px;
+  /* or whatever fixed/card width you like */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.video-thumb {
+  width: 100%;
+  height: 120px;
+  /* adjust to your desired thumbnail height */
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.video-caption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #333;
+  line-height: 1.2;
+}
+
+.loading-videos {
+  font-style: italic;
+  color: #555;
+  padding: 0.75rem 1rem;
+}
+
+.no-videos {
+  font-style: italic;
+  color: #666;
 }
 
 .delete-btn {

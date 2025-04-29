@@ -477,43 +477,43 @@ export default {
       },
       
       exportAnalysisAsPDF() {
-      const element = document.getElementById('financial-report');
+        const element = document.getElementById('pdf-report-content');
 
-      const plainText = this.analysisResults.summary?.replace(/<[^>]+>/g, '') || '';
-      const keywords = plainText.split(' ').slice(0, 3).join('_');
-      const timestamp = new Date().toLocaleString();
-      const filename = `${keywords || 'Financial_Report'}_${Date.now()}.pdf`;  // ✅ define here
+        const plainText = this.analysisResults.summary?.replace(/<[^>]+>/g, '') || '';
+        const keywords = plainText.split(' ').slice(0, 3).join('_');
+        const timestamp = new Date().toLocaleString();
+        const filename = `${keywords || 'Financial_Report'}_${Date.now()}.pdf`;  // ✅ define here
 
-      const opt = {
-        margin: 0.5,
-        filename, // ✅ now filename is defined
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
+        const opt = {
+          margin: 0.5,
+          filename, // ✅ now filename is defined
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
 
-      html2pdf().set(opt).from(element).save().then(() => {
-        fetch('/api/save-report', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            filename,                     // ✅ filename used again here
-            html: element.innerHTML,
-            timestamp
-          })
+        html2pdf().set(opt).from(element).save().then(() => {
+          fetch('/api/save-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              filename,                     // ✅ filename used again here
+              html: element.innerHTML,
+              timestamp
             })
-            .then(res => res.json())
-            .then(data => {
-              this.exportedReports.unshift({
-                filename,
-                timestamp,
-                url: data.url
+              })
+              .then(res => res.json())
+              .then(data => {
+                this.exportedReports.unshift({
+                  filename,
+                  timestamp,
+                  url: data.url
+                });
               });
             });
-          });
+          }
         }
       }
-    }
 
 </script>
 
