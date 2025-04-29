@@ -27,6 +27,7 @@ import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 import FinDataPage from "@/views/FinDataPage.vue"
 import AgentPage from "@/views/AgentPage.vue";
+import PestlePage from "@/views/PestlePage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
 import AutoTradeAI from "@/views/AutoTradeAI.vue";
 import InvestmentCalculator from "@/views/InvestmentCalculator.vue";
@@ -196,6 +197,11 @@ const routes = [
     path: "/agent/",
     name: "AgentPage",
     component: AgentPage,
+  },
+  {
+    path: "/pestle/",
+    name: "PestlePage",
+    component: PestlePage,
   },
   {
     path: "/forgot-password",
