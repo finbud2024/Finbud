@@ -1,4 +1,14 @@
 <template>
+  <div class="connect-button-wrapper">
+    <button
+      @click="openPlaidLink"
+      :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
+      class="connect-button"
+    >
+      Connect Your Bank Account
+    </button>
+  </div>
+  
   <div class="GoalDashBoardContainer">
     <!-- Bot Chat Component - Updated with toggle functionality -->
     <div
@@ -29,8 +39,8 @@
     </div>
 
     <div class="leftPanel">
-      <div class="leftPanelHeader">
-        <img class="profilePic" :src="profilePic" alt="profilePic" />
+      <!-- <div class="leftPanelHeader"> -->
+        <!-- <img class="profilePic" :src="profilePic" alt="profilePic" />
         <div class="headerText">
           <div class="greeting">
             {{
@@ -46,14 +56,20 @@
             Manage your wallet wisely to reach your goals with ease.
           </div>
         </div>
-      </div>
-      <button
-        @click="openPlaidLink"
-        :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
-      >
-        Connect Your Bank Account
-      </button>
+      </div> -->
+
       <div class="revenue-expense">
+        <div class="total-spend transaction-card">
+          <h2>
+            {{
+              selectedCurrency === "USD"
+                ? formatCurrency(totalRevenue)
+                : formatCurrency(convertToVND(totalRevenue))
+            }}
+          </h2>
+          <p>Total Transactions</p>
+        </div>
+
         <div class="total-spend revenue-card">
           <h2>
             {{
@@ -76,7 +92,7 @@
           <p>Total Expense</p>
         </div>
 
-        <div class="total-spend">
+        <div class="total-spend balance-card">
           <div class="balance-header">
             <h2>
               {{
@@ -96,6 +112,7 @@
           </div>
           <p>Account Balance</p>
         </div>
+
       </div>
 
       <div v-if="transactions && transactions.length > 0">
@@ -113,13 +130,13 @@
         </div>
       </div>
       <!-- TransactionPie -->
-      <div
+      <!-- <div
         class="pie-chart-row"
         v-if="transactions && transactions.length > 0"
       >
         <TransactionPie :transactions="transactions" chartType="Income" />
         <TransactionPie :transactions="transactions" chartType="Expense" />
-      </div>
+      </div> -->
       <div class="chart-container no-data" v-else>
         <div class="no-data-message">
           <p>No transaction data available to display.</p>
@@ -165,6 +182,16 @@
     </div>
 
     <div class="rightPanel">
+      <div class="pie-chart-card">
+        <div class="pie-chart-header">
+          <h3 for="chartToggle">Transaction Chart</h3>
+          <select id="chartToggle" v-model="activePieChart">
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
+          </select>
+        </div>
+        <TransactionPie :transactions="transactions" :chartType="activePieChart" />
+      </div>
       <section class="financial-goals" ref="financialGoalsSection">
         <div class="goal-upper-part">
           <h3 class="goal-section-title">Goals</h3>
@@ -342,6 +369,7 @@
       </button>
       <button @click="resetAccountBalance">Yes</button>
     </div>
+    
   </div>
 </template>
 
@@ -379,6 +407,7 @@ export default {
       typingSpeed: 50, // milliseconds between words
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
+      activePieChart: "Income",
 
       userId: this.$store.getters["users/userId"],
       firstName:
@@ -1350,14 +1379,15 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 </script>
 <style scoped>
 .GoalDashBoardContainer {
-  width: 100vw;
-  max-width: 100%;
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  overflow-x: hidden;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  max-width: unset !important;
+  width: calc(100vw - 30px) !important;
+  margin-left: 15px !important;; 
+  margin-right: 15px !important;;
+  margin-bottom: 20px !important;;
+  padding: 0 2px !important;
+  padding-top: 20px !important;
+  box-sizing: border-box;
+  outline: 3px solid #dee4e6; 
 }
 
 .leftPanel {
@@ -1375,12 +1405,24 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   height: 5%;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
   padding: 10px;
   margin-bottom: 0;
   padding-bottom: 5px;
   color: var(--text-primary);
+}
+
+.connect-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+  padding-top: 20px;
+}
+
+.connect-button {
+  margin: 0;
 }
 
 .profilePic {
@@ -1462,6 +1504,30 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--bg-primary);
+}
+
+.pie-chart-card {
+  width: 100%;
+  padding: 0; 
+  background-color: transparent; 
+  border-radius: 0;
+  box-shadow: none;
+  margin-bottom: 20px;
+}
+
+.pie-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+#chartToggle {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 /* Goals styles */
@@ -1672,19 +1738,25 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 /* Mobile-specific styles */
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
   .GoalDashBoardContainer {
-    flex-direction: column;
-    height: auto;
-    width: 100vw;
-    max-width: 100%;
-    background-color: var(--bg-primary);
+  width: 100%;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--bg-primary);
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-sizing: border-box;
   }
+
 
   .leftPanel,
   .rightPanel {
-    width: 100%;
-    background-color: var(--bg-primary);
+    /* width: 100%; */
+    /* background-color: var(--bg-primary);
   }
 
   .leftPanelHeader,
@@ -1694,7 +1766,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     width: 100%;
     max-width: 100%;
   }
-}
+} */ 
 
 .financial-goals {
   text-align: center;
@@ -2260,40 +2332,6 @@ hr {
   margin-left: 10px;
 }
 
-.revenue-expense {
-  display: flex;
-  gap: 40px; /* Adjust the gap between cards */
-  margin-top: 0;
-  margin-bottom: 20px;
-}
-
-.total-spend {
-  width: 27%;
-  padding: 10px;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px var(--shadow-color);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Align items to the start (left) */
-  justify-content: flex-start; /* Align items to the top */
-  margin: 10px;
-}
-
-.total-spend h2 {
-  margin: 0;
-  margin-bottom: 10px;
-}
-
-.revenue-card {
-  background-color: var(--card-bg);
-  border: 1px solid #4caf50;
-}
-
-.expense-card {
-  background-color: var(--card-bg);
-  border: 1px solid #f44336;
-}
-
 /* Animations */
 @keyframes fadeIn {
   from {
@@ -2594,14 +2632,16 @@ hr {
 </style>
 <style scoped>
 .GoalDashBoardContainer {
-  width: 100vw;
-  max-width: 100%;
+  width: 100%;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 24px;
   display: flex;
   flex-direction: row;
-  height: 100vh;
-  overflow-x: hidden;
   background-color: var(--bg-primary);
-  color: var(--text-primary);
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-sizing: border-box;
 }
 
 .leftPanel {
@@ -2919,14 +2959,6 @@ hr {
 
 /* Mobile-specific styles */
 @media (max-width: 1024px) {
-  .GoalDashBoardContainer {
-    flex-direction: column;
-    height: auto;
-    width: 100vw;
-    max-width: 100%;
-    background-color: var(--bg-primary);
-  }
-
   .leftPanel,
   .rightPanel {
     width: 100%;
@@ -3559,14 +3591,48 @@ hr {
   margin-bottom: 10px;
 }
 
+.transaction-card {
+  background-color: var(--card-bg);
+  border: 1px solid #2596be;
+  border-bottom: 6px solid #2596be;
+  border-radius: 8px;
+}
+
+.transaction-card:hover {
+  background-color: rgba(37, 150, 190, 0.1); 
+}
+
 .revenue-card {
   background-color: var(--card-bg);
   border: 1px solid #4caf50;
+  border-bottom: 6px solid #4caf50;
+  border-radius: 8px;
+}
+
+.revenue-card:hover {
+  background-color: rgba(76, 175, 80, 0.1); 
 }
 
 .expense-card {
   background-color: var(--card-bg);
   border: 1px solid #f44336;
+  border-bottom: 6px solid #f44336;
+  border-radius: 8px;
+}
+
+.expense-card:hover {
+  background-color: rgba(244, 67, 54, 0.1); 
+}
+
+.balance-card {
+  background-color: var(--card-bg);
+  border: 1px solid orange;
+  border-bottom: 8px solid orange;
+  border-radius: 5px;
+}
+
+.balance-card:hover {
+  background-color: rgba(255, 165, 0, 0.1); 
 }
 
 /* Animations */

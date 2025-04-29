@@ -128,7 +128,6 @@ export default {
         "Investment Return",
         "Gift",
         "Refund",
-        "Other Income"
       ]
     };
   },
