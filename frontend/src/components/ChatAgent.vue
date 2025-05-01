@@ -267,6 +267,7 @@ export default {
 		};
 	},
     mounted() {
+		this.startWorkflow();
         this.$watch(
             () => [this.processingSteps.step1, this.processingSteps.step2, this.processingSteps.step3, this.processingSteps.step4, this.processingSteps.step5],
             async() => {
