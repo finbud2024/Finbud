@@ -936,31 +936,102 @@ h3 {
     width: 25%;
     text-align: right;
   }
-}
 
-/* For very small screens */
-@media (max-width: 480px) {
+  .mortgage-calc {
+    max-width: 100%;
+    padding: 15px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-bottom: 15px;
+  }
+
+  .content-wrapper {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .input-section {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .payment-breakdown-box {
+    padding: 15px;
+    margin-top: 15px;
+  }
+
   .payment-breakdown h2 {
     font-size: 20px;
+    margin-bottom: 15px;
   }
-  
+
+  .breakdown-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .chart-container {
+    width: 100%;
+    height: 200px;
+  }
+
+  .breakdown-details {
+    width: 100%;
+  }
+
   .breakdown-item {
     padding: 8px;
     font-size: 14px;
   }
-  
-  .breakdown-item .percentage {
-    width: 20%;
+
+  .percentage {
+    min-width: 40px;
   }
-  
-  .breakdown-item .label {
-    width: 50%;
+
+  .label {
+    margin: 0 8px;
+    font-size: 13px;
   }
-  
-  .breakdown-item .amount {
-    width: 25%;
+
+  .amount {
+    min-width: 70px;
+    text-align: right;
+  }
+
+  /* Input adjustments */
+  input, select {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .split-input {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toggle-header button label {
+    font-size: 1rem;
+  }
+
+  /* Bot chat adjustments for mobile */
+  .bot-chat-container {
+    right: -280px;
+    width: 250px;
+    top: auto;
+    bottom: 20px;
+  }
+
+  .bot-chat-container.bot-visible {
+    transform: translateX(-280px);
+  }
+
+  .bot-message {
+    max-width: 230px;
+    padding: 10px 15px;
   }
 }
-
 
 </style>
