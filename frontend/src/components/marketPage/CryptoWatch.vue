@@ -465,10 +465,16 @@ body {
 .top-series {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin: 20px 0;
   gap: 10px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+}
+
+/* For mobile screens (typically 768px and below) */
+@media (max-width: 768px) {
+  .top-series {
+    flex-direction: column;
+    gap: 20px; /* Increase gap for better spacing when stacked */
+  }
 }
 
 .crypto-watch {
