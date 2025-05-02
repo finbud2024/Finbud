@@ -1,21 +1,15 @@
 <template>
 	<div>
 		<!-- Bot Chat Component - Placed outside the main container -->
-		<div
-			class="bot-chat-container"
-			:class="{
-				'bot-visible': activeTab === 'realEstate',
-				'bot-hidden': hidingBot,
-			}"
-		>
+		<div class="bot-chat-container" :class="{
+			'bot-visible': activeTab === 'realEstate',
+			'bot-hidden': hidingBot,
+		}">
 			<img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
-			<div
-				class="bot-message"
-				:class="{
-					'message-visible': showMessage,
-					'message-hidden': hidingMessage,
-				}"
-			>
+			<div class="bot-message" :class="{
+				'message-visible': showMessage,
+				'message-hidden': hidingMessage,
+			}">
 				<div v-if="isTyping" class="typing-animation">
 					<span class="dot"></span>
 					<span class="dot"></span>
@@ -30,14 +24,18 @@
 			<section>
 				<h2 class="headtitle">Market Data Center</h2>
 
+				<!-- <div v-if="marketSummary" class="market-summary">
+					<h3>Market Summary</h3>
+					<p>{{ marketSummary }}</p>
+				</div>
+				<div v-else class="market-summary loading">
+					Generating summary…
+				</div> -->
+
 				<!-- Sub Navigation Bar -->
 				<div class="sub-nav">
-					<button
-						v-for="tab in ['stock', 'crypto', 'realEstate']"
-						:key="tab"
-						:class="['tab-button', { active: activeTab === tab }]"
-						@click="activeTab = tab"
-					>
+					<button v-for="tab in ['stock', 'crypto', 'realEstate']" :key="tab"
+						:class="['tab-button', { active: activeTab === tab }]" @click="activeTab = tab">
 						{{ formatTabName(tab) }}
 					</button>
 				</div>
@@ -49,7 +47,7 @@
 							<!-- Cryptocurrency Watch Section -->
 							<div class="section-title">Cryptocurrency Watch</div>
 							<div class="margin-box">
-								<CryptoWatch class="margin-box-content" />
+								<CryptoWatch :marketSummary="marketSummary" class="margin-box-content" />
 							</div>
 
 							<!-- Crypto Quotes Section -->
@@ -73,10 +71,7 @@
 												</tr>
 											</thead>
 											<tbody v-if="paginatedCryptoList.length">
-												<tr
-													v-for="crypto in paginatedCryptoList"
-													:key="crypto.uuid"
-												>
+												<tr v-for="crypto in paginatedCryptoList" :key="crypto.uuid">
 													<td data-label="Name">
 														<img :src="crypto.iconUrl" :alt="crypto.name" />
 														{{ crypto.name }}
@@ -89,30 +84,27 @@
 												</tr>
 											</tbody>
 										</table>
-										<Pagination
-											:currentPage.sync="currentCryptoPage"
-											:totalPages="cryptoTotalPages"
-											@update:currentPage="updateCryptoCurrentPage"
-										/>
+										<Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages"
+											@update:currentPage="updateCryptoCurrentPage" />
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 
-          <!-- Stock Tab Content -->
-          <div v-if="activeTab === 'stock'" class="tab-content">
-            <div class="market-section">
+					<!-- Stock Tab Content -->
+					<div v-if="activeTab === 'stock'" class="tab-content">
+						<div class="market-section">
 
-            <!-- Vietnam Stock Watch Section -->
-            <div class="section-title">Vietnam Stock Watch</div>
-                <VietnamStockWatch class="margin-box-content" />
+							<!-- Vietnam Stock Watch Section -->
+							<div class="section-title">Vietnam Stock Watch</div>
+							<VietnamStockWatch :marketSummary="marketSummary" class="margin-box-content" />
 
-              <!-- Stock Watch Section -->
-              <div class="section-title">Stock Watch</div>
-              <div class="margin-box">
-                <StockWatch class="margin-box-content" />
-              </div>
+							<!-- Stock Watch Section -->
+							<div class="section-title">Stock Watch</div>
+							<div class="margin-box">
+								<StockWatch :marketSummary="marketSummary" class="margin-box-content" />
+							</div>
 
 							<!-- Stock Quotes Section -->
 							<div class="section-title">Stock Quotes</div>
@@ -133,24 +125,20 @@
 												</tr>
 											</thead>
 											<tbody v-if="paginatedStockQuotes.length">
-												<tr
-													v-for="stock in paginatedStockQuotes"
-													:key="stock['01. symbol']"
-												>
+												<tr v-for="stock in paginatedStockQuotes" :key="stock['01. symbol']">
 													<td data-label="Symbol">{{ stock["01. symbol"] }}</td>
 													<td data-label="Price">{{ stock["05. price"] }}</td>
 													<td data-label="Volume">{{ stock["06. volume"] }}</td>
-													<td data-label="Previous Close">{{ stock["08. previous close"] }}</td>
+													<td data-label="Previous Close">{{ stock["08. previous close"] }}
+													</td>
 													<td data-label="Change">{{ stock["09. change"] }}</td>
-													<td data-label="Change Percent">{{ stock["10. change percent"] }}</td>
+													<td data-label="Change Percent">{{ stock["10. change percent"] }}
+													</td>
 												</tr>
 											</tbody>
 										</table>
-										<Pagination
-											:currentPage.sync="currentStockPage"
-											:totalPages="stockTotalPages"
-											@update:currentPage="updateStockCurrentPage"
-										/>
+										<Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages"
+											@update:currentPage="updateStockCurrentPage" />
 									</div>
 								</div>
 							</div>
@@ -173,7 +161,7 @@
 							<div class="section-title">Real Estate</div>
 							<div class="real-estate-section" ref="realEstateSection">
 								<div class="margin-box">
-									<RealEstateMap class="margin-box-content" />
+									<RealEstateMap :marketSummary="marketSummary" class="margin-box-content" />
 									<div class="margin-box-content">
 										<div v-if="errorRealEstate" class="error">
 											{{ errorRealEstate }}
@@ -192,14 +180,11 @@
 													</tr>
 												</thead>
 												<tbody v-if="paginatedRealEstate.length">
-													<tr
-														v-for="estate in paginatedRealEstate"
-														:key="estate.id"
-													>
+													<tr v-for="estate in paginatedRealEstate" :key="estate.id">
 														<td data-label="Type">
 															{{
 																estate.propertyType &&
-																!isNaN(estate.propertyType)
+																	!isNaN(estate.propertyType)
 																	? estate.propertyType
 																	: "Single-family"
 															}}
@@ -208,7 +193,7 @@
 														<td data-label="Price">
 															{{
 																estate.lastSalePrice &&
-																!isNaN(estate.lastSalePrice)
+																	!isNaN(estate.lastSalePrice)
 																	? "$" + estate.lastSalePrice.toLocaleString()
 																	: "N/A"
 															}}
@@ -223,11 +208,9 @@
 													</tr>
 												</tbody>
 											</table>
-											<Pagination
-												:currentPage.sync="currentRealEstatePage"
+											<Pagination :currentPage.sync="currentRealEstatePage"
 												:totalPages="realEstateTotalPages"
-												@update:currentPage="updateRealEstateCurrentPage"
-											/>
+												@update:currentPage="updateRealEstateCurrentPage" />
 										</div>
 									</div>
 								</div>
@@ -244,45 +227,53 @@
 
 <script>
 import axios from "axios";
+import {
+	fetchStockQuote,
+	fetchCryptoList,
+	fetchRealEstateList
+} from "@/services/marketDataService.js";
+import { gptServices } from '@/services/gptServices.js';
 import Pagination from "../components/Risk&Chat/Pagination.vue";
 import RiskChat from "../components/Risk&Chat/RiskChat.vue";
 import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
 import StockWatch from "@/components/marketPage/StockWatch.vue";
 import VietnamStockWatch from "@/components/marketPage/VietnamStockWatch.vue";
 import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
+import { computed } from 'vue';
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
 const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
 const apiKeyRealEstate = process.env.VUE_APP_REAL_ESTATE_KEY;
 
+
 export default {
-  name: "RiskAnalysis",
-  components: {
-    Pagination,
-    CryptoWatch,
-    StockWatch,
-    VietnamStockWatch,
-    RealEstateMap,
-    RiskChat,
-  },
-  data() {
-    return {
-      activeTab: "stock",
-      // Bot Chat data
-      showBot: false,
-      hidingBot: false,
-      showMessage: false,
-      hidingMessage: false,
-      isTyping: false,
-      botMessage: "",
-      typedContent: "",
-      botObserver: null,
-      typingSpeed: 50, // milliseconds between characters
-      typingIndex: 0,
-      typingTimer: null,
-      botHideTimer: null,
-      words: [],
-      currentWordIndex: 0,
+	name: "RiskAnalysis",
+	components: {
+		Pagination,
+		CryptoWatch,
+		StockWatch,
+		VietnamStockWatch,
+		RealEstateMap,
+		RiskChat,
+	},
+	data() {
+		return {
+			activeTab: "crypto",
+			// Bot Chat data
+			showBot: false,
+			hidingBot: false,
+			showMessage: false,
+			hidingMessage: false,
+			isTyping: false,
+			botMessage: "",
+			typedContent: "",
+			botObserver: null,
+			typingSpeed: 50, // milliseconds between characters
+			typingIndex: 0,
+			typingTimer: null,
+			botHideTimer: null,
+			words: [],
+			currentWordIndex: 0,
 
 			// Market Data
 			loading: true,
@@ -329,7 +320,13 @@ export default {
 			currentStockPage: 1,
 			currentCryptoPage: 1,
 			itemsPerPage: 10,
+			marketSummary: "Loading overall market summary…",
 		};
+	},
+	provide() {
+		return {
+			marketSummary: computed(() => this.marketSummary)
+		}
 	},
 	computed: {
 		stockTotalPages() {
@@ -366,10 +363,8 @@ export default {
 			},
 		},
 	},
-	mounted() {
-		this.fetchStockQuote();
-		this.getCryptoPrice();
-		// this.getRealEstatePrice();
+	async mounted() {
+		this.generateOverallMarketSummary();
 		this.setupBotObserver();
 	},
 	beforeUnmount() {
@@ -412,6 +407,43 @@ export default {
 			});
 		},
 
+		async generateOverallMarketSummary() {
+			try {
+				const [stocks, cryptos, estates] = await Promise.all([
+					fetchStockQuote(),
+					fetchCryptoList(),
+					fetchRealEstateList()
+				])
+
+				// build a little prompt
+				const lines = [
+					'**Stocks**',
+					...stocks.map(s => {
+						const price = parseFloat(s['05. price']).toFixed(2)
+						const chg = parseFloat(s['09. change']).toFixed(2)
+						return `• ${s['01. symbol']}: $${price} (${chg}%)`
+					}),
+					'**Crypto**',
+					...cryptos.map(c => `• ${c.symbol}: $${c.price.toFixed(2)} (${c.change.toFixed(2)}%)`),
+					'**Real Estate**',
+					...estates.map(e => `• ${e.propertyType} at ${e.formattedAddress}: $${e.lastSalePrice.toLocaleString()}`)
+				].join('\n')
+
+				const prompt = `
+Here’s today’s market snapshot:
+${lines}
+
+Give me a concise overall summary of these combined markets.
+         `.trim()
+
+				const resp = await gptServices([{ role: 'user', content: prompt }])
+				this.marketSummary = resp.trim()
+			}
+			catch (err) {
+				console.error(err)
+				this.marketSummary = 'Unable to generate market summary right now.'
+			}
+		},
 		// Bot Chat methods
 		formatMarketSummary() {
 			// Focus on real estate data since this bot appears in the real estate section
@@ -420,15 +452,13 @@ export default {
 			if (this.realEstateList && this.realEstateList.length) {
 				summary += "🏠 Here are some properties you might like:\n";
 				this.realEstateList.slice(0, 3).forEach((estate) => {
-					summary += `${estate.propertyType || "Home"} at ${
-						estate.formattedAddress
-					}\n`;
+					summary += `${estate.propertyType || "Home"} at ${estate.formattedAddress
+						}\n`;
 					if (estate.lastSalePrice && !isNaN(estate.lastSalePrice)) {
 						summary += `Price: $${estate.lastSalePrice.toLocaleString()}\n`;
 					}
-					summary += `Status: ${
-						estate.ownerOccupied === true ? "Inactive" : "Active"
-					}\n\n`;
+					summary += `Status: ${estate.ownerOccupied === true ? "Inactive" : "Active"
+						}\n\n`;
 				});
 			}
 
@@ -558,67 +588,67 @@ export default {
 		},
 
 		// Existing market data methods
-		async fetchStockQuote() {
-			const symbols = [
-				"IBM",
-				"AAPL",
-				"GOOGL",
-				"MSFT",
-				"AMZN",
-				"FB",
-				"TSLA",
-				"NFLX",
-				"NVDA",
-				"INTC",
-				"CSCO",
-				"ORCL",
-				"ADBE",
-				"CRM",
-				"PYPL",
-				"AMD",
-				"QCOM",
-				"TXN",
-				"AVGO",
-				"SHOP",
-			];
-			const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
-			try {
-				const requests = symbols.map((symbol) => {
-					const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
-					return axios.get(url);
-				});
-				const responses = await Promise.all(requests);
-				this.stockQuotes = responses
-					.map((response) => {
-						const quote = response.data["Global Quote"];
-						if (quote && Object.keys(quote).length > 0) {
-							return quote;
-						} else {
-							return null;
-						}
-					})
-					.filter((quote) => quote !== null);
-				this.loading = false;
-			} catch (error) {
-				this.error = "Failed to fetch stock quotes";
-				this.loading = false;
-			}
-		},
-		async getCryptoPrice() {
-			const url = "https://api.coinranking.com/v2/coins?timePeriod=7d";
-			try {
-				const res = await axios.get(url, {
-					headers: {
-						"x-access-token": apiKeyCrypto,
-					},
-				});
-				this.cryptoList = res.data.data.coins;
-				this.loadingCrypto = false;
-			} catch (error) {
-				this.errorCrypto = "Failed to fetch crypto quotes";
-				this.loadingCrypto = false;
-			}
-		},
+		// async fetchStockQuote() {
+		// 	const symbols = [
+		// 		"IBM",
+		// 		"AAPL",
+		// 		"GOOGL",
+		// 		"MSFT",
+		// 		"AMZN",
+		// 		"FB",
+		// 		"TSLA",
+		// 		"NFLX",
+		// 		"NVDA",
+		// 		"INTC",
+		// 		"CSCO",
+		// 		"ORCL",
+		// 		"ADBE",
+		// 		"CRM",
+		// 		"PYPL",
+		// 		"AMD",
+		// 		"QCOM",
+		// 		"TXN",
+		// 		"AVGO",
+		// 		"SHOP",
+		// 	];
+		// 	const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
+		// 	try {
+		// 		const requests = symbols.map((symbol) => {
+		// 			const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
+		// 			return axios.get(url);
+		// 		});
+		// 		const responses = await Promise.all(requests);
+		// 		this.stockQuotes = responses
+		// 			.map((response) => {
+		// 				const quote = response.data["Global Quote"];
+		// 				if (quote && Object.keys(quote).length > 0) {
+		// 					return quote;
+		// 				} else {
+		// 					return null;
+		// 				}
+		// 			})
+		// 			.filter((quote) => quote !== null);
+		// 		this.loading = false;
+		// 	} catch (error) {
+		// 		this.error = "Failed to fetch stock quotes";
+		// 		this.loading = false;
+		// 	}
+		// },
+		// async getCryptoPrice() {
+		// 	const url = "https://api.coinranking.com/v2/coins?timePeriod=7d";
+		// 	try {
+		// 		const res = await axios.get(url, {
+		// 			headers: {
+		// 				"x-access-token": apiKeyCrypto,
+		// 			},
+		// 		});
+		// 		this.cryptoList = res.data.data.coins;
+		// 		this.loadingCrypto = false;
+		// 	} catch (error) {
+		// 		this.errorCrypto = "Failed to fetch crypto quotes";
+		// 		this.loadingCrypto = false;
+		// 	}
+		// },
 		updateCryptoCurrentPage(newPage) {
 			this.currentCryptoPage = newPage;
 		},
@@ -791,8 +821,10 @@ img {
 
 /* Enhanced Bot Chat Styles */
 .bot-chat-container {
-	position: fixed; /* Fixed positioning relative to viewport */
-	left: -350px; /* Start off-screen to the left */
+	position: fixed;
+	/* Fixed positioning relative to viewport */
+	left: -350px;
+	/* Start off-screen to the left */
 	top: 30%;
 	width: 300px;
 	display: flex;
@@ -804,13 +836,16 @@ img {
 		opacity 0.6s ease;
 	opacity: 0;
 	transform: translateX(0);
-	pointer-events: none; /* Prevents interaction with elements behind it */
+	pointer-events: none;
+	/* Prevents interaction with elements behind it */
 }
 
 .bot-chat-container.bot-visible {
-	transform: translateX(350px); /* Move to the right */
+	transform: translateX(350px);
+	/* Move to the right */
 	opacity: 1;
-	pointer-events: auto; /* Re-enable interaction when visible */
+	pointer-events: auto;
+	/* Re-enable interaction when visible */
 }
 
 .bot-chat-container.bot-hidden {
@@ -837,12 +872,15 @@ img {
 		transform: translateY(20px);
 		opacity: 0;
 	}
+
 	60% {
 		transform: translateY(-5px);
 	}
+
 	80% {
 		transform: translateY(2px);
 	}
+
 	100% {
 		transform: translateY(0);
 		opacity: 1;
@@ -857,10 +895,13 @@ img {
 	border-radius: 18px;
 	max-width: 280px;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-	opacity: 0; /* Start hidden */
-	transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
+	opacity: 0;
+	/* Start hidden */
+	transform: scale(0.8) translateY(10px);
+	/* Start slightly smaller and lower */
 	transition: opacity 0.4s ease, transform 0.4s ease;
-	transition-delay: 0.2s; /* Reduced delay for smoother appearance */
+	transition-delay: 0.2s;
+	/* Reduced delay for smoother appearance */
 }
 
 .bot-message.message-visible {
@@ -907,11 +948,13 @@ img {
 }
 
 @keyframes typing {
+
 	0%,
 	100% {
 		opacity: 0.3;
 		transform: scale(1);
 	}
+
 	50% {
 		opacity: 1;
 		transform: scale(1.2);
@@ -919,6 +962,7 @@ img {
 }
 
 @media screen and (max-width: 1200px) {
+
 	.market-data-center,
 	.quotes-section {
 		padding: 1.5rem;
@@ -948,6 +992,7 @@ img {
 }
 
 @media screen and (max-width: 992px) {
+
 	.market-data-center,
 	.quotes-section {
 		padding: 1.5rem;
@@ -1261,6 +1306,7 @@ td[data-label="Name"] img {
 		opacity: 0;
 		transform: translateY(10px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
