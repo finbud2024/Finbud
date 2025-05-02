@@ -416,4 +416,61 @@ html, body {
   color: #1d4ed8;
   text-decoration: underline;
 }
+
+@media (max-width: 767px) {
+  .signin-container {
+    max-width: 100%;
+    padding: 1.5rem;
+    min-height: 100vh;
+  }
+
+  .header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-options,
+  .signin-form,
+  .or-separator {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .social-btn {
+    height: 50px;
+    font-size: 0.9rem;
+  }
+
+  .form-input {
+    height: 46px;
+    font-size: 1rem;
+  }
+
+  .submit-btn {
+    width: 100%;
+    height: 50px;
+    font-size: 1rem;
+  }
+
+  .password-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .signup-link {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  /* Adjust logo sizes for mobile */
+  .facebook-logo, .apple-logo {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .google-logo {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
 </style>

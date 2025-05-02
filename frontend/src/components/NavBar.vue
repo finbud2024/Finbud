@@ -318,6 +318,12 @@
               >{{ $t("riskAnalysis") }}</router-link
             >
             <router-link
+              to="/investment-calculator"
+              class="investment-calculator"
+              @click="toggleDropdownMobile"
+              >{{ $t("investmentCalculator") }}</router-link
+            >
+            <router-link
               to="/mortgage-calc"
               class="mortgage-calc"
               @click="toggleDropdownMobile"
