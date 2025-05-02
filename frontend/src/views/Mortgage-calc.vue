@@ -584,7 +584,7 @@ export default {
 
 /* Mortgage Calculator Container */
 .mortgage-calc {
-  max-width: 90%;
+  max-width: 95%;
   margin: auto;
   padding: 20px;
   background: #f9f9f9;
@@ -637,6 +637,8 @@ h1 {
 /* Input Groups */
 .input-group {
   margin-bottom: 15px;
+  display: flex;
+  flex-direction: column; /* This will stack children vertically */
 }
 
 label {
@@ -732,7 +734,7 @@ h3 {
 
 .chart-container {
   flex: 1;
-  max-width: 300px;
+  max-width: 100%;
 }
 
 .breakdown-details {
@@ -899,6 +901,64 @@ h3 {
   50% { 
     opacity: 1;
     transform: scale(1.2);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .breakdown-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .chart-container,
+  .breakdown-details {
+    width: 100%;
+  }
+  
+  .breakdown-item {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .breakdown-item .percentage {
+    order: 1;
+    width: 15%;
+  }
+  
+  .breakdown-item .label {
+    order: 2;
+    width: 60%;
+  }
+  
+  .breakdown-item .amount {
+    order: 3;
+    width: 25%;
+    text-align: right;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .payment-breakdown h2 {
+    font-size: 20px;
+  }
+  
+  .breakdown-item {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .breakdown-item .percentage {
+    width: 20%;
+  }
+  
+  .breakdown-item .label {
+    width: 50%;
+  }
+  
+  .breakdown-item .amount {
+    width: 25%;
   }
 }
 
