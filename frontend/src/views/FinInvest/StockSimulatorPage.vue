@@ -414,7 +414,7 @@ import {
   fetchSimBannerStockDatav2,
   fetchSimBannerStockDatav3,
 } from "../../services/stockServices";
-import StockScreener from "@/components/StockScreener.vue";
+import StockScreener from "@/components/Stock/StockScreener.vue";
 import CompanyCard from "@/components/CompanyCard.vue";
 import BannerCardSimulator from "@/components/BannerCardSimulator.vue";
 import stockData from "../hardcodeData/StockData.js";
@@ -426,7 +426,7 @@ import { toast } from "vue3-toastify";
 import axios from "axios";
 import { showReward } from "../../utils/utils";
 import { gptServices } from "@/services/gptServices";
-import QuizRewards from "@/components/QuizRewards.vue";
+import QuizRewards from "@/components/FinEdu/Quiz/QuizRewards.vue";
 
 export default {
   name: "StockDashboard",

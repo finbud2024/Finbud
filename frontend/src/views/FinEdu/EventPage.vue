@@ -158,7 +158,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
 import { gptNewsService } from '@/services/gptServices';
-import EventMap from '@/components/EventMap.vue';
+import EventMap from '@/components/FinEdu/Event/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Articles from '@/components/Articles.vue'; // Adjust the path if necessary

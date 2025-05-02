@@ -4,7 +4,7 @@ import LoginView from "@/views/Authentication/LoginPage.vue";
 import SignUp from "@/views/Authentication/SignUpPage.vue";
 import Home from "@/views/Home/HomePage.vue";
 import ChatPage from "@/views/Chat/ChatPage.vue";
-import SideBar from "@/components/SideBar.vue";
+import SideBar from "@/components/Basic/SideBar.vue";
 import TechnologyPage from "@/views/Overview/TechnologyPage.vue";
 import PricingPage from "@/views/Unused/PricingPage.vue";
 import AboutUsPage from "@/views/Overview/AboutUsPage.vue";

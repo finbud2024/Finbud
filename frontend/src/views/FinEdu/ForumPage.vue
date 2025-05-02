@@ -39,8 +39,8 @@
 <script>
 import api from "@/utils/api";
 import ThreadCard from "@/components/ThreadCard.vue";
-import ForumSidebar from "@/components/ForumSidebar.vue";
-import ForumBanner from "@/components/ForumBanner.vue";
+import ForumSidebar from "@/components/FinEdu/Forum/ForumSidebar.vue";
+import ForumBanner from "@/components/FinEdu/Forum/ForumBanner.vue";
 import { computed, ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";

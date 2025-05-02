@@ -87,8 +87,8 @@ import { useStore } from "vuex";
 import { useHead } from "@vueuse/head";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
 import ShareButton from "@/components/ShareButton.vue";
-import ForumSidebar from "@/components/ForumSidebar.vue";
-import ForumBanner from "@/components/ForumBanner.vue";
+import ForumSidebar from "@/components/FinEdu/Forum/ForumSidebar.vue";
+import ForumBanner from "@/components/FinEdu/Forum/ForumBanner.vue";
 
 export default {
   components: { ForumSidebar, ForumBanner, Heart, MessageCircle, Repeat, Send, ShareButton },

@@ -397,7 +397,7 @@
 import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
-import NavbarNoti from "./Notification/NavbarNoti.vue";
+import NavbarNoti from "../Notification/NavbarNoti.vue";
 import { to } from "mathjs";
 export default {
   name: "NavBar",

@@ -401,7 +401,7 @@
   import axios from "axios";
   import { showReward } from "../../utils/utils";
   import { gptServices } from "@/services/gptServices";
-  import QuizRewards from "@/components/QuizRewards.vue";
+  import QuizRewards from "@/components/FinEdu/Quiz/QuizRewards.vue";
   
   export default {
     name: "StockDashboard",

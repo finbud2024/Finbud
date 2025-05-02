@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import ForumSidebar from "@/components/ForumSidebar.vue";
+import ForumSidebar from "@/components/FinEdu/Forum/ForumSidebar.vue";
 import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
