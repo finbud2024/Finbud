@@ -1,23 +1,12 @@
 <template>
   <div>
     <!-- Bot Chat Component -->
-    <div
-      class="bot-chat-container"
-      :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }"
-    >
-      <img
-        class="bot-image"
-        src="@/assets/botrmbg.png"
-        alt="Bot"
-        @click="hideMessage"
-      />
-      <div
-        class="bot-message"
-        :class="{
-          'message-visible': showMessage,
-          'message-hidden': hidingMessage,
-        }"
-      >
+    <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
+      <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" @click="hideMessage" />
+      <div class="bot-message" :class="{
+        'message-visible': showMessage,
+        'message-hidden': hidingMessage,
+      }">
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -29,33 +18,17 @@
     <!-- Display the market summary quote -->
     <div class="market-summary">
       <h3>Market Summary</h3>
-      <p v-if="marketSummary">{{ marketSummary }}</p>
-      <p v-else>Loading market summary...</p>
+      <div v-if="marketSummary" v-html="renderedSummary"></div>
+      <p v-else>Loading summary…</p>
     </div>
-    <CryptoPopup
-      v-if="showPopup"
-      :crypto="selectedCrypto"
-      @close="closePopup"
-    />
+    <CryptoPopup v-if="showPopup" :crypto="selectedCrypto" @close="closePopup" />
 
     <!-- Top Series Section -->
     <section class="top-series">
       <TopSeries title="Hot Coins" :cryptos="hotCoins" :openPopup="openPopup" />
-      <TopSeries
-        title="Top Losers"
-        :cryptos="topLosers"
-        :openPopup="openPopup"
-      />
-      <TopSeries
-        title="Top Gainers"
-        :cryptos="topGainers"
-        :openPopup="openPopup"
-      />
-      <TopSeries
-        title="Top Volume"
-        :cryptos="topVolume"
-        :openPopup="openPopup"
-      />
+      <TopSeries title="Top Losers" :cryptos="topLosers" :openPopup="openPopup" />
+      <TopSeries title="Top Gainers" :cryptos="topGainers" :openPopup="openPopup" />
+      <TopSeries title="Top Volume" :cryptos="topVolume" :openPopup="openPopup" />
     </section>
 
     <!-- Search Bar -->
@@ -70,12 +43,7 @@
     </div> -->
 
     <div class="search-bar">
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Search for a coin..."
-        @input="filterCryptos"
-      />
+      <input type="text" v-model="searchQuery" placeholder="Search for a coin..." @input="filterCryptos" />
     </div>
 
     <!-- Existing crypto list -->
@@ -83,23 +51,15 @@
       <div class="crypto-table">
         <div v-for="(row, rowIndex) in filteredRows" :key="rowIndex">
           <div class="crypto-row">
-            <div
-              class="crypto-item animate__animated animate__fadeInUp"
-              v-for="crypto in row"
-              :key="crypto.symbol"
-              @click="openPopup(crypto)"
-              @mouseover="showTooltip(crypto.uuid)"
-              @mouseleave="hideTooltip"
-            >
-              <div
-                :class="[
-                  'crypto-bar',
-                  {
-                    'positive-bar': crypto.change > 0,
-                    'negative-bar': crypto.change < 0,
-                  },
-                ]"
-              ></div>
+            <div class="crypto-item animate__animated animate__fadeInUp" v-for="crypto in row" :key="crypto.symbol"
+              @click="openPopup(crypto)" @mouseover="showTooltip(crypto.uuid)" @mouseleave="hideTooltip">
+              <div :class="[
+                'crypto-bar',
+                {
+                  'positive-bar': crypto.change > 0,
+                  'negative-bar': crypto.change < 0,
+                },
+              ]"></div>
               <div class="crypto-info">
                 <div class="crypto-symbol">
                   <h3>{{ crypto.symbol }}</h3>
@@ -109,43 +69,34 @@
                   <p class="price">${{ crypto.price.toFixed(6) }}</p>
                 </div>
                 <div class="crypto-change">
-                  <p
-                    :class="{
-                      positive: crypto.change > 0,
-                      negative: crypto.change < 0,
-                    }"
-                  >
+                  <p :class="{
+                    positive: crypto.change > 0,
+                    negative: crypto.change < 0,
+                  }">
                     {{ crypto.change > 0 ? "+" : ""
                     }}{{ crypto.change.toFixed(2) }}%
                   </p>
-                  <p
-                    :class="{
-                      positive: crypto.changeAmount > 0,
-                      negative: crypto.changeAmount < 0,
-                    }"
-                  >
+                  <p :class="{
+                    positive: crypto.changeAmount > 0,
+                    negative: crypto.changeAmount < 0,
+                  }">
                     {{ crypto.changeAmount.toFixed(6) }}
                   </p>
                 </div>
               </div>
               <!-- Tooltip element -->
-              <div
-                :class="[
-                  'tooltip',
-                  {
-                    'tooltip-visible':
-                      tooltipVisible && activeCrypto === crypto.uuid,
-                  },
-                ]"
-              >
+              <div :class="[
+                'tooltip',
+                {
+                  'tooltip-visible':
+                    tooltipVisible && activeCrypto === crypto.uuid,
+                },
+              ]">
                 Full chart
               </div>
             </div>
           </div>
-          <div
-            v-if="rowIndex < filteredRows.length - 1"
-            class="row-divider"
-          ></div>
+          <div v-if="rowIndex < filteredRows.length - 1" class="row-divider"></div>
         </div>
       </div>
     </div>
@@ -158,6 +109,13 @@ import TopSeries from "./TopSeries.vue";
 import CryptoPopup from "../marketPage/CryptoPopup.vue";
 import { gptServices } from "@/services/gptServices.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import MarkdownIt from 'markdown-it'
+
+const md = new MarkdownIt({
+  html: true,        // allow inline HTML
+  linkify: true,        // autolink URLs
+  typographer: true,
+})
 
 const DEPLOY_URL = process.env.VUE_APP_DEPLOY_URL;
 const BINANCE_API_KEY = process.env.VUE_APP_BINANCE_API_KEY;
@@ -166,6 +124,17 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 export default {
   name: "CryptoWatch",
+  props: {
+    marketSummary: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    renderedSummary() {
+      return md.render(this.marketSummary)
+    }
+  },
   components: {
     TopSeries,
     CryptoPopup,
@@ -184,7 +153,7 @@ export default {
       searchQuery: "", // For storing the search input
       tooltipVisible: false, // Tooltip visibility flag
       activeCrypto: null, // Store the UUID of the active crypto for tooltip
-      marketSummary: null, // To store the generated market summary
+      // marketSummary: null, // To store the generated market summary
       // Bot Chat data
       showBot: false,
       hidingBot: false,
@@ -399,7 +368,7 @@ export default {
           this.selectedCrypto = this.cryptos[0].symbol; // Set default selected crypto
         }
         this.distributeCryptos();
-        await this.generateMarketSummary(); // Generate market summary after fetching cryptos
+        // await this.generateMarketSummary(); // Generate market summary after fetching cryptos
       } catch (error) {
         console.error("Error fetching cryptos:", error);
       }
@@ -440,27 +409,29 @@ export default {
         this.filteredRows[i % 3].push(filteredCryptos[i]);
       }
     },
-    async generateMarketSummary() {
-      try {
-        const allCryptos = this.cryptos; // Use all cryptos
-        const promptData = allCryptos
-          .map((crypto) => {
-            return `${crypto.symbol} (${crypto.name}) - $${crypto.price.toFixed(
-              2
-            )} - ${crypto.changeAmount.toFixed(2)}%`;
-          })
-          .join("\n");
+    // async generateMarketSummary() {
+    //   try {
+    //     const allCryptos = this.cryptos; // Use all cryptos
+    //     const promptData = allCryptos
+    //       .map((crypto) => {
+    //         return `${crypto.symbol} (${crypto.name}) - $${crypto.price.toFixed(
+    //           2
+    //         )} - ${crypto.changeAmount.toFixed(2)}%`;
+    //       })
+    //       .join("\n");
 
-        const openAiPrompt = `Here is the data for all cryptocurrencies:\n${promptData}\n\nBased on the above data, provide a summary of the overall market trend. Consider factors like the general direction (increase/decrease), and any significant fluctuations or patterns. Please give a concise summary that starts with "The market trend today tends to..."`;
+    //     const openAiPrompt = `Here is the data for all cryptocurrencies:\n${promptData}\n\nBased on the above data, provide a summary of the overall market trend. Consider factors like the general direction (increase/decrease), and any significant fluctuations or patterns. Please give a concise summary that starts with "The market trend today tends to..."`;
 
-        const summary = await gptServices(openAiPrompt);
+    //     const summary = await gptServices([
+    //       { role: 'user', content: openAiPrompt }
+    //     ]);
 
-        this.marketSummary = summary;
-      } catch (error) {
-        console.error("Error generating market summary:", error);
-        this.marketSummary = "Unable to generate market summary at this time.";
-      }
-    },
+    //     this.marketSummary = summary;
+    //   } catch (error) {
+    //     console.error("Error generating market summary:", error);
+    //     this.marketSummary = "Unable to generate market summary at this time.";
+    //   }
+    // },
     openPopup(crypto) {
       this.selectedCrypto = crypto;
       this.showPopup = true;
@@ -585,7 +556,8 @@ body {
 .crypto-table {
   display: flex;
   flex-direction: column;
-  width: max-content; /* Ensure the table takes the necessary width for scrolling */
+  width: max-content;
+  /* Ensure the table takes the necessary width for scrolling */
 }
 
 .crypto-row {
@@ -597,13 +569,16 @@ body {
   display: flex;
   border: 1px solid transparent;
   padding: 8px;
-  width: 350px; /* Set a fixed width for each item */
+  width: 350px;
+  /* Set a fixed width for each item */
   margin-right: 10px;
   position: relative;
   cursor: pointer;
   transition: box-shadow 0.3s, transform 0.3s;
-  white-space: normal; /* Ensure text wraps within the item */
-  word-wrap: break-word; /* Break words that are too long */
+  white-space: normal;
+  /* Ensure text wraps within the item */
+  word-wrap: break-word;
+  /* Break words that are too long */
 }
 
 .crypto-item:hover {
@@ -653,17 +628,21 @@ body {
 
 .crypto-info {
   display: flex;
-  justify-content: space-between; /* Distribute space between children */
+  justify-content: space-between;
+  /* Distribute space between children */
   align-items: center;
-  width: 100%; /* Make sure it takes the full width of the container */
+  width: 100%;
+  /* Make sure it takes the full width of the container */
   padding-left: 10px;
 }
 
 .crypto-symbol {
-  flex: 1; /* Take all the available space on the left */
+  flex: 1;
+  /* Take all the available space on the left */
   display: flex;
   flex-direction: column;
-  word-wrap: break-word; /* Ensure long words break to the next line */
+  word-wrap: break-word;
+  /* Ensure long words break to the next line */
 }
 
 .crypto-symbol h3 {
@@ -676,14 +655,19 @@ body {
   margin: 0;
   font-size: 0.9em;
   color: #666;
-  word-wrap: break-word; /* Ensure long words break to the next line */
-  white-space: normal; /* Ensure text wraps */
-  overflow-wrap: break-word; /* Ensure text wraps */
+  word-wrap: break-word;
+  /* Ensure long words break to the next line */
+  white-space: normal;
+  /* Ensure text wraps */
+  overflow-wrap: break-word;
+  /* Ensure text wraps */
 }
 
 .crypto-price {
-  flex-shrink: 0; /* Prevent shrinking */
-  text-align: center; /* Center align the text */
+  flex-shrink: 0;
+  /* Prevent shrinking */
+  text-align: center;
+  /* Center align the text */
   font-size: 0.9em;
 }
 
@@ -692,10 +676,12 @@ body {
 }
 
 .crypto-change {
-  flex: 1; /* Take all the available space on the right */
+  flex: 1;
+  /* Take all the available space on the right */
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align to the right */
+  align-items: flex-end;
+  /* Align to the right */
   font-size: 0.9em;
 }
 
@@ -714,7 +700,8 @@ body {
 .row-divider {
   height: 1px;
   background-color: rgba(0, 0, 0, 0.1);
-  width: 100%; /* Ensure the divider spans the entire width of the scrolling area */
+  width: 100%;
+  /* Ensure the divider spans the entire width of the scrolling area */
   margin: 10px 0;
 }
 
@@ -823,12 +810,15 @@ body {
     transform: translateY(20px);
     opacity: 0;
   }
+
   60% {
     transform: translateY(-5px);
   }
+
   80% {
     transform: translateY(2px);
   }
+
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -894,11 +884,13 @@ body {
 }
 
 @keyframes typing {
+
   0%,
   100% {
     opacity: 0.3;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.2);
