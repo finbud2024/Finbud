@@ -8,7 +8,8 @@ const StockSchema = new mongoose.Schema({
     close: { type: Number, },
     change: { type: Number},
     volume: { type: Number},
-    date: { type: Date, required: true}
+    date: { type: Date, required: true},
+    country: { type: String, required: true }
 })
 
 const Stock = mongoose.model('Stock', StockSchema);

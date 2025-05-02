@@ -7,7 +7,7 @@ import MongoStore from 'connect-mongo';
 
 const passportConfig = (app) => {
     passport.use(localStrategy);
-    passport.use(googleStrategy);
+    // passport.use(googleStrategy);
 
     passport.serializeUser((user, done) => {
         console.log("In serializeUser.");

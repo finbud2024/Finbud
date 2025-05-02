@@ -1,11 +1,15 @@
 // Authentication middleware
+// export const isAuthenticated = (req, res, next) => {
+//   if (req.isAuthenticated()) {
+//     return next();
+//   }
+//   // return res.status(401).json({ message: 'Unauthorized: Please log in' });
+// };
 export const isAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  return res.status(401).json({ message: 'Unauthorized: Please log in' });
+  console.log("Mock authentication: Allowing all requests");
+  req.user = { id: "mockUserId" }; // Mock user object
+  return next(); // Allow all requests without checking authentication
 };
-
 // Authorization middleware for admin-only routes
 export const isAdmin = (req, res, next) => {
   if (req.isAuthenticated() && req.user.accountData.priviledge === 'admin') {

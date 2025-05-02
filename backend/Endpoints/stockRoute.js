@@ -2,6 +2,8 @@ import express from 'express';
 import StockPrice from '../Database Schema/Stock.js';
 import validateRequest from '../utils/validateRequest.js';
 import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const stockRoute = express.Router();
 
@@ -53,11 +55,8 @@ stockRoute.get("/api/stocks", async (req, res) => {
             }
         );
 
-        // Tính tổng số trang
         const totalCount = response.data.totalCount;
         const totalPages = Math.ceil(totalCount / size);
-
-        // Định dạng dữ liệu trả về
         const formattedData = response.data.data.map(stock => ({
             name: stock.d[0],
             logo: stock.d[1],
@@ -86,6 +85,32 @@ stockRoute.get("/api/stocks", async (req, res) => {
     }
 });
 
+// Add a screener endpoint
+stockRoute.get('/api/screener', async (req, res) => {
+    const { sector, marketCapMoreThan, priceMoreThan, priceLessThan, dividendMoreThan } = req.query;
+    const fmpApiKey = process.env.FMP_API_KEY;
+    const fmpBaseUrl = `https://financialmodelingprep.com/api/v3/stock-screener`;
+
+    // Build the filter object based on query parameters
+    const params = {
+        sector: sector || undefined,
+        marketCapMoreThan: marketCapMoreThan || undefined,
+        priceMoreThan: priceMoreThan || undefined,
+        priceLessThan: priceLessThan || undefined,
+        dividendMoreThan: dividendMoreThan || undefined,
+        apikey: fmpApiKey,
+    };
+
+    try {
+        // Query the database using the filter
+        const response = await axios.get(fmpBaseUrl, { params });
+        const stocks = response.data;
+        res.status(200).json(stocks);
+    } catch (error) {
+        console.error('Error fetching stocks:', error.message);
+        res.status(500).json({ error: 'Failed to fetch stocks' });
+    }
+});
 
 stockRoute.post("/updateStockDB", validateRequest(StockPrice.schema), async (req, res) => {
     const symbol = req.body.symbol;

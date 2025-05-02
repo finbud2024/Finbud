@@ -211,15 +211,156 @@
     </section>
 
     <section v-if="activeSection === 'filters'">
-      <stockScreener @applyFilter="stockFilterHandler" />
+      <div class="stock-screener">
+        <h1>Stock Screener</h1>
+        
+        <div class="filter-container">
+          <!-- Multi-select for Countries -->
+          <div class="filter-group">
+  <label for="country">Country:</label>
+  <select 
+    id="country" 
+    v-model="filters.country"
+  >
+    <option value="">All Countries</option>
+    <option v-for="country in countries" :key="country" :value="country">
+      {{ country }}
+    </option>
+  </select>
 
-      <div class="stockDisplayContainer" v-if="count">
-        <CompanyCard
-          v-for="(item, idx) in displayStock"
-          :key="idx"
-          :companyName="item.ticker"
-          :width="`80%`"
-        />
+            <div class="toggle-group">
+              <label for="excludeCountries">Exclude Countries</label>
+              <input
+                type="checkbox"
+                id="excludeCountries"
+                v-model="filters.excludeCountries"
+              />
+            </div>
+          </div>
+          <div class="filter-group">
+              <label for="pageSize">Results per Page:</label>
+              <select v-model="selectedPageSize" id="pageSize" @change="handlePageSizeChange">
+                <option v-for="option in pageSizeOptions" :key="option" :value="option">
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+
+          <!-- Multi-select for Exchanges -->
+          <div class="filter-group">
+  <label for="exchange">Exchange:</label>
+  <select 
+    id="exchange" 
+    v-model="filters.exchange"
+  >
+    <option value="">All Exchanges</option>
+    <option v-for="exchange in exchanges" :key="exchange" :value="exchange">
+      {{ exchange }}
+    </option>
+  </select>
+</div>
+
+
+<div class="filter-group">
+  <label for="sector">Sector:</label>
+  <select 
+    id="sector" 
+    v-model="filters.sector"
+  >
+    <option value="">All Sectors</option>
+    <option v-for="sector in sectors" :key="sector" :value="sector">
+      {{ sector }}
+    </option>
+  </select>
+</div>
+
+
+          <div class="filter-group">
+            <label for="marketCapMoreThan">Market Cap (Greater Than):</label>
+            <input 
+              type="number" 
+              id="marketCapMoreThan" 
+              placeholder="e.g. 1000000000" 
+              v-model="filters.marketCapMoreThan"
+            />
+          </div>
+          
+          <div class="filter-group">
+            <label for="priceMoreThan">Price (Greater Than):</label>
+            <input 
+              type="number" 
+              id="priceMoreThan" 
+              placeholder="e.g. 10" 
+              v-model="filters.priceMoreThan"
+            />
+          </div>
+          
+          <div class="filter-group">
+            <label for="priceLessThan">Price (Less Than):</label>
+            <input 
+              type="number" 
+              id="priceLessThan" 
+              placeholder="e.g. 100" 
+              v-model="filters.priceLessThan"
+            />
+          </div>
+          
+          <div class="filter-group">
+            <label for="dividendMoreThan">Dividend Yield (Greater Than %):</label>
+            <input 
+              type="number" 
+              id="dividendMoreThan" 
+              placeholder="e.g. 2" 
+              v-model="filters.dividendMoreThan"
+            />
+          </div>
+        </div>
+        
+        <div class="button-group">
+          <button @click="fetchStocks" :disabled="loading" class="search-button">
+            {{ loading ? 'Searching...' : 'Search Stocks' }}
+          </button>
+          <button @click="handleReset" class="reset-button">
+            Reset Filters
+          </button>
+        </div>
+        
+        <div v-if="stocks.length > 0" class="results-container">
+    <h2>Results ({{ stocks.length }} stocks found)</h2>
+    <div class="table-container">
+      <table>
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Company Name</th>
+            <th>Market Cap</th>
+            <th>Sector</th>
+            <th>Industry</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+      <tr v-for="stock in stocksToDisplay" :key="stock.symbol">
+            <td>{{ stock.symbol }}</td>
+            <td>{{ stock.companyName }}</td>
+            <td>{{ formatMarketCap(stock.marketCap) }}</td>
+            <td>{{ stock.sector || 'N/A' }}</td>
+            <td>{{ stock.industry || 'N/A' }}</td>
+            <td>{{ stock.price || 'N/A' }}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="pagination-bar" v-if="stocks.length > selectedPageSize">
+  <button @click="goToPrevPage" :disabled="currentPage === 1">← Prev</button>
+  <span>Page {{ currentPage }} of {{ totalPages }}</span>
+  <button @click="goToNextPage" :disabled="currentPage === totalPages">Next →</button>
+</div>
+    </div>
+</div>
+        
+        <div v-else-if="!loading" class="no-results">
+          <p>Use the filters above to search for stocks</p>
+        </div>
       </div>
     </section>
 
@@ -422,6 +563,8 @@ import axios from "axios";
 import { showReward } from "../utils/utils";
 import { gptServices } from "@/services/gptServices";
 import QuizRewards from "@/components/QuizRewards.vue";
+import Multiselect from "vue-multiselect";
+import "vue-multiselect/dist/vue-multiselect.min.css";
 
 export default {
   name: "StockDashboard",
@@ -435,6 +578,7 @@ export default {
     QuizRewards,
     PredicitveCalc,
     PortfolioPerformance,
+    Multiselect,
   },
   data() {
     return {
@@ -509,9 +653,147 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       holdingsError: null,
       currentQuestion: null,
       questions: [],
+      sectors: [],
+      stocks: [],
+      loading: false,
+      filters: {
+        country: [],
+        industry: [],
+        exchanges: [],
+        sector: '',
+        marketCapMoreThan: '',
+        priceMoreThan: '',
+        priceLessThan: '',
+        dividendMoreThan: '',
+      },
+      countries: [
+        "US", "VN", "JP", "CN", "UK", "FR", "DE", "CA", "AU", "SG", "KR", 
+        "IN", "BR", "IT", "ES", "MX", "NL", "CH", "HK", "SE"
+      ],
+      exchanges: ["NYSE", "NASDAQ", "AMEX", "TSX", "LSE", "HKEX", "SSE", "ASX"],
+      industries: ["Oil, Gas and Consumable Fuels", "Technology", "Healthcare"],
+      pageSizeOptions: [25, 50, 100],
+      selectedPageSize: 25,
+      sectors: [
+        "Communication Services",
+        "Consumer Discretionary",
+        "Consumer Staples",
+        "Energy",
+        "Financials",
+        "Health Care",
+        "Industrials",
+        "Information Technology",
+        "Materials",
+        "Real Estate",
+        "Utilities"
+      ],
+      currentPage: 1,
+
     };
   },
+
+  computed: {
+        totalPages() {
+          return Math.ceil(this.stocks.length / this.selectedPageSize);
+        },
+        stocksToDisplay() {
+          const start = (this.currentPage - 1) * this.selectedPageSize;
+          const end = start + this.selectedPageSize;
+          return this.stocks.slice(start, end);
+        }
+      },
+
   methods: {
+    goToPrevPage() {
+    if (this.currentPage > 1) this.currentPage--;
+  },
+  goToNextPage() {
+    if (this.currentPage < this.totalPages) this.currentPage++;
+  },
+  handlePageSizeChange() {
+    this.fetchStocks(); 
+  },
+
+async fetchStocks() {
+  try {
+    const payload = { ...this.filters };
+
+    if (payload.countries && payload.countries.length > 0) {
+      payload.country = payload.countries[0];
+    }
+    delete payload.countries;
+
+    if (payload.exchanges && payload.exchanges.length > 0) {
+      payload.exchange = payload.exchanges;
+    } else {
+      delete payload.exchanges;
+    }
+
+    let url = `https://financialmodelingprep.com/api/v3/stock-screener?apikey=jT0palmVejg7FZjX75aZYnQPC0Qackka&pageSize=${this.selectedPageSize}`;
+
+    if (payload.sector) {
+      url += `&sector=${payload.sector.replace(/\s+/g, '+')}`;
+    }
+    if (payload.country) {
+      url += `&country=${payload.country}`;
+    }
+    if (payload.exchange) {
+      url += `&exchange=${payload.exchange}`;
+    }
+    if (payload.marketCapMoreThan) {
+      url += `&marketCapMoreThan=${payload.marketCapMoreThan}`;
+    }
+    if (payload.priceMoreThan) {
+      url += `&priceMoreThan=${payload.priceMoreThan}`;
+    }
+    if (payload.priceLessThan) {
+      url += `&priceLessThan=${payload.priceLessThan}`;
+    }
+    if (payload.dividendMoreThan) {
+      url += `&dividendMoreThan=${payload.dividendMoreThan}`;
+    }
+
+    const response = await axios.get(url);  
+
+    let stocks = response.data;
+
+    if (this.filters.industries && this.filters.industries.length > 0) {
+      stocks = stocks.filter(stock =>
+        stock.industry && this.filters.industries.includes(stock.industry)
+      );
+    }
+    this.stocks = stocks;
+    this.currentPage = 1;
+
+  } catch (error) {
+    console.error("Error fetching stocks:", error.response ? error.response.data : error.message);
+  }
+},
+
+
+    handleReset() {
+        this.filters = {
+            countries: [],
+            excludeCountries: false,
+            industries: [],
+            excludeIndustries: false,
+            exchanges: [],
+            excludeExchanges: false,
+            sector: '',
+            marketCapMoreThan: '',
+            priceMoreThan: '',
+            priceLessThan: '',
+            dividendMoreThan: '',
+        };
+        this.stocks = [];
+    },
+    formatMarketCap(value) {
+        if (!value) return 'N/A';
+        if (value >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
+        if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+        if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
+        return value.toLocaleString();
+    },
     // Add the adjustChartHeight method here
     adjustChartHeight() {
       this.$nextTick(() => {
@@ -1873,6 +2155,43 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         }
       }
     },
+    async handleSearch() {
+      await this.fetchStocks();
+    try {
+        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/screener`, {
+            params: this.filters, 
+        });
+        console.log("API Response:", response.data); 
+        this.stocks = response.data; 
+    } catch (error) {
+        console.error("Error fetching stocks:", error.response ? error.response.data : error.message);
+    } finally {
+        this.loading = false;
+    }
+},
+    handleReset() {
+      this.filters = {
+        countries: [],
+        excludeCountries: false,
+        industries: [],
+        excludeIndustries: false,
+        exchanges: [],
+        excludeExchanges: false,
+        sector: '',
+        marketCapMoreThan: '',
+        priceMoreThan: '',
+        priceLessThan: '',
+        dividendMoreThan: '',
+      };
+      this.stocks = [];
+    },
+    formatMarketCap(value) {
+      if (!value) return 'N/A';
+      if (value >= 1e12) return `${(value / 1e12).toFixed(2)}T`;
+      if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+      if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
+      return value.toLocaleString();
+    },
   },
   watch: {
     "$route.query": {
@@ -3055,4 +3374,114 @@ h1 {
   align-items: center;
   margin-bottom: 20px;
 }
+
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #333;
+}
+
+.filter-group input,
+.filter-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.search-button, .reset-button {
+  background-color: #000; 
+  color: white; 
+  border: none;
+  padding: 6px 20px; 
+  border-radius: 12px; 
+  font-size: 14px; 
+  font-weight: 600; 
+  line-height: 1; 
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover, .reset-button:hover {
+  background-color: #333333; 
+}
+
+.results-container {
+  margin-top: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #6c757d;
+}
+
+.pagination-bar button {
+  padding: 6px 12px;
+  border: none;
+  background-color: black;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination-bar button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 </style>

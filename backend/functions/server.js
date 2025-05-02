@@ -30,8 +30,6 @@ import finCoinRouter from "../Endpoints/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/portfolioRoute.js";
 import plaidRoute from "../Endpoints/PlaidService.js";
 
-dotenv.config();
-
 const mongoURI = process.env.MONGO_URI;
 const app = express();
 
@@ -159,6 +157,7 @@ router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
+// router.use("/stock-simulator", stockRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development

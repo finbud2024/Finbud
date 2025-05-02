@@ -16,3 +16,7 @@
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
   PORT = "8000"
+  OPENAI_API_KEY = "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"
+  FMP_API_KEY = "jT0palmVejg7FZjX75aZYnQPC0Qackka"
+  GOOGLE_CLIENT_ID = "65993531317-jsfm66l7uo79apo75v5pol43b2o8absv.apps.googleusercontent.com"
+  GOOGLE_CLIENT_SECRET="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"
