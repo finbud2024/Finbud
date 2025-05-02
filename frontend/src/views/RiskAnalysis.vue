@@ -1,5 +1,4 @@
 <template>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<div>
 		<!-- Bot Chat Component - Placed outside the main container -->
 		<div class="bot-chat-container" :class="{
@@ -143,7 +142,6 @@
 									</div>
 								</div>
 							</div>
-	
 						</div>
 					</div>
 
@@ -213,7 +211,7 @@
 				</div>
 			</section>
 			<!-- Risk Chat Section -->
-			<RiskChat :activeTab="activeTab" />
+			<!-- <RiskChat :activeTab="activeTab" /> -->
 		</div>
 	</div>
 </template>
@@ -1041,10 +1039,6 @@ img {
 		font-size: 0.8rem;
 		width: 100%;
 		border: none;
-		width: 100%;
-		display: block;
-		overflow-x: auto; /* Allows horizontal scrolling if needed */
-		-webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 	}
 
 	tr {
@@ -1068,6 +1062,13 @@ img {
 
 	td:last-child {
 		border-bottom: none;
+	}
+
+	td:before {
+		content: attr(data-label);
+		font-weight: bold;
+		padding-right: 1rem;
+		text-align: left;
 	}
 
 	thead {
@@ -1124,28 +1125,6 @@ img {
 }
 
 @media screen and (max-width: 480px) {
-
-	* {
-        box-sizing: border-box;
-    }
-    
-    body {
-        padding: 0;
-        margin: 0;
-    }
-    
-    .market-data-center {
-        border-radius: 0;
-        margin: 0;
-        padding: 0.5rem;
-    }
-    
-    /* Simplify table cells */
-    td[data-label]:before {
-        min-width: 30%;
-        max-width: 30%;
-    }
-
 	.container {
 		padding: 5px;
 	}
@@ -1294,23 +1273,6 @@ td[data-label="Name"] img {
 		padding: 0.75rem 0;
 		font-size: 1.1rem;
 	}
-
-	.market-data-center {
-        max-width: 100%;
-        padding: 1rem;
-        margin: 1rem 0;
-    }
-    
-    .container, .header, .margin-box {
-        width: 100%;
-        padding: 10px;
-        margin: 0;
-    }
-    
-    html, body {
-        overflow-x: hidden;
-        width: 100%;
-    }
 }
 
 @media screen and (max-width: 576px) {
@@ -1341,5 +1303,4 @@ td[data-label="Name"] img {
 		transform: translateY(0);
 	}
 }
-
 </style>
