@@ -2,7 +2,6 @@
     <div class="container">
         <!-- Conditional rendering based on activeTab -->
         <DisplayCrypto v-if="activeTab === 'crypto'" />
-        <DisplayStock v-if="activeTab === 'stock'" />
 
         <!-- Chat section only shown in stock tab -->
         <div v-if="activeTab === 'stock'" class="main-content">
@@ -26,7 +25,6 @@ import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
 import UserInput from '@/components/UserInput.vue';
 import News from '../Risk&Chat/News.vue';
-import DisplayStock from './DisplayStock.vue';
 import DisplayCrypto from './DisplayCrypto.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import defaultImage from "@/assets/anonymous.png";
@@ -38,7 +36,6 @@ export default {
     name: 'RiskChat',
     components: {
         DisplayCrypto,
-        DisplayStock,
         ChatFrame,
         MessageComponent,
         UserInput,
