@@ -23,10 +23,10 @@
 
 
 <script>
-import NewsSection from '../components/marketPage/NewsSection.vue';
-import CryptoWatch from '@/components/marketPage/CryptoWatch.vue';
-import StockWatch from '@/components/marketPage/StockWatch.vue';
-import RealEstateMap from '@/components/marketPage/RealEstateMap.vue'; 
+import NewsSection from '@/components/MarketPage/NewsSection.vue';
+import CryptoWatch from '@/components/MarketPage/CryptoWatch.vue';
+import StockWatch from '@/components/MarketPage/StockWatch.vue';
+import RealEstateMap from '@/components/MarketPage/RealEstateMap.vue'; 
 
 export default {
   name: 'MarketDataCenter',

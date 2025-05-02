@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import quizComponent from "../components/quizComponent.vue";
+import quizComponent from "@/components/quizComponent.vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
 //moving quiz into a component in case need to add more later on to Quiz Page

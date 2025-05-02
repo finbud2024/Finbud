@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import SocialShare from '@/components/Agent/SocialShare.vue'
-import CustomButton from '@/components/Agent/CustomButton.vue'
+import SocialShare from '@/components/FinAgentPage/SocialShare.vue'
+import CustomButton from '@/components/FinAgentPage/CustomButton.vue'
 import FeatureChecklist from './FeatureChecklist.vue';
 
 export default {

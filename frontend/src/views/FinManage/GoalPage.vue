@@ -146,7 +146,7 @@
 
           <div class="goals">
             <div v-for="goal in filteredGoals" :key="goal._id" class="goal" @click="showGoalProgress(goal)">
-              <img src="../assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
+              <img src="@/assets/financial-goal-mockup.jpg" alt="Goal Image" class="goal-image" />
               <div class="goal-content">
                 <div class="goal-icon">
                   <i :class="goal.icon"></i>
@@ -248,11 +248,11 @@
 
 <script>
 import axios from "axios";
-import TransactionLine from "../components/goalPage/TransactionLine.vue";
-import TransactionTable from "../components/goalPage/TransactionTable.vue";
-import TransactionModal from "../components/goalPage/TransactionModal.vue";
-import TransactionPie from "../components/goalPage/TransactionPie.vue";
-import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+import TransactionLine from "@/components/FinManage/GoalPage/TransactionLine.vue";
+import TransactionTable from "@/components/FinManage/GoalPage/TransactionTable.vue";
+import TransactionModal from "@/components/FinManage/GoalPage/TransactionModal.vue";
+import TransactionPie from "@/components/FinManage/GoalPage/TransactionPie.vue";
+import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
 import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
 export default {
   name: "GoalPage",

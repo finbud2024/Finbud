@@ -387,19 +387,19 @@
     fetchSimBannerStockData,
     fetchSimBannerStockDatav2,
     fetchSimBannerStockDatav3,
-  } from "../services/stockServices";
+  } from "../../services/stockServices";
   import StockScreener from "../components/StockScreener.vue";
   import CompanyCard from "@/components/CompanyCard.vue";
   import BannerCardSimulator from "@/components/BannerCardSimulator.vue";
-  import stockData from "./hardcodeData/StockData.js";
-  import PreviewOrderModal from "../components/StockSimulatorPage/PreviewOrderModal.vue";
-  import TransactionHistory from "../components/StockSimulatorPage/TransactionHistory.vue";
+  import stockData from "../hardcodeData/StockData.js";
+  import PreviewOrderModal from "../components/FinInvest/StockSimulatorPage/PreviewOrderModal.vue";
+  import TransactionHistory from "../components/FinInvest/StockSimulatorPage/TransactionHistory.vue";
   import PerformanceChart from "../components/PerformanceChart.vue";
-  import PredicitveCalc from "../components/StockSimulatorPage/PredicitveCalc.vue";
-  import PortfolioPerformance from "../components/StockSimulatorPage/PortfolioPerformance.vue";
+  import PredicitveCalc from "../components/FinInvest/StockSimulatorPage/PredicitveCalc.vue";
+  import PortfolioPerformance from "../components/FinInvest/StockSimulatorPage/PortfolioPerformance.vue";
   import { toast } from "vue3-toastify";
   import axios from "axios";
-  import { showReward } from "../utils/utils";
+  import { showReward } from "../../utils/utils";
   import { gptServices } from "@/services/gptServices";
   import QuizRewards from "@/components/QuizRewards.vue";
   

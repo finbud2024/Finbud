@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import InvestorCard from '@/components/superInvestors/InvestorCard/InvestorCard.vue';
+import InvestorCard from '@/components/FinManage/SuperInvestorsPage/InvestorCard/InvestorCard.vue';
 import { getInvestors } from '@/services/investorService';
 
 const investors = ref([]);

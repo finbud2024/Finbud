@@ -15,10 +15,10 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-import BackNavigation from '@/components/Agent/BackNavigation.vue'
-import PageHeader from '@/components/Agent/PageHeader.vue'
-import MainContent from '@/components/Agent/MainContent.vue'
-import ChatSection from '@/components/Agent/ChatSection.vue'
+import BackNavigation from '@/components/FinAgentPage/BackNavigation.vue'
+import PageHeader from '@/components/FinAgentPage/PageHeader.vue'
+import MainContent from '@/components/FinAgentPage/MainContent.vue'
+import ChatSection from '@/components/FinAgentPage/ChatSection.vue'
 
 export default defineComponent({
   name: "AgentPage",

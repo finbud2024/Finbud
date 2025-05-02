@@ -179,7 +179,7 @@
 </template>
 
 <script>
-import { processFinancialNews } from '@/components/Agent/agent.js'
+import { processFinancialNews } from '@/components/FinAgentPage/agent.js'
 import SocialShare from './SocialShare.vue';
 
 export default {

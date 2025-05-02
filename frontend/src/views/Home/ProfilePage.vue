@@ -83,7 +83,7 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import defaultImage from "@/assets/anonymous.png";
 import api from "@/utils/api";
-import FinCoinLeaderboard from "../components/FinCoinLeaderboard.vue";
+import FinCoinLeaderboard from "@/components/FinCoinLeaderboard.vue";
 
 export default {
   components: {

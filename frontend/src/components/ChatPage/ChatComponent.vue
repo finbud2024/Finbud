@@ -26,12 +26,12 @@
 <script>
 // COMPONENT IMPORT
 import ChatFrame from "./ChatFrame.vue";
-import MessageComponent from "./MessageComponent.vue";
-import UserInput from "./UserInput.vue";
-import TradingViewWidget from "./TradingViewWidget.vue";
+import MessageComponent from "../MessageComponent.vue";
+import UserInput from "../UserInput.vue";
+import TradingViewWidget from "../TradingViewWidget.vue";
 import ChatAgent from "./ChatAgent.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
-import FileIndicator from "./FileIndicator.vue";
+import FileIndicator from "../FileIndicator.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";

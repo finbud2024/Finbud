@@ -1,7 +1,8 @@
+<!-- Super Investors: Investors Details -->
 <script setup>
 import { computed, ref } from 'vue';
-import Holdings from '../components/superInvestors/Holdings/Holdings.vue';
-import Companies from '../components/superInvestors/Companies/Companies.vue';
+import Holdings from '@/components/FinManage/SuperInvestorsPage/Holdings/Holdings.vue';
+import Companies from '@/components/FinManage/SuperInvestorsPage/Companies/Companies.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();

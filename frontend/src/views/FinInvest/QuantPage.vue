@@ -515,9 +515,9 @@ export default {
 </template>
 
 <script>
-import MonteCarloSimulation from "./MonteCarloSimulation.vue";
-import DashBoard from "@/components/quant/DashBoard.vue";
-import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
+import MonteCarloSimulation from "./QuantMonteCarloSimulation.vue";
+import DashBoard from "@/components/FinInvest/QuantPage/DashBoard.vue";
+import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
 
 export default {
   components: {

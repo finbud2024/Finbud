@@ -44,10 +44,10 @@
 <script>
 import NavBar from "./components/NavBar.vue";
 import FooterBar from "./components/FooterBar.vue";
-import ChatBubble from "./components/ChatBubble.vue";
+import ChatBubble from "./components/ChatPage/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
-import LoadingPage from "./views/LoadingPage.vue";
+import LoadingPage from "./views/Home/LoadingPage.vue";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {

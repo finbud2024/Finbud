@@ -22,7 +22,7 @@
 			@click="showGuidance = true"
 		>
 			<div class="guidance-image-container">
-				<img class="guidance-image" src="../assets/botrmbg.png" alt="Finbud" />
+				<img class="guidance-image" src="@/assets/botrmbg.png" alt="Finbud" />
 			</div>
 			<span class="guidance-text">{{ $t("chatComponent.guildence") }}</span>
 		</div>
@@ -44,10 +44,10 @@
 
 <script>
 //COMPONENT IMPORT
-import ChatComponent from "@/components/ChatComponent.vue";
-import SideBar from "../components/SideBar.vue";
-import GuidanceModal from "../components/GuidanceModal.vue";
-import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
+import ChatComponent from "@/components/ChatPage/ChatComponent.vue";
+import SideBar from "@/components/SideBar.vue";
+import GuidanceModal from "@/components/GuidanceModal.vue";
+import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 //UTILITIES + LIB IMPORT
 
 export default {

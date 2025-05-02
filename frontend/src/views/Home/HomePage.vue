@@ -183,10 +183,11 @@
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex';
-import BigGreenButton from "../components/Button/ChatNow.vue";
-import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
+import BigGreenButton from "@/components/Button/ChatNow.vue";
+import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 import { useTypingEffect } from '@/composables/useTypingEffect';
 import UserInput from '@/components/UserInput.vue';
+
 import axios from 'axios';
 
 export default {

@@ -132,6 +132,12 @@
               @click="toggleDropdownInvest(false)"
               >Fund Letter</router-link
             >
+            <router-link
+              to="/docs"
+              class="docs"
+              @click="toggleDropdownData(false)"
+              >{{ $t("Fin Data") }}</router-link
+            >
           </div>
         </li>
 
@@ -190,17 +196,7 @@
           @mouseenter="toggleDropdownData(true)"
           @mouseleave="toggleDropdownData(false)"
         >
-          <div class="services-dropdown dropbtn">
-            {{ $t("finData") }} <span class="arrow-down"></span>
-          </div>
-          <div class="dropdown-content" v-show="isDataDropdownOpen">
-            <router-link
-              to="/docs"
-              class="docs"
-              @click="toggleDropdownData(false)"
-              >{{ $t("Docs") }}</router-link
-            >
-          </div>
+
         </li>
 
         <li v-if="!isAuthenticated && !isAuthLoading">
@@ -355,6 +351,7 @@
               @click="toggleDropdownMobile"
               >{{ $t("quantSimulator") }}</router-link
             >
+            
 
             <strong>{{ $t("finEdu") }}</strong>
             <router-link
