@@ -208,14 +208,11 @@ const routes = [
     component: AgentPage,
   },
   {
-<<<<<<< HEAD
     path: '/chat-view',
     component: ChatComponent,  // Ensure ChatComponent is imported
-=======
     path: "/pestle/",
     name: "PestlePage",
     component: PestlePage,
->>>>>>> e761646099a3d1d75c1edcf33f1759c18222baba
   },
   {
     path: "/forgot-password",

@@ -56,10 +56,7 @@
     "fuse.js": "^7.1.0",
     "glob": "^10.4.1",
     "google-finance": "^0.1.12",
-<<<<<<< HEAD
     "html-pdf": "^3.0.1",
-=======
->>>>>>> e761646099a3d1d75c1edcf33f1759c18222baba
     "html2pdf.js": "^0.10.3",
     "http-proxy-middleware": "^3.0.0",
     "ignore": "^5.2.0",
