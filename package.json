@@ -2,14 +2,14 @@
   "name": "FinBud-AI-bot",
   "version": "0.1.0",
   "type": "module",
-"scripts": {
-  "netlify:build": "cd frontend && vue-cli-service build",
-  "client": "cd frontend && vue-cli-service serve",
-  "start": "nodemon backend/functions/server.js",
-  "dev": "dotenv -e .env netlify dev",
-  "seeding": "node backend/utils/stockSeeding.js",
-  "install:python-deps": "pip install -r backend/functions/requirements.txt"
-},
+  "scripts": {
+    "netlify:build": "cd frontend && vue-cli-service build",
+    "client": "cd frontend && vue-cli-service serve",
+    "start": "nodemon backend/functions/server.js",
+    "dev": "dotenv -e .env netlify dev",
+    "seeding": "node backend/utils/stockSeeding.js",
+    "install:python-deps": "pip install -r backend/functions/requirements.txt"
+  },
   "dependencies": {
     "@canvasjs/charts": "^3.10.0",
     "@canvasjs/stockcharts": "^1.12.12",
@@ -95,6 +95,7 @@
     "@vuepic/vue-datepicker": "^8.8.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "csv-loader": "^3.0.5",
     "dotenv-webpack": "^8.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
