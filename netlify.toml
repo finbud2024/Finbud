@@ -16,3 +16,7 @@
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
   PORT = "8000"
+  
+[build.environment]
+  YARN_FLAGS = "--network-timeout 600000"
+  PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
