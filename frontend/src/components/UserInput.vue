@@ -33,11 +33,20 @@
 					</div>
 					<div class="agent-btn">
 						<button
-							class="agent-button"
-							:class="{ active: agentMode }"
+							class="chat-mode-button"
+							:class="{ active: chatMode === 'agent' }"
 							@click="toggleAgentMode"
 						>
 							Agent
+						</button>
+					</div>
+					<div class="agent-btn">
+						<button
+							class="chat-mode-button"
+							:class="{ active: chatMode === 'think' }"
+							@click="toggleThinkMode"
+						>
+							Think
 						</button>
 					</div>
 				</div>
@@ -116,7 +125,7 @@ export default {
 			typingIndex: 0,
 			charIndex: 0,
 			isDeleting: false,
-			agentMode: false,
+			chatMode: "",
 			inputDebounceTimer: null,
 		};
 	},
@@ -140,14 +149,18 @@ export default {
 
 			if (this.redirectOnSend) {
 				// Emit to parent to handle redirect + send
+				this.$emit("chat-mode", this.chatMode);
 				this.$emit("send-message", this.messageText.trim());
 			} else {
 				// Normal mode: just send directly
+				this.$emit("chat-mode", this.chatMode);
 				this.$emit("send-message", {
 					message: this.messageText.trim(),
 					file: this.selectedFile,
 				});
 			}
+
+			console.log(`chat mode after sent from user input: ${this.chatMode}`);
 
 			this.messageText = "";
 			this.isTyping = false;
@@ -204,12 +217,29 @@ export default {
 		},
 
 		toggleAgentMode() {
-			this.agentMode = !this.agentMode;
-			console.log(
-				"[UserInput] Toggling agent mode. New value:",
-				this.agentMode
-			);
-			this.$emit("agent-mode", this.agentMode);
+			if (this.chatMode) {
+				this.chatMode = "";
+			} else {
+				this.chatMode = "agent";
+			}
+		},
+
+		toggleThinkMode() {
+			if (this.chatMode) {
+				this.chatMode = "";
+			} else {
+				this.chatMode = "think";
+			}
+		},
+
+		checkChatMode() {
+			if (this.messageText.includes("#agent")) {
+				this.chatMode = "agent";
+				this.messageText = this.messageText.replace("#agent", "");
+			} else if (this.messageText.includes("#think")) {
+				this.chatMode = "think";
+				this.messageText = this.messageText.replace("#think", "");
+			}
 		},
 
 		handleInput() {
@@ -223,19 +253,8 @@ export default {
 				this.isTyping = this.messageText.length > 0;
 
 				// Check for agent mode triggers
-				if (
-					(this.messageText.includes("#10") ||
-						this.messageText.includes("#agent")) &&
-					!this.agentMode // Only emit if not already active
-				) {
-					this.agentMode = true;
-					this.messageText = this.messageText.replace("#10", "");
-					this.messageText = this.messageText.replace("#agent", "");
-					console.log(
-						"[UserInput] Agent mode triggered by input. Emitting true."
-					);
-					this.$emit("agent-mode", true);
-				}
+				this.checkChatMode();
+
 			}, 50); // Debounce time of 50ms
 		},
 
@@ -446,7 +465,7 @@ export default {
 }
 
 .upload-btn,
-.agent-btn,
+.chat-mode-button,
 .mic-btn,
 .send-btn {
 	position: relative;

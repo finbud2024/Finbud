@@ -796,7 +796,7 @@ export default {
 .dropdown-content:before {
   content: "";
   position: absolute;
-  top: 0px; /* Moved up to account for padding */
+  top: 0px; /* Moved up to account for padding */ 
   left: 20px; /* Position arrow more to the left */
   width: 0;
   height: 0;

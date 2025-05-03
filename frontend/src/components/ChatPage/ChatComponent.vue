@@ -3,23 +3,62 @@
 		<ChatFrame class="chat-frame-content">
 			<div v-for="(message, index) in messages" :key="index">
 				<FileIndicator v-if="message.containFile" :file="message.file" />
-        		<MessageComponent :is-user="message.isUser" :text="message.text" :typing="message.typing"
-					:is-thinking="message.isThinking" :htmlContent="message.htmlContent"
+
+				<MessageComponent
+					:is-user="message.isUser"
+					:text="message.text"
+					:typing="message.typing"
+					:is-thinking="message.isThinking"
+					:htmlContent="message.htmlContent"
 					:username="message.isUser ? displayName : 'FinBud Bot'"
 					:avatar-src="message.isUser ? userAvatar : botAvatar"
-					:sources="message.isUser ? [] : message.sources" :videos="message.isUser ? [] : message.videos"
+					:sources="message.isUser ? [] : message.sources"
+					:videos="message.isUser ? [] : message.videos"
 					:relevantQuestions="message.isUser ? [] : message.relevantQuestions"
-					@question-click="handleQuestionClick" />
+					@question-click="handleQuestionClick"
+				/>
+
+				<!-- Only show ThinkingProcess for the current message when in think mode -->
+				<ThinkingProcess
+					v-if="
+						chatMode === 'think' &&
+						showThinkingProcess &&
+						index === messages.length - 1
+					"
+					@thinking-complete="handleThinkingComplete"
+					:scroll-to-bottom="scrollChatFrameToBottom"
+				/>
+
+				<!-- Agent Mode work flow -->
+				<ChatAgent
+					ref="chatAgent"
+					v-if="
+						chatMode === 'agent' &&
+						showAgentWorkflow &&
+						index === messages.length - 1
+					"
+					@workflow-complete="handleAgentWorkflowComplete"
+					:scroll-to-bottom="scrollChatFrameToBottom"
+				/>
 
 				<!-- Add TradingView widget after stock messages -->
-				<TradingViewWidget v-if="message.showChart" :symbol="message.stockSymbol" />
+				<TradingViewWidget
+					v-if="message.showChart"
+					:symbol="message.stockSymbol"
+				/>
 			</div>
-			<!-- Agent Mode work flow - Only show when workflow starts -->
-			<ChatAgent ref="chatAgent" v-if="showAgentWorkflow" @workflow-complete="handleWorkflowComplete"
-				:scroll-to-bottom="scrollChatFrameToBottom" />
 		</ChatFrame>
-		<ChatSuggestion v-if="showSuggestion" :lan="this.$i18n.locale" class="suggestion-wrapper" @suggestion-selected="handleSuggestion"/>
-    <UserInput ref="userInput" @send-message="handleUserSubmit" @agent-mode="handleAgentMode" />
+		<ChatSuggestion
+			v-if="showSuggestion"
+			:lan="this.$i18n.locale"
+			class="suggestion-wrapper"
+			@suggestion-selected="handleSuggestion"
+		/>
+		<UserInput
+			ref="userInput"
+			@send-message="handleUserSubmit"
+			@chat-mode="handleChatMode"
+		/>
 	</div>
 </template>
 
@@ -32,6 +71,8 @@ import TradingViewWidget from "../TradingViewWidget.vue";
 import ChatAgent from "./ChatAgent.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
+
+import ThinkingProcess from "./ThinkingProcess.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -49,7 +90,6 @@ import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf";
 
 GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
-
 const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
 const geminiAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
@@ -63,18 +103,20 @@ export default {
 		TradingViewWidget,
 		ChatAgent,
 		FileIndicator,
-    ChatSuggestion
+		ChatSuggestion,
+		ThinkingProcess,
 	},
 	data() {
 		return {
+			currentUserMessageText: "",
 			messages: [],
 			sources: [],
 			videos: [],
 			relevantQuestions: [],
 			botAvatar: require("@/assets/botrmbg.png"),
-			agentMode: false,
+			chatMode: "",
 			showAgentWorkflow: false,
-			pendingMessageAfterWorkflow: null,
+			showThinkingProcess: false,
 		};
 	},
 	computed: {
@@ -122,47 +164,31 @@ export default {
 	methods: {
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		handleUserSubmit({ message, file }) {
+			console.log(
+				`chat mode before sent from chat component: ${this.chatMode}`
+			);
 			if (file) {
 				this.handleFileUpload(message, file);
 			} else if (message) {
-				const userMessageText = message.trim();
+				this.currentUserMessageText = message.trim();
 				this.messages.push({
-					text: userMessageText,
+					text: this.currentUserMessageText,
 					isUser: true,
 					typing: false,
 					timestamp: new Date().toLocaleTimeString(),
 				});
+
 				this.$nextTick(() => this.scrollChatFrameToBottom());
 
-				console.log(
-					"[ChatComponent] handleUserSubmit - Checking agentMode:",
-					this.agentMode
-				);
-				if (this.agentMode) {
-					console.log(
-						"[ChatComponent] handleUserSubmit - Agent mode ON. Setting showAgentWorkflow=true and starting workflow..."
-					);
-					this.pendingMessageAfterWorkflow = userMessageText;
+				if (this.chatMode === "agent") {
 					this.showAgentWorkflow = true;
-					this.$nextTick(() => {
-						if (this.$refs.chatAgent) {
-							this.$refs.chatAgent.startWorkflow();
-						} else {
-							console.error(
-								"[ChatComponent] ChatAgent ref not found immediately after setting showAgentWorkflow! Retrying..."
-							);
-							setTimeout(() => this.$refs.chatAgent.startWorkflow(), 50);
-						}
-					});
+				} else if (this.chatMode === "think") {
+					this.showThinkingProcess = true;
 				} else {
-					console.log(
-						"[ChatComponent] handleUserSubmit - Agent mode OFF. Sending message directly..."
-					);
-					this.sendMessage(userMessageText);
+					this.sendMessage(this.currentUserMessageText);
 				}
-
-				this.$refs.userInput && this.$refs.userInput.clearInput?.();
 			}
+			this.$refs.userInput && this.$refs.userInput.clearInput?.();
 		},
 
 		// ---------------------------- RESPONSE MESSGE ----------------------------
@@ -420,9 +446,14 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 							const amount = parseInt(match[2], 10);
 							const type = "Income";
 							const balance = await this.calculateNewBalance(amount);
-							const category = await this.categorizeTransaction(description, type);
+							const category = await this.categorizeTransaction(
+								description,
+								type
+							);
 							await this.addTransaction(description, amount, type, category);
-							const res = `Transaction added: "${description}" as a ${type} in category "${category}" with amount $${Math.abs(amount)}. Your new balance is $${balance}.`;
+							const res = `Transaction added: "${description}" as a ${type} in category "${category}" with amount $${Math.abs(
+								amount
+							)}. Your new balance is $${balance}.`;
 							console.log(res);
 							const Responsegpt = await gptServices([
 								{
@@ -480,9 +511,14 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 								const amount = -parseInt(match[2], 10);
 								const type = "Expense";
 								const balance = await this.calculateNewBalance(amount);
-								const category = await this.categorizeTransaction(description, type);
+								const category = await this.categorizeTransaction(
+									description,
+									type
+								);
 								await this.addTransaction(description, amount, type, category);
-								const res = `Transaction added: "${description}" as a ${type} in category "${category}" with amount $${Math.abs(amount)}. Your new balance is $${balance}.`;
+								const res = `Transaction added: "${description}" as a ${type} in category "${category}" with amount $${Math.abs(
+									amount
+								)}. Your new balance is $${balance}.`;
 								const Responsegpt = await gptServices([
 									{
 										role: "user",
@@ -553,8 +589,9 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 					coinData.slice(0, 10).map((item) => {
 						tableTemplate += `
 				    <tr>
-				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${item.name
-							}
+				    <td><img style="width: 50px; aspect-ratio: 1;" src=${item.iconUrl} alt=${
+							item.name
+						}
 						}>${item.name}</td>
 				    <td>${item.rank}</td>
 				    <td>${item.tier}</td>
@@ -923,26 +960,17 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 
 		// --------------------------- AGENT MODE -----------------------------------------------------
 
-		handleAgentMode(agentModeValue) {
-			console.log("[ChatComponent] handleAgentMode received:", agentModeValue);
-			this.agentMode = agentModeValue;
-			console.log("[ChatComponent] this.agentMode is now:", this.agentMode);
-			if (!agentModeValue) {
-				this.showAgentWorkflow = false;
-			}
+		handleChatMode(mode) {
+			this.chatMode = mode;
+			console.log(`Chat mode changed to: ${mode}`);
 		},
 
-		handleWorkflowComplete() {
-			console.log("[ChatComponent] handleWorkflowComplete received.");
-			this.showAgentWorkflow = false;
-			if (this.pendingMessageAfterWorkflow) {
-				this.sendMessage(this.pendingMessageAfterWorkflow);
-				this.pendingMessageAfterWorkflow = null;
-			} else {
-				console.warn(
-					"[ChatComponent] Workflow completed, but no pending message found"
-				);
-			}
+		handleAgentWorkflowComplete() {
+			setTimeout(() => {
+				this.showAgentWorkflow = false;
+				this.sendMessage(this.currentUserMessageText);
+				this.currentUserMessageText = "";
+			}, 1500);
 		},
 
 		async handleSuggestion(suggestion) {
@@ -950,9 +978,17 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				text: suggestion,
 				isUser: true,
 				timestamp: new Date().toLocaleTimeString(),
-			});			
+			});
 			this.sendMessage(suggestion);
-			
+		},
+
+		// --------------------------- THINKING PROCESS -----------------------------------------------------
+		handleThinkingComplete() {
+			setTimeout(() => {
+				this.showThinkingProcess = false;
+				this.sendMessage(this.currentUserMessageText);
+				this.currentUserMessageText = "";
+			}, 1500);
 		},
 
 		// --------------------------- READ FILE -----------------------------------------------------
@@ -971,30 +1007,34 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				if (file.type.startsWith("image/")) {
 					try {
 						result = await this.analyzeImageOpenAI(file, newMessage);
-					}
-					catch (err) {
-						console.error("OpenAI failed to anylyze image, switching to Gemini:", err);
+					} catch (err) {
+						console.error(
+							"OpenAI failed to anylyze image, switching to Gemini:",
+							err
+						);
 						result = await this.analyzeImageGemini(file, newMessage);
 					}
 				} else if (file.type === "application/pdf") {
 					try {
 						result = await this.analyzePDFOpenAI(file, newMessage);
-						new Promise((_, reject) => 
+						new Promise((_, reject) =>
 							setTimeout(() => reject(new Error("OpenAI timeout")), 3000)
-						);	
-					}
-					catch (err) {
-						console.error("OpenAI failed to anylyze pdf, switching to Gemini:", err);
+						);
+					} catch (err) {
+						console.error(
+							"OpenAI failed to anylyze pdf, switching to Gemini:",
+							err
+						);
 						result = await this.analyzePDFGemini(file, newMessage);
 					}
 				} else {
 					throw new Error("Unsupported file type");
 				}
 				this.messages.push({
-						text: result,
-						isUser: false,
-						timestamp: new Date().toLocaleTimeString(),
-					});
+					text: result,
+					isUser: false,
+					timestamp: new Date().toLocaleTimeString(),
+				});
 			} catch (err) {
 				console.error("Error processing file:", err);
 				this.addTypingResponse("Failed to process file", false);
@@ -1009,8 +1049,8 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				model: "gpt-4o",
 				messages: [
 					{
-            role: "system",
-            content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+						role: "system",
+						content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
             Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
             Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
             Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
@@ -1042,21 +1082,22 @@ Bạn là FinBud — trợ lý tài chính.
 3. Luôn thân thiện, vui vẻ! 😊
 `;
 			const result = await model.generateContent({
-				contents: [{
-					role: "user",
-					parts: [
-					{ text: systemPrompt },
-					{ text: "Câu hỏi của người dùng: " + newMessage },
+				contents: [
 					{
-						inlineData: {
-						mimeType: file.type,
-						data: base64Image,
-						},
+						role: "user",
+						parts: [
+							{ text: systemPrompt },
+							{ text: "Câu hỏi của người dùng: " + newMessage },
+							{
+								inlineData: {
+									mimeType: file.type,
+									data: base64Image,
+								},
+							},
+						],
 					},
-					],
-				
-				}],	
-			})
+				],
+			});
 			return result.response.candidates[0].content.parts[0].text;
 		},
 
@@ -1069,24 +1110,24 @@ Bạn là FinBud — trợ lý tài chính.
 			const response = await this.openai.responses.create({
 				model: "gpt-4o",
 				input: [
-				{
-					role: "system",
-					content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
+					{
+						role: "system",
+						content: `Bạn là FinBud — một trợ lý tài chính thông minh, thân thiện, chuyên nói chuyện bằng tiếng Việt.
 					Tuy nhiên, nếu người dùng dùng ngôn ngữ khác, bạn có thể phản hồi bằng ngôn ngữ đó cho phù hợp.
 					Hãy luôn trả lời một cách vui vẻ, dễ hiểu, như một người bạn đáng tin cậy của Gen Z. 😎
 					Nếu tin nhắn người dùng không rõ ràng, hãy lịch sự nhắc họ viết lại rõ hơn, và phản hồi bằng **tiếng Việt**.`,
-					role: "user",
-					content: [
-					{
-						type: "input_file",
-						file_id: uploadedFile.id
+						role: "user",
+						content: [
+							{
+								type: "input_file",
+								file_id: uploadedFile.id,
+							},
+							{
+								type: "input_text",
+								text: newMessage,
+							},
+						],
 					},
-					{
-						type: "input_text",
-						text: newMessage,
-					},
-					],
-				},
 				],
 			});
 
@@ -1107,14 +1148,15 @@ Bạn là FinBud — trợ lý tài chính.
 `;
 
 			const result = await model.generateContent({
-				contents: [{
-					role: "user",
-					parts: [
-					{ text: systemPrompt },
-					{ text: `${newMessage}\n${textFromPDF}` },
-					],
-				
-				}],	
+				contents: [
+					{
+						role: "user",
+						parts: [
+							{ text: systemPrompt },
+							{ text: `${newMessage}\n${textFromPDF}` },
+						],
+					},
+				],
 			});
 
 			return result.response.candidates[0].content.parts[0].text;
@@ -1124,16 +1166,16 @@ Bạn là FinBud — trợ lý tài chính.
 			return new Promise((resolve, reject) => {
 				const reader = new FileReader();
 				reader.onload = async (e) => {
-				const typedarray = new Uint8Array(e.target.result);
-				const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
-				let textContent = "";
-				for (let i = 1; i <= pdf.numPages; i++) {
-					const page = await pdf.getPage(i);
-					const content = await page.getTextContent();
-					const pageText = content.items.map(item => item.str).join(" ");
-					textContent += pageText + "\n";
-				}
-				resolve(textContent);
+					const typedarray = new Uint8Array(e.target.result);
+					const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+					let textContent = "";
+					for (let i = 1; i <= pdf.numPages; i++) {
+						const page = await pdf.getPage(i);
+						const content = await page.getTextContent();
+						const pageText = content.items.map((item) => item.str).join(" ");
+						textContent += pageText + "\n";
+					}
+					resolve(textContent);
 				};
 				reader.onerror = reject;
 				reader.readAsArrayBuffer(file);
@@ -1228,10 +1270,10 @@ Bạn là FinBud — trợ lý tài chính.
 
 				// Verify the result is a valid number
 				if (isNaN(newBalance)) {
-					console.error('Invalid balance calculation:', {
+					console.error("Invalid balance calculation:", {
 						currentBalance,
 						amount: newAmount,
-						transactions: transactions[0]
+						transactions: transactions[0],
 					});
 					return 0;
 				}
@@ -1271,17 +1313,19 @@ Bạn là FinBud — trợ lý tài chính.
 				const newBalance = await this.calculateNewBalance(amount);
 				const date = new Date().toISOString();
 
-
 				// Make API call with all required fields
-				const response = await api.post(`${process.env.VUE_APP_DEPLOY_URL}/transactions`, {
-					userId,
-					description,
-					amount,
-					balance: newBalance,
-					date,
-					type,
-					category,
-				});
+				const response = await api.post(
+					`${process.env.VUE_APP_DEPLOY_URL}/transactions`,
+					{
+						userId,
+						description,
+						amount,
+						balance: newBalance,
+						date,
+						type,
+						category,
+					}
+				);
 
 				// Emit event to update other components
 
@@ -1322,14 +1366,14 @@ Bạn là FinBud — trợ lý tài chính.
 "Chi 70.000 VNĐ mua sáchhhhhh", 
 "Mua 5 cổ phiếu Apple cho tui nè", 
 "Giá cổ phiếu Tesla là bao nhiêu á Bud ơii"`;
-        if (this.$i18n.locale != 'vi') {
-                botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot:
+				if (this.$i18n.locale != "vi") {
+					botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot:
 "Record income 12,500,000 VND", 
 "Analyze my budget <3", 
 "Spend 70,000 VND to buy bookshhhhh", 
 "Buy me 5 Apple shares", 
 "How much is Tesla stock, Bud"`;
-              }
+				}
 				this.addTypingResponse(botInstruction, false);
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
 				const chats = await axios.get(chatApi);
@@ -1387,58 +1431,57 @@ Bạn là FinBud — trợ lý tài chính.
 			}
 		},
 		async categorizeTransaction(description, type) {
-  const categories = type === "Income"
-    ? [
-      "Salary",
-      "Freelance & Side Job",
-      "Allowance",
-      "Investment Return",
-      "Gift",
-      "Refund",
-    ]
-    : [
-      "Food & Groceries",
-      "Housing & Utilities",
-      "Transportation",
-      "Health & Wellness",
-      "Lifestyle & Subscriptions"
-    ];
+			const categories =
+				type === "Income"
+					? [
+							"Salary",
+							"Freelance & Side Job",
+							"Allowance",
+							"Investment Return",
+							"Gift",
+							"Refund",
+					  ]
+					: [
+							"Food & Groceries",
+							"Housing & Utilities",
+							"Transportation",
+							"Health & Wellness",
+							"Lifestyle & Subscriptions",
+					  ];
 
-  let category = "";
-  let attempts = 0;
-  const maxAttempts = 3;
+			let category = "";
+			let attempts = 0;
+			const maxAttempts = 3;
 
-  while (!categories.includes(category) && attempts < maxAttempts) {
-    const prompt = `You are a smart finance assistant. Given the transaction description: ${description}, and the type: ${type}, select the most appropriate category from the following list:
+			while (!categories.includes(category) && attempts < maxAttempts) {
+				const prompt = `You are a smart finance assistant. Given the transaction description: ${description}, and the type: ${type}, select the most appropriate category from the following list:
 ${categories.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
 Respond ONLY with the category name, and nothing else.`;
 
-    const response = await gptServices([
-      { role: "user", content: prompt }
-    ]);
+				const response = await gptServices([{ role: "user", content: prompt }]);
 
-    category = response.trim().replace(/^"(.*)"$/, '$1');
+				category = response.trim().replace(/^"(.*)"$/, "$1");
 
-    if (!categories.includes(category)) {
-      // Nếu chưa phân loại được --> Gọi API tạo câu trả lời tự động giải thích tại sao
-      const explanationPrompt = `You are a smart finance assistant. The user described the transaction as: "${description}". 
+				if (!categories.includes(category)) {
+					// Nếu chưa phân loại được --> Gọi API tạo câu trả lời tự động giải thích tại sao
+					const explanationPrompt = `You are a smart finance assistant. The user described the transaction as: "${description}". 
 You tried to categorize it into type "${type}" but none of the expected categories match correctly.
 Please write a short, friendly explanation (in Vietnamese) telling the user why you cannot categorize this yet and politely ask them to clarify more.`;
 
-      const explanation = await gptServices([
-        { role: "user", content: explanationPrompt }
-      ]);
+					const explanation = await gptServices([
+						{ role: "user", content: explanationPrompt },
+					]);
 
-      await this.addTypingResponse(explanation.trim(), false);
-      return null; // Ngưng luôn, chờ user clarify
-    }
+					await this.addTypingResponse(explanation.trim(), false);
+					return null; // Ngưng luôn, chờ user clarify
+				}
 
-    attempts++;
-  }
+				attempts++;
+			}
 
-  return category;
-}
+			return category;
+		},
 	},
 	mounted() {
 		const autoMessage = this.$route.query.autoMessage;
@@ -1448,14 +1491,14 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 			this.$router.replace({ query: null }); // xoá query để reload ko gửi lại
 		}
 
-    if (!this.isAuthenticated) {
-      let botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
-      if (this.$i18n.locale === 'vi') {
-        botInstruction = `Hế lô, bạn!\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
-      }
-      this.addTypingResponse(botInstruction, false);
-    }
-  },
+		if (!this.isAuthenticated) {
+			let botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+			if (this.$i18n.locale === "vi") {
+				botInstruction = `Hế lô, bạn!\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
+			}
+			this.addTypingResponse(botInstruction, false);
+		}
+	},
 };
 </script>
 
@@ -1649,7 +1692,6 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 }
 
 .suggestion-wrapper {
-  width: 90%;
+	width: 90%;
 }
-
 </style>
