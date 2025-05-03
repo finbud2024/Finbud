@@ -72,7 +72,7 @@ import ChatAgent from "./ChatAgent.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 
-import ThinkingProcess from "./ThinkingProcess.vue";
+import ThinkingProcess from "../ThinkingProcess.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
