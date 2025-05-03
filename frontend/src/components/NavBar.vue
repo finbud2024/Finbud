@@ -59,7 +59,7 @@
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
             <router-link
-              to="/goal"
+              to="/goal" 
               class="goal"
               @click="toggleDropdown(false)"
               >{{ $t("goal") }}</router-link
@@ -150,6 +150,12 @@
               class="quizz"
               @click="toggleDropdownEdu(false)"
               >{{ $t("quiz") }}</router-link
+            >
+            <router-link
+              to="/course"
+              class="course"
+              @click="toggleDropdownEdu(false)"
+              >{{ $t("course") }}</router-link
             >
             <router-link
               to="/event"

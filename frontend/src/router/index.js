@@ -19,6 +19,7 @@ import EventHub from "@/views/EventHub.vue";
 import LearningRoadMap from "@/views/LearningRoadMap.vue";
 import QuantSimulator from "@/views/QuantSimulator.vue";
 import ForumView from "@/views/ForumView.vue";
+import CoursePage from "@/views/CoursePage.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/ThreadView.vue";
 import StartThread from "@/views/StartThread.vue";
@@ -140,6 +141,12 @@ const routes = [
     path: "/forum",
     name: "ForumView",
     component: ForumView,
+    props: true,
+  },
+  {
+    path: "/course",
+    name: "CoursePage",
+    component: CoursePage,
     props: true,
   },
   {
