@@ -15,7 +15,6 @@
 
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
-  PORT = "8000"
 
 [build.environment]
   NODE_VERSION = "18"

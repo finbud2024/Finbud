@@ -2853,7 +2853,7 @@ csstype@^3.1.3:
 
 csv-loader@^3.0.5:
   version "3.0.5"
-  resolved "https://registry.npmjs.org/csv-loader/-/csv-loader-3.0.5.tgz"
+  resolved "https://registry.yarnpkg.com/csv-loader/-/csv-loader-3.0.5.tgz#7becd534f9289f871ea78db525a1cf58578072ec"
   integrity sha512-vO01k3mtxlSeipH4bvLgzM3yuhlF3efNBnx3xXpvyG/yZT4cyNgk3jh3cuoilKPHpGC5uvGCvq4pYxoafa5jsQ==
   dependencies:
     loader-utils "^2.0.0"
