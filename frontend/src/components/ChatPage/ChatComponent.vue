@@ -72,7 +72,7 @@ import ChatAgent from "./ChatAgent.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 
-import ThinkingProcess from "./ThinkingProcess.vue";
+import ThinkingProcess from "../ThinkingProcess.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -1374,12 +1374,12 @@ Bạn là FinBud — trợ lý tài chính.
 "Buy me 5 Apple shares", 
 "How much is Tesla stock, Bud"`;
 				}
-				this.addTypingResponse(botInstruction, false);
+				await this.addTypingResponse(botInstruction, false);
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
 				const chats = await axios.get(chatApi);
 				const chatsData = chats.data;
 				if (Array.isArray(chatsData)) {
-					chatsData.forEach((chat) => {
+					for (const chat of chatsData) {
 						const prompt = {
 							text: chat.prompt.toString(),
 							isUser: true,
@@ -1420,7 +1420,7 @@ Bạn là FinBud — trợ lý tài chính.
 								this.messages.push(htmlResponse);
 							});
 						}
-					});
+					};
 				} else {
 					console.error("Error: chatsData is not an array");
 				}

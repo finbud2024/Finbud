@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="container">
 		<!-- Bot Chat Component - Placed outside the main container -->
 		<div class="bot-chat-container" :class="{
 			'bot-visible': activeTab === 'realEstate',
@@ -19,9 +19,8 @@
 			</div>
 		</div>
 
-		<div class="container">
 			<!-- Market Data Section -->
-			<section>
+			<section class="market-section">
 				<h2 class="headtitle">Market Data Center</h2>
 
 				<!-- <div v-if="marketSummary" class="market-summary">
@@ -142,15 +141,6 @@
 									</div>
 								</div>
 							</div>
-
-							<!-- Stock History Section -->
-							<div class="section-title">Stock History</div>
-							<div class="margin-box">
-								<div class="margin-box-content">
-									<!-- Add Stock History component here -->
-									<p>Stock History Component (Coming Soon)</p>
-								</div>
-							</div>
 						</div>
 					</div>
 
@@ -220,8 +210,7 @@
 				</div>
 			</section>
 			<!-- Risk Chat Section -->
-			<RiskChat :activeTab="activeTab" />
-		</div>
+			<!-- <RiskChat :activeTab="activeTab" /> -->
 	</div>
 </template>
 
@@ -692,14 +681,18 @@ Give me a concise overall summary of these combined markets.
 
 <style scoped>
 .container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 20px;
 	width: 100%;
 	max-width: 100%;
-	overflow-x: hidden;
+	padding: 0;
+	margin: 0;
+	overflow-x: hidden; /* Prevent horizontal scrolling */
 	box-sizing: border-box;
+}
+
+.market-section {
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .header {
@@ -709,19 +702,18 @@ Give me a concise overall summary of these combined markets.
 }
 
 .headtitle {
+	font-size: 1.5rem;
 	text-align: center;
-	color: var(--text-primary);
-	font-size: 2rem;
-	margin-bottom: 1rem;
+	margin: 1rem 0;
+	padding: 0 10px;
 }
 
 .market-data-center {
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
-	padding: 2rem;
 	background: var(--bg-primary);
-	margin: 2rem auto;
+	margin: 0 auto;
 	width: 100%;
 	max-width: 1200px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -732,7 +724,7 @@ Give me a concise overall summary of these combined markets.
 .section-title {
 	font-weight: bold;
 	color: var(--text-primary);
-	font-size: 1.5rem;
+	font-size: 1.3rem;
 	margin-bottom: 0.5rem;
 	border-bottom: 2px solid black;
 	padding-bottom: 0.5rem;
@@ -754,12 +746,6 @@ Give me a concise overall summary of these combined markets.
 	box-sizing: border-box;
 }
 
-/* Exception for Vietnam Stock Watch */
-.vietnam-stocks .margin-box-content {
-	overflow: hidden;
-	width: 100%;
-}
-
 .real-estate-section {
 	position: relative;
 	margin-bottom: 1rem;
@@ -767,9 +753,14 @@ Give me a concise overall summary of these combined markets.
 
 table {
 	width: 100%;
+	max-width: 100%;
+	display: block;
 	border-collapse: collapse;
 	margin-top: 20px;
 	font-size: 0.9rem;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	white-space: nowrap;
 }
 
 thead {
@@ -823,36 +814,31 @@ img {
 /* Enhanced Bot Chat Styles */
 .bot-chat-container {
 	position: fixed;
-	/* Fixed positioning relative to viewport */
-	left: -350px;
-	/* Start off-screen to the left */
-	top: 30%;
-	width: 300px;
+	right: 20px;
+	bottom: 20px;
+	width: 90%;
+	max-width: 300px;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: flex-end;
 	padding: 15px;
 	z-index: 100;
 	transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
 		opacity 0.6s ease;
 	opacity: 0;
-	transform: translateX(0);
+	transform: translateY(100%);
 	pointer-events: none;
-	/* Prevents interaction with elements behind it */
 }
 
 .bot-chat-container.bot-visible {
-	transform: translateX(350px);
-	/* Move to the right */
+	transform: translateY(0);
 	opacity: 1;
 	pointer-events: auto;
-	/* Re-enable interaction when visible */
 }
 
 .bot-chat-container.bot-hidden {
-	transform: translateX(350px) translateY(50px);
+	transform: translateY(100%);
 	opacity: 0;
-	transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
 .bot-image {
@@ -894,15 +880,12 @@ img {
 	color: #ffffff;
 	padding: 12px 18px;
 	border-radius: 18px;
-	max-width: 280px;
+	max-width: 100%;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 	opacity: 0;
-	/* Start hidden */
 	transform: scale(0.8) translateY(10px);
-	/* Start slightly smaller and lower */
 	transition: opacity 0.4s ease, transform 0.4s ease;
 	transition-delay: 0.2s;
-	/* Reduced delay for smoother appearance */
 }
 
 .bot-message.message-visible {
@@ -962,299 +945,40 @@ img {
 	}
 }
 
-@media screen and (max-width: 1200px) {
-
-	.market-data-center,
-	.quotes-section {
-		padding: 1.5rem;
-		margin: 1.5rem auto;
-	}
-
-	.headtitle {
-		font-size: 2rem;
-	}
-
-	.section-title {
-		font-size: 1.5rem;
-	}
-
-	.margin-box {
-		padding: 0.75rem;
-	}
-
-	/* Adjust bot position for smaller screens */
-	.bot-chat-container {
-		left: -300px;
-	}
-
-	.bot-chat-container.bot-visible {
-		transform: translateX(310px);
-	}
-}
-
-@media screen and (max-width: 992px) {
-
-	.market-data-center,
-	.quotes-section {
-		padding: 1.5rem;
-		margin: 1.5rem auto;
-	}
-
-	.headtitle {
-		font-size: 1.75rem;
-	}
-
-	.section-title {
-		font-size: 1.4rem;
-	}
-
-	.margin-box {
-		padding: 0.75rem;
-	}
-}
-
-@media screen and (max-width: 768px) {
-	.container {
-		padding: 10px;
-	}
-
-	.market-data-center {
-		padding: 1rem;
-		margin: 1rem auto;
-		gap: 1rem;
-	}
-
-	.headtitle {
-		font-size: 1.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.section-title {
-		font-size: 1.2rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.margin-box {
-		padding: 0.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.margin-box-content {
-		width: 100%;
-		overflow: hidden;
-	}
-
-	/* Adjust table for mobile */
-	table {
-		font-size: 0.8rem;
-		width: 100%;
-		border: none;
-	}
-
-	tr {
-		display: flex;
-		flex-direction: column;
-		margin-bottom: 1rem;
-		border: 1px solid #ddd;
-		padding: 0.5rem;
-		background: #fff;
-	}
-
-	td {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.5rem;
-		border: none;
-		border-bottom: 1px solid #eee;
-		width: 100%;
-		align-items: center;
-	}
-
-	td:last-child {
-		border-bottom: none;
-	}
-
-	td:before {
-		content: attr(data-label);
-		font-weight: bold;
-		padding-right: 1rem;
-		text-align: left;
-	}
-
-	thead {
-		display: none;
-	}
-
-	/* Ensure Vietnam Stocks section is responsive */
-	.vietnam-stocks {
-		width: 100%;
-		overflow: hidden;
-	}
-
-	.vietnam-stocks .margin-box-content {
-		overflow: hidden;
-		width: 100%;
-	}
-
-	/* Sub navigation adjustments */
-	.sub-nav {
-		width: 100%;
-		padding: 0.3rem;
-		margin: 0.5rem auto 1.5rem;
-		overflow: hidden;
-	}
-
-	.tab-button {
-		padding: 0.5rem;
-		font-size: 0.9rem;
-		white-space: nowrap;
-	}
-
-	/* Bot chat adjustments */
-	.bot-chat-container {
-		left: auto;
-		right: 0;
-		bottom: 20px;
-		top: auto;
-		width: 100%;
-		max-width: 300px;
-		transform: translateY(100%);
-	}
-
-	.bot-chat-container.bot-visible {
-		transform: translateY(0);
-	}
-
-	.bot-chat-container.bot-hidden {
-		transform: translateY(100%);
-	}
-
-	.bot-message {
-		max-width: 250px;
-	}
-}
-
-@media screen and (max-width: 480px) {
-	.container {
-		padding: 5px;
-	}
-
-	.market-data-center {
-		padding: 0.5rem;
-		margin: 0.5rem auto;
-		gap: 0.5rem;
-	}
-
-	.headtitle {
-		font-size: 1.3rem;
-	}
-
-	.section-title {
-		font-size: 1.1rem;
-		margin-bottom: 0.25rem;
-	}
-
-	.margin-box {
-		padding: 0.25rem;
-		margin-bottom: 0.25rem;
-	}
-
-	table {
-		font-size: 0.75rem;
-	}
-
-	tr {
-		padding: 0.25rem;
-	}
-
-	td {
-		padding: 0.25rem;
-		font-size: 0.8rem;
-	}
-
-	td:before {
-		font-size: 0.8rem;
-	}
-
-	/* Sub navigation adjustments */
-	.sub-nav {
-		flex-direction: column;
-		gap: 5px;
-		border-width: 1px;
-		padding: 0.25rem;
-	}
-
-	.tab-button {
-		width: 100%;
-		padding: 0.4rem;
-		font-size: 0.85rem;
-		margin: 0;
-	}
-
-	.tab-button.active {
-		border-radius: 4px;
-	}
-
-	/* Adjust crypto list for mobile */
-	td img {
-		width: 20px;
-		height: 20px;
-		margin-right: 5px;
-	}
-}
-
-/* Add these styles to ensure proper table cell alignment */
-td[data-label]:before {
-	min-width: 40%;
-	max-width: 40%;
-}
-
-td[data-label] {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-/* Special handling for cells with images */
-td[data-label="Name"] {
-	display: flex;
-	align-items: center;
-}
-
-td[data-label="Name"]:before {
-	margin-right: 10px;
-}
-
-td[data-label="Name"] img {
-	margin-right: 5px;
-}
-
-/* Add these new styles for the sub-navigation */
+/* Sub Navigation Bar */
 .sub-nav {
 	display: flex;
 	justify-content: space-between;
-	margin: 1rem auto 3rem;
-	padding: 0.5rem;
-	border: 2px solid #e0e0e0;
-	border-radius: 12px;
-	background: #f8f9fa;
-	width: 600px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	width: 100%;
+	max-width: 100%;
+	padding: 5px;
+	margin: 0 auto 1rem;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	white-space: nowrap;
+	box-sizing: border-box;
+	scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.sub-nav::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .tab-button {
-	flex: 1;
-	padding: 1rem 0;
+	flex: 1 0 auto;
+	min-width: 30%;
+	padding: 8px 5px;
 	border: none;
 	background: none;
-	font-size: 1.3rem;
+	font-size: 1rem;
 	color: #666;
 	cursor: pointer;
 	transition: all 0.3s ease;
 	position: relative;
 	font-weight: 500;
-	margin: 0 0.25rem;
+	margin: 0 2px;
 	border-radius: 8px;
+	white-space: nowrap;
 }
 
 .tab-button:hover {
@@ -1268,36 +992,142 @@ td[data-label="Name"] img {
 	font-weight: bold;
 }
 
-/* Remove the underline effect */
-.tab-button.active::after {
-	display: none;
-}
-
+/* Table Responsive Styles */
 @media screen and (max-width: 768px) {
-	.sub-nav {
+	.container {
+		padding: 10px;
+	}
+
+	.market-data-center {
+		padding: 1rem;
+		margin: 1rem 0;
+		gap: 1rem;
+	}
+
+	.headtitle {
+		font-size: 1.5rem;
+	}
+
+	.section-title {
+		font-size: 1.2rem;
+	}
+
+	/* Responsive table */
+	table {
+		width: 100%;
+	}
+
+	thead {
+		display: none;
+	}
+
+	tr {
+		display: block;
+		margin-bottom: 1rem;
+		border: 1px solid #ddd;
+		padding: 0.5rem;
+	}
+
+	td {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.5rem;
+		border: none;
+		border-bottom: 1px solid #eee;
+		text-align: right;
+	}
+
+	td:last-child {
+		border-bottom: none;
+	}
+
+	td::before {
+		content: attr(data-label);
+		font-weight: bold;
+		margin-right: 1rem;
+		text-align: left;
+	}
+
+	/* Adjust bot for mobile */
+	.bot-chat-container {
 		width: 90%;
-		padding: 0.4rem;
+		max-width: 300px;
+		right: 10px;
 	}
 
-	.tab-button {
-		padding: 0.75rem 0;
-		font-size: 1.1rem;
+	.bot-message {
+		max-width: 100%;
 	}
-}
 
-@media screen and (max-width: 576px) {
+	/* Sub nav adjustments */
 	.sub-nav {
-		width: 95%;
+		flex-wrap: wrap;
 		padding: 0.3rem;
 	}
 
 	.tab-button {
+		min-width: 80px;
 		padding: 0.5rem 0;
-		font-size: 1rem;
-		margin: 0 0.15rem;
+		font-size: 0.9rem;
+		margin: 0.1rem;
 	}
 }
 
+@media screen and (max-width: 480px) {
+	.container {
+		padding: 5px;
+	}
+
+	.headtitle {
+		font-size: 1.3rem;
+	}
+
+	.section-title {
+		font-size: 1.1rem;
+	}
+
+	.margin-box {
+		padding: 0.5rem;
+	}
+
+	td {
+		font-size: 0.8rem;
+		padding: 0.3rem;
+	}
+
+	td::before {
+		font-size: 0.8rem;
+	}
+
+	/* Adjust images in tables */
+	td[data-label="Name"] img {
+		width: 20px;
+		height: 20px;
+	}
+
+	/* Sub nav adjustments */
+	.sub-nav {
+		border-radius: 8px;
+	}
+
+	.tab-button {
+		min-width: 70px;
+		padding: 0.4rem 0;
+		font-size: 0.8rem;
+	}
+
+	/* Bot adjustments */
+	.bot-chat-container {
+		width: 85%;
+	}
+
+	.bot-image {
+		width: 60px;
+	}
+}
+
+/* Animation for tab content */
 .tab-content {
 	animation: fadeIn 0.3s ease-in-out;
 }

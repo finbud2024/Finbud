@@ -608,5 +608,97 @@ input, select {
   }
 }
 
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .calculator-container {
+    width: 100%;
+    margin: 20px auto 0;
+    padding: 15px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .title {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .input-section {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .input-group {
+    margin-bottom: 10px;
+  }
+
+  .contribution-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .contribution-options label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .contribution-options input[type="radio"] {
+    margin-right: 5px;
+  }
+
+  .chart-section {
+    height: 250px;
+  }
+
+  .result-text {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Adjust bot chat for mobile */
+  .bot-chat-container {
+    right: -280px;
+    width: 250px;
+  }
+
+  .bot-chat-container.bot-visible {
+    transform: translateX(-280px);
+  }
+
+  .bot-message {
+    max-width: 230px;
+    font-size: 14px;
+  }
+
+  /* Stack radio buttons vertically on very small screens */
+  @media (max-width: 480px) {
+    .contribution-options {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .contribution-options label {
+      width: auto;
+      margin-bottom: 0;
+    }
+
+    .calculate-btn {
+      width: 100%;
+      padding: 12px;
+    }
+
+    .bot-chat-container {
+      right: -250px;
+      width: 220px;
+      top: 20%;
+    }
+
+    .bot-chat-container.bot-visible {
+      transform: translateX(-250px);
+    }
+  }
+}
 
 </style>
