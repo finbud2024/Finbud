@@ -584,7 +584,7 @@ export default {
 
 /* Mortgage Calculator Container */
 .mortgage-calc {
-  max-width: 90%;
+  max-width: 95%;
   margin: auto;
   padding: 20px;
   background: #f9f9f9;
@@ -637,6 +637,8 @@ h1 {
 /* Input Groups */
 .input-group {
   margin-bottom: 15px;
+  display: flex;
+  flex-direction: column; /* This will stack children vertically */
 }
 
 label {
@@ -732,7 +734,7 @@ h3 {
 
 .chart-container {
   flex: 1;
-  max-width: 300px;
+  max-width: 100%;
 }
 
 .breakdown-details {
@@ -902,5 +904,134 @@ h3 {
   }
 }
 
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .breakdown-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .chart-container,
+  .breakdown-details {
+    width: 100%;
+  }
+  
+  .breakdown-item {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .breakdown-item .percentage {
+    order: 1;
+    width: 15%;
+  }
+  
+  .breakdown-item .label {
+    order: 2;
+    width: 60%;
+  }
+  
+  .breakdown-item .amount {
+    order: 3;
+    width: 25%;
+    text-align: right;
+  }
+
+  .mortgage-calc {
+    max-width: 100%;
+    padding: 15px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-bottom: 15px;
+  }
+
+  .content-wrapper {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .input-section {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .payment-breakdown-box {
+    padding: 15px;
+    margin-top: 15px;
+  }
+
+  .payment-breakdown h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .breakdown-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .chart-container {
+    width: 100%;
+    height: 200px;
+  }
+
+  .breakdown-details {
+    width: 100%;
+  }
+
+  .breakdown-item {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .percentage {
+    min-width: 40px;
+  }
+
+  .label {
+    margin: 0 8px;
+    font-size: 13px;
+  }
+
+  .amount {
+    min-width: 70px;
+    text-align: right;
+  }
+
+  /* Input adjustments */
+  input, select {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .split-input {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toggle-header button label {
+    font-size: 1rem;
+  }
+
+  /* Bot chat adjustments for mobile */
+  .bot-chat-container {
+    right: -280px;
+    width: 250px;
+    top: auto;
+    bottom: 20px;
+  }
+
+  .bot-chat-container.bot-visible {
+    transform: translateX(-280px);
+  }
+
+  .bot-message {
+    max-width: 230px;
+    padding: 10px 15px;
+  }
+}
 
 </style>

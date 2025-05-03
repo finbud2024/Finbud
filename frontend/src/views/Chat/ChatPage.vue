@@ -175,6 +175,13 @@ export default {
 		).style.height = `calc(100vh - ${navbarHeight}px)`;
 		//HANDLE REDIRECT MESSAGE FROM HOMEPAGE
 		const autoMessage = this.$route.query.autoMessage;
+		const threadID = this.$route.query.threadID;
+
+		if (threadID) {
+			// Update the Vuex store with the new thread ID
+			this.$store.dispatch("threads/updateThreadID", threadID);
+		}
+
 		// if (autoMessage && this.$refs.chatComponent) {
 		//   console.log("📩 Redirected message from Home:", autoMessage); // 👈 DEBUG
 		//   this.$refs.chatComponent.handleUserSubmit({ message: autoMessage }); // 👈 GỬI NGAY
