@@ -15,8 +15,6 @@
     @closeChatBubble="toggleChatBubble"
     :chatViewThreadID="threadId"
   />
-  <!-- <img v-if="showChatBubble" class="finbudBot" src="./assets/botrmbg_sm.webp" alt="Finbud" @click="toggleChatBubble"
-		:style="botPosition" /> -->
   <img
     class="finbudBot"
     :class="{ hidden: !showChatBubble }"
