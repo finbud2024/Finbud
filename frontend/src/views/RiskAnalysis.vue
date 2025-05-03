@@ -1,21 +1,15 @@
 <template>
-	<div>
+	<div class="container">
 		<!-- Bot Chat Component - Placed outside the main container -->
-		<div
-			class="bot-chat-container"
-			:class="{
-				'bot-visible': activeTab === 'realEstate',
-				'bot-hidden': hidingBot,
-			}"
-		>
+		<div class="bot-chat-container" :class="{
+			'bot-visible': activeTab === 'realEstate',
+			'bot-hidden': hidingBot,
+		}">
 			<img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
-			<div
-				class="bot-message"
-				:class="{
-					'message-visible': showMessage,
-					'message-hidden': hidingMessage,
-				}"
-			>
+			<div class="bot-message" :class="{
+				'message-visible': showMessage,
+				'message-hidden': hidingMessage,
+			}">
 				<div v-if="isTyping" class="typing-animation">
 					<span class="dot"></span>
 					<span class="dot"></span>
@@ -25,19 +19,22 @@
 			</div>
 		</div>
 
-		<div class="container">
 			<!-- Market Data Section -->
-			<section>
+			<section class="market-section">
 				<h2 class="headtitle">Market Data Center</h2>
+
+				<!-- <div v-if="marketSummary" class="market-summary">
+					<h3>Market Summary</h3>
+					<p>{{ marketSummary }}</p>
+				</div>
+				<div v-else class="market-summary loading">
+					Generating summary…
+				</div> -->
 
 				<!-- Sub Navigation Bar -->
 				<div class="sub-nav">
-					<button
-						v-for="tab in ['stock', 'crypto', 'realEstate']"
-						:key="tab"
-						:class="['tab-button', { active: activeTab === tab }]"
-						@click="activeTab = tab"
-					>
+					<button v-for="tab in ['stock', 'crypto', 'realEstate']" :key="tab"
+						:class="['tab-button', { active: activeTab === tab }]" @click="activeTab = tab">
 						{{ formatTabName(tab) }}
 					</button>
 				</div>
@@ -49,7 +46,7 @@
 							<!-- Cryptocurrency Watch Section -->
 							<div class="section-title">Cryptocurrency Watch</div>
 							<div class="margin-box">
-								<CryptoWatch class="margin-box-content" />
+								<CryptoWatch :marketSummary="marketSummary" class="margin-box-content" />
 							</div>
 
 							<!-- Crypto Quotes Section -->
@@ -73,10 +70,7 @@
 												</tr>
 											</thead>
 											<tbody v-if="paginatedCryptoList.length">
-												<tr
-													v-for="crypto in paginatedCryptoList"
-													:key="crypto.uuid"
-												>
+												<tr v-for="crypto in paginatedCryptoList" :key="crypto.uuid">
 													<td data-label="Name">
 														<img :src="crypto.iconUrl" :alt="crypto.name" />
 														{{ crypto.name }}
@@ -89,30 +83,27 @@
 												</tr>
 											</tbody>
 										</table>
-										<Pagination
-											:currentPage.sync="currentCryptoPage"
-											:totalPages="cryptoTotalPages"
-											@update:currentPage="updateCryptoCurrentPage"
-										/>
+										<Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages"
+											@update:currentPage="updateCryptoCurrentPage" />
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 
-          <!-- Stock Tab Content -->
-          <div v-if="activeTab === 'stock'" class="tab-content">
-            <div class="market-section">
+					<!-- Stock Tab Content -->
+					<div v-if="activeTab === 'stock'" class="tab-content">
+						<div class="market-section">
 
-            <!-- Vietnam Stock Watch Section -->
-            <div class="section-title">Vietnam Stock Watch</div>
-                <VietnamStockWatch class="margin-box-content" />
+							<!-- Vietnam Stock Watch Section -->
+							<div class="section-title">Vietnam Stock Watch</div>
+							<VietnamStockWatch :marketSummary="marketSummary" class="margin-box-content" />
 
-              <!-- Stock Watch Section -->
-              <div class="section-title">Stock Watch</div>
-              <div class="margin-box">
-                <StockWatch class="margin-box-content" />
-              </div>
+							<!-- Stock Watch Section -->
+							<div class="section-title">Stock Watch</div>
+							<div class="margin-box">
+								<StockWatch :marketSummary="marketSummary" class="margin-box-content" />
+							</div>
 
 							<!-- Stock Quotes Section -->
 							<div class="section-title">Stock Quotes</div>
@@ -133,34 +124,21 @@
 												</tr>
 											</thead>
 											<tbody v-if="paginatedStockQuotes.length">
-												<tr
-													v-for="stock in paginatedStockQuotes"
-													:key="stock['01. symbol']"
-												>
+												<tr v-for="stock in paginatedStockQuotes" :key="stock['01. symbol']">
 													<td data-label="Symbol">{{ stock["01. symbol"] }}</td>
 													<td data-label="Price">{{ stock["05. price"] }}</td>
 													<td data-label="Volume">{{ stock["06. volume"] }}</td>
-													<td data-label="Previous Close">{{ stock["08. previous close"] }}</td>
+													<td data-label="Previous Close">{{ stock["08. previous close"] }}
+													</td>
 													<td data-label="Change">{{ stock["09. change"] }}</td>
-													<td data-label="Change Percent">{{ stock["10. change percent"] }}</td>
+													<td data-label="Change Percent">{{ stock["10. change percent"] }}
+													</td>
 												</tr>
 											</tbody>
 										</table>
-										<Pagination
-											:currentPage.sync="currentStockPage"
-											:totalPages="stockTotalPages"
-											@update:currentPage="updateStockCurrentPage"
-										/>
+										<Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages"
+											@update:currentPage="updateStockCurrentPage" />
 									</div>
-								</div>
-							</div>
-
-							<!-- Stock History Section -->
-							<div class="section-title">Stock History</div>
-							<div class="margin-box">
-								<div class="margin-box-content">
-									<!-- Add Stock History component here -->
-									<p>Stock History Component (Coming Soon)</p>
 								</div>
 							</div>
 						</div>
@@ -173,7 +151,7 @@
 							<div class="section-title">Real Estate</div>
 							<div class="real-estate-section" ref="realEstateSection">
 								<div class="margin-box">
-									<RealEstateMap class="margin-box-content" />
+									<RealEstateMap :marketSummary="marketSummary" class="margin-box-content" />
 									<div class="margin-box-content">
 										<div v-if="errorRealEstate" class="error">
 											{{ errorRealEstate }}
@@ -192,14 +170,11 @@
 													</tr>
 												</thead>
 												<tbody v-if="paginatedRealEstate.length">
-													<tr
-														v-for="estate in paginatedRealEstate"
-														:key="estate.id"
-													>
+													<tr v-for="estate in paginatedRealEstate" :key="estate.id">
 														<td data-label="Type">
 															{{
 																estate.propertyType &&
-																!isNaN(estate.propertyType)
+																	!isNaN(estate.propertyType)
 																	? estate.propertyType
 																	: "Single-family"
 															}}
@@ -208,7 +183,7 @@
 														<td data-label="Price">
 															{{
 																estate.lastSalePrice &&
-																!isNaN(estate.lastSalePrice)
+																	!isNaN(estate.lastSalePrice)
 																	? "$" + estate.lastSalePrice.toLocaleString()
 																	: "N/A"
 															}}
@@ -223,11 +198,9 @@
 													</tr>
 												</tbody>
 											</table>
-											<Pagination
-												:currentPage.sync="currentRealEstatePage"
+											<Pagination :currentPage.sync="currentRealEstatePage"
 												:totalPages="realEstateTotalPages"
-												@update:currentPage="updateRealEstateCurrentPage"
-											/>
+												@update:currentPage="updateRealEstateCurrentPage" />
 										</div>
 									</div>
 								</div>
@@ -237,52 +210,59 @@
 				</div>
 			</section>
 			<!-- Risk Chat Section -->
-			<RiskChat :activeTab="activeTab" />
-		</div>
+			<!-- <RiskChat :activeTab="activeTab" /> -->
 	</div>
 </template>
 
 <script>
 import axios from "axios";
+import {
+	fetchStockQuote,
+	fetchCryptoList,
+	fetchRealEstateList
+} from "@/services/marketDataService.js";
+import { gptServices } from '@/services/gptServices.js';
 import Pagination from "../components/Risk&Chat/Pagination.vue";
 import RiskChat from "../components/Risk&Chat/RiskChat.vue";
 import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
 import StockWatch from "@/components/marketPage/StockWatch.vue";
 import VietnamStockWatch from "@/components/marketPage/VietnamStockWatch.vue";
 import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
+import { computed } from 'vue';
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
 const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;
 const apiKeyRealEstate = process.env.VUE_APP_REAL_ESTATE_KEY;
 
+
 export default {
-  name: "RiskAnalysis",
-  components: {
-    Pagination,
-    CryptoWatch,
-    StockWatch,
-    VietnamStockWatch,
-    RealEstateMap,
-    RiskChat,
-  },
-  data() {
-    return {
-      activeTab: "stock",
-      // Bot Chat data
-      showBot: false,
-      hidingBot: false,
-      showMessage: false,
-      hidingMessage: false,
-      isTyping: false,
-      botMessage: "",
-      typedContent: "",
-      botObserver: null,
-      typingSpeed: 50, // milliseconds between characters
-      typingIndex: 0,
-      typingTimer: null,
-      botHideTimer: null,
-      words: [],
-      currentWordIndex: 0,
+	name: "RiskAnalysis",
+	components: {
+		Pagination,
+		CryptoWatch,
+		StockWatch,
+		VietnamStockWatch,
+		RealEstateMap,
+		RiskChat,
+	},
+	data() {
+		return {
+			activeTab: "crypto",
+			// Bot Chat data
+			showBot: false,
+			hidingBot: false,
+			showMessage: false,
+			hidingMessage: false,
+			isTyping: false,
+			botMessage: "",
+			typedContent: "",
+			botObserver: null,
+			typingSpeed: 50, // milliseconds between characters
+			typingIndex: 0,
+			typingTimer: null,
+			botHideTimer: null,
+			words: [],
+			currentWordIndex: 0,
 
 			// Market Data
 			loading: true,
@@ -329,7 +309,13 @@ export default {
 			currentStockPage: 1,
 			currentCryptoPage: 1,
 			itemsPerPage: 10,
+			marketSummary: "Loading overall market summary…",
 		};
+	},
+	provide() {
+		return {
+			marketSummary: computed(() => this.marketSummary)
+		}
 	},
 	computed: {
 		stockTotalPages() {
@@ -366,10 +352,8 @@ export default {
 			},
 		},
 	},
-	mounted() {
-		this.fetchStockQuote();
-		this.getCryptoPrice();
-		// this.getRealEstatePrice();
+	async mounted() {
+		this.generateOverallMarketSummary();
 		this.setupBotObserver();
 	},
 	beforeUnmount() {
@@ -412,6 +396,43 @@ export default {
 			});
 		},
 
+		async generateOverallMarketSummary() {
+			try {
+				const [stocks, cryptos, estates] = await Promise.all([
+					fetchStockQuote(),
+					fetchCryptoList(),
+					fetchRealEstateList()
+				])
+
+				// build a little prompt
+				const lines = [
+					'**Stocks**',
+					...stocks.map(s => {
+						const price = parseFloat(s['05. price']).toFixed(2)
+						const chg = parseFloat(s['09. change']).toFixed(2)
+						return `• ${s['01. symbol']}: $${price} (${chg}%)`
+					}),
+					'**Crypto**',
+					...cryptos.map(c => `• ${c.symbol}: $${c.price.toFixed(2)} (${c.change.toFixed(2)}%)`),
+					'**Real Estate**',
+					...estates.map(e => `• ${e.propertyType} at ${e.formattedAddress}: $${e.lastSalePrice.toLocaleString()}`)
+				].join('\n')
+
+				const prompt = `
+Here’s today’s market snapshot:
+${lines}
+
+Give me a concise overall summary of these combined markets.
+         `.trim()
+
+				const resp = await gptServices([{ role: 'user', content: prompt }])
+				this.marketSummary = resp.trim()
+			}
+			catch (err) {
+				console.error(err)
+				this.marketSummary = 'Unable to generate market summary right now.'
+			}
+		},
 		// Bot Chat methods
 		formatMarketSummary() {
 			// Focus on real estate data since this bot appears in the real estate section
@@ -420,15 +441,13 @@ export default {
 			if (this.realEstateList && this.realEstateList.length) {
 				summary += "🏠 Here are some properties you might like:\n";
 				this.realEstateList.slice(0, 3).forEach((estate) => {
-					summary += `${estate.propertyType || "Home"} at ${
-						estate.formattedAddress
-					}\n`;
+					summary += `${estate.propertyType || "Home"} at ${estate.formattedAddress
+						}\n`;
 					if (estate.lastSalePrice && !isNaN(estate.lastSalePrice)) {
 						summary += `Price: $${estate.lastSalePrice.toLocaleString()}\n`;
 					}
-					summary += `Status: ${
-						estate.ownerOccupied === true ? "Inactive" : "Active"
-					}\n\n`;
+					summary += `Status: ${estate.ownerOccupied === true ? "Inactive" : "Active"
+						}\n\n`;
 				});
 			}
 
@@ -558,67 +577,67 @@ export default {
 		},
 
 		// Existing market data methods
-		async fetchStockQuote() {
-			const symbols = [
-				"IBM",
-				"AAPL",
-				"GOOGL",
-				"MSFT",
-				"AMZN",
-				"FB",
-				"TSLA",
-				"NFLX",
-				"NVDA",
-				"INTC",
-				"CSCO",
-				"ORCL",
-				"ADBE",
-				"CRM",
-				"PYPL",
-				"AMD",
-				"QCOM",
-				"TXN",
-				"AVGO",
-				"SHOP",
-			];
-			const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
-			try {
-				const requests = symbols.map((symbol) => {
-					const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
-					return axios.get(url);
-				});
-				const responses = await Promise.all(requests);
-				this.stockQuotes = responses
-					.map((response) => {
-						const quote = response.data["Global Quote"];
-						if (quote && Object.keys(quote).length > 0) {
-							return quote;
-						} else {
-							return null;
-						}
-					})
-					.filter((quote) => quote !== null);
-				this.loading = false;
-			} catch (error) {
-				this.error = "Failed to fetch stock quotes";
-				this.loading = false;
-			}
-		},
-		async getCryptoPrice() {
-			const url = "https://api.coinranking.com/v2/coins?timePeriod=7d";
-			try {
-				const res = await axios.get(url, {
-					headers: {
-						"x-access-token": apiKeyCrypto,
-					},
-				});
-				this.cryptoList = res.data.data.coins;
-				this.loadingCrypto = false;
-			} catch (error) {
-				this.errorCrypto = "Failed to fetch crypto quotes";
-				this.loadingCrypto = false;
-			}
-		},
+		// async fetchStockQuote() {
+		// 	const symbols = [
+		// 		"IBM",
+		// 		"AAPL",
+		// 		"GOOGL",
+		// 		"MSFT",
+		// 		"AMZN",
+		// 		"FB",
+		// 		"TSLA",
+		// 		"NFLX",
+		// 		"NVDA",
+		// 		"INTC",
+		// 		"CSCO",
+		// 		"ORCL",
+		// 		"ADBE",
+		// 		"CRM",
+		// 		"PYPL",
+		// 		"AMD",
+		// 		"QCOM",
+		// 		"TXN",
+		// 		"AVGO",
+		// 		"SHOP",
+		// 	];
+		// 	const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
+		// 	try {
+		// 		const requests = symbols.map((symbol) => {
+		// 			const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
+		// 			return axios.get(url);
+		// 		});
+		// 		const responses = await Promise.all(requests);
+		// 		this.stockQuotes = responses
+		// 			.map((response) => {
+		// 				const quote = response.data["Global Quote"];
+		// 				if (quote && Object.keys(quote).length > 0) {
+		// 					return quote;
+		// 				} else {
+		// 					return null;
+		// 				}
+		// 			})
+		// 			.filter((quote) => quote !== null);
+		// 		this.loading = false;
+		// 	} catch (error) {
+		// 		this.error = "Failed to fetch stock quotes";
+		// 		this.loading = false;
+		// 	}
+		// },
+		// async getCryptoPrice() {
+		// 	const url = "https://api.coinranking.com/v2/coins?timePeriod=7d";
+		// 	try {
+		// 		const res = await axios.get(url, {
+		// 			headers: {
+		// 				"x-access-token": apiKeyCrypto,
+		// 			},
+		// 		});
+		// 		this.cryptoList = res.data.data.coins;
+		// 		this.loadingCrypto = false;
+		// 	} catch (error) {
+		// 		this.errorCrypto = "Failed to fetch crypto quotes";
+		// 		this.loadingCrypto = false;
+		// 	}
+		// },
 		updateCryptoCurrentPage(newPage) {
 			this.currentCryptoPage = newPage;
 		},
@@ -661,14 +680,18 @@ export default {
 
 <style scoped>
 .container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 20px;
 	width: 100%;
 	max-width: 100%;
-	overflow-x: hidden;
+	padding: 0;
+	margin: 0;
+	overflow-x: hidden; /* Prevent horizontal scrolling */
 	box-sizing: border-box;
+}
+
+.market-section {
+  width: 100%;
+  padding: 0 15px;
+  box-sizing: border-box;
 }
 
 .header {
@@ -678,19 +701,18 @@ export default {
 }
 
 .headtitle {
+	font-size: 1.5rem;
 	text-align: center;
-	color: var(--text-primary);
-	font-size: 2rem;
-	margin-bottom: 1rem;
+	margin: 1rem 0;
+	padding: 0 10px;
 }
 
 .market-data-center {
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
-	padding: 2rem;
 	background: var(--bg-primary);
-	margin: 2rem auto;
+	margin: 0 auto;
 	width: 100%;
 	max-width: 1200px;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -701,7 +723,7 @@ export default {
 .section-title {
 	font-weight: bold;
 	color: var(--text-primary);
-	font-size: 1.5rem;
+	font-size: 1.3rem;
 	margin-bottom: 0.5rem;
 	border-bottom: 2px solid black;
 	padding-bottom: 0.5rem;
@@ -723,12 +745,6 @@ export default {
 	box-sizing: border-box;
 }
 
-/* Exception for Vietnam Stock Watch */
-.vietnam-stocks .margin-box-content {
-	overflow: hidden;
-	width: 100%;
-}
-
 .real-estate-section {
 	position: relative;
 	margin-bottom: 1rem;
@@ -736,9 +752,14 @@ export default {
 
 table {
 	width: 100%;
+	max-width: 100%;
+	display: block;
 	border-collapse: collapse;
 	margin-top: 20px;
 	font-size: 0.9rem;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	white-space: nowrap;
 }
 
 thead {
@@ -791,32 +812,32 @@ img {
 
 /* Enhanced Bot Chat Styles */
 .bot-chat-container {
-	position: fixed; /* Fixed positioning relative to viewport */
-	left: -350px; /* Start off-screen to the left */
-	top: 30%;
-	width: 300px;
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	width: 90%;
+	max-width: 300px;
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: flex-end;
 	padding: 15px;
 	z-index: 100;
 	transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
 		opacity 0.6s ease;
 	opacity: 0;
-	transform: translateX(0);
-	pointer-events: none; /* Prevents interaction with elements behind it */
+	transform: translateY(100%);
+	pointer-events: none;
 }
 
 .bot-chat-container.bot-visible {
-	transform: translateX(350px); /* Move to the right */
+	transform: translateY(0);
 	opacity: 1;
-	pointer-events: auto; /* Re-enable interaction when visible */
+	pointer-events: auto;
 }
 
 .bot-chat-container.bot-hidden {
-	transform: translateX(350px) translateY(50px);
+	transform: translateY(100%);
 	opacity: 0;
-	transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
 .bot-image {
@@ -837,12 +858,15 @@ img {
 		transform: translateY(20px);
 		opacity: 0;
 	}
+
 	60% {
 		transform: translateY(-5px);
 	}
+
 	80% {
 		transform: translateY(2px);
 	}
+
 	100% {
 		transform: translateY(0);
 		opacity: 1;
@@ -855,12 +879,12 @@ img {
 	color: #ffffff;
 	padding: 12px 18px;
 	border-radius: 18px;
-	max-width: 280px;
+	max-width: 100%;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-	opacity: 0; /* Start hidden */
-	transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
+	opacity: 0;
+	transform: scale(0.8) translateY(10px);
 	transition: opacity 0.4s ease, transform 0.4s ease;
-	transition-delay: 0.2s; /* Reduced delay for smoother appearance */
+	transition-delay: 0.2s;
 }
 
 .bot-message.message-visible {
@@ -907,308 +931,53 @@ img {
 }
 
 @keyframes typing {
+
 	0%,
 	100% {
 		opacity: 0.3;
 		transform: scale(1);
 	}
+
 	50% {
 		opacity: 1;
 		transform: scale(1.2);
 	}
 }
 
-@media screen and (max-width: 1200px) {
-	.market-data-center,
-	.quotes-section {
-		padding: 1.5rem;
-		margin: 1.5rem auto;
-	}
-
-	.headtitle {
-		font-size: 2rem;
-	}
-
-	.section-title {
-		font-size: 1.5rem;
-	}
-
-	.margin-box {
-		padding: 0.75rem;
-	}
-
-	/* Adjust bot position for smaller screens */
-	.bot-chat-container {
-		left: -300px;
-	}
-
-	.bot-chat-container.bot-visible {
-		transform: translateX(310px);
-	}
-}
-
-@media screen and (max-width: 992px) {
-	.market-data-center,
-	.quotes-section {
-		padding: 1.5rem;
-		margin: 1.5rem auto;
-	}
-
-	.headtitle {
-		font-size: 1.75rem;
-	}
-
-	.section-title {
-		font-size: 1.4rem;
-	}
-
-	.margin-box {
-		padding: 0.75rem;
-	}
-}
-
-@media screen and (max-width: 768px) {
-	.container {
-		padding: 10px;
-	}
-
-	.market-data-center {
-		padding: 1rem;
-		margin: 1rem auto;
-		gap: 1rem;
-	}
-
-	.headtitle {
-		font-size: 1.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.section-title {
-		font-size: 1.2rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.margin-box {
-		padding: 0.5rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.margin-box-content {
-		width: 100%;
-		overflow: hidden;
-	}
-
-	/* Adjust table for mobile */
-	table {
-		font-size: 0.8rem;
-		width: 100%;
-		border: none;
-	}
-
-	tr {
-		display: flex;
-		flex-direction: column;
-		margin-bottom: 1rem;
-		border: 1px solid #ddd;
-		padding: 0.5rem;
-		background: #fff;
-	}
-
-	td {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.5rem;
-		border: none;
-		border-bottom: 1px solid #eee;
-		width: 100%;
-		align-items: center;
-	}
-
-	td:last-child {
-		border-bottom: none;
-	}
-
-	td:before {
-		content: attr(data-label);
-		font-weight: bold;
-		padding-right: 1rem;
-		text-align: left;
-	}
-
-	thead {
-		display: none;
-	}
-
-	/* Ensure Vietnam Stocks section is responsive */
-	.vietnam-stocks {
-		width: 100%;
-		overflow: hidden;
-	}
-
-	.vietnam-stocks .margin-box-content {
-		overflow: hidden;
-		width: 100%;
-	}
-
-	/* Sub navigation adjustments */
-	.sub-nav {
-		width: 100%;
-		padding: 0.3rem;
-		margin: 0.5rem auto 1.5rem;
-		overflow: hidden;
-	}
-
-	.tab-button {
-		padding: 0.5rem;
-		font-size: 0.9rem;
-		white-space: nowrap;
-	}
-
-	/* Bot chat adjustments */
-	.bot-chat-container {
-		left: auto;
-		right: 0;
-		bottom: 20px;
-		top: auto;
-		width: 100%;
-		max-width: 300px;
-		transform: translateY(100%);
-	}
-
-	.bot-chat-container.bot-visible {
-		transform: translateY(0);
-	}
-
-	.bot-chat-container.bot-hidden {
-		transform: translateY(100%);
-	}
-
-	.bot-message {
-		max-width: 250px;
-	}
-}
-
-@media screen and (max-width: 480px) {
-	.container {
-		padding: 5px;
-	}
-
-	.market-data-center {
-		padding: 0.5rem;
-		margin: 0.5rem auto;
-		gap: 0.5rem;
-	}
-
-	.headtitle {
-		font-size: 1.3rem;
-	}
-
-	.section-title {
-		font-size: 1.1rem;
-		margin-bottom: 0.25rem;
-	}
-
-	.margin-box {
-		padding: 0.25rem;
-		margin-bottom: 0.25rem;
-	}
-
-	table {
-		font-size: 0.75rem;
-	}
-
-	tr {
-		padding: 0.25rem;
-	}
-
-	td {
-		padding: 0.25rem;
-		font-size: 0.8rem;
-	}
-
-	td:before {
-		font-size: 0.8rem;
-	}
-
-	/* Sub navigation adjustments */
-	.sub-nav {
-		flex-direction: column;
-		gap: 5px;
-		border-width: 1px;
-		padding: 0.25rem;
-	}
-
-	.tab-button {
-		width: 100%;
-		padding: 0.4rem;
-		font-size: 0.85rem;
-		margin: 0;
-	}
-
-	.tab-button.active {
-		border-radius: 4px;
-	}
-
-	/* Adjust crypto list for mobile */
-	td img {
-		width: 20px;
-		height: 20px;
-		margin-right: 5px;
-	}
-}
-
-/* Add these styles to ensure proper table cell alignment */
-td[data-label]:before {
-	min-width: 40%;
-	max-width: 40%;
-}
-
-td[data-label] {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-/* Special handling for cells with images */
-td[data-label="Name"] {
-	display: flex;
-	align-items: center;
-}
-
-td[data-label="Name"]:before {
-	margin-right: 10px;
-}
-
-td[data-label="Name"] img {
-	margin-right: 5px;
-}
-
-/* Add these new styles for the sub-navigation */
+/* Sub Navigation Bar */
 .sub-nav {
 	display: flex;
 	justify-content: space-between;
-	margin: 1rem auto 3rem;
-	padding: 0.5rem;
-	border: 2px solid #e0e0e0;
-	border-radius: 12px;
-	background: #f8f9fa;
-	width: 600px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	width: 100%;
+	max-width: 100%;
+	padding: 5px;
+	margin: 0 auto 1rem;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	white-space: nowrap;
+	box-sizing: border-box;
+	scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.sub-nav::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 .tab-button {
-	flex: 1;
-	padding: 1rem 0;
+	flex: 1 0 auto;
+	min-width: 30%;
+	padding: 8px 5px;
 	border: none;
 	background: none;
-	font-size: 1.3rem;
+	font-size: 1rem;
 	color: #666;
 	cursor: pointer;
 	transition: all 0.3s ease;
 	position: relative;
 	font-weight: 500;
-	margin: 0 0.25rem;
+	margin: 0 2px;
 	border-radius: 8px;
+	white-space: nowrap;
 }
 
 .tab-button:hover {
@@ -1222,36 +991,142 @@ td[data-label="Name"] img {
 	font-weight: bold;
 }
 
-/* Remove the underline effect */
-.tab-button.active::after {
-	display: none;
-}
-
+/* Table Responsive Styles */
 @media screen and (max-width: 768px) {
-	.sub-nav {
+	.container {
+		padding: 10px;
+	}
+
+	.market-data-center {
+		padding: 1rem;
+		margin: 1rem 0;
+		gap: 1rem;
+	}
+
+	.headtitle {
+		font-size: 1.5rem;
+	}
+
+	.section-title {
+		font-size: 1.2rem;
+	}
+
+	/* Responsive table */
+	table {
+		width: 100%;
+	}
+
+	thead {
+		display: none;
+	}
+
+	tr {
+		display: block;
+		margin-bottom: 1rem;
+		border: 1px solid #ddd;
+		padding: 0.5rem;
+	}
+
+	td {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.5rem;
+		border: none;
+		border-bottom: 1px solid #eee;
+		text-align: right;
+	}
+
+	td:last-child {
+		border-bottom: none;
+	}
+
+	td::before {
+		content: attr(data-label);
+		font-weight: bold;
+		margin-right: 1rem;
+		text-align: left;
+	}
+
+	/* Adjust bot for mobile */
+	.bot-chat-container {
 		width: 90%;
-		padding: 0.4rem;
+		max-width: 300px;
+		right: 10px;
 	}
 
-	.tab-button {
-		padding: 0.75rem 0;
-		font-size: 1.1rem;
+	.bot-message {
+		max-width: 100%;
 	}
-}
 
-@media screen and (max-width: 576px) {
+	/* Sub nav adjustments */
 	.sub-nav {
-		width: 95%;
+		flex-wrap: wrap;
 		padding: 0.3rem;
 	}
 
 	.tab-button {
+		min-width: 80px;
 		padding: 0.5rem 0;
-		font-size: 1rem;
-		margin: 0 0.15rem;
+		font-size: 0.9rem;
+		margin: 0.1rem;
 	}
 }
 
+@media screen and (max-width: 480px) {
+	.container {
+		padding: 5px;
+	}
+
+	.headtitle {
+		font-size: 1.3rem;
+	}
+
+	.section-title {
+		font-size: 1.1rem;
+	}
+
+	.margin-box {
+		padding: 0.5rem;
+	}
+
+	td {
+		font-size: 0.8rem;
+		padding: 0.3rem;
+	}
+
+	td::before {
+		font-size: 0.8rem;
+	}
+
+	/* Adjust images in tables */
+	td[data-label="Name"] img {
+		width: 20px;
+		height: 20px;
+	}
+
+	/* Sub nav adjustments */
+	.sub-nav {
+		border-radius: 8px;
+	}
+
+	.tab-button {
+		min-width: 70px;
+		padding: 0.4rem 0;
+		font-size: 0.8rem;
+	}
+
+	/* Bot adjustments */
+	.bot-chat-container {
+		width: 85%;
+	}
+
+	.bot-image {
+		width: 60px;
+	}
+}
+
+/* Animation for tab content */
 .tab-content {
 	animation: fadeIn 0.3s ease-in-out;
 }
@@ -1261,6 +1136,7 @@ td[data-label="Name"] img {
 		opacity: 0;
 		transform: translateY(10px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);

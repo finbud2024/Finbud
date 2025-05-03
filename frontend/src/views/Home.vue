@@ -280,6 +280,9 @@ export default {
         // Extract the new thread ID from the response
         const newThreadID = response.data._id;
 
+        // Update the Vuex store with the new thread ID
+        this.$store.dispatch("threads/updateThreadID", newThreadID);
+
         // Navigate to the chat view with the new thread ID and the message
         this.$router.push({
           path: "/chat-view",

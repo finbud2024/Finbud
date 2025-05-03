@@ -1,6 +1,14 @@
 <template>
   <div>
     <div class="stock-watch animate__animated animate__fadeIn">
+      <div class="market-summary">
+        <h3>Market Summary</h3>
+        <!-- only render the HTML when we actually have markdown -->
+        <div v-if="marketSummary" v-html="renderedSummary"></div>
+
+        <!-- otherwise show your fallback -->
+        <p v-else>Loading summary…</p>
+      </div>
       <div class="header">
         <!--<h2>VIETNAM STOCKS</h2>-->
       </div>
@@ -9,7 +17,7 @@
         <div v-if="loading && rows.length > 0" class="loading-overlay">
           <div class="loading-spinner"></div>
         </div>
-        
+
         <!-- Show loading state only for initial load -->
         <div v-if="loading && rows.length === 0" class="loading-state">
           <p>Đang tải dữ liệu cổ phiếu...</p>
@@ -20,14 +28,10 @@
         <div v-else class="stock-table">
           <div v-for="(row, rowIndex) in rows" :key="rowIndex">
             <div class="stock-row">
-              <div 
-                class="stock-item animate__animated animate__fadeInUp" 
-                v-for="stock in row" 
-                :key="stock.symbol"
-                @click="showPopup(stock)"
-              >
-                <div :class="['stock-bar', { 
-                  'positive-bar': stock.change > 0, 
+              <div class="stock-item animate__animated animate__fadeInUp" v-for="stock in row" :key="stock.symbol"
+                @click="showPopup(stock)">
+                <div :class="['stock-bar', {
+                  'positive-bar': stock.change > 0,
                   'negative-bar': stock.change < 0,
                   'neutral-bar': stock.change === 0
                 }]"></div>
@@ -37,23 +41,23 @@
                     <div class="stock-company">
                       <h3 class="company-name">{{ stock.organ_name || 'Chưa có tên công ty' }}</h3>
                     </div>
-                    
+
                     <!-- Key-value pairs for details -->
                     <div class="stock-details">
                       <p class="detail-item">
-                        <span class="detail-key">Mã CP:</span> 
+                        <span class="detail-key">Mã CP:</span>
                         <span class="symbol-value">{{ stock.symbol }}</span>
                       </p>
-                      
+
                       <p class="detail-item price-item">
-                        <span class="detail-key">Giá:</span> 
+                        <span class="detail-key">Giá:</span>
                         <span class="price-value">{{ formatPrice(stock.price) }}</span>
                       </p>
-                      
+
                       <p class="detail-item">
-                        <span class="detail-key">Thay đổi:</span> 
+                        <span class="detail-key">Thay đổi:</span>
                         <span :class="{
-                          'positive': stock.change > 0, 
+                          'positive': stock.change > 0,
                           'negative': stock.change < 0,
                           'neutral': stock.change === 0
                         }">
@@ -63,11 +67,11 @@
                           {{ stock.change.toFixed(2) }}
                         </span>
                       </p>
-                      
+
                       <p class="detail-item">
-                        <span class="detail-key">Thay đổi (%):</span> 
+                        <span class="detail-key">Thay đổi (%):</span>
                         <span :class="{
-                          'positive': stock.change_percent > 0, 
+                          'positive': stock.change_percent > 0,
                           'negative': stock.change_percent < 0,
                           'neutral': stock.change_percent === 0
                         }">
@@ -87,22 +91,14 @@
       </div>
       <div class="pagination-wrapper">
         <div class="pagination-container">
-          <button 
-            @click="prevPage" 
-            :disabled="currentPage <= 1 || loading"
-            class="pagination-button"
-            :class="{'loading-button': loading}"
-          >
+          <button @click="prevPage" :disabled="currentPage <= 1 || loading" class="pagination-button"
+            :class="{ 'loading-button': loading }">
             <span v-if="loading && navigationDirection === 'prev'" class="button-loader"></span>
             <span v-else>Trước</span>
           </button>
           <span class="page-info">Trang {{ currentPage }} / {{ totalPages }}</span>
-          <button 
-            @click="nextPage" 
-            :disabled="currentPage >= totalPages || loading"
-            class="pagination-button"
-            :class="{'loading-button': loading}"
-          >
+          <button @click="nextPage" :disabled="currentPage >= totalPages || loading" class="pagination-button"
+            :class="{ 'loading-button': loading }">
             <span v-if="loading && navigationDirection === 'next'" class="button-loader"></span>
             <span v-else>Sau</span>
           </button>
@@ -116,9 +112,22 @@
 <script>
 import axios from 'axios';
 import VNStockPopup from './VNStockPopup.vue';
+import MarkdownIt from 'markdown-it'
+
+const md = new MarkdownIt({
+  html:        true,        // allow inline HTML
+  linkify:     true,        // autolink URLs
+  typographer: true,
+})
 
 export default {
   name: 'VietnamStockWatch',
+  props: {
+    marketSummary: {
+      type: String,
+      default: ''
+    }
+  },
   components: {
     VNStockPopup,
   },
@@ -137,6 +146,12 @@ export default {
       navigationDirection: null, // To track which direction we're navigating
     };
   },
+  computed: {
+    renderedSummary() {
+      // convert your Markdown string into safe HTML
+      return md.render(this.marketSummary)
+    }
+  },
   mounted() {
     this.fetchStockSymbols();
   },
@@ -144,11 +159,11 @@ export default {
     async fetchStockSymbols() {
       try {
         const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/symbols?page=${this.currentPage}&page_size=${this.pageSize}`);
-        
+
         if (response.data && response.data.stocks) {
           this.stockSymbols = response.data.stocks;
           this.totalPages = Math.ceil(response.data.pagination.total_pages);
-          
+
           // Extract symbols to query prices
           const symbols = this.stockSymbols.map(s => s.symbol).join(',');
           await this.fetchStockPrices(symbols);
@@ -165,20 +180,20 @@ export default {
     async fetchStockPrices(symbols) {
       try {
         const response = await axios.get(`https://highs-latest-obituaries-thriller.trycloudflare.com/api/vn-stock/prices?symbols=${symbols}`);
-        
+
         if (response.data && response.data.data) {
           // Create a map of symbols to organ_names
           const symbolToOrganMap = {};
           this.stockSymbols.forEach(stock => {
             symbolToOrganMap[stock.symbol] = stock.organ_name;
           });
-          
+
           // Add organ_name to each stock price data
           this.stockQuotes = response.data.data.map(stock => ({
             ...stock,
             organ_name: symbolToOrganMap[stock.symbol] || ''
           }));
-              
+
           this.distributeStocks();
           this.loading = false;
           this.navigationDirection = null; // Reset direction after loading
@@ -195,7 +210,7 @@ export default {
     distributeStocks() {
       // Clear previous rows
       this.rows = [];
-      
+
       // Distribute stocks across 3 columns, 5 rows
       // Create rows of 3 items each
       for (let i = 0; i < this.stockQuotes.length; i += 3) {
@@ -244,10 +259,13 @@ export default {
 
 .stock-watch {
   width: 100%;
-  max-width: 1200px; /* Adjusted for 3 columns */
+  max-width: 1200px;
+  /* Adjusted for 3 columns */
   overflow: hidden;
-  margin: 0 auto; /* Center the container */
-  padding: 0 15px; /* Add padding for mobile */
+  margin: 0 auto;
+  /* Center the container */
+  padding: 0 15px;
+  /* Add padding for mobile */
   box-sizing: border-box;
 }
 
@@ -260,10 +278,13 @@ export default {
 }
 
 .stock-table-wrapper {
-  overflow: visible; /* No need for horizontal scrolling */
+  overflow: visible;
+  /* No need for horizontal scrolling */
   white-space: normal;
-  position: relative; /* For absolute positioning of loading overlay */
-  min-height: 200px; /* Ensure minimum height for proper loading state */
+  position: relative;
+  /* For absolute positioning of loading overlay */
+  min-height: 200px;
+  /* Ensure minimum height for proper loading state */
 }
 
 .loading-overlay {
@@ -290,7 +311,9 @@ export default {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .stock-table {
@@ -301,16 +324,19 @@ export default {
 
 .stock-row {
   display: flex;
-  justify-content: space-between; /* Evenly distribute the 3 items */
+  justify-content: space-between;
+  /* Evenly distribute the 3 items */
   margin-bottom: 25px;
-  gap: 20px; /* Gap between items */
+  gap: 20px;
+  /* Gap between items */
 }
 
 .stock-item {
   display: flex;
   border: 1px solid #858585;
   padding: 8px;
-  width: calc(33.333% - 14px); /* 3 items per row with gap taken into account */
+  width: calc(33.333% - 14px);
+  /* 3 items per row with gap taken into account */
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -331,7 +357,8 @@ export default {
 }
 
 .stock-bar {
-  width: 6px; /* Slightly wider bar */
+  width: 6px;
+  /* Slightly wider bar */
   height: 100%;
   position: absolute;
   left: 0;
@@ -339,15 +366,18 @@ export default {
 }
 
 .positive-bar {
-  background-color: #28a745; /* Brighter green */
+  background-color: #28a745;
+  /* Brighter green */
 }
 
 .negative-bar {
-  background-color: #dc3545; /* Brighter red */
+  background-color: #dc3545;
+  /* Brighter red */
 }
 
 .neutral-bar {
-  background-color: #f0ad4e; /* More distinct yellow */
+  background-color: #f0ad4e;
+  /* More distinct yellow */
 }
 
 .stock-info {
@@ -361,7 +391,8 @@ export default {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  min-height: 140px; /* Increased minimum height */
+  min-height: 140px;
+  /* Increased minimum height */
 }
 
 .stock-company {
@@ -369,7 +400,8 @@ export default {
   padding-right: 8px;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center vertically */
+  justify-content: center;
+  /* Center vertically */
 }
 
 .company-name {
@@ -379,11 +411,13 @@ export default {
   color: #333;
   line-height: 1.3;
   display: -webkit-box;
-  -webkit-line-clamp: 4; /* Increased from 3 to 4 lines */
+  -webkit-line-clamp: 4;
+  /* Increased from 3 to 4 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
   height: auto;
-  max-height: 5.2em; /* Increased max height */
+  max-height: 5.2em;
+  /* Increased max height */
   letter-spacing: -0.01em;
 }
 
@@ -392,7 +426,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center; /* Center vertically */
+  justify-content: center;
+  /* Center vertically */
   gap: 4px;
   border-left: 1px solid #eee;
   padding-left: 10px;
@@ -412,7 +447,8 @@ export default {
   font-weight: 600;
   margin-right: 4px;
   color: #444;
-  min-width: 80px; /* Slightly wider for better spacing */
+  min-width: 80px;
+  /* Slightly wider for better spacing */
   font-size: 0.9em;
 }
 
@@ -422,7 +458,8 @@ export default {
 }
 
 .price-item {
-  margin-bottom: 2px; /* Reduced margin */
+  margin-bottom: 2px;
+  /* Reduced margin */
 }
 
 .price-value {
@@ -432,17 +469,20 @@ export default {
 }
 
 .positive {
-  color: #28a745; /* Brighter green for better visibility */
+  color: #28a745;
+  /* Brighter green for better visibility */
   font-weight: 600;
 }
 
 .negative {
-  color: #dc3545; /* Brighter red for better visibility */
+  color: #dc3545;
+  /* Brighter red for better visibility */
   font-weight: 600;
 }
 
 .neutral {
-  color: #f0ad4e; /* More distinct yellow */
+  color: #f0ad4e;
+  /* More distinct yellow */
   font-weight: 600;
 }
 
@@ -476,7 +516,8 @@ export default {
   vertical-align: middle;
 }
 
-.loading-state, .error-state {
+.loading-state,
+.error-state {
   text-align: center;
   padding: 25px;
   font-size: 1.1em;
@@ -569,46 +610,46 @@ export default {
     margin-bottom: 15px;
     width: 100%;
   }
-  
+
   .stock-item {
     width: 100%;
     margin-bottom: 0;
     min-height: auto;
     box-sizing: border-box;
   }
-  
+
   .card-content {
     flex-direction: row;
     min-height: auto;
     padding: 8px 0;
     width: 100%;
   }
-  
+
   .stock-company {
     width: 40%;
     padding-right: 10px;
   }
-  
+
   .stock-details {
     width: 60%;
     padding-left: 10px;
   }
-  
+
   .detail-key {
     min-width: 70px;
     font-size: 0.85em;
   }
-  
+
   .pagination-container {
     gap: 10px;
   }
-  
+
   .pagination-button {
     min-width: 80px;
     padding: 6px 12px;
     font-size: 0.9em;
   }
-  
+
   .page-info {
     font-size: 0.85em;
   }
@@ -622,18 +663,18 @@ export default {
   .stock-item {
     padding: 8px;
   }
-  
+
   .card-content {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .stock-company {
     width: 100%;
     padding-right: 0;
     margin-bottom: 8px;
   }
-  
+
   .stock-details {
     width: 100%;
     border-left: none;
@@ -641,25 +682,25 @@ export default {
     padding-left: 0;
     padding-top: 8px;
   }
-  
+
   .company-name {
     font-size: 0.95em;
     text-align: left;
     -webkit-line-clamp: 2;
     max-height: 2.6em;
   }
-  
+
   .detail-item {
     justify-content: space-between;
     font-size: 0.85em;
     padding: 3px 0;
   }
-  
+
   .detail-key {
     min-width: auto;
     margin-right: 8px;
   }
-  
+
   .pagination-container {
     flex-direction: column;
     align-items: center;
@@ -687,7 +728,8 @@ export default {
 
 @media (max-width: 576px) {
   .stock-item {
-    width: 100%; /* 1 item per row on very small screens */
+    width: 100%;
+    /* 1 item per row on very small screens */
   }
 }
-</style> 
+</style>
