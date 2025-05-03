@@ -19,4 +19,9 @@ export default {
     /* padding: 0 10px; */
     /* border: 1px solid #ccc;  */
 }
+
+.chat-frame::-webkit-scrollbar {
+    /* width: 2px; Make the scrollbar thinner */
+    display: none; /* Hide the scrollbar */
+}
 </style>
