@@ -23,7 +23,7 @@
 import ChatHeader from './ChatHeader.vue';
 import MessageComponent from './MessageComponent.vue';
 import ChatFrame from './ChatFrame.vue';
-import UserInput from '@/components/UserInput.vue';
+import UserInput from './UserInput.vue';
 import News from '../Risk&Chat/News.vue';
 import DisplayCrypto from './DisplayCrypto.vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';

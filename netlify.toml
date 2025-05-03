@@ -2,7 +2,6 @@
   functions = "backend/functions"
   publish = "frontend/dist"
   command = "npm run build"
-  node_version = "22"
 
 [dev]
   port = 8888
