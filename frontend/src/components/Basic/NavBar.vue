@@ -1,201 +1,89 @@
 <template>
   <nav class="nav-bar" id="app">
     <router-link to="/" @click.native="handleLogoClick">
-      <img
-        src="@/assets/home-page/FinbudSmallLogo.png"
-        class="navbar-brand"
-        alt="FinBud Logo"
-      />
+      <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
     </router-link>
     <div class="nav-right">
       <ul class="nav-items">
-        <li>
-          <div class="language-switcher">
-            <button @click="switchLanguage('en')">
-              <img src="@/assets/us.png" alt="English" />
-            </button>
-            <button @click="switchLanguage('vi')">
-              <img src="@/assets/vn.png" alt="Tiếng Việt" />
-            </button>
-          </div>
-        </li>
+
         <li>
           <router-link to="/chat-view" class="chatview">{{
             $t("chat")
           }}</router-link>
         </li>
-        <li
-          class="dropdown"
-          @mouseenter="toggleAboutDropdown(true)"
-          @mouseleave="toggleAboutDropdown(false)"
-        >
+        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
           <div class="services-dropdown dropbtn">
             {{ $t("overview") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
-            <router-link
-              to="/about"
-              class="about"
-              @click="toggleAboutDropdown(false)"
-              >{{ $t("about") }}</router-link
-            >
-            <router-link
-              to="/tech"
-              class="technology"
-              @click="toggleAboutDropdown(false)"
-              >{{ $t("technology") }}</router-link
-            >
+            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">{{ $t("about") }}</router-link>
+            <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">{{ $t("technology")
+            }}</router-link>
           </div>
         </li>
 
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdown(true)"
-          @mouseleave="toggleDropdown(false)"
-        >
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown('General', true)"
+          @mouseleave="toggleDropdown('General', false)">
           <div class="services-dropdown dropbtn">
             {{ $t("finManage") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link
-              to="/goal"
-              class="goal"
-              @click="toggleDropdown(false)"
-              >{{ $t("goal") }}</router-link
-            >
-            <router-link
-              to="/riskanalysis"
-              class="risk-analysis"
-              @click="toggleDropdown(false)"
-              >{{ $t("riskAnalysis") }}</router-link
-            >
-            <router-link
-              to="/investment-calculator"
-              class="investment-calculator"
-              @click="toggleAboutDropdown(false)"
-              >{{ $t("investmentCalculator") }}</router-link
-            >
-            <router-link
-              to="/mortgage-calc"
-              class="mortgage-calc"
-              @click="toggleDropdown(false)"
-              >{{ $t("mortgageCalculator") }}</router-link
-            >
+            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">{{ $t("goal") }}</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">{{ $t("riskAnalysis")
+            }}</router-link>
+            <router-link to="/investment-calculator" class="investment-calculator"
+              @click="toggleAboutDropdown(false)">{{ $t("investmentCalculator") }}</router-link>
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">{{
+              $t("mortgageCalculator") }}</router-link>
 
-            <router-link
-              to="/super-investors"
-              class="super-investors"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t("superInvestors") }}</router-link
-            >
+            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">{{
+              $t("superInvestors") }}</router-link>
           </div>
         </li>
 
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdownInvest(true)"
-          @mouseleave="toggleDropdownInvest(false)"
-        >
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownInvest(true)"
+          @mouseleave="toggleDropdownInvest(false)">
           <div class="services-dropdown dropbtn">
             {{ $t("finInvest") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
-            <router-link
-              to="/stock-simulator"
-              class="simulator"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t("simulator") }}</router-link
-            >
-            <router-link
-              to="/autotrade-ai"
-              class="autotrade"
-              @click="toggleDropdownInvest(false)"
-              >AutoTrade AI</router-link
-            >
-            <router-link
-              to="/quant-analysis"
-              class="home"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t("quant") }}</router-link
-            >
-            <router-link
-              to="/quant-simulator"
-              class="quant-simulator"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t("quantSimulator") }}</router-link
-            >
-            <router-link
-              to="/fund-letter"
-              class="fund-letter"
-              @click="toggleDropdownInvest(false)"
-              >Fund Letter</router-link
-            >
-            <router-link
-              to="/docs"
-              class="docs"
-              @click="toggleDropdownData(false)"
-              >{{ $t("Fin Data") }}</router-link
-            >
+            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownInvest(false)">{{ $t("simulator")
+            }}</router-link>
+            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownInvest(false)">AutoTrade
+              AI</router-link>
+            <router-link to="/quant-analysis" class="home" @click="toggleDropdownInvest(false)">{{ $t("quant")
+            }}</router-link>
+            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownInvest(false)">{{
+              $t("quantSimulator") }}</router-link>
+            <router-link to="/fund-letter" class="fund-letter" @click="toggleDropdownInvest(false)">Fund
+              Letter</router-link>
+            <router-link to="/docs" class="docs" @click="toggleDropdownData(false)">{{ $t("Fin Data") }}</router-link>
           </div>
         </li>
 
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdownEdu(true)"
-          @mouseleave="toggleDropdownEdu(false)"
-        >
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownEdu(true)"
+          @mouseleave="toggleDropdownEdu(false)">
           <div class="services-dropdown dropbtn">
             {{ $t("finEdu") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenEdu">
-            <router-link
-              to="/quizz"
-              class="quizz"
-              @click="toggleDropdownEdu(false)"
-              >{{ $t("quiz") }}</router-link
-            >
-            <router-link
-              to="/event"
-              class="event"
-              @click="toggleDropdownEdu(false)"
-              >{{ $t("event") }}</router-link
-            >
-            <router-link
-              to="/forum"
-              class="forum"
-              @click="toggleDropdownEdu(false)"
-              >{{ $t("forum") }}</router-link
-            >
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownEdu(false)">{{ $t("quiz") }}</router-link>
+            <router-link to="/event" class="event" @click="toggleDropdownEdu(false)">{{ $t("event") }}</router-link>
+            <router-link to="/forum" class="forum" @click="toggleDropdownEdu(false)">{{ $t("forum") }}</router-link>
           </div>
         </li>
 
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdownAgent(true)"
-          @mouseleave="toggleDropdownAgent(false)"
-        >
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown('Agent', true)"
+          @mouseleave="toggleDropdown('Agent', false)">
           <div class="services-dropdown dropbtn">
             {{ $t("finAgent") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenAgent">
-            <router-link
-              to="/agent"
-              class="agent"
-              @click="toggleDropdownEdu(false)"
-              >{{ $t("agent") }}</router-link
-            >
+            <router-link to="/agent" class="agent" @click="toggleDropdownEdu(false)">{{ $t("agent") }}</router-link>
           </div>
         </li>
-        <li
-          v-if="isAuthenticated"
-          class="dropdown"
-          @mouseenter="toggleDropdownData(true)"
-          @mouseleave="toggleDropdownData(false)"
-        >
+        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownData(true)"
+          @mouseleave="toggleDropdownData(false)">
 
         </li>
 
@@ -205,196 +93,114 @@
           }}</router-link>
         </li>
 
-        <li v-if="isAuthenticated" class="fincoin-container">
-          <FinCoinDisplay :balance="finCoinBalance" />
-        </li>
 
         <li v-if="isAuthenticated">
           <NavbarNoti />
         </li>
 
-        <li
-          v-if="isAuthenticated"
-          class="dropdown profile-dropdown"
-          @mouseenter="toggleProfileDropdown(true)"
-          @mouseleave="toggleProfileDropdown(false)"
-        >
-          <img
-            :src="profileImage"
-            alt="User Image"
-            class="user-image"
-            @error="handleImageError"
-            loading="eager"
-          />
-          <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-            <router-link
-              to="/profile"
-              class="profile"
-              @click="toggleProfileDropdown(false)"
-            >
-              <img
-                :src="profileImage"
-                alt="User Image"
-                class="inside-dropdown-user-image"
-                @error="handleImageError"
-                loading="eager"
-              />
-              <p>{{ profileName }}</p>
-            </router-link>
-            <router-link
-              to="#"
-              class="dark-mode-toggle"
-              @click="toggleDarkMode"
-            >
-              <font-awesome-icon
-                :icon="isDarkMode ? 'fa-moon' : 'fa-sun'"
-                class="icon"
-              />
-              <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
-            </router-link>
-            <router-link to="#" class="logout" @click="logout">
-              <font-awesome-icon
-                icon="fa-solid fa-right-from-bracket"
-                class="icon"
-              />
-              <p>{{ $t("logout") }}</p>
-            </router-link>
-          </div>
-        </li>
+        <li v-if="isAuthenticated" class="dropdown profile-dropdown">
+  <div
+    class="profile-wrapper"
+    @mouseenter="toggleProfileDropdown(true)"
+    @mouseleave="toggleProfileDropdown(false)"
+  >
+    <img
+      :src="profileImage"
+      alt="User Image"
+      class="user-image"
+      @error="handleImageError"
+      loading="eager"
+    />
+    <div class="dropdown-profile" v-show="isProfileDropdownOpen">
+      <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
+        <img
+          :src="profileImage"
+          alt="User Image"
+          class="inside-dropdown-user-image"
+          @error="handleImageError"
+          loading="eager"
+        />
+        <p>{{ profileName }}</p>
+      </router-link>
 
-        <li v-if="isAuthLoading" class="auth-loading">
-          <div class="loading-indicator"></div>
-        </li>
-      </ul>
+      <!-- Moved inside dropdown -->
+      <div class="fincoin-container">
+        <FinCoinDisplay :balance="finCoinBalance" />
+      </div>
+      <div class="language-switcher">
+        <button @click="switchLanguage('en')">
+          <img src="@/assets/us.png" alt="English" />
+        </button>
+        <button @click="switchLanguage('vi')">
+          <img src="@/assets/vn.png" alt="Tiếng Việt" />
+        </button>
+      </div>
+      <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
+        <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
+        <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
+      </router-link>
+      <router-link to="#" class="logout" @click="logout">
+        <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
+        <p>{{ $t("logout") }}</p>
+      </router-link>
+    </div>
+  </div>
+</li>
 
-      <!-- Mobile version -->
-      <div
-        class="dropdown mobile-only"
-        :class="{ active: isDropdownOpenMobile }"
-      >
-        <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
-          <div class="brand-mobile">FinBud</div>
-          <font-awesome-icon icon="fa-solid fa-chevron-down" />
+    <li v-if="isAuthLoading" class="auth-loading">
+      <div class="loading-indicator"></div>
+    </li>
+    </ul>
+
+    <!-- Mobile version -->
+    <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
+      <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
+        <div class="brand-mobile">FinBud</div>
+        <font-awesome-icon icon="fa-solid fa-chevron-down" />
+      </div>
+      <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
+        <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">{{ $t("chat") }}</router-link>
+        <router-link to="/about" class="about" @click="toggleDropdownMobile">{{ $t("about") }}</router-link>
+        <router-link to="/tech" class="technology" @click="toggleDropdownMobile">{{ $t("technology") }}</router-link>
+        <div class="authenticated" v-if="isAuthenticated">
+          <strong>{{ $t("finManage") }}</strong>
+          <router-link to="/goal" class="goal" @click="toggleDropdownMobile">{{ $t("goal") }}</router-link>
+          <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">{{ $t("riskAnalysis")
+          }}</router-link>
+          <router-link to="/investment-calculator" class="investment-calculator" @click="toggleDropdownMobile">{{
+            $t("investmentCalculator") }}</router-link>
+          <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdownMobile">{{
+            $t("mortgageCalculator") }}</router-link>
+          <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">{{
+            $t("superInvestors") }}</router-link>
+
+          <strong>{{ $t("finInvest") }}</strong>
+          <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">{{ $t("simulator")
+          }}</router-link>
+          <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownMobile">AutoTrade AI</router-link>
+          <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">{{ $t("quant") }}</router-link>
+          <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">{{
+            $t("quantSimulator") }}</router-link>
+          <router-link to="/docs" class="docs" @click="toggleDropdownMobile">
+            {{ $t("Fin Data") }}
+          </router-link>
+
+          <strong>{{ $t("finEdu") }}</strong>
+          <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">{{ $t("quiz") }}</router-link>
+          <router-link to="/event" class="event" @click="toggleDropdownMobile">{{ $t("event") }}</router-link>
+          <router-link to="/forum" class="forum" @click="toggleDropdownMobile">{{ $t("forum") }}</router-link>
+
+          <router-link to="#" @click="logout" class="logout">{{
+            $t("logout")
+          }}</router-link>
         </div>
-        <div
-          class="dropdown-content"
-          v-show="isDropdownOpenMobile"
-          @mouseleave="closeDropdownMobile"
-        >
-          <router-link
-            to="/chat-view"
-            class="chatview"
-            @click="toggleDropdownMobile"
-            >{{ $t("chat") }}</router-link
-          >
-          <router-link
-            to="/about"
-            class="about"
-            @click="toggleDropdownMobile"
-            >{{ $t("about") }}</router-link
-          >
-          <router-link
-            to="/tech"
-            class="technology"
-            @click="toggleDropdownMobile"
-            >{{ $t("technology") }}</router-link
-          >
-          <div class="authenticated" v-if="isAuthenticated">
-            <strong>{{ $t("finManage") }}</strong>
-            <router-link
-              to="/goal"
-              class="goal"
-              @click="toggleDropdownMobile"
-              >{{ $t("goal") }}</router-link
-            >
-            <router-link
-              to="/riskanalysis"
-              class="risk-analysis"
-              @click="toggleDropdownMobile"
-              >{{ $t("riskAnalysis") }}</router-link
-            >
-            <router-link
-              to="/investment-calculator"
-              class="investment-calculator"
-              @click="toggleDropdownMobile"
-              >{{ $t("investmentCalculator") }}</router-link
-            >
-            <router-link
-              to="/mortgage-calc"
-              class="mortgage-calc"
-              @click="toggleDropdownMobile"
-              >{{ $t("mortgageCalculator") }}</router-link
-            >
-            <router-link
-              to="/super-investors"
-              class="super-investors"
-              @click="toggleDropdownMobile"
-              >{{ $t("superInvestors") }}</router-link
-            >
-
-            <strong>{{ $t("finInvest") }}</strong>
-            <router-link
-              to="/stock-simulator"
-              class="simulator"
-              @click="toggleDropdownMobile"
-              >{{ $t("simulator") }}</router-link
-            >
-            <router-link
-              to="/autotrade-ai"
-              class="autotrade"
-              @click="toggleDropdownMobile"
-              >AutoTrade AI</router-link
-            >
-            <router-link
-              to="/quant-analysis"
-              class="home"
-              @click="toggleDropdownMobile"
-              >{{ $t("quant") }}</router-link
-            >
-            <router-link
-              to="/quant-simulator"
-              class="quant-simulator"
-              @click="toggleDropdownMobile"
-              >{{ $t("quantSimulator") }}</router-link
-            >
-            
-
-            <strong>{{ $t("finEdu") }}</strong>
-            <router-link
-              to="/quizz"
-              class="quizz"
-              @click="toggleDropdownMobile"
-              >{{ $t("quiz") }}</router-link
-            >
-            <router-link
-              to="/event"
-              class="event"
-              @click="toggleDropdownMobile"
-              >{{ $t("event") }}</router-link
-            >
-            <router-link
-              to="/forum"
-              class="forum"
-              @click="toggleDropdownMobile"
-              >{{ $t("forum") }}</router-link
-            >
-
-            <router-link to="#" @click="logout" class="logout">{{
-              $t("logout")
-            }}</router-link>
-          </div>
-          <router-link
-            to="/login"
-            v-if="!isAuthenticated && !isAuthLoading"
-            class="login-button"
-            @click="toggleDropdownMobile"
-            >{{ $t("login") }}</router-link
-          >
-          <div v-if="isAuthLoading" class="auth-loading-mobile">
-            <div class="loading-indicator"></div>
-          </div>
+        <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button"
+          @click="toggleDropdownMobile">{{ $t("login") }}</router-link>
+        <div v-if="isAuthLoading" class="auth-loading-mobile">
+          <div class="loading-indicator"></div>
         </div>
       </div>
+    </div>
     </div>
   </nav>
 </template>
@@ -404,7 +210,7 @@ import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
 import NavbarNoti from "../Notification/NavbarNoti.vue";
-import { to } from "mathjs";
+
 export default {
   name: "NavBar",
   components: {
@@ -413,19 +219,41 @@ export default {
   },
   data() {
     return {
-      isDropdownOpen: false,
-      isDropdownOpenInvest: false,
-      isDropdownOpenEdu: false,
-      isDropdownOpenAgent: false,
-      isAboutDropdownOpen: false,
-      isDropdownOpenMobile: false,
-      isProfileDropdownOpen: false,
-      isDataDropdownOpen: false,
+      dropdowns: {
+        General: false,
+        Invest: false,
+        Edu: false,
+        Agent: false,
+        Data: false,
+        About: false,
+        Profile: false,
+        Mobile: false,
+      },
       isDarkMode: false,
-      isAuthLoading: false,
     };
   },
   computed: {
+    isDropdownOpen() {
+      return this.dropdowns.General;
+    },
+    isDropdownOpenInvest() {
+      return this.dropdowns.Invest;
+    },
+    isDropdownOpenEdu() {
+      return this.dropdowns.Edu;
+    },
+    isDropdownOpenAgent() {
+      return this.dropdowns.Agent;
+    },
+    isDropdownOpenMobile() {
+      return this.dropdowns.Mobile;
+    },
+    isAboutDropdownOpen() {
+      return this.dropdowns.About;
+    },
+    isProfileDropdownOpen() {
+      return this.dropdowns.Profile;
+    },
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
@@ -437,16 +265,7 @@ export default {
     },
     profileImage() {
       const userImage = this.$store.getters["users/userProfileImage"];
-      // Check if the image URL is valid
-      if (
-        userImage &&
-        typeof userImage === "string" &&
-        userImage.trim() !== ""
-      ) {
-        return userImage;
-      }
-      // Return the default image
-      return defaultImage;
+      return userImage && userImage.trim() !== "" ? userImage : defaultImage;
     },
     profileName() {
       return this.$store.getters["users/userDisplayName"];
@@ -454,46 +273,50 @@ export default {
     finCoinBalance() {
       return this.$store.getters["finCoin/finCoinBalance"];
     },
-    watch: {
-      // Fetch FinCoin balance when user logs in
-      isAuthenticated(newVal) {
-        if (newVal) {
-          this.$store.dispatch("finCoin/fetchFinCoinBalance");
-        }
-      },
+  },
+  watch: {
+    isAuthenticated(newVal) {
+      if (newVal) {
+        this.$store.dispatch("finCoin/fetchFinCoinBalance");
+      }
     },
   },
+
   methods: {
     switchLanguage(lang) {
       this.$i18n.locale = lang;
       localStorage.setItem("language", lang);
     },
-    toggleDropdown(open) {
-      this.isDropdownOpen = open;
-    },
-    toggleDropdownInvest(open) {
-      this.isDropdownOpenInvest = open;
-    },
-    toggleDropdownEdu(open) {
-      this.isDropdownOpenEdu = open;
-    },
-    toggleDropdownAgent(open) {
-      this.isDropdownOpenAgent = open;
-    },
-    toggleDropdownData(open) {
-      this.isDataDropdownOpen = open;
-    },
-    toggleProfileDropdown(open) {
-      this.isProfileDropdownOpen = open;
+    toggleDropdown(type, open) {
+      if (this.dropdowns.hasOwnProperty(type)) {
+        this.dropdowns[type] = open;
+      }
+
     },
     toggleAboutDropdown(open) {
-      this.isAboutDropdownOpen = open;
+      this.toggleDropdown("About", open);
     },
+
+    toggleDropdownInvest(open) {
+      this.toggleDropdown("Invest", open);
+    },
+    toggleDropdownData(open) {
+      this.toggleDropdown("Data", open);
+    },
+    toggleProfileDropdown(open) {
+      this.toggleDropdown("Profile", open);
+    },
+
     toggleDropdownMobile() {
-      this.isDropdownOpenMobile = !this.isDropdownOpenMobile;
+      this.dropdowns.Mobile = !this.dropdowns.Mobile;
     },
+
+    toggleDropdownEdu(open) {
+      this.toggleDropdown("Edu", open);
+    },
+
     closeDropdownMobile() {
-      this.isDropdownOpenMobile = false;
+      this.dropdowns.Mobile = false;
     },
     async logout() {
       try {
@@ -501,7 +324,7 @@ export default {
           withCredentials: true,
         });
       } catch (err) {
-        console.log("After logout with err: " + err);
+        console.error("Logout error:", err);
       }
       this.$store.dispatch("users/logout");
       this.$router.push("/login");
@@ -513,31 +336,20 @@ export default {
       localStorage.setItem("darkMode", this.isDarkMode ? "true" : "false");
 
       if (this.userData) {
-        const userId = this.userData._id;
         try {
           const response = await axios.put(
-            `${process.env.VUE_APP_DEPLOY_URL}/users/${userId}/settings`,
-            {
-              settings: {
-                darkMode: this.isDarkMode,
-              },
-            },
+            `${process.env.VUE_APP_DEPLOY_URL}/users/${this.userData._id}/settings`,
+            { settings: { darkMode: this.isDarkMode } },
             { withCredentials: true }
           );
           console.log("Dark mode updated:", response.data);
         } catch (err) {
-          console.error(
-            "Error updating dark mode in database:",
-            err.response ? err.response.data : err
-          );
+          console.error("Error saving dark mode:", err);
         }
       }
     },
     handleLogoClick(event) {
-      // Prevent default navigation
       event.preventDefault();
-
-      // Emit logo-click event to parent component
       this.$emit("logo-clicked");
     },
     handleImageError(event) {
@@ -545,30 +357,25 @@ export default {
     },
   },
   async mounted() {
-    // Set initial language from localStorage only if it exists
     const savedLang = localStorage.getItem("language");
-    if (savedLang) {
-      this.$i18n.locale = savedLang;
-    }
+    if (savedLang) this.$i18n.locale = savedLang;
 
     if (!this.$store.getters["users/currentUser"]) {
       await this.$store.dispatch("users/fetchCurrentUser");
     }
-    const storedDarkMode = localStorage.getItem("darkMode");
-    if (storedDarkMode !== null) {
-      this.isDarkMode = storedDarkMode === "true";
-    } else {
-      this.isDarkMode = false;
-      localStorage.setItem("darkMode", "false");
-    }
 
-    // Fetch FinCoin balance if user is authenticated
+    const storedDarkMode = localStorage.getItem("darkMode");
+    this.isDarkMode = storedDarkMode === "true";
+    document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
+    document.body.classList.toggle("dark-mode", this.isDarkMode);
+
     if (this.isAuthenticated) {
       await this.$store.dispatch("finCoin/fetchFinCoinBalance");
     }
 
-    document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
-    document.body.classList.toggle("dark-mode", this.isDarkMode);
+    this.$router.afterEach(() => {
+      this.closeDropdownMobile();
+    });
   },
 };
 </script>
@@ -600,11 +407,9 @@ export default {
 }
 
 .nav-bar {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.85),
-    rgba(255, 255, 255, 0)
-  );
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0));
   width: 100%;
   height: 80px;
   display: flex;
@@ -648,8 +453,7 @@ export default {
   list-style: none;
   display: flex;
   align-items: center;
-  padding: 0.2rem;
-  gap: 2rem;
+  gap: 0.5rem;
 }
 
 .nav-items li {
@@ -750,11 +554,14 @@ export default {
   content: "";
   position: absolute;
   width: 100%;
-  height: 20px; /* Height of connection area */
-  bottom: -20px; /* Position it below the dropdown trigger */
+  height: 20px;
+  /* Height of connection area */
+  bottom: -20px;
+  /* Position it below the dropdown trigger */
   left: 0;
   z-index: 1000;
-  pointer-events: none; /* Makes it not interfere with clicks */
+  pointer-events: none;
+  /* Makes it not interfere with clicks */
 }
 
 .dropdown-content {
@@ -762,13 +569,18 @@ export default {
   position: absolute;
   background-color: var(--bg-primary);
   border: 2px solid var(--text-primary);
-  min-width: 180px; /* Increased from 160px to accommodate longer text */
+  min-width: 180px;
+  /* Increased from 160px to accommodate longer text */
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
-  z-index: 1001; /* Increased z-index to prevent overlap */
+  z-index: 1001;
+  /* Increased z-index to prevent overlap */
   border-radius: 15px;
-  top: 40px; /* Position below the navbar item */
-  left: 0; /* Align with left edge of the parent */
-  margin-top: 0; /* Reduced from 10px to eliminate gap */
+  top: 40px;
+  /* Position below the navbar item */
+  left: 0;
+  /* Align with left edge of the parent */
+  margin-top: 0;
+  /* Reduced from 10px to eliminate gap */
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
@@ -782,28 +594,37 @@ export default {
   position: absolute;
   background-color: var(--bg-primary);
   border: 2px solid var(--text-primary);
-  min-width: 220px; /* Increased width */
+  min-width: 220px;
+  /* Increased width */
   box-shadow: 0px 8px 16px 0px var(--shadow-color);
-  z-index: 1001; /* Increased z-index */
+  z-index: 1001;
+  /* Increased z-index */
   right: 0;
-  top: 45px; /* Position below user image */
+  top: 45px;
+  /* Position below user image */
   border-radius: 15px;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
   transform: translateY(10px);
-  left: auto; /* Ensure right alignment */
+  left: auto;
+  /* Ensure right alignment */
   transform-origin: top right;
-  padding-top: 10px; /* Add padding to top of dropdown content */
-  margin-top: 0; /* No gap between trigger and content */
-  overflow: hidden; /* Ensure content stays within border radius */
+  padding-top: 10px;
+  /* Add padding to top of dropdown content */
+  margin-top: 0;
+  /* No gap between trigger and content */
+  overflow: hidden;
+  /* Ensure content stays within border radius */
 }
 
 .dropdown-content:before {
   content: "";
   position: absolute;
-  top: 0px; /* Moved up to account for padding */ 
-  left: 20px; /* Position arrow more to the left */
+  top: 0px;
+  /* Moved up to account for padding */
+  left: 20px;
+  /* Position arrow more to the left */
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
@@ -872,17 +693,27 @@ export default {
 .dropdown-profile a {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  padding: 12px 16px;
+  padding: 6px 12px;
+  /* giảm padding */
+  font-size: 12px;
+  /* chữ nhỏ hơn */
+  margin: 1px 0;
+  /* ít khoảng cách hơn */
+  line-height: 1.2;
+  /* dòng sát nhau hơn */
   text-decoration: none;
   display: flex;
   align-items: center;
   border-bottom: 1px dotted var(--border-color, rgba(226, 215, 215, 0.5));
-  height: auto; /* Changed from fixed height */
-  min-height: 24px; /* Minimum height */
+  height: auto;
+  /* Changed from fixed height */
+  min-height: 24px;
+  /* Minimum height */
   border-left: none;
   border-right: none;
   transition: background-color 0.2s ease;
-  margin: 2px 0; /* Added margin between items */
+  margin: 2px 0;
+  /* Added margin between items */
 }
 
 .dropdown-content a:nth-child(1),
@@ -890,7 +721,8 @@ export default {
   border-top: none;
   border-top-left-radius: 13px;
   border-top-right-radius: 13px;
-  margin-top: 0; /* No margin for first item */
+  margin-top: 0;
+  /* No margin for first item */
 }
 
 .dropdown-content a:last-child,
@@ -898,7 +730,8 @@ export default {
   border-bottom: none;
   border-bottom-left-radius: 13px;
   border-bottom-right-radius: 13px;
-  margin-bottom: 0; /* No margin for last item */
+  margin-bottom: 0;
+  /* No margin for last item */
 }
 
 .dropdown-content .authenticated a:last-child {
@@ -984,6 +817,7 @@ export default {
 }
 
 @media (max-width: 768px) {
+
   /* Disable the hover connection for mobile */
   .dropdown::after {
     display: none;
@@ -1039,8 +873,10 @@ export default {
   .mobile-only .dropdown-content {
     top: 40px;
     width: 200px;
-    max-height: 80vh; /* Limit height on mobile */
-    overflow-y: auto; /* Allow scrolling */
+    max-height: 80vh;
+    /* Limit height on mobile */
+    overflow-y: auto;
+    /* Allow scrolling */
     left: 50%;
     transform: translateX(-50%) translateY(10px);
     transform-origin: top center;
@@ -1049,7 +885,8 @@ export default {
   }
 
   .mobile-only .dropdown-content a {
-    padding: 14px 16px; /* Larger touch targets on mobile */
+    padding: 14px 16px;
+    /* Larger touch targets on mobile */
     border-left: none;
     border-right: none;
   }
@@ -1069,6 +906,8 @@ export default {
     font-weight: bold;
   }
 }
+
+
 
 .auth-loading {
   display: flex;
