@@ -383,12 +383,8 @@ import { toast } from "vue3-toastify";
 import axios from "axios";
 import { showReward } from "../../utils/utils";
 import { gptServices } from "@/services/gptServices";
-<<<<<<< HEAD:frontend/src/views/StockSimulator.vue
-import QuizRewards from "@/components/QuizRewards.vue";
 import StockChart from '@/views/StockChart.vue'
-=======
 import QuizRewards from "@/components/FinEdu/Quiz/QuizRewards.vue";
->>>>>>> main:frontend/src/views/FinInvest/StockSimulatorPage.vue
 
 export default {
   name: "StockDashboard",
