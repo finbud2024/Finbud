@@ -43,11 +43,11 @@ export async function getEarningCalendars(ticker) {
 }
 
 // Get earning transcripts
-// export async function getEarningTranscripts(ticker){
-//     const response = await axios.get(`/.netlify/functions/server/earnings-transcript/${ticker}`)
-//     console.log("earning transcripts from FE", response.data)
-//     return response.data
-// }
+export async function getEarningTranscripts(ticker){
+    const response = await axios.get(`/.netlify/functions/server/earnings-transcript/${ticker}`)
+    console.log("earning transcripts from FE", response.data)
+    return response.data
+}
 
 export async function getProcessForm4(ticker){
     try {
