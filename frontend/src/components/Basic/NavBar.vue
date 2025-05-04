@@ -98,38 +98,54 @@
           <NavbarNoti />
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown profile-dropdown" @mouseenter="toggleProfileDropdown(true)"
-          @mouseleave="toggleProfileDropdown(false)">
-          <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" loading="eager" />
-          <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-  <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-    <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image" @error="handleImageError" />
-    <p>{{ profileName }}</p>
-  </router-link>
+        <li v-if="isAuthenticated" class="dropdown profile-dropdown">
+  <div
+    class="profile-wrapper"
+    @mouseenter="toggleProfileDropdown(true)"
+    @mouseleave="toggleProfileDropdown(false)"
+  >
+    <img
+      :src="profileImage"
+      alt="User Image"
+      class="user-image"
+      @error="handleImageError"
+      loading="eager"
+    />
+    <div class="dropdown-profile" v-show="isProfileDropdownOpen">
+      <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
+        <img
+          :src="profileImage"
+          alt="User Image"
+          class="inside-dropdown-user-image"
+          @error="handleImageError"
+          loading="eager"
+        />
+        <p>{{ profileName }}</p>
+      </router-link>
 
-  <li v-if="isAuthenticated" class="fincoin-container">
-    <FinCoinDisplay :balance="finCoinBalance" />
-  </li>
-  <div class="language-switcher">
-    <button @click="switchLanguage('en')">
-      <img src="@/assets/us.png" alt="English" />
-    </button>
-    <button @click="switchLanguage('vi')">
-      <img src="@/assets/vn.png" alt="Tiếng Việt" />
-    </button>
+      <!-- Moved inside dropdown -->
+      <div class="fincoin-container">
+        <FinCoinDisplay :balance="finCoinBalance" />
+      </div>
+      <div class="language-switcher">
+        <button @click="switchLanguage('en')">
+          <img src="@/assets/us.png" alt="English" />
+        </button>
+        <button @click="switchLanguage('vi')">
+          <img src="@/assets/vn.png" alt="Tiếng Việt" />
+        </button>
+      </div>
+      <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
+        <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
+        <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
+      </router-link>
+      <router-link to="#" class="logout" @click="logout">
+        <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
+        <p>{{ $t("logout") }}</p>
+      </router-link>
+    </div>
   </div>
-
-  <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-    <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-    <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
-  </router-link>
-
-  <router-link to="#" class="logout" @click="logout">
-    <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
-    <p>{{ $t("logout") }}</p>
-  </router-link>
-</div>
-    </li>
+</li>
 
     <li v-if="isAuthLoading" class="auth-loading">
       <div class="loading-indicator"></div>
@@ -890,6 +906,8 @@ export default {
     font-weight: bold;
   }
 }
+
+
 
 .auth-loading {
   display: flex;
