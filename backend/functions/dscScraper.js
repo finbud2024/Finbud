@@ -14,7 +14,7 @@ const SECTION_URLS = {
   'phan-tich-ky-thuat': 'https://www.dsc.com.vn/kien-thuc/phan-tich-ky-thuat'
 };
 
-const mongoURI = 'mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/development?retryWrites=true&w=majority';
+const mongoURI = process.env.MONGO_URI;
 
 const connectToMongoDB = async () => {
   return mongoose.connect(mongoURI, {

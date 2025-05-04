@@ -36,7 +36,7 @@ import InsiderTransactionPage from "@/views/InsiderTransactionPage.vue";
 import EarningCalendarPage from "@/views/EarningCalendarPage.vue";
 import FundLetterPage from "@/views/FundLetterPage.vue";
 import NotificationCenter from "@/views/NotificationCenter.vue";
-
+import CourseCategoryPage from "@/views/CourseCategoryPage.vue";
 
 const routes = [
   {
@@ -150,6 +150,12 @@ const routes = [
     props: true,
   },
   {
+    path: '/courses/:categorySlug',
+    name: 'CourseCategory',
+    component: CourseCategoryPage,
+    props: true
+  },
+  {
     path: "/thread",
     name: "ThreadCard",
     component: ThreadCard,
@@ -229,7 +235,13 @@ const routes = [
     path: "/notifications",
     name: "NotificationCenter",
     component: NotificationCenter, 
+  },
+  {
+    path: '/courses/:categorySlug',
+    name: 'CourseCategory', // Must match exactly what you use in router-link
+    component: CourseCategoryPage,
   }
+  
 ];
 
 const router = createRouter({

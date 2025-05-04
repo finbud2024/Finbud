@@ -599,8 +599,25 @@ const messages = {
           linkHref: "#"
         }
       }
-    }
+    },
 
+    coursePage: {
+      loadingText: "Loading data...",
+      errorMessage: "Error loading data: }",
+      retryButton: "Try Again",
+      categories: {
+        beginners: "FOR BEGINNERS",
+        investments: "EFFECTIVE INVESTMENTS", 
+        fundamental: "FUNDAMENTAL ANALYSIS",
+        technical: "TECHNICAL ANALYSIS"
+      },
+      viewMore: "View More",
+      courseCard: {
+        views: "views",
+        readTime: "min read"
+      },
+      emptyState: "No articles available in this category."
+    },
   },
   vi: {
 
@@ -1184,7 +1201,24 @@ const messages = {
           linkHref: "#"
         }
       }
-    }
+    },
+    coursePage: {
+      loadingText: "Đang tải dữ liệu...",
+      errorMessage: "Đã xảy ra lỗi khi tải dữ liệu: ",
+      retryButton: "Thử lại",
+      categories: {
+        beginners: "CHO NGƯỜI MỚI BẮT ĐẦU",
+        investments: "ĐẦU TƯ HIỆU QUẢ",
+        fundamental: "PHÂN TÍCH CƠ BẢN",
+        technical: "PHÂN TÍCH KỸ THUẬT"
+      },
+      viewMore: "Xem thêm",
+      courseCard: {
+        views: "lượt xem",
+        readTime: "phút đọc"
+      },
+      emptyState: "Không có bài viết nào trong danh mục này."
+    },
   },
 };
 
