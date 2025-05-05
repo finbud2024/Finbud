@@ -14,7 +14,7 @@ const SECTION_URLS = {
   'phan-tich-ky-thuat': 'https://www.dsc.com.vn/kien-thuc/phan-tich-ky-thuat'
 };
 
-const mongoURI = process.env.MONGO_URI;
+const mongoURI = 'mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/development?retryWrites=true&w=majority';
 
 const connectToMongoDB = async () => {
   return mongoose.connect(mongoURI, {
@@ -91,8 +91,10 @@ async function scrapeArticles() {
           const img = card.querySelector('img');
           const descEl = card.querySelector('.FCQNZMBSBW');
           const description = descEl ? descEl.innerText.trim() : '';
-          const viewEl = card.querySelector('.ASNPXFEMPX')
-          const view = viewEl ? viewEl.innerText.trim() : null;
+          const viewEl = card.querySelector('.ASNPXFEMPX');
+          
+          // Extract only the number of views
+          const view = viewEl ? viewEl.innerText.trim().replace(/[^\d]/g, '') : null;
 
           return {
             title: anchor?.innerText.trim() || '',

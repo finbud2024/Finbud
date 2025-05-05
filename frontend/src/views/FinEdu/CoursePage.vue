@@ -87,7 +87,7 @@
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                {{ article.view }} 
+                {{ article.view }} {{ $t('coursePage.views') }}
               </span>
             </div>
             <p class="course-description">{{ getFirstParagraph(article.description) }}</p>
@@ -129,7 +129,7 @@
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                {{ article.view }}
+                {{ article.view }} {{ $t('coursePage.views') }}
               </span>
             </div>
             <p class="course-description">{{ getFirstParagraph(article.description) }}</p>
@@ -171,7 +171,7 @@
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                {{ article.view }}
+                {{ article.view }} {{ $t('coursePage.views') }}
               </span>
             </div>
             <p class="course-description">{{ getFirstParagraph(article.description) }}</p>
@@ -213,7 +213,7 @@
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                {{ article.view }}
+                {{ article.view }} {{ $t('coursePage.views') }}
               </span>
             </div>
             <p class="course-description">{{ getFirstParagraph(article.description) }}</p>
@@ -227,6 +227,7 @@
 <script>
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { useI18n } from 'vue-i18n'
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_DEPLOY_URL,
@@ -262,6 +263,7 @@ export default {
       typingTimer: null,
       botHideTimer: null,
       chatCollapsed: false,
+      abortTyping: false,
     };
   },
   computed: {
@@ -288,11 +290,21 @@ export default {
       return articles?.slice(0, 6).map(article => ({
         ...article,
       })) || [];
+    },
+    botMessage() {
+      return this.$t('coursePage.botMessage');
+    }
+  },
+  watch: {
+    '$i18n.locale'(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.refreshBotMessage();
+      }
     }
   },
   methods: {
     formatCourseIntroduction() {
-      return 'Hello there! 👋<br><br>This is FinBud financial learning hub. Here you can:<br><br>📚 Learn investment knowledge from basic to advanced<br>💡 Discover effective investment strategies<br>📊 Dive deep into fundamental and technical analysis<br><br>Explore articles by topic or search for content you are interested in!';
+      return this.$t('coursePage.botMessage');
     },
     async fetchArticles() {
       this.loading = true;
@@ -356,10 +368,13 @@ export default {
     },
 
     startRealisticTyping() {
+      this.abortTyping = false;
       this.typedContent = "";
       let charIndex = 0;
 
       const typeNextChar = () => {
+        if (this.abortTyping) return;
+
         if (charIndex < this.botMessage.length) {
           const currentChar = this.botMessage.charAt(charIndex);
 
@@ -399,7 +414,31 @@ export default {
 
       setTimeout(typeNextChar, 300);
     },
-
+    refreshBotMessage() {
+      // 1. Abort any ongoing typing immediately
+      this.abortTyping = true;
+      if (this.typingTimer) {
+        clearTimeout(this.typingTimer);
+      }
+      this.botMessage = this.formatCourseIntroduction();
+      
+      // 2. Quickly fade out current message
+      this.hidingMessage = true;
+      
+      // 3. After fade-out completes, start new message
+      setTimeout(() => {
+        this.hidingMessage = false;
+        this.showMessage = true;
+        this.typedContent = "";
+        this.isTyping = true;
+        
+        // 4. Start typing new message
+        setTimeout(() => {
+          this.isTyping = false;
+          this.startRealisticTyping();
+        }, 300);
+      }, 300);
+    },
     hideMessage() {
       // Only hide the message, not the bot
       this.hidingMessage = true;
@@ -416,7 +455,7 @@ export default {
         // After typing animation, restart with new message
         setTimeout(() => {
           this.isTyping = false;
-          this.botMessage = this.formatQuizIntroduction();
+          // this.botMessage = this.formatQuizIntroduction();
           this.startRealisticTyping();
         }, 500);
       }, 800);
@@ -623,18 +662,70 @@ export default {
 
 /* Section Divider */
 .section-divider {
-  margin-bottom: 3rem;
-  text-align: center;
+  margin-bottom: 1.5rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
 }
 
 .section-title {
   position: relative;
   display: inline-block;
-  padding: 0 2rem;
-  margin-left: 100px;
+  padding: 0 0.5rem;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+/* View All Button */
+.read-more-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.read-more-btn {
+  background-color: black;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 3px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  font-size: small;
+}
+
+@media (min-width: 768px) {
+  .section-divider {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .section-title {
+    padding: 0 2rem;
+    margin-left: 100px;
+    text-align: center;
+    font-size: large;
+  }
+  
+  .read-more-container {
+    justify-content: flex-end;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .read-more-btn {
+    background-color: black;
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    font-size: medium;
+  }
 }
 
 .title-text {
@@ -661,23 +752,6 @@ export default {
 
 .section-title::after {
   right: -100px;
-}
-
-/* View All Button */
-.read-more-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-.read-more-btn {
-  background-color: black;
-  color: white;
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
 }
 
 .read-more-btn:hover {

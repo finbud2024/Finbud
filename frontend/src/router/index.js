@@ -35,8 +35,8 @@ import InsiderTransactionPage from "@/views/FinInvest/FinData/InsiderTransaction
 import EarningCalendarPage from "@/views/Unused/EarningCalendarPage.vue";
 import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
-import CourseCategoryPage from "@/views/CourseCategoryPage.vue";
-import CoursePage from "@/views/CoursePage.vue";
+import CourseCategoryPage from "@/views/FinEdu/CourseCategoryPage.vue";
+import CoursePage from "@/views/FinEdu/CoursePage.vue";
 
 const routes = [
   {

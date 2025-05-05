@@ -383,7 +383,7 @@ import { toast } from "vue3-toastify";
 import axios from "axios";
 import { showReward } from "../../utils/utils";
 import { gptServices } from "@/services/gptServices";
-import StockChart from '@/views/StockChart.vue'
+import StockChart from '@/components/StockChart.vue'
 import QuizRewards from "@/components/FinEdu/Quiz/QuizRewards.vue";
 
 export default {

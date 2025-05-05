@@ -53,7 +53,7 @@
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
-                  {{ article.view }} {{ $t('coursePage.courseCard.views') }}
+                  {{ article.view }} {{ $t('coursePage.views') }}
                 </span>
               </div>
               <p class="course-description">{{ getFirstParagraph(article.description) }}</p>

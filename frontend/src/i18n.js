@@ -612,11 +612,9 @@ const messages = {
         technical: "TECHNICAL ANALYSIS"
       },
       viewMore: "View More",
-      courseCard: {
-        views: "views",
-        readTime: "min read"
-      },
-      emptyState: "No articles available in this category."
+      views: "views",
+      emptyState: "No articles available in this category.",
+      botMessage: "Hello there! 👋<br><br>This is FinBud financial learning hub. Here you can:<br><br>📚 Learn investment knowledge from basic to advanced<br>💡 Discover effective investment strategies<br>📊 Dive deep into fundamental and technical analysis<br><br>Explore articles by topic or search for content you are interested in!"
     },
   },
   vi: {
@@ -1213,11 +1211,9 @@ const messages = {
         technical: "PHÂN TÍCH KỸ THUẬT"
       },
       viewMore: "Xem thêm",
-      courseCard: {
-        views: "lượt xem",
-        readTime: "phút đọc"
-      },
-      emptyState: "Không có bài viết nào trong danh mục này."
+      views: "lượt xem",
+      emptyState: "Không có bài viết nào trong danh mục này.",
+      botMessage: "Chào bạn! 👋<br><br>Chào mừng đến với FinBud – trung tâm học tập tài chính. Tại đây bạn có thể:<br><br>📚 Học kiến thức đầu tư từ cơ bản đến nâng cao<br>💡 Khám phá các chiến lược đầu tư hiệu quả<br>📊 Tìm hiểu sâu về phân tích cơ bản và phân tích kỹ thuật<br><br>Khám phá các bài viết theo chủ đề hoặc tìm kiếm nội dung bạn quan tâm nhé!"
     },
   },
 };
