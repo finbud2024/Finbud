@@ -38,13 +38,13 @@
     </nav>
 
     <section v-if="activeSection === 'investment'">
-      <div class="header-container">
-        <header class="dashboard-header">
-          <BannerCardSimulator :stockCode="bannerDisplayStock" />
-        </header>
-
-        <!-- Repositioned header chatbot to be beside the dashboard header -->
-        <div class="header-chatbot-container">
+      <!-- Row 1: Graph and Chatbox -->
+      <div class="investment-row top-row">
+        <div class="graph-container">
+          <StockChart :stockCode="bannerDisplayStock" timeRange="3M"/>
+        </div>
+        
+        <div class="chatbox-container">
           <div class="header-finbudBot-container">
             <img
               class="header-finbudBot"
@@ -54,71 +54,22 @@
             />
           </div>
           <div class="header-chatbot-content">
-            <div
-              class="header-chat-message"
-              v-html="
-                formatChatMessage(
-                  headerTypingComplete
-                    ? headerChatbotMessage
-                    : headerPartialMessage
-                )
-              "
-            ></div>
+            <div class="header-chat-message" v-html="formatChatMessage(headerTypingComplete ? headerChatbotMessage : headerPartialMessage)"></div>
             <span v-if="!headerTypingComplete" class="typing-cursor">|</span>
           </div>
         </div>
       </div>
 
-      <div class="main-content">
-        <section class="key-statistics">
-          <h3>{{ $t("investment.keyStatistics") }}</h3>
-          <div class="stats-grid">
-            <div class="stat">
-              <span class="label">{{ $t("investment.stats.open") }}: </span>
-              <span class="value">${{ stockData.open }}</span>
-            </div>
-            <div class="stat">
-              <span class="label"
-                >{{ $t("investment.stats.prevClose") }}:
-              </span>
-              <span class="value">${{ stockData.close }}</span>
-            </div>
-            <div class="stat">
-              <span class="label"
-                >{{ $t("investment.stats.week52High") }}:
-              </span>
-              <span class="value">${{ stockData.high }}</span>
-            </div>
-            <div class="stat">
-              <span class="label"
-                >{{ $t("investment.stats.week52Low") }}:
-              </span>
-              <span class="value">${{ stockData.low }}</span>
-            </div>
-            <div class="stat">
-              <span class="label"
-                >{{ $t("investment.stats.marketCap") }}:
-              </span>
-              <span class="value">${{ stockData.marketCap }}</span>
-            </div>
-            <div class="stat">
-              <span class="label">{{ $t("investment.stats.volume") }}: </span>
-              <span class="value"
-                >{{ stockData.volume }}
-                {{ $t("investment.stats.volume") }}</span
-              >
-            </div>
-          </div>
-        </section>
-
-        <section class="actions">
-          <h3>Actions</h3>
+      <!-- Row 2: AAPL Info and Action Box -->
+      <div class="investment-row bottom-row">
+        <div class="stock-info-container">
+          <BannerCardSimulator :stockCode="bannerDisplayStock" />
+        </div>
+        
+        <div class="action-container">
           <div class="action-form">
-            <input
-              v-model="stockSymbol"
-              type="text"
-              placeholder="Enter stock symbol"
-            />
+            <h3>Actions</h3>
+            <input v-model="stockSymbol" type="text" placeholder="Enter stock symbol" />
             <input v-model="quantity" type="number" placeholder="Quantity" />
             <select v-model="action">
               <option value="buy">{{ $t("investment.actionForm.buy") }}</option>
@@ -135,8 +86,14 @@
               </button>
             </div>
           </div>
-        </section>
+        </div>
       </div>
+
+      <section class="transactions">
+        <div class="transaction-form">
+           <TransactionHistory :key="transactionKey" />
+        </div>
+      </section>
 
       <div class="account-performance">
         <section class="account-info">
@@ -426,6 +383,7 @@ import { toast } from "vue3-toastify";
 import axios from "axios";
 import { showReward } from "../../utils/utils";
 import { gptServices } from "@/services/gptServices";
+import StockChart from '@/components/StockChart.vue'
 import QuizRewards from "@/components/FinEdu/Quiz/QuizRewards.vue";
 
 export default {
@@ -439,6 +397,7 @@ export default {
     QuizRewards,
     PredicitveCalc,
     PortfolioPerformance,
+    StockChart,
   },
   data() {
     return {
@@ -2096,27 +2055,21 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 </script>
 
 <style scoped>
-.stockDisplayContainer {
-  width: calc(100%- 40px);
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-}
-
+/* Base styles */
 .dashboard {
   color: #333;
 }
 
-/* Thinking animation */
-.thinking-animation {
+/* Typing animations */
+.thinking-animation, .typing-animation {
   display: flex;
   gap: 4px;
+  padding: 4px;
+}
+
+.thinking-animation {
   margin-top: 26px;
   margin-left: 20px;
-  padding: 4px;
   background-color: #2196f3;
   width: fit-content;
   border-radius: 16px;
@@ -2143,8 +2096,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 }
 
 @keyframes thinking {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.3;
     transform: scale(1);
   }
@@ -2154,87 +2106,150 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   }
 }
 
-/* New container to hold both header elements side by side */
-.header-container {
+.typing-cursor {
+  animation: blink 1s infinite;
+  font-weight: bold;
+  display: inline;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Header styles */
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 0px;
+}
+
+/* Navigation */
+.navbar {
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  background: white;
+  padding: 0px 0;
+  border-bottom: 2px solid #ddd;
+}
+
+.navbar ul {
+  list-style-type: none;
+  display: flex;
+  gap: 10px;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 15px;
+  border: 2px solid #ddd;
+}
+
+.navbar li {
+  cursor: pointer;
+  padding: 15px 50px;
+  color: #333;
+  transition: background 0.3s, color 0.3s;
+  border-radius: 10px;
+  font-size: 1.1rem;
+}
+
+.navbar li:hover {
+  color: #007bff;
+  background: #e9f0fc;
+}
+
+.navbar li.active {
+  font-weight: bold;
+  background: #007bff;
+  color: white;
+}
+
+/* Investment section layout */
+.investment-row {
+  display: flex;
   justify-content: space-between;
-  align-items: stretch; /* Changed from flex-start to stretch for equal height */
-  padding: 20px;
-  margin-bottom: 20px;
-  width: 100%;
+  padding: 0 20px; 
   box-sizing: border-box;
-  gap: 20px; /* Added gap for consistent spacing */
+  margin: 20px 0px;
 }
 
-.dashboard-header {
-  display: flex;
-  flex-direction: column; /* Changed to column for better content alignment */
-  justify-content: flex-start;
-  align-items: stretch;
-  min-height: 120px;
-  width: 50%; /* Adjusted for more equal space distribution */
-  margin-right: 0; /* Removed margin-right and using gap instead */
-  background-color: #f8f9fa; /* Added background to match other containers */
-  border-radius: 10px; /* Added border-radius to match other containers */
-  padding: 15px; /* Added padding to match other containers */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Added shadow to match */
+.top-row {
+  height: 350px;
+}
+
+.bottom-row {
+  min-height: 400px;
+}
+
+/* Container styles */
+.chatbox-container,
+.action-container,
+.stock-info-container,
+.transactions,
+.account-info-container,
+.chat-bot-container,
+.portfolio-container,
+.quiz-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
   border: 1px solid #dee2e6;
-  overflow: hidden;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Add new style to ensure BannerCardSimulator is properly contained */
-.dashboard-header :deep(.banner-card) {
-  width: 100%;
-  height: 100%;
-  margin: 0;
+.graph-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
 }
 
-/* Ensure any direct children of dashboard-header take full width */
-.dashboard-header > * {
-  width: 100%;
-  box-sizing: border-box;
+.transactions {
+  margin: 0px 20px;
 }
 
-/* Updated header chatbot container to be side-by-side with header */
-.header-chatbot-container {
+/* Specific container widths */
+.graph-container,
+.stock-info-container {
+  width: calc(66.66% - 10px);
+}
+
+.chatbox-container,
+.action-container {
+  width: calc(33.33% - 10px);
+}
+
+.graph-container {
+  margin-right: 20px;
+}
+
+.stock-info-container {
+  margin-right: 20px;
+}
+
+/* Chatbox styles */
+.chatbox-container {
   display: flex;
   flex-direction: row-reverse;
   align-items: flex-start;
-  width: 50%; /* Equal width with dashboard-header */
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  border: 1px solid #dee2e6;
 }
 
 .header-chatbot-content {
-  display: flex;
-  flex-direction: column;
-  margin-right: 20px;
   flex-grow: 1;
-  position: relative;
+  margin-right: 15px;
 }
 
 .header-chat-message {
   background-color: #2196f3;
   color: white;
   border-radius: 15px;
-  padding: 8px 12px;
+  padding: 12px 15px;
   border: 1px solid #dee2e6;
   font-size: 0.9rem;
   line-height: 1.4;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  width: 100%;
   margin-top: 30px;
-}
-
-/* Updated FinBudBot styles */
-.header-finbudBot-container {
-  display: flex;
-  align-items: flex-start;
-  margin-left: 10px;
 }
 
 .header-finbudBot {
@@ -2248,56 +2263,64 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   transform: scale(1.1);
 }
 
-.market {
-  font-size: 0.8rem;
-  color: #00aaff;
-}
-
-.stock-prices {
-  margin-top: 10px;
-  font-size: 1.2rem;
-}
-
-.stock-info {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-around;
-  font-size: 0.9rem;
-}
-
-.main-content {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  flex-wrap: wrap;
-  gap: 20px;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.key-statistics,
-.actions {
-  width: calc(50% - 10px); /* Adjusted to ensure exact 50% minus half the gap */
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  height: 350px; /* Set fixed height instead of min-height for better alignment */
+/* Action form styles */
+.action-form {
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
-  box-sizing: border-box;
+  gap: 15px;
 }
 
-.key-statistics h3,
-.actions h3 {
+.action-form h3 {
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: #007bff;
-  font-size: 1.5rem;
 }
 
+.action-form input,
+.action-form select {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  font-size: 1rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.clear-btn,
+.preview-btn {
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.clear-btn {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  color: #555;
+}
+
+.preview-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.clear-btn:hover {
+  background-color: #e9ecef;
+}
+
+.preview-btn:hover {
+  background-color: #0069d9;
+}
+
+/* Account performance section */
 .account-performance {
   display: flex;
   justify-content: space-between;
@@ -2312,14 +2335,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   flex-direction: column;
   gap: 20px;
   height: fit-content;
-}
-
-.account-info-container {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-  min-height: 240px;
 }
 
 .account-grid {
@@ -2350,11 +2365,8 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   color: #333;
 }
 
+/* Chat bot styles */
 .chat-bot-container {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
   min-height: 200px;
   height: auto;
   position: relative;
@@ -2381,27 +2393,6 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
   margin-top: 30px;
 }
 
-.chat-message strong {
-  font-weight: 600;
-  color: #007bff;
-}
-
-.typing-cursor {
-  animation: blink 1s infinite;
-  font-weight: bold;
-  display: inline;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
 .finbudBot {
   width: 40px;
   aspect-ratio: 1;
@@ -2418,125 +2409,13 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 
 .performance-chart {
   width: 70%;
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 5px;
   display: flex;
   flex-direction: column;
 }
 
-@media (max-width: 768px) {
-  /* Mobile styling for header container */
-  .header-container {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .dashboard-header,
-  .header-chatbot-container {
-    width: 100%;
-    margin-bottom: 0; /* Removed margin-bottom and using gap instead */
-  }
-
-  .main-content {
-    flex-direction: column;
-    flex-wrap: nowrap;
-  }
-
-  .key-statistics,
-  .actions {
-    width: 100%;
-    margin-bottom: 0; /* Using gap instead */
-    height: auto; /* Allow height to adjust on mobile */
-  }
-  .account-performance {
-    flex-direction: column;
-  }
-
-  .account-info,
-  .performance-chart {
-    width: 100%;
-    height: auto !important; /* Override any JS-set height on mobile */
-    min-height: 400px;
-  }
-}
-
-.new-section {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  border: 1px solid;
-}
-
-h1 {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 0px;
-}
-
-.navbar {
-  display: flex;
-  justify-content: center;
-  background: white;
-  padding: 0px 0;
-  border-bottom: 2px solid #ddd;
-}
-.navbar ul {
-  list-style-type: none;
-  display: flex;
-  gap: 10px;
-  background: #f8f9fa;
-  padding: 10px;
-  border-radius: 15px;
-  border: 2px solid #ddd;
-}
-.navbar li {
-  cursor: pointer;
-  padding: 15px 50px;
-  color: #333;
-  transition: background 0.3s, color 0.3s;
-  border-radius: 10px;
-  font-size: 1.1rem;
-}
-
-.navbar li:hover {
-  color: #007bff;
-  background: #e9f0fc;
-}
-
-.navbar li.active {
-  font-weight: bold;
-  background: #007bff;
-  color: white;
-}
-.content {
-  padding: 20px;
-}
+/* Portfolio section */
 .portfolio-section {
   padding: 20px;
-}
-
-.portfolio-container {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.portfolio-container h2 {
-  color: #007bff;
-  margin-top: 0;
-  margin-bottom: 20px;
-}
-
-.portfolio-content {
-  background-color: white;
-  border-radius: 5px;
-  padding: 20px;
-  border: 1px solid #dee2e6;
-  min-height: 300px;
 }
 
 .portfolio-header {
@@ -2546,95 +2425,10 @@ h1 {
   margin-bottom: 20px;
 }
 
-.portfolio-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.refresh-btn,
-.export-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 12px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
-  background-color: #f8f9fa;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
-}
-
-.refresh-btn:hover,
-.export-btn:hover {
-  background-color: #e9ecef;
-}
-
 .portfolio-overview {
   display: flex;
   gap: 20px;
   margin-bottom: 20px;
-}
-
-.quiz-container {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.quiz-container h2 {
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-.quiz-container p {
-  background: #f5f7fa;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  text-align: left;
-  font-family: sans-serif;
-  font-size: 1.2rem;
-  color: var(--text-primary); /* Thay #2c3e50 */
-}
-
-.options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.options button {
-  background: #f5f7fa;
-  border: none;
-  padding: 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  color: #333;
-  transition: all 0.3s;
-  text-align: left;
-  min-height: 60px;
-}
-
-.options button:hover {
-  background: var(--hover-bg);
-  transform: translateY(-2px);
-}
-
-.options button:active {
-  transform: translateY(0);
-  color: var(--text-primary);
 }
 
 .overview-card {
@@ -2657,22 +2451,6 @@ h1 {
   font-weight: bold;
   color: #333;
   margin-bottom: 5px;
-}
-
-.overview-change {
-  font-size: 1rem;
-}
-
-.overview-change.positive {
-  color: #28a745;
-}
-
-.overview-change.negative {
-  color: #dc3545;
-}
-
-.overview-change.neutral {
-  color: #6c757d;
 }
 
 .holdings-section {
@@ -2716,7 +2494,7 @@ h1 {
   color: #dc3545;
 }
 
-/* Bot Chat Styles for Portfolio Section */
+/* Portfolio bot styles */
 .chatbot-trigger {
   position: relative;
   height: 20px;
@@ -2724,10 +2502,9 @@ h1 {
   pointer-events: none;
 }
 
-/* Keep just the left-side positioning styles (around lines 1809-1825) */
 .portfolio-bot-container {
   position: fixed;
-  left: 20px; /* Change from -350px to visible on page load */
+  left: 20px;
   bottom: 30px;
   width: 300px;
   display: flex;
@@ -2742,35 +2519,13 @@ h1 {
 
 .portfolio-bot-container.bot-visible {
   opacity: 1;
-  transform: translateX(0); /* Don't move, just fade in */
+  transform: translateX(0);
 }
 
 .portfolio-bot-container.bot-hidden {
   opacity: 0;
   transform: translateX(-50px);
   pointer-events: none;
-}
-
-@keyframes botSlideIn {
-  from {
-    transform: translateX(-100px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes botSlideOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(-100px);
-    opacity: 0;
-  }
 }
 
 .bot-image {
@@ -2832,45 +2587,6 @@ h1 {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* Typing animation */
-.typing-animation {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  opacity: 0.3;
-}
-
-.dot:nth-child(1) {
-  animation: typing 1s infinite 0s;
-}
-
-.dot:nth-child(2) {
-  animation: typing 1s infinite 0.2s;
-}
-
-.dot:nth-child(3) {
-  animation: typing 1s infinite 0.4s;
-}
-
-@keyframes typing {
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
 .bot-image.clickable {
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -2878,34 +2594,6 @@ h1 {
 
 .bot-image.clickable:hover {
   transform: scale(1.1);
-}
-
-/* Mobile adjustments */
-@media screen and (max-width: 768px) {
-  .portfolio-bot-container {
-    left: -300px;
-    bottom: 20px;
-  }
-
-  .portfolio-bot-container.bot-visible {
-    transform: translateX(310px);
-  }
-
-  .portfolio-bot-container.bot-hidden {
-    transform: translateX(310px) translateY(50px);
-  }
-}
-
-.loading-message,
-.error-message,
-.empty-message {
-  text-align: center;
-  padding: 20px;
-  color: #6c757d;
-}
-
-.error-message {
-  color: #dc3545;
 }
 
 .bot-controls {
@@ -2928,8 +2616,84 @@ h1 {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Add these to your existing styles */
+/* Quiz section */
+.quiz-container h2 {
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 25px;
+  text-align: center;
+}
 
+.quiz-container p {
+  background: #f5f7fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  text-align: left;
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.options button {
+  background: #f5f7fa;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #333;
+  transition: all 0.3s;
+  text-align: left;
+  min-height: 60px;
+}
+
+.options button:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
+}
+
+.options button:active {
+  transform: translateY(0);
+  color: var(--text-primary);
+}
+
+/* Stock display */
+.stockDisplayContainer {
+  width: calc(100%- 40px);
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+/* Message styles */
+.loading-message,
+.error-message,
+.empty-message {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+.error-message {
+  color: #dc3545;
+}
+
+/* Portfolio insights formatting */
 .typed-message {
   line-height: 1.4;
 }
@@ -2937,7 +2701,7 @@ h1 {
 .insight-heading {
   margin: 8px 0 4px;
   color: #ffffff;
-  font-size: 0.95rem; /* Reduced from 1rem */
+  font-size: 0.95rem;
   font-weight: 600;
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding-bottom: 2px;
@@ -2964,20 +2728,7 @@ h1 {
   margin: 8px 0;
 }
 
-/* Fix v-html styling issue by targeting the container */
-.bot-message :deep(.insight-heading),
-.bot-message :deep(.insight-item),
-.bot-message :deep(.insight-number),
-.bot-message :deep(.highlight),
-.bot-message :deep(.insight-paragraph) {
-  color: inherit;
-}
-
-.bot-message :deep(.highlight) {
-  color: #ffeb3b;
-}
-
-/* Add at the appropriate location in your CSS */
+/* Language switcher */
 .portfolio-language-switcher {
   display: flex;
   gap: 10px;
@@ -3006,11 +2757,81 @@ h1 {
   border-color: #007bff;
 }
 
-/* Update portfolio header to accommodate language switcher */
-.portfolio-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .investment-row {
+    flex-direction: column;
+    padding: 0 20px;
+    gap: 20px;
+  }
+  
+  .graph-container,
+  .chatbox-container,
+  .stock-info-container,
+  .action-container {
+    width: 100%;
+    margin-right: 0 ;
+  }
+  
+  .top-row {
+    height: auto;
+  }
+  
+  .chatbox-container {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0;
+    height: auto;
+  }
+  
+  .header-chat-message {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-bot-container {
+    left: -300px;
+    bottom: 20px;
+  }
+
+  .portfolio-bot-container.bot-visible {
+    transform: translateX(310px);
+  }
+
+  .portfolio-bot-container.bot-hidden {
+    transform: translateX(310px) translateY(50px);
+  }
+
+  .account-performance {
+    flex-direction: column;
+  }
+
+  .account-info,
+  .performance-chart {
+    width: 100%;
+    height: auto !important;
+    min-height: 400px;
+  }
+
+  .investment-row {
+    padding: 10px;
+  }
+  
+  .graph-container,
+  .stock-info-container,
+  .action-container,
+  .chatbox-container {
+    padding: 15px;
+  }
+  
+  .action-form input,
+  .action-form select {
+    padding: 10px;
+  }
+  
+  .header-chat-message {
+    font-size: 0.85rem;
+  }
 }
 </style>

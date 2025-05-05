@@ -35,7 +35,8 @@ import InsiderTransactionPage from "@/views/FinInvest/FinData/InsiderTransaction
 import EarningCalendarPage from "@/views/Unused/EarningCalendarPage.vue";
 import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
-
+import CourseCategoryPage from "@/views/FinEdu/CourseCategoryPage.vue";
+import CoursePage from "@/views/FinEdu/CoursePage.vue";
 
 const routes = [
   {
@@ -143,6 +144,18 @@ const routes = [
     props: true,
   },
   {
+    path: "/course",
+    name: "CoursePage",
+    component: CoursePage,
+    props: true,
+  },
+  {
+    path: '/courses/:categorySlug',
+    name: 'CourseCategory',
+    component: CourseCategoryPage,
+    props: true
+  },
+  {
     path: "/thread",
     name: "ThreadCard",
     component: ThreadCard,
@@ -222,7 +235,13 @@ const routes = [
     path: "/notifications",
     name: "NotificationCenter",
     component: NotificationCenter, 
+  },
+  {
+    path: '/courses/:categorySlug',
+    name: 'CourseCategory', // Must match exactly what you use in router-link
+    component: CourseCategoryPage,
   }
+  
 ];
 
 const router = createRouter({
