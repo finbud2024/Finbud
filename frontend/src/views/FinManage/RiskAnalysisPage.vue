@@ -273,36 +273,36 @@ export default {
 			errorCrypto: null,
 			cryptoList: [],
 			realEstateList: [
-				{
-					propertyType: "Single Family Home",
-					formattedAddress: "123 Main St, San Jose, CA 95112",
-					price: "$1,200,000",
-					status: "For Sale",
-				},
-				{
-					propertyType: "Condo",
-					formattedAddress: "456 Elm St, San Jose, CA 95126",
-					price: "$850,000",
-					status: "Pending",
-				},
-				{
-					propertyType: "Townhouse",
-					formattedAddress: "789 Oak Ave, San Jose, CA 95128",
-					price: "$975,000",
-					status: "Sold",
-				},
-				{
-					propertyType: "Apartment",
-					formattedAddress: "101 Pine St, San Jose, CA 95110",
-					price: "$3,200/mo",
-					status: "For Rent",
-				},
-				{
-					propertyType: "Duplex",
-					formattedAddress: "202 Maple Dr, San Jose, CA 95125",
-					price: "$1,050,000",
-					status: "For Sale",
-				},
+				// {
+				// 	propertyType: "Single Family Home",
+				// 	formattedAddress: "123 Main St, San Jose, CA 95112",
+				// 	price: "$1,200,000",
+				// 	status: "For Sale",
+				// },
+				// {
+				// 	propertyType: "Condo",
+				// 	formattedAddress: "456 Elm St, San Jose, CA 95126",
+				// 	price: "$850,000",
+				// 	status: "Pending",
+				// },
+				// {
+				// 	propertyType: "Townhouse",
+				// 	formattedAddress: "789 Oak Ave, San Jose, CA 95128",
+				// 	price: "$975,000",
+				// 	status: "Sold",
+				// },
+				// {
+				// 	propertyType: "Apartment",
+				// 	formattedAddress: "101 Pine St, San Jose, CA 95110",
+				// 	price: "$3,200/mo",
+				// 	status: "For Rent",
+				// },
+				// {
+				// 	propertyType: "Duplex",
+				// 	formattedAddress: "202 Maple Dr, San Jose, CA 95125",
+				// 	price: "$1,050,000",
+				// 	status: "For Sale",
+				// },
 			],
 			loadingRealEstate: true,
 			errorRealEstate: null,
@@ -354,11 +354,23 @@ export default {
 		},
 	},
 	async mounted() {
-		await Promise.all([
-			this.fetchStockQuote(),
-			this.fetchCryptoList(),
-			this.fetchRealEstateList()
-		])
+		const [
+			stocks,
+			cryptos,
+			estates
+		] = await Promise.all([
+			fetchStockQuote(),
+			fetchCryptoList(),
+			fetchRealEstateList()
+		]);
+
+		// stick them into your component state:
+		this.stockQuotes = stocks;
+		this.cryptoList = cryptos;
+		this.realEstateList = estates;
+		this.loading = false;
+		this.loadingCrypto = false;
+		this.loadingRealEstate = false;
 		this.generateOverallMarketSummary();
 		this.setupBotObserver();
 	},
