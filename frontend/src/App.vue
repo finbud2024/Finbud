@@ -359,8 +359,8 @@ body.dark-mode {
   --logo-color: #007bff;
   --content-bg: #736969;
   --chat-text-color: #ffffff;
-  --chat-message-bg-color: #2d2d2d;
-  --chat-user-bg-color: #007bff;
+  /* --chat-message-bg-color: #2d2d2d; */
+  --chat-user-bg-color: #2d2d2d;
   --chat-user-text-color: #ffffff;
   --black-in-light-mode: #ffffff;
   --white-in-light-mode: #000000;
