@@ -60,13 +60,7 @@
 
       <div class="revenue-expense">
         <div class="total-spend transaction-card">
-          <h2>
-            {{
-              selectedCurrency === "USD"
-                ? formatCurrency(totalRevenue)
-                : formatCurrency(convertToVND(totalRevenue))
-            }}
-          </h2>
+          <h2>{{ transactions.length }}</h2>
           <p>Total Transactions</p>
         </div>
 
@@ -1744,7 +1738,7 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 /* Mobile-specific styles */
-/* @media (max-width: 1024px) {
+@media (max-width: 1024px) {
   .GoalDashBoardContainer {
   width: 100%;
   max-width: 1400px;
@@ -1761,8 +1755,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
   .leftPanel,
   .rightPanel {
-    /* width: 100%; */
-    /* background-color: var(--bg-primary);
+    width: 100%; 
+    background-color: var(--bg-primary);
   }
 
   .leftPanelHeader,
@@ -1772,7 +1766,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
     width: 100%;
     max-width: 100%;
   }
-} */ 
+} 
+
 
 .financial-goals {
   text-align: center;
@@ -2363,9 +2358,21 @@ hr {
 
 /* Responsive design */
 @media (max-width: 768px) {
+
+  .connect-button-wrapper {
+    padding-top: 40px;
+  }
+
   .header-content {
     flex-direction: column;
     text-align: center;
+  }
+
+  .revenue-expense {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
   }
 
   .header-icons {
@@ -3669,6 +3676,9 @@ hr {
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .total-spend {
+    flex: 1 1 100%; /* full width on mobile */
+  }
   .header-content {
     flex-direction: column;
     text-align: center;
