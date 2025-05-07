@@ -98,15 +98,16 @@ vietStockRoute.post("/GDP/filter/quarter", async(req, res) => {
             year: { $gte: startYear, $lte: endYear }
         });
 
-        while (allData.length != 0 && allData[0].quarter != startQuarter) {
+        const eQuarterNum = parseInt(allData[allData.length - 1].quarter.replace('Quý', '').trim());
+        const sQuarterNum = parseInt(allData[0].quarter.replace('Quý', '').trim());
+
+        for (let i = sQuarterNum; i < startQuarterNum; i++) {
             allData.shift();
         }
 
-        while (allData.length != 0 && allData[allData.length - 1].quarter != endQuarter) {
+        for (let i = eQuarterNum; i > endQuarterNum; i--) {
             allData.pop();
         }
-            
-
 
         res.status(200).json({ data: allData });
     }
@@ -155,12 +156,14 @@ vietStockRoute.post("/CPI/filter/month", async(req, res) => {
             year: { $gte: startYear, $lte: endYear }
         });
 
-        console.log(allData);
-        while (allData.length != 0 && allData[0].month != startMonth) {
+        const eMonthNum = parseInt(allData[allData.length - 1].month.replace('Tháng', '').trim());
+        const sMonthNum = parseInt(allData[0].month.replace('Tháng', '').trim());
+
+        for (let i = sMonthNum; i < startMonthNum; i++) {
             allData.shift();
         }
 
-        while (allData.length != 0 && allData[allData.length - 1].month != endMonth) {
+        for (let i = eMonthNum; i > endMonthNum; i--) {
             allData.pop();
         }
 
@@ -210,13 +213,15 @@ vietStockRoute.post("/ImportExport/filter/month", async(req, res) => {
             xem_theo: 'tháng',
             year: { $gte: startYear, $lte: endYear }
         });
+        
+        const eMonthNum = parseInt(allData[allData.length - 1].month.replace('Tháng', '').trim());
+        const sMonthNum = parseInt(allData[0].month.replace('Tháng', '').trim());
 
-        console.log(allData);
-        while (allData.length != 0 && allData[0].month != startMonth) {
+        for (let i = sMonthNum; i < startMonthNum; i++) {
             allData.shift();
         }
 
-        while (allData.length != 0 && allData[allData.length - 1].month != endMonth) {
+        for (let i = eMonthNum; i > endMonthNum; i--) {
             allData.pop();
         }
 
@@ -267,12 +272,14 @@ vietStockRoute.post("/FDI/filter/month", async(req, res) => {
             year: { $gte: startYear, $lte: endYear }
         });
 
-        console.log(allData);
-        while (allData.length != 0 && allData[0].month != startMonth) {
+        const eMonthNum = parseInt(allData[allData.length - 1].month.replace('Tháng', '').trim());
+        const sMonthNum = parseInt(allData[0].month.replace('Tháng', '').trim());
+
+        for (let i = sMonthNum; i < startMonthNum; i++) {
             allData.shift();
         }
 
-        while (allData.length != 0 && allData[allData.length - 1].month != endMonth) {
+        for (let i = eMonthNum; i > endMonthNum; i--) {
             allData.pop();
         }
 
