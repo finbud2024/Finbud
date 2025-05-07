@@ -2232,7 +2232,7 @@ h1 {
 /* Chatbox styles */
 .chatbox-container {
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   align-items: flex-start;
 }
 
