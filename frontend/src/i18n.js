@@ -17,6 +17,7 @@ const messages = {
     simulator: "Simulator",
     quant: "Quant",
     quantSimulator: "Quant Simulator",
+    macroEconomic: "Macro Economic Data",
     finEdu: "Fin Edu",
     quiz: "Quiz",
     course: "Course",
@@ -616,6 +617,35 @@ const messages = {
       emptyState: "No articles available in this category.",
       botMessage: "Hello there! 👋<br><br>This is FinBud financial learning hub. Here you can:<br><br>📚 Learn investment knowledge from basic to advanced<br>💡 Discover effective investment strategies<br>📊 Dive deep into fundamental and technical analysis<br><br>Explore articles by topic or search for content you are interested in!"
     },
+
+    macroEcon: {
+      quarter: "Quarter",
+      month: "Month",
+      year: "Year",
+      viewBy: "View by",
+      from: "From",
+      to: "To",
+      see: "Select",
+      overview: "Overview",
+      gdp: "GDP",
+      cpi: "CPI",
+      fdi: "FDI",
+      importExport: "Import-Export",
+      enMonth: {
+        1: "January",
+        2: "February",
+        3: "March",
+        4: "April",
+        5: "May",
+        6: "June",
+        7: "July",
+        8: "August",
+        9: "September",
+        10: "October",
+        11: "November",
+        12: "December"
+      }
+    }
   },
   vi: {
 
@@ -633,6 +663,7 @@ const messages = {
     simulator: "Mô phỏng",
     quant: "Định lượng",
     quantSimulator: "Mô phỏng Định lượng",
+    macroEconomic: "Kinh Tế Vĩ Mô",
     finEdu: "Fin Giáo dục",
     quiz: "Quiz",
     course: "Khoá học",
@@ -1215,6 +1246,36 @@ const messages = {
       emptyState: "Không có bài viết nào trong danh mục này.",
       botMessage: "Chào bạn! 👋<br><br>Chào mừng đến với FinBud – trung tâm học tập tài chính. Tại đây bạn có thể:<br><br>📚 Học kiến thức đầu tư từ cơ bản đến nâng cao<br>💡 Khám phá các chiến lược đầu tư hiệu quả<br>📊 Tìm hiểu sâu về phân tích cơ bản và phân tích kỹ thuật<br><br>Khám phá các bài viết theo chủ đề hoặc tìm kiếm nội dung bạn quan tâm nhé!"
     },
+
+    macroEconomic: {
+      quarter: "Quý",
+      month: "Tháng",
+      year: "Năm",
+      viewBy: "Xem theo",
+      from: "Từ",
+      to: "Đến",
+      see: "Chọn",
+      overview: "Tổng quan",
+      gdp: "GDP",
+      cpi: "CPI",
+      fdi: "FDI",
+      importExport: "Xuất-Nhập khẩu",
+      enMonth: {
+        1: "Tháng 1",
+        2: "Tháng 2",
+        3: "Tháng 3",
+        4: "Tháng 4",
+        5: "Tháng 5",
+        6: "Tháng 6",
+        7: "Tháng 7",
+        8: "Tháng 8",
+        9: "Tháng 9",
+        10: "Tháng 10",
+        11: "Tháng 11",
+        12: "Tháng 12"
+      }
+    }
+
   },
 };
 

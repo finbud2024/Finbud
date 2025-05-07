@@ -37,6 +37,7 @@ import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
 import CourseCategoryPage from "@/views/FinEdu/CourseCategoryPage.vue";
 import CoursePage from "@/views/FinEdu/CoursePage.vue";
+import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
 
 const routes = [
   {
@@ -240,6 +241,11 @@ const routes = [
     path: '/courses/:categorySlug',
     name: 'CourseCategory', // Must match exactly what you use in router-link
     component: CourseCategoryPage,
+  },
+  {
+    path: "/macro-economic",
+    name: "MacroeconomicPage",
+    component: MacroeconomicPage,
   }
   
 ];
