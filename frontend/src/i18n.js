@@ -19,6 +19,7 @@ const messages = {
     quantSimulator: "Quant Simulator",
     finEdu: "Fin Edu",
     quiz: "Quiz",
+    course: "Course",
     event: "Event",
     forum: "Forum",
     finAgent: "Fin Agent",
@@ -598,8 +599,23 @@ const messages = {
           linkHref: "#"
         }
       }
-    }
+    },
 
+    coursePage: {
+      loadingText: "Loading data...",
+      errorMessage: "Error loading data: }",
+      retryButton: "Try Again",
+      categories: {
+        beginners: "FOR BEGINNERS",
+        investments: "EFFECTIVE INVESTMENTS", 
+        fundamental: "FUNDAMENTAL ANALYSIS",
+        technical: "TECHNICAL ANALYSIS"
+      },
+      viewMore: "View More",
+      views: "views",
+      emptyState: "No articles available in this category.",
+      botMessage: "Hello there! 👋<br><br>This is FinBud financial learning hub. Here you can:<br><br>📚 Learn investment knowledge from basic to advanced<br>💡 Discover effective investment strategies<br>📊 Dive deep into fundamental and technical analysis<br><br>Explore articles by topic or search for content you are interested in!"
+    },
   },
   vi: {
 
@@ -619,6 +635,7 @@ const messages = {
     quantSimulator: "Mô phỏng Định lượng",
     finEdu: "Fin Giáo dục",
     quiz: "Quiz",
+    course: "Khoá học",
     event: "Sự kiện",
     forum: "Forum",
     finAgent: "Fin Tài chính",
@@ -1182,7 +1199,22 @@ const messages = {
           linkHref: "#"
         }
       }
-    }
+    },
+    coursePage: {
+      loadingText: "Đang tải dữ liệu...",
+      errorMessage: "Đã xảy ra lỗi khi tải dữ liệu: ",
+      retryButton: "Thử lại",
+      categories: {
+        beginners: "CHO NGƯỜI MỚI BẮT ĐẦU",
+        investments: "ĐẦU TƯ HIỆU QUẢ",
+        fundamental: "PHÂN TÍCH CƠ BẢN",
+        technical: "PHÂN TÍCH KỸ THUẬT"
+      },
+      viewMore: "Xem thêm",
+      views: "lượt xem",
+      emptyState: "Không có bài viết nào trong danh mục này.",
+      botMessage: "Chào bạn! 👋<br><br>Chào mừng đến với FinBud – trung tâm học tập tài chính. Tại đây bạn có thể:<br><br>📚 Học kiến thức đầu tư từ cơ bản đến nâng cao<br>💡 Khám phá các chiến lược đầu tư hiệu quả<br>📊 Tìm hiểu sâu về phân tích cơ bản và phân tích kỹ thuật<br><br>Khám phá các bài viết theo chủ đề hoặc tìm kiếm nội dung bạn quan tâm nhé!"
+    },
   },
 };
 

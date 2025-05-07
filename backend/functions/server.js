@@ -35,6 +35,7 @@ import filingsRoute, { loadCompanies } from "../Endpoints/finData/filingsRoute.j
 import articleRoute from "../Endpoints/articleRoute.js";
 import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
 import notiRoute from "../Endpoints/notiRoute.js";
+import courseRoute from "../Endpoints/courseRoute.js";
 
 dotenv.config();
 
@@ -169,6 +170,7 @@ router.use("/api/plaid", plaidRoute);
 router.use("/", filingsRoute);
 router.use("/", insiderTransactionRoute)
 router.use("/", notiRoute);
+router.use("/api/courses", courseRoute)
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development

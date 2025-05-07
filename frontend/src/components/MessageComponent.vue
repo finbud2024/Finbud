@@ -54,7 +54,7 @@
 <script>
 import SearchResult from "../components/chatbot/SearchResult.vue";
 import Video from "../components/chatbot/Video.vue";
-import marked from "marked"; // Import the marked library
+import { marked } from "marked"; // Import the marked library
 
 export default {
   name: "MessageComponent",

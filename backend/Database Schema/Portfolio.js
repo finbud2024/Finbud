@@ -1,4 +1,4 @@
-import { unique } from '@tensorflow/tfjs';
+// Portfolio.js
 import mongoose from 'mongoose';
 
 const portfolioSchema = new mongoose.Schema({ 
@@ -16,6 +16,7 @@ const portfolioSchema = new mongoose.Schema({
 })
 
 const Portfolio = mongoose.model('Portfolio', portfolioSchema);
+portfolioSchema.index({ userId: 1 }, { unique: true }); 
 
 export default Portfolio;
 
