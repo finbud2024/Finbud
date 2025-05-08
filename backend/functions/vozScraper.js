@@ -264,6 +264,7 @@ async function scrapeVoz() {
           processedComments.push({
             body: comment.body.trim(),
             authorId: commentUser._id,
+            authorModel: 'ScrapedUser',
             createdAt: comment.time,
           });
         }
@@ -275,6 +276,7 @@ async function scrapeVoz() {
           title: thread.title,
           body: mainPost.body.trim(),
           authorId: scrapedUser._id,
+          authorModel: 'ScrapedUser',
           forumId: FORUM_ID,
           createdAt: new Date(mainPost.time),
           updatedAt: new Date(),

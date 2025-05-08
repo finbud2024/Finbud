@@ -19,11 +19,11 @@
 			</div>
 		</div>
 
-			<!-- Market Data Section -->
-			<section class="market-section">
-				<h2 class="headtitle">Market Data Center</h2>
+		<!-- Market Data Section -->
+		<section class="market-section">
+			<h2 class="headtitle">Market Data Center</h2>
 
-				<!-- <div v-if="marketSummary" class="market-summary">
+			<!-- <div v-if="marketSummary" class="market-summary">
 					<h3>Market Summary</h3>
 					<p>{{ marketSummary }}</p>
 				</div>
@@ -31,186 +31,186 @@
 					Generating summary…
 				</div> -->
 
-				<!-- Sub Navigation Bar -->
-				<div class="sub-nav">
-					<button v-for="tab in ['stock', 'crypto', 'realEstate']" :key="tab"
-						:class="['tab-button', { active: activeTab === tab }]" @click="activeTab = tab">
-						{{ formatTabName(tab) }}
-					</button>
+			<!-- Sub Navigation Bar -->
+			<div class="sub-nav">
+				<button v-for="tab in ['stock', 'crypto', 'realEstate']" :key="tab"
+					:class="['tab-button', { active: activeTab === tab }]" @click="activeTab = tab">
+					{{ formatTabName(tab) }}
+				</button>
+			</div>
+
+			<div class="market-data-center">
+				<!-- Crypto Tab Content -->
+				<div v-if="activeTab === 'crypto'" class="tab-content">
+					<div class="market-section">
+						<!-- Cryptocurrency Watch Section -->
+						<div class="section-title">Cryptocurrency Watch</div>
+						<div class="margin-box">
+							<CryptoWatch :marketSummary="marketSummary" class="margin-box-content" />
+						</div>
+
+						<!-- Crypto Quotes Section -->
+						<div class="section-title">Crypto Quotes</div>
+						<div class="margin-box">
+							<div class="margin-box-content">
+								<div v-if="errorCrypto" class="error">{{ errorCrypto }}</div>
+								<div v-else-if="loadingCrypto" class="loading">
+									Loading...
+								</div>
+								<div v-else>
+									<table>
+										<thead>
+											<tr>
+												<th>Name</th>
+												<th>Rank</th>
+												<th>Tier</th>
+												<th>Price</th>
+												<th>Symbol</th>
+												<th>Change</th>
+											</tr>
+										</thead>
+										<tbody v-if="paginatedCryptoList.length">
+											<tr v-for="crypto in paginatedCryptoList" :key="crypto.uuid">
+												<td data-label="Name">
+													<img :src="crypto.iconUrl" :alt="crypto.name" />
+													{{ crypto.name }}
+												</td>
+												<td data-label="Rank">{{ crypto.rank }}</td>
+												<td data-label="Tier">{{ crypto.tier }}</td>
+												<td data-label="Price">{{ formatPrice(crypto.price) }} B</td>
+												<td data-label="Symbol">{{ crypto.symbol }}</td>
+												<td data-label="Change">{{ crypto.change }}</td>
+											</tr>
+										</tbody>
+									</table>
+									<Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages"
+										@update:currentPage="updateCryptoCurrentPage" />
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 
-				<div class="market-data-center">
-					<!-- Crypto Tab Content -->
-					<div v-if="activeTab === 'crypto'" class="tab-content">
-						<div class="market-section">
-							<!-- Cryptocurrency Watch Section -->
-							<div class="section-title">Cryptocurrency Watch</div>
-							<div class="margin-box">
-								<CryptoWatch :marketSummary="marketSummary" class="margin-box-content" />
-							</div>
+				<!-- Stock Tab Content -->
+				<div v-if="activeTab === 'stock'" class="tab-content">
+					<div class="market-section">
 
-							<!-- Crypto Quotes Section -->
-							<div class="section-title">Crypto Quotes</div>
+						<!-- Vietnam Stock Watch Section -->
+						<div class="section-title">Vietnam Stock Watch</div>
+						<VietnamStockWatch :marketSummary="marketSummary" class="margin-box-content" />
+
+						<!-- Stock Watch Section -->
+						<div class="section-title">Stock Watch</div>
+						<div class="margin-box">
+							<StockWatch :marketSummary="marketSummary" class="margin-box-content" />
+						</div>
+
+						<!-- Stock Quotes Section -->
+						<div class="section-title">Stock Quotes</div>
+						<div class="margin-box">
+							<div class="margin-box-content">
+								<div v-if="error" class="error">{{ error }}</div>
+								<div v-else-if="loading" class="loading">Loading...</div>
+								<div v-else>
+									<table>
+										<thead>
+											<tr>
+												<th>Symbol</th>
+												<th>Price</th>
+												<th>Volume</th>
+												<th>Previous Close</th>
+												<th>Change</th>
+												<th>Change Percent</th>
+											</tr>
+										</thead>
+										<tbody v-if="paginatedStockQuotes.length">
+											<tr v-for="stock in paginatedStockQuotes" :key="stock['01. symbol']">
+												<td data-label="Symbol">{{ stock["01. symbol"] }}</td>
+												<td data-label="Price">{{ stock["05. price"] }}</td>
+												<td data-label="Volume">{{ stock["06. volume"] }}</td>
+												<td data-label="Previous Close">{{ stock["08. previous close"] }}
+												</td>
+												<td data-label="Change">{{ stock["09. change"] }}</td>
+												<td data-label="Change Percent">{{ stock["10. change percent"] }}
+												</td>
+											</tr>
+										</tbody>
+									</table>
+									<Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages"
+										@update:currentPage="updateStockCurrentPage" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Real Estate Tab Content -->
+				<div v-if="activeTab === 'realEstate'" class="tab-content">
+					<div class="market-section">
+						<!-- Real Estate Section -->
+						<div class="section-title">Real Estate</div>
+						<div class="real-estate-section" ref="realEstateSection">
 							<div class="margin-box">
+								<RealEstateMap :marketSummary="marketSummary" class="margin-box-content" />
 								<div class="margin-box-content">
-									<div v-if="errorCrypto" class="error">{{ errorCrypto }}</div>
-									<div v-else-if="loadingCrypto" class="loading">
+									<div v-if="errorRealEstate" class="error">
+										{{ errorRealEstate }}
+									</div>
+									<div v-else-if="loadingRealEstate" class="loading">
 										Loading...
 									</div>
 									<div v-else>
 										<table>
 											<thead>
 												<tr>
-													<th>Name</th>
-													<th>Rank</th>
-													<th>Tier</th>
+													<th>Type</th>
+													<th>Address</th>
 													<th>Price</th>
-													<th>Symbol</th>
-													<th>Change</th>
+													<th>Status</th>
 												</tr>
 											</thead>
-											<tbody v-if="paginatedCryptoList.length">
-												<tr v-for="crypto in paginatedCryptoList" :key="crypto.uuid">
-													<td data-label="Name">
-														<img :src="crypto.iconUrl" :alt="crypto.name" />
-														{{ crypto.name }}
+											<tbody v-if="paginatedRealEstate.length">
+												<tr v-for="estate in paginatedRealEstate" :key="estate.id">
+													<td data-label="Type">
+														{{
+															estate.propertyType &&
+																!isNaN(estate.propertyType)
+																? estate.propertyType
+																: "Single-family"
+														}}
 													</td>
-													<td data-label="Rank">{{ crypto.rank }}</td>
-													<td data-label="Tier">{{ crypto.tier }}</td>
-													<td data-label="Price">{{ formatPrice(crypto.price) }} B</td>
-													<td data-label="Symbol">{{ crypto.symbol }}</td>
-													<td data-label="Change">{{ crypto.change }}</td>
-												</tr>
-											</tbody>
-										</table>
-										<Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages"
-											@update:currentPage="updateCryptoCurrentPage" />
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- Stock Tab Content -->
-					<div v-if="activeTab === 'stock'" class="tab-content">
-						<div class="market-section">
-
-							<!-- Vietnam Stock Watch Section -->
-							<div class="section-title">Vietnam Stock Watch</div>
-							<VietnamStockWatch :marketSummary="marketSummary" class="margin-box-content" />
-
-							<!-- Stock Watch Section -->
-							<div class="section-title">Stock Watch</div>
-							<div class="margin-box">
-								<StockWatch :marketSummary="marketSummary" class="margin-box-content" />
-							</div>
-
-							<!-- Stock Quotes Section -->
-							<div class="section-title">Stock Quotes</div>
-							<div class="margin-box">
-								<div class="margin-box-content">
-									<div v-if="error" class="error">{{ error }}</div>
-									<div v-else-if="loading" class="loading">Loading...</div>
-									<div v-else>
-										<table>
-											<thead>
-												<tr>
-													<th>Symbol</th>
-													<th>Price</th>
-													<th>Volume</th>
-													<th>Previous Close</th>
-													<th>Change</th>
-													<th>Change Percent</th>
-												</tr>
-											</thead>
-											<tbody v-if="paginatedStockQuotes.length">
-												<tr v-for="stock in paginatedStockQuotes" :key="stock['01. symbol']">
-													<td data-label="Symbol">{{ stock["01. symbol"] }}</td>
-													<td data-label="Price">{{ stock["05. price"] }}</td>
-													<td data-label="Volume">{{ stock["06. volume"] }}</td>
-													<td data-label="Previous Close">{{ stock["08. previous close"] }}
+													<td data-label="Address">{{ estate.formattedAddress }}</td>
+													<td data-label="Price">
+														{{
+															estate.lastSalePrice &&
+																!isNaN(estate.lastSalePrice)
+																? "$" + estate.lastSalePrice.toLocaleString()
+																: "N/A"
+														}}
 													</td>
-													<td data-label="Change">{{ stock["09. change"] }}</td>
-													<td data-label="Change Percent">{{ stock["10. change percent"] }}
+													<td data-label="Status">
+														{{
+															estate.ownerOccupied === true
+																? "Inactive"
+																: "Active"
+														}}
 													</td>
 												</tr>
 											</tbody>
 										</table>
-										<Pagination :currentPage.sync="currentStockPage" :totalPages="stockTotalPages"
-											@update:currentPage="updateStockCurrentPage" />
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- Real Estate Tab Content -->
-					<div v-if="activeTab === 'realEstate'" class="tab-content">
-						<div class="market-section">
-							<!-- Real Estate Section -->
-							<div class="section-title">Real Estate</div>
-							<div class="real-estate-section" ref="realEstateSection">
-								<div class="margin-box">
-									<RealEstateMap :marketSummary="marketSummary" class="margin-box-content" />
-									<div class="margin-box-content">
-										<div v-if="errorRealEstate" class="error">
-											{{ errorRealEstate }}
-										</div>
-										<div v-else-if="loadingRealEstate" class="loading">
-											Loading...
-										</div>
-										<div v-else>
-											<table>
-												<thead>
-													<tr>
-														<th>Type</th>
-														<th>Address</th>
-														<th>Price</th>
-														<th>Status</th>
-													</tr>
-												</thead>
-												<tbody v-if="paginatedRealEstate.length">
-													<tr v-for="estate in paginatedRealEstate" :key="estate.id">
-														<td data-label="Type">
-															{{
-																estate.propertyType &&
-																	!isNaN(estate.propertyType)
-																	? estate.propertyType
-																	: "Single-family"
-															}}
-														</td>
-														<td data-label="Address">{{ estate.formattedAddress }}</td>
-														<td data-label="Price">
-															{{
-																estate.lastSalePrice &&
-																	!isNaN(estate.lastSalePrice)
-																	? "$" + estate.lastSalePrice.toLocaleString()
-																	: "N/A"
-															}}
-														</td>
-														<td data-label="Status">
-															{{
-																estate.ownerOccupied === true
-																	? "Inactive"
-																	: "Active"
-															}}
-														</td>
-													</tr>
-												</tbody>
-											</table>
-											<Pagination :currentPage.sync="currentRealEstatePage"
-												:totalPages="realEstateTotalPages"
-												@update:currentPage="updateRealEstateCurrentPage" />
-										</div>
+										<Pagination :currentPage.sync="currentRealEstatePage"
+											:totalPages="realEstateTotalPages"
+											@update:currentPage="updateRealEstateCurrentPage" />
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</section>
-			<!-- Risk Chat Section -->
-			<!-- <RiskChat :activeTab="activeTab" /> -->
+			</div>
+		</section>
+		<!-- Risk Chat Section -->
+		<!-- <RiskChat :activeTab="activeTab" /> -->
 	</div>
 </template>
 
@@ -273,36 +273,36 @@ export default {
 			errorCrypto: null,
 			cryptoList: [],
 			realEstateList: [
-				{
-					propertyType: "Single Family Home",
-					formattedAddress: "123 Main St, San Jose, CA 95112",
-					price: "$1,200,000",
-					status: "For Sale",
-				},
-				{
-					propertyType: "Condo",
-					formattedAddress: "456 Elm St, San Jose, CA 95126",
-					price: "$850,000",
-					status: "Pending",
-				},
-				{
-					propertyType: "Townhouse",
-					formattedAddress: "789 Oak Ave, San Jose, CA 95128",
-					price: "$975,000",
-					status: "Sold",
-				},
-				{
-					propertyType: "Apartment",
-					formattedAddress: "101 Pine St, San Jose, CA 95110",
-					price: "$3,200/mo",
-					status: "For Rent",
-				},
-				{
-					propertyType: "Duplex",
-					formattedAddress: "202 Maple Dr, San Jose, CA 95125",
-					price: "$1,050,000",
-					status: "For Sale",
-				},
+				// {
+				// 	propertyType: "Single Family Home",
+				// 	formattedAddress: "123 Main St, San Jose, CA 95112",
+				// 	price: "$1,200,000",
+				// 	status: "For Sale",
+				// },
+				// {
+				// 	propertyType: "Condo",
+				// 	formattedAddress: "456 Elm St, San Jose, CA 95126",
+				// 	price: "$850,000",
+				// 	status: "Pending",
+				// },
+				// {
+				// 	propertyType: "Townhouse",
+				// 	formattedAddress: "789 Oak Ave, San Jose, CA 95128",
+				// 	price: "$975,000",
+				// 	status: "Sold",
+				// },
+				// {
+				// 	propertyType: "Apartment",
+				// 	formattedAddress: "101 Pine St, San Jose, CA 95110",
+				// 	price: "$3,200/mo",
+				// 	status: "For Rent",
+				// },
+				// {
+				// 	propertyType: "Duplex",
+				// 	formattedAddress: "202 Maple Dr, San Jose, CA 95125",
+				// 	price: "$1,050,000",
+				// 	status: "For Sale",
+				// },
 			],
 			loadingRealEstate: true,
 			errorRealEstate: null,
@@ -354,6 +354,23 @@ export default {
 		},
 	},
 	async mounted() {
+		const [
+			stocks,
+			cryptos,
+			estates
+		] = await Promise.all([
+			fetchStockQuote(),
+			fetchCryptoList(),
+			fetchRealEstateList()
+		]);
+
+		// stick them into your component state:
+		this.stockQuotes = stocks;
+		this.cryptoList = cryptos;
+		this.realEstateList = estates;
+		this.loading = false;
+		this.loadingCrypto = false;
+		this.loadingRealEstate = false;
 		this.generateOverallMarketSummary();
 		this.setupBotObserver();
 	},
@@ -399,11 +416,9 @@ export default {
 
 		async generateOverallMarketSummary() {
 			try {
-				const [stocks, cryptos, estates] = await Promise.all([
-					fetchStockQuote(),
-					fetchCryptoList(),
-					fetchRealEstateList()
-				])
+				const stocks = this.stockQuotes
+				const cryptos = this.cryptoList
+				const estates = this.realEstateList
 
 				// build a little prompt
 				const lines = [
@@ -685,14 +700,15 @@ Give me a concise overall summary of these combined markets.
 	max-width: 100%;
 	padding: 0;
 	margin: 0;
-	overflow-x: hidden; /* Prevent horizontal scrolling */
+	overflow-x: hidden;
+	/* Prevent horizontal scrolling */
 	box-sizing: border-box;
 }
 
 .market-section {
-  width: 100%;
-  padding: 0 15px;
-  box-sizing: border-box;
+	width: 100%;
+	padding: 0 15px;
+	box-sizing: border-box;
 }
 
 .header {
@@ -957,11 +973,13 @@ img {
 	-webkit-overflow-scrolling: touch;
 	white-space: nowrap;
 	box-sizing: border-box;
-	scrollbar-width: none; /* Hide scrollbar for Firefox */
+	scrollbar-width: none;
+	/* Hide scrollbar for Firefox */
 }
 
 .sub-nav::-webkit-scrollbar {
-  display: none; /* Hide scrollbar for Chrome/Safari */
+	display: none;
+	/* Hide scrollbar for Chrome/Safari */
 }
 
 .tab-button {
