@@ -5,7 +5,7 @@
       :class="['add-goal-button', disabledConnect ? 'disabled' : null]"
       class="connect-button"
     >
-      Connect Your Bank Account
+    {{ $t('connect') }}
     </button>
   </div>
   
@@ -61,7 +61,7 @@
       <div class="revenue-expense">
         <div class="total-spend transaction-card">
           <h2>{{ transactions.length }}</h2>
-          <p>Total Transactions</p>
+          <p>{{ $t('totalTransactions') }}</p>
         </div>
 
         <div class="total-spend revenue-card">
@@ -72,7 +72,7 @@
                 : formatCurrency(convertToVND(totalRevenue))
             }}
           </h2>
-          <p>Total Income</p>
+          <p>{{ $t('totalIncome') }}</p>
         </div>
 
         <div class="total-spend expense-card">
@@ -83,7 +83,7 @@
                 : formatCurrency(convertToVND(totalExpense))
             }}
           </h2>
-          <p>Total Expense</p>
+          <p>{{ $t('totalExpense') }}</p>
         </div>
 
         <div class="total-spend balance-card">
@@ -104,13 +104,13 @@
               <option value="VND">VND</option>
             </select>
           </div>
-          <p>Account Balance</p>
+          <p>{{ $t('accountBalance') }}</p>
         </div>
 
       </div>
       <div v-if="transactions && transactions.length > 0 && showForecast !== undefined">
         <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-          <label style="font-weight: bold; margin-right: 10px;">Show Forecast</label>
+          <label style="font-weight: bold; margin-right: 10px;">{{ $t('showForecast') }}</label>
           <input type="checkbox" v-model="showForecast" />
         </div>
 
@@ -132,19 +132,19 @@
       </div> -->
       <div class="chart-container no-data" v-else>
         <div class="no-data-message">
-          <p>No transaction data available to display.</p>
+          <p>{{ $t('noTransactionData') }}</p>
         </div>
       </div>
       <section class="transactions">
         <div class="headline-buttons">
-          <h2>Daily Transactions</h2>
+          <h2>{{ $t('dailyTransactions') }}</h2>
           <div class="buttons">
-            <button @click="openModal" style="font-weight: bold">Add</button>
+            <button @click="openModal" style="font-weight: bold">{{ $t('add') }}</button>
             <button
               @click="showResetConfirmationModal = true"
               style="font-weight: bold"
             >
-              Reset
+            {{ $t('reset') }}
             </button>
           </div>
         </div>
@@ -177,23 +177,23 @@
     <div class="rightPanel">
       <div class="pie-chart-card">
         <div class="pie-chart-header">
-          <h3 for="chartToggle">Transaction Chart</h3>
+          <h3 for="chartToggle">{{ $t('transactionChart') }}</h3>
           <select id="chartToggle" v-model="activePieChart">
-            <option value="Income">Income</option>
-            <option value="Expense">Expense</option>
+            <option value="Income">{{ $t('income') }}</option>
+            <option value="Expense">{{ $t('expense') }}</option>
           </select>
         </div>
         <TransactionPie :transactions="transactions" :chartType="activePieChart" />
       </div>
       <section class="financial-goals" ref="financialGoalsSection">
         <div class="goal-upper-part">
-          <h3 class="goal-section-title">Goals</h3>
+          <h3 class="goal-section-title">{{ $t('goals') }}</h3>
           <button
             class="add-goal-button"
             @click="showAddGoalModal = true"
             style="font-weight: bold"
           >
-            Add Goal
+          {{ $t('addGoal') }}
           </button>
         </div>
 
@@ -214,7 +214,7 @@
             @click="showGoalProgress(goal)"
           >
             <img
-              src="../assets/financial-goal-mockup.jpg"
+              src="@/assets/financial-goal-mockup.jpg"
               alt="Goal Image"
               class="goal-image"
             />
@@ -247,9 +247,9 @@
         >
           <div class="modal-content" @click.stop>
             <div class="modal-text-content">
-              <h3>Add New Goal</h3>
+              <h3>{{ $t('addNewGoal') }}</h3>
               <div class="form-group">
-                <label for="goalTitle">Goal Title</label>
+                <label for="goalTitle">{{ $t('goalTitle') }}</label>
                 <input
                   id="goalTitle"
                   type="text"
@@ -258,8 +258,8 @@
                   required
                 />
               </div>
-              <div class="form-group">
-                <label for="goalDescription">Description (optional)</label>
+              <div class="form-group description-group">
+                <label for="goalDescription">{{ $t('description') }}</label>
                 <textarea
                   id="goalDescription"
                   placeholder="Describe your goal (max 500 words)"
@@ -272,7 +272,7 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="targetAmount">Total Money Needed</label>
+                <label for="targetAmount">{{ $t('totalNeeded') }}</label>
                 <div class="currency-input">
                   <input
                     id="targetAmount"
@@ -290,7 +290,7 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="currentAmount">Money Already Have</label>
+                <label for="currentAmount">{{ $t('alreadyHave') }}</label>
                 <input
                   id="currentAmount"
                   type="number"
@@ -299,7 +299,7 @@
                 />
               </div>
               <div class="form-group">
-                <label for="startDate">Start Date</label>
+                <label for="startDate">{{ $t('startDate') }}</label>
                 <input
                   id="startDate"
                   type="date"
@@ -308,7 +308,7 @@
                 />
               </div>
               <div class="form-group">
-                <label for="endDate">End Date</label>
+                <label for="endDate">{{ $t('endDate') }}</label>
                 <input
                   id="endDate"
                   type="date"
@@ -317,7 +317,7 @@
                 />
               </div>
               <div class="form-group">
-                <label for="goalCategory">Category</label>
+                <label for="goalCategory">{{ $t('category') }}</label>
                 <select id="goalCategory" v-model="selectedCategory">
                   <option
                     v-for="category in categories"
@@ -326,11 +326,11 @@
                   >
                     {{ category }}
                   </option>
-                  <option value="new">Add New Category</option>
+                  <option value="new">{{ $t('addNewCategory') }}</option>
                 </select>
               </div>
               <div v-if="selectedCategory === 'new'" class="form-group">
-                <label for="newCategory">New Category</label>
+                <label for="newCategory">{{ $t('newCategory') }}</label>
                 <input
                   id="newCategory"
                   type="text"
@@ -338,7 +338,7 @@
                   v-model="newCategory"
                 />
               </div>
-              <button class="add-goal-button" @click="addGoal">Add Goal</button>
+              <button class="add-goal-button" @click="addGoal">{{ $t('addGoal') }}</button>
             </div>
           </div>
         </div>
@@ -349,18 +349,17 @@
   </div>
   <div v-if="showResetConfirmationModal" class="modal">
     <div class="modal-content">
-      <h3>Reset Account Balance</h3>
+      <h3>{{ $t('resetTitle') }}</h3>
       <p>
-        Are you sure you want to reset your account balance? This action will
-        delete all your transactions.
+        {{ $t('resetConfirmation') }}
       </p>
       <button
         @click="showResetConfirmationModal = false"
         style="margin-right: 10px"
       >
-        No
+      {{ $t('no') }}
       </button>
-      <button @click="resetAccountBalance">Yes</button>
+      <button @click="resetAccountBalance">{{ $t('yes') }}</button>
     </div>
     
   </div>
@@ -414,21 +413,7 @@ export default {
         this.$store.getters["users/currentUser"]?.identityData?.firstName || "",
       displayName: this.$store.getters["users/userDisplayName"],
       profilePic: this.$store.getters["users/userProfileImage"],
-      templateChat: `Hey "Tri"! 😊 Here's a closer look at your spending:
-
-📚 You spent $1,233 on books on 03/23/2333. If it's for learning, great! Otherwise, make sure it aligns with your financial goals.
-
-🛒 You spent $425 on "shopping" across multiple entries on 09/07/2024 and 09/14/2024. Grouping these under one category might help track spending better.
-
-🚗 A -$150 car expense—if it's a refund, labeling it clearly will help with accurate tracking.
-
-Suggestions:
-
-1. Set spending caps for categories like books or shopping.
-2. Review high-cost purchases.
-3. Use consistent labels for similar expenses.
-
-Keep it chill, "Tri," and let's make smarter financial moves together!`,
+      templateChat: "", // Will be set dynamically
       // goal data
       newGoal: {
         title: "",
@@ -601,6 +586,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       this.refreshData();
       this.getAccountBalance(); // Cập nhật account balance mỗi lần refresh
     }, 10000);
+
+    this.templateChat = this.generateBotMessage();
   },
   beforeUnmount() {
     // Clean up timers and observers when the component is destroyed
@@ -991,10 +978,13 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
             this.recalculateBalances();
           }
         }
+        // Update chatbot message after transactions are loaded
+        this.templateChat = this.generateBotMessage();
         return response; // Trả về response để có thể sử dụng .then()
       } catch (error) {
         console.error("Error fetching transactions:", error);
         this.transactions = []; // Đặt mảng rỗng nếu có lỗi
+        this.templateChat = this.generateBotMessage();
         return null; // Trả về null trong trường hợp lỗi
       }
     },
@@ -1373,56 +1363,134 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
       if (this.transactions.length === 0) {
         this.fetchTransactions();
       }
+    },
+    generateBotMessage() {
+      const name = this.displayName || "there";
+      let summary = "";
+
+      if (this.transactions && this.transactions.length > 0) {
+        // Summarize top expense and income categories
+        const expenses = this.transactions.filter(tx => tx.type === "Expense");
+        const incomes = this.transactions.filter(tx => tx.type === "Income");
+
+        // Top expense category
+        const expenseCategoryTotals = {};
+        for (const tx of expenses) {
+          expenseCategoryTotals[tx.category] = (expenseCategoryTotals[tx.category] || 0) + Math.abs(tx.amount);
+        }
+        const topExpense = Object.entries(expenseCategoryTotals).sort((a, b) => b[1] - a[1])[0];
+
+        // Top income category
+        const incomeCategoryTotals = {};
+        for (const tx of incomes) {
+          incomeCategoryTotals[tx.category] = (incomeCategoryTotals[tx.category] || 0) + Math.abs(tx.amount);
+        }
+        const topIncome = Object.entries(incomeCategoryTotals).sort((a, b) => b[1] - a[1])[0];
+
+        summary += `You have ${this.transactions.length} transactions. `;
+        if (topExpense) {
+          summary += `You spent the most on "${topExpense[0]}" ($${topExpense[1].toFixed(2)}). `;
+        }
+        if (topIncome) {
+          summary += `You saved/earned the most from "${topIncome[0]}" ($${topIncome[1].toFixed(2)}). `;
+        }
+        summary += `Tip: Try to set a monthly budget for your top spending category, and review your savings goals regularly!`;
+      } else {
+        summary = 'No transactions yet. Start adding your income and expenses!';
+      }
+
+      return `Hey ${name}! 😊\nHere's your financial summary:\n\n${summary}\n\nKeep it up, ${name}, and let's make smarter financial moves together!`;
     }
   },
 };
 </script>
 <style scoped>
 .GoalDashBoardContainer {
-  max-width: unset !important;
+  display: flex;
+  flex-direction: row;
   width: calc(100vw - 30px) !important;
-  margin-left: 15px !important;; 
-  margin-right: 15px !important;;
-  margin-bottom: 20px !important;;
+  margin-left: 15px !important;
+  margin-right: 15px !important;
+  margin-bottom: 20px !important;
   padding: 0 2px !important;
   padding-top: 20px !important;
   box-sizing: border-box;
-  outline: 3px solid #dee4e6; 
+  border-radius: 32px; /* More roundness */
+  box-shadow: 0 6px 32px rgba(0,0,0,0.07), 0 1.5px 6px rgba(0,0,0,0.03);
+  background: var(--bg-primary);
+  /* Remove outline for a cleaner look */
+  outline: none;
 }
 
 .leftPanel {
   width: 70%;
+  min-width: 0;
   height: fit-content;
   display: flex;
   flex-direction: column;
   padding: 20px;
   padding-top: 0;
   background-color: var(--bg-primary);
+  border-radius: 28px 0 0 28px;
 }
 
-.leftPanelHeader {
-  max-width: 100%;
-  height: 5%;
+.rightPanel {
+  width: 30%;
+  min-width: 320px;
+  max-width: 480px;
+  padding: 20px;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 10px;
-  margin-bottom: 0;
-  padding-bottom: 5px;
-  color: var(--text-primary);
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+  border-radius: 0 28px 28px 0;
+  box-shadow: none;
+}
+
+.pie-chart-card {
+  width: 100%;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 20px;
+}
+
+.financial-goals {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding-bottom: 16px;
+  padding: 24px 16px 32px 16px; /* Add inner padding for better spacing */
+}
+
+@media (max-width: 1024px) {
+  .GoalDashBoardContainer {
+    flex-direction: column;
+    width: 100%;
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 24px;
+    border-radius: 18px;
+  }
+  .leftPanel,
+  .rightPanel {
+    width: 100%;
+    border-radius: 18px;
+  }
 }
 
 .connect-button-wrapper {
   display: flex;
   justify-content: flex-end;
   padding-right: 20px;
-  padding-top: 20px;
-}
-
-.connect-button {
-  margin: 0;
+  padding-top: 20px;  
 }
 
 .profilePic {
@@ -1464,7 +1532,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(31, 126, 53);
 }
 
 .transactionContainer {
@@ -1542,7 +1609,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   width: 100%;
   height: auto;
   border-radius: 10px 10px 0 0;
-  margin-bottom: -20px; /* Overlap with goal-content */
 }
 
 .goal-upper-part {
@@ -1573,47 +1639,33 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   background-color: #005bb5;
 }
 
-.goals {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
 
 .goal {
-  background-color: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 8px 16px var(--shadow-color);
+  background: #fff;
+  border-radius: 14px;
   cursor: pointer;
-  margin: 10px;
-  flex: 1 1 calc(100% - 20px);
+  margin: 0;
+  flex: 1 1 320px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s, box-shadow 0.3s;
+  align-items: center;
   color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
 }
 
 .goal:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
 }
 
 .goal-image {
-  width: 50%;
-  height: 50%;
-  margin: auto;
-  border-radius: 10px 10px 0 0;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  border-radius: 12px;
+  margin-bottom: 16px; /* keep this small for balance */
 }
 
-.goal-content {
-  background-color: var(--card-bg);
-  border-radius: 10px;
-  margin-top: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  color: var(--bg-primary);
-}
 
 .goal-icon {
   font-size: 2.5em;
@@ -1622,8 +1674,9 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 }
 
 .goal-info h3 {
-  margin: 10px 0;
-  font-size: 1.5em;
+  margin: 0 0 8px 0;
+  font-size: 1.3em;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
@@ -1631,22 +1684,6 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   margin: 5px 0;
   font-size: 1em;
   color: var(--text-primary) !important;
-}
-
-.progress-bar-container {
-  width: 100%;
-  background-color: var(--progress-color);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  height: 20px;
-}
-
-.progress-bar {
-  height: 100%;
-  background-color: var(--link-color);
-  transition: width 0.5s ease-in-out;
 }
 
 .modal {
@@ -1668,8 +1705,8 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
   box-shadow: 0 4px 8px var(--shadow-color);
   width: 90%;
   max-width: 500px;
-  max-height: 90vh; /* Limit height to 90% of viewport */
-  overflow-y: auto; /* Add scroll for overflow content */
+  max-height: 90vh; 
+  overflow-y: auto; 
   padding: 20px;
 }
 
@@ -1699,1239 +1736,46 @@ Keep it chill, "Tri," and let's make smarter financial moves together!`,
 
 /* Add Goal Modal Styles */
 .form-group {
-  margin-bottom: 10px;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-#goalCategory {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-#goalCategory:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0,123,255,.25);
-}
-
-.category-loading {
-  font-size: 0.8em;
-  color: #666;
-  margin-top: 5px;
-}
-
-.loading-spinner {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid rgba(0,0,0,0.1);
-  border-radius: 50%;
-  border-top-color: #007bff;
-  animation: spin 1s linear infinite;
-  margin-right: 5px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Mobile-specific styles */
-@media (max-width: 1024px) {
-  .GoalDashBoardContainer {
-  width: 100%;
-  max-width: 1400px;
-  margin: 40px auto;
-  padding: 0 24px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: row;
-  background-color: var(--bg-primary);
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  box-sizing: border-box;
-  }
-
-
-  .leftPanel,
-  .rightPanel {
-    width: 100%; 
-    background-color: var(--bg-primary);
-  }
-
-  .leftPanelHeader,
-  .panelOverview,
-  .graphContainer,
-  .transactionContainer {
-    width: 100%;
-    max-width: 100%;
-  }
-} 
-
-
-.financial-goals {
-  text-align: center;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.rightPanel {
-  width: 30%;
-  max-height: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: flex-start;
 }
-
-.profilePic {
-  height: 100%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  max-width: 100px !important;
-}
-
-.headerText {
-  margin-left: 10px;
-}
-
-.greeting {
-  font-weight: 600;
-  font-size: 22px;
-}
-
-.slogan {
-  font-size: 14px;
-  color: #aaa;
-}
-
-/* Basic styles */
-.homepage {
-  color: #333;
-  padding: 20px;
-  background-color: #f9f9f9;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1e06fb;
-  color: #ffffff;
-  padding: 20px 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.header-icons i {
-  font-size: 2em;
-  margin-left: 20px;
-  cursor: pointer;
-}
-
-.header-greeting h1 {
-  font-size: 2em;
-  margin: 0;
-  animation: fadeIn 2s;
-}
-
-.header-greeting p {
-  font-size: 1.2em;
-  margin: 10px 0 0;
-  animation: fadeIn 2s;
-}
-
-.alldata1 {
-  padding: 20px;
-  display: flex;
-  background-color: #f9f9f9; /* Light background color */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 42px;
-  justify-content: space-between;
-  width: 40%;
-  flex-wrap: wrap; /* Allow wrapping to a new line */
-}
-
-.total-spend {
-  display: flex; /* Use flexbox for alignment */
-  flex-direction: column; /* Stack elements vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Align items to the top */
-  margin-left: 0; /* Push to the far right within the wrapper */
-  padding: 10px;
-  border-radius: 9px;
-  background-color: var(--card-bg);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: var(--text-primary);
-  transition: background-color 0.3s, box-shadow 0.3s;
-  height: auto;
-}
-
-.balance-header {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  width: 100%;
-  height: auto;
-}
-
-.selectoutside {
-  padding: 5px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
-  height: 33px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-hr {
-  width: 100%; /* Make the <hr> span the full width of its container */
-  border: 0; /* Remove default border */
-  height: 0.5px; /* Set the height of the line */
-  background: #ccc; /* Set the color of the line */
-  margin: 20px 0; /* Add space above and below the line */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-.total-spend:hover {
-  background-color: #ddd; /* Change to your hover background color */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.total-spend h2 {
-  margin: 0;
-}
-
-.total-spend p {
-  margin: 0;
-}
-
-.categories-container {
-  align-items: flex-start; /* Align items to the start */
-  width: fit-content; /* Container width fits the content */
-}
-
-.categories-container h2 {
-  margin: 0; /* Remove default margins */
-  padding-bottom: 10px; /* Space between heading and icons */
-}
-
-.category-icon {
-  width: 50px;
-  height: 50px;
-  display: inline-flex;
-  margin: 10px;
-  margin-top: -5px;
-  margin-left: 7px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background-color: #f0f0f0; /* Change to your desired background color */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  font-size: 24px;
-  color: #333; /* Icon color */
-  transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-.category-icon:hover {
-  background-color: #ddd; /* Change to your hover background color */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.amount-popup {
-  display: none;
-  position: absolute;
-  bottom: -30px; /* Adjust as needed */
-  background-color: #333;
-  color: #fff;
-  padding: 5px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.category-container:hover .amount-popup {
-  display: block;
-}
-
-/* Transactions section */
-.transactions {
-  margin-top: 20px;
-  text-align: center;
-  border: 2px solid var(--border-color);
-  padding: 20px;
-  padding-top: 0px;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px var(--shadow-color);
-  background-color: var(--card-bg);
-}
-
-.headline-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.headline-buttons h2 {
-  width: fit-content;
-  margin: 0;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  height: 100%;
-  margin: 0;
-}
-.buttons button {
-  height: 100%;
-  padding: 10px 20px;
-  border-radius: 5px;
-  background-color: var(--link-color);
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.buttons button:hover {
-  background-color: var(--hover-bg);
-}
-
-.transaction-box input {
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  width: 100%;
-  /* Set to 100% width */
-  box-sizing: border-box;
-  /* Include padding and border in the element's total width and height */
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.transaction-box button {
-  padding: 10px 20px;
-  background-color: var(--link-color);
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.transaction-box button:hover {
-  background-color: var(--bg-primary);
-}
-
-.recommendation-list {
-  position: absolute;
-  top: 50px;
-  /* Adjust this value based on your input field height */
-  left: 0;
-  right: 0;
-  max-height: 150px;
-  overflow-y: auto;
-  background-color: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-.recommendation-list li {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.recommendation-list li:hover,
-.recommendation-list li.highlighted {
-  background-color: var(--hover-bg);
-}
-
-.transaction-list table {
-  width: 100%;
-  border-collapse: collapse;
-  color: var(--text-primary);
-}
-
-.transaction-list th,
-.transaction-list td {
-  padding: 10px;
+.form-group label {
+  flex: 0 0 160px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.transaction-list th {
-  background-color: var(--bg-primary);
-}
-
-.expense {
-  background-color: rgba(244, 67, 54, 0.1);
-}
-
-.income {
-  background-color: rgba(76, 175, 80, 0.1);
-}
-
-.chart-container {
-  width: 100%;
-  height: 350px;
-  min-height: 300px;
-  box-sizing: border-box;
-  border: 2px solid var(--border-color);
-  border-radius: 10px;
-  background-color: var(--card-bg);
-  margin-bottom: 20px;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Đảm bảo biểu đồ hiển thị đúng trên các trình duyệt khác nhau */
-.chart-container > * {
-  width: 100%;
-  height: 100%;
-}
-
-.chart-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.chart-wrapper canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.chart-toggle-buttons {
-  display: flex;
-  flex-direction: column; /* Stack buttons vertically */
-  align-items: center; /* Center buttons horizontally */
-  margin-top: 3px;
-  height: 100%; /* Adjust height as needed */
-}
-
-.chart-toggle-buttons button {
-  padding: 10px 20px;
-  margin: 5px 0; /* Adjust margin to space buttons vertically */
-  background-color: var(--link-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  min-width: 150px; /* Ensure both buttons have the same minimum width */
-  text-align: center; /* Center text inside buttons */
-}
-
-.chart-toggle-buttons button.active {
-  background-color: var(--hover-bg);
-}
-
-.input-box {
-  width: 100%;
-  /* Same width as its parent, the transaction box */
-  padding: 10px;
-  /* Optional: Add padding as needed */
-  box-sizing: border-box;
-  /* Ensures padding and border are included in the width */
-  border: none;
-  /* Optional: Add a border if needed */
-  position: relative;
-  /* Allows absolute positioning of child inputs */
-}
-
-.selectinside {
-  padding: 9px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  font-size: 15px;
-  transition: border-color 0.3s ease;
-  margin-left: 10px;
-  background-color: var(--bg-primary);
+  font-weight: 500;
+  margin-right: 16px;
   color: var(--text-primary);
 }
-
-.type-select {
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  margin-bottom: 10px;
-  padding-left: 5px;
+.form-group input,
+.form-group textarea,
+.form-group select,
+.form-group .currency-input {
+  flex: 1 1 0;
+  margin-left: 0;
+  margin-right: 0;
+  min-width: 0;
 }
-
-.chart-toggle-buttons button:hover {
-  background-color: var(--hover-bg);
-}
-
-.chart-toggle-buttons button.active {
-  background-color: var(--hover-bg);
-}
-
-/* Financial goals */
-.financial-goals {
-  margin-top: 40px;
-}
-
-.add-goal-button {
-  padding: 10px 20px;
-  background-color: var(--link-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-goal-button:hover {
-  background-color: var(--hover-bg);
-}
-
-.goals {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.goal {
-  text-align: center;
-  padding: 60px;
-  margin: 10px;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px var(--shadow-color);
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-  animation: slideIn 1s;
-  flex: 1 1 calc(33.333% - 20px);
-}
-
-.goal:hover {
-  transform: scale(1.1) rotateY(15deg);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-}
-
-.goal p {
-  color: white;
-}
-
-/* Modal styles */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 20;
-}
-
-.modal-content input {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  width: 80%;
-}
-
-.modal-content button {
-  padding: 10px 20px;
-  background-color: var(--link-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.modal-content button:hover {
-  background-color: var(--hover-bg);
-}
-
-.progress-bar {
-  width: 100%;
-  background: var(--hover-bg);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 20px;
-}
-
 .currency-input {
   display: flex;
-  align-items: center;
-}
-
-.progress {
-  height: 20px;
-  background: var(--link-color);
-}
-
-/* Footer navigation */
-.footer-nav {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 40px;
-  background-color: #003366;
-  padding: 20px;
-  border-radius: 10px;
-  color: #ffffff;
-}
-
-.nav-item {
-  text-align: center;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 5px;
-  width: 500px;
-  max-width: 90%;
-  height: 630px;
-  margin-top: 80px;
-}
-
-.modal-header {
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-}
-
-.modal-footer button {
-  margin-left: 10px;
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-
-  .connect-button-wrapper {
-    padding-top: 40px;
-  }
-
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .revenue-expense {
-  display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
   gap: 10px;
-  margin-bottom: 20px;
-  }
-
-  .header-icons {
-    margin-top: 10px;
-  }
-
-  .header-greeting h1 {
-    font-size: 1.5em;
-  }
-
-  .header-greeting p {
-    font-size: 1em;
-  }
-
-  .assets-value {
-    font-size: 1.2em;
-  }
-
-  .goal {
-    flex: 1 1 100%;
-  }
-
-  .chart-wrapper {
-    height: auto;
-  }
 }
-
-/* Scrollbar Customization */
-/* For Webkit browsers (Chrome, Safari, newer Edge) */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.currency-input input,
+.currency-input select {
+  flex: 1 1 0;
+  min-width: 0;
 }
-
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--link-color);
-}
-
-/* For Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-color) var(--bg-primary);
-}
-
-/* Apply to specific scrollable containers */
-.modal-content,
-.rightPanel,
-.transaction-list {
-  /* Inherit the global scrollbar styles */
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-color) var(--bg-primary);
-}
-
-/* Bot Chat Styles */
-.bot-chat-container {
-  position: fixed; /* Fixed positioning relative to viewport */
-  left: -350px; /* Start off-screen to the left */
-  bottom: 30px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 15px;
-  z-index: 100;
-  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    opacity 1s ease;
-  opacity: 0;
-  transform: translateX(0);
-  pointer-events: none; /* Prevents interaction with elements behind it */
-}
-
-.bot-chat-container.bot-visible {
-  transform: translateX(350px); /* Move to the right */
-  opacity: 1;
-  pointer-events: auto; /* Re-enable interaction when visible */
-}
-
-.bot-chat-container.bot-hidden {
-  transform: translateX(350px) translateY(50px);
-  opacity: 0;
-  transition: transform 1s ease, opacity 1s ease;
-}
-
-.bot-image {
-  width: 60px;
-  height: auto;
-  display: block;
-  position: relative;
-  background: transparent;
-  transition: transform 0.5s ease;
-  border-radius: 50%;
-}
-
-.bot-visible .bot-image {
-  animation: botBounce 1s ease-out;
-}
-
-@keyframes botBounce {
-  0% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(-5px);
-  }
-  80% {
-    transform: translateY(2px);
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.bot-message {
-  margin-bottom: 10px;
-  margin-left: 10px;
-  background: #007bff;
-  color: #ffffff;
-  padding: 12px 18px;
-  border-radius: 18px;
-  max-width: 280px;
-  max-height: 200px; 
-  overflow-y: auto; /* Enable vertical scrolling */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0; /* Start hidden */
-  transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
-  transition: opacity 0.7s ease, transform 0.7s ease;
-  transition-delay: 0.3s; /* Reduced delay for smoother appearance */
-}
-
-.bot-message.message-visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-
-.bot-message.message-hidden {
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-/* Typing animation */
-.typing-animation {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  opacity: 0.3;
-}
-
-.dot:nth-child(1) {
-  animation: typing 1s infinite 0s;
-}
-
-.dot:nth-child(2) {
-  animation: typing 1s infinite 0.2s;
-}
-
-.dot:nth-child(3) {
-  animation: typing 1s infinite 0.4s;
-}
-
-.typed-message {
-  line-height: 1.5;
-  word-wrap: break-word;
-}
-
-@keyframes typing {
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
-@media screen and (max-width: 768px) {
-  /* ...existing code... */
-
-  /* For mobile, position the bot at the bottom of the screen */
-  .bot-chat-container {
-    left: auto;
-    right: -300px;
-    bottom: 20px;
-  }
-
-  .bot-chat-container.bot-visible {
-    transform: translateX(-310px);
-  }
-
-  .bot-chat-container.bot-hidden {
-    transform: translateX(-310px) translateY(50px);
-  }
-}
-
-/* Ghost div for chatbot trigger */
-.chatbot-trigger {
-  height: 20px; /* Small height to be less intrusive */
-  width: 100%;
-  opacity: 0; /* Invisible */
-  pointer-events: none; /* Won't interfere with user interaction */
-  position: relative;
-  margin-top: 20px; /* Space after the last visible element */
-  margin-bottom: 20px; /* Space at the bottom of the page */
-}
-
-/* Ghost div for chatbot trigger - truly invisible */
-.chatbot-trigger {
-  height: 1px; /* Minimal height */
-  width: 1px; /* Minimal width */
-  opacity: 0; /* Invisible */
-  pointer-events: none; /* Won't interfere with user interaction */
-  position: absolute; /* Take out of normal document flow */
-  bottom: 20px; /* Position near the bottom of the container */
-  left: 0; /* Align to the left */
-  margin: 0; /* Remove margins */
-  padding: 0; /* Remove padding */
-  border: none; /* Remove borders */
-  background: transparent; /* Transparent background */
-}
-
-/* ...existing code... */
-.bot-image.clickable {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.bot-image.clickable:hover {
-  transform: scale(1.1);
-}
-
-.chart-container.no-data {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 350px;
-}
-
-.no-data-message {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  color: #666;
-  font-size: 16px;
-  text-align: center;
-}
-
-</style>
-<style scoped>
-.GoalDashBoardContainer {
-  width: 100%;
-  max-width: 1400px;
-  margin: 40px auto;
-  padding: 0 24px;
-  display: flex;
-  flex-direction: row;
-  background-color: var(--bg-primary);
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  box-sizing: border-box;
-}
-
-.leftPanel {
-  width: 70%;
-  height: fit-content;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  padding-top: 0;
-  background-color: var(--bg-primary);
-}
-
-.leftPanelHeader {
-  max-width: 100%;
-  height: 5%;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 0;
-  padding-bottom: 5px;
-  color: var(--text-primary);
-}
-
-.profilePic {
-  height: 100%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  max-width: 100%;
-}
-
-.headerText {
-  margin-left: 10px;
-}
-
-.greeting {
-  font-weight: 600;
-  font-size: 22px;
-  color: var(--text-primary);
-}
-
-.slogan {
-  font-size: 14px;
-  color: var(--text-primary);
-  opacity: 0.7;
-}
-
-.panelOverview {
-  width: 100%;
-  height: 15%;
-  background-color: blue;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.graphContainer {
-  width: 100%;
-  height: 45%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-}
-
-.transactionContainer {
-  width: 100%;
-  height: 30%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-x: auto;
-}
-
-.pie-chart-row {
-  display: flex;
-  justify-content: center;
-  align-items: stretch; 
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  margin-bottom: 40px;
-}
-
-.pie-chart-row > * {
-  flex: 1 1 45%;
-  max-width: 45%;
-  min-width: 320px;
-}
-
-/* Right Panel - Financial goals */
-.rightPanel {
-  width: 30%;
-  max-height: none;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: var(--bg-primary);
-}
-
-/* Goals styles */
-.financial-goals {
-  text-align: center;
-  height: 100%;
+.modal-text-content {
   width: 100%;
 }
-
-.goal-image {
-  z-index: 20;
-  width: 100%;
-  height: auto;
-  border-radius: 10px 10px 0 0;
-  margin-bottom: -20px; /* Overlap with goal-content */
-}
-
-.goal-upper-part {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.goal-section-title {
-  margin-bottom: 0px;
-  margin-top: 0px;
-  font-size: 2em;
-  color: var(--text-primary);
-}
-
-.add-goal-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-goal-button:hover {
-  background-color: #005bb5;
-}
-
-.goals {
-  margin-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
-
-.goal {
-  background-color: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 8px 16px var(--shadow-color);
-  cursor: pointer;
-  margin: 10px;
-  flex: 1 1 calc(100% - 20px);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s, box-shadow 0.3s;
-  color: var(--text-primary);
-}
-
-.goal:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-}
-
-.goal-image {
-  width: 50%;
-  height: 50%;
-  margin: auto;
-  border-radius: 10px 10px 0 0;
-}
-
-.goal-content {
-  background-color: var(--card-bg);
-  border-radius: 10px;
-  margin-top: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  color: var(--bg-primary);
-}
-
-.goal-icon {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  color: #007bff;
-}
-
-.goal-info h3 {
-  margin: 10px 0;
-  font-size: 1.5em;
-  color: var(--text-primary);
-}
-
-.goal-info p {
-  margin: 5px 0;
-  font-size: 1em;
-  color: var(--text-primary) !important;
-}
-
-.progress-bar-container {
-  width: 100%;
-  background-color: var(--progress-color);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  height: 20px;
-}
-
-.progress-bar {
-  height: 100%;
-  background-color: var(--link-color);
-  transition: width 0.5s ease-in-out;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 20;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px var(--shadow-color);
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh; /* Limit height to 90% of viewport */
-  overflow-y: auto; /* Add scroll for overflow content */
-  padding: 20px;
-}
-
-.modal-content img {
-  width: 100%;
-  height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-.search-container {
-  margin: 20px 0;
-  text-align: center;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-  font-size: 16px;
-  box-sizing: border-box;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-/* Add Goal Modal Styles */
-.form-group {
-  margin-bottom: 10px;
-  font-family: "Space Grotesk", sans-serif;
+.character-counter {
+  margin-left: 176px;
+  text-align: left;
+  color: #888;
+  font-size: 13px;
 }
 
 #goalCategory {
@@ -2972,6 +1816,19 @@ hr {
 
 /* Mobile-specific styles */
 @media (max-width: 1024px) {
+  .GoalDashBoardContainer {
+  width: 100%;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--bg-primary);
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-sizing: border-box;
+  }
+
   .leftPanel,
   .rightPanel {
     width: 100%;
@@ -3471,59 +2328,6 @@ hr {
   color: white;
 }
 
-/* Modal styles */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 20;
-}
-
-.modal-content input {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  width: 80%;
-}
-
-.modal-content button {
-  padding: 10px 20px;
-  background-color: var(--link-color);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.modal-content button:hover {
-  background-color: var(--hover-bg);
-}
-
-.progress-bar {
-  width: 100%;
-  background: var(--hover-bg);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 20px;
-}
-
-.currency-input {
-  display: flex;
-  align-items: center;
-}
-
-.progress {
-  height: 20px;
-  background: var(--link-color);
-}
-
 /* Footer navigation */
 .footer-nav {
   display: flex;
@@ -3537,47 +2341,6 @@ hr {
 
 .nav-item {
   text-align: center;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 5px;
-  width: 500px;
-  max-width: 90%;
-  height: 630px;
-  margin-top: 80px;
-}
-
-.modal-header {
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-}
-
-.modal-footer button {
-  margin-left: 10px;
 }
 
 .revenue-expense {
@@ -3949,6 +2712,37 @@ hr {
   color: #666;
   font-size: 16px;
   text-align: center;
+}
+
+.form-group.description-group {
+  display: block;
+  flex-direction: unset;
+  align-items: unset;
+  gap: 0;
+  margin-bottom: 16px;
+}
+.form-group.description-group label {
+  display: block;
+  width: 100%;
+  margin-bottom: 2px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: left;
+}
+.form-group.description-group textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  font-size: 15px;
+  padding: 10px;
+  margin-bottom: 4px;
+}
+.form-group.description-group .character-counter {
+  margin-left: 0;
+  text-align: right;
+  color: #888;
+  font-size: 13px;
+  width: 100%;
 }
 
 </style>

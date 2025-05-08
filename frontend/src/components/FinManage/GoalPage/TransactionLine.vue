@@ -6,7 +6,7 @@
       id="transaction-line-chart"
     ></canvas>
     <div v-else class="no-data-message">
-      <p>No transaction data available to display.</p>
+      <p>{{ $t('noTransactionData') }}</p>
     </div>
   </div>
 </template>

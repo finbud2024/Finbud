@@ -4,12 +4,12 @@
       <table>
         <thead>
           <tr>
-            <th>Description</th>
-            <th>Date</th>
-            <th>Amount ({{ selectedCurrency }})</th>
-            <th>Category</th>
-            <th>Transaction Type</th>
-            <th>Action</th>
+            <th>{{ $t('description') }}</th>
+            <th>{{ $t('dateTime') }}</th>
+            <th>{{ $t('amount') }} ({{ selectedCurrency }})</th>
+            <th>{{ $t('category') }}</th>
+            <th>{{ $t('transactionType') }}</th>
+            <th>{{ $t('action') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -36,19 +36,16 @@
             </td>
             <td>{{ trans.category || '-' }}</td>
             <td>
-              {{
-                trans.type === 'Expense' ||
-                (trans.type === 'revenue' && trans.amount > 0)
-                  ? 'Expense'
-                  : 'Income'
-              }}
+              {{ trans.type === 'Expense' || (trans.type === 'revenue' && trans.amount > 0)
+                ? $t('expense')
+                : $t('income') }}
             </td>
             <td class="buttons">
               <button @click="$emit('edit', trans)" style="margin-right: 10px; padding: 6px 12px">
-                Edit
+                {{ $t('edit') }}
               </button>
               <button @click="$emit('remove', trans._id || trans.account_id)" style="padding: 6px 12px">
-                Remove
+                {{ $t('remove') }}
               </button>
             </td>
           </tr>
