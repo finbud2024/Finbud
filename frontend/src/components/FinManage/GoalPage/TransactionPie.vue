@@ -1,6 +1,8 @@
 <template>
   <div class="pie-chart-container">
-    <canvas ref="pieCanvas"></canvas>
+    <div class="pie-chart-wrapper">
+      <canvas ref="pieCanvas"></canvas>
+    </div>
   </div>
 </template>
 
@@ -10,6 +12,11 @@ Chart.register(ArcElement, Tooltip, Legend);
 
 export default {
   name: "TransactionPie",
+  data() {
+    return {
+      _chartInstance: null
+    };
+  },
   props: {
     transactions: {
       type: Array,
@@ -19,6 +26,19 @@ export default {
       type: String, // "Income" or "Expense"
       required: true,
     },
+  },
+  watch: {
+    transactions: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.renderPieChart();
+        }
+      },
+      deep: true
+    },
+    chartType() {
+      this.renderPieChart();
+    }
   },
   mounted() {
     this.renderPieChart();
@@ -46,7 +66,12 @@ export default {
 
       const ctx = this.$refs.pieCanvas.getContext("2d");
 
-      new Chart(ctx, {
+      // ✅ destroy previous chart instance if exists
+      if (this._chartInstance) {
+        this._chartInstance.destroy();
+      }
+
+      this._chartInstance = new Chart(ctx, {
         type: "pie",
         data: {
           labels,
@@ -73,14 +98,20 @@ export default {
       });
     },
   },
+  beforeUnmount() {
+    if (this._chartInstance) {
+      this._chartInstance.destroy();
+    }
+  }
 };
 </script>
 
 <style scoped>
 .pie-chart-container {
+  aspect-ratio: 1 / 1 !important;
   width: 100%;
   max-width: 400px;
-  height: 400px; /* ⬅️ force height to match width */
+  height: 400px;
   margin: auto;
   padding: 10px;
   box-sizing: border-box;

@@ -35,7 +35,7 @@ transactionRoute
 
   // PUT: update a transaction with a given ID
   .put(validateRequest(Transaction.schema), async (req, res) => {
-    const { description, amount, userId } = req.body;
+    const { description, amount, userId, category } = req.body;
     const transactionId = req.params.transactionId;
 
     if (!description || amount === undefined || !userId) {
@@ -61,7 +61,7 @@ transactionRoute
 
       const updatedTransaction = await Transaction.findByIdAndUpdate(
         transactionId,
-        { userId, description, amount, transaction: transactionType },
+        { userId, description, amount, type: transactionType, category },
         { new: true }
       );
 

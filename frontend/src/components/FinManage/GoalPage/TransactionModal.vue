@@ -2,23 +2,23 @@
   <div class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Add Transaction</h3>
+        <h3>{{ $t('addTransaction') }}</h3>
       </div>
 
       <div class="modal-body">
         <!-- Transaction Type -->
         <div class="form-group">
-          <label>Transaction Type</label>
+          <label>{{ $t('transactionType') }}</label>
           <select v-model="transaction.type" class="input">
-            <option disabled value="">Select type</option>
-            <option value="Income">Income</option>
-            <option value="Expense">Expense</option>
+            <option disabled value="">{{ $t('selectType') }}</option>
+            <option value="Income">{{ $t('income') }}</option>
+            <option value="Expense">{{ $t('expense') }}</option>
           </select>
         </div>
 
         <!-- Description -->
         <div class="form-group description-group">
-          <label>Description</label>
+          <label>{{ $t('description') }}</label>
           <input
             type="text"
             placeholder="Transaction description"
@@ -47,7 +47,7 @@
 
         <!-- Amount + Currency -->
         <div class="form-group">
-          <label>Amount & Currency</label>
+          <label>{{ $t('amount') }}</label>
           <div class="currency-input">
             <input
               type="number"
@@ -68,25 +68,25 @@
 
         <!-- Category -->
         <div class="form-group">
-          <label>Category</label>
+          <label>{{ $t('category') }}</label>
           <select v-model="transaction.category" class="input">
-            <option disabled value="">Select category</option>
+            <option disabled value="">{{ $t('selectCategory') }}</option>
             <option v-for="cat in filteredCategories" :key="cat">{{ cat }}</option>
           </select>
         </div>
 
         <!-- Date -->
         <div class="form-group">
-          <label>Date</label>
+          <label>{{ $t('dateTime') }}</label>
           <input type="date" v-model="transaction.date" class="input" />
         </div>
       </div>
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button @click="$emit('close')" class="btn cancel">Cancel</button>
+        <button @click="$emit('close')" class="btn cancel">{{ $t('cancel') }}</button>
         <button @click="$emit('submit', transaction)" class="btn confirm">
-          Add Transaction
+          {{ $t('addTransaction') }}
         </button>
       </div>
     </div>

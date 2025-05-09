@@ -6,7 +6,7 @@
       id="transaction-line-chart"
     ></canvas>
     <div v-else class="no-data-message">
-      <p>No transaction data available to display.</p>
+      <p>{{ $t('noTransactionData') }}</p>
     </div>
   </div>
 </template>
@@ -141,7 +141,7 @@ export default {
         datasets: [{
           label: "Balance Change",
           data,
-          borderColor: "rgba(40, 42, 42, 0.5)",
+          borderColor: "rgba(0, 123, 255, 0.6)",
           backgroundColor: "rgba(75, 192, 192, 0.2)",
           pointBackgroundColor: pointColors,
           pointBorderColor: pointColors,
