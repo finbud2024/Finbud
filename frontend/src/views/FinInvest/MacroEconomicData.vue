@@ -655,9 +655,49 @@ tr:hover .header.sticky-col {
     background-color: rgb(0, 0, 0);
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 768px) {
     .button-group {
         padding-top: 60px;
+    }
+
+    .sticky-first {
+        position: relative;
+        left: auto;
+        min-width: auto;
+        max-width: none;
+    }
+
+    .sticky-second {
+        position: relative;
+        left: auto;
+        min-width: auto;
+        max-width: none;
+    }
+
+    .sticky-col {
+        position: relative;
+        background-color: inherit;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        width: 100%;
+        min-width: 800px; /* Ensures table doesn't get too compressed */
+    }
+}
+
+@media (max-width: 480px) {
+    .button-group {
+        padding-top: 60px;
+    }
+
+    .table-container {
+        margin: 0 -20px; /* Negative margin to allow full-width scrolling */
+        padding: 0 20px; /* Add padding to maintain content alignment */
     }
 }
 

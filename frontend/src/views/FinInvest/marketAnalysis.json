@@ -23,6 +23,11 @@
             }
           }
     },
+    "Date": {
+      "Today": "Today",
+      "This Week": "This Week",
+      "This Month": "This Month"
+    },
     "Topic": {
         "Topic": "#Trend",
         "topic": "Topic",

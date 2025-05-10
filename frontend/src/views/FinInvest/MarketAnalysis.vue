@@ -77,6 +77,19 @@
                         >
                             {{ category }}
                         </button>
+
+                        <div>
+                            <label class="date-label">
+                                <select>
+                                    <option
+                                        v-for="(date, index) in marketAnalysis.Date"
+                                        :key="index"
+                                    >
+                                        {{ date }}
+                                    </option>
+                                </select>
+                            </label>
+                        </div>
                     </div>
 
                     <table class="table-container">
@@ -333,5 +346,11 @@ thead tr th {
     color: #dc0101; /* red */
 }
 
+.date-label {
+    font-size: 14px;
+    font-weight: 800;
+    color: rgb(101, 101, 101);
+    width: 100px;
+}
 
 </style>

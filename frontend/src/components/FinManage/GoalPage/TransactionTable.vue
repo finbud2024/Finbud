@@ -1,14 +1,15 @@
 <template>
+  <div class="transaction-wrapper">
     <div class="transaction-list">
       <table>
         <thead>
           <tr>
-            <th>Description</th>
-            <th>Date</th>
-            <th>Amount ({{ selectedCurrency }})</th>
-            <th>Category</th>
-            <th>Transaction Type</th>
-            <th>Action</th>
+            <th>{{ $t('description') }}</th>
+            <th>{{ $t('dateTime') }}</th>
+            <th>{{ $t('amount') }} ({{ selectedCurrency }})</th>
+            <th>{{ $t('category') }}</th>
+            <th>{{ $t('transactionType') }}</th>
+            <th>{{ $t('action') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -35,26 +36,24 @@
             </td>
             <td>{{ trans.category || '-' }}</td>
             <td>
-              {{
-                trans.type === 'Expense' ||
-                (trans.type === 'revenue' && trans.amount > 0)
-                  ? 'Expense'
-                  : 'Income'
-              }}
+              {{ trans.type === 'Expense' || (trans.type === 'revenue' && trans.amount > 0)
+                ? $t('expense')
+                : $t('income') }}
             </td>
             <td class="buttons">
               <button @click="$emit('edit', trans)" style="margin-right: 10px; padding: 6px 12px">
-                Edit
+                {{ $t('edit') }}
               </button>
               <button @click="$emit('remove', trans._id || trans.account_id)" style="padding: 6px 12px">
-                Remove
+                {{ $t('remove') }}
               </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   export default {
@@ -93,22 +92,61 @@
   </script>
   
   <style scoped>
-  .transaction-list table {
-    width: 100%;
-    border-collapse: collapse;
-    color: var(--text-primary);
-  }
-  .transaction-list th,
-  .transaction-list td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-  }
-  .income {
-    background-color: rgba(76, 175, 80, 0.1);
-  }
-  .expense {
-    background-color: rgba(244, 67, 54, 0.1);
-  }
+.transaction-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.transaction-list table {
+  table-layout: fixed;
+  min-width: 900px; /* this ensures there's enough space */
+  width: 100%;
+  border-collapse: collapse;
+}
+.transaction-list th:nth-child(1),
+.transaction-list td:nth-child(1) {
+  width: 24%; /* Description */
+}
+
+.transaction-list th:nth-child(2),
+.transaction-list td:nth-child(2) {
+  width: 12%;
+}
+
+.transaction-list th:nth-child(3),
+.transaction-list td:nth-child(3) {
+  width: 15%;
+}
+
+.transaction-list th:nth-child(4),
+.transaction-list td:nth-child(4) {
+  width: 18%;
+}
+
+.transaction-list th:nth-child(5),
+.transaction-list td:nth-child(5) {
+  width: 12%;
+}
+
+.transaction-list th:nth-child(6),
+.transaction-list td:nth-child(6) {
+  width: max-content;
+  white-space: nowrap;
+  padding-right: 4px;
+}
+
+.transaction-list .buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.transaction-list button {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
   </style>
   

@@ -19,7 +19,7 @@
 
 <script>
 import axios from 'axios';
-import Modal from '../Modal.vue'
+import Modal from '@/components/marketPage/Modal.vue'
 
 export default {
   name: 'News',
