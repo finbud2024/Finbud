@@ -1,6 +1,6 @@
 <template>
   <div class="modal-overlay" @click.self="closeModal">
-    <div class="modal">
+    <div class="order-modal">
       <h3>Preview Order</h3>
       <div class="order-details">
         <div class="detail">
@@ -92,7 +92,7 @@ export default {
   z-index: 1000;
 }
 
-.modal {
+.order-modal {
   background: white;
   padding: 20px;
   border-radius: 10px;
