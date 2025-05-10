@@ -9,7 +9,12 @@
 				icon="fa-solid fa-bars"
 			/>
 			<div v-if="isSidebarVisible" class="overlay" @click="closeSidebar" />
-			<SideBar
+			<img
+				class="toggle-sidebar toggle-sidebar-big"
+				@click="toggleSidebarBigScreen"
+				src="@/assets/sidebar-open-icon.png"
+			/>
+			<SideBar v-if="isSidebarVisibleBigScreen"
 				:class="{ 'is-visible': isSidebarVisible }"
 				:initialThreadName="newThreadName"
 			/>
@@ -81,6 +86,7 @@ export default {
 					title: "Need help with queries?",
 				},
 			],
+			isSidebarVisibleBigScreen: true,
 		};
 	},
 	computed: {
@@ -101,6 +107,9 @@ export default {
 		},
 	},
 	methods: {
+		toggleSidebarBigScreen() {
+			this.isSidebarVisibleBigScreen = !this.isSidebarVisibleBigScreen;
+		},
 		toggleSidebar() {
 			this.isSidebarVisible = !this.isSidebarVisible;
 		},
@@ -253,6 +262,9 @@ export default {
 		font-size: 1rem;
 		padding: 10px;
 	}
+	.toggle-sidebar-big {
+		display: none;
+	}
 }
 
 .overlay {
@@ -282,6 +294,31 @@ export default {
 .side-bar.is-visible {
 	transform: translateX(0);
 }
+
+.toggle-sidebar-big {
+	position: absolute;
+	top: 15px;
+	left: 160px; /* adjust as needed */
+	z-index: 1000;
+	cursor: pointer;
+	color: var(--text-primary);
+	width: 45px;   
+ 	height: 45px;
+	padding: 10px;
+	
+}
+
+.side-bar.big-screen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 250px;
+	height: 100%;
+	background-color: var(--bg-secondary);
+	z-index: 999;
+	transition: transform 0.3s ease;
+}
+
 
 /*______________________*/
 /* Guidance CSS class*/
