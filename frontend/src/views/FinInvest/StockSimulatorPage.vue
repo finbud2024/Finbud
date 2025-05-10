@@ -2070,7 +2070,7 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 .thinking-animation {
   margin-top: 26px;
   margin-left: 20px;
-  background-color: #2196f3;
+  background-color: #000000;
   width: fit-content;
   border-radius: 16px;
 }
@@ -2157,13 +2157,13 @@ h1 {
 }
 
 .navbar li:hover {
-  color: #007bff;
+  color: #000000;
   background: #e9f0fc;
 }
 
 .navbar li.active {
   font-weight: bold;
-  background: #007bff;
+  background: #000000;
   color: white;
 }
 
@@ -2242,7 +2242,7 @@ h1 {
 }
 
 .header-chat-message {
-  background-color: #2196f3;
+  background-color: #000000;
   color: white;
   border-radius: 15px;
   padding: 12px 15px;
@@ -2273,7 +2273,7 @@ h1 {
 .action-form h3 {
   margin-top: 0;
   margin-bottom: 15px;
-  color: #007bff;
+  color: #000000;
 }
 
 .action-form input,
@@ -2308,7 +2308,7 @@ h1 {
 }
 
 .preview-btn {
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
 }
 
@@ -2317,7 +2317,7 @@ h1 {
 }
 
 .preview-btn:hover {
-  background-color: #0069d9;
+  background-color: #000000;
 }
 
 /* Account performance section */
@@ -2380,7 +2380,7 @@ h1 {
 }
 
 .chat-message {
-  background-color: #2196f3;
+  background-color: #000000;
   color: white;
   border-radius: 15px;
   padding: 12px 15px;
@@ -2562,7 +2562,7 @@ h1 {
 .bot-message {
   margin-top: 10px;
   margin-left: 10px;
-  background: #007bff;
+  background: #272626;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 18px;
@@ -2754,7 +2754,7 @@ h1 {
 }
 
 .portfolio-language-switcher button.active img {
-  border-color: #007bff;
+  border-color: #030303;
 }
 
 /* Responsive styles */

@@ -107,7 +107,7 @@ export default {
 
 <style scoped>
 h3 {
-  color: #007bff; /* Blue color for the header */
+  color: #000000; /* Blue color for the header */
   font-weight: bold; /* Make it bold */
   font-size: 1.5rem; /* Font size for the header */
   margin-bottom: 20px;
@@ -145,7 +145,7 @@ h3 {
 
 .fetch-btn {
   padding: 10px 15px;
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 4px;

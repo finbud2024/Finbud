@@ -327,7 +327,8 @@ export default {
   --nav-bg: transparent;
   --border-color: #f5f5f5;
   --link-color: black;
-  --hover-bg: #024384;
+  /* --hover-bg: #024384; */
+  --hover-bg: #949393;
   --card-bg: #ffffff;
   --content-bg: #ffffff;
   --shadow-color: #e9e2e2;
