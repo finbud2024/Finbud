@@ -89,102 +89,128 @@ async function scrapeVietStock() {
 
         const filters = activeFilters;
 
-        // Xem theo: Thángháng
+        console.log(filters);
 
-        await page.waitForSelector('select[name="type"]');
-        await page.waitForSelector('select[name="from"]');
-        await page.waitForSelector('select[name="fromYear"]');
-        await page.waitForSelector('select[name="to"]');
-        await page.waitForSelector('select[name="toYear"]');
+    
+        for (let ffrom = 0; ffrom < filters[1].length; ffrom++) {
+            for (let ffromYear = 0; ffromYear < filters[2].length - 19; ffromYear++) {
+                for (let ftoYear = 0; ftoYear <= ffromYear; ftoYear++) {
+                    for (let fto = 0; fto < filters[3].length; fto++) {
 
-        await page.selectOption('select[name="type"]', {value: filters[0][0]});
-        await page.selectOption('select[name="from"]', {value: filters[1][0]});
-        await page.selectOption('select[name="fromYear"]', {value: filters[2][filters[2].length - 1]});
-        await page.selectOption('select[name="to"]', {value: filters[3][5]});
-        await page.selectOption('select[name="toYear"]', {value: filters[4][0]});
-        
-        await page.click('button.btn.bg.m-l');
+                        if (ffromYear === ftoYear) {
+                            if (ffrom > fto) {
+                                break;
+                            }
+                        }
 
-        await page.waitForSelector('div.table-responsive.pos-relative', { timeout: 120000 });
-          
-        const data_month = await page.evaluate(() => {
-            const results = [];
-            let headers = [];
+                        await page.waitForSelector('select[name="type"]');
+                        await page.waitForSelector('select[name="from"]');
+                        await page.waitForSelector('select[name="fromYear"]');
+                        await page.waitForSelector('select[name="to"]');
+                        await page.waitForSelector('select[name="toYear"]');
+                        
+                        await page.selectOption('select[name="type"]', {value: filters[0][0]});
+                        await page.selectOption('select[name="from"]', {value: filters[1][ffrom]});
+                        await page.selectOption('select[name="fromYear"]', {value: filters[2][ffromYear]});
+                        await page.selectOption('select[name="to"]', {value: filters[3][fto]});
+                        await page.selectOption('select[name="toYear"]', {value: filters[4][ftoYear]});
+
+                        console.log('***From Month: ', filters[1][ffrom]);
+                        console.log('From Year: ', filters[2][ffromYear]);
+                        console.log('To Month: ', filters[3][fto]);
+                        console.log('To Year: ', filters[4][ftoYear]);
+
+                        await page.click('button.btn.bg.m-l');
         
-            // Select all tables that match the given class
-            const tables = document.querySelectorAll('table.table.table-hover.table-bordered.responsive.sticky2f');
+                        await page.waitForSelector('div.table-responsive.pos-relative', { timeout: 120000 });
+                    
+                        const data = await page.evaluate(() => {
+                            const results = [];
+                            let headers = [];
+
+                            // Select all tables that match the given class
+                            const tables = document.querySelectorAll('table.table.table-hover.table-bordered.responsive.sticky2f');
+                        
+                            tables.forEach(table => {
+                                const rows = table.querySelectorAll('tbody tr'); // only data rows
+                        
+                                rows.forEach(row => {
+                                    const cells = row.querySelectorAll('td');
+                                    const rowData = Array.from(cells).map(cell => cell.innerText.trim());
+                                    results.push(
+                                        rowData
+                                    );
+                                });
+                
+                                const heads = table.querySelectorAll('thead tr');
+                                heads.forEach(head => {
+                                    const cells = head.querySelectorAll('th.text-right');
+                                    const headData = Array.from(cells).map(cell => cell.innerText.trim());
+                                    headers = headData;
+                                });
+                            });
+                
+                            return [headers, results];
+                        });
+
+                        processData('tháng', data, filters[1][ffrom], filters[2][ffromYear], filters[3][fto], filters[4][ftoYear]);
+                    }
+                }
+            }
+        }
+
+
+        for (let fYear = 0; fYear < filters[2].length; fYear++) {
+            for (let toYear = 0; toYear <= fYear; toYear++) {
+
+                await page.waitForSelector('select[name="type"]');
+                await page.waitForSelector('select[name="fromYear"]');
+                await page.waitForSelector('select[name="toYear"]');
+
+                await page.selectOption('select[name="type"]', {value: filters[0][1]});
+                await page.selectOption('select[name="fromYear"]', {value: filters[2][fYear]});
+                await page.selectOption('select[name="toYear"]', {value: filters[4][toYear]});
+
+                console.log('***From Year: ', filters[2][fYear]);
+                console.log('To Year: ', filters[4][toYear]);
+
+                await page.click('button.btn.bg.m-l');
+
+                await page.waitForSelector('div.table-responsive.pos-relative', { timeout: 120000 });
+            
+                const data = await page.evaluate(() => {
+                    const results = [];
+                    let headers = [];
+
+                    // Select all tables that match the given class
+                    const tables = document.querySelectorAll('table.table.table-hover.table-bordered.responsive.sticky2f');
+                
+                    tables.forEach(table => {
+                        const rows = table.querySelectorAll('tbody tr'); // only data rows
+                
+                        rows.forEach(row => {
+                            const cells = row.querySelectorAll('td');
+                            const rowData = Array.from(cells).map(cell => cell.innerText.trim());
+                            results.push(
+                                rowData
+                            );
+                        });
         
-            tables.forEach(table => {
-                const rows = table.querySelectorAll('tbody tr'); // only data rows
+                        const heads = table.querySelectorAll('thead tr');
+                        heads.forEach(head => {
+                            const cells = head.querySelectorAll('th.text-right');
+                            const headData = Array.from(cells).map(cell => cell.innerText.trim());
+                            headers = headData;
+                        });
+                    });
         
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    const rowData = Array.from(cells).map(cell => cell.innerText.trim());
-                    results.push(
-                        rowData
-                    );
+                    return [headers, results];
                 });
 
-                const heads = table.querySelectorAll('thead tr');
-                heads.forEach(head => {
-                    const cells = head.querySelectorAll('th.text-right');
-                    const headData = Array.from(cells).map(cell => cell.innerText.trim());
-                    headers = headData;
-                });
-            });
+                processData('năm', data, null, filters[2][fYear], null, filters[4][toYear]);
 
-            return [headers, results];
-        });
-
-        processData('tháng', data_month);
-
-        // Xem theo: Nămăm
-
-        await page.waitForSelector('select[name="type"]');
-        await page.waitForSelector('select[name="from"]');
-        await page.waitForSelector('select[name="fromYear"]');
-        await page.waitForSelector('select[name="to"]');
-        await page.waitForSelector('select[name="toYear"]');
-
-        await page.selectOption('select[name="type"]', {value: filters[0][1]});
-        await page.selectOption('select[name="fromYear"]', {value: filters[2][filters[2].length - 1]});
-        await page.selectOption('select[name="toYear"]', {value: filters[4][0]});
-        
-        await page.click('button.btn.bg.m-l');
-
-        await page.waitForSelector('div.table-responsive.pos-relative', { timeout: 120000 });
-        
-        const data_year = await page.evaluate(() => {
-            const results = [];
-            let headers = [];
-        
-            // Select all tables that match the given class
-            const tables = document.querySelectorAll('table.table.table-hover.table-bordered.responsive.sticky2f');
-        
-            tables.forEach(table => {
-                const rows = table.querySelectorAll('tbody tr'); // only data rows
-        
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    const rowData = Array.from(cells).map(cell => cell.innerText.trim());
-                    results.push(
-                        rowData
-                    );
-                });
-
-                const heads = table.querySelectorAll('thead tr');
-                heads.forEach(head => {
-                    const cells = head.querySelectorAll('th.text-right');
-                    const headData = Array.from(cells).map(cell => cell.innerText.trim());
-                    headers = headData;
-                });
-            });
-
-            return [headers, results];
-        });
-
-        processData('năm', data_year);
-
+            }
+        }
 
     } catch (error) {
         console.error('Error scraping Viet Stock:', error);
@@ -200,49 +226,32 @@ async function scrapeVietStock() {
     }
 }
 
-let fdiData = []
-
-function processData(type, data) {
+function processData(type, data, fromMonth, fromYear, toMonth, toYear) {
     const headers = data[0];
     const result = data[1];
 
+    console.log('Result: ', result);
 
-
-    for (let i = 0; i < headers.length; i++) {
-        let month = null;
-        let year = null;
-        let categories = [];
-        let value = [];
-        if (type == "tháng") {
-            [month, year] = headers[i].split("/");
-        }
-        else { year = headers[i]; }
-
-        for (let index = 0; index < result.length; index += 1) {
-
-            if (result[index].length == 1) {
-                value.push({category: result[index][0]});
-            }
-            else {
-                value.push({
-                    chi_tieu: result[index][0],
-                    don_vi: result[index][1],
-                    gia_tri: result[index][index + 2]
-                });
-            }
-
-        }
-
-        const temp = {            
+    if (type === 'năm') {
+        vietStockFDI.insertOne({
             xem_theo: type,
-            month,
-            year,
-            value
-        }
-    
-        fdiData.push(temp);
+            fromYear,
+            toYear,
+            headers,
+            data: result
+        });
+        return;
     }
-        
+
+    vietStockFDI.insertOne({
+        xem_theo: type,
+        fromMonth,
+        fromYear,
+        toMonth,
+        toYear,
+        headers,
+        data: result
+    });
 }
 
 async function runScrapers() {
@@ -252,13 +261,11 @@ async function runScrapers() {
 
         await connectToMongoDB();
 
+        await vietStockFDI.deleteMany({});
+
         await scrapeVietStock();
 
         //console.log(fdiData);
-
-        await vietStockFDI.deleteMany({});
-
-        await vietStockFDI.insertMany(fdiData);
         
 
     } catch (error) {

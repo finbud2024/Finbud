@@ -88,14 +88,40 @@ vietStockRoute.post("/GDP/filter/quarter", async(req, res) => {
 
         // Convert quarter and year to numbers for comparison
         const startQuarterNum = parseInt(startQuarter.replace('Quý', '').trim());
-        const startYearNum = parseInt(startYear);
         const endQuarterNum = parseInt(endQuarter.replace('Quý', '').trim());
-        const endYearNum = parseInt(endYear);
 
         // Fetch all documents and filter in-memory
         let allData = await vietStockGDP.find({
             xem_theo: 'quý',
             year: { $gte: startYear, $lte: endYear }
+        });
+
+        console.log(allData);
+
+        allData.sort((a, b) => {
+            if (a.year === b.year) {
+                if (a.quarter.includes('Quý') && b.quarter.includes('Quý')) {
+                    return parseInt(a.quarter.replace('Quý', '').trim()) - parseInt(b.quarter.replace('Quý', '').trim());
+                }
+                if (a.quarter.includes('Quý') && !b.quarter.includes('Tháng')) {
+                    const aQuarterNum = parseInt(a.quarter.replace('Quý', '').trim());
+                    const bQuarterNum = parseInt(b.quarter.replace('Tháng', '').trim());
+                    if (aQuarterNum - parseInt(bQuarterNum / 3) == 0) {
+                        return -1;
+                    }
+                    return aQuarterNum - parseInt(bQuarterNum / 3);
+                }
+                if (a.quarter.includes('Tháng') && b.quarter.includes('Quý')) {
+                    const aQuarterNum = parseInt(a.quarter.replace('Tháng', '').trim()) / 3;
+                    const bQuarterNum = parseInt(b.quarter.replace('Quý', '').trim());
+                    if (parseInt(aQuarterNum / 3) - bQuarterNum == 0) {
+                        return 1;
+                    }
+                    return (aQuarterNum / 3) - bQuarterNum;
+                }
+                return parseInt(a.quarter.replace('Tháng', '').trim()) - parseInt(b.quarter.replace('Tháng', '').trim());
+            }
+            return parseInt(a.year) - parseInt(b.year); 
         });
 
         const eQuarterNum = parseInt(allData[allData.length - 1].quarter.replace('Quý', '').trim());
@@ -122,13 +148,14 @@ vietStockRoute.post("/GDP/filter/year", async(req, res) => {
         if (!startYear || !endYear) {
             return res.status(400).json({ message: "Please provide startQuarter, startYear, endQuarter, and endYear." });
         }
-        
-        const startYearNum = parseInt(startYear);
-        const endYearNum = parseInt(endYear);
 
         let allData = await vietStockGDP.find({
             xem_theo: 'năm',
             year: { $gte: startYear, $lte: endYear }
+        });
+
+        allData.sort((a, b) => {
+            return parseInt(a.year) - parseInt(b.year);
         });
 
         res.status(200).json({ data: allData });
@@ -154,6 +181,13 @@ vietStockRoute.post("/CPI/filter/month", async(req, res) => {
         let allData = await vietStockCPI.find({
             xem_theo: 'tháng',
             year: { $gte: startYear, $lte: endYear }
+        });
+
+        allData.sort((a, b) => {
+            if (a.year === b.year) {
+                return parseInt(a.month.replace('Tháng', '').trim()) - parseInt(b.month.replace('Tháng', '').trim());
+            }
+            return parseInt(a.year) - parseInt(b.year);
         });
 
         const eMonthNum = parseInt(allData[allData.length - 1].month.replace('Tháng', '').trim());
@@ -189,6 +223,10 @@ vietStockRoute.post("/CPI/filter/year", async(req, res) => {
             year: { $gte: startYear, $lte: endYear }
         });
 
+        allData.sort((a, b) => {
+            return parseInt(a.year) - parseInt(b.year);
+        });
+
         res.status(200).json({data: allData});
     }
     catch (error) {
@@ -212,6 +250,13 @@ vietStockRoute.post("/ImportExport/filter/month", async(req, res) => {
         let allData = await vietStockImportExport.find({
             xem_theo: 'tháng',
             year: { $gte: startYear, $lte: endYear }
+        });
+
+        allData.sort((a, b) => {
+            if (a.year === b.year) {
+                return parseInt(a.month.replace('Tháng', '').trim()) - parseInt(b.month.replace('Tháng', '').trim());
+            }
+            return parseInt(a.year) - parseInt(b.year);
         });
         
         const eMonthNum = parseInt(allData[allData.length - 1].month.replace('Tháng', '').trim());
@@ -247,62 +292,8 @@ vietStockRoute.post("/ImportExport/filter/year", async(req, res) => {
             year: { $gte: startYear, $lte: endYear }
         });
 
-        res.status(200).json({data: allData});
-    }
-    catch (error) {
-        res.status(500).json({message: 'Error fetching data', error});
-    }
-}); 
-
-vietStockRoute.post("/FDI/filter/month", async(req, res) => {
-    try {
-        const {startMonth, startYear, endMonth, endYear} = req.body;
-        if (!startMonth || !startYear || !endMonth || !endYear) {
-            return res.status(400).json({message: 'Please provide startMonth, startYear, endMonth, endYear'});
-        }
-        
-        // Convert month and year to numbers for comparison
-        const startMonthNum = parseInt(startMonth.replace('Tháng', '').trim());
-        const startYearNum = parseInt(startYear);
-        const endMonthNum = parseInt(endMonth.replace('Tháng', '').trim());
-        const endYearNum = parseInt(endYear);
-
-        let allData = await vietStockFDI.find({
-            xem_theo: 'tháng',
-            year: { $gte: startYear, $lte: endYear }
-        });
-
-        const eMonthNum = parseInt(allData[allData.length - 1].month.replace('Tháng', '').trim());
-        const sMonthNum = parseInt(allData[0].month.replace('Tháng', '').trim());
-
-        for (let i = sMonthNum; i < startMonthNum; i++) {
-            allData.shift();
-        }
-
-        for (let i = eMonthNum; i > endMonthNum; i--) {
-            allData.pop();
-        }
-
-        res.status(200).json({data: allData});          
-    }
-    catch (error) {
-        res.status(500).json({message: 'Error fetching data', error});
-    }
-}); 
-
-vietStockRoute.post("/FDI/filter/year", async(req, res) => {
-    try {
-        const { startYear, endYear } = req.body;
-        if (!startYear || !endYear) {
-            return res.status(400).json({message: 'Please provide startMonth, startYear, endMonth, endYear'});
-        }
-        
-        const startYearNum = parseInt(startYear);
-        const endYearNum = parseInt(endYear);
-
-        let allData = await vietStockFDI.find({
-            xem_theo: 'năm',
-            year: { $gte: startYear, $lte: endYear }
+        allData.sort((a, b) => {
+            return parseInt(a.year) - parseInt(b.year);
         });
 
         res.status(200).json({data: allData});
@@ -311,5 +302,51 @@ vietStockRoute.post("/FDI/filter/year", async(req, res) => {
         res.status(500).json({message: 'Error fetching data', error});
     }
 }); 
+
+vietStockRoute.post("/FDI/:type", async(req, res) => {
+    try {
+        const { type } = req.params;
+        console.log(type);
+        const { fromMonth, fromYear, toMonth, toYear } = req.body;
+
+        const fType = (type === 'month') ? 'tháng' : 'năm';
+
+        let result;
+
+        if (type === 'month') {
+            result = await vietStockFDI.find({
+                xem_theo: fType,
+                $and: [
+                  { fromYear: fromYear },
+                  { fromMonth: fromMonth.replace('Tháng', '').trim() },
+                  { toYear: toYear },
+                  { toMonth: toMonth.replace('Tháng', '').trim() }
+                ]
+              });              
+        }
+        else {
+            result = await vietStockFDI.find({
+                xem_theo: fType,
+                fromYear: fromYear,
+                toYear: toYear
+            });
+        }
+
+        res.json(result);
+    }
+    catch (error) {
+        res.status(500).json({message: 'Error fetching data', error});
+    }
+});
+
+vietStockRoute.get("/FDI", async(req, res) => {
+    try {
+        const result = await vietStockFDI.find({});
+        res.json(result);
+    }
+    catch (error) {
+        res.status(500).json({message: 'Error fetching data', error});
+    }
+});
 
 export default vietStockRoute;

@@ -1,0 +1,463 @@
+{
+    "marketAnalysisTitle": "Market Analysis",
+    "marketAnalysis": {
+        "title": "Market Analysis for 06/05/2025",
+        "components": {
+            "Securities Company": {
+                "Positive": "43%",
+                "Neutral": "45%",
+                "Negative": "12%",
+                "Last Updated": "09:01, 07/05"
+            },
+            "Press": {
+                "Positive": "53%",
+                "Neutral": "37%",
+                "Negative": "10%",
+                "Last Updated": "10:00, 07/05"
+            },
+            "Expert Community": {
+                "Positive": "22%",
+                "Neutral": "51%",
+                "Negative": "27%",
+                "Last Updated": "08:00, 07/05"
+            }
+          }
+    },
+    "Topic": {
+        "Topic": "#Trend",
+        "topic": "Topic",
+        "Categories": [
+          "All",
+          "Securities",
+          "Economy",
+          "Industry",
+          "Other"
+        ],
+        "Articles": {
+          "All": [
+            {
+              "Rank": 1,
+              "Title": "Vinpearl reports strong revenue and profit growth",
+              "Time": "33 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 2,
+              "Title": "Dragon Capital increases stake in Dat Xanh to over 13%",
+              "Time": "5 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 3,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 4,
+              "Title": "Foreign investors heavily buy DXG real estate shares",
+              "Time": "33 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 5,
+              "Title": "Foreign investors net buy real estate stocks, NVL leads",
+              "Time": "2 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 6,
+              "Title": "India and Pakistan escalate: Missile strikes and aircraft downed",
+              "Time": "6 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 7,
+              "Title": "BSC recommends buying MBB, target price 28,200 VND due to growth outlook",
+              "Time": "3 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 8,
+              "Title": "Vinpearl (VPL) to debut on HOSE on May 13, nearly 130 trillion VND market cap",
+              "Time": "3 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 9,
+              "Title": "THACO boosts investment in Lam Dong, Quang Nam, and Bauxite project",
+              "Time": "1 hour ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 10,
+              "Title": "China eases monetary policy to cope with trade tensions",
+              "Time": "3 hours ago",
+              "Link": "https://www.google.com"
+            }
+          ],
+          "Securities": [
+            {
+              "Rank": 1,
+              "Title": "VN-Index surpasses 1,250 points thanks to real estate, foreign investors buy strongly",
+              "Time": "9 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 2,
+              "Title": "Vinpearl (VPL) to list on HOSE on May 13, market capitalization nearly USD 5 billion",
+              "Time": "12 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 3,
+              "Title": "DXG reports Q1 profit growth, Dragon Capital increases stake",
+              "Time": "14 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 4,
+              "Title": "Foreign investors net-buy real estate stocks, NVL in the spotlight",
+              "Time": "12 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 5,
+              "Title": "BSC recommends 'Buy' for MBB, target price VND 28,200 thanks to growth outlook",
+              "Time": "9 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 6,
+              "Title": "Foreign investors strongly net-buy DXG shares, VN-Index surpasses 1,250 points",
+              "Time": "10 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 7,
+              "Title": "VN30 surpasses 1,325 points, VN-Index expected to consolidate further",
+              "Time": "9 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 8,
+              "Title": "LPBank and TPBank announce attractive 2025 cash dividends",
+              "Time": "11 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 9,
+              "Title": "TPBank: 2024 profit up 36%, rated 'Positive' with a target price of VND 20,500",
+              "Time": "14 hours ago",
+              "Tag": "Emerging"
+            },
+            {
+              "Rank": 10,
+              "Title": "Eximbank Q1/2025 pre-tax profit rises 25.8%",
+              "Time": "13 hours ago",
+              "Link": "https://www.google.com"
+            }
+          ],
+          "Economy": [
+            {
+              "Rank": 1,
+              "Title": "Gold prices fluctuate due to U.S.-China talks and economic concerns",
+              "Time": "13 hours ago",
+              "Tag": "Trending",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 2,
+              "Title": "U.S. trade deficit hits record, GDP declines, Fed holds interest rates",
+              "Time": "9 hours ago",
+              "Tag": "Trending",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 3,
+              "Title": "Vietnam reforms electricity prices: Toward a transparent, sustainable market",
+              "Time": "9 hours ago",
+              "Tag": "Trending",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 4,
+              "Title": "U.S. tariffs affect growth and Vietnam’s trade negotiations",
+              "Time": "9 hours ago",
+              "Tag": "Trending",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 5,
+              "Title": "Vietnam faces 46% U.S. tariffs, FDI grows strongly",
+              "Time": "9 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 6,
+              "Title": "China eases monetary policy in response to U.S. trade pressure",
+              "Time": "13 hours ago",
+              "Tag": "Falling",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 7,
+              "Title": "Interbank interest rates fall, SBV drains net liquidity but remains ample",
+              "Time": "9 hours ago",
+              "Tag": "Emerging",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 8,
+              "Title": "Vietnam: VND 25 trillion/year for universal health checkups from 2026",
+              "Time": "19 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 9,
+              "Title": "Vietnam pushes for private sector to contribute 55–58% of GDP by 2030",
+              "Time": "18 hours ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 10,
+              "Title": "Hai Phong tops 2024 PCI, Long An overtakes Tay Ninh ahead of merger",
+              "Time": "9 hours ago",
+              "Link": "https://www.google.com"
+            }
+          ],
+          "Industry": [
+            {
+              "Rank": 1,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Tag": "Trending",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 2,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Tag": "Emerging",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 3,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 4,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Tag": "Emerging",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 5,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 6,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 7,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Tag": "Falling"
+            },
+            {
+              "Rank": 8,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 9,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 10,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            }
+          ],
+          "Other": [
+            {
+              "Rank": 1,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Tag": "Trending",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 2,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 3,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 4,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 5,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Tag": "Falling",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 6,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Tag": "Trending",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 7,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 8,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 9,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            },
+            {
+              "Rank": 10,
+              "Title": "Vietnam's real estate market: Strong investment in social housing and infrastructure",
+              "Time": "41 minutes ago",
+              "Link": "https://www.google.com"
+            }
+          ]
+        },
+        "Note": "Source: 532 news articles - Compiled by Investify AI"
+    },
+    "AI News": {
+        "AI News": [
+            {
+            "title": "Ukraine continues drone attacks on Moscow ahead of Victory Day",
+            "source": "fireant.vn",
+            "datetime": "07/05/2025, 09:54",
+            "summary": "Russia's capital shook for the third consecutive day as Ukraine launched a series of drone (UAV) attacks just ahead of Victory Day, causing several airports to temporarily halt operations. The attacks occurred on the eve of multiple world leaders arriving in Russia and just two days before the military parade celebrating the 80th anniversary of the victory over Nazi Germany. Between 10 p.m. on May 6 and early morning on May 7, Russian air defenses intercepted at least 14 Ukrainian drones en route to the capital. Airports were disrupted and airlines scrambled to adjust schedules. On May 5, fighter jets flew over Red Square in Moscow as part of a parade rehearsal. Photo: Xinhua. Chinese President Xi Jinping is expected to arrive in Moscow on the evening of May 7 and attend the Red Square parade on May 9, along with 28 other leaders from Asia, Africa, Latin America, and several European countries. According to the Kremlin, leaders attending are from: Abkhazia, Armenia, Azerbaijan, Belarus, Bosnia and Herzegovina, Brazil, Burkina Faso, Congo, Cuba, Egypt, Equatorial Guinea, Ethiopia, Guinea-Bissau, Kazakhstan, Kyrgyzstan, Laos, Mongolia, Myanmar, Palestine, Serbia, Slovakia, South Ossetia, Tajikistan, Turkmenistan, Uzbekistan, Venezuela, Vietnam, and Zimbabwe. Xi is expected to sign several strategic agreements during the visit. He previously called for negotiations to end the Ukraine crisis and blamed the U.S. for escalating the situation by providing arms to Kyiv. In a May 7 op-ed in Russian media, Xi emphasized that China and Russia must 'safeguard the post-WWII international order' and resist any attempts to divide the two nations.",
+            "tags": [
+                "Military",
+                "Diplomacy",
+                "Conflict and Political Crisis"
+            ]
+            },
+            {
+            "title": "Russia, China discuss energy partnership",
+            "tags": [
+                "Supply",
+                "Energy",
+                "Trade",
+                "Diplomacy",
+                "Oil & Gas",
+                "Energy Sector",
+                "Strategic Partnership",
+                "Trade Balance",
+                "Trade Volume",
+                "Government Policy"
+            ],
+            "source": "fireant.vn",
+            "datetime": "07/05/2025, 09:52"
+            },
+            {
+            "title": "Billionaire Warren Buffett to leave nearly $350 billion in cash for successor",
+            "tags": [
+                "Capital",
+                "Assets",
+                "Cash Flow",
+                "Upcoming Events",
+                "Treasury Bills",
+                "Berkshire Hathaway",
+                "Investment Recommendations"
+            ],
+            "source": "fireant.vn",
+            "datetime": "07/05/2025, 09:50"
+            },
+            {
+            "title": "Why China is in no rush to seek a trade deal with the U.S.",
+            "tags": [
+                "USD",
+                "Prices",
+                "S&P 500",
+                "Price Volatility",
+                "Global Economy",
+                "Trade Balance"
+            ],
+            "source": "fireant.vn",
+            "datetime": "07/05/2025, 09:49"
+            },
+            {
+            "title": "Stock market outlook for May 8: VN-Index expected to sustain gains",
+            "tags": [
+                "BSR",
+                "DXG",
+                "HDC",
+                "HVN",
+                "KDH",
+                "NLG",
+                "PC1",
+                "POW",
+                "VIC",
+                "VN-INDEX",
+                "Oil & Gas",
+                "Price Volatility",
+                "Overall Market",
+                "Investment Recommendations",
+                "Net Trading Value"
+            ],
+            "source": "cafef.vn",
+            "datetime": "07/05/2025, 09:48"
+            },
+            {
+            "title": "U.S. seeks economic and trade cooperation opportunities with Hai Phong City",
+            "tags": [
+                "Global Economy",
+                "Development Economics",
+                "Market Structure",
+                "FDI (Foreign Direct Investment)"
+            ],
+            "source": "fireant.vn",
+            "datetime": "07/05/2025, 09:42"
+            },
+            {
+            "title": "Nam Dinh: Tightens inspections and handling of housing, apartment projects violating construction order",
+            "tags": [
+                "Real Estate",
+                "Government Policy"
+            ],
+            "source": "fireant.vn",
+            "datetime": "07/05/2025, 09:40"
+            }
+        ]
+    }
+}

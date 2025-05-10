@@ -126,9 +126,9 @@ async function runScrapers() {
         await connectToMongoDB();
         const result = await scrapeTopInvestors();
 
-        if (result && result.length > 0) {
-            await vietStockOverview.insertMany(result);
-        }
+        await vietStockOverview.deleteMany({}); // Clear existing data before inserting new data
+
+        await vietStockOverview.insertMany(result);
 
         console.log('Data: ', result);
     } catch (error) {

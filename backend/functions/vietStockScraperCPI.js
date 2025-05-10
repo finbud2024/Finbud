@@ -218,13 +218,13 @@ function processData(type, data) {
         for (let index = 0; index < result.length; index += 1) {
             value.push({
                 chi_tieu: result[index][0],
-                don_vi_tinh: result[index][1],
+                don_vi: result[index][1],
                 gia_tri: result[index][i + 2]
             })
         }
 
         if (type == 'tháng') {
-            value.push({chi_tieu: result[14][0], don_vi_tinh: result[14][1], gia_tri: result[14][i + 2]});
+            value.push({chi_tieu: result[14][0], don_vi: result[14][1], gia_tri: result[14][i + 2]});
         }
 
         const temp = {            

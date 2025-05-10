@@ -59,16 +59,6 @@
               @click="toggleDropdownInvest(false)"
               >{{ $t("superInvestors") }}</router-link
             >
-            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">{{ $t("goal") }}</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">{{ $t("riskAnalysis")
-            }}</router-link>
-            <router-link to="/investment-calculator" class="investment-calculator"
-              @click="toggleAboutDropdown(false)">{{ $t("investmentCalculator") }}</router-link>
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">{{
-              $t("mortgageCalculator") }}</router-link>
-
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">{{
-              $t("superInvestors") }}</router-link>
           </div>
         </li>
 
@@ -90,6 +80,7 @@
               Letter</router-link>
             <router-link to="/docs" class="docs" @click="toggleDropdownData(false)">{{ $t("Fin Data") }}</router-link>
             <router-link to="/macro-economic" class="macro-economic" @click="toggleDropdownData(false)">{{ $t("macroEconomic") }}</router-link>
+            <router-link to="/market-analysis" class="market-analysis" @click="toggleDropdownData(false)">{{ $t("marketAnalysis") }}</router-link>
           </div>
         </li>
 
@@ -220,6 +211,9 @@
           </router-link>
           <router-link to="/macro-economic" class="macro-economic" @click="toggleDropdownMobile">
             {{ $t("macroEconomic") }}
+          </router-link>
+          <router-link to="/market-analysis" class="market-analysis" @click="toggleDropdownMobile">
+            {{ $t("marketAnalysis") }}
           </router-link>
 
           <strong>{{ $t("finEdu") }}</strong>

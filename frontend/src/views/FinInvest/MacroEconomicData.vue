@@ -1,5 +1,11 @@
 <template>
     <div>
+        <!-- ChatBot component -->
+        <ChatBot :botMessage="templateChat" />
+
+        <!-- Title -->
+        <div class="title">{{ t('macroEconomic') }}</div>
+
         <!-- Table Selection Buttons -->
         <div class="button-group">
             <button
@@ -17,11 +23,11 @@
         <template v-if="selectedTable && selectedTable !== 'Tổng quan'">
             <div class="filter">
                 <div class="inline-label-select">
-                    <label>{{ $t('macroEcon.viewBy') }}:
+                    <label>{{ t('macroEcon.viewBy') }}:
                         <select v-model="filterType" class="select-box">
-                            <option v-if="selectedTable === 'GDP'" value="quý">{{ $t('macroEcon.quarter') }}</option>
-                            <option v-else value="tháng">{{ $t('macroEcon.month') }}</option>
-                            <option value="năm">{{ $t('macroEcon.year') }}</option>
+                            <option v-if="selectedTable === 'GDP'" value="quý">{{ t('macroEcon.quarter') }}</option>
+                            <option v-else value="tháng">{{ t('macroEcon.month') }}</option>
+                            <option value="năm">{{ t('macroEcon.year') }}</option>
                         </select>
                     </label>
                 </div>
@@ -29,9 +35,9 @@
                 <!-- Filter for quý -->
                 <template v-if="filterType === 'quý'">
                     <div class="inline-label-select">
-                        <label>{{ $t('macroEcon.from') }}:
+                        <label>{{ t('macroEcon.from') }}:
                             <select v-model="fromQuarter" class="select-box">
-                                <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ $t('macroEcon.quarter') }} {{ q }}</option>
+                                <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ t('macroEcon.quarter') }} {{ q }}</option>
                             </select>
                         </label>
                     </div>
@@ -40,9 +46,9 @@
                 <!-- Filter for tháng -->
                 <template v-if="filterType === 'tháng'">
                     <div class="inline-label-select">
-                        <label>{{ $t('macroEcon.from') }}:
+                        <label>{{ t('macroEcon.from') }}:
                             <select v-model="fromMonth" class="select-box">
-                                <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ $t('macroEcon.month') }} {{ m }}</option>
+                                <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ t(`macroEcon.enMonth.${m}`) }}</option>
                             </select>
                         </label>
                     </div>
@@ -50,7 +56,7 @@
 
                 <!-- Filter for năm (from) -->
                 <div class="inline-label-select">
-                    <label>{{ $t('macroEcon.from') }}:
+                    <label>{{ t('macroEcon.from') }}:
                         <select v-model="fromYear" class="select-box">
                             <option v-for="y in Years" :key="y" :value="y">{{ y }}</option>
                         </select>
@@ -60,9 +66,9 @@
                 <!-- Filter for quý -->
                 <template v-if="filterType === 'quý'">
                     <div class="inline-label-select">
-                        <label>{{ $t('macroEcon.to') }}:
+                        <label>{{ t('macroEcon.to') }}:
                             <select v-model="toQuarter" class="select-box">
-                                <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ $t('macroEcon.quarter') }} {{ q }}</option>
+                                <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ t('macroEcon.quarter') }} {{ q }}</option>
                             </select>
                         </label>
                     </div>
@@ -71,9 +77,9 @@
                 <!-- Filter for tháng -->
                 <template v-if="filterType === 'tháng'">
                     <div class="inline-label-select">
-                        <label>{{ $t('macroEcon.to') }}:
+                        <label>{{ t('macroEcon.to') }}:
                             <select v-model="toMonth" class="select-box">
-                                <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ $t(`macroEcon.enMonth.${m}`) }}</option>
+                                <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ t(`macroEcon.enMonth.${m}`) }}</option>
                             </select>
                         </label>
                     </div>
@@ -81,7 +87,7 @@
 
                 <!-- Filter for năm (to) -->
                 <div class="inline-label-select">
-                    <label>{{ $t('macroEcon.to') }}:
+                    <label>{{ t('macroEcon.to') }}:
                         <select v-model="toYear" class="select-box">
                             <option v-for="y in Years" :key="y" :value="y">{{ y }}</option>
                         </select>
@@ -94,7 +100,7 @@
                         class="filter-button"
                         @click="fetchData(selectedTable)"
                     >
-                        {{ $t('macroEcon.see') }}
+                        {{ t('macroEcon.see') }}
                     </button>
                 </div>
             </div>
@@ -106,9 +112,14 @@
             <thead>
                 <tr>
                     <th
-                        v-for="header in tableHeaders"
+                        v-for="(header, index) in tableHeaders"
                         :key="header"
                         class="header"
+                        :class="{
+                            'sticky-col': (index === 0 || index === 1) && selectedTable !== 'Tổng quan',
+                            'sticky-first': index === 0 && selectedTable !== 'Tổng quan',
+                            'sticky-second': index === 1 && selectedTable !== 'Tổng quan'
+                        }"
                     >
                         {{ header }}
                     </th>
@@ -122,7 +133,12 @@
                     <td
                         v-for="(cell, cellIndex) in row" 
                         :key="cellIndex"
-                        :class="{ 'highlight-row': row.length >= 1 && row[1] === ''  }"
+                        :class="{
+                            'highlight-row': row.length >= 1 && row[1] === '',
+                            'sticky-col': (cellIndex === 0 || cellIndex === 1) && selectedTable !== 'Tổng quan',
+                            'sticky-first': cellIndex === 0 && selectedTable !== 'Tổng quan',
+                            'sticky-second': cellIndex === 1 && selectedTable !== 'Tổng quan'
+                        }"
                     >
                         {{ cell }} 
                     </td>
@@ -137,10 +153,16 @@
     import axios from 'axios';
     import { nextTick } from 'vue';
     import { useI18n } from 'vue-i18n';
+    import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
 
     const { t } = useI18n();
+
+    const templateChat = `
+        ${t('macroEcon.chat')}
+    `;
+
     const tableRows = ref({});
-    const tableHeaders = ref({});
+    const tableHeaders = ref([]);
     const selectedTable = ref('Tổng quan');
     const filterType = ref('');
     const fromQuarter = ref('Quý 1');
@@ -180,25 +202,51 @@
         console.log('Filter type changed to:', newType);
     });
 
-    const header = {
-        'Tổng quan': ['STT', 'Chỉ tiêu', 'Đơn vị tính', 'Số liệu mới nhất', 'Giá trị', 'Đồ thị'],
-        'GDP': ['Chỉ tiêu', 'Đơn vị tính'],
-        'FDI': ['Chỉ tiêu', 'Đơn vị tính'],
-        'CPI': ['Chỉ tiêu', 'Đơn vị tính'],
-        'Xuất-Nhập khẩu': ['Chỉ tiêu', 'Đơn vị tính'],
-    };
+    const header = computed(() => ({
+        'Tổng quan': [
+            t('macroEcon.header.STT'), 
+            t('macroEcon.header.Chỉ tiêu'), 
+            t('macroEcon.header.Đơn vị tính'), 
+            t('macroEcon.header.Số liệu mới nhất'), 
+            t('macroEcon.header.Giá trị'), 
+            t('macroEcon.header.Đồ thị')
+        ],
+        'GDP': [
+            t('macroEcon.header.Chỉ tiêu'), 
+            t('macroEcon.header.Đơn vị tính')
+        ],
+        'FDI': [
+            t('macroEcon.header.Chỉ tiêu'), 
+            t('macroEcon.header.Đơn vị tính')
+        ],
+        'CPI': [
+            t('macroEcon.header.Chỉ tiêu'), 
+            t('macroEcon.header.Đơn vị tính')
+        ],
+        'Xuất-Nhập khẩu': [
+            t('macroEcon.header.Chỉ tiêu'), 
+            t('macroEcon.header.Đơn vị tính')
+        ]
+    }));
 
     const tableSources = {
         'Tổng quan': '.netlify/functions/server/api/vietstock/Overview',
         'GDP': '.netlify/functions/server/api/vietstock/GDP/filter/',
-        'FDI': '.netlify/functions/server/api/vietstock/FDI/filter/',
+        'FDI': '.netlify/functions/server/api/vietstock/FDI',
         'CPI': '.netlify/functions/server/api/vietstock/CPI/filter/',
         'Xuất-Nhập khẩu': '.netlify/functions/server/api/vietstock/ImportExport/filter/',
     };
 
+    watch([selectedTable, header], ([newTable]) => {
+        if (newTable) {
+            tableHeaders.value = header.value[newTable] || [];
+        }
+    }, { immediate: true });
+
     const getData = async (tName) => {
         const url = tableSources[tName];
         console.log('Start fetching data from api: ', url);
+        let fType = '';
         let response = null;
         try {
             console.log(`Starting fetching data from ${tName}`);
@@ -209,27 +257,107 @@
                     console.log(response);
                     const data = response.data;
                     data.forEach(row => {
+                        let temp = '';
+                        if (row.latestData?.chart) {
+                            temp = row.latestData.chart;
+                            if (temp.includes('Tháng')) {
+                                const month = t(`macroEcon.enMonth.${temp.match(/Tháng (\d+)\//)[1]}`);
+                                const year = temp.match(/\/(\d{4})$/)[1];
+                                temp = `${month} ${year}`;
+                            }
+                            else if (temp.includes('Quý')) {
+                                const quarter = t(`macroEcon.enQuarter.${temp.match(/Quý (\d+)\//)[1]}`);
+                                const year = temp.match(/\/(\d{4})$/)[1];
+                                temp = `${quarter} ${year}`;
+                            }
+                        }
+
                         result.push([
                             row.ordinalNumber,
-                            row.indicator,
-                            row.unit,
-                            row.latestData?.chart,
+                            t(`macroEcon.Tổng quan.${row.indicator}`),
+                            t(`macroEcon.unit.${row.unit}`),
+                            temp,
                             row.latestData?.value,
                             row.latestData?.chartUrl
                         ]);
                     });
 
-                    tableHeaders.value = header[tName] || [];
-
+                    tableHeaders.value = header.value[tName] || [];
                     return result;
                 }
                 else {
                     console.log(`Error fetching table ${tName}`);
                 }
             }
+            else if (tName === 'FDI') {
+                fType = (filterType.value === 'năm') ? 'year' : 'month';
+                console.log('fType: ', fType);
+                console.log('fromMonth: ', fromMonth.value);
+                console.log('fromYear: ', fromYear.value);
+                console.log('toMonth: ', toMonth.value);
+                console.log('toYear: ', toYear.value);
+                response = await axios.post(`${url}/${fType}`, {
+                    fromMonth: fromMonth.value,
+                    fromYear: fromYear.value,
+                    toMonth: toMonth.value,
+                    toYear: toYear.value       
+                });
+                if (response) {
+                    const rows = response.data[0];
+                    console.log(rows);
+                    let result = [];
+                    const headers = [];
+
+                    const temp = (fType === 'year') ? 'Năm' : 'Tháng';
+
+                    if (fType === 'month') {
+                        rows.headers.forEach(header => {
+                            const month = fType === 'month' ? t(`macroEcon.enMonth.${header.match(/Tháng (\d+)\//)[1]}`) : '';
+                            const year = header.match(/\/(\d{4})$/)[1];
+                            if (fType === 'month')  
+                                headers.push(`${month} ${year}`);
+                            else headers.push(`${year}`);
+                        });
+                    }
+                    else {
+                        rows.headers.forEach(header => {
+                            headers.push(`${header}`);
+                        });
+                    }
+
+                    let maxLength = 0;
+                    result = rows.data.map(row => {
+                        const rowData = [t(`macroEcon.${tName}.${temp}.${row[0]}`)];
+                        if (row.length > 1) {
+                            rowData.push(t(`macroEcon.unit.${row[1]}`));
+                        }
+                        for (let i = 2; i < row.length - 1; i++) {
+                            rowData.push(row[i]);   
+                        }   
+                        maxLength = Math.max(maxLength, rowData.length);
+                        return rowData;
+                    });
+
+                    result = result.map(row => {
+                        while (row.length < maxLength) {
+                            row.push('');
+                        }
+                        return row;
+                    });
+
+                    console.log('Result: ', result);    
+                    tableHeaders.value = (header.value[tName] || []).concat(headers);
+                    return result;
+                }
+                else {
+                    console.log(`Error fetching table`);
+                }
+            }
             else {
                 if (tName === 'GDP') {
-                    const fType = (filterType === 'năm') ? 'year' : 'quarter';
+                    fType = (filterType.value === 'năm') ? 'year' : 'quarter';
+                    console.log('fType: ', fType);
+                    console.log('filterType: ', filterType.value);
                     response = await axios.post(`${url}${fType}`, {
                         startQuarter: fromQuarter.value,
                         startYear: fromYear.value,
@@ -238,13 +366,16 @@
                     });
                 }
                 else {
-                    const fType = (filterType === 'năm') ? 'year' : 'month';
+                    fType = (filterType.value === 'năm') ? 'year' : 'month';
+                    console.log('fType: ', fType);
+                    console.log('filterType: ', filterType.value);
                     response = await axios.post(`${url}${fType}`, {
                         startMonth: fromMonth.value,
                         startYear: fromYear.value,
                         endMonth: toMonth.value,
                         endYear: toYear.value
                     });
+                    console.log('Response: ', response.data.data);
                 }
                 if (response) {
                     const rows = response.data.data;
@@ -259,23 +390,48 @@
                     }
                     console.log(result);
 
-
-
                     for (let index = 0; index < rows.length; index++) {
                         const row = rows[index];
                         console.log('Row: ', row);
 
                         if (tName === 'GDP') {
-                            headers.push(`${row.quarter} ${row.year}`);
+                            let temp = '';
+                            if (row.quarter !== null) {
+                                if (row.quarter.includes('Quý')) {
+                                    temp = row.quarter.replace('Quý', '');
+                                    temp = t(`macroEcon.enQuarter.${parseInt(temp)}`);
+                                }
+                                else {
+                                    temp = row.quarter.replace('tháng', '');
+                                    temp = temp + ` ${t('macroEcon.month')}`;
+                                }
+                            }
+                            headers.push(`${temp} ${row.year}`);
                         } else {
-                            headers.push(`${row.month} ${row.year}`);
+                            if (row.month !== null) {
+                                let temp = row.month.replace('Tháng', '');
+                                temp = t(`macroEcon.enMonth.${parseInt(temp)}`);
+                                headers.push(`${temp} ${row.year}`);
+                            }
+                            else {
+                                headers.push(row.year);
+                            }
                         }
 
                         for (let i = 0; i < row.value.length; i++) {
                             const data = row.value[i];
+                            if (fType === 'year') {
+                                fType = 'Năm';
+                            }
+                            else if (fType === 'quarter') {
+                                fType = 'Quý';
+                            }
+                            else if (fType === 'month') {
+                                fType = 'Tháng';
+                            }
                             if (data.category) {
                                 if (result[i].length == 0) {
-                                    result[i].push(data.category); 
+                                    result[i].push(t(`macroEcon.${tName}.${fType}.${data.category}`)); 
                                     result[i].push('');
                                     result[i].push('');
                                 }
@@ -283,15 +439,15 @@
                             }
                             else {
                                 if (result[i].length === 0) {
-                                    result[i].push(data.chi_tieu);
-                                    result[i].push(data.don_vi);
+                                    result[i].push(t(`macroEcon.${tName}.${fType}.${data.chi_tieu}`));
+                                    result[i].push(t(`macroEcon.unit.${data.don_vi}`));
                                 } 
                                 result[i].push(data.gia_tri);
                             }
                         };
                     }
 
-                    tableHeaders.value = (header[tName] || []).concat(headers);
+                    tableHeaders.value = (header.value[tName] || []).concat(headers);
 
                     return result;
                 }
@@ -328,7 +484,14 @@
 
 </script>
 
-<style>
+<style scoped>
+
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 20px;
+}
 
 .button-group {
     padding-left: 10%;
@@ -424,7 +587,6 @@ table {
     color: black;
     background-color: white;
     border-radius: 5px;
-    border: 1px solid gray;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     position: relative;
@@ -443,20 +605,54 @@ table {
     font-weight: bold;
 }
 
+.header-first-column {
+    width: 150px;
+}
+
 .table-container {
     max-width: 100%;
     overflow-x: auto;
     display: block;
+    position: relative;
 }
 
-th, td {
-    border: 1px solid gray;
+.sticky-col {
+    position: sticky;
+    background-color: white;
+    z-index: 1;
+}
+
+.sticky-first {
+    left: 0;
+    min-width: 250px;
+    max-width: 250px;
+}
+
+.sticky-second {
+    left: 250px;
+    min-width: 150px;
+    max-width: 150px;
 }
 
 tr:hover td {
     background-color: rgb(234, 234, 234);
     font-weight: bold;
     color: black;
+}
+
+tr:hover .sticky-col {
+    background-color: rgb(234, 234, 234);
+    font-weight: bold;
+    color: black;
+}
+
+.header.sticky-col {
+    background-color: rgb(0, 0, 0);
+    z-index: 2;
+}
+
+tr:hover .header.sticky-col {
+    background-color: rgb(0, 0, 0);
 }
 
 @media (max-width: 1200px) {

@@ -38,6 +38,7 @@ import NotificationCenter from "@/views/Home/NotificationCenter.vue";
 import CourseCategoryPage from "@/views/FinEdu/CourseCategoryPage.vue";
 import CoursePage from "@/views/FinEdu/CoursePage.vue";
 import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
+import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
 
 const routes = [
   {
@@ -246,6 +247,11 @@ const routes = [
     path: "/macro-economic",
     name: "MacroeconomicPage",
     component: MacroeconomicPage,
+  },
+  {
+    path: "/market-analysis",
+    name: "MarketAnalysisPage",
+    component: MarketAnalysisPage,
   }
   
 ];
