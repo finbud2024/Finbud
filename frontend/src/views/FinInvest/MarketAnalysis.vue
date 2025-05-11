@@ -195,9 +195,17 @@ watch(selectedCategory, (newCategory) => {
     text-align: center;
 }
 
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 28px;
+    }
+}
+
 .container-card-big {
     margin-top: 0;
     padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .market-analysis-container {
@@ -210,15 +218,19 @@ watch(selectedCategory, (newCategory) => {
     display: flex;
     width: 100%;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 .card {
-    width: calc((100% - 40px) / 3); 
+    width: calc((100% - 40px) / 3);
+    min-width: 250px;
+    flex: 1;
     border-radius: 8px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
     background-color: rgb(43, 43, 43) !important;
     color: white !important;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .card:hover {
@@ -293,19 +305,22 @@ watch(selectedCategory, (newCategory) => {
 .button-group {
     display: flex;
     padding: 0;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: transparent;
-  border-radius: 0.375rem; /* rounded-md */
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease-in-out;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: transparent;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: white;
+    white-space: nowrap;
 }
 
 .button.selected {
@@ -316,6 +331,13 @@ watch(selectedCategory, (newCategory) => {
     display: flex;
     width: 100%;
     gap: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1000px) {
+    .trend-ai-news-container > .container-card-big {
+        width: 100% !important;
+    }
 }
 
 .table-container {
@@ -323,7 +345,9 @@ watch(selectedCategory, (newCategory) => {
     margin-left: 0;
     margin-right: 0;
     justify-content: center;
-    width: 100%
+    width: 100%;
+    overflow-x: auto;
+    display: block;
 }
 
 thead tr th {
@@ -351,6 +375,30 @@ thead tr th {
     font-weight: 800;
     color: rgb(101, 101, 101);
     width: 100px;
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        font-size: 14px;
+    }
+    
+    .table-container td {
+        padding: 8px;
+    }
+    
+    .button {
+        padding: 0.3rem 0.7rem;
+        font-size: 14px;
+    }
+    
+    .date-label {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .date-label select {
+        width: 100%;
+    }
 }
 
 </style>

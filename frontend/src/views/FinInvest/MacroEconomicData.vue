@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="full-screen-container">
         <!-- ChatBot component -->
         <ChatBot :botMessage="templateChat" />
 
@@ -22,6 +22,7 @@
         <!-- Filter Bar -->
         <template v-if="selectedTable && selectedTable !== 'Tổng quan'">
             <div class="filter">
+
                 <div class="inline-label-select">
                     <label>{{ t('macroEcon.viewBy') }}:
                         <select v-model="filterType" class="select-box">
@@ -32,66 +33,70 @@
                     </label>
                 </div>
 
-                <!-- Filter for quý -->
-                <template v-if="filterType === 'quý'">
+                <div class="mobile-filter">
+                    <!-- Filter for quý -->
+                    <template v-if="filterType === 'quý'">
+                        <div class="inline-label-select">
+                            <label>{{ t('macroEcon.from') }}:
+                                <select v-model="fromQuarter" class="select-box">
+                                    <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ t('macroEcon.quarter') }} {{ q }}</option>
+                                </select>
+                            </label>
+                        </div>
+                    </template>
+
+                    <!-- Filter for tháng -->
+                    <template v-if="filterType === 'tháng'">
+                        <div class="inline-label-select">
+                            <label>{{ t('macroEcon.from') }}:
+                                <select v-model="fromMonth" class="select-box">
+                                    <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ t(`macroEcon.enMonth.${m}`) }}</option>
+                                </select>
+                            </label>
+                        </div>
+                    </template>
+
+                    <!-- Filter for năm (from) -->
                     <div class="inline-label-select">
                         <label>{{ t('macroEcon.from') }}:
-                            <select v-model="fromQuarter" class="select-box">
-                                <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ t('macroEcon.quarter') }} {{ q }}</option>
+                            <select v-model="fromYear" class="select-box">
+                                <option v-for="y in Years" :key="y" :value="y">{{ y }}</option>
                             </select>
                         </label>
                     </div>
-                </template>
-
-                <!-- Filter for tháng -->
-                <template v-if="filterType === 'tháng'">
-                    <div class="inline-label-select">
-                        <label>{{ t('macroEcon.from') }}:
-                            <select v-model="fromMonth" class="select-box">
-                                <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ t(`macroEcon.enMonth.${m}`) }}</option>
-                            </select>
-                        </label>
-                    </div>
-                </template>
-
-                <!-- Filter for năm (from) -->
-                <div class="inline-label-select">
-                    <label>{{ t('macroEcon.from') }}:
-                        <select v-model="fromYear" class="select-box">
-                            <option v-for="y in Years" :key="y" :value="y">{{ y }}</option>
-                        </select>
-                    </label>
                 </div>
 
-                <!-- Filter for quý -->
-                <template v-if="filterType === 'quý'">
+                <div class="mobile-filter">
+                    <!-- Filter for quý -->
+                    <template v-if="filterType === 'quý'">
+                        <div class="inline-label-select">
+                            <label>{{ t('macroEcon.to') }}:
+                                <select v-model="toQuarter" class="select-box">
+                                    <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ t('macroEcon.quarter') }} {{ q }}</option>
+                                </select>
+                            </label>
+                        </div>
+                    </template>
+
+                    <!-- Filter for tháng -->
+                    <template v-if="filterType === 'tháng'">
+                        <div class="inline-label-select">
+                            <label>{{ t('macroEcon.to') }}:
+                                <select v-model="toMonth" class="select-box">
+                                    <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ t(`macroEcon.enMonth.${m}`) }}</option>
+                                </select>
+                            </label>
+                        </div>
+                    </template>
+
+                    <!-- Filter for năm (to) -->
                     <div class="inline-label-select">
                         <label>{{ t('macroEcon.to') }}:
-                            <select v-model="toQuarter" class="select-box">
-                                <option v-for="q in Quarters" :key="q" :value="`Quý ${q}`">{{ t('macroEcon.quarter') }} {{ q }}</option>
+                            <select v-model="toYear" class="select-box">
+                                <option v-for="y in Years" :key="y" :value="y">{{ y }}</option>
                             </select>
                         </label>
                     </div>
-                </template>
-
-                <!-- Filter for tháng -->
-                <template v-if="filterType === 'tháng'">
-                    <div class="inline-label-select">
-                        <label>{{ t('macroEcon.to') }}:
-                            <select v-model="toMonth" class="select-box">
-                                <option v-for="m in Months" :key="m" :value="`Tháng ${m}`">{{ t(`macroEcon.enMonth.${m}`) }}</option>
-                            </select>
-                        </label>
-                    </div>
-                </template>
-
-                <!-- Filter for năm (to) -->
-                <div class="inline-label-select">
-                    <label>{{ t('macroEcon.to') }}:
-                        <select v-model="toYear" class="select-box">
-                            <option v-for="y in Years" :key="y" :value="y">{{ y }}</option>
-                        </select>
-                    </label>
                 </div>
 
                 <!-- Button -->
@@ -108,6 +113,7 @@
 
 
         <!-- Table Display -->
+        <div class="responsive-table">
         <table class="table-container">
             <thead>
                 <tr>
@@ -144,7 +150,8 @@
                     </td>
                 </tr>
             </tbody>
-        </table>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -541,6 +548,10 @@
     flex-wrap: wrap;
 }
 
+.mobile-filter {
+    display: flex;
+}
+
 .inline-label-select {
   padding: 0.5rem 1rem;
   display: flex;
@@ -653,6 +664,7 @@ tr:hover .sticky-col {
 
 tr:hover .header.sticky-col {
     background-color: rgb(0, 0, 0);
+    color: white;
 }
 
 @media (max-width: 768px) {
@@ -690,15 +702,93 @@ tr:hover .header.sticky-col {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 390px) {
     .button-group {
-        padding-top: 60px;
+        padding-top: 10px;
+        flex-direction: row;  /* Arrange buttons in rows */
+        flex-wrap: wrap;      /* Allow buttons to wrap onto the next line */
+        justify-content: center; /* Center the buttons horizontally */
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 0;
+        font-size: 10px;
+        display: flex;
+    }
+
+
+    .button {
+        width: 45%;  /* Ensure buttons take up half of the available width */
+        margin: 0;  /* Add some space between buttons */
+        padding: 5px;
+        text-align: center;
+        align-items: center;
+    }
+
+
+    .full-screen-container {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+        font-size: 13px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        padding-top: 70px;
+    }
+
+    .responsive-table {
+        width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+        padding-bottom: 100px;
+        -webkit-overflow-scrolling: touch;
     }
 
     .table-container {
-        margin: 0 -20px; /* Negative margin to allow full-width scrolling */
-        padding: 0 20px; /* Add padding to maintain content alignment */
+        width: 100%;
     }
+
+    .filter {
+        height: auto;
+        padding: 0;
+        padding-bottom: 5px;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+    }
+
+    
+    .select-box {
+        width: 90px;
+    }
+
+    .mobile-filter {
+        display: flex;
+        padding-left: 0;
+        padding-right: 0;
+        justify-content: center;
+    }
+
+    .filter-button {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .inline-label-select {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
 }
 
 </style>
