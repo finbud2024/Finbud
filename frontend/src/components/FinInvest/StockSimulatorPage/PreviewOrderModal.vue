@@ -1,6 +1,6 @@
 <template>
   <div class="modal-overlay" @click.self="closeModal">
-    <div class="modal">
+    <div class="order-modal">
       <h3>Preview Order</h3>
       <div class="order-details">
         <div class="detail">
@@ -92,7 +92,7 @@ export default {
   z-index: 1000;
 }
 
-.modal {
+.order-modal {
   background: white;
   padding: 20px;
   border-radius: 10px;
@@ -135,7 +135,7 @@ export default {
 }
 
 .submit-btn {
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
 }
 
@@ -146,6 +146,6 @@ export default {
 }
 
 .submit-btn:hover {
-  background-color: #0056b3;
+  background-color: #000000;
 }
 </style>

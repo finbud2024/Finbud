@@ -134,7 +134,8 @@
   
   .stock-screener h3 {
     margin-bottom: 20px;
-    color: #007bff;
+    color: #000000;
+    font-weight: bold;
     text-align: center;
   }
   
@@ -159,7 +160,7 @@
     
   .filter-btn {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
     border: none;
     border-radius: 5px;
@@ -170,7 +171,7 @@
   }
   
   .filter-btn:hover {
-    background-color: #0056b3;
+    background-color: #000000;
   }
   </style>
   

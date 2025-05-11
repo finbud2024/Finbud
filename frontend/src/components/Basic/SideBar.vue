@@ -311,6 +311,7 @@ export default {
   transition: background-color 0.3s;
   width: 100%;
   height: 35px;
+  margin-bottom: 10px;
 }
 
 .add-thread-btn:hover {
