@@ -213,7 +213,42 @@
     <section v-if="activeSection === 'filters'">
       <div class="stock-screener">
         <h1>Stock Screener</h1>
-        
+        <!-- Filters Assistant Bot -->
+<div
+  class="portfolio-bot-container"
+  :class="{
+    'bot-visible': showFiltersBot,
+    'bot-hidden': hidingFiltersBot,
+  }"
+>
+  <img
+    class="bot-image"
+    src="@/assets/botrmbg.png"
+    alt="Bot"
+    @click="toggleFiltersBotMessage"
+    :class="{ clickable: showFiltersBot }"
+  />
+  <div
+    class="bot-message"
+    :class="{
+      'message-visible': showFiltersMessage,
+      'message-hidden': hidingFiltersMessage,
+    }"
+  >
+    <div v-if="isFiltersTyping" class="typing-animation">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+    <div
+      v-else
+      class="typed-message"
+      v-html="currentFiltersTypedMessage"
+      
+    ></div>
+  </div>
+</div>
+
         <div class="filter-container">
           <!-- Multi-select for Countries -->
           <div class="filter-group">
@@ -565,6 +600,8 @@ import { gptServices } from "@/services/gptServices";
 import QuizRewards from "@/components/QuizRewards.vue";
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.min.css";
+import ChatBubble from '@/components/ChatBubble.vue'; 
+
 
 export default {
   name: "StockDashboard",
@@ -579,6 +616,7 @@ export default {
     PredicitveCalc,
     PortfolioPerformance,
     Multiselect,
+    ChatBubble,
   },
   data() {
     return {
@@ -688,10 +726,16 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
         "Utilities"
       ],
       currentPage: 1,
-
+      showFiltersBot: true,
+      currentFiltersTypedMessage: "",
+      filtersBotMessage: `📌 <strong>Filter Usage Guide:</strong><br>
+      • Select your desired <strong>country</strong>, <strong>exchange</strong>, and financial criteria like <strong>Revenue</strong> or <strong>P/E Ratio</strong>.<br>
+      • Click <strong>Search Stocks</strong> to filter.<br>
+      • Use <strong>Reset</strong> to clear all filters.`,
+      isFiltersTyping: true
     };
   },
-
+  
   computed: {
         totalPages() {
           return Math.ceil(this.stocks.length / this.selectedPageSize);
@@ -1594,6 +1638,24 @@ async fetchStocks() {
       setTimeout(typeNextWord, 400);
     },
 
+    startFiltersWordByWordTyping() {
+      this.currentFiltersTypedMessage = "";
+      const words = this.filtersBotMessage.split(/\s+/);
+      let index = 0;
+
+      const typeNext = () => {
+        if (index < words.length) {
+          this.currentFiltersTypedMessage += words[index] + " ";
+          index++;
+          setTimeout(typeNext, 50);
+        } else {
+          this.isFiltersTyping = false;
+        }
+      };
+
+      typeNext();
+    },
+
     startPortfolioCharacterByCharacterTyping() {
       this.currentPortfolioTypedMessage = "";
       let charIndex = 0;
@@ -2270,9 +2332,22 @@ async fetchStocks() {
           }, 500);
         } else if (this.showPortfolioBot) {
           this.hidePortfolioBot();
+          
         } else if (newSection === 'quiz') {
           this.generateTradingQuestions();
         }
+        else if (newSection === 'filters') {
+            this.showFiltersBot = true;
+            this.hidingFiltersBot = false;
+            this.showFiltersMessage = true;
+            this.hidingFiltersMessage = false;
+            this.isFiltersTyping = true;
+
+            setTimeout(() => {
+              this.startFiltersWordByWordTyping();
+            }, 300);
+          }
+
 
         // Add this to reset language to English when leaving Portfolio section
         if (oldSection === 'portfolio' && newSection !== 'portfolio') {
@@ -2340,6 +2415,15 @@ async fetchStocks() {
       this.handleScroll();
       this.adjustChartHeight();
     });
+    this.filtersBotMessage = this.$i18n.locale === 'vi'
+      ? `📌 <strong>Hướng dẫn sử dụng bộ lọc:</strong><br>
+    • Chọn <strong>quốc gia</strong>, <strong>sàn giao dịch</strong>, và các điều kiện như <strong>doanh thu</strong> hoặc <strong>P/E</strong>.<br>
+    • Bấm <strong>Tìm kiếm cổ phiếu</strong> để lọc.<br>
+    • Dùng <strong>Reset</strong> để xoá điều kiện lọc.`
+      : `📌 <strong>Filter Usage Guide:</strong><br>
+    • Select your desired <strong>country</strong>, <strong>exchange</strong>, and financial criteria like <strong>Revenue</strong> or <strong>P/E Ratio</strong>.<br>
+    • Click <strong>Search Stocks</strong> to filter.<br>
+    • Use <strong>Reset</strong> to clear all filters.`;
 
     // If portfolio is the initial section, show the bot after a delay
     if (this.activeSection === "portfolio") {
@@ -2373,6 +2457,7 @@ async fetchStocks() {
       clearTimeout(this.portfolioBotHideTimeout);
     }
   },
+  
 };
 </script>
 
@@ -3378,7 +3463,7 @@ h1 {
 .filter-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 24px;
   margin-bottom: 24px;
   background-color: #f8f9fa;
   padding: 20px;
@@ -3386,11 +3471,11 @@ h1 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.filter-group {
-  flex: 1;
-  min-width: 200px;
-}
 
+.filter-group {
+  flex: 1 1 220px; 
+  min-width: 220px;
+}
 .filter-group label {
   display: block;
   margin-bottom: 8px;
@@ -3483,5 +3568,34 @@ tbody tr:hover {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+.filters-bot-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  max-width: 800px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.bot-image {
+  width: 32px;
+  height: 32px;
+}
+
+.bot-message {
+  background-color: black;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  max-width: 350px;
+  line-height: 1.4;
+}
+
 
 </style>
