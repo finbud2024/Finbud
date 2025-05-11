@@ -42,6 +42,3 @@ venv/
 .env/
 .eslintignore
 
-# Ignore frontend/src/views/FinInvest/marketAnalysis.json
-frontend/src/views/FinInvest/marketAnalysis.json
-frontend/src/views/FinInvest/MarketAnalysis.vue
