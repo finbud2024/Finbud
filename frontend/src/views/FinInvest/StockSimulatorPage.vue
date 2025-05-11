@@ -355,9 +355,13 @@
             </button>
           </div>
         </div>
-        <div v-else>
-          <p>
-            Loading more questions... (Reload if action take more than 1 minute)
+        <div v-else class="quiz-loading">
+          <div class="quiz-spinner"></div>
+          <p class="quiz-loading-text">
+            Loading more questions...
+            <span class="quiz-dot">.</span><span class="quiz-dot">.</span><span class="quiz-dot">.</span>
+            <br>
+            <small>(If this takes more than a minute, please reload the page.)</small>
           </p>
         </div>
       </div>
@@ -2726,6 +2730,51 @@ h1 {
 
 .insight-paragraph {
   margin: 8px 0;
+}
+
+.quiz-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+
+.quiz-spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #e0e0e0;
+  border-top: 5px solid #1976d2;
+  border-radius: 50%;
+  animation: quiz-spin 1s linear infinite;
+  margin-bottom: 18px;
+}
+
+@keyframes quiz-spin {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+.quiz-loading-text {
+  font-size: 1.1rem;
+  color: #555;
+  text-align: center;
+  margin-top: 0;
+  letter-spacing: 0.5px;
+}
+
+.quiz-dot {
+  animation: quiz-dot-blink 1.4s infinite both;
+  opacity: 0.5;
+}
+
+.quiz-dot:nth-child(1) { animation-delay: 0s; }
+.quiz-dot:nth-child(2) { animation-delay: 0.2s; }
+.quiz-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes quiz-dot-blink {
+  0%, 80%, 100% { opacity: 0.3; }
+  40% { opacity: 1; }
 }
 
 /* Language switcher */

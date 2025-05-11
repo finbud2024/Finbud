@@ -135,7 +135,7 @@ export default {
 }
 
 .submit-btn {
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
 }
 
@@ -146,6 +146,6 @@ export default {
 }
 
 .submit-btn:hover {
-  background-color: #0056b3;
+  background-color: #000000;
 }
 </style>
