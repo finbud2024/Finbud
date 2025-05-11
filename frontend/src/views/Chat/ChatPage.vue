@@ -302,8 +302,8 @@ export default {
 	z-index: 1000;
 	cursor: pointer;
 	color: var(--text-primary);
-	width: 45px;   
- 	height: 45px;
+	width: 38px;   
+ 	height: 38px;
 	padding: 10px;
 	
 }
