@@ -1,7 +1,7 @@
 import express from 'express';
-import Goal from '../Database Schema/Goal.js';
-import validateRequest from '../utils/validateRequest.js';
-import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
+import Goal from '../../Database Schema/Goal.js';
+import validateRequest from '../../utils/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const goalRoute = express.Router();
 

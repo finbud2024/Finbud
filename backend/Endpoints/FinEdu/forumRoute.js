@@ -1,5 +1,5 @@
 import express from "express";
-import Forum from "../Database Schema/Forum.js";
+import Forum from "../../Database Schema/FinEdu/Forum.js";
 
 const forumRouter = express.Router();
 

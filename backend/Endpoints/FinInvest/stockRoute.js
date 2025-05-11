@@ -1,6 +1,6 @@
 import express from 'express';
-import StockPrice from '../Database Schema/Stock.js';
-import validateRequest from '../utils/validateRequest.js';
+import StockPrice from '../../Database Schema/FinInvest/Stock.js';
+import validateRequest from '../../utils/validateRequest.js';
 import axios from 'axios';
 
 const stockRoute = express.Router();

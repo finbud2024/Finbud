@@ -1,4 +1,4 @@
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsp'litters";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
