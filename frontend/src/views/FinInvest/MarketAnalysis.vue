@@ -1,5 +1,8 @@
 <template>
     <div>
+        <!-- ChatBot component -->
+        <ChatBot :botMessage="templateChat" />
+
         <h1 class="page-title">
             {{ marketAnalysis.marketAnalysisTitle }}
         </h1>
@@ -323,6 +326,7 @@
 
 <script setup>
 
+import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
 import marketAnalysisData from './marketAnalysis.json';
 import trendingIcon from '@/assets/increaseTrend.png';
 import fallingIcon from '@/assets/decreaseTrend.png';

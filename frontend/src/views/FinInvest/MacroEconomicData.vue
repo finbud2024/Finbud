@@ -156,7 +156,7 @@
 </template>
 
 <script setup>
-    import { ref, computed, onMounted, watch } from 'vue';
+    import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
     import axios from 'axios';
     import { nextTick } from 'vue';
     import { useI18n } from 'vue-i18n';
@@ -482,7 +482,12 @@
     }
 
     onMounted(async () => {
+        document.body.setAttribute('data-route', 'macro-economic');
         fetchData(selectedTable.value);
+    });
+
+    onUnmounted(() => {
+        document.body.removeAttribute('data-route');
     });
 
     watch(selectedTable, (newTable) => {
@@ -490,6 +495,27 @@
     });
 
 </script>
+
+<style>
+/* Global styles for MacroEconomicData page */
+body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleHeader {
+    background-color: black !important;
+    color: white !important;
+}
+
+body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleHeader .chatBubbleTittle {
+    color: white !important;
+}
+
+body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleHeader .chatBubbleTittle .link {
+    color: white !important;
+    text-decoration: none !important;
+}
+
+body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleHeader .closeChatBubble {
+    color: white !important;
+}
+</style>
 
 <style scoped>
 
