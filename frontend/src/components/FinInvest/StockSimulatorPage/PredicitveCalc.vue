@@ -41,7 +41,13 @@
       <button @click="fetchPredictionData" class="fetch-btn">Fetch Prediction</button>
 
       <!-- Display the Chart -->
+      <div v-if="fetchingdata" class="loading">
+        <div class="loader"></div>
+      </div>
+
+      <div v-else>
       <StockChart :data="chartData" />
+      </div>
     </div>
   </div>
 </template>
@@ -49,6 +55,9 @@
 <script>
 import axios from 'axios';
 import StockChart from './StockChart.vue';
+import { ref } from 'vue';
+
+const fetchingdata = ref(false);
 
 export default {
   name: 'PredictiveCalculator',
@@ -71,12 +80,14 @@ export default {
       predictSize: 60,
       showSize: 26,
       selectedModels: ['lr'],  // Default to Linear Regression
-      chartData: []
+      chartData: [],
+      fetchingdata: false  // Loading state
     };
   },
   methods: {
     async fetchPredictionData() {
       try {
+        this.fetchingdata = true;  // Set loading state
         const modelsParam = this.selectedModels.join(',');  // Join selected models to a comma-separated string
         const response = await axios.post(`https://o5az2qbdw6.execute-api.us-east-2.amazonaws.com/predict?stock=${this.selectedStock}&predict_size=${this.predictSize}&show_size=${this.showSize}&models=${modelsParam}`);
         // const response = await axios.post(`http://localhost:8000/api/predict?stock=${this.selectedStock}&predict_size=${this.predictSize}&show_size=${this.showSize}&models=${modelsParam}`);
@@ -97,6 +108,7 @@ export default {
           }))
         ];
         console.log("Prediction data fetched successfully:", this.chartData);
+        this.fetchingdata = false;  // Reset loading state
       } catch (error) {
         console.error("Error fetching prediction data:", error);
       }
@@ -189,4 +201,26 @@ label {
   margin: 20px; 
   margin-top: 40px;
 }
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #000000;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 </style>
