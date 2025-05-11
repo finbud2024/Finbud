@@ -14,6 +14,8 @@ import RiskAnalysis from "@/views/FinManage/RiskAnalysisPage.vue";
 import GoalPage from "@/views/FinManage/GoalPage.vue";
 import MarketDataCenter from "@/views/FinManage/SuperInvestorMarketDataCenter.vue";
 import ProfilePage from "@/views/Home/ProfilePage.vue";
+import ForeignExchange from "@/components/marketPage/ForeignExchange.vue";
+import Commodity from '@/components/marketPage/Commodity.vue'
 import QuantAnalysis from "@/views/FinInvest/QuantPage.vue";
 import EventHub from "@/views/FinEdu/EventPage.vue";
 import LearningRoadMap from "@/views/FinEdu/QuizzLearningRoadMap.vue";
@@ -120,6 +122,16 @@ const routes = [
     path: "/market",
     name: "Market",
     component: MarketDataCenter,
+  },
+  {
+    path: "/forex",
+    name: "ForeignExchange",
+    component: ForeignExchange,
+    meta: { title: "Foreign Exchange" }
+  },
+  { path: '/commodity', 
+    name: 'Commodity', 
+    component: Commodity
   },
   {
     path: "/profile",

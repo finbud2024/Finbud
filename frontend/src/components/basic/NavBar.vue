@@ -9,7 +9,7 @@
         <li>
           <router-link to="/chat-view" class="chatview">{{
             $t("chat")
-          }}</router-link>
+            }}</router-link>
         </li>
         <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
           <div class="services-dropdown dropbtn">
@@ -18,7 +18,7 @@
           <div class="dropdown-content" v-if="isAboutDropdownOpen">
             <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">{{ $t("about") }}</router-link>
             <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">{{ $t("technology")
-            }}</router-link>
+              }}</router-link>
           </div>
         </li>
 
@@ -28,37 +28,16 @@
             {{ $t("finManage") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link
-              to="/goal" 
-              class="goal"
-              @click="toggleDropdown(false)"
-              >{{ $t("goal") }}</router-link
-            >
-            <router-link
-              to="/riskanalysis"
-              class="risk-analysis"
-              @click="toggleDropdown(false)"
-              >{{ $t("riskAnalysis") }}</router-link
-            >
-            <router-link
-              to="/investment-calculator"
-              class="investment-calculator"
-              @click="toggleAboutDropdown(false)"
-              >{{ $t("investmentCalculator") }}</router-link
-            >
-            <router-link
-              to="/mortgage-calc"
-              class="mortgage-calc"
-              @click="toggleDropdown(false)"
-              >{{ $t("mortgageCalculator") }}</router-link
-            >
+            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">{{ $t("goal") }}</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">{{ $t("riskAnalysis")
+              }}</router-link>
+            <router-link to="/investment-calculator" class="investment-calculator"
+              @click="toggleAboutDropdown(false)">{{ $t("investmentCalculator") }}</router-link>
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">{{
+              $t("mortgageCalculator") }}</router-link>
 
-            <router-link
-              to="/super-investors"
-              class="super-investors"
-              @click="toggleDropdownInvest(false)"
-              >{{ $t("superInvestors") }}</router-link
-            >
+            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">{{
+              $t("superInvestors") }}</router-link>
           </div>
         </li>
 
@@ -69,7 +48,7 @@
           </div>
           <div class="dropdown-content" v-show="isDropdownOpenInvest">
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownInvest(false)">{{ $t("simulator")
-            }}</router-link>
+              }}</router-link>
             <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownInvest(false)">AutoTrade
               AI</router-link>
             <router-link to="/quant-analysis" class="home" @click="toggleDropdownInvest(false)">{{ $t("quant")
@@ -91,8 +70,7 @@
             <router-link to="/quizz" class="quizz" @click="toggleDropdownEdu(false)">{{ $t("quiz") }}</router-link>
             <router-link to="/event" class="event" @click="toggleDropdownEdu(false)">{{ $t("event") }}</router-link>
             <router-link to="/forum" class="forum" @click="toggleDropdownEdu(false)">{{ $t("forum") }}</router-link>
-            <router-link to="/course" class="course" @click="toggleDropdownEdu(false)" >{{ $t("course") }}</router-link
-            >
+            <router-link to="/course" class="course" @click="toggleDropdownEdu(false)">{{ $t("course") }}</router-link>
           </div>
         </li>
 
@@ -113,7 +91,7 @@
         <li v-if="!isAuthenticated && !isAuthLoading">
           <router-link to="/login" class="login-button">{{
             $t("login")
-          }}</router-link>
+            }}</router-link>
         </li>
 
 
@@ -122,108 +100,93 @@
         </li>
 
         <li v-if="isAuthenticated" class="dropdown profile-dropdown">
-  <div
-    class="profile-wrapper"
-    @mouseenter="toggleProfileDropdown(true)"
-    @mouseleave="toggleProfileDropdown(false)"
-  >
-    <img
-      :src="profileImage"
-      alt="User Image"
-      class="user-image"
-      @error="handleImageError"
-      loading="eager"
-    />
-    <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-      <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-        <img
-          :src="profileImage"
-          alt="User Image"
-          class="inside-dropdown-user-image"
-          @error="handleImageError"
-          loading="eager"
-        />
-        <p>{{ profileName }}</p>
-      </router-link>
+          <div class="profile-wrapper" ref="profileWrapper" @mouseenter="toggleProfileDropdown(true)" >
+            <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" loading="eager" />
+            <div class="dropdown-profile" v-show="isProfileDropdownOpen">
+              <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
+                <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image" @error="handleImageError"
+                  loading="eager" />
+                <p>{{ profileName }}</p>
+              </router-link>
 
-      <!-- Moved inside dropdown -->
-      <div class="fincoin-container">
-        <FinCoinDisplay :balance="finCoinBalance" />
-      </div>
-      <div class="language-switcher">
-        <button @click="switchLanguage('en')">
-          <img src="@/assets/us.png" alt="English" />
-        </button>
-        <button @click="switchLanguage('vi')">
-          <img src="@/assets/vn.png" alt="Tiếng Việt" />
-        </button>
-      </div>
-      <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-        <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-        <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
-      </router-link>
-      <router-link to="#" class="logout" @click="logout">
-        <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
-        <p>{{ $t("logout") }}</p>
-      </router-link>
-    </div>
-  </div>
-</li>
+              <!-- Moved inside dropdown -->
+              <div class="fincoin-container">
+                <FinCoinDisplay :balance="finCoinBalance" />
+              </div>
+              <div class="language-switcher">
+                <button @click="switchLanguage('en')">
+                  <img src="@/assets/us.png" alt="English" />
+                </button>
+                <button @click="switchLanguage('vi')">
+                  <img src="@/assets/vn.png" alt="Tiếng Việt" />
+                </button>
+              </div>
+              <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
+                <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
+                <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
+              </router-link>
+              <router-link to="#" class="logout" @click="logout">
+                <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
+                <p>{{ $t("logout") }}</p>
+              </router-link>
+            </div>
+          </div>
+        </li>
 
-    <li v-if="isAuthLoading" class="auth-loading">
-      <div class="loading-indicator"></div>
-    </li>
-    </ul>
-
-    <!-- Mobile version -->
-    <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
-      <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
-        <div class="brand-mobile">FinBud</div>
-        <font-awesome-icon icon="fa-solid fa-chevron-down" />
-      </div>
-      <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
-        <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">{{ $t("chat") }}</router-link>
-        <router-link to="/about" class="about" @click="toggleDropdownMobile">{{ $t("about") }}</router-link>
-        <router-link to="/tech" class="technology" @click="toggleDropdownMobile">{{ $t("technology") }}</router-link>
-        <div class="authenticated" v-if="isAuthenticated">
-          <strong>{{ $t("finManage") }}</strong>
-          <router-link to="/goal" class="goal" @click="toggleDropdownMobile">{{ $t("goal") }}</router-link>
-          <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">{{ $t("riskAnalysis")
-          }}</router-link>
-          <router-link to="/investment-calculator" class="investment-calculator" @click="toggleDropdownMobile">{{
-            $t("investmentCalculator") }}</router-link>
-          <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdownMobile">{{
-            $t("mortgageCalculator") }}</router-link>
-          <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">{{
-            $t("superInvestors") }}</router-link>
-
-          <strong>{{ $t("finInvest") }}</strong>
-          <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">{{ $t("simulator")
-          }}</router-link>
-          <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownMobile">AutoTrade AI</router-link>
-          <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">{{ $t("quant") }}</router-link>
-          <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">{{
-            $t("quantSimulator") }}</router-link>
-          <router-link to="/docs" class="docs" @click="toggleDropdownMobile">
-            {{ $t("Fin Data") }}
-          </router-link>
-
-          <strong>{{ $t("finEdu") }}</strong>
-          <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">{{ $t("quiz") }}</router-link>
-          <router-link to="/event" class="event" @click="toggleDropdownMobile">{{ $t("event") }}</router-link>
-          <router-link to="/forum" class="forum" @click="toggleDropdownMobile">{{ $t("forum") }}</router-link>
-
-          <router-link to="#" @click="logout" class="logout">{{
-            $t("logout")
-          }}</router-link>
-        </div>
-        <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button"
-          @click="toggleDropdownMobile">{{ $t("login") }}</router-link>
-        <div v-if="isAuthLoading" class="auth-loading-mobile">
+        <li v-if="isAuthLoading" class="auth-loading">
           <div class="loading-indicator"></div>
+        </li>
+      </ul>
+
+      <!-- Mobile version -->
+      <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
+        <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
+          <div class="brand-mobile">FinBud</div>
+          <font-awesome-icon icon="fa-solid fa-chevron-down" />
+        </div>
+        <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
+          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">{{ $t("chat") }}</router-link>
+          <router-link to="/about" class="about" @click="toggleDropdownMobile">{{ $t("about") }}</router-link>
+          <router-link to="/tech" class="technology" @click="toggleDropdownMobile">{{ $t("technology") }}</router-link>
+          <div class="authenticated" v-if="isAuthenticated">
+            <strong>{{ $t("finManage") }}</strong>
+            <router-link to="/goal" class="goal" @click="toggleDropdownMobile">{{ $t("goal") }}</router-link>
+            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">{{ $t("riskAnalysis")
+              }}</router-link>
+            <router-link to="/investment-calculator" class="investment-calculator" @click="toggleDropdownMobile">{{
+              $t("investmentCalculator") }}</router-link>
+            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdownMobile">{{
+              $t("mortgageCalculator") }}</router-link>
+            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">{{
+              $t("superInvestors") }}</router-link>
+
+            <strong>{{ $t("finInvest") }}</strong>
+            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">{{ $t("simulator")
+              }}</router-link>
+            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownMobile">AutoTrade AI</router-link>
+            <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">{{ $t("quant") }}</router-link>
+            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">{{
+              $t("quantSimulator") }}</router-link>
+            <router-link to="/docs" class="docs" @click="toggleDropdownMobile">
+              {{ $t("Fin Data") }}
+            </router-link>
+
+            <strong>{{ $t("finEdu") }}</strong>
+            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">{{ $t("quiz") }}</router-link>
+            <router-link to="/event" class="event" @click="toggleDropdownMobile">{{ $t("event") }}</router-link>
+            <router-link to="/forum" class="forum" @click="toggleDropdownMobile">{{ $t("forum") }}</router-link>
+
+            <router-link to="#" @click="logout" class="logout">{{
+              $t("logout")
+              }}</router-link>
+          </div>
+          <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button"
+            @click="toggleDropdownMobile">{{ $t("login") }}</router-link>
+          <div v-if="isAuthLoading" class="auth-loading-mobile">
+            <div class="loading-indicator"></div>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </nav>
 </template>
@@ -329,6 +292,12 @@ export default {
     toggleProfileDropdown(open) {
       this.toggleDropdown("Profile", open);
     },
+    handleClickOutside(e) {
+      const wrap = this.$refs.profileWrapper;
+      if (this.isProfileDropdownOpen && wrap && !wrap.contains(e.target)) {
+        this.toggleProfileDropdown(false);
+      }
+    },
 
     toggleDropdownMobile() {
       this.dropdowns.Mobile = !this.dropdowns.Mobile;
@@ -399,6 +368,11 @@ export default {
     this.$router.afterEach(() => {
       this.closeDropdownMobile();
     });
+
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
 };
 </script>
@@ -920,8 +894,7 @@ export default {
     transform: translateX(-50%) translateY(0);
   }
 
-  /* Fix for authenticated section in mobile dropdown */
-  .dropdown-content .authenticated strong {
+  /* Fix for authenticated section in mobile dropdown */ .dropdown-content .authenticated strong {
     display: block;
     padding: 10px 16px;
     background-color: var(--bg-secondary);
