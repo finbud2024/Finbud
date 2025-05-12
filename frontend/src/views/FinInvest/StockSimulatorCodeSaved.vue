@@ -392,11 +392,11 @@
   import CompanyCard from "@/components/CompanyCard.vue";
   import BannerCardSimulator from "@/components/BannerCardSimulator.vue";
   import stockData from "../hardcodeData/StockData.js";
-  import PreviewOrderModal from "../components/FinInvest/StockSimulatorPage/PreviewOrderModal.vue";
-  import TransactionHistory from "../components/FinInvest/StockSimulatorPage/TransactionHistory.vue";
+  import PreviewOrderModal from "../components/finInvest/StockSimulatorPage/PreviewOrderModal.vue";
+  import TransactionHistory from "../components/finInvest/StockSimulatorPage/TransactionHistory.vue";
   import PerformanceChart from "../components/PerformanceChart.vue";
-  import PredicitveCalc from "../components/FinInvest/StockSimulatorPage/PredicitveCalc.vue";
-  import PortfolioPerformance from "../components/FinInvest/StockSimulatorPage/PortfolioPerformance.vue";
+  import PredicitveCalc from "../components/finInvest/StockSimulatorPage/PredicitveCalc.vue";
+  import PortfolioPerformance from "../components/finInvest/StockSimulatorPage/PortfolioPerformance.vue";
   import { toast } from "vue3-toastify";
   import axios from "axios";
   import { showReward } from "../../utils/utils";

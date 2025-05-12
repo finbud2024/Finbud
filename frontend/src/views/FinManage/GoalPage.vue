@@ -367,11 +367,11 @@
 
 <script>
 import axios from "axios";
-import TransactionLine from "@/components/FinManage/GoalPage/TransactionLine.vue";
-import TransactionTable from "@/components/FinManage/GoalPage/TransactionTable.vue";
-import TransactionModal from "@/components/FinManage/GoalPage/TransactionModal.vue";
-import TransactionPie from "@/components/FinManage/GoalPage/TransactionPie.vue";
-import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
+import TransactionLine from "@/components/finManage/GoalPage/TransactionLine.vue";
+import TransactionTable from "@/components/finManage/GoalPage/TransactionTable.vue";
+import TransactionModal from "@/components/finManage/GoalPage/TransactionModal.vue";
+import TransactionPie from "@/components/finManage/GoalPage/TransactionPie.vue";
+import ChatBotTyping from "@/components/finInvest/quantPage/ChatBotTyping.vue";
 import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
 export default {
   name: "GoalPage",

@@ -42,7 +42,7 @@
 <script>
 import NavBar from "./components/basic/NavBar.vue";
 import FooterBar from "./components/basic/FooterBar.vue";
-import ChatBubble from "./components/ChatPage/ChatBubble.vue";
+import ChatBubble from "./components/chatPage/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import LoadingPage from "./views/Home/LoadingPage.vue";
@@ -342,6 +342,14 @@ export default {
   --agent-button-bg-active-color: #000000;
   --black-in-dark-mode: #ffffff;
   --white-in-dark-mode: #000000;
+  /*Quant Page in Light Mode*/
+  --quant-background: #ffffff;
+  --quant-section-background: #f2f2f7;
+  --quant-border: #c6c6c8;
+  --quant-text-primary: #000000;
+  --quant-text-secondary: #6e6e73;
+  --quant-switch-on: #34c759;
+  
 }
 
 :root.dark-mode,
@@ -369,6 +377,13 @@ body.dark-mode {
   --black-in-dark-mode: #0f0f14;
   --white-in-dark-mode: #ffffff;
   --dark-grey: #0f0f14;
+  /* Quant Page in Dark Mode */
+  --quant-background: #000000;
+  --quant-section-background: #1c1c1e;
+  --quant-border: #3a3a3c;
+  --quant-text-primary: #ffffff;
+  --quant-text-secondary: #8e8e93;
+  --quant-switch-on: #30d158;
 }
 /* Update content area */
 .content {

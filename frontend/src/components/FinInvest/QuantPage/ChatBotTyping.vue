@@ -97,10 +97,10 @@ export default {
 
 <style scoped>
 .chat-bot-container {
-  background-color: #f8f9fa;
+  background-color: var(--quant-section-background);
   padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
+  
+  border: 1px solid var(--quant-section-border);
   min-height: 200px;
   height: auto;
   position: relative;

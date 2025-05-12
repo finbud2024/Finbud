@@ -76,8 +76,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import { ref, onMounted, watch, computed } from 'vue';
 import { BButton, BTable } from 'bootstrap-vue-3';
-import DataCard from '@/components/FinInvest/FinDataPage/DataCard.vue';
-import TicketSearchModal from '@/components/FinInvest/FinDataPage/TicketSearchModal.vue';
+import DataCard from '@/components/finInvest/finDataPage/DataCard.vue';
+import TicketSearchModal from '@/components/finInvest/finDataPage/TicketSearchModal.vue';
 import { getAllCompanies, fetchCompanyFilings, getCompanyFilingsFromDB, getEarningCalendars, getEarningTranscripts } from '@/services/finDataService';
 
 const route = useRoute();

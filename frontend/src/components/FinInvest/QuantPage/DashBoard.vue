@@ -1,20 +1,19 @@
 <template>
   <div class="dashboard">
-    <header>
-      <h1>Personal Stock Portfolio Dashboard</h1>
-    </header>
+
     <section class="current-holding">
+      <header>
+        <h1>Personal Stock Portfolio Dashb</h1>
+      </header>
       <h2>Current Holding</h2>
-      <div class="margin-box-content">
-<!--        <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div>-->
-<!--        <div v-else-if="loadingCrypto" class="loading">Loading...</div>-->
-        <div>
+
+        <div class="table-container">
           <table>
             <thead>
             <tr>
               <th>Stock Ticker</th>
               <th>Logo</th>
-              <th>Currency Code</th>
+              <th>Currency</th>
               <th>Close</th>
               <th>Price Currency</th>
               <th>Price Change</th>
@@ -23,7 +22,7 @@
               <th>EPS Diluted (TTM)</th>
               <th>Dividend Yield</th>
               <th>Exchange</th>
-              <th>Industry Sector</th>
+              <th>Industry</th>
             </tr>
             </thead>
             <tbody v-if="cryptoList.length">
@@ -46,14 +45,15 @@
           </table>
 <!--          <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />-->
         </div>
-      </div>
+
     </section>
 
     <section class="industry-comparison">
-      <header>
-        <h1>Portfolio By Industry</h1>
-      </header>
+
       <section class="comparison-section">
+        <header>
+          <h1>Portfolio By Industry</h1>
+        </header>
         <div class="comparison-header">
           <h2>Comparison Stocks in the Industry Map</h2>
         </div>
@@ -318,9 +318,11 @@ export default {
 <style scoped>
 /* Add your styles here */
 .dashboard {
-  width: 100%;
-  padding: 20px;
+  width: 100%; /* Reduce the width to 80% of the viewport */
+  margin: 0 auto; /* Center the dashboard horizontally */
+  
   position: relative;
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds the height */
 }
 
 .dashboard.loading {
@@ -405,8 +407,8 @@ export default {
 }
 
 header {
-  background-color: #0033cc;
-  color: white;
+  background-color: var(--quant-section-background);
+  color: var(--quant-text-primary);
   text-align: center;
   padding: 10px;
 }
@@ -418,19 +420,24 @@ header {
 
 .current-holding {
   margin-top: 20px;
-  background-color: rgb(94, 169, 212);
+  background-color: var(--quant-section-background);
   align-content: center;
 }
 
 h2 {
-  color: #0033cc;
+  color: var(--quant-text-secondary);
   font-size: 24px;
   text-align: center;
 }
-
+.table-container {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  width: 100%; /* Ensure it takes the full width of the parent */
+  margin-bottom: 20px; /* Add some spacing below the table */
+}
 table {
   width: 100%;
   border-collapse: collapse;
+  overflow-x: auto;
 }
 
 th, td {
@@ -450,6 +457,7 @@ td {
 
 .industry-comparison {
   margin-top: 10px;
+  color:var(--quant-section-background);
 }
 
 .comparison-header {
@@ -492,7 +500,7 @@ td {
 
 .comparison-section {
   padding: 20px;
-  background-color: #f0f0f0;
+  background-color: var(--quant-section-background);
 }
 
 .industry-selection {
