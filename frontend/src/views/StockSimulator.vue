@@ -262,15 +262,15 @@
       {{ country }}
     </option>
   </select>
+      <div class="filter-group">
+      <label for="excludeCountries">Exclude Countries</label>
+      <input
+        type="checkbox"
+        id="excludeCountries"
+        v-model="filters.excludeCountries"
+      />
+    </div>
 
-            <div class="toggle-group">
-              <label for="excludeCountries">Exclude Countries</label>
-              <input
-                type="checkbox"
-                id="excludeCountries"
-                v-model="filters.excludeCountries"
-              />
-            </div>
           </div>
           <div class="filter-group">
               <label for="pageSize">Results per Page:</label>
@@ -728,11 +728,12 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
       currentPage: 1,
       showFiltersBot: true,
       currentFiltersTypedMessage: "",
-      filtersBotMessage: `📌 <strong>Filter Usage Guide:</strong><br>
-      • Select your desired <strong>country</strong>, <strong>exchange</strong>, and financial criteria like <strong>Revenue</strong> or <strong>P/E Ratio</strong>.<br>
-      • Click <strong>Search Stocks</strong> to filter.<br>
-      • Use <strong>Reset</strong> to clear all filters.`,
-      isFiltersTyping: true
+      isFiltersTyping: true,
+      showFiltersMessage: true,
+      hidingFiltersMessage: false,
+      filtersMessageManuallyToggled: false,
+      filtersWordByWordTyping: true,
+
     };
   },
   
@@ -859,6 +860,44 @@ async fetchStocks() {
         .split(/(?<=[.!?])\s+/);
       return sentences.map((sentence) => `<div>${sentence}</div>`).join("");
     },
+
+    toggleFiltersBotMessage() {
+  if (!this.showFiltersBot) return;
+
+  this.filtersMessageManuallyToggled = true;
+
+  if (this.filtersBotHideTimeout) {
+    clearTimeout(this.filtersBotHideTimeout);
+    this.filtersBotHideTimeout = null;
+  }
+
+  if (this.showFiltersMessage) {
+    this.hidingFiltersMessage = true;
+
+    setTimeout(() => {
+      this.showFiltersMessage = false;
+      this.hidingFiltersMessage = false;
+    }, 250); 
+  } else {
+
+    this.hidingFiltersMessage = false;
+    this.showFiltersMessage = true;
+
+    if (this.currentFiltersTypedMessage === "") {
+      this.isFiltersTyping = true;
+
+      setTimeout(() => {
+        if (this.filtersWordByWordTyping) {
+          this.startFiltersWordByWordTyping();
+        } else {
+          this.startFiltersCharacterByCharacterTyping();
+        }
+      }, 250);
+    } else {
+      this.isFiltersTyping = false;
+    }
+  }
+},
     startHeaderTypingEffect() {
       // Reset typing process
       if (this.headerTypingInterval) {
@@ -2416,14 +2455,17 @@ async fetchStocks() {
       this.adjustChartHeight();
     });
     this.filtersBotMessage = this.$i18n.locale === 'vi'
-      ? `📌 <strong>Hướng dẫn sử dụng bộ lọc:</strong><br>
-    • Chọn <strong>quốc gia</strong>, <strong>sàn giao dịch</strong>, và các điều kiện như <strong>doanh thu</strong> hoặc <strong>P/E</strong>.<br>
-    • Bấm <strong>Tìm kiếm cổ phiếu</strong> để lọc.<br>
-    • Dùng <strong>Reset</strong> để xoá điều kiện lọc.`
-      : `📌 <strong>Filter Usage Guide:</strong><br>
-    • Select your desired <strong>country</strong>, <strong>exchange</strong>, and financial criteria like <strong>Revenue</strong> or <strong>P/E Ratio</strong>.<br>
-    • Click <strong>Search Stocks</strong> to filter.<br>
-    • Use <strong>Reset</strong> to clear all filters.`;
+    this.filtersBotMessage = this.$i18n.locale === 'vi'
+  ? `<strong>Hướng dẫn sử dụng bộ lọc:</strong><br>
+1. Chọn <strong>quốc gia</strong>, <strong>sàn giao dịch</strong> và tiêu chí tài chính như <strong>Giá</strong> hoặc <strong>Tỷ suất cổ tức</strong>.<br>
+2. Bấm <strong>Tìm kiếm cổ phiếu</strong> để xem kết quả phù hợp.<br>
+3. Nhấn <strong>Reset</strong> để bắt đầu lại từ đầu.`
+  : `<strong>Let’s Find the Right Stocks:</strong><br>
+1. Pick your preferred <strong>Country</strong> and <strong>Exchange</strong>.<br>
+2. Add filters like <strong>Price</strong>, <strong>Market Cap</strong>, or <strong>P/E Ratio</strong> to refine results.<br>
+3. Click <strong>Search Stocks</strong> when you're ready — I’ll handle the rest!<br>
+4. Want a clean slate? Just hit <strong>Reset Filters</strong>.`;
+;
 
     // If portfolio is the initial section, show the bot after a delay
     if (this.activeSection === "portfolio") {
@@ -3174,7 +3216,7 @@ h1 {
 .portfolio-bot-container {
   position: fixed;
   left: 20px; /* Change from -350px to visible on page load */
-  bottom: 30px;
+  bottom: 10px;
   width: 300px;
   display: flex;
   flex-direction: column;
@@ -3463,19 +3505,17 @@ h1 {
 .filter-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
-  margin-bottom: 24px;
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 20px;
+  justify-content: flex-start;
+  align-items: flex-end;
 }
-
 
 .filter-group {
-  flex: 1 1 220px; 
-  min-width: 220px;
+  flex: 1 1 200px;
+  min-width: 180px;
 }
+
+
 .filter-group label {
   display: block;
   margin-bottom: 8px;
@@ -3485,12 +3525,15 @@ h1 {
 
 .filter-group input,
 .filter-group select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  height: 36px;
+  padding: 8px 12px;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 
 .button-group {
   display: flex;
@@ -3597,5 +3640,19 @@ tbody tr:hover {
   line-height: 1.4;
 }
 
+.bot-message {
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.bot-message.message-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.bot-message.message-hidden {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  pointer-events: none;
+}
 
 </style>
