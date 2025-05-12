@@ -27,10 +27,10 @@ const messages = {
     agent: "Agent",
     pestle: "PESTLE",
     login: "Log In",
-    darkMode: "Dark Mode",
-    lightMode: "Light Mode",
     logout: "Log Out",
     chat: "Chat",
+    language: "Language",
+    theme: "Theme",
 
     //Old  
     title: "Mortgage Payment Calculator",
@@ -682,10 +682,10 @@ const messages = {
     agent: "Agent",
     pestle: "PESTLE",
     login: "Đăng nhập",
-    darkMode: "Chế độ tối",
-    lightMode: "Chế độ sáng",
     logout: "Đăng xuất",
     chat: "Chat",
+    language: "Ngôn ngữ",
+    theme: "Chủ đề",
     //Old
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
     homePrice: "Giá nhà",

@@ -136,35 +136,60 @@
     />
     <div class="dropdown-profile" v-show="isProfileDropdownOpen">
       <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-        <img
-          :src="profileImage"
-          alt="User Image"
-          class="inside-dropdown-user-image"
-          @error="handleImageError"
-          loading="eager"
-        />
-        <p>{{ profileName }}</p>
+        <div class="profile-info-row">
+          <img
+            :src="profileImage"
+            alt="User Image"
+            class="inside-dropdown-user-image"
+            @error="handleImageError"
+            loading="eager"
+          />
+          <div class="profile-info-col">
+            <p class="profile-name">{{ profileName }}</p>
+            <div class="fincoin-container">
+              <FinCoinDisplay :balance="finCoinBalance" />
+            </div>
+          </div>
+        </div>
       </router-link>
 
       <!-- Moved inside dropdown -->
-      <div class="fincoin-container">
-        <FinCoinDisplay :balance="finCoinBalance" />
-      </div>
+      
       <div class="language-switcher">
-        <button @click="switchLanguage('en')">
-          <img src="@/assets/us.png" alt="English" />
-        </button>
-        <button @click="switchLanguage('vi')">
-          <img src="@/assets/vn.png" alt="Tiếng Việt" />
-        </button>
+        <p>{{ $t("language") }}</p>
+        <div class="language-buttons">
+          <button @click="switchLanguage('en')">
+            <img src="@/assets/us.png" alt="English" />
+          </button>
+          <button @click="switchLanguage('vi')">
+            <img src="@/assets/vn.png" alt="Tiếng Việt" />
+          </button>
+        </div>
       </div>
-      <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-        <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-        <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
-      </router-link>
+
+      <div class="theme-switcher">
+        <p>{{ $t("theme") }}</p>
+        <div class="theme-buttons">
+          <button
+            :class="{ active: !isDarkMode }"
+            @click="setDarkMode(false)"
+            aria-label="Light mode"
+          >
+            <font-awesome-icon icon="fa-sun" />
+          </button>
+          <button
+            :class="{ active: isDarkMode }"
+            @click="setDarkMode(true)"
+            aria-label="Dark mode"
+          >
+            <font-awesome-icon icon="fa-moon" />
+          </button>
+        </div>
+      </div>
+
       <router-link to="#" class="logout" @click="logout">
         <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
-        <p>{{ $t("logout") }}</p>
+        <p style="margin-left: 50px;">{{ $t("logout") }}</p>
       </router-link>
     </div>
   </div>
@@ -310,6 +335,12 @@ export default {
       this.$i18n.locale = lang;
       localStorage.setItem("language", lang);
     },
+
+    setDarkMode(isDark) {
+      if (this.isDarkMode !== isDark) {
+        this.toggleDarkMode();
+      }
+    },
     toggleDropdown(type, open) {
       if (this.dropdowns.hasOwnProperty(type)) {
         this.dropdowns[type] = open;
@@ -407,8 +438,16 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
 .language-switcher {
+  margin-top: 10px;
   display: flex;
-  margin-left: 2rem;
+}
+
+.theme-switcher {
+  display: flex;
+}
+
+.language-switcher, .theme-switcher p {
+  margin-left: 10px;
 }
 
 .language-switcher button {
@@ -427,6 +466,22 @@ export default {
 .language-switcher button:hover img {
   transform: scale(1.1);
   /* Slightly enlarge the flag on hover */
+}
+
+.language-buttons, .theme-buttons {
+  margin-left: auto; /* Pushes buttons to the right */
+  margin-right: 10px;
+}
+
+.theme-buttons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
 }
 
 .nav-bar {
@@ -797,7 +852,33 @@ export default {
   transform: scale(1.05);
 }
 
-.inside-dropdown-user-image,
+.profile-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inside-dropdown-user-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.profile-info-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profile-name {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
 .icon {
   position: absolute;
   width: 20px;
@@ -811,7 +892,6 @@ export default {
 }
 
 .dropdown-profile p {
-  margin-left: 50px;
   max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
