@@ -127,8 +127,12 @@ export default {
   border-radius: 5px;
 }
 
+.performance-history {
+  margin-top: auto;
+}
+
 .performance-history-btn {
-  background-color: #000000;
+  background-color: #2e5cb8;
   color: white;
   border: none;
   padding: 10px 20px;

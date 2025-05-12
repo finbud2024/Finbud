@@ -1,45 +1,31 @@
 import { createRouter, createWebHistory } from "vue-router";
-import store from "@/store";
-import LoginView from "@/views/Authentication/LoginPage.vue";
-import SignUp from "@/views/Authentication/SignUpPage.vue";
-import Home from "@/views/Home/HomePage.vue";
-import ChatPage from "@/views/Chat/ChatPage.vue";
-import SideBar from "@/components/Basic/SideBar.vue";
-import TechnologyPage from "@/views/Overview/TechnologyPage.vue";
-import PricingPage from "@/views/Unused/PricingPage.vue";
-import AboutUsPage from "@/views/Overview/AboutUsPage.vue";
-import QuizzPage from "@/views/FinEdu/QuizzPage.vue";
-import StockSimulator from "@/views/FinInvest/StockSimulatorPage.vue";
-import RiskAnalysis from "@/views/FinManage/RiskAnalysisPage.vue";
-import GoalPage from "@/views/FinManage/GoalPage.vue";
-import MarketDataCenter from "@/views/FinManage/SuperInvestorMarketDataCenter.vue";
-import ProfilePage from "@/views/Home/ProfilePage.vue";
-import QuantAnalysis from "@/views/FinInvest/QuantPage.vue";
-import EventHub from "@/views/FinEdu/EventPage.vue";
-import LearningRoadMap from "@/views/FinEdu/QuizzLearningRoadMap.vue";
-import QuantSimulator from "@/views/FinInvest/QuantSimulatorPage.vue";
-import ForumView from "@/views/FinEdu/ForumPage.vue";
+import LoginView from "@/views/LoginView.vue";
+import SignUp from "@/views/SignUp.vue";
+import Home from "@/views/Home.vue";
+import ChatView from "@/views/ChatView.vue";
+import SideBar from "@/components/SideBar.vue";
+import TechnologyPage from "@/views/TechnologyPage.vue";
+import PricingPage from "@/views/PricingPage.vue";
+import AboutUsPage from "@/views/AboutUsPage.vue";
+import QuizzPage from "@/views/QuizzPage.vue";
+import StockSimulator from "@/views/StockSimulator.vue";
+import RiskAnalysis from "@/views/RiskAnalysis.vue";
+import GoalPage from "@/views/GoalPage.vue";
+import MarketDataCenter from "@/views/MarketDataCenter.vue";
+import ProfilePage from "@/views/ProfilePage.vue";
+import QuantAnalysis from "@/views/QuantAnalysis.vue";
+import EventHub from "@/views/EventHub.vue";
+import LearningRoadMap from "@/views/LearningRoadMap.vue";
+import QuantSimulator from "@/views/QuantSimulator.vue";
+import ForumView from "@/views/ForumView.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
-import ThreadView from "@/views/FinEdu/ForumThreadView.vue";
-import StartThread from "@/views/FinEdu/ForumThreadStart.vue";
-import MortgageCalc from "@/views/FinManage/MortgageCalculatorPage.vue";
-import SuperInvestors from "@/views/FinManage/SuperInvestorsPage.vue";
-import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue";
-import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue"
-import AgentPage from "@/views/FinAgent/AgentPage.vue";
-import PestlePage from "@/views/Unused/PestlePage.vue";
-import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
-import AutoTradeAI from "@/views/FinInvest/AutoTradeAIPage.vue";
-import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
-import InsiderTransactionPage from "@/views/FinInvest/FinData/InsiderTransactionPage.vue";
-import EarningCalendarPage from "@/views/Unused/EarningCalendarPage.vue";
-import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
-import NotificationCenter from "@/views/Home/NotificationCenter.vue";
-import CourseCategoryPage from "@/views/FinEdu/CourseCategoryPage.vue";
-import CoursePage from "@/views/FinEdu/CoursePage.vue";
-import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
-import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
-
+import ThreadView from "@/views/ThreadView.vue";
+import StartThread from "@/views/StartThread.vue";
+import MortgageCalc from "@/views/Mortgage-calc.vue";
+import SuperInvestors from "@/views/SuperInvestors.vue";
+import InvestorDetail from "@/views/InvestorDetail.vue";
+import AgentPage from "@/views/AgentPage.vue";
+import ForgotPassword from "@/views/ForgotPassword.vue";
 const routes = [
   {
     path: "/",
@@ -64,7 +50,7 @@ const routes = [
     path: "/chat-view",
     name: "ChatView",
     components: {
-      default: ChatPage,
+      default: ChatView,
       sidebar: SideBar,
     },
   },
@@ -109,11 +95,6 @@ const routes = [
     component: QuantSimulator,
   },
   {
-    path: "/autotrade-ai",
-    name: "AutoTradeAI",
-    component: AutoTradeAI,
-  },
-  {
     path: "/goal",
     name: "GoalPage",
     component: GoalPage,
@@ -146,18 +127,6 @@ const routes = [
     props: true,
   },
   {
-    path: "/course",
-    name: "CoursePage",
-    component: CoursePage,
-    props: true,
-  },
-  {
-    path: '/courses/:categorySlug',
-    name: 'CourseCategory',
-    component: CourseCategoryPage,
-    props: true
-  },
-  {
     path: "/thread",
     name: "ThreadCard",
     component: ThreadCard,
@@ -181,6 +150,7 @@ const routes = [
     component: MortgageCalc,
     props: true,
   },
+  ,
   {
     path: "/super-investors",
     name: "SuperInvestors",
@@ -192,81 +162,21 @@ const routes = [
     component: InvestorDetail,
   },
   {
-    path: "/docs",
-    redirect: "/docs/aapl"
-  },
-  {
-    path: "/docs/:ticker",
-    name: "Financial Docs",
-    component: FinDataPage
-  },
-  {
-    path: "/company-report/:ticker",
-    component: InsiderTransactionPage
-  },
-  {
-    path: "/earning-calendars",
-    component: EarningCalendarPage
-  },
-  {
     path: "/agent/",
     name: "AgentPage",
     component: AgentPage,
-  },
-  {
-    path: "/pestle/",
-    name: "PestlePage",
-    component: PestlePage,
   },
   {
     path: "/forgot-password",
     name: "ForgotPassword",
     component: ForgotPassword,
   },
-  {
-    path: "/investment-calculator",
-    name: "InvestmentCalculator",
-    component: InvestmentCalculator,
-  },
-  {
-    path: "/fund-letter",
-    name: "FundLetter",
-    component: FundLetterPage,
-  },
-  {
-    path: "/notifications",
-    name: "NotificationCenter",
-    component: NotificationCenter, 
-  },
-  {
-    path: '/courses/:categorySlug',
-    name: 'CourseCategory', // Must match exactly what you use in router-link
-    component: CourseCategoryPage,
-  },
-  {
-    path: "/macro-economic",
-    name: "MacroeconomicPage",
-    component: MacroeconomicPage,
-  },
-  {
-    path: "/market-analysis",
-    name: "MarketAnalysisPage",
-    component: MarketAnalysisPage,
-  }
-  
+
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-});
-
-// Add navigation guard
-router.beforeEach(async (to, from, next) => {
-  if (!store.getters["users/isAuthenticated"]) {
-    await store.dispatch("users/fetchCurrentUser");
-  }
-  next();
 });
 
 export default router;

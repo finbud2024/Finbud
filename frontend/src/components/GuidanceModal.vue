@@ -3,7 +3,8 @@
     <div class="sidebar-content">
       <button class="close-btn" @click="close">x</button>
       <div class="guidance-text">
-        <p>Chào mừng bạn đến với <span class="brand-name">FinBud</span>! Dưới đây là một số <span class="command">lệnh</span> để bạn bắt đầu:</p>
+        <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to
+          help you get started:</p>
         <ol class="guidance-list">
           <!-- guidance for general users -->
           <li v-for="(item, index) in generalGuidanceList" :key="index" @click="toggleExpansion(item)"
@@ -13,10 +14,10 @@
               <span class="command">{{ item.command }}</span>
             </div>
             <div v-if="item.instruction">{{ item.instruction }}.</div>
-            <div v-if="item.example">(VD: "{{ item.example }}").</div>
+            <div v-if="item.example">(e.g. "{{ item.example }}").</div>
             <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
             <div class="expanded-content">
-              <img class="explanation" :src="item.explanation" alt="minh họa" @click="handleImageClick(item)">
+              <img class="explanation" :src="item.explanation" alt="explanation" @click="handleImageClick(item)">
             </div>
           </li>
           <!-- guidance for authenticated users -->
@@ -28,12 +29,22 @@
                 <span class="command">{{ item.command }}</span>
               </div>
               <div v-if="item.instruction">{{ item.instruction }}.</div>
-              <div v-if="item.example">(VD: "{{ item.example }}").</div>
+              <div v-if="item.example">(e.g. "{{ item.example }}").</div>
               <div class="expanded-content">
-                <img class="explanation" :src="item.explanation" alt="minh họa" @click.stop="handleImageClick(item)">
+                <img class="explanation" :src="item.explanation" alt="explanation" @click.stop="handleImageClick(item)">
               </div>
             </li>
           </div>
+          <!-- this one always at last regardless of user status -->
+          <!-- <li @click="toggleExpansion(generalAdvice)"
+            :class="{ 'expanded': expandedItem === generalAdvice }"
+          >
+            <span class="header-list">{{generalAdvice.header}}</span>
+            <br> {{generalAdvice.instruction}}
+            <div class="expanded-content">
+              <img class="explanation" :src="generalAdvice.explanation" alt="explanation">
+            </div>
+          </li> -->
         </ol>
       </div>
     </div>
@@ -63,118 +74,79 @@ export default {
   data() {
     return {
       generalGuidanceList: [
-  {
-    header: "Tìm kiếm nâng cao",
-    command: "#timkiem [từ_khóa]",
-    instruction: "Nhập từ khóa cần tìm",
-    example: "#timkiem thị trường chứng khoán",
-    explanation: search,
-  },
-  {
-    header: "Tra cứu giá cổ phiếu",
-    command: null,
-    instruction: "Nhập mã cổ phiếu viết hoa",
-    example: "TSLA",
-    explanation: stockPrice,
-  },
-  {
-    header: "Giải nghĩa thuật ngữ tài chính",
-    command: "#dinhnghia [thuật_ngữ]",
-    instruction: null,
-    example: "#dinhnghia IPO",
-    explanation: define,
-  },
-  {
-    header: "Xem Top 5 tiền điện tử",
-    command: "#tiendientu",
-    instruction: null,
-    example: null,
-    explanation: crypto,
-  },
-  {
-    header: "Xem 5 bất động sản khu vực",
-    command: "#batdongsan [tên_khu_vực]",
-    example: "#batdongsan new york",
-    additionalInfo: "Nếu không nhập khu vực, mặc định là San Jose.",
-    explanation: realestate,
-  },
-],
-userGuidanceList: [
-  {
-    header: "Thêm giao dịch",
-    command: "#them [mô_tả] [số_tiền]",
-    example: "#them Mua sắm 125",
-    explanation: add,
-  },
-  {
-    header: "Ghi lại chi tiêu",
-    command: "#chi [mô_tả] [số_tiền]",
-    example: "#chi Mua sắm 125",
-    explanation: spend,
-  },
-  {
-    header: "Mua cổ phiếu",
-    command: "#mua [mã_cổ_phiếu] [số_lượng]",
-    example: "#mua TSLA 10",
-    explanation: buy,
-  },
-  {
-    header: "Bán cổ phiếu",
-    command: "#ban [mã_cổ_phiếu] [số_lượng]",
-    example: "#ban TSLA 10",
-    explanation: sell,
-  },
-  {
-    header: "Thêm mục tiêu",
-    command: "#them_muctieu",
-    example: null,
-    explanation: create,
-  },
-  {
-    header: "Phân tích danh mục",
-    command: "#phantich",
-    example: null,
-    explanation: create,
-  },
-],
-userGuidanceList: [
-  {
-    header: "Thêm giao dịch",
-    command: "#them [mô_tả] [số_tiền]",
-    example: "#them Mua sắm 125",
-    explanation: add,
-  },
-  {
-    header: "Theo dõi chi tiêu",
-    command: "#chi [mô_tả] [số_tiền]",
-    example: "#chi Mua sắm 125",
-    explanation: spend,
-  },
-  {
-    header: "Mua cổ phiếu",
-    command: "#mua [mã_cổ_phiếu] [số_lượng]",
-    example: "#mua TSLA 10",
-    explanation: buy,
-  },
-  {
-    header: "Bán cổ phiếu",
-    command: "#ban [mã_cổ_phiếu] [số_lượng]",
-    example: "#ban TSLA 10",
-    explanation: sell,
-  },
-  {
-    header: "Tạo mục tiêu",
-    command: "#taomuctieu",
-    example: null,
-    explanation: create,
-  },
-  {
-    header: "Phân tích danh mục",
-    command: "#phantich",
-    example: null,
-    explanation: create,
-  },
-],
+        {
+          header: "Advanced search",
+          command: "#search [term]",
+          instruction: "Enter search term",
+          example: "#search stock market",
+          explanation: search,
+        },
+        {
+          header: "Stock Price Inquiry",
+          command: null,
+          instruction: "Enter the stock code in uppercase",
+          example: "TSLA",
+          explanation: stockPrice,
+        },
+        {
+          header: "Financial Term Definitions",
+          command: "#define [term]",
+          instruction: null,
+          example: "#define IPO",
+          explanation: define,
+        },
+        {
+          header: "List of Top 5 Cryptocurrencies",
+          command: "#crypto",
+          instruction: null,
+          example: null,
+          explanation: crypto,
+        },
+        {
+          header: "Show 5 Properties in area",
+          command: "#realestate [area_name]",
+          example: "#realestate new york",
+          additionalInfo: "If no area is specified, the default location will be San Jose.",
+          explanation: realestate,
+        },
+      ],
+      userGuidanceList: [
+        {
+          header: "Add a Transaction",
+          command: "#add [description] [amount]",
+          example: "#add Shopping 125",
+          explanation: add,
+        },
+        {
+          header: "Track Spending",
+          command: "#spend [description] [amount]",
+          example: "#spend Shopping 125",
+          explanation: spend,
+        },
+        {
+          header: "Buy Stock",
+          command: "#buy [stock_name] [quantity]",
+          example: "#buy TSLA 10",
+          explanation: buy,
+        },
+        {
+          header: "Sell Stock",
+          command: "#sell [stock_name] [quantity]",
+          example: "#sell TSLA 10",
+          explanation: sell,
+        },
+        {
+          header: "Add a Goal",
+          command: "#create goal",
+          example: null,
+          explanation: create,
+        },
+      ],
+      // generalAdvice: {
+      //   header: "General Financial Concepts & Advice",
+      //   instruction: "For general inquiries, use descriptive terms.",
+      //   explanation: general,
+      // },
       expandedItem: null,
     };
   },
@@ -235,7 +207,7 @@ userGuidanceList: [
   width: 25%;
   height: 80%;
   margin-top: 7%;
-  border: 3px solid black;
+  border: 3px solid #007bff;
   overflow: auto;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transform: translateX(100%);
@@ -285,7 +257,7 @@ userGuidanceList: [
 
 .brand-name {
   font-weight: bolder;
-  color: black;
+  color: #007bff;
 }
 
 .guidance-text ol {
@@ -307,7 +279,7 @@ userGuidanceList: [
 }
 
 .command {
-  background-color: rgb(0, 0, 0, 0.7);
+  background-color: rgb(0, 123, 255, 0.7);
   padding: 2px 5px;
   border-radius: 5px;
   line-height: normal;
@@ -334,7 +306,7 @@ userGuidanceList: [
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  border-right: 2px solid black;
+  border-right: 2px solid #007bff;
   display: flex;
   justify-content: end;
 }

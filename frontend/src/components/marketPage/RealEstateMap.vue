@@ -1,12 +1,4 @@
 <template>
-  <div class="market-summary">
-    <h3>Market Summary</h3>
-    <!-- only render the HTML when we actually have markdown -->
-    <div v-if="marketSummary" v-html="renderedSummary"></div>
-
-    <!-- otherwise show your fallback -->
-    <p v-else>Loading summary…</p>
-  </div>
   <div class="map-container">
     <div class="controls">
       <select v-model="selectedLocation" @change="zoomToLocation" class="location-dropdown">
@@ -15,7 +7,7 @@
         </option>
       </select>
     </div>
-    <div ref="mapContainer" class="leaflet-map" style="height:500px;"></div>
+    <div id="map"></div>
     <table v-if="displayedProperties.length" class="property-table">
       <thead>
         <tr>
@@ -40,8 +32,7 @@
       <button v-if="displayedProperties.length < properties.length" @click="showMore" class="show-more-button">
         Show More
       </button>
-      <button v-if="displayedProperties.length >= properties.length && properties.length > 10" @click="showLess"
-        class="show-less-button">
+      <button v-if="displayedProperties.length >= properties.length && properties.length > 10" @click="showLess" class="show-less-button">
         Show Less
       </button>
     </div>
@@ -49,17 +40,10 @@
 </template>
 
 <script>
-import { inject, onMounted, onBeforeUnmount, shallowRef, ref, nextTick, computed } from 'vue';
+import { onMounted, onBeforeUnmount, shallowRef, ref } from 'vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
-import MarkdownIt from 'markdown-it'
-
-const md = new MarkdownIt({
-  html: true,        // allow inline HTML
-  linkify: true,        // autolink URLs
-  typographer: true,
-})
 
 const API_KEY = process.env.VUE_APP_REAL_ESTATE_KEY;
 const BASE_URL = 'https://zillow-com1.p.rapidapi.com/propertyExtendedSearch';
@@ -81,23 +65,9 @@ const getPropertyData = async (location) => {
 };
 
 export default {
-  name: 'RealEstateMap',
-  props: {
-    marketSummary: {
-      type: String,
-      default: ''       // or "Loading summary…" if you like
-    }
-  },
-  setup(props) {
-    // const map = shallowRef(null);
-    // const markers = shallowRef([]);
-    const mapContainer = ref(null)
-    const map = ref(null)
-    const markers = ref([])
-    const clearMarkers = () => {
-      markers.value.forEach(m => m.remove())
-      markers.value = []
-    }
+  setup() {
+    const map = shallowRef(null);
+    const markers = shallowRef([]);
     const popupOpen = shallowRef(false);
     const properties = ref([]);
     const displayedProperties = ref([]);
@@ -110,24 +80,9 @@ export default {
     ]);
     const selectedLocation = ref(locations.value[0]);
     const propertiesToShow = ref(10);
-    const renderedSummary = computed(() => {
-      return props.marketSummary
-        ? md.render(props.marketSummary)
-        : ''
-    })
 
     onMounted(async () => {
-      await nextTick();
-      const el = mapContainer.value
-      if (!el) {
-        console.error('⚠️ mapContainer ref is still null!')
-        return
-      }
-      // now we know it's non-null
-      map.value = L.map(el).setView(
-        [selectedLocation.value.lat, selectedLocation.value.lng],
-        10
-      )
+      map.value = L.map('map').setView([selectedLocation.value.lat, selectedLocation.value.lng], 10);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -144,7 +99,6 @@ export default {
           closeAllPopups();
         }
       });
-
     });
 
     const loadProperties = async (location) => {
@@ -236,9 +190,6 @@ export default {
     });
 
     return {
-      marketSummary: props.marketSummary,
-      renderedSummary,
-      mapContainer,
       map,
       locations,
       selectedLocation,
@@ -254,13 +205,6 @@ export default {
 </script>
 
 <style>
-.market-summary {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
-}
-
 .map-container {
   position: relative;
   z-index: 1;
@@ -282,7 +226,7 @@ export default {
 
 .location-dropdown {
   padding: 10px 20px;
-  background-color: black;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
@@ -304,8 +248,7 @@ export default {
   overflow-x: auto;
 }
 
-.property-table th,
-.property-table td {
+.property-table th, .property-table td {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -353,8 +296,7 @@ export default {
     font-size: 12px;
   }
 
-  .property-table th,
-  .property-table td {
+  .property-table th, .property-table td {
     padding: 6px;
   }
 

@@ -3,62 +3,46 @@
     <div :class="['message-wrapper', { user: isUser, bot: !isUser }]">
       <img :src="avatarSrc" class="avatar" />
       <div class="message-content-wrapper">
-        <!-- Displayed text -->
-        <div
-          v-if="htmlContent"
-          class="message-content"
-          v-html="htmlContent"
-        ></div>
-        <div
-          v-else-if="markdown"
-          class="message-content markdown-content"
-          v-html="renderedMarkdown"
-        ></div>
-        <div v-else :class="['message-content', { typing: typing }]">
-          <div v-if="isThinking" class="thinking-animation">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+          <!-- Displayed text -->
+          <div v-if="htmlContent" :class="['message-content']" v-html="htmlContent"></div>
+          <div v-else  :class="['message-content', { 'typing': typing }]">
+            <div v-if="isThinking" class="thinking-animation">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <p v-else>{{ displayedText }}</p>
           </div>
-          <p v-else>{{ displayedText }}</p>
-        </div>
-        <!-- Sources -->
-        <section class="sources" v-if="sources && sources.length > 0">
-          <SearchResult :sources="sources" />
-        </section>
-        <!-- Videos -->
-        <section class="videos" v-if="videos && videos.length > 0">
-          <Video :videos="videos" />
-        </section>
-        <!-- Follow-up questions -->
-        <div
-          class="relevant-questions"
-          v-if="relevantQuestions && relevantQuestions.length > 0"
-        >
-          <h3>Suggested Question</h3>
-          <ul>
-            <li
-              v-for="(question, i) in relevantQuestions"
-              :key="i"
-              @click="handleQuestionClick(question)"
-            >
-              {{ question }}
-            </li>
-          </ul>
-        </div>
+          <!-- Sources -->
+            <section class="sources" v-if="sources && sources.length > 0">
+              <SearchResult :sources="sources" />
+            </section>
+            <!-- Videos -->
+            <section class="videos" v-if="videos && videos.length > 0">
+              <Video :videos="videos" />
+            </section>
+            <!-- Follow-up questions -->
+            <div class="relevant-questions" v-if="relevantQuestions && relevantQuestions.length > 0">
+              <h3>Suggested Question</h3>
+              <ul>
+                <li v-for="(question, i) in relevantQuestions" :key="i" @click="handleQuestionClick(question)">
+                  {{ question }}
+                </li>
+              </ul>
+            </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import SearchResult from "../components/chatbot/SearchResult.vue";
-import Video from "../components/chatbot/Video.vue";
-import { marked } from "marked"; // Import the marked library
+import SearchResult from '../components/chatbot/SearchResult.vue';
+import Video from '../components/chatbot/Video.vue';
 
 export default {
-  name: "MessageComponent",
+  name: 'MessageComponent',
   components: { SearchResult, Video },
+  // props: ['isUser', 'text', 'typing', 'timestamp', 'username', 'avatarSrc','htmlContent','sources','videos','relevantQuestions'],
   props: {
     isThinking: {
       type: Boolean,
@@ -70,7 +54,7 @@ export default {
     },
     text: {
       type: String,
-      default: "",
+      default: '',
     },
     typing: {
       type: Boolean,
@@ -78,19 +62,19 @@ export default {
     },
     timestamp: {
       type: String,
-      default: "",
+      default: '',
     },
     username: {
       type: String,
-      default: "",
+      default: '',
     },
     avatarSrc: {
       type: String,
-      default: "",
+      default: '',
     },
     htmlContent: {
       type: String,
-      default: "",
+      default: '',
     },
     sources: {
       type: Array,
@@ -104,10 +88,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    markdown: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -116,50 +96,15 @@ export default {
   },
   computed: {
     displayedText() {
-      if (!this.typing) {
+      if(!this.typing) {
         return this.text;
       }
       // Return the substring of text based on the current typing progress
       return this.text.substring(0, this.textProgress);
     },
-    renderedMarkdown() {
-      try {
-        if (this.markdown && this.text) {
-          // Configure marked options
-          marked.setOptions({
-            breaks: true, // Convert \n to <br>
-            gfm: true, // GitHub flavored markdown
-            headerIds: false, // Don't add ids to headers
-            mangle: false, // Don't escape HTML
-            sanitize: false, // Don't sanitize HTML
-          });
-
-          return marked(this.text);
-        }
-        return this.text;
-      } catch (error) {
-        console.error("Error rendering markdown:", error);
-        return this.text;
-      }
-    },
-  },
-  watch: {
-    typing(newValue) {
-      if (newValue) {
-        this.startTypingEffect();
-      }
-    },
-    text() {
-      if (this.typing) {
-        this.startTypingEffect();
-      }
-    },
   },
   methods: {
     startTypingEffect() {
-      // Reset the progress
-      this.textProgress = 0;
-
       const length = this.text.length;
       const typingSpeed = 5; // milliseconds per character
       let currentLength = 0;
@@ -173,8 +118,8 @@ export default {
       }, typingSpeed);
     },
     handleQuestionClick(question) {
-      this.$emit("question-click", question);
-    },
+      this.$emit('question-click', question);
+    }
   },
   mounted() {
     if (this.typing) {
@@ -211,90 +156,6 @@ tr:nth-child(odd) {
   background-color: #fff;
 }
 
-/* Markdown styles - using ::v-deep for Vue 2 or :deep for Vue 3 */
-:deep(.markdown-content h1),
-:deep(.markdown-content h2),
-:deep(.markdown-content h3),
-:deep(.markdown-content h4) {
-  margin-top: 16px;
-  margin-bottom: 8px;
-  color: inherit;
-  font-weight: bold;
-}
-
-:deep(.markdown-content h1) {
-  font-size: 1.8em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 0.3em;
-}
-
-:deep(.markdown-content h2) {
-  font-size: 1.5em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 0.3em;
-}
-
-:deep(.markdown-content h3) {
-  font-size: 1.3em;
-}
-
-:deep(.markdown-content h4) {
-  font-size: 1.1em;
-}
-
-:deep(.markdown-content ul),
-:deep(.markdown-content ol) {
-  padding-left: 2em;
-  margin: 8px 0;
-}
-
-:deep(.markdown-content li) {
-  margin: 4px 0;
-}
-
-:deep(.markdown-content p) {
-  margin: 8px 0;
-}
-
-:deep(.markdown-content strong) {
-  font-weight: bold;
-}
-
-:deep(.markdown-content em) {
-  font-style: italic;
-}
-
-:deep(.markdown-content blockquote) {
-  padding: 0 1em;
-  border-left: 0.25em solid rgba(255, 255, 255, 0.3);
-  margin: 8px 0;
-  opacity: 0.9;
-}
-
-:deep(.markdown-content code) {
-  font-family: "Courier New", Courier, monospace;
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-  font-size: 0.9em;
-}
-
-:deep(.markdown-content pre) {
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  border-radius: 6px;
-  overflow: auto;
-}
-
-/* Make sure user messages with markdown have proper styling */
-.user .message-content.markdown-content :deep(h1),
-.user .message-content.markdown-content :deep(h2),
-.user .message-content.markdown-content :deep(h3),
-.user .message-content.markdown-content :deep(h4),
-.user .message-content.markdown-content :deep(p),
-.user .message-content.markdown-content :deep(li) {
-  color: #000;
-}
 .message-wrapper {
   display: flex;
   align-items: flex-end;
@@ -302,9 +163,10 @@ tr:nth-child(odd) {
   margin-bottom: 16px;
   overflow: hidden;
   word-wrap: break-word;
-  padding: 0;
+  padding: 0 17.42%;
   container-name: chatComponent;
 }
+
 
 .message-content-wrapper {
   display: inline-flex;
@@ -314,19 +176,25 @@ tr:nth-child(odd) {
   word-wrap: break-word;
 }
 
+/*
+  .bot {
+    padding: 0 0 0 14%;
+  }
+
+  .user {
+    padding: 0 16% 0 0;
+  }
+
+  */
+
 .bot .message-content-wrapper {
   max-width: 100%;
   padding-right: calc(1% + 30px + 18px);
 }
 
-.user .message-content {
-  background-color: var(--chat-user-bg-color);
-}
-
 .user .message-content-wrapper {
   max-width: 60%;
 }
-
 
 .bot .avatar {
   width: 41px;
@@ -358,8 +226,8 @@ tr:nth-child(odd) {
   flex-direction: column;
   padding: 10px;
   border-radius: 16px;
-  background-color: var(--chat-message-bg-color);
-  color: var(--chat-text-color);
+  background-color: #007bff;
+  color: #fff;
   /* background-color: papayawhip;
     color: black; */
   border: 1px solid transparent;
@@ -368,15 +236,6 @@ tr:nth-child(odd) {
   line-height: 1.3;
 }
 
-/* Make sure markdown content also uses flex layout */
-.markdown-content {
-  display: block !important;
-}
-
-/* Override flex for paragraphs in markdown content */
-.markdown-content > p {
-  display: block;
-}
 
 /* thinking animation */
 .thinking-animation {
@@ -406,16 +265,16 @@ tr:nth-child(odd) {
 }
 
 @keyframes thinking {
-  0%,
-  100% {
-    opacity: 0.3;
+  0%, 100% { 
+    opacity: 0.3; 
     transform: scale(1);
   }
-  50% {
+  50% { 
     opacity: 1;
     transform: scale(1.2);
   }
 }
+
 
 @keyframes typing {
   from {
@@ -426,15 +285,16 @@ tr:nth-child(odd) {
   }
 }
 
-.message-container.is-user .message-content {
-  background-color: #f0f0f0;
-  color: #000;
-}
+  .message-container.is-user .message-content {
+    background-color: #f0f0f0;
+    color: #000;
+  }
 
-.combined-content {
+  .combined-content {
   display: flex;
   flex-direction: column;
 }
+
 
 .relevant-questions {
   width: 100%;
@@ -476,6 +336,7 @@ tr:nth-child(odd) {
     padding: 0;
   }
 }
+
 
 .sidebar-container {
   display: flex;
