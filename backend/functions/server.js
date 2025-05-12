@@ -36,6 +36,7 @@ import articleRoute from "../Endpoints/articleRoute.js";
 import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
 import notiRoute from "../Endpoints/notiRoute.js";
 import courseRoute from "../Endpoints/courseRoute.js";
+import vietStock from "../Endpoints/vietStock.js";
 
 dotenv.config();
 
@@ -171,6 +172,7 @@ router.use("/", filingsRoute);
 router.use("/", insiderTransactionRoute)
 router.use("/", notiRoute);
 router.use("/api/courses", courseRoute)
+router.use("/api/vietstock", vietStock);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
