@@ -55,8 +55,10 @@
                                 <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Negative }}</p>
                             </div>
                         </div>
-
-                        <p>Last Updated: {{ category.LastUpdated }}</p>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p>Last Updated: {{ category.LastUpdated }}</p>
+                            <a :href="`/market-analysis/insight/${category.type}`" style="color: white; text-decoration: none;">Insight</a>
+                        </div>
                     </div>
                 </div>
             </div>
