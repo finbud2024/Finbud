@@ -4,14 +4,14 @@
         <ChatBot :botMessage="templateChat" />
 
         <h1 class="page-title">
-            {{ marketAnalysis.marketAnalysisTitle }}
+            {{ t('marketAnalysisPage.marketAnalysisTitle') }}
         </h1>
 
         <!-- Market Analysis -->
         <div class="container-card-big">
             <div class="market-analysis-container">
                 <h2 class="component-title">
-                    {{ marketAnalysis.marketAnalysis.title }}
+                    {{ t('marketAnalysisPage.marketAnalysisTitle') }}
                 </h2>
                 <div class="card-container">
                     <div 
@@ -20,7 +20,7 @@
                         class="card"
                     >
                         <p class="card-title">
-                            {{ key }}
+                            {{ t('marketAnalysisPage.marketAnalysis.' + key) }}
                         </p>
 
                         <div 
@@ -37,27 +37,27 @@
                                 class="positive-detail-container"
                                 :style="{ width: category.Positive }"
                             >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">Positive</p>
+                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Positive') }}</p>
                                 <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Positive }}</p>
                             </div>
                             <div 
                                 class="neutral-detail-container"
                                 :style="{ width: category.Neutral }"
                             >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">Neutral</p>
+                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Neutral') }}</p>
                                 <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Neutral }}</p>
                             </div>
                             <div 
                                 class="negative-detail-container"
                                 :style="{ width: category.Negative }"
                             >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">Negative</p>
+                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Negative') }}</p>
                                 <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Negative }}</p>
                             </div>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
-                            <p>Last Updated: {{ category.LastUpdated }}</p>
-                            <a :href="`/market-analysis/insight/${category.type}`" style="color: white; text-decoration: none;">Insight</a>
+                            <p>{{ t('marketAnalysisPage.LastUpdated') }}: {{ category.LastUpdated }}</p>
+                            <a :href="`/market-analysis/insight/${category.type}`" style="color: white; text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                 style="width: calc(50% - 10px); padding-right: 0;"
             >
                 <div class="topic-container">
-                    <h2 class="component-title">{{ marketAnalysis.Topic.Topic }}</h2>
+                    <h2 class="component-title">{{ t('marketAnalysisPage.trend.title') }}</h2>
                     <div class="topic-card">
                         <div class="button-group">
                             <button
@@ -81,7 +81,7 @@
                                 :key="index"
                                 @click="selectedCategory = category"
                             >
-                                {{ category }}
+                                {{ t('marketAnalysisPage.trend.categories.' + category) }}
                             </button>
 
                             <div>
@@ -94,7 +94,7 @@
                                             v-for="(date, index) in marketAnalysis.Date"
                                             :key="index"
                                         >
-                                            {{ date }}
+                                            {{ t('marketAnalysisPage.' + date) }}
                                         </option>
                                     </select>
                                 </label>
@@ -105,7 +105,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Topic</th>
+                                    <th>{{ t('marketAnalysisPage.trend.topic') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -158,7 +158,7 @@
             >
                 <div class="topic-container">
                     <h2 class="component-title">
-                        {{ `${marketAnalysis.AI_News.Title}` }}
+                        {{ t('marketAnalysisPage.AINews') }}
                     </h2>
                     <div class="topic-card">
                         <div class="news-card" style="height: calc(30% - 5px);">
@@ -286,9 +286,9 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Topic</th>
+                                    <th>{{ t('marketAnalysisPage.trend.topic') }}</th>
                                     <th></th>
-                                    <th>Mentions</th>
+                                    <th>{{ t('marketAnalysisPage.mentions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -333,7 +333,10 @@ import marketAnalysisData from './MarketAnalysis/marketAnalysis.json';
 import trendingIcon from '@/assets/increaseTrend.png';
 import fallingIcon from '@/assets/decreaseTrend.png';
 import emergingIcon from '@/assets/emergingTrend.png';
+import { useI18n } from 'vue-i18n'
 import { ref, onMounted, watch } from 'vue'
+
+const { t } = useI18n()
 
 const marketAnalysis = ref(marketAnalysisData);
 const selectedCategory = ref(marketAnalysis.value.Topic.Categories[0]);

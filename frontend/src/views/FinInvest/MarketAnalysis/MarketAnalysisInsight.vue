@@ -4,14 +4,14 @@
         <div>
           <!-- Market Analysis -->
           <div style="width: 100%;">
-            <div class="title">Market Analysis</div>
+            <div class="title">{{ t('marketAnalysisPage.marketAnalysisTitle') }}</div>
             <div class="market-analysis-container">
                 <div class="market-analysis-card" style="background-color: #000000; color: white;">
                     <div>
                         <img :src="assessmentIcon" alt="assessment" class="market-analysis-icon"/>
                     </div>
                     <div class="assessment-container">
-                        <div style="font-size: 18px; margin-top: 0;">Assessments</div>
+                        <div style="font-size: 18px; margin-top: 0;">{{ t('marketAnalysisPage.insight.Assessment') }}</div>
                         <div style="display: flex; align-items: center;">
                             <div style="font-size: 60px; font-weight: 700;">45</div>
                         </div>
@@ -19,7 +19,7 @@
                 </div>
                 <div v-for="(item, index) in Level" :key="index" class="market-analysis-card" :class="getCardStyle(item)">
                     <div>
-                        <div style="font-size: 18px; font-weight: 600;">{{ item }}</div>
+                        <div style="font-size: 18px; font-weight: 600;">{{ t('marketAnalysisPage.' + item) }}</div>
                         <div style="font-size: 60px; font-weight: 700;">{{ LevelValue[index] }}</div>
                     </div>
                 </div>
@@ -29,14 +29,14 @@
           <!--Details-->
           <div style="width: 100%;">
             <div style="display: flex; justify-content: space-between;">
-                <div class="title" style="align-self: center;">Details</div>
+                <div class="title" style="align-self: center;">{{ t('marketAnalysisPage.insight.Details') }}</div>
                 <div class="button-group">
                     <button 
                       v-for="filter in filterOptions" 
                       :key="filter"
                       :class="{ active: selectedFilter === filter }" 
                       @click="setFilter(filter)"
-                    >{{ filter }}</button>
+                    >{{ t('marketAnalysisPage.' + filter) }}</button>
                 </div>
             </div>
             <div class="details-container">
@@ -44,9 +44,9 @@
                     <thead>
                         <tr>
                             <th style="width: 10%;">#</th>
-                            <th style="width: 15%;">Source</th>
-                            <th style="width: 60%;">Analysis</th>
-                            <th style="width: 15%;">Reference</th>
+                            <th style="width: 15%;">{{ t('marketAnalysisPage.insight.Source') }}</th>
+                            <th style="width: 60%;">{{ t('marketAnalysisPage.insight.Analysis') }}</th>
+                            <th style="width: 15%;">{{ t('marketAnalysisPage.insight.Reference') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,6 +82,7 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import marketAnalysis from './marketAnalysis.json'
 import assessmentIcon from '@/assets/behavior.png'
 import upIcon from '@/assets/up.png'
@@ -89,6 +90,7 @@ import downIcon from '@/assets/down.png'
 import flatIcon from '@/assets/flat.png'
 import Chart from './Chart.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 const type = ref(route.params.type);
 const marketAnalysisInsightTitle = ref(marketAnalysis.marketAnalysisInsight[type.value]);
