@@ -327,7 +327,7 @@
 <script setup>
 
 import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
-import marketAnalysisData from './marketAnalysis.json';
+import marketAnalysisData from './MarketAnalysis/marketAnalysis.json';
 import trendingIcon from '@/assets/increaseTrend.png';
 import fallingIcon from '@/assets/decreaseTrend.png';
 import emergingIcon from '@/assets/emergingTrend.png';
