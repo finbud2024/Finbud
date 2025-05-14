@@ -4,7 +4,6 @@ import vietStockGDP from '../Database Schema/vietStockGDP';
 import vietStockCPI from '../Database Schema/vietStockCPI';
 import vietStockImportExport from '../Database Schema/vietStockImportExport';
 import vietStockFDI from '../Database Schema/vietStockFDI';
-import { fixRequestBody } from 'http-proxy-middleware';
 
 const vietStockRoute = express.Router();
 
