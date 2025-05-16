@@ -37,7 +37,7 @@
 
 <script>
 import NavBar from "./components/basic/NavBar.vue";
-import FooterBar from "./components/basic/FooterBar.vue";
+import FooterBar from "./components/FooterBar.vue";
 import ChatBubble from "./components/chatPage/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";

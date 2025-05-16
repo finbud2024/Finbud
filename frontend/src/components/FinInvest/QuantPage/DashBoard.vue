@@ -3,7 +3,7 @@
 
     <section class="current-holding">
       <header>
-        <h1>Personal Stock Portfolio Dashb</h1>
+        <h1>Personal Stock Portfolio Dashboard</h1>
       </header>
       <h2>Current Holding</h2>
 

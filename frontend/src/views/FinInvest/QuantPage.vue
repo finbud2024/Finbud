@@ -57,6 +57,7 @@
           <div class="return-chart" id="return_graph">{{ ReturnGraph1 }}</div>
         </div>
         <br />
+        
         <div class="trend">
           <h4>Past Trend vs. Future Projections</h4>
           <div class="closing-price">
@@ -158,8 +159,11 @@
       <ChatBotTyping :message="technicalIndicators" />
       <ChatBotTyping :message="riskRatio" />
     </div>
+  <StockComparision/>
+
   <DashBoard />
   <MonteCarloSimulation />
+
 </div>
 </template>
 
@@ -167,12 +171,21 @@
 import MonteCarloSimulation from "./QuantMonteCarloSimulation.vue";
 import DashBoard from "@/components/finInvest/quantPage/DashBoard.vue";
 import ChatBotTyping from "@/components/finInvest/quantPage/ChatBotTyping.vue";
-
+import StockComparision from "@/components/finInvest/quantPage/StockComparision.vue";
+import IndicatorGraph from "@/components/finInvest/quantPage/IndicatorGraph.vue";
+import ReturnGraph from "@/components/finInvest/quantPage/ReturnGraph.vue";
+import GBMGraph from "@/components/finInvest/quantPage/GBMGraph.vue";
+import GARCHGraph from "@/components/finInvest/quantPage/GARCHGraph.vue";
 export default {
   components: {
     ChatBotTyping,
     DashBoard,
     MonteCarloSimulation,
+    StockComparision,
+    IndicatorGraph,
+    ReturnGraph,
+    GBMGraph,
+    GARCHGraph,
   },
   data() {
     return {

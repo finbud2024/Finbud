@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import BigGreenButton from "../components/Button/ChatNow.vue";
+import BigGreenButton from "../components/button/ChatNow.vue";
 import TutorialOverlay from "@/components/tutorial/TutorialOverlay.vue";
 import faqs from "@/views/hardcodeData/FAQs.js";
 import { useTypingEffect } from '@/composables/useTypingEffect';

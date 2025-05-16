@@ -1,4 +1,5 @@
 <template>
+  
   <table class="custom-table">
     <thead>
       <tr>
@@ -34,7 +35,7 @@
       </tr>
       <tr v-if="rows[0].showGraph">
         <td colspan="3" class="graph-cell">
-          <CompareClosePrice />
+          <CompareClosePrice :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" />
         </td>
       </tr>
 
@@ -51,7 +52,8 @@
       </tr>
       <tr v-if="rows[1].showGraph">
         <td colspan="3" class="graph-cell">
-          <IndicatorGraph />
+          <IndicatorGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :period="period" :returnType="returnType"
+    />
         </td>
       </tr>
 
@@ -68,7 +70,7 @@
       </tr>
       <tr v-if="rows[2].showGraph">
         <td colspan="3" class="graph-cell">
-          <ReturnGraph />
+          <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" />
         </td>
       </tr>
 
@@ -85,50 +87,53 @@
       </tr>
       <tr v-if="rows[4].showGraph">
         <td colspan="3" class="graph-cell">
-
-          <table class="custom-table">
-          <!--Sub Row 1-->
-          <tr>
-            <td> Close Value
-              <button class="toggle-btn" @click="toggleGraph(5)">
-                {{ rows[5].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[5].showGraph">
-            <td colspan="3" class="graph-cell">
-              <GBMGraph />
-            </td>
-          </tr>
-          <!--Sub Row 2-->
-          <tr>
-            <td> Daily Volatility
-              <button class="toggle-btn" @click="toggleGraph(6)">
-                {{ rows[6].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[6].showGraph">
-            <td colspan="3" class="graph-cell">
-              <GARCHGraph />
-            </td>
-          </tr>
-          </table>
         
 
         </td>
       </tr>
 
+        <!--Sub Row 1-->
+        <template v-if="rows[4].showGraph">
+        <tr>
+          <td> Close Value
+            <button class="toggle-btn" @click="toggleGraph(5)">
+              {{ rows[5].showGraph ? '▲' : '▼' }}
+            </button>
+          </td>
+          <td>Data A</td>
+          <td>
+            Data C
+          </td>
+        </tr>
+        <tr v-if="rows[5].showGraph">
+          <td colspan="3" class="graph-cell">
+            <GBMGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :returnType="returnType" />
+          </td>
+        </tr>
+        <!--Sub Row 2-->
+        <tr>
+          <td> Daily Volatility
+            <button class="toggle-btn" @click="toggleGraph(6)">
+              {{ rows[6].showGraph ? '▲' : '▼' }}
+            </button>
+          </td>
+          <td>Data A</td>
+          <td>
+            Data C
+          </td>
+        </tr>
+        <tr v-if="rows[6].showGraph">
+          <td colspan="3" class="graph-cell">
+            <GARCHGraph />
+          </td>
+        </tr>
+        
+      </template>
+
+
 
       <!-- Row 5 -->
+
       <tr>
         <td>Risk Ratio
           <button class="toggle-btn" @click="toggleGraph(7)">
@@ -140,87 +145,79 @@
       </tr>
       <tr v-if="rows[7].showGraph">
         <td colspan="3" class="graph-cell">
-          <table class="custom-table">
-          <tr>
-            <td>Alpha (NIFTY 50)
-              <button class="toggle-btn" @click="toggleGraph(7)">
-                {{ rows[7].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[7].showGraph">
-            <td colspan="3" class="graph-cell">
-            </td>
-          </tr>
-
-          <tr>
-            <td>Beta (NIFTY 50)
-              <button class="toggle-btn" @click="toggleGraph(7)">
-                {{ rows[7].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[7].showGraph">
-            <td colspan="3" class="graph-cell">
-            </td>
-          </tr>
-
-          <tr>
-            <td>Sharpe Ratio
-              <button class="toggle-btn" @click="toggleGraph(7)">
-                {{ rows[7].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[7].showGraph">
-            <td colspan="3" class="graph-cell">
-            </td>
-          </tr>
-          <tr>
-            <td>Sortino Ratio
-              <button class="toggle-btn" @click="toggleGraph(7)">
-                {{ rows[7].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[7].showGraph">
-            <td colspan="3" class="graph-cell">
-            </td>
-          </tr>
-          <tr>
-            <td>Standard Deviation
-              <button class="toggle-btn" @click="toggleGraph(7)">
-                {{ rows[7].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[7].showGraph">
-            <td colspan="3" class="graph-cell">
-            </td>
-          </tr>
-          </table>
         </td>
       </tr>
+      <template v-if="rows[7].showGraph">
+        <tr>
+          <td> Alpha(NIFTY 50)
+
+          </td>
+          <td>Data A</td>
+          <td>
+            Data C
+          </td>
+        </tr>
+        <tr v-if="rows[6].showGraph">
+          <td colspan="3" class="graph-cell">
+
+          </td>
+        </tr>
+        
+        <tr>
+          <td> Beta(NIFTY 50)
+          </td>
+          <td>Data A</td>
+          <td>
+            Data C
+          </td>
+        </tr>
+        <tr v-if="rows[6].showGraph">
+          <td colspan="3" class="graph-cell">
+
+          </td>
+        </tr>
+
+        <tr>
+          <td> Sharpe Ratio
+          </td>
+          <td>Data A</td>
+          <td>
+            Data C
+          </td>
+        </tr>
+        <tr v-if="rows[6].showGraph">
+          <td colspan="3" class="graph-cell">
+
+          </td>
+        </tr>
+        <tr>
+          <td> Sortino Ratio
+          </td>
+          <td>Data A</td>
+          <td>
+            Data C
+          </td>
+        </tr>
+        <tr v-if="rows[6].showGraph">
+          <td colspan="3" class="graph-cell">
+
+          </td>
+        </tr>
+        <tr>
+          <td> Standard Deviation
+
+          </td>
+          <td>Data A</td>
+          <td>
+            Data C
+          </td>
+        </tr>
+        <tr v-if="rows[6].showGraph">
+          <td colspan="3" class="graph-cell">
+          </td>
+        </tr>
+    </template>
+      
     </tbody>
   </table>
 </template>
@@ -232,8 +229,18 @@ import IndicatorGraph from './IndicatorGraph.vue';
 import GARCHGraph from './GARCHGraph.vue';
 import GBMGraph from './GBMGraph.vue';
 import ReturnGraph from './ReturnGraph.vue';
+import {
+  calculateAlphaBeta,
+  calculateSharpeRatio,
+  calculateSortinoRatio,
+  calculateStandardDeviation
+} from './backend/functions/quantRiskRatio.js';
+
 const availableTickers = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'TSLA']; // Example tickers
 const selectedTickers = reactive(['AAPL', 'MSFT']); // Default selected tickers for columns A and C
+const indicator = 'macd'           // 'ema', 'rsi', 'macd', 'bollinger'
+const period = 50                 // e.g., 20, 50, 200
+const returnType = 'cumulative'  // or 'daily'
 const rows = reactive([
   { showGraph: false },
   { showGraph: false },
@@ -283,6 +290,9 @@ function updateStock(columnIndex) {
   padding: 8px 16px;
   /*text-align: center;*/
 }
+.custom-table td{
+  border:none;
+}
 .sticky-header {
   position: sticky; /* Makes the header row stick */
   top: 0; /* Sticks the header to the top of the table */
@@ -296,6 +306,13 @@ function updateStock(columnIndex) {
   padding: 4px 8px;
   font-size: 12px;
   cursor: pointer;
+  background: none;
+  border: none;
+  color: #1d4ed8;
+}
+
+.toggle-btn:hover {
+  color: #0c3c91;
 }
 
 .graph-cell {

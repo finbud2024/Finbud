@@ -32,11 +32,7 @@
       <p v-if="marketSummary">{{ marketSummary }}</p>
       <p v-else>Loading market summary...</p>
     </div>
-    <CryptoPopup
-      v-if="showPopup"
-      :crypto="selectedCrypto"
-      @close="closePopup"
-    />
+
 
     <!-- Top Series Section -->
     <section class="top-series">
@@ -155,7 +151,7 @@
 <script>
 import axios from "axios";
 import TopSeries from "./TopSeries.vue";
-import CryptoPopup from "../marketPage/CryptoPopup.vue";
+
 import { gptServices } from "@/services/gptServices.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -168,7 +164,7 @@ export default {
   name: "CryptoWatch",
   components: {
     TopSeries,
-    CryptoPopup,
+ 
   },
   data() {
     return {
