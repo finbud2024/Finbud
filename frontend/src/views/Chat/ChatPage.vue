@@ -49,7 +49,7 @@
 
 <script>
 //COMPONENT IMPORT
-import ChatComponent from "@/components/chatPage/ChatComponent.vue";
+import ChatComponent from "@/components/ChatPage/ChatComponent.vue";
 import SideBar from "@/components/basic/SideBar.vue";
 import GuidanceModal from "@/components/GuidanceModal.vue";
 import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
