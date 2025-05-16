@@ -1,7 +1,6 @@
 <template>
-  <LoadingPage v-if="showLoadingPage" />
   <div class="nav-actions">
-    <NavBar v-if="showHeader" ref="headerBar" @logo-clicked="handleLogoClick" />
+    <NavBar v-if="showHeader" ref="headerBar" />
     <div class="content"></div>
   </div>
   <router-view
@@ -16,17 +15,14 @@
     :chatViewThreadID="threadId"
   />
   <img
+    v-if="showChatBubble"
     class="finbudBot"
-    :class="{ hidden: !showChatBubble }"
-    src="@/assets/botrmbg_sm.webp"
+    src="./assets/botrmbg.png"
     alt="Finbud"
-    width="60"
-    height="60"
-    fetchpriority="high"
-    decoding="async"
     @click="toggleChatBubble"
     :style="botPosition"
   />
+
   <div v-if="showBotMessage" class="bot-message-container">
     <div
       class="finbudBotMessage"
@@ -45,7 +41,6 @@ import FooterBar from "./components/basic/FooterBar.vue";
 import ChatBubble from "./components/chatPage/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
-import LoadingPage from "./views/Home/LoadingPage.vue";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {
@@ -62,43 +57,30 @@ export default {
     NavBar,
     FooterBar,
     ChatBubble,
-    LoadingPage,
   },
   data() {
     return {
-      botSize: { width: 60, height: 60 },
+      botSize: { width: 60, height: 60},
       threadId: "",
       chatBubbleActive: false,
       botMessage: "",
       displayedMessage: "",
       showBotMessage: true,
-      typingSpeed: 20,
+      typingSpeed: 20, 
       isTyping: false,
-      messageVisible: false,
-      botPosition: { right: "20px", bottom: "20px" },
-      showLoadingPage: false,
-      isInitialLoad: true,
-      logoClicked: false,
+      messageVisible: false, 
+      botPosition: { right: '20px', bottom: '20px' },
     };
   },
   async mounted() {
-    if (this.isInitialLoad) {
-      this.showLoadingPage = true;
-      this.loadingStartTime = Date.now();
-
-      const minLoadingTime = 1200;
-      setTimeout(() => {
-        this.showLoadingPage = false;
-        this.isInitialLoad = false;
-      }, minLoadingTime);
-    }
-
+    // Set the initial bot message
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener("click", this.handleClickOutside);
 
     console.log("App mounted, checking for tutorial flag");
     console.log("showTutorial query param:", this.$route.query.showTutorial);
 
+    // Check for isNewUser flag in localStorage as a fallback
     const isNewUser = localStorage.getItem("isNewUser") === "true";
     if (isNewUser && !this.$route.query.showTutorial) {
       console.log(
@@ -108,14 +90,12 @@ export default {
         path: this.$route.path,
         query: { ...this.$route.query, showTutorial: "true" },
       });
+      // Remove the flag after using it
       localStorage.removeItem("isNewUser");
     }
 
-    setTimeout(async () => {
-      await this.$store.dispatch("users/fetchCurrentUser");
-      await this.checkIfUserIsNew();
-      await this.checkDailyLoginReward();
-    }, 0);
+    // Fetch current user data
+    await this.$store.dispatch("users/fetchCurrentUser");
     const userData = this.$store.getters["users/currentUser"];
 
     if (this.isAuthenticated && userData) {
@@ -127,6 +107,7 @@ export default {
         });
         const historyThreadsData = historyThreads.data;
         if (historyThreadsData.length === 0) {
+          // If new user with no thread, create a new one
           console.log("No threads found, creating new thread for user");
           const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
           const reqBody = { userId };
@@ -141,8 +122,14 @@ export default {
         console.error("Error fetching threads:", error);
       }
 
+      // Check if user is new
+      await this.checkIfUserIsNew();
+
+      // Check localStorage for dark mode preference first
       const storedDarkMode = localStorage.getItem("darkMode");
+
       if (storedDarkMode !== null) {
+        console.log("Applying dark mode from localStorage:", storedDarkMode);
         if (storedDarkMode === "true") {
           document.documentElement.classList.add("dark-mode");
           document.body.classList.add("dark-mode");
@@ -150,19 +137,29 @@ export default {
           document.documentElement.classList.remove("dark-mode");
           document.body.classList.remove("dark-mode");
         }
-      } else {
-        document.documentElement.classList.remove("dark-mode");
-        document.body.classList.remove("dark-mode");
-        localStorage.setItem("darkMode", "false");
+      }
+      // If no localStorage setting, fall back to user settings
+      else if (userData.settings) {
+        if (userData.settings.darkMode) {
+          console.log("Applying dark mode from user settings");
+          document.documentElement.classList.add("dark-mode");
+          document.body.classList.add("dark-mode");
+        } else {
+          console.log("Applying light mode from user settings");
+          document.documentElement.classList.remove("dark-mode");
+          document.body.classList.remove("dark-mode");
+        }
       }
     }
 
+    // If showTutorial query parameter is present, ensure light mode for tutorial
     if (this.$route.query.showTutorial === "true") {
       console.log("Tutorial mode activated, forcing light mode");
       document.documentElement.classList.remove("dark-mode");
       document.body.classList.remove("dark-mode");
     }
 
+    // Add route watcher
     this.$watch(
       () => this.$route.path,
       (newPath) => {
@@ -170,19 +167,29 @@ export default {
           this.showEventHubGreeting();
         }
       },
-      { immediate: true }
+      { immediate: true } // Check immediately on mount
     );
-
-    const savedPosition = localStorage.getItem("finbudBotPosition");
+    
+    // Load saved position if exists
+    const savedPosition = localStorage.getItem('finbudBotPosition');
     if (savedPosition) {
       try {
         const parsed = JSON.parse(savedPosition);
+        // Validate position
         if (this.isValidPosition(parsed)) {
           this.botPosition = parsed;
         }
       } catch (e) {
-        console.warn("Invalid saved position", e);
+        console.warn('Invalid saved position', e);
       }
+    }
+
+    // Add new method to check if user is new
+    await this.checkIfUserIsNew();
+
+    // Check for daily login rewards if user is authenticated
+    if (this.$store.getters["users/isAuthenticated"]) {
+      this.checkDailyLoginReward();
     }
   },
   computed: {
@@ -210,6 +217,7 @@ export default {
     toggleChatBubble() {
       this.chatBubbleActive = !this.chatBubbleActive;
     },
+    // Add new method to check if user is new
     async checkIfUserIsNew() {
       if (this.isAuthenticated) {
         try {
@@ -222,6 +230,7 @@ export default {
 
           if (response.data.isNewUser) {
             console.log("User is new, showing tutorial");
+            // Add showTutorial query parameter
             this.$router.replace({
               path: this.$route.path,
               query: { ...this.$route.query, showTutorial: "true" },
@@ -237,6 +246,7 @@ export default {
       this.botMessage = message;
       this.displayedMessage = message;
 
+      // Add small delay before showing the message
       setTimeout(() => {
         this.messageVisible = true;
       }, 200);
@@ -264,6 +274,7 @@ export default {
         this.showBotMessage
       ) {
         this.messageVisible = false;
+        // Wait for fade out animation before hiding
         setTimeout(() => {
           this.botMessage = "";
           this.displayedMessage = "";
@@ -271,21 +282,30 @@ export default {
         }, 300);
       }
     },
-    showEventHubGreeting() {},
+    showEventHubGreeting() {
+      // Instead of static message, we'll wait for EventHub to emit the message
+      // The actual message will be handled by displayMessage method
+      // which is already connected to finbudBotResponse event
+    },
     async checkDailyLoginReward() {
+      // Get the last login date from localStorage
       const lastLogin = localStorage.getItem("lastLoginDate");
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
 
+      // If no previous login or last login was before today
       if (!lastLogin || lastLogin !== today) {
         try {
+          // Award 5 FinCoins for daily login
           await this.$store.dispatch("finCoin/earnFinCoins", {
             amount: 5,
             source: "daily_login",
             description: "Daily login reward",
           });
 
+          // Save today's date as last login
           localStorage.setItem("lastLoginDate", today);
 
+          // Show reward notification
           this.$notify({
             title: "Daily Login Reward",
             message: "You earned 5 FinCoins for logging in today!",
@@ -296,17 +316,6 @@ export default {
           console.error("Failed to award daily login FinCoins:", error);
         }
       }
-    },
-    handleLogoClick() {
-      this.showLoadingPage = true;
-      this.loadingStartTime = Date.now();
-
-      const minLoadingTime = 1200;
-      setTimeout(() => {
-        this.showLoadingPage = false;
-      }, minLoadingTime);
-
-      this.$router.push("/");
     },
   },
   beforeDestroy() {
@@ -319,14 +328,14 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
-  --finbudBotMessageBG: #c8c5c5;
-  --finbudBotMessageColor: #007bff;
+  --finbudBotMessageBG: #007bff;
+  --finbudBotMessageColor: white;
   --finbudBotMessageBorderColor: #007bff;
   --bg-primary: #ffffff;
   --text-primary: #333333;
-  --nav-bg: transparent;
-  --border-color: #f5f5f5;
-  --link-color: black;
+  --nav-bg: #ffffff;
+  --border-color: #dddddd;
+  --link-color: #007bff;
   --hover-bg: #024384;
   --card-bg: #ffffff;
   --content-bg: #ffffff;
@@ -357,9 +366,9 @@ body.dark-mode {
   /* Dark theme */
   --bg-primary: #1a1a1a;
   --text-primary: #ffffff;
-  --nav-bg: transparent;
+  --nav-bg: #242424;
   --border-color: #404040;
-  --link-color: #ffffff;
+  --link-color: #4da3ff;
   --hover-bg: #024384;
   --card-bg: #2d2d2d;
   --shadow-color: #0a6b10;
@@ -387,7 +396,6 @@ body.dark-mode {
 }
 /* Update content area */
 .content {
-  margin-top: 5%;
   background-color: var(--content-bg);
 }
 
@@ -438,7 +446,7 @@ html {
 }
 
 .content {
-  /* padding-top: 80px; */
+  padding-top: 80px;
   flex: 1;
 }
 
@@ -460,7 +468,7 @@ a:hover {
   transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
   cursor: grab;
   user-select: none;
-  touch-action: none;
+  touch-action: none; 
 }
 
 .finbudBot:active {
@@ -497,7 +505,7 @@ a:hover {
   border: 2px solid var(--finbudBotMessageBorderColor);
   border-radius: 15px;
   max-width: 300px;
-  background-color: black;
+  background-color: var(--finbudBotMessageBG);
   color: #ffffff;
 }
 
@@ -540,8 +548,7 @@ a:hover {
 
 .blinking-cursor {
   font-weight: 100;
-  font-size: 16px;
-  /* Reduced cursor size to match new text size */
+  font-size: 16px; /* Reduced cursor size to match new text size */
   color: #2e3d48;
   -webkit-animation: 1s blink step-end infinite;
   -moz-animation: 1s blink step-end infinite;
@@ -578,15 +585,10 @@ a:hover {
   to {
     color: transparent;
   }
-
   50% {
     color: #2e3d48;
   }
 }
 
 /* Keep other existing animation keyframes */
-.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
 </style>

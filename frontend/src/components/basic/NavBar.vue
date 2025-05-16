@@ -89,6 +89,7 @@
             <router-link to="/fund-letter" class="fund-letter" @click="toggleDropdownInvest(false)">Fund
               Letter</router-link>
             <router-link to="/docs" class="docs" @click="toggleDropdownData(false)">{{ $t("Fin Data") }}</router-link>
+            <router-link to="/macro-economic" class="macro-economic" @click="toggleDropdownData(false)">{{ $t("Macro Economic Data") }}</router-link>
           </div>
         </li>
 
@@ -217,6 +218,7 @@
           <router-link to="/docs" class="docs" @click="toggleDropdownMobile">
             {{ $t("Fin Data") }}
           </router-link>
+          <router-link to="/macro-economic" class="macro-economic" @click="toggleDropdownData(false)">{{ $t("Macro Economic Data") }}</router-link>
 
           <strong>{{ $t("finEdu") }}</strong>
           <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">{{ $t("quiz") }}</router-link>

@@ -22,16 +22,25 @@
         </div>
 
         <div class="data-body">
-            <DataCard title="Financials" :docsCount="data?.financials.length || 0">
-        <div v-for="item in data?.financials" :key="item.id" class="card-row">
-          <a :href="item.documentUrl" class="doc-link">{{ item.reportType }}</a>
-          <span>{{ ticker.toUpperCase() }}</span>
-          <span>{{ item.periodDate }}</span>
-          <span>{{ item.filingDate }}</span>
-        </div>
-      </DataCard>
+          
+          <DataCard title="Financials" :docsCount="data?.financials.length || 0">
+            <!-- Skeleton Loader -->
+            <div v-if="loadingCards">
+              <div class="skeleton-card"></div>
+            </div>
+            <div v-for="item in data?.financials" :key="item.id" class="card-row">
+              <a :href="item.documentUrl" class="doc-link">{{ item.reportType }}</a>
+              <span>{{ ticker.toUpperCase() }}</span>
+              <span>{{ item.periodDate }}</span>
+              <span>{{ item.filingDate }}</span>
+            </div>
+          </DataCard>
 
       <DataCard title="News" :docsCount="data?.news.length || 0">
+        <!-- Skeleton Loader -->
+        <div v-if="loadingCards">
+              <div class="skeleton-card"></div>
+            </div>
         <div v-for="item in data?.news" :key="item.id" class="card-row">
           <a :href="item.documentUrl" class="doc-link">{{ item.reportType }}</a>
           <span>{{ ticker.toUpperCase() }}</span>
@@ -41,6 +50,10 @@
       </DataCard>
 
       <DataCard title="Proxies" :docsCount="data?.proxies.length || 0">
+        <!-- Skeleton Loader -->
+        <div v-if="loadingCards">
+              <div class="skeleton-card"></div>
+            </div>
         <div v-for="item in data?.proxies" :key="item.id" class="card-row">
           <a :href="item.documentUrl" class="doc-link">{{ item.reportType }}</a>
           <span>{{ ticker.toUpperCase() }}</span>
@@ -50,6 +63,10 @@
       </DataCard>
 
       <DataCard title="Form 4" :docsCount="data?.form4.length || 0">
+        <!-- Skeleton Loader -->
+        <div v-if="loadingCards">
+              <div class="skeleton-card"></div>
+            </div>
         <div v-for="item in data?.form4" :key="item.id" class="card-row">
           <a :href="item.documentUrl" class="doc-link">Form 4</a>
           <span>{{ ticker.toUpperCase() }}</span>
@@ -91,6 +108,7 @@ const form4 = ref([])
 const earningTranscripts = ref([])
 const news = ref([])
 const earningItems = ref([]);
+const loadingCards = ref(true);
 const fields = [
     { key: 'symbol', label: 'Ticker' },
     { key: 'name', label: 'Company Name' },
@@ -114,10 +132,12 @@ function gotoCompanyReport(){
 }
 const loadFilings = async () => {
   try {
+    loadingCards.value = true;
     await fetchCompanyFilings(ticker.value)
 
     const filings = await getCompanyFilingsFromDB(ticker.value)
     console.log("filings in FE", filings)
+    loadingCards.value = false;
     return {
       financials: filings.filter(f => f.reportType === '10-K' || f.reportType === '10-Q').sort((a, b) => new Date(b.filingDate - a.filingDate)),
       news: filings.filter(f => f.reportType === '8-K').sort((a, b) => new Date(b.filingDate - a.filingDate)),
@@ -195,6 +215,23 @@ function handleTickerSelect(company) {
   padding: 0.4rem 0.5rem;
   border-radius: 0.4rem;
   transition: background 0.2s ease;
+}
+
+.skeleton-card {
+  height: 120px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
 }
 
 </style>

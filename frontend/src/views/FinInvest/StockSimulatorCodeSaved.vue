@@ -2276,7 +2276,7 @@
   }
   
   .preview-btn {
-    background-color: #007bff;
+    background-color: #5a5a5b;
     color: white;
   }
   
@@ -2285,7 +2285,7 @@
   }
   
   .preview-btn:hover {
-    background-color: #0069d9;
+    background-color: #5a5a5b;
   }
   
   .account-performance {
@@ -2358,7 +2358,7 @@
   }
   
   .chat-message {
-    background-color: #2196f3;
+    background-color: #000000;
     color: white;
     border-radius: 15px;
     padding: 12px 15px;
@@ -2373,7 +2373,7 @@
   
   .chat-message strong {
     font-weight: 600;
-    color: #007bff;
+    color: #000000;
   }
   
   .typing-cursor {
@@ -2491,13 +2491,13 @@
   }
   
   .navbar li:hover {
-    color: #007bff;
+    color: #000000;
     background: #e9f0fc;
   }
   
   .navbar li.active {
     font-weight: bold;
-    background: #007bff;
+    background: #000000;
     color: white;
   }
   .content {
@@ -2516,7 +2516,7 @@
   }
   
   .portfolio-container h2 {
-    color: #007bff;
+    color: #000000;
     margin-top: 0;
     margin-bottom: 20px;
   }
@@ -2797,7 +2797,7 @@
   .bot-message {
     margin-top: 10px;
     margin-left: 10px;
-    background: #007bff;
+    background: #000000;
     color: #ffffff;
     padding: 12px 18px;
     border-radius: 18px;
@@ -2993,7 +2993,7 @@
   }
   
   .portfolio-language-switcher button.active img {
-    border-color: #007bff;
+    border-color: #000000;
   }
   
   /* Update portfolio header to accommodate language switcher */
