@@ -42,8 +42,7 @@
                             :ref="el => { if (el) sectionRefs[category] = el }"
                             :title="'Phân tích ' + getTranslatedTitle(category)"
                             :description="analysisResults[category]?.description || ''"
-                            :headings="analysisResults[category]?.headings || []"
-                            :items="analysisResults[category]?.items || []" :icon-path="getIconPath(category)"
+                            :sections="analysisResults[category]?.sections || []" :icon-path="getIconPath(category)"
                             :info-icon-path="getInfoIconPath()" :info-text="getInfoText(category)"
                             :loading="(currentCategory === category && !analysisResults[category]?.description) || regeneratingCategory === category"
                             @regenerate="regenerateCategory(category)" @copy="copyCategory(category)"
@@ -58,7 +57,7 @@
 <script>
 import { defineComponent, reactive, ref, watch, nextTick } from "vue";
 import AnalysisSection from "./AnalysisSection.vue";
-import { processPestleAnalysis, regenerateCategory as regenerateCategoryApi, getPESTLECategories } from "./pestle.js";
+import { generateAndProcessRemainingPestleAnalysis, fetchPestleCategoryData, getPESTLECategories } from "./pestle.js";
 
 export default defineComponent({
     name: "Pestle",
@@ -77,8 +76,8 @@ export default defineComponent({
         const initialLoading = ref(true);
         const currentCategory = ref('');
         const visibleCategories = ref([]);
-        const regeneratingCategory = ref(null); // Add state for regeneration loading
-        const sectionRefs = ref({}); // To store refs of AnalysisSection components
+        const regeneratingCategory = ref(null);
+        const sectionRefs = ref({});
 
         const scrollToSection = (category) => {
             nextTick(() => {
@@ -92,51 +91,78 @@ export default defineComponent({
         const startAnalysis = async () => {
             try {
                 initialLoading.value = true;
-                sectionRefs.value = {}; // Reset refs on new analysis
-                const results = await processPestleAnalysis(props.industry);
+                visibleCategories.value = [];
+                // Clear previous results
+                for (const cat of orderedCategories) {
+                    delete analysisResults[cat];
+                }
+                sectionRefs.value = {};
 
-                // Store all results
-                Object.assign(analysisResults, results);
+                // 1. Fetch and display the Political category first
+                currentCategory.value = 'Political';
+                const politicalResult = await fetchPestleCategoryData(props.industry, 'Political');
+                analysisResults['Political'] = politicalResult;
 
                 initialLoading.value = false;
+                visibleCategories.value = ['Political'];
 
-                // Show first category
-                currentCategory.value = orderedCategories[0];
-                visibleCategories.value = [orderedCategories[0]];
-                // No scroll needed for the first one initially
+                // Asynchronously fetch the remaining categories in the background
+                generateAndProcessRemainingPestleAnalysis(props.industry)
+                    .then(remainingResults => {
+                        Object.entries(remainingResults).forEach(([category, result]) => {
+                            analysisResults[category] = {
+                                description: result.summary,
+                                sections: (result.sections || []).map(section => ({
+                                    heading: section.heading || "Không có tiêu đề",
+                                    items: (section.key_points || []).map(kp => ({
+                                        highlight: kp.highlight || "",
+                                        text: kp.text || "Không có nội dung"
+                                    }))
+                                }))
+                            };
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error fetching remaining PESTLE categories:", error);
+                        orderedCategories.forEach(cat => {
+                            if (cat !== 'Political' && !analysisResults[cat]) {
+                                analysisResults[cat] = { error: true, description: `Failed to load ${cat}.`, sections: [] };
+                            }
+                        });
+                    });
 
             } catch (error) {
-                console.error("Error in analysis:", error);
+                console.error("Error in initial analysis (Political):", error);
                 initialLoading.value = false;
+                analysisResults['Political'] = { error: true, description: "Failed to load Political analysis.", sections: [] };
             }
         };
 
-        const onSectionComplete = (category) => {
-            const currentIndex = orderedCategories.indexOf(category);
+        const onSectionComplete = (completedCategory) => {
+            const currentIndex = orderedCategories.indexOf(completedCategory);
             if (currentIndex < orderedCategories.length - 1) {
                 const nextCategory = orderedCategories[currentIndex + 1];
-                currentCategory.value = nextCategory;
-                visibleCategories.value.push(nextCategory);
-                // Scroll is handled by the currentCategory watcher
+                if (!visibleCategories.value.includes(nextCategory)) {
+                    currentCategory.value = nextCategory; // Update for loading state and scrolling
+                    visibleCategories.value.push(nextCategory);
+                }
             }
         };
 
         const regenerateCategory = async (category) => {
             if (!category) return;
-            currentCategory.value = category; // Keep track of which one is active
-            regeneratingCategory.value = category; // Set loading state before API call
-            // Scroll is handled by the regeneratingCategory watcher
+            currentCategory.value = category;
+            regeneratingCategory.value = category;
 
             try {
-                const result = await regenerateCategoryApi(props.industry, category);
+                const result = await fetchPestleCategoryData(props.industry, category);
                 // Ensure the specific category object exists before assigning properties
                 if (!analysisResults[category]) {
                     analysisResults[category] = {};
                 }
                 // Reset the specific category data before assigning new results
                 analysisResults[category].description = '';
-                analysisResults[category].headings = [];
-                analysisResults[category].items = [];
+                analysisResults[category].sections = []; // Changed from headings and items
                 // Assign new results after a short delay to allow UI update
                 await new Promise(resolve => setTimeout(resolve, 50)); // Small delay
                 analysisResults[category] = result;
@@ -199,8 +225,11 @@ export default defineComponent({
             if (!data) return;
 
             const textToCopy = `## ${getTranslatedTitle(category)} Analysis\n\n${data.description || ''}\n\n` +
-                (data.headings?.length > 0 ? `**Headings:**\n${data.headings.join('\n')}\n\n` : '') +
-                (data.items?.length > 0 ? `**Key Points:**\n${data.items.map(item => `• ${item.highlight ? `**${item.highlight}:** ` : ''}${item.text}`).join('\n')}` : '');
+                (data.sections?.length > 0 ? data.sections.map(section =>
+                    `### ${section.heading}\n${section.items.map(item =>
+                        `• ${item.highlight ? `**${item.highlight}:** ` : ''}${item.text}`
+                    ).join('\n')}`
+                ).join('\n\n') : '');
 
             navigator.clipboard.writeText(textToCopy)
                 .then(() => alert(`Phân tích ${getTranslatedTitle(category)} đã được sao chép vào clipboard!`))
@@ -236,9 +265,7 @@ export default defineComponent({
 /* General Container */
 .pestle-container {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding: 20px;
     background-color: #f9f9f9;
-    /* Light background for the whole page */
     max-width: 900px;
     margin: 20px auto;
     border-radius: 10px;

@@ -49,22 +49,23 @@
         <div class="analysis-content">
           <TypeWriter v-if="description" :text="description" :speed="200" @complete="onDescriptionComplete" />
 
-          <div v-if="headings && headings.length > 0 && descriptionComplete">
-            <TypeWriter v-for="(heading, index) in headings" :key="`heading-${index}`" :text="heading" :speed="200"
-              :delay="index * 100" tag="h3" @complete="onHeadingComplete(index)"
-              v-show="index <= completedHeadings.length" />
+          <div v-if="sections && sections.length > 0 && descriptionComplete">
+            <div v-for="(section, sectionIndex) in sections" :key="`section-${sectionIndex}`" class="content-section">
+              <TypeWriter v-if="shouldShowSectionHeading(sectionIndex)" :text="section.heading" :speed="200" tag="h3"
+                @complete="onSectionHeadingComplete(sectionIndex)" />
+              <ul class="analysis-list"
+                v-if="section.items && section.items.length > 0 && completedSectionHeadings[sectionIndex]">
+                <li v-for="(item, itemIndex) in section.items" :key="`item-${sectionIndex}-${itemIndex}`"
+                  class="analysis-item" v-show="shouldShowItem(sectionIndex, itemIndex)">
+                  <span class="bullet">•</span>
+                  <div class="item-content">
+                    <TypeWriter v-if="shouldShowItem(sectionIndex, itemIndex)" :text="getItemText(item)" :speed="200"
+                      :delay="0" @complete="onItemComplete(sectionIndex, itemIndex)" />
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
-
-          <ul class="analysis-list" v-if="items && items.length > 0 && headingsComplete">
-            <li v-for="(item, index) in items" :key="`item-${index}`" class="analysis-item"
-              v-show="shouldShowItem(index)">
-              <span class="bullet">•</span>
-              <div class="item-content">
-                <TypeWriter v-if="shouldShowItem(index)" :text="getItemText(item)" :speed="200" :delay="0"
-                  @complete="onItemComplete(index)" />
-              </div>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
@@ -72,7 +73,7 @@
 </template>
 
 <script>
-import TypeWriter from '../TypeWriter.vue';
+import TypeWriter from './TypeWriter.vue';
 
 export default {
   name: "AnalysisSection",
@@ -104,11 +105,7 @@ export default {
       type: String,
       required: true,
     },
-    headings: {
-      type: Array,
-      default: () => [],
-    },
-    items: {
+    sections: {
       type: Array,
       default: () => [],
     },
@@ -120,10 +117,10 @@ export default {
   data() {
     return {
       descriptionComplete: false,
-      completedHeadings: [],
-      completedItems: [],
-      headingsComplete: false,
-      currentItemIndex: -1
+      completedSectionHeadings: {}, // Tracks completion of section headings
+      currentSectionIndex: -1, // Tracks the current section being processed
+      currentItemIndices: {}, // Tracks current item index for each section {sectionIndex: itemIndex}
+      allSectionsComplete: false
     };
   },
   computed: {
@@ -149,36 +146,73 @@ export default {
     },
     onDescriptionComplete() {
       this.descriptionComplete = true;
+      if (this.sections.length > 0) {
+        this.currentSectionIndex = 0; // Start with the first section
+      } else {
+        this.allSectionsComplete = true;
+        this.$emit('section-complete'); // Emit if no sections
+      }
     },
-    onHeadingComplete(index) {
-      this.completedHeadings.push(index);
-      if (this.completedHeadings.length === this.headings.length) {
-        this.headingsComplete = true;
-        if (this.items.length > 0) {
-          this.currentItemIndex = 0;
+    onSectionHeadingComplete(sectionIndex) {
+      this.completedSectionHeadings[sectionIndex] = true;
+      if (this.sections[sectionIndex] && this.sections[sectionIndex].items && this.sections[sectionIndex].items.length > 0) {
+        this.currentItemIndices[sectionIndex] = 0; // Start with the first item of this section
+      } else {
+        // If section has no items, move to next section or complete
+        if (sectionIndex < this.sections.length - 1) {
+          this.currentSectionIndex = sectionIndex + 1;
+        } else {
+          this.allSectionsComplete = true;
+          this.$emit('section-complete');
         }
       }
     },
-    onItemComplete(index) {
-      this.completedItems.push(index);
-      if (index < this.items.length - 1) {
-        this.currentItemIndex = index + 1;
-      } else if (index === this.items.length - 1) {
-        this.$emit('section-complete');
+    onItemComplete(sectionIndex, itemIndex) {
+      const section = this.sections[sectionIndex];
+      if (itemIndex < section.items.length - 1) {
+        this.currentItemIndices[sectionIndex] = itemIndex + 1;
+      } else {
+        // Current section's items are complete, move to next section
+        if (sectionIndex < this.sections.length - 1) {
+          this.currentSectionIndex = sectionIndex + 1;
+        } else {
+          this.allSectionsComplete = true;
+          this.$emit('section-complete');
+        }
       }
     },
-    shouldShowItem(index) {
-      return index <= this.currentItemIndex;
+    shouldShowSectionHeading(sectionIndex) {
+      return sectionIndex <= this.currentSectionIndex;
+    },
+    shouldShowItem(sectionIndex, itemIndex) {
+      // Ensure the section heading itself has completed typing
+      if (!this.completedSectionHeadings[sectionIndex]) {
+        return false;
+      }
+
+      // If the section is before the current processing section, all its items should be visible
+      if (sectionIndex < this.currentSectionIndex) {
+        return true;
+      }
+
+      // If it's the current section being processed
+      if (sectionIndex === this.currentSectionIndex) {
+        // Show item if its index is less than or equal to the current item being typed in this section
+        return itemIndex <= (this.currentItemIndices[sectionIndex] !== undefined ? this.currentItemIndices[sectionIndex] : -1);
+      }
+
+      // If sectionIndex > this.currentSectionIndex, it means this section's items haven't started processing yet.
+      return false;
     },
     getItemText(item) {
       return item.highlight ? `${item.highlight}: ${item.text}` : item.text;
     },
     resetState() {
       this.descriptionComplete = false;
-      this.completedHeadings = [];
-      this.completedItems = [];
-      this.headingsComplete = false;
-      this.currentItemIndex = -1;
+      this.completedSectionHeadings = {};
+      this.currentSectionIndex = -1;
+      this.currentItemIndices = {};
+      this.allSectionsComplete = false;
     }
   },
   watch: {
@@ -365,6 +399,7 @@ details[open] .dropdown-arrow {
 .analysis-section {
   padding-bottom: 32px;
   border-bottom: 1px solid #e5e7eb;
+  padding: 20px;
 }
 
 .analysis-content {
@@ -422,6 +457,44 @@ details[open] .dropdown-arrow {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .analysis-section {
+    padding: 10px;
+  }
+
+  .section-content {
+    margin-left: 10px;
+  }
+
+  .analysis-list {
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .analysis-item {
+    padding-left: 0;
+  }
+
+  .bullet {
+    margin-right: 4px;
+  }
+
+  .section-title h2 {
+    font-size: 18px;
+  }
+
+  .info-box {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .tool-button {
+    padding: 6px 10px;
+    font-size: 13px;
   }
 }
 </style>

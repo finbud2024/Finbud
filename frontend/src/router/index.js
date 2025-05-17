@@ -25,6 +25,7 @@ import MortgageCalc from "@/views/Mortgage-calc.vue";
 import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 import AgentPage from "@/views/AgentPage.vue";
+import PestlePage from "@/views/FinAgent/PestlePage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
 const routes = [
   {
@@ -165,6 +166,11 @@ const routes = [
     path: "/agent/",
     name: "AgentPage",
     component: AgentPage,
+  },
+  {
+    path: "/pestle/",
+    name: "PestlePage",
+    component: PestlePage,
   },
   {
     path: "/forgot-password",
