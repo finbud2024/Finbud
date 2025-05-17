@@ -18,6 +18,7 @@ const messages = {
     quant: "Quant",
     quantSimulator: "Quant Simulator",
     macroEconomic: "Macro Economic Data",
+    marketAnalysis: "Market Analysis",
     finEdu: "Fin Edu",
     quiz: "Quiz",
     course: "Course",
@@ -877,6 +878,45 @@ const messages = {
           "Giải ngân": "Disbursed FDI"
         }        
       }
+    },
+    marketAnalysisPage: {
+      "marketAnalysisTitle": "Market Analysis",
+      "All": "All",
+      "Positive": "Positive",
+      "Negative": "Negative",
+      "Neutral": "Neutral",
+      "LastUpdated": "Last Updated",
+      "Insight": "Insight",
+      "Today": "Today",
+      "This Week": "This Week",
+      "This Month": "This Month",
+      "mentions": "Mentions",
+      "marketAnalysis": {
+        "Securities Company": "Securities Company",
+        "Press": "Press",
+        "Expert Community": "Expert Community"
+      },
+      "trend": {
+        "title": "Trend",
+        "topic": "Topic",
+        "categories": {
+          "All": "All",
+          "Securities": "Securities",
+          "Economy": "Economy",
+          "Industry": "Industry",
+          "Other": "Other"
+        },
+      },
+      "AINews": "AI News",
+      "insight": {
+        "Market Analysis": "Market Analysis",
+        "Assessment": "Assessment",
+        "Details": "Details",
+        "Source": "Source",
+        "Analysis": "Analysis",
+        "Reference": "Reference",
+        "Market Sentiment Over Time": "Market Sentiment Over Time",
+      }
     }
   },
   vi: {
@@ -896,6 +936,7 @@ const messages = {
     quant: "Định lượng",
     quantSimulator: "Mô phỏng Định lượng",
     macroEconomic: "Kinh Tế Vĩ Mô",
+    marketAnalysis: "Phân tích Thị trường",
     finEdu: "Fin Giáo dục",
     quiz: "Quiz",
     course: "Khoá học",
@@ -1736,6 +1777,45 @@ const messages = {
         }        
       }
     },
+    "marketAnalysisPage": {
+      "marketAnalysisTitle": "Phân Tích Thị Trường",
+      "All": "Tất Cả",
+      "Positive": "Tích Cực",
+      "Negative": "Tiêu Cực",
+      "Neutral": "Trung Lập",
+      "LastUpdated": "Cập Nhật Lần Cuối",
+      "Insight": "Nhận Định",
+      "Today": "Hôm Nay",
+      "This Week": "Tuần Này",
+      "This Month": "Tháng Này",
+      "mentions": "Đề Cập",
+      "marketAnalysis": {
+        "Securities Company": "Công Ty Chứng Khoán",
+        "Press": "Báo Chí",
+        "Expert Community": "Cộng Đồng Chuyên Gia"
+      },
+      "trend": {
+        "title": "Xu Hướng",
+        "topic": "Chủ Đề",
+        "categories": {
+          "All": "Tất Cả",
+          "Securities": "Chứng Khoán",
+          "Economy": "Kinh Tế",
+          "Industry": "Ngành Công Nghiệp",
+          "Other": "Khác"
+        }
+      },
+      "AINews": "Tin Tức AI",
+      "insight": {
+        "Market Analysis": "Phân Tích Thị Trường",
+        "Assessment": "Đánh Giá",
+        "Details": "Chi Tiết",
+        "Source": "Nguồn",
+        "Analysis": "Phân Tích",
+        "Reference": "Tham Khảo",
+        "Market Sentiment Over Time": "Tâm Lý Thị Trường Theo Thời Gian"
+      }
+    }
   }
 };
 
