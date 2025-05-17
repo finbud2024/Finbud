@@ -37,7 +37,7 @@ import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
 import notiRoute from "../Endpoints/notiRoute.js";
 import courseRoute from "../Endpoints/courseRoute.js";
 import vietStock from "../Endpoints/vietStock.js";
-import finCompareRoute from "../Endpoints/finCompareRoute.js";
+
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -173,7 +173,7 @@ router.use("/", insiderTransactionRoute)
 router.use("/", notiRoute);
 router.use("/api/courses", courseRoute)
 router.use("/api/vietstock", vietStock);
-router.use("/", finCompareRoute);
+
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
 app.use("/", router);

@@ -64,12 +64,6 @@
               @click="toggleDropdownInvest(false)"
               >Super Investors</router-link
             >
-            <router-link
-              to="/fin-compare"
-              class="fin-compare"
-              @click="toggleAboutDropdown(false)"
-              >FinCompare</router-link
-            >
           </div>
         </li>
 
