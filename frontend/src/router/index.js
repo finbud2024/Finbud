@@ -26,6 +26,7 @@ import SuperInvestors from "@/views/SuperInvestors.vue";
 import InvestorDetail from "@/views/InvestorDetail.vue";
 import AgentPage from "@/views/AgentPage.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
+import FinCompare from "@/views/FinCompare.vue";
 const routes = [
   {
     path: "/",
@@ -170,6 +171,11 @@ const routes = [
     path: "/forgot-password",
     name: "ForgotPassword",
     component: ForgotPassword,
+  },
+  {
+    path: "/fin-compare",
+    name: "FinCompare",
+    component: FinCompare,
   },
 
 ];
