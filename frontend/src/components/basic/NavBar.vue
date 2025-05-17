@@ -59,6 +59,12 @@
               @click="toggleDropdownInvest(false)"
               >{{ $t("superInvestors") }}</router-link
             >
+            <router-link
+              to="/fin-compare"
+              class="fin-compare"
+              @click="toggleDropdown(false)"
+              >{{ $t("finCompare") }}</router-link
+            >
           </div>
         </li>
 
