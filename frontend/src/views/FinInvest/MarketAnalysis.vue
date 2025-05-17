@@ -93,6 +93,7 @@
                                         <option
                                             v-for="(date, index) in marketAnalysis.Date"
                                             :key="index"
+                                            :value="date"
                                         >
                                             {{ t('marketAnalysisPage.' + date) }}
                                         </option>
