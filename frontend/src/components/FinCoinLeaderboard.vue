@@ -175,7 +175,7 @@ export default {
   top: 0%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
 }
 
@@ -196,9 +196,9 @@ export default {
 }
 
 .filter-btn.active {
-  background-color: #007bff;
+  background-color: #000408;
   color: white;
-  border-color: #007bff;
+  border-color: #000000;
 }
 
 .leaderboard-table {
@@ -228,8 +228,8 @@ export default {
   display: flex;
   padding: 15px 0;
   margin-top: 20px;
-  border-top: 2px dashed #007bff;
-  border-bottom: 2px dashed #007bff;
+  border-top: 2px dashed #000000;
+  border-bottom: 2px dashed #000000;
   background-color: rgba(0, 123, 255, 0.1);
   border-radius: 8px;
   align-items: center;
@@ -257,7 +257,7 @@ export default {
   width: 20%;
   text-align: center;
   font-weight: bold;
-  color: #007bff;
+  color: #fbc900;
 }
 
 .leaderboard-user-image {
