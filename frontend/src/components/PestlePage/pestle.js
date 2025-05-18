@@ -23,11 +23,11 @@ export async function generateAndProcessRemainingPestleAnalysis(industry) {
 Trả lời bằng một đối tượng JSON duy nhất. Đối tượng JSON phải có các khóa là "${categoriesToFetch.join('", "')}".
 Mỗi khóa phải tương ứng với một đối tượng chứa hai thuộc tính chính:
 1.  "summary": (string) Một tóm tắt ngắn gọn về các yếu tố của hạng mục đó.
-2.  "sections": (array of objects) Một danh sách các phần chính. Mỗi đối tượng trong mảng "sections" phải có hai thuộc tính:
+2.  "sections": (array of objects) Một danh sách gồm 3 đến 4 phần chính. Mỗi đối tượng trong mảng "sections" phải có hai thuộc tính:
     a.  "heading": (string) Tiêu đề chính cho phần đó.
-    b.  "key_points": (array of objects) Một danh sách các điểm chính thuộc về tiêu đề đó. Mỗi đối tượng "key_point" phải có hai thuộc tính:
+    b.  "key_points": (array of objects) Một danh sách gồm 3 đến 4 điểm chính thuộc về tiêu đề đó. Mỗi đối tượng "key_point" phải có hai thuộc tính:
         i.  "highlight": (string) Một tiêu đề ngắn hoặc điểm nhấn cho điểm chính đó. Có thể là một chuỗi trống.
-        ii. "text": (string) Nội dung chi tiết của điểm chính đó.
+        ii. "text": (string) Nội dung chi tiết của điểm chính đó. QUAN TRỌNG: Nội dung này PHẢI có độ dài khoảng 2 câu.
 
 Ví dụ cấu trúc cho một hạng mục (ví dụ: "Political"):
 {
@@ -59,7 +59,7 @@ Chỉ trả về đối tượng JSON. Không bao gồm bất kỳ văn bản gi
             model: "gemini-2.0-flash",
             contents: fullPrompt,
             generationConfig: {
-                maxOutputTokens: 2048,
+                maxOutputTokens: 300,
                 temperature: 0.3,
             }
         });
@@ -98,13 +98,13 @@ export async function fetchPestleCategoryData(industry, category) {
 Trả lời bằng một đối tượng JSON duy nhất. Đối tượng JSON phải có cấu trúc sau:
 {
   "summary": (string) "Một tóm tắt ngắn gọn về các yếu tố của hạng mục này.",
-  "sections": [ (array of objects)
+  "sections": [ (array of objects) // Cố gắng tạo ra 3 đến 4 đối tượng "section"
     {
       "heading": (string) "Tiêu đề chính cho phần này.",
-      "key_points": [ (array of objects)
+      "key_points": [ (array of objects) // Cố gắng tạo ra 3 đến 4 đối tượng "key_point" cho mỗi "section"
         {
           "highlight": (string) "Điểm nhấn ngắn (có thể trống).",
-          "text": (string) "Nội dung chi tiết của điểm chính."
+          "text": (string) "Nội dung chi tiết của điểm chính. QUAN TRỌNG: Nội dung này PHẢI có độ dài khoảng 2 câu."
         }
         // ... các key_points khác
       ]
@@ -118,7 +118,7 @@ Chỉ trả về đối tượng JSON. Không bao gồm bất kỳ văn bản gi
         model: "gemini-2.0-flash",
         contents: prompt,
         generationConfig: {
-            maxOutputTokens: 128,
+            maxOutputTokens: 40,
             temperature: 0.3,
         }
     });

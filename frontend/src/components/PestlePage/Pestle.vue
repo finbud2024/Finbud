@@ -98,7 +98,7 @@ export default defineComponent({
                 }
                 sectionRefs.value = {};
 
-                // 1. Fetch and display the Political category first
+                // Fetch and display the Political category first
                 currentCategory.value = 'Political';
                 const politicalResult = await fetchPestleCategoryData(props.industry, 'Political');
                 analysisResults['Political'] = politicalResult;

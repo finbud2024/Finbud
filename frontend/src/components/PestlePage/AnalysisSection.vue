@@ -47,7 +47,7 @@
           </button>
         </div>
         <div class="analysis-content">
-          <TypeWriter v-if="description" :text="description" :speed="200" @complete="onDescriptionComplete" />
+          <TypeWriter v-if="description" :text="description" :speed="300" @complete="onDescriptionComplete" />
 
           <div v-if="sections && sections.length > 0 && descriptionComplete">
             <div v-for="(section, sectionIndex) in sections" :key="`section-${sectionIndex}`" class="content-section">
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import TypeWriter from './TypeWriter.vue';
+import TypeWriter from '../TypeWriter.vue';
 
 export default {
   name: "AnalysisSection",
