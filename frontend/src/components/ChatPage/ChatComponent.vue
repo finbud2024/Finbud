@@ -18,6 +18,8 @@
 					@question-click="handleQuestionClick"
 				/>
 
+				<FinBudMenu v-if="message.isRouteOptions" @navigate="goTo" />
+
 				<!-- Only show ThinkingProcess for the current message when in think mode -->
 				<ThinkingProcess
 					v-if="
@@ -71,7 +73,7 @@ import TradingViewWidget from "../TradingViewWidget.vue";
 import ChatAgent from "./ChatAgent.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
-
+import FinBudMenu from "./FinBudMenu.vue";
 import ThinkingProcess from "../ThinkingProcess.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
@@ -105,6 +107,7 @@ export default {
 		FileIndicator,
 		ChatSuggestion,
 		ThinkingProcess,
+		FinBudMenu,
 	},
 	data() {
 		return {
@@ -194,6 +197,7 @@ export default {
 		// ---------------------------- RESPONSE MESSGE ----------------------------
 		async sendMessage(newMessage) {
 			const userMessage = newMessage.trim();
+
 			const language = await gptServices([
 				{
 					role: "user",
@@ -203,6 +207,72 @@ export default {
 					Now detect this message: "${userMessage}"`,
 				},
 			]);
+
+			const UserPage = await this.openai.chat.completions.create({
+				model: "gpt-4o",
+				messages: [
+					{
+
+    role: "system",
+    content: `You are a routing assistant for the FinBud website.
+
+Your job is to return the route for a requested page.
+
+List of available pages (English / Vietnamese):
+
+- About / Giới thiệu → /about
+- Technology / Công nghệ → /tech
+- Goal / Chi tiêu → /goal
+- Risk Analysis / Chi tiêu → /riskanalysis
+- Investment Calculator / Tính toán Đầu tư → /investment-calculator
+- Mortgage Calculator / Tính toán Thế chấp → /mortgage-calc
+- Super Investors / Đầu tư tài chính → /super-investors
+- Simulator / Mô phỏng → /simulator
+- AutoTrade AI → /autotrade-ai
+- Quant / Định lượng → /quant-analysis
+- Quant Simulator / Mô phỏng Định lượng → /quant-simulator
+- Fin Data / Dữ liệu thị trường → /doc
+- Quiz / Câu đố → /quizz
+- Event / Sự kiện → /event
+- Forum → /forum
+- Course / Khoá học → /course
+- Fin Agent / Agent → /agent
+
+Response rules:
+
+1. If the user asks about a **specific page**, return only the route.
+2. If the user asks what pages are available, return: /route
+3. If the request is not about a page, return: different
+
+Do not respond with anything else. No text, no formatting.
+`,
+					},
+					{
+						role: "user",
+						content: `Given the user message: "${userMessage}", return the route for the requested page. If the request is not about a page, return: different`,
+					},
+				],
+				temperature: 0.2,
+				max_tokens: 100,
+			});
+
+
+			console.log("UserPage:", UserPage.choices[0].message.content);
+			const userPage = UserPage.choices[0].message.content.trim();
+
+			if (userPage === "/route") {
+				this.messages.push({
+					isUser: false,
+					isRouteOptions: true,
+					timestamp: new Date().toLocaleTimeString(),
+				});
+				return;
+			} else if (userPage === "different") {
+				console.log("");
+			} else {
+				this.goTo(userPage);
+				return;
+			}
 
 			//UPDATE THREAD NAME BASED ON FIRST MESSAGE
 			if (this.messages.length === 1) {
@@ -1481,6 +1551,9 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 			}
 
 			return category;
+		},
+		goTo(path) {
+			this.$router.push(path);
 		},
 	},
 	mounted() {
