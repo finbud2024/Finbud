@@ -509,6 +509,7 @@ export default {
       <ChatBotTyping :message="riskRatio" />
     </div>
   </div>
+  <StockComparision/>
 
   <DashBoard />
   <MonteCarloSimulation />
@@ -518,12 +519,13 @@ export default {
 import MonteCarloSimulation from "./QuantMonteCarloSimulation.vue";
 import DashBoard from "@/components/FinInvest/QuantPage/DashBoard.vue";
 import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
-
+import StockComparision from "@/components/FinInvest/QuantPage/StockComparision.vue";
 export default {
   components: {
     ChatBotTyping,
     DashBoard,
     MonteCarloSimulation,
+    StockComparision,
   },
   data() {
     return {
