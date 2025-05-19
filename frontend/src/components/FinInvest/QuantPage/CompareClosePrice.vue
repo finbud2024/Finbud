@@ -26,15 +26,16 @@ ChartJS.register(
 
 const props = defineProps({
   tickerA: { type: String, required: true },
-  tickerB: { type: String, required: true }
+  tickerB: { type: String, required: true },
+  duration: { type: Number, default: 1 } // Duration in years (default: 1 year)
 });
 
 // Debug: Log props when they change
-watch(() => [props.tickerA, props.tickerB], (newVal) => {
+watch(() => [props.tickerA, props.tickerB, props.duration], (newVal) => {
   console.log('Props changed:', newVal);
 }, { immediate: true });
 
-const { tickerA, tickerB } = toRefs(props);
+const { tickerA, tickerB, duration } = toRefs(props);
 
 const chartData = ref({
   labels: [],
@@ -113,11 +114,16 @@ const loadChartData = async () => {
       parseCSV(tickerB.value)
     ]);
 
+    const now = new Date();
+    const startDate = new Date(now.getFullYear() - duration.value, now.getMonth(), now.getDate());
+
     const dates = Array.from(
       new Set([...Object.keys(tickerAData), ...Object.keys(tickerBData)])
-    ).sort((a, b) => new Date(a) - new Date(b));
+    )
+      .filter(date => new Date(date) >= startDate) // Filter dates based on duration
+      .sort((a, b) => new Date(a) - new Date(b));
 
-    console.log(`Found ${dates.length} common dates`);
+    console.log(`Found ${dates.length} dates within the last ${duration.value} year(s)`);
 
     chartData.value = {
       labels: dates,
@@ -141,7 +147,7 @@ const loadChartData = async () => {
       ]
     };
 
-    chartOptions.value.plugins.title.text = `${tickerA.value} vs ${tickerB.value} Close Prices`;
+    chartOptions.value.plugins.title.text = `${tickerA.value} vs ${tickerB.value} Close Prices (Last ${duration.value} Year(s))`;
     console.log('Chart data loaded successfully');
   } catch (error) {
     console.error('Error loading chart data:', error);
@@ -150,8 +156,8 @@ const loadChartData = async () => {
 };
 
 // Watch for prop changes
-watch([tickerA, tickerB], () => {
-  console.log('Tickers changed - reloading data');
+watch([tickerA, tickerB, duration], () => {
+  console.log('Tickers or duration changed - reloading data');
   loadChartData();
 }, { immediate: true });
 

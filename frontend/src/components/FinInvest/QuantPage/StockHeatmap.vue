@@ -55,8 +55,8 @@
             "isZoomEnabled": true,
             "hasSymbolTooltip": true,
             "isMonoSize": false,
-          "width": 1000,
-          "height": 1000
+          "width": 1200,
+          "height": 600
         });
   
         // Append to widget container

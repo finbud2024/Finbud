@@ -35,7 +35,7 @@
         </tr>
         <tr v-if="rows[0].showGraph">
           <td colspan="3" class="graph-cell">
-            <CompareClosePrice :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" />
+            <CompareClosePrice :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :duration="2" />
           </td>
         </tr>
   
@@ -70,7 +70,7 @@
         </tr>
         <tr v-if="rows[2].showGraph">
           <td colspan="3" class="graph-cell">
-            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" />
+            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" :duration="2" />
           </td>
         </tr>
   
@@ -124,7 +124,12 @@
           </tr>
           <tr v-if="rows[6].showGraph">
             <td colspan="3" class="graph-cell">
-              <GARCHGraph />
+                <GARCHGraph
+                    :tickerA="selectedTickers[0]"
+                    :tickerB="selectedTickers[1]"
+                    :indicator="indicator"
+                    :returnType="returnType"
+                />
             </td>
           </tr>
           
@@ -230,7 +235,7 @@ import {watch, ref } from 'vue';
 
   const availableTickers = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'TSLA']; // Example tickers
   const selectedTickers = reactive(['AAPL', 'MSFT']); // Default selected tickers for columns A and C
-  const indicator = 'macd'           // 'ema', 'rsi', 'macd', 'bollinger'
+  const indicator = 'ema'           // 'ema', 'rsi', 'macd', 'bollinger'
   const period = 50                 // e.g., 20, 50, 200
   const returnType = 'cumulative'  // or 'daily'
   const rows = reactive([

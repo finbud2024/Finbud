@@ -1,3 +1,5 @@
+
+<!--Close Price Compare using Alpha Vantage-->
 <template>
     <div class="chart-container">
       <canvas ref="chartRef"></canvas>

@@ -29,6 +29,10 @@
       type: String,
       default: 'cumulative', // 'daily' or 'cumulative'
       validator: (val) => ['daily', 'cumulative'].includes(val)
+    },
+    duration: {
+      type: Number,
+      default: 1 // Duration in years (default: 1 year)
     }
   });
   
@@ -96,9 +100,16 @@
     const dataA = await parseCSV(`/${props.tickerA}.csv`);
     const dataB = await parseCSV(`/${props.tickerB}.csv`);
   
-    const dates = dataA.map(d => d.date);
-    const pricesA = dataA.map(d => d.close);
-    const pricesB = dataB.map(d => d.close);
+    // Filter data based on duration
+    const now = new Date();
+    const startDate = new Date(now.getFullYear() - props.duration, now.getMonth(), now.getDate());
+  
+    const filteredDataA = dataA.filter(d => new Date(d.date) >= startDate);
+    const filteredDataB = dataB.filter(d => new Date(d.date) >= startDate);
+  
+    const dates = filteredDataA.map(d => d.date);
+    const pricesA = filteredDataA.map(d => d.close);
+    const pricesB = filteredDataB.map(d => d.close);
   
     const returnA = props.returnType === 'daily'
       ? computeDailyReturn(pricesA)
@@ -129,11 +140,11 @@
     };
   
     chartOptions.value.plugins.title.text =
-      `${props.returnType === 'daily' ? 'Daily' : 'Cumulative'} Return: ${props.tickerA} vs ${props.tickerB}`;
+      `${props.returnType === 'daily' ? 'Daily' : 'Cumulative'} Return: ${props.tickerA} vs ${props.tickerB} (Last ${props.duration} Year(s))`;
   };
   
   watch(
-    [() => props.tickerA, () => props.tickerB, () => props.returnType],
+    [() => props.tickerA, () => props.tickerB, () => props.returnType, () => props.duration],
     loadChart,
     { immediate: true }
   );
