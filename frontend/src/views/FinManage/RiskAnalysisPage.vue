@@ -195,16 +195,16 @@
 													<td data-label="Price">
 														{{
 															estate.lastSalePrice &&
-																!isNaN(estate.lastSalePrice)
-																? "$" + estate.lastSalePrice.toLocaleString()
-																: "N/A"
+														!isNaN(estate.lastSalePrice)
+														? "$" + estate.lastSalePrice.toLocaleString()
+														: "N/A"
 														}}
 													</td>
 													<td data-label="Status">
 														{{
 															estate.ownerOccupied === true
-																? "Inactive"
-																: "Active"
+														? "Inactive"
+														: "Active"
 														}}
 													</td>
 												</tr>
@@ -689,18 +689,18 @@ Give me a concise overall summary of these combined markets.
 			}
 			return x.toFixed(2);
 		},
-		// async getRealEstatePrice(){
-		//   const url = "https://api.rentcast.io/v1/properties/random";
-		//   try {
-		//     const response = await axios.get(url, {
-		//       headers: {
-		//         'X-Api-Key': apiKeyRealEstate
-		//       }
-		//     })
-		//     this.realEstateList = response.data;
-		//     this.loadingRealEstate = false;
-		//   } catch (error){
-		//     console.log('Error fetching real estate', error)
+// async getRealEstatePrice(){
+//   const url = "https://api.rentcast.io/v1/properties/random";
+//   try {
+//     const response = await axios.get(url, {
+//       headers: {
+//         'X-Api-Key': apiKeyRealEstate
+//       }
+//     })
+//     this.realEstateList = response.data;
+//     this.loadingRealEstate = false;
+//   } catch (error){
+//     console.log('Error fetching real estate', error)
 		//     this.errorRealEstate = 'Error fetching real estate';
 		//     this.loadingRealEstate = false;
 		//   }
