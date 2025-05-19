@@ -4,7 +4,7 @@ import LoginView from "@/views/Authentication/LoginPage.vue";
 import SignUp from "@/views/Authentication/SignUpPage.vue";
 import Home from "@/views/Home/HomePage.vue";
 import ChatPage from "@/views/Chat/ChatPage.vue";
-import SideBar from "@/components/basic/SideBar.vue";
+import SideBar from "@/components/Basic/SideBar.vue";
 import TechnologyPage from "@/views/Overview/TechnologyPage.vue";
 import PricingPage from "@/views/Unused/PricingPage.vue";
 import AboutUsPage from "@/views/Overview/AboutUsPage.vue";
@@ -29,7 +29,7 @@ import SuperInvestors from "@/views/FinManage/SuperInvestorsPage.vue";
 import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue";
 import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue"
 import AgentPage from "@/views/FinAgent/AgentPage.vue";
-import PestlePage from "@/views/Unused/PestlePage.vue";
+import PestlePage from "@/views/FinAgent/PestlePage.vue";
 import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
 import AutoTradeAI from "@/views/FinInvest/AutoTradeAIPage.vue";
 import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
@@ -39,6 +39,9 @@ import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
 import CourseCategoryPage from "@/views/FinEdu/CourseCategoryPage.vue";
 import CoursePage from "@/views/FinEdu/CoursePage.vue";
+import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
+import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
+import MarketAnalysisInsight from "@/views/FinInvest/MarketAnalysis/MarketAnalysisInsight.vue";
 
 const routes = [
   {
@@ -252,6 +255,21 @@ const routes = [
     path: '/courses/:categorySlug',
     name: 'CourseCategory', // Must match exactly what you use in router-link
     component: CourseCategoryPage,
+  },
+  {
+    path: "/macro-economic",
+    name: "MacroeconomicPage",
+    component: MacroeconomicPage,
+  },
+  {
+    path: "/market-analysis",
+    name: "MarketAnalysisPage",
+    component: MarketAnalysisPage,
+  },
+  {
+    path: "/market-analysis/insight/:type",
+    name: "MarketAnalysisInsight",
+    component: MarketAnalysisInsight,
   }
   
 ];

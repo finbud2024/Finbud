@@ -21,7 +21,7 @@
     <div class="card-stats">
       <div class="stat-item" v-for="stat in stats" :key="stat.label">
         <span class="label">{{ stat.label }}</span>
-        <span class="value">{{ stat.value }}</span>
+        <span class="value">{{ typeof stat.value === 'number' ? stat.value.toFixed(2) : stat.value }}</span>
       </div>
     </div>
   </div>

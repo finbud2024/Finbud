@@ -128,7 +128,7 @@ export default {
 }
 
 .performance-history-btn {
-  background-color: #2e5cb8;
+  background-color: #000000;
   color: white;
   border: none;
   padding: 10px 20px;

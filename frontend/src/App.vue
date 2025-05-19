@@ -40,8 +40,8 @@
 </template>
 
 <script>
-import NavBar from "./components/basic/NavBar.vue";
-import FooterBar from "./components/basic/FooterBar.vue";
+import NavBar from "@/components/Basic/NavBar.vue";
+import FooterBar from "@/components/Basic/FooterBar.vue";
 import ChatBubble from "./components/ChatPage/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
@@ -327,7 +327,8 @@ export default {
   --nav-bg: transparent;
   --border-color: #f5f5f5;
   --link-color: black;
-  --hover-bg: #024384;
+  /* --hover-bg: #024384; */
+  --hover-bg: #949393;
   --card-bg: #ffffff;
   --content-bg: #ffffff;
   --shadow-color: #e9e2e2;
@@ -359,8 +360,8 @@ body.dark-mode {
   --logo-color: #007bff;
   --content-bg: #736969;
   --chat-text-color: #ffffff;
-  --chat-message-bg-color: #2d2d2d;
-  --chat-user-bg-color: #007bff;
+  /* --chat-message-bg-color: #2d2d2d; */
+  --chat-user-bg-color: #2d2d2d;
   --chat-user-text-color: #ffffff;
   --black-in-light-mode: #ffffff;
   --white-in-light-mode: #000000;
