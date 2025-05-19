@@ -509,9 +509,21 @@ export default {
       <ChatBotTyping :message="riskRatio" />
     </div>
   </div>
-  <StockComparision/>
+  <StockComparision       
+  :dataSource="'SPX500'"
+  :grouping="'sector'"
+  :blockSize="'market_cap_basic'"
+  :blockColor="'change'"
+  :colorTheme="'light'"
+  :width="'100%'"
+  :height="'600px'"/>
 
-  <DashBoard />
+
+<div class="container">
+  <StockHeatmap      
+  :width="'100%'" 
+  :height="'1000px'" />
+</div>
   <MonteCarloSimulation />
 </template>
 
@@ -520,15 +532,28 @@ import MonteCarloSimulation from "./QuantMonteCarloSimulation.vue";
 import DashBoard from "@/components/FinInvest/QuantPage/DashBoard.vue";
 import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
 import StockComparision from "@/components/FinInvest/QuantPage/StockComparision.vue";
+import StockHeatmap from "@/components/FinInvest/QuantPage/StockHeatmap.vue";
 export default {
   components: {
     ChatBotTyping,
     DashBoard,
     MonteCarloSimulation,
     StockComparision,
+    StockHeatmap,
   },
   data() {
     return {
+      stockData: [
+        { symbol: 'AAPL', change: 0.0234 },
+        { symbol: 'MSFT', change: -0.0156 },
+        { symbol: 'GOOGL', change: 0.0567 },
+        { symbol: 'AMZN', change: -0.0321 },
+        { symbol: 'TSLA', change: 0.1123 },
+        { symbol: 'FB', change: -0.0089 },
+        { symbol: 'NVDA', change: 0.0456 },
+        { symbol: 'PYPL', change: -0.0678 },
+        // Add more stocks as needed
+      ],
       riskRatio: `<h5>Risk ratios</h5>
       <ul>
         <li>Alpha: Return performance as compared to benchmark of market</li>
@@ -614,6 +639,10 @@ export default {
       this.fetchData();
       this.fetchData2();
     },
+    handleStockClick(stock) {
+      console.log('Stock clicked:', stock);
+      // You can navigate to stock details or show a modal here
+    },
     fetchData() {
       // Update data based on selected options
       this.chart1_1 = `show chart 1 for ${this.selectedStock1}`;
@@ -651,6 +680,11 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  width: 100%;
+  height: 100%;
+  padding:20px;
+}
 .Navigation {
   background-color: #2b2b2b;
   padding: 20px;
