@@ -33,8 +33,8 @@
 
 			<!-- Sub Navigation Bar -->
 			<div class="sub-nav">
-				<button v-for="tab in ['stock', 'crypto', 'realEstate']" :key="tab"
-					:class="['tab-button', { active: activeTab === tab }]" @click="activeTab = tab">
+				<button v-for="tab in tabs" :key="tab" :class="['tab-button', { active: activeTab === tab }]"
+					@click="activeTab = tab">
 					{{ formatTabName(tab) }}
 				</button>
 			</div>
@@ -144,6 +144,18 @@
 					</div>
 				</div>
 
+
+				<!-- ForEx Tab Content -->
+				<div v-if="activeTab === 'forex'" class="tab-content">
+					<ForeignExchange />
+				</div>
+
+
+				<!-- Commodity Tab Content -->
+				<div v-if="activeTab === 'commodity'" class="tab-content">
+					<Commodity />
+				</div>
+
 				<!-- Real Estate Tab Content -->
 				<div v-if="activeTab === 'realEstate'" class="tab-content">
 					<div class="market-section">
@@ -207,6 +219,7 @@
 						</div>
 					</div>
 				</div>
+
 			</div>
 		</section>
 		<!-- Risk Chat Section -->
@@ -222,6 +235,9 @@ import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
 import StockWatch from "@/components/marketPage/StockWatch.vue";
 import VietnamStockWatch from "@/components/marketPage/VietnamStockWatch.vue";
 import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
+import ForeignExchange from '@/components/marketPage/ForeignExchange.vue';
+import Commodity from '@/components/marketPage/Commodity.vue';
+
 import {
 	fetchStockQuote,
 	fetchCryptoList,
@@ -244,10 +260,13 @@ export default {
 		StockWatch,
 		VietnamStockWatch,
 		RealEstateMap,
+		ForeignExchange,
+		Commodity,
 		RiskChat,
 	},
 	data() {
 		return {
+			tabs: ['stock', 'crypto', 'forex', 'commodity', 'realEstate'],
 			activeTab: "crypto",
 			// Bot Chat data
 			showBot: false,
@@ -688,6 +707,7 @@ Give me a concise overall summary of these combined markets.
 		// },
 		formatTabName(tab) {
 			if (tab === "realEstate") return "Real Estate";
+			if (tab === 'forex') return 'Foreign Exchange';
 			return tab.charAt(0).toUpperCase() + tab.slice(1);
 		},
 	},
@@ -983,8 +1003,8 @@ img {
 }
 
 .tab-button {
-	flex: 1 0 auto;
-	min-width: 30%;
+	flex: 1 1 auto;
+	/* min-width: 30%; */
 	padding: 8px 5px;
 	border: none;
 	background: none;
