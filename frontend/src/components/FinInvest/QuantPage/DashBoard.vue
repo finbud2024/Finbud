@@ -5,10 +5,10 @@
     </header>
     <section class="current-holding">
       <h2>Current Holding</h2>
+      
       <div class="margin-box-content">
-<!--        <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div>-->
-<!--        <div v-else-if="loadingCrypto" class="loading">Loading...</div>-->
         <div>
+          <div class="scrollable-table">
           <table>
             <thead>
             <tr>
@@ -26,7 +26,9 @@
               <th>Industry Sector</th>
             </tr>
             </thead>
+
             <tbody v-if="cryptoList.length">
+              
             <tr v-for="crypto in cryptoList" :key="crypto.name">
               <td>{{ crypto.name }}</td>
               <td><img :src="`https://s3-symbol-logo.tradingview.com/${crypto.logo}.svg`"
@@ -43,10 +45,12 @@
               <td>{{ crypto.sector }} </td>
             </tr>
             </tbody>
+          
           </table>
-<!--          <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />-->
+<!--         <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />--> 
         </div>
       </div>
+    </div>
     </section>
 
     <section class="industry-comparison">
@@ -317,6 +321,12 @@ export default {
 
 <style scoped>
 /* Add your styles here */
+.scrollable-table {
+  max-height: 400px; /* Set the maximum height for the table container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  margin-top: 10px; /* Add some spacing above the table */
+}
 .dashboard {
   width: 100%;
   padding: 20px;
@@ -431,6 +441,13 @@ h2 {
 table {
   width: 100%;
   border-collapse: collapse;
+}
+th {
+  position: sticky; /* Make the header sticky */
+  top: 0; /* Stick the header to the top of the container */
+  background-color: #0073e6; /* Background color for the header */
+  color: white; /* Text color for the header */
+  z-index: 1; /* Ensure the header stays above the table rows */
 }
 
 th, td {

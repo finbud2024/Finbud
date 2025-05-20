@@ -37,7 +37,15 @@
       v-model:selectedTickers="selectedTickers"
       :indicator="indicator"
       :period="period"
-      :returnType="returnType"/>
+      :returnType="returnType"
+           
+    :dataSource="'SPX500'"
+    :grouping="'sector'"
+    :blockSize="'market_cap_basic'"
+    :blockColor="'change'"
+    :colorTheme="'light'"
+    :width="'100%'"
+    :height="'600px'"/>
   
     <br /><br />
 
@@ -52,7 +60,7 @@
     </div>
   </div>
 
-
+<DashBoard/>
 <div class="container">
   <StockHeatmap      
   :width="'100%'" 
