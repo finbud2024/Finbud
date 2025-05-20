@@ -105,8 +105,8 @@
         </li>
 
         <li v-if="isAuthenticated" class="dropdown profile-dropdown">
-          <div class="profile-wrapper" @mouseenter="toggleProfileDropdown(true)"
-            @mouseleave="toggleProfileDropdown(false)">
+          <div class="profile-wrapper" ref="profileWrapper" @mouseenter="toggleProfileDropdown(true)"
+           >
             <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" loading="eager" />
             <div class="dropdown-profile" v-show="isProfileDropdownOpen">
               <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
@@ -300,6 +300,14 @@ export default {
       this.toggleDropdown("Profile", open);
     },
 
+    handleClickOutside(e) {
+      // if menu is open and click landed outside of our wrapper, close it
+      const wrap = this.$refs.profileWrapper;
+      if (this.isProfileDropdownOpen && wrap && !wrap.contains(e.target)) {
+        this.dropdowns.Profile = false;
+      }
+    },
+
     toggleDropdownMobile() {
       this.dropdowns.Mobile = !this.dropdowns.Mobile;
     },
@@ -357,6 +365,8 @@ export default {
       await this.$store.dispatch("users/fetchCurrentUser");
     }
 
+    document.addEventListener('click', this.handleClickOutside);
+
     const storedDarkMode = localStorage.getItem("darkMode");
     this.isDarkMode = storedDarkMode === "true";
     document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
@@ -369,6 +379,9 @@ export default {
     this.$router.afterEach(() => {
       this.closeDropdownMobile();
     });
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
 };
 </script>

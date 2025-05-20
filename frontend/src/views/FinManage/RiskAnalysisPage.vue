@@ -62,8 +62,6 @@
 										<thead>
 											<tr>
 												<th>Name</th>
-												<th>Rank</th>
-												<th>Tier</th>
 												<th>Price</th>
 												<th>Symbol</th>
 												<th>Change</th>
@@ -75,8 +73,6 @@
 													<img :src="crypto.iconUrl" :alt="crypto.name" />
 													{{ crypto.name }}
 												</td>
-												<td data-label="Rank">{{ crypto.rank }}</td>
-												<td data-label="Tier">{{ crypto.tier }}</td>
 												<td data-label="Price">{{ formatPrice(crypto.price) }} B</td>
 												<td data-label="Symbol">{{ crypto.symbol }}</td>
 												<td data-label="Change">{{ crypto.change }}</td>

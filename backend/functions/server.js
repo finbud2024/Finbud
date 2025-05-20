@@ -17,7 +17,6 @@ import newsRoute from "../Endpoints/newsRoute.js";
 import chatRoute from "../Endpoints/chatRoute.js";
 import cryptoRoute from "../Endpoints/cryptoRoute.js";
 import stockRoute from "../Endpoints/stockRoute.js";
-import fxRoutes from "../Endpoints/fx.js";
 import stockTransactionRoute from "../Endpoints/stockTransactionRoute.js";
 import goalRoute from "../Endpoints/goalRoute.js";
 import transactionRoute from "../Endpoints/transactionRoute.js";
@@ -38,7 +37,6 @@ import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
 import notiRoute from "../Endpoints/notiRoute.js";
 import courseRoute from "../Endpoints/courseRoute.js";
 import vietStock from "../Endpoints/vietStock.js";
-import { handler as fxCronHandler } from "../functions/fxCronJob.js";
 
 dotenv.config();
 
@@ -152,8 +150,6 @@ router.use("/", newsRoute);
 router.use("/", chatRoute);
 router.use("/", cryptoRoute);
 router.use("/", stockRoute);
-router.use("/api/fx", fxRoutes);
-router.use("/.netlify/functions/fxCron", fxCronHandler);
 router.use("/", stockTransactionRoute);
 router.use("/", goalRoute);
 router.use("/", transactionRoute);
