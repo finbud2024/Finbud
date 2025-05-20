@@ -62,6 +62,7 @@
               $t("macroEconomic") }}</router-link>
             <router-link to="/market-analysis" class="market-analysis" @click="toggleDropdownData(false)">{{
               $t("marketAnalysis") }}</router-link>
+            <router-link to="/viet-companies" class="viet-companies" @click="toggleDropdownInvest(false)">{{$t('vietCompanies.title')}}</router-link>
           </div>
         </li>
 
@@ -937,4 +938,19 @@ export default {
 }
 
 /* Only keep one instance of the keyframes animation */
+
+.floating-chat-window {
+  position: fixed;
+  left: 50%;
+  bottom: 50px;
+  transform: translateX(-50%);
+  z-index: 2002;
+  width: 370px;
+  max-width: 95vw;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  overflow: hidden;
+  border: 2px solid red; /* for debug */
+}
 </style>

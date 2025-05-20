@@ -21,3 +21,8 @@
   YARN_VERSION = "1.22.22"
   YARN_FLAGS = "--network-timeout 600000"
 
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server/api/:splat"
+  status = 200
+
