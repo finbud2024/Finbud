@@ -1,6 +1,6 @@
 import express from 'express';
-import StockTransaction from '../../Database Schema/StockTransaction.js';
-import UserHolding from '../Database Schema/UserHolding.js';
+import StockTransaction from '../../Database Schema/FinManage/StockTransaction.js';
+import UserHolding from '../../Database Schema/FinInvest/UserHolding.js';
 import User from '../../Database Schema/User.js';
 import validateRequest from '../../utils/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';

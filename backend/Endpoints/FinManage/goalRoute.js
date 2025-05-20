@@ -1,5 +1,5 @@
 import express from 'express';
-import Goal from '../../Database Schema/Goal.js';
+import Goal from '../../Database Schema/FinManage/Goal.js';
 import validateRequest from '../../utils/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 

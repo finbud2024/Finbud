@@ -1,5 +1,5 @@
 import express from 'express';
-import Portfolio from '../../Database Schema/Portfolio.js';
+import Portfolio from '../../Database Schema/FinInvest/Portfolio.js';
 import UserHolding from '../../Database Schema/FinInvest/UserHolding.js';
 import User from '../../Database Schema/User.js';
 import validateRequest from '../../utils/validateRequest.js';

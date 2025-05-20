@@ -1,6 +1,6 @@
 import express from 'express';
-import TopInvestors from "../../Database Schema/TopInvestors.js";
-import CompanyPortfolio from "../../Database Schema/CompanyPortfolio.js";
+import TopInvestors from "../../Database Schema/FinManage/TopInvestors.js";
+import CompanyPortfolio from "../../Database Schema/FinManage/CompanyPortfolio.js";
 import InvestorData from "../../Database Schema/MarketValue.js";
 import mongoose from 'mongoose';
 const superInvestorsRoute = express.Router();

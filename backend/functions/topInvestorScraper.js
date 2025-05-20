@@ -1,6 +1,6 @@
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
-import Investor from "../Database Schema/TopInvestors.js";
+import Investor from "../Database Schema/FinManage/TopInvestors.js";
 import { 
     getRandomUserAgent,
     connectToMongoDB,

@@ -1,5 +1,5 @@
 import express from 'express';
-import CryptoCurrency from '../../Database Schema/Crypto.js';
+import CryptoCurrency from '../../Database Schema/FinManage/Crypto.js';
 import moment from 'moment';
 import validateRequest from '../../utils/validateRequest.js';
 

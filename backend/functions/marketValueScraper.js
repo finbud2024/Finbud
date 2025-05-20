@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { fileURLToPath } from 'url';
-import Investor from '../Database Schema/TopInvestors.js';
+import Investor from '../Database Schema/FinManage/TopInvestors.js';
 import InvestorData from '../Database Schema/MarketValue.js';
 import { 
     getRandomUserAgent,

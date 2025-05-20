@@ -1,7 +1,7 @@
 import express from "express";
 import User from "../../Database Schema/User.js";
 import mongoose from "mongoose";
-import FinCoinTransaction from "../../Database Schema/FinCoinTransaction.js";
+import FinCoinTransaction from "../../Database Schema/FinManage/FinCoinTransaction.js";
 import { isAuthenticated } from "../../middleware/auth.js";
 
 const finCoinRouter = express.Router();

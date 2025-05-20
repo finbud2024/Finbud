@@ -1,5 +1,5 @@
 import express from 'express';
-import Noti from "../../Database Schema/Noti.js";
+import Noti from "../../Database Schema/Home/Noti.js";
 import validateRequest from '../../utils/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 

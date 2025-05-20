@@ -1,5 +1,5 @@
 import express from 'express';
-import Thread from '../../Database Schema/Thread.js';
+import Thread from '../../Database Schema/FinEdu/Thread.js';
 import validateRequest from '../../utils/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 

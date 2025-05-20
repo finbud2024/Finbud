@@ -1,5 +1,5 @@
 import express from 'express';
-import User from '../../Database Schema/Authentication/User.js';
+import User from '../../Database Schema/User.js';
 import validateRequest from '../../utils/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
