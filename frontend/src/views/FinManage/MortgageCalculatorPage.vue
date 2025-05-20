@@ -596,7 +596,7 @@ export default {
 h1 {
   font-size: 40px;
   margin-bottom: 20px;
-  color: #007bff;
+  color: black;
 }
 
 /* Layout */
@@ -839,7 +839,7 @@ h3 {
 
 .bot-message {
   margin-top: 10px;
-  background: #2196F3;
+  background: black;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 18px;

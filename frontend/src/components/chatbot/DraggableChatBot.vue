@@ -282,7 +282,7 @@
 .bot-message {
   margin-bottom: 10px;
   margin-left: 10px;
-  background: #007bff;
+  background: black;
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 18px;

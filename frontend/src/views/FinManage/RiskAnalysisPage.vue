@@ -908,7 +908,7 @@ img {
 
 .bot-message {
 	margin-top: 10px;
-	background: #2196f3;
+	background: black;
 	color: #ffffff;
 	padding: 12px 18px;
 	border-radius: 18px;
