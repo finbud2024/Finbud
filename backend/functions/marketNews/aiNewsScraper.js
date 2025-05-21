@@ -4,7 +4,7 @@ import {
   pool,
   articleExists,
   insertArticle,
-} from "../Database Schema/AINews/db.js";
+} from "../../Database Schema/aiNews/db.js";
 import dotenv from "dotenv";
 import { URL } from "url";
 
@@ -34,8 +34,9 @@ async function checkForAntiBot(page) {
   });
 }
 
-async function crawlFireAnt() {
+export async function crawlFireAnt() {
   let browser = null;
+  const insertedArticles = [];
   try {
     console.log("🚀 Launching browser...");
     browser = await puppeteer.launch({
@@ -44,23 +45,31 @@ async function crawlFireAnt() {
     });
 
     const page = await browser.newPage();
-    await page.setUserAgent(userAgents[Math.floor(Math.random() * userAgents.length)]);
-    await page.goto("https://fireant.vn/bai-viet", { waitUntil: "networkidle2" });
+    await page.setUserAgent(
+      userAgents[Math.floor(Math.random() * userAgents.length)]
+    );
+    await page.goto("https://fireant.vn/bai-viet", {
+      waitUntil: "networkidle2",
+    });
 
     const collectedLinks = new Set();
     let stop = false;
 
     while (!stop) {
       const links = await page.evaluate(() => {
-        const anchors = Array.from(document.querySelectorAll('a[href^="/bai-viet/"]'));
-        return anchors.map((a) => `https://fireant.vn${a.getAttribute("href")}`);
+        const anchors = Array.from(
+          document.querySelectorAll('a[href^="/bai-viet/"]')
+        );
+        return anchors.map(
+          (a) => `https://fireant.vn${a.getAttribute("href")}`
+        );
       });
 
       for (const link of links) {
         if (collectedLinks.has(link)) continue;
         collectedLinks.add(link);
         console.log(link);
-        if(collectedLinks.size > 10) {
+        if (collectedLinks.size > 99) {
           stop = true;
           break;
         }
@@ -85,10 +94,15 @@ async function crawlFireAnt() {
 
     for (const url of linksToCrawl) {
       const articlePage = await browser.newPage();
-      await articlePage.setUserAgent(userAgents[Math.floor(Math.random() * userAgents.length)]);
+      await articlePage.setUserAgent(
+        userAgents[Math.floor(Math.random() * userAgents.length)]
+      );
 
       try {
-        await articlePage.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        await articlePage.goto(url, {
+          waitUntil: "domcontentloaded",
+          timeout: 60000,
+        });
       } catch (err) {
         console.log(`⚠️ Timeout loading ${url}, skipping...`);
         await articlePage.close();
@@ -102,8 +116,10 @@ async function crawlFireAnt() {
       }
 
       const data = await articlePage.evaluate(() => {
-        const getText = (sel) => document.querySelector(sel)?.textContent?.trim() || null;
-        const getAttr = (sel, attr) => document.querySelector(sel)?.getAttribute(attr) || null;
+        const getText = (sel) =>
+          document.querySelector(sel)?.textContent?.trim() || null;
+        const getAttr = (sel, attr) =>
+          document.querySelector(sel)?.getAttribute(attr) || null;
 
         const title = getText("div.text-3xl.font-semibold");
         const contentEl = document.querySelector("#post_content");
@@ -117,7 +133,8 @@ async function crawlFireAnt() {
           const blocks = Array.from(contentEl.children);
           const lastBlock = blocks[blocks.length - 1];
           const lastLink = lastBlock?.querySelector('a[target="_blank"]');
-          const isAuthorBlock = lastLink && lastLink.innerText?.trim().endsWith("Link gốc");
+          const isAuthorBlock =
+            lastLink && lastLink.innerText?.trim().endsWith("Link gốc");
 
           if (isAuthorBlock) {
             author = lastLink.innerText.trim();
@@ -126,14 +143,25 @@ async function crawlFireAnt() {
           }
 
           blocks.forEach((block) => {
-            const walker = document.createTreeWalker(block, NodeFilter.SHOW_ALL, null, false);
+            const walker = document.createTreeWalker(
+              block,
+              NodeFilter.SHOW_ALL,
+              null,
+              false
+            );
             let blockText = "";
             while (walker.nextNode()) {
               const node = walker.currentNode;
-              if (node.nodeType === Node.ELEMENT_NODE && node.tagName === "IMG") {
-                const src = node.getAttribute("src") || node.getAttribute("data-src");
+              if (
+                node.nodeType === Node.ELEMENT_NODE &&
+                node.tagName === "IMG"
+              ) {
+                const src =
+                  node.getAttribute("src") || node.getAttribute("data-src");
                 if (src) {
-                  const full = src.startsWith("https") ? `https://fireant.vn${src}` : src;
+                  const full = src.startsWith("https")
+                    ? `https://fireant.vn${src}`
+                    : src;
                   imageUrls.push(full);
                   blockText += "[[IMAGE]] ";
                 }
@@ -146,7 +174,8 @@ async function crawlFireAnt() {
           });
         }
 
-        const publishedAt = getAttr(".line-clamp-2 time", "datetime") || new Date().toISOString();
+        const publishedAt =
+          getAttr(".line-clamp-2 time", "datetime") || new Date().toISOString();
 
         return {
           title,
@@ -165,17 +194,29 @@ async function crawlFireAnt() {
         ? new URL(data.originalUrl).hostname.replace(/^www\./, "")
         : "fireant.vn";
 
-      if (!data.title || !data.content || data.content === "[[IMAGE]]" || !data.originalUrl) {
-        console.log(`❌ Invalid content or missing original_url. Skipping ${url}`);
+      if (
+        !data.title ||
+        !data.content ||
+        data.content === "[[IMAGE]]" ||
+        !data.originalUrl
+      ) {
+        console.log(
+          `❌ Invalid content or missing original_url. Skipping ${url}`
+        );
         await articlePage.close();
         continue;
       }
 
       try {
-        await insertArticle(data);
+        const articleId = await insertArticle(data);
         console.log(`✅ Saved: ${data.title}`);
+        insertedArticles.push({
+          id: articleId,
+          title: data.title,
+          content: data.content,
+        });
       } catch (err) {
-        if (err.code === '23505') {
+        if (err.code === "23505") {
           console.log(`⚠️ Skipped duplicate during insert: ${data.fireantUrl}`);
         } else {
           console.error(`❌ Failed to insert: ${data.title}`, err);
@@ -187,12 +228,13 @@ async function crawlFireAnt() {
     }
 
     console.log("🎉 Done crawling FireAnt!");
+    return insertedArticles;
   } catch (err) {
     console.error("❌ Error during crawling:", err);
+    return insertedArticles;
   } finally {
     if (browser) await browser.close();
-    await pool.end();
   }
 }
 
-crawlFireAnt();
+// crawlFireAnt();

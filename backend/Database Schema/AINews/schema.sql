@@ -24,7 +24,7 @@ CREATE TABLE summary_bullets (
 
 CREATE TABLE tags (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) UNIQUE NOT NULL
+  name VARCHAR(200) UNIQUE NOT NULL
 );
 
 CREATE TABLE article_tags (

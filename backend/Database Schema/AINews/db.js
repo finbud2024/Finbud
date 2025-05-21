@@ -34,12 +34,13 @@ export async function insertArticle(article) {
     publishedAt
   } = article;
 
-  await pool.query(
+  const result = await pool.query(
     `INSERT INTO articles (
       title, content, image_urls, image_url,
       fireant_url, original_url, author,
       source, published_at
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+    RETURNING id`,
     [
       title,
       content,
@@ -52,4 +53,17 @@ export async function insertArticle(article) {
       publishedAt
     ]
   );
+
+  return result.rows[0].id;
+}
+
+// ❌ Delete an article by ID (including all dependent bullets/tags via ON DELETE CASCADE)
+export async function deleteArticleById(id) {
+  try {
+    await pool.query("DELETE FROM articles WHERE id = $1", [id]);
+    console.log(`🗑️ Deleted article ID ${id} from database.`);
+  } catch (err) {
+    console.error(`❌ Failed to delete article ID ${id}:`, err);
+    throw err;
+  }
 }

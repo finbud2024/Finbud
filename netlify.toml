@@ -13,6 +13,10 @@
   node_bundler = "esbuild"
   esbuild_options = { format = "esm" }
 
+[[functions]]
+  name = "marketNews"
+  schedule = "0 */3 * * *"
+
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
 
