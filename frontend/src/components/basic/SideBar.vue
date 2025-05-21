@@ -1,10 +1,9 @@
 <template>
   <aside class="side-bar">
     <div class="sidebar-header">
-      <!-- <span>Chat Threads</span> -->
       <router-link to="/">
         <div class="footer-image">
-          <img src="@/assets/home-page/FinBudPix.png" class="navbar-brand" alt="FinBud Logo">
+          <img src="@/assets/home-page/FinBudPix.png" class="logo-img" alt="FinBud Logo" />
         </div>
       </router-link>
     </div>
@@ -12,36 +11,74 @@
       <font-awesome-icon icon="fa-solid fa-plus" />
     </button>
     <ul class="thread-list">
-      <li
-        v-for="(thread, index) in threads"
-        :key="index"
-        :class="['thread', { clicked: thread.clicked }]"
-        @click="handleClick(index)"
-      >
-        <div v-if="!thread.editing" class="thread-item">
-          <div class="thread-name">{{ thread.name }}</div>
-          <div class="edit-btn" @click.stop="toggleDropdown(index)">
-            <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
-          </div>
-          <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
-            <div @click.stop="editThread(index)">
-              <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
-              <div>{{ $t('chatComponent.rename') }}</div>
+      <template v-if="groupedThreads.today.length">
+        <div class="group-label">Today</div>
+        <li v-for="thread in groupedThreads.today" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
+          <div v-if="!thread.editing" class="thread-item">
+            <div class="thread-name">{{ thread.name }}</div>
+            <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
+              <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
             </div>
-            <div @click.stop="promptDelete(index)" class="delete-thread">
-              <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
-              <div>{{ $t('chatComponent.delete') }}</div>
+            <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
+              <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
+                <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
+                <div>{{ $t('chatComponent.rename') }}</div>
+              </div>
+              <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
+                <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
+                <div>{{ $t('chatComponent.delete') }}</div>
+              </div>
             </div>
           </div>
-        </div>
-        <input
-          v-else
-          :ref="`editInput-${index}`"
-          v-model="thread.editedName"
-          @keyup.enter="saveThreadName(thread, index)"
-          @blur="cancelEdit(index)"
-        />
-      </li>
+          <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
+        </li>
+      </template>
+
+      <template v-if="groupedThreads.yesterday.length">
+        <div class="group-label">Yesterday</div>
+        <li v-for="thread in groupedThreads.yesterday" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
+          <div v-if="!thread.editing" class="thread-item">
+            <div class="thread-name">{{ thread.name }}</div>
+            <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
+              <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
+            </div>
+            <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
+              <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
+                <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
+                <div>{{ $t('chatComponent.rename') }}</div>
+              </div>
+              <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
+                <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
+                <div>{{ $t('chatComponent.delete') }}</div>
+              </div>
+            </div>
+          </div>
+          <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
+        </li>
+      </template>
+
+      <template v-if="groupedThreads.last30Days.length">
+        <div class="group-label">Previous 30 Days</div>
+        <li v-for="thread in groupedThreads.last30Days" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
+          <div v-if="!thread.editing" class="thread-item">
+            <div class="thread-name">{{ thread.name }}</div>
+            <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
+              <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
+            </div>
+            <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
+              <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
+                <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
+                <div>{{ $t('chatComponent.rename') }}</div>
+              </div>
+              <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
+                <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
+                <div>{{ $t('chatComponent.delete') }}</div>
+              </div>
+            </div>
+          </div>
+          <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
+        </li>
+      </template>
     </ul>
     <div v-if="showConfirmDeleteModal" class="delete-prompt-overlay">
       <div class="delete-prompt-content">
@@ -60,6 +97,8 @@
 
 <script>
 import axios from "axios";
+import { isToday, isYesterday, subDays, isAfter } from 'date-fns';
+
 export default {
   name: "SideBar",
   props: {
@@ -76,12 +115,22 @@ export default {
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
+    groupedThreads() {
+      const today = [], yesterday = [], last30Days = [];
+      this.threads.forEach(thread => {
+        const created = new Date(thread.creationDate);
+        if (isToday(created)) today.push(thread);
+        else if (isYesterday(created)) yesterday.push(thread);
+        else if (isAfter(created, subDays(new Date(), 30))) last30Days.push(thread);
+      });
+      return { today, yesterday, last30Days };
+    }
   },
   watch: {
     initialThreadName: {
       immediate: true,
       handler(newName) {
-        if (newName.length === 0 || newName === null) return;
+        if (!newName) return;
         this.threads.forEach((thread, index) => {
           if (thread.id === this.$store.getters["threads/getThreadID"]) {
             thread.editedName = newName;
@@ -106,6 +155,7 @@ export default {
         const reqBody = { userId };
         const thread = await axios.post(api, reqBody);
         newThread.id = thread.data._id;
+        newThread.creationDate = new Date();
         this.threads.unshift(newThread);
         this.selectThread(0);
       } catch (err) {
@@ -114,13 +164,10 @@ export default {
     },
     toggleDropdown(index) {
       this.threads[index].openDropdown = !this.threads[index].openDropdown;
-      for (let i = 0; i < this.threads.length; i++) {
-        if (i !== index) {
-          this.threads[i].openDropdown = false;
-        }
-      }
+      this.threads.forEach((thread, i) => {
+        if (i !== index) thread.openDropdown = false;
+      });
     },
-    //DELETE THREAD HANDLE
     promptDelete(index) {
       this.deleteIndex = index;
       this.showConfirmDeleteModal = true;
@@ -136,41 +183,26 @@ export default {
     async deleteThread(index) {
       const threadId = this.threads[index].id;
       try {
-        // Remove the thread from the list in the UI
         this.threads.splice(index, 1);
-
-        // If there are still threads left, select the first one; otherwise, clear the chat and thread state
         if (this.threads.length > 0) {
           this.selectThread(0);
         } else {
           this.currentThread = {};
           this.messages = [];
         }
-        // Step 1: delete all chats associated with this threadId
-        const deleteChatsApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`;
-        await axios.delete(deleteChatsApi);
-
-        // Step 2: delete the thread itself
-        const deleteThreadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
-        await axios.delete(deleteThreadApi);
+        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`);
+        await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`);
       } catch (err) {
         console.error("Error on deleting thread or its associated chats:", err);
       }
     },
-    //EDIT THREAD HANDLE
     editThread(index) {
-      this.threads.forEach((thread, idx) => {
-        thread.editing = idx === index;
-      });
+      this.threads.forEach((thread, idx) => thread.editing = idx === index);
       this.$nextTick(() => {
-        this.$nextTick(() => {
-          const refKey = `editInput-${index}`;
-          if (this.$refs[refKey] && this.$refs[refKey][0]) {
-            this.$refs[refKey][0].focus();
-          } else {
-            console.error(`Failed to find ref: ${refKey}`);
-          }
-        });
+        const refKey = `editInput-${index}`;
+        if (this.$refs[refKey] && this.$refs[refKey][0]) {
+          this.$refs[refKey][0].focus();
+        }
       });
     },
     async saveThreadName(thread, index) {
@@ -178,10 +210,8 @@ export default {
         try {
           thread.name = thread.editedName.trim();
           thread.editing = false;
-          const threadId = thread.id;
-          const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`;
-          const threadChanges = await axios.put(api, { title: thread.name });
-          console.log("Thread name saved:", threadChanges.data);
+          const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/${thread.id}`;
+          await axios.put(api, { title: thread.name });
           thread.editedName = null;
           thread.openDropdown = false;
         } catch (err) {
@@ -200,78 +230,50 @@ export default {
     },
     cancelEdit(index) {
       this.threads[index].editing = false;
-      console.log("cancel edit");
     },
     handleClick(index) {
-      if (event.detail == 1) {
+      if (event.detail === 1) {
         this.selectThread(index);
       }
-
-      if (event.detail == 2) {
-        //do nothing
-      }
     },
-    //FUNCTION TO HANDLE CLICK OUTSIDE OF DROPDOWN
     handleOutsideClick(event) {
-      let isClickInside =
-        this.$refs.dropdowns &&
-        Array.from(this.$refs.dropdowns).some((ref) =>
-          ref.contains(event.target)
-        );
-      if (!isClickInside) {
-        this.closeDropdowns();
-      }
+      let isClickInside = this.$refs.dropdowns && Array.from(this.$refs.dropdowns).some(ref => ref.contains(event.target));
+      if (!isClickInside) this.closeDropdowns();
     },
     closeDropdowns() {
-      this.threads.forEach((thread) => {
-        thread.openDropdown = false;
-      });
+      this.threads.forEach(thread => thread.openDropdown = false);
     },
   },
   async mounted() {
     if (this.isAuthenticated) {
       const userId = this.$store.getters["users/userId"];
       const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-      const historyThreads = await axios.get(threadApi);
-      const historyThreadsData = historyThreads.data;
+      const res = await axios.get(threadApi);
+      const historyThreadsData = res.data;
       if (historyThreadsData.length === 0) {
-        const newThread = {
-          name: "New Thread",
-          editing: false,
-          editedName: "New Chat",
-          messages: [],
-          openDropdown: false,
-        };
-        await this.addThread(newThread);
+        await this.addThread();
       } else {
-        historyThreadsData.forEach((threadData) => {
-          const thread = {
+        historyThreadsData.forEach(threadData => {
+          this.threads.unshift({
             id: threadData._id,
             name: threadData.title,
+            creationDate: new Date(threadData.creationDate),
             editing: false,
             editedName: threadData.title,
             messages: [],
             openDropdown: false,
-          };
-          this.threads.unshift(thread);
+          });
         });
       }
-      console.log(this.threads);
       if (this.$store.getters["threads/getThreadID"] === null) {
         this.selectThread(0);
       } else {
-        for (let i = 0; i < historyThreadsData.length; i++) {
-          if (
-            historyThreadsData[i]._id ===
-            this.$store.getters["threads/getThreadID"]
-          ) {
-            this.selectThread(historyThreadsData.length - i - 1);
-            break;
-          }
+        const matchIndex = historyThreadsData.findIndex(t => t._id === this.$store.getters["threads/getThreadID"]);
+        if (matchIndex !== -1) {
+          this.selectThread(historyThreadsData.length - matchIndex - 1);
         }
       }
     }
-    // Add event listener to handle click outside of dropdown
     document.addEventListener("click", this.handleOutsideClick);
   },
   beforeDestroy() {
@@ -301,6 +303,13 @@ export default {
   font-size: 1.5rem;
 }
 
+.logo-img {
+  max-width: 160px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
 .add-thread-btn {
   cursor: pointer;
   padding: 10px;
@@ -326,6 +335,14 @@ export default {
   cursor: pointer;
   transition: transform 0.3s;
   transform: scale(1.2);
+}
+
+.group-label {
+  margin: 0.75rem 0 0.25rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  opacity: 0.6;
 }
 
 .thread-list {
@@ -356,9 +373,10 @@ export default {
   color: white;
   cursor: pointer;
   background-color: var(--text-primary);
-  .edit-btn {
-    color: white;
-  }
+}
+
+.thread-list li:hover .edit-btn {
+  color: white;
 }
 
 .thread-list input {
@@ -373,12 +391,12 @@ export default {
 .thread.clicked {
   background-color: black;
   color: white;
-  .edit-btn {
-    color: white;
-  }
 }
 
-/* Dropdown */
+.thread.clicked .edit-btn {
+  color: white;
+}
+
 .dropdown {
   display: block;
   position: absolute;
@@ -412,7 +430,6 @@ export default {
   border-radius: 10px;
 }
 
-/* Delete Prompt */
 .delete-thread {
   color: red;
 }
@@ -433,7 +450,6 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
-  height: fit-content;
   background: var(--bg-primary);
   color: var(--text-primary);
   border-radius: 10px;
@@ -493,6 +509,7 @@ export default {
 .cancel-button:hover {
   background: var(--hover-bg);
 }
+
 .footer-image img {
   max-width: 200px;
   height: auto;
