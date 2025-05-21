@@ -111,45 +111,47 @@
             </div>
         </template>
 
-
         <!-- Table Display -->
         <div class="responsive-table">
-        <table class="table-container">
-            <thead>
-                <tr>
-                    <th
-                        v-for="(header, index) in tableHeaders"
-                        :key="header"
-                        class="header"
-                        :class="{
-                            'sticky-col': (index === 0 || index === 1) && selectedTable !== 'Tổng quan',
-                            'sticky-first': index === 0 && selectedTable !== 'Tổng quan',
-                            'sticky-second': index === 1 && selectedTable !== 'Tổng quan'
-                        }"
-                    >
-                        {{ header }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr 
-                    v-for="(row, rowIndex) in tableRows" 
-                    :key="rowIndex"
-                >   
-                    <td
-                        v-for="(cell, cellIndex) in row" 
-                        :key="cellIndex"
-                        :class="{
-                            'highlight-row': row.length >= 1 && row[1] === '',
-                            'sticky-col': (cellIndex === 0 || cellIndex === 1) && selectedTable !== 'Tổng quan',
-                            'sticky-first': cellIndex === 0 && selectedTable !== 'Tổng quan',
-                            'sticky-second': cellIndex === 1 && selectedTable !== 'Tổng quan'
-                        }"
-                    >
-                        {{ cell }} 
-                    </td>
-                </tr>
-            </tbody>
+            <div v-if="loading">
+                <div class="loading-container"></div>
+            </div>
+            <table v-else class="table-container">
+                <thead>
+                    <tr>
+                        <th
+                            v-for="(header, index) in tableHeaders"
+                            :key="header"
+                            class="header"
+                            :class="{
+                                'sticky-col': (index === 0 || index === 1) && selectedTable !== 'Tổng quan',
+                                'sticky-first': index === 0 && selectedTable !== 'Tổng quan',
+                                'sticky-second': index === 1 && selectedTable !== 'Tổng quan'
+                            }"
+                        >
+                            {{ header }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr 
+                        v-for="(row, rowIndex) in tableRows" 
+                        :key="rowIndex"
+                    >   
+                        <td
+                            v-for="(cell, cellIndex) in row" 
+                            :key="cellIndex"
+                            :class="{
+                                'highlight-row': row.length >= 1 && row[1] === '',
+                                'sticky-col': (cellIndex === 0 || cellIndex === 1) && selectedTable !== 'Tổng quan',
+                                'sticky-first': cellIndex === 0 && selectedTable !== 'Tổng quan',
+                                'sticky-second': cellIndex === 1 && selectedTable !== 'Tổng quan'
+                            }"
+                        >
+                            {{ cell }} 
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -167,6 +169,8 @@
     const templateChat = `
         ${t('macroEcon.chat')}
     `;
+    
+    const loading = ref(false);
 
     const tableRows = ref({});
     const tableHeaders = ref([]);
@@ -251,6 +255,7 @@
     }, { immediate: true });
 
     const getData = async (tName) => {
+        loading.value = true;
         const url = tableSources[tName];
         console.log('Start fetching data from api: ', url);
         let fType = '';
@@ -466,6 +471,9 @@
         catch (error) {
             console.log(`Error fetching table ${tName}: `, error);
         }
+        finally {
+            loading.value = false;
+        }
     };
 
     const fetchData = async(tName) => {
@@ -497,7 +505,6 @@
 </script>
 
 <style>
-/* Global styles for MacroEconomicData page */
 body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleHeader {
     background-color: black !important;
     color: white !important;
@@ -616,6 +623,16 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
 .select-box option {
     text-align: center;
     padding: 10px;
+}
+
+.loading-container {
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 100px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.2s ease-in-out infinite;
 }
 
 table {
