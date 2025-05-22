@@ -14,50 +14,40 @@
                     {{ t('marketAnalysisPage.marketAnalysisTitle') }}
                 </h2>
                 <div class="card-container">
-                    <div 
-                        v-for="(category, key, index) in marketAnalysis.marketAnalysis.components" 
-                        :key="key"
-                        class="card"
-                    >
+                    <div v-for="(category, key, index) in marketAnalysis.marketAnalysis.components" :key="key"
+                        class="card">
                         <p class="card-title">
                             {{ t('marketAnalysisPage.marketAnalysis.' + key) }}
                         </p>
 
-                        <div 
-                            class="percentage-bar"
-                            :style="{ width: category.Positive + category.Neutral + category.Negative }"
-                        >
+                        <div class="percentage-bar"
+                            :style="{ width: category.Positive + category.Neutral + category.Negative }">
                             <span class="positive" :style="{ width: category.Positive }"></span>
                             <span class="neutral" :style="{ width: category.Neutral }"></span>
                             <span class="negative" :style="{ width: category.Negative }"></span>
                         </div>
 
                         <div class="details-container">
-                            <div 
-                                class="positive-detail-container"
-                                :style="{ width: category.Positive }"
-                            >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Positive') }}</p>
+                            <div class="positive-detail-container" :style="{ width: category.Positive }">
+                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{
+                                    t('marketAnalysisPage.Positive') }}</p>
                                 <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Positive }}</p>
                             </div>
-                            <div 
-                                class="neutral-detail-container"
-                                :style="{ width: category.Neutral }"
-                            >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Neutral') }}</p>
+                            <div class="neutral-detail-container" :style="{ width: category.Neutral }">
+                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{
+                                    t('marketAnalysisPage.Neutral') }}</p>
                                 <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Neutral }}</p>
                             </div>
-                            <div 
-                                class="negative-detail-container"
-                                :style="{ width: category.Negative }"
-                            >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Negative') }}</p>
+                            <div class="negative-detail-container" :style="{ width: category.Negative }">
+                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{
+                                    t('marketAnalysisPage.Negative') }}</p>
                                 <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Negative }}</p>
                             </div>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
                             <p>{{ t('marketAnalysisPage.LastUpdated') }}: {{ category.LastUpdated }}</p>
-                            <a :href="`/market-analysis/insight/${category.type}`" style="color: white; text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
+                            <a :href="`/market-analysis/insight/${category.type}`"
+                                style="color: white; text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
                         </div>
                     </div>
                 </div>
@@ -66,35 +56,21 @@
 
         <!-- Trending AI News -->
         <div class="trend-ai-news-container">
-            <div 
-                class="container-card-big"
-                style="width: calc(50% - 10px); padding-right: 0;"
-            >
+            <div class="container-card-big" style="width: calc(50% - 10px); padding-right: 0;">
                 <div class="topic-container">
                     <h2 class="component-title">{{ t('marketAnalysisPage.trend.title') }}</h2>
                     <div class="topic-card">
                         <div class="button-group">
-                            <button
-                                class="button"
-                                :class="{selected: selectedCategory === category}"
-                                v-for="(category, index) in marketAnalysis.Topic.Categories"
-                                :key="index"
-                                @click="selectedCategory = category"
-                            >
+                            <button class="button" :class="{ selected: selectedCategory === category }"
+                                v-for="(category, index) in marketAnalysis.Topic.Categories" :key="index"
+                                @click="selectedCategory = category">
                                 {{ t('marketAnalysisPage.trend.categories.' + category) }}
                             </button>
 
                             <div>
                                 <label>
-                                    <select 
-                                        v-model="selectedDate"
-                                        class="date-label"
-                                    >
-                                        <option
-                                            v-for="(date, index) in marketAnalysis.Date"
-                                            :key="index"
-                                            :value="date"
-                                        >
+                                    <select v-model="selectedDate" class="date-label">
+                                        <option v-for="(date, index) in marketAnalysis.Date" :key="index" :value="date">
                                             {{ t('marketAnalysisPage.' + date) }}
                                         </option>
                                     </select>
@@ -110,38 +86,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
-                                    v-for="(row, rowIndex) in tableRows"
-                                    :key="rowIndex"
-                                >
+                                <tr v-for="(row, rowIndex) in tableRows" :key="rowIndex">
                                     <td>{{ row.Rank }}</td>
                                     <td>
-                                        <a
-                                            :style="{fontSize: '14px', fontWeight: '600', color: 'black'}"
-                                            :href="row.Link"
-                                        >
+                                        <a :style="{ fontSize: '14px', fontWeight: '600', color: 'black' }"
+                                            :href="row.Link">
                                             {{ row.Title }}
                                         </a>
                                         <div style="display: flex; gap: 10px;">
-                                            <div
-                                                :style="{fontSize: '12px', fontWeight: '400'}"
-                                            >
+                                            <div :style="{ fontSize: '12px', fontWeight: '400' }">
                                                 {{ row.Time }}
                                             </div>
-                                            <div
-                                                :style="{display: 'flex', gap: '5px'}"
-                                            >
-                                                <img 
-                                                    v-if="row.Tag === 'Trending' || row.Tag === 'Emerging' || row.Tag === 'Falling'"
-                                                    :src="getIcon(row.Tag)" 
-                                                    :style="{width: '15px', height: '15px'}" 
-                                                />
-                                                <div
-                                                    :style="{fontSize: '12px', fontWeight: '700'}"
-                                                    :class="{'trending': row.Tag === 'Trending', 'emerging': row.Tag === 'Emerging', 'falling': row.Tag === 'Falling'}"
-                                                >
+                                            <div :style="{ display: 'flex', gap: '5px' }">
+                                                <img v-if="row.Tag === 'Trending' || row.Tag === 'Emerging' || row.Tag === 'Falling'"
+                                                    :src="getIcon(row.Tag)"
+                                                    :style="{ width: '15px', height: '15px' }" />
+                                                <div :style="{ fontSize: '12px', fontWeight: '700' }"
+                                                    :class="{ 'trending': row.Tag === 'Trending', 'emerging': row.Tag === 'Emerging', 'falling': row.Tag === 'Falling' }">
                                                     {{ row.Tag }}
-                                            </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -151,38 +114,28 @@
 
                     </div>
                 </div>
-            </div>  
+            </div>
 
-            <div 
-                class="container-card-big"
-                style="width: calc(50% - 10px); padding-left: 0;"
-            >
+            <div class="container-card-big" style="width: calc(50% - 10px); padding-left: 0;">
                 <div class="topic-container">
                     <h2 class="component-title">
                         {{ t('marketAnalysisPage.AINews') }}
                     </h2>
                     <div class="topic-card">
-                        <div class="news-card" style="height: calc(30% - 5px);">
-                            <img 
-                                :src="marketAnalysis.AI_News.AI_News[0].link" 
-                                alt="AI News"
-                                class="news-image"
-                            >
+                        <div class="news-card" style="height: calc(30% - 5px);" v-if="largeNewsCard">
+                            <img :src="largeNewsCard.image" alt="AI News" class="news-image">
                             <div class="news-content">
-                                <a class="news-title clamp-text" :href="marketAnalysis.AI_News.AI_News[0].link" target="_blank">
-                                    {{ marketAnalysis.AI_News.AI_News[0].title }}
+                                <a class="news-title clamp-text" :href="largeNewsCard.link" target="_blank">
+                                    {{ largeNewsCard.title }}
                                 </a>
                                 <p class="news-datetime">
-                                    {{ marketAnalysis.AI_News.AI_News[0].datetime }}
+                                    {{ largeNewsCard.datetime }}
                                 </p>
                                 <p class="clamp-text">
-                                    {{ marketAnalysis.AI_News.AI_News[0].content }}
+                                    {{ largeNewsCard.content }}
                                 </p>
                                 <div class="news-tags-container">
-                                    <div
-                                        v-for="(tag, index) in marketAnalysis.AI_News.AI_News[0].tags"
-                                        :key="index"
-                                    >
+                                    <div v-for="(tag, index) in largeNewsCard.tags" :key="index">
                                         <div v-if="index < 3" class="news-tag">
                                             <p style="margin: 0; padding: 0;">{{ tag }}</p>
                                         </div>
@@ -192,24 +145,18 @@
                         </div>
                         <div class="small-news-card-wrapper">
                             <div v-for="(news, index) in smallNewsCardsFirst" :key="index" class="small-news-card">
-                                <img 
-                                    :src="news.link" 
-                                    alt="AI News"
-                                    class="news-image"
-                                    style="width: 50%; height: 40%;"
-                                >
+                                <img :src="news.image" alt="AI News" class="news-image"
+                                    style="width: 50%; height: 40%;">
                                 <div class="news-content">
-                                    <a class="news-title clamp-text" :href="news.link" target="_blank" style="font-size: 14px;">
+                                    <a class="news-title clamp-text" :href="news.link" target="_blank"
+                                        style="font-size: 14px;">
                                         {{ news.title }}
                                     </a>
                                     <p class="news-datetime">
                                         {{ news.datetime }}
                                     </p>
                                     <div class="news-tags-container">
-                                        <div
-                                            v-for="(tag, index) in news.tags"
-                                            :key="index"
-                                        >
+                                        <div v-for="(tag, index) in news.tags" :key="index">
                                             <div v-if="index < 3" class="news-tag">
                                                 <p style="margin: 0; padding: 0;">{{ tag }}</p>
                                             </div>
@@ -220,24 +167,18 @@
                         </div>
                         <div class="small-news-card-wrapper">
                             <div v-for="(news, index) in smallNewsCardsSecond" :key="index" class="small-news-card">
-                                <img 
-                                    :src="news.link" 
-                                    alt="AI News"
-                                    class="news-image"
-                                    style="width: 50%; height: 40%;"
-                                >
+                                <img :src="news.image" alt="AI News" class="news-image"
+                                    style="width: 50%; height: 40%;">
                                 <div class="news-content">
-                                    <a class="news-title clamp-text" :href="news.link" target="_blank" style="font-size: 14px;">
+                                    <a class="news-title clamp-text" :href="news.link" target="_blank"
+                                        style="font-size: 14px;">
                                         {{ news.title }}
                                     </a>
                                     <p class="news-datetime">
                                         {{ news.datetime }}
                                     </p>
                                     <div class="news-tags-container">
-                                        <div
-                                            v-for="(tag, index) in news.tags"
-                                            :key="index"
-                                        >
+                                        <div v-for="(tag, index) in news.tags" :key="index">
                                             <div v-if="index < 3" class="news-tag">
                                                 <p style="margin: 0; padding: 0;">{{ tag }}</p>
                                             </div>
@@ -255,28 +196,16 @@
         <div class="stock-container">
             <div class="container-card-big">
                 <div class="stock-card-container">
-                    <div
-                        v-for="(title, index) in marketAnalysis.Stock.Title"
-                        :key="index"
-                        class="stock-card"
-                    >
+                    <div v-for="(title, index) in marketAnalysis.Stock.Title" :key="index" class="stock-card">
                         <div style="display: flex; justify-content: space-between;">
-                            <h2 
-                                class="component-title"
-                                :style="{color: title === 'Positive' ? '#80ed9b' : title === 'Neutral' ? '#fff480' : '#fa7979'}"
-                            >
+                            <h2 class="component-title"
+                                :style="{ color: title === 'Positive' ? '#80ed9b' : title === 'Neutral' ? '#fff480' : '#fa7979' }">
                                 {{ title }}
                             </h2>
                             <div>
                                 <label>
-                                    <select 
-                                        v-model="selectedDate"
-                                        class="date-label"
-                                    >
-                                        <option
-                                            v-for="(date, index) in marketAnalysis.Date"
-                                            :key="index"
-                                        >
+                                    <select v-model="selectedDate" class="date-label">
+                                        <option v-for="(date, index) in marketAnalysis.Date" :key="index">
                                             {{ date }}
                                         </option>
                                     </select>
@@ -293,24 +222,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
-                                    v-for="(row, rowIndex) in stockTableRows[index]"
-                                    :key="rowIndex"
-                                >
+                                <tr v-for="(row, rowIndex) in stockTableRows[index]" :key="rowIndex">
                                     <td>{{ row.rank }}</td>
                                     <td>
-                                        <div
-                                            :style="{fontSize: '14px', fontWeight: '600', color: 'black'}"
-                                        >
+                                        <div :style="{ fontSize: '14px', fontWeight: '600', color: 'black' }">
                                             {{ row.stock_code }}
                                         </div>
                                     </td>
                                     <td>
-                                        <div 
-                                            class="progress-container"
-                                            :style="{backgroundColor: title === 'Positive' ? '#80ed9b' : title === 'Neutral' ? '#fff480' : '#fa7979'}"
-                                        >
-                                            <div class="progress-bar" :style="{ width: (1 - (row.mentions / maxVal[title])) * 100 + '%' }"></div>
+                                        <div class="progress-container"
+                                            :style="{ backgroundColor: title === 'Positive' ? '#80ed9b' : title === 'Neutral' ? '#fff480' : '#fa7979' }">
+                                            <div class="progress-bar"
+                                                :style="{ width: (1 - (row.mentions / maxVal[title])) * 100 + '%' }">
+                                            </div>
                                         </div>
                                     </td>
                                     <td>
@@ -336,6 +260,7 @@ import fallingIcon from '@/assets/decreaseTrend.png';
 import emergingIcon from '@/assets/emergingTrend.png';
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, watch } from 'vue'
+import axios from 'axios';
 
 const { t } = useI18n()
 
@@ -344,6 +269,7 @@ const selectedCategory = ref(marketAnalysis.value.Topic.Categories[0]);
 const tableRows = ref([]);
 const stockTableRows = ref([]);
 const selectedDate = ref(marketAnalysis.value.Date.Today);
+const largeNewsCard = ref();
 const smallNewsCardsFirst = ref([]);
 const smallNewsCardsSecond = ref([]);
 const maxVal = ref({});
@@ -374,10 +300,71 @@ const getIcon = (tag) => {
     if (tag === 'Emerging') return emergingIcon;
 }
 
+const fetchAINews = async () => {
+    const { data } = await axios.get(`/.netlify/functions/server/api/ai-news`);
+    const topicNews = data.map(article => ({
+        title: article.title,
+        source: article.source,
+        datetime: new Date(article.published_at).toLocaleString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }),
+        summary: article.content,
+        tags: article.tags,
+        content: article.content,
+        link: `/market-analysis/news/${article.id}`,
+        image: article.image_url
+    }))[0];
+
+    const firstNewsRow = data.map(article => ({
+        title: article.title,
+        source: article.source,
+        datetime: new Date(article.published_at).toLocaleString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }),
+        summary: article.content,
+        tags: article.tags,
+        content: article.content,
+        link: `/market-analysis/news/${article.id}`,
+        image: article.image_url
+    })).slice(1).slice(0, 3);
+
+    const secondNewsRow = data.map(article => ({
+        title: article.title,
+        source: article.source,
+        datetime: new Date(article.published_at).toLocaleString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }),
+        summary: article.content,
+        tags: article.tags,
+        content: article.content,
+        link: `/market-analysis/news/${article.id}`,
+        image: article.image_url
+    })).slice(1).slice(3, 6);
+    return { topicNews, firstNewsRow, secondNewsRow };
+}
+
 onMounted(async () => {
     getTable(selectedCategory.value);
-    smallNewsCardsFirst.value = marketAnalysis.value.AI_News.AI_News.slice(1).slice(0, 3);
-    smallNewsCardsSecond.value = marketAnalysis.value.AI_News.AI_News.slice(1).slice(3, 6);
+    const { topicNews, firstNewsRow, secondNewsRow } = await fetchAINews();
+    console.log(topicNews);
+    console.log(firstNewsRow);
+    console.log(secondNewsRow);
+    largeNewsCard.value = topicNews;
+    console.log("largeNewsCard", largeNewsCard.value);
+    smallNewsCardsFirst.value = firstNewsRow;
+    smallNewsCardsSecond.value = secondNewsRow;
     stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[0]));
     stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[1]));
     stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[2]));
@@ -387,11 +374,10 @@ onMounted(async () => {
 watch(selectedCategory, (newCategory) => {
     getTable(newCategory);
 });
-    
+
 </script>
 
 <style scoped>
-
 .page-title {
     font-size: 40px;
     font-weight: 1000;
@@ -443,35 +429,39 @@ watch(selectedCategory, (newCategory) => {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
-.card-title, .component-title {
+.card-title,
+.component-title {
     font-weight: 800;
     font-size: 20px;
     margin-bottom: 12px;
 }
 
 .percentage-bar {
-  display: flex;
-  height: 20px;
-  border-radius: 4px;
-  overflow: hidden;
-  background-color: #eee;
-  margin-top: 5px;
+    display: flex;
+    height: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #eee;
+    margin-top: 5px;
 }
 
 .percentage-bar span {
-  height: 100%;
+    height: 100%;
 }
 
 .positive {
-  background-color: #80ed9b; /* green */
+    background-color: #80ed9b;
+    /* green */
 }
 
 .neutral {
-  background-color: #fff480; /* amber */
+    background-color: #fff480;
+    /* amber */
 }
 
 .negative {
-  background-color: #fa7979; /* red */
+    background-color: #fa7979;
+    /* red */
 }
 
 .details-container {
@@ -482,15 +472,18 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .positive-detail-container {
-    color: #80ed9b; /* green */
+    color: #80ed9b;
+    /* green */
 }
 
 .neutral-detail-container {
-    color: #fff480; /* amber */
+    color: #fff480;
+    /* amber */
 }
 
 .negative-detail-container {
-    color: #fa7979; /* red */
+    color: #fa7979;
+    /* red */
 }
 
 .topic-container {
@@ -648,7 +641,7 @@ watch(selectedCategory, (newCategory) => {
 }
 
 @media (max-width: 1000px) {
-    .trend-ai-news-container > .container-card-big {
+    .trend-ai-news-container>.container-card-big {
         width: 100% !important;
     }
 }
@@ -664,17 +657,17 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .progress-container {
-  width: 100%;
-  background-color: #717171;
-  overflow: hidden;
-  position: relative;
-  height: 24px;
+    width: 100%;
+    background-color: #717171;
+    overflow: hidden;
+    position: relative;
+    height: 24px;
 }
 
 .progress-bar {
-  background-color: rgb(255, 255, 255);
-  height: 100%;
-  transition: width 0.3s ease;
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    transition: width 0.3s ease;
 }
 
 
@@ -687,15 +680,18 @@ thead tr th {
 }
 
 .trending {
-    color: #23d30b; /* green */
+    color: #23d30b;
+    /* green */
 }
 
 .emerging {
-    color: #ffa600; /* amber */
+    color: #ffa600;
+    /* amber */
 }
 
 .falling {
-    color: #dc0101; /* red */
+    color: #dc0101;
+    /* red */
 }
 
 .date-label {
@@ -709,21 +705,21 @@ thead tr th {
     .table-container {
         font-size: 14px;
     }
-    
+
     .table-container td {
         padding: 8px;
     }
-    
+
     .button {
         padding: 0.3rem 0.7rem;
         font-size: 14px;
     }
-    
+
     .date-label {
         width: 100%;
         margin-top: 10px;
     }
-    
+
     .date-label select {
         width: 100%;
     }

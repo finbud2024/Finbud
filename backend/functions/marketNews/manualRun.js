@@ -1,3 +1,7 @@
+import { crawlFireAnt } from "./aiNewsScraper.js";
+import { analyzeArticle } from "./aiNewsAnalyzer.js";
+import { pool, deleteArticleById } from "../../Database Schema/aiNews/db.js";
+
 // function to test the pipeline manually
 async function runPipeline() {
     try {

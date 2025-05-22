@@ -25,7 +25,7 @@ import StartThread from "@/views/FinEdu/ForumThreadStart.vue";
 import MortgageCalc from "@/views/FinManage/MortgageCalculatorPage.vue";
 import SuperInvestors from "@/views/FinManage/SuperInvestorsPage.vue";
 import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue";
-import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue"
+import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue";
 import AgentPage from "@/views/FinAgent/AgentPage.vue";
 import PestlePage from "@/views/FinAgent/PestlePage.vue";
 import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
@@ -40,6 +40,7 @@ import CoursePage from "@/views/FinEdu/CoursePage.vue";
 import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
 import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
 import MarketAnalysisInsight from "@/views/FinInvest/MarketAnalysis/MarketAnalysisInsight.vue";
+import MarketAnalysisNews from "@/views/FinInvest/MarketAnalysis/MarketAnalysisNews.vue";
 
 const routes = [
   {
@@ -153,10 +154,10 @@ const routes = [
     props: true,
   },
   {
-    path: '/courses/:categorySlug',
-    name: 'CourseCategory',
+    path: "/courses/:categorySlug",
+    name: "CourseCategory",
     component: CourseCategoryPage,
-    props: true
+    props: true,
   },
   {
     path: "/thread",
@@ -194,20 +195,20 @@ const routes = [
   },
   {
     path: "/docs",
-    redirect: "/docs/aapl"
+    redirect: "/docs/aapl",
   },
   {
     path: "/docs/:ticker",
     name: "Financial Docs",
-    component: FinDataPage
+    component: FinDataPage,
   },
   {
     path: "/company-report/:ticker",
-    component: InsiderTransactionPage
+    component: InsiderTransactionPage,
   },
   {
     path: "/earning-calendars",
-    component: EarningCalendarPage
+    component: EarningCalendarPage,
   },
   {
     path: "/agent/",
@@ -237,11 +238,11 @@ const routes = [
   {
     path: "/notifications",
     name: "NotificationCenter",
-    component: NotificationCenter, 
+    component: NotificationCenter,
   },
   {
-    path: '/courses/:categorySlug',
-    name: 'CourseCategory', // Must match exactly what you use in router-link
+    path: "/courses/:categorySlug",
+    name: "CourseCategory", // Must match exactly what you use in router-link
     component: CourseCategoryPage,
   },
   {
@@ -258,8 +259,12 @@ const routes = [
     path: "/market-analysis/insight/:type",
     name: "MarketAnalysisInsight",
     component: MarketAnalysisInsight,
-  }
-  
+  },
+  {
+    path: "/market-analysis/news/:id",
+    name: "MarketAnalysisNews",
+    component: MarketAnalysisNews,
+  },
 ];
 
 const router = createRouter({

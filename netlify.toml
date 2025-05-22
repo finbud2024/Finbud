@@ -13,10 +13,6 @@
   node_bundler = "esbuild"
   esbuild_options = { format = "esm" }
 
-[[functions]]
-  name = "marketNews"
-  schedule = "0 */3 * * *"
-
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
 
@@ -24,4 +20,3 @@
   NODE_VERSION = "18"
   YARN_VERSION = "1.22.22"
   YARN_FLAGS = "--network-timeout 600000"
-

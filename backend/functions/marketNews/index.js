@@ -2,8 +2,9 @@
 import { crawlFireAnt } from "./aiNewsScraper.js";
 import { analyzeArticle } from "./aiNewsAnalyzer.js";
 import { pool, deleteArticleById } from "../../Database Schema/aiNews/db.js";
+import { schedule } from "@netlify/functions";
 
-export async function handler(event, context) {
+export const handler = schedule("0 */3 * * *", async () => {
   try {
     console.log("🌐 [CRON] Starting end-to-end article pipeline...");
 
@@ -28,10 +29,18 @@ export async function handler(event, context) {
     console.log(
       `✅ [CRON] Successfully processed ${newArticles.length} articles.`
     );
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: "Pipeline executed successfully." }),
+    };
   } catch (error) {
     console.error("❌ [CRON] Handler pipeline error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Pipeline execution failed." }),
+    };
   } finally {
     // End the pool only after all operations are complete
     await pool.end();
   }
-}
+});

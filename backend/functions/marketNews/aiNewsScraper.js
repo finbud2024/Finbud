@@ -69,7 +69,7 @@ export async function crawlFireAnt() {
         if (collectedLinks.has(link)) continue;
         collectedLinks.add(link);
         console.log(link);
-        if (collectedLinks.size > 99) {
+        if (collectedLinks.size >= 7) {
           stop = true;
           break;
         }
@@ -159,10 +159,7 @@ export async function crawlFireAnt() {
                 const src =
                   node.getAttribute("src") || node.getAttribute("data-src");
                 if (src) {
-                  const full = src.startsWith("https")
-                    ? `https://fireant.vn${src}`
-                    : src;
-                  imageUrls.push(full);
+                  imageUrls.push(src);
                   blockText += "[[IMAGE]] ";
                 }
               } else if (node.nodeType === Node.TEXT_NODE) {
@@ -175,7 +172,7 @@ export async function crawlFireAnt() {
         }
 
         const publishedAt =
-          getAttr(".line-clamp-2 time", "datetime") || new Date().toISOString();
+          getAttr("time", "datetime") || new Date().toISOString();
 
         return {
           title,
@@ -236,5 +233,3 @@ export async function crawlFireAnt() {
     if (browser) await browser.close();
   }
 }
-
-// crawlFireAnt();

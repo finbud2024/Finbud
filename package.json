@@ -23,6 +23,7 @@
     "@langchain/langgraph": "^0.0.34",
     "@langchain/openai": "^0.2.11",
     "@langchain/textsplitters": "^0.1.0",
+    "@netlify/functions": "^3.1.8",
     "@popperjs/core": "^2.11.8",
     "@tanstack/vue-query": "^5.74.5",
     "@vueuse/head": "^2.0.0",

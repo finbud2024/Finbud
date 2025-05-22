@@ -37,6 +37,7 @@ import insiderTransactionRoute from "../Endpoints/finData/transactionRoute.js";
 import notiRoute from "../Endpoints/notiRoute.js";
 import courseRoute from "../Endpoints/courseRoute.js";
 import vietStock from "../Endpoints/vietStock.js";
+import aiNewsRoute from "../Endpoints/aiNewsRoute.js";
 
 dotenv.config();
 
@@ -173,6 +174,7 @@ router.use("/", insiderTransactionRoute)
 router.use("/", notiRoute);
 router.use("/api/courses", courseRoute)
 router.use("/api/vietstock", vietStock);
+router.use("/api/ai-news", aiNewsRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development
