@@ -170,6 +170,7 @@
             <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">{{ $t("simulator")
             }}</router-link>
             <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownMobile">AutoTrade AI</router-link>
+            
             <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">{{ $t("quant") }}</router-link>
             <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">{{
               $t("quantSimulator") }}</router-link>
@@ -203,12 +204,13 @@ import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
 import NavbarNoti from "../Notification/NavbarNoti.vue";
-
+import LoadingPage from "@/views/Home/LoadingPage.vue";
 export default {
   name: "NavBar",
   components: {
     FinCoinDisplay,
     NavbarNoti,
+    LoadingPage,
   },
   data() {
     return {

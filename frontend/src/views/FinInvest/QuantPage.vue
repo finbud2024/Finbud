@@ -1,6 +1,7 @@
 
 
 <template>
+  
   <div class="container">
     <div class="Navigation">
       <div class="animated no-fade">
@@ -75,6 +76,7 @@ import DashBoard from "@/components/FinInvest/QuantPage/DashBoard.vue";
 import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
 import StockComparision from "@/components/FinInvest/QuantPage/StockComparision.vue";
 import StockHeatmap from "@/components/FinInvest/QuantPage/StockHeatmap.vue";
+import LoadingPage from "../Home/LoadingPage.vue";
 export default {
   components: {
     ChatBotTyping,
@@ -82,6 +84,7 @@ export default {
     MonteCarloSimulation,
     StockComparision,
     StockHeatmap,
+    LoadingPage,
   },
   data() {
     return {
