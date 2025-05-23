@@ -1,10 +1,15 @@
 <template>
   <div class="dashboard">
     <header>
-      <h1>Personal Stock Portfolio Dashboard</h1>
+      <h1>Stock Portfolio Dashboard</h1>
     </header>
     <section class="current-holding">
-      <h2>Current Holding</h2>
+      <input
+      type="text"
+      v-model="tickerSearch"
+      placeholder="Search by ticker name"
+      style="margin-bottom: 10px; padding: 5px; width: 200px;"
+    />
       
       <div class="margin-box-content">
         <div>
@@ -14,34 +19,34 @@
             <tr>
               <th>Stock Ticker</th>
               <th>Logo</th>
-              <th>Currency Code</th>
+              <!--<th>Currency Code</th>-->
               <th>Close</th>
-              <th>Price Currency</th>
+              <!--<th>Price Currency</th>-->
               <th>Price Change</th>
               <th>Relative Volume (10d)</th>
               <th>P/E Ratio (TTM)</th>
               <th>EPS Diluted (TTM)</th>
               <th>Dividend Yield</th>
-              <th>Exchange</th>
+              <!--<th>Exchange</th>-->
               <th>Industry Sector</th>
             </tr>
             </thead>
 
             <tbody v-if="cryptoList.length">
               
-            <tr v-for="crypto in cryptoList" :key="crypto.name">
+            <tr v-for="crypto in filteredCryptoList" :key="crypto.name">
               <td>{{ crypto.name }}</td>
               <td><img :src="`https://s3-symbol-logo.tradingview.com/${crypto.logo}.svg`"
                        :alt="`${crypto.logo} logo`"/></td>
-              <td>{{ crypto.currency }}</td>
+              <!--<td>{{ crypto.currency }}</td>-->
               <td>{{ crypto.close }} </td>
-              <td>{{ crypto.priceCurrency }} </td>
-              <td>{{ crypto.priceChange }} </td>
-              <td>{{ crypto.relativeVolume }}</td>
-              <td>{{ crypto.PERatio }} </td>
-              <td>{{ crypto.EPS }} </td>
-              <td>{{ crypto.dividendYield }} </td>
-              <td>{{ crypto.market }} </td>
+              <!--<td>{{ crypto.priceCurrency }} </td>-->
+              <td>{{ formatNumber(crypto.priceChange) }} </td>
+              <td>{{ formatNumber(crypto.relativeVolume) }}</td>
+              <td>{{ formatNumber(crypto.PERatio) }} </td>
+              <td>{{ formatNumber(crypto.EPS) }} </td>
+              <td>{{ formatNumber(crypto.dividendYield) }} </td>
+              <!--<td>{{ crypto.market }} </td>-->
               <td>{{ crypto.sector }} </td>
             </tr>
             </tbody>
@@ -120,6 +125,7 @@ export default {
         gain_loss: 'null',
         loading: false,
       })),
+      tickerSearch: '', 
       chartOptions: null,
       chartSeries: null,
       processedData: null,
@@ -130,6 +136,19 @@ export default {
     this.loadData();
     this.getCryptoPrice();
   },
+
+  computed: {
+  filteredCryptoList() {
+    if (!this.tickerSearch) {
+      return this.cryptoList;
+    }
+    const searchTerm = this.tickerSearch.toLowerCase();
+    return this.cryptoList.filter(crypto =>
+      crypto.name.toLowerCase().includes(searchTerm)
+    );
+  }
+  }, 
+  
   methods: {
     loadData() {
       const cachedData = localStorage.getItem('tickerData');
@@ -314,7 +333,13 @@ export default {
         this.errorCrypto = 'Failed to fetch holding list';
         this.loadingCrypto = false;
       }
-    }
+    },
+    formatNumber(value) {
+    if (value === null || value === undefined) return '-'; // handle empty or null
+    const number = Number(value);
+    if (isNaN(number)) return value; // if not a number, just return as-is
+    return number.toFixed(2);
+  },
   },
 };
 </script>
@@ -530,5 +555,13 @@ label {
   display: block;
   margin-bottom: 10px;
   color: #0033cc;
+}
+.search-input {
+  width: 300px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 </style>

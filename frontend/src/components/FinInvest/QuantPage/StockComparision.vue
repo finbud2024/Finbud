@@ -1,4 +1,32 @@
 <template>
+  <div class="controls">
+    <label>
+      Indicator:
+      <select v-model="indicator" @change="loadRiskMetrics">
+        <option value="ema">EMA</option>
+        <option value="rsi">RSI</option>
+        <option value="macd">MACD</option>
+        <option value="bollinger">Bollinger</option>
+      </select>
+    </label>
+  
+    <label>
+      Period:
+      <select v-model="period" @change="loadRiskMetrics">
+        <option :value="20">20</option>
+        <option :value="50">50</option>
+        <option :value="200">200</option>
+      </select>
+    </label>
+  
+    <label>
+      Return Type:
+      <select v-model="returnType" @change="loadRiskMetrics">
+        <option value="cumulative">Cumulative</option>
+        <option value="daily">Daily</option>
+      </select>
+    </label>
+  </div>
   
     <table class="custom-table">
       <thead>
@@ -235,9 +263,10 @@ import {watch, ref } from 'vue';
 
   const availableTickers = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'TSLA']; // Example tickers
   const selectedTickers = reactive(['AAPL', 'MSFT']); // Default selected tickers for columns A and C
-  const indicator = 'ema'           // 'ema', 'rsi', 'macd', 'bollinger'
-  const period = 50                 // e.g., 20, 50, 200
-  const returnType = 'cumulative'  // or 'daily'
+  // or 'daily'
+  const indicator = ref('ema');           // Default indicator
+  const period = ref(50);                 // Default period
+  const returnType = ref('cumulative');  // Default returnType
   const rows = reactive([
     { showGraph: false },
     { showGraph: false },
