@@ -23,8 +23,8 @@
   ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
   
   const props = defineProps({
-    tickerA: String,
-    tickerB: String,
+    tickerA: { type: String, required: true },
+    tickerB: { type: String, required: true },
     indicator: {
       type: String,
       default: 'sma'
@@ -96,10 +96,7 @@
   };
   
   const loadChartData = async () => {
-    if (!props.tickerA || !props.tickerB) {
-      console.warn('Missing ticker values:', { tickerA: props.tickerA, tickerB: props.tickerB });
-      return;
-    }
+
   
     const dataA = await parseCSV(`/${props.tickerA}.csv`);
     const dataB = await parseCSV(`/${props.tickerB}.csv`);

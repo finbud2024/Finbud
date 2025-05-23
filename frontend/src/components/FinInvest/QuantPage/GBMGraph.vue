@@ -14,8 +14,8 @@ import axios from 'axios'
 Chart.register(LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend)
 
 const props = defineProps({
-  tickerA: String,
-  tickerB: String,
+  tickerA: { type: String, required: true },
+  tickerB: { type: String, required: true },
   indicator: String,
   returnType: String,
 })

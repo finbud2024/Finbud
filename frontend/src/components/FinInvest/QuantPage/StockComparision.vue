@@ -121,7 +121,7 @@
         </tr>
   
           <!--Sub Row 1-->
-          <template v-if="rows[4].showGraph">
+        <template v-if="rows[4].showGraph">
           <tr>
             <td> Close Value
               <button class="toggle-btn" @click="toggleGraph(5)">
@@ -262,33 +262,33 @@
 import {watch, ref } from 'vue';
 
   const availableTickers = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'TSLA']; // Example tickers
-  const selectedTickers = reactive(['AAPL', 'MSFT']); // Default selected tickers for columns A and C
+  const selectedTickers = reactive(['', '']); // Default selected tickers for columns A and C
   // or 'daily'
   const indicator = ref('ema');           // Default indicator
   const period = ref(50);                 // Default period
   const returnType = ref('cumulative');  // Default returnType
   const rows = reactive([
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
-    { showGraph: false },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
+    { showGraph: true },
   ]);
   
   function toggleGraph(index) {
