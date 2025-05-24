@@ -2,8 +2,8 @@ import cron from 'node-cron';
 import axios from 'axios';
 import mongoose from 'mongoose';
 import User from '../Database Schema/User.js';
-import UserHolding from '../Database Schema/UserHolding.js';
-import Portfolio from '../Database Schema/Portfolio.js';
+import UserHolding from '../Database Schema/FinInvest/UserHolding.js';
+import Portfolio from '../Database Schema/FinInvest/Portfolio.js';
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/development?retryWrites=true&w=majority&appName=Cluster0";
 
