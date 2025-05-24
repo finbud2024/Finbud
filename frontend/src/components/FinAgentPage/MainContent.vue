@@ -56,7 +56,7 @@ export default {
 }
 
 .start-button {
-  background-color: #007bff;
+  background-color: white;
   color: var(--white-in-dark-mode);
   font-size: 16px;
   font-weight: 500;
