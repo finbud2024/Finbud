@@ -44,7 +44,6 @@ vietStockRoute.get("/ImportExport", async(req, res) => {
 vietStockRoute.get("/FDI", async(req, res) => {
     try {
         const result = await vietStockFDI.find({});
-        console.log(result);
         res.json(result);
     }
     catch (error) {
@@ -339,14 +338,105 @@ vietStockRoute.post("/FDI/:type", async(req, res) => {
     }
 });
 
-vietStockRoute.get("/FDI", async(req, res) => {
-    try {
-        const result = await vietStockFDI.find({});
-        res.json(result);
+vietStockRoute.get("/companies", async (req, res) => {
+  try {
+    const db = require('mongoose').connection.useDb("vietstock");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+    const firstLetter = req.query.firstLetter;
+    const sortField = req.query.sortField || 'Mã CK';
+    const sortOrder = parseInt(req.query.sortOrder) || 1;
+    const san = req.query.san;
+
+    let filter = {};
+    if (firstLetter && firstLetter !== 'all') {
+      filter['Mã CK'] = { $regex: `^${firstLetter}`, $options: 'i' };
     }
-    catch (error) {
-        res.status(500).json({message: 'Error fetching data', error});
+    if (san && san !== 'Tất cả' && san !== 'all') {
+      filter['Sàn'] = san;
     }
+
+    let companies, total;
+    if (sortField === 'Mã CK') {
+      // Custom sort: alphabetic first, then numeric
+      companies = await db.collection("companies").aggregate([
+        { $match: filter },
+        { $addFields: {
+            isAlpha: { $regexMatch: { input: "$Mã CK", regex: /^[A-Za-z]/ } },
+            maCKNumber: {
+              $cond: [
+                { $regexMatch: { input: "$Mã CK", regex: /^[0-9]+$/ } },
+                { $toDouble: "$Mã CK" },
+                null
+              ]
+            }
+          }
+        },
+        { $sort: {
+            isAlpha: -sortOrder, // true (alphabet) first for ascending, last for descending
+            "Mã CK": sortOrder,
+            maCKNumber: sortOrder
+          }
+        },
+        { $skip: skip },
+        { $limit: limit }
+      ]).toArray();
+      total = await db.collection("companies").countDocuments(filter);
+    } else if (sortField === 'Khối lượng NY/ĐKGD') {
+      const isDescending = sortOrder === -1;
+      companies = await db.collection("companies").aggregate([
+        { $match: filter },
+        { $addFields: { 
+            numericVolume: { 
+              $cond: [
+                { $or: [
+                    { $eq: ["$Khối lượng NY/ĐKGD", null] },
+                    { $eq: ["$Khối lượng NY/ĐKGD", ""] },
+                    { $eq: ["$Khối lượng NY/ĐKGD", "0"] }
+                  ] },
+                isDescending ? -1 : 0,
+                { $convert: { 
+                    input: { 
+                      $replaceAll: { 
+                        input: { $ifNull: ["$Khối lượng NY/ĐKGD", "0"] }, 
+                        find: ",", 
+                        replacement: "" 
+                      } 
+                    }, 
+                    to: "double", 
+                    onError: 0, 
+                    onNull: 0 
+                  } 
+                }
+              ]
+            }
+          } 
+        },
+        { $sort: { numericVolume: sortOrder } },
+        { $skip: skip },
+        { $limit: limit }
+      ]).toArray();
+      total = await db.collection("companies").countDocuments(filter);
+    } else {
+      // Default string sort
+      companies = await db.collection("companies").find(filter)
+        .sort({ [sortField]: sortOrder })
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+      total = await db.collection("companies").countDocuments(filter);
+    }
+
+    res.json({
+      companies,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching companies", error });
+  }
 });
 
 export default vietStockRoute;
