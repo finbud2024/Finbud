@@ -1,6 +1,6 @@
 <template>
   <div class="gbm-graph">
-    <h2>GBM Simulation: {{ tickerA }} vs {{ tickerB }}</h2>
+    <h2>GBM Simulation: {{ tickerA || 'None' }} vs {{ tickerB || 'None' }}</h2>
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
@@ -14,8 +14,8 @@ import axios from 'axios'
 Chart.register(LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend)
 
 const props = defineProps({
-  tickerA: { type: String, required: true },
-  tickerB: { type: String, required: true },
+  tickerA: { type: String, required: false },
+  tickerB: { type: String, required: false },
   indicator: String,
   returnType: String,
 })
@@ -63,54 +63,59 @@ function calculateMeanAndStd(returns) {
 }
 
 async function loadAndSimulate() {
-  if (!props.tickerA || !props.tickerB) return
-
-  const dataA = await fetchCSVData(props.tickerA)
-  const dataB = await fetchCSVData(props.tickerB)
-
-  const returnsA = calculateReturns(dataA)
-  const returnsB = calculateReturns(dataB)
-
-  const { mu: muA, sigma: sigmaA } = calculateMeanAndStd(returnsA)
-  const { mu: muB, sigma: sigmaB } = calculateMeanAndStd(returnsB)
-
-  const S0A = parseFloat(dataA.at(-1)['Close'])
-  const S0B = parseFloat(dataB.at(-1)['Close'])
-
+  const datasets = []
+  const labels = Array.from({ length: 252 }, (_, i) => i)
   const steps = 252
   const T = 1
 
-  const pathA = simulateGBM(S0A, muA, sigmaA, T, steps)
-  const pathB = simulateGBM(S0B, muB, sigmaB, T, steps)
+  if (!props.tickerA && !props.tickerB) {
+    renderBlankChart()
+    return
+  }
 
-  renderChart(pathA, pathB)
+  if (props.tickerA) {
+    const dataA = await fetchCSVData(props.tickerA)
+    const returnsA = calculateReturns(dataA)
+    const { mu, sigma } = calculateMeanAndStd(returnsA)
+    const S0 = parseFloat(dataA.at(-1)['Close'])
+    const pathA = simulateGBM(S0, mu, sigma, T, steps)
+
+    datasets.push({
+      label: props.tickerA,
+      data: pathA,
+      borderColor: 'blue',
+      borderWidth: 2,
+      fill: false,
+    })
+  }
+
+  if (props.tickerB) {
+    const dataB = await fetchCSVData(props.tickerB)
+    const returnsB = calculateReturns(dataB)
+    const { mu, sigma } = calculateMeanAndStd(returnsB)
+    const S0 = parseFloat(dataB.at(-1)['Close'])
+    const pathB = simulateGBM(S0, mu, sigma, T, steps)
+
+    datasets.push({
+      label: props.tickerB,
+      data: pathB,
+      borderColor: 'green',
+      borderWidth: 2,
+      fill: false,
+    })
+  }
+
+  renderChart(labels, datasets)
 }
 
-function renderChart(pathA, pathB) {
+function renderChart(labels, datasets) {
   if (chartInstance) chartInstance.destroy()
-
-  const labels = Array.from({ length: pathA.length }, (_, i) => i)
 
   chartInstance = new Chart(chartCanvas.value, {
     type: 'line',
     data: {
       labels,
-      datasets: [
-        {
-          label: props.tickerA,
-          data: pathA,
-          borderColor: 'blue',
-          borderWidth: 2,
-          fill: false,
-        },
-        {
-          label: props.tickerB,
-          data: pathB,
-          borderColor: 'green',
-          borderWidth: 2,
-          fill: false,
-        },
-      ],
+      datasets,
     },
     options: {
       responsive: true,
@@ -140,6 +145,50 @@ function renderChart(pathA, pathB) {
     },
   })
 }
+
+function renderBlankChart() {
+  if (chartInstance) chartInstance.destroy()
+  chartInstance = new Chart(chartCanvas.value, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: 252 }, (_, i) => i),
+      datasets: [],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'GBM Simulated Stock Prices',
+        },
+        legend: {
+          position: 'top',
+        },
+      },
+      scales: {
+        y: {
+          title: {
+            display: true,
+            text: 'Price ($)',
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Time Steps',
+          },
+        },
+      },
+    },
+  })
+}
+
+
+
+
+onMounted(() => {
+  renderBlankChart()
+})
 
 watch(() => [props.tickerA, props.tickerB], loadAndSimulate, { immediate: true })
 </script>

@@ -68,6 +68,7 @@
   :height="'1000px'" />
 </div>
   <MonteCarloSimulation />
+  <NewMonteCarloGraph/>
 </template>
 
 <script>
@@ -77,6 +78,7 @@ import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
 import StockComparision from "@/components/FinInvest/QuantPage/StockComparision.vue";
 import StockHeatmap from "@/components/FinInvest/QuantPage/StockHeatmap.vue";
 import LoadingPage from "../Home/LoadingPage.vue";
+import NewMonteCarloGraph from "@/components/FinInvest/QuantPage/NewMonteCarloGraph.vue";
 export default {
   components: {
     ChatBotTyping,
@@ -85,6 +87,7 @@ export default {
     StockComparision,
     StockHeatmap,
     LoadingPage,
+    NewMonteCarloGraph,
   },
   data() {
     return {
@@ -192,38 +195,7 @@ export default {
       console.log('Stock clicked:', stock);
       // You can navigate to stock details or show a modal here
     },
-    fetchData() {
-      // Update data based on selected options
-      this.chart1_1 = `show chart 1 for ${this.selectedStock1}`;
-      this.chart1_2 = `show chart 2 for ${this.selectedStock1}`;
-      this.IndicatorGraph1 = `show indicator graph for ${this.selectedStock1}`;
-      this.ReturnGraph1 = `show return graph for ${this.selectedStock1}`;
-      this.cGraph = `478 for ${this.selectedStock1}`;
-      this.graphs = `0.98 for ${this.selectedStock1}`;
-      this.gbmGraph = `Updated GBM Graph for ${this.selectedStock1} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
-      this.garchGraph = `Updated GARCH Graph for ${this.selectedStock1} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
-      this.alphaRatio = `Updated Alpha Ratio for ${this.selectedStock1}`;
-      this.betaRatio = `Updated Beta Ratio for ${this.selectedStock1}`;
-      this.sharpeRatio = `Updated Sharpe Ratio for ${this.selectedStock1}`;
-      this.sortinoRatio = `Updated Sortino Ratio for ${this.selectedStock1}`;
-      this.stdDeviation = `Updated Standard Deviation for ${this.selectedStock1}`;
-    },
-    fetchData2() {
-      // Update data based on selected options for the second panel
-      this.chart2_1 = `show chart 1 for ${this.selectedStock2}`;
-      this.chart2_2 = `show chart 2 for ${this.selectedStock2}`;
-      this.IndicatorGraph2 = `show indicator graph for ${this.selectedStock2}`;
-      this.ReturnGraph2 = `show return graph for ${this.selectedStock2}`;
-      this.cGraph2 = `376 for ${this.selectedStock2}`;
-      this.graphs2 = `0.76 for ${this.selectedStock2}`;
-      this.gbmGraph2 = `Updated GBM Graph for ${this.selectedStock2} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
-      this.garchGraph2 = `Updated GARCH Graph for ${this.selectedStock2} in ${this.timePeriod} with ${this.indicator} and ${this.returns}`;
-      this.alphaRatio2 = `Updated Alpha Ratio for ${this.selectedStock2}`;
-      this.betaRatio2 = `Updated Beta Ratio for ${this.selectedStock2}`;
-      this.sharpeRatio2 = `Updated Sharpe Ratio for ${this.selectedStock2}`;
-      this.sortinoRatio2 = `Updated Sortino Ratio for ${this.selectedStock2}`;
-      this.stdDeviation2 = `Updated Standard Deviation for ${this.selectedStock2}`;
-    },
+
   },
 };
 </script>

@@ -49,124 +49,6 @@
         </tr>
       </thead>
       <tbody>
-  
-  
-        <!-- Row 1 -->
-        <tr>
-          <td>Close Value
-            <button class="toggle-btn" @click="toggleGraph(0)">
-              {{ rows[0].showGraph ? '▲' : '▼' }} 
-            </button>
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr v-if="rows[0].showGraph">
-          <td colspan="3" class="graph-cell">
-            <CompareClosePrice :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :duration="2" />
-          </td>
-        </tr>
-  
-  
-        <!-- Row 2 -->
-        <tr>
-          <td>Indicator Value
-            <button class="toggle-btn" @click="toggleGraph(1)">
-              {{ rows[1].showGraph ? '▲' : '▼' }} 
-            </button>
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr v-if="rows[1].showGraph">
-          <td colspan="3" class="graph-cell">
-            <IndicatorGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :period="period" :returnType="returnType"
-      />
-          </td>
-        </tr>
-  
-  
-        <!-- Row 3 -->
-        <tr>
-          <td>Return Value
-            <button class="toggle-btn" @click="toggleGraph(2)">
-              {{ rows[2].showGraph ? '▲' : '▼' }}
-            </button>
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr v-if="rows[2].showGraph">
-          <td colspan="3" class="graph-cell">
-            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" :duration="2" />
-          </td>
-        </tr>
-  
-  
-        <!-- Row 4 -->
-        <tr>
-          <td> Past trend vs Future Projection
-            <button class="toggle-btn" @click="toggleGraph(4)">
-              {{ rows[4].showGraph ? '▲' : '▼' }}
-            </button>
-          </td>
-          <td></td>
-          <td></td>
-        </tr>
-        <tr v-if="rows[4].showGraph">
-          <td colspan="3" class="graph-cell">
-          
-  
-          </td>
-        </tr>
-  
-          <!--Sub Row 1-->
-        <template v-if="rows[4].showGraph">
-          <tr>
-            <td> Close Value
-              <button class="toggle-btn" @click="toggleGraph(5)">
-                {{ rows[5].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[5].showGraph">
-            <td colspan="3" class="graph-cell">
-              <GBMGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :returnType="returnType" />
-            </td>
-          </tr>
-          <!--Sub Row 2-->
-          <tr>
-            <td> Daily Volatility
-              <button class="toggle-btn" @click="toggleGraph(6)">
-                {{ rows[6].showGraph ? '▲' : '▼' }}
-              </button>
-            </td>
-            <td>Data A</td>
-            <td>
-              Data C
-            </td>
-          </tr>
-          <tr v-if="rows[6].showGraph">
-            <td colspan="3" class="graph-cell">
-                <GARCHGraph
-                    :tickerA="selectedTickers[0]"
-                    :tickerB="selectedTickers[1]"
-                    :indicator="indicator"
-                    :returnType="returnType"
-                />
-            </td>
-          </tr>
-          
-        </template>
-  
-  
-  
-        <!-- Row 5 -->
-  
         <tr>
           <td>Risk Ratio
             <button class="toggle-btn" @click="toggleGraph(7)">
@@ -239,8 +121,111 @@
             <td colspan="3" class="graph-cell">
             </td>
           </tr>
+          
       </template>
+        <tr>
+          <td> Past trend vs Future Projection
+            <button class="toggle-btn" @click="toggleGraph(4)">
+              {{ rows[4].showGraph ? '▲' : '▼' }}
+            </button>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr v-if="rows[4].showGraph">
+          <td colspan="3" class="graph-cell">
+          
+          </td>
+        </tr>
+  
+          <!--Sub Row 1-->
+
+        <template v-if="rows[4].showGraph">
+          <tr>
+            <td> Simulation
+              <button class="toggle-btn" @click="toggleGraph(5)">
+                {{ rows[5].showGraph ? '▲' : '▼' }}
+              </button>
+            </td>
+            <td></td>
+            <td>
+            </td>
+          </tr>
+          <tr v-if="rows[5].showGraph">
+            <td colspan="3" class="graph-cell">
+              <div class="graph-row">
+              <GBMGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :returnType="returnType" />
+              <GARCHGraph
+              :tickerA="selectedTickers[0]"
+              :tickerB="selectedTickers[1]"
+              :indicator="indicator"
+              :returnType="returnType"
+          />
+             
+             </div>
+            </td>
+          </tr>
+          <!--Sub Row 2-->
+  
+          
+        </template>
         
+  
+  
+        <!-- Row 2 -->
+        <tr>
+          <td>Close Value
+            <button class="toggle-btn" @click="toggleGraph(0)">
+              {{ rows[0].showGraph ? '▲' : '▼' }} 
+            </button>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr v-if="rows[0].showGraph">
+          <td colspan="3" class="graph-cell">
+            <CompareClosePrice :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :duration="2" />
+          </td>
+        </tr>
+  
+  
+        <!-- Row 3 -->
+        <tr>
+          <td>Indicator Value
+            <button class="toggle-btn" @click="toggleGraph(1)">
+              {{ rows[1].showGraph ? '▲' : '▼' }} 
+            </button>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr v-if="rows[1].showGraph">
+          <td colspan="3" class="graph-cell">
+            <div class="graph-row">
+            <IndicatorGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :period="period" :returnType="returnType"/>
+            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" :duration="2" />
+          
+          </div>
+          </td>
+        </tr>
+  
+  
+        <!-- Row 4 -->
+        <tr>
+          <td>Return Value
+            <button class="toggle-btn" @click="toggleGraph(2)">
+              {{ rows[2].showGraph ? '▲' : '▼' }}
+            </button>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr v-if="rows[2].showGraph">
+          <td colspan="3" class="graph-cell">
+            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" :duration="2" />
+          </td>
+        </tr>
+
       </tbody>
     </table>
   </template>
@@ -392,6 +377,7 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   }
   
   .graph-cell {
+    width: 50%;
     background-color: #f9f9f9;
     padding: 12px;
     text-align: center;
@@ -404,5 +390,15 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
     line-height: 100px;
     font-weight: bold;
     color: #1d4ed8;
+  }
+  .graph-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .graph-row > * {
+    flex: 1 1 45%;
+    max-width: 48%;
   }
   </style>
