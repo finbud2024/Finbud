@@ -239,7 +239,7 @@
 <script>
 import { GPTService, gptServices } from "@/services/gptServices";
 import debounce from "lodash/debounce";
-import SearchInput from "@/components/basic/SearchInput.vue";
+import SearchInput from "@/components/Basic/SearchInput.vue";
 import QuizRewards from "@/components/FinEdu/Quiz/QuizRewards.vue";
 import { showReward } from "@/utils/utils";
 
