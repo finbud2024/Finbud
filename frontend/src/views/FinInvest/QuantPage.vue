@@ -4,37 +4,7 @@
   
   <div class="container">
     <div class="Navigation">
-      <div class="animated no-fade">
-        <h1 class="start">Dashboard</h1>
-        <div class="form-group">
-          <label>Time Period</label>
-          <select v-model="timePeriod" class="dropdown">
-            <option value="6m">6 Months</option>
-            <option value="1y">1 year</option>
-            <option value="3y">3 years</option>
-            <option value="5y">5 years</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Technical Indicators</label>
-          <select v-model="indicator" class="dropdown">
-            <option value="RSI">RSI</option>
-            <option value="SMA">SMA</option>
-            <option value="EMA">EMA</option>
-            <option value="MACD">MACD</option>
-            <option value="Bollinger Bands">Bollinger Bands</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Returns</label>
-          <select v-model="returns" class="dropdown">
-            <option value="Daily Returns">Daily Returns</option>
-            <option value="Cumulative Returns">Cumulative Returns</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <StockComparision
+      <StockComparision
       v-model:selectedTickers="selectedTickers"
       :indicator="indicator"
       :period="period"
@@ -47,6 +17,9 @@
     :colorTheme="'light'"
     :width="'100%'"
     :height="'600px'"/>
+  
+    </div>
+    
   
     <br /><br />
 
@@ -208,7 +181,7 @@ export default {
   align:center;
 }
 .Navigation {
-  background-color: #2b2b2b;
+  background-color: grey;
   padding: 20px;
   border-radius: 10px;
   max-width: 100%;

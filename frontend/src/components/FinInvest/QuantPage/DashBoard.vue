@@ -5,10 +5,11 @@
     </header>
     <section class="current-holding">
       <input
+      class="ticker-search"
       type="text"
       v-model="tickerSearch"
       placeholder="Search by ticker name"
-      style="margin-bottom: 10px; padding: 5px; width: 200px;"
+      
     />
       
       <div class="margin-box-content">
@@ -32,7 +33,7 @@
             </tr>
             </thead>
 
-            <tbody v-if="cryptoList.length">
+            <tbody v-if="filteredCryptoList.length">
               
             <tr v-for="crypto in filteredCryptoList" :key="crypto.name">
               <td>{{ crypto.name }}</td>
@@ -58,7 +59,7 @@
     </div>
     </section>
 
-    <section class="industry-comparison">
+    <!--<section class="industry-comparison">
       <header>
         <h1>Portfolio By Industry</h1>
       </header>
@@ -85,7 +86,7 @@
           <div class="xAxis-chart-placeholder"></div>
         </div>
       </section>
-    </section>
+    </section>-->
   </div>
 </template>
 
@@ -563,5 +564,22 @@ label {
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+.ticker-search {
+  display: block; /* Center the input horizontally */
+  margin: 20px auto; /* Add spacing and center it */
+  padding: 10px 15px; /* Add padding for better appearance */
+  width: 50%; /* Make the input longer */
+  font-size: 16px; /* Increase font size for readability */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 8px; /* Round the corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.ticker-search:focus {
+  outline: none; /* Remove the default outline */
+  border-color: #0073e6; /* Change border color on focus */
+  box-shadow: 0 4px 8px rgba(0, 115, 230, 0.2); /* Enhance shadow on focus */
 }
 </style>

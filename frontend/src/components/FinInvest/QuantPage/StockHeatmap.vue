@@ -42,22 +42,23 @@
         script.async = true;
         script.type = 'text/javascript';
         script.innerHTML = JSON.stringify({
-          "exchanges": [],
-          "dataSource": "SPX500",
-          "grouping": "sector",
-          "blockSize": "market_cap_basic",
-          "blockColor": "change",
-          "locale": "en",
-          "symbolUrl": "",
-          "colorTheme": "dark",
-          "hasTopBar": true,
-            "isDataSetEnabled": true,
-            "isZoomEnabled": true,
-            "hasSymbolTooltip": true,
-            "isMonoSize": false,
-          "width": 1200,
-          "height": 600
-        });
+  "exchanges": [],
+  "dataSource": "SPX500",
+  "grouping": "sector",
+  "blockSize": "market_cap_basic",
+  "blockColor": "change",
+  "locale": "en",
+  "symbolUrl": "https://finbud.pro/",
+  "colorTheme": "dark",
+  "hasTopBar": true,
+  "isDataSetEnabled": true,
+  "isZoomEnabled": true,
+  "hasSymbolTooltip": false,
+  "showSymbolLogo": false,
+  "isMonoSize": false,
+  "width": 1200,
+  "height": 600
+});
   
         // Append to widget container
         document.getElementById('tradingview-heatmap-widget').appendChild(script);

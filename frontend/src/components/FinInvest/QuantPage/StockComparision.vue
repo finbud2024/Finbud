@@ -1,7 +1,7 @@
 <template>
   <div class="controls">
     <label>
-      Indicator:
+      <span class="label-text">Indicator</span>
       <select v-model="indicator" @change="loadRiskMetrics">
         <option value="ema">EMA</option>
         <option value="rsi">RSI</option>
@@ -11,7 +11,7 @@
     </label>
   
     <label>
-      Period:
+      <span class="label-text">Period</span>
       <select v-model="period" @change="loadRiskMetrics">
         <option :value="20">20</option>
         <option :value="50">50</option>
@@ -20,7 +20,7 @@
     </label>
   
     <label>
-      Return Type:
+      <span class="label-text">Returns</span>
       <select v-model="returnType" @change="loadRiskMetrics">
         <option value="cumulative">Cumulative</option>
         <option value="daily">Daily</option>
@@ -401,4 +401,25 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
     flex: 1 1 45%;
     max-width: 48%;
   }
+  .controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    width: 100%;
+  }
+  
+  label {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  
+  .label-text {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  
   </style>
