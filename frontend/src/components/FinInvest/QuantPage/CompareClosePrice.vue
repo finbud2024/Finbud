@@ -25,6 +25,7 @@ ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScal
 const props = defineProps({
   tickerA: { type: String, required: true },
   tickerB: { type: String, required: true },
+  tickerC: { type: String, required: true },
   duration: {
     type: Number,
     default: 1 // Duration in years
@@ -79,6 +80,7 @@ const parseCSV = async (url) => {
 const loadChart = async () => {
   const dataA = await parseCSV(`/${props.tickerA}.csv`);
   const dataB = await parseCSV(`/${props.tickerB}.csv`);
+  const dataC = await parseCSV(`/${props.tickerC}.csv`);
 
   // Filter based on duration
   const now = new Date();
@@ -86,10 +88,12 @@ const loadChart = async () => {
 
   const filteredDataA = dataA.filter(d => new Date(d.date) >= startDate);
   const filteredDataB = dataB.filter(d => new Date(d.date) >= startDate);
+  const filteredDataC = dataC.filter(d => new Date(d.date) >= startDate);
 
   const dates = filteredDataA.map(d => d.date);
   const closeA = filteredDataA.map(d => d.close);
   const closeB = filteredDataB.map(d => d.close);
+  const closeC = filteredDataC.map(d => d.close);
 
   chartData.value = {
     labels: dates,
@@ -107,17 +111,24 @@ const loadChart = async () => {
         borderColor: 'rgba(255, 99, 132, 1)',
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         tension: 0.3
+      },
+      {
+        label: `${props.tickerC} Close Price`,
+        data: closeC,
+        borderColor: 'rgba(200, 99, 132, 1)',
+        backgroundColor: 'rgba(200, 99, 132, 0.2)',
+        tension: 0.3
       }
     ]
   };
 
   chartOptions.value.plugins.title.text =
-    `Close Prices: ${props.tickerA} vs ${props.tickerB} (Last ${props.duration} Year(s))`;
+    `Close Prices: ${props.tickerA} vs ${props.tickerB} vs ${props.tickerC} (Last ${props.duration} Year(s))`;
 };
 
 // Watch props and reload chart
 watch(
-  [() => props.tickerA, () => props.tickerB, () => props.duration],
+  [() => props.tickerA, () => props.tickerB, () => props.tickerC, () => props.duration],
   loadChart,
   { immediate: true }
 );

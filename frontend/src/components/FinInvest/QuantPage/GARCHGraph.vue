@@ -1,6 +1,6 @@
 <template>
   <div class="garch-graph">
-    <h2>GARCH Simulation: {{ tickerA || 'None' }} vs {{ tickerB || 'None' }}</h2>
+    <h2>GARCH Simulation: {{ tickerA || 'None' }} vs {{ tickerB || 'None' }} vs {{ tickerC || 'None' }}</h2>
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
@@ -16,6 +16,7 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, Title, Ca
 const props = defineProps({
   tickerA: { type: String, required: false },
   tickerB: { type: String, required: false },
+  tickerC: { type: String, required: false },
   indicator: String,
   returnType: String,
 })
@@ -67,7 +68,7 @@ async function loadAndSimulate() {
   const labels = Array.from({ length: 252 }, (_, i) => i)
   const steps = 252
 
-  if (!props.tickerA && !props.tickerB) {
+  if (!props.tickerA && !props.tickerB && !props.tickerB) {
     renderBlankChart()
     return
   }
@@ -96,6 +97,20 @@ async function loadAndSimulate() {
     datasets.push({
       label: props.tickerB,
       data: pathB,
+      borderColor: 'orange',
+      borderWidth: 2,
+      fill: false,
+    })
+  }
+  if (props.tickerC) {
+    const dataC = await fetchCSVData(props.tickerC)
+    const returnsC = calculateReturns(dataC)
+    const S0 = parseFloat(dataC.at(-1)['Close'])
+    const pathC = simulateGARCH(S0, returnsC, steps)
+
+    datasets.push({
+      label: props.tickerC,
+      data: pathC,
       borderColor: 'orange',
       borderWidth: 2,
       fill: false,
@@ -189,7 +204,7 @@ onMounted(async () => {
 })
 
 watch(
-  () => [props.tickerA, props.tickerB],
+  () => [props.tickerA, props.tickerB, props.tickerC],
   async () => {
     await nextTick()
     loadAndSimulate()

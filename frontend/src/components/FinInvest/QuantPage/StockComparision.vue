@@ -1,5 +1,8 @@
 <template>
+
+  <h1 class="page-header">Stock Comparison</h1>
   <div class="controls">
+    
     <label>
       <span class="label-text">Indicator</span>
       <select v-model="indicator" @change="loadRiskMetrics">
@@ -46,6 +49,13 @@
               </option>
             </select>
           </th>
+          <th class="sticky-header">
+            <select v-model="selectedTickers[2]" @change="updateStock(2)">
+              <option v-for="ticker in availableTickers" :key="ticker" :value="ticker">
+                {{ ticker }}
+              </option>
+            </select>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -57,9 +67,10 @@
           </td>
           <td></td>
           <td></td>
+          <td></td>
         </tr>
         <tr v-if="rows[7].showGraph">
-          <td colspan="3" class="graph-cell">
+          <td colspan="4" class="graph-cell">
           </td>
         </tr>
         <template v-if="rows[7].showGraph">
@@ -69,9 +80,10 @@
             </td>
             <td>{{ metrics.alpha.A }}</td>
             <td>{{ metrics.alpha.C }}</td>
+            <td>{{ metrics.alpha.B }}</td>
           </tr>
           <tr v-if="rows[6].showGraph">
-            <td colspan="3" class="graph-cell">
+            <td colspan="4" class="graph-cell">
   
             </td>
           </tr>
@@ -81,9 +93,10 @@
             </td>
             <td>{{ metrics.beta.A }}</td>
             <td>{{ metrics.beta.C }}</td>
+            <td>{{ metrics.beta.B }}</td>
           </tr>
           <tr v-if="rows[6].showGraph">
-            <td colspan="3" class="graph-cell">
+            <td colspan="4" class="graph-cell">
   
             </td>
           </tr>
@@ -93,9 +106,10 @@
             </td>
             <td>{{ metrics.sharpe.A }}</td>
             <td>{{ metrics.sharpe.C }}</td>
+            <td>{{ metrics.sharpe.B }}</td>
           </tr>
           <tr v-if="rows[6].showGraph">
-            <td colspan="3" class="graph-cell">
+            <td colspan="4" class="graph-cell">
   
             </td>
           </tr>
@@ -104,9 +118,10 @@
             </td>
             <td>{{ metrics.sortino.A }}</td>
             <td>{{ metrics.sortino.C }}</td>
+            <td>{{ metrics.sortino.B }}</td>
           </tr>
           <tr v-if="rows[6].showGraph">
-            <td colspan="3" class="graph-cell">
+            <td colspan="4" class="graph-cell">
   
             </td>
           </tr>
@@ -116,9 +131,10 @@
             </td>
             <td>{{ metrics.stdDev.A }}</td>
             <td>{{ metrics.stdDev.C }}</td>
+            <td>{{ metrics.stdDev.B }}</td>
           </tr>
           <tr v-if="rows[6].showGraph">
-            <td colspan="3" class="graph-cell">
+            <td colspan="4" class="graph-cell">
             </td>
           </tr>
           
@@ -131,9 +147,10 @@
           </td>
           <td></td>
           <td></td>
+          <td></td>
         </tr>
         <tr v-if="rows[4].showGraph">
-          <td colspan="3" class="graph-cell">
+          <td colspan="4" class="graph-cell">
           
           </td>
         </tr>
@@ -148,16 +165,17 @@
               </button>
             </td>
             <td></td>
-            <td>
-            </td>
+            <td></td>
+            <td></td>
           </tr>
           <tr v-if="rows[5].showGraph">
-            <td colspan="3" class="graph-cell">
+            <td colspan="4" class="graph-cell">
               <div class="graph-row">
-              <GBMGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :returnType="returnType" />
+              <GBMGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :tickerC="selectedTickers[2]" :indicator="indicator" :returnType="returnType" />
               <GARCHGraph
               :tickerA="selectedTickers[0]"
               :tickerB="selectedTickers[1]"
+              :tickerC="selectedTickers[2]"
               :indicator="indicator"
               :returnType="returnType"
           />
@@ -181,10 +199,11 @@
           </td>
           <td></td>
           <td></td>
+          <td></td>
         </tr>
         <tr v-if="rows[0].showGraph">
-          <td colspan="3" class="graph-cell">
-            <CompareClosePrice :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :duration="2" />
+          <td colspan="4" class="graph-cell">
+            <CompareClosePrice :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :tickerC="selectedTickers[2]" :duration="2" />
           </td>
         </tr>
   
@@ -200,10 +219,10 @@
           <td></td>
         </tr>
         <tr v-if="rows[1].showGraph">
-          <td colspan="3" class="graph-cell">
+          <td colspan="4" class="graph-cell">
             <div class="graph-row">
-            <IndicatorGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :indicator="indicator" :period="period" :returnType="returnType"/>
-            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" :duration="2" />
+            <IndicatorGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :tickerC="selectedTickers[2]" :indicator="indicator" :period="period" :returnType="returnType"/>
+            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :tickerC="selectedTickers[2]" :returnType="returnType" :duration="2" />
           
           </div>
           </td>
@@ -219,10 +238,11 @@
           </td>
           <td></td>
           <td></td>
+          <td></td>
         </tr>
         <tr v-if="rows[2].showGraph">
-          <td colspan="3" class="graph-cell">
-            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :returnType="returnType" :duration="2" />
+          <td colspan="4" class="graph-cell">
+            <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :tickerC="selectedTickers[2]" :returnType="returnType" :duration="2" />
           </td>
         </tr>
 
@@ -247,7 +267,7 @@
 import {watch, ref } from 'vue';
 
   const availableTickers = ['AAPL', 'MSFT', 'GOOG', 'AMZN', 'TSLA']; // Example tickers
-  const selectedTickers = reactive(['', '']); // Default selected tickers for columns A and C
+  const selectedTickers = reactive(['', '', '']); // Default selected tickers for columns A and C
   // or 'daily'
   const indicator = ref('ema');           // Default indicator
   const period = ref(50);                 // Default period
@@ -285,12 +305,12 @@ import {watch, ref } from 'vue';
 
 
 
-const metrics = ref({
-  alpha: { A: null, C: null },
-  beta: { A: null, C: null },
-  sharpe: { A: null, C: null },
-  sortino: { A: null, C: null },
-  stdDev: { A: null, C: null }
+  const metrics = ref({
+  alpha: { A: null, B: null, C: null },
+  beta: { A: null, B: null, C: null },
+  sharpe: { A: null, B: null, C: null },
+  sortino: { A: null, B: null, C: null },
+  stdDev: { A: null, B: null, C: null },
 });
 
 async function parseClosePrices(ticker) {
@@ -312,21 +332,27 @@ async function parseClosePrices(ticker) {
 }
 
 async function loadRiskMetrics() {
-  const [dataA, dataC, benchmark] = await Promise.all([
+  const [dataA, dataC, dataB, benchmark] = await Promise.all([
     parseClosePrices(selectedTickers[0]),
     parseClosePrices(selectedTickers[1]),
+    parseClosePrices(selectedTickers[2]),
     parseClosePrices('NIFTY50') // Assuming this CSV exists
   ]);
 
   metrics.value.alpha.A = calculateAlphaBeta(dataA, benchmark).alpha.toFixed(4);
+  metrics.value.alpha.B = calculateAlphaBeta(dataB, benchmark).alpha.toFixed(4);
   metrics.value.alpha.C = calculateAlphaBeta(dataC, benchmark).alpha.toFixed(4);
   metrics.value.beta.A = calculateAlphaBeta(dataA, benchmark).beta.toFixed(4);
+  metrics.value.beta.B = calculateAlphaBeta(dataB, benchmark).beta.toFixed(4);
   metrics.value.beta.C = calculateAlphaBeta(dataC, benchmark).beta.toFixed(4);
   metrics.value.sharpe.A = calculateSharpeRatio(dataA).toFixed(4);
+  metrics.value.sharpe.B = calculateSharpeRatio(dataB).toFixed(4);
   metrics.value.sharpe.C = calculateSharpeRatio(dataC).toFixed(4);
   metrics.value.sortino.A = calculateSortinoRatio(dataA).toFixed(4);
+  metrics.value.sortino.B = calculateSortinoRatio(dataB).toFixed(4);
   metrics.value.sortino.C = calculateSortinoRatio(dataC).toFixed(4);
   metrics.value.stdDev.A = calculateStandardDeviation(dataA).toFixed(4);
+  metrics.value.stdDev.B = calculateStandardDeviation(dataB).toFixed(4);
   metrics.value.stdDev.C = calculateStandardDeviation(dataC).toFixed(4);
 }
 
@@ -420,6 +446,18 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   .label-text {
     margin-bottom: 0.5rem;
     font-weight: bold;
+  }
+
+  .page-header {
+    font-size: 2rem; /* Increase the font size */
+    font-weight: bold; /* Make the text bold */
+    text-align: center; /* Center the header */
+    margin: 1.5rem 0; /* Add spacing above and below */
+    color: #1d4ed8; /* Set a primary color (blue) */
+    text-transform: uppercase; /* Make the text uppercase */
+    letter-spacing: 0.1rem; /* Add some spacing between letters */
+    border-bottom: 2px solid #dbeafe; /* Add a subtle underline */
+    padding-bottom: 0.5rem; /* Add padding below the text */
   }
   
   </style>

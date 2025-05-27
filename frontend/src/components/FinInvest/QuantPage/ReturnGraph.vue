@@ -25,6 +25,7 @@
   const props = defineProps({
     tickerA: { type: String, required: true },
     tickerB: { type: String, required: true },
+    tickerC: { type: String, required: true },
     returnType: {
       type: String,
       default: 'cumulative', // 'daily' or 'cumulative'
@@ -99,6 +100,7 @@
   const loadChart = async () => {
     const dataA = await parseCSV(`/${props.tickerA}.csv`);
     const dataB = await parseCSV(`/${props.tickerB}.csv`);
+    const dataC = await parseCSV(`/${props.tickerC}.csv`);
   
     // Filter data based on duration
     const now = new Date();
@@ -106,10 +108,12 @@
   
     const filteredDataA = dataA.filter(d => new Date(d.date) >= startDate);
     const filteredDataB = dataB.filter(d => new Date(d.date) >= startDate);
+    const filteredDataC = dataC.filter(d => new Date(d.date) >= startDate);
   
     const dates = filteredDataA.map(d => d.date);
     const pricesA = filteredDataA.map(d => d.close);
     const pricesB = filteredDataB.map(d => d.close);
+    const pricesC = filteredDataC.map(d => d.close);
   
     const returnA = props.returnType === 'daily'
       ? computeDailyReturn(pricesA)
@@ -118,6 +122,10 @@
     const returnB = props.returnType === 'daily'
       ? computeDailyReturn(pricesB)
       : computeCumulativeReturn(pricesB);
+
+    const returnC = props.returnType === 'daily'
+      ? computeDailyReturn(pricesC)
+      : computeCumulativeReturn(pricesC);
   
     chartData.value = {
       labels: dates,
@@ -135,16 +143,23 @@
           borderColor: 'rgba(255, 99, 132, 1)',
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           tension: 0.3
+        },
+        {
+          label: `${props.tickerC} ${props.returnType} return`,
+          data: returnC,
+          borderColor: 'rgba(255, 159, 64, 1)',
+          backgroundColor: 'rgba(255, 159, 64, 0.2)',
+          tension: 0.3
         }
       ]
     };
   
     chartOptions.value.plugins.title.text =
-      `${props.returnType === 'daily' ? 'Daily' : 'Cumulative'} Return: ${props.tickerA} vs ${props.tickerB} (Last ${props.duration} Year(s))`;
+      `${props.returnType === 'daily' ? 'Daily' : 'Cumulative'} Return: ${props.tickerA} vs ${props.tickerB} vs ${props.tickerC} (Last ${props.duration} Year(s))`;
   };
   
   watch(
-    [() => props.tickerA, () => props.tickerB, () => props.returnType, () => props.duration],
+    [() => props.tickerA, () => props.tickerB, () => props.tickerC, () => props.returnType, () => props.duration],
     loadChart,
     { immediate: true }
   );

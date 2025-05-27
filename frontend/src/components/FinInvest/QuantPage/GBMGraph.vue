@@ -1,6 +1,6 @@
 <template>
   <div class="gbm-graph">
-    <h2>GBM Simulation: {{ tickerA || 'None' }} vs {{ tickerB || 'None' }}</h2>
+    <h2>GBM Simulation: {{ tickerA || 'None' }} vs {{ tickerB || 'None' }} vs {{ tickerC || 'None' }}</h2>
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
@@ -16,6 +16,7 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, Title, Ca
 const props = defineProps({
   tickerA: { type: String, required: false },
   tickerB: { type: String, required: false },
+  tickerC: { type: String, required: false },
   indicator: String,
   returnType: String,
 })
@@ -68,7 +69,7 @@ async function loadAndSimulate() {
   const steps = 252
   const T = 1
 
-  if (!props.tickerA && !props.tickerB) {
+  if (!props.tickerA && !props.tickerB && !props.tickerC) {
     renderBlankChart()
     return
   }
@@ -100,6 +101,21 @@ async function loadAndSimulate() {
       label: props.tickerB,
       data: pathB,
       borderColor: 'green',
+      borderWidth: 2,
+      fill: false,
+    })
+  }
+    if (props.tickerC) {
+    const dataC = await fetchCSVData(props.tickerC)
+    const returnsC = calculateReturns(dataC)
+    const { mu, sigma } = calculateMeanAndStd(returnsC)
+    const S0 = parseFloat(dataC.at(-1)['Close'])
+    const pathC = simulateGBM(S0, mu, sigma, T, steps)
+
+    datasets.push({
+      label: props.tickerC,
+      data: pathC,
+      borderColor: 'red',
       borderWidth: 2,
       fill: false,
     })
@@ -190,7 +206,7 @@ onMounted(() => {
   renderBlankChart()
 })
 
-watch(() => [props.tickerA, props.tickerB], loadAndSimulate, { immediate: true })
+watch(() => [props.tickerA, props.tickerB, props.tickerC], loadAndSimulate, { immediate: true })
 </script>
 
 <style scoped>

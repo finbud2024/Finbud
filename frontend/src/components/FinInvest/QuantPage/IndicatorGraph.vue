@@ -25,6 +25,7 @@
   const props = defineProps({
     tickerA: { type: String, required: true },
     tickerB: { type: String, required: true },
+    tickerC: { type: String, required: true },
     indicator: {
       type: String,
       default: 'sma'
@@ -100,12 +101,16 @@
   
     const dataA = await parseCSV(`/${props.tickerA}.csv`);
     const dataB = await parseCSV(`/${props.tickerB}.csv`);
+    const dataC = await parseCSV(`/${props.tickerC}.csv`);
+
     const dates = dataA.map(d => d.date);
     const closeA = dataA.map(d => d.close);
     const closeB = dataB.map(d => d.close);
+    const closeC = dataC.map(d => d.close);
   
     const processedA = applyIndicator(closeA, props.indicator, props.period);
     const processedB = applyIndicator(closeB, props.indicator, props.period);
+    const processedC = applyIndicator(closeC, props.indicator, props.period);
   
     chartData.value = {
       labels: dates,
@@ -123,13 +128,20 @@
           borderColor: 'rgba(153, 102, 255, 1)',
           backgroundColor: 'rgba(153, 102, 255, 0.2)',
           tension: 0.3
+        },
+        {
+          label: `${props.tickerC} ${props.indicator.toUpperCase()}`,
+          data: processedC,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          tension: 0.3
         }
       ]
     };
   
-    chartOptions.value.plugins.title.text = `${props.period}-Day ${props.indicator.toUpperCase()}: ${props.tickerA} vs ${props.tickerB}`;
+    chartOptions.value.plugins.title.text = `${props.period}-Day ${props.indicator.toUpperCase()}: ${props.tickerA} vs ${props.tickerB} vs ${props.tickerC}`;
   };
   
   // Watch for changes in props and reload the chart
-  watch([() => props.tickerA, () => props.tickerB, () => props.indicator, () => props.period], loadChartData, { immediate: true });
+  watch([() => props.tickerA, () => props.tickerB, () => props.tickerC, () => props.indicator, () => props.period], loadChartData, { immediate: true });
   </script>
