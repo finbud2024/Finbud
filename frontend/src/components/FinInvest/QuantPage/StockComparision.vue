@@ -217,6 +217,7 @@
           </td>
           <td></td>
           <td></td>
+          <td></td>
         </tr>
         <tr v-if="rows[1].showGraph">
           <td colspan="4" class="graph-cell">
@@ -230,7 +231,7 @@
   
   
         <!-- Row 4 -->
-        <tr>
+        <!--<tr>
           <td>Return Value
             <button class="toggle-btn" @click="toggleGraph(2)">
               {{ rows[2].showGraph ? '▲' : '▼' }}
@@ -244,7 +245,7 @@
           <td colspan="4" class="graph-cell">
             <ReturnGraph :tickerA="selectedTickers[0]" :tickerB="selectedTickers[1]" :tickerC="selectedTickers[2]" :returnType="returnType" :duration="2" />
           </td>
-        </tr>
+        </tr>-->
 
       </tbody>
     </table>
@@ -445,7 +446,9 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   
   .label-text {
     margin-bottom: 0.5rem;
-    font-weight: bold;
+    font-size: 1rem;
+    color:var(--quant-text-color); /* Set a primary color (blue) */
+  
   }
 
   .page-header {
@@ -453,10 +456,10 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
     font-weight: bold; /* Make the text bold */
     text-align: center; /* Center the header */
     margin: 1.5rem 0; /* Add spacing above and below */
-    color: #1d4ed8; /* Set a primary color (blue) */
+    color: var(--quant-text-color); /* Set a primary color (blue) */
     text-transform: uppercase; /* Make the text uppercase */
     letter-spacing: 0.1rem; /* Add some spacing between letters */
-    border-bottom: 2px solid #dbeafe; /* Add a subtle underline */
+    border-bottom: 2px solid var(--quant-divider-line-color); /* Add a subtle underline */
     padding-bottom: 0.5rem; /* Add padding below the text */
   }
   

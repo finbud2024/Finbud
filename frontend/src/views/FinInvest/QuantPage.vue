@@ -1,9 +1,8 @@
 
 
 <template>
-  
-  <div class="container">
     <div class="Navigation">
+      <ChatBot :botMessage="riskRatio"/>
       <StockComparision
       v-model:selectedTickers="selectedTickers"
       :indicator="indicator"
@@ -17,31 +16,35 @@
     :colorTheme="'light'"
     :width="'100%'"
     :height="'600px'"/>
-  
+    <DashBoard/>
+    <div class="container">
+      <StockHeatmap/>
+    
+    </div>
+    <div class="monte-carlo-wrapper">
+      <div class="monte-carlo-container">
+        <NewMonteCarloGraph />
+      </div>
+    </div>
     </div>
     
   
-    <br /><br />
+ 
 
-    <br />
-    <div
+ 
+    <!--<div
       class="Panels animate__animated animate__fadeInRight"
       style="width: 80%; margin: 0 auto"
     >
       <h3 style="text-align: center">Interpretation</h3>
       <ChatBotTyping :message="technicalIndicators" />
       <ChatBotTyping :message="riskRatio" />
-    </div>
-  </div>
+    </div>-->
 
-<DashBoard/>
-<div class="container">
-  <StockHeatmap      
-  :width="'100%'" 
-  :height="'1000px'" />
-</div>
-  <MonteCarloSimulation />
-  <NewMonteCarloGraph/>
+
+
+
+
 </template>
 
 <script>
@@ -52,6 +55,18 @@ import StockComparision from "@/components/FinInvest/QuantPage/StockComparision.
 import StockHeatmap from "@/components/FinInvest/QuantPage/StockHeatmap.vue";
 import LoadingPage from "../Home/LoadingPage.vue";
 import NewMonteCarloGraph from "@/components/FinInvest/QuantPage/NewMonteCarloGraph.vue";
+import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
+const templateChat =`Risk ratios Alpha: Return performance as compared to benchmark of market
+        <li>
+          Beta: Relative price movement of a stock to go up and down as compared
+          to the market trend
+        </li>
+        <li>
+          Sharpe Ratio: Returns generated per unit of risk - the higher the
+          better
+        </li>
+        <li>Sortino Ratio: Returns as compared to only downside risk</li>
+      </ul>`
 export default {
   components: {
     ChatBotTyping,
@@ -61,6 +76,7 @@ export default {
     StockHeatmap,
     LoadingPage,
     NewMonteCarloGraph,
+    ChatBot,
   },
   data() {
     return {
@@ -79,19 +95,15 @@ export default {
         { symbol: 'PYPL', change: -0.0678 },
         // Add more stocks as needed
       ],
-      riskRatio: `<h5>Risk ratios</h5>
-      <ul>
+      riskRatio: `Risk ratios
+      
         <li>Alpha: Return performance as compared to benchmark of market</li>
-        <li>
-          Beta: Relative price movement of a stock to go up and down as compared
-          to the market trend
+        <li>Beta: Relative price movement of a stock to go up and down as compared to the market trend
         </li>
-        <li>
-          Sharpe Ratio: Returns generated per unit of risk - the higher the
-          better
+        <li>Sharpe Ratio: Returns generated per unit of risk - the higher the better
         </li>
         <li>Sortino Ratio: Returns as compared to only downside risk</li>
-      </ul>`,
+      `,
       technicalIndicators: `<h5>Technical indicators</h5>
   <ul>
     <li>
@@ -174,16 +186,11 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  width: 100%;
-  height: 100%;
-  padding:20px;
-  align:center;
-}
+
 .Navigation {
-  background-color: grey;
-  padding: 20px;
-  border-radius: 10px;
+  background-color: var(--quant-background);
+
+  padding:20px;
   max-width: 100%;
   margin: 0 auto;
 }
@@ -251,11 +258,6 @@ label {
   margin: 0 1%;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
 
 .stock-box {
   width: 60%;
@@ -318,6 +320,23 @@ h5 {
 .no-fade {
   animation: none;       /* disables fade / opacity 0 → 1 */
   transform: translateX(0); /* keep it static */
+}
+.monte-carlo-wrapper {
+  width: 100%; /* Full width of the wrapper */
+  max-width: 1200px; /* Limit the width */
+  margin: 0 auto; /* Center the wrapper */
+  padding: 20px; /* Add padding around the container */
+  background-color: #f9f9f9; /* Light background color */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 8px; /* Round the corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  margin-top:50px;
+}
+
+
+.monte-carlo-container {
+  margin-top: 20px; /* Add spacing above the graph */
+  text-align: center; /* Center the graph */
 }
 
 @import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");

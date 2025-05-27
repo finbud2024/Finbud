@@ -343,6 +343,14 @@ export default {
   --agent-button-bg-active-color: #000000;
   --black-in-dark-mode: #ffffff;
   --white-in-dark-mode: #000000;
+
+  /*--QuantPage colors */
+  --quant-background:#ffffff;
+  --quant-text-color: #000000;
+  --quant-secondary-text-color: #8E8E93;
+  --quant-card-background:#f9f9f9;
+  --quant-description-text-color: #8E8E93;
+  --quant-divider-line-color: #C6C6C8;
 }
 
 :root.dark-mode,
@@ -370,6 +378,14 @@ body.dark-mode {
   --black-in-dark-mode: #0f0f14;
   --white-in-dark-mode: #ffffff;
   --dark-grey: #0f0f14;
+
+  /*--QuantPage colors */
+  --quant-background: #000000;
+  --quant-text-color: #ffffff;
+  --quant-secondary-text-color: #8E8E93;
+  --quant-card-background: #1C1C1E;
+  --quant-description-text-color: #8E8E93;
+  --quant-divider-line-color: #3A3A3C;
 }
 /* Update content area */
 .content {

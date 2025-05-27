@@ -1,6 +1,6 @@
 <template>
   <div class="frame-container">
-
+    <div class="border-wrapper">
     <div class="tradingview-heatmap-container">
       <div class="tradingview-widget-container">
         <div id="tradingview-heatmap-widget"></div>
@@ -9,6 +9,7 @@
 
           </a>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -94,6 +95,15 @@
     width: 100%; /* Full width of the container */
     max-width: 1200px; /* Limit the width */
     margin: 30px auto; /* Center the container */
+  }
+  .border-wrapper {
+    position: relative; /* Position the wrapper relative to the heatmap */
+    border: 10px solid #444; /* Add a border around the graph */
+    border-radius: 12px; /* Round the corners of the border */
+    overflow: hidden; /* Hide any part of the graph that extends beyond the border */
+    width: 100%; /* Full width of the wrapper */
+    height: 725px; /* Match the height of the heatmap */
+    box-sizing: border-box; /* Include the border in the element's dimensions */
   }
   
   .frame-overlay {

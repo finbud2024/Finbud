@@ -441,8 +441,8 @@ export default {
 }
 
 header {
-  background-color: #0033cc;
-  color: white;
+  background-color:var(--quant-background);
+  color: var(--quant-text-color);
   text-align: center;
   padding: 10px;
 }
@@ -454,12 +454,12 @@ header {
 
 .current-holding {
   margin-top: 20px;
-  background-color: rgb(94, 169, 212);
+  background-color:var(--quant-card-background);
   align-content: center;
 }
 
 h2 {
-  color: #0033cc;
+  color: var(--quant-card-background);
   font-size: 24px;
   text-align: center;
 }
@@ -471,8 +471,8 @@ table {
 th {
   position: sticky; /* Make the header sticky */
   top: 0; /* Stick the header to the top of the container */
-  background-color: #0073e6; /* Background color for the header */
-  color: white; /* Text color for the header */
+  background-color:var(--quant-card-background); /* Background color for the header */
+  color: var(--quant-text-color); /* Text color for the header */
   z-index: 1; /* Ensure the header stays above the table rows */
 }
 
@@ -482,8 +482,7 @@ th, td {
 }
 
 th {
-  background-color: #0073e6;
-  color: white;
+
   font-weight: bold;
 }
 
