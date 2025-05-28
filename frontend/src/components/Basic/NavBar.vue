@@ -28,16 +28,37 @@
             {{ $t("finManage") }} <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">{{ $t("goal") }}</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">{{ $t("riskAnalysis")
-            }}</router-link>
-            <router-link to="/investment-calculator" class="investment-calculator"
-              @click="toggleAboutDropdown(false)">{{ $t("investmentCalculator") }}</router-link>
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">{{
-              $t("mortgageCalculator") }}</router-link>
+            <router-link
+              to="/goal" 
+              class="goal"
+              @click="toggleDropdown(false)"
+              >{{ $t("goal") }}</router-link
+            >
+            <router-link
+              to="/riskanalysis"
+              class="risk-analysis"
+              @click="toggleDropdown(false)"
+              >{{ $t("riskAnalysis") }}</router-link
+            >
+            <router-link
+              to="/investment-calculator"
+              class="investment-calculator"
+              @click="toggleAboutDropdown(false)"
+              >{{ $t("investmentCalculator") }}</router-link
+            >
+            <router-link
+              to="/mortgage-calc"
+              class="mortgage-calc"
+              @click="toggleDropdown(false)"
+              >{{ $t("mortgageCalculator") }}</router-link
+            >
 
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">{{
-              $t("superInvestors") }}</router-link>
+            <router-link
+              to="/super-investors"
+              class="super-investors"
+              @click="toggleDropdownInvest(false)"
+              >{{ $t("superInvestors") }}</router-link
+            >
           </div>
         </li>
 
@@ -106,46 +127,85 @@
         </li>
 
         <li v-if="isAuthenticated" class="dropdown profile-dropdown">
-          <div class="profile-wrapper" @mouseenter="toggleProfileDropdown(true)"
-            @mouseleave="toggleProfileDropdown(false)">
-            <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" loading="eager" />
-            <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-              <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-                <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image" @error="handleImageError"
-                  loading="eager" />
-                <p>{{ profileName }}</p>
-              </router-link>
-
-              <!-- Moved inside dropdown -->
-              <div class="fincoin-container">
-                <FinCoinDisplay :balance="finCoinBalance" />
-              </div>
-              <div class="language-switcher">
-                <button @click="switchLanguage('en')">
-                  <img src="@/assets/us.png" alt="English" />
-                </button>
-                <button @click="switchLanguage('vi')">
-                  <img src="@/assets/vn.png" alt="Tiếng Việt" />
-                </button>
-              </div>
-              <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
-                <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-                <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
-              </router-link>
-              <router-link to="#" class="logout" @click="logout">
-                <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
-                <p>{{ $t("logout") }}</p>
-              </router-link>
+  <div
+    class="profile-wrapper"
+    @mouseenter="toggleProfileDropdown(true)"
+    @mouseleave="toggleProfileDropdown(false)"
+  >
+    <img
+      :src="profileImage"
+      alt="User Image"
+      class="user-image"
+      @error="handleImageError"
+      loading="eager"
+    />
+    <div class="dropdown-profile" v-show="isProfileDropdownOpen">
+      <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
+        <div class="profile-info-row">
+          <img
+            :src="profileImage"
+            alt="User Image"
+            class="inside-dropdown-user-image"
+            @error="handleImageError"
+            loading="eager"
+          />
+          <div class="profile-info-col">
+            <p class="profile-name">{{ profileName }}</p>
+            <div class="fincoin-container">
+              <FinCoinDisplay :balance="finCoinBalance" />
             </div>
           </div>
-        </li>
+        </div>
+      </router-link>
 
-        <li v-if="isAuthLoading" class="auth-loading">
-          <div class="loading-indicator"></div>
-        </li>
-      </ul>
+      <!-- Moved inside dropdown -->
+      
+      <div class="language-switcher">
+        <p>{{ $t("language") }}</p>
+        <div class="language-buttons">
+          <button @click="switchLanguage('en')">
+            <img src="@/assets/us.png" alt="English" />
+          </button>
+          <button @click="switchLanguage('vi')">
+            <img src="@/assets/vn.png" alt="Tiếng Việt" />
+          </button>
+        </div>
+      </div>
 
-      <!-- Mobile version -->
+      <div class="theme-switcher">
+        <p>{{ $t("theme") }}</p>
+        <div class="theme-buttons">
+          <button
+            :class="{ active: !isDarkMode }"
+            @click="setDarkMode(false)"
+            aria-label="Light mode"
+          >
+            <font-awesome-icon icon="fa-sun" />
+          </button>
+          <button
+            :class="{ active: isDarkMode }"
+            @click="setDarkMode(true)"
+            aria-label="Dark mode"
+          >
+            <font-awesome-icon icon="fa-moon" />
+          </button>
+        </div>
+      </div>
+
+      <router-link to="#" class="logout" @click="logout">
+        <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
+        <p style="margin-left: 50px;">{{ $t("logout") }}</p>
+      </router-link>
+    </div>
+  </div>
+</li>
+
+    <li v-if="isAuthLoading" class="auth-loading">
+      <div class="loading-indicator"></div>
+    </li>
+    </ul>
+
+    <!-- Mobile version -->
       <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
         <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
           <div class="brand-mobile">FinBud</div>
