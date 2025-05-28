@@ -1312,10 +1312,6 @@ export default {
     font-size: clamp(2rem, 10%, 3rem);
   }
 
-  .quiz-container {
-    width: calc(100% - 40px);
-  }
-
   .search-container {
     flex-direction: column;
     gap: 10px;
