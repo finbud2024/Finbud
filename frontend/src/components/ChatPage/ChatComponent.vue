@@ -208,14 +208,10 @@ export default {
 				},
 			]);
 
-			const UserPage = await this.openai.chat.completions.create({
-				model: "gpt-4o",
-				messages: [
-					{
-
-    role: "system",
-    content: `You are a routing assistant for the FinBud website.
-
+			const userPage = (await gptServices([
+				{
+					role: "system",
+					content: `You are a routing assistant for the FinBud website.
 Your job is to return the route for a requested page.
 
 List of available pages (English / Vietnamese):
@@ -244,21 +240,15 @@ Response rules:
 2. If the user asks what pages are available, return: /route
 3. If the request is not about a page, return: different
 
-Do not respond with anything else. No text, no formatting.
-`,
-					},
-					{
-						role: "user",
-						content: `Given the user message: "${userMessage}", return the route for the requested page. If the request is not about a page, return: different`,
-					},
-				],
-				temperature: 0.2,
-				max_tokens: 100,
-			});
+Do not respond with anything else. No text, no formatting.`,
+				},
+				{
+					role: "user",
+					content: `Given the user message: "${userMessage}", return the route for the requested page. If the request is not about a page, return: different`,
+				},
+			])).trim();
 
-
-			console.log("UserPage:", UserPage.choices[0].message.content);
-			const userPage = UserPage.choices[0].message.content.trim();
+			console.log("UserPage:", userPage);
 
 			if (userPage === "/route") {
 				this.messages.push({
