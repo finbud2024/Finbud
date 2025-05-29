@@ -843,12 +843,42 @@ export default {
 
 <style scoped>
 .quiz-card {
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
   background: white;
   border-radius: 12px;
-  padding: 2.5rem;
-  width: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
+
+@media (max-width: 768px) {
+  .quiz-card {
+    padding: 1.5rem;
+    max-width: 100%; 
+  }
+
+  .quiz-area {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .search-container,
+  .suggest-keyword-container {
+    width: 100% !important;
+    flex-direction: column;
+  }
+
+  .quizChoices button {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
+
+  .answerButton {
+    font-size: 0.95rem;
+  }
+}
+
 
 .title {
   font-family: sans-serif;
@@ -966,10 +996,34 @@ export default {
 
 .quizQuestion {
   font-family: sans-serif;
-  font-size: 1.2rem;
+  font-size: 1rem; /* Explicitly 16px on larger screens */
   color: #2c3e50;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: left;
 }
+
+/* Tablet screens */
+@media (max-width: 768px) {
+  .quizQuestion {
+    font-size: 15px;
+    margin-bottom: 1.15rem;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+  .quizQuestion {
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+}
+
 
 .quizQuestionEnabled {
   color: black;
@@ -985,17 +1039,22 @@ export default {
 
 .answerButton {
   width: 100%;
-  padding: 0.875rem;
+  padding: clamp(0.65rem, 2.5vw, 0.875rem); /* Responsive padding */
   background: white;
   color: #2c3e50;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2.5vw, 1rem); /* Responsive font size */
   cursor: pointer;
   transition: all 0.2s ease;
   margin-bottom: 0.5rem;
+  box-sizing: border-box; /* Prevent overflow */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: center;
 }
+
 
 .answerButton:hover {
   background: #f7fafc;
@@ -1090,7 +1149,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 70vw;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -1100,6 +1159,7 @@ export default {
   border-radius: 12px;
   padding: 2.5rem;
   width: 100%;
+  max-width: 1500px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -1801,7 +1861,7 @@ export default {
 
 .quizQuestion {
   font-family: sans-serif;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: var(--text-primary);
   /* Thay #2c3e50 */
   margin-bottom: 1.5rem;
