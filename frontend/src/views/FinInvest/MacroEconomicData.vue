@@ -160,7 +160,7 @@
     import axios from 'axios';
     import { nextTick } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import ChatBot from "../../components/ChatBot/DraggableChatBot.vue";
+    import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
 
     const { t } = useI18n();
 
