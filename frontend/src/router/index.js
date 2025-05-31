@@ -4,7 +4,7 @@ import LoginView from "@/views/Authentication/LoginPage.vue";
 import SignUp from "@/views/Authentication/SignUpPage.vue";
 import Home from "@/views/Home/HomePage.vue";
 import ChatPage from "@/views/Chat/ChatPage.vue";
-import SideBar from "@/components/basic/SideBar.vue";
+import SideBar from "@/components/Basic/SideBar.vue";
 import TechnologyPage from "@/views/Overview/TechnologyPage.vue";
 import PricingPage from "@/views/Unused/PricingPage.vue";
 import AboutUsPage from "@/views/Overview/AboutUsPage.vue";
@@ -40,7 +40,6 @@ import CoursePage from "@/views/FinEdu/CoursePage.vue";
 import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
 import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
 import MarketAnalysisInsight from "@/views/FinInvest/MarketAnalysis/MarketAnalysisInsight.vue";
-import VietCompanies from "@/views/FinInvest/VietCompanies.vue";
 
 const routes = [
   {
@@ -259,12 +258,8 @@ const routes = [
     path: "/market-analysis/insight/:type",
     name: "MarketAnalysisInsight",
     component: MarketAnalysisInsight,
-  },
-  {
-    path: "/viet-companies",
-    name: "VietCompanies",
-    component: VietCompanies,
-  },
+  }
+  
 ];
 
 const router = createRouter({
