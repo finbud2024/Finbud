@@ -4,7 +4,7 @@ dotenv.config({ path: '../.env' });
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
 import mongoose from "mongoose";
-import Event from "../Database Schema/FinEdu/Event.js"; 
+import Event from "../Database Schema/Event.js"; 
 
 chromium.use(stealth());
 

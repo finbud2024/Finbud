@@ -1,6 +1,6 @@
 // recreateAllForums.js
 import mongoose from 'mongoose';
-import Forum from '../Database Schema/FinEdu/Forum.js'; // adjust path if needed
+import Forum from '../Database Schema/Forum.js'; // adjust path if needed
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
