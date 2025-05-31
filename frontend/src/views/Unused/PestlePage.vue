@@ -1,3 +1,5 @@
+<!--Agent-->
+
 <template>
   <div class="pestle-page">
     <!-- Title -->
@@ -53,7 +55,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Pestle from "@/components/PestlePage/Pestle.vue";
+import Pestle from "@/components/Pestle/Pestle.vue";
 
 export default defineComponent({
   name: "PestlePage",
@@ -93,7 +95,6 @@ export default defineComponent({
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
-  margin-top: 30px;
 }
 
 .title {
