@@ -299,15 +299,15 @@ const messages = {
     // Testimonials
     testimonials: {
       daniel: "FinBud helped me understand where my money goes each month. Simple insights, big impact.",
-      rachel: "I've tried several money apps before, but none felt as intuitive as FinBud. It helped me figure out where my paycheck was going. The AI guidance makes a big difference—it feels personal. Now I've started building savings and even planning for retirement. I finally feel like I'm making smart choices with my money.",
+      rachel: "I’ve tried several money apps before, but none felt as intuitive as FinBud. It helped me figure out where my paycheck was going. The AI guidance makes a big difference—it feels personal. Now I’ve started building savings and even planning for retirement. I finally feel like I’m making smart choices with my money.",
       jane: "I love using FinBud! It's like having a personal financial advisor available 24/7. The insights and tips are incredibly useful and easy to understand.",
-      julian: "I was always intimidated by financial planning. Spreadsheets overwhelmed me, and I never knew where to start.FinBud took that stress away with its clean interface and smart AI support. It categorized my spending automatically and gave me goals I could actually reach. After six months of using it, I've paid off two credit cards and started building an emergency fund. I finally feel like I'm in control of my finances instead of the other way around. It's more than an app—it's like having a coach that keeps me accountable. Highly recommend it to anyone feeling stuck or lost with money.",
-      amelia: "FinBud's personalized advice was the game-changer I didn't know I needed. It adapts to my financial habits and pushes me gently in the right direction. From budgeting to investing, every feature feels thoughtful and well-designed. What really surprised me was how much I've learned just by using the app. The daily insights taught me more than any finance blog or YouTube video ever has. My relationship with money has completely shifted—from stress to confidence. FinBud truly empowers users to take charge.",
-      marcus: "I used to bounce between multiple finance apps—one for spending, one for saving, another for investments. FinBud brought everything together in one sleek platform. It tracks my goals, shows me real-time progress, and gives advice that actually works. I've reduced unnecessary subscriptions, started a travel fund, and even put money into a Roth IRA. I don't need to be a finance expert anymore. FinBud makes complex decisions feel manageable. This app respects your time and rewards consistency. It's been a game-changer for how I handle money.",
-      tyler: "The budgeting tool alone is worth it, but the real-time alerts are what keep me on track. It's like having a financial assistant watching out for me. I never miss a due date anymore.",
-      ten: "FinBud doesn't just show you numbers—it explains them. I get clear, actionable tips that help me adjust my habits without guilt. It feels like I'm getting smarter about money every day. Even my partner started using it after seeing my progress. It's been a financial glow-up for both of us.",
-      claire: "Tracking expenses used to stress me out, but FinBud simplified it all. The daily summaries help me stay accountable without being overwhelmed. I love how it celebrates milestones—it's motivating. It's the only finance app I've actually stuck with. Definitely recommend for anyone trying to build better habits.",
-      sophie: "FinBud gives me confidence in every financial decision I make. It's easy to use and always spot-on with its advice. I've already saved more in 3 months than I did all last year.",
+      julian: "I was always intimidated by financial planning. Spreadsheets overwhelmed me, and I never knew where to start.FinBud took that stress away with its clean interface and smart AI support. It categorized my spending automatically and gave me goals I could actually reach. After six months of using it, I’ve paid off two credit cards and started building an emergency fund. I finally feel like I’m in control of my finances instead of the other way around. It’s more than an app—it’s like having a coach that keeps me accountable. Highly recommend it to anyone feeling stuck or lost with money.",
+      amelia: "FinBud’s personalized advice was the game-changer I didn’t know I needed. It adapts to my financial habits and pushes me gently in the right direction. From budgeting to investing, every feature feels thoughtful and well-designed. What really surprised me was how much I’ve learned just by using the app. The daily insights taught me more than any finance blog or YouTube video ever has. My relationship with money has completely shifted—from stress to confidence. FinBud truly empowers users to take charge.",
+      marcus: "I used to bounce between multiple finance apps—one for spending, one for saving, another for investments. FinBud brought everything together in one sleek platform. It tracks my goals, shows me real-time progress, and gives advice that actually works. I’ve reduced unnecessary subscriptions, started a travel fund, and even put money into a Roth IRA. I don’t need to be a finance expert anymore. FinBud makes complex decisions feel manageable. This app respects your time and rewards consistency. It’s been a game-changer for how I handle money.",
+      tyler: "The budgeting tool alone is worth it, but the real-time alerts are what keep me on track. It’s like having a financial assistant watching out for me. I never miss a due date anymore.",
+      ten: "FinBud doesn’t just show you numbers—it explains them. I get clear, actionable tips that help me adjust my habits without guilt. It feels like I’m getting smarter about money every day. Even my partner started using it after seeing my progress. It’s been a financial glow-up for both of us.",
+      claire: "Tracking expenses used to stress me out, but FinBud simplified it all. The daily summaries help me stay accountable without being overwhelmed. I love how it celebrates milestones—it’s motivating. It’s the only finance app I’ve actually stuck with. Definitely recommend for anyone trying to build better habits.",
+      sophie: "FinBud gives me confidence in every financial decision I make. It’s easy to use and always spot-on with its advice. I’ve already saved more in 3 months than I did all last year.",
     },
     //Stock Simulator
     //Nav Bar
@@ -626,9 +626,9 @@ const messages = {
       partners: {
         title: "Integrate with the best tools in the market",
         descriptionParts: [
-          "Check out our connected partners. Don't see your software on the list of partners?",
+          "Check out our connected partners. Don’t see your software on the list of partners?",
           { type: "link", text: " Drop us a note", href: "mailto:contact@yourdomain.com" },
-          " and we'll get them added."
+          " and we’ll get them added."
         ],
         left: {
           text: "Shop-Ware enables users to take advantage of their lightning-fast workflows to repair more cars every month.",
@@ -636,7 +636,7 @@ const messages = {
           linkHref: "#"
         },
         right: {
-          text: "Tekmetric lets you unleash your shop's potential with their streamlined workflow settings.",
+          text: "Tekmetric lets you unleash your shop’s potential with their streamlined workflow settings.",
           linkText: "Learn more",
           linkHref: "#"
         }
@@ -917,47 +917,7 @@ const messages = {
         "Reference": "Reference",
         "Market Sentiment Over Time": "Market Sentiment Over Time",
       }
-    },
-    vietCompanies: {
-      title: "Viet Companies",
-      stt: "No.",
-      maCK: "Ticker",
-      tenCongTy: "Company Name",
-      nganh: "Industry",
-      san: "Exchange",
-      khoiLuong: "Listed/Trading Volume",
-      sanGiaoDich: "Exchange",
-      tatCa: "All",
-      khac: "Other",
-      previous: "Previous",
-      next: "Next",
-      page: "Page",
-      of: "of",
-      loading: "Loading..."
-    },
-    industries: {
-      "Tổ chức tín dụng": "Financial Institution",
-      "Nguyên vật liệu": "Materials",
-      "Năng lượng": "Energy",
-      "Phân phối và bán lẻ hàng lâu bền": "Durable Goods Distribution & Retail",
-      "Dịch vụ tài chính": "Financial Services",
-      "Dịch vụ tiện ích": "Utilities",
-      "Phát triển và quản lý bất động sản": "Real Estate Development & Management",
-      "Tư liệu sản xuất": "Manufacturing",
-      "Bảo hiểm": "Insurance",
-      "Thực phẩm, đồ uống và thuốc lá": "Food, Beverage & Tobacco",
-      "Dịch vụ viễn thông": "Telecommunications",
-      "Dịch vụ tiêu dùng": "Consumer Services",
-      "Vận tải": "Transportation",
-      "Khac": "Other",
-      "Truyền thông và giải trí": "Media & Entertainment",
-      "Dịch vụ chuyên biệt và thương mại": "Specialized & Commercial Services",
-      "Bán lẻ thực phẩm và nhu yếu phẩm": "Food & Essential Retail",
-      "Dịch vụ và thiết bị chăm sóc sức khỏe": "Healthcare Services & Equipment",
-      "Năng lượng": "Energy",
-      "Hàng tiêu dùng và trang trí": "Consumer Goods & Decoration",
-      "Dược phẩm, Công nghệ sinh học và Khoa học thường thức": "Pharmaceuticals, Biotechnology & Life Sciences"
-    },
+    }
   },
   vi: {
 
@@ -1855,47 +1815,7 @@ const messages = {
         "Reference": "Tham Khảo",
         "Market Sentiment Over Time": "Tâm Lý Thị Trường Theo Thời Gian"
       }
-    },
-    vietCompanies: {
-      title: "Công ty Việt",
-      stt: "STT",
-      maCK: "Mã CK",
-      tenCongTy: "Tên công ty",
-      nganh: "Ngành",
-      san: "Sàn",
-      khoiLuong: "Khối lượng NY/ĐKGD",
-      sanGiaoDich: "Sàn giao dịch",
-      tatCa: "Tất cả",
-      khac: "Khác",
-      previous: "Trước",
-      next: "Tiếp",
-      page: "Trang",
-      of: "của",
-      loading: "Đang tải..."
-    },
-    industries: {
-      "Tổ chức tín dụng": "Tổ chức tín dụng",
-      "Nguyên vật liệu": "Nguyên vật liệu",
-      "Năng lượng": "Năng lượng",
-      "Phân phối và bán lẻ hàng lâu bền": "Phân phối và bán lẻ hàng lâu bền",
-      "Dịch vụ tài chính": "Dịch vụ tài chính",
-      "Dịch vụ tiện ích": "Dịch vụ tiện ích",
-      "Phát triển và quản lý bất động sản": "Phát triển và quản lý bất động sản",
-      "Tư liệu sản xuất": "Tư liệu sản xuất",
-      "Bảo hiểm": "Bảo hiểm",
-      "Thực phẩm, đồ uống và thuốc lá": "Thực phẩm, đồ uống và thuốc lá",
-      "Dịch vụ viễn thông": "Dịch vụ viễn thông",
-      "Dịch vụ tiêu dùng": "Dịch vụ tiêu dùng",
-      "Vận tải": "Vận tải",
-      "Khac": "Khác",
-      "Truyền thông và giải trí": "Truyền thông và giải trí",
-      "Dịch vụ chuyên biệt và thương mại": "Dịch vụ chuyên biệt và thương mại",
-      "Bán lẻ thực phẩm và nhu yếu phẩm": "Bán lẻ thực phẩm và nhu yếu phẩm",
-      "Dịch vụ và thiết bị chăm sóc sức khỏe": "Dịch vụ và thiết bị chăm sóc sức khỏe",
-      "Năng lượng": "Năng lượng",
-      "Hàng tiêu dùng và trang trí": "Hàng tiêu dùng và trang trí",
-      "Dược phẩm, Công nghệ sinh học và Khoa học thường thức": "Dược phẩm, Công nghệ sinh học và Khoa học thường thức"
-    },
+    }
   }
 };
 
