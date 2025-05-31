@@ -45,27 +45,24 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .forum-banner {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #f8f9fa;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e0e0e0; 
   border-radius: 12px;
-  padding: 32px 24px;
+  padding: 32px 24px; 
   margin-bottom: 20px;
-  min-height: 96px;
-  gap: 16px;
-  flex-wrap: wrap;
+  min-height: 96px; 
 }
 
 .forum-info {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex: 1 1 60%;
-  min-width: 260px;
+  gap: 16px; 
 }
 
 .forum-icon {
@@ -74,7 +71,7 @@ export default {
   border-radius: 8px;
   background: #ffffff;
   padding: 8px;
-  border: 1px solid #dcdcdc;
+  border: 1px solid #dcdcdc; 
 }
 
 .forum-text h1 {
@@ -84,7 +81,7 @@ export default {
 }
 
 .forum-text p {
-  font-size: 16px;
+  font-size: 16px; 
   color: #6c757d;
   margin: 4px 0 0;
   max-width: 500px;
@@ -93,7 +90,7 @@ export default {
 .start-thread-btn {
   background: black;
   color: white;
-  padding: 12px 22px;
+  padding: 12px 22px; 
   border: none;
   border-radius: 9999px;
   cursor: pointer;
@@ -103,34 +100,14 @@ export default {
   font-size: 15px;
   font-weight: 600;
   transition: background 0.2s ease-in-out;
-  white-space: nowrap;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .forum-banner {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px 16px;
-  }
+.start-thread-btn:hover {
+  background: black;
+}
 
-  .forum-info {
-    flex: 1 1 100%;
-    margin-bottom: 12px;
-  }
-
-  .start-thread-btn {
-    width: 100%;
-    justify-content: center;
-    font-size: 14px;
-  }
-
-  .forum-text h1 {
-    font-size: 18px;
-  }
-
-  .forum-text p {
-    font-size: 14px;
-  }
+.icon {
+  width: 18px;
+  height: 18px;
 }
 </style>

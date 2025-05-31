@@ -130,55 +130,6 @@ export default {
   gap: 64px;
 }
 
-/* Tablet screens */
-@media (max-width: 1024px) {
-  .forum-layout {
-    grid-template-columns: 220px 1fr;
-    gap: 32px;
-    padding: 16px;
-  }
-}
-
-/* Mobile screens */
-@media (max-width: 768px) {
-  .forum-layout {
-    display: flex;
-    flex-direction: column;
-    padding: 16px 12px;
-    gap: 24px;
-  }
-
-  .sidebar {
-    width: 100%;
-    padding: 16px;
-    border-bottom: 1px solid var(--background-tertiary);
-    border-right: none;
-  }
-
-  .content {
-    width: 100%;
-  }
-
-  .forum-dropdown {
-    width: 100%;
-    font-size: 15px;
-  }
-
-  .title-input,
-  .body-input {
-    font-size: 15px;
-  }
-
-  .submit-button {
-    width: 100%;
-    font-size: 15px;
-  }
-
-  .page-title {
-    font-size: 20px;
-  }
-}
-
 .sidebar {
   background: var(--background-primary);
   padding: 20px;
@@ -213,7 +164,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  align-items: flex-start;
+  align-items: flex-start; 
 }
 
 .title-input {
@@ -227,7 +178,7 @@ export default {
 
 .body-input {
   width: 100%;
-  min-height: 200px;
+  min-height: 200px; 
   padding: 12px;
   font-size: 16px;
   border: 1px solid var(--border-color);
@@ -243,9 +194,9 @@ export default {
 }
 
 .submit-button {
-  background: var(--primary-color) ;
-  color: var(--primary-color);
-  border: 2px solid #dddddd ;
+  background: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  border: 2px solid #dddddd !important;
   align-self: flex-end;
   width: 90px;
   height: 44px;
@@ -254,13 +205,10 @@ export default {
   cursor: pointer;
   text-align: center;
   margin-top: 10px;
-  margin-bottom: 80px; /* 👈 Add this */
 }
-
 
 .submit-button:hover {
   background: #0F1F3D;
 }
-
 
 </style>
