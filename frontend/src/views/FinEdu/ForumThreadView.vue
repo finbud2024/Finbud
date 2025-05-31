@@ -277,86 +277,10 @@ export default {
   gap: 64px;
 }
 
-/* Responsive layout */
-@media (max-width: 1024px) {
-  .forum-layout {
-    grid-template-columns: 220px 1fr;
-    gap: 32px;
-    padding: 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  .forum-layout {
-    display: flex;
-    flex-direction: column;
-    padding: 16px 12px;
-    gap: 24px;
-  }
-
-  .sidebar {
-    width: 100%;
-    padding: 16px;
-    border-right: none;
-    border-bottom: 1px solid var(--background-tertiary);
-  }
-
-  .content {
-    width: 100%;
-  }
-
-  .thread-container {
-    padding: 0 4px;
-  }
-
-  .thread-title {
-    font-size: 17px;
-  }
-
-  .thread-info {
-    font-size: 14px;
-    flex-wrap: wrap;
-  }
-
-  .thread-body {
-    font-size: 15px;
-  }
-
-  .comment-box {
-    font-size: 14px;
-  }
-
-  .comment-button {
-    width: 100%;
-    font-size: 14px;
-  }
-
-  .reply-header {
-    font-size: 14px;
-    flex-wrap: wrap;
-  }
-
-  .reply-text {
-    font-size: 14px;
-  }
-
-  .thread-footer,
-  .reply-actions {
-    gap: 16px;
-    font-size: 13px;
-    flex-wrap: wrap;
-  }
-
-  .reaction .icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .author-avatar,
-  .reply-avatar {
-    width: 40px;
-    height: 40px;
-  }
+.sidebar {
+  background: var(--background-primary);
+  padding: 20px;
+  border-right: 1px solid var(--background-tertiary);
 }
 
 .content {
@@ -389,7 +313,7 @@ export default {
 .thread-title {
   font-size: 18px;
   font-weight: bold;
-  margin: 5px;
+  margin: 5px; 
 }
 
 .thread-info {
@@ -397,7 +321,7 @@ export default {
   align-items: center;
   font-size: 16px;
   color: var(--text-secondary);
-  margin: 5px;
+  margin: 5px; 
 }
 
 .author-avatar,
@@ -443,8 +367,8 @@ export default {
 .comment-box-container {
   width: 100%;
   max-width: 800px;
-  margin-bottom: 10px;
-  display: flex;
+  margin-bottom: 10px; 
+  display: flex; 
   flex-direction: column;
 }
 
@@ -482,6 +406,12 @@ export default {
   align-items: flex-start;
   gap: 12px;
   padding: 10px 0;
+}
+
+.reply-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 }
 
 .reply-content {
@@ -526,11 +456,9 @@ export default {
   color: red;
   fill: red;
 }
-
 .liked-text {
   color: red;
   font-weight: bold;
 }
-
 
 </style>
