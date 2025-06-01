@@ -54,8 +54,12 @@
             />
           </div>
           <div class="header-chatbot-content">
-            <div class="header-chat-message" v-html="formatChatMessage(headerTypingComplete ? headerChatbotMessage : headerPartialMessage)"></div>
-            <span v-if="!headerTypingComplete" class="typing-cursor">|</span>
+            <!-- <div class="header-chat-message" v-html="formatChatMessage(headerTypingComplete ? headerChatbotMessage : headerPartialMessage)"></div>
+            <span v-if="!headerTypingComplete" class="typing-cursor">|</span> -->
+            <div class="header-chat-message">
+              <span v-html="formatChatMessage(headerTypingComplete ? headerChatbotMessage : headerPartialMessage)"></span>
+              <span v-if="!headerTypingComplete" class="typing-cursor">|</span>
+            </div>
           </div>
         </div>
       </div>
