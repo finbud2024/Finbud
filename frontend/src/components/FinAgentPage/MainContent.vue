@@ -22,7 +22,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--black-in-light-mode);
+  background: var(--white-in-light-mode);
   border-radius: 12px;
   padding: 60px 40px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -56,8 +56,8 @@ export default {
 }
 
 .start-button {
-  background-color: white;
-  color: var(--white-in-dark-mode);
+  background-color: var(--white-in-dark-mode);
+  color: var(--black-in-dark-mode);
   font-size: 16px;
   font-weight: 500;
   padding: 14px 70px;
@@ -68,9 +68,12 @@ export default {
 }
 
 .start-button:hover {
-  background-color: #0095ff;
+  background-color: var(--white-in-dark-mode);
+  color: var(--black-in-dark-mode);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(140, 125, 247, 0.2);
+  box-shadow: 
+    0px 2px 4px rgba(140, 125, 247, 0.4), 
+    0px 8px 20px rgba(140, 125, 247, 0.3);
 }
 
 @media (max-width: 768px) {

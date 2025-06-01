@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="page-container">
         <!-- ChatBot component -->
         <ChatBot :botMessage="templateChat" />
 
@@ -37,27 +37,27 @@
                                 class="positive-detail-container"
                                 :style="{ width: category.Positive }"
                             >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Positive') }}</p>
-                                <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Positive }}</p>
+                                <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Positive') }}</p>
+                                <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Positive }}</p>
                             </div>
                             <div 
                                 class="neutral-detail-container"
                                 :style="{ width: category.Neutral }"
                             >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Neutral') }}</p>
-                                <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Neutral }}</p>
+                                <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Neutral') }}</p>
+                                <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Neutral }}</p>
                             </div>
                             <div 
                                 class="negative-detail-container"
                                 :style="{ width: category.Negative }"
                             >
-                                <p :style="{ fontSize: '11px', margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Negative') }}</p>
-                                <p :style="{ margin: '2px 0 0 0', padding: 0 }">{{ category.Negative }}</p>
+                                <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Negative') }}</p>
+                                <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Negative }}</p>
                             </div>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
                             <p>{{ t('marketAnalysisPage.LastUpdated') }}: {{ category.LastUpdated }}</p>
-                            <a :href="`/market-analysis/insight/${category.type}`" style="color: white; text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
+                            <a :href="`/market-analysis/insight/${category.type}`" style="color: var(--black-in-light-mode); text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
                         </div>
                     </div>
                 </div>
@@ -73,16 +73,18 @@
                 <div class="topic-container">
                     <h2 class="component-title">{{ t('marketAnalysisPage.trend.title') }}</h2>
                     <div class="topic-card">
-                        <div class="button-group">
-                            <button
-                                class="button"
-                                :class="{selected: selectedCategory === category}"
-                                v-for="(category, index) in marketAnalysis.Topic.Categories"
-                                :key="index"
-                                @click="selectedCategory = category"
-                            >
-                                {{ t('marketAnalysisPage.trend.categories.' + category) }}
-                            </button>
+                        <div class="title-group">
+                            <div class="button-group">
+                                <button
+                                    class="button"
+                                    :class="{selected: selectedCategory === category}"
+                                    v-for="(category, index) in marketAnalysis.Topic.Categories"
+                                    :key="index"
+                                    @click="selectedCategory = category"
+                                >
+                                    {{ t('marketAnalysisPage.trend.categories.' + category) }}
+                                </button>
+                            </div>
 
                             <div>
                                 <label>
@@ -117,7 +119,7 @@
                                     <td>{{ row.Rank }}</td>
                                     <td>
                                         <a
-                                            :style="{fontSize: '14px', fontWeight: '600', color: 'black'}"
+                                            :style="{fontSize: '14px', fontWeight: '600', color: 'var(--black-in-light-mode)'}"
                                             :href="row.Link"
                                         >
                                             {{ row.Title }}
@@ -260,10 +262,10 @@
                         :key="index"
                         class="stock-card"
                     >
-                        <div style="display: flex; justify-content: space-between;">
+                        <div style="display: flex; justify-content: space-between; flex-wrap: wrap">
                             <h2 
                                 class="component-title"
-                                :style="{color: title === 'Positive' ? '#80ed9b' : title === 'Neutral' ? '#fff480' : '#fa7979'}"
+                                :style="{color: title === 'Positive' ? '#27db54' : title === 'Neutral' ? '#e2d32b' : '#d23737'}"
                             >
                                 {{ title }}
                             </h2>
@@ -300,7 +302,7 @@
                                     <td>{{ row.rank }}</td>
                                     <td>
                                         <div
-                                            :style="{fontSize: '14px', fontWeight: '600', color: 'black'}"
+                                            :style="{fontSize: '14px', fontWeight: '600', color: 'var(--black-in-light-mode)'}"
                                         >
                                             {{ row.stock_code }}
                                         </div>
@@ -335,7 +337,7 @@ import trendingIcon from '@/assets/increaseTrend.png';
 import fallingIcon from '@/assets/decreaseTrend.png';
 import emergingIcon from '@/assets/emergingTrend.png';
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 const { t } = useI18n()
 
@@ -392,9 +394,16 @@ watch(selectedCategory, (newCategory) => {
 
 <style scoped>
 
+.page-container {
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .page-title {
-    font-size: 40px;
-    font-weight: 1000;
+    font-size: 60px;
+    font-weight: 800;
     margin-top: 20px;
     margin-bottom: 5px;
     text-align: center;
@@ -430,22 +439,22 @@ watch(selectedCategory, (newCategory) => {
     width: calc((100% - 40px) / 3);
     min-width: 250px;
     flex: 1;
-    border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    background-color: rgb(43, 43, 43) !important;
-    color: white !important;
+    border-radius: 10px;
+    box-shadow: 
+        0 2px 6px rgba(181, 181, 181, 0.438);
+    background-color: transparent;
+    color: var(--black-in-light-mode);
     padding: 20px;
     box-sizing: border-box;
 }
 
 .card:hover {
-    background-color: rgb(72, 72, 72) !important;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
 }
 
 .card-title, .component-title {
     font-weight: 800;
-    font-size: 20px;
+    font-size: 24px;
     margin-bottom: 12px;
 }
 
@@ -463,15 +472,15 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .positive {
-  background-color: #80ed9b; /* green */
+  background-color: #27db54; /* green */
 }
 
 .neutral {
-  background-color: #fff480; /* amber */
+  background-color: #e2d32b; /* amber */
 }
 
 .negative {
-  background-color: #fa7979; /* red */
+  background-color: #d23737; /* red */
 }
 
 .details-container {
@@ -482,15 +491,15 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .positive-detail-container {
-    color: #80ed9b; /* green */
+    color: #27db54; /* green */
 }
 
 .neutral-detail-container {
-    color: #fff480; /* amber */
+    color: #e2d32b; /* amber */
 }
 
 .negative-detail-container {
-    color: #fa7979; /* red */
+    color: #d23737; /* red */
 }
 
 .topic-container {
@@ -499,10 +508,11 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .topic-card {
-    border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    background-color: rgb(43, 43, 43) !important;
-    color: white !important;
+    border-radius: 10px;
+    box-shadow: 
+        0 2px 6px rgba(181, 181, 181, 0.438);
+    background-color: transparent;
+    color: var(--black-in-light-mode);
     width: 100%;
     font-size: 15px;
     padding: 10px;
@@ -526,6 +536,12 @@ watch(selectedCategory, (newCategory) => {
     gap: 10px;
 }
 
+.title-group {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
 .button {
     padding: 0.5rem 1rem;
     border: none;
@@ -536,12 +552,14 @@ watch(selectedCategory, (newCategory) => {
     transition: all 0.2s ease-in-out;
     border-bottom: 2px solid transparent;
     border-radius: 0;
-    color: white;
+    color: var(--black-in-light-mode);
     white-space: nowrap;
 }
 
 .button.selected {
-    border-bottom: 2px solid white;
+    border-radius: 10px;
+    background-color: var(--black-in-light-mode);
+    color: var(--white-in-light-mode);
 }
 
 .news-card {
@@ -549,9 +567,10 @@ watch(selectedCategory, (newCategory) => {
     gap: 10px;
     width: 100%;
     height: 200px;
-    background-color: rgb(43, 43, 43);
+    background-color: var(--white-in-light-mode);
     border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     align-items: center;
 }
 
@@ -565,7 +584,7 @@ watch(selectedCategory, (newCategory) => {
 .news-title {
     font-size: 20px;
     font-weight: 800;
-    color: white;
+    color: var(--black-in-light-mode);
     margin: 0;
 }
 
@@ -595,8 +614,8 @@ watch(selectedCategory, (newCategory) => {
 .news-tag {
     font-size: 12px;
     font-weight: 400;
-    color: rgb(202, 202, 202);
-    background-color: rgb(92, 92, 92);
+    color: var(--white-in-light-mode);
+    background-color: var(--black-in-light-mode);
     font-style: italic;
     margin: 0;
     padding: 5px;
@@ -617,6 +636,9 @@ watch(selectedCategory, (newCategory) => {
     padding-top: 10px;
     display: flex;
     gap: 10px;
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
+    border-radius: 8px;
 }
 
 .small-news-card {
@@ -627,6 +649,8 @@ watch(selectedCategory, (newCategory) => {
     padding-top: 10px;
     font-size: 10px;
     height: calc(100% - 10px);
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
 }
 
 .stock-card-container {
@@ -640,9 +664,10 @@ watch(selectedCategory, (newCategory) => {
 .stock-card {
     width: calc((100% - 40px) / 3);
     height: 100%;
-    background-color: rgb(43, 43, 43);
+    background-color: var(--white-in-light-mode);
     border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+        0 2px 6px rgba(181, 181, 181, 0.438);
     color: white;
     padding: 10px;
 }
@@ -654,13 +679,15 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .table-container {
-    margin-top: 10px;
+    margin-top: 20px;
     margin-left: 0;
     margin-right: 0;
     justify-content: center;
     width: 100%;
     overflow-x: auto;
     display: block;
+    border-radius: 10px;
+    border: none;
 }
 
 .progress-container {
@@ -679,11 +706,15 @@ watch(selectedCategory, (newCategory) => {
 
 
 thead tr th {
-    border: none;
-    background-color: rgb(229, 229, 229);
-    color: rgb(101, 101, 101);
     font-size: 14px;
     font-weight: 800;
+    color: var(--black-in-light-mode);
+    background-color: var(--white-in-light-mode);
+}
+
+tbody tr td {
+    color: var(--black-in-light-mode);
+    background-color: var(--white-in-light-mode);
 }
 
 .trending {
@@ -701,7 +732,8 @@ thead tr th {
 .date-label {
     font-size: 14px;
     font-weight: 800;
-    color: rgb(101, 101, 101);
+    color: var(--white-in-light-mode);
+    background-color: var(--black-in-light-mode);
     border: none;
 }
 
