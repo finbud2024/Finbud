@@ -2,7 +2,7 @@
 
 <template>
     <div class="Navigation">
-      <ChatBot :botMessage="riskRatio"/>
+    
       <StockComparision
       v-model:selectedTickers="selectedTickers"
       :indicator="indicator"
@@ -27,11 +27,7 @@
       </div>
     </div>
     </div>
-    
-  
- 
 
- 
     <!--<div
       class="Panels animate__animated animate__fadeInRight"
       style="width: 80%; margin: 0 auto"
@@ -55,18 +51,18 @@ import StockComparision from "@/components/FinInvest/QuantPage/StockComparision.
 import StockHeatmap from "@/components/FinInvest/QuantPage/StockHeatmap.vue";
 import LoadingPage from "../Home/LoadingPage.vue";
 import NewMonteCarloGraph from "@/components/FinInvest/QuantPage/NewMonteCarloGraph.vue";
-import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
-const templateChat =`Risk ratios Alpha: Return performance as compared to benchmark of market
-        <li>
-          Beta: Relative price movement of a stock to go up and down as compared
-          to the market trend
-        </li>
-        <li>
-          Sharpe Ratio: Returns generated per unit of risk - the higher the
-          better
-        </li>
-        <li>Sortino Ratio: Returns as compared to only downside risk</li>
-      </ul>`
+
+const templateChat = `
+<b>GBM vs. GARCH Models</b><br/><br/>
+The chart above compares stock price simulations using two models:<br/><br/>
+<ul>
+  <li><b>GBM (Geometric Brownian Motion):</b> Assumes constant volatility and normally distributed returns. Commonly used in financial modeling for its simplicity.</li>
+  <li><b>GARCH (Generalized Autoregressive Conditional Heteroskedasticity):</b> Accounts for changing (time-varying) volatility over time, making it more suitable for modeling real-world market behavior and shocks.</li>
+</ul>
+<br/>
+Use this comparison to evaluate how volatility assumptions affect projected price paths over time.
+`;
+
 export default {
   components: {
     ChatBotTyping,
@@ -76,7 +72,7 @@ export default {
     StockHeatmap,
     LoadingPage,
     NewMonteCarloGraph,
-    ChatBot,
+
   },
   data() {
     return {
@@ -326,7 +322,7 @@ h5 {
   max-width: 1200px; /* Limit the width */
   margin: 0 auto; /* Center the wrapper */
   padding: 20px; /* Add padding around the container */
-  background-color: #f9f9f9; /* Light background color */
+  background-color: var(--quant-card-background); /* Light background color */
   border: 1px solid #ccc; /* Add a border */
   border-radius: 8px; /* Round the corners */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */

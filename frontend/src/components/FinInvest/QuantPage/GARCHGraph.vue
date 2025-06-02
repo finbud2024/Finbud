@@ -1,6 +1,5 @@
 <template>
   <div class="garch-graph">
-    <h2>GARCH Simulation: {{ tickerA || 'None' }} vs {{ tickerB || 'None' }} vs {{ tickerC || 'None' }}</h2>
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
@@ -10,7 +9,8 @@ import { onMounted, watch, ref, nextTick } from 'vue'
 import { Chart, LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend } from 'chart.js'
 import Papa from 'papaparse'
 import axios from 'axios'
-
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n() // Initialize the translation function
 Chart.register(LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend)
 
 const props = defineProps({
@@ -82,7 +82,7 @@ async function loadAndSimulate() {
     datasets.push({
       label: props.tickerA,
       data: pathA,
-      borderColor: 'red',
+      borderColor: 'blue',
       borderWidth: 2,
       fill: false,
     })
@@ -97,7 +97,7 @@ async function loadAndSimulate() {
     datasets.push({
       label: props.tickerB,
       data: pathB,
-      borderColor: 'orange',
+      borderColor: 'green',
       borderWidth: 2,
       fill: false,
     })
@@ -111,7 +111,7 @@ async function loadAndSimulate() {
     datasets.push({
       label: props.tickerC,
       data: pathC,
-      borderColor: 'orange',
+      borderColor: 'red',
       borderWidth: 2,
       fill: false,
     })
@@ -135,7 +135,7 @@ function renderChart(labels, datasets) {
       plugins: {
         title: {
           display: true,
-          text: 'GARCH Simulated Stock Prices',
+          text: t('quantPage.GARCHSimulation'),
         },
         legend: {
           position: 'top',
@@ -174,7 +174,7 @@ function renderBlankChart() {
       plugins: {
         title: {
           display: true,
-          text: 'GARCH Simulated Stock Prices',
+          text: t('quantPage.GARCHSimulation'),
         },
         legend: {
           position: 'top',

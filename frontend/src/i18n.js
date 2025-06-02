@@ -1,5 +1,6 @@
 import { monthsToYears } from "date-fns";
 import { createI18n } from "vue-i18n";
+import StockComparision from "./components/FinInvest/QuantPage/StockComparision.vue";
 
 const messages = {
   en: {
@@ -917,7 +918,26 @@ const messages = {
         "Reference": "Reference",
         "Market Sentiment Over Time": "Market Sentiment Over Time",
       }
-    }
+    },
+    quantPage: {
+      Date: "Date",
+      StockComparison: "Stock Comparision",
+      RiskRatio: "Risk Ratio",
+      AlphaNIFTY50: "Alpha (NIFTY 50)",
+      BetaNIFTY50: "Beta (NIFTY 50)",
+      SharpeRatio: "Sharpe Ratio",
+      SortinoRatio: "Sortino Ratio",
+      StandardDeviation: "Standard Deviation",
+      PastTrendVsFutureProjection: "Past trend & Future Projection",
+      Simulation: "Simulation",
+      Indicator:"Indicator",
+      Period: "Period",
+      Returns: "Returns",
+      CloseValue: "Close Value",
+      IndicatorValue: "Indicator Value",
+      GBMSimulation: "GBM Simulation",
+      GARCHSimulation: "GARCH Simulation",
+    },
   },
   vi: {
 
@@ -1815,7 +1835,27 @@ const messages = {
         "Reference": "Tham Khảo",
         "Market Sentiment Over Time": "Tâm Lý Thị Trường Theo Thời Gian"
       }
-    }
+    },
+    quantPage: {
+      Date: "Ngày",
+      StockComparision: "So sánh Cổ phiếu",
+      RiskRatio: "Tỷ lệ Rủi ro",
+      AlphaNIFTY50: "Alpha (NIFTY 50)",
+      BetaNIFTY50: "Beta (NIFTY 50)",
+      SharpeRatio: "Tỷ lệ Sharpe",
+      SortinoRatio: "Tỷ lệ Sortino",
+      StandardDeviation: "Độ lệch chuẩn",
+      PastTrendVsFutureProjection: "Xu hướng quá khứ & Dự báo tương lai",
+      Simulation: "Mô phỏng",
+      Indicator: "Chỉ số",
+      Period: "Chu kỳ",
+      Returns: "Lợi nhuận",
+      CloseValue: "Giá đóng cửa",
+      IndicatorValue: "Giá trị chỉ số",
+      GBMSimulation: "Mô phỏng GBM",
+      GARCHSimulation: "Mô phỏng GARCH", 
+
+    },
   }
 };
 

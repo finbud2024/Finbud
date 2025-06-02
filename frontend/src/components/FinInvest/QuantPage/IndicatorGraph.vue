@@ -118,21 +118,21 @@
         {
           label: `${props.tickerA} ${props.indicator.toUpperCase()}`,
           data: processedA,
-          borderColor: 'rgba(75, 192, 192, 1)',
+          borderColor: 'blue',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           tension: 0.3
         },
         {
           label: `${props.tickerB} ${props.indicator.toUpperCase()}`,
           data: processedB,
-          borderColor: 'rgba(153, 102, 255, 1)',
+          borderColor: 'green',
           backgroundColor: 'rgba(153, 102, 255, 0.2)',
           tension: 0.3
         },
         {
           label: `${props.tickerC} ${props.indicator.toUpperCase()}`,
           data: processedC,
-          borderColor: 'rgba(153, 102, 255, 1)',
+          borderColor: 'red',
           backgroundColor: 'rgba(153, 102, 255, 0.2)',
           tension: 0.3
         }

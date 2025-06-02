@@ -10,7 +10,8 @@
   import { ref, watch, onMounted, onUnmounted, nextTick } from 'vue';
   import { Chart, registerables } from 'chart.js';
   import axios from 'axios';
-  
+  import { useI18n } from 'vue-i18n';
+  const { t } = useI18n(); // Initialize the translation function
   Chart.register(...registerables);
   
   const props = defineProps({
@@ -44,12 +45,12 @@
   
       const stockDataList = await Promise.all(props.symbols.map(fetchDataForSymbol));
       const labels = stockDataList[0].dates;
-  
+      const colors = ['blue', 'green', 'red'];
       const datasets = stockDataList.map((stock, i) => ({
         label: `${stock.symbol} Close`,
         data: stock.closePrices,
-        borderColor: `hsl(${(i * 60) % 360}, 70%, 50%)`,
-        backgroundColor: `hsla(${(i * 60) % 360}, 70%, 50%, 0.2)`,
+        borderColor: colors[i % colors.length], // Cycle through blue, green, red
+        
         fill: true,
         tension: 0.3,
       }));

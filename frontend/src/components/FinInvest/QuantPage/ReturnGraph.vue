@@ -133,21 +133,21 @@
         {
           label: `${props.tickerA} ${props.returnType} return`,
           data: returnA,
-          borderColor: 'rgba(54, 162, 235, 1)',
+          borderColor: 'blue',
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           tension: 0.3
         },
         {
           label: `${props.tickerB} ${props.returnType} return`,
           data: returnB,
-          borderColor: 'rgba(255, 99, 132, 1)',
+          borderColor: 'green',
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           tension: 0.3
         },
         {
           label: `${props.tickerC} ${props.returnType} return`,
           data: returnC,
-          borderColor: 'rgba(255, 159, 64, 1)',
+          borderColor: 'red',
           backgroundColor: 'rgba(255, 159, 64, 0.2)',
           tension: 0.3
         }

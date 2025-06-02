@@ -1,6 +1,5 @@
 <template>
   <div class="gbm-graph">
-    <h2>GBM Simulation: {{ tickerA || 'None' }} vs {{ tickerB || 'None' }} vs {{ tickerC || 'None' }}</h2>
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
@@ -10,7 +9,7 @@ import { onMounted, watch, ref } from 'vue'
 import { Chart, LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend } from 'chart.js'
 import Papa from 'papaparse'
 import axios from 'axios'
-
+import { useI18n } from 'vue-i18n'; // Import useI18n
 Chart.register(LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Legend)
 
 const props = defineProps({
@@ -20,7 +19,7 @@ const props = defineProps({
   indicator: String,
   returnType: String,
 })
-
+const { t } = useI18n(); // Initialize the translation function
 const chartCanvas = ref(null)
 let chartInstance = null
 
@@ -138,7 +137,7 @@ function renderChart(labels, datasets) {
       plugins: {
         title: {
           display: true,
-          text: 'GBM Simulated Stock Prices',
+          text: t('quantPage.GBMSimulation'),
         },
         legend: {
           position: 'top',
@@ -175,7 +174,7 @@ function renderBlankChart() {
       plugins: {
         title: {
           display: true,
-          text: 'GBM Simulated Stock Prices',
+          text: t('quantPage.GBMSimulation'), // Use the translation key here
         },
         legend: {
           position: 'top',

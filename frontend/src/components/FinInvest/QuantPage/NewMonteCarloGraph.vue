@@ -1,6 +1,6 @@
 <template>
     <div class="p-4">
-      <label for="ticker">Select Ticker:</label>
+      <label for="ticker" class="text">Select Ticker: </label>
       <select id="ticker" v-model="selectedTicker" class="ml-2 p-1 border rounded">
         <option v-for="ticker in tickers" :key="ticker" :value="ticker">{{ ticker }}</option>
       </select>
@@ -93,13 +93,13 @@
   
     const S0 = closes[closes.length - 1];
     const paths = simulateGBMPaths(S0, mu, sigma, 252);
-  
+    const quantTextColor = getComputedStyle(document.documentElement).getPropertyValue('--quant-text-color').trim();
     chartData.value = {
       labels: Array.from({ length: 253 }, (_, i) => i),
       datasets: paths.map((path, index) => ({
         label: `Path ${index + 1}`,
         data: path,
-        borderColor: `rgba(0, 0, 0, 0.2)`,
+        borderColor: quantTextColor, // Cycle through colors
         borderWidth: 1,
         pointRadius: 0
       }))
@@ -113,5 +113,9 @@
   select {
     font-family: sans-serif;
   }
+  .text{
+    color: var(--quant-text-color);
+  }
+  
   </style>
   

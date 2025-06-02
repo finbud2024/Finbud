@@ -18,7 +18,9 @@ import {
   LinearScale
 } from 'chart.js';
 import Papa from 'papaparse';
-
+import { useI18n } from 'vue-i18n';
+// Register Chart.js components
+const { t } = useI18n();
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
 
 // Props
@@ -49,7 +51,7 @@ const chartOptions = ref({
       ticks: { maxTicksLimit: 10 }
     },
     y: {
-      title: { display: true, text: 'Close Price ($)' },
+      title: { display: true, text: t('quantPage.CloseValue')},
       ticks: {
         callback: value => `$${value}`
       }
@@ -99,23 +101,23 @@ const loadChart = async () => {
     labels: dates,
     datasets: [
       {
-        label: `${props.tickerA} Close Price`,
+        label: `${props.tickerA} ${t('quantPage.CloseValue')}`,
         data: closeA,
-        borderColor: 'rgba(54, 162, 235, 1)',
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'blue',
+        backgroundColor: 'blue',
         tension: 0.3
       },
       {
-        label: `${props.tickerB} Close Price`,
+        label: `${props.tickerB} ${t('quantPage.CloseValue')}`,
         data: closeB,
-        borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'green',
+        backgroundColor: 'green',
         tension: 0.3
       },
       {
-        label: `${props.tickerC} Close Price`,
+        label: `${props.tickerC} ${t('quantPage.CloseValue')}`,
         data: closeC,
-        borderColor: 'rgba(200, 99, 132, 1)',
+        borderColor: 'red',
         backgroundColor: 'rgba(200, 99, 132, 0.2)',
         tension: 0.3
       }
@@ -123,7 +125,7 @@ const loadChart = async () => {
   };
 
   chartOptions.value.plugins.title.text =
-    `Close Prices: ${props.tickerA} vs ${props.tickerB} vs ${props.tickerC} (Last ${props.duration} Year(s))`;
+    `${t('quantPage.CloseValue')}: ${props.tickerA} vs ${props.tickerB} vs ${props.tickerC} (Last ${props.duration} Year(s))`;
 };
 
 // Watch props and reload chart
