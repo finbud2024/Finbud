@@ -1,6 +1,6 @@
 <template>
     <div class="p-4">
-      <label for="ticker" class="text">Select Ticker: </label>
+      <label for="ticker" class="text">{{t('quantPage.SelectTicker') }}</label>
       <select id="ticker" v-model="selectedTicker" class="ml-2 p-1 border rounded">
         <option v-for="ticker in tickers" :key="ticker" :value="ticker">{{ ticker }}</option>
       </select>
@@ -23,6 +23,9 @@
     CategoryScale,
     LinearScale
   } from 'chart.js';
+  import { useI18n } from 'vue-i18n';
+  // Register Chart.js components
+  const { t } = useI18n();
   
   ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
   

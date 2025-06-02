@@ -1,6 +1,6 @@
 <template>
 
-  <h1 class="page-header">{{ t('quantPage. StockComparison') }}</h1>
+  <h1 class="page-header">{{ t('quantPage.StockComparison') }}</h1>
   <div class="controls">
     
     <label>

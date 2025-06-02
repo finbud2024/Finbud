@@ -1,14 +1,14 @@
 <template>
   <div class="dashboard">
     <header>
-      <h1>Stock Portfolio Dashboard</h1>
+      <h1>{{ t('quantPage.StockPortfolioDashboard') }}</h1>
     </header>
     <section class="current-holding">
       <input
       class="ticker-search"
       type="text"
       v-model="tickerSearch"
-      placeholder="Search by ticker name"
+      :placeholder="t('quantPage.TickerNameSearch')"
       
     />
       
@@ -18,18 +18,18 @@
           <table>
             <thead>
             <tr>
-              <th>Stock Ticker</th>
+              <th>{{ t('quantPage.StockTicker') }}</th>
               <th>Logo</th>
               <!--<th>Currency Code</th>-->
-              <th>Close</th>
+              <th>{{ t('quantPage.CloseValue') }}</th>
               <!--<th>Price Currency</th>-->
-              <th>Price Change</th>
-              <th>Relative Volume (10d)</th>
-              <th>P/E Ratio (TTM)</th>
-              <th>EPS Diluted (TTM)</th>
-              <th>Dividend Yield</th>
+              <th>{{ t('quantPage.PriceChange') }}</th>
+              <th>{{ t('quantPage.RelativeVolume') }}</th>
+              <th>{{ t('quantPage.PERatio') }}</th>
+              <th>{{ t('quantPage.EPSDistributed') }}</th>
+              <th>{{ t('quantPage.DividendYield') }}</th>
               <!--<th>Exchange</th>-->
-              <th>Industry Sector</th>
+              <th>{{ t('quantPage.IndustrySector') }}</th>
             </tr>
             </thead>
 
@@ -99,6 +99,8 @@ import VueApexCharts from 'vue3-apexcharts';
 import BollingerBands from './BollingerBands.vue';
 import Pagination from "@/components/Risk&Chat/Pagination.vue";
 import axios from "axios";
+import { useI18n } from 'vue-i18n';
+// Register Chart.js components
 
 export default {
   name: 'PortfolioDashboard',
@@ -106,7 +108,11 @@ export default {
     Pagination,
     Multiselect,
     apexchart: VueApexCharts,
-    BollingerBands
+    BollingerBands,
+  },
+  setup() {
+    const { t } = useI18n(); // Initialize the translation function
+    return { t };
   },
   data() {
     return {

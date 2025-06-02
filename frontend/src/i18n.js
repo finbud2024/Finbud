@@ -937,6 +937,16 @@ const messages = {
       IndicatorValue: "Indicator Value",
       GBMSimulation: "GBM Simulation",
       GARCHSimulation: "GARCH Simulation",
+      StockPortfolioDashboard: "Stock Portfolio Dashboard",
+      StockTicker: "Stock Ticker",
+      PriceChange: "Price Change",
+      RelativeVolume: "Relative Volume (10d)",
+      PERatio: "P/E Ratio",
+      EPSDistributed: "EPS Distributed",
+      DividendYield: "Dividend Yield",
+      IndustrySector: "Industry Sector",
+      SelectTicker: "Select Ticker",
+      TickerNameSearch: "Search by Ticker Name",
     },
   },
   vi: {
@@ -1838,7 +1848,7 @@ const messages = {
     },
     quantPage: {
       Date: "Ngày",
-      StockComparision: "So sánh Cổ phiếu",
+      StockComparison: "So sánh Cổ phiếu",
       RiskRatio: "Tỷ lệ Rủi ro",
       AlphaNIFTY50: "Alpha (NIFTY 50)",
       BetaNIFTY50: "Beta (NIFTY 50)",
@@ -1854,9 +1864,21 @@ const messages = {
       IndicatorValue: "Giá trị chỉ số",
       GBMSimulation: "Mô phỏng GBM",
       GARCHSimulation: "Mô phỏng GARCH", 
+      StockPortfolioDashboard: "Thông tin cổ phiểu",
+      StockTicker: "Mã cổ phiếu",
+      PriceChange: "Giá chênh lệch",
+      RelativeVolume: "Khối lượng tương đối (10 ngày)",
+      PERatio: "Tỷ lệ P/E",
+      EPSDistributed: "EPS phân phối",
+      DividendYield: "Lợi suất cổ tức",
+      IndustrySector: "Ngành công nghiệp",
+      SelectTicker: "Chọn mã cổ phiếu",
+      TickerNameSearch: "Tìm kiếm mã cổ phiếu",
+
 
     },
   }
+
 };
 
 const i18n = createI18n({
