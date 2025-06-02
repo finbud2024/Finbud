@@ -1,0 +1,63 @@
+.companies-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  gap: 20px;
+}
+
+.companies-container h2 {
+  color: #111827;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.company-dropdown {
+  padding: 10px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  height: 50px;
+  width: 300px;
+  transition: all 0.2s ease;
+  margin: 0;
+}
+
+.company-dropdown:hover {
+  border-color: #3b82f6;
+}
+
+.company-dropdown:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.chart-container {
+  width: 100%;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
+  max-width: 1000px;
+}

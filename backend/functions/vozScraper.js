@@ -10,8 +10,15 @@ import Forum from "../Database Schema/Forum.js";
 
 puppeteer.use(StealthPlugin());
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Get the directory path of the current module - with fallback
+let __dirname;
+try {
+  const __filename = fileURLToPath(import.meta.url);
+  __dirname = path.dirname(__filename);
+} catch (e) {
+  // Fallback for environments where import.meta is not available
+  __dirname = path.resolve();
+}
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const MONGO_URI = process.env.MONGO_URI;
@@ -257,6 +264,7 @@ async function scrapeVoz() {
           processedComments.push({
             body: comment.body.trim(),
             authorId: commentUser._id,
+            authorModel: 'ScrapedUser',
             createdAt: comment.time,
           });
         }
@@ -268,6 +276,7 @@ async function scrapeVoz() {
           title: thread.title,
           body: mainPost.body.trim(),
           authorId: scrapedUser._id,
+          authorModel: 'ScrapedUser',
           forumId: FORUM_ID,
           createdAt: new Date(mainPost.time),
           updatedAt: new Date(),

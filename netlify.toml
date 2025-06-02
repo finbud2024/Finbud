@@ -1,18 +1,23 @@
 [build]
-  functions = "backend/functions"
+  command = "yarn netlify:build"
   publish = "frontend/dist"
-  command = "npm run build"
+  functions = "backend/functions"
 
 [dev]
   port = 8888
   functions = "backend/functions"
   framework = "#auto"
-  command = "npm run client"
+  command = "yarn client"
 
 [functions]
   node_bundler = "esbuild"
+  esbuild_options = { format = "esm" }
 
-# Adding environment variables for the development environment
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"
-  PORT = "8000"
+
+[build.environment]
+  NODE_VERSION = "18"
+  YARN_VERSION = "1.22.22"
+  YARN_FLAGS = "--network-timeout 600000"
+

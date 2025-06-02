@@ -35,7 +35,7 @@ transactionRoute
 
   // PUT: update a transaction with a given ID
   .put(validateRequest(Transaction.schema), async (req, res) => {
-    const { description, amount, userId } = req.body;
+    const { description, amount, userId, category } = req.body;
     const transactionId = req.params.transactionId;
 
     if (!description || amount === undefined || !userId) {
@@ -49,7 +49,7 @@ transactionRoute
         transactionId
     );
 
-    const transactionType = amount > 0 ? "receiving" : "spending";
+    const transactionType = amount > 0 ? "Income" : "Expense";
 
     try {
       const oldTransaction = await Transaction.findById(transactionId);
@@ -59,11 +59,9 @@ transactionRoute
           .send(`Cannot find transaction with ID: ${transactionId}`);
       }
 
-      const balanceDifference = amount - oldTransaction.amount;
-
       const updatedTransaction = await Transaction.findByIdAndUpdate(
         transactionId,
-        { userId, description, amount, transaction: transactionType },
+        { userId, description, amount, type: transactionType, category },
         { new: true }
       );
 
@@ -72,15 +70,6 @@ transactionRoute
           .status(404)
           .send(`Cannot find transaction with ID: ${transactionId}`);
       }
-
-      // Recalculate balances
-      const transactions = await Transaction.find({ userId }).sort({ date: 1 });
-      let newBalance = 0;
-      transactions.forEach((tx) => {
-        newBalance += tx.amount;
-        tx.balance = newBalance;
-        tx.save();
-      });
 
       console.log("Transaction updated: ", updatedTransaction);
       return res
@@ -117,17 +106,6 @@ transactionRoute
           );
       }
 
-      // Recalculate balances
-      const transactions = await Transaction.find({
-        userId: transaction.userId,
-      }).sort({ date: 1 });
-      let newBalance = 0;
-      transactions.forEach((tx) => {
-        newBalance += tx.amount;
-        tx.balance = newBalance;
-        tx.save();
-      });
-
       console.log("Transaction deleted: ", transaction);
       return res.status(204).send("Transaction deleted successfully");
     } catch (error) {
@@ -155,31 +133,30 @@ transactionRoute
 
   // POST a new transaction
   .post(validateRequest(Transaction.schema), async (req, res) => {
+    console.log("Incoming POST body:", req.body);
     console.log("in /transactions Route (POST) new transaction to database");
-    const { description, amount, balance, userId, date, type } = req.body;
-
+    const { description, amount, userId, date, type, category, balance } = req.body;
+    
     if (
       !description ||
       amount === undefined ||
-      balance === undefined ||
       !userId ||
       !date ||
       !type
     ) {
-      return res
-        .status(400)
-        .send(
-          "Unable to save. Description, amount, balance, date, and userId are required"
-        );
+      return res.status(400).send(
+        "Unable to save. Description, amount, date, and userId are required"
+      );
     }
 
     const transaction = new Transaction({
-      userId: userId,
-      description: description,
-      amount: amount,
-      balance: balance,
-      type: type,
-      date: date,
+      userId,
+      description,
+      amount,
+      balance,
+      type,
+      date,
+      category, 
     });
 
     try {
@@ -236,6 +213,7 @@ transactionRoute
   // DELETE all transactions for a specific userId, RESET account balance of specific user
   .delete(async (req, res) => {
     const userId = req.params.userId;
+    const source = req.body.source
     if (!userId) {
       return res.status(400).send("Missing userId in request parameters");
     }
@@ -244,15 +222,17 @@ transactionRoute
         userId
     );
     try {
-      let transactions = await Transaction.deleteMany({ userId: userId });
-      if (!transactions.deletedCount) {
-        return res
-          .status(404)
-          .send(`No transactions with userId: ${userId} existed in database`);
+      let transactions = [];
+      if (!source) {
+        transactions = await Transaction.deleteMany({ "userId": userId });
       }
-      return res
-        .status(200)
-        .send(`All transactions with userId: ${userId} deleted successfully`);
+      else {
+        transactions = await Transaction.deleteMany({ "userId": userId, "source": source });
+      }
+      // if (!transactions.deletedCount) {
+      //   return res.status(404).send(`No transactions with userId: ${userId} existed in database`);
+      // }
+      return res.status(200).send(`All transactions with userId: ${userId} deleted successfully`);
     } catch (err) {
       return res
         .status(501)

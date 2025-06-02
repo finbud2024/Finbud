@@ -5,16 +5,23 @@
         <!--<h2>STOCKS</h2>-->
       </div>
       <div class="stock-table-wrapper">
+      <div class="market-summary">
+        <h3>Market Summary</h3>
+        <!-- only render the HTML when we actually have markdown -->
+        <div v-if="marketSummary" v-html="renderedSummary"></div>
+
+        <!-- otherwise show your fallback -->
+        <p v-else>Loading summary…</p>
+      </div>
+      
         <div class="stock-table">
           <div v-for="(row, rowIndex) in rows" :key="rowIndex">
             <div class="stock-row">
-              <div 
-                class="stock-item animate__animated animate__fadeInUp" 
-                v-for="stock in row" 
-                :key="stock['01. symbol']"
-                @click="showPopup(stock)"
-              >
-                <div :class="['stock-bar', { 'positive-bar': parseFloat(stock['09. change']) > 0, 'negative-bar': parseFloat(stock['09. change']) < 0 }]"></div>
+              <div class="stock-item animate__animated animate__fadeInUp" v-for="stock in row"
+                :key="stock['01. symbol']" @click="showPopup(stock)">
+                <div
+                  :class="['stock-bar', { 'positive-bar': parseFloat(stock['09. change']) > 0, 'negative-bar': parseFloat(stock['09. change']) < 0 }]">
+                </div>
                 <div class="stock-info">
                   <div class="stock-symbol">
                     <h3>{{ stock['01. symbol'] }}</h3>
@@ -46,11 +53,29 @@
 <script>
 import axios from 'axios';
 import StockPopup from './StockPopup.vue';
+import MarkdownIt from 'markdown-it'
+
+const md = new MarkdownIt({
+  html:        true,        // allow inline HTML
+  linkify:     true,        // autolink URLs
+  typographer: true,
+})
 
 const apiKey = process.env.VUE_APP_STOCK_KEY;
 
 export default {
   name: 'StockWatch',
+  props: {
+    marketSummary: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    renderedSummary() {
+      return md.render(this.marketSummary)
+    }
+  },
   components: {
     StockPopup,
   },
@@ -70,8 +95,8 @@ export default {
   methods: {
     async fetchStockQuote() {
       const symbols = [
-        'IBM', 'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META', 'TSLA', 'NFLX', 'NVDA', 
-        'INTC', 'CSCO', 'ORCL', 'ADBE', 'CRM', 'PYPL', 'AMD', 'QCOM', 'TXN', 
+        'IBM', 'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'META', 'TSLA', 'NFLX', 'NVDA',
+        'INTC', 'CSCO', 'ORCL', 'ADBE', 'CRM', 'PYPL', 'AMD', 'QCOM', 'TXN',
         'AVGO', 'SHOP'
       ];
       try {
@@ -87,7 +112,7 @@ export default {
             quote['name'] = symbols.find(sym => sym === quote['01. symbol']); // Add stock name
             return quote;
           } else {
-            return null; 
+            return null;
           }
         }).filter(quote => quote !== null);
         this.distributeStocks();
@@ -131,16 +156,25 @@ export default {
   animation: fadeInDown 0.5s;
 }
 
+.market-summary {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
 .stock-table-wrapper {
   overflow-x: auto;
-  overflow-y: hidden; /* Hide vertical overflow */
-  white-space: nowrap; 
+  overflow-y: hidden;
+  /* Hide vertical overflow */
+  white-space: nowrap;
 }
 
 .stock-table {
   display: flex;
   flex-direction: column;
-  width: max-content; /* Ensure the table takes the necessary width for scrolling */
+  width: max-content;
+  /* Ensure the table takes the necessary width for scrolling */
 }
 
 .stock-row {
@@ -152,14 +186,18 @@ export default {
   display: flex;
   border: 1px solid transparent;
   padding: 8px;
-  width: 350px; /* Set a fixed width for each item */
+  width: 350px;
+  /* Set a fixed width for each item */
   margin-right: 10px;
   position: relative;
   cursor: pointer;
   transition: box-shadow 0.3s, transform 0.3s;
-  white-space: normal; /* Ensure text wraps within the item */
-  overflow: hidden; /* Prevent overflow */
-  word-wrap: break-word; /* Break words that are too long */
+  white-space: normal;
+  /* Ensure text wraps within the item */
+  overflow: hidden;
+  /* Prevent overflow */
+  word-wrap: break-word;
+  /* Break words that are too long */
 }
 
 .stock-item:hover {
@@ -185,14 +223,17 @@ export default {
 
 .stock-info {
   display: flex;
-  justify-content: space-between; /* Distribute space between children */
+  justify-content: space-between;
+  /* Distribute space between children */
   align-items: center;
-  width: 100%; /* Make sure it takes the full width of the container */
+  width: 100%;
+  /* Make sure it takes the full width of the container */
   padding-left: 10px;
 }
 
 .stock-symbol {
-  flex: 1; /* Take all the available space on the left */
+  flex: 1;
+  /* Take all the available space on the left */
   display: flex;
   flex-direction: column;
 }
@@ -207,14 +248,19 @@ export default {
   margin: 0;
   font-size: 0.9em;
   color: #666;
-  word-wrap: break-word; /* Ensure long words break to the next line */
-  white-space: normal; /* Ensure text wraps */
-  overflow-wrap: break-word; /* Ensure text wraps */
+  word-wrap: break-word;
+  /* Ensure long words break to the next line */
+  white-space: normal;
+  /* Ensure text wraps */
+  overflow-wrap: break-word;
+  /* Ensure text wraps */
 }
 
 .stock-price {
-  flex-shrink: 0; /* Prevent shrinking */
-  text-align: center; /* Center align the text */
+  flex-shrink: 0;
+  /* Prevent shrinking */
+  text-align: center;
+  /* Center align the text */
   font-size: 0.9em;
 }
 
@@ -223,10 +269,12 @@ export default {
 }
 
 .stock-change {
-  flex: 1; /* Take all the available space on the right */
+  flex: 1;
+  /* Take all the available space on the right */
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align to the right */
+  align-items: flex-end;
+  /* Align to the right */
   font-size: 0.9em;
 }
 
@@ -245,7 +293,8 @@ export default {
 .row-divider {
   height: 1px;
   background-color: rgba(0, 0, 0, 0.1);
-  width: 100%; /* Ensure the divider spans the entire width of the scrolling area */
+  width: 100%;
+  /* Ensure the divider spans the entire width of the scrolling area */
   margin: 10px 0;
 }
 
@@ -267,5 +316,4 @@ export default {
     width: 350px;
   }
 }
-
 </style>

@@ -3,46 +3,61 @@
     <div :class="['message-wrapper', { user: isUser, bot: !isUser }]">
       <img :src="avatarSrc" class="avatar" />
       <div class="message-content-wrapper">
-          <!-- Displayed text -->
-          <div v-if="htmlContent" class="message-content" v-html="htmlContent"></div>
-          <div v-else-if="markdown" class="message-content markdown-content" v-html="renderedMarkdown"></div>
-          <div v-else :class="['message-content', { 'typing': typing }]">
-            <div v-if="isThinking" class="thinking-animation">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <p v-else>{{ displayedText }}</p>
+        <!-- Displayed text -->
+        <div
+          v-if="htmlContent"
+          class="message-content"
+          v-html="htmlContent"
+        ></div>
+        <div
+          v-else-if="markdown"
+          class="message-content markdown-content"
+          v-html="renderedMarkdown"
+        ></div>
+        <div v-else :class="['message-content', { typing: typing }]">
+          <div v-if="isThinking" class="thinking-animation">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
           </div>
-          <!-- Sources -->
-            <section class="sources" v-if="sources && sources.length > 0">
-              <SearchResult :sources="sources" />
-            </section>
-            <!-- Videos -->
-            <section class="videos" v-if="videos && videos.length > 0">
-              <Video :videos="videos" />
-            </section>
-            <!-- Follow-up questions -->
-            <div class="relevant-questions" v-if="relevantQuestions && relevantQuestions.length > 0">
-              <h3>Suggested Question</h3>
-              <ul>
-                <li v-for="(question, i) in relevantQuestions" :key="i" @click="handleQuestionClick(question)">
-                  {{ question }}
-                </li>
-              </ul>
-            </div>
+          <p v-else>{{ displayedText }}</p>
+        </div>
+        <!-- Sources -->
+        <section class="sources" v-if="sources && sources.length > 0">
+          <SearchResult :sources="sources" />
+        </section>
+        <!-- Videos -->
+        <section class="videos" v-if="videos && videos.length > 0">
+          <Video :videos="videos" />
+        </section>
+        <!-- Follow-up questions -->
+        <div
+          class="relevant-questions"
+          v-if="relevantQuestions && relevantQuestions.length > 0"
+        >
+          <h3>Suggested Question</h3>
+          <ul>
+            <li
+              v-for="(question, i) in relevantQuestions"
+              :key="i"
+              @click="handleQuestionClick(question)"
+            >
+              {{ question }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import SearchResult from '../components/chatbot/SearchResult.vue';
-import Video from '../components/chatbot/Video.vue';
-import marked from 'marked'; // Import the marked library
+import SearchResult from "../components/ChatBot/SearchResult.vue";
+import Video from "../components/ChatBot/Video.vue";
+import { marked } from "marked"; // Import the marked library
 
 export default {
-  name: 'MessageComponent',
+  name: "MessageComponent",
   components: { SearchResult, Video },
   props: {
     isThinking: {
@@ -55,7 +70,7 @@ export default {
     },
     text: {
       type: String,
-      default: '',
+      default: "",
     },
     typing: {
       type: Boolean,
@@ -63,19 +78,19 @@ export default {
     },
     timestamp: {
       type: String,
-      default: '',
+      default: "",
     },
     username: {
       type: String,
-      default: '',
+      default: "",
     },
     avatarSrc: {
       type: String,
-      default: '',
+      default: "",
     },
     htmlContent: {
       type: String,
-      default: '',
+      default: "",
     },
     sources: {
       type: Array,
@@ -101,7 +116,7 @@ export default {
   },
   computed: {
     displayedText() {
-      if(!this.typing) {
+      if (!this.typing) {
         return this.text;
       }
       // Return the substring of text based on the current typing progress
@@ -112,21 +127,21 @@ export default {
         if (this.markdown && this.text) {
           // Configure marked options
           marked.setOptions({
-            breaks: true,     // Convert \n to <br>
-            gfm: true,        // GitHub flavored markdown
+            breaks: true, // Convert \n to <br>
+            gfm: true, // GitHub flavored markdown
             headerIds: false, // Don't add ids to headers
-            mangle: false,    // Don't escape HTML
-            sanitize: false   // Don't sanitize HTML
+            mangle: false, // Don't escape HTML
+            sanitize: false, // Don't sanitize HTML
           });
-          
+
           return marked(this.text);
         }
         return this.text;
       } catch (error) {
-        console.error('Error rendering markdown:', error);
+        console.error("Error rendering markdown:", error);
         return this.text;
       }
-    }
+    },
   },
   watch: {
     typing(newValue) {
@@ -144,7 +159,7 @@ export default {
     startTypingEffect() {
       // Reset the progress
       this.textProgress = 0;
-      
+
       const length = this.text.length;
       const typingSpeed = 5; // milliseconds per character
       let currentLength = 0;
@@ -158,8 +173,8 @@ export default {
       }, typingSpeed);
     },
     handleQuestionClick(question) {
-      this.$emit('question-click', question);
-    }
+      this.$emit("question-click", question);
+    },
   },
   mounted() {
     if (this.typing) {
@@ -170,7 +185,6 @@ export default {
 </script>
 
 <style scoped>
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -198,9 +212,9 @@ tr:nth-child(odd) {
 }
 
 /* Markdown styles - using ::v-deep for Vue 2 or :deep for Vue 3 */
-:deep(.markdown-content h1), 
-:deep(.markdown-content h2), 
-:deep(.markdown-content h3), 
+:deep(.markdown-content h1),
+:deep(.markdown-content h2),
+:deep(.markdown-content h3),
 :deep(.markdown-content h4) {
   margin-top: 16px;
   margin-bottom: 8px;
@@ -228,7 +242,7 @@ tr:nth-child(odd) {
   font-size: 1.1em;
 }
 
-:deep(.markdown-content ul), 
+:deep(.markdown-content ul),
 :deep(.markdown-content ol) {
   padding-left: 2em;
   margin: 8px 0;
@@ -258,7 +272,7 @@ tr:nth-child(odd) {
 }
 
 :deep(.markdown-content code) {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   background-color: rgba(0, 0, 0, 0.1);
   padding: 0.2em 0.4em;
   border-radius: 3px;
@@ -288,10 +302,9 @@ tr:nth-child(odd) {
   margin-bottom: 16px;
   overflow: hidden;
   word-wrap: break-word;
-  padding: 0 17.42%;
+  padding: 0;
   container-name: chatComponent;
 }
-
 
 .message-content-wrapper {
   display: inline-flex;
@@ -306,14 +319,14 @@ tr:nth-child(odd) {
   padding-right: calc(1% + 30px + 18px);
 }
 
+.user .message-content {
+  background-color: var(--chat-user-bg-color);
+}
+
 .user .message-content-wrapper {
   max-width: 60%;
 }
 
-.user .message-content {
-  background-color: var(--chat-user-bg-color);
-  color: var(--chat-user-text-color);
-}
 
 .bot .avatar {
   width: 41px;
@@ -355,7 +368,6 @@ tr:nth-child(odd) {
   line-height: 1.3;
 }
 
-
 /* Make sure markdown content also uses flex layout */
 .markdown-content {
   display: block !important;
@@ -394,16 +406,16 @@ tr:nth-child(odd) {
 }
 
 @keyframes thinking {
-  0%, 100% { 
-    opacity: 0.3; 
+  0%,
+  100% {
+    opacity: 0.3;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 1;
     transform: scale(1.2);
   }
 }
-
 
 @keyframes typing {
   from {
@@ -423,7 +435,6 @@ tr:nth-child(odd) {
   display: flex;
   flex-direction: column;
 }
-
 
 .relevant-questions {
   width: 100%;
@@ -465,7 +476,6 @@ tr:nth-child(odd) {
     padding: 0;
   }
 }
-
 
 .sidebar-container {
   display: flex;
