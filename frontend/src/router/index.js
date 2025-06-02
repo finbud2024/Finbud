@@ -40,6 +40,7 @@ import CoursePage from "@/views/FinEdu/CoursePage.vue";
 import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
 import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
 import MarketAnalysisInsight from "@/views/FinInvest/MarketAnalysis/MarketAnalysisInsight.vue";
+import FinCompare from "@/views/FinManage/FinCompare.vue";
 
 const routes = [
   {
@@ -258,8 +259,12 @@ const routes = [
     path: "/market-analysis/insight/:type",
     name: "MarketAnalysisInsight",
     component: MarketAnalysisInsight,
+  },
+  {
+    path: "/fin-compare",
+    name: "FinCompare",
+    component: FinCompare,
   }
-  
 ];
 
 const router = createRouter({
