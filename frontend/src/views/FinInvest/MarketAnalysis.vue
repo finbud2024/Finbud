@@ -735,6 +735,7 @@ tbody tr td {
     color: var(--white-in-light-mode);
     background-color: var(--black-in-light-mode);
     border: none;
+    width: 150px;
 }
 
 @media (max-width: 768px) {

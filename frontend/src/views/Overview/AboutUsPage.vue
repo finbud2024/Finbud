@@ -95,7 +95,7 @@
           <input
             type="email"
             id="email"
-            :placeholder="$t('emailPlaceholder')"
+            placeholder="abc@gmail.com"
             required
           />
         </div>
