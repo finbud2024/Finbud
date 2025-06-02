@@ -38,11 +38,11 @@
     responsive: true,
     plugins: {
       legend: { display: false },
-      title: { display: true, text: 'Monte Carlo Simulation' }
+      title: { display: true, text: t('quantPage.MonteCarloSimulation') }
     },
     scales: {
-      x: { title: { display: true, text: 'Days' } },
-      y: { title: { display: true, text: 'Simulated Price ($)' } }
+      x: { title: { display: true, text:  t('quantPage.Date') } },
+      y: { title: { display: true, text: t('quantPage.Value') } }
     }
   };
   

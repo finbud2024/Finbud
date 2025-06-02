@@ -18,7 +18,8 @@
     LinearScale
   } from 'chart.js';
   import Papa from 'papaparse';
-  
+  import { useI18n } from 'vue-i18n';
+
   ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
   
   // Props
@@ -36,7 +37,7 @@
       default: 1 // Duration in years (default: 1 year)
     }
   });
-  
+  const { t } = useI18n(); // Initialize the translation function
   const chartData = ref(null);
   
   const chartOptions = ref({
@@ -50,11 +51,11 @@
     },
     scales: {
       x: {
-        title: { display: true, text: 'Date' },
+        title: { display: true, text: t('quantPage.Date') },
         ticks: { maxTicksLimit: 10 }
       },
       y: {
-        title: { display: true, text: 'Return (%)' },
+        title: { display: true, text: t('quantPage.Returns') },
         ticks: {
           callback: value => `${value}%`
         }

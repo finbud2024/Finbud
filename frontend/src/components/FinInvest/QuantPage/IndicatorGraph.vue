@@ -19,7 +19,7 @@
   } from 'chart.js';
   import Papa from 'papaparse';
   import { computeSMA, computeEMA, computeRSI, computeMACD, computeBollingerBands } from './backend/functions/indicator.js';
-  
+  import { useI18n } from 'vue-i18n';
   ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale);
   
   const props = defineProps({
@@ -39,7 +39,7 @@
       default: 'daily' // or 'cumulative'
     }
   });
-  
+  const { t } = useI18n(); // Initialize the translation function
   const chartData = ref(null);
   const chartOptions = ref({
     responsive: true,
@@ -52,11 +52,11 @@
     },
     scales: {
       x: {
-        title: { display: true, text: 'Date' },
+        title: { display: true, text: t('quantPage.Date') },
         ticks: { maxTicksLimit: 10 }
       },
       y: {
-        title: { display: true, text: 'Value' }
+        title: { display: true, text: t('quantPage.Value') }
       }
     }
   });

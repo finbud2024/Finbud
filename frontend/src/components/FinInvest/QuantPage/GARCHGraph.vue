@@ -145,13 +145,13 @@ function renderChart(labels, datasets) {
         y: {
           title: {
             display: true,
-            text: 'Price ($)',
+            text: t('quantPage.GraphPrice'),
           },
         },
         x: {
           title: {
             display: true,
-            text: 'Time Steps',
+            text: t('quantPage.TimeStep'),
           },
         },
       },
@@ -184,13 +184,13 @@ function renderBlankChart() {
         y: {
           title: {
             display: true,
-            text: 'Price ($)',
+            text: t('quantPage.GraphPrice'),
           },
         },
         x: {
           title: {
             display: true,
-            text: 'Time Steps',
+            text: t('quantPage.TimeStep'),
           },
         },
       },

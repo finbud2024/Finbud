@@ -25,8 +25,8 @@
     <label>
       <span class="label-text">{{ t('quantPage.Returns') }}</span>
       <select v-model="returnType" @change="loadRiskMetrics">
-        <option value="cumulative">Cumulative</option>
-        <option value="daily">Daily</option>
+        <option value="cumulative">{{ t('quantPage.Cummulative') }}</option>
+        <option value="daily">{{ t('quantPage.Daily') }}</option>
       </select>
     </label>
   </div>
@@ -351,7 +351,6 @@ import {watch, ref } from 'vue';
   }
 
 
-
   const metrics = ref({
   alpha: { A: null, B: null, C: null },
   beta: { A: null, B: null, C: null },
@@ -403,6 +402,7 @@ async function loadRiskMetrics() {
   metrics.value.stdDev.C = calculateStandardDeviation(dataC).toFixed(4);
 }
 
+
 watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
 
   </script>
@@ -450,7 +450,8 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   }
   
   .graph-cell {
-    width: 50%;
+    max-width: 100%;
+    width: 100%;
     background-color: var(--quant-card-background);
     padding: 12px;
     text-align: center;
@@ -529,6 +530,10 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   .custom-table td {
     background-color: var(--quant-card-background); /* Light gray background */
     color: var(--quant-text-color); /* Black text */
+  }
+  canvas {
+    width: 100% !important; /* Force the canvas to take up the full width */
+    height: auto !important; /* Adjust the height automatically */
   }
   
   </style>

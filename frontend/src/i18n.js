@@ -947,6 +947,14 @@ const messages = {
       IndustrySector: "Industry Sector",
       SelectTicker: "Select Ticker",
       TickerNameSearch: "Search by Ticker Name",
+      Cummulative: "Cumulative",
+      Daily: "Daily",
+      GraphPrice:"Price ($)",
+      TimeStep: "Time Step",
+      Date: "Date",
+      Value: "Value",
+      MonteCarloSimulation: " Monte Carlo Simulation",
+    
     },
   },
   vi: {
@@ -1874,8 +1882,13 @@ const messages = {
       IndustrySector: "Ngành công nghiệp",
       SelectTicker: "Chọn mã cổ phiếu",
       TickerNameSearch: "Tìm kiếm mã cổ phiếu",
-
-
+      Cummulative: "Tích lũy",
+      Daily: "Hàng ngày",
+      GraphPrice:"Giá ($)",
+      TimeStep: "Thời gian",
+      Date: "Ngày",
+      Value: "Giá trị",
+      MonteCarloSimulation: "Mô phỏng Monte Carlo",
     },
   }
 
