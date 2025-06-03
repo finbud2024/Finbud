@@ -132,6 +132,7 @@ function renderChart(labels, datasets) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
@@ -171,6 +172,7 @@ function renderBlankChart() {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         title: {
           display: true,
@@ -215,7 +217,8 @@ watch(
 
 <style scoped>
 .garch-graph {
-  max-width: 1000px;
-  margin: 2rem auto;
+  width: 100%;
+  height: 400px;
+  position: relative;
 }
 </style>

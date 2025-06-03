@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="chart-container">
       <Line v-if="chartData" :data="chartData" :options="chartOptions" />
     </div>
   </template>
@@ -43,6 +43,7 @@
   const chartData = ref(null);
   const chartOptions = ref({
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: true },
       title: {
@@ -145,3 +146,11 @@
   // Watch for changes in props and reload the chart
   watch([() => props.tickerA, () => props.tickerB, () => props.tickerC, () => props.indicator, () => props.period], loadChartData, { immediate: true });
   </script>
+
+<style scoped>
+.chart-container {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+</style>

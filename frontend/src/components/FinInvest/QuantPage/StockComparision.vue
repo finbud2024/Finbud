@@ -309,7 +309,7 @@ import {watch, ref } from 'vue';
     { showGraph: true },
   ]);
   const simulationChat = `
-  <b>GBM vs. GARCH Models</b><br/><br/>
+  GBM vs. GARCH Models<br/><br/>
   The chart above compares stock price simulations using two models:<br/><br/>
   <ul>
     <li><b>GBM (Geometric Brownian Motion):</b> Assumes constant volatility and normally distributed returns. Commonly used in financial modeling for its simplicity.</li>
