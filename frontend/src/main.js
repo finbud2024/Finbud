@@ -10,15 +10,12 @@ import * as faBrand from "@fortawesome/free-brands-svg-icons";
 import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import i18n from "./i18n";
-<<<<<<< Updated upstream
-=======
 import BootstrapVue3 from 'bootstrap-vue-3'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
->>>>>>> Stashed changes
 
 // Add specific icons to the library
 const icons = [
@@ -44,10 +41,7 @@ const icons = [
   faSolid.faSun,
 ];
 library.add(...icons); // Use the spread operator to add the icons
-<<<<<<< Updated upstream
-=======
 library.add(faBell);
->>>>>>> Stashed changes
 
 // Create the application
 const app = createApp(App);

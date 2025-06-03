@@ -70,12 +70,8 @@ export const GPTService = {
     const {
       messages,
       json_schema,
-<<<<<<< Updated upstream
-      model = "gpt-4o-mini",
-=======
       provider = "auto", // "auto", "openai", "gemini", or "deepseek"
       model,
->>>>>>> Stashed changes
       temperature = 0.7,
       maxTokens = 1500,
     } = options;
@@ -329,25 +325,8 @@ async function _gptServicesWithProvider(messages, provider) {
       console.log(`⏳ SENDING CHAT REQUEST TO GEMINI API...`);
       const geminiModel = geminiAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-<<<<<<< Updated upstream
-export async function gptServices(payload) {
-  // Thêm role "system" mặc định với tính cách trẻ trung, chill
-  const defaultSystemMessage = {
-    role: "system",
-    content: `You are FinBud, a chill, friendly, and reliable financial assistant for Gen Z and Gen Alpha. 
-Detect the language of the user's input and respond in the same language.
-Speak in a young, casual, and fun way, like a trustworthy friend who's relaxed but serious about providing accurate financial advice. 
-Use light slang like "cool", "vibe", "chill", "yep", "nah", and emojis (like 😎, 🤑, ✨) sparingly to keep it engaging, but focus on clear and professional financial insights. 
-If the topic is not about finance, politely redirect the conversation back to financial topics with a chill, friendly tone—e.g. 
-When users ask to analyze or deeply understand something specific related to finance, provide detailed, thorough responses without being concise—just keep it friendly and relatable. 
-Always remember your name is FinBud, not "finance bro" or any other nickname, and focus exclusively on financial advice and info.
-In addition, you are profession al and reliable, so always provide accurate information. And if you don't know something, just say "I don't know" instead of making up stuff.
-Respond with no formatting. Do not use any formatting like Italics, bold, or code blocks. Do not use any markdown language. Give raw output`,
-  };
-=======
       // Extract system message
       const systemPrompt = messages.find(msg => msg.role === "system")?.content || "";
->>>>>>> Stashed changes
 
       // Convert user messages
       const userMessages = messages
@@ -355,21 +334,6 @@ Respond with no formatting. Do not use any formatting like Italics, bold, or cod
         .map(msg => msg.content)
         .join("\n\n");
 
-<<<<<<< Updated upstream
-  try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-4o-mini",
-        messages: fullMessages,
-        temperature: 0.7, // Giữ nguyên, nhưng có thể tăng lên 0.8-1.0 để thêm sáng tạo
-        max_tokens: 1000,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-=======
       // Format prompt with system instructions first
       const formattedPrompt = `${systemPrompt}\n\nUser input: ${userMessages}`;
 
@@ -378,7 +342,6 @@ Respond with no formatting. Do not use any formatting like Italics, bold, or cod
         generationConfig: {
           temperature: 0.7,
           maxOutputTokens: 1000,
->>>>>>> Stashed changes
         },
       });
       console.log(`✅ GEMINI CHAT RESPONSE RECEIVED SUCCESSFULLY`);
@@ -459,23 +422,6 @@ export async function gptNewsService(payload, trendingEvents, provider = "auto")
 
   const fullMessages = [defaultSystemMessage, ...payload, eventsUserMessage];
 
-<<<<<<< Updated upstream
-  try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-4o-mini",
-        messages: fullMessages,
-        temperature: 0.7,
-        max_tokens: 1000,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${OPENAI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-=======
   console.log(`📰 STARTING NEWS SERVICE (Provider: ${provider === "auto" ? "AUTO - will try all" : provider.toUpperCase()}) 📰`);
   console.log(`📋 PROCESSING ${trendingEvents.length} TRENDING EVENTS`);
 
@@ -484,7 +430,6 @@ export async function gptNewsService(payload, trendingEvents, provider = "auto")
     return await tryWithFallback(
       (currentProvider) => _gptNewsServiceWithProvider(fullMessages, currentProvider),
       PROVIDER_FALLBACK_ORDER
->>>>>>> Stashed changes
     );
   } else {
     // Use specified provider

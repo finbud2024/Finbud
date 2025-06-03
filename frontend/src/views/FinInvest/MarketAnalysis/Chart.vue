@@ -145,15 +145,15 @@ const chartOptions = {
 .chart-select-container {
   margin-top: 20px;
   display: flex;
-  justify-content: flex-end;  /* Aligns content to the right */
+  justify-content: flex-end;  
 }
 
 .chart-select {
-  /* Add styles for the select element */
   border-radius: 4px;
   padding: 5px;
-  border: 1px solid #ccc;
+  background-color: var(--whtie-in-light-mode);
+  color: var(--black-in-light-mode);
+  border: 1px solid var(--black-in-light-mode);
 }
-
 
 </style>

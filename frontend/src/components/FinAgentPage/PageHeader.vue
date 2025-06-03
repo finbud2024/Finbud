@@ -81,7 +81,7 @@ h1 {
 
 .customize-button {
   background-color: var(--link-color);
-  color: white;
+  color: var(--black-in-dark-mode);
   padding: 10px 20px;
   border-radius: 24px;
   font-weight: 500;
@@ -95,7 +95,8 @@ h1 {
 }
 
 .customize-button:hover {
-  background-color: var(--hover-bg);
+  background-color: var(--black-in-dark-mode);
+  color: var(--white-in-dark-mode);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(140, 125, 247, 0.3);
 }

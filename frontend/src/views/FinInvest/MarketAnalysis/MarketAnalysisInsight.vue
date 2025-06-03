@@ -6,7 +6,7 @@
           <div style="width: 100%;">
             <div class="title">{{ t('marketAnalysisPage.marketAnalysisTitle') }}</div>
             <div class="market-analysis-container">
-                <div class="market-analysis-card" style="background-color: #000000; color: white;">
+                <div class="market-analysis-card" style="background-color: var(--black-in-light-mode); color: var(--white-in-light-mode);">
                     <div>
                         <img :src="assessmentIcon" alt="assessment" class="market-analysis-icon"/>
                     </div>
@@ -142,6 +142,8 @@ const setFilter = (filter) => {
     box-sizing: border-box;
     width: 100%;
     height: 100%;
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
   }
   
   .container {
@@ -149,17 +151,17 @@ const setFilter = (filter) => {
     padding: 0 20px;
     width: 100%;
     box-sizing: border-box;
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
     border-radius: 4px;
-    border: 1px solid rgb(221, 221, 221);
+    border: 1px solid var(--white-in-light-mode);
   }
 
   .title {
     margin-top: 20px;
     font-size: 30px;
     font-weight: 750;
-    color: black;
+    color: var(--black-in-light-mode);
   }
 
   .market-analysis-container {
@@ -175,14 +177,14 @@ const setFilter = (filter) => {
     flex: 1;
     height: 200px;
     min-height: 200px;
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
     border-radius: 4px;
     display: flex;
     text-align: center;
     justify-content: center;
     align-items: center;
-    border: 1px solid rgb(221, 221, 221);
+    border: 1px solid var(--white-in-light-mode);
     padding: 10px;
     flex-grow: 1;
   }
@@ -200,18 +202,18 @@ const setFilter = (filter) => {
   }
 
   .Positive { 
-    background-color: #000000;
-    color: #acfeac;
+    background-color: var(--black-in-light-mode);
+    color: #31de31;
   }
 
   .Neutral {
-    background-color: #000000;
-    color: #ffff9e;
+    background-color: var(--black-in-light-mode);
+    color: #e0e000;
   }
 
   .Negative {
-    background-color: #000000;
-    color: #fd9e9e;
+    background-color: var(--black-in-light-mode);
+    color: #dd2525;
   }
 
   .button-group {
@@ -223,9 +225,9 @@ const setFilter = (filter) => {
   }
 
   .button-group button {
-    background-color: rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
-    border: 1px solid rgb(221, 221, 221);
+    background-color: transparent;
+    color: var(--black-in-light-mode);
+    border: 1px solid var(--black-in-light-mode);
     border-radius: 4px;
     padding: 5px 10px;
     cursor: pointer;
@@ -233,39 +235,42 @@ const setFilter = (filter) => {
   }
 
   .button-group button.active {
-    background-color: #0a0a0a;
-    color: white;
-    border-color: #606060;
+    background-color: var(--black-in-light-mode);
+    color: var(--white-in-light-mode);
+    border-color: var(--white-in-light-mode);
   }
 
   .button-group button:hover {
-    background-color: #f0f0f0;
+    background-color: var(--white-in-light-mode);
   }
 
   .button-group button.active:hover {
-    background-color: #424242;
+    background-color: var(--black-in-light-mode);
   }
   
-  td {
+  tr td {
     white-space: normal;        
     word-wrap: break-word;      
     word-break: break-word;     
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
+    border-radius: 10px;
   }
 
   .style-table {
     width: 100%;            
     table-layout: auto;    
-    border-radius: 4px;
+    border-radius: 10px;
   }
 
   tr th {
-    background-color: #000000;
-    color: white;
+    background-color: var(--black-in-light-mode);
+    color: var(--white-in-light-mode);
   }
 
   .details-container {
-    background-color: #fff;
-    color: #000;
+    background-color: var(--white-in-light-mode);
+    color: var(--black-in-light-mode);
     border-radius: 4px;
   }
 

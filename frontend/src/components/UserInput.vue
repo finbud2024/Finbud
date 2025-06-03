@@ -56,18 +56,6 @@
 
 				<div class="flex-spacer"></div>
 
-<<<<<<< Updated upstream
-      <!-- Voice Recording Button OR Send Button -->
-      <div v-if="!isTyping" 
-        @mousedown="startRecording" 
-        @mouseup="stopRecording" 
-        @mouseleave="stopRecording"
-        class="mic-btn"
-        :class="{ recording: isRecording }" 
-      >
-        <i class="fa-solid fa-microphone-lines"></i>
-      </div>
-=======
 				<!-- Right side buttons -->
 				<div class="right-buttons">
 					<!-- Voice Recording Button or Send Button -->
@@ -81,7 +69,6 @@
 					>
 						<i class="fa-solid fa-microphone-lines"></i>
 					</div>
->>>>>>> Stashed changes
 
 					<div v-else @click="send" class="send-btn">
 						<font-awesome-icon icon="fa-solid fa-chevron-up" />

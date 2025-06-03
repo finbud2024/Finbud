@@ -68,7 +68,6 @@ const routes = [
     components: {
       default: ChatPage,
       sidebar: SideBar,
-    component: ChatView,
     },
   },
   {

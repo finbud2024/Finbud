@@ -148,156 +148,6 @@
             </button>
           </div>
         </div>
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-          <div class="transaction-box">
-            <div v-if="showModal" class="modal-overlay">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h3>{{ $t('addTransactionTitle') }}</h3>
-                </div>
-                <div class="modal-body">
-                  <div class="input-box">
-                    <select
-                      v-model="transaction.type"
-                      class="input-box type-select"
-                      required
-                    >
-                      <option value="" disabled class="input-box-placeholder">
-                        {{ $t('transactionTypePlaceholder') }}
-                      </option>
-                      <option value="Income">{{ $t('creditedOption') }}</option>
-                      <option value="Expense">{{ $t('debitedOption') }}</option>
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Description"
-                      v-model="transaction.description"
-                      @input="generateRecommendations"
-                      @keydown="generateRecommendations"
-                      @focus="showRecommendations"
-                      @blur="hideRecommendations"
-                    />
-                    <ul
-                      v-if="recommendations.length && recommendationsVisible"
-                      class="recommendation-list"
-                      @mousedown.prevent
-                    >
-                      <li
-                        v-for="(recommendation, index) in recommendations"
-                        :key="index"
-                        @click="selectRecommendation(recommendation)"
-                        :class="{ highlighted: index === highlightedIndex }"
-                      >
-                        {{ recommendation }}
-                      </li>
-                    </ul>
-                    <div class="currency-input">
-                      <input
-                        type="number"
-                        placeholder="Amount"
-                        v-model="transaction.amount"
-                      />
-                      <select v-model="selectedCurrency" class="selectinside">
-                        <option value="USD">USD</option>
-                        <option value="VND">VND</option>
-                      </select>
-                    </div>
-                    <input
-                      type="date"
-                      placeholder="Date"
-                      v-model="transaction.date"
-                    />
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button @click="closeModal" style="margin-right: 10px">
-                    {{ $t('cancelButton') }}
-                  </button>
-                  <button @click="addTransaction">{{ $t('addTransactionButton') }}</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="transaction-list">
-            <table>
-              <thead>
-                <tr>
-                  <th>{{ $t('descriptionHeader') }}</th>
-                  <th>{{ $t('dateHeader') }}</th>
-                  <th>{{ $t('amountHeader') }} ({{ selectedCurrency }})</th>
-                  <th>{{ $t('statusHeader') }}</th>
-                  <th>{{ $t('transactionHeader') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- <tr
-                  v-for="trans in transactions"
-                  :key="trans._id"
-                  :class="{
-                    income: trans.type === 'Income',
-                    expense: trans.type === 'Expense',
-                  }"
-                > -->
-              <tr
-                v-for="trans in transactions"
-                :key="trans._id || trans.account_id"
-                :class="{
-                  income:
-                    trans.type === 'Income' ||
-                    (trans.type === 'revenue' && trans.amount < 0),
-                  expense:
-                    trans.type === 'Expense' ||
-                    (trans.type === 'revenue' && trans.amount > 0),
-                }"
-              >
-                <!-- <td>{{ trans.description }}</td> -->
-                <td>{{ trans.description || trans.name }}</td>
-                <td>{{ formattedDate(trans.date) }}</td>
-                <td v-if="selectedCurrency === 'USD'">
-                  {{ formatCurrency(Math.abs(trans.amount).toFixed(2)) }}
-                </td>
-                <td v-if="selectedCurrency === 'VND'">
-                  {{
-                    formatCurrency(
-                      convertToVND(Math.abs(trans.amount)).toFixed(2)
-                    )
-                  }}
-                </td>
-                <td>
-                  {{
-                    trans.type === "Expense" ||
-                    (trans.type === "revenue" && trans.amount > 0)
-                      ? "Debited"
-                      : "Credited"
-                  }}
-                </td>
-                <td class="buttons">
-                  <button
-                    @click="editTransaction(trans)"
-                    style="margin-right: 10px; padding: 6px 12px"
-                  >
-                    Edit
-                  </button>
-                  <!-- <button 
-                      @click="removeTransaction(trans._id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    > -->
-                    <button 
-                      @click="removeTransaction(trans.account_id)"
-                      style="
-                      padding: 6px 12px;
-                      "
-                    >
-                    {{ $t('removeButton') }}
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-=======
         <div class="transaction-box">
           <TransactionModal
             v-if="showModal"
@@ -321,7 +171,6 @@
           @edit="editTransaction"
           @remove="removeTransaction"
         />
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
       </section>
     </div>
 
@@ -388,23 +237,6 @@
                 ></div>
               </div>
             </div>
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-          </section>
-        </div>
-    
-        <!-- Reset Confirmation Modal -->
-        <div v-if="showResetConfirmationModal" class="modal">
-          <div class="modal-content">
-            <h3>{{ $t('resetAccountTitle') }}</h3>
-            <p>{{ $t('resetAccountMessage') }}</p>
-            <button @click="showResetConfirmationModal = false" style="margin-right: 10px">
-              {{ $t('noButton') }}
-            </button>
-            <button @click="resetAccountBalance">
-              {{ $t('yesButton') }}
-            </button>
-=======
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
           </div>
         </div>
 
@@ -535,29 +367,20 @@
 
 <script>
 import axios from "axios";
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-import TransactionLine from "../components/goalPage/TransactionLine.vue";
-import { toast } from "vue3-toastify";
-import ChatBotTyping from "@/components/quant/ChatBotTyping.vue";
-=======
 import TransactionLine from "@/components/FinManage/GoalPage/TransactionLine.vue";
 import TransactionTable from "@/components/FinManage/GoalPage/TransactionTable.vue";
 import TransactionModal from "@/components/FinManage/GoalPage/TransactionModal.vue";
 import TransactionPie from "@/components/FinManage/GoalPage/TransactionPie.vue";
 import ChatBotTyping from "@/components/FinInvest/QuantPage/ChatBotTyping.vue";
 import goalNotiModal from "@/components/Notification/goalNotiModal.vue";
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
 export default {
   name: "GoalPage",
   components: {
     ChatBotTyping,
     TransactionLine,
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-=======
     TransactionTable,
     TransactionModal,
     TransactionPie
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
   },
   // watch: {
   //   showForecast(newVal) {
@@ -582,11 +405,8 @@ export default {
       typingSpeed: 50, // milliseconds between words
       typingTimer: null,
       messageManuallyToggled: false, // Add this new property to track if the message was manually toggled
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-=======
       activePieChart: "Income",
       showForecast: false,
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
 
       userId: this.$store.getters["users/userId"],
       firstName:
@@ -734,20 +554,6 @@ export default {
 
     // Sửa cách tính accountBalance để lấy từ trường balance của transaction mới nhất
     accountBalance() {
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-      // Ưu tiên giá trị từ server nếu có
-      if (this.serverAccountBalance !== 0) {
-        return this.serverAccountBalance;
-      }
-
-      // Khi không có giao dịch, trả về 0
-      if (!this.transactions || this.transactions.length === 0) {
-        return 0;
-      }
-
-      // Dựa trên tổng revenue và expense nếu không có giá trị server
-=======
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
       return this.totalRevenue - this.totalExpense;
     },
   },
@@ -755,11 +561,7 @@ export default {
   mounted() {
     // if (!this.isAuthenticated) {
     //   this.$router.push("/");
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-      return;
-=======
       // return;
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
     // }
 
 
@@ -1186,10 +988,7 @@ export default {
         return null; // Trả về null trong trường hợp lỗi
       }
     },
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-=======
 
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
     async addTransaction() {
       if (
         this.transaction.description &&
@@ -1200,21 +999,11 @@ export default {
         try {
           let amountInUSD = Math.abs(this.transaction.amount);
 
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-          // Convert amount to USD if the selected currency is VND
-=======
           // Convert to USD if needed
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
           if (this.selectedCurrency === "VND") {
             amountInUSD = this.convertVNDToUSD(amountInUSD);
           }
 
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-          // Xác định dấu của số tiền dựa vào type
-          // Income (ghi có) = số âm (thêm tiền vào tài khoản)
-          // Expense (ghi nợ) = số dương (lấy tiền ra khỏi tài khoản)
-=======
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
           const signedAmount =
             this.transaction.type === "Income" ? -amountInUSD : amountInUSD;
 
@@ -1631,6 +1420,7 @@ export default {
   background: var(--bg-primary);
   /* Remove outline for a cleaner look */
   outline: none;
+  flex-wrap: wrap;
 }
 
 .leftPanel {
@@ -1697,6 +1487,30 @@ export default {
   }
 }
 
+@media (max-width: 390px) {
+  .GoalDashBoardContainer {
+    flex-direction: column;
+    width: 100%;
+    max-width: 1400px;
+    margin: 40px auto;
+  }
+
+  .leftPanel .rightPanel {
+    width: 100%;
+  }
+
+  .connect-button-wrapper {
+    margin-top: 40px;
+  }
+
+  .buttons {
+    padding-top: 10px;
+  }
+
+  .add-goal-button {
+    width: 200px;
+  }
+}
 .connect-button-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -1743,10 +1557,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-<<<<<<< Updated upstream:frontend/src/views/GoalPage.vue
-  background-color: rgb(31, 126, 53);
-=======
->>>>>>> Stashed changes:frontend/src/views/FinManage/GoalPage.vue
 }
 
 .transactionContainer {
@@ -2267,6 +2077,7 @@ hr {
   justify-content: space-between;
   margin-top: 10px;
   margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 .headline-buttons h2 {
@@ -2372,6 +2183,35 @@ hr {
 
 .income {
   background-color: rgba(76, 175, 80, 0.1);
+}
+
+.transaction-list td.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 5px;
+  gap: 5px;
+}
+
+.transaction-list td.buttons button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  background-color: var(--link-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto;
+  min-width: 80px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.transaction-list td.buttons button:hover {
+  background-color: var(--button-hover-bg, #005bb5);
+  transform: translateY(-1px);
 }
 
 .chart-container {
@@ -2537,6 +2377,7 @@ hr {
   display: flex;
   gap: 20px;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .total-spend {

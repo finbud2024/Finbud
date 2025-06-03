@@ -364,12 +364,21 @@ export default {
 
 <style scoped>
 .chat-section {
-  background-color: #2196f3;
+  background-color: var(--white-in-white-mode);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.15), 
+    0 8px 24px rgba(0, 0, 0, 0.1);
   padding: 30px;
   max-width: 900px;
   margin: 0 auto;
+}
+
+.chat-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2), 
+    0 16px 48px rgba(0, 0, 0, 0.15);
 }
 
 .chat-header {
@@ -379,13 +388,13 @@ export default {
 .chat-title {
   font-size: 28px;
   font-weight: bold;
-  color: #ffffff;
+  color: var(--white-in-dark-mode);
   margin: 0 0 8px 0;
 }
 
 .powered-by {
   font-size: 14px;
-  color: #ffffff;
+  color: var(--white-in-dark-mode);
   margin-bottom: 20px;
 }
 
@@ -426,24 +435,26 @@ export default {
 }
 
 .ticker-button {
-  background-color: #0095ff;
-  color: #f8f9fa;
+  background-color: var(--white-in-dark-mode);
+  color: var(--black-in-dark-mode);
   box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
 
 .ticker-button:hover {
-  background-color: #3a56d4;
+  background-color: var(--black-in-dark-mode);
+  color: var(--white-in-dark-mode);
   transform: translateY(-2px);
 }
 
 .market-button {
-  background-color: #0095ff;
-  color: #f8f9fa;
+  background-color: var(--white-in-dark-mode);
+  color: var(--black-in-dark-mode);
   box-shadow: 0 4px 12px rgba(58, 12, 163, 0.2);
 }
 
 .market-button:hover {
-  background-color: #2d0a7a;
+  background-color: var(--black-in-dark-mode);
+  color: var(--white-in-dark-mode);
   transform: translateY(-2px);
 }
 
