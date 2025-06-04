@@ -176,133 +176,96 @@ const hideBot = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: fadeIn 0.5s ease;
 }
 
 .title {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #000000;
-  margin-bottom: 2rem;
-  position: relative;
-  animation: slideInDown 0.5s ease;
-}
-
-.title::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 3px;
-  background: #000000;
-  border-radius: 2px;
+  color: #1f2937;
 }
 
 .investors-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  max-width: 1400px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
   width: 100%;
-  padding: 20px;
-  animation: fadeInUp 0.5s ease;
+  justify-content: center;
 }
 
-/* Loading Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+img {
+  max-width: 30px;
+  height: auto;
+  vertical-align: middle;
+  margin-right: 8px;
 }
 
 /* Bot Chat Styles */
 .bot-chat-container {
   position: fixed;
-  right: -350px;
+  left: -350px;
   top: 30%;
   width: 300px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   padding: 15px;
   z-index: 100;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
+  opacity: 0;
+  transform: translateX(0);
+  pointer-events: none;
 }
 
 .bot-chat-container.bot-visible {
-  transform: translateX(-350px);
+  transform: translateX(350px);
   opacity: 1;
+  pointer-events: auto;
 }
 
 .bot-chat-container.bot-hidden {
-  transform: translateX(0);
+  transform: translateX(350px) translateY(50px);
   opacity: 0;
+  transition: transform 1s ease, opacity 1s ease;
 }
 
 .bot-image {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
+  width: 60px;
+  height: auto;
   display: block;
   position: relative;
   background: transparent;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: transform 0.5s ease;
+  border-radius: 50%;
 }
 
-.bot-image:hover {
-  transform: scale(1.1);
+.bot-visible .bot-image {
+  animation: botBounce 1s ease-out;
 }
 
 .bot-message {
-  background: #000000;
+  margin-top: 10px;
+  background: #2196F3;
   color: #ffffff;
   padding: 12px 18px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  margin-right: 15px;
-  max-width: 250px;
-  transition: all 0.3s ease;
+  border-radius: 18px;
+  max-width: 280px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  transform: translateX(20px);
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: 0.3s;
 }
 
 .bot-message.message-visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: scale(1) translateY(0);
 }
 
 .bot-message.message-hidden {
   opacity: 0;
-  transform: translateX(20px);
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .typing-animation {
@@ -316,13 +279,7 @@ const hideBot = () => {
   height: 8px;
   border-radius: 50%;
   background-color: #ffffff;
-  opacity: 0.6;
-}
-
-.typed-message {
-  line-height: 1.5;
-  word-wrap: break-word;
-  color: #ffffff;
+  opacity: 0.3;
 }
 
 .dot:nth-child(1) {
@@ -337,9 +294,14 @@ const hideBot = () => {
   animation: typing 1s infinite 0.4s;
 }
 
+.typed-message {
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
 @keyframes typing {
   0%, 100% { 
-    opacity: 0.6;
+    opacity: 0.3; 
     transform: scale(1);
   }
   50% { 
@@ -348,31 +310,38 @@ const hideBot = () => {
   }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .investors-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 10px;
+@keyframes botBounce {
+  0% { transform: translateY(20px); opacity: 0; }
+  60% { transform: translateY(-5px); }
+  80% { transform: translateY(2px); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .bot-chat-container {
+    left: auto;
+    right: -300px;
+    bottom: 20px;
+    top: auto;
   }
   
-  .title {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .bot-chat-container {
-    right: -280px;
-    width: 250px;
-  }
-
   .bot-chat-container.bot-visible {
-    transform: translateX(-280px);
+    transform: translateX(-310px);
+  }
+  
+  .bot-chat-container.bot-hidden {
+    transform: translateX(-310px) translateY(50px);
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .bot-chat-container {
+    width: 250px;
   }
   
   .bot-message {
     max-width: 220px;
-    padding: 10px 15px;
   }
 }
 </style>

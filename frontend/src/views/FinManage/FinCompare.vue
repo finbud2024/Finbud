@@ -105,51 +105,33 @@
       }
     },
     methods: {
-      async loadData() {
+      async fetchData() {
         try {
           this.loading = true;
-          const cachedData = localStorage.getItem('bankData');
-
-          if (cachedData) {
-            const parsedData = JSON.parse(cachedData);
-            this.banks = parsedData;
-          } else {
-            const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/banks`);
-            this.banks = response.data;
-            localStorage.setItem('bankData', JSON.stringify(response.data));
-          }
-        } catch (error) {
+          this.error = null;
+          const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/banks`);
+          this.banks = response.data;
+        } catch (err) {
           this.error = 'Failed to load bank data. Please try again later.';
-          console.error('Error loading bank data:', error);
+          console.error('Error fetching bank data:', err);
         } finally {
           this.loading = false;
         }
       },
       isBestChoice(bank) {
-        if (!this.suggestedBank) return false;
-        return bank.bank === this.suggestedBank.bank;
+        return this.suggestedBank && bank.bank === this.suggestedBank.bank;
       },
       getPriorityText(priority) {
-        switch (priority) {
-          case 'savings':
-            return 'highest interest rate';
-          case 'fees':
-            return 'lowest fees';
-          case 'flexible':
-            return 'most flexible terms';
-          default:
-            return '';
-        }
+        const texts = {
+          savings: 'maximum savings',
+          fees: 'lowest fees',
+          flexible: 'flexible conditions'
+        };
+        return texts[priority] || '';
       }
     },
     mounted() {
-      this.loadData();
-    },
-    watch: {
-      selectedPriority() {
-        // Clear any existing error when priority changes
-        this.error = null;
-      }
+      this.fetchData();
     }
   };
   </script>
@@ -159,240 +141,146 @@
   .flex-container {
     display: flex;
     min-height: 100vh;
-    background: var(--bg-primary);
   }
-  
+   /* #1e3a8a */
   .sidebar {
-    width: 300px;
-    background: linear-gradient(to bottom, #000, #1a1a1a);
+    width: 256px;
+    background-color: black;
     color: white;
-    padding: 2rem;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-shrink: 0;
   }
   
   .sidebar-content {
-    height: 100%;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    justify-content: space-between;
+    height: 100%;
   }
   
   .title {
     font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(45deg, #fff, #ccc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+    margin-bottom: 16px;
   }
   
   .subtitle {
-    font-size: 1rem;
-    color: #ccc;
-    margin-bottom: 2rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 32px;
   }
   
   .filter-label {
-    font-size: 1.1rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    margin-bottom: 1rem;
-    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 12px;
   }
   
   .filter-options {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 16px;
   }
   
   .radio-option {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: all 0.3s ease;
   }
   
-  .radio-option:hover {
-    background: rgba(255, 255, 255, 0.1);
+  .radio-option input[type="radio"]:checked + label {
+    font-weight: bold;
   }
   
   .main-content {
     flex: 1;
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    background-color: #f3f4f6;
+    padding: 48px;
   }
   
   .main-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 2rem;
-    background: linear-gradient(45deg, #1a1a1a, #4a4a4a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: fadeIn 1s ease;
+    margin-bottom: 32px;
   }
   
   .comparison-table-container {
-    background: var(--bg-primary);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    animation: slideIn 0.5s ease;
+    padding: 32px;
+    margin-bottom: 40px;
   }
   
   .table-wrapper {
     overflow-x: auto;
-    border-radius: 12px;
   }
   
   .comparison-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
+    text-align: left;
+    border-collapse: collapse;
   }
   
   .table-header {
-    padding: 1rem;
+    padding: 12px;
     font-size: 1rem;
     font-weight: 600;
-    color: var(--text-primary);
-    background: var(--bg-secondary);
-    border-bottom: 2px solid var(--border-color);
+    color: #4b5563;
+    border-bottom: 2px solid #e5e7eb;
     text-align: left;
-    position: sticky;
-    top: 0;
-    z-index: 10;
   }
   
   .table-row-title {
-    padding: 1rem;
+    padding: 12px;
     font-weight: 600;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
+    color: #1e3a8a;
   }
   
   .table-row {
-    padding: 1rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-  }
-  
-  tr {
-    transition: all 0.3s ease;
-  }
-  
-  tr:hover {
-    background: var(--hover-bg);
-    transform: translateX(5px);
+    padding: 12px;
+    font-size: 1rem;
+    color: #4b5563;
+    border-bottom: 1px solid #e5e7eb;
   }
   
   .best-choice {
-    background: var(--primary-color);
-    color: white;
-  }
-  
-  .best-choice td {
-    color: white;
+    background-color: #f0f9ff;
   }
   
   .best-choice-label {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    background-color: #bfdbfe;
+    color: #1e3a8a;
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 0.25rem 0.75rem;
+    padding: 2px 8px;
     border-radius: 9999px;
-    margin-left: 0.5rem;
+    margin-left: 8px;
   }
   
   .suggested {
-    margin-top: 1.5rem;
-    background: var(--primary-color);
-    color: white;
-    padding: 1rem;
-    border-radius: 12px;
-    animation: fadeIn 0.5s ease;
+    margin-top: 24px;
+    background-color: #e0f2fe;
+    color: #1e40af;
+    padding: 16px;
+    border-radius: 16px;
   }
   
   .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 200px;
+    text-align: center;
+    padding: 2rem;
     font-size: 1.2rem;
-    color: var(--text-primary);
-  }
-  
-  .loading::after {
-    content: '';
-    width: 2rem;
-    height: 2rem;
-    border: 3px solid var(--border-color);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    margin-left: 0.5rem;
-    animation: spin 1s linear infinite;
+    color: #4b5563;
   }
   
   .error {
     text-align: center;
     padding: 2rem;
     color: #dc2626;
-    background: #fee2e2;
-    border-radius: 12px;
+    background-color: #fee2e2;
+    border-radius: 0.5rem;
     margin-bottom: 1rem;
-    animation: shake 0.5s ease;
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-  }
-  
-  /* Dark mode specific styles */
-  :root[data-theme="dark"] .table-row,
-  :root[data-theme="dark"] .table-header {
-    color: #000;
-    background: #fff;
-  }
-  
-  :root[data-theme="dark"] .best-choice {
-    background: var(--primary-color);
-    color: white;
-  }
-  
-  :root[data-theme="dark"] .best-choice td {
-    color: white;
   }
   </style>

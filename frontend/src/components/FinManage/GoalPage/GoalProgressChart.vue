@@ -40,9 +40,17 @@
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faChartBar } from '@fortawesome/free-solid-svg-icons'
+import { 
+  faChartBar, faShieldAlt, faPlane, faChartLine,
+  faGraduationCap, faHeart, faCar, faHome, faLaptop,
+  faBriefcase, faUserClock, faBullseye
+} from '@fortawesome/free-solid-svg-icons'
 
-library.add(faChartBar)
+library.add(
+  faChartBar, faShieldAlt, faPlane, faChartLine,
+  faGraduationCap, faHeart, faCar, faHome, faLaptop,
+  faBriefcase, faUserClock, faBullseye
+)
 
 export default {
   name: 'GoalProgressChart',

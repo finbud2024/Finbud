@@ -1,17 +1,6 @@
 <template>
-  <div class="trading-interface">
-    <div class="notifications-container">
-      <transition-group name="notification">
-        <div v-for="notification in notifications" 
-             :key="notification.id" 
-             :class="['notification', `notification-${notification.type}`]">
-          {{ notification.message }}
-          <button class="notification-close" @click="removeNotification(notification.id)">×</button>
-        </div>
-      </transition-group>
-    </div>
-    
-    <div class="grid-container">
+  <div class="quant-simulator-page">
+    <div class="page-container">
       <div class="team-panel astrominers">
         <h2>Astrominers <span v-if="isRefreshing" class="refresh-indicator">⟳</span></h2>
         <div class="table-wrapper tight-columns" style="width: 100%; overflow-x: auto !important; max-width: none;">
@@ -2421,12 +2410,70 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 /* Base styles */
-.trading-interface {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+.quant-simulator-page {
   min-height: 100vh;
-  padding: 24px;
-  overflow: hidden;
-  font-family: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--quant-background);
+  color: var(--quant-text-color);
+  padding: 16px;
+  margin: 0;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 20px;
+  height: calc(100vh - 32px);
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
+  .page-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 16px;
+    height: auto;
+    min-height: calc(100vh - 32px);
+  }
+}
+
+/* HEADER */
+.page-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--quant-card-background);
+  border: 1px solid rgba(226, 232, 240, 0.3);
+  border-radius: 16px;
+  padding: 20px 28px;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 1.875rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.01em;
+}
+
+.header-left p {
+  margin: 4px 0 0 0;
+  color: var(--quant-text-color);
+  opacity: 0.7;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
 }
 
 .grid-container {
@@ -2612,12 +2659,11 @@ export default {
 }
 /* TEAM PANEL BASE STYLES */
 .team-panel {
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--quant-card-background);
   border-radius: 12px;
   box-shadow: 
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(8px);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -2758,14 +2804,14 @@ export default {
   position: sticky;
   top: 0;
   z-index: 2;
-  background: #F7FAFC;
+  background: var(--quant-card-background);
 }
 
 .team-panel th {
   font-weight: 600;
   font-size: 0.7rem;
-  color: #1e293b;
-  background-color: rgba(248, 250, 252, 0.6);
+  color: var(--quant-text-color);
+  background-color: var(--quant-card-background);
   z-index: 2;
 }
 
@@ -2780,7 +2826,8 @@ export default {
   text-overflow: initial; /* Remove ellipsis */
   box-sizing: border-box !important;
   text-align: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+  color: var(--quant-text-color);
 }
 
 /* COLUMN STRUCTURE */

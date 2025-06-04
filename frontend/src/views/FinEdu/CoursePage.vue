@@ -515,7 +515,7 @@ export default {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  color: var(--text-primary);
+  color: #2d3748;
   line-height: 1.6;
   position: relative;
 }
@@ -527,33 +527,21 @@ export default {
   align-items: center;
   justify-content: center;
   height: 60vh;
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .loading-spinner {
+  border: 4px solid black;
+  border-radius: 50%;
+  border-top: 4px solid gray;
   width: 50px;
   height: 50px;
-  border: 4px solid var(--border-color);
-  border-top: 4px solid var(--link-color);
-  border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
 
 .loading-text {
-  color: var(--text-secondary);
+  color: #4a5568;
   font-size: 1.1rem;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
 }
 
 /* Error State */
@@ -596,91 +584,58 @@ export default {
   transform: translateY(-2px);
 }
 
-/* Course Grid */
+/* Course Sections */
 .course-section {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   margin-bottom: 4rem;
-  animation: slideUp 0.5s ease;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Course Cards */
 .course-card {
-  background: var(--bg-primary);
+  background-color: white;
   height: 400px;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--border-color);
-  position: relative;
   cursor: pointer;
+  position: relative;
 }
 
 .course-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .card-image {
-  height: 200px;
+  height: 150px;
   overflow: hidden;
-  position: relative;
-}
-
-.card-image::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: linear-gradient(to top, var(--bg-primary), transparent);
 }
 
 .card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 .course-card:hover .card-image img {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .card-content {
   padding: 1.5rem;
-  position: relative;
 }
 
 .course-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  transition: color 0.3s ease;
-}
-
-.course-card:hover .course-title {
-  color: var(--link-color);
+  height: 80px;
 }
 
 .course-meta {
@@ -689,177 +644,321 @@ export default {
   gap: 1.5rem;
   margin-bottom: 1rem;
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: #718096;
 }
 
-.views {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.icon {
-  color: var(--link-color);
+.course-meta .icon {
+  margin-right: 0.25rem;
+  vertical-align: middle;
 }
 
 .course-description {
-  color: var(--text-secondary);
+  color: #4a5568;
   font-size: 0.9rem;
+  margin-bottom: 1.5rem;
   line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* Section Headers */
+/* Section Divider */
 .section-divider {
-  margin-bottom: 2rem;
-  position: relative;
+  margin-bottom: 1.5rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  animation: fadeIn 0.5s ease;
 }
 
 .section-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--text-primary);
   position: relative;
   display: inline-block;
+  padding: 0 0.5rem;
+  margin: 1rem 0;
+  text-align: left;
 }
 
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 60px;
-  height: 4px;
-  background: var(--link-color);
-  border-radius: 2px;
-  transition: width 0.3s ease;
-}
-
-.section-title:hover::after {
+/* View All Button */
+.read-more-container {
+  display: flex;
+  justify-content: flex-end;
   width: 100%;
 }
 
 .read-more-btn {
-  padding: 0.75rem 1.5rem;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border-radius: 8px;
+  background-color: black;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 3px;
   font-weight: 500;
   text-decoration: none;
-  transition: all 0.3s ease;
-  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+  font-size: small;
+}
+
+@media (min-width: 768px) {
+  .section-divider {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .section-title {
+    padding: 0 2rem;
+    margin-left: 100px;
+    text-align: center;
+    font-size: large;
+  }
+  
+  .read-more-container {
+    justify-content: flex-end;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .read-more-btn {
+    background-color: black;
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    font-size: medium;
+  }
+}
+
+.title-text {
+  position: relative;
+  z-index: 1;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.section-title::before,
+.section-title::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 100px;
+  height: 2px;
+  background-color: #e2e8f0;
+}
+
+.section-title::before {
+  left: -100px;
+}
+
+.section-title::after {
+  right: -100px;
 }
 
 .read-more-btn:hover {
-  background: var(--link-color);
-  color: white;
-  transform: translateY(-2px);
+  background-color: gray;
 }
 
-/* Bot Chat */
+/* Bot Chat Styles */
 .bot-chat-container {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
+  left: 5px;
+  top: 30%;
+  width: 260px;
   display: flex;
-  align-items: flex-end;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+  z-index: 100;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bot-chat-container.bot-visible {
+  opacity: 1;
+}
+
+.bot-chat-container.bot-hidden {
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
 .bot-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  cursor: pointer;
+  width: 40px;
+  height: auto;
+  display: block;
+  position: relative;
+  background: transparent;
   transition: transform 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 2;
 }
 
 .bot-image:hover {
   transform: scale(1.1);
 }
 
-.bot-message {
-  background: var(--bg-primary);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  max-width: 300px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
+.bot-visible .bot-image {
+  animation: botBounce 0.6s ease-out;
 }
 
-/* Mobile Responsiveness */
+@keyframes botBounce {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+  80% {
+    transform: translateY(2px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.bot-message {
+  margin-top: 10px;
+  background: #2196f3;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-size: 15px;
+  max-width: 280px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease;
+  transition-delay: 0.2s;
+  word-wrap: break-word;
+  white-space: pre-line;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.bot-message.message-visible {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  max-height: 1000px;
+}
+
+.bot-message.message-hidden {
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  max-height: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+}
+
+.typing-animation {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  opacity: 0.3;
+}
+
+.dot:nth-child(1) {
+  animation: typing 1s infinite 0s;
+}
+
+.dot:nth-child(2) {
+  animation: typing 1s infinite 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation: typing 1s infinite 0.4s;
+}
+
+.typed-message {
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+@keyframes typing {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Styles */
 @media (max-width: 768px) {
   .course-page {
-    padding: 1rem;
+    padding: 1.5rem;
   }
-
+  
   .course-section {
     grid-template-columns: 1fr;
   }
-
-  .course-card {
-    height: auto;
-    min-height: 350px;
+  
+  .section-title::before,
+  .section-title::after {
+    width: 50px;
   }
-
-  .card-image {
-    height: 150px;
+  
+  .section-title::before {
+    left: -50px;
   }
-
-  .section-title {
-    font-size: 1.5rem;
+  
+  .section-title::after {
+    right: -50px;
   }
 
   .bot-chat-container {
-    bottom: 20px;
-    right: 20px;
+    left: 10px;
+    right: auto;
+    bottom: 10px;
+    top: auto;
   }
 
   .bot-image {
-    width: 50px;
-    height: 50px;
-  }
-
-  .bot-message {
-    max-width: 250px;
-    font-size: 0.9rem;
+    width: 60px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 576px) {
   .course-page {
-    padding: 0.5rem;
+    padding: 1rem;
   }
-
-  .section-divider {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
+  
+  .section-title::before,
+  .section-title::after {
+    display: none;
   }
-
-  .read-more-btn {
-    width: 100%;
-    text-align: center;
-  }
-
+  
   .course-meta {
     flex-direction: column;
+    align-items: flex-start;
     gap: 0.5rem;
   }
 
+  .bot-chat-container {
+    width: 250px;
+  }
+
   .bot-message {
-    max-width: 200px;
-    font-size: 0.85rem;
+    max-width: 220px;
   }
 }
 </style>

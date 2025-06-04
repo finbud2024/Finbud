@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="team-section">
-      <h1 class="title">{{ $t('aboutUsTitle') }}</h1>
-      <p class="description">
+      <li class="title">{{ $t('aboutUsTitle') }}</li>
+      <li class="description">
         {{ $t('aboutUsDescription') }}
-      </p>
+      </li>
     </div>
     <div class="team-section">
-      <h2 class="title">{{ $t('meetOurTeamTitle') }}</h2>
+      <li class="title">{{ $t('meetOurTeamTitle') }}</li>
       <swiper
         :slidesPerView="slidesPerView"
         :spaceBetween="30"
@@ -57,7 +57,7 @@
 
     <!-- Testimonials Section -->
     <div class="testimonials-section">
-      <h2 class="title">{{ $t('testimonialsTitle') }}</h2>
+      <li class="title">{{ $t('testimonialsTitle') }}</li>
       <div class="testimonials-container">
         <div
           class="testimonial-card"
@@ -408,574 +408,404 @@ export default {
 <style scoped>
 @import "swiper/swiper-bundle.css";
 
-/* Base Styles */
-:root {
-  --primary-color: #000000;
-  --secondary-color: #ffffff;
-  --text-primary: #000000;
-  --text-secondary: #6b7280;
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --border-color: #e5e7eb;
-  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
+body {
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.mySwiper-linear .swiper-wrapper {
+  transition-timing-function: linear !important;
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-  overflow: hidden;
-  list-style: none;
+  list-style-type: none;
+  padding: 20px;
 }
 
-/* Remove any list styling */
-ul, ol, li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* Team Section */
 .team-section {
-  padding: 4rem 2rem;
-  margin: -2rem;
-  overflow: hidden;
+  background-color: white;
+  margin-bottom: 2rem;
+  padding: 2rem;
 }
 
 .title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  background: linear-gradient(45deg, #000, #333);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   text-align: center;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
-  list-style: none;
+  color: var(--text-primary);
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  animation: fadeInDown 1s ease-in-out;
+  font-weight: 700;
 }
 
 .description {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  color: #666;
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto 3rem;
-  position: relative;
-  z-index: 1;
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  animation: fadeInUp 1s ease-in-out;
+  font-weight: 300;
 }
 
-/* Team Members Slider */
-.mySwiper-linear {
-  padding: 20px 0;
-  overflow: visible !important;
-  margin: 0 -20px;
+.team-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
 }
 
 .team-member {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  max-width: 100%;
-  word-wrap: break-word;
-}
-
-.team-member::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, #000, transparent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
-}
-
-.team-member:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.team-member:hover::before {
-  transform: scaleX(1);
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: fadeIn 1s ease-in-out;
+  font-weight: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: auto; /* Ensure the height is dynamic */
 }
 
 .image-container {
-  width: 160px;
-  height: 160px;
-  margin: 0 auto 2rem;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 4px solid #000;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.4s ease;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .image-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 50%;
+  animation: zoomIn 1s ease-in-out;
+}
+
+.team-member:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .team-member h3 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(45deg, #000, #333);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #333;
 }
 
 .team-member p {
   font-size: 1rem;
-  color: #666;
-  margin-bottom: 1rem;
-  line-height: 1.5;
+  color: #777;
+  margin: 0.5rem 0 1rem;
 }
 
 .team-member h2 {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 1.5rem;
-  max-height: 4.8rem;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1rem;
 }
 
 .social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 5px;
 }
 
 .social-icons a {
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #000;
-  color: white;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.social-icons a::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin: 0 5px;
+  transition: color 0.3s;
+  text-decoration: none;
 }
 
 .social-icons a:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: font-weight 0.3s;
 }
 
-.social-icons a:hover::before {
-  transform: translateY(0);
-}
-
-/* Testimonials Section */
 .testimonials-section {
-  padding: 6rem 2rem;
-  background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
-  border-radius: 30px;
-  margin: 4rem 0;
-  position: relative;
-  overflow: hidden;
+  background-color: white;
+  margin: 2rem 0;
+  padding: 2rem 13%; /* Adds spacing to the left and right */
 }
 
-.testimonials-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, rgba(0,0,0,0.02) 0%, transparent 100%);
-  pointer-events: none;
+.testimonials-container {
+  column-count: 3;
+  column-gap: 4rem;
 }
 
 .testimonial-card {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  max-width: 100%;
-  word-wrap: break-word;
-}
-
-.testimonial-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  font-weight: 300;
+  display: inline-block;
   width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, #000, transparent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
-}
-
-.testimonial-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.testimonial-card:hover::before {
-  transform: scaleX(1);
+  margin-bottom: 2rem;
 }
 
 .testimonial-card h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #000;
-  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
 }
 
 .stars {
   display: flex;
-  gap: 4px;
-  margin-bottom: 1.5rem;
+  justify-content: center;
+  margin: 0.5rem 0;
 }
 
 .star {
-  color: #fbbf24;
-  font-size: 1.3rem;
-  filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.2));
+  color: gold;
+  font-size: 1.2rem;
 }
 
 .testimonial-card p {
   font-size: 1rem;
-  line-height: 1.6;
-  color: #666;
-  margin-bottom: 1.5rem;
-  max-height: 9.6rem;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  -webkit-box-orient: vertical;
+  color: #777;
 }
 
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.author-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-}
-
-.author-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.author-info {
-  flex-grow: 1;
-}
-
-.author-name {
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 0.25rem;
-}
-
-.author-role {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-.contact-section {
-  position: relative;
-  padding: 4rem 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.02), transparent);
-  border-radius: 24px;
-}
-
-.contact-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  transform: translateY(50px);
-  opacity: 0;
-  animation: floatUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #444;
-  margin-bottom: 0.5rem;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #000;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.form-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 1rem;
-  border: none;
-  border-radius: 12px;
-  background: #000;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Animations */
-@keyframes slideUpFade {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+@media (max-width: 1024px) {
+  .testimonials-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
   }
 }
 
-@keyframes floatUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes popIn {
-  from {
-    transform: translateY(20px) scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-/* Staggered animations for team cards */
-.team-card:nth-child(1) { animation-delay: 0.1s; }
-.team-card:nth-child(2) { animation-delay: 0.2s; }
-.team-card:nth-child(3) { animation-delay: 0.3s; }
-.team-card:nth-child(4) { animation-delay: 0.4s; }
-
-/* Staggered animations for social links */
-.social-link:nth-child(1) { animation-delay: 0.6s; }
-.social-link:nth-child(2) { animation-delay: 0.7s; }
-.social-link:nth-child(3) { animation-delay: 0.8s; }
-
-/* Staggered animations for testimonial cards */
-.testimonial-card:nth-child(1) { animation-delay: 0.2s; }
-.testimonial-card:nth-child(2) { animation-delay: 0.3s; }
-.testimonial-card:nth-child(3) { animation-delay: 0.4s; }
-
-/* Dark mode support */
-:root.dark-mode .about-us {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-:root.dark-mode .hero-title,
-:root.dark-mode .section-title {
-  background: linear-gradient(135deg, #ffffff, #cccccc);
-  -webkit-background-clip: text;
-}
-
-:root.dark-mode .hero-description {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-:root.dark-mode .team-card,
-:root.dark-mode .testimonial-card,
-:root.dark-mode .contact-form {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-:root.dark-mode .member-name,
-:root.dark-mode .author-name {
-  color: white;
-}
-
-:root.dark-mode .member-role,
-:root.dark-mode .member-bio,
-:root.dark-mode .author-role {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-:root.dark-mode .testimonial-content {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-:root.dark-mode .form-label {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-:root.dark-mode .form-input {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-:root.dark-mode .form-input:focus {
-  border-color: white;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
-}
-
-:root.dark-mode .social-link {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-:root.dark-mode .social-link:hover {
-  background: white;
-  color: black;
-}
-
-/* Responsive design */
 @media (max-width: 768px) {
-  .about-us {
-    padding: 1rem;
-  }
-
-  .hero-title {
-    font-size: 2.5rem;
-  }
-
-  .section-title {
-    font-size: 2rem;
-  }
-
-  .team-grid,
-  .testimonial-grid {
+  .testimonials-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     grid-template-columns: 1fr;
   }
 
-  .team-card,
   .testimonial-card {
-    padding: 1.5rem;
+    width: 100%;
+    height: auto; /* Ensures cards can adjust height dynamically */
+    margin: 10px 0;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
   }
 
-  .member-image {
-    width: 120px;
-    height: 120px;
+  .team-section {
+    align-items: center;
+  }
+  .team-member {
+    margin-bottom: 20px;
+  }
+
+  .team-container,
+  .testimonials-container {
+    padding: 0 10px;
   }
 
   .contact-form {
-    padding: 1.5rem;
+    padding: 20px;
   }
 }
 
-/* Hover effects */
-.team-card::before,
-.testimonial-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), transparent);
-  border-radius: inherit;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.team-card:hover::before,
-.testimonial-card:hover::before {
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+#contact-page {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.contact-header {
+  margin-bottom: 40px;
+}
+
+.contact-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.contact-header p {
+  font-size: 18px;
+  color: #666;
+}
+
+.contact-form {
+  background: #f9f9f9;
+  padding: 40px 70px 40px 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+.contact-header h1,
+.contact-header p {
+  margin-bottom: 20px;
+}
+
+.contact-form .input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.mySwiper {
+  height: 550px; /* Set your custom height here */
+}
+
+.swiper-slide {
+  display: flex;
+  align-items: stretch;
+  height: auto; /* Ensure slides take the height of their content */
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form input[type="tel"],
+.contact-form textarea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+.contact-form input[type="text"]:focus,
+.contact-form input[type="email"]:focus,
+.contact-form input[type="tel"]:focus,
+.contact-form textarea:focus {
+  border-color: var(--text-primary);
+  outline: none;
+}
+
+.contact-form button {
+  padding: 15px 30px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.contact-form button:hover {
+  background-color: var(--text-primary);
+}
+
+.contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-block {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.info-block .icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.info-block p {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.info-block a {
+  font-size: 16px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.info-block a:hover {
+  font-weight: 500;
+  transition: font-weight 0.3s;
+}
+
+/* Add animations */
+.animate {
+  opacity: 0;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.animate-visible {
   opacity: 1;
 }
 
-/* Floating animation */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.fade-in {
+  transform: translateY(20px);
 }
 
-.team-card {
-  animation: float 6s ease-in-out infinite;
+.fade-in.animate-visible {
+  transform: translateY(0);
 }
 
-.team-card:nth-child(1) { animation-delay: 0s; }
-.team-card:nth-child(2) { animation-delay: -1.5s; }
-.team-card:nth-child(3) { animation-delay: -3s; }
-.team-card:nth-child(4) { animation-delay: -4.5s; }
+.slide-in-up {
+  transform: translateY(20px);
+}
+
+.slide-in-up.animate-visible {
+  transform: translateY(0);
+}
+
+.swiper-container-free-mode > .swiper-wrapper {
+  transition-timing-function : linear;
+}
 </style>

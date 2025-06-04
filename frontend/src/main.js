@@ -39,6 +39,15 @@ const icons = [
   faRegular.faBell,
   faSolid.faMoon,
   faSolid.faSun,
+  // Navigation icons
+  faSolid.faComment,
+  faSolid.faCompass,
+  faSolid.faRobot,
+  faSolid.faChartLine,
+  faSolid.faMoneyBillTrendUp,
+  faSolid.faGraduationCap,
+  faSolid.faChevronLeft,
+  faSolid.faChevronRight,
 ];
 library.add(...icons); // Use the spread operator to add the icons
 library.add(faBell);

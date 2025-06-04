@@ -149,9 +149,9 @@
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faChartLine, faTrendUp, faTrendDown, faMinus } from '@fortawesome/free-solid-svg-icons'
+import { faChartLine, faArrowUp, faArrowDown, faMinus } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faChartLine, faTrendUp, faTrendDown, faMinus)
+library.add(faChartLine, faArrowUp, faArrowDown, faMinus)
 
 export default {
   name: 'SavingsTrendChart',
@@ -244,8 +244,8 @@ export default {
       if (this.chartData.length < 2) return 'fa-solid fa-minus'
       const first = this.chartData[0].amount
       const last = this.chartData[this.chartData.length - 1].amount
-      if (last > first) return 'fa-solid fa-trend-up'
-      if (last < first) return 'fa-solid fa-trend-down'
+      if (last > first) return 'fa-solid fa-arrow-up'
+      if (last < first) return 'fa-solid fa-arrow-down'
       return 'fa-solid fa-minus'
     },
     trendText() {

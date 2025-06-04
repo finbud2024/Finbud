@@ -54,10 +54,7 @@
     <button @click="calculateInvestment" class="calculate-btn">{{$t('calculate')}}</button>
     <div class="chart-section">
       <h2 class="result-text"> {{$t('finAmount')}} ${{ finalAmount.toFixed(2) }}</h2>
-      <div class="chart-wrapper">
-        <ChartLoader v-if="isLoading" :text="$t('calculatingInvestment')" />
       <canvas id="investmentChart"></canvas>
-      </div>
     </div>
 
   </div>
@@ -67,73 +64,21 @@
 import { Chart } from 'chart.js/auto';
 import axios from 'axios';
 import { debounce } from 'lodash';
-import ChartLoader from '@/components/Common/ChartLoader.vue';
 // this.$i18n.locale = 'vi'; // to change language
 
 // Chart configuration constants
-const CHART_COLORS = [
-  'rgba(0, 0, 0, 0.8)',
-  'rgba(0, 0, 0, 0.5)',
-  'rgba(0, 0, 0, 0.3)'
-];
-
+const CHART_COLORS = ['#4CAF50', '#FFC107', '#2196F3'];
 const BASE_OPTIONS = {
   animation: { duration: 500 },
   responsive: true,
   maintainAspectRatio: false,
   scales: { 
-    x: { 
-      stacked: true,
-      grid: {
-        color: 'rgba(0, 0, 0, 0.1)',
-        borderColor: 'rgba(0, 0, 0, 0.3)'
-      },
-      ticks: {
-        color: '#000000'
-      }
-    }, 
-    y: { 
-      stacked: true,
-      grid: {
-        color: 'rgba(0, 0, 0, 0.1)',
-        borderColor: 'rgba(0, 0, 0, 0.3)'
-      },
-      ticks: {
-        color: '#000000'
-      }
-    } 
-  },
-  plugins: {
-    legend: {
-      labels: {
-        color: '#000000',
-        font: {
-          weight: '500'
-        },
-        padding: 15
-      }
-    },
-    tooltip: {
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      titleColor: '#ffffff',
-      bodyColor: '#ffffff',
-      padding: 12,
-      cornerRadius: 8,
-      titleFont: {
-        size: 14,
-        weight: '600'
-      },
-      bodyFont: {
-        size: 13
-      }
-    }
+    x: { stacked: true }, 
+    y: { stacked: true } 
   }
 };
 
 export default {
-  components: {
-    ChartLoader
-  },
   data() {
     return {
       // Core input data
@@ -166,7 +111,6 @@ export default {
       words: [],
       currentWordIndex: 0,
       typingSpeed: 60,
-      isLoading: false,
     };
   },
 
@@ -208,12 +152,7 @@ export default {
   },
 
   methods: {
-    async calculateInvestment() {
-      this.isLoading = true;
-      
-      // Simulate loading time for better UX
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+    calculateInvestment() {
       const P = this.initialInvestment;
       const r = this.interestRate / 100;
       const t = this.years;
@@ -252,8 +191,6 @@ export default {
       this.buildChart(this.rawYears, this.rawInit, this.rawContrib, this.rawProfit);
       this.shouldCalculate = false;
       this.startBotAnimation();
-      
-      this.isLoading = false;
     },
 
     buildChart(years, init, contrib, profit) {
@@ -431,253 +368,130 @@ export default {
 </script>
 
 <style scoped>
-/* Base Container */
+
+/* Language Switcher */
+.language-switcher {
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
+  display: flex;
+}
+
+.language-switcher button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.language-switcher button img {
+  width: 40px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.language-switcher button:hover img {
+  transform: scale(1.1); /* Slightly enlarge the flag on hover */
+}
+
 .calculator-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  width: 800px;
-  margin: 40px auto;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 600px;
+  margin: 60px auto 0;
+
   min-height: 730px;
-  animation: fadeIn 0.5s ease;
-  transition: all 0.3s ease;
+
+  height: auto;
+  flex-grow: 1;
+  flex-shrink: 0;
+  overflow: visible;
+
 }
 
-/* Title */
 .title {
-  font-size: 32px;
-  font-weight: 600;
-  color: #000000;
-  margin-bottom: 30px;
-  text-align: center;
-  animation: slideInDown 0.5s ease;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
 }
 
-/* Input Section */
 .input-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
   width: 100%;
-  margin-bottom: 30px;
-  animation: fadeInUp 0.5s ease;
 }
 
-/* Input Groups */
 .input-group {
   display: flex;
   flex-direction: column;
-  opacity: 0;
-  animation: fadeInUp 0.5s ease forwards;
 }
 
-.input-group:nth-child(1) { animation-delay: 0.1s; }
-.input-group:nth-child(2) { animation-delay: 0.2s; }
-.input-group:nth-child(3) { animation-delay: 0.3s; }
-.input-group:nth-child(4) { animation-delay: 0.4s; }
-.input-group:nth-child(5) { animation-delay: 0.5s; }
-
 label {
-  font-weight: 500;
-  color: #333333;
-  margin-bottom: 8px;
-  font-size: 14px;
-  transition: color 0.3s ease;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
 input, select {
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 16px;
-  background: #ffffff;
-  transition: all 0.3s ease;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-input:focus, select:focus {
-  border-color: #000000;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Contribution Options */
-.contribution-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  align-items: center;
-  margin-top: 20px;
-  padding: 15px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  animation: slideIn 0.5s ease;
-}
-
-.contribution-options label {
-  margin: 0;
-  font-size: 14px;
-}
-
-.contribution-options input[type="radio"] {
-  margin-right: 5px;
-  cursor: pointer;
-}
-
-/* Calculate Button */
 .calculate-btn {
-  background: #000000;
+  background: #007bff;
   color: white;
-  padding: 14px 30px;
+  padding: 10px 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  margin: 20px 0;
-  transition: all 0.3s ease;
-  animation: fadeIn 0.5s ease;
+  margin-top: 20px;
 }
 
-.calculate-btn:hover {
-  background: #333333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Chart Section */
 .chart-section {
+  margin-top: 20px;
   width: 100%;
-  height: 400px;
-  margin-top: 30px;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  animation: slideInUp 0.5s ease;
-  transition: all 0.3s ease;
-}
-
-.chart-section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .result-text {
-  font-size: 24px;
-  font-weight: 600;
-  color: #000000;
-  margin-bottom: 20px;
-  text-align: center;
-  animation: fadeIn 0.5s ease;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-/* Loading State */
-.loading {
-  position: relative;
-  overflow: hidden;
-}
-
-.loading::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Chatbot Styles */
+.chatbot-container {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: shimmer 1.5s infinite;
+  margin-top: 30px;
+  background: #eef6f9;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #007bff;
+  transition: all 0.5s ease;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-}
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInUp {
-  from {
+.chatbot-container.hide {
   opacity: 0;
   transform: translateY(20px);
 }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+
+.bot-message {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.5;
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-/* Responsive Design */
-@media (max-width: 850px) {
-  .calculator-container {
-    width: 95%;
-    padding: 20px;
-    margin: 20px auto;
-  }
-
-  .input-section {
-    grid-template-columns: 1fr;
-}
-
-  .title {
-    font-size: 24px;
-  }
-
-  .chart-section {
-    height: 300px;
-  }
-
-  .contribution-options {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .calculate-btn {
-    width: 100%;
-  }
-}
-
-/* Bot Chat Styles */
+/* Add the bot chat styles from the previous example here */
 .bot-chat-container {
   position: fixed;
   right: -350px;
@@ -688,23 +502,32 @@ input:focus, select:focus {
   align-items: flex-end;
   padding: 15px;
   z-index: 100;
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
+  opacity: 0;
+  transform: translateX(0);
+  pointer-events: none;
+}
+
+.bot-chat-container.bot-visible {
+  transform: translateX(-350px);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bot-chat-container.bot-hidden {
+  transform: translateX(-350px) translateY(50px); 
+  opacity: 0;
+  transition: transform 1s ease, opacity 1s ease;
 }
 
 .bot-image {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
+  width: 40px;
+  height: auto;
   display: block;
   position: relative;
   background: transparent;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
   cursor: pointer;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.bot-image:hover {
-  transform: scale(1.1);
 }
 
 .bot-visible .bot-image {
@@ -718,35 +541,29 @@ input:focus, select:focus {
   100% { transform: translateY(0); opacity: 1; }
 }
 
-.bot-chat-container.bot-visible {
-  transform: translateX(-350px);
-  opacity: 1;
-}
-
-.bot-chat-container.bot-hidden {
-  transform: translateX(0);
-  opacity: 0;
-}
-
 .bot-message {
-  background: #000000;
+  margin-top: 10px;
+  background: #2196F3;
   color: #ffffff;
   padding: 12px 18px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  margin-right: 15px;
-  max-width: 250px;
-  transition: all 0.3s ease;
+  border-radius: 18px;
+  max-width: 280px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition-delay: 0.3s;
 }
 
 .bot-message.message-visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: scale(1) translateY(0);
 }
 
 .bot-message.message-hidden {
   opacity: 0;
-  transform: translateX(20px);
+  transform: scale(0.8) translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .typing-animation {
@@ -760,13 +577,7 @@ input:focus, select:focus {
   height: 8px;
   border-radius: 50%;
   background-color: #ffffff;
-  opacity: 0.6;
-}
-
-.typed-message {
-  line-height: 1.5;
-  word-wrap: break-word;
-  color: #ffffff;
+  opacity: 0.3;
 }
 
 .dot:nth-child(1) {
@@ -781,9 +592,14 @@ input:focus, select:focus {
   animation: typing 1s infinite 0.4s;
 }
 
+.typed-message {
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
 @keyframes typing {
   0%, 100% { 
-    opacity: 0.6;
+    opacity: 0.3; 
     transform: scale(1);
   }
   50% { 
@@ -792,13 +608,97 @@ input:focus, select:focus {
   }
 }
 
-.chart-wrapper {
-  position: relative;
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .calculator-container {
     width: 100%;
-  height: 400px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+    margin: 20px auto 0;
+    padding: 15px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .title {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .input-section {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .input-group {
+    margin-bottom: 10px;
+  }
+
+  .contribution-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .contribution-options label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .contribution-options input[type="radio"] {
+    margin-right: 5px;
+  }
+
+  .chart-section {
+    height: 250px;
+  }
+
+  .result-text {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Adjust bot chat for mobile */
+  .bot-chat-container {
+    right: -280px;
+    width: 250px;
+  }
+
+  .bot-chat-container.bot-visible {
+    transform: translateX(-280px);
+  }
+
+  .bot-message {
+    max-width: 230px;
+    font-size: 14px;
+  }
+
+  /* Stack radio buttons vertically on very small screens */
+  @media (max-width: 480px) {
+    .contribution-options {
+      flex-direction: column;
+      align-items: flex-start;
     }
+
+    .contribution-options label {
+      width: auto;
+      margin-bottom: 0;
+    }
+
+    .calculate-btn {
+      width: 100%;
+      padding: 12px;
+    }
+
+    .bot-chat-container {
+      right: -250px;
+      width: 220px;
+      top: 20%;
+    }
+
+    .bot-chat-container.bot-visible {
+      transform: translateX(-250px);
+    }
+  }
+}
+
 </style>

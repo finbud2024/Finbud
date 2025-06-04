@@ -116,7 +116,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="startDate" class="form-label">
-              <font-awesome-icon icon="fa-solid fa-calendar-start" />
+              <font-awesome-icon icon="fa-solid fa-calendar-alt" />
               Start Date *
             </label>
             <input
@@ -131,7 +131,7 @@
 
           <div class="form-group">
             <label for="endDate" class="form-label">
-              <font-awesome-icon icon="fa-solid fa-calendar-check" />
+              <font-awesome-icon icon="fa-solid fa-calendar-alt" />
               Target Date *
             </label>
             <input
@@ -220,12 +220,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faBullseye, faTimes, faTag, faFolder, faPiggyBank,
-  faCalendarStart, faCalendarCheck, faFileAlt, faHeart, faPlus
+  faCalendarAlt, faFileAlt, faHeart, faPlus
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
   faBullseye, faTimes, faTag, faFolder, faPiggyBank,
-  faCalendarStart, faCalendarCheck, faFileAlt, faHeart, faPlus
+  faCalendarAlt, faFileAlt, faHeart, faPlus
 )
 
 export default {

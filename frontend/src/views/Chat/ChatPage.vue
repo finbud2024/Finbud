@@ -173,15 +173,36 @@ export default {
 				this.$refs.tutorialOverlay.resetTutorial();
 			}
 		},
+		checkNavbarState() {
+			const navbar = document.querySelector('.navbar-container');
+			const homeContainer = document.querySelector('.home-container');
+			const sidebar = document.querySelector('.side-bar.big-screen');
+			
+			if (navbar && homeContainer) {
+				const isExpanded = navbar.classList.contains('expanded');
+				if (isExpanded) {
+					homeContainer.classList.add('nav-expanded');
+					if (sidebar) {
+						sidebar.classList.add('nav-expanded');
+					}
+				} else {
+					homeContainer.classList.remove('nav-expanded');
+					if (sidebar) {
+						sidebar.classList.remove('nav-expanded');
+					}
+				}
+			}
+		},
 	},
 	async mounted() {
 		setInterval(() => {
 			this.currentTime = new Date().toLocaleTimeString();
 		}, 500);
-		const navbarHeight = document.querySelector(".nav-actions").offsetHeight;
-		document.querySelector(
-			".home-container"
-		).style.height = `calc(100vh - ${navbarHeight}px)`;
+		
+		// Handle navbar expansion state
+		this.checkNavbarState();
+		window.addEventListener('resize', this.checkNavbarState);
+		
 		//HANDLE REDIRECT MESSAGE FROM HOMEPAGE
 		const autoMessage = this.$route.query.autoMessage;
 		const threadID = this.$route.query.threadID;
@@ -191,21 +212,14 @@ export default {
 			this.$store.dispatch("threads/updateThreadID", threadID);
 		}
 
-		// if (autoMessage && this.$refs.chatComponent) {
-		//   console.log("📩 Redirected message from Home:", autoMessage); // 👈 DEBUG
-		//   this.$refs.chatComponent.handleUserSubmit({ message: autoMessage }); // 👈 GỬI NGAY
-		//   this.$router.replace({ query: {} }); // xoá query sau khi gửi
-		// }
-
 		// Check if we've been redirected from Home page and show tutorial
-		if (this.$route.query.showTutorial) {
-			// A small delay to ensure the page is fully loaded
-			setTimeout(() => {
-				if (this.$refs.tutorialOverlay) {
-					this.$refs.tutorialOverlay.resetTutorial();
-				}
-			}, 500);
+		if (this.$route.query.fromHome === 'true') {
+			// Clear the query parameter first
+			this.$router.replace({ query: {} });
 		}
+	},
+	beforeUnmount() {
+		window.removeEventListener('resize', this.checkNavbarState);
 	},
 };
 </script>
@@ -213,32 +227,43 @@ export default {
 <style scoped>
 .home-container {
 	display: flex;
-	width: 100%;
-	height: 100%;
-	background-color: var(--bg-primary);
-	color: var(--text-primary);
+	height: 100vh;
+	overflow: hidden;
+	padding-left: 70px; /* Default navbar width */
+	transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Adjust for expanded navbar */
+.home-container.nav-expanded {
+	padding-left: 280px; /* Expanded navbar width */
 }
 
 .sidebar-container {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
+	position: relative;
+	z-index: 100; /* Lower than navbar but higher than chat content */
 }
 
 .toggle-sidebar-btn {
 	display: none;
-	position: absolute;
-	top: 15px;
-	left: 10px;
-	z-index: 1000;
-	color: var(--text-primary);
-	padding: 10px;
+	position: fixed;
+	top: 20px;
+	left: 20px;
+	z-index: 1050;
+	font-size: 24px;
+	background: rgba(255, 255, 255, 0.9);
+	color: #333;
+	border: none;
+	border-radius: 8px;
+	padding: 12px;
 	cursor: pointer;
-	transition: background-color 0.3s ease;
+	backdrop-filter: blur(10px);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
 }
 
 .toggle-sidebar-btn:hover {
-	background-color: var(--hover-bg);
+	background: rgba(255, 255, 255, 1);
+	transform: scale(1.05);
 }
 
 .chat-container {
@@ -247,9 +272,14 @@ export default {
 	flex-direction: column;
 	flex: 1;
 	position: relative;
+	z-index: 1;
 }
 
 @media (max-width: 768px) {
+	.home-container {
+		padding-left: 0; /* No padding on mobile */
+	}
+	
 	.side-bar {
 		display: none;
 	}
@@ -262,6 +292,7 @@ export default {
 		font-size: 1rem;
 		padding: 10px;
 	}
+	
 	.toggle-sidebar-big {
 		display: none;
 	}
@@ -275,8 +306,8 @@ export default {
 	width: 100%;
 	height: 100%;
 	background: rgba(0, 0, 0, 0.7);
-	z-index: 999;
-	pointer-events: none; /* Allow clicks to pass through */
+	z-index: 1049; /* Just below sidebar */
+	pointer-events: auto;
 }
 
 .side-bar.is-visible {
@@ -287,9 +318,11 @@ export default {
 	width: 60%;
 	height: 100%;
 	background-color: var(--card-bg);
-	z-index: 1001;
+	z-index: 1050; /* Higher than overlay, lower than navbar */
 	transform: translateX(-100%);
 	transition: transform 0.3s ease-in-out;
+	backdrop-filter: blur(10px);
+	box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
 }
 
 .side-bar.is-visible {
@@ -302,33 +335,48 @@ export default {
 	z-index: 1;
 	height: 100%;
 	width: 100%;
-	pointer-events: auto; /* Enable interactions */
+	pointer-events: auto;
 }
 
 .toggle-sidebar-big {
-	position: absolute;
-	top: 15px;
-	left: 160px; /* adjust as needed */
-	z-index: 1000;
+	position: fixed;
+	top: 20px;
+	left: 300px; /* Position outside expanded navbar */
+	z-index: 100;
 	cursor: pointer;
 	color: var(--text-primary);
 	width: 38px;   
  	height: 38px;
 	padding: 10px;
-	
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 8px;
+	backdrop-filter: blur(10px);
+	transition: all 0.3s ease;
+}
+
+.toggle-sidebar-big:hover {
+	background: rgba(255, 255, 255, 1);
+	transform: scale(1.05);
 }
 
 .side-bar.big-screen {
 	position: fixed;
 	top: 0;
-	left: 0;
+	left: 70px; /* Start after navbar */
 	width: 250px;
 	height: 100%;
-	background-color: var(--bg-secondary);
-	z-index: 999;
-	transition: transform 0.3s ease;
+	background-color: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	z-index: 100; /* Lower than navbar */
+	transition: all 0.3s ease;
+	border-right: 1px solid rgba(0, 0, 0, 0.1);
+	box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
 }
 
+/* When navbar is expanded, adjust sidebar position */
+.side-bar.big-screen.nav-expanded {
+	left: 280px; /* Position after expanded navbar */
+}
 
 /*______________________*/
 /* Guidance CSS class*/
@@ -346,7 +394,8 @@ export default {
 	transition: transform 0.3s ease, right 0.3s ease, z-index 0.3s ease;
 	display: flex;
 	z-index: 999;
-	/* Default z-index */
+	border-radius: 25px 0 0 25px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Make button visible during tutorial with higher z-index */
@@ -354,17 +403,16 @@ export default {
 	transform: translateX(-100px) !important;
 	right: -105px !important;
 	z-index: 10001 !important;
-	/* Higher z-index during tutorial */
 }
 
 .guidance-btn:hover {
 	transform: translateX(-90px);
+	box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
 }
 
 .is-guidance-visible {
 	right: calc(50% + 19px - 80px);
 	z-index: 999;
-	/* Normal z-index when visible */
 }
 
 /* Make the guidance button always visible during tutorial */
