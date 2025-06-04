@@ -9,28 +9,28 @@
     <div class="team-section">
       <li class="title">{{ $t('meetOurTeamTitle') }}</li>
       <swiper
-      :slidesPerView="slidesPerView"
-      :spaceBetween="30"
-      :speed="2000" 
-      :autoplay="{
-        delay: 0,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true
-      }"
-      :loop="true"
-      :loopAdditionalSlides="4" 
-      :freeMode="{
-        enabled: true,
-        momentum: false
-      }"
-      :modules="modules"
-      class="mySwiper-linear"
-      :breakpoints="{
-        0: { slidesPerView: 1 },
-        768: { slidesPerView: 2 },
-        1024: { slidesPerView: 3 }
-      }"
-    >
+        :slidesPerView="slidesPerView"
+        :spaceBetween="30"
+        :speed="8000" 
+        :autoplay="{
+          delay: 0,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true
+        }"
+        :loop="true"
+        :loopAdditionalSlides="10" 
+        :freeMode="{
+          enabled: true,
+          momentum: false
+        }"
+        :modules="modules"
+        class="mySwiper-linear"
+        :breakpoints="{
+          0: { slidesPerView: 1 },
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 }
+        }"
+      >
      
         <swiper-slide v-for="member in teamMembers" :key="member.name">
           <div class="team-member">
@@ -95,7 +95,7 @@
           <input
             type="email"
             id="email"
-            :placeholder="$t('emailPlaceholder')"
+            placeholder="abc@gmail.com"
             required
           />
         </div>
@@ -413,6 +413,10 @@ body {
   margin: 0;
   padding: 20px;
   box-sizing: border-box;
+}
+
+.mySwiper-linear .swiper-wrapper {
+  transition-timing-function: linear !important;
 }
 
 .container {

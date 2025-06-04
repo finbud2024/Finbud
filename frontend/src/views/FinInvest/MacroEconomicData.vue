@@ -111,45 +111,58 @@
             </div>
         </template>
 
-
         <!-- Table Display -->
         <div class="responsive-table">
-        <table class="table-container">
-            <thead>
-                <tr>
-                    <th
-                        v-for="(header, index) in tableHeaders"
-                        :key="header"
-                        class="header"
-                        :class="{
-                            'sticky-col': (index === 0 || index === 1) && selectedTable !== 'Tổng quan',
-                            'sticky-first': index === 0 && selectedTable !== 'Tổng quan',
-                            'sticky-second': index === 1 && selectedTable !== 'Tổng quan'
-                        }"
-                    >
-                        {{ header }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr 
-                    v-for="(row, rowIndex) in tableRows" 
-                    :key="rowIndex"
-                >   
-                    <td
-                        v-for="(cell, cellIndex) in row" 
-                        :key="cellIndex"
-                        :class="{
-                            'highlight-row': row.length >= 1 && row[1] === '',
-                            'sticky-col': (cellIndex === 0 || cellIndex === 1) && selectedTable !== 'Tổng quan',
-                            'sticky-first': cellIndex === 0 && selectedTable !== 'Tổng quan',
-                            'sticky-second': cellIndex === 1 && selectedTable !== 'Tổng quan'
-                        }"
-                    >
-                        {{ cell }} 
-                    </td>
-                </tr>
-            </tbody>
+            <div v-if="loading">
+                <div 
+                    class="loading-container"
+                    :class="{
+                        'table-tong-quan': selectedTable === 'Tổng quan',
+                        'table-gdp': selectedTable === 'GDP',
+                        'table-fdi': selectedTable === 'FDI',
+                        'table-cpi': selectedTable === 'CPI',
+                        'table-xnk': selectedTable === 'Xuất-Nhập khẩu'
+                    }"
+                >
+                </div>
+            </div>
+            <table v-else class="table-container">
+                <thead>
+                    <tr>
+                        <th
+                            v-for="(header, index) in tableHeaders"
+                            :key="header"
+                            class="header"
+                            :class="{
+                                'sticky-col': (index === 0 || index === 1) && selectedTable !== 'Tổng quan',
+                                'sticky-first': index === 0 && selectedTable !== 'Tổng quan',
+                                'sticky-second': index === 1 && selectedTable !== 'Tổng quan'
+                            }"
+                        >
+                            {{ header }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr 
+                        v-for="(row, rowIndex) in tableRows" 
+                        :key="rowIndex"
+                    >   
+                        <td
+                            v-for="(cell, cellIndex) in row" 
+                            :key="cellIndex"
+                            class="cell-style"
+                            :class="{
+                                'highlight-row': row.length >= 1 && row[1] === '',
+                                'sticky-col': (cellIndex === 0 || cellIndex === 1) && selectedTable !== 'Tổng quan',
+                                'sticky-first': cellIndex === 0 && selectedTable !== 'Tổng quan',
+                                'sticky-second': cellIndex === 1 && selectedTable !== 'Tổng quan'
+                            }"
+                        >
+                            <div>{{ cell }} </div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -160,13 +173,15 @@
     import axios from 'axios';
     import { nextTick } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
+    import ChatBot from "../../components/ChatBot/DraggableChatBot.vue";
 
     const { t } = useI18n();
 
     const templateChat = `
         ${t('macroEcon.chat')}
     `;
+    
+    const loading = ref(false);
 
     const tableRows = ref({});
     const tableHeaders = ref([]);
@@ -251,6 +266,7 @@
     }, { immediate: true });
 
     const getData = async (tName) => {
+        loading.value = true;
         const url = tableSources[tName];
         console.log('Start fetching data from api: ', url);
         let fType = '';
@@ -466,6 +482,9 @@
         catch (error) {
             console.log(`Error fetching table ${tName}: `, error);
         }
+        finally {
+            loading.value = false;
+        }
     };
 
     const fetchData = async(tName) => {
@@ -497,7 +516,6 @@
 </script>
 
 <style>
-/* Global styles for MacroEconomicData page */
 body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleHeader {
     background-color: black !important;
     color: white !important;
@@ -519,6 +537,15 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
 
 <style scoped>
 
+.full-screen-container {
+    background-color: var(--black-in-dark-mode);
+    color: var(--white-in-dark-mode);
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+    /* position: fixed; */
+}
+
 .title {
     font-size: 2rem;
     font-weight: bold;
@@ -532,31 +559,37 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
     padding-bottom: 20px;
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .button {
-  padding: 0.5rem 1rem;
-  border: none;
-  background-color: transparent;
-  border-radius: 0.375rem; /* rounded-md */
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: all 0.2s ease-in-out;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: transparent;
+    border-radius: 0.375rem; /* rounded-md */
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: var(--white-in-dark-mode);
 }
 
 .button.selected {
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid var(--white-in-dark-mode);
 }
 
 .filter-button {
-    background-color: black;
-    color: white;
-    border-radius: 0.375rem; /* rounded-md */
+    background-color: var(--white-in-dark-mode);
+    color: var(--black-in-dark-mode);
+    border-radius: 0.375rem; 
+    border: none;
+    box-shadow: 
+        0 2px 6px rgba(181, 181, 181, 0.438), 
+        0 8px 24px rgba(152, 152, 152, 0.372);
     font-weight: 500;
     width: 130px;
     height: 30px;
@@ -565,12 +598,11 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
 
 .filter {
     padding-left: 10%;
-    padding-top: 10px;
+    padding-top: 0;
     padding-bottom: 20px;
     display: flex;
     font-weight: 500;
     align-items: center;
-    height: 100%;
     flex-wrap: wrap;
 }
 
@@ -597,14 +629,18 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
     text-align-last: center;
     vertical-align: middle; 
     border-radius: 0.375rem;
-    border-color: black;
-    color: black;
-    background-color: white;
+    border: none;
+    color: var(--black-in-dark-mode);
+    background-color: var(--white-in-dark-mode);
+    box-shadow: 
+        0 2px 6px rgba(181, 181, 181, 0.438), 
+        0 8px 24px rgba(152, 152, 152, 0.363);
     padding: 0 10px;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     cursor: pointer;
+    font-weight: 500;
 }
 
 .select-box:focus {
@@ -618,27 +654,59 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
     padding: 10px;
 }
 
+.loading-container {
+    height: 100px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.table-tong-quan {
+    height: 672px;
+}
+
+.table-gdp {
+    height: 961.333px;
+}
+
+.table-fdi {
+    height: 208.667px;
+}
+
+.table-cpi {
+    height: 816.000px;
+}
+
+.table-xnk {
+    height: 1120.670px;
+}
+
 table {
     width: 80%;
     margin: 0 auto;
     color: black;
-    background-color: white;
     border-radius: 5px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     position: relative;
-}
+} 
 
 .highlight-row {
-    background-color: #d9d9d9 !important; 
+    background-color: var(--white-in-dark-mode); 
     font-weight: 800;
-    color: black;
+    color: var(--black-in-dark-mode);
+    box-shadow: 0 2px 6px rgba(181, 181, 181, 0.438), 
+                0 8px 24px rgba(152, 152, 152, 0.372);
 }
 
+.cell-style {
+    background-color: var(--black-in-dark-mode);
+    color: var(--white-in-dark-mode);
+}
 
 .header {
-    color: white;
-    background-color: rgb(0, 0, 0);
+    color: var(--black-in-dark-mode);
+    background-color: var(--white-in-dark-mode);
     font-weight: bold;
 }
 
@@ -647,80 +715,41 @@ table {
 }
 
 .table-container {
-    max-width: 100%;
-    overflow-x: auto;
-    display: block;
-    position: relative;
-}
-
-.sticky-col {
-    position: sticky;
+    width: 100%;
+    color: black;
     background-color: white;
-    z-index: 1;
+    border-radius: 5px;
+    border-collapse: collapse;
+    border: none;
 }
 
-.sticky-first {
-    left: 0;
-    min-width: 250px;
-    max-width: 250px;
+
+.responsive-table {
+    table-layout: fixed;
+    overflow-x: auto;
+    width: 80%;
+    margin: 0 auto;
+    border: none;
+    box-shadow: 
+        0 2px 6px rgba(181, 181, 181, 0.438), 
+        0 8px 24px rgba(152, 152, 152, 0.363);
+    -webkit-overflow-scrolling: touch; /* for iOS smooth scrolling */
 }
 
-.sticky-second {
-    left: 250px;
-    min-width: 150px;
-    max-width: 150px;
-}
-
-tr:hover td {
-    background-color: rgb(234, 234, 234);
-    font-weight: bold;
-    color: black;
-}
-
-tr:hover .sticky-col {
-    background-color: rgb(234, 234, 234);
-    font-weight: bold;
-    color: black;
-}
-
-.header.sticky-col {
-    background-color: rgb(0, 0, 0);
-    z-index: 2;
-}
-
-tr:hover .header.sticky-col {
+/* tr:hover .header.sticky-col {
     background-color: rgb(0, 0, 0);
     color: white;
-}
+} */
 
 @media (max-width: 768px) {
     .button-group {
         padding-top: 60px;
     }
 
-    .sticky-first {
-        position: relative;
-        left: auto;
-        min-width: auto;
-        max-width: none;
-    }
-
-    .sticky-second {
-        position: relative;
-        left: auto;
-        min-width: auto;
-        max-width: none;
-    }
-
-    .sticky-col {
-        position: relative;
-        background-color: inherit;
-    }
-
     .table-container {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-    }
+    } 
 
     table {
         width: 100%;
@@ -771,16 +800,13 @@ tr:hover .header.sticky-col {
         padding-top: 70px;
     }
 
-    .responsive-table {
-        width: 100%;
-        overflow-x: auto;
-        border-collapse: collapse;
-        padding-bottom: 100px;
-        -webkit-overflow-scrolling: touch;
-    }
-
     .table-container {
         width: 100%;
+        border: none;
+    }
+    
+    tbody tr {
+        border: none;
     }
 
     .filter {
@@ -788,6 +814,7 @@ tr:hover .header.sticky-col {
         padding: 0;
         padding-bottom: 5px;
         margin: 0;
+        display: flex;
         align-items: center;
         justify-content: center;
     }

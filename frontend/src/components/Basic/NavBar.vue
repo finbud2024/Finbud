@@ -38,6 +38,12 @@
 
             <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">{{
               $t("superInvestors") }}</router-link>
+            <router-link
+              to="/fin-compare"
+              class="fin-compare"
+              @click="toggleDropdown(false)"
+              >{{ $t("Products Comparison") }}</router-link
+            >
           </div>
         </li>
 
@@ -105,7 +111,8 @@
 
         <li v-if="isAuthenticated" class="dropdown profile-dropdown">
           <div class="profile-wrapper" @mouseenter="toggleProfileDropdown(true)"
-            @mouseleave="toggleProfileDropdown(false)">
+            @mouseleave="toggleProfileDropdown(false)"
+          >
             <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" loading="eager" />
             <div class="dropdown-profile" v-show="isProfileDropdownOpen">
               <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
@@ -594,7 +601,7 @@ export default {
   z-index: 1001;
   /* Increased z-index */
   right: 0;
-  top: 45px;
+  top: 100%;
   /* Position below user image */
   border-radius: 15px;
   opacity: 0;

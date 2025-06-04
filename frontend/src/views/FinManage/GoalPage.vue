@@ -1420,6 +1420,7 @@ export default {
   background: var(--bg-primary);
   /* Remove outline for a cleaner look */
   outline: none;
+  flex-wrap: wrap;
 }
 
 .leftPanel {
@@ -1486,6 +1487,30 @@ export default {
   }
 }
 
+@media (max-width: 390px) {
+  .GoalDashBoardContainer {
+    flex-direction: column;
+    width: 100%;
+    max-width: 1400px;
+    margin: 40px auto;
+  }
+
+  .leftPanel .rightPanel {
+    width: 100%;
+  }
+
+  .connect-button-wrapper {
+    margin-top: 40px;
+  }
+
+  .buttons {
+    padding-top: 10px;
+  }
+
+  .add-goal-button {
+    width: 200px;
+  }
+}
 .connect-button-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -2052,6 +2077,7 @@ hr {
   justify-content: space-between;
   margin-top: 10px;
   margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 .headline-buttons h2 {
@@ -2351,6 +2377,7 @@ hr {
   display: flex;
   gap: 20px;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .total-spend {
