@@ -122,31 +122,25 @@
                 </div>
             </section>
         </div>
-        <div class="articles-section">
-            <h3 class="text-2xl md:text-3xl mb-6 articles-title">Latest Articles</h3>
-            <Articles :articles="articles" /> <!-- Pass articles to the Articles component -->
+        <div class="articles-section" data-aos="fade-up">
+            <h3 class="text-2xl md:text-3xl mb-6 articles-title">{{ $t('eventHub.latestArticles') }}</h3>
+            <div class="articles-grid">
+                <div v-for="(article, index) in articles" :key="index" class="article-card" data-aos="fade-up">
+                    <div class="article-image-container">
+                        <img :src="article.image" :alt="article.title" class="article-image" />
         </div>
-        <div class="frame3" data-aos="flip-left">
-            <div class="events-container">
-                <h3 class="text-2xl md:text-3xl mb-6 all-events-title">{{ $t('eventHub.allEvents') }}</h3>
-                <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card" data-aos="fade-left">
-                        <img v-if="event.image" :src="event.image" alt="Event image" class="event-image"/>
-                        <div class="event-details">
-                            <h2>{{ event.title }}</h2>
-                            <p>{{ new Date(event.publish_date).toLocaleString() }}</p>
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span class="article-date">{{ formatDate(article.date) }}</span>
+                            <span class="article-category">{{ article.category }}</span>
                         </div>
-                        <div class="event-actions">
-                            <button class="star-button">⭐</button>
-                            <button class="read-more-button" @click="openEventUrl(event.url)">
-                                {{ $t('eventHub.readMore') }}
-                            </button>
+                        <h4 class="article-title">{{ article.title }}</h4>
+                        <p class="article-excerpt">{{ article.excerpt }}</p>
+                        <a :href="article.url" target="_blank" class="read-more-link">{{ $t('eventHub.readMore') }} →</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- <div v-if="loading" class="loading-spinner">Loading...</div> -->
     </div>
 </template>
 
@@ -327,9 +321,9 @@ export default {
 .round, .round-star {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
     justify-content: center;
     transition: all 0.2s ease;
 }
@@ -383,33 +377,33 @@ export default {
     font-weight: 500;
     opacity: 0.9;
     text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
+    }
 
 .event-category {
     margin: 48px 0;
-}
+    }
 
 .event-category h3 {
     margin-bottom: 32px;
     font-weight: 600;
     color: var(--text-primary);
-}
+    }
 
-.event-category-bg {
+    .event-category-bg {
     padding: 32px;
     background: var(--card-bg);
     border-radius: 24px;
     border: 1px solid var(--border-color);
-}
+    }
 
-.category-btn {
-    display: flex;
+    .category-btn {
+    display: flex; 
     flex-direction: column;
     align-items: center;
     gap: 12px;
     padding: 24px;
     border-radius: 16px;
-    cursor: pointer;
+    cursor: pointer; 
     transition: all 0.3s ease;
 }
 
@@ -422,7 +416,7 @@ export default {
     width: 64px;
     height: 64px;
     border-radius: 16px;
-    object-fit: cover;
+    object-fit: cover; 
 }
 
 .events-section {
@@ -544,96 +538,109 @@ export default {
 }
 
 .articles-section {
-    margin: 48px 0;
-}
-
-.articles-title {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 32px;
-}
-
-.frame3 {
-    padding: 32px;
-    background: var(--card-bg);
-    border-radius: 24px;
+    margin: 4rem 0;
+    padding: 2rem;
+    background: var(--background-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
 }
 
-.all-events-title {
-    font-weight: 600;
+.articles-title {
+    font-size: 2rem;
     color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
 }
 
-.event-card {
-    background: var(--bg-primary);
-    border-radius: 16px;
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.article-card {
+    background: white;
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
     border: 1px solid var(--border-color);
 }
 
-.event-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--link-color);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
 }
 
-.event-image {
+.article-image-container {
+    position: relative;
+    padding-top: 60%;
+    overflow: hidden;
+}
+
+.article-image {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
-.event-details {
-    padding: 20px;
+.article-card:hover .article-image {
+    transform: scale(1.05);
 }
 
-.event-details h2 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 8px;
+.article-content {
+    padding: 1.5rem;
 }
 
-.event-details p {
-    font-size: 14px;
+.article-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
     color: var(--text-secondary);
 }
 
-.event-actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px 20px;
-    border-top: 1px solid var(--border-color);
+.article-date, .article-category {
+    padding: 0.25rem 0.75rem;
+    background: var(--surface-color);
+    border-radius: var(--radius-sm);
 }
 
-.star-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    transition: transform 0.2s ease;
+.article-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.4;
 }
 
-.star-button:hover {
-    transform: scale(1.2);
+.article-excerpt {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.read-more-button {
-    padding: 8px 16px;
-    background: var(--link-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
+.read-more-link {
+    display: inline-block;
+    color: var(--link-color);
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.read-more-button:hover {
-    background: var(--hover-bg);
-    transform: translateY(-2px);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    }
+    
+.read-more-link:hover {
+    color: var(--hover-bg);
 }
 
 @media (max-width: 768px) {
@@ -643,7 +650,7 @@ export default {
 
     .banner-content {
         left: 24px;
-    }
+}
 
     .main-heading {
         font-size: 32px;
@@ -651,7 +658,7 @@ export default {
 
     .sub-heading {
         font-size: 18px;
-    }
+}
 
     .event-category-bg {
         padding: 16px;
@@ -668,11 +675,23 @@ export default {
 
     .events-section {
         padding: 20px;
-    }
+}
 
     .nav-button {
         width: 40px;
         height: 40px;
+    }
+
+    .articles-section {
+        padding: 1rem;
+}
+
+    .articles-grid {
+        grid-template-columns: 1fr;
+}
+
+    .article-title {
+        font-size: 1.125rem;
     }
 }
 </style>

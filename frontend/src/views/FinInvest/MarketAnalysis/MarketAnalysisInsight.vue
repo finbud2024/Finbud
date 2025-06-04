@@ -144,24 +144,189 @@ const setFilter = (filter) => {
     height: 100%;
     background-color: var(--white-in-light-mode);
     color: var(--black-in-light-mode);
+    animation: fadeIn 0.5s ease;
   }
-  
+
   .container {
     max-width: calc(100% - 20px);
-    padding: 0 20px;
+    padding: 2rem;
     width: 100%;
     box-sizing: border-box;
     background-color: var(--white-in-light-mode);
     color: var(--black-in-light-mode);
-    border-radius: 4px;
-    border: 1px solid var(--white-in-light-mode);
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: slideInUp 0.5s ease forwards;
+  }
+
+  .container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   }
 
   .title {
     margin-top: 20px;
-    font-size: 30px;
-    font-weight: 750;
+    font-size: 2.5rem;
+    font-weight: 800;
     color: var(--black-in-light-mode);
+    animation: slideInDown 0.5s ease;
+    text-align: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(45deg, #1a1a1a, #4a4a4a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradientText 3s ease infinite;
+  }
+
+  .market-analysis-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+    opacity: 0;
+    animation: fadeInUp 0.5s ease forwards 0.2s;
+  }
+
+  .market-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .market-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(0,0,0,0.02), rgba(255,255,255,0.1));
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .market-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .market-card:hover::before {
+    opacity: 1;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+  }
+
+  .card-content {
+    font-size: 1rem;
+    color: #4a4a4a;
+    line-height: 1.6;
+  }
+
+  .loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+    border-radius: 8px;
+    height: 200px;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
+
+  @keyframes gradientText {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+
+    .title {
+      font-size: 2rem;
+      margin-top: 1rem;
+    }
+
+    .market-analysis-container {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .market-card {
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .title {
+      font-size: 1.75rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+    }
+
+    .card-content {
+      font-size: 0.9rem;
+    }
   }
 
   .market-analysis-container {

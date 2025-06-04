@@ -4,59 +4,113 @@
       <h1>{{ t('quantPage.StockPortfolioDashboard') }}</h1>
     </header>
     <section class="current-holding">
-      <input
-      class="ticker-search"
-      type="text"
-      v-model="tickerSearch"
-      :placeholder="t('quantPage.TickerNameSearch')"
-      
-    />
+      <div class="controls">
+        <input
+          class="ticker-search"
+          type="text"
+          v-model="tickerSearch"
+          :placeholder="t('quantPage.TickerNameSearch')"
+        />
+        <button class="display-toggle" @click="toggleDisplayType">
+          <i :class="displayType === 'grid' ? 'bi bi-grid' : 'bi bi-list'"></i>
+        </button>
+      </div>
       
       <div class="margin-box-content">
-        <div>
-          <div class="scrollable-table">
+        <!-- Grid View -->
+        <div v-if="displayType === 'grid'" class="stock-grid">
+          <div v-for="stock in paginatedStocks" :key="stock.symbol" class="stock-card">
+            <div class="stock-header">
+              <img :src="stock.logo" :alt="stock.name" class="stock-logo" v-if="stock.logo"/>
+              <div class="stock-title">
+                <h3>{{ stock.symbol }}</h3>
+                <p>{{ stock.name }}</p>
+              </div>
+            </div>
+            <div class="stock-details">
+              <div class="detail-row">
+                <span class="label">Price</span>
+                <span class="value">${{ formatNumber(stock.close) }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Change</span>
+                <span class="value" :class="stock.priceChange >= 0 ? 'positive' : 'negative'">
+                  {{ formatNumber(stock.priceChange) }}%
+                </span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Volume</span>
+                <span class="value">{{ formatNumber(stock.relativeVolume) }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">P/E</span>
+                <span class="value">{{ formatNumber(stock.peRatio) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div v-else class="scrollable-table">
           <table>
             <thead>
-            <tr>
-              <th>{{ t('quantPage.StockTicker') }}</th>
-              <th>Logo</th>
-              <!--<th>Currency Code</th>-->
-              <th>{{ t('quantPage.CloseValue') }}</th>
-              <!--<th>Price Currency</th>-->
-              <th>{{ t('quantPage.PriceChange') }}</th>
-              <th>{{ t('quantPage.RelativeVolume') }}</th>
-              <th>{{ t('quantPage.PERatio') }}</th>
-              <th>{{ t('quantPage.EPSDistributed') }}</th>
-              <th>{{ t('quantPage.DividendYield') }}</th>
-              <!--<th>Exchange</th>-->
-              <th>{{ t('quantPage.IndustrySector') }}</th>
-            </tr>
+              <tr>
+                <th>{{ t('quantPage.StockTicker') }}</th>
+                <th>Logo</th>
+                <th>{{ t('quantPage.CloseValue') }}</th>
+                <th>{{ t('quantPage.PriceChange') }}</th>
+                <th>{{ t('quantPage.RelativeVolume') }}</th>
+                <th>{{ t('quantPage.PERatio') }}</th>
+                <th>{{ t('quantPage.EPSDistributed') }}</th>
+                <th>{{ t('quantPage.DividendYield') }}</th>
+                <th>{{ t('quantPage.IndustrySector') }}</th>
+              </tr>
             </thead>
-
-            <tbody v-if="filteredCryptoList.length">
-              
-            <tr v-for="crypto in filteredCryptoList" :key="crypto.name">
-              <td>{{ crypto.name }}</td>
-              <td><img :src="`https://s3-symbol-logo.tradingview.com/${crypto.logo}.svg`"
-                       :alt="`${crypto.logo} logo`"/></td>
-              <!--<td>{{ crypto.currency }}</td>-->
-              <td>{{ crypto.close }} </td>
-              <!--<td>{{ crypto.priceCurrency }} </td>-->
-              <td>{{ formatNumber(crypto.priceChange) }} </td>
-              <td>{{ formatNumber(crypto.relativeVolume) }}</td>
-              <td>{{ formatNumber(crypto.PERatio) }} </td>
-              <td>{{ formatNumber(crypto.EPS) }} </td>
-              <td>{{ formatNumber(crypto.dividendYield) }} </td>
-              <!--<td>{{ crypto.market }} </td>-->
-              <td>{{ crypto.sector }} </td>
-            </tr>
+            <tbody>
+              <tr v-for="stock in paginatedStocks" :key="stock.symbol">
+                <td>{{ stock.symbol }}</td>
+                <td><img :src="stock.logo" :alt="stock.name" class="table-logo" v-if="stock.logo"/></td>
+                <td>${{ formatNumber(stock.close) }}</td>
+                <td :class="stock.priceChange >= 0 ? 'positive' : 'negative'">
+                  {{ formatNumber(stock.priceChange) }}%
+                </td>
+                <td>{{ formatNumber(stock.relativeVolume) }}</td>
+                <td>{{ formatNumber(stock.peRatio) }}</td>
+                <td>{{ formatNumber(stock.eps) }}</td>
+                <td>{{ formatNumber(stock.dividendYield) }}%</td>
+                <td>{{ stock.sector }}</td>
+              </tr>
             </tbody>
-          
           </table>
-<!--         <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />--> 
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <button 
+            class="page-btn" 
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
+          >
+            Previous
+          </button>
+          <button 
+            v-for="page in totalPages" 
+            :key="page"
+            class="page-btn"
+            :class="{ active: currentPage === page }"
+            @click="changePage(page)"
+          >
+            {{ page }}
+          </button>
+          <button 
+            class="page-btn" 
+            :disabled="currentPage === totalPages"
+            @click="changePage(currentPage + 1)"
+          >
+            Next
+          </button>
         </div>
       </div>
-    </div>
     </section>
 
     <!--<section class="industry-comparison">
@@ -137,6 +191,9 @@ export default {
       chartSeries: null,
       processedData: null,
       isLoading: false, // Loading state
+      currentPage: 1,
+      itemsPerPage: 20,
+      displayType: 'grid', // 'grid' or 'table'
     };
   },
   mounted() {
@@ -145,15 +202,23 @@ export default {
   },
 
   computed: {
-  filteredCryptoList() {
-    if (!this.tickerSearch) {
-      return this.cryptoList;
+    filteredCryptoList() {
+      if (!this.tickerSearch) {
+        return this.cryptoList;
+      }
+      const searchTerm = this.tickerSearch.toLowerCase();
+      return this.cryptoList.filter(crypto =>
+        crypto.name.toLowerCase().includes(searchTerm)
+      );
+    },
+    paginatedStocks() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredCryptoList.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredCryptoList.length / this.itemsPerPage);
     }
-    const searchTerm = this.tickerSearch.toLowerCase();
-    return this.cryptoList.filter(crypto =>
-      crypto.name.toLowerCase().includes(searchTerm)
-    );
-  }
   }, 
   
   methods: {
@@ -347,244 +412,262 @@ export default {
     if (isNaN(number)) return value; // if not a number, just return as-is
     return number.toFixed(2);
   },
+    changePage(page) {
+      this.currentPage = page;
+    },
+    toggleDisplayType() {
+      this.displayType = this.displayType === 'grid' ? 'table' : 'grid';
+    }
   },
 };
 </script>
 
 <style scoped>
-/* Add your styles here */
-.scrollable-table {
-  max-height: 400px; /* Set the maximum height for the table container */
-  overflow-y: auto; /* Enable vertical scrolling */
-  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
-  margin-top: 10px; /* Add some spacing above the table */
-}
 .dashboard {
-  width: 100%;
-  padding: 20px;
-  position: relative;
-}
-
-.dashboard.loading {
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-.loader {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  perspective: 800px;
-  margin: auto;
-}
-
-.loader2 {
-  position: absolute;
-  margin-top: 50px;
-  margin-bottom: 50px;
-  left: calc(50% - 32px);
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  perspective: 800px;
-}
-
-.inner {
-  position: absolute;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;  
-}
-
-.inner.one {
-  left: 0%;
-  top: 0%;
-  animation: rotate-one 1s linear infinite;
-  border-bottom: 3px solid #2a2a5f;
-}
-
-.inner.two {
-  right: 0%;
-  top: 0%;
-  animation: rotate-two 1s linear infinite;
-  border-right: 3px solid #2a2a5f;
-}
-
-.inner.three {
-  right: 0%;
-  bottom: 0%;
-  animation: rotate-three 1s linear infinite;
-  border-top: 3px solid #2a2a5f;
-}
-
-@keyframes rotate-one {
-  0% {
-    transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg);
-  }
-  100% {
-    transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg);
-  }
-}
-
-@keyframes rotate-two {
-  0% {
-    transform: rotateX(50deg) rotateY(10deg) rotateZ(0deg);
-  }
-  100% {
-    transform: rotateX(50deg) rotateY(10deg) rotateZ(360deg);
-  }
-}
-
-@keyframes rotate-three {
-  0% {
-    transform: rotateX(35deg) rotateY(55deg) rotateZ(0deg);
-  }
-  100% {
-    transform: rotateX(35deg) rotateY(55deg) rotateZ(360deg);
-  }
+  padding: 2rem;
+  background: var(--quant-background);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 header {
-  background-color:var(--quant-background);
-  color: var(--quant-text-color);
-  text-align: center;
-  padding: 10px;
+  margin-bottom: 2rem;
 }
 
-.loading-section {
+h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
   text-align: center;
-  margin-top: 50px;
+  margin-bottom: 1.5rem;
 }
 
-.current-holding {
-  margin-top: 20px;
-  background-color:var(--quant-card-background);
-  align-content: center;
+.ticker-search {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
 }
 
-h2 {
-  color: var(--quant-card-background);
-  font-size: 24px;
-  text-align: center;
+.ticker-search:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.margin-box-content {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.scrollable-table {
+  overflow-x: auto;
+  border-radius: 12px;
+  background: var(--bg-primary);
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-}
-th {
-  position: sticky; /* Make the header sticky */
-  top: 0; /* Stick the header to the top of the container */
-  background-color:var(--quant-card-background); /* Background color for the header */
-  color: var(--quant-text-color); /* Text color for the header */
-  z-index: 1; /* Ensure the header stays above the table rows */
-}
-
-th, td {
-  padding: 10px;
-  text-align: center;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
 }
 
 th {
-
-  font-weight: bold;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 td {
-  background-color: #f9f9f9;
+  padding: 1rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
-.industry-comparison {
-  margin-top: 10px;
+tr {
+  transition: all 0.3s ease;
 }
 
-.comparison-header {
+tr:hover {
+  background: var(--hover-bg);
+  transform: translateX(5px);
+}
+
+/* Dark mode specific styles */
+:root[data-theme="dark"] td {
+  color: #000;
+  background: #fff;
+}
+
+:root[data-theme="dark"] th {
+  color: #000;
+  background: #f0f0f0;
+}
+
+/* Grid layout for stocks */
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.stock-card {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.stock-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stock-header {
+  display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-/* --------BOLLINGER CHART--------- */
-.Bollinger-placeholder {
-  width: 100%;
-  height: 200px;
-  background-color: #f0f0f0;
-  margin: 0 auto;
+.stock-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-/* --------INDUSTRY CHART--------- */
-.Industry-chart {
-  width: 100%;
-  height: 400px;
-  background-color: #e0e0e0;
-  margin-bottom: 20px;
-}
-.industry-chart-placeholder {
-  width: 100%;
-  height: 300px;
-  background-color: #e0e0e0;
+.table-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-/* --------X-AXIS CHART--------- */
-.xAxis-charts {
-  display: block; /* Ensure vertical stacking */
+.stock-title h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
 }
 
-.xAxis-chart-placeholder {
-  width: 100%;
-  height: 200px;
-  background-color: #e0e0e0;
-  margin-bottom: 20px; /* Space between charts */
+.stock-title p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
-.comparison-section {
-  padding: 20px;
-  background-color: #f0f0f0;
+.stock-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.industry-selection {
-  width: 20%;
-  margin-bottom: 20px;
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.value {
+  font-weight: 500;
+}
+
+.positive {
+  color: #10b981;
+}
+
+.negative {
+  color: #ef4444;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.page-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: var(--hover-bg);
+}
+
+.page-btn.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stock-card {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.stock-card:nth-child(n) {
+  animation-delay: calc(n * 0.05s);
 }
 
 .controls {
-  width: 20%;
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
-.stock-dropdown {
-  width: 15%;
+.display-toggle {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-label {
-  display: block;
-  margin-bottom: 10px;
-  color: #0033cc;
-}
-.search-input {
-  width: 300px;
-  padding: 8px 12px;
-  margin-bottom: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.ticker-search {
-  display: block; /* Center the input horizontally */
-  margin: 20px auto; /* Add spacing and center it */
-  padding: 10px 15px; /* Add padding for better appearance */
-  width: 50%; /* Make the input longer */
-  font-size: 16px; /* Increase font size for readability */
-  border: 1px solid #ccc; /* Add a border */
-  border-radius: 8px; /* Round the corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  transition: all 0.3s ease; /* Smooth transition for hover effects */
-}
-
-.ticker-search:focus {
-  outline: none; /* Remove the default outline */
-  border-color: #0073e6; /* Change border color on focus */
-  box-shadow: 0 4px 8px rgba(0, 115, 230, 0.2); /* Enhance shadow on focus */
+.display-toggle:hover {
+  background: var(--hover-bg);
 }
 </style>

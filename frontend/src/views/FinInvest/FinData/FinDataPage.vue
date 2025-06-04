@@ -188,50 +188,154 @@ function handleTickerSelect(company) {
     height: fit-content;
     display: flex;
     flex-direction: column;
-    padding: 1rem 4rem
+    padding: 1rem 4rem;
+    background: var(--bg-primary);
 }
+
 .data-header{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 4rem;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(to right, var(--bg-primary), var(--bg-secondary));
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    animation: slideIn 0.5s ease;
 }
-.buttons-header{
+
+.data-header h3 {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, var(--text-primary), var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.buttons-header {
     display: flex;
-    align-items: center;
     gap: 1rem;
 }
 
-.data-body{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 1.5rem;
+.button,
+.action-button,
+.filter-button,
+.search-button,
+.download-button,
+.view-button {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
+
+.button:hover,
+.action-button:hover,
+.filter-button:hover,
+.search-button:hover,
+.download-button:hover,
+.view-button:hover {
+  background-color: #ffffff;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.button:active,
+.action-button:active,
+.filter-button:active,
+.search-button:active,
+.download-button:active,
+.view-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Disabled state */
+.button:disabled,
+.action-button:disabled,
+.filter-button:disabled,
+.search-button:disabled,
+.download-button:disabled,
+.view-button:disabled {
+  background-color: #cccccc;
+  border-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.data-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+    animation: fadeIn 0.5s ease;
+}
+
 .card-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.95rem;
-  padding: 0.4rem 0.5rem;
-  border-radius: 0.4rem;
-  transition: background 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: var(--bg-primary);
+    transition: all 0.3s ease;
+    margin-bottom: 0.5rem;
+}
+
+.card-row:hover {
+    transform: translateX(5px);
+    background: var(--hover-bg);
+}
+
+.doc-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.doc-link:hover {
+    color: var(--primary-color-dark);
 }
 
 .skeleton-card {
-  height: 120px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
-  background-size: 400% 100%;
-  animation: shimmer 1.2s ease-in-out infinite;
+    height: 50px;
+    background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-primary) 50%, var(--bg-secondary) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 </style>

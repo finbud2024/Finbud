@@ -113,12 +113,134 @@
   </script>
   
   <style scoped>
-  select {
-    font-family: sans-serif;
-  }
-  .text{
-    color: var(--quant-text-color);
+  .p-4 {
+    padding: 1rem;
+    background: var(--quant-card-background);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
   }
   
+  .p-4:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--quant-text-color);
+    margin-right: 1rem;
+  }
+  
+  select {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--quant-text-color);
+    background-color: var(--quant-background);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-width: 120px;
+  }
+  
+  select:hover {
+    border-color: #cbd5e1;
+  }
+  
+  select:focus {
+    outline: none;
+    border-color: #94a3b8;
+    box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.1);
+  }
+  
+  .mt-4 {
+    margin-top: 1rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Loading animation */
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--quant-text-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Error state */
+  .error {
+    padding: 1rem;
+    background: #fee2e2;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    color: #b91c1c;
+    margin: 1rem 0;
+  }
+  
+  /* Success animation */
+  .success-enter-active {
+    animation: bounceIn 0.5s ease-out;
+  }
+  
+  @keyframes bounceIn {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+    70% { transform: scale(0.9); }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .p-4 {
+      padding: 0.75rem;
+    }
+    
+    select {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    
+    .text {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  }
   </style>
   

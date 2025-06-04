@@ -1,5 +1,6 @@
 <template>
   <div class="chart-wrapper">
+    <ChartLoader v-if="isLoading" :text="$t('loadingTransactions')" />
     <canvas
       v-if="hasData"
       ref="transactionChart"
@@ -13,10 +14,14 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
+import ChartLoader from '@/components/Common/ChartLoader.vue';
 Chart.register(...registerables);
 
 export default {
   name: "TransactionLine",
+  components: {
+    ChartLoader
+  },
   props: {
     transactions: {
       type: Array,
@@ -31,7 +36,7 @@ export default {
       chartInitialized: false,
       chartReady: false,
       mountTimer: null,
-      // resizeTimer: null,
+      isLoading: true,
       activatedTimer: null,
       chartId: "transaction-line-chart",
       retryCount: 0,
@@ -275,6 +280,17 @@ export default {
       // Hủy chart
       this.destroyChart();
     },
+
+    async initializeChart() {
+      this.isLoading = true;
+      
+      // Simulate loading time for better UX
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // ... rest of initialization code ...
+      
+      this.isLoading = false;
+    }
   },
   watch: {
     transactions: {
@@ -327,8 +343,8 @@ export default {
 .chart-wrapper {
   position: relative;
   width: 100%;
-  height: 300px; /* Chiều cao cố định để đảm bảo biểu đồ hiển thị đúng */
-  margin: 0 auto;
+  height: 100%;
+  min-height: 300px;
 }
 
 canvas {
@@ -337,18 +353,12 @@ canvas {
 }
 
 .no-data-message {
-  position: absolute;
-  top: 0;
-  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.03);
-  border-radius: 8px;
-  color: #666;
-  font-size: 16px;
-  text-align: center;
+  min-height: 300px;
+  color: var(--text-secondary);
+  font-size: 1rem;
 }
 </style>

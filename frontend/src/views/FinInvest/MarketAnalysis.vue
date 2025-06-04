@@ -8,57 +8,58 @@
         </h1>
 
         <!-- Market Analysis -->
-        <div class="container-card-big">
-            <div class="market-analysis-container">
-                <h2 class="component-title">
-                    {{ t('marketAnalysisPage.marketAnalysisTitle') }}
-                </h2>
-                <div class="card-container">
+        <div class="market-analysis">
+            <div class="market-header">
+                <h1>{{ t('marketAnalysisPage.marketAnalysisTitle') }}</h1>
+                <p>{{ t('marketAnalysisPage.marketAnalysisDescription') }}</p>
+            </div>
+
+            <div class="market-grid">
+                <div 
+                    v-for="(category, key, index) in marketAnalysis.marketAnalysis.components" 
+                    :key="key"
+                    class="market-card"
+                >
+                    <h3>
+                        {{ t('marketAnalysisPage.marketAnalysis.' + key) }}
+                        <i class="fas fa-chart-bar"></i>
+                    </h3>
+
                     <div 
-                        v-for="(category, key, index) in marketAnalysis.marketAnalysis.components" 
-                        :key="key"
-                        class="card"
+                        class="percentage-bar"
+                        :style="{ width: category.Positive + category.Neutral + category.Negative }"
                     >
-                        <p class="card-title">
-                            {{ t('marketAnalysisPage.marketAnalysis.' + key) }}
-                        </p>
+                        <span class="positive" :style="{ width: category.Positive }"></span>
+                        <span class="neutral" :style="{ width: category.Neutral }"></span>
+                        <span class="negative" :style="{ width: category.Negative }"></span>
+                    </div>
 
+                    <div class="details-container">
                         <div 
-                            class="percentage-bar"
-                            :style="{ width: category.Positive + category.Neutral + category.Negative }"
+                            class="positive-detail-container"
+                            :style="{ width: category.Positive }"
                         >
-                            <span class="positive" :style="{ width: category.Positive }"></span>
-                            <span class="neutral" :style="{ width: category.Neutral }"></span>
-                            <span class="negative" :style="{ width: category.Negative }"></span>
+                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Positive') }}</p>
+                            <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Positive }}</p>
                         </div>
-
-                        <div class="details-container">
-                            <div 
-                                class="positive-detail-container"
-                                :style="{ width: category.Positive }"
-                            >
-                                <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Positive') }}</p>
-                                <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Positive }}</p>
-                            </div>
-                            <div 
-                                class="neutral-detail-container"
-                                :style="{ width: category.Neutral }"
-                            >
-                                <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Neutral') }}</p>
-                                <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Neutral }}</p>
-                            </div>
-                            <div 
-                                class="negative-detail-container"
-                                :style="{ width: category.Negative }"
-                            >
-                                <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Negative') }}</p>
-                                <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Negative }}</p>
-                            </div>
+                        <div 
+                            class="neutral-detail-container"
+                            :style="{ width: category.Neutral }"
+                        >
+                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Neutral') }}</p>
+                            <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Neutral }}</p>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <p>{{ t('marketAnalysisPage.LastUpdated') }}: {{ category.LastUpdated }}</p>
-                            <a :href="`/market-analysis/insight/${category.type}`" style="color: var(--black-in-light-mode); text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
+                        <div 
+                            class="negative-detail-container"
+                            :style="{ width: category.Negative }"
+                        >
+                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Negative') }}</p>
+                            <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Negative }}</p>
                         </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <p>{{ t('marketAnalysisPage.LastUpdated') }}: {{ category.LastUpdated }}</p>
+                        <a :href="`/market-analysis/insight/${category.type}`" style="color: var(--black-in-light-mode); text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
                     </div>
                 </div>
             </div>
@@ -415,91 +416,276 @@ watch(selectedCategory, (newCategory) => {
     }
 }
 
+.market-analysis {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.market-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.market-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.market-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: #000;
+    border-radius: 2px;
+}
+
+.market-header p {
+    color: #666;
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.market-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+    position: relative;
+    overflow: hidden;
+}
+
+.market-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #000;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.market-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.market-card:hover::before {
+    transform: scaleX(1);
+}
+
+.market-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.market-card h3 i {
+    font-size: 1.2em;
+    opacity: 0.8;
+}
+
+.market-card p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.market-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    background: #000;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.stat-item:hover .stat-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.chart-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 3rem;
+    border: 1px solid #eee;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.chart-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.chart-control-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    background: white;
+    color: #000;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chart-control-btn:hover,
+.chart-control-btn.active {
+    background: #000;
+    color: white;
+    border-color: #000;
+}
+
+.insights-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.insight-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.insight-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.insight-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.insight-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.insight-content {
+    color: #666;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .market-analysis {
+        padding: 1rem;
+    }
+
+    .market-header h1 {
+        font-size: 2rem;
+    }
+
+    .market-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .chart-controls {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+    }
+
+    .chart-control-btn {
+        white-space: nowrap;
+    }
+
+    .insights-section {
+        grid-template-columns: 1fr;
+    }
+}
+
 .container-card-big {
     margin-top: 0;
     padding: 10px;
     width: 100%;
     box-sizing: border-box;
-}
-
-.market-analysis-container {
-    padding: 10px;
-    width: 100%;
-}
-
-.card-container {
-    margin: 0;
-    display: flex;
-    width: 100%;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.card {
-    width: calc((100% - 40px) / 3);
-    min-width: 250px;
-    flex: 1;
-    border-radius: 10px;
-    box-shadow: 
-        0 2px 6px rgba(181, 181, 181, 0.438);
-    background-color: transparent;
-    color: var(--black-in-light-mode);
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.card-title, .component-title {
-    font-weight: 800;
-    font-size: 24px;
-    margin-bottom: 12px;
-}
-
-.percentage-bar {
-  display: flex;
-  height: 20px;
-  border-radius: 4px;
-  overflow: hidden;
-  background-color: #eee;
-  margin-top: 5px;
-}
-
-.percentage-bar span {
-  height: 100%;
-}
-
-.positive {
-  background-color: #27db54; /* green */
-}
-
-.neutral {
-  background-color: #e2d32b; /* amber */
-}
-
-.negative {
-  background-color: #d23737; /* red */
-}
-
-.details-container {
-    display: flex;
-    font-size: 12px;
-    margin: 0;
-    padding: 0;
-}
-
-.positive-detail-container {
-    color: #27db54; /* green */
-}
-
-.neutral-detail-container {
-    color: #e2d32b; /* amber */
-}
-
-.negative-detail-container {
-    color: #d23737; /* red */
 }
 
 .topic-container {

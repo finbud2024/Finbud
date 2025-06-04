@@ -122,7 +122,7 @@ export default {
             this.keyword = '';
         },
         /**
-        * Called when the user hits “send”
+        * Called when the user hits "send"
         * @param {string} newMessage
         */
         async sendMessage(newMessage) {
@@ -250,55 +250,60 @@ export default {
 .container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .main-content {
     display: flex;
-    width: 100%;
-    max-width: 1100px;
-    margin: 20px 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(to bottom, #7BDBBF, #e0dede);
-    border-radius: 10px;
-    overflow: hidden;
+    gap: 2rem;
 }
 
 .chat-section {
-
+    flex: 1;
     display: flex;
     flex-direction: column;
-    flex: 1;
-    padding: 20px;
+    gap: 1rem;
+}
+
+/* Message styling */
+:deep(.message) {
+    background-color: #f8f9fa !important;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+:deep(.message.bot-message) {
+    background-color: #f8f9fa !important;
+    border-color: #e9ecef;
+}
+
+:deep(.message.user-message) {
+    background-color: #f8f9fa !important;
+    border-color: #e9ecef;
+    margin-left: auto;
 }
 
 .user-input-container {
-    position: static;
-}
-
-.user-input-container :deep(.user-input) {
-    width: 100%;
+    margin-top: auto;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 768px) {
-    .chat-header {
-        font-size: 1rem;
-        padding: 10px;
+    .container {
+        padding: 1rem;
     }
-}
-
-@media (max-width: 768px) {
+    
     .main-content {
         flex-direction: column;
-        width: 90%;
-    }
-}
-
-@media (max-width: 768px) {
-    .chat-header {
-        font-size: 1rem;
-        padding: 10px;
     }
 }
 </style>

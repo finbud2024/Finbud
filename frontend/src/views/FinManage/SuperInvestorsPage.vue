@@ -355,7 +355,7 @@ const hideBot = () => {
     gap: 20px;
     padding: 10px;
   }
-
+  
   .title {
     font-size: 2rem;
     margin-bottom: 1.5rem;
@@ -369,7 +369,7 @@ const hideBot = () => {
   .bot-chat-container.bot-visible {
     transform: translateX(-280px);
   }
-
+  
   .bot-message {
     max-width: 220px;
     padding: 10px 15px;

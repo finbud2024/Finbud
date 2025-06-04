@@ -198,4 +198,164 @@ export default {
     background-position: 400px 0;
   }
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .forum-container {
+    padding: 1rem;
+  }
+
+  .forum-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-bar {
+    width: 100%;
+  }
+
+  .forum-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .forum-card {
+    padding: 1rem;
+  }
+
+  .forum-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .forum-actions button {
+    width: 100%;
+  }
+
+  .forum-stats {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .forum-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .forum-author {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .forum-tags {
+    flex-wrap: wrap;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .forum-filters {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .sort-options {
+    width: 100%;
+  }
+}
+
+/* Tablet Responsive Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .forum-container {
+    padding: 1.5rem;
+  }
+
+  .forum-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .forum-card {
+    padding: 1.5rem;
+  }
+
+  .forum-actions {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .forum-filters {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .filter-group {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+/* Enhanced Loading States */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Smooth Transitions */
+.forum-card,
+.forum-actions button,
+.forum-tags span,
+.pagination button {
+  transition: all 0.3s ease;
+}
+
+/* Touch-friendly Interactions */
+@media (hover: none) {
+  .forum-card:hover {
+    transform: none;
+  }
+
+  .forum-actions button:hover {
+    transform: none;
+  }
+
+  .forum-tags span:hover {
+    transform: none;
+  }
+
+  .pagination button:hover {
+    transform: none;
+  }
+}
+
+/* Improved Touch Targets */
+@media (max-width: 768px) {
+  .forum-actions button,
+  .pagination button,
+  .filter-group select,
+  .search-bar input {
+    min-height: 44px;
+  }
+
+  .forum-tags span {
+    padding: 8px 16px;
+  }
+}
 </style>

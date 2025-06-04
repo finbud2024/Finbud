@@ -536,14 +536,13 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
 </style>
 
 <style scoped>
-
 .full-screen-container {
     background-color: var(--black-in-dark-mode);
     color: var(--white-in-dark-mode);
     width: 100vw;
     min-height: 100vh;
     overflow: hidden;
-    /* position: fixed; */
+    animation: fadeIn 0.5s ease;
 }
 
 .title {
@@ -551,6 +550,7 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
     font-weight: bold;
     text-align: center;
     padding-top: 20px;
+    animation: slideInDown 0.5s ease;
 }
 
 .button-group {
@@ -560,40 +560,63 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
+    animation: fadeInUp 0.5s ease;
 }
 
 .button {
     padding: 0.5rem 1rem;
     border: none;
     background-color: transparent;
-    border-radius: 0.375rem; /* rounded-md */
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    font-size: 1rem;
     font-weight: bold;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease;
     border-bottom: 2px solid transparent;
-    border-radius: 0;
     color: var(--white-in-dark-mode);
+    position: relative;
+    overflow: hidden;
+}
+
+.button::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--white-in-dark-mode);
+    transition: all 0.3s ease;
+}
+
+.button:hover::after {
+    left: 0;
+    width: 100%;
 }
 
 .button.selected {
     border-bottom: 2px solid var(--white-in-dark-mode);
+    transform: translateY(-2px);
 }
 
 .filter-button {
     background-color: var(--white-in-dark-mode);
     color: var(--black-in-dark-mode);
-    border-radius: 0.375rem; 
+    border-radius: 8px;
     border: none;
-    box-shadow: 
-        0 2px 6px rgba(181, 181, 181, 0.438), 
-        0 8px 24px rgba(152, 152, 152, 0.372);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
     font-weight: 500;
     width: 130px;
-    height: 30px;
+    height: 36px;
     margin-left: 1rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.filter-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
 }
 
 .filter {
@@ -604,49 +627,57 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
     font-weight: 500;
     align-items: center;
     flex-wrap: wrap;
+    animation: fadeIn 0.5s ease;
 }
 
 .mobile-filter {
     display: flex;
+    gap: 10px;
+    animation: fadeInUp 0.5s ease;
 }
 
 .inline-label-select {
-  padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  padding-right: 8px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    padding-right: 8px;
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
 }
 
-.inline-label-select label {
-  white-space: nowrap;
-  vertical-align: middle;
-}
+.inline-label-select:nth-child(1) { animation-delay: 0.1s; }
+.inline-label-select:nth-child(2) { animation-delay: 0.2s; }
+.inline-label-select:nth-child(3) { animation-delay: 0.3s; }
 
 .select-box {
     width: 130px;
-    height: 30px;
+    height: 36px;
     text-align: center;
     text-align-last: center;
-    vertical-align: middle; 
-    border-radius: 0.375rem;
+    vertical-align: middle;
+    border-radius: 8px;
     border: none;
     color: var(--black-in-dark-mode);
     background-color: var(--white-in-dark-mode);
-    box-shadow: 
-        0 2px 6px rgba(181, 181, 181, 0.438), 
-        0 8px 24px rgba(152, 152, 152, 0.363);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
     padding: 0 10px;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     cursor: pointer;
     font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.select-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
 }
 
 .select-box:focus {
     outline: none;
     border-color: #000;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
 .select-box option {
@@ -656,10 +687,11 @@ body[data-route*="macro-economic"] .chatBubble .chatBubbleContainer .chatBubbleH
 
 .loading-container {
     height: 100px;
-    border-radius: 8px;
-    background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
+    border-radius: 12px;
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 37%, #2a2a2a 63%);
     background-size: 400% 100%;
     animation: shimmer 1.2s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
 }
 
 .table-tong-quan {
@@ -708,6 +740,8 @@ table {
     color: var(--black-in-dark-mode);
     background-color: var(--white-in-dark-mode);
     font-weight: bold;
+    transition: all 0.3s ease;
+    padding: 15px;
 }
 
 .header-first-column {
@@ -718,11 +752,13 @@ table {
     width: 100%;
     color: black;
     background-color: white;
-    border-radius: 5px;
+    border-radius: 12px;
     border-collapse: collapse;
     border: none;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    opacity: 0;
+    animation: fadeInUp 0.5s ease forwards;
 }
-
 
 .responsive-table {
     table-layout: fixed;
@@ -730,20 +766,62 @@ table {
     width: 80%;
     margin: 0 auto;
     border: none;
-    box-shadow: 
-        0 2px 6px rgba(181, 181, 181, 0.438), 
-        0 8px 24px rgba(152, 152, 152, 0.363);
-    -webkit-overflow-scrolling: touch; /* for iOS smooth scrolling */
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.05);
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
 }
 
-/* tr:hover .header.sticky-col {
-    background-color: rgb(0, 0, 0);
-    color: white;
-} */
+tr:hover .header {
+    background-color: #f5f5f5;
+}
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .button-group {
         padding-top: 60px;
+        padding-left: 5%;
+        gap: 10px;
+    }
+
+    .filter {
+        padding-left: 5%;
+    }
+
+    .mobile-filter {
+        flex-direction: column;
+        gap: 10px;
     }
 
     .table-container {

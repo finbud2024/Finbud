@@ -2,31 +2,15 @@
   <LoadingPage v-if="showLoadingPage" />
   <div class="nav-actions">
     <NavBar v-if="showHeader" ref="headerBar" @logo-clicked="handleLogoClick" />
-    <div class="content"></div>
+    <div class="content-wrapper">
+      <router-view
+        @chatviewSelectingThread="loadThread"
+        @finbudBotResponse="displayMessage"
+        :chatBubbleThreadID="threadId"
+      />
+    </div>
   </div>
-  <router-view
-    @chatviewSelectingThread="loadThread"
-    @finbudBotResponse="displayMessage"
-    :chatBubbleThreadID="threadId"
-  />
   <FooterBar v-if="showFooter" ref="footerBar" />
-  <ChatBubble
-    v-if="showChatBubble && chatBubbleActive"
-    @closeChatBubble="toggleChatBubble"
-    :chatViewThreadID="threadId"
-  />
-  <img
-    class="finbudBot"
-    :class="{ hidden: !showChatBubble }"
-    src="@/assets/botrmbg_sm.webp"
-    alt="Finbud"
-    width="60"
-    height="60"
-    fetchpriority="high"
-    decoding="async"
-    @click="toggleChatBubble"
-    :style="botPosition"
-  />
   <div v-if="showBotMessage" class="bot-message-container">
     <div
       class="finbudBotMessage"
@@ -42,7 +26,6 @@
 <script>
 import NavBar from "@/components/Basic/NavBar.vue";
 import FooterBar from "@/components/Basic/FooterBar.vue";
-import ChatBubble from "./components/ChatPage/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import LoadingPage from "./views/Home/LoadingPage.vue";
@@ -61,21 +44,18 @@ export default {
   components: {
     NavBar,
     FooterBar,
-    ChatBubble,
     LoadingPage,
   },
   data() {
     return {
       botSize: { width: 60, height: 60 },
       threadId: "",
-      chatBubbleActive: false,
       botMessage: "",
       displayedMessage: "",
       showBotMessage: true,
       typingSpeed: 20,
       isTyping: false,
       messageVisible: false,
-      botPosition: { right: "20px", bottom: "20px" },
       showLoadingPage: false,
       isInitialLoad: true,
       logoClicked: false,
@@ -172,29 +152,10 @@ export default {
       },
       { immediate: true }
     );
-
-    const savedPosition = localStorage.getItem("finbudBotPosition");
-    if (savedPosition) {
-      try {
-        const parsed = JSON.parse(savedPosition);
-        if (this.isValidPosition(parsed)) {
-          this.botPosition = parsed;
-        }
-      } catch (e) {
-        console.warn("Invalid saved position", e);
-      }
-    }
   },
   computed: {
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
-    },
-    showChatBubble() {
-      return (
-        this.$route.path !== "/chat-view" &&
-        this.$route.path !== "/login" &&
-        this.$route.path !== "/signup"
-      );
     },
     showFooter() {
       return this.$route.path === "/about";
@@ -206,9 +167,6 @@ export default {
   methods: {
     loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
-    },
-    toggleChatBubble() {
-      this.chatBubbleActive = !this.chatBubbleActive;
     },
     async checkIfUserIsNew() {
       if (this.isAuthenticated) {
@@ -388,9 +346,48 @@ body.dark-mode {
   --quant-divider-line-color: #3A3A3C;
 }
 /* Update content area */
-.content {
-  margin-top: 5%;
+.content-wrapper {
   background-color: var(--content-bg);
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+#app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.nav-actions {
+  margin: 0px;
+}
+
+/* Main router view positioning to avoid navbar */
+#app {
+  padding-left: 70px;
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Expand margin when navbar is hovered or expanded */
+.nav-bar:hover ~ #app,
+.nav-bar.expanded ~ #app {
+  padding-left: 280px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  #app {
+    padding-left: 0;
+  }
+  
+  .nav-bar:hover ~ #app,
+  .nav-bar.expanded ~ #app {
+    padding-left: 0;
+  }
 }
 
 /* Add transition for all elements */
@@ -434,13 +431,10 @@ html {
 
 <style scoped>
 .nav-actions {
-  display: flex;
-  flex-direction: column;
   margin: 0px;
 }
 
-.content {
-  /* padding-top: 80px; */
+.content-wrapper {
   flex: 1;
 }
 
@@ -454,33 +448,11 @@ a:hover {
   background-color: #e7f3ff;
 }
 
-.finbudBot {
-  position: fixed;
-  width: 60px;
-  aspect-ratio: 1;
-  z-index: 99998;
-  transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
-}
-
-.finbudBot:active {
-  cursor: grabbing;
-  transform: scale(1.05);
-  transition: transform 0.1s ease;
-}
-
-.finbudBot:hover {
-  cursor: pointer;
-  transform: scale(1.05);
-}
-
 .bot-message-container {
   position: fixed;
-  z-index: 99999;
-  bottom: calc(20px + 60px);
-  right: calc(3.125vw + 60px);
+  z-index: 9999;
+  bottom: 20px;
+  right: 20px;
 }
 
 .finbudBotMessage {
@@ -558,10 +530,6 @@ a:hover {
     max-width: 250px;
     font-size: 0.8125rem;
     padding: 12px;
-  }
-
-  .bot-message-container {
-    right: calc(3.125vw + 50px);
   }
 }
 

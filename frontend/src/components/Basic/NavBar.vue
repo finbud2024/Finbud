@@ -1,130 +1,105 @@
 <template>
-  <nav class="nav-bar" id="app">
-    <router-link to="/" @click.native="handleLogoClick">
+  <nav class="nav-bar" :class="{ active: isMenuOpen, expanded: navBarIsVisiblyExpanded }" id="nav-bar" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+    <router-link to="/" class="logo-link">
       <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
     </router-link>
+
+    <button class="expand-toggle" @click="toggleExpand">
+      <font-awesome-icon :icon="isExpanded ? 'fa-chevron-left' : 'fa-chevron-right'" class="icon" />
+    </button>
+
     <div class="nav-right">
       <ul class="nav-items">
-
         <li>
-          <router-link to="/chat-view" class="chatview">{{
-            $t("chat")
-          }}</router-link>
-        </li>
-        <li class="dropdown" @mouseenter="toggleAboutDropdown(true)" @mouseleave="toggleAboutDropdown(false)">
-          <div class="services-dropdown dropbtn">
-            {{ $t("overview") }} <span class="arrow-down"></span>
-          </div>
-          <div class="dropdown-content" v-if="isAboutDropdownOpen">
-            <router-link to="/about" class="about" @click="toggleAboutDropdown(false)">{{ $t("about") }}</router-link>
-            <router-link to="/tech" class="technology" @click="toggleAboutDropdown(false)">{{ $t("technology")
-            }}</router-link>
-          </div>
+          <router-link to="/chat-view" class="chat-button">
+            <font-awesome-icon icon="fa-solid fa-comment" class="icon" />
+            <span>{{ $t("chat") }}</span>
+          </router-link>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown('General', true)"
-          @mouseleave="toggleDropdown('General', false)">
-          <div class="services-dropdown dropbtn">
-            {{ $t("finManage") }} <span class="arrow-down"></span>
+        <li class="dropdown" ref="overviewDropdown">
+          <div class="services-dropdown" @click="toggleDropdown('overview')">
+            <font-awesome-icon icon="fa-solid fa-compass" class="icon" />
+            <span>{{ $t("overview") }}</span>
+            <span class="arrow-down"></span>
           </div>
-          <div class="dropdown-content" v-show="isDropdownOpen">
-            <router-link to="/goal" class="goal" @click="toggleDropdown(false)">{{ $t("goal") }}</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdown(false)">{{ $t("riskAnalysis")
-            }}</router-link>
-            <router-link to="/investment-calculator" class="investment-calculator"
-              @click="toggleAboutDropdown(false)">{{ $t("investmentCalculator") }}</router-link>
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdown(false)">{{
-              $t("mortgageCalculator") }}</router-link>
-
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownInvest(false)">{{
-              $t("superInvestors") }}</router-link>
-            <router-link
-              to="/fin-compare"
-              class="fin-compare"
-              @click="toggleDropdown(false)"
-              >{{ $t("ProductComparison") }}</router-link
-            >
+          <div class="dropdown-content" v-show="activeDropdown === 'overview'">
+            <router-link to="/about">{{ $t("about") }}</router-link>
+            <router-link to="/tech">{{ $t("technology") }}</router-link>
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownInvest(true)"
-          @mouseleave="toggleDropdownInvest(false)">
-          <div class="services-dropdown dropbtn">
-            {{ $t("finInvest") }} <span class="arrow-down"></span>
+        <li v-if="isAuthenticated" class="dropdown" ref="finAgentDropdown">
+          <div class="services-dropdown" @click="toggleDropdown('finAgent')">
+            <font-awesome-icon icon="fa-solid fa-robot" class="icon" />
+            <span>{{ $t("finAgent") }}</span>
+            <span class="arrow-down"></span>
           </div>
-          <div class="dropdown-content" v-show="isDropdownOpenInvest">
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownInvest(false)">{{ $t("simulator")
-            }}</router-link>
-            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownInvest(false)">AutoTrade
-              AI</router-link>
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdownInvest(false)">{{ $t("quant")
-            }}</router-link>
-            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownInvest(false)">{{
-              $t("quantSimulator") }}</router-link>
-            <router-link to="/fund-letter" class="fund-letter" @click="toggleDropdownInvest(false)">{{ $t("FundLetter")}}</router-link>
-            <router-link to="/docs" class="docs" @click="toggleDropdownData(false)">{{ $t("FinData") }}</router-link>
-            <router-link to="/macro-economic" class="macro-economic" @click="toggleDropdownData(false)">{{
-              $t("macroEconomic") }}</router-link>
-            <router-link to="/market-analysis" class="market-analysis" @click="toggleDropdownData(false)">{{
-              $t("marketAnalysis") }}</router-link>
+          <div class="dropdown-content" v-show="activeDropdown === 'finAgent'">
+            <router-link to="/agent">{{ $t("agent") }}</router-link>
+            <router-link to="/pestle">{{ $t("pestle") }}</router-link>
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownEdu(true)"
-          @mouseleave="toggleDropdownEdu(false)">
-          <div class="services-dropdown dropbtn">
-            {{ $t("finEdu") }} <span class="arrow-down"></span>
+        <li v-if="isAuthenticated" class="dropdown" ref="finManageDropdown">
+          <div class="services-dropdown" @click="toggleDropdown('finManage')">
+            <font-awesome-icon icon="fa-solid fa-chart-line" class="icon" />
+            <span>{{ $t("finManage") }}</span>
+            <span class="arrow-down"></span>
           </div>
-          <div class="dropdown-content" v-show="isDropdownOpenEdu">
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownEdu(false)">{{ $t("quiz") }}</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdownEdu(false)">{{ $t("event") }}</router-link>
-            <router-link to="/forum" class="forum" @click="toggleDropdownEdu(false)">{{ $t("forum") }}</router-link>
-            <router-link to="/course" class="course" @click="toggleDropdownEdu(false)">{{ $t("course") }}</router-link>
-          </div>
-        </li>
-
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdown('Agent', true)"
-          @mouseleave="toggleDropdown('Agent', false)">
-          <div class="services-dropdown dropbtn">
-            {{ $t("finAgent") }} <span class="arrow-down"></span>
-          </div>
-          <div class="dropdown-content" v-show="isDropdownOpenAgent">
-            <router-link to="/agent" class="agent" @click="toggleDropdownEdu(false)">{{ $t("agent") }}</router-link>
-            <router-link to="/pestle" class="pestle" @click="toggleDropdownEdu(false)">{{ $t("pestle") }}</router-link>
+          <div class="dropdown-content" v-show="activeDropdown === 'finManage'">
+            <router-link to="/goal">{{ $t("goal") }}</router-link>
+            <router-link to="/riskanalysis">{{ $t("riskAnalysis") }}</router-link>
+            <router-link to="/investment-calculator">{{ $t("investmentCalculator") }}</router-link>
+            <router-link to="/mortgage-calc">{{ $t("mortgageCalculator") }}</router-link>
+            <router-link to="/super-investors">{{ $t("superInvestors") }}</router-link>
+            <router-link to="/fin-compare">{{ $t("ProductComparison") }}</router-link>
           </div>
         </li>
-        <li v-if="isAuthenticated" class="dropdown" @mouseenter="toggleDropdownData(true)"
-          @mouseleave="toggleDropdownData(false)">
 
+        <li v-if="isAuthenticated" class="dropdown" ref="finInvestDropdown">
+          <div class="services-dropdown" @click="toggleDropdown('finInvest')">
+            <font-awesome-icon icon="fa-solid fa-money-bill-trend-up" class="icon" />
+            <span>{{ $t("finInvest") }}</span>
+            <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="activeDropdown === 'finInvest'">
+            <router-link to="/stock-simulator">{{ $t("simulator") }}</router-link>
+            <router-link to="/autotrade-ai">AutoTrade AI</router-link>
+            <router-link to="/quant-analysis">{{ $t("quant") }}</router-link>
+            <router-link to="/quant-simulator">{{ $t("quantSimulator") }}</router-link>
+            <router-link to="/fund-letter">{{ $t("FundLetter")}}</router-link>
+            <router-link to="/docs">{{ $t("FinData") }}</router-link>
+            <router-link to="/macro-economic">{{ $t("macroEconomic") }}</router-link>
+            <router-link to="/market-analysis">{{ $t("marketAnalysis") }}</router-link>
+          </div>
         </li>
 
-        <li v-if="!isAuthenticated && !isAuthLoading">
-          <router-link to="/login" class="login-button">{{
-            $t("login")
-          }}</router-link>
+        <li v-if="isAuthenticated" class="dropdown" ref="finEduDropdown">
+          <div class="services-dropdown" @click="toggleDropdown('finEdu')">
+            <font-awesome-icon icon="fa-solid fa-graduation-cap" class="icon" />
+            <span>{{ $t("finEdu") }}</span>
+            <span class="arrow-down"></span>
+          </div>
+          <div class="dropdown-content" v-show="activeDropdown === 'finEdu'">
+            <router-link to="/quizz">{{ $t("quiz") }}</router-link>
+            <router-link to="/event">{{ $t("event") }}</router-link>
+            <router-link to="/forum">{{ $t("forum") }}</router-link>
+            <router-link to="/course">{{ $t("course") }}</router-link>
+          </div>
         </li>
+      </ul>
 
-
-        <li v-if="isAuthenticated">
-          <NavbarNoti />
-        </li>
-
-        <li v-if="isAuthenticated" class="dropdown profile-dropdown">
-          <div class="profile-wrapper" @mouseenter="toggleProfileDropdown(true)"
-            @mouseleave="toggleProfileDropdown(false)"
-          >
-            <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" loading="eager" />
-            <div class="dropdown-profile" v-show="isProfileDropdownOpen">
-              <router-link to="/profile" class="profile" @click="toggleProfileDropdown(false)">
-                <img :src="profileImage" alt="User Image" class="inside-dropdown-user-image" @error="handleImageError"
-                  loading="eager" />
-                <p>{{ profileName }}</p>
-              </router-link>
-
-              <!-- Moved inside dropdown -->
-              <div class="fincoin-container">
+      <div class="profile-wrapper" v-if="isAuthenticated">
+        <router-link to="/profile" class="user-profile">
+          <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" />
+          <div class="user-info">
+            <div class="user-name">{{ profileName }}</div>
                 <FinCoinDisplay :balance="finCoinBalance" />
               </div>
+        </router-link>
+        
+        <div class="nav-bottom">
               <div class="language-switcher">
                 <button @click="switchLanguage('en')">
                   <img src="@/assets/us.png" alt="English" />
@@ -133,75 +108,27 @@
                   <img src="@/assets/vn.png" alt="Tiếng Việt" />
                 </button>
               </div>
-              <router-link to="#" class="dark-mode-toggle" @click="toggleDarkMode">
+          
+          <a href="#" class="dark-mode-toggle" @click.prevent="toggleDarkMode">
                 <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
-                <p>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</p>
-              </router-link>
-              <router-link to="#" class="logout" @click="logout">
+            <span>{{ isDarkMode ? $t("darkMode") : $t("lightMode") }}</span>
+          </a>
+          
+          <a href="#" class="logout" @click.prevent="logout">
                 <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
-                <p>{{ $t("logout") }}</p>
-              </router-link>
+            <span>{{ $t("logout") }}</span>
+          </a>
             </div>
           </div>
-        </li>
 
-        <li v-if="isAuthLoading" class="auth-loading">
-          <div class="loading-indicator"></div>
-        </li>
-      </ul>
-
-      <!-- Mobile version -->
-      <div class="dropdown mobile-only" :class="{ active: isDropdownOpenMobile }">
-        <div class="button-mobile dropbtn" @click="toggleDropdownMobile">
-          <div class="brand-mobile">FinBud</div>
-          <font-awesome-icon icon="fa-solid fa-chevron-down" />
-        </div>
-        <div class="dropdown-content" v-show="isDropdownOpenMobile" @mouseleave="closeDropdownMobile">
-          <router-link to="/chat-view" class="chatview" @click="toggleDropdownMobile">{{ $t("chat") }}</router-link>
-          <router-link to="/about" class="about" @click="toggleDropdownMobile">{{ $t("about") }}</router-link>
-          <router-link to="/tech" class="technology" @click="toggleDropdownMobile">{{ $t("technology") }}</router-link>
-          <div class="authenticated" v-if="isAuthenticated">
-            <strong>{{ $t("finManage") }}</strong>
-            <router-link to="/goal" class="goal" @click="toggleDropdownMobile">{{ $t("goal") }}</router-link>
-            <router-link to="/riskanalysis" class="risk-analysis" @click="toggleDropdownMobile">{{ $t("riskAnalysis")
-            }}</router-link>
-            <router-link to="/investment-calculator" class="investment-calculator" @click="toggleDropdownMobile">{{
-              $t("investmentCalculator") }}</router-link>
-            <router-link to="/mortgage-calc" class="mortgage-calc" @click="toggleDropdownMobile">{{
-              $t("mortgageCalculator") }}</router-link>
-            <router-link to="/super-investors" class="super-investors" @click="toggleDropdownMobile">{{
-              $t("superInvestors") }}</router-link>
-
-            <strong>{{ $t("finInvest") }}</strong>
-            <router-link to="/stock-simulator" class="simulator" @click="toggleDropdownMobile">{{ $t("simulator")
-            }}</router-link>
-            <router-link to="/autotrade-ai" class="autotrade" @click="toggleDropdownMobile">AutoTrade AI</router-link>
-            
-            <router-link to="/quant-analysis" class="home" @click="toggleDropdownMobile">{{ $t("quant") }}</router-link>
-            <router-link to="/quant-simulator" class="quant-simulator" @click="toggleDropdownMobile">{{
-              $t("quantSimulator") }}</router-link>
-            <router-link to="/docs" class="docs" @click="toggleDropdownMobile">
-              {{ $t("Fin Data") }}
+      <router-link v-if="!isAuthenticated && !isAuthLoading" to="/login" class="login-button">
+        {{ $t("login") }}
             </router-link>
-            <router-link to="/macro-economic" class="macro-economic" @click="toggleDropdownData(false)">{{ $t("Macro Economic Data") }}</router-link>
-
-            <strong>{{ $t("finEdu") }}</strong>
-            <router-link to="/quizz" class="quizz" @click="toggleDropdownMobile">{{ $t("quiz") }}</router-link>
-            <router-link to="/event" class="event" @click="toggleDropdownMobile">{{ $t("event") }}</router-link>
-            <router-link to="/forum" class="forum" @click="toggleDropdownMobile">{{ $t("forum") }}</router-link>
-
-            <router-link to="#" @click="logout" class="logout">{{
-              $t("logout")
-            }}</router-link>
           </div>
-          <router-link to="/login" v-if="!isAuthenticated && !isAuthLoading" class="login-button"
-            @click="toggleDropdownMobile">{{ $t("login") }}</router-link>
-          <div v-if="isAuthLoading" class="auth-loading-mobile">
-            <div class="loading-indicator"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+
+    <button class="navbar-toggle" @click="toggleMenu">
+      <font-awesome-icon icon="fa-solid fa-bars" />
+    </button>
   </nav>
 </template>
 
@@ -211,6 +138,7 @@ import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
 import NavbarNoti from "../Notification/NavbarNoti.vue";
 import LoadingPage from "@/views/Home/LoadingPage.vue";
+
 export default {
   name: "NavBar",
   components: {
@@ -220,41 +148,27 @@ export default {
   },
   data() {
     return {
-      dropdowns: {
-        General: false,
-        Invest: false,
-        Edu: false,
-        Agent: false,
-        Data: false,
-        About: false,
-        Profile: false,
-        Mobile: false,
-      },
       isDarkMode: false,
+      isMenuOpen: false,
+      isMobile: false,
+      isExpanded: false,
+      activeDropdown: null,
+      isHovered: false,
     };
   },
+  watch: {
+    isExpanded(newIsExpandedState) {
+      if (!newIsExpandedState && !this.isHovered) {
+        this.activeDropdown = null;
+      }
+    },
+    isHovered(newIsHoveredState) {
+      if (!newIsHoveredState && !this.isExpanded) {
+        this.activeDropdown = null;
+      }
+    }
+  },
   computed: {
-    isDropdownOpen() {
-      return this.dropdowns.General;
-    },
-    isDropdownOpenInvest() {
-      return this.dropdowns.Invest;
-    },
-    isDropdownOpenEdu() {
-      return this.dropdowns.Edu;
-    },
-    isDropdownOpenAgent() {
-      return this.dropdowns.Agent;
-    },
-    isDropdownOpenMobile() {
-      return this.dropdowns.Mobile;
-    },
-    isAboutDropdownOpen() {
-      return this.dropdowns.About;
-    },
-    isProfileDropdownOpen() {
-      return this.dropdowns.Profile;
-    },
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
     },
@@ -274,50 +188,43 @@ export default {
     finCoinBalance() {
       return this.$store.getters["finCoin/finCoinBalance"];
     },
+    navBarIsVisiblyExpanded() {
+      if (this.isMobile) return this.isMenuOpen;
+      return this.isExpanded || this.isHovered;
+    }
   },
-  watch: {
-    isAuthenticated(newVal) {
-      if (newVal) {
-        this.$store.dispatch("finCoin/fetchFinCoinBalance");
+  methods: {
+    handleMouseEnter() {
+      if (!this.isMobile) {
+        this.isHovered = true;
       }
     },
-  },
-
-  methods: {
+    handleMouseLeave() {
+      if (!this.isMobile) {
+        this.isHovered = false;
+      }
+    },
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen;
+      if(!this.isMenuOpen && this.isMobile) {
+          this.activeDropdown = null;
+      }
+    },
+    checkMobile() {
+      const mobileState = window.innerWidth <= 768;
+      if (this.isMobile !== mobileState) {
+          this.isMobile = mobileState;
+          if(this.isMobile) {
+              this.isExpanded = false;
+              this.isHovered = false;
+          } else {
+              this.isMenuOpen = false;
+          }
+      }
+    },
     switchLanguage(lang) {
       this.$i18n.locale = lang;
       localStorage.setItem("language", lang);
-    },
-    toggleDropdown(type, open) {
-      if (this.dropdowns.hasOwnProperty(type)) {
-        this.dropdowns[type] = open;
-      }
-
-    },
-    toggleAboutDropdown(open) {
-      this.toggleDropdown("About", open);
-    },
-
-    toggleDropdownInvest(open) {
-      this.toggleDropdown("Invest", open);
-    },
-    toggleDropdownData(open) {
-      this.toggleDropdown("Data", open);
-    },
-    toggleProfileDropdown(open) {
-      this.toggleDropdown("Profile", open);
-    },
-
-    toggleDropdownMobile() {
-      this.dropdowns.Mobile = !this.dropdowns.Mobile;
-    },
-
-    toggleDropdownEdu(open) {
-      this.toggleDropdown("Edu", open);
-    },
-
-    closeDropdownMobile() {
-      this.dropdowns.Mobile = false;
     },
     async logout() {
       try {
@@ -349,20 +256,81 @@ export default {
         }
       }
     },
-    handleLogoClick(event) {
-      event.preventDefault();
-      this.$emit("logo-clicked");
-    },
     handleImageError(event) {
       event.target.src = defaultImage;
     },
+    toggleExpand() {
+      if (this.isMobile) return;
+      this.isExpanded = !this.isExpanded;
+    },
+    toggleDropdown(name) {
+      if (this.isMobile && !this.isMenuOpen) return;
+
+      if (!this.isMobile && !this.navBarIsVisiblyExpanded) {
+        this.isExpanded = true;
+        this.$nextTick(() => {
+          this.activeDropdown = name;
+          this.positionDropdown(name);
+        });
+      } else if (this.activeDropdown === name) {
+        this.activeDropdown = null;
+      } else {
+        this.activeDropdown = name;
+        this.$nextTick(() => {
+          this.positionDropdown(name);
+        });
+      }
+    },
+    positionDropdown(name) {
+      if (this.isMobile) {
+          const dropdownContent = this.$refs[name + 'Dropdown']?.querySelector('.dropdown-content');
+          if(dropdownContent) {
+            dropdownContent.style.left = '';
+            dropdownContent.style.top = '';
+          }
+          return;
+      }
+
+      const dropdownRef = this.$refs[name + 'Dropdown'];
+      if (dropdownRef) {
+        const rect = dropdownRef.getBoundingClientRect();
+        const dropdown = dropdownRef.querySelector('.dropdown-content');
+        if (dropdown) {
+          const navBarElement = document.getElementById('nav-bar');
+          let navBarWidth = 70; 
+          if (navBarElement && navBarElement.classList.contains('expanded')) {
+             navBarWidth = 280;
+          }
+          dropdown.style.left = navBarWidth + 'px';
+          dropdown.style.top = rect.top + 'px';
+        }
+      }
+    },
+    closeDropdowns(event) {
+      if (!event.target.closest('.dropdown')) {
+        this.activeDropdown = null;
+      }
+    },
+    handleResize() {
+      this.checkMobile();
+      if (this.activeDropdown) {
+          if (this.navBarIsVisiblyExpanded || this.isMenuOpen) { 
+              this.positionDropdown(this.activeDropdown);
+          } else {
+              this.activeDropdown = null; 
+          }
+      }
+    }
   },
-  async mounted() {
+  mounted() {
+    this.checkMobile();
+    window.addEventListener('resize', this.handleResize);
+
     const savedLang = localStorage.getItem("language");
     if (savedLang) this.$i18n.locale = savedLang;
 
     if (!this.$store.getters["users/currentUser"]) {
-      await this.$store.dispatch("users/fetchCurrentUser");
+      this.$store.dispatch("users/fetchCurrentUser");
     }
 
     const storedDarkMode = localStorage.getItem("darkMode");
@@ -371,578 +339,531 @@ export default {
     document.body.classList.toggle("dark-mode", this.isDarkMode);
 
     if (this.isAuthenticated) {
-      await this.$store.dispatch("finCoin/fetchFinCoinBalance");
+      this.$store.dispatch("finCoin/fetchFinCoinBalance");
     }
-
-    this.$router.afterEach(() => {
-      this.closeDropdownMobile();
-    });
+    document.addEventListener('click', this.closeDropdowns);
   },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.handleResize);
+    document.removeEventListener('click', this.closeDropdowns);
+  }
 };
 </script>
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
-.language-switcher {
-  display: flex;
-  margin-left: 2rem;
-}
-
-.language-switcher button {
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.language-switcher button img {
-  width: 40px;
-  height: auto;
-  transition: transform 0.2s ease;
-}
-
-.language-switcher button:hover img {
-  transform: scale(1.1);
-  /* Slightly enlarge the flag on hover */
-}
-
 .nav-bar {
-  background: linear-gradient(to bottom,
-      rgba(255, 255, 255, 0.85),
-      rgba(255, 255, 255, 0));
-  width: 100%;
-  height: 80px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0rem 2rem;
-  font-family: "Space Grotesk", sans-serif;
   position: fixed;
+  left: 0;
+  top: 0;
+  width: 70px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 0.75rem;
   z-index: 1000;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-:root.dark-mode .nav-bar {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+.nav-bar.expanded {
+  width: 280px;
+}
+
+.logo-link {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
 }
 
 .navbar-brand {
-  font-size: 4rem;
-  font-weight: bold;
-  color: var(--logo-color);
-  cursor: pointer;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  height: 100%;
+  height: 55px;
   width: auto;
-  object-fit: contain;
-}
-
-:root.dark-mode .navbar-brand {
-  filter: invert(1);
-  /* This will make the PNG icons white */
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
 }
 
 .nav-right {
   display: flex;
-  align-items: center;
-  margin-right: 3rem;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.nav-right::-webkit-scrollbar {
+  width: 4px;
+}
+
+.nav-right::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nav-right::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
 }
 
 .nav-items {
   list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .nav-items li {
+  width: 100%;
+}
+
+/* Chat button special styling */
+.chat-button {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  margin: 0.5rem 0;
+  background: #000;
+  color: #fff !important;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  display: flex;
-  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.nav-items li a {
-  color: var(--text-primary);
-  text-decoration: none;
-  transition: color 0.3s ease;
-  font-size: clamp(0.5rem, 5vw, 1rem);
-  white-space: nowrap;
+.chat-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
 }
 
-.nav-items li .chatview {
-  border-radius: 10px;
-  padding: 5px 10px;
-  background-color: black;
-  color: white;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.chat-button:hover::before {
+  transform: translate(-50%, -50%) scale(2);
 }
 
-.nav-items li .login-button {
-  background-color: black;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 70px;
+.chat-button .icon {
+  min-width: 24px;
+  margin-right: 1rem;
+  font-size: 1.2rem;
+  position: relative;
+  z-index: 2;
 }
 
-.nav-items li a:not(.login-button):not(.chatview):hover {
-  color: var(--accent-color);
+.chat-button span {
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
 }
 
-.login-button:hover,
-.chatview:hover {
-  transform: scale(1.05);
+.nav-bar.expanded .chat-button span {
+  opacity: 1;
+  transform: translateX(0);
 }
 
+/* Navigation items styling */
+.nav-items li a,
 .services-dropdown {
-  cursor: pointer;
-  position: relative;
-  font-size: clamp(0.6rem, 5.1vw, 1rem);
-  color: var(--text-primary);
-  padding: 8px 12px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
   white-space: nowrap;
-  text-align: center;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
+.nav-items li a .icon,
+.services-dropdown .icon {
+  min-width: 24px;
+  margin-right: 1rem;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-items li a span,
+.services-dropdown span {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.nav-bar.expanded .nav-items li a span,
+.nav-bar.expanded .services-dropdown span {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.nav-items li a:hover,
 .services-dropdown:hover {
-  color: var(--accent-color);
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateX(5px);
 }
 
-.services-dropdown .arrow-down {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  vertical-align: middle;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid var(--text-primary);
+.nav-items li a:hover .icon,
+.services-dropdown:hover .icon {
+  transform: scale(1.1);
 }
 
-.services-dropdown:hover .arrow-down {
-  border-top-color: var(--accent-color);
-}
-
-.dropdown:hover .services-dropdown {
-  color: var(--accent-color);
-}
-
+/* Dropdown styling */
 .dropdown {
   position: relative;
-  display: inline-block;
-}
-
-/* Add pseudo-element to connect dropdown to trigger */
-.dropdown::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 20px;
-  /* Height of connection area */
-  bottom: -20px;
-  /* Position it below the dropdown trigger */
-  left: 0;
-  z-index: 1000;
-  pointer-events: none;
-  /* Makes it not interfere with clicks */
 }
 
 .dropdown-content {
-  display: block;
-  position: absolute;
-  background-color: var(--bg-primary);
-  border: 2px solid var(--text-primary);
-  min-width: 180px;
-  /* Increased from 160px to accommodate longer text */
-  box-shadow: 0px 8px 16px 0px var(--shadow-color);
-  z-index: 1001;
-  /* Increased z-index to prevent overlap */
-  border-radius: 15px;
-  top: 40px;
-  /* Position below the navbar item */
-  left: 0;
-  /* Align with left edge of the parent */
-  margin-top: 0;
-  /* Reduced from 10px to eliminate gap */
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-  transform-origin: top left;
-  transform: translateY(10px);
-  text-align: left;
-  overflow: hidden;
+  position: fixed;
+  left: 280px;
+  top: auto;
+  min-width: 240px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  backdrop-filter: blur(10px);
 }
 
-.dropdown-profile {
-  position: absolute;
-  background-color: var(--bg-primary);
-  border: 2px solid var(--text-primary);
-  min-width: 220px;
-  /* Increased width */
-  box-shadow: 0px 8px 16px 0px var(--shadow-color);
-  z-index: 1001;
-  /* Increased z-index */
-  right: 0;
-  top: 100%;
-  /* Position below user image */
-  border-radius: 15px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-  transform: translateY(10px);
-  left: auto;
-  /* Ensure right alignment */
-  transform-origin: top right;
-  padding-top: 10px;
-  /* Add padding to top of dropdown content */
-  margin-top: 0;
-  /* No gap between trigger and content */
-  overflow: hidden;
-  /* Ensure content stays within border radius */
+.nav-bar:not(.expanded):not(:hover) .dropdown-content {
+  left: 70px;
 }
 
-.dropdown-content:before {
-  content: "";
-  position: absolute;
-  top: 0px;
-  /* Moved up to account for padding */
-  left: 20px;
-  /* Position arrow more to the left */
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid var(--bg-primary);
-}
-
-/* Add class for profile-dropdown that will work in all browsers */
-.dropdown.profile-dropdown::after {
-  width: 35px;
-  height: 20px;
-  bottom: -20px;
-  right: 0;
-  left: auto;
-}
-
-/* Show dropdown on hover */
-.dropdown:hover .dropdown-content {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown:hover .dropdown-profile {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Support for v-show="true" */
-.dropdown-content[style*="display: block"],
-.dropdown-profile[style*="display: block"] {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Support for v-if */
-.dropdown-content:not([style*="display: none"]),
-.dropdown-profile:not([style*="display: none"]) {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Mobile dropdown active state - keep for mobile toggle functionality */
-.dropdown.active .dropdown-content {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown-content a:first-child:hover,
-.dropdown-profile a:first-child:hover {
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-}
-
-.dropdown-content a:last-child:hover,
-.dropdown-profile a:last-child:hover {
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-}
-
-.dropdown-content a,
-.dropdown-profile a {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  padding: 6px 12px;
-  /* giảm padding */
-  font-size: 12px;
-  /* chữ nhỏ hơn */
-  margin: 1px 0;
-  /* ít khoảng cách hơn */
-  line-height: 1.2;
-  /* dòng sát nhau hơn */
-  text-decoration: none;
+.dropdown-content a {
   display: flex;
   align-items: center;
-  border-bottom: 1px dotted var(--border-color, rgba(226, 215, 215, 0.5));
-  height: auto;
-  /* Changed from fixed height */
-  min-height: 24px;
-  /* Minimum height */
-  border-left: none;
-  border-right: none;
-  transition: background-color 0.2s ease;
-  margin: 2px 0;
-  /* Added margin between items */
+  padding: 0.8rem 1rem;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.dropdown-content a:nth-child(1),
-.dropdown-profile a:nth-child(1) {
-  border-top: none;
-  border-top-left-radius: 13px;
-  border-top-right-radius: 13px;
-  margin-top: 0;
-  /* No margin for first item */
-}
-
-.dropdown-content a:last-child,
-.dropdown-profile a:last-child {
-  border-bottom: none;
-  border-bottom-left-radius: 13px;
-  border-bottom-right-radius: 13px;
-  margin-bottom: 0;
-  /* No margin for last item */
-}
-
-.dropdown-content .authenticated a:last-child {
-  border-bottom: none;
-}
-
-.dropdown-content .authenticated a:nth-child(1) {
-  border-top: none;
-}
-
-.dropdown-content .authenticated {
-  width: 100%;
-}
-
-/* Remove animation that might cause issues */
-.dropdown-content,
-.dropdown-profile {
-  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-}
-
-.dropdown-content a:hover,
-.dropdown-profile a:hover {
-  background-color: var(--bg-secondary);
-}
-
-.user-image {
-  position: relative;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  object-fit: cover;
-  background-color: #f0f0f0;
-  border: 1px solid var(--border-color, rgba(226, 215, 215, 0.5));
-}
-
-.user-image:hover {
-  opacity: 0.8;
-  transform: scale(1.05);
-}
-
-.inside-dropdown-user-image,
-.icon {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  margin-right: 10px;
-  margin-left: 10px;
-  cursor: pointer;
-  object-fit: cover;
-  background-color: #f0f0f0;
-}
-
-.dropdown-profile p {
-  margin-left: 50px;
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.dropdown-content a:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateX(5px);
 }
 
 .arrow-down {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 5px;
-  vertical-align: middle;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid white;
+  margin-left: auto;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.3s ease;
 }
 
-.mobile-only {
+.services-dropdown:hover .arrow-down {
+  transform: rotate(-45deg) translate(-2px, -2px);
+}
+
+/* Profile section */
+.profile-wrapper {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  gap: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.user-profile:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.user-image {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  min-width: 42px;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.nav-bar.expanded .user-info {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.user-name {
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* Bottom section */
+.nav-bottom {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-bottom a {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  color: #333;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.nav-bottom a .icon {
+  min-width: 24px;
+  margin-right: 1rem;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-bottom a span {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.nav-bar.expanded .nav-bottom a span {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.nav-bottom a:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateX(5px);
+}
+
+.nav-bottom a:hover .icon {
+  transform: scale(1.1);
+}
+
+/* Language switcher */
+.language-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+
+.language-switcher button {
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.language-switcher button img {
+  width: 28px;
+  height: auto;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.language-switcher button:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.language-switcher button:hover img {
+  transform: scale(1.1);
+}
+
+/* Dark mode */
+:root.dark-mode .nav-bar {
+  background: rgba(0, 0, 0, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .nav-items li a,
+:root.dark-mode .services-dropdown,
+:root.dark-mode .nav-bottom a {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:root.dark-mode .nav-items li a:hover,
+:root.dark-mode .services-dropdown:hover,
+:root.dark-mode .nav-bottom a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .dropdown-content {
+  background: rgba(20, 20, 20, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .dropdown-content a {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:root.dark-mode .dropdown-content a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .user-name {
+  color: white;
+}
+
+:root.dark-mode .chat-button {
+  background: #fff;
+  color: #000 !important;
+}
+
+:root.dark-mode .chat-button::before {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
+}
+
+/* Toggle button */
+.expand-toggle {
+    position: absolute;
+  top: 1.5rem;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  background: #000;
+  border: none;
+  border-radius: 50%;
+  color: white;
+    display: flex;
+    align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2001;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.expand-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.expand-toggle .icon {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-bar.expanded .expand-toggle .icon {
+  transform: rotate(180deg);
+}
+
+:root.dark-mode .expand-toggle {
+  background: #fff;
+  color: #000;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .nav-bar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+
+  .nav-bar.active {
+    transform: translateX(0);
+  }
+
+  .navbar-toggle {
+    display: block;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 2001;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+    color: #333;
+    backdrop-filter: blur(10px);
+  }
+
+  .navbar-toggle:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+  }
+
+  .dropdown-content {
+    position: static;
+    margin: 0.5rem 0;
+    width: 100%;
+    box-shadow: none;
+    border-left: 2px solid rgba(0,0,0,0.1);
+    border-radius: 0 0 12px 12px;
+    left: auto !important;
+    top: auto !important;
+  }
+
+  .nav-bar.active .chat-button span,
+  .nav-bar.active .nav-items li a span,
+  .nav-bar.active .services-dropdown span,
+  .nav-bar.active .user-info,
+  .nav-bar.active .nav-bottom a span {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+   }
+}
+
+/* Mobile navbar toggle */
+.navbar-toggle {
   display: none;
 }
 
-.dropdown.active .dropdown-content {
-  display: block;
-  opacity: 1;
-  transform: translate(-15px, 0px);
+/* Mobile navbar toggle dark mode */
+:root.dark-mode .navbar-toggle {
+  background: rgba(0, 0, 0, 0.95);
+  color: #fff;
 }
 
-@media (max-width: 768px) {
-
-  /* Disable the hover connection for mobile */
-  .dropdown::after {
-    display: none;
-  }
-
-  .dropdown-content,
-  .dropdown-profile {
-    padding-top: 0;
-  }
-
-  .nav-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 7%;
-  }
-
-  .mobile-only {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-
-  .button-mobile {
-    position: absolute;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .navbar-brand {
-    display: none;
-  }
-
-  .brand-mobile {
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--accent-color);
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .nav-items {
-    display: none;
-  }
-
-  .mobile-only .dropdown-content {
-    top: 40px;
-    width: 200px;
-    max-height: 80vh;
-    /* Limit height on mobile */
-    overflow-y: auto;
-    /* Allow scrolling */
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
-    transform-origin: top center;
-    background-color: var(--bg-primary);
-    border: 2px solid var(--text-primary);
-  }
-
-  .mobile-only .dropdown-content a {
-    padding: 14px 16px;
-    /* Larger touch targets on mobile */
-    border-left: none;
-    border-right: none;
-  }
-
-  .dropdown.active .dropdown-content {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* Fix for authenticated section in mobile dropdown */
-  .dropdown-content .authenticated strong {
-    display: block;
-    padding: 10px 16px;
-    background-color: var(--bg-secondary);
-    margin-top: 5px;
-    font-weight: bold;
-  }
+:root.dark-mode .navbar-toggle:hover {
+  background: rgba(0, 0, 0, 1);
 }
-
-
-
-.auth-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-}
-
-.loading-indicator {
-  width: 24px;
-  height: 24px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #45a049;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.auth-loading-mobile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  margin: 5px 0;
-}
-
-/* Only keep one instance of the keyframes animation */
 </style>

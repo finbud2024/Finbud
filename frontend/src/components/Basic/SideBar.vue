@@ -1,98 +1,114 @@
 <template>
-  <aside class="side-bar">
-    <div class="sidebar-header">
-      <router-link to="/">
-        <div class="footer-image">
-          <img src="@/assets/home-page/FinBudPix.png" class="logo-img" alt="FinBud Logo" />
-        </div>
-      </router-link>
-    </div>
-    <button class="add-thread-btn" @click="addThread()">
-      <font-awesome-icon icon="fa-solid fa-plus" />
+  <div>
+    <button class="toggle-btn" @click="toggleSidebar">
+      <svg v-if="isCollapsed" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+      <svg v-else xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
     </button>
-    <ul class="thread-list">
-      <template v-if="groupedThreads.today.length">
-        <div class="group-label">Today</div>
-        <li v-for="thread in groupedThreads.today" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
-          <div v-if="!thread.editing" class="thread-item">
-            <div class="thread-name">{{ thread.name }}</div>
-            <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
-              <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
-            </div>
-            <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
-              <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
-                <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
-                <div>{{ $t('chatComponent.rename') }}</div>
-              </div>
-              <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
-                <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
-                <div>{{ $t('chatComponent.delete') }}</div>
-              </div>
-            </div>
-          </div>
-          <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
-        </li>
-      </template>
 
-      <template v-if="groupedThreads.yesterday.length">
-        <div class="group-label">Yesterday</div>
-        <li v-for="thread in groupedThreads.yesterday" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
-          <div v-if="!thread.editing" class="thread-item">
-            <div class="thread-name">{{ thread.name }}</div>
-            <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
-              <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
-            </div>
-            <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
-              <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
-                <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
-                <div>{{ $t('chatComponent.rename') }}</div>
-              </div>
-              <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
-                <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
-                <div>{{ $t('chatComponent.delete') }}</div>
-              </div>
-            </div>
-          </div>
-          <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
-        </li>
-      </template>
+    <div class="overlay" :class="{ active: !isCollapsed }" @click="closeSidebar"></div>
 
-      <template v-if="groupedThreads.last30Days.length">
-        <div class="group-label">Previous 30 Days</div>
-        <li v-for="thread in groupedThreads.last30Days" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
-          <div v-if="!thread.editing" class="thread-item">
-            <div class="thread-name">{{ thread.name }}</div>
-            <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
-              <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
-            </div>
-            <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
-              <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
-                <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
-                <div>{{ $t('chatComponent.rename') }}</div>
-              </div>
-              <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
-                <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
-                <div>{{ $t('chatComponent.delete') }}</div>
-              </div>
-            </div>
+    <div class="side-bar" :class="{ collapsed: isCollapsed }">
+      <div class="sidebar-header">
+        <router-link to="/">
+          <div class="footer-image">
+            <img src="@/assets/home-page/FinBudPix.png" class="logo-img" alt="FinBud Logo" />
           </div>
-          <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
-        </li>
-      </template>
-    </ul>
-    <div v-if="showConfirmDeleteModal" class="delete-prompt-overlay">
-      <div class="delete-prompt-content">
-        <div class="delete-header">{{ $t('chatComponent.deleteConfirm') }}</div>
-        <div class="delete-body">
-          <p>{{ $t('chatComponent.deleteConfirmMessage') }} <strong class="delete-thread-name">{{ threads[deleteIndex].name }}.</strong></p>
-          <div class="delete-button-container">
-            <button class="cancel-button" @click="cancelDelete">{{ $t('chatComponent.cancel') }}</button>
-            <button class="confirm-button" @click="confirmDelete">{{ $t('chatComponent.delete') }}</button>
+        </router-link>
+      </div>
+      <button class="add-thread-btn" @click="addThread()">
+        <font-awesome-icon icon="fa-solid fa-plus" />
+      </button>
+      <ul class="thread-list">
+        <template v-if="groupedThreads.today.length">
+          <div class="group-label">Today</div>
+          <li v-for="thread in groupedThreads.today" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
+            <div v-if="!thread.editing" class="thread-item">
+              <div class="thread-name">{{ thread.name }}</div>
+              <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
+                <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
+              </div>
+              <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
+                <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
+                  <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
+                  <div>{{ $t('chatComponent.rename') }}</div>
+                </div>
+                <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
+                  <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
+                  <div>{{ $t('chatComponent.delete') }}</div>
+                </div>
+              </div>
+            </div>
+            <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
+          </li>
+        </template>
+
+        <template v-if="groupedThreads.yesterday.length">
+          <div class="group-label">Yesterday</div>
+          <li v-for="thread in groupedThreads.yesterday" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
+            <div v-if="!thread.editing" class="thread-item">
+              <div class="thread-name">{{ thread.name }}</div>
+              <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
+                <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
+              </div>
+              <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
+                <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
+                  <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
+                  <div>{{ $t('chatComponent.rename') }}</div>
+                </div>
+                <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
+                  <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
+                  <div>{{ $t('chatComponent.delete') }}</div>
+                </div>
+              </div>
+            </div>
+            <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
+          </li>
+        </template>
+
+        <template v-if="groupedThreads.last30Days.length">
+          <div class="group-label">Previous 30 Days</div>
+          <li v-for="thread in groupedThreads.last30Days" :key="thread.id" :class="['thread', { clicked: thread.clicked }]" @click="handleClick(threads.findIndex(t => t.id === thread.id))">
+            <div v-if="!thread.editing" class="thread-item">
+              <div class="thread-name">{{ thread.name }}</div>
+              <div class="edit-btn" @click.stop="toggleDropdown(threads.findIndex(t => t.id === thread.id))">
+                <font-awesome-icon icon="fa-solid fa-ellipsis" class="icon" />
+              </div>
+              <div v-if="thread.openDropdown" class="dropdown" ref="dropdowns">
+                <div @click.stop="editThread(threads.findIndex(t => t.id === thread.id))">
+                  <font-awesome-icon icon="fa-solid fa-pen" class="icon" />
+                  <div>{{ $t('chatComponent.rename') }}</div>
+                </div>
+                <div @click.stop="promptDelete(threads.findIndex(t => t.id === thread.id))" class="delete-thread">
+                  <font-awesome-icon icon="fa-solid fa-trash-can" class="icon" />
+                  <div>{{ $t('chatComponent.delete') }}</div>
+                </div>
+              </div>
+            </div>
+            <input v-else :ref="`editInput-${threads.findIndex(t => t.id === thread.id)}`" v-model="thread.editedName" @keyup.enter="saveThreadName(thread, threads.findIndex(t => t.id === thread.id))" @blur="cancelEdit(threads.findIndex(t => t.id === thread.id))" />
+          </li>
+        </template>
+      </ul>
+      <div v-if="showConfirmDeleteModal" class="delete-prompt-overlay">
+        <div class="delete-prompt-content">
+          <div class="delete-header">{{ $t('chatComponent.deleteConfirm') }}</div>
+          <div class="delete-body">
+            <p>{{ $t('chatComponent.deleteConfirmMessage') }} <strong class="delete-thread-name">{{ threads[deleteIndex].name }}.</strong></p>
+            <div class="delete-button-container">
+              <button class="cancel-button" @click="cancelDelete">{{ $t('chatComponent.cancel') }}</button>
+              <button class="confirm-button" @click="confirmDelete">{{ $t('chatComponent.delete') }}</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </aside>
+  </div>
 </template>
 
 <script>
@@ -109,6 +125,7 @@ export default {
       threads: [],
       deleteIndex: null,
       showConfirmDeleteModal: false,
+      isCollapsed: false
     };
   },
   computed: {
@@ -243,6 +260,12 @@ export default {
     closeDropdowns() {
       this.threads.forEach(thread => thread.openDropdown = false);
     },
+    toggleSidebar() {
+      this.isCollapsed = !this.isCollapsed;
+    },
+    closeSidebar() {
+      this.isCollapsed = true;
+    }
   },
   async mounted() {
     if (this.isAuthenticated) {
@@ -284,23 +307,89 @@ export default {
 
 <style scoped>
 .side-bar {
-  width: 200px;
-  background-color: var(--bg-primary);
+  width: 280px;
+  background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
   padding: 20px;
-  height: 100%;
+  height: 100vh;
   overflow-y: auto;
   color: var(--text-primary);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.side-bar.collapsed {
+  transform: translateX(-100%);
+}
+
+.toggle-btn {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  z-index: 1001;
+  background: var(--bg-primary);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+  transform: scale(1.1);
+}
+
+.toggle-btn svg {
+  width: 24px;
+  height: 24px;
+  color: var(--text-primary);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 .sidebar-header {
   font-weight: bold;
-  padding-bottom: 15px;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
   display: flex;
-  justify-content: start;
+  justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
+  position: relative;
+}
+
+.sidebar-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -20px;
+  right: -20px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
 }
 
 .logo-img {
@@ -308,130 +397,170 @@ export default {
   width: 100%;
   height: auto;
   object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.05);
 }
 
 .add-thread-btn {
-  cursor: pointer;
-  padding: 10px;
-  background-color: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  transition: background-color 0.3s;
   width: 100%;
-  height: 35px;
+  padding: 12px;
+  background: linear-gradient(45deg, #000, #333);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .add-thread-btn:hover {
-  background-color: var(--text-primary);
-  color: white;
-}
-
-.edit-btn {
-  color: var(--text-primary);
-}
-
-.edit-btn:hover {
-  cursor: pointer;
-  transition: transform 0.3s;
-  transform: scale(1.2);
-}
-
-.group-label {
-  margin: 0.75rem 0 0.25rem;
-  font-weight: 600;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  opacity: 0.6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(45deg, #333, #000);
 }
 
 .thread-list {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.thread-list li {
+.group-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 20px 0 10px;
+  padding-left: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.thread {
+  margin-bottom: 8px;
   border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .thread-item {
+  padding: 12px 15px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  background: var(--bg-primary);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.thread-item:hover {
+  background: var(--hover-bg);
+  transform: translateX(5px);
+}
+
+.thread.clicked .thread-item {
+  background: #000;
+  color: white;
+  transform: translateX(5px);
 }
 
 .thread-name {
-  white-space: nowrap;
+  flex: 1;
   overflow: hidden;
-  margin-right: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.95rem;
 }
 
-.thread-list li:hover {
-  color: white;
-  cursor: pointer;
-  background-color: var(--text-primary);
-}
-
-.thread-list li:hover .edit-btn {
-  color: white;
-}
-
-.thread-list input {
-  width: 80%;
-  padding: 8px;
-  border: 1px solid var(--border-color);
+.edit-btn {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 5px;
   border-radius: 5px;
-  background-color: white;
-  color: black;
+  cursor: pointer;
 }
 
-.thread.clicked {
-  background-color: black;
-  color: white;
-}
-
-.thread.clicked .edit-btn {
-  color: white;
+.thread-item:hover .edit-btn {
+  opacity: 1;
 }
 
 .dropdown {
-  display: block;
   position: absolute;
-  color: var(--text-primary);
-  background-color: var(--card-bg);
-  min-width: 120px;
-  box-shadow: 0px 8px 16px 0px var(--shadow-color);
-  z-index: 1;
-  left: 190px;
-  margin-top: 140px;
-  border-radius: 10px;
+  right: 0;
+  top: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideIn 0.3s ease;
 }
 
 .dropdown > div {
+  padding: 10px 15px;
   display: flex;
-  flex-direction: row;
-  margin: 5px;
-  padding: 10px 20px;
-  text-align: center;
-  transition: background-color 0.3s;
-  border-radius: 10px;
-  font-size: 0.9rem;
-}
-
-.dropdown .icon {
-  margin-right: 15px;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .dropdown > div:hover {
-  background-color: var(--hover-bg);
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .delete-thread {
-  color: red;
+  color: #dc2626;
+}
+
+.delete-thread:hover {
+  background: rgba(220, 38, 38, 0.1) !important;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+input:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .side-bar {
+    width: 80%;
+    max-width: 300px;
+  }
 }
 
 .delete-prompt-overlay {

@@ -89,99 +89,159 @@ export default defineComponent({
 
 <style scoped>
 .pestle-page {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  margin-top: 30px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
+  text-align: center;
 }
 
 .text-content {
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
 }
 
 .subtitle {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2d3748;
 }
 
 .description {
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  color: #4a5568;
 }
 
 .industry-input-container {
-  margin-top: 2rem;
+  margin-top: 3rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .industry-input {
-  margin-top: 2rem;
-  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .label {
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 600;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: #2d3748;
 }
 
 .required {
-  color: red;
+  color: #e53e3e;
+  margin-left: 4px;
 }
 
 .input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 1rem;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .start-button {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #000000;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  background: #000000;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  text-align: center;
+  transition: all 0.3s ease;
 }
 
 .start-button:hover {
-  background-color: #0056b3;
+  background: #1a1a1a;
+  transform: translateY(-2px);
 }
 
 .start-button:disabled {
-  background-color: #ccc;
+  background: #cbd5e0;
   cursor: not-allowed;
+  transform: none;
+}
+
+.back-button {
+  margin-bottom: 2rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2d3748;
+  background: #e2e8f0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.back-button:hover {
+  background: #cbd5e0;
+}
+
+.back-button::before {
+  content: '←';
+  font-size: 1.2rem;
 }
 
 .pestle-container {
   margin-top: 2rem;
 }
 
-.back-button {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #000000;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+@media (max-width: 768px) {
+  .pestle-page {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+
+  .industry-input-container {
+    padding: 1.5rem;
+  }
 }
 </style>

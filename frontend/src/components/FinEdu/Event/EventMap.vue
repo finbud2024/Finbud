@@ -48,6 +48,12 @@
         />
       </Map>
     </div>
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
+    <div v-if="error" class="error-message">
+      {{ error }}
+    </div>
   </div>
 </template>
 
@@ -71,6 +77,8 @@ export default defineComponent({
     const eventRefs = ref({});
     const searchQuery = ref("");
     const { t, locale } = useI18n();
+    const loading = ref(false);
+    const error = ref(null);
 
     // Debounced search function to prevent excessive calls
     const debouncedSearch = debounce((query) => {
@@ -101,14 +109,18 @@ export default defineComponent({
     // Fetch events from the API
     const fetchEvents = async () => {
       try {
+        loading.value = true;
         const response = await axios.get("/.netlify/functions/server/events");
         events.value = response.data;
         events.value.sort((a, b) => new Date(b.date) - new Date(a.date));
         if (events.value.length > 0) {
           adjustMapToFitMarkers();
         }
-      } catch (error) {
-        console.error("❌ Error fetching events:", error);
+      } catch (err) {
+        console.error("❌ Error fetching events:", err);
+        error.value = err.message || "An error occurred while fetching events.";
+      } finally {
+        loading.value = false;
       }
     };
 
@@ -203,6 +215,8 @@ export default defineComponent({
       eventRefs,
       searchQuery,
       handleSearch,
+      loading,
+      error,
     };
   },
 });
@@ -214,6 +228,49 @@ export default defineComponent({
   display: flex;
   width: 100%;
   height: 600px;
+  position: relative;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #dc2626;
+  background: #fee2e2;
+  border-radius: 12px;
+  margin: 1rem;
+  animation: shake 0.5s ease;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
 
 .event-list {

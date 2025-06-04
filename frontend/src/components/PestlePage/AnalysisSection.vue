@@ -227,274 +227,249 @@ export default {
 
 <style scoped>
 .section {
-  margin-bottom: 32px;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 1.5rem;
+  background: #f8fafc;
   cursor: pointer;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.3s ease;
+}
+
+.section-header:hover {
+  background: #f1f5f9;
 }
 
 .section-title-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .section-icon {
-  padding: 8px;
-  border-radius: 9999px;
-}
-
-.user-icon {
-  background-color: rgb(243, 244, 246);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: all 0.3s ease;
 }
 
 .globe-icon {
-  background-color: rgb(220, 252, 231);
-  color: rgb(22, 163, 74);
+  background: #f0fdf4;
+  color: #15803d;
 }
 
 .section-title {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
+}
+
+.section-title h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 .status-indicator {
   width: 8px;
   height: 8px;
-  background-color: rgb(34, 197, 94);
-  border-radius: 9999px;
-  margin-right: 8px;
-}
-
-.section-title h2 {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.dropdown-arrow {
-  width: 20px;
-  height: 20px;
-  transform: rotate(0);
-  transition: transform 0.2s;
-}
-
-details[open] .dropdown-arrow {
-  transform: rotate(180deg);
+  background: #22c55e;
+  border-radius: 50%;
 }
 
 .section-content {
-  margin-top: 24px;
-  margin-left: 40px;
+  padding: 2rem;
 }
 
-/* Form Elements */
-.form-group {
-  margin-bottom: 16px;
-}
-
-.required {
-  color: rgb(239, 68, 68);
-}
-
-.form-input {
-  width: 100%;
-  padding: 12px;
-  background-color: rgb(243, 244, 246);
-  border-radius: 24px;
-  transition: all 0.15s;
-}
-
-.form-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgb(183, 169, 255);
-}
-
-/* Info Box */
 .info-box {
-  background-color: rgb(239, 246, 255);
-  border-radius: 24px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: #f0f9ff;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 1rem;
+  animation: slideIn 0.5s ease;
 }
 
 .info-icon {
   width: 24px;
   height: 24px;
-  color: rgb(59, 130, 246);
+  color: #0369a1;
+  flex-shrink: 0;
 }
 
 .info-box span {
-  color: rgb(29, 78, 216);
+  color: #0c4a6e;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
-/* Action Toolbar */
 .action-toolbar {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .tool-button {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background-color: rgb(243, 244, 246);
-  padding: 8px 12px;
-  border-radius: 18px;
-  font-size: 14px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #475569;
   cursor: pointer;
-  transition: background-color 0.15s;
+  transition: all 0.3s ease;
 }
 
 .tool-button:hover {
-  background-color: rgb(229, 231, 235);
+  background: #e2e8f0;
+  transform: translateY(-1px);
 }
 
 .tool-icon {
-  width: 16px;
-  height: 16px;
-}
-
-.loading-indicator {
-  display: flex;
-  flex-direction: column;
-  /* Stack spinner and text vertically */
-  justify-content: center;
-  align-items: center;
-  min-height: 100px;
-  color: #6b7280;
-  font-style: italic;
-}
-
-.spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border-left-color: #4f46e5;
-  /* Use a theme color */
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-  /* Add space between spinner and text */
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Analysis Content */
-.analysis-section {
-  padding-bottom: 32px;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .analysis-content {
-  color: rgb(55, 65, 81);
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.analysis-content p {
-  margin-bottom: 16px;
+  color: #334155;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .analysis-content h3 {
-  font-weight: 600;
   font-size: 1.1rem;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 1.5rem 0 1rem;
 }
 
 .analysis-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 1rem;
+  gap: 1rem;
 }
 
 .analysis-item {
   display: flex;
   align-items: flex-start;
-  animation: fadeIn 0.3s ease-out;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.analysis-item:hover {
+  background: #f8fafc;
 }
 
 .bullet {
-  color: rgb(156, 163, 175);
-  margin-right: 8px;
-  line-height: 1.4;
+  color: #94a3b8;
+  font-size: 1.2rem;
+  line-height: 1;
 }
 
-.highlight {
-  font-weight: 600;
-  margin-right: 4px;
+.item-content {
+  flex: 1;
 }
 
-.icon {
-  width: 20px;
-  height: 20px;
-}
-
-@keyframes fadeIn {
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(5px);
+    transform: translateY(-10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Mobile-specific styles */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #000000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-indicator p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 768px) {
-  .analysis-section {
-    padding: 10px;
+  .section-header {
+    padding: 1rem;
   }
 
   .section-content {
-    margin-left: 10px;
+    padding: 1.25rem;
   }
 
-  .analysis-list {
-    padding-left: 0;
-    margin-left: 0;
-  }
-
-  .analysis-item {
-    padding-left: 0;
-  }
-
-  .bullet {
-    margin-right: 4px;
+  .section-icon {
+    width: 32px;
+    height: 32px;
   }
 
   .section-title h2 {
-    font-size: 18px;
+    font-size: 1.1rem;
   }
 
   .info-box {
-    padding: 12px;
-    border-radius: 16px;
+    padding: 1rem;
   }
 
   .tool-button {
-    padding: 6px 10px;
-    font-size: 13px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
   }
 }
 </style>

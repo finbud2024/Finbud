@@ -381,20 +381,21 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   
   <style scoped>
   .custom-table {
-    width: auto;
-    border-collapse: collapse;
-    margin: 16px 0;
-    
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 2rem 0;
+    background: var(--bg-primary);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
   
   .custom-table th,
   .custom-table td {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    border-left: none;
-    border-right: none;
-    padding: 8px 16px;
-    /*text-align: center;*/
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
   }
   .custom-table td{
     border:none;
@@ -402,7 +403,7 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   .sticky-header {
     position: sticky; /* Makes the header row stick */
     top: 0; /* Sticks the header to the top of the table */
-    background-color: var(--quant-card-background); /* Background color for the header */
+    background-color: var(--bg-secondary); /* Background color for the header */
     z-index: 1; /* Ensures the header stays above other content */
   
   }
@@ -424,9 +425,10 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   .graph-cell {
     max-width: 100%;
     width: 100%;
-    background-color: var(--quant-card-background);
+    background-color: var(--bg-primary);
     padding: 12px;
     text-align: center;
+    animation: slideIn 0.5s ease;
   }
   
   .fake-graph {
@@ -449,63 +451,109 @@ watch(selectedTickers, loadRiskMetrics, { deep: true, immediate: true });
   }
   .controls {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-    width: 100%;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   
   label {
     display: flex;
     flex-direction: column;
-    align-items: start;
+    gap: 0.5rem;
   }
   
   .label-text {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    color:var(--quant-text-color); /* Set a primary color (blue) */
-  
+    font-weight: 500;
+    color: var(--text-primary);
   }
 
   .page-header {
-    font-size: 2rem; /* Increase the font size */
-    font-weight: bold; /* Make the text bold */
-    text-align: center; /* Center the header */
-    margin: 1.5rem 0; /* Add spacing above and below */
-    color: var(--quant-text-color); /* Set a primary color (blue) */
-    text-transform: uppercase; /* Make the text uppercase */
-    letter-spacing: 0.1rem; /* Add some spacing between letters */
-    border-bottom: 2px solid var(--quant-divider-line-color); /* Add a subtle underline */
-    padding-bottom: 0.5rem; /* Add padding below the text */
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(45deg, #1a1a1a, #4a4a4a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeIn 1s ease;
   }
   .chatbot-container {
      /* Limit the width of the chatbot */
-    background-color: var(--quant-card-background);
+    background-color: var(--bg-primary);
     width: 100%;
     word-wrap: break-word; /* Break long words into the next line */
     overflow-wrap: break-word; /* Ensure text wraps properly */
     white-space: normal; /* Allow text to wrap to the next line */
     margin: 0 auto; /* Center the chatbot container */
 
-    background-color: var(--quant-card-background); /* Optional: Add a background color */
-    border: 1px solid #ccc; /* Optional: Add a border */
+    background-color: var(--bg-primary); /* Optional: Add a background color */
+    border: 1px solid var(--border-color); /* Optional: Add a border */
     border-radius: 8px; /* Optional: Round the corners */
   }
   .graph-row .chatbot-container {
     flex: 1 1 100%; /* Make the chatbot container take up the full width */
     max-width: 100%; /* Ensure it doesn't shrink */
-    background-color:var(--quant-card-background); /* Match the background color */
+    background-color:var(--bg-primary); /* Match the background color */
   }
   .custom-table td {
-    background-color: var(--quant-card-background); /* Light gray background */
-    color: var(--quant-text-color); /* Black text */
+    background-color: var(--bg-primary); /* Light gray background */
+    color: var(--text-primary); /* Black text */
   }
   canvas {
     width: 100% !important; /* Force the canvas to take up the full width */
     height: auto !important; /* Adjust the height automatically */
   }
   
+  .chart-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    text-align: center;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  .chart-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), transparent);
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Dark mode specific styles */
+  :root[data-theme="dark"] .custom-table td {
+    color: #000;
+    background: #fff;
+  }
+  
+  :root[data-theme="dark"] .custom-table th {
+    color: #000;
+    background: #f0f0f0;
+  }
   </style>

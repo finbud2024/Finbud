@@ -54,7 +54,10 @@
     <button @click="calculateInvestment" class="calculate-btn">{{$t('calculate')}}</button>
     <div class="chart-section">
       <h2 class="result-text"> {{$t('finAmount')}} ${{ finalAmount.toFixed(2) }}</h2>
+      <div class="chart-wrapper">
+        <ChartLoader v-if="isLoading" :text="$t('calculatingInvestment')" />
       <canvas id="investmentChart"></canvas>
+      </div>
     </div>
 
   </div>
@@ -64,6 +67,7 @@
 import { Chart } from 'chart.js/auto';
 import axios from 'axios';
 import { debounce } from 'lodash';
+import ChartLoader from '@/components/Common/ChartLoader.vue';
 // this.$i18n.locale = 'vi'; // to change language
 
 // Chart configuration constants
@@ -127,6 +131,9 @@ const BASE_OPTIONS = {
 };
 
 export default {
+  components: {
+    ChartLoader
+  },
   data() {
     return {
       // Core input data
@@ -159,6 +166,7 @@ export default {
       words: [],
       currentWordIndex: 0,
       typingSpeed: 60,
+      isLoading: false,
     };
   },
 
@@ -200,7 +208,12 @@ export default {
   },
 
   methods: {
-    calculateInvestment() {
+    async calculateInvestment() {
+      this.isLoading = true;
+      
+      // Simulate loading time for better UX
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
       const P = this.initialInvestment;
       const r = this.interestRate / 100;
       const t = this.years;
@@ -239,6 +252,8 @@ export default {
       this.buildChart(this.rawYears, this.rawInit, this.rawContrib, this.rawProfit);
       this.shouldCalculate = false;
       this.startBotAnimation();
+      
+      this.isLoading = false;
     },
 
     buildChart(years, init, contrib, profit) {
@@ -609,7 +624,7 @@ input:focus, select:focus {
   from {
     opacity: 0;
     transform: translateY(-20px);
-  }
+}
   to {
     opacity: 1;
     transform: translateY(0);
@@ -618,9 +633,9 @@ input:focus, select:focus {
 
 @keyframes slideInUp {
   from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+  opacity: 0;
+  transform: translateY(20px);
+}
   to {
     opacity: 1;
     transform: translateY(0);
@@ -642,7 +657,7 @@ input:focus, select:focus {
 
   .input-section {
     grid-template-columns: 1fr;
-  }
+}
 
   .title {
     font-size: 24px;
@@ -776,4 +791,14 @@ input:focus, select:focus {
     transform: scale(1.2);
   }
 }
+
+.chart-wrapper {
+  position: relative;
+    width: 100%;
+  height: 400px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+    }
 </style>

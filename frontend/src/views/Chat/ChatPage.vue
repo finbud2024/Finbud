@@ -275,7 +275,8 @@ export default {
 	width: 100%;
 	height: 100%;
 	background: rgba(0, 0, 0, 0.7);
-	z-index: 1000;
+	z-index: 999;
+	pointer-events: none; /* Allow clicks to pass through */
 }
 
 .side-bar.is-visible {
@@ -293,6 +294,15 @@ export default {
 
 .side-bar.is-visible {
 	transform: translateX(0);
+}
+
+/* Add this new style */
+.chat-component-wrapper {
+	position: relative;
+	z-index: 1;
+	height: 100%;
+	width: 100%;
+	pointer-events: auto; /* Enable interactions */
 }
 
 .toggle-sidebar-big {
