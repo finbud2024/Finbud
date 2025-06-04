@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import SearchResult from "../components/ChatBot/SearchResult.vue";
-import Video from "../components/ChatBot/Video.vue";
+import SearchResult from "../components/chatbot/SearchResult.vue";
+import Video from "../components/chatbot/Video.vue";
 import { marked } from "marked"; // Import the marked library
 
 export default {

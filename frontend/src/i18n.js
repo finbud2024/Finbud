@@ -1,9 +1,11 @@
 import { monthsToYears } from "date-fns";
 import { createI18n } from "vue-i18n";
+import StockComparision from "./components/FinInvest/QuantPage/StockComparision.vue";
 
 const messages = {
   en: {
     //Nav Bar
+    
     overview: "Overview",
     about: "About",
     technology: "Technology",
@@ -917,7 +919,84 @@ const messages = {
         "Reference": "Reference",
         "Market Sentiment Over Time": "Market Sentiment Over Time",
       }
-    }
+    },
+    quantPage: {
+      Date: "Date",
+      StockComparison: "Stock Comparision",
+      RiskRatio: "Risk Ratio",
+      AlphaNIFTY50: "Alpha (NIFTY 50)",
+      BetaNIFTY50: "Beta (NIFTY 50)",
+      SharpeRatio: "Sharpe Ratio",
+      SortinoRatio: "Sortino Ratio",
+      StandardDeviation: "Standard Deviation",
+      PastTrendVsFutureProjection: "Past trend & Future Projection",
+      Simulation: "Simulation",
+      Indicator:"Indicator",
+      Period: "Period",
+      Returns: "Returns",
+      CloseValue: "Close Value",
+      IndicatorValue: "Indicator Value",
+      GBMSimulation: "GBM Simulation",
+      GARCHSimulation: "GARCH Simulation",
+      StockPortfolioDashboard: "Stock Portfolio Dashboard",
+      StockTicker: "Stock Ticker",
+      PriceChange: "Price Change",
+      RelativeVolume: "Relative Volume (10d)",
+      PERatio: "P/E Ratio",
+      EPSDistributed: "EPS Distributed",
+      DividendYield: "Dividend Yield",
+      IndustrySector: "Industry Sector",
+      SelectTicker: "Select Ticker",
+      TickerNameSearch: "Search by Ticker Name",
+      Cummulative: "Cumulative",
+      Daily: "Daily",
+      GraphPrice:"Price ($)",
+      TimeStep: "Time Step",
+      Date: "Date",
+      Value: "Value",
+      MonteCarloSimulation: " Monte Carlo Simulation",
+      simulationChatBot:`
+      <div style="text-align: left;">
+        <b>GBM vs. GARCH Models</b><br/><br/>
+        The chart above compares stock price simulations using two models:<br/><br/>
+        <ul>
+          <li><b>GBM (Geometric Brownian Motion):</b> Assumes constant volatility and normally distributed returns. Commonly used in financial modeling for its simplicity.</li>
+          <li><b>GARCH (Generalized Autoregressive Conditional Heteroskedasticity):</b> Accounts for changing (time-varying) volatility over time, making it more suitable for modeling real-world market behavior and shocks.</li>
+        </ul>
+        <br/>
+        Use this comparison to evaluate how volatility assumptions affect projected price paths over time.
+      </div>
+    `,
+    
+    closeValueChatBot: `
+      <div style="text-align: left;">
+        <b>Close Price Graph</b><br/><br/>
+        This chart displays the historical closing prices of the selected stock:<br/><br/>
+        <ul>
+          <li><b>Close Price:</b> The final trading price of the stock for each day, reflecting market consensus.</li>
+        </ul>
+        <br/>
+        Use this graph to observe price trends, patterns, and historical performance over time.
+      </div>
+    `,
+    
+    indicatorAndReturnChatBot: `
+      <div style="text-align: left;">
+        <b>Return & Technical Indicator Graphs</b><br/><br/>
+        These charts help analyze stock performance and market behavior:<br/><br/>
+        <ul>
+          <li><b>Return Graph:</b> Shows <i>daily</i> or <i>cumulative</i> returns over time. Use it to compare stock performance across periods.</li>
+          <li><b>Indicator Graph:</b> Plots technical indicators like SMA, EMA, RSI, MACD, or Bollinger Bands to help identify trends and signals.</li>
+        </ul>
+        <br/>
+        Use these tools to assess growth, momentum, and potential entry/exit points.
+      </div>
+    `,
+    },
+    FundLetter:"Fund Letter",
+    FinData: "Fin Data",
+    ProductComparison: "Product Comparison",
+
   },
   vi: {
 
@@ -932,7 +1011,7 @@ const messages = {
     mortgageCalculator: "Tính toán Thế chấp",
     superInvestors: "Đầu tư tài chính",
     finInvest: "Fin Đầu tư",
-    simulator: "Mô phỏng",
+    simulator: "Đầu Tư Mô Phỏng",
     quant: "Định lượng",
     quantSimulator: "Mô phỏng Định lượng",
     macroEconomic: "Kinh Tế Vĩ Mô",
@@ -1815,8 +1894,84 @@ const messages = {
         "Reference": "Tham Khảo",
         "Market Sentiment Over Time": "Tâm Lý Thị Trường Theo Thời Gian"
       }
-    }
+    },
+    quantPage: {
+      Date: "Ngày",
+      StockComparison: "So sánh Cổ phiếu",
+      RiskRatio: "Tỷ lệ Rủi ro",
+      AlphaNIFTY50: "Alpha (NIFTY 50)",
+      BetaNIFTY50: "Beta (NIFTY 50)",
+      SharpeRatio: "Tỷ lệ Sharpe",
+      SortinoRatio: "Tỷ lệ Sortino",
+      StandardDeviation: "Độ lệch chuẩn",
+      PastTrendVsFutureProjection: "Xu hướng quá khứ & Dự báo tương lai",
+      Simulation: "Mô phỏng",
+      Indicator: "Chỉ số",
+      Period: "Chu kỳ",
+      Returns: "Lợi nhuận",
+      CloseValue: "Giá đóng cửa",
+      IndicatorValue: "Giá trị chỉ số",
+      GBMSimulation: "Mô phỏng GBM",
+      GARCHSimulation: "Mô phỏng GARCH", 
+      StockPortfolioDashboard: "Thông tin cổ phiểu",
+      StockTicker: "Mã cổ phiếu",
+      PriceChange: "Giá chênh lệch",
+      RelativeVolume: "Khối lượng tương đối (10 ngày)",
+      PERatio: "Tỷ lệ P/E",
+      EPSDistributed: "EPS phân phối",
+      DividendYield: "Lợi suất cổ tức",
+      IndustrySector: "Ngành công nghiệp",
+      SelectTicker: "Chọn mã cổ phiếu",
+      TickerNameSearch: "Tìm kiếm mã cổ phiếu",
+      Cummulative: "Tích lũy",
+      Daily: "Hàng ngày",
+      GraphPrice:"Giá ($)",
+      TimeStep: "Thời gian",
+      Date: "Ngày",
+      Value: "Giá trị",
+      MonteCarloSimulation: "Mô phỏng Monte Carlo",
+      simulationChatBot:`
+  <div style="text-align: left;">
+    <b>Mô hình GBM và GARCH</b><br/><br/>
+    Biểu đồ trên so sánh các mô phỏng giá cổ phiếu bằng hai mô hình:<br/><br/>
+    <ul>
+      <li><b>GBM (Geometric Brownian Motion):</b> Giả định độ biến động không đổi và lợi nhuận phân phối chuẩn. Thường được sử dụng trong mô hình tài chính vì tính đơn giản.</li>
+      <li><b>GARCH (Generalized Autoregressive Conditional Heteroskedasticity):</b> Xem xét độ biến động thay đổi theo thời gian, phù hợp hơn với hành vi thị trường thực tế và các cú sốc.</li>
+    </ul>
+    <br/>
+    Sử dụng so sánh này để đánh giá cách các giả định về độ biến động ảnh hưởng đến các đường giá dự kiến theo thời gian.
+  </div>
+`,
+closeValueChatBot: `
+  <div style="text-align: left;">
+    <b>Biểu đồ giá đóng cửa</b><br/><br/>
+    Biểu đồ này hiển thị giá đóng cửa lịch sử của cổ phiếu đã chọn:<br/><br/>
+    <ul>
+      <li><b>Giá đóng cửa:</b> Giá giao dịch cuối cùng của cổ phiếu mỗi ngày, phản ánh sự đồng thuận của thị trường.</li>
+    </ul>
+    <br/>
+    Sử dụng biểu đồ này để quan sát xu hướng giá, mẫu hình và hiệu suất lịch sử theo thời gian.
+  </div>
+`,
+
+indicatorAndReturnChatBot: `
+  <div style="text-align: left;">
+    <b>Biểu đồ lợi nhuận và chỉ báo kỹ thuật</b><br/><br/>
+    Các biểu đồ này giúp phân tích hiệu suất cổ phiếu và hành vi thị trường:<br/><br/>
+    <ul>
+      <li><b>Biểu đồ lợi nhuận:</b> Hiển thị lợi nhuận <i>hàng ngày</i> hoặc <i>tích lũy</i> theo thời gian. Sử dụng để so sánh hiệu suất cổ phiếu qua các giai đoạn.</li>
+      <li><b>Biểu đồ chỉ báo:</b> Vẽ các chỉ báo kỹ thuật như SMA, EMA, RSI, MACD hoặc Bollinger Bands để giúp xác định xu hướng và tín hiệu.</li>
+    </ul>
+    <br/>
+    Sử dụng các công cụ này để đánh giá tăng trưởng, động lực và các điểm vào/ra tiềm năng.
+  </div>
+`,
+    },
+    FundLetter:"Thư Quỹ",
+    FinData: "Fin Dữ Liệu",
+    ProductComparison: "So Sánh Sản Phẩm",
   }
+
 };
 
 const i18n = createI18n({

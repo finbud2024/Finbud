@@ -1,55 +1,65 @@
 <template>
   <div class="dashboard">
     <header>
-      <h1>Personal Stock Portfolio Dashboard</h1>
+      <h1>{{ t('quantPage.StockPortfolioDashboard') }}</h1>
     </header>
     <section class="current-holding">
-      <h2>Current Holding</h2>
+      <input
+      class="ticker-search"
+      type="text"
+      v-model="tickerSearch"
+      :placeholder="t('quantPage.TickerNameSearch')"
+      
+    />
+      
       <div class="margin-box-content">
-<!--        <div v-if="errorCrypto" class="error">{{ errorCrypto }}</div>-->
-<!--        <div v-else-if="loadingCrypto" class="loading">Loading...</div>-->
         <div>
+          <div class="scrollable-table">
           <table>
             <thead>
             <tr>
-              <th>Stock Ticker</th>
+              <th>{{ t('quantPage.StockTicker') }}</th>
               <th>Logo</th>
-              <th>Currency Code</th>
-              <th>Close</th>
-              <th>Price Currency</th>
-              <th>Price Change</th>
-              <th>Relative Volume (10d)</th>
-              <th>P/E Ratio (TTM)</th>
-              <th>EPS Diluted (TTM)</th>
-              <th>Dividend Yield</th>
-              <th>Exchange</th>
-              <th>Industry Sector</th>
+              <!--<th>Currency Code</th>-->
+              <th>{{ t('quantPage.CloseValue') }}</th>
+              <!--<th>Price Currency</th>-->
+              <th>{{ t('quantPage.PriceChange') }}</th>
+              <th>{{ t('quantPage.RelativeVolume') }}</th>
+              <th>{{ t('quantPage.PERatio') }}</th>
+              <th>{{ t('quantPage.EPSDistributed') }}</th>
+              <th>{{ t('quantPage.DividendYield') }}</th>
+              <!--<th>Exchange</th>-->
+              <th>{{ t('quantPage.IndustrySector') }}</th>
             </tr>
             </thead>
-            <tbody v-if="cryptoList.length">
-            <tr v-for="crypto in cryptoList" :key="crypto.name">
+
+            <tbody v-if="filteredCryptoList.length">
+              
+            <tr v-for="crypto in filteredCryptoList" :key="crypto.name">
               <td>{{ crypto.name }}</td>
               <td><img :src="`https://s3-symbol-logo.tradingview.com/${crypto.logo}.svg`"
                        :alt="`${crypto.logo} logo`"/></td>
-              <td>{{ crypto.currency }}</td>
+              <!--<td>{{ crypto.currency }}</td>-->
               <td>{{ crypto.close }} </td>
-              <td>{{ crypto.priceCurrency }} </td>
-              <td>{{ crypto.priceChange }} </td>
-              <td>{{ crypto.relativeVolume }}</td>
-              <td>{{ crypto.PERatio }} </td>
-              <td>{{ crypto.EPS }} </td>
-              <td>{{ crypto.dividendYield }} </td>
-              <td>{{ crypto.market }} </td>
+              <!--<td>{{ crypto.priceCurrency }} </td>-->
+              <td>{{ formatNumber(crypto.priceChange) }} </td>
+              <td>{{ formatNumber(crypto.relativeVolume) }}</td>
+              <td>{{ formatNumber(crypto.PERatio) }} </td>
+              <td>{{ formatNumber(crypto.EPS) }} </td>
+              <td>{{ formatNumber(crypto.dividendYield) }} </td>
+              <!--<td>{{ crypto.market }} </td>-->
               <td>{{ crypto.sector }} </td>
             </tr>
             </tbody>
+          
           </table>
-<!--          <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />-->
+<!--         <Pagination :currentPage.sync="currentCryptoPage" :totalPages="cryptoTotalPages" @update:currentPage="updateCryptoCurrentPage" />--> 
         </div>
       </div>
+    </div>
     </section>
 
-    <section class="industry-comparison">
+    <!--<section class="industry-comparison">
       <header>
         <h1>Portfolio By Industry</h1>
       </header>
@@ -76,7 +86,7 @@
           <div class="xAxis-chart-placeholder"></div>
         </div>
       </section>
-    </section>
+    </section>-->
   </div>
 </template>
 
@@ -89,6 +99,8 @@ import VueApexCharts from 'vue3-apexcharts';
 import BollingerBands from './BollingerBands.vue';
 import Pagination from "@/components/Risk&Chat/Pagination.vue";
 import axios from "axios";
+import { useI18n } from 'vue-i18n';
+// Register Chart.js components
 
 export default {
   name: 'PortfolioDashboard',
@@ -96,7 +108,11 @@ export default {
     Pagination,
     Multiselect,
     apexchart: VueApexCharts,
-    BollingerBands
+    BollingerBands,
+  },
+  setup() {
+    const { t } = useI18n(); // Initialize the translation function
+    return { t };
   },
   data() {
     return {
@@ -116,6 +132,7 @@ export default {
         gain_loss: 'null',
         loading: false,
       })),
+      tickerSearch: '', 
       chartOptions: null,
       chartSeries: null,
       processedData: null,
@@ -126,6 +143,19 @@ export default {
     this.loadData();
     this.getCryptoPrice();
   },
+
+  computed: {
+  filteredCryptoList() {
+    if (!this.tickerSearch) {
+      return this.cryptoList;
+    }
+    const searchTerm = this.tickerSearch.toLowerCase();
+    return this.cryptoList.filter(crypto =>
+      crypto.name.toLowerCase().includes(searchTerm)
+    );
+  }
+  }, 
+  
   methods: {
     loadData() {
       const cachedData = localStorage.getItem('tickerData');
@@ -310,13 +340,25 @@ export default {
         this.errorCrypto = 'Failed to fetch holding list';
         this.loadingCrypto = false;
       }
-    }
+    },
+    formatNumber(value) {
+    if (value === null || value === undefined) return '-'; // handle empty or null
+    const number = Number(value);
+    if (isNaN(number)) return value; // if not a number, just return as-is
+    return number.toFixed(2);
+  },
   },
 };
 </script>
 
 <style scoped>
 /* Add your styles here */
+.scrollable-table {
+  max-height: 400px; /* Set the maximum height for the table container */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  margin-top: 10px; /* Add some spacing above the table */
+}
 .dashboard {
   width: 100%;
   padding: 20px;
@@ -405,8 +447,8 @@ export default {
 }
 
 header {
-  background-color: #0033cc;
-  color: white;
+  background-color:var(--quant-background);
+  color: var(--quant-text-color);
   text-align: center;
   padding: 10px;
 }
@@ -418,12 +460,12 @@ header {
 
 .current-holding {
   margin-top: 20px;
-  background-color: rgb(94, 169, 212);
+  background-color:var(--quant-card-background);
   align-content: center;
 }
 
 h2 {
-  color: #0033cc;
+  color: var(--quant-card-background);
   font-size: 24px;
   text-align: center;
 }
@@ -432,6 +474,13 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
+th {
+  position: sticky; /* Make the header sticky */
+  top: 0; /* Stick the header to the top of the container */
+  background-color:var(--quant-card-background); /* Background color for the header */
+  color: var(--quant-text-color); /* Text color for the header */
+  z-index: 1; /* Ensure the header stays above the table rows */
+}
 
 th, td {
   padding: 10px;
@@ -439,8 +488,7 @@ th, td {
 }
 
 th {
-  background-color: #0073e6;
-  color: white;
+
   font-weight: bold;
 }
 
@@ -513,5 +561,30 @@ label {
   display: block;
   margin-bottom: 10px;
   color: #0033cc;
+}
+.search-input {
+  width: 300px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.ticker-search {
+  display: block; /* Center the input horizontally */
+  margin: 20px auto; /* Add spacing and center it */
+  padding: 10px 15px; /* Add padding for better appearance */
+  width: 50%; /* Make the input longer */
+  font-size: 16px; /* Increase font size for readability */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 8px; /* Round the corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.ticker-search:focus {
+  outline: none; /* Remove the default outline */
+  border-color: #0073e6; /* Change border color on focus */
+  box-shadow: 0 4px 8px rgba(0, 115, 230, 0.2); /* Enhance shadow on focus */
 }
 </style>

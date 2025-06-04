@@ -97,7 +97,7 @@ export default {
 
 <style scoped>
 .chat-bot-container {
-  background-color: #f8f9fa;
+  
   padding: 20px;
   border-radius: 5px;
   border: 1px solid #dee2e6;
@@ -114,8 +114,8 @@ export default {
 }
 
 .chat-message {
-  background-color: #2196F3;
-  color: white;
+  background-color: var(--quant-background);
+  color: var(--quant-text-color);
   border-radius: 15px;
   padding: 12px 15px;
   border: 1px solid #dee2e6;

@@ -6,7 +6,7 @@ import axios from 'axios';
 const stockRoute = express.Router();
 
 stockRoute.get("/api/stocks", async (req, res) => {
-    const { page = 1, pageSize = 10, search, sortBy = "market_cap_basic", sortOrder = "desc", markets="india"  } = req.query;
+    const { page = 1, pageSize = 701, search, sortBy = "market_cap_basic", sortOrder = "desc", markets="america"  } = req.query;
     const pageNumber = parseInt(page);
     const size = parseInt(pageSize);
 
