@@ -57,138 +57,148 @@ export default {
     },
 
     generateChart() {
-  if (!this.transactions || this.transactions.length === 0) {
-    this.hasData = false;
-    return;
-  }
-
-  this.hasData = true;
-
-  this.$nextTick(() => {
-    const canvas = this.$refs.transactionChart;
-    if (!canvas) {
-      console.warn("Canvas not found, skipping chart generation.");
-      return;
-    }
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      console.warn("Canvas context not available.");
-      return;
-    }
-
-    this.destroyChart(); // Clean up any existing chart
-
-    const sortedTransactions = [...this.transactions].sort(
-      (a, b) => new Date(a.date) - new Date(b.date)
-    );
-
-    // Prepare chart data
-    const formatted = sortedTransactions.map(tx => ({
-      type: tx.amount > 0 ? "Expense" : "Income",
-      amount: Math.abs(tx.amount),
-      date: tx.date,
-      description: tx.name || tx.description || tx.merchant_name || "Transaction"
-    }));
-
-    let balance = 0;
-    const labels = [], data = [], pointColors = [];
-
-    const timePoints = [];
-    const balancePoints = [];
-
-    formatted.forEach((tx, i) => {
-      const label = new Date(tx.date).toLocaleDateString();
-      labels.push(label);
-      balance += tx.type === "Income" ? tx.amount : -tx.amount;
-
-      data.push({ x: label, y: balance, ...tx });
-      pointColors.push(
-        tx.type === "Income" ? "rgba(0,255,0,0.5)" : "rgba(255,0,0,0.5)"
-      );
-
-      timePoints.push(i);
-      balancePoints.push(balance);
-    });
-
-    // Linear forecast for next 90 days (if enabled)
-    let forecastDataset = [];
-    if (this.showForecast && timePoints.length >= 2) {
-      const n = timePoints.length;
-      const meanX = timePoints.reduce((sum, x) => sum + x, 0) / n;
-      const meanY = balancePoints.reduce((sum, y) => sum + y, 0) / n;
-      const numerator = timePoints.reduce((sum, x, i) => sum + (x - meanX) * (balancePoints[i] - meanY), 0);
-      const denominator = timePoints.reduce((sum, x) => sum + Math.pow(x - meanX, 2), 0);
-      const slope = numerator / denominator;
-      const intercept = meanY - slope * meanX;
-
-      for (let i = 1; i <= 90; i++) {
-        const futureIndex = timePoints.length + i;
-        const futureDate = new Date(new Date(sortedTransactions[sortedTransactions.length - 1].date).getTime() + i * 86400000);
-        const futureLabel = futureDate.toLocaleDateString();
-        labels.push(futureLabel);
-        forecastDataset.push({ x: futureLabel, y: slope * futureIndex + intercept });
+      if (!this.transactions || this.transactions.length === 0) {
+        this.hasData = false;
+        return;
       }
 
-      forecastDataset = forecastDataset.filter(pt => pt.x && typeof pt.y === "number" && !isNaN(pt.y));
+      this.hasData = true;
 
-    }
+      // Ensure canvas is ready
+      this.$nextTick(() => {
+        const canvas = this.$refs.transactionChart;
+        if (!canvas) {
+          console.warn("Canvas element not found");
+          return;
+        }
 
-    const config = {
-      type: "line",
-      data: {
-        labels,
-        datasets: [{
-          label: "Balance Change",
-          data,
-          borderColor: "rgba(0, 123, 255, 0.6)",
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
-          pointBackgroundColor: pointColors,
-          pointBorderColor: pointColors,
-        },
-        ...(this.showForecast ? [{
-          label: "Forecast (Linear)",
-          data: forecastDataset,
-          borderColor: "rgba(0, 123, 255, 0.6)",
-          backgroundColor: "rgba(0, 123, 255, 0.2)",
-          borderDash: [5, 5],
-          pointRadius: 0,
-          fill: false
-        }] : [])
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: "top" },
-          title: { display: true, text: "DAILY TRANSACTION OVERVIEW" },
-          tooltip: {
-            callbacks: {
-              title: ctx => ctx[0].label,
-              label: ctx => {
-                const tx = ctx.raw;
-                return [
-                  `Transaction Type: ${tx.type || 'Forecast'}`,
-                  `Change Amount: ${tx.amount ? (tx.type === "Expense" ? "-" : "+") + "$" + tx.amount : ""}`,
-                  `Description: ${tx.description || ""}`,
-                  `Account Balance: $${tx.y?.toFixed(2) ?? ""}`
-                ];
+        // Get and verify context
+        let ctx;
+        try {
+          ctx = canvas.getContext("2d");
+          if (!ctx) {
+            throw new Error("Could not get canvas context");
+          }
+        } catch (error) {
+          console.error("Error getting canvas context:", error);
+          return;
+        }
+
+        // Clean up any existing chart
+        this.destroyChart();
+
+        // Sort transactions by date
+        const sortedTransactions = [...this.transactions].sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+
+        // Prepare chart data
+        const formatted = sortedTransactions.map(tx => ({
+          type: tx.amount > 0 ? "Expense" : "Income",
+          amount: Math.abs(tx.amount),
+          date: tx.date,
+          description: tx.name || tx.description || tx.merchant_name || "Transaction"
+        }));
+
+        let balance = 0;
+        const labels = [];
+        const data = [];
+        const pointColors = [];
+        const timePoints = [];
+        const balancePoints = [];
+
+        formatted.forEach((tx, i) => {
+          const label = new Date(tx.date).toLocaleDateString();
+          labels.push(label);
+          balance += tx.type === "Income" ? tx.amount : -tx.amount;
+          data.push({ x: label, y: balance, ...tx });
+          pointColors.push(
+            tx.type === "Income" ? "rgba(0,255,0,0.5)" : "rgba(255,0,0,0.5)"
+          );
+          timePoints.push(i);
+          balancePoints.push(balance);
+        });
+
+        // Linear forecast for next 90 days (if enabled)
+        let forecastDataset = [];
+        if (this.showForecast && timePoints.length >= 2) {
+          const n = timePoints.length;
+          const meanX = timePoints.reduce((sum, x) => sum + x, 0) / n;
+          const meanY = balancePoints.reduce((sum, y) => sum + y, 0) / n;
+          const numerator = timePoints.reduce((sum, x, i) => sum + (x - meanX) * (balancePoints[i] - meanY), 0);
+          const denominator = timePoints.reduce((sum, x) => sum + Math.pow(x - meanX, 2), 0);
+          const slope = numerator / denominator;
+          const intercept = meanY - slope * meanX;
+
+          for (let i = 1; i <= 90; i++) {
+            const futureIndex = timePoints.length + i;
+            const futureDate = new Date(new Date(sortedTransactions[sortedTransactions.length - 1].date).getTime() + i * 86400000);
+            const futureLabel = futureDate.toLocaleDateString();
+            labels.push(futureLabel);
+            forecastDataset.push({ x: futureLabel, y: slope * futureIndex + intercept });
+          }
+
+          forecastDataset = forecastDataset.filter(pt => pt.x && typeof pt.y === "number" && !isNaN(pt.y));
+        }
+
+        try {
+          // Create new chart with error handling
+          this.chart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels,
+              datasets: [{
+                label: "Balance Change",
+                data,
+                borderColor: "rgba(0, 123, 255, 0.6)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                pointBackgroundColor: pointColors,
+                pointBorderColor: pointColors,
+              },
+              ...(this.showForecast ? [{
+                label: "Forecast (Linear)",
+                data: forecastDataset,
+                borderColor: "rgba(0, 123, 255, 0.6)",
+                backgroundColor: "rgba(0, 123, 255, 0.2)",
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false
+              }] : [])
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { position: "top" },
+                title: { display: true, text: "DAILY TRANSACTION OVERVIEW" },
+                tooltip: {
+                  callbacks: {
+                    title: ctx => ctx[0].label,
+                    label: ctx => {
+                      const tx = ctx.raw;
+                      return [
+                        `Transaction Type: ${tx.type || 'Forecast'}`,
+                        `Change Amount: ${tx.amount ? (tx.type === "Expense" ? "-" : "+") + "$" + tx.amount : ""}`,
+                        `Description: ${tx.description || ""}`,
+                        `Account Balance: $${tx.y?.toFixed(2) ?? ""}`
+                      ];
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: { title: { display: true, text: "Date" } },
+                y: { title: { display: true, text: "Account Balance ($)" }, beginAtZero: true }
               }
             }
-          }
-        },
-        scales: {
-          x: { title: { display: true, text: "Date" } },
-          y: { title: { display: true, text: "Account Balance ($)" }, beginAtZero: true }
+          });
+        } catch (error) {
+          console.error("Error creating chart:", error);
+          this.destroyChart();
         }
-      }
-    };
-
-    this.chart = new Chart(ctx, config);
-  });
-},
-
+      });
+    },
 
     // Destroy chart method
     destroyChart() {

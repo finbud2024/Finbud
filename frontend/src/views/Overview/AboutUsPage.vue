@@ -408,207 +408,312 @@ export default {
 <style scoped>
 @import "swiper/swiper-bundle.css";
 
-body {
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.mySwiper-linear .swiper-wrapper {
-  transition-timing-function: linear !important;
+/* Base Styles */
+:root {
+  --primary-color: #000000;
+  --secondary-color: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #6b7280;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .container {
-  list-style-type: none;
-  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background: var(--bg-primary);
 }
 
+/* Team Section */
 .team-section {
-  background-color: white;
-  margin-bottom: 2rem;
-  padding: 2rem;
+  margin-bottom: 60px;
+  animation: fadeIn 0.8s ease;
 }
 
 .title {
-  text-align: center;
-  color: var(--text-primary);
   font-size: 2.5rem;
-  margin-bottom: 1rem;
-  animation: fadeInDown 1s ease-in-out;
   font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  animation: slideInDown 0.8s ease;
 }
 
 .description {
-  color: #333;
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-  animation: fadeInUp 1s ease-in-out;
-  font-weight: 300;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+  animation: slideInUp 0.8s ease;
 }
 
-.team-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
+/* Team Members Slider */
+.mySwiper-linear {
+  padding: 20px 0;
+  overflow: visible !important;
 }
 
 .team-member {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-  animation: fadeIn 1s ease-in-out;
-  font-weight: 300;
+  background: var(--bg-primary);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  height: auto; /* Ensure the height is dynamic */
-}
-
-.image-container {
-  width: 100%;
-  height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.image-container img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 50%;
-  animation: zoomIn 1s ease-in-out;
+  text-align: center;
 }
 
 .team-member:hover {
   transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
+}
+
+.image-container {
+  width: 160px;
+  height: 160px;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 3px solid var(--primary-color);
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.team-member:hover .image-container img {
+  transform: scale(1.1);
 }
 
 .team-member h3 {
-  font-size: 1.2rem;
-  margin: 0.5rem 0;
-  color: #333;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
 .team-member p {
   font-size: 1rem;
-  color: #777;
-  margin: 0.5rem 0 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
 }
 
 .team-member h2 {
   font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
 }
 
 .social-icons {
-  margin-top: 5px;
+  display: flex;
+  gap: 1rem;
+  margin-top: auto;
 }
 
 .social-icons a {
-  font-size: 1rem;
   color: var(--text-primary);
-  margin: 0 5px;
-  transition: color 0.3s;
   text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
 .social-icons a:hover {
-  color: var(--text-primary);
-  font-weight: 500;
-  transition: font-weight 0.3s;
+  color: var(--primary-color);
+  transform: translateY(-2px);
 }
 
+/* Testimonials Section */
 .testimonials-section {
-  background-color: white;
-  margin: 2rem 0;
-  padding: 2rem 13%; /* Adds spacing to the left and right */
+  padding: 60px 0;
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  margin: 40px 0;
+  animation: fadeIn 1s ease;
 }
 
 .testimonials-container {
-  column-count: 3;
-  column-gap: 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 0 40px;
 }
 
 .testimonial-card {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-  font-weight: 300;
-  display: inline-block;
-  width: 100%;
-  margin-bottom: 2rem;
+  background: var(--bg-primary);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.4s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
 }
 
 .testimonial-card h3 {
   font-size: 1.2rem;
-  margin: 0.5rem 0;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
 }
 
 .stars {
   display: flex;
-  justify-content: center;
-  margin: 0.5rem 0;
+  gap: 4px;
+  margin-bottom: 1rem;
 }
 
 .star {
-  color: gold;
+  color: #fbbf24;
   font-size: 1.2rem;
 }
 
 .testimonial-card p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+/* Contact Form Section */
+#contact-page {
+  max-width: 800px;
+  margin: 60px auto;
+  animation: fadeIn 1s ease;
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contact-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.contact-header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.contact-form {
+  background: var(--bg-secondary);
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.input-group input,
+.input-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form button {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  border-radius: 8px;
   font-size: 1rem;
-  color: #777;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-@media (max-width: 1024px) {
-  .testimonials-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
-  }
+.contact-form button:hover {
+  background: #1a1a1a;
+  transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-  .testimonials-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    grid-template-columns: 1fr;
-  }
-
-  .testimonial-card {
-    width: 100%;
-    height: auto; /* Ensures cards can adjust height dynamically */
-    margin: 10px 0;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .team-section {
-    align-items: center;
-  }
-  .team-member {
-    margin-bottom: 20px;
-  }
-
-  .team-container,
-  .testimonials-container {
-    padding: 0 10px;
-  }
-
-  .contact-form {
-    padding: 20px;
-  }
+.contact-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
 }
 
+.info-block {
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-primary);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.info-block:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.info-block .icon {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.info-block p {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.info-block a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.info-block a:hover {
+  opacity: 0.8;
+}
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -618,7 +723,7 @@ body {
   }
 }
 
-@keyframes fadeInDown {
+@keyframes slideInDown {
   from {
     opacity: 0;
     transform: translateY(-20px);
@@ -629,7 +734,7 @@ body {
   }
 }
 
-@keyframes fadeInUp {
+@keyframes slideInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -640,172 +745,62 @@ body {
   }
 }
 
-@keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .description {
+    font-size: 1rem;
+  }
+
+  .testimonials-container {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+
+  .contact-form {
+    padding: 20px;
+  }
+
+  .info-block {
+    padding: 1.5rem;
   }
 }
 
-#contact-page {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  text-align: center;
+/* Loading States */
+.loading {
+  position: relative;
+  overflow: hidden;
 }
 
-.contact-header {
-  margin-bottom: 40px;
-}
-
-.contact-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.contact-header p {
-  font-size: 18px;
-  color: #666;
-}
-
-.contact-form {
-  background: #f9f9f9;
-  padding: 40px 70px 40px 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 40px;
-}
-
-.contact-header h1,
-.contact-header p {
-  margin-bottom: 20px;
-}
-
-.contact-form .input-group {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.mySwiper {
-  height: 550px; /* Set your custom height here */
-}
-
-.swiper-slide {
-  display: flex;
-  align-items: stretch;
-  height: auto; /* Ensure slides take the height of their content */
-}
-
-.contact-form label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.contact-form input[type="text"],
-.contact-form input[type="email"],
-.contact-form input[type="tel"],
-.contact-form textarea {
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  transition: border-color 0.3s ease;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
 }
 
-.contact-form input[type="text"]:focus,
-.contact-form input[type="email"]:focus,
-.contact-form input[type="tel"]:focus,
-.contact-form textarea:focus {
-  border-color: var(--text-primary);
-  outline: none;
-}
-
-.contact-form button {
-  padding: 15px 30px;
-  background-color: black;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.contact-form button:hover {
-  background-color: var(--text-primary);
-}
-
-.contact-info {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.info-block {
-  text-align: center;
-  margin: 10px 0;
-}
-
-.info-block .icon {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.info-block p {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 5px;
-}
-
-.info-block a {
-  font-size: 16px;
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
-.info-block a:hover {
-  font-weight: 500;
-  transition: font-weight 0.3s;
-}
-
-/* Add animations */
-.animate {
-  opacity: 0;
-  transition: opacity 1s ease, transform 1s ease;
-}
-
-.animate-visible {
-  opacity: 1;
-}
-
-.fade-in {
-  transform: translateY(20px);
-}
-
-.fade-in.animate-visible {
-  transform: translateY(0);
-}
-
-.slide-in-up {
-  transform: translateY(20px);
-}
-
-.slide-in-up.animate-visible {
-  transform: translateY(0);
-}
-
-.swiper-container-free-mode > .swiper-wrapper {
-  transition-timing-function : linear;
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 </style>

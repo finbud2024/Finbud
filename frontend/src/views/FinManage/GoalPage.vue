@@ -114,12 +114,18 @@
           <input type="checkbox" v-model="showForecast" />
         </div>
 
+        <!-- Chart container with loading state -->
         <div class="chart-container">
+          <div v-if="isChartLoading" class="chart-loading"></div>
           <TransactionLine
+            v-if="transactions && transactions.length > 0"
             :transactions="transactions"
             :showForecast="showForecast"
             :key="`transaction-line-${transactions.length}-${showForecast}`" 
           />
+          <div v-else class="no-data-message">
+            <p>{{ $t('noTransactionData') }}</p>
+          </div>
         </div>
       </div>
       <!-- TransactionPie -->
@@ -185,15 +191,13 @@
         </div>
         <TransactionPie :transactions="transactions" :chartType="activePieChart" />
       </div>
+      <!-- Goals section -->
       <section class="financial-goals" ref="financialGoalsSection">
         <div class="goal-upper-part">
           <h3 class="goal-section-title">{{ $t('goals') }}</h3>
-          <button
-            class="add-goal-button"
-            @click="showAddGoalModal = true"
-            style="font-weight: bold"
-          >
-          {{ $t('addGoal') }}
+          <button class="add-goal-button" @click="showAddGoalModal = true">
+            <i class="fas fa-plus"></i>
+            {{ $t('addGoal') }}
           </button>
         </div>
 
@@ -201,7 +205,7 @@
           <input
             type="text"
             v-model="searchQuery"
-            placeholder="Search goals..."
+            :placeholder="$t('searchGoals')"
             class="search-input"
           />
         </div>
@@ -211,134 +215,44 @@
             v-for="goal in filteredGoals"
             :key="goal._id"
             class="goal"
-            @click="showGoalProgress(goal)"
+            :class="{ 'achieved': goal.currentAmount >= goal.targetAmount }"
           >
-            <img
-              src="@/assets/financial-goal-mockup.jpg"
-              alt="Goal Image"
-              class="goal-image"
-            />
-            <div class="goal-content">
+            <div class="goal-header">
               <div class="goal-icon">
-                <i :class="goal.icon"></i>
+                <i :class="getCategoryIcon(goal.category)"></i>
               </div>
               <div class="goal-info">
                 <h3>{{ goal.title }}</h3>
-                <p>Category: {{ goal.category }}</p>
-                <p>Total: {{ goal.targetAmount }} USD</p>
-                <p>Saved: {{ goal.currentAmount }} USD</p>
-              </div>
-              <div class="progress-bar-container">
-                <div
-                  class="progress-bar"
-                  :style="{
-                    width: (goal.currentAmount / goal.targetAmount) * 100 + '%',
-                  }"
-                ></div>
+                <p>{{ goal.category }}</p>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div
-          v-if="showAddGoalModal"
-          class="modal"
-          @click="showAddGoalModal = false"
-        >
-          <div class="modal-content" @click.stop>
-            <div class="modal-text-content">
-              <h3>{{ $t('addNewGoal') }}</h3>
-              <div class="form-group">
-                <label for="goalTitle">{{ $t('goalTitle') }}</label>
-                <input
-                  id="goalTitle"
-                  type="text"
-                  placeholder="Enter your goal title"
-                  v-model="newGoal.title"
-                  required
-                />
+            <div class="goal-content">
+              <div class="goal-amounts">
+                <p>{{ $t('saved') }}: {{ formatCurrency(goal.currentAmount) }}</p>
+                <p>{{ $t('target') }}: {{ formatCurrency(goal.targetAmount) }}</p>
               </div>
-              <div class="form-group description-group">
-                <label for="goalDescription">{{ $t('description') }}</label>
-                <textarea
-                  id="goalDescription"
-                  placeholder="Describe your goal (max 500 words)"
-                  v-model="newGoal.description"
-                  maxlength="500"
-                  @input="updateDescriptionCount"
-                ></textarea>
-                <div class="character-counter">
-                  {{ descriptionCharCount }} / 500 characters
-                </div>
+
+              <div class="progress-bar-container">
+                <div 
+                  class="progress-bar"
+                  :style="{ width: (goal.currentAmount / goal.targetAmount * 100) + '%' }"
+                ></div>
+                <span class="progress-text">
+                  {{ Math.round(goal.currentAmount / goal.targetAmount * 100) }}%
+                </span>
               </div>
-              <div class="form-group">
-                <label for="targetAmount">{{ $t('totalNeeded') }}</label>
-                <div class="currency-input">
-                  <input
-                    id="targetAmount"
-                    type="number"
-                    placeholder="Total money needed"
-                    v-model="newGoal.targetAmount"
-                    required
-                  />
-                  <select>
-                    <option value="USD">USD</option>
-                    <option value="VND">VND</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
-                  </select>
-                </div>
+
+              <div class="goal-actions">
+                <button class="action-button add-money-btn" @click.stop="openAddMoneyModal(goal)">
+                  <i class="fas fa-plus"></i>
+                  {{ $t('addMoney') }}
+                </button>
+                <button class="action-button view-details-btn" @click.stop="showGoalDetails(goal)">
+                  <i class="fas fa-eye"></i>
+                  {{ $t('details') }}
+                </button>
               </div>
-              <div class="form-group">
-                <label for="currentAmount">{{ $t('alreadyHave') }}</label>
-                <input
-                  id="currentAmount"
-                  type="number"
-                  placeholder="Money already have"
-                  v-model="newGoal.currentAmount"
-                />
-              </div>
-              <div class="form-group">
-                <label for="startDate">{{ $t('startDate') }}</label>
-                <input
-                  id="startDate"
-                  type="date"
-                  v-model="newGoal.startDate"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="endDate">{{ $t('endDate') }}</label>
-                <input
-                  id="endDate"
-                  type="date"
-                  v-model="newGoal.endDate"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label for="goalCategory">{{ $t('category') }}</label>
-                <select id="goalCategory" v-model="selectedCategory">
-                  <option
-                    v-for="category in categories"
-                    :key="category"
-                    :value="category"
-                  >
-                    {{ category }}
-                  </option>
-                  <option value="new">{{ $t('addNewCategory') }}</option>
-                </select>
-              </div>
-              <div v-if="selectedCategory === 'new'" class="form-group">
-                <label for="newCategory">{{ $t('newCategory') }}</label>
-                <input
-                  id="newCategory"
-                  type="text"
-                  placeholder="Enter new category"
-                  v-model="newCategory"
-                />
-              </div>
-              <button class="add-goal-button" @click="addGoal">{{ $t('addGoal') }}</button>
             </div>
           </div>
         </div>
@@ -362,6 +276,219 @@
       <button @click="resetAccountBalance">{{ $t('yes') }}</button>
     </div>
     
+  </div>
+
+  <!-- Add Goal Modal -->
+  <div class="modal" :class="{ 'show': showAddGoalModal }" @click="closeAddGoalModal">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h3>{{ $t('addNewGoal') }}</h3>
+      </div>
+
+      <div class="form-group">
+        <label for="goalTitle">{{ $t('goalTitle') }}</label>
+        <input
+          id="goalTitle"
+          type="text"
+          v-model="newGoal.title"
+          :placeholder="$t('enterGoalTitle')"
+          class="form-input"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="goalDescription">{{ $t('description') }}</label>
+        <textarea
+          id="goalDescription"
+          v-model="newGoal.description"
+          :placeholder="$t('describeYourGoal')"
+          class="form-input"
+          rows="4"
+          maxlength="500"
+          @input="updateDescriptionCount"
+        ></textarea>
+        <div class="character-counter">
+          {{ descriptionCharCount }} / 500
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="targetAmount">{{ $t('totalNeeded') }}</label>
+        <div class="currency-input">
+          <input
+            id="targetAmount"
+            type="number"
+            v-model="newGoal.targetAmount"
+            :placeholder="$t('enterAmount')"
+            class="form-input"
+            required
+          />
+          <select class="form-input" v-model="selectedCurrency">
+            <option value="USD">USD</option>
+            <option value="VND">VND</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="currentAmount">{{ $t('alreadyHave') }}</label>
+        <input
+          id="currentAmount"
+          type="number"
+          v-model="newGoal.currentAmount"
+          :placeholder="$t('enterCurrentAmount')"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="startDate">{{ $t('startDate') }}</label>
+        <input
+          id="startDate"
+          type="date"
+          v-model="newGoal.startDate"
+          class="form-input"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="endDate">{{ $t('endDate') }}</label>
+        <input
+          id="endDate"
+          type="date"
+          v-model="newGoal.endDate"
+          class="form-input"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="goalCategory">{{ $t('category') }}</label>
+        <select id="goalCategory" v-model="selectedCategory" class="form-input">
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+          <option value="new">{{ $t('addNewCategory') }}</option>
+        </select>
+      </div>
+
+      <div v-if="selectedCategory === 'new'" class="form-group">
+        <label for="newCategory">{{ $t('newCategory') }}</label>
+        <input
+          id="newCategory"
+          type="text"
+          v-model="newCategory"
+          :placeholder="$t('enterNewCategory')"
+          class="form-input"
+        />
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn secondary" @click="closeAddGoalModal">
+          {{ $t('cancel') }}
+        </button>
+        <button class="modal-btn primary" @click="addGoal">
+          {{ $t('addGoal') }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" :class="{ 'show': showToast }">
+    <div class="toast-icon">
+      <i class="fas fa-check"></i>
+    </div>
+    <div class="toast-message">{{ toastMessage }}</div>
+  </div>
+
+  <!-- Add Money Modal -->
+  <div class="modal" :class="{ 'show': showAddMoneyModal }" @click="closeAddMoneyModal">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h3>{{ $t('addMoneyToGoal') }}</h3>
+      </div>
+
+      <div class="form-group">
+        <label for="addAmount">{{ $t('amount') }}</label>
+        <input
+          id="addAmount"
+          type="number"
+          v-model="addAmount"
+          :placeholder="$t('enterAmount')"
+          class="form-input"
+          required
+        />
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn secondary" @click="closeAddMoneyModal">
+          {{ $t('cancel') }}
+        </button>
+        <button class="modal-btn primary" @click="addMoneyToGoal">
+          {{ $t('add') }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Details Modal -->
+  <div class="modal" :class="{ 'show': showGoalDetailsModal }" @click="closeGoalDetailsModal">
+    <div class="modal-content" @click.stop>
+      <div class="modal-header">
+        <h3>{{ selectedGoal ? selectedGoal.title : '' }}</h3>
+      </div>
+
+      <div class="goal-details">
+        <p class="goal-description">{{ selectedGoal ? selectedGoal.description : '' }}</p>
+        
+        <div class="goal-progress">
+          <div class="progress-bar-container">
+            <div 
+              class="progress-bar"
+              :style="{ width: selectedGoal ? (selectedGoal.currentAmount / selectedGoal.targetAmount * 100) + '%' : '0%' }"
+            ></div>
+            <span class="progress-text">
+              {{ selectedGoal ? Math.round(selectedGoal.currentAmount / selectedGoal.targetAmount * 100) : 0 }}%
+            </span>
+          </div>
+        </div>
+
+        <div class="goal-info-grid">
+          <div class="info-item">
+            <span class="label">{{ $t('category') }}</span>
+            <span class="value">{{ selectedGoal ? selectedGoal.category : '' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('saved') }}</span>
+            <span class="value">{{ selectedGoal ? formatCurrency(selectedGoal.currentAmount) : '' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('target') }}</span>
+            <span class="value">{{ selectedGoal ? formatCurrency(selectedGoal.targetAmount) : '' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('startDate') }}</span>
+            <span class="value">{{ selectedGoal ? formatDate(selectedGoal.startDate) : '' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ $t('endDate') }}</span>
+            <span class="value">{{ selectedGoal ? formatDate(selectedGoal.endDate) : '' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-btn secondary" @click="closeGoalDetailsModal">
+          {{ $t('close') }}
+        </button>
+        <button class="modal-btn primary" @click="openAddMoneyModal(selectedGoal)">
+          {{ $t('addMoney') }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -504,6 +631,12 @@ export default {
       disabledConnect: false,
       refreshInterval: null,
       serverAccountBalance: 0, // New state to store account balance from server
+      showToast: false,
+      toastMessage: "",
+      showAddMoneyModal: false,
+      showGoalDetailsModal: false,
+      selectedGoal: null,
+      isChartLoading: false, // New state to track chart loading
     };
   },
   computed: {
@@ -859,9 +992,13 @@ export default {
             };
             this.selectedCategory = "";
             this.newCategory = "";
+            this.showToast = true;
+            this.toastMessage = this.$t('goalAddedSuccessfully');
           })
           .catch((error) => {
             console.error("Error adding goal:", error);
+            this.showToast = true;
+            this.toastMessage = this.$t('errorAddingGoal');
           });
       } else {
         alert("Please fill in all required fields.");
@@ -956,19 +1093,13 @@ export default {
     // Example usage of the sorting function
     async fetchTransactions() {
       try {
+        this.isChartLoading = true;
         const response = await axios.get(
           `${process.env.VUE_APP_DEPLOY_URL}/transactions/u/${this.userId}`
         );
         
-        console.log("✅ API response:", response); // 🪵 Log full response
-        console.log("✅ Raw data:", response.data); // 🪵 Log data array
-
-        // Kiểm tra response đầy đủ trước khi cập nhật
         if (response && response.data) {
-          // Sắp xếp transactions theo ngày mới nhất
           const sortedTransactions = this.sortTransactionsByDate(response.data);
-
-          // Cập nhật mảng transactions
           this.transactions = sortedTransactions.filter(
             (tx) => tx.amount != null && !isNaN(tx.amount) && tx.date
           );
@@ -1400,7 +1531,46 @@ export default {
       }
 
       return `Hey ${name}! 😊\nHere's your financial summary:\n\n${summary}\n\nKeep it up, ${name}, and let's make smarter financial moves together!`;
-    }
+    },
+    getCategoryIcon(category) {
+      switch (category) {
+        case 'Savings':
+          return 'fas fa-piggy-bank';
+        case 'Investment':
+          return 'fas fa-chart-line';
+        case 'Entertainment':
+          return 'fas fa-film';
+        case 'Education':
+          return 'fas fa-book';
+        case 'Emergency Fund':
+          return 'fas fa-hospital';
+        case 'Vehicle':
+          return 'fas fa-car';
+        case 'Vacation':
+          return 'fas fa-plane';
+        case 'Health':
+          return 'fas fa-heart';
+        default:
+          return 'fas fa-question';
+      }
+    },
+    openAddMoneyModal(goal) {
+      this.selectedGoal = goal;
+      this.showAddMoneyModal = true;
+    },
+    closeAddGoalModal() {
+      this.showAddGoalModal = false;
+    },
+    closeAddMoneyModal() {
+      this.showAddMoneyModal = false;
+    },
+    showGoalDetails(goal) {
+      this.selectedGoal = goal;
+      this.showGoalDetailsModal = true;
+    },
+    closeGoalDetailsModal() {
+      this.showGoalDetailsModal = false;
+    },
   },
 };
 </script>
@@ -1408,566 +1578,119 @@ export default {
 .GoalDashBoardContainer {
   display: flex;
   flex-direction: row;
-  width: calc(100vw - 30px) !important;
-  margin-left: 15px !important;
-  margin-right: 15px !important;
-  margin-bottom: 20px !important;
-  padding: 0 2px !important;
-  padding-top: 20px !important;
+  width: calc(100vw - 48px) !important;
+  margin: 24px !important;
+  padding: 32px !important;
   box-sizing: border-box;
-  border-radius: 32px; /* More roundness */
-  box-shadow: 0 6px 32px rgba(0,0,0,0.07), 0 1.5px 6px rgba(0,0,0,0.03);
+  border-radius: 32px;
   background: var(--bg-primary);
-  /* Remove outline for a cleaner look */
-  outline: none;
+  box-shadow: 
+    0 8px 24px rgba(0,0,0,0.08),
+    0 2px 8px rgba(0,0,0,0.04);
   flex-wrap: wrap;
+  gap: 32px;
 }
 
 .leftPanel {
-  width: 70%;
-  min-width: 0;
+  flex: 1;
+  min-width: 640px;
   height: fit-content;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  padding-top: 0;
-  background-color: var(--bg-primary);
-  border-radius: 28px 0 0 28px;
-}
-
-.rightPanel {
-  width: 30%;
-  min-width: 320px;
-  max-width: 480px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: var(--bg-primary);
-  border-radius: 0 28px 28px 0;
-  box-shadow: none;
-}
-
-.pie-chart-card {
-  width: 100%;
+  gap: 32px;
   padding: 0;
   background-color: transparent;
-  border-radius: 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  margin-bottom: 20px;
-}
-
-.financial-goals {
-  text-align: center;
-  height: 100%;
-  width: 100%;
-  background: var(--card-bg);
-  border-radius: 18px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  padding-bottom: 16px;
-  padding: 24px 16px 32px 16px; /* Add inner padding for better spacing */
-}
-
-@media (max-width: 1024px) {
-  .GoalDashBoardContainer {
-    flex-direction: column;
-    width: 100%;
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 24px;
-    border-radius: 18px;
-  }
-  .leftPanel,
-  .rightPanel {
-    width: 100%;
-    border-radius: 18px;
-  }
-}
-
-@media (max-width: 390px) {
-  .GoalDashBoardContainer {
-    flex-direction: column;
-    width: 100%;
-    max-width: 1400px;
-    margin: 40px auto;
-  }
-
-  .leftPanel .rightPanel {
-    width: 100%;
-  }
-
-  .connect-button-wrapper {
-    margin-top: 40px;
-  }
-
-  .buttons {
-    padding-top: 10px;
-  }
-
-  .add-goal-button {
-    width: 200px;
-  }
-}
-.connect-button-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 20px;
-  padding-top: 20px;  
-}
-
-.profilePic {
-  height: 100%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  max-width: 100%;
-}
-
-.headerText {
-  margin-left: 10px;
-}
-
-.greeting {
-  font-weight: 600;
-  font-size: 22px;
-  color: var(--text-primary);
-}
-
-.slogan {
-  font-size: 14px;
-  color: var(--text-primary);
-  opacity: 0.7;
-}
-
-.panelOverview {
-  width: 100%;
-  height: 15%;
-  background-color: blue;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.graphContainer {
-  width: 100%;
-  height: 45%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.transactionContainer {
-  width: 100%;
-  height: 30%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-x: auto;
-}
-
-.pie-chart-row {
-  display: flex;
-  justify-content: center;
-  align-items: stretch; 
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  margin-bottom: 40px;
-}
-
-.pie-chart-row > * {
-  flex: 1 1 45%;
-  max-width: 45%;
-  min-width: 320px;
-}
-
-/* Right Panel - Financial goals */
-.rightPanel {
-  width: 30%;
-  max-height: none;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: var(--bg-primary);
-}
-
-.pie-chart-card {
-  width: 100%;
-  padding: 0; 
-  background-color: transparent; 
-  border-radius: 0;
-  box-shadow: none;
-  margin-bottom: 20px;
-}
-
-.pie-chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-#chartToggle {
-  padding: 6px 12px;
-  border-radius: 6px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-/* Goals styles */
-.financial-goals {
-  text-align: center;
-  height: 100%;
-  width: 100%;
-}
-
-.goal-image {
-  z-index: 20;
-  width: 100%;
-  height: auto;
-  border-radius: 10px 10px 0 0;
-}
-
-.goal-upper-part {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.goal-section-title {
-  margin-bottom: 0px;
-  margin-top: 0px;
-  font-size: 2em;
-  color: var(--text-primary);
-}
-
-.add-goal-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-goal-button:hover {
-  background-color: #005bb5;
-}
-
-
-.goal {
-  background: #fff;
-  border-radius: 14px;
-  cursor: pointer;
-  margin: 0;
-  flex: 1 1 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--text-primary);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  transition: box-shadow 0.2s;
-}
-
-.goal:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
-}
-
-.goal-image {
-  width: 100%;
-  max-width: 220px;
-  height: auto;
-  border-radius: 12px;
-  margin-bottom: 16px; /* keep this small for balance */
-}
-
-
-.goal-icon {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  color: #007bff;
-}
-
-.goal-info h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.3em;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.goal-info p {
-  margin: 5px 0;
-  font-size: 1em;
-  color: var(--text-primary) !important;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 20;
-}
-
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px var(--shadow-color);
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh; 
-  overflow-y: auto; 
-  padding: 20px;
-}
-
-.modal-content img {
-  width: 100%;
-  height: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-.search-container {
-  margin: 20px 0;
-  text-align: center;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-  font-size: 16px;
-  box-sizing: border-box;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-/* Add Goal Modal Styles */
-.form-group {
-  margin-bottom: 16px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-}
-.form-group label {
-  flex: 0 0 160px;
-  text-align: left;
-  font-weight: 500;
-  margin-right: 16px;
-  color: var(--text-primary);
-}
-.form-group input,
-.form-group textarea,
-.form-group select,
-.form-group .currency-input {
-  flex: 1 1 0;
-  margin-left: 0;
-  margin-right: 0;
-  min-width: 0;
-}
-.currency-input {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-}
-.currency-input input,
-.currency-input select {
-  flex: 1 1 0;
-  min-width: 0;
-}
-.modal-text-content {
-  width: 100%;
-}
-.character-counter {
-  margin-left: 176px;
-  text-align: left;
-  color: #888;
-  font-size: 13px;
-}
-
-#goalCategory {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-#goalCategory:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.category-loading {
-  font-size: 0.8em;
-  color: #666;
-  margin-top: 5px;
-}
-
-.loading-spinner {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-  border-top-color: #007bff;
-  animation: spin 1s linear infinite;
-  margin-right: 5px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Mobile-specific styles */
-@media (max-width: 1024px) {
-  .GoalDashBoardContainer {
-  width: 100%;
-  max-width: 1400px;
-  margin: 40px auto;
-  padding: 0 24px;
-  display: flex;
-  flex-direction: row;
-  background-color: var(--bg-primary);
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  box-sizing: border-box;
-  }
-
-  .leftPanel,
-  .rightPanel {
-    width: 100%;
-    background-color: var(--bg-primary);
-  }
-
-  .leftPanelHeader,
-  .panelOverview,
-  .graphContainer,
-  .transactionContainer {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-.financial-goals {
-  text-align: center;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
 }
 
 .rightPanel {
-  width: 30%;
-  max-height: 100%;
-  padding: 20px;
+  width: 380px;
+  min-width: 380px;
+  max-width: none;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: 32px;
+  background-color: transparent;
 }
 
-.profilePic {
-  height: 100%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  max-width: 100px !important;
-}
-
-.headerText {
-  margin-left: 10px;
-}
-
-.greeting {
-  font-weight: 600;
-  font-size: 22px;
-}
-
-.slogan {
-  font-size: 14px;
-  color: #aaa;
-}
-
-/* Basic styles */
-.homepage {
-  color: #333;
-  padding: 20px;
-  background-color: #f9f9f9;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1e06fb;
-  color: #ffffff;
-  padding: 20px 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.header-icons i {
-  font-size: 2em;
-  margin-left: 20px;
-  cursor: pointer;
-}
-
-.header-greeting h1 {
-  font-size: 2em;
-  margin: 0;
-  animation: fadeIn 2s;
-}
-
-.header-greeting p {
-  font-size: 1.2em;
-  margin: 10px 0 0;
-  animation: fadeIn 2s;
-}
-
-.alldata1 {
-  padding: 20px;
-  display: flex;
-  background-color: #f9f9f9; /* Light background color */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 42px;
-  justify-content: space-between;
-  width: 40%;
-  flex-wrap: wrap; /* Allow wrapping to a new line */
+.revenue-expense {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  width: 100%;
 }
 
 .total-spend {
-  display: flex; /* Use flexbox for alignment */
-  flex-direction: column; /* Stack elements vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Align items to the top */
-  margin-left: 0; /* Push to the far right within the wrapper */
-  padding: 10px;
-  border-radius: 9px;
+  width: 100%;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.total-spend:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.total-spend h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  background: linear-gradient(45deg, var(--link-color), #5c6bc0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.total-spend p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.total-spend transaction-card {
   background-color: var(--card-bg);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: var(--text-primary);
-  transition: background-color 0.3s, box-shadow 0.3s;
-  height: auto;
+  border: 1px solid #2596be;
+  border-bottom: 6px solid #2596be;
+  border-radius: 8px;
+}
+
+.total-spend transaction-card:hover {
+  background-color: rgba(37, 150, 190, 0.1); 
+}
+
+.total-spend revenue-card {
+  background-color: var(--card-bg);
+  border: 1px solid #4caf50;
+  border-bottom: 6px solid #4caf50;
+  border-radius: 8px;
+}
+
+.total-spend revenue-card:hover {
+  background-color: rgba(76, 175, 80, 0.1); 
+}
+
+.total-spend expense-card {
+  background-color: var(--card-bg);
+  border: 1px solid #f44336;
+  border-bottom: 6px solid #f44336;
+  border-radius: 8px;
+}
+
+.total-spend expense-card:hover {
+  background-color: rgba(244, 67, 54, 0.1); 
+}
+
+.total-spend balance-card {
+  background-color: var(--card-bg);
+  border: 1px solid orange;
+  border-bottom: 8px solid orange;
+  border-radius: 5px;
+}
+
+.total-spend balance-card:hover {
+  background-color: rgba(255, 165, 0, 0.1); 
 }
 
 .balance-header {
@@ -2215,16 +1938,45 @@ hr {
 }
 
 .chart-container {
+  position: relative;
   width: 100%;
   height: 350px;
   min-height: 300px;
   box-sizing: border-box;
   border: 2px solid var(--border-color);
-  border-radius: 10px;
-  background-color: var(--card-bg);
+  border-radius: 16px;
+  background: var(--card-bg);
   margin-bottom: 20px;
   overflow: hidden;
-  position: relative;
+}
+
+.chart-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--card-bg);
+  z-index: 10;
+}
+
+.chart-loading::after {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--link-color);
+  border-radius: 50%;
+  animation: loading-spin 1s linear infinite;
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Đảm bảo biểu đồ hiển thị đúng trên các trình duyệt khác nhau */
@@ -2599,18 +2351,49 @@ hr {
 .bot-message {
   margin-bottom: 10px;
   margin-left: 10px;
-  background: #007bff;
+  background: rgba(0, 0, 0, 0.8);
   color: #ffffff;
-  padding: 12px 18px;
+  padding: 16px 20px;
   border-radius: 18px;
   max-width: 280px;
   max-height: 200px;
-  overflow-y: auto; /* Enable vertical scrolling */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0; /* Start hidden */
-  transform: scale(0.8) translateY(10px); /* Start slightly smaller and lower */
-  transition: opacity 0.7s ease, transform 0.7s ease;
-  transition-delay: 0.3s; /* Reduced delay for smoother appearance */
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.bot-message::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bot-message::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.1);
+}
+
+.bot-message::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+}
+
+.bot-message .typing-animation {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+}
+
+.bot-message .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.8);
+  opacity: 0.3;
+}
+
+.bot-message .typed-message {
+  line-height: 1.6;
+  font-size: 14px;
+  color: rgba(255,255,255,0.9);
 }
 
 .bot-message.message-visible {
@@ -2772,4 +2555,370 @@ hr {
   width: 100%;
 }
 
+.goal-details {
+  padding: 24px 0;
+}
+
+.goal-description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 24px 0;
+}
+
+.goal-progress {
+  margin-bottom: 32px;
+}
+
+.goal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item .label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.info-item .value {
+  font-size: 15px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Toast animations */
+@keyframes slideIn {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+}
+
+.toast {
+  animation: slideOut 0.3s ease forwards;
+}
+
+.toast.show {
+  animation: slideIn 0.3s ease forwards;
+}
+
+/* Goal amounts */
+.goal-amounts {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.goal-amounts p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.goal-amounts p:last-child {
+  font-weight: 600;
+}
+
+/* Progress bar colors based on progress */
+.progress-bar[style*="width: 100%"],
+.progress-bar[style*="width:100%"] {
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+}
+
+.progress-bar[style*="width: 7"],
+.progress-bar[style*="width: 8"],
+.progress-bar[style*="width: 9"] {
+  background: linear-gradient(90deg, #ff9800, #ffc107);
+}
+
+.progress-bar[style*="width: 0"],
+.progress-bar[style*="width: 1"],
+.progress-bar[style*="width: 2"],
+.progress-bar[style*="width: 3"],
+.progress-bar[style*="width: 4"],
+.progress-bar[style*="width: 5"],
+.progress-bar[style*="width: 6"] {
+  background: linear-gradient(90deg, #f44336, #ff5722);
+}
+
+/* Currency input styles */
+.currency-input {
+  display: flex;
+  gap: 12px;
+}
+
+.currency-input input {
+  flex: 2;
+}
+
+.currency-input select {
+  flex: 1;
+  min-width: 100px;
+}
+
+/* Character counter */
+.character-counter {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Empty state */
+.goals:empty::after {
+  content: attr(data-empty-message);
+  display: block;
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-style: italic;
+}
+
+/* Loading state */
+.goal.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.goal.loading::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  border-radius: 24px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.2);
+}
+
+.modal.show .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  margin-bottom: 32px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: linear-gradient(45deg, var(--link-color), #5c6bc0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: var(--link-color);
+  box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
+  outline: none;
+}
+
+.modal-footer {
+  margin-top: 32px;
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-btn.primary {
+  background: var(--link-color);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,123,255,0.2);
+}
+
+.modal-btn.primary:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,123,255,0.3);
+}
+
+.modal-btn.secondary {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.modal-btn.secondary:hover {
+  background: var(--border-color);
+  transform: translateY(-2px);
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1000;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--link-color), #5c6bc0);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.toast-message {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    padding: 24px;
+  }
+
+  .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--card-bg);
+    padding: 16px 0;
+    margin-top: 24px;
+  }
+
+  .toast {
+    width: calc(100% - 48px);
+    left: 24px;
+    right: 24px;
+  }
+}
 </style>

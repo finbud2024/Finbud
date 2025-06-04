@@ -2133,7 +2133,10 @@ Your portfolio is showing impressive performance with a total value of $24,892.3
 h1 {
   text-align: center;
   margin-top: 20px;
-  margin-bottom: 0px;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #000000;
 }
 
 /* Navigation */
@@ -2141,38 +2144,76 @@ h1 {
   display: flex;
   justify-content: center;
   background: white;
-  padding: 0px 0;
-  border-bottom: 2px solid #ddd;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar ul {
   list-style-type: none;
   display: flex;
-  gap: 10px;
+  gap: 0.5rem;
   background: #f8f9fa;
-  padding: 10px;
-  border-radius: 15px;
-  border: 2px solid #ddd;
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 2px solid #000000;
+  margin: 0;
 }
 
 .navbar li {
   cursor: pointer;
-  padding: 15px 50px;
-  color: #333;
-  transition: background 0.3s, color 0.3s;
-  border-radius: 10px;
-  font-size: 1.1rem;
+  padding: 0.75rem 1.5rem;
+  color: #000000;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
 .navbar li:hover {
-  color: #000000;
-  background: #e9f0fc;
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
 }
 
 .navbar li.active {
-  font-weight: bold;
   background: #000000;
   color: white;
+  font-weight: 600;
+}
+
+.navbar li.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: 3px;
+  background: white;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.navbar li:hover::after {
+  width: 50%;
+}
+
+@media (max-width: 768px) {
+  .navbar ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .navbar li {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
 }
 
 /* Investment section layout */

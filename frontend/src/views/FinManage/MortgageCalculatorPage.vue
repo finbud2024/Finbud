@@ -397,7 +397,7 @@ export default {
 
       const ctx = this.$refs.chart.getContext('2d');
       this._chart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
           labels: [
             this.$t('principalInterest'),
@@ -414,20 +414,62 @@ export default {
               parseFloat(this.pmi), 
               parseFloat(this.hoaFees)
             ],
-            backgroundColor: ['#81D4FA', '#FFCC80', '#E6EE9C', '#A5D6A7', '#80CBC4']
+            backgroundColor: [
+              '#2c3e50', // Dark blue for principal & interest
+              '#e74c3c', // Red for property tax
+              '#27ae60', // Green for insurance
+              '#f39c12', // Orange for PMI
+              '#8e44ad'  // Purple for HOA fees
+            ],
+            borderColor: '#ffffff',
+            borderWidth: 2,
+            borderRadius: 5,
+            spacing: 2
           }]
         },
         options: {
           responsive: true,
-          cutout: '60%', 
+          maintainAspectRatio: false,
+          cutout: '65%',
+          layout: {
+            padding: 20
+          },
           plugins: {
             legend: {
               position: 'bottom',
+              labels: {
+                color: '#000000',
+                font: {
+                  size: 13,
+                  family: "'Space Grotesk', sans-serif",
+                  weight: '500'
+                },
+                padding: 15,
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
             },
             tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              padding: 12,
+              cornerRadius: 8,
+              titleFont: {
+                size: 14,
+                family: "'Space Grotesk', sans-serif",
+                weight: '600'
+              },
+              bodyFont: {
+                size: 13,
+                family: "'Space Grotesk', sans-serif"
+              },
               callbacks: {
                 label: function(context) {
-                  return `${context.label}: $${context.raw.toFixed(2)}`;
+                  const value = context.raw.toFixed(2);
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((context.raw / total) * 100).toFixed(1);
+                  return `${context.label}: $${value} (${percentage}%)`;
                 }
               }
             }
@@ -442,26 +484,32 @@ export default {
 
             ctx.restore();
 
-            // Clear the center area first
+            // Clear the center area
             const centerX = width / 2;
             const centerY = height / 2;
             const radius = Math.min(width, height) * 0.25;
             ctx.clearRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
 
-            // Calculate positions relative to center 
-            const titleY = centerY - 60; 
-            const amountY = centerY - 30; 
+            // Draw background circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.9, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            // Calculate positions for text
+            const titleY = centerY - 25;
+            const amountY = centerY + 10;
 
             // Draw "Monthly total" text
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'center';
-            ctx.fillStyle = '#333333';
-            ctx.font = '16px Arial';
+            ctx.fillStyle = '#000000';
+            ctx.font = "600 16px 'Space Grotesk'";
             const text = this.$t('monthlyTotal');
             ctx.fillText(text, centerX, titleY);
 
-            // Draw payment amount with larger, bold font
-            ctx.font = 'bold 28px Arial';
+            // Draw payment amount
+            ctx.font = "700 24px 'Space Grotesk'";
             const paymentText = `$${this.calculateMonthlyPayment}`;
             ctx.fillText(paymentText, centerX, amountY);
 
@@ -557,6 +605,287 @@ export default {
 </script>
 
 <style scoped>
+/* Base styles */
+.mortgage-calc {
+  max-width: 95%;
+  margin: auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+/* Headings */
+h1 {
+  font-size: 40px;
+  margin-bottom: 20px;
+  color: #000000;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+h2 {
+  color: #000000;
+  font-size: 24px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+/* Layout */
+.content-wrapper {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  animation: fadeIn 0.5s ease;
+}
+
+/* Input Section */
+.input-section {
+  max-width: 30%;
+  flex-grow: 1;
+  animation: slideIn 0.5s ease;
+}
+
+/* Input Groups */
+.input-group {
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.input-group:nth-child(1) { animation-delay: 0.1s; }
+.input-group:nth-child(2) { animation-delay: 0.2s; }
+.input-group:nth-child(3) { animation-delay: 0.3s; }
+.input-group:nth-child(4) { animation-delay: 0.4s; }
+
+label {
+  font-weight: 500;
+  color: #333333;
+  display: block;
+  margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+/* Input Wrapper */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+  border-color: #000000;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.unit {
+  position: absolute;
+  right: 12px;
+  font-size: 14px;
+  color: #666666;
+  pointer-events: none;
+}
+
+/* Payment Breakdown Box */
+.payment-breakdown-box {
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 25px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  flex: 1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: slideInRight 0.5s ease;
+}
+
+.payment-breakdown-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.payment-breakdown {
+  flex: 1;
+}
+
+/* Breakdown Details */
+.breakdown-list {
+  margin-top: 20px;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background: #f8f8f8;
+  transition: all 0.3s ease;
+}
+
+.breakdown-item:hover {
+  background: #f0f0f0;
+  transform: translateX(5px);
+}
+
+.percentage {
+  font-weight: 600;
+  color: #000000;
+  margin-right: 15px;
+  min-width: 45px;
+}
+
+.label {
+  flex: 1;
+  color: #333333;
+}
+
+.amount {
+  font-weight: 500;
+  color: #000000;
+}
+
+/* Toggle Header */
+.toggle-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.toggle-header button:hover {
+  background: #f5f5f5;
+}
+
+.dropdown-icon {
+  transition: transform 0.3s ease;
+}
+
+.dropdown-icon.rotated {
+  transform: rotate(180deg);
+}
+
+/* Extra Content Animation */
+.extra-content {
+  animation: slideDown 0.3s ease;
+}
+
+/* Loading States */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mortgage-calc {
+    padding: 15px;
+  }
+
+  .content-wrapper {
+    gap: 20px;
+  }
+
+  .input-section {
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .payment-breakdown-box {
+    padding: 15px;
+  }
+}
+
 /* Language Switcher */
 .language-switcher {
   position: fixed;
@@ -590,13 +919,6 @@ export default {
   background: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Headings */
-h1 {
-  font-size: 40px;
-  margin-bottom: 20px;
-  color: #007bff;
 }
 
 /* Layout */
@@ -839,16 +1161,15 @@ h3 {
 
 .bot-message {
   margin-top: 10px;
-  background: #2196F3;
+  background: #000000;
   color: #ffffff;
   padding: 12px 18px;
-  border-radius: 18px;
+  border-radius: 12px;
   max-width: 280px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   opacity: 0;
   transform: scale(0.8) translateY(10px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-  transition-delay: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .bot-message.message-visible {
@@ -859,7 +1180,6 @@ h3 {
 .bot-message.message-hidden {
   opacity: 0;
   transform: scale(0.8) translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .typing-animation {
@@ -873,7 +1193,7 @@ h3 {
   height: 8px;
   border-radius: 50%;
   background-color: #ffffff;
-  opacity: 0.3;
+  opacity: 0.6;
 }
 
 .dot:nth-child(1) {
@@ -891,11 +1211,12 @@ h3 {
 .typed-message {
   line-height: 1.5;
   word-wrap: break-word;
+  color: #ffffff;
 }
 
 @keyframes typing {
   0%, 100% { 
-    opacity: 0.3; 
+    opacity: 0.6;
     transform: scale(1);
   }
   50% { 
