@@ -221,7 +221,7 @@
             
           </td>
           <td colspan="1" class="chatbot-container">
-            <ChatBotTyping :message="closeVaue" />
+            <ChatBotTyping :message="closeValue" />
 
             
           </td>
@@ -308,39 +308,11 @@ import {watch, ref } from 'vue';
     { showGraph: true },
     { showGraph: true },
   ]);
-  const simulationChat = `
-  GBM vs. GARCH Models<br/><br/>
-  The chart above compares stock price simulations using two models:<br/><br/>
-  <ul>
-    <li><b>GBM (Geometric Brownian Motion):</b> Assumes constant volatility and normally distributed returns. Commonly used in financial modeling for its simplicity.</li>
-    <li><b>GARCH (Generalized Autoregressive Conditional Heteroskedasticity):</b> Accounts for changing (time-varying) volatility over time, making it more suitable for modeling real-world market behavior and shocks.</li>
-  </ul>
-  <br/>
-  Use this comparison to evaluate how volatility assumptions affect projected price paths over time.
+  const simulationChat = t('quantPage.simulationChatBot');
 
-  `;
-  const closeVaue = `
-  <b>Close Price Graph</b><br/><br/>
-  This chart displays the historical closing prices of the selected stock:<br/><br/>
-  <ul>
-    <li><b>Close Price:</b> The final trading price of the stock for each day, reflecting market consensus.</li>
-  </ul>
-  <br/>
-  Use this graph to observe price trends, patterns, and historical performance over time.
-  `;
+const closeValue = t('quantPage.closeValueChatBot') ;
 
-  const indicatorAndReturn = `
-  <b>Return & Technical Indicator Graphs</b><br/><br/>
-  These charts help analyze stock performance and market behavior:<br/><br/>
-  <ul>
-    <li><b>Return Graph:</b> Shows <i>daily</i> or <i>cumulative</i> returns over time. Use it to compare stock performance across periods.</li>
-    <li><b>Indicator Graph:</b> Plots technical indicators like SMA, EMA, RSI, MACD, or Bollinger Bands to help identify trends and signals.</li>
-  </ul>
-  <br/>
-  Use these tools to assess growth, momentum, and potential entry/exit points.
-  `;
-
-
+const indicatorAndReturn = t('quantPage.indicatorAndReturnChatBot');
 
   
   function toggleGraph(index) {

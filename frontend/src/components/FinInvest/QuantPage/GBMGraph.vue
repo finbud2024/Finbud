@@ -1,5 +1,5 @@
 <template>
-  <div class="gbm-graph">
+  <div class="chart-container">
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
@@ -211,9 +211,15 @@ watch(() => [props.tickerA, props.tickerB, props.tickerC], loadAndSimulate, { im
 </script>
 
 <style scoped>
-.gbm-graph {
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+canvas {
   width: 100%;
   height: 400px;
-  position: relative;
 }
 </style>

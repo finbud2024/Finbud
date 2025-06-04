@@ -1,5 +1,5 @@
 <template>
-  <div class="garch-graph">
+  <div class="chart-container">
     <canvas ref="chartCanvas"></canvas>
   </div>
 </template>
@@ -216,9 +216,16 @@ watch(
 </script>
 
 <style scoped>
-.garch-graph {
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+canvas {
   width: 100%;
   height: 400px;
-  position: relative;
 }
+
 </style>
