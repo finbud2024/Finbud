@@ -42,7 +42,7 @@
               to="/fin-compare"
               class="fin-compare"
               @click="toggleDropdown(false)"
-              >{{ $t("Products Comparison") }}</router-link
+              >{{ $t("ProductComparison") }}</router-link
             >
           </div>
         </li>

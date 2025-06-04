@@ -218,10 +218,10 @@
 import axios from "axios";
 import Pagination from "@/components/Risk&Chat/Pagination.vue";
 import RiskChat from "@/components/Risk&Chat/RiskChat.vue";
-import CryptoWatch from "@/components/MarketPage/CryptoWatch.vue";
-import StockWatch from "@/components/MarketPage/StockWatch.vue";
-import VietnamStockWatch from "@/components/MarketPage/VietnamStockWatch.vue";
-import RealEstateMap from "@/components/MarketPage/RealEstateMap.vue";
+import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
+import StockWatch from "@/components/marketPage/StockWatch.vue";
+import VietnamStockWatch from "@/components/marketPage/VietnamStockWatch.vue";
+import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
 import {
 	fetchStockQuote,
 	fetchCryptoList,
