@@ -105,9 +105,8 @@
 
 <script>
 import axios from "axios";
-import TopSeries from "../marketPage/TopSeries.vue";
-import CryptoPopup from "../marketPage/CryptoPopup.vue";
-import { gptServices } from "@/services/gptServices.js";
+import TopSeries from "../MarketPage/TopSeries.vue";
+import CryptoPopup from "../MarketPage/CryptoPopup.vue";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import MarkdownIt from 'markdown-it'
 
