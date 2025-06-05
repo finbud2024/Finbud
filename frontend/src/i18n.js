@@ -1047,7 +1047,7 @@ const messages = {
     currentKeywordLabel: "Từ khóa hiện tại:",
     pointsLabel: "Điểm:",
     timeLeftLabel: "Thời gian còn lại:",
-    questionPlaceholder: "Câu hỏi sẽ hiển thị ở đây",
+    questionPlaceholder: "Câu hỏi sẽ hiển thị ở đây:",
     answerPlaceholder: "Câu trả lời {letter}",
     explanationTitle: "Giải thích:",
     nextQuestionButton: "Câu hỏi tiếp theo",

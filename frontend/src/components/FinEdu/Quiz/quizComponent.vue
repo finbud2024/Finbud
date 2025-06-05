@@ -843,11 +843,13 @@ export default {
 
 <style scoped>
 .quiz-card {
+  width: 70%;
+  max-width: 1600px;
+  padding: 2rem;
   background: white;
   border-radius: 12px;
-  padding: 2.5rem;
-  width: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .title {
@@ -883,9 +885,24 @@ export default {
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
+@media (max-width: 480px) {
+  .search-container {
+    flex-direction: column;
+    width: 100% !important;
+    gap: 0.5rem;
+  }
+
+  .search-container > input,
+  .search-container > .button {
+    width: 100%;
+  }
+}
+
+
 .button {
   width: 100%;
-  padding: 0.875rem;
+  max-width: 400px;
+  padding: 0.875rem 1rem;
   background: #3182ce;
   color: white;
   border: none;
@@ -894,7 +911,25 @@ export default {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  margin: 0 auto; /* center alignment */
+  display: block;
 }
+
+@media (max-width: 768px) {
+  .button {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    font-size: 0.875rem;
+    padding: 0.65rem;
+    width: 90%;
+  }
+}
+
 
 .button:hover:not(:disabled) {
   background: #2c5282;
@@ -966,7 +1001,7 @@ export default {
 
 .quizQuestion {
   font-family: sans-serif;
-  font-size: 1.2rem;
+  font-size: 16px;
   color: #2c3e50;
   margin-bottom: 1.5rem;
 }
@@ -981,21 +1016,10 @@ export default {
   flex-direction: column;
   gap: 5px;
   width: 100%;
+  align-items: center; 
 }
 
-.answerButton {
-  width: 100%;
-  padding: 0.875rem;
-  background: white;
-  color: #2c3e50;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: 0.5rem;
-}
+
 
 .answerButton:hover {
   background: #f7fafc;
@@ -1801,7 +1825,7 @@ export default {
 
 .quizQuestion {
   font-family: sans-serif;
-  font-size: 1.2rem;
+  font-size: 16px;
   color: var(--text-primary);
   /* Thay #2c3e50 */
   margin-bottom: 1.5rem;
@@ -1822,20 +1846,36 @@ export default {
 
 .answerButton {
   width: 100%;
-  padding: 0.875rem;
+  max-width: 500px;
+  padding: 0.875rem 1rem;
   background: var(--card-bg);
-  /* Thay trắng */
   color: var(--text-primary);
-  /* Thay #2c3e50 */
   border: 1px solid var(--border-color);
-  /* Thay #e2e8f0 */
   border-radius: 6px;
   font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
   margin-bottom: 0.5rem;
+  box-sizing: border-box;
 }
+
+@media (max-width: 768px) {
+  .answerButton {
+    font-size: 0.95rem;
+    padding: 0.75rem 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .answerButton {
+    font-size: 0.9rem;
+    padding: 0.65rem 0.75rem;
+    width: 90%;
+    margin: 0 auto 0.5rem auto; /* center align */
+  }
+}
+
 
 .answerButton:hover {
   background: var(--hover-bg);

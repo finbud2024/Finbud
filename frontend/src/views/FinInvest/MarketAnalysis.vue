@@ -163,7 +163,10 @@
                     <h2 class="component-title">
                         {{ t('marketAnalysisPage.AINews') }}
                     </h2>
+
                     <div class="topic-card">
+
+                        <!-- TOP LARGE NEWS CARD -->
                         <div class="news-card" style="height: calc(30% - 5px);">
                             <img 
                                 :src="marketAnalysis.AI_News.AI_News[0].link" 
@@ -171,10 +174,14 @@
                                 class="news-image"
                             >
                             <div class="news-content">
-                                <a class="news-title clamp-text" :href="marketAnalysis.AI_News.AI_News[0].link" target="_blank">
+                                <router-link
+                                    class="news-title clamp-text"
+                                    :to="`/market-analysis/news/${marketAnalysis.AI_News.AI_News[0].id}`"
+                                >
                                     {{ marketAnalysis.AI_News.AI_News[0].title }}
-                                </a>
-                                <p class="news-datetime">
+                                </router-link>
+                                <p class="news-datetime-creator">
+                                    <strong class="news-source" style="color: black;">{{ marketAnalysis.AI_News.AI_News[0].source }}</strong> -
                                     {{ marketAnalysis.AI_News.AI_News[0].datetime }}
                                 </p>
                                 <p class="clamp-text">
@@ -192,8 +199,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- SMALL NEWS ROW 1 -->
                         <div class="small-news-card-wrapper">
-                            <div v-for="(news, index) in smallNewsCardsFirst" :key="index" class="small-news-card">
+                            <div 
+                                v-for="(news, index) in smallNewsCardsFirst" 
+                                :key="index" 
+                                class="small-news-card"
+                            >
                                 <img 
                                     :src="news.link" 
                                     alt="AI News"
@@ -201,10 +214,15 @@
                                     style="width: 50%; height: 40%;"
                                 >
                                 <div class="news-content">
-                                    <a class="news-title clamp-text" :href="news.link" target="_blank" style="font-size: 14px;">
+                                    <router-link
+                                        class="news-title clamp-text"
+                                        :to="`/market-analysis/news/${news.id}`"
+                                        style="font-size: 14px;"
+                                    >
                                         {{ news.title }}
-                                    </a>
-                                    <p class="news-datetime">
+                                    </router-link>
+                                    <p class="news-datetime-creator">
+                                        <strong class="news-source" style="color: black;">{{ news.source }}</strong> -
                                         {{ news.datetime }}
                                     </p>
                                     <div class="news-tags-container">
@@ -220,8 +238,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- SMALL NEWS ROW 2 -->
                         <div class="small-news-card-wrapper">
-                            <div v-for="(news, index) in smallNewsCardsSecond" :key="index" class="small-news-card">
+                            <div 
+                                v-for="(news, index) in smallNewsCardsSecond" 
+                                :key="index" 
+                                class="small-news-card"
+                            >
                                 <img 
                                     :src="news.link" 
                                     alt="AI News"
@@ -229,10 +253,15 @@
                                     style="width: 50%; height: 40%;"
                                 >
                                 <div class="news-content">
-                                    <a class="news-title clamp-text" :href="news.link" target="_blank" style="font-size: 14px;">
+                                    <router-link
+                                        class="news-title clamp-text"
+                                        :to="`/market-analysis/news/${news.id}`"
+                                        style="font-size: 14px;"
+                                    >
                                         {{ news.title }}
-                                    </a>
-                                    <p class="news-datetime">
+                                    </router-link>
+                                    <p class="news-datetime-creator">
+                                        <strong class="news-source" style="color: black;">{{ news.source }}</strong> -
                                         {{ news.datetime }}
                                     </p>
                                     <div class="news-tags-container">
@@ -248,6 +277,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -595,7 +625,7 @@ watch(selectedCategory, (newCategory) => {
     overflow: hidden;
 }
 
-.news-datetime {
+.news-datetime-creator {
     font-size: 12px;
     font-weight: 400;
     color: rgb(184, 184, 184);

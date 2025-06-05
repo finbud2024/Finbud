@@ -41,6 +41,7 @@ import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
 import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
 import MarketAnalysisInsight from "@/views/FinInvest/MarketAnalysis/MarketAnalysisInsight.vue";
 import FinCompare from "@/views/FinManage/FinCompare.vue";
+import NewsDetailPage from '@/views/FinInvest/MarketAnalysis/NewsDetailPage.vue';
 
 const routes = [
   {
@@ -259,6 +260,11 @@ const routes = [
     path: "/market-analysis/insight/:type",
     name: "MarketAnalysisInsight",
     component: MarketAnalysisInsight,
+  },
+  {
+    path: '/market-analysis/news/:id',
+    name: 'NewsDetailPage',
+    component: NewsDetailPage,
   },
   {
     path: "/fin-compare",

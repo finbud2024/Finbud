@@ -1289,6 +1289,7 @@
         "Title": "AI News",
         "AI_News": [
             {
+            "id": "1",
             "title": "Ukraine continues drone attacks on Moscow ahead of Victory Day",
             "source": "fireant.vn",
             "datetime": "07/05/2025, 09:54",
@@ -1302,6 +1303,7 @@
             "link": "https://cdn.pixabay.com/photo/2015/02/15/09/33/news-636978_1280.jpg"
             },
             {
+            "id": "2",
             "title": "Russia, China discuss energy partnership",
             "tags": [
                 "Supply",
@@ -1321,6 +1323,7 @@
             "link": "https://cdn.pixabay.com/photo/2015/02/15/09/33/news-636978_1280.jpg"
             },
             {
+            "id": "3",
             "title": "Billionaire Warren Buffett to leave nearly $350 billion in cash for successor",
             "tags": [
                 "Capital",
@@ -1337,6 +1340,7 @@
             "content": "Russia's capital shook for the third consecutive day as Ukraine launched a series of drone (UAV) attacks just ahead of Victory Day, causing several airports to temporarily halt operations. The attacks occurred on the eve of multiple world leaders arriving in Russia and just two days before the military parade celebrating the 80th anniversary of the victory over Nazi Germany. Between 10 p.m. on May 6 and early morning on May 7, Russian air defenses intercepted at least 14 Ukrainian drones en route to the capital. Airports were disrupted and airlines scrambled to adjust schedules. On May 5, fighter jets flew over Red Square in Moscow as part of a parade rehearsal. Photo: Xinhua. Chinese President Xi Jinping is expected to arrive in Moscow on the evening of May 7 and attend the Red Square parade on May 9, along with 28 other leaders from Asia, Africa, Latin America, and several European countries. According to the Kremlin, leaders attending are from: Abkhazia, Armenia, Azerbaijan, Belarus, Bosnia and Herzegovina, Brazil, Burkina Faso, Congo, Cuba, Egypt, Equatorial Guinea, Ethiopia, Guinea-Bissau, Kazakhstan, Kyrgyzstan, Laos, Mongolia, Myanmar, Palestine, Serbia, Slovakia, South Ossetia, Tajikistan, Turkmenistan, Uzbekistan, Venezuela, Vietnam, and Zimbabwe. Xi is expected to sign several strategic agreements during the visit. He previously called for negotiations to end the Ukraine crisis and blamed the U.S. for escalating the situation by providing arms to Kyiv. In a May 7 op-ed in Russian media, Xi emphasized that China and Russia must 'safeguard the post-WWII international order' and resist any attempts to divide the two nations."  
             },
             {
+            "id": "4",
             "title": "Why China is in no rush to seek a trade deal with the U.S.",
             "tags": [
                 "USD",
@@ -1352,6 +1356,7 @@
             "link": "https://cdn.pixabay.com/photo/2015/02/15/09/33/news-636978_1280.jpg"
             },
             {
+            "id": "5",
             "title": "Stock market outlook for May 8: VN-Index expected to sustain gains",
             "tags": [
                 "BSR",
@@ -1366,6 +1371,7 @@
             "content": "Russia's capital shook for the third consecutive day as Ukraine launched a series of drone (UAV) attacks just ahead of Victory Day, causing several airports to temporarily halt operations. The attacks occurred on the eve of multiple world leaders arriving in Russia and just two days before the military parade celebrating the 80th anniversary of the victory over Nazi Germany. Between 10 p.m. on May 6 and early morning on May 7, Russian air defenses intercepted at least 14 Ukrainian drones en route to the capital. Airports were disrupted and airlines scrambled to adjust schedules. On May 5, fighter jets flew over Red Square in Moscow as part of a parade rehearsal. Photo: Xinhua. Chinese President Xi Jinping is expected to arrive in Moscow on the evening of May 7 and attend the Red Square parade on May 9, along with 28 other leaders from Asia, Africa, Latin America, and several European countries. According to the Kremlin, leaders attending are from: Abkhazia, Armenia, Azerbaijan, Belarus, Bosnia and Herzegovina, Brazil, Burkina Faso, Congo, Cuba, Egypt, Equatorial Guinea, Ethiopia, Guinea-Bissau, Kazakhstan, Kyrgyzstan, Laos, Mongolia, Myanmar, Palestine, Serbia, Slovakia, South Ossetia, Tajikistan, Turkmenistan, Uzbekistan, Venezuela, Vietnam, and Zimbabwe. Xi is expected to sign several strategic agreements during the visit. He previously called for negotiations to end the Ukraine crisis and blamed the U.S. for escalating the situation by providing arms to Kyiv. In a May 7 op-ed in Russian media, Xi emphasized that China and Russia must 'safeguard the post-WWII international order' and resist any attempts to divide the two nations."
             },
             {
+            "id": "6",
             "title": "U.S. seeks economic and trade cooperation opportunities with Hai Phong City",
             "tags": [
                 "Global Economy",
@@ -1379,6 +1385,7 @@
             "content": "Russia's capital shook for the third consecutive day as Ukraine launched a series of drone (UAV) attacks just ahead of Victory Day, causing several airports to temporarily halt operations. The attacks occurred on the eve of multiple world leaders arriving in Russia and just two days before the military parade celebrating the 80th anniversary of the victory over Nazi Germany. Between 10 p.m. on May 6 and early morning on May 7, Russian air defenses intercepted at least 14 Ukrainian drones en route to the capital. Airports were disrupted and airlines scrambled to adjust schedules. On May 5, fighter jets flew over Red Square in Moscow as part of a parade rehearsal. Photo: Xinhua. Chinese President Xi Jinping is expected to arrive in Moscow on the evening of May 7 and attend the Red Square parade on May 9, along with 28 other leaders from Asia, Africa, Latin America, and several European countries. According to the Kremlin, leaders attending are from: Abkhazia, Armenia, Azerbaijan, Belarus, Bosnia and Herzegovina, Brazil, Burkina Faso, Congo, Cuba, Egypt, Equatorial Guinea, Ethiopia, Guinea-Bissau, Kazakhstan, Kyrgyzstan, Laos, Mongolia, Myanmar, Palestine, Serbia, Slovakia, South Ossetia, Tajikistan, Turkmenistan, Uzbekistan, Venezuela, Vietnam, and Zimbabwe. Xi is expected to sign several strategic agreements during the visit. He previously called for negotiations to end the Ukraine crisis and blamed the U.S. for escalating the situation by providing arms to Kyiv. In a May 7 op-ed in Russian media, Xi emphasized that China and Russia must 'safeguard the post-WWII international order' and resist any attempts to divide the two nations."
             },
             {
+            "id": "7",
             "title": "Nam Dinh: Tightens inspections and handling of housing, apartment projects violating construction order",
             "tags": [
                 "Real Estate",

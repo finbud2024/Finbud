@@ -111,16 +111,12 @@ export default {
     });
 
     onMounted(async () => {
-      // Show UI immediately
       ready.value = true;
-      
-      // First check auth
       store.dispatch("users/fetchCurrentUser");
       if (!isAuthenticated.value) {
         router.push("/login");
         return;
       }
-
       fetchForums();
       fetchThreads();
     });
@@ -147,6 +143,52 @@ export default {
   margin: 0 auto;
   padding: 20px;
   gap: 64px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .forum-layout {
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .forum-layout {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 20px;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-bottom: 1px solid var(--background-tertiary);
+  }
+
+  .content {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .forum-layout {
+    padding: 12px 8px;
+    gap: 12px;
+  }
+
+  .load-more {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .skeleton-card {
+    height: 100px;
+  }
 }
 
 .sidebar {
