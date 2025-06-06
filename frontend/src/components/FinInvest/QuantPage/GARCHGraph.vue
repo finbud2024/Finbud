@@ -82,7 +82,7 @@ async function loadAndSimulate() {
     datasets.push({
       label: props.tickerA,
       data: pathA,
-      borderColor: 'blue',
+      borderColor: '#000000',
       borderWidth: 2,
       fill: false,
     })

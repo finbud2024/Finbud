@@ -5,18 +5,18 @@
         <aside class="sidebar-content">
           <div>
             <h1 class="title">FinBud</h1>
-            <p class="subtitle">Smart Financial Product Comparison</p>
+            <p class="subtitle">{{ $t('finCompare.title') }}</p>
             <div>
-              <p class="filter-label">Filter by priority</p>
+              <p class="filter-label">{{ $t('finCompare.filterByPriority') }}</p>
               <div class="filter-options">
                 <label class="radio-option">
-                  <input type="radio" name="priority" v-model="selectedPriority" value="savings" /> Maximum savings
+                  <input type="radio" name="priority" v-model="selectedPriority" value="savings" /> {{ $t('finCompare.priorities.maxSavings') }}
                 </label>
                 <label class="radio-option">
-                  <input type="radio" name="priority" v-model="selectedPriority" value="fees" /> Lowest fees
+                  <input type="radio" name="priority" v-model="selectedPriority" value="fees" /> {{ $t('finCompare.priorities.lowestFees') }}
                 </label>
                 <label class="radio-option">
-                  <input type="radio" name="priority" v-model="selectedPriority" value="flexible" /> Flexible conditions
+                  <input type="radio" name="priority" v-model="selectedPriority" value="flexible" /> {{ $t('finCompare.priorities.flexibleConditions') }}
                 </label>
               </div>
             </div>
@@ -27,25 +27,25 @@
       <!-- Main Content Container -->
       <div class="main-content">
         <main>
-          <h2 class="main-title">Compare Financial Products</h2>
-          <div v-if="loading" class="loading">Loading...</div>
+          <h2 class="main-title">{{ $t('finCompare.compare') }}</h2>
+          <div v-if="loading" class="loading">{{ $t('finCompare.loading') }}</div>
           <div v-else-if="error" class="error">{{ error }}</div>
           <div v-else class="comparison-table-container">
             <div class="table-wrapper">
               <table class="comparison-table">
                 <thead>
                   <tr>
-                    <th class="table-header">Bank</th>
-                    <th class="table-header">Interest Rate</th>
-                    <th class="table-header">Issuance Fee</th>
-                    <th class="table-header">Max Loan Term</th>
+                    <th class="table-header">{{ $t('finCompare.table.bank') }}</th>
+                    <th class="table-header">{{ $t('finCompare.table.interestRate') }}</th>
+                    <th class="table-header">{{ $t('finCompare.table.issuanceFee') }}</th>
+                    <th class="table-header">{{ $t('finCompare.table.maxLoanTerm') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="bank in banks" :key="bank.bank" :class="{ 'best-choice': isBestChoice(bank) }">
                     <td class="table-row-title">
                       {{ bank.bank }}
-                      <span v-if="isBestChoice(bank)" class="best-choice-label">Best choice</span>
+                      <span v-if="isBestChoice(bank)" class="best-choice-label">{{ $t('finCompare.bestChoice') }}</span>
                     </td>
                     <td class="table-row">{{ bank.rate || 'N/A' }}</td>
                     <td class="table-row">{{ bank.issuanceFee || 'N/A' }}</td>
@@ -55,7 +55,7 @@
               </table>
             </div>
             <div v-if="suggestedBank" class="suggested">
-              <strong>Suggested:</strong> {{ suggestedBank.bank }} for {{ getPriorityText(selectedPriority) }}
+              <strong>{{ $t('finCompare.suggested') }}:</strong> {{ suggestedBank.bank }} {{ $t('finCompare.for') }} {{ getPriorityText(selectedPriority) }}
             </div>
           </div>
         </main>
@@ -105,33 +105,51 @@
       }
     },
     methods: {
-      async fetchData() {
+      async loadData() {
         try {
           this.loading = true;
-          this.error = null;
-          const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/banks`);
-          this.banks = response.data;
-        } catch (err) {
-          this.error = 'Failed to load bank data. Please try again later.';
-          console.error('Error fetching bank data:', err);
+          const cachedData = localStorage.getItem('bankData');
+
+          if (cachedData) {
+            const parsedData = JSON.parse(cachedData);
+            this.banks = parsedData;
+          } else {
+            const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/api/banks`);
+            this.banks = response.data;
+            localStorage.setItem('bankData', JSON.stringify(response.data));
+          }
+        } catch (error) {
+          this.error = this.$t('finCompare.error');
+          console.error('Error loading bank data:', error);
         } finally {
           this.loading = false;
         }
       },
       isBestChoice(bank) {
-        return this.suggestedBank && bank.bank === this.suggestedBank.bank;
+        if (!this.suggestedBank) return false;
+        return bank.bank === this.suggestedBank.bank;
       },
       getPriorityText(priority) {
-        const texts = {
-          savings: 'maximum savings',
-          fees: 'lowest fees',
-          flexible: 'flexible conditions'
-        };
-        return texts[priority] || '';
+        switch (priority) {
+          case 'savings':
+            return this.$t('finCompare.priorityTexts.highestRate');
+          case 'fees':
+            return this.$t('finCompare.priorityTexts.lowestFees');
+          case 'flexible':
+            return this.$t('finCompare.priorityTexts.flexibleTerms');
+          default:
+            return '';
+        }
       }
     },
     mounted() {
-      this.fetchData();
+      this.loadData();
+    },
+    watch: {
+      selectedPriority() {
+        // Clear any existing error when priority changes
+        this.error = null;
+      }
     }
   };
   </script>
@@ -141,146 +159,240 @@
   .flex-container {
     display: flex;
     min-height: 100vh;
+    background: var(--bg-primary);
   }
-   /* #1e3a8a */
+  
   .sidebar {
-    width: 256px;
-    background-color: black;
+    width: 300px;
+    background: linear-gradient(to bottom, #000, #1a1a1a);
     color: white;
-    display: flex;
-    flex-shrink: 0;
+    padding: 2rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
   }
   
   .sidebar-content {
-    padding: 24px;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    gap: 2rem;
   }
   
   .title {
     font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 16px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, #fff, #ccc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .subtitle {
-    font-size: 1.125rem;
-    font-weight: 500;
-    margin-bottom: 32px;
+    font-size: 1rem;
+    color: #ccc;
+    margin-bottom: 2rem;
   }
   
   .filter-label {
-    font-size: 0.875rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 1rem;
+    color: #fff;
   }
   
   .filter-options {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 1rem;
   }
   
   .radio-option {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
   }
   
-  .radio-option input[type="radio"]:checked + label {
-    font-weight: bold;
+  .radio-option:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
   
   .main-content {
     flex: 1;
-    background-color: #f3f4f6;
-    padding: 48px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
   }
   
   .main-title {
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
+    background: linear-gradient(45deg, #1a1a1a, #4a4a4a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeIn 1s ease;
   }
   
   .comparison-table-container {
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--bg-primary);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 40px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    animation: slideIn 0.5s ease;
   }
   
   .table-wrapper {
     overflow-x: auto;
+    border-radius: 12px;
   }
   
   .comparison-table {
     width: 100%;
-    text-align: left;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
   }
   
   .table-header {
-    padding: 12px;
+    padding: 1rem;
     font-size: 1rem;
     font-weight: 600;
-    color: #4b5563;
-    border-bottom: 2px solid #e5e7eb;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    border-bottom: 2px solid var(--border-color);
     text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
   
   .table-row-title {
-    padding: 12px;
+    padding: 1rem;
     font-weight: 600;
-    color: #1e3a8a;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
   }
   
   .table-row {
-    padding: 12px;
-    font-size: 1rem;
-    color: #4b5563;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+  }
+  
+  tr {
+    transition: all 0.3s ease;
+  }
+  
+  tr:hover {
+    background: var(--hover-bg);
+    transform: translateX(5px);
   }
   
   .best-choice {
-    background-color: #f0f9ff;
+    background: var(--primary-color);
+    color: white;
+  }
+  
+  .best-choice td {
+    color: white;
   }
   
   .best-choice-label {
     display: inline-block;
-    background-color: #bfdbfe;
-    color: #1e3a8a;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 0.25rem 0.75rem;
     border-radius: 9999px;
-    margin-left: 8px;
+    margin-left: 0.5rem;
   }
   
   .suggested {
-    margin-top: 24px;
-    background-color: #e0f2fe;
-    color: #1e40af;
-    padding: 16px;
-    border-radius: 16px;
+    margin-top: 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    animation: fadeIn 0.5s ease;
   }
   
   .loading {
-    text-align: center;
-    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
     font-size: 1.2rem;
-    color: #4b5563;
+    color: var(--text-primary);
+  }
+  
+  .loading::after {
+    content: '';
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    margin-left: 0.5rem;
+    animation: spin 1s linear infinite;
   }
   
   .error {
     text-align: center;
     padding: 2rem;
     color: #dc2626;
-    background-color: #fee2e2;
-    border-radius: 0.5rem;
+    background: #fee2e2;
+    border-radius: 12px;
     margin-bottom: 1rem;
+    animation: shake 0.5s ease;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  
+  /* Dark mode specific styles */
+  :root[data-theme="dark"] .table-row,
+  :root[data-theme="dark"] .table-header {
+    color: #000;
+    background: #fff;
+  }
+  
+  :root[data-theme="dark"] .best-choice {
+    background: var(--primary-color);
+    color: white;
+  }
+  
+  :root[data-theme="dark"] .best-choice td {
+    color: white;
   }
   </style>

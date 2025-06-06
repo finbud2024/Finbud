@@ -96,13 +96,13 @@ const selectedTab = ref('Holding');
 }
 
 .tab-buttons button:hover {
-  color: #007bff;
+  color: #000000;
   background-color: rgba(0, 123, 255, 0.1);
 }
 
 .tab-buttons button.active {
   color: white;
-  background-color: #007bff;
+  background-color: #000000;
   font-weight: bold;
 }
 

@@ -345,19 +345,28 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 						const stockSymbol = match[1].toUpperCase();
 						const quantity = parseInt(match[2], 10);
 						if (stockSymbol && !isNaN(quantity)) {
-							const baseUrl = window.location.origin.includes("localhost")
-								? "http://localhost:8888"
-								: "https://finbud.pro";
+							// Navigate to stock simulator and auto-open modal
+							this.$router.push('/stock-simulator').then(() => {
+								// Wait for component to mount, then emit event
+								setTimeout(() => {
+									if (this.$eventBus) {
+										this.$eventBus.$emit('stock-buy-request', {
+											symbol: stockSymbol,
+											quantity: quantity,
+											action: 'buy'
+										});
+									}
+								}, 500);
+							});
 
-							const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=buy&fullUI=true`;
-							window.open(url, "_blank");
-							// Wait for the page to load and auto-click the Preview Order button
-							setTimeout(() => {
-								window.addEventListener("load", () => {
-									const previewButton = document.querySelector(".preview-btn");
-									if (previewButton) previewButton.click();
-								});
-							}, 2000);
+							const res = `I'll help you buy ${quantity} shares of ${stockSymbol}. Opening the stock trading interface for you!`;
+							const Responsegpt = await gptServices([
+								{
+									role: "user",
+									content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
+								},
+							]);
+							answers.push(Responsegpt);
 						} else {
 							const res = "Invalid stock symbol or quantity";
 							const Responsegpt = await gptServices([
@@ -366,75 +375,69 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 									content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
 								},
 							]);
-							this.addTypingResponse(Responsegpt, false);
+							answers.push(Responsegpt);
 						}
 					} else {
-						const res = "Invalid stock symbol or quantity";
+						const res = "Invalid stock symbol or quantity format. Please use: #buy SYMBOL QUANTITY";
 						const Responsegpt = await gptServices([
 							{
 								role: "user",
 								content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
 							},
 						]);
-						this.addTypingResponse(Responsegpt, false);
+						answers.push(Responsegpt);
 					}
 				}
 
 				// HANDLE SELL (8)
 				else if (gptDefine.toLowerCase().includes("#sell")) {
-					try {
-						const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
-						const match = gptDefine.match(sellRegex);
-						if (match) {
-							const stockSymbol = match[1].toUpperCase();
-							const quantity = parseInt(match[2], 10);
-							if (stockSymbol && !isNaN(quantity)) {
-								const baseUrl = window.location.origin.includes("localhost")
-									? "http://localhost:8888"
-									: "https://finbud.pro";
-
-								const url = `${baseUrl}/stock-simulator?symbol=${stockSymbol}&quantity=${quantity}&action=sell`;
-								window.open(url, "_blank");
-
-								const res = `We've created the sell request for ${quantity} ${stockSymbol} shares.`;
-								const Responsegpt = await gptServices([
-									{
-										role: "user",
-										content: `Translate the following text ${res} into ${language}. Respond only with the translated text.`,
-									},
-								]);
-								answers.push(Responsegpt);
-
-								// Wait for the page to load and auto-click the Preview Order button
+					const sellRegex = /#sell\s+([A-Z]+)\s+(\d+)/i;
+					const match = gptDefine.match(sellRegex);
+					if (match) {
+						const stockSymbol = match[1].toUpperCase();
+						const quantity = parseInt(match[2], 10);
+						if (stockSymbol && !isNaN(quantity)) {
+							// Navigate to stock simulator and auto-open modal
+							this.$router.push('/stock-simulator').then(() => {
+								// Wait for component to mount, then emit event
 								setTimeout(() => {
-									window.addEventListener("load", () => {
-										const previewButton =
-											document.querySelector(".preview-btn");
-										if (previewButton) previewButton.click();
-									});
-								}, 2000);
-							} else {
-								const res = "Invalid stock symbol or quantity";
-								const Responsegpt = await gptServices([
-									{
-										role: "user",
-										content: `Translate "${res}" into the language detected from this message: "${newMessage}".`,
-									},
-								]);
-								this.addTypingResponse(Responsegpt, false);
-							}
-						} else {
-							const res = "Invalid sell command format";
+									if (this.$eventBus) {
+										this.$eventBus.$emit('stock-sell-request', {
+											symbol: stockSymbol,
+											quantity: quantity,
+											action: 'sell'
+										});
+									}
+								}, 500);
+							});
+
+							const res = `I'll help you sell ${quantity} shares of ${stockSymbol}. Opening the stock trading interface for you!`;
 							const Responsegpt = await gptServices([
 								{
 									role: "user",
-									content: `Translate "${res}" into the language detected from this message: "${newMessage}".`,
+									content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
 								},
 							]);
-							this.addTypingResponse(Responsegpt, false);
+							answers.push(Responsegpt);
+						} else {
+							const res = "Invalid stock symbol or quantity";
+							const Responsegpt = await gptServices([
+								{
+									role: "user",
+									content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
+								},
+							]);
+							answers.push(Responsegpt);
 						}
-					} catch (err) {
-						console.error("Error in sell message:", err.message);
+					} else {
+						const res = "Invalid stock symbol or quantity format. Please use: #sell SYMBOL QUANTITY";
+						const Responsegpt = await gptServices([
+							{
+								role: "user",
+								content: `Translate the following text into ${language}. Respond only with the translated text: "${res}".`,
+							},
+						]);
+						answers.push(Responsegpt);
 					}
 				}
 				// HANDLE ADD TRANSACTION (6)
@@ -1328,6 +1331,21 @@ Bạn là FinBud — trợ lý tài chính.
 				);
 
 				// Emit event to update other components
+				this.$eventBus?.$emit('transaction-added', {
+					userId,
+					description,
+					amount,
+					balance: newBalance,
+					date,
+					type,
+					category,
+					_id: response.data._id || response.data.id
+				});
+
+				// Also try to trigger store updates if available
+				if (this.$store.dispatch) {
+					this.$store.dispatch('transactions/refreshTransactions');
+				}
 
 				return {
 					category,
@@ -1549,7 +1567,7 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 }
 
 .analysis-section h2 {
-	color: #2c3e50;
+	color: #1a1a1a;
 	margin-bottom: 15px;
 	font-size: 1.5em;
 }

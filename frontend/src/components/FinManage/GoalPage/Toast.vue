@@ -196,7 +196,7 @@ export default {
 }
 
 .toast-info {
-  border-left-color: #3b82f6;
+  border-left-color: #000000;
   background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
 }
 
@@ -226,7 +226,7 @@ export default {
 }
 
 .icon-info {
-  color: #3b82f6;
+  color: #000000;
 }
 
 .toast-content {
@@ -293,7 +293,7 @@ export default {
 }
 
 .toast-info .toast-progress {
-  background: #3b82f6;
+  background: #000000;
 }
 
 @keyframes slideIn {
@@ -399,7 +399,7 @@ export default {
 
 /* Accessibility improvements */
 .toast:focus {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid #000000;
   outline-offset: 2px;
 }
 

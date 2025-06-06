@@ -2,23 +2,29 @@
     <div class="articles">
       <h1 class="articles-title">Latest News</h1>
   
-      <div v-if="loading">Loading...</div>
-      <div v-else-if="error">{{ error }}</div>
-      <div v-else>
+      <div v-if="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading articles...</p>
+      </div>
+      <div v-else-if="error" class="error">{{ error }}</div>
+      <div v-else class="articles-grid">
         <div v-for="article in articles" :key="article._id" class="article-card">
-          
           <div class="article-content">
             <img :src="article.featuredImage" alt="Image" v-if="article.featuredImage" class="thumbnail" />
             <div class="text-content">
-              <h2>{{ article.title }}</h2>
-              <p>{{ article.description }}</p>
-              <small>
-                Source: {{ article.sourceId?.name || "Unknown" }} | 
-                Author: {{ article.authorId?.name || "Unknown" }} | 
-                {{ new Date(article.createdAt).toLocaleDateString() }}
-              </small>
-              <br />
-              <a :href="article.url" target="_blank" class="read-more">Read more</a>
+              <h2 class="article-title">{{ article.title }}</h2>
+              <p class="article-description">{{ article.description }}</p>
+              <div class="article-meta">
+                <span class="meta-item">Source: {{ article.sourceId?.name || "Unknown" }}</span>
+                <span class="meta-separator">|</span>
+                <span class="meta-item">Author: {{ article.authorId?.name || "Unknown" }}</span>
+                <span class="meta-separator">|</span>
+                <span class="meta-item">{{ new Date(article.createdAt).toLocaleDateString() }}</span>
+              </div>
+              <a :href="article.url" target="_blank" class="read-more">
+                Read more
+                <i class="fas fa-external-link-alt"></i>
+              </a>
             </div>
           </div>
         </div>
@@ -57,44 +63,159 @@
   
   <style scoped>
   .articles {
-    max-width: 60%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2rem;
   }
 
   .articles-title {
+    font-size: 2.5rem;
+    font-weight: 700;
     color: var(--text-primary);
+    margin-bottom: 2rem;
+    text-align: center;
   }
+
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+  }
+
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--bg-secondary);
+    border-left-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .loading p {
+    margin-top: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .error {
+    color: var(--error);
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    margin: 2rem 0;
+  }
+
+  .articles-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .article-card {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+  }
+
+  .article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+  }
+
   .article-content {
     display: flex;
-    gap: 1rem; /* Space between the image and text */
-    align-items: flex-start; /* Align items at the top */
-  }
-  
-  .article-card {
-    border: 1px solid #ddd;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    color: var(--text-primary);
-    align-self: center;
+    gap: 2rem;
+    padding: 1.5rem;
   }
 
   .thumbnail {
-    width: 200px; /* Set a fixed width for the image */
-    height: 100%; /* Maintain aspect ratio */
-    object-fit: cover; /* Ensure the image fits nicely */
-    border-radius: 8px; /* Optional: Add rounded corners */
-
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    flex-shrink: 0;
   }
+
   .text-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
+
+  .article-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .article-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-tertiary);
+  }
+
+  .meta-item {
+    color: var(--text-secondary);
+  }
+
+  .meta-separator {
+    color: var(--border-color);
+  }
+
   .read-more {
-    color: blue;
-    text-decoration: underline;
-    margin-left: 10px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    width: fit-content;
+  }
+
+  .read-more:hover {
+    transform: translateX(5px);
+  }
+
+  .read-more i {
+    font-size: 0.9rem;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .articles {
+      padding: 1rem;
+    }
+
+    .articles-title {
+      font-size: 2rem;
+    }
+
+    .article-content {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .thumbnail {
+      width: 100%;
+      height: 200px;
+    }
   }
   </style>
   

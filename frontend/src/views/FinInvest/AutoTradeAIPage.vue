@@ -209,7 +209,7 @@ export default {
   width: 40px;
   height: 40px;
   background-color: rgba(54, 162, 235, 0.15);
-  color: rgba(0, 0, 255, 0.5);
+  color: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;

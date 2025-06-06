@@ -77,7 +77,7 @@ export default {
       const percentage = this.getProgressPercentage(goal)
       if (percentage >= 100) return 'linear-gradient(90deg, #10b981, #047857)'
       if (percentage >= 75) return 'linear-gradient(90deg, #059669, #047857)'
-      if (percentage >= 50) return 'linear-gradient(90deg, #3b82f6, #1d4ed8)'
+      if (percentage >= 50) return 'linear-gradient(90deg, #000000, #333333)'
       if (percentage >= 25) return 'linear-gradient(90deg, #f59e0b, #d97706)'
       return 'linear-gradient(90deg, #ef4444, #dc2626)'
     },
@@ -137,7 +137,7 @@ export default {
 .goal-icon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #000000, #333333);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -167,7 +167,7 @@ export default {
 .goal-percentage {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #3b82f6;
+  color: #000000;
 }
 
 .progress-bar {

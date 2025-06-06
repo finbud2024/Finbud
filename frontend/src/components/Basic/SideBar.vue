@@ -317,9 +317,9 @@ export default {
   box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   position: fixed;
-  left: 0;
+  left: 70px;
   top: 0;
-  z-index: 1000;
+  z-index: 1050;
 }
 
 .side-bar.collapsed {

@@ -119,7 +119,7 @@
         {
           label: `${props.tickerA} ${props.indicator.toUpperCase()}`,
           data: processedA,
-          borderColor: 'blue',
+          borderColor: '#000000',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           tension: 0.3
         },

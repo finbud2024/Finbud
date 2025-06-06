@@ -1,46 +1,72 @@
-
-
 <template>
     <div class="Navigation">
-    
-      <StockComparision
-      v-model:selectedTickers="selectedTickers"
-      :indicator="indicator"
-      :period="period"
-      :returnType="returnType"
-           
-    :dataSource="'SPX500'"
-    :grouping="'sector'"
-    :blockSize="'market_cap_basic'"
-    :blockColor="'change'"
-    :colorTheme="'light'"
-    :width="'100%'"
-    :height="'600px'"/>
-    <DashBoard/>
-    <div class="container">
-      <StockHeatmap/>
-    
-    </div>
-    <div class="monte-carlo-wrapper">
-      <div class="monte-carlo-container">
-        <NewMonteCarloGraph />
+      <div class="quant-header">
+        <h1>{{ $t('quantAnalysisPage.title') }}</h1>
+        <p>{{ $t('quantAnalysisPage.subtitle') }}</p>
+      </div>
+
+      <div class="quant-grid">
+        <div class="chart-section">
+          <div class="chart-container">
+            <div class="chart-title">{{ $t('quantAnalysisPage.sections.marketAnalysis') }}</div>
+            <div v-if="loading" class="chart-loading">
+              <div class="loading-spinner"></div>
+              <div class="loading-text">{{ $t('quantAnalysisPage.loading') }}</div>
+            </div>
+            <StockComparision
+              v-else
+              v-model:selectedTickers="selectedTickers"
+              :indicator="indicator"
+              :period="period"
+              :returnType="returnType"
+              :dataSource="'SPX500'"
+              :grouping="'sector'"
+              :blockSize="'market_cap_basic'"
+              :blockColor="'change'"
+              :colorTheme="'light'"
+              :width="'100%'"
+              :height="'400px'"
+              class="chart-component"
+            />
+          </div>
+        </div>
+
+        <div class="dashboard-section">
+          <div class="chart-container">
+            <div class="chart-title">{{ $t('quantAnalysisPage.sections.dashboard') }}</div>
+            <DashBoard class="chart-component" />
+          </div>
+        </div>
+
+        <div class="heatmap-section">
+          <div class="chart-container">
+            <div class="chart-title">{{ $t('quantAnalysisPage.sections.heatmap') }}</div>
+            <div v-if="loading" class="chart-loading">
+              <div class="loading-spinner"></div>
+              <div class="loading-text">{{ $t('quantAnalysisPage.loadingHeatmap') }}</div>
+            </div>
+            <StockHeatmap v-else class="chart-component" />
+          </div>
+        </div>
+
+        <div class="monte-carlo-section">
+          <div class="chart-container">
+            <div class="chart-title">{{ $t('quantAnalysisPage.sections.monteCarlo') }}</div>
+            <div v-if="loading" class="chart-loading">
+              <div class="loading-spinner"></div>
+              <div class="loading-text">{{ $t('quantAnalysisPage.loadingMonteCarlo') }}</div>
+            </div>
+            <NewMonteCarloGraph v-else class="chart-component" />
+          </div>
+        </div>
+      </div>
+
+      <div class="Panels">
+        <h3>{{ $t('quantAnalysisPage.interpretation') }}</h3>
+        <ChatBotTyping :message="technicalIndicators" />
+        <ChatBotTyping :message="riskRatio" />
       </div>
     </div>
-    </div>
-
-    <!--<div
-      class="Panels animate__animated animate__fadeInRight"
-      style="width: 80%; margin: 0 auto"
-    >
-      <h3 style="text-align: center">Interpretation</h3>
-      <ChatBotTyping :message="technicalIndicators" />
-      <ChatBotTyping :message="riskRatio" />
-    </div>-->
-
-
-
-
-
 </template>
 
 <script>
@@ -76,10 +102,11 @@ export default {
   },
   data() {
     return {
-    selectedTickers: ['AAPL', 'MSFT'],  // or empty: []
-    indicator: 'RSI',                   // default indicator
-    period: '1y',                       // default time period
-    returnType: 'Daily Returns',        // or 'Cumulative Returns'
+      loading: true,
+      selectedTickers: ['AAPL', 'MSFT'],  // or empty: []
+      indicator: 'RSI',                   // default indicator
+      period: '1y',                       // default time period
+      returnType: 'Daily Returns',        // or 'Cumulative Returns'
       stockData: [
         { symbol: 'AAPL', change: 0.0234 },
         { symbol: 'MSFT', change: -0.0156 },
@@ -160,12 +187,31 @@ export default {
       ReturnGraph2: "",
     };
   },
+  mounted() {
+    // Simulate loading time for demonstration
+    setTimeout(() => {
+      this.loading = false;
+    }, 2000);
+  },
   watch: {
-    timePeriod: "updateBothData",
-    indicator: "updateBothData",
-    returns: "updateBothData",
-    selectedStock1: "fetchData",
-    selectedStock2: "fetchData2",
+    selectedTickers() {
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+      }, 1500);
+    },
+    indicator() {
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+      }, 1500);
+    },
+    period() {
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+      }, 1500);
+    },
   },
   methods: {
     updateBothData() {
@@ -182,158 +228,265 @@ export default {
 </script>
 
 <style scoped>
-
 .Navigation {
-  background-color: var(--quant-background);
-
-  padding:20px;
-  max-width: 100%;
+  background: var(--bg-primary);
+  padding: 2rem;
+  max-width: 1800px;
   margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
-.animated {
-  animation-duration: 1s;
+.Navigation::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 70%
+  );
+  z-index: 0;
+  animation: pulse 15s infinite;
 }
 
-.dropdown {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  color: #333;
-  background-color: #fff;
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 0.5; }
 }
 
-select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-}
-
-h1 {
+.quant-header {
   text-align: center;
-  color: rgba(255, 255, 255, 0.1);
-  font-size: 3.5rem;
-  margin-bottom: 20px;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 1;
 }
 
-.form-group {
-  margin-bottom: 30px;
+.quant-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
-label {
-  display: block;
-  color: white;
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-}
-
-.panel {
-  background-color: #ecf0f1;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.Panels {
-  background-color: #ecf0f1;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-}
-
-.Panel-Frame {
-  width: 48%;
-  display: inline-block;
-  vertical-align: top;
-  margin: 0 1%;
-}
-
-
-.stock-box {
-  width: 60%;
-  margin: 0 auto;
-  display: block;
-  margin-bottom: 30px;
-}
-
-.stock-value {
-  text-align: center;
-}
-
-.change-index {
-  font-size: 1.8rem;
-  margin-bottom: 5px;
-}
-
-.change-ratio {
-  font-size: 1rem;
-  color: green;
-}
-
-h4 {
-  text-align: center;
-  font-size: 1.5rem;
-  /* margin-bottom: -5px; */
-}
-
-h5 {
-  text-align: center;
+.quant-header p {
   font-size: 1.2rem;
+  color: var(--text-secondary);
 }
 
-.Risk-info {
-  margin-top: 0px;
+/* Force single column layout for all screen sizes */
+.quant-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
-.Risk-Block {
-  width: 49%;
-  display: inline-block;
+.chart-section,
+.dashboard-section,
+.heatmap-section,
+.monte-carlo-section {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
-.Risk-value {
-  margin-top: 10px;
-  font-size: 15px;
+.chart-container {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent content overflow */
 }
 
-.stock-graph {
-  align-items: center;
-  justify-content: center;
+.chart-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.chart-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+.chart-component {
+  flex: 1;
+  width: 100%;
+  height: auto;
+  min-height: 300px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Panels Section */
+.Panels {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-radius: 15px;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.Panels h3 {
+  color: var(--bg-primary);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
-.trend {
+/* Loading States */
+.chart-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  background: rgba(var(--bg-primary-rgb), 0.9);
+  backdrop-filter: blur(5px);
+  border-radius: 15px;
+  z-index: 10;
 }
 
-.no-fade {
-  animation: none;       /* disables fade / opacity 0 → 1 */
-  transform: translateX(0); /* keep it static */
-}
-.monte-carlo-wrapper {
-  width: 100%; /* Full width of the wrapper */
-  max-width: 1200px; /* Limit the width */
-  margin: 0 auto; /* Center the wrapper */
-  padding: 20px; /* Add padding around the container */
-  background-color: var(--quant-card-background); /* Light background color */
-  border: 1px solid #ccc; /* Add a border */
-  border-radius: 8px; /* Round the corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-  margin-top:50px;
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-
-.monte-carlo-container {
-  margin-top: 20px; /* Add spacing above the graph */
-  text-align: center; /* Center the graph */
+.loading-text {
+  margin-top: 1rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
 }
 
-@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
+/* Animations */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .Navigation {
+    padding: 1.5rem;
+  }
+
+  .quant-header h1 {
+    font-size: 2rem;
+  }
+
+  .quant-header p {
+    font-size: 1rem;
+  }
+
+  .quant-grid {
+    gap: 1.5rem;
+  }
+
+  .chart-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .Navigation {
+    padding: 1rem;
+  }
+
+  .quant-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .chart-section,
+  .dashboard-section,
+  .heatmap-section,
+  .monte-carlo-section {
+    min-height: 300px;
+  }
+
+  .chart-container {
+    padding: 1rem;
+  }
+
+  .Panels {
+    padding: 1.5rem;
+  }
+
+  .Panels h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quant-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .chart-title {
+    font-size: 1rem;
+  }
+
+  .chart-section,
+  .dashboard-section,
+  .heatmap-section,
+  .monte-carlo-section {
+    min-height: 250px;
+  }
+
+  .Panels h3 {
+    font-size: 1.2rem;
+  }
+}
 </style>

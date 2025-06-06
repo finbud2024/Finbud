@@ -135,7 +135,7 @@
         {
           label: `${props.tickerA} ${props.returnType} return`,
           data: returnA,
-          borderColor: 'blue',
+          borderColor: '#000000',
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           tension: 0.3
         },

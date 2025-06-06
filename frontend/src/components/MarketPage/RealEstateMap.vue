@@ -294,7 +294,7 @@ export default {
 }
 
 .location-dropdown:hover {
-  background-color: #0056b3;
+  background-color: #333333;
 }
 
 .property-table {
@@ -334,7 +334,7 @@ export default {
 .show-more-button,
 .show-less-button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 4px;
@@ -344,7 +344,7 @@ export default {
 
 .show-more-button:hover,
 .show-less-button:hover {
-  background-color: #0056b3;
+  background-color: #333333;
 }
 
 /* Responsive Design */

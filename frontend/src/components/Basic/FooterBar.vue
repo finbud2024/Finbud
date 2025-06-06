@@ -106,7 +106,7 @@ export default {
 }
 
 .footer-items li a:hover {
-  background-color: #0056b3;
+  background-color: #333333;
   border-radius: 5px;
 }
 

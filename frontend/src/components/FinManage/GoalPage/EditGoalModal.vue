@@ -452,7 +452,7 @@ export default {
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #000000;
   background: white;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
@@ -532,7 +532,7 @@ export default {
 .insight-value {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #3b82f6;
+  color: #000000;
 }
 
 .savings-required {
@@ -659,7 +659,7 @@ export default {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   color: white;
 }
 

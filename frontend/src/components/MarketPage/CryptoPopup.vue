@@ -263,8 +263,8 @@ export default {
 
 .timeframe-selector button {
   background: none;
-  border: 1px solid #007bff;
-  color: #007bff;
+  border: 1px solid #000000;
+  color: #000000;
   padding: 5px 10px;
   margin-right: 5px;
   cursor: pointer;
@@ -273,7 +273,7 @@ export default {
 
 .timeframe-selector button.active,
 .timeframe-selector button:hover {
-  background: #007bff;
+  background: #000000;
   color: #fff;
 }
 
@@ -287,8 +287,8 @@ export default {
 
   .dropdown-group select {
     padding: 5px 10px;
-    border: 1px solid #007bff;
-    color: #007bff;
+    border: 1px solid #000000;
+    color: #000000;
     background: none;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -297,7 +297,7 @@ export default {
 
   .dropdown-group select:focus {
     outline: none;
-    border-color: #0056b3;
+    border-color: #333333;
   }
 }
 

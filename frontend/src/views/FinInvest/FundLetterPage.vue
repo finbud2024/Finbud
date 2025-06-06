@@ -117,11 +117,11 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-//backend/functions/fundLetterData.json
-import rawData from '../../../../backend/functions/fundLetterData.json'
+//backend/functions/data/fundLetterData.json
+import rawData from '../../../../backend/functions/data/fundLetterData.json'
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
-import investorData from '../../../../backend/functions/investorCards.json';
+import investorData from '../../../../backend/functions/data/investorCards.json';
 import ChatBot from "../../components/ChatBot/DraggableChatBot.vue";
 const templateChat = `Hello! I'm here to help you find the best hedge fund letters. 
 You can search by fund name or filter by year and quarter. If you have any questions, feel free to ask!`;

@@ -2204,7 +2204,7 @@
   .actions h3 {
     margin-top: 0;
     margin-bottom: 20px;
-    color: #007bff;
+    color: #000000;
     font-size: 1.5rem;
   }
   
@@ -2594,7 +2594,7 @@
     text-align: left;
     font-family: sans-serif;
     font-size: 1.2rem;
-    color: var(--text-primary); /* Thay #2c3e50 */
+    color: var(--text-primary); /* Thay #1a1a1a */
   }
   
   .options {

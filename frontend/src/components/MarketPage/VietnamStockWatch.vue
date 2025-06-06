@@ -270,7 +270,7 @@ export default {
 }
 
 .header {
-  color: #007bff;
+  color: #000000;
   opacity: 1;
   text-align: left;
   margin-bottom: 20px;
@@ -306,7 +306,7 @@ export default {
   height: 40px;
   border: 4px solid rgba(0, 123, 255, 0.3);
   border-radius: 50%;
-  border-top-color: #007bff;
+  border-top-color: #000000;
   animation: spin 1s linear infinite;
 }
 
@@ -558,7 +558,7 @@ export default {
 }
 
 .pagination-button:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #333333;
 }
 
 .pagination-button:disabled {

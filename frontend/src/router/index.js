@@ -41,6 +41,12 @@ import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
 import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
 import MarketAnalysisInsight from "@/views/FinInvest/MarketAnalysis/MarketAnalysisInsight.vue";
 import FinCompare from "@/views/FinManage/FinCompare.vue";
+import PredictiveCalculatorPage from "@/views/FinInvest/PredictiveCalculatorPage.vue";
+import CreateRoadmapPage from "@/views/FinEdu/CreateRoadmapPage.vue";
+import SubscriptionPage from "@/views/Subscription/SubscriptionPage.vue";
+import RealEstateAnalystPage from "@/views/FinXpert/RealEstateAnalystPage.vue";
+import EquityResearcherPage from "@/views/FinXpert/EquityResearcherPage.vue";
+import AIHedgeFundLabPage from "@/views/FinXpert/AIHedgeFundLabPage.vue";
 
 const routes = [
   {
@@ -81,7 +87,7 @@ const routes = [
     component: PricingPage,
   },
   {
-    path: "/riskanalysis",
+    path: "/market-data-center",
     name: "RiskAnalysis",
     component: RiskAnalysis,
   },
@@ -264,6 +270,36 @@ const routes = [
     path: "/fin-compare",
     name: "FinCompare",
     component: FinCompare,
+  },
+  {
+    path: "/predictive-calculator",
+    name: "PredictiveCalculatorPage",
+    component: PredictiveCalculatorPage,
+  },
+  {
+    path: "/create-roadmap",
+    name: "CreateRoadmapPage",
+    component: CreateRoadmapPage,
+  },
+  {
+    path: "/subscribe",
+    name: "SubscriptionPage",
+    component: SubscriptionPage,
+  },
+  {
+    path: "/finxpert-real-estate",
+    name: "RealEstateAnalystPage",
+    component: RealEstateAnalystPage,
+  },
+  {
+    path: "/finxpert-equity",
+    name: "EquityResearcherPage",
+    component: EquityResearcherPage,
+  },
+  {
+    path: "/ai-hedge-fund-lab",
+    name: "AIHedgeFundLabPage",
+    component: AIHedgeFundLabPage,
   }
 ];
 

@@ -176,6 +176,68 @@
 
     <TutorialOverlay :steps="tutorialSteps" storageKey="finbudHomeTutorialShown" :autoStart="true"
       @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
+
+    <!-- Quick Access Cards Section -->
+    <section class="quick-access-section">
+      <div class="container">
+        <h2 class="section-title">New Features</h2>
+        <div class="features-grid">
+          <!-- AI Predictive Calculator -->
+          <div class="feature-card">
+            <div class="feature-icon">
+              <font-awesome-icon icon="fa-solid fa-brain" />
+            </div>
+            <h3>AI Predictive Calculator</h3>
+            <p>Advanced stock price prediction with multiple AI models and customizable parameters</p>
+            <div class="feature-tags">
+              <span class="tag">AI Models</span>
+              <span class="tag">Real-time Data</span>
+              <span class="tag">Charts</span>
+            </div>
+            <router-link to="/predictive-calculator" class="feature-btn">
+              Try Calculator
+              <font-awesome-icon icon="fa-solid fa-arrow-right" />
+            </router-link>
+          </div>
+
+          <!-- Learning Roadmap Creator -->
+          <div class="feature-card">
+            <div class="feature-icon gradient-edu">
+              <font-awesome-icon icon="fa-solid fa-map" />
+            </div>
+            <h3>Learning Roadmap Creator</h3>
+            <p>Create personalized financial learning paths based on your goals and experience level</p>
+            <div class="feature-tags">
+              <span class="tag">Personalized</span>
+              <span class="tag">Step-by-step</span>
+              <span class="tag">AI-powered</span>
+            </div>
+            <router-link to="/create-roadmap" class="feature-btn">
+              Create Roadmap
+              <font-awesome-icon icon="fa-solid fa-arrow-right" />
+            </router-link>
+          </div>
+
+          <!-- Enhanced Quiz -->
+          <div class="feature-card">
+            <div class="feature-icon gradient-quiz">
+              <font-awesome-icon icon="fa-solid fa-trophy" />
+            </div>
+            <h3>Enhanced Financial Quiz</h3>
+            <p>Test your financial knowledge with AI-powered feedback and personalized learning</p>
+            <div class="feature-tags">
+              <span class="tag">Interactive</span>
+              <span class="tag">AI Feedback</span>
+              <span class="tag">Progress Tracking</span>
+            </div>
+            <router-link to="/quizz" class="feature-btn">
+              Take Quiz
+              <font-awesome-icon icon="fa-solid fa-arrow-right" />
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </section>
   </section>
 </template>
 
@@ -187,6 +249,12 @@ import BigGreenButton from "@/components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 import { useTypingEffect } from '@/composables/useTypingEffect';
 import UserInput from '@/components/UserInput.vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faBrain, faMap, faTrophy, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+
+// Add icons to library
+library.add(faBrain, faMap, faTrophy, faArrowRight);
 
 import axios from 'axios';
 
@@ -196,6 +264,7 @@ export default {
     BigGreenButton,
     TutorialOverlay,
     UserInput,
+    FontAwesomeIcon,
   },
   setup() {
     const store = useStore();
@@ -263,7 +332,7 @@ export default {
       mouseX: 0,
       mouseY: 0,
       elementStyle: {
-        backgroundColor: 'lightblue'
+        backgroundColor: 'lightgray'
       }
     };
   },
@@ -540,7 +609,7 @@ export default {
   pointer-events: none;
   border-radius: inherit;
   background: radial-gradient(circle 100px at var(--mouse-x, 50%) var(--mouse-y, 50%),
-      rgba(0, 0, 255, 0.8) 0,
+      rgba(0, 0, 0, 0.8) 0,
       transparent 100%);
   transition: background 0.1s ease;
   z-index: 1;
@@ -731,7 +800,7 @@ body.dark-mode .feature-icon {
 }
 
 .feature-name {
-  color: blue;
+  color: #000000;
 }
 
 
@@ -1192,6 +1261,146 @@ img {
 
   .answer p {
     font-size: 0.9rem;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+a:hover {
+  background-color: #f5f5f5;
+}
+
+/* Quick Access Section */
+.quick-access-section {
+  padding: 10% 10%;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 3rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.gradient-edu {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.gradient-quiz {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.feature-card p {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.feature-tags {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.tag {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.feature-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.feature-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  text-decoration: none;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .quick-access-section {
+    padding: 5% 5%;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .feature-card {
+    padding: 2rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
   }
 }
 </style>

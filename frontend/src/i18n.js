@@ -11,7 +11,7 @@ const messages = {
     technology: "Technology",
     finManage: "Fin Manage",
     goal: "Goal",
-    riskAnalysis: "Risk Analysis",
+    riskAnalysis: "Market Data Center",
     investmentCalculator: "Investment Calculator",
     mortgageCalculator: "Mortgage Calculator",
     superInvestors: "Super Investors",
@@ -997,6 +997,632 @@ const messages = {
     FinData: "Fin Data",
     ProductComparison: "Product Comparison",
 
+    // Financial Dashboard translations
+    financialDashboard: 'Financial Dashboard',
+    trackTransactionsGoals: 'Track Transactions and Goals',
+    currentBalance: 'Current Balance',
+    monthlyIncome: 'Monthly Income',
+    monthlyExpense: 'Monthly Expense',
+    goalsAchieved: 'Goals Achieved',
+    thisMonth: 'This Month',
+    transactions: 'Transactions',
+    completion: 'Completion',
+    smartInsights: 'Smart Insights',
+    aiPoweredAnalysis: 'AI-Powered Analysis',
+    allCategories: 'All Categories',
+    allStatus: 'All Status',
+    active: 'Active',
+    completed: 'Completed',
+    overdue: 'Overdue',
+    sortByProgress: 'Sort by Progress',
+    sortByEndDate: 'Sort by End Date',
+    sortByAmount: 'Sort by Amount',
+    sortByCreated: 'Sort by Created',
+    searchGoalsPlaceholder: 'Search Goals...',
+    noGoalsFound: 'No goals found',
+    createYourFirstGoal: 'Create your first goal to start tracking your financial progress.',
+
+    // FAQ Section
+    faqTitle: "Frequently Asked Questions",
+    faqs: {
+      pricing: {
+        question: "Is FinBud free to use, or are there any subscription plans?",
+        answer: "FinBud offers both a free package with basic features and a subscription plan for some advanced features. Let's register to try all the free financial tools of FinBud before looking for more advanced options from us."
+      },
+      chatbot: {
+        question: "What kind of questions can the FinBud chatbot solve?",
+        answer: "The FinBud chatbot is designed to assist with a wide range of inquiries, covering both financial and non-financial topics. Additionally, the chatbot allows you to directly execute various commands within FinBud's financial management, investment, and educational features. For example, you can buy or sell stocks, manage your budget, or look up financial terms. Simply click on the chat icon and follow the guidance to explore the full capabilities of the FinBud chatbot."
+      },
+      investment: {
+        question: "Does FinBud support investment tracking and management?",
+        answer: "Yes, our Quant and Simulator pages provide an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and even practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience."
+      },
+      goals: {
+        question: "Can I set financial goals with FinBud and track my progress?",
+        answer: "Absolutely! With FinBud, you can set specific financial goals by defining details such as the category, target date, required amount, and current savings. On the Goal page, we help you stay on track by monitoring your daily transactions and providing detailed charts, ensuring you can reach each goal more effectively."
+      },
+      mobile: {
+        question: "Is FinBud available on mobile devices, and does it sync across platforms?",
+        answer: "Yes, FinBud is available on both mobile devices and laptops. Simply log in to your account, and your data will automatically sync across all platforms for seamless access."
+      }
+    },
+
+    // Course Page
+    coursePage: {
+      title: "Financial Courses",
+      subtitle: "Learn and improve financial knowledge",
+      categories: {
+        beginners: "For Beginners",
+        investments: "Effective Investments", 
+        fundamental: "Fundamental Analysis",
+        technical: "Technical Analysis"
+      },
+      views: "views",
+      viewMore: "View More",
+      loading: "Loading courses...",
+      noData: "No courses available",
+      readTime: "min read"
+    },
+
+    // Market Analysis Page
+    marketAnalysisPage: {
+      marketAnalysisTitle: "Market Analysis",
+      marketAnalysisDescription: "Comprehensive market data and analysis for informed investment decisions",
+      Positive: "Positive",
+      Neutral: "Neutral", 
+      Negative: "Negative",
+      LastUpdated: "Last Updated",
+      Insight: "Insight",
+      mentions: "Mentions",
+      AINews: "AI News",
+      marketAnalysis: {
+        StockCompany: "Stock Company",
+        FinanceStock: "Finance Stock",
+        TechCommunity: "Tech Community"
+      },
+      insight: {
+        Assessment: "Assessment",
+        Details: "Details",
+        Source: "Source",
+        Analysis: "Analysis",
+        Reference: "Reference"
+      },
+      trend: {
+        title: "Market Trends",
+        topic: "Topic",
+        categories: {
+          All: "All",
+          Securities: "Securities",
+          Economy: "Economy", 
+          Industry: "Industry",
+          Other: "Other"
+        }
+      }
+    },
+
+    stockSimulator: {
+      pageTitle: "Mô Phỏng Chứng Khoán",
+      tabs: {
+        investment: "Đầu Tư",
+        portfolio: "Danh Mục",
+        filters: "Lọc Cổ Phiếu",
+        quiz: "Câu Hỏi",
+        predictiveCalc: "Tính Toán Dự Đoán"
+      },
+      trading: {
+        quickTrade: "Giao Dịch Nhanh",
+        stockSymbol: "Mã Cổ Phiếu",
+        stockSymbolPlaceholder: "Nhập mã cổ phiếu (ví dụ: AAPL)",
+        quantity: "Số Lượng",
+        buy: "Mua",
+        sell: "Bán",
+        clear: "Xóa"
+      },
+      account: {
+        summary: "Tóm Tắt Tài Khoản",
+        balance: "Tổng Số Dư",
+        cash: "Tiền Mặt Khả Dụng",
+        stocks: "Giá Trị Cổ Phiếu",
+        todayChange: "Thay Đổi Hôm Nay"
+      },
+      portfolio: {
+        totalPortfolio: "Tổng Giá Trị Danh Mục",
+        holdings: "Cổ Phiếu Sở Hữu",
+        symbol: "Mã",
+        shares: "Cổ Phần",
+        avgPrice: "Giá TB",
+        currentPrice: "Giá Hiện Tại",
+        totalValue: "Tổng Giá Trị",
+        gainLoss: "Lãi/Lỗ",
+        noHoldings: "Chưa có cổ phiếu nào trong danh mục"
+      },
+      screener: {
+        title: "Lọc Cổ Phiếu",
+        subtitle: "Tìm cổ phiếu phù hợp với tiêu chí đầu tư của bạn",
+        quickPresets: "Bộ Lọc Nhanh",
+        marketCap: "Vốn Hóa Thị Trường",
+        sector: "Ngành",
+        priceRange: "Khoảng Giá",
+        peRatio: "Tỷ Lệ P/E",
+        dividendYield: "Tỷ Suất Cổ Tức",
+        volume: "Khối Lượng",
+        beta: "Beta",
+        resetFilters: "Đặt Lại Bộ Lọc",
+        savePreset: "Lưu Bộ Lọc",
+        stocksFound: "cổ phiếu được tìm thấy",
+        loading: "Đang tải...",
+        loadingStocks: "Đang tải dữ liệu cổ phiếu...",
+        enterPresetName: "Nhập tên bộ lọc:",
+        presetSaved: "Đã Lưu Bộ Lọc",
+        presetSavedMessage: "Bộ lọc \"{name}\" đã được lưu thành công",
+        presets: {
+          growthStocks: "Cổ Phiếu Tăng Trưởng",
+          valueStocks: "Cổ Phiếu Giá Trị",
+          dividendStocks: "Cổ Phiếu Cổ Tức",
+          largeCap: "Vốn Hóa Lớn",
+          smallCap: "Vốn Hóa Nhỏ"
+        },
+        marketCapOptions: {
+          mega: "Siêu Lớn (>$200B)",
+          large: "Lớn ($10B-$200B)",
+          mid: "Trung Bình ($2B-$10B)",
+          small: "Nhỏ ($300M-$2B)",
+          micro: "Rất Nhỏ (<$300M)"
+        },
+        sectors: {
+          technology: "Công Nghệ",
+          healthcare: "Y Tế",
+          financials: "Tài Chính",
+          energy: "Năng Lượng",
+          industrials: "Công Nghiệp",
+          materials: "Vật Liệu",
+          utilities: "Tiện Ích",
+          realestate: "Bất Động Sản",
+          consumer_discretionary: "Hàng Tiêu Dùng Tùy Chọn",
+          consumer_staples: "Hàng Tiêu Dùng Thiết Yếu",
+          telecommunications: "Viễn Thông"
+        }
+      },
+      notifications: {
+        orderSuccess: "Lệnh Thành Công",
+        buySuccess: "Đã mua thành công {quantity} cổ phiếu {symbol}",
+        sellSuccess: "Đã bán thành công {quantity} cổ phiếu {symbol}",
+        orderError: "Lệnh Thất Bại",
+        networkError: "Lỗi kết nối mạng"
+      }
+    },
+
+    // Forum Page
+    forumPage: {
+      title: "Diễn đàn Cộng đồng",
+      loadMore: "Tải thêm",
+      loading: "Đang tải...",
+      noThreads: "Không có chủ đề nào",
+      createThread: "Tạo chủ đề mới",
+      search: "Tìm kiếm chủ đề...",
+      categories: {
+        general: "Thảo luận chung",
+        investing: "Chiến lược Đầu tư",
+        news: "Tin tức Thị trường",
+        analysis: "Phân tích Kỹ thuật",
+        education: "Giáo dục Tài chính"
+      },
+      thread: {
+        replies: "phản hồi",
+      views: "lượt xem",
+        lastReply: "Phản hồi cuối",
+        by: "bởi",
+        startThread: "Bắt đầu Chủ đề Mới",
+        reply: "Trả lời",
+        edit: "Chỉnh sửa",
+        delete: "Xóa"
+      }
+    },
+
+    // Market Data Center
+    marketDataCenter: {
+      title: "Trung tâm Dữ liệu Thị trường",
+      sections: {
+        cryptocurrency: "TIỀN ĐIỆN TỬ",
+        stock: "CỔ PHIẾU",
+        realEstate: "BẤT ĐỘNG SẢN"
+      },
+      loading: "Đang tải dữ liệu thị trường...",
+      error: "Không thể tải dữ liệu thị trường",
+      refresh: "Làm mới Dữ liệu",
+      lastUpdated: "Cập nhật lần cuối",
+      change24h: "Thay đổi 24h",
+      marketCap: "Vốn hóa Thị trường",
+      volume: "Khối lượng",
+      price: "Giá"
+    },
+
+    // Fin Compare (Product Comparison)
+    finCompare: {
+      title: "So sánh Sản phẩm Tài chính Thông minh",
+      compare: "So sánh Sản phẩm Tài chính",
+      addProduct: "Thêm Sản phẩm",
+      removeProduct: "Xóa Sản phẩm",
+      noProducts: "Không có sản phẩm để so sánh",
+      selectProducts: "Chọn sản phẩm để so sánh",
+      features: "Tính năng",
+      pricing: "Giá cả",
+      ratings: "Đánh giá",
+      pros: "Ưu điểm",
+      cons: "Nhược điểm",
+      recommendation: "Đề xuất của chúng tôi",
+      filterByPriority: "Lọc theo ưu tiên",
+      loading: "Đang tải...",
+      error: "Không thể tải dữ liệu ngân hàng. Vui lòng thử lại sau.",
+      bestChoice: "Lựa chọn tốt nhất",
+      suggested: "Được đề xuất",
+      for: "cho",
+      priorities: {
+        maxSavings: "Tiết kiệm tối đa",
+        lowestFees: "Phí thấp nhất",
+        flexibleConditions: "Điều kiện linh hoạt"
+      },
+      table: {
+        bank: "Ngân hàng",
+        interestRate: "Lãi suất",
+        issuanceFee: "Phí phát hành",
+        maxLoanTerm: "Thời hạn vay tối đa"
+      },
+      priorityTexts: {
+        highestRate: "lãi suất cao nhất",
+        lowestFees: "phí thấp nhất",
+        flexibleTerms: "điều kiện linh hoạt nhất"
+      }
+    },
+
+    // Agent Page
+    agentPage: {
+      title: "Trình tạo Báo cáo Tài chính AI Hàng ngày",
+      subtitle: "Phân tích và báo cáo tài chính được hỗ trợ bởi AI",
+      startWorkflow: "Bắt đầu Phân tích",
+      processing: "Đang xử lý...",
+      generateReport: "Tạo Báo cáo",
+      downloadReport: "Tải xuống Báo cáo",
+      selectTicker: "Chọn Mã Cổ phiếu",
+      analysisComplete: "Hoàn thành Phân tích",
+      reportReady: "Báo cáo của bạn đã sẵn sàng",
+      workflow: {
+        step1: "Thu thập Dữ liệu",
+        step2: "Phân tích Thị trường",
+        step3: "Tạo Báo cáo",
+        step4: "Xem xét Cuối cùng"
+      }
+    },
+
+    // PESTLE Page
+    pestlePage: {
+      title: "Phân tích PESTLE",
+      subtitle: "Phân tích Chính trị, Kinh tế, Xã hội, Công nghệ, Pháp lý, Môi trường",
+      categories: {
+        political: "Chính trị",
+        economic: "Kinh tế",
+        social: "Xã hội", 
+        technological: "Công nghệ",
+        legal: "Pháp lý",
+        environmental: "Môi trường"
+      },
+      analysis: "Phân tích",
+      impact: "Tác động",
+      risk: "Mức độ Rủi ro",
+      opportunity: "Cơ hội",
+      loading: "Đang tải phân tích PESTLE...",
+      noData: "Không có dữ liệu phân tích"
+    },
+
+    // Quant Analysis Page
+    quantAnalysisPage: {
+      title: "Phân tích định lượng",
+      subtitle: "Công cụ phân tích và trực quan hóa thị trường nâng cao",
+      sections: {
+        marketAnalysis: "Phân tích thị trường",
+        dashboard: "Bảng điều khiển thị trường",
+        heatmap: "Bản đồ nhiệt thị trường", 
+        monteCarlo: "Mô phỏng Monte Carlo"
+      },
+      interpretation: "Giải thích phân tích thị trường",
+      loading: "Đang tải dữ liệu thị trường...",
+      loadingHeatmap: "Đang tải dữ liệu bản đồ nhiệt...",
+      loadingMonteCarlo: "Đang tải mô phỏng Monte Carlo...",
+      controls: {
+        indicator: "Chỉ báo",
+        period: "Khoảng thời gian",
+        returnType: "Loại lợi nhuận",
+        dataSource: "Nguồn dữ liệu"
+      }
+    },
+
+    // Quant Page detailed translations
+    quantPage: {
+      StockComparison: "Stock Comparison",
+      StockPortfolioDashboard: "Stock Portfolio Dashboard",
+      Indicator: "Indicator",
+      Period: "Period",
+      Returns: "Returns",
+      Cummulative: "Cumulative",
+      Daily: "Daily",
+      RiskRatio: "Risk Ratio",
+      SharpeRatio: "Sharpe Ratio",
+      SortinoRatio: "Sortino Ratio",
+      StandardDeviation: "Standard Deviation",
+      PastTrendVsFutureProjection: "Past Trend vs Future Projection",
+      Simulation: "Simulation",
+      CloseValue: "Close Value",
+      IndicatorValue: "Indicator Value",
+      GBMSimulation: "GBM Simulation",
+      GARCHSimulation: "GARCH Simulation",
+      GraphPrice: "Graph Price",
+      TimeStep: "Time Step",
+      Date: "Date",
+      Value: "Value",
+      MonteCarloSimulation: "Monte Carlo Simulation",
+      SelectTicker: "Select Ticker",
+      TickerNameSearch: "Search ticker name...",
+      StockTicker: "Stock Ticker",
+      PriceChange: "Price Change",
+      RelativeVolume: "Relative Volume",
+      PERatio: "P/E Ratio",
+      EPSDistributed: "EPS Distributed",
+      DividendYield: "Dividend Yield",
+      IndustrySector: "Industry/Sector",
+      simulationChatBot: "Simulation from chatbot",
+      closeValueChatBot: "Close value from chatbot",
+      indicatorAndReturnChatBot: "Indicator and return from chatbot"
+    },
+
+    // Super Investor Page
+    superInvestorPage: {
+      title: "Nhà Đầu tư Vĩ đại",
+      subtitle: "Học hỏi từ những nhà đầu tư vĩ đại nhất thế giới",
+      investors: "Nhà đầu tư",
+      portfolio: "Danh mục",
+      strategy: "Chiến lược Đầu tư",
+      performance: "Hiệu suất",
+      biography: "Tiểu sử",
+      quotes: "Câu nói Nổi tiếng",
+      holdings: "Cổ phiếu Nắm giữ",
+      returns: "Lợi nhuận Hàng năm",
+      viewProfile: "Xem Hồ sơ",
+      followStrategy: "Theo dõi Chiến lược",
+      loading: "Đang tải dữ liệu nhà đầu tư...",
+      noInvestors: "Không tìm thấy nhà đầu tư",
+      searchInvestors: "Tìm kiếm nhà đầu tư...",
+      greeting: "Xin chào! Bạn đang tìm kiếm những hiểu biết về đầu tư?",
+      topInvestorsIntro: "Đây là một số nhà đầu tư hàng đầu mà bạn có thể quan tâm:",
+      from: "từ",
+      portfolioValue: "Giá trị Danh mục",
+      avgHoldingPeriod: "Thời gian Nắm giữ Trung bình",
+      learnMorePrompt: "Bạn có muốn tìm hiểu thêm về chiến lược đầu tư của họ không?"
+    },
+
+    // Chatbot Bubble
+    chatbotBubble: {
+      minimize: "Thu nhỏ",
+      maximize: "Phóng to",
+      close: "Đóng",
+      dragToMove: "Kéo để di chuyển",
+      chatWithFinBud: "Chat với FinBud",
+      startConversation: "Bắt đầu cuộc trò chuyện",
+      needHelp: "Cần hỗ trợ tài chính?",
+      inactivityPrompt: "Bạn có cần hỗ trợ gì về tài chính không?",
+      marketHoursPrompt: "Thị trường đang mở! Bạn có muốn xem phân tích mới nhất?",
+      portfolioCheckPrompt: "Đã lâu rồi bạn chưa kiểm tra danh mục đầu tư. Cần hỗ trợ gì không?",
+      budgetReminderPrompt: "Cuối tháng rồi! Bạn có muốn xem lại ngân sách và chi tiêu không?",
+      suggestions: {
+        title: "Gợi ý Nhanh",
+        investment: "Lời khuyên đầu tư",
+        portfolio: "Phân tích danh mục",
+        market: "Thông tin thị trường",
+        budgeting: "Mẹo lập ngân sách",
+        risk: "Quản lý rủi ro",
+        trading: "Chiến lược giao dịch"
+      },
+      typing: "FinBud đang gõ...",
+      placeholder: "Nhập câu hỏi tài chính của bạn...",
+      send: "Gửi",
+      quickSuggestions: "Gợi ý Nhanh",
+      messageHistory: "Lịch sử Tin nhắn",
+      clearHistory: "Xóa Lịch sử",
+      error: "Xin lỗi, có lỗi xảy ra. Vui lòng thử lại.",
+      reconnecting: "Đang kết nối lại...",
+      offline: "Bạn đang ngoại tuyến",
+      poweredBy: "Được hỗ trợ bởi FinBud AI"
+    },
+
+    // Course Page
+    coursePage: {
+      title: "Khóa học Tài chính",
+      subtitle: "Học hỏi và nâng cao kiến thức tài chính",
+      categories: {
+        beginners: "Dành cho người mới bắt đầu",
+        investments: "Đầu tư hiệu quả",
+        fundamental: "Phân tích cơ bản", 
+        technical: "Phân tích kỹ thuật"
+      },
+      views: "lượt xem",
+      viewMore: "Xem thêm",
+      loading: "Đang tải khóa học...",
+      noData: "Không có khóa học nào",
+      readTime: "phút đọc"
+    },
+
+    // Market Analysis Page
+    marketAnalysisPage: {
+      marketAnalysisTitle: "Phân tích Thị trường",
+      marketAnalysisDescription: "Dữ liệu và phân tích thị trường toàn diện cho quyết định đầu tư sáng suốt",
+      Positive: "Tích cực",
+      Neutral: "Trung tính",
+      Negative: "Tiêu cực", 
+      LastUpdated: "Cập nhật cuối",
+      Insight: "Thông tin chi tiết",
+      mentions: "Đề cập",
+      AINews: "Tin tức AI",
+      marketAnalysis: {
+        StockCompany: "Công ty Cổ phiếu",
+        FinanceStock: "Cổ phiếu Tài chính",
+        TechCommunity: "Cộng đồng Công nghệ"
+      },
+      insight: {
+        Assessment: "Đánh giá",
+        Details: "Chi tiết",
+        Source: "Nguồn",
+        Analysis: "Phân tích", 
+        Reference: "Tham khảo"
+      },
+      trend: {
+        title: "Xu hướng Thị trường",
+        topic: "Chủ đề",
+        categories: {
+          All: "Tất cả",
+          Securities: "Chứng khoán",
+          Economy: "Kinh tế",
+          Industry: "Ngành nghề",
+          Other: "Khác"
+        }
+      }
+    },
+
+    // Quant Page  
+    quantPage: {
+      StockComparison: "So sánh Cổ phiếu",
+      Indicator: "Chỉ báo",
+      Period: "Thời kỳ",
+      Returns: "Lợi nhuận",
+      Cummulative: "Tích lũy",
+      Daily: "Hàng ngày",
+      RiskRatio: "Tỷ lệ Rủi ro",
+      SharpeRatio: "Tỷ lệ Sharpe",
+      SortinoRatio: "Tỷ lệ Sortino",
+      StandardDeviation: "Độ lệch Chuẩn",
+      PastTrendVsFutureProjection: "Xu hướng Quá khứ vs Dự báo Tương lai",
+      Simulation: "Mô phỏng",
+      CloseValue: "Giá Đóng cửa",
+      IndicatorValue: "Giá trị Chỉ báo",
+      Date: "Ngày",
+      Value: "Giá trị",
+      GraphPrice: "Biểu đồ Giá",
+      TimeStep: "Bước Thời gian",
+      GBMSimulation: "Mô phỏng GBM",
+      GARCHSimulation: "Mô phỏng GARCH",
+      MonteCarloSimulation: "Mô phỏng Monte Carlo",
+      StockPortfolioDashboard: "Bảng điều khiển Danh mục Cổ phiếu",
+      TickerNameSearch: "Tìm kiếm mã cổ phiếu...",
+      StockTicker: "Mã Cổ phiếu",
+      PriceChange: "Thay đổi Giá",
+      RelativeVolume: "Khối lượng Tương đối",
+      PERatio: "Tỷ lệ P/E", 
+      EPSDistributed: "EPS Phân phối",
+      DividendYield: "Lợi suất Cổ tức",
+      IndustrySector: "Ngành Công nghiệp",
+      SelectTicker: "Chọn Mã cổ phiếu",
+      simulationChatBot: "Phân tích mô phỏng hoàn thành",
+      closeValueChatBot: "Phân tích giá đóng cửa sẵn sàng", 
+      indicatorAndReturnChatBot: "Phân tích chỉ báo và lợi nhuận có sẵn"
+    },
+
+    // Stock Simulator
+    stockSimulator: {
+      pageTitle: "Mô Phỏng Chứng Khoán",
+      tabs: {
+        investment: "Đầu Tư",
+        portfolio: "Danh Mục",
+        filters: "Bộ Lọc Cổ Phiếu", 
+        quiz: "Câu Hỏi",
+        predictiveCalc: "Máy Tính Dự Đoán"
+      },
+      trading: {
+        quickTrade: "Giao Dịch Nhanh",
+        stockSymbol: "Mã Cổ Phiếu",
+        stockSymbolPlaceholder: "Nhập mã cổ phiếu (ví dụ: AAPL)",
+        quantity: "Số Lượng",
+        buy: "Mua",
+        sell: "Bán",
+        clear: "Xóa"
+      },
+      account: {
+        summary: "Tóm Tắt Tài Khoản",
+        balance: "Tổng Số Dư",
+        cash: "Tiền Mặt Khả Dụng",
+        stocks: "Giá Trị Cổ Phiếu",
+        todayChange: "Thay Đổi Hôm Nay"
+      },
+      portfolio: {
+        totalPortfolio: "Tổng Giá Trị Danh Mục",
+        holdings: "Cổ Phiếu Sở Hữu",
+        loading: "Đang tải danh mục...",
+        noHoldings: "Không có cổ phiếu nào",
+        table: {
+          symbol: "Mã",
+          shares: "Shares",
+          currentPrice: "Current Price",
+          marketValue: "Market Value",
+          gainLoss: "Gain/Loss",
+          change: "Change %"
+        }
+      },
+      screener: {
+        title: "Stock Screener",
+        subtitle: "Find stocks that match your investment criteria",
+        quickPresets: "Quick Presets",
+        marketCap: "Market Cap",
+        sector: "Sector",
+        priceRange: "Price Range",
+        peRatio: "P/E Ratio",
+        dividendYield: "Dividend Yield",
+        volume: "Volume",
+        beta: "Beta",
+        resetFilters: "Reset Filters",
+        savePreset: "Save Preset",
+        stocksFound: "stocks found",
+        loading: "Loading...",
+        loadingStocks: "Loading stocks data...",
+        enterPresetName: "Enter preset name:",
+        presetSaved: "Preset Saved",
+        presetSavedMessage: "Preset \"{name}\" saved successfully",
+        presets: {
+          growthStocks: "Growth Stocks",
+          valueStocks: "Value Stocks", 
+          dividendStocks: "Dividend Stocks",
+          largeCap: "Large Cap",
+          smallCap: "Small Cap"
+        },
+        marketCapOptions: {
+          mega: "Mega Cap (>$200B)",
+          large: "Large Cap ($10B-$200B)",
+          mid: "Mid Cap ($2B-$10B)",
+          small: "Small Cap ($300M-$2B)",
+          micro: "Micro Cap (<$300M)"
+        },
+        sectors: {
+          technology: "Technology",
+          healthcare: "Healthcare",
+          financials: "Financials",
+          energy: "Energy",
+          industrials: "Industrials",
+          materials: "Materials",
+          utilities: "Utilities",
+          realestate: "Real Estate",
+          consumer_discretionary: "Consumer Discretionary",
+          consumer_staples: "Consumer Staples",
+          telecommunications: "Telecommunications"
+        }
+      },
+      quiz: {
+        title: "Stock Market Quiz",
+        loading: "Loading quiz..."
+      },
+      notifications: {
+        orderSuccess: "Order Successful",
+        buySuccess: "Successfully bought {quantity} shares of {symbol}",
+        sellSuccess: "Successfully sold {quantity} shares of {symbol}",
+        orderError: "Order Failed",
+        networkError: "Network error occurred"
+      }
+    }
   },
   vi: {
 
@@ -1006,7 +1632,7 @@ const messages = {
     technology: "Công nghệ",
     finManage: "Fin Quản lý",
     goal: "Chi tiêu",
-    riskAnalysis: "Dữ liệu thị trường",
+    riskAnalysis: "Trung tâm dữ liệu thị trường",
     investmentCalculator: "Tính toán Đầu tư",
     mortgageCalculator: "Tính toán Thế chấp",
     superInvestors: "Đầu tư tài chính",
@@ -1021,7 +1647,7 @@ const messages = {
     course: "Khoá học",
     event: "Sự kiện",
     forum: "Forum",
-    finAgent: "Fin Agent",
+    finAgent: "Fin Tài chính",
     agent: "Agent",
     pestle: "PESTLE",
     login: "Đăng nhập",
@@ -1149,830 +1775,1474 @@ const messages = {
     studentsLabel: "Học viên",
 
     //Goal Section
+
     // Bot Section
-    botAltText: "Chatbot trợ giúp",
-    profilePicAlt: "Ảnh đại diện",
+    botAltText: "Chatbot",
+    profilePicAlt: "Profile picture",
 
     // Greetings
-    morningGreeting: "Chào buổi sáng",
-    afternoonGreeting: "Chào buổi chiều",
-    eveningGreeting: "Chào buổi tối",
-    dashboardSlogan: "Quản lý ví thông minh để đạt mục tiêu dễ dàng",
+    morningGreeting: "Good Morning",
+    afternoonGreeting: "Good Afternoon",
+    eveningGreeting: "Good Evening",
+    dashboardSlogan: "Manage your wallet wisely to reach your goals with ease",
 
     // Buttons
-    connectBankButton: "Kết nối tài khoản ngân hàng",
-    addButton: "Thêm",
-    resetButton: "Đặt lại",
-    cancelButton: "Hủy",
-    yesButton: "Có",
-    noButton: "Không",
-    editButton: "Sửa",
-    removeButton: "Xóa",
-    addGoalButton: "Thêm mục tiêu",
-    addTransactionButton: "Thêm giao dịch",
+    connectBankButton: "Connect Your Bank Account",
+    addButton: "Add",
+    resetButton: "Reset",
+    cancelButton: "Cancel",
+    yesButton: "Yes",
+    noButton: "No",
+    editButton: "Edit",
+    removeButton: "Remove",
+    addGoalButton: "Add Goal",
+    addTransactionButton: "Add Transaction",
 
     // Financial Summary
-    totalRevenueLabel: "Tổng thu nhập",
-    totalExpenseLabel: "Tổng chi tiêu",
-    accountBalanceLabel: "Số dư tài khoản",
+    totalRevenueLabel: "Total Revenue",
+    totalExpenseLabel: "Total Expense",
+    accountBalanceLabel: "Account Balance",
 
     // Transactions
-    dailyTransactionsTitle: "Giao dịch hàng ngày",
-    addTransactionTitle: "Thêm giao dịch",
-    transactionTypePlaceholder: "Loại giao dịch",
-    creditedOption: "Ghi có",
-    debitedOption: "Ghi nợ",
-    descriptionPlaceholder: "Mô tả",
-    amountPlaceholder: "Số tiền",
-    datePlaceholder: "Ngày",
+    dailyTransactionsTitle: "Daily Transactions",
+    addTransactionTitle: "Add Transaction",
+    transactionTypePlaceholder: "Transaction Type",
+    creditedOption: "Credited",
+    debitedOption: "Debited",
+    descriptionPlaceholder: "Description",
+    amountPlaceholder: "Amount",
+    datePlaceholder: "Date",
 
     // Table Headers
-    descriptionHeader: "Mô tả",
-    dateHeader: "Ngày",
-    amountHeader: "Số tiền",
-    sourceHeader: "Nguồn",
-    statusHeader: "Trạng thái",
-    transactionHeader: "Giao dịch",
-    creditedStatus: "Ghi có",
-    debitedStatus: "Ghi nợ",
+    descriptionHeader: "Description",
+    dateHeader: "Date",
+    amountHeader: "Amount",
+    sourceHeader: "Source",
+    statusHeader: "Status",
+    transactionHeader: "Transaction",
+    creditedStatus: "Credited",
+    debitedStatus: "Debited",
 
     // Goals Section
-    goalsSectionTitle: "Mục tiêu",
-    searchGoalsPlaceholder: "Tìm kiếm mục tiêu...",
-    goalImageAlt: "Hình ảnh mục tiêu",
-    categoryLabel: "Danh mục",
-    totalLabel: "Tổng",
-    savedLabel: "Đã tiết kiệm",
+    goalsSectionTitle: "Goals",
+    searchGoalsPlaceholder: "Search goals...",
+    goalImageAlt: "Goal image",
+    categoryLabel: "Category",
+    totalLabel: "Total",
+    savedLabel: "Saved",
 
     // Add Goal Modal
-    addNewGoalTitle: "Thêm mục tiêu mới",
-    goalTitleLabel: "Tiêu đề mục tiêu",
-    goalTitlePlaceholder: "Nhập tiêu đề mục tiêu",
-    descriptionLabel: "Mô tả",
-    optionalLabel: "không bắt buộc",
-    descriptionPlaceholder: "Mô tả mục tiêu (tối đa 500 chữ)",
-    charactersLabel: "ký tự",
-    totalMoneyNeededLabel: "Tổng tiền cần",
-    totalMoneyNeededPlaceholder: "Tổng tiền cần thiết",
-    moneyHaveLabel: "Tiền đã có",
-    moneyHavePlaceholder: "Số tiền hiện có",
-    startDateLabel: "Ngày bắt đầu",
-    endDateLabel: "Ngày kết thúc",
-    addNewCategoryOption: "Thêm danh mục mới",
-    newCategoryLabel: "Danh mục mới",
-    newCategoryPlaceholder: "Nhập danh mục mới",
+    addNewGoalTitle: "Add New Goal",
+    goalTitleLabel: "Goal Title",
+    goalTitlePlaceholder: "Enter your goal title",
+    descriptionLabel: "Description",
+    optionalLabel: "optional",
+    descriptionPlaceholder: "Describe your goal (max 500 words)",
+    charactersLabel: "characters",
+    totalMoneyNeededLabel: "Total Money Needed",
+    totalMoneyNeededPlaceholder: "Total money needed",
+    moneyHaveLabel: "Money Already Have",
+    moneyHavePlaceholder: "Money already have",
+    startDateLabel: "Start Date",
+    endDateLabel: "End Date",
+    addNewCategoryOption: "Add New Category",
+    newCategoryLabel: "New Category",
+    newCategoryPlaceholder: "Enter new category",
 
     // Reset Account Modal
-    resetAccountTitle: "Đặt lại số dư tài khoản",
-    resetAccountMessage: "Bạn có chắc muốn đặt lại số dư tài khoản? Hành động này sẽ xóa tất cả giao dịch của bạn.",
+    resetAccountTitle: "Reset Account Balance",
+    resetAccountMessage: "Are you sure you want to reset your account balance? This action will delete all your transactions.",
 
     // About Us Section
-    aboutUsTitle: "Về chúng tôi",
-    aboutUsDescription: "Chúng tôi là một đội ngũ công nghệ tại Việt Nam chuyên về tích hợp AI. FinBud là dự án đầu tiên của chúng tôi với mục tiêu hỗ trợ mọi người trong các quyết định tài chính, từ đầu tư, tiết kiệm đến chi tiêu thông minh. Đội ngũ của chúng tôi bao gồm các chuyên gia giàu kinh nghiệm với nền tảng đa dạng về công nghệ, tài chính và kinh doanh. Chúng tôi đam mê ứng dụng công nghệ để làm cho việc quản lý tài chính trở nên dễ dàng và dễ tiếp cận với tất cả mọi người.",
-    meetOurTeamTitle: "Đội Ngũ",
+    aboutUsTitle: "About us",
+    aboutUsDescription: "We are a Vietnam-based tech team working on AI integrations. FinBud is our first project with an aim to aid people with their financial decisions, from investing, accruing savings, to smart expenditures. Our team consists of experienced professionals with diverse backgrounds in technology, finance, and business. We are passionate about leveraging technology to make financial management accessible and straightforward for everyone.",
+    meetOurTeamTitle: "Meet Our Team",
 
     // Testimonials Section
-    testimonialsTitle: "Feedback",
+    testimonialsTitle: "What our users say about FinBud",
 
     // Contact Section
-    contactHeader: "Liên hệ ngay",
-    contactSubheader: "Hãy cho chúng tôi biết cách chúng tôi có thể hỗ trợ bạn!",
+    contactHeader: "We'd love to talk about how we can work together.",
+    contactSubheader: "Let us know how we can help (or if we can't, tell us)!",
 
     // Contact Form
-    fullNameLabel: "Họ và tên",
-    fullNamePlaceholder: "Nguyễn Văn A",
-    emailLabel: "Email của bạn",
-    emailPlaceholder: "vidu@example.com",
-    companyNameLabel: "Tên công ty",
-    companyNamePlaceholder: "Công ty ABC",
-    mobileNumberLabel: "Số điện thoại",
-    mobileNumberPlaceholder: "+84 123 456 789",
-    messageLabel: "Lời nhắn của bạn",
-    messagePlaceholder: "Chúng tôi có thể giúp gì cho bạn?",
-    sendMessageButton: "Gửi tin nhắn",
+    fullNameLabel: "Full name",
+    fullNamePlaceholder: "Frank Castle",
+    emailLabel: "Your email",
+    emailPlaceholder: "franklyfrank@example.com",
+    companyNameLabel: "Company name",
+    companyNamePlaceholder: "The P-Corp.",
+    mobileNumberLabel: "Mobile number",
+    mobileNumberPlaceholder: "+1 012 345 6789",
+    messageLabel: "Your message",
+    messagePlaceholder: "How can we help you?",
+    sendMessageButton: "Send message",
 
     // Contact Info
-    messageUsLabel: "Gửi tin nhắn",
-    callUsLabel: "Gọi điện thoại",
+    messageUsLabel: "Message us",
+    callUsLabel: "Call us",
 
     //Member Intro
     // Team member roles
     roles: {
-      ceo: "Người sáng lập & Giám đốc điều hành",
-      pm: "Quản lý dự án",
-      cto: "Giám đốc công nghệ",
-      dataLead: "Trưởng nhóm Dữ liệu",
-      fullstack: "Kỹ sư Fullstack",
-      frontend: "Kỹ sư Front-end",
-      backend: "Trưởng nhóm Back-end",
-      aiEngineer: "Kỹ sư Trí tuệ nhân tạo (AI)",
-      dataScientist: "Phân tích/Khoa học dữ liệu"
+      ceo: "Founder & CEO",
+      pm: "Project Manager",
+      cto: "Chief Technology Officer (CTO)",
+      dataLead: "Data Division Lead",
+      fullstack: "Fullstack Engineer",
+      frontend: "Front-end Engineer",
+      backend: "Back-end Lead",
+      aiEngineer: "Artificial Intelligence (AI) Engineer",
+      dataScientist: "Data Analytics/Data Scientist"
     },
 
     // Team member introductions
     team: {
       intros: {
-        tri: "Cử nhân Kinh tế Định lượng và Khoa học Máy tính từ Đại học Macalester với niềm đam mê khởi nghiệp kết hợp Tài chính, Công nghệ và Kinh doanh để mang lại lợi ích cho cộng đồng Việt Nam",
-        dung: "Lập trình viên Full Stack với 2 năm kinh nghiệm tại F5 Networks và SVB, tốt nghiệp Cử nhân Khoa học Máy tính từ Đại học Washington State",
-        minh: "Thạc sĩ Khoa học Máy tính và Kinh tế từ Đại học Iowa cùng với Cử nhân Khoa học Thống kê tại Đại học Grinnell. Đam mê AI/ML, kỹ thuật phần mềm và giao thoa giữa công nghệ và kinh tế.",
-        phu: "Cử nhân Danh dự Kinh doanh & Marketing từ IBD@NEU, tập trung vào ứng dụng kỹ thuật và chiến lược phân tích nâng cao trong FinTech.",
-        huy: "Nhà khoa học máy tính và toán học từ Đại học DePauw. Lập trình viên full stack tận tâm với công nghệ mới và giải quyết vấn đề phức tạp, luôn đổi mới và tạo ra các giải pháp có tác động.",
-        linh: "Sinh viên Khoa học Máy tính tại Đại học South Florida, chuyên về phát triển phần mềm full-stack với trọng tâm là khả năng mở rộng. Đam mê kỹ thuật phần mềm và khám phá ứng dụng tiềm năng trong AI.",
-        dungpham: "Sinh viên Khoa học Máy tính tại Đại học South Florida, có kỹ năng phát triển web fullstack và muốn đi sâu vào các lĩnh vực AI/ML, Fintech và Điện toán đám mây",
-        khoi: "Theo học Cử nhân Khoa học Máy tính tại Viện Công nghệ New Jersey. Hăng hái ứng dụng kỹ năng vào các dự án đổi mới và khám phá cơ hội mới trong ngành công nghệ",
-        binh: "Cử nhân Khoa học Máy tính từ Đại học VinUni với đam mê tận dụng toán học và công nghệ như AI và Học máy để nâng cao điều trị y tế và trị liệu sức khỏe tâm thần",
-        quang: "Quản trị Kinh doanh tại Đại học Ngoại thương và tham gia Chương trình Trao đổi về Thống kê và Kinh tế lượng tại Đại học Uppsala",
-        khoa: "Nhà phát triển LLM ứng dụng với bằng Cử nhân Khoa học Dữ liệu từ Đại học Rochester. Đam mê về truy xuất thông tin và hệ thống đề xuất",
-        tuan: "Theo học chuyên ngành Khoa học Máy tính tại Đại học Khoa học, đang tích cực phát triển tính năng cho Finbud, một dự án quản lý tài chính. Đam mê AI/ML và kỹ thuật phần mềm.",
-        krystal: "Sinh viên Cử nhân Khoa học Dữ liệu tại Đại học Deakin, cam kết biến đổi dữ liệu thành các giải pháp có tác động. Đam mê giải quyết các thách thức thực tế thông qua cách tiếp cận dựa trên dữ liệu, luôn nỗ lực tạo ra sự khác biệt có ý nghĩa.",
-        bach: "Theo học bằng Cử nhân Khoa học Máy tính tại Đại học VinUni"
+        tri: "Bachelor of Quantitative Economics and Computer Science from Macalester College with passion creating a startup that merges Finance, Technology, and Business to benefit Vietnam community",
+        dung: "Full Stack Software Developer with 2 years of experience at F5 Networks and SVB, holding a Bachelor of Science degree in Computer Science from Washington State University",
+        minh: "Master Degree in Computer Science and Economics from University of Iowa with an addition of Bachelor of Science in Statistics at Grinnell College. Passionate about AI/ML, software engineering, and the intersection of technology and economics.",
+        phu: "Honours Bachelor of Business & Marketing from IBD@NEU, focused on applying advanced analysis techniques and strategies in FinTech.",
+        huy: "Computer Scientist and Mathematics from DePauw University. Dedicated full stack developer passionate about new technologies and solving complex problems, driven to innovate and create impactful solutions.",
+        linh: "Computer Science student from University of South Florida, specializing in full-stack software development with a focus on scalability. Deeply passionate about software engineering and exploring its potential applications in AI.",
+        dungpham: "Computer Science student at University of South Florida, skilled in fullstack web development and wanting to dive into the fields of AI/ML, Fintech and Cloud Computing",
+        khoi: "Pursuing a Bachelor of Computer Science at the New Jersey Institute of Technology. Enthusiastic about applying my skills to innovative projects and exploring new opportunities in the tech industry",
+        binh: "Bachelor of Computer Science from VinUniversity with passion to leverage mathematics and technology such AI and Machine Learning, to augment medical treatment and mental health therapy",
+        quang: "Business Management at Foreign Trade University and participated in an Exchange Program in Statistics and Econometrics at Uppsala University",
+        khoa: "Applied LLM Developer with a Bachelor's degree in Data Science from the University of Rochester. Passionate about information retrieval and recommendation systems",
+        tuan: "Pursuing a major in Computer Science at the University of Science, actively developing features for Finbud, a financial management project. Passionate about AI/ML and software engineering.",
+        krystal: "Bachelor of Data Science student at Deakin University, dedicated to transforming data into impactful solutions. Passionate about addressing real-world challenges through data-driven approaches, always striving to make a meaningful difference.",
+        bach: "Pursuing Computer Science Degree at VinUniversity"
       }
     },
 
     // Testimonials
     testimonials: {
-      daniel: "FinBud giúp tôi hiểu rõ tiền của mình đi đâu mỗi tháng. Những phân tích đơn giản nhưng tạo ra khác biệt lớn.",
-      rachel: "Tôi đã thử nhiều ứng dụng tài chính, nhưng không cái nào trực quan như FinBud. Nó giúp tôi biết tiền lương của mình đã được chi vào đâu. Hướng dẫn AI tạo nên khác biệt lớn — cảm giác rất cá nhân. Giờ tôi đã bắt đầu tiết kiệm và lên kế hoạch nghỉ hưu. Cuối cùng tôi cũng cảm thấy mình đang đưa ra những quyết định thông minh với tiền bạc.",
-      jane: "Tôi yêu FinBud! Giống như có một cố vấn tài chính cá nhân 24/7 vậy. Những phân tích và mẹo đều cực kỳ hữu ích và dễ hiểu.",
-      julian: "Tôi từng rất sợ lập kế hoạch tài chính. Bảng tính làm tôi choáng ngợp và tôi không biết bắt đầu từ đâu. FinBud giúp tôi thoát khỏi căng thẳng đó nhờ giao diện đơn giản và hỗ trợ AI thông minh. Nó tự động phân loại chi tiêu và đặt ra các mục tiêu khả thi. Sau 6 tháng sử dụng, tôi đã trả hết 2 thẻ tín dụng và bắt đầu xây dựng quỹ khẩn cấp. Cuối cùng tôi cũng cảm thấy kiểm soát được tài chính thay vì bị nó chi phối. Không chỉ là một ứng dụng — nó giống như một huấn luyện viên giúp tôi có trách nhiệm hơn. Rất đáng dùng cho ai cảm thấy bế tắc về tiền bạc.",
-      amelia: "Lời khuyên cá nhân hóa từ FinBud chính là điều tôi không ngờ mình cần. Nó điều chỉnh theo thói quen tài chính của tôi và nhẹ nhàng định hướng đúng đắn. Từ ngân sách đến đầu tư, mọi tính năng đều được thiết kế tỉ mỉ. Điều bất ngờ nhất là lượng kiến thức tôi học được chỉ từ việc dùng app. Những phân tích hàng ngày dạy tôi nhiều hơn cả blog hay video tài chính. Mối quan hệ của tôi với tiền bạc đã thay đổi hoàn toàn — từ căng thẳng sang tự tin. FinBud thực sự trao quyền cho người dùng.",
-      marcus: "Tôi từng dùng nhiều app tài chính cùng lúc — một để theo dõi chi tiêu, một để tiết kiệm, một khác để đầu tư. FinBud kết hợp tất cả trong một nền tảng mượt mà. Nó theo dõi mục tiêu, hiển thị tiến độ thời gian thực và đưa ra lời khuyên hiệu quả. Tôi đã cắt giảm các gói đăng ký không cần thiết, bắt đầu quỹ du lịch và cả đầu tư vào Roth IRA. Giờ tôi không cần phải là chuyên gia tài chính nữa. FinBud biến những quyết định phức tạp thành đơn giản. Ứng dụng này tôn trọng thời gian của bạn và khuyến khích sự kiên trì. Nó thay đổi hoàn toàn cách tôi quản lý tiền.",
-      tyler: "Chỉ riêng công cụ lập ngân sách đã đáng giá, nhưng cảnh báo thời gian thực mới là thứ giữ tôi đi đúng hướng. Giống như có một trợ lý tài chính luôn theo sát vậy. Tôi không bao giờ quên hạn thanh toán nữa.",
-      ben: "FinBud không chỉ hiển thị con số — nó còn giải thích chúng. Tôi nhận được mẹo hành động rõ ràng để điều chỉnh thói quen mà không cảm thấy tội lỗi. Cảm giác như mỗi ngày tôi đều hiểu hơn về tiền bạc. Ngay cả bạn đời của tôi cũng bắt đầu dùng sau khi thấy sự tiến bộ của tôi. Đó là một bước ngoặt tài chính cho cả hai chúng tôi.",
-      claire: "Theo dõi chi tiêu từng khiến tôi căng thẳng, nhưng FinBud đã đơn giản hóa mọi thứ. Bản tóm tắt hàng ngày giúp tôi có trách nhiệm mà không bị quá tải. Tôi thích cách nó ăn mừng các cột mốc — rất có động lực. Đây là ứng dụng tài chính duy nhất tôi kiên trì dùng. Rất đáng để thử nếu bạn muốn xây dựng thói quen tốt hơn.",
-      sophie: "FinBud cho tôi tự tin vào mọi quyết định tài chính. Dễ sử dụng và luôn đưa ra lời khuyên chính xác. Chỉ sau 3 tháng, tôi đã tiết kiệm được nhiều hơn cả năm ngoái.",
+      daniel: "FinBud helped me understand where my money goes each month. Simple insights, big impact.",
+      rachel: "I've tried several money apps before, but none felt as intuitive as FinBud. It helped me figure out where my paycheck was going. The AI guidance makes a big difference—it feels personal. Now I've started building savings and even planning for retirement. I finally feel like I'm making smart choices with my money.",
+      jane: "I love using FinBud! It's like having a personal financial advisor available 24/7. The insights and tips are incredibly useful and easy to understand.",
+      julian: "I was always intimidated by financial planning. Spreadsheets overwhelmed me, and I never knew where to start.FinBud took that stress away with its clean interface and smart AI support. It categorized my spending automatically and gave me goals I could actually reach. After six months of using it, I've paid off two credit cards and started building an emergency fund. I finally feel like I'm in control of my finances instead of the other way around. It's more than an app—it's like having a coach that keeps me accountable. Highly recommend it to anyone feeling stuck or lost with money.",
+      amelia: "FinBud's personalized advice was the game-changer I didn't know I needed. It adapts to my financial habits and pushes me gently in the right direction. From budgeting to investing, every feature feels thoughtful and well-designed. What really surprised me was how much I've learned just by using the app. The daily insights taught me more than any finance blog or YouTube video ever has. My relationship with money has completely shifted—from stress to confidence. FinBud truly empowers users to take charge.",
+      marcus: "I used to bounce between multiple finance apps—one for spending, one for saving, another for investments. FinBud brought everything together in one sleek platform. It tracks my goals, shows me real-time progress, and gives advice that actually works. I've reduced unnecessary subscriptions, started a travel fund, and even put money into a Roth IRA. I don't need to be a finance expert anymore. FinBud makes complex decisions feel manageable. This app respects your time and rewards consistency. It's been a game-changer for how I handle money.",
+      tyler: "The budgeting tool alone is worth it, but the real-time alerts are what keep me on track. It's like having a financial assistant watching out for me. I never miss a due date anymore.",
+      ten: "FinBud doesn't just show you numbers—it explains them. I get clear, actionable tips that help me adjust my habits without guilt. It feels like I'm getting smarter about money every day. Even my partner started using it after seeing my progress. It's been a financial glow-up for both of us.",
+      claire: "Tracking expenses used to stress me out, but FinBud simplified it all. The daily summaries help me stay accountable without being overwhelmed. I love how it celebrates milestones—it's motivating. It's the only finance app I've actually stuck with. Definitely recommend for anyone trying to build better habits.",
+      sophie: "FinBud gives me confidence in every financial decision I make. It's easy to use and always spot-on with its advice. I've already saved more in 3 months than I did all last year.",
     },
     //Stock Simulator
     //Nav Bar
-    appTitle: "Mô Phỏng Chứng Khoán",
+    appTitle: "Stock Simulator",
     navigation: {
-      investment: "Đầu tư",
-      portfolio: "Danh mục đầu tư",
-      transactionHistory: "Lịch sử giao dịch",
-      filters: "Bộ lọc",
-      quiz: "Câu đố",
-      predictiveCalc: "Máy tính dự đoán"
+      investment: "Investment",
+      portfolio: "Your Portfolio",
+      transactionHistory: "Transaction History",
+      filters: "Filters",
+      quiz: "Quiz",
+      predictiveCalc: "Predictive Calculator"
     },
     investment: {
-      keyStatistics: "Thống kê chính",
+      keyStatistics: "Key Statistics",
       stats: {
-        open: "Giá mở cửa",
-        prevClose: "Giá đóng cửa trước",
-        week52High: "52 tuần cao nhất",
-        week52Low: "52 tuần thấp nhất",
-        marketCap: "Vốn hóa thị trường",
-        volume: "Khối lượng"
+        open: "Open",
+        prevClose: "Prev Close",
+        week52High: "52 Week High",
+        week52Low: "52 Week Low",
+        marketCap: "Market Cap",
+        volume: "Volume"
       },
-      actions: "Hành động",
+      actions: "Actions",
       actionForm: {
-        placeholder: "Nhập mã cổ phiếu",
-        quantity: "Số lượng",
-        buy: "Mua",
-        sell: "Bán",
-        clear: "XÓA",
-        preview: "Xem trước lệnh"
+        placeholder: "Enter stock symbol",
+        quantity: "Quantity",
+        buy: "Buy",
+        sell: "Sell",
+        clear: "CLEAR",
+        preview: "Preview Order"
       },
       accountPerformance: {
-        accountBalance: "SỐ DƯ TÀI KHOẢN",
-        cashBalance: "SỐ DƯ TIỀN MẶT",
-        stockValue: "GIÁ TRỊ CỔ PHIẾU",
-        todaysChange: "THAY ĐỔI HÔM NAY",
-        annualReturn: "LỢI NHUẬN HÀNG NĂM"
+        accountBalance: "ACCOUNT BALANCE",
+        cashBalance: "CASH BALANCE",
+        stockValue: "STOCK VALUE",
+        todaysChange: "TODAY'S CHANGE",
+        annualReturn: "ANNUAL RETURN"
       }
     },
     portfolio: {
-      title: "Danh mục đầu tư của bạn",
+      title: "Your Investment Portfolio",
       overview: {
-        totalValue: "Tổng giá trị danh mục",
-        stocks: "Cổ phiếu",
-        cash: "Tiền mặt"
+        totalValue: "Total Portfolio Value",
+        stocks: "Stocks",
+        cash: "Cash"
       },
       holdings: {
-        title: "Danh mục nắm giữ",
+        title: "Your Holdings",
         tableHeaders: {
-          ticker: "Mã cổ phiếu",
-          quantity: "Số lượng cổ phần",
-          currentPrice: "Giá hiện tại mỗi cổ phiếu",
-          purchasedValue: "Tổng giá trị đã mua",
-          marketValue: "Giá trị thị trường hiện tại",
-          gainLoss: "Lãi/Lỗ",
-          percentChange: "% Thay đổi"
+          ticker: "Stock Ticker",
+          quantity: "Share Quantity",
+          currentPrice: "Current Price Per Share",
+          purchasedValue: "Total Purchased Value",
+          marketValue: "Current Market Value",
+          gainLoss: "Gain/Loss",
+          percentChange: "% Change"
         }
       }
     },
-    currencySymbol: "₫",
-    shares: "cổ phiếu",
+    currencySymbol: "$",
+    shares: "shares",
     chatComponent: {
-      rename: "Đổi tên",
-      delete: "Xoá",
-      deleteConfirm: "Xóa cuộc trò chuyện?",
-      deleteConfirmMessage: "Điều này sẽ xóa",
-      cancel: "Hủy",
-      guildence: "Hướng dẫn",
-      sendButton: "Gửi",
+      rename: "Rename",
+      delete: "Delete",
+      deleteConfirm: "Delete Chat ?",
+      deleteConfirmMessage: "This will delete",
+      cancel: "Cancel",
+      guildence: "Guidence",
+      sendButton: "Send",
       responsePlaceholder: "Phản hồi từ FinBud sẽ xuất hiện ở đây"
     },
-    //Event Hub
+
+    //Envent Hub
     eventHub: {
-      searchPlaceholder: "Tìm kiếm sự kiện...",
-      exploreNearby: "Khám phá gần bạn",
-      saved: "Đã lưu",
-      allEvents: "Tất cả sự kiện",
-      eventCategories: "Danh mục sự kiện bạn có thể thích",
-      trending: "Xu hướng",
-      readMore: "Xem thêm",
-      dontMiss: "Đừng bỏ lỡ!",
-      finDiscover: "Khám phá các sự kiện tài chính nổi bật gần bạn",
+      searchPlaceholder: "Search events...",
+      exploreNearby: "Explore Near You",
+      saved: "Saved",
+      allEvents: "All Events",
+      eventCategories: "Event Categories You May Like",
+      trending: "Trending",
+      readMore: "Read more",
+      dontMiss: "DON'T MISS OUT!",
+      finDiscover: "Discover Top Financial Events Near You",
       categories: {
-        conference: "Hội nghị & Hội thảo",
-        workshop: "Workshop & Đào tạo",
-        webinars: "Hội thảo trực tuyến",
-        networking: "Kết nối mạng lưới",
-        careerFairs: "Ngày hội việc làm"
+        conference: "Conference & Summit",
+        workshop: "Workshop & Training",
+        webinars: "Webinars",
+        networking: "Networking",
+        careerFairs: "Career Fairs"
       },
       eventMap: {
-        upcomingEvents: "Sự kiện sắp tới",
-        eventImage: "Hình ảnh sự kiện",
-        date: "Ngày",
-        host: "Người tổ chức",
-        location: "Địa điểm",
-        tba: "Chưa xác định"
+        upcomingEvents: "Upcoming Events",
+        eventImage: "Event Image",
+        date: "Date",
+        host: "Host",
+        location: "Location",
+        tba: "TBA"
       }
     },
 
     //Chat
-    message: "Nhập tin nhắn của bạn ở đây... ",
+    message: "Type your message here... ",
 
     // Main Page Content
-    empoweringTitle: "Tự tin với mỗi quyết định tài chính",
-    anytimeAnswers: "FinBud – trợ lý tài chính của bạn, sẵn sàng giải đáp mọi thắc mắc 24/7",
-    partneringTitle: "Hợp tác để đạt được mục tiêu tài chính",
+    empoweringTitle: "Empowering smarter finance decisions",
+    anytimeAnswers: "Anytime answers for finance questions with FinBud",
+    partneringTitle: "Partnering to Achieve Financial Goals",
 
     // Financial Awareness Section
-    enhanceFinancialTitle: "Nâng cao nhận thức tài chính của bạn",
-    enhanceFinancialDesc: "Chatbot AI tiên tiến của Finbud sẽ giúp bạn xem xét, khám phá các chủ đề tài chính và trả lời mọi câu hỏi của bạn.",
+    enhanceFinancialTitle: "Enhance Your Financial Awareness",
+    enhanceFinancialDesc: "Finbud's advanced AI chatbot will help you review, explore financial topics, and answer all your questions.",
 
     // Financial Planning Section
-    optimizeFinancialTitle: "Tối ưu hóa kế hoạch tài chính của bạn",
-    optimizeFinancialDesc: "Finbud giúp bạn theo dõi và quản lý chi phí, ghi lại thu nhập và chi tiêu, và điều chỉnh quản lý tài chính theo mục tiêu cụ thể của bạn.",
+    optimizeFinancialTitle: "Optimize Your Financial Planning",
+    optimizeFinancialDesc: "Finbud helps you track and manage expenses, record income and spending, and tailor financial management to your specific goals.",
 
     // Investment Section
-    maximizeInvestmentTitle: "Tối đa hóa hiệu quả đầu tư của bạn",
-    maximizeInvestmentDesc: "Finbud cung cấp tổng quan toàn diện về thị trường tài chính, hướng dẫn bạn tối ưu hóa vốn một cách tự tin.",
+    maximizeInvestmentTitle: "Maximize Your Investment Efficiency",
+    maximizeInvestmentDesc: "Finbud provides a comprehensive overview of the financial market, guiding you to optimize your capital confidently.",
 
     // Impact Section
-    impactTitle: "Dễ dàng nhận thấy tác động",
-    savingsIncrease: "Tăng tiết kiệm",
-    savingsDesc: "trung bình mỗi người dùng",
-    financialAwareness: "Nhận thức tài chính",
-    awarenessDesc: "tăng",
-    debtReduction: "Giảm nợ",
-    debtDesc: "sau 1 năm",
-    creditScore: "Cải thiện điểm tín dụng",
-    creditDesc: "tháng",
+    impactTitle: "Easily notice the impact",
+    savingsIncrease: "Savings Increase",
+    savingsDesc: "average per user",
+    financialAwareness: "Financial Awareness",
+    awarenessDesc: "increase",
+    debtReduction: "Debt Reduction",
+    debtDesc: "after 1 year",
+    creditScore: "Improved Credit Score",
+    creditDesc: "months within",
 
     // Features Section
-    chatbotFeatureTitle: "Giải quyết lo lắng tài chính với",
-    chatbotFeatureName: "Chatbot AI,",
-    chatbotDesc: "Với các lệnh đơn giản và truy cập vào nguồn thông tin chính xác và đáng tin cậy, mọi thắc mắc tài chính của bạn đều có thể được trả lời ngay lập tức.",
-    chatNow: "Chat ngay",
+    chatbotFeatureTitle: "Solve Financial Worries with",
+    chatbotFeatureName: "AI Chatbot,",
+    chatbotDesc: "With just simple commands and access to a vast source of accurate and reliable information, all your financial queries can be answered instantly.",
+    chatNow: "Chat now",
 
-    simulatorFeatureTitle: "Làm chủ đầu tư của bạn với",
+    simulatorFeatureTitle: "Master Your Investments with",
     simulatorFeatureName: "FinBud Simulator,",
-    simulatorDesc: "Theo dõi hiệu suất đầu tư của bạn theo thời gian thực, cung cấp thông tin chi tiết từ đầu tư của bạn và thị trường để đưa ra quyết định đầu tư tốt hơn.",
-    simulatorNow: "Mô phỏng ngay",
+    simulatorDesc: "Track how your investments are performing in real-time, provide actionable insights from your investment and the market to make better investment decisions.",
+    simulatorNow: "Simulator now",
 
-    goalFeatureTitle: "Dự đoán chi phí của bạn với",
+    goalFeatureTitle: "Predict Your Costs with",
     goalFeatureName: "FinBud Goal,",
-    goalDesc: "AI của chúng tôi dự đoán chi phí sắp tới để giúp bạn lên kế hoạch trước, hiểu mô hình chi tiêu của bạn và nhận các mẹo quản lý ngân sách tốt hơn.",
-    goalNow: "Đặt mục tiêu ngay",
+    goalDesc: "Our AI predicts upcoming expenses to help you plan ahead, understand your spending patterns and receive tips for better budget management.",
+    goalNow: "Set Goal now",
 
-    quizFeatureTitle: "Nâng cao kỹ năng tài chính của bạn với",
+    quizFeatureTitle: "Boost Your Finance Skills with",
     quizFeatureName: "FinBud Quiz,",
-    quizDesc: "Bài kiểm tra tài chính với các chủ đề khác nhau liên quan đến các từ khóa khác nhau giúp bạn thực hành và học kiến thức tài chính một cách thông minh và tương tác.",
-    quizNow: "Thử Quiz ngay",
+    quizDesc: "Financial Quiz with different topics related to various keywords helps you practice and learn financial knowledge in a smart and interactive way.",
+    quizNow: "Try Quiz now",
 
     // Goal Page
-    connect: 'Kết nối tài khoản ngân hàng của bạn',
-    totalTransactions: 'Tổng giao dịch',
-    totalIncome: 'Tổng thu nhập',
-    totalExpense: 'Tổng chi tiêu',
-    accountBalance: 'Số dư tài khoản',
-    showForecast: 'Hiển thị dự đoán',
-    dailyTransactions: 'Giao dịch hàng ngày',
-    add: 'Thêm',
-    reset: 'Đặt lại',
-    noData: 'Không có dữ liệu giao dịch để hiển thị.',
-    transactionChart: 'Biểu đồ giao dịch',
-    goals: 'Mục tiêu',
-    addGoal: 'Thêm mục tiêu',
-    searchGoals: 'Tìm kiếm mục tiêu...',
-    addNewGoal: 'Thêm mục tiêu mới',
-    goalTitle: 'Tên mục tiêu',
-    description: 'Mô tả',
-    totalNeeded: 'Tổng tiền cần',
-    alreadyHave: 'Số tiền đã có',
-    startDate: 'Ngày bắt đầu',
-    endDate: 'Ngày kết thúc',
-    category: 'Danh mục',
-    newCategory: 'Danh mục mới',
-    confirmReset: 'Bạn có chắc chắn muốn đặt lại số dư tài khoản không? Hành động này sẽ xóa tất cả giao dịch của bạn.',
-    cancel: 'Không',
-    confirm: 'Có',
-    addTransaction: 'Thêm giao dịch',
-    transactionType: 'Loại giao dịch',
-    transactionDescription: 'Mô tả giao dịch',
-    amount: 'Số tiền & Đơn vị tiền',
-    dateTime: 'Ngày',
-    income: 'Thu nhập',
-    expense: 'Chi tiêu',
-    selectType: 'Chọn loại',
-    selectCategory: 'Chọn danh mục',
-    action: 'Trạng thái',
-    edit: 'Sửa',
-    remove: 'Xóa',
+    connect: 'Connect Your Bank Account',
+    totalTransactions: 'Total Transactions',
+    totalIncome: 'Total Income',
+    totalExpense: 'Total Expense',
+    accountBalance: 'Account Balance',
+    showForecast: 'Show Forecast',
+    dailyTransactions: 'Daily Transactions',
+    add: 'Add',
+    reset: 'Reset',
+    noData: 'No transaction data available to display.',
+    transactionChart: 'Transaction Chart',
+    goals: 'Goals',
+    addGoal: 'Add Goal',
+    searchGoals: 'Search goals...',
+    addNewGoal: 'Add New Goal',
+    goalTitle: 'Goal Title',
+    description: 'Description (optional)',
+    totalNeeded: 'Total Money Needed',
+    alreadyHave: 'Money Already Have',
+    startDate: 'Start Date',
+    endDate: 'End Date',
+    category: 'Category',
+    newCategory: 'New Category',
+    confirmReset: 'Are you sure you want to reset your account balance? This action will delete all your transactions.',
+    cancel: 'No',
+    confirm: 'Yes',
+    addTransaction: 'Add Transaction',
+    transactionType: 'Transaction Type',
+    transactionDescription: 'Transaction description',
+    amount: 'Amount & Currency',
+    dateTime: 'Date',
+    income: 'Income',
+    expense: 'Expense',
+    selectType: 'Select type',
+    selectCategory: 'Select category',
+    action: 'Action',
+    edit: 'Edit',
+    remove: 'Remove',
 
     // FAQ Section
-    faqTitle: "Câu hỏi thường gặp",
+    faqTitle: "Frequently Asked Questions",
     faqs: {
       pricing: {
-        question: "FinBud có miễn phí để sử dụng không, hay có các gói đăng ký?",
-        answer: "FinBud cung cấp cả gói miễn phí với các tính năng cơ bản và gói đăng ký cho một số tính năng nâng cao. Hãy đăng ký để thử tất cả các công cụ tài chính miễn phí của FinBud trước khi tìm hiểu thêm các tùy chọn nâng cao từ chúng tôi."
+        question: "Is FinBud free to use, or are there any subscription plans?",
+        answer: "FinBud offers both a free package with basic features and a subscription plan for some advanced features. Let's register to try all the free financial tools of FinBud before looking for more advanced options from us."
       },
       chatbot: {
-        question: "Chatbot FinBud có thể giải quyết những câu hỏi nào?",
-        answer: "Chatbot FinBud được thiết kế để hỗ trợ nhiều loại câu hỏi, bao gồm cả chủ đề tài chính và phi tài chính. Ngoài ra, chatbot cho phép bạn trực tiếp thực hiện các lệnh khác nhau trong các tính năng quản lý tài chính, đầu tư và giáo dục của FinBud. Ví dụ, bạn có thể mua hoặc bán cổ phiếu, quản lý ngân sách hoặc tra cứu các thuật ngữ tài chính. Chỉ cần nhấp vào biểu tượng chat và làm theo hướng dẫn để khám phá đầy đủ khả năng của chatbot FinBud."
+        question: "What kind of questions can the FinBud chatbot solve?",
+        answer: "The FinBud chatbot is designed to assist with a wide range of inquiries, covering both financial and non-financial topics. Additionally, the chatbot allows you to directly execute various commands within FinBud's financial management, investment, and educational features. For example, you can buy or sell stocks, manage your budget, or look up financial terms. Simply click on the chat icon and follow the guidance to explore the full capabilities of the FinBud chatbot."
       },
       investment: {
-        question: "FinBud có hỗ trợ theo dõi và quản lý đầu tư không?",
-        answer: "Có, các trang Quant và Simulator của chúng tôi cung cấp trải nghiệm chuyên sâu cho những người khám phá tài chính nâng cao. Bạn có thể quản lý danh mục đầu tư, truy cập phân tích cổ phiếu chuyên sâu và thậm chí thực hành giao dịch cổ phiếu thực thông qua Simulator - hoàn hảo cho người mới bắt đầu muốn có kinh nghiệm đầu tư thực tế."
+        question: "Does FinBud support investment tracking and management?",
+        answer: "Yes, our Quant and Simulator pages provide an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and even practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience."
       },
       goals: {
-        question: "Tôi có thể đặt mục tiêu tài chính với FinBud và theo dõi tiến trình của mình không?",
-        answer: "Hoàn toàn có thể! Với FinBud, bạn có thể đặt các mục tiêu tài chính cụ thể bằng cách xác định chi tiết như danh mục, ngày mục tiêu, số tiền cần thiết và tiết kiệm hiện tại. Trên trang Goal, chúng tôi giúp bạn theo dõi bằng cách giám sát các giao dịch hàng ngày và cung cấp biểu đồ chi tiết, đảm bảo bạn có thể đạt được từng mục tiêu hiệu quả hơn."
+        question: "Can I set financial goals with FinBud and track my progress?",
+        answer: "Absolutely! With FinBud, you can set specific financial goals by defining details such as the category, target date, required amount, and current savings. On the Goal page, we help you stay on track by monitoring your daily transactions and providing detailed charts, ensuring you can reach each goal more effectively."
       },
       mobile: {
-        question: "FinBud có khả dụng trên thiết bị di động và có đồng bộ hóa trên các nền tảng không?",
-        answer: "Có, FinBud có sẵn trên cả thiết bị di động và laptop. Chỉ cần đăng nhập vào tài khoản của bạn, và dữ liệu của bạn sẽ tự động đồng bộ hóa trên tất cả các nền tảng để truy cập liền mạch."
+        question: "Is FinBud available on mobile devices, and does it sync across platforms?",
+        answer: "Yes, FinBud is available on both mobile devices and laptops. Simply log in to your account, and your data will automatically sync across all platforms for seamless access."
       }
     },
+    // Chart Labels
+    initialInvestmentLabel: "Initial Investment",
+    additionalContributionLabel: "Additional Contribution",
+    profitEarnedLabel: "Profit Earned",
+    zillowNote: "Interest rate provided via Zillow.",
+    yearNumber: "Year {number}",
+    // FundLetterPage Component
+    fundLetters: "Fund Letters",
+    fundLettersArchive: "Fund Letters Archive",
+    curatedListSubtitle: "Curated List of Quarterly Hedge Fund Letters",
+    searchPlaceholder: "Search by name of fund",
+    allYears: "All Years",
+    allQuarters: "All Quarters",
+    fundName: "Fund Name",
+    date: "Date",
+    noResults: "No letters found for selected filters.",
+    resetFilters: "Reset Filters",
+    greatestInvestors: "Greatest Investor Compilations",
+    learnFromMasters: "Learn from the masters of value investing",
 
-    // Investment Calculator Chart Labels
-    initialInvestmentLabel: "Số vốn ban đầu",
-    additionalContributionLabel: "Đóng góp bổ sung",
-    profitEarnedLabel: "Lợi nhuận thu được",
-    zillowNote: "Lãi suất được cung cấp bởi Zillow.",
-    yearNumber: "Năm {number}",
-    // Fund Letter
-    fundLetters: "Thư Quỹ",
-    fundLettersArchive: "Lưu Trữ Thư Quỹ",
-    curatedListSubtitle: "Danh sách các thư quỹ hàng quý được chọn lọc",
-    searchPlaceholder: "Tìm kiếm theo tên quỹ",
-    allYears: "Tất cả các năm",
-    allQuarters: "Tất cả các quý",
-    fundName: "Tên Quỹ",
-    date: "Ngày",
-    noResults: "Không tìm thấy thư nào với bộ lọc đã chọn.",
-    resetFilters: "Đặt lại bộ lọc",
-    greatestInvestors: "Tuyển Tập Nhà Đầu Tư Vĩ Đại",
+    // Investment Calculator Bot Messages
+    investmentAnalysis: "Investment Analysis:",
+    initialAmount: "Initial:",
+    rateAmount: "Rate:",
+    finalAmountBot: "Final:",
 
     // Technology Page
     technologyPage: {
-      title: "Phân tích giúp phát triển doanh nghiệp của bạn.",
-      description: "Theo dõi hiệu quả hoạt động và thúc đẩy thay đổi tích cực với những phân tích thực tiễn bằng công nghệ của chúng tôi.",
+      title: "Analytics that drive your business.",
+      description: "Review your performance and drive change with our actionable insights provided via our intuitive web app.",
       features: {
         title: {
-          plan: "Lập kế hoạch tài chính",
-          manage: "Quản lý nợ và đầu tư",
-          edu: "Giáo dục tài chính",
-          analyze: "Dự đoán và phân tích tài chính",
+          plan: "Financial Planning",
+          manage: "Debt and Investment Management",
+          edu: "Financial Education",
+          analyze: "Predictive Financial Analytics",
         },
         description: {
-          plan: "Đồng hành cùng bạn trong việc xây dựng và duy trì một kế hoạch tài chính cá nhân vững chắc.",
-          manage: "Giúp bạn kiểm soát nợ và đầu tư hiệu quả với những lời khuyên phù hợp với mục tiêu cá nhân.",
-          edu: "Trang bị cho bạn những kiến thức nền tảng và nâng cao về tài chính để tự tin ra quyết định.",
-          analyze: "Ứng dụng AI để phân tích và dự đoán xu hướng tài chính, hỗ trợ bạn đưa ra những quyết định thông minh và chính xác.",
+          plan: "I help you create and maintain a perfect personal financial plan.",
+          manage: "Manage your debts and invest wisely with targeted advice tailored to your goals.",
+          edu: "Providing knowledge on basic and advanced financial concepts to empower your decisions.",
+          analyze: "Utilize AI to analyze and predict financial trends to make smart decisions.",
         },
       },
       financialConsulting: {
-        title: "Tư vấn tài chính",
-        note: "Kế hoạch cá nhân hóa để bảo vệ tương lai tài chính của bạn.",
+        title: "Financial Consulting",
+        note: "Personalized plans to secure your financial future.",
         highlightsLeft: [
-          "Quản lý nợ",
-          "Chiến lược tiết kiệm",
-          "Tư vấn đầu tư"
+          "Debt Management",
+          "Savings Strategies",
+          "Investment Advice"
         ],
         highlightsRight: [
-          "Lập kế hoạch tài chính cá nhân",
-          "Định hướng theo mục tiêu",
-          "Quản lý tài sản cá nhân"
+          "Custom Financial Planning",
+          "Goal-Oriented Guidance",
+          "Personal Wealth Management"
         ],
-        button: "Bắt đầu dùng thử 30 ngày miễn phí"
+        button: "Start your 30-day free trial"
       },
       financialEducation: {
-        title: "Giáo dục tài chính",
-        note: "Trang bị kiến thức để đưa ra những quyết định tài chính sáng suốt.",
+        title: "Financial Education",
+        note: "Empower yourself with knowledge to make better financial decisions.",
         highlights: [
-          "Kiến thức tài chính từ cơ bản đến nâng cao",
-          "Bài học và câu đố sinh động",
-          "Phân tích xu hướng tài chính theo thời gian thực",
-          "Thông tin chuyên sâu được hỗ trợ bởi AI"
+          "Basic to Advanced Financial Concepts",
+          "Interactive Lessons and Quizzes",
+          "Real-time Financial Trend Analysis",
+          "AI-Driven Insights"
         ],
-        button: "Bắt đầu dùng thử 30 ngày miễn phí"
+        button: "Start your 30-day free trial"
       },
       insights: {
-        title: "TRÍ TUỆ NHÂN TẠO",
-        subtitle: "Nhận phân tích tức thời về hiệu suất của bạn.",
-        description: "Nâng cấp quyết định tài chính với công nghệ AI tiên tiến của chúng tôi.",
+        title: "ARTIFICIAL INTELLIGENCE",
+        subtitle: "Get real-time insights on your performance.",
+        description: "Empower your financial decisions with our cutting-edge AI technology.",
         points: [
-          "Cá nhân hoá phân tích tài chính: Báo cáo tự động theo dõi thói quen chi tiêu của bạn, giúp bạn tối ưu ngân sách và gia tăng tiết kiệm.",
-          "Dự đoán xu hướng: Công cụ AI phân tích dòng tiền quá khứ để dự báo tương lai tài chính, giúp bạn chủ động lên kế hoạch từ sớm."
+          "Personalized Financial Analysis: Gain comprehensive insights with auto-generated reports tailored to your financial behavior, helping you optimize your budget and savings.",
+          "Trend Prediction: Our AI-driven tools analyze past spending and earning trends to forecast your financial future, enabling proactive financial planning."
         ],
-        button: "Xem thêm"
+        button: "Learn more"
       },
       computerVision: {
-        title: "CHATBOT AI TIÊN TIẾN",
-        subtitle: "Trợ lý tài chính thông minh chỉ với một chạm.",
+        title: "ADVANCED AI CHATBOT",
+        subtitle: "Smart Financial Assistance at Your Fingertips.",
         featuresTitle: {
-          analyze: "Phân tích tài chính tức thì",
-          plan: "Lập kế hoạch tài chính linh hoạt",
-          secure: "An toàn và bảo mật tuyệt đối"
+          analyze: "Instant Financial Insights",
+          plan: "Interactive Financial Planning",
+          secure: "Secure and Confidential"
         },
         featuresDescription: {
-          analyze: "Bạn cần mẹo tiết kiệm hay tư vấn đầu tư? Hỏi ngay và nhận câu trả lời chính xác, dựa trên dữ liệu thực tế – nhanh chóng và dễ hiểu.",
-          plan: "Tương tác trực tiếp để thiết kế kế hoạch tài chính riêng cho bạn – đơn giản, nhanh gọn và cực kỳ hiệu quả.",
-          secure: "Hệ thống độc quyền của chúng tôi vận hành như một \"bộ não AI\" thông minh, tự động nhận diện những thông tin quan trọng nhất cho bạn. Hãy tưởng tượng nó giống như bộ não của bạn vậy — chỉ khác là nó không bao giờ mệt mỏi hay cần 3 ly cà phê để hoạt động mỗi ngày!."
+          analyze: "Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.",
+          plan: "Ask any question, from budgeting tips to investment advice, and get immediate, data-driven answers.",
+          secure: "Our proprietary system utilizes neural networks to identify the information that matters most. Think of it like the way your brain works, only it never gets tired (or needs 3 cups of coffee to get through the day)."
         }
       },
+      // partners: {
+      //   description: " <a href='mailto:contact@yourdomain.com'></a>",
+      //   left: "<a href='#'></a>",
+      //   right: " <a href='#'>Learn more</a>"
+      // }
       partners: {
-        title: "Tích hợp với những công cụ tốt nhất trên thị trường",
+        title: "Integrate with the best tools in the market",
         descriptionParts: [
-          "Khám phá các đối tác liên kết với chúng tôi. Không thấy phần mềm bạn đang dùng?",
-          { type: "link", text: " Liên hệ với chúng tôi", href: "mailto:contact@yourdomain.com" },
-          " và chúng tôi sẽ hỗ trợ tích hợp ngay."
+          "Check out our connected partners. Don't see your software on the list of partners?",
+          { type: "link", text: " Drop us a note", href: "mailto:contact@yourdomain.com" },
+          " and we'll get them added."
         ],
         left: {
-          text: "Shop-Ware giúp bạn tận dụng quy trình siêu tốc để sửa chữa được nhiều xe hơn mỗi tháng.",
-          linkText: "Tìm hiểu thêm",
+          text: "Shop-Ware enables users to take advantage of their lightning-fast workflows to repair more cars every month.",
+          linkText: "Learn more",
           linkHref: "#"
         },
         right: {
-          text: "Tekmetric giúp bạn khai phá tối đa tiềm năng xưởng sửa chữa với quy trình vận hành tinh gọn.",
-          linkText: "Tìm hiểu thêm",
+          text: "Tekmetric lets you unleash your shop's potential with their streamlined workflow settings.",
+          linkText: "Learn more",
           linkHref: "#"
         }
       }
     },
+
     coursePage: {
-      loadingText: "Đang tải dữ liệu...",
-      errorMessage: "Đã xảy ra lỗi khi tải dữ liệu: ",
-      retryButton: "Thử lại",
+      loadingText: "Loading data...",
+      errorMessage: "Error loading data: }",
+      retryButton: "Try Again",
       categories: {
-        beginners: "CHO NGƯỜI MỚI BẮT ĐẦU",
-        investments: "ĐẦU TƯ HIỆU QUẢ",
-        fundamental: "PHÂN TÍCH CƠ BẢN",
-        technical: "PHÂN TÍCH KỸ THUẬT"
+        beginners: "FOR BEGINNERS",
+        investments: "EFFECTIVE INVESTMENTS", 
+        fundamental: "FUNDAMENTAL ANALYSIS",
+        technical: "TECHNICAL ANALYSIS"
       },
-      viewMore: "Xem thêm",
-      views: "lượt xem",
-      emptyState: "Không có bài viết nào trong danh mục này.",
-      botMessage: "Chào bạn! 👋<br><br>Chào mừng đến với FinBud – trung tâm học tập tài chính. Tại đây bạn có thể:<br><br>📚 Học kiến thức đầu tư từ cơ bản đến nâng cao<br>💡 Khám phá các chiến lược đầu tư hiệu quả<br>📊 Tìm hiểu sâu về phân tích cơ bản và phân tích kỹ thuật<br><br>Khám phá các bài viết theo chủ đề hoặc tìm kiếm nội dung bạn quan tâm nhé!"
+      viewMore: "View More",
+      views: "views",
+      emptyState: "No articles available in this category.",
+      botMessage: "Hello there! 👋<br><br>This is FinBud financial learning hub. Here you can:<br><br>📚 Learn investment knowledge from basic to advanced<br>💡 Discover effective investment strategies<br>📊 Dive deep into fundamental and technical analysis<br><br>Explore articles by topic or search for content you are interested in!"
     },
 
     macroEcon: {
-      chat: "Xin chào! Tôi ở đây để giúp bạn với các câu hỏi về dữ liệu kinh tế vĩ mô. Bạn có thể hỏi tôi về GDP, FDI, CPI và dữ liệu Xuất Nhập khẩu.",
-      quarter: "Quý",
-      month: "Tháng",
-      year: "Năm",
-      viewBy: "Xem theo",
-      from: "Từ",
-      to: "Đến",
-      see: "Chọn",
-      overview: "Tổng quan",
+      chat: "Hello! I'm here to help you with your questions about macroeconomic data. You can ask me about GDP, FDI, CPI, and Import-Export data.",
+      quarter: "Quarter",
+      month: "Month",
+      year: "Year",
+      viewBy: "View by",
+      from: "From",
+      to: "To",
+      see: "Select",
+      overview: "Overview",
       gdp: "GDP",
       cpi: "CPI",
       fdi: "FDI",
-      importExport: "Xuất-Nhập khẩu",
-      enMonth: {
-        1: "Tháng 1",
-        2: "Tháng 2",
-        3: "Tháng 3",
-        4: "Tháng 4",
-        5: "Tháng 5",
-        6: "Tháng 6",
-        7: "Tháng 7",
-        8: "Tháng 8",
-        9: "Tháng 9",
-        10: "Tháng 10",
-        11: "Tháng 11",
-        12: "Tháng 12"
-      },
+      importExport: "Import-Export",
       enQuarter: {
-        1: "Quý 1",
-        2: "Quý 2",
-        3: "Quý 3",
-        4: "Quý 4"
+        1: "Q1",
+        2: "Q2",
+        3: "Q3",
+        4: "Q4"
+      },
+      enMonth: {
+        1: "January",
+        2: "February",
+        3: "March",
+        4: "April",
+        5: "May",
+        6: "June",
+        7: "July",
+        8: "August",
+        9: "September",
+        10: "October",
+        11: "November",
+        12: "December"
+      },
+      header: {
+        "Chỉ tiêu": "Indicator",
+        "Đơn vị tính": "Unit",
+        "Số liệu mới nhất": "Latest Data",
+        "Giá trị": "Value",
+        "Đồ thị": "Chart",
+        "STT": "No."
       },
       unit: {
         "%": "%",
-        "Tỷ VNĐ": "Tỷ VNĐ",
-        "Tỷ USD": "Tỷ USD",
-        "Triệu USD": "Triệu USD",
-        "VNĐ/USD": "VNĐ/USD",
-        "Triệu người": "Triệu người",
-      },
-      header: {
-        "Chỉ tiêu": "Chỉ tiêu",
-        "Đơn vị tính": "Đơn vị tính",
-        "Số liệu mới nhất": "Số liệu mới nhất",
-        "Giá trị": "Giá trị",
-        "Đồ thị": "Đồ thị",
-        "STT": "STT"
+        "Tỷ VNĐ": "Billion VND",
+        "Tỷ USD": "Billion USD",
+        "Triệu USD": "Million USD",
+        "VNĐ/USD": "VND/USD",
+        "Triệu người": "Million People",
+        "Nghìn đồng": "Thousand Dong",
+        "USD": "USD"
       },
       "Tổng quan": {
-        "Chỉ số giá tiêu dùng": "Chỉ số giá tiêu dùng",
-        "Tăng trưởng GDP": "Tăng trưởng GDP",
-        "GDP theo giá hiện hành": "GDP theo giá hiện hành",
-        "GDP theo giá cố định (2010)": "GDP theo giá cố định (2010)",
-        "Tổng trị giá Xuất khẩu": "Tổng trị giá Xuất khẩu",
-        "Tổng trị giá Nhập khẩu": "Tổng trị giá Nhập khẩu",
-        "Toàn ngành công nghiệp": "Toàn ngành công nghiệp",
-        "FDI Giải ngân": "FDI Giải ngân",
-        "Cung tiền M2": "Cung tiền M2",
-        "Tỷ giá trung tâm": "Tỷ giá trung tâm",
-        "Tăng trưởng bán lẻ": "Tăng trưởng bán lẻ",
-        "Dân số": "Dân số",
-        "Tỷ lệ thất nghiệp thành thị": "Tỷ lệ thất nghiệp thành thị"
+        "Chỉ số giá tiêu dùng": "Consumer Price Index",
+        "Tăng trưởng GDP": "GDP Growth",
+        "GDP theo giá hiện hành": "GDP at Current Prices",
+        "GDP theo giá cố định (2010)": "GDP at Constant Prices",
+        "Tổng trị giá Xuất khẩu": "Total Export Value",
+        "Tổng trị giá Nhập khẩu": "Total Import Value",
+        "Toàn ngành công nghiệp": "Total Industrial Sector Growth",
+        "FDI Giải ngân": "FDI Disbursement",
+        "Cung tiền M2": "M2 Money Supply",
+        "Tỷ giá trung tâm": "Central Exchange Rate",
+        "Tăng trưởng bán lẻ": "Retail Sales Growth",
+        "Dân số": "Population",
+        "Tỷ lệ thất nghiệp thành thị": "Urban Unemployment Rate"
       },
       "GDP": {
         "Quý": {
-            "Cơ cấu GDP theo giá hiện tại": "Cơ cấu GDP theo giá hiện tại",
-            "Nông nghiệp": "Nông nghiệp",
-            "Công nghiệp": "Công nghiệp",
-            "Dịch vụ": "Dịch vụ",
-            "Tăng trưởng thực của GDP": "Tăng trưởng thực của GDP",
-            "Tổng GDP": "Tổng GDP",
-            "Giá trị GDP (2010)": "Giá trị GDP (2010)",
-            "GDP theo giá cố định (2010)": "GDP theo giá cố định (2010)",
-            "Giá trị GDP hiện hành": "Giá trị GDP hiện hành"
+            "Cơ cấu GDP theo giá hiện tại": "GDP Structure at Current Prices",
+            "Nông nghiệp": "Agriculture",
+            "Công nghiệp": "Industry",
+            "Dịch vụ": "Services",
+            "Tăng trưởng thực của GDP": "Real GDP Growth",
+            "Tổng GDP": "Total GDP",
+            "Giá trị GDP (2010)": "GDP Value (2010)",
+            "GDP theo giá cố định (2010)": "GDP at Constant Prices (2010)",
+            "Giá trị GDP hiện hành": "GDP Value at Current Prices",
+            "GDP theo giá hiện hành": "GDP at Current Prices",
         },
         "Năm": {
-          "Thu nhập bình quân": "Thu nhập bình quân",
-          "GDP bình quân": "GDP bình quân",
-          "GNI bình quân": "GNI bình quân",
-          "GDP bình quân (USD)": "GDP bình quân (USD)",
-          "Tăng trưởng thực của GDP": "Tăng trưởng thực của GDP",
-          "Tổng GDP": "Tổng GDP",
-          "Nông nghiệp": "Nông nghiệp",
-          "Công nghiệp": "Công nghiệp",
-          "Dịch vụ": "Dịch vụ",
-          "Cơ cấu GDP theo giá hiện tại": "Cơ cấu GDP theo giá hiện tại",
-          "Giá trị GDP": "Giá trị GDP",
-          "GDP theo giá hiện hành": "GDP theo giá hiện hành",
-          "GDP theo giá hiện hành (ước tính)": "GDP theo giá hiện hành (ước tính)",
-          "GDP theo giá cố định (2010)": "GDP theo giá cố định (2010)",
-          "GDP theo giá cố định (2010) (ước tính)": "GDP theo giá cố định (2010) (ước tính)",
-          "GNI theo giá hiện tại": "GNI theo giá hiện tại"
+          "Thu nhập bình quân": "Per Capita Income",
+          "GDP bình quân": "GDP per Capita (VND)",
+          "GNI bình quân": "GNI per Capita (VND)",
+          "GDP bình quân (USD)": "GDP per Capita (USD)",
+          "Tăng trưởng thực của GDP": "Real GDP Growth",
+          "Tổng GDP": "Total GDP",
+          "Nông nghiệp": "Agriculture",
+          "Công nghiệp": "Industry",
+          "Dịch vụ": "Services",
+          "Cơ cấu GDP theo giá hiện tại": "GDP Structure at Current Prices",
+          "Giá trị GDP": "GDP Value",
+          "GDP theo giá hiện hành": "GDP at Current Prices",
+          "GDP theo giá hiện hành (ước tính)": "GDP at Current Prices (Estimated)",
+          "GDP theo giá cố định (2010)": "GDP at Constant Prices (2010)",
+          "GDP theo giá cố định (2010) (ước tính)": "GDP at Constant Prices (2010) (Estimated)",
+          "GNI theo giá hiện tại": "GNI at Current Prices"
         }        
       },
       "CPI": {
         "Tháng": {
-          "Chỉ số giá tiêu dùng": "Chỉ số giá tiêu dùng",
-          "Hàng ăn và dịch vụ ăn uống": "Hàng ăn và dịch vụ ăn uống",
-          "Lương thực": "Lương thực",
-          "Thực phẩm": "Thực phẩm",
-          "Ăn uống ngoài gia đình": "Ăn uống ngoài gia đình",
-          "Đồ uống và thuốc lá": "Đồ uống và thuốc lá",
-          "May mặc, giày dép mũ nón": "May mặc, giày dép mũ nón",
-          "Nhà ở và vật liệu xây dựng": "Nhà ở và vật liệu xây dựng",
-          "Thiết bị và đồ dùng gia đình": "Thiết bị và đồ dùng gia đình",
-          "Thuốc và dịch vụ y tế": "Thuốc và dịch vụ y tế",
-          "Giao thông": "Giao thông",
-          "Bưu chính viễn thông": "Bưu chính viễn thông",
-          "Giáo dục": "Giáo dục",
-          "Văn hóa, giải trí và du lịch": "Văn hóa, giải trí và du lịch",
-          "Đồ dùng và dịch vụ khác": "Đồ dùng và dịch vụ khác"
+          "Chỉ số giá tiêu dùng": "Consumer Price Index",
+          "Hàng ăn và dịch vụ ăn uống": "Food and Beverage Services",
+          "Lương thực": "Cereals",
+          "Thực phẩm": "Food",
+          "Ăn uống ngoài gia đình": "Dining Out",
+          "Đồ uống và thuốc lá": "Beverages and Tobacco",
+          "May mặc, giày dép mũ nón": "Clothing, Footwear, and Hats",
+          "Nhà ở và vật liệu xây dựng": "Housing and Building Materials",
+          "Thiết bị và đồ dùng gia đình": "Household Equipment and Appliances",
+          "Thuốc và dịch vụ y tế": "Medicines and Healthcare Services",
+          "Giao thông": "Transport",
+          "Bưu chính viễn thông": "Postal and Telecommunications",
+          "Giáo dục": "Education",
+          "Văn hóa, giải trí và du lịch": "Culture, Recreation, and Tourism",
+          "Đồ dùng và dịch vụ khác": "Other Goods and Services"
         },
         "Năm": {
-          "Tháng 1": "Tháng 1",
-          "Tháng 2": "Tháng 2",
-          "Tháng 3": "Tháng 3",
-          "Tháng 4": "Tháng 4",
-          "Tháng 5": "Tháng 5",
-          "Tháng 6": "Tháng 6",
-          "Tháng 7": "Tháng 7",
-          "Tháng 8": "Tháng 8",
-          "Tháng 9": "Tháng 9",
-          "Tháng 10": "Tháng 10",
-          "Tháng 11": "Tháng 11",
-          "Tháng 12": "Tháng 12",
-          "Bình quân tháng": "Bình quân tháng",
-          "Tháng 12 năm báo cáo so với tháng 12 năm trước": "Tháng 12 năm báo cáo so với tháng 12 năm trước"
+          "Tháng 1": "January",
+          "Tháng 2": "February",
+          "Tháng 3": "March",
+          "Tháng 4": "April",
+          "Tháng 5": "May",
+          "Tháng 6": "June",
+          "Tháng 7": "July",
+          "Tháng 8": "August",
+          "Tháng 9": "September",
+          "Tháng 10": "October",
+          "Tháng 11": "November",
+          "Tháng 12": "December",
+          "Bình quân tháng": "Monthly Average",
+          "Tháng 12 năm báo cáo so với tháng 12 năm trước": "December of the Reporting Year Compared to December of the Previous Year"
         }        
       },
       "Xuất-Nhập khẩu": {
         "Tháng": {
-          "Xuất khẩu": "Xuất khẩu",
-          "Tổng trị giá Xuất khẩu": "Tổng trị giá Xuất khẩu",
-          "Giày da": "Giày da",
-          "Dệt may": "Dệt may",
-          "Gỗ và sản phẩm gỗ": "Gỗ và sản phẩm gỗ",
-          "Thủy sản": "Thủy sản",
-          "Dầu thô": "Dầu thô",
-          "Gạo": "Gạo",
-          "Café": "Café",
-          "Điện tử máy tính": "Điện tử máy tính",
-          "Máy móc thiết bị": "Máy móc thiết bị",
-          "Nhập khẩu": "Nhập khẩu",
-          "Tổng trị giá Nhập khẩu": "Tổng trị giá Nhập khẩu",
-          "Điện tử, máy tính và linh kiện": "Điện tử, máy tính và linh kiện",
-          "Máy móc thiết bị, phụ tùng": "Máy móc thiết bị, phụ tùng",
-          "Xăng dầu": "Xăng dầu",
-          "Hóa chất": "Hóa chất",
-          "Sản phẩm hóa chất": "Sản phẩm hóa chất",
-          "Sắt thép": "Sắt thép",
-          "Vải": "Vải",
-          "Ô tô": "Ô tô",
-          "Thức ăn gia súc": "Thức ăn gia súc"
+          "Xuất khẩu": "Exports",
+          "Tổng trị giá Xuất khẩu": "Total Export Value (Million USD)",
+          "Giày da": "Footwear (Leather)",
+          "Dệt may": "Textiles",
+          "Gỗ và sản phẩm gỗ": "Wood and Wood Products",
+          "Thủy sản": "Seafood",
+          "Dầu thô": "Crude Oil",
+          "Gạo": "Rice",
+          "Café": "Coffee",
+          "Điện tử máy tính": "Electronics and Computers",
+          "Máy móc thiết bị": "Machinery and Equipment",
+          "Nhập khẩu": "Imports",
+          "Tổng trị giá Nhập khẩu": "Total Import Value (Million USD)",
+          "Điện tử, máy tính và linh kiện": "Electronics, Computers, and Components",
+          "Máy móc thiết bị, phụ tùng": "Machinery and Equipment, Parts",
+          "Xăng dầu": "Petroleum Products",
+          "Hóa chất": "Chemicals",
+          "Sản phẩm hóa chất": "Chemical Products",
+          "Sắt thép": "Iron and Steel",
+          "Vải": "Fabric",
+          "Ô tô": "Automobiles",
+          "Thức ăn gia súc": "Animal Feed"
         },
         "Năm": {
-          "Xuất khẩu": "Xuất khẩu",
-          "Hoa Kỳ": "Hoa Kỳ",
-          "Nhật Bản": "Nhật Bản",
+          "Xuất khẩu": "Exports",
+          "Hoa Kỳ": "United States",
+          "Nhật Bản": "Japan",
           "Australia": "Australia",
-          "Trung Quốc": "Trung Quốc",
+          "Trung Quốc": "China",
           "Singapore": "Singapore",
-          "Đức": "Đức",
-          "Anh": "Anh",
+          "Đức": "Germany",
+          "Anh": "United Kingdom",
           "Malaysia": "Malaysia",
-          "Thái Lan": "Thái Lan",
-          "Pháp": "Pháp",
-          "Sản phẩm dệt may": "Sản phẩm dệt may",
-          "Thủy sản": "Thủy sản",
-          "Gạo": "Gạo",
-          "Café": "Café",
-          "Cao su": "Cao su",
-          "Gỗ và sản phẩm gỗ": "Gỗ và sản phẩm gỗ",
-          "Than đá": "Than đá",
-          "Tôm đông lạnh": "Tôm đông lạnh",
-          "Lương thực, Thực phẩm và động vật sống": "Lương thực, Thực phẩm và động vật sống",
-          "Đồ uống và thuốc lá": "Đồ uống và thuốc lá",
-          "NVL thô, không dùng để ăn, trừ nhiên liệu": "NVL thô, không dùng để ăn, trừ nhiên liệu",
-          "Nhiêu liệu, dầu mỡ nhờn và vật liệu liên quan": "Nhiêu liệu, dầu mỡ nhờn và vật liệu liên quan",
-          "Dầu, mỡ, chất béo, sáp động, thực vật": "Dầu, mỡ, chất béo, sáp động, thực vật",
-          "Hoá chất và sản phẩm liên quan": "Hoá chất và sản phẩm liên quan",
-          "Hàng chế biến phân loại theo nguyên liệu": "Hàng chế biến phân loại theo nguyên liệu",
-          "Máy móc, phương tiện vận tải và phụ tùng": "Máy móc, phương tiện vận tải và phụ tùng",
-          "Hàng chế biến khác": "Hàng chế biến khác",
-          "Háng hóa không thuộc các nhóm trên": "Háng hóa không thuộc các nhóm trên",
-          "Giá trị xuất khẩu (USD giá hiện hành)": "Giá trị xuất khẩu (USD giá hiện hành)",
-          "Nhập khẩu": "Nhập khẩu",
-          "Hàn Quốc": "Hàn Quốc",
-          "Hồng Kông": "Hồng Kông",
+          "Thái Lan": "Thailand",
+          "Pháp": "France",
+          "Sản phẩm dệt may": "Textile Products",
+          "Thủy sản": "Seafood",
+          "Gạo": "Rice (Thousand Tons)",
+          "Café": "Coffee (Thousand Tons)",
+          "Cao su": "Rubber (Thousand Tons)",
+          "Gỗ và sản phẩm gỗ": "Wood and Wood Products",
+          "Than đá": "Coal",
+          "Tôm đông lạnh": "Frozen Shrimp",
+          "Lương thực, Thực phẩm và động vật sống": "Grains, Food and Live Animals",
+          "Đồ uống và thuốc lá": "Beverages and Tobacco",
+          "NVL thô, không dùng để ăn, trừ nhiên liệu": "Raw Materials (Non-food, Excluding Fuel)",
+          "Nhiêu liệu, dầu mỡ nhờn và vật liệu liên quan": "Lubricants, Oils, and Related Materials",
+          "Dầu, mỡ, chất béo, sáp động, thực vật": "Oils, Fats, Waxes (Animal, Vegetable)",
+          "Hoá chất và sản phẩm liên quan": "Chemicals and Related Products",
+          "Hàng chế biến phân loại theo nguyên liệu": "Processed Goods Classified by Raw Materials",
+          "Máy móc, phương tiện vận tải và phụ tùng": "Machinery, Transport Equipment and Parts",
+          "Hàng chế biến khác": "Other Processed Goods",
+          "Háng hóa không thuộc các nhóm trên": "Goods Not Classified in Above Groups",
+          "Giá trị xuất khẩu (USD giá hiện hành)": "Export Value (USD at Current Prices)",
+          "Nhập khẩu": "Imports",
+          "Hàn Quốc": "South Korea",
+          "Hồng Kông": "Hong Kong",
           "Indonesia": "Indonesia",
-          "Nguyên liệu thô, không dùng để ăn, trừ nhiên liệu": "Nguyên liệu thô, không dùng để ăn, trừ nhiên liệu",
-          "Máy móc, phương tiện vận tải": "Máy móc, phương tiện vận tải",
-          "Giá trị nhập khẩu (USD giá hiện hành)": "Giá trị nhập khẩu (USD giá hiện hành)"
+          "Nguyên liệu thô, không dùng để ăn, trừ nhiên liệu": "Raw Materials (Non-food, Excluding Fuel)",
+          "Máy móc, phương tiện vận tải": "Machinery, Transport Equipment",
+          "Giá trị nhập khẩu (USD giá hiện hành)": "Import Value (USD at Current Prices)"
         }        
       },
       "FDI": {
         "Tháng": {
-          "Tổng FDI": "Tổng FDI",
-          "Đăng ký": "Đăng ký",
-          "Giải ngân": "Giải ngân"
+          "Tổng FDI": "Total FDI",
+          "Đăng ký": "Registered FDI (Billion USD)",
+          "Giải ngân": "Disbursed FDI"
         },
         "Năm": {
-          "Quốc gia": "Quốc gia",
-          "Tính lũy kế đến thời điểm hiện tại": "Tính lũy kế đến thời điểm hiện tại",
-          "Theo vùng lãnh thổ": "Theo vùng lãnh thổ",
-          "Lĩnh vực": "Lĩnh vực",
-          "Sản xuất": "Sản xuất",
-          "Bất động sản": "Bất động sản",
-          "Nông nghiệp": "Nông nghiệp",
-          "Dịch vụ": "Dịch vụ",
-          "Tổng FDI": "Tổng FDI",
-          "Đăng ký": "Đăng ký",
-          "Giải ngân": "Giải ngân"
+          "Quốc gia": "Country",
+          "Tính lũy kế đến thời điểm hiện tại": "Cumulative to Date (Billion USD)",
+          "Theo vùng lãnh thổ": "By Territory (Billion USD)",
+          "Lĩnh vực": "Sector",
+          "Sản xuất": "Manufacturing (Billion USD)",
+          "Bất động sản": "Real Estate (Billion USD)",
+          "Nông nghiệp": "Agriculture (Billion USD)",
+          "Dịch vụ": "Services (Billion USD)",
+          "Tổng FDI": "Total FDI",
+          "Đăng ký": "Registered FDI (Million USD)",
+          "Giải ngân": "Disbursed FDI"
         }        
       }
     },
-    "marketAnalysisPage": {
-      "marketAnalysisTitle": "Phân Tích Thị Trường",
-      "All": "Tất Cả",
-      "Positive": "Tích Cực",
-      "Negative": "Tiêu Cực",
-      "Neutral": "Trung Lập",
-      "LastUpdated": "Cập Nhật Lần Cuối",
-      "Insight": "Nhận Định",
-      "Today": "Hôm Nay",
-      "This Week": "Tuần Này",
-      "This Month": "Tháng Này",
-      "mentions": "Đề Cập",
+    marketAnalysisPage: {
+      "marketAnalysisTitle": "Market Analysis",
+      "All": "All",
+      "Positive": "Positive",
+      "Negative": "Negative",
+      "Neutral": "Neutral",
+      "LastUpdated": "Last Updated",
+      "Insight": "Insight",
+      "Today": "Today",
+      "This Week": "This Week",
+      "This Month": "This Month",
+      "mentions": "Mentions",
       "marketAnalysis": {
-        "Securities Company": "Công Ty Chứng Khoán",
-        "Press": "Báo Chí",
-        "Expert Community": "Cộng Đồng Chuyên Gia"
+        "Securities Company": "Securities Company",
+        "Press": "Press",
+        "Expert Community": "Expert Community"
       },
       "trend": {
-        "title": "Xu Hướng",
-        "topic": "Chủ Đề",
+        "title": "Trend",
+        "topic": "Topic",
         "categories": {
-          "All": "Tất Cả",
-          "Securities": "Chứng Khoán",
-          "Economy": "Kinh Tế",
-          "Industry": "Ngành Công Nghiệp",
-          "Other": "Khác"
-        }
+          "All": "All",
+          "Securities": "Securities",
+          "Economy": "Economy",
+          "Industry": "Industry",
+          "Other": "Other"
+        },
       },
-      "AINews": "Tin Tức AI",
+      "AINews": "AI News",
       "insight": {
-        "Market Analysis": "Phân Tích Thị Trường",
-        "Assessment": "Đánh Giá",
-        "Details": "Chi Tiết",
-        "Source": "Nguồn",
-        "Analysis": "Phân Tích",
-        "Reference": "Tham Khảo",
-        "Market Sentiment Over Time": "Tâm Lý Thị Trường Theo Thời Gian"
+        "Market Analysis": "Market Analysis",
+        "Assessment": "Assessment",
+        "Details": "Details",
+        "Source": "Source",
+        "Analysis": "Analysis",
+        "Reference": "Reference",
+        "Market Sentiment Over Time": "Market Sentiment Over Time",
       }
     },
     quantPage: {
-      Date: "Ngày",
-      StockComparison: "So sánh Cổ phiếu",
-      RiskRatio: "Tỷ lệ Rủi ro",
+      Date: "Date",
+      StockComparison: "Stock Comparision",
+      RiskRatio: "Risk Ratio",
       AlphaNIFTY50: "Alpha (NIFTY 50)",
       BetaNIFTY50: "Beta (NIFTY 50)",
-      SharpeRatio: "Tỷ lệ Sharpe",
-      SortinoRatio: "Tỷ lệ Sortino",
-      StandardDeviation: "Độ lệch chuẩn",
-      PastTrendVsFutureProjection: "Xu hướng quá khứ & Dự báo tương lai",
-      Simulation: "Mô phỏng",
-      Indicator: "Chỉ số",
-      Period: "Chu kỳ",
+      SharpeRatio: "Sharpe Ratio",
+      SortinoRatio: "Sortino Ratio",
+      StandardDeviation: "Standard Deviation",
+      PastTrendVsFutureProjection: "Past trend & Future Projection",
+      Simulation: "Simulation",
+      Indicator:"Indicator",
+      Period: "Period",
+      Returns: "Returns",
+      CloseValue: "Close Value",
+      IndicatorValue: "Indicator Value",
+      GBMSimulation: "GBM Simulation",
+      GARCHSimulation: "GARCH Simulation",
+      StockPortfolioDashboard: "Stock Portfolio Dashboard",
+      StockTicker: "Stock Ticker",
+      PriceChange: "Price Change",
+      RelativeVolume: "Relative Volume (10d)",
+      PERatio: "P/E Ratio",
+      EPSDistributed: "EPS Distributed",
+      DividendYield: "Dividend Yield",
+      IndustrySector: "Industry Sector",
+      SelectTicker: "Select Ticker",
+      TickerNameSearch: "Search by Ticker Name",
+      Cummulative: "Cumulative",
+      Daily: "Daily",
+      GraphPrice:"Price ($)",
+      TimeStep: "Time Step",
+      Date: "Date",
+      Value: "Value",
+      MonteCarloSimulation: " Monte Carlo Simulation",
+      simulationChatBot:`
+      <div style="text-align: left;">
+        <b>GBM vs. GARCH Models</b><br/><br/>
+        The chart above compares stock price simulations using two models:<br/><br/>
+        <ul>
+          <li><b>GBM (Geometric Brownian Motion):</b> Assumes constant volatility and normally distributed returns. Commonly used in financial modeling for its simplicity.</li>
+          <li><b>GARCH (Generalized Autoregressive Conditional Heteroskedasticity):</b> Accounts for changing (time-varying) volatility over time, making it more suitable for modeling real-world market behavior and shocks.</li>
+        </ul>
+        <br/>
+        Use this comparison to evaluate how volatility assumptions affect projected price paths over time.
+      </div>
+    `,
+    
+    closeValueChatBot: `
+      <div style="text-align: left;">
+        <b>Close Price Graph</b><br/><br/>
+        This chart displays the historical closing prices of the selected stock:<br/><br/>
+        <ul>
+          <li><b>Close Price:</b> The final trading price of the stock for each day, reflecting market consensus.</li>
+        </ul>
+        <br/>
+        Use this graph to observe price trends, patterns, and historical performance over time.
+      </div>
+    `,
+    
+    indicatorAndReturnChatBot: `
+      <div style="text-align: left;">
+        <b>Return & Technical Indicator Graphs</b><br/><br/>
+        These charts help analyze stock performance and market behavior:<br/><br/>
+        <ul>
+          <li><b>Return Graph:</b> Shows <i>daily</i> or <i>cumulative</i> returns over time. Use it to compare stock performance across periods.</li>
+          <li><b>Indicator Graph:</b> Plots technical indicators like SMA, EMA, RSI, MACD, or Bollinger Bands to help identify trends and signals.</li>
+        </ul>
+        <br/>
+        Use these tools to assess growth, momentum, and potential entry/exit points.
+      </div>
+    `,
+    },
+    FundLetter:"Fund Letter",
+    FinData: "Fin Data",
+    ProductComparison: "Product Comparison",
+
+    // Financial Dashboard translations
+    financialDashboard: 'Financial Dashboard',
+    trackTransactionsGoals: 'Track Transactions and Goals',
+    currentBalance: 'Current Balance',
+    monthlyIncome: 'Monthly Income',
+    monthlyExpense: 'Monthly Expense',
+    goalsAchieved: 'Goals Achieved',
+    thisMonth: 'This Month',
+    transactions: 'Transactions',
+    completion: 'Completion',
+    smartInsights: 'Smart Insights',
+    aiPoweredAnalysis: 'AI-Powered Analysis',
+    allCategories: 'All Categories',
+    allStatus: 'All Status',
+    active: 'Active',
+    completed: 'Completed',
+    overdue: 'Overdue',
+    sortByProgress: 'Sort by Progress',
+    sortByEndDate: 'Sort by End Date',
+    sortByAmount: 'Sort by Amount',
+    sortByCreated: 'Sort by Created',
+    searchGoalsPlaceholder: 'Search Goals...',
+    noGoalsFound: 'No goals found',
+    createYourFirstGoal: 'Create your first goal to start tracking your financial progress.',
+
+    // FAQ Section
+    faqTitle: "Frequently Asked Questions",
+    faqs: {
+      pricing: {
+        question: "Is FinBud free to use, or are there any subscription plans?",
+        answer: "FinBud offers both a free package with basic features and a subscription plan for some advanced features. Let's register to try all the free financial tools of FinBud before looking for more advanced options from us."
+      },
+      chatbot: {
+        question: "What kind of questions can the FinBud chatbot solve?",
+        answer: "The FinBud chatbot is designed to assist with a wide range of inquiries, covering both financial and non-financial topics. Additionally, the chatbot allows you to directly execute various commands within FinBud's financial management, investment, and educational features. For example, you can buy or sell stocks, manage your budget, or look up financial terms. Simply click on the chat icon and follow the guidance to explore the full capabilities of the FinBud chatbot."
+      },
+      investment: {
+        question: "Does FinBud support investment tracking and management?",
+        answer: "Yes, our Quant and Simulator pages provide an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and even practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience."
+      },
+      goals: {
+        question: "Can I set financial goals with FinBud and track my progress?",
+        answer: "Absolutely! With FinBud, you can set specific financial goals by defining details such as the category, target date, required amount, and current savings. On the Goal page, we help you stay on track by monitoring your daily transactions and providing detailed charts, ensuring you can reach each goal more effectively."
+      },
+      mobile: {
+        question: "Is FinBud available on mobile devices, and does it sync across platforms?",
+        answer: "Yes, FinBud is available on both mobile devices and laptops. Simply log in to your account, and your data will automatically sync across all platforms for seamless access."
+      }
+    },
+
+    // Course Page
+    coursePage: {
+      title: "Financial Courses",
+      subtitle: "Learn and improve financial knowledge",
+      categories: {
+        beginners: "For Beginners",
+        investments: "Effective Investments", 
+        fundamental: "Fundamental Analysis",
+        technical: "Technical Analysis"
+      },
+      views: "views",
+      viewMore: "View More",
+      loading: "Loading courses...",
+      noData: "No courses available",
+      readTime: "min read"
+    },
+
+    // Market Analysis Page
+    marketAnalysisPage: {
+      marketAnalysisTitle: "Market Analysis",
+      marketAnalysisDescription: "Comprehensive market data and analysis for informed investment decisions",
+      Positive: "Positive",
+      Neutral: "Neutral", 
+      Negative: "Negative",
+      LastUpdated: "Last Updated",
+      Insight: "Insight",
+      mentions: "Mentions",
+      AINews: "AI News",
+      marketAnalysis: {
+        StockCompany: "Stock Company",
+        FinanceStock: "Finance Stock",
+        TechCommunity: "Tech Community"
+      },
+      insight: {
+        Assessment: "Assessment",
+        Details: "Details",
+        Source: "Source",
+        Analysis: "Analysis",
+        Reference: "Reference"
+      },
+      trend: {
+        title: "Market Trends",
+        topic: "Topic",
+        categories: {
+          All: "All",
+          Securities: "Securities",
+          Economy: "Economy", 
+          Industry: "Industry",
+          Other: "Other"
+        }
+      }
+    },
+
+    stockSimulator: {
+      pageTitle: "Mô Phỏng Chứng Khoán",
+      tabs: {
+        investment: "Đầu Tư",
+        portfolio: "Danh Mục",
+        filters: "Lọc Cổ Phiếu",
+        quiz: "Câu Hỏi",
+        predictiveCalc: "Tính Toán Dự Đoán"
+      },
+      trading: {
+        quickTrade: "Giao Dịch Nhanh",
+        stockSymbol: "Mã Cổ Phiếu",
+        stockSymbolPlaceholder: "Nhập mã cổ phiếu (ví dụ: AAPL)",
+        quantity: "Số Lượng",
+        buy: "Mua",
+        sell: "Bán",
+        clear: "Xóa"
+      },
+      account: {
+        summary: "Tóm Tắt Tài Khoản",
+        balance: "Tổng Số Dư",
+        cash: "Tiền Mặt Khả Dụng",
+        stocks: "Giá Trị Cổ Phiếu",
+        todayChange: "Thay Đổi Hôm Nay"
+      },
+      portfolio: {
+        totalPortfolio: "Tổng Giá Trị Danh Mục",
+        holdings: "Cổ Phiếu Sở Hữu",
+        symbol: "Mã",
+        shares: "Cổ Phần",
+        avgPrice: "Giá TB",
+        currentPrice: "Giá Hiện Tại",
+        totalValue: "Tổng Giá Trị",
+        gainLoss: "Lãi/Lỗ",
+        noHoldings: "Chưa có cổ phiếu nào trong danh mục"
+      },
+      screener: {
+        title: "Lọc Cổ Phiếu",
+        subtitle: "Tìm cổ phiếu phù hợp với tiêu chí đầu tư của bạn",
+        quickPresets: "Bộ Lọc Nhanh",
+        marketCap: "Vốn Hóa Thị Trường",
+        sector: "Ngành",
+        priceRange: "Khoảng Giá",
+        peRatio: "Tỷ Lệ P/E",
+        dividendYield: "Tỷ Suất Cổ Tức",
+        volume: "Khối Lượng",
+        beta: "Beta",
+        resetFilters: "Đặt Lại Bộ Lọc",
+        savePreset: "Lưu Bộ Lọc",
+        stocksFound: "cổ phiếu được tìm thấy",
+        loading: "Đang tải...",
+        loadingStocks: "Đang tải dữ liệu cổ phiếu...",
+        enterPresetName: "Nhập tên bộ lọc:",
+        presetSaved: "Đã Lưu Bộ Lọc",
+        presetSavedMessage: "Bộ lọc \"{name}\" đã được lưu thành công",
+        presets: {
+          growthStocks: "Cổ Phiếu Tăng Trưởng",
+          valueStocks: "Cổ Phiếu Giá Trị",
+          dividendStocks: "Cổ Phiếu Cổ Tức",
+          largeCap: "Vốn Hóa Lớn",
+          smallCap: "Vốn Hóa Nhỏ"
+        },
+        marketCapOptions: {
+          mega: "Siêu Lớn (>$200B)",
+          large: "Lớn ($10B-$200B)",
+          mid: "Trung Bình ($2B-$10B)",
+          small: "Nhỏ ($300M-$2B)",
+          micro: "Rất Nhỏ (<$300M)"
+        },
+        sectors: {
+          technology: "Công Nghệ",
+          healthcare: "Y Tế",
+          financials: "Tài Chính",
+          energy: "Năng Lượng",
+          industrials: "Công Nghiệp",
+          materials: "Vật Liệu",
+          utilities: "Tiện Ích",
+          realestate: "Bất Động Sản",
+          consumer_discretionary: "Hàng Tiêu Dùng Tùy Chọn",
+          consumer_staples: "Hàng Tiêu Dùng Thiết Yếu",
+          telecommunications: "Viễn Thông"
+        }
+      },
+      notifications: {
+        orderSuccess: "Lệnh Thành Công",
+        buySuccess: "Đã mua thành công {quantity} cổ phiếu {symbol}",
+        sellSuccess: "Đã bán thành công {quantity} cổ phiếu {symbol}",
+        orderError: "Lệnh Thất Bại",
+        networkError: "Lỗi kết nối mạng"
+      }
+    },
+
+    // Forum Page
+    forumPage: {
+      title: "Diễn đàn Cộng đồng",
+      loadMore: "Tải thêm",
+      loading: "Đang tải...",
+      noThreads: "Không có chủ đề nào",
+      createThread: "Tạo chủ đề mới",
+      search: "Tìm kiếm chủ đề...",
+      categories: {
+        general: "Thảo luận chung",
+        investing: "Chiến lược Đầu tư",
+        news: "Tin tức Thị trường",
+        analysis: "Phân tích Kỹ thuật",
+        education: "Giáo dục Tài chính"
+      },
+      thread: {
+        replies: "phản hồi",
+      views: "lượt xem",
+        lastReply: "Phản hồi cuối",
+        by: "bởi",
+        startThread: "Bắt đầu Chủ đề Mới",
+        reply: "Trả lời",
+        edit: "Chỉnh sửa",
+        delete: "Xóa"
+      }
+    },
+
+    // Market Data Center
+    marketDataCenter: {
+      title: "Trung tâm Dữ liệu Thị trường",
+      sections: {
+        cryptocurrency: "TIỀN ĐIỆN TỬ",
+        stock: "CỔ PHIẾU",
+        realEstate: "BẤT ĐỘNG SẢN"
+      },
+      loading: "Đang tải dữ liệu thị trường...",
+      error: "Không thể tải dữ liệu thị trường",
+      refresh: "Làm mới Dữ liệu",
+      lastUpdated: "Cập nhật lần cuối",
+      change24h: "Thay đổi 24h",
+      marketCap: "Vốn hóa Thị trường",
+      volume: "Khối lượng",
+      price: "Giá"
+    },
+
+    // Fin Compare (Product Comparison)
+    finCompare: {
+      title: "So sánh Sản phẩm Tài chính Thông minh",
+      compare: "So sánh Sản phẩm Tài chính",
+      addProduct: "Thêm Sản phẩm",
+      removeProduct: "Xóa Sản phẩm",
+      noProducts: "Không có sản phẩm để so sánh",
+      selectProducts: "Chọn sản phẩm để so sánh",
+      features: "Tính năng",
+      pricing: "Giá cả",
+      ratings: "Đánh giá",
+      pros: "Ưu điểm",
+      cons: "Nhược điểm",
+      recommendation: "Đề xuất của chúng tôi",
+      filterByPriority: "Lọc theo ưu tiên",
+      loading: "Đang tải...",
+      error: "Không thể tải dữ liệu ngân hàng. Vui lòng thử lại sau.",
+      bestChoice: "Lựa chọn tốt nhất",
+      suggested: "Được đề xuất",
+      for: "cho",
+      priorities: {
+        maxSavings: "Tiết kiệm tối đa",
+        lowestFees: "Phí thấp nhất",
+        flexibleConditions: "Điều kiện linh hoạt"
+      },
+      table: {
+        bank: "Ngân hàng",
+        interestRate: "Lãi suất",
+        issuanceFee: "Phí phát hành",
+        maxLoanTerm: "Thời hạn vay tối đa"
+      },
+      priorityTexts: {
+        highestRate: "lãi suất cao nhất",
+        lowestFees: "phí thấp nhất",
+        flexibleTerms: "điều kiện linh hoạt nhất"
+      }
+    },
+
+    // Agent Page
+    agentPage: {
+      title: "Trình tạo Báo cáo Tài chính AI Hàng ngày",
+      subtitle: "Phân tích và báo cáo tài chính được hỗ trợ bởi AI",
+      startWorkflow: "Bắt đầu Phân tích",
+      processing: "Đang xử lý...",
+      generateReport: "Tạo Báo cáo",
+      downloadReport: "Tải xuống Báo cáo",
+      selectTicker: "Chọn Mã Cổ phiếu",
+      analysisComplete: "Hoàn thành Phân tích",
+      reportReady: "Báo cáo của bạn đã sẵn sàng",
+      workflow: {
+        step1: "Thu thập Dữ liệu",
+        step2: "Phân tích Thị trường",
+        step3: "Tạo Báo cáo",
+        step4: "Xem xét Cuối cùng"
+      }
+    },
+
+    // PESTLE Page
+    pestlePage: {
+      title: "Phân tích PESTLE",
+      subtitle: "Phân tích Chính trị, Kinh tế, Xã hội, Công nghệ, Pháp lý, Môi trường",
+      categories: {
+        political: "Chính trị",
+        economic: "Kinh tế",
+        social: "Xã hội", 
+        technological: "Công nghệ",
+        legal: "Pháp lý",
+        environmental: "Môi trường"
+      },
+      analysis: "Phân tích",
+      impact: "Tác động",
+      risk: "Mức độ Rủi ro",
+      opportunity: "Cơ hội",
+      loading: "Đang tải phân tích PESTLE...",
+      noData: "Không có dữ liệu phân tích"
+    },
+
+    // Quant Analysis Page
+    quantAnalysisPage: {
+      title: "Phân tích định lượng",
+      subtitle: "Công cụ phân tích và trực quan hóa thị trường nâng cao",
+      sections: {
+        marketAnalysis: "Phân tích thị trường",
+        dashboard: "Bảng điều khiển thị trường",
+        heatmap: "Bản đồ nhiệt thị trường", 
+        monteCarlo: "Mô phỏng Monte Carlo"
+      },
+      interpretation: "Giải thích phân tích thị trường",
+      loading: "Đang tải dữ liệu thị trường...",
+      loadingHeatmap: "Đang tải dữ liệu bản đồ nhiệt...",
+      loadingMonteCarlo: "Đang tải mô phỏng Monte Carlo...",
+      controls: {
+        indicator: "Chỉ báo",
+        period: "Khoảng thời gian",
+        returnType: "Loại lợi nhuận",
+        dataSource: "Nguồn dữ liệu"
+      }
+    },
+
+    // Quant Page detailed translations
+    quantPage: {
+      StockComparison: "Stock Comparison",
+      StockPortfolioDashboard: "Stock Portfolio Dashboard",
+      Indicator: "Indicator",
+      Period: "Period",
+      Returns: "Returns",
+      Cummulative: "Cumulative",
+      Daily: "Daily",
+      RiskRatio: "Risk Ratio",
+      SharpeRatio: "Sharpe Ratio",
+      SortinoRatio: "Sortino Ratio",
+      StandardDeviation: "Standard Deviation",
+      PastTrendVsFutureProjection: "Past Trend vs Future Projection",
+      Simulation: "Simulation",
+      CloseValue: "Close Value",
+      IndicatorValue: "Indicator Value",
+      GBMSimulation: "GBM Simulation",
+      GARCHSimulation: "GARCH Simulation",
+      GraphPrice: "Graph Price",
+      TimeStep: "Time Step",
+      Date: "Date",
+      Value: "Value",
+      MonteCarloSimulation: "Monte Carlo Simulation",
+      SelectTicker: "Select Ticker",
+      TickerNameSearch: "Search ticker name...",
+      StockTicker: "Stock Ticker",
+      PriceChange: "Price Change",
+      RelativeVolume: "Relative Volume",
+      PERatio: "P/E Ratio",
+      EPSDistributed: "EPS Distributed",
+      DividendYield: "Dividend Yield",
+      IndustrySector: "Industry/Sector",
+      simulationChatBot: "Simulation from chatbot",
+      closeValueChatBot: "Close value from chatbot",
+      indicatorAndReturnChatBot: "Indicator and return from chatbot"
+    },
+
+    // Super Investor Page
+    superInvestorPage: {
+      title: "Nhà Đầu tư Vĩ đại",
+      subtitle: "Học hỏi từ những nhà đầu tư vĩ đại nhất thế giới",
+      investors: "Nhà đầu tư",
+      portfolio: "Danh mục",
+      strategy: "Chiến lược Đầu tư",
+      performance: "Hiệu suất",
+      biography: "Tiểu sử",
+      quotes: "Câu nói Nổi tiếng",
+      holdings: "Cổ phiếu Nắm giữ",
+      returns: "Lợi nhuận Hàng năm",
+      viewProfile: "Xem Hồ sơ",
+      followStrategy: "Theo dõi Chiến lược",
+      loading: "Đang tải dữ liệu nhà đầu tư...",
+      noInvestors: "Không tìm thấy nhà đầu tư",
+      searchInvestors: "Tìm kiếm nhà đầu tư...",
+      greeting: "Xin chào! Bạn đang tìm kiếm những hiểu biết về đầu tư?",
+      topInvestorsIntro: "Đây là một số nhà đầu tư hàng đầu mà bạn có thể quan tâm:",
+      from: "từ",
+      portfolioValue: "Giá trị Danh mục",
+      avgHoldingPeriod: "Thời gian Nắm giữ Trung bình",
+      learnMorePrompt: "Bạn có muốn tìm hiểu thêm về chiến lược đầu tư của họ không?"
+    },
+
+    // Chatbot Bubble
+    chatbotBubble: {
+      minimize: "Thu nhỏ",
+      maximize: "Phóng to",
+      close: "Đóng",
+      dragToMove: "Kéo để di chuyển",
+      chatWithFinBud: "Chat với FinBud",
+      startConversation: "Bắt đầu cuộc trò chuyện",
+      needHelp: "Cần hỗ trợ tài chính?",
+      inactivityPrompt: "Bạn có cần hỗ trợ gì về tài chính không?",
+      marketHoursPrompt: "Thị trường đang mở! Bạn có muốn xem phân tích mới nhất?",
+      portfolioCheckPrompt: "Đã lâu rồi bạn chưa kiểm tra danh mục đầu tư. Cần hỗ trợ gì không?",
+      budgetReminderPrompt: "Cuối tháng rồi! Bạn có muốn xem lại ngân sách và chi tiêu không?",
+      suggestions: {
+        title: "Gợi ý Nhanh",
+        investment: "Lời khuyên đầu tư",
+        portfolio: "Phân tích danh mục",
+        market: "Thông tin thị trường",
+        budgeting: "Mẹo lập ngân sách",
+        risk: "Quản lý rủi ro",
+        trading: "Chiến lược giao dịch"
+      },
+      typing: "FinBud đang gõ...",
+      placeholder: "Nhập câu hỏi tài chính của bạn...",
+      send: "Gửi",
+      quickSuggestions: "Gợi ý Nhanh",
+      messageHistory: "Lịch sử Tin nhắn",
+      clearHistory: "Xóa Lịch sử",
+      error: "Xin lỗi, có lỗi xảy ra. Vui lòng thử lại.",
+      reconnecting: "Đang kết nối lại...",
+      offline: "Bạn đang ngoại tuyến",
+      poweredBy: "Được hỗ trợ bởi FinBud AI"
+    },
+
+    // Course Page
+    coursePage: {
+      title: "Khóa học Tài chính",
+      subtitle: "Học hỏi và nâng cao kiến thức tài chính",
+      categories: {
+        beginners: "Dành cho người mới bắt đầu",
+        investments: "Đầu tư hiệu quả",
+        fundamental: "Phân tích cơ bản", 
+        technical: "Phân tích kỹ thuật"
+      },
+      views: "lượt xem",
+      viewMore: "Xem thêm",
+      loading: "Đang tải khóa học...",
+      noData: "Không có khóa học nào",
+      readTime: "phút đọc"
+    },
+
+    // Market Analysis Page
+    marketAnalysisPage: {
+      marketAnalysisTitle: "Phân tích Thị trường",
+      marketAnalysisDescription: "Dữ liệu và phân tích thị trường toàn diện cho quyết định đầu tư sáng suốt",
+      Positive: "Tích cực",
+      Neutral: "Trung tính",
+      Negative: "Tiêu cực", 
+      LastUpdated: "Cập nhật cuối",
+      Insight: "Thông tin chi tiết",
+      mentions: "Đề cập",
+      AINews: "Tin tức AI",
+      marketAnalysis: {
+        StockCompany: "Công ty Cổ phiếu",
+        FinanceStock: "Cổ phiếu Tài chính",
+        TechCommunity: "Cộng đồng Công nghệ"
+      },
+      insight: {
+        Assessment: "Đánh giá",
+        Details: "Chi tiết",
+        Source: "Nguồn",
+        Analysis: "Phân tích", 
+        Reference: "Tham khảo"
+      },
+      trend: {
+        title: "Xu hướng Thị trường",
+        topic: "Chủ đề",
+        categories: {
+          All: "Tất cả",
+          Securities: "Chứng khoán",
+          Economy: "Kinh tế",
+          Industry: "Ngành nghề",
+          Other: "Khác"
+        }
+      }
+    },
+
+    // Quant Page  
+    quantPage: {
+      StockComparison: "So sánh Cổ phiếu",
+      Indicator: "Chỉ báo",
+      Period: "Thời kỳ",
       Returns: "Lợi nhuận",
-      CloseValue: "Giá đóng cửa",
-      IndicatorValue: "Giá trị chỉ số",
-      GBMSimulation: "Mô phỏng GBM",
-      GARCHSimulation: "Mô phỏng GARCH", 
-      StockPortfolioDashboard: "Thông tin cổ phiểu",
-      StockTicker: "Mã cổ phiếu",
-      PriceChange: "Giá chênh lệch",
-      RelativeVolume: "Khối lượng tương đối (10 ngày)",
-      PERatio: "Tỷ lệ P/E",
-      EPSDistributed: "EPS phân phối",
-      DividendYield: "Lợi suất cổ tức",
-      IndustrySector: "Ngành công nghiệp",
-      SelectTicker: "Chọn mã cổ phiếu",
-      TickerNameSearch: "Tìm kiếm mã cổ phiếu",
       Cummulative: "Tích lũy",
       Daily: "Hàng ngày",
-      GraphPrice:"Giá ($)",
-      TimeStep: "Thời gian",
+      RiskRatio: "Tỷ lệ Rủi ro",
+      SharpeRatio: "Tỷ lệ Sharpe",
+      SortinoRatio: "Tỷ lệ Sortino",
+      StandardDeviation: "Độ lệch Chuẩn",
+      PastTrendVsFutureProjection: "Xu hướng Quá khứ vs Dự báo Tương lai",
+      Simulation: "Mô phỏng",
+      CloseValue: "Giá Đóng cửa",
+      IndicatorValue: "Giá trị Chỉ báo",
       Date: "Ngày",
       Value: "Giá trị",
+      GraphPrice: "Biểu đồ Giá",
+      TimeStep: "Bước Thời gian",
+      GBMSimulation: "Mô phỏng GBM",
+      GARCHSimulation: "Mô phỏng GARCH",
       MonteCarloSimulation: "Mô phỏng Monte Carlo",
-      simulationChatBot:`
-  <div style="text-align: left;">
-    <b>Mô hình GBM và GARCH</b><br/><br/>
-    Biểu đồ trên so sánh các mô phỏng giá cổ phiếu bằng hai mô hình:<br/><br/>
-    <ul>
-      <li><b>GBM (Geometric Brownian Motion):</b> Giả định độ biến động không đổi và lợi nhuận phân phối chuẩn. Thường được sử dụng trong mô hình tài chính vì tính đơn giản.</li>
-      <li><b>GARCH (Generalized Autoregressive Conditional Heteroskedasticity):</b> Xem xét độ biến động thay đổi theo thời gian, phù hợp hơn với hành vi thị trường thực tế và các cú sốc.</li>
-    </ul>
-    <br/>
-    Sử dụng so sánh này để đánh giá cách các giả định về độ biến động ảnh hưởng đến các đường giá dự kiến theo thời gian.
-  </div>
-`,
-closeValueChatBot: `
-  <div style="text-align: left;">
-    <b>Biểu đồ giá đóng cửa</b><br/><br/>
-    Biểu đồ này hiển thị giá đóng cửa lịch sử của cổ phiếu đã chọn:<br/><br/>
-    <ul>
-      <li><b>Giá đóng cửa:</b> Giá giao dịch cuối cùng của cổ phiếu mỗi ngày, phản ánh sự đồng thuận của thị trường.</li>
-    </ul>
-    <br/>
-    Sử dụng biểu đồ này để quan sát xu hướng giá, mẫu hình và hiệu suất lịch sử theo thời gian.
-  </div>
-`,
-
-indicatorAndReturnChatBot: `
-  <div style="text-align: left;">
-    <b>Biểu đồ lợi nhuận và chỉ báo kỹ thuật</b><br/><br/>
-    Các biểu đồ này giúp phân tích hiệu suất cổ phiếu và hành vi thị trường:<br/><br/>
-    <ul>
-      <li><b>Biểu đồ lợi nhuận:</b> Hiển thị lợi nhuận <i>hàng ngày</i> hoặc <i>tích lũy</i> theo thời gian. Sử dụng để so sánh hiệu suất cổ phiếu qua các giai đoạn.</li>
-      <li><b>Biểu đồ chỉ báo:</b> Vẽ các chỉ báo kỹ thuật như SMA, EMA, RSI, MACD hoặc Bollinger Bands để giúp xác định xu hướng và tín hiệu.</li>
-    </ul>
-    <br/>
-    Sử dụng các công cụ này để đánh giá tăng trưởng, động lực và các điểm vào/ra tiềm năng.
-  </div>
-`,
+      StockPortfolioDashboard: "Bảng điều khiển Danh mục Cổ phiếu",
+      TickerNameSearch: "Tìm kiếm mã cổ phiếu...",
+      StockTicker: "Mã Cổ phiếu",
+      PriceChange: "Thay đổi Giá",
+      RelativeVolume: "Khối lượng Tương đối",
+      PERatio: "Tỷ lệ P/E", 
+      EPSDistributed: "EPS Phân phối",
+      DividendYield: "Lợi suất Cổ tức",
+      IndustrySector: "Ngành Công nghiệp",
+      SelectTicker: "Chọn Mã cổ phiếu",
+      simulationChatBot: "Phân tích mô phỏng hoàn thành",
+      closeValueChatBot: "Phân tích giá đóng cửa sẵn sàng", 
+      indicatorAndReturnChatBot: "Phân tích chỉ báo và lợi nhuận có sẵn"
     },
-    FundLetter:"Thư Quỹ",
-    FinData: "Fin Dữ Liệu",
-    ProductComparison: "So Sánh Sản Phẩm",
-  }
 
-};
+    // Stock Simulator
+    stockSimulator: {
+      pageTitle: "Mô Phỏng Chứng Khoán",
+      tabs: {
+        investment: "Đầu Tư",
+        portfolio: "Danh Mục",
+        filters: "Bộ Lọc Cổ Phiếu", 
+        quiz: "Câu Hỏi",
+        predictiveCalc: "Máy Tính Dự Đoán"
+      },
+      trading: {
+        quickTrade: "Giao Dịch Nhanh",
+        stockSymbol: "Mã Cổ Phiếu",
+        stockSymbolPlaceholder: "Nhập mã cổ phiếu (ví dụ: AAPL)",
+        quantity: "Số Lượng",
+        buy: "Mua",
+        sell: "Bán",
+        clear: "Xóa"
+      },
+      account: {
+        summary: "Tóm Tắt Tài Khoản",
+        balance: "Tổng Số Dư",
+        cash: "Tiền Mặt Khả Dụng",
+        stocks: "Giá Trị Cổ Phiếu",
+        todayChange: "Thay Đổi Hôm Nay"
+      },
+      portfolio: {
+        totalPortfolio: "Tổng Giá Trị Danh Mục",
+        holdings: "Cổ Phiếu Sở Hữu",
+        loading: "Đang tải danh mục...",
+        noHoldings: "Không có cổ phiếu nào",
+        table: {
+          symbol: "Mã",
+          shares: "Shares",
+          currentPrice: "Current Price",
+          marketValue: "Market Value",
+          gainLoss: "Gain/Loss",
+          change: "Change %"
+        }
+      },
+      screener: {
+        title: "Stock Screener",
+        subtitle: "Find stocks that match your investment criteria",
+        quickPresets: "Quick Presets",
+        marketCap: "Market Cap",
+        sector: "Sector",
+        priceRange: "Price Range",
+        peRatio: "P/E Ratio",
+        dividendYield: "Dividend Yield",
+        volume: "Volume",
+        beta: "Beta",
+        resetFilters: "Reset Filters",
+        savePreset: "Save Preset",
+        stocksFound: "stocks found",
+        loading: "Loading...",
+        loadingStocks: "Loading stocks data...",
+        enterPresetName: "Enter preset name:",
+        presetSaved: "Preset Saved",
+        presetSavedMessage: "Preset \"{name}\" saved successfully",
+        presets: {
+          growthStocks: "Growth Stocks",
+          valueStocks: "Value Stocks", 
+          dividendStocks: "Dividend Stocks",
+          largeCap: "Large Cap",
+          smallCap: "Small Cap"
+        },
+        marketCapOptions: {
+          mega: "Mega Cap (>$200B)",
+          large: "Large Cap ($10B-$200B)",
+          mid: "Mid Cap ($2B-$10B)",
+          small: "Small Cap ($300M-$2B)",
+          micro: "Micro Cap (<$300M)"
+        },
+        sectors: {
+          technology: "Technology",
+          healthcare: "Healthcare",
+          financials: "Financials",
+          energy: "Energy",
+          industrials: "Industrials",
+          materials: "Materials",
+          utilities: "Utilities",
+          realestate: "Real Estate",
+          consumer_discretionary: "Consumer Discretionary",
+          consumer_staples: "Consumer Staples",
+          telecommunications: "Telecommunications"
+        }
+      },
+      quiz: {
+        title: "Stock Market Quiz",
+        loading: "Loading quiz..."
+      },
+      notifications: {
+        orderSuccess: "Order Successful",
+        buySuccess: "Successfully bought {quantity} shares of {symbol}",
+        sellSuccess: "Successfully sold {quantity} shares of {symbol}",
+        orderError: "Order Failed",
+        networkError: "Network error occurred"
+      }
+    }
+  }
+}
 
 const i18n = createI18n({
   legacy: false,

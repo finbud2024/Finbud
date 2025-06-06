@@ -31,23 +31,45 @@
         {{ $t('eventHub.eventMap.noResults') }}
       </div>
     </div>
+    
     <div class="map-container">
-      <Map
-        :center="mapCenter"
-        :zoom="mapZoom"
-        map-type-id="roadmap"
-        :style="{ width: '100%', height: mapHeight }"
-        :options="{ disableDefaultUI: false }"
-      >
-        <Marker
-          v-for="event in filteredEvents"
-          :key="event._id"
-          :position="{ lat: event.lat, lng: event.lng }"
-          :title="event.name"
-          @click="highlightEvent(event._id)"
-        />
-      </Map>
+      <!-- Show map only if Google Maps API is available and events are loaded -->
+      <div v-if="mapsApiLoaded && filteredEvents.length > 0" class="google-map-wrapper">
+        <Map
+          :center="mapCenter"
+          :zoom="mapZoom"
+          map-type-id="roadmap"
+          :style="{ width: '100%', height: mapHeight }"
+          :options="{ disableDefaultUI: false }"
+          @error="handleMapError"
+        >
+          <Marker
+            v-for="event in filteredEvents"
+            :key="event._id"
+            :position="{ lat: event.lat, lng: event.lng }"
+            :title="event.name"
+            @click="highlightEvent(event._id)"
+          />
+        </Map>
+      </div>
+      
+      <!-- Fallback content when Maps API is not available -->
+      <div v-else-if="mapError" class="map-fallback">
+        <div class="fallback-content">
+          <div class="fallback-icon">🗺️</div>
+          <h3>Map Temporarily Unavailable</h3>
+          <p>{{ mapError }}</p>
+          <button @click="retryMapLoad" class="retry-button">Try Again</button>
+        </div>
+      </div>
+      
+      <!-- Loading state for map -->
+      <div v-else class="map-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading map...</p>
+      </div>
     </div>
+    
     <div v-if="loading" class="loading-overlay">
       <div class="loading-spinner"></div>
     </div>
@@ -59,15 +81,26 @@
 
 <script>
 import { defineComponent, ref, computed, onMounted, nextTick } from "vue";
-import { Map, Marker } from '@fawmi/vue-google-maps';
 import axios from "axios";
 import Fuse from "fuse.js";
 import { debounce } from "lodash";
 import { useI18n } from "vue-i18n";
 
+// Dynamically import Google Maps components with error handling
+let Map, Marker;
+try {
+  const googleMapsModule = require('@fawmi/vue-google-maps');
+  Map = googleMapsModule.Map;
+  Marker = googleMapsModule.Marker;
+} catch (error) {
+  console.warn('Google Maps components not available:', error);
+}
+
 export default defineComponent({
   name: "EventMap",
-  components: { Map, Marker },
+  components: { 
+    ...(Map && Marker ? { Map, Marker } : {})
+  },
   setup() {
     const events = ref([]);
     const mapHeight = ref("580px");
@@ -79,21 +112,69 @@ export default defineComponent({
     const { t, locale } = useI18n();
     const loading = ref(false);
     const error = ref(null);
+    const mapsApiLoaded = ref(false);
+    const mapError = ref(null);
+
+    // Check if Google Maps API is available
+    const checkMapsApi = () => {
+      try {
+        // Check if Google Maps API key is configured
+        const apiKey = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
+        if (!apiKey) {
+          mapError.value = "Google Maps API key not configured";
+          return false;
+        }
+
+        // Check if Google Maps components are available
+        if (!Map || !Marker) {
+          mapError.value = "Google Maps components not available";
+          return false;
+        }
+
+        // Check if window.google is available (API loaded)
+        if (typeof window !== 'undefined' && window.google && window.google.maps) {
+          mapsApiLoaded.value = true;
+          return true;
+        }
+
+        // Wait for API to load
+        setTimeout(checkMapsApi, 1000);
+        return false;
+      } catch (err) {
+        console.error('Maps API check error:', err);
+        mapError.value = "Failed to load Google Maps";
+        return false;
+      }
+    };
+
+    const handleMapError = (error) => {
+      console.error('Map error:', error);
+      mapError.value = "Map failed to load. Please try again.";
+      mapsApiLoaded.value = false;
+    };
+
+    const retryMapLoad = () => {
+      mapError.value = null;
+      mapsApiLoaded.value = false;
+      checkMapsApi();
+    };
 
     // Debounced search function to prevent excessive calls
     const debouncedSearch = debounce((query) => {
-      adjustMapToFitMarkers();
-    }, 300); // 300ms debounce time
+      if (mapsApiLoaded.value) {
+        adjustMapToFitMarkers();
+      }
+    }, 300);
 
     // Fuzzy search options
     const fuseOptions = {
       includeScore: true,
-      threshold: 0.3,  // Allow for fuzzy matches
-      distance: 100,   // Limit the distance for matches, allowing partial word matching
+      threshold: 0.3,
+      distance: 100,
       keys: [
-        { name: "name", weight: 0.6 },    // Prioritize name field
-        { name: "host", weight: 0.2 },    // Secondary priority on host
-        { name: "location", weight: 0.1 },  // Location is less important
+        { name: "name", weight: 0.6 },
+        { name: "host", weight: 0.2 },
+        { name: "location", weight: 0.1 },
         { name: "date", weight: 0.1 }
       ],
     };
@@ -113,7 +194,7 @@ export default defineComponent({
         const response = await axios.get("/.netlify/functions/server/events");
         events.value = response.data;
         events.value.sort((a, b) => new Date(b.date) - new Date(a.date));
-        if (events.value.length > 0) {
+        if (events.value.length > 0 && mapsApiLoaded.value) {
           adjustMapToFitMarkers();
         }
       } catch (err) {
@@ -126,7 +207,7 @@ export default defineComponent({
 
     // Adjust map zoom and center based on the filtered events
     const adjustMapToFitMarkers = () => {
-      if (filteredEvents.value.length === 0) return;
+      if (!mapsApiLoaded.value || filteredEvents.value.length === 0) return;
 
       let latSum = 0, lngSum = 0;
       let latMin = 90, latMax = -90, lngMin = 180, lngMax = -180;
@@ -200,7 +281,11 @@ export default defineComponent({
       debouncedSearch(searchQuery.value);
     };
 
-    onMounted(fetchEvents);
+    onMounted(() => {
+      // Check Maps API first, then fetch events
+      checkMapsApi();
+      fetchEvents();
+    });
 
     return {
       events,
@@ -217,11 +302,14 @@ export default defineComponent({
       handleSearch,
       loading,
       error,
+      mapsApiLoaded,
+      mapError,
+      handleMapError,
+      retryMapLoad,
     };
   },
 });
 </script>
-
 
 <style scoped>
 .event-map-container {
@@ -261,6 +349,72 @@ export default defineComponent({
   border-radius: 12px;
   margin: 1rem;
   animation: shake 0.5s ease;
+}
+
+.map-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+}
+
+.fallback-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.fallback-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.fallback-content h3 {
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.fallback-content p {
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retry-button:hover {
+  background: #0056b3;
+}
+
+.map-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.map-loading p {
+  margin-top: 1rem;
+  color: #6c757d;
+}
+
+.google-map-wrapper {
+  width: 100%;
+  height: 100%;
 }
 
 @keyframes spin {

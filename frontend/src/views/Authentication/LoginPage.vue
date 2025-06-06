@@ -190,7 +190,7 @@ html, body {
   font-size: 2.25rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-  color: #111827;
+  color: #000000;
 }
 
 .auth-options {
@@ -225,7 +225,7 @@ html, body {
   display: flex;
   align-items: center;
   font-size: 0.875rem;
-  color: #374151;
+  color: #000000;
   font-weight: 500;
 }
 
@@ -279,7 +279,7 @@ html, body {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: #000000;
   margin-bottom: 0.25rem;
 }
 
@@ -292,12 +292,12 @@ html, body {
 
 .forgot-password {
   font-size: 0.875rem;
-  color: #3b82f6;
+  color: #000000;
   text-decoration: none;
 }
 
 .forgot-password:hover {
-  color: #2563eb;
+  color: #000000;
   text-decoration: underline;
 }
 
@@ -313,7 +313,7 @@ html, body {
   background-color: white;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
-  color: #111827;
+  color: #000000;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
   box-sizing: border-box;
@@ -360,7 +360,7 @@ html, body {
   width: 70%;
   height: 44px;
   margin: 0.5rem auto 0;
-  background-color: #111827;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -408,12 +408,12 @@ html, body {
 }
 
 .signup-link a {
-  color: #2563eb;
+  color: #000000;
   text-decoration: none;
 }
 
 .signup-link a:hover {
-  color: #1d4ed8;
+  color: #333333;
   text-decoration: underline;
 }
 

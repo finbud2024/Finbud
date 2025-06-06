@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="main-content">
       <BackNavigation />
-      <PageHeader title="Daily AI Finance Reports Generator" />
+      <PageHeader :title="$t('agentPage.title')" />
       
       <div v-if="!showChat" class="content-wrapper">        
         <MainContent @start-workflow="startWorkflow" />

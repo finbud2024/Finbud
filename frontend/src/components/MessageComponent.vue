@@ -320,13 +320,15 @@ tr:nth-child(odd) {
 }
 
 .user .message-content {
-  background-color: var(--chat-user-bg-color);
+  position: relative;
+  padding: 1rem 1.25rem;
+  border-radius: 15px;
+  transition: all 0.3s ease;
 }
 
 .user .message-content-wrapper {
   max-width: 60%;
 }
-
 
 .bot .avatar {
   width: 41px;
@@ -565,7 +567,7 @@ tr:nth-child(odd) {
   position: fixed;
   bottom: calc(15%);
   right: -105px;
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
   border: none;
   cursor: pointer;
@@ -587,7 +589,7 @@ tr:nth-child(odd) {
   width: 50px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background-color: #007bff;
+  background-color: #000000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -607,5 +609,38 @@ tr:nth-child(odd) {
 
 .is-guidance-visible {
   right: calc(25% + 19px - 80px);
+}
+
+.message-wrapper:not(.user) .message-content {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.message-wrapper.user .message-content {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.message-content p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.message-wrapper:not(.user) .message-content p {
+  color: #fff;
+}
+
+.message-wrapper:not(.user) .message-content a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.message-wrapper:not(.user) .message-content code {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
 }
 </style>

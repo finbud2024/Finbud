@@ -99,29 +99,72 @@ export default {
         'INTC', 'CSCO', 'ORCL', 'ADBE', 'CRM', 'PYPL', 'AMD', 'QCOM', 'TXN',
         'AVGO', 'SHOP'
       ];
+      
+      this.loading = true;
+      this.error = null;
+      
       try {
-        const requests = symbols.map(symbol => {
-          const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`;
-          return axios.get(url);
-        });
-
-        const responses = await Promise.all(requests);
-        this.stockQuotes = responses.map(response => {
-          const quote = response.data['Global Quote'];
-          if (quote && Object.keys(quote).length > 0) {
-            quote['name'] = symbols.find(sym => sym === quote['01. symbol']); // Add stock name
-            return quote;
-          } else {
-            return null;
-          }
-        }).filter(quote => quote !== null);
+        // Import the updated market data service
+        const { fetchStockQuote } = await import('@/services/marketDataService.js');
+        const stockData = await fetchStockQuote(symbols);
+        
+        // Transform the data to match the expected format
+        this.stockQuotes = stockData.map(stock => ({
+          '01. symbol': stock.symbol,
+          '05. price': stock.price.toFixed(2),
+          '09. change': stock.change.toFixed(2),
+          '10. change percent': `${stock.changePercent.toFixed(2)}%`,
+          'name': this.getStockName(stock.symbol)
+        }));
+        
         this.distributeStocks();
         this.loading = false;
       } catch (error) {
-        this.error = 'Failed to fetch stock quotes';
-        console.error('Error:', error);
+        console.error('Error fetching stock data:', error);
+        this.error = 'Unable to load stock data. Please try again later.';
         this.loading = false;
+        
+        // Provide fallback data to prevent empty display
+        this.stockQuotes = this.getFallbackQuotes();
+        this.distributeStocks();
       }
+    },
+    
+    getStockName(symbol) {
+      const stockNames = {
+        'IBM': 'International Business Machines',
+        'AAPL': 'Apple Inc.',
+        'GOOGL': 'Alphabet Inc.',
+        'MSFT': 'Microsoft Corporation',
+        'AMZN': 'Amazon.com Inc.',
+        'META': 'Meta Platforms Inc.',
+        'TSLA': 'Tesla Inc.',
+        'NFLX': 'Netflix Inc.',
+        'NVDA': 'NVIDIA Corporation',
+        'INTC': 'Intel Corporation',
+        'CSCO': 'Cisco Systems Inc.',
+        'ORCL': 'Oracle Corporation',
+        'ADBE': 'Adobe Inc.',
+        'CRM': 'Salesforce Inc.',
+        'PYPL': 'PayPal Holdings Inc.',
+        'AMD': 'Advanced Micro Devices',
+        'QCOM': 'QUALCOMM Incorporated',
+        'TXN': 'Texas Instruments',
+        'AVGO': 'Broadcom Inc.',
+        'SHOP': 'Shopify Inc.'
+      };
+      return stockNames[symbol] || symbol;
+    },
+    
+    getFallbackQuotes() {
+      return [
+        { '01. symbol': 'AAPL', '05. price': '175.84', '09. change': '1.34', '10. change percent': '0.77%', 'name': 'Apple Inc.' },
+        { '01. symbol': 'MSFT', '05. price': '338.11', '09. change': '2.44', '10. change percent': '0.73%', 'name': 'Microsoft Corporation' },
+        { '01. symbol': 'GOOGL', '05. price': '129.85', '09. change': '0.93', '10. change percent': '0.72%', 'name': 'Alphabet Inc.' },
+        { '01. symbol': 'AMZN', '05. price': '140.75', '09. change': '1.54', '10. change percent': '1.11%', 'name': 'Amazon.com Inc.' },
+        { '01. symbol': 'TSLA', '05. price': '248.42', '09. change': '2.75', '10. change percent': '1.12%', 'name': 'Tesla Inc.' },
+        { '01. symbol': 'META', '05. price': '326.08', '09. change': '1.76', '10. change percent': '0.54%', 'name': 'Meta Platforms Inc.' },
+      ];
     },
     distributeStocks() {
       for (let i = 0; i < this.stockQuotes.length; i++) {
@@ -149,7 +192,7 @@ export default {
 }
 
 .header {
-  color: #007bff;
+  color: #000000;
   opacity: 1;
   text-align: left;
   margin-bottom: 20px;

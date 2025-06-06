@@ -51,7 +51,7 @@ export default {
   margin-bottom: 10px;
 }
 .follow-up-questions button {
-  background-color: #007bff;
+  background-color: #000000;
   border: none;
   color: white;
   padding: 10px 15px;
@@ -61,10 +61,10 @@ export default {
   transition: background-color 0.3s ease;
 }
 .follow-up-questions button:hover {
-  background-color: #0056b3;
+  background-color: #333333;
 }
 .follow-up-questions button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
 }
 </style>

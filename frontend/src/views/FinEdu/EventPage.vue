@@ -1,5 +1,11 @@
 <template>
     <div class="EventHubContainer">
+        <!-- Loading overlay -->
+        <div v-if="loading" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Đang tải dữ liệu sự kiện...</p>
+        </div>
+
         <nav class="w-full p-4 bg-white shadow-sm" data-aos="fade-left">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="event-navbar relative w-full md:w-1/2">
@@ -46,11 +52,25 @@
             </div>
             <img src="https://media.istockphoto.com/id/1529811813/photo/team-building-asian-workshop-participants-in-small-group-discussion-brainstorming-during.jpg?s=612x612&w=0&k=20&c=20R95Z0NkiQJO2EwWGKivBUEwtdAYJrtclReELgoVsw=" alt="">
         </div>
-        <EventMap />
+        <!-- Lazy load EventMap sau khi data đã sẵn sàng -->
+        <div v-if="!loading" class="event-map-section">
+            <EventMap 
+                v-if="trendingEvents.length > 0" 
+                :key="'event-map-' + trendingEvents.length"
+                @error="handleMapError"
+            />
+            <div v-else-if="mapError" class="map-error-fallback">
+                <div class="error-content">
+                    <h3>🗺️ Map Service Unavailable</h3>
+                    <p>{{ mapError }}</p>
+                    <p>You can still browse events below.</p>
+                </div>
+            </div>
+        </div>
         <div class="event-category" data-aos="fade-right">
             <h3 class="text-2xl md:text-3xl text-center">{{ $t('eventHub.eventCategories') }}</h3>
             <div class="event-category-bg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div v-for="(category, index) in categories" :key="index" class="category-btn">
+                <div v-for="(category, index) in categories" :key="`category-${index}`" class="category-btn">
                     <img :src="category.image" :alt="category.name" class="category-img" />
                     <p>{{ category.name }}</p>
                 </div>
@@ -61,7 +81,7 @@
                 <div class="content-wrapper flex flex-col md:flex-row">
                     <div class="left-div w-full md:w-1/4 mb-6 md:mb-0">
                         <h2 class="trending-title">{{ $t('eventHub.trending') }}</h2>
-                        <div v-for="(event, index) in topTrendingEvents" :key="index" class="event-item">
+                        <div v-for="(event, index) in topTrendingEvents" :key="`trending-${index}-${event.title}`" class="event-item">
                             <a :href="event.url" class="event-link">
                                 <span class="event-number">{{ index + 1 }}. {{ event.title }}</span>
                             </a>
@@ -72,6 +92,7 @@
                     <div class="right-div w-full md:w-3/4">
                         <div class="swiper-container">
                             <swiper 
+                                :key="`swiper-${remainingEvents.length}`"
                                 :slidesPerView="1" 
                                 :spaceBetween="0" 
                                 :pagination="false" 
@@ -86,7 +107,7 @@
                                 }"
                                 class="swiper"
                             >
-                                <swiper-slide v-for="(event, index) in remainingEvents" :key="index" class="swiper-slide">
+                                <swiper-slide v-for="(event, index) in remainingEvents" :key="`slide-${index}-${event.title}`" class="swiper-slide">
                                     <a :href="event.url" target="_blank" class="slider-link">
                                         <div class="slider-content">
                                             <div class="slider-image-container h-48 md:h-96">
@@ -111,7 +132,7 @@
                         </div>
 
                         <div class="bottom-articles grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div v-for="(event, index) in remainingEvents.slice(0, 3)" :key="index" class="article-card">
+                            <div v-for="(event, index) in remainingEvents.slice(0, 3)" :key="`article-${index}-${event.title}`" class="article-card">
                                 <a :href="event.url" class="article-link">
                                     <img :src="event.image" alt="Event image" class="article-image" />
                                     <p class="article-title">{{ event.title }}</p>
@@ -122,31 +143,25 @@
                 </div>
             </section>
         </div>
-        <div class="articles-section">
-            <h3 class="text-2xl md:text-3xl mb-6 articles-title">Latest Articles</h3>
-            <Articles :articles="articles" /> <!-- Pass articles to the Articles component -->
+        <div class="articles-section" data-aos="fade-up" v-if="articles && articles.length > 0">
+            <h3 class="text-2xl md:text-3xl mb-6 articles-title">{{ $t('eventHub.latestArticles') }}</h3>
+            <div class="articles-grid">
+                <div v-for="(article, index) in articles" :key="`news-article-${index}-${article.title}`" class="article-card" data-aos="fade-up">
+                    <div class="article-image-container">
+                        <img :src="article.image" :alt="article.title" class="article-image" />
         </div>
-        <div class="frame3" data-aos="flip-left">
-            <div class="events-container">
-                <h3 class="text-2xl md:text-3xl mb-6 all-events-title">{{ $t('eventHub.allEvents') }}</h3>
-                <div class="grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="(event, index) in allEvents.slice(0, 3)" :key="index" class="event-card" data-aos="fade-left">
-                        <img v-if="event.image" :src="event.image" alt="Event image" class="event-image"/>
-                        <div class="event-details">
-                            <h2>{{ event.title }}</h2>
-                            <p>{{ new Date(event.publish_date).toLocaleString() }}</p>
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span class="article-date">{{ formatDate(article.date) }}</span>
+                            <span class="article-category">{{ article.category }}</span>
                         </div>
-                        <div class="event-actions">
-                            <button class="star-button">⭐</button>
-                            <button class="read-more-button" @click="openEventUrl(event.url)">
-                                {{ $t('eventHub.readMore') }}
-                            </button>
+                        <h4 class="article-title">{{ article.title }}</h4>
+                        <p class="article-excerpt">{{ article.excerpt }}</p>
+                        <a :href="article.url" target="_blank" class="read-more-link">{{ $t('eventHub.readMore') }} →</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- <div v-if="loading" class="loading-spinner">Loading...</div> -->
     </div>
 </template>
 
@@ -181,7 +196,7 @@ export default {
             searchQuery: '',
             searchExpanded: false,
             isMobile: false,
-            
+            mapError: null,
         };
     },
     computed: {
@@ -199,14 +214,37 @@ export default {
                 { name: this.$t('eventHub.categories.networking'), image: require('@/assets/workshop.png') },
                 { name: this.$t('eventHub.categories.careerFairs'), image: require('@/assets/career fair.png') }
             ];
-            articles: []
         }
     },
     methods: {
         checkMobile() {
             this.isMobile = window.innerWidth <= 768;
         },
+        formatDate(date) {
+            if (!date) return '';
+            try {
+                return new Date(date).toLocaleDateString('vi-VN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return date;
+            }
+        },
         async fetchHeadlines() {
+            // Kiểm tra cache để tránh gọi API liên tục
+            const cachedData = sessionStorage.getItem('eventHeadlines');
+            const cacheTime = sessionStorage.getItem('eventHeadlinesTime');
+            const now = Date.now();
+            
+            // Cache 5 phút (300000ms)
+            if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) {
+                this.trendingEvents = JSON.parse(cachedData);
+                this.loading = false;
+                return;
+            }
+
             this.loading = true;
             try {
                 const apiKey = process.env.VUE_APP_NEWS_API_KEY;
@@ -221,10 +259,20 @@ export default {
                 );
                 if (response.data.news) {
                     this.trendingEvents = response.data.news.filter(article => article.image);
-                    await this.generateBotMessage(this.trendingEvents);
+                    
+                    // Cache data
+                    sessionStorage.setItem('eventHeadlines', JSON.stringify(this.trendingEvents));
+                    sessionStorage.setItem('eventHeadlinesTime', now.toString());
+                    
+                    // Không gọi GPT service ngay để tránh lag
+                    this.$nextTick(() => {
+                        this.generateBotMessage(this.trendingEvents);
+                    });
                 }
             } catch (error) {
                 console.error('Fetch error:', error.response ? error.response.data : error.message);
+                // Fallback với empty data để tránh crash
+                this.trendingEvents = [];
             } finally {
                 this.loading = false;
             }
@@ -251,16 +299,44 @@ export default {
         },
         switchLanguage(lang) {
         this.$i18n.locale = lang;
+        },
+        handleMapError(error) {
+            this.mapError = error;
         }
     },
     mounted() {
-        this.fetchHeadlines();
+        // Khởi tạo mobile check trước
         this.checkMobile();
         window.addEventListener('resize', this.checkMobile);
-        AOS.init({ duration: 1000, easing: "ease-out" });
+        
+        // Delay AOS init để không block UI
+        this.$nextTick(() => {
+            AOS.init({ duration: 1000, easing: "ease-out" });
+        });
+        
+        // Fetch data với timeout để tránh lag
+        setTimeout(() => {
+            this.fetchHeadlines();
+        }, 100);
     },
-    beforeDestroy() {
+    beforeUnmount() {
+        // Cải thiện cleanup để tránh lỗi vnode
         window.removeEventListener('resize', this.checkMobile);
+        
+        // Reset data để tránh reference issues
+        this.trendingEvents = [];
+        this.allEvents = [];
+        this.articles = [];
+        
+        // Clear cache nếu cần
+        if (this.$route.name !== 'EventHub') {
+            sessionStorage.removeItem('eventHeadlines');
+            sessionStorage.removeItem('eventHeadlinesTime');
+        }
+    },
+    // Thêm beforeDestroy cho Vue 2 compatibility
+    beforeDestroy() {
+        this.beforeUnmount();
     }
 };
 </script>
@@ -269,596 +345,248 @@ export default {
 @import "swiper/swiper-bundle.css";
 
 .EventHubContainer {
+    min-height: 100vh;
+    background: var(--bg-primary);
+    padding-bottom: 48px;
+    position: relative;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Loading overlay styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: fit-content;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     flex-direction: column;
-    background-color: var(--bg-primary);
-}
-
-.frame1 {
-    width: 100%;
-    height: fit-content;
-}
-
-.event-navbar-container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+    justify-content: center;
     align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: loading-spin 1s ease-in-out infinite;
+}
+
+.loading-text {
+    color: white;
+    font-size: 16px;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+@keyframes loading-spin {
+    to { transform: rotate(360deg); }
 }
 
 .event-navbar {
-    position: relative;
-    width: 50%;
-    margin-left:100px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
 
 .search-bar {
-    width: 70%;
-    font-size: 18px;
-    padding: 10px;
-    margin: 20px;
-    box-sizing: border-box;
-    z-index: 100;
-    border-radius: 28px;
-    border: 4px solid black;
+    padding: 14px 18px 14px 48px;
+    border-radius: 16px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: all 0.3s ease;
 }
 
 .search-bar:focus {
+    border-color: var(--link-color);
+    box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
     outline: none;
-    border: 4px solid black;
 }
 
 .search-icon {
     position: absolute;
-    right: 30%;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 20px;
-    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 18px;
 }
 
 .nav-btn {
     display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    text-align: center;
-    margin: 10px
-}
-
-.nav-btn p {
-    font-size: 14px;
+    gap: 24px;
 }
 
 .event-btn {
-    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 12px;
     cursor: pointer;
-    color: var(--text-primary);
+    transition: all 0.2s ease;
 }
 
 .event-btn:hover {
-    color: var(--hover-bg);
+    background: var(--border-color);
+}
+
+.round, .round-star {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.round {
+    background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+}
+
+.round-star {
+    background: linear-gradient(45deg, #FFD93D, #FFE869);
 }
 
 .btn-icon {
-    font-size: 18px;
-    padding: 5px;
+    font-size: 16px;
+    color: white;
 }
 
 .banner {
-    display:flex;
-    background-color: black;
-    padding: 20px 20px;
+    position: relative;
+    height: 400px;
+    margin: 32px 0;
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
 }
 
 .banner-content {
-    background-color: white;
-    color: black;
-    width: 100%;
-    margin-top: 15%;
-    padding: 10px 150px 10px 0;
-
+    position: absolute;
+    top: 50%;
+    left: 48px;
+    transform: translateY(-50%);
+    color: white;
+    z-index: 1;
 }
 
 .main-heading {
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    margin-left: 150px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .sub-heading {
     font-size: 24px;
-    font-weight: 600;
-    margin-top: 0;
-    margin-left: 150px;
-    letter-spacing: 0.5px;
-}
+    font-weight: 500;
+    opacity: 0.9;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
 
-.banner-img {
-    width: 100%;
-    height: auto;
-}
+.event-category {
+    margin: 48px 0;
+    }
 
 .event-category h3 {
-    text-align: center;
-    font-size: 3rem;
+    margin-bottom: 32px;
+    font-weight: 600;
     color: var(--text-primary);
-}
-
-.event-category-bg {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
-    margin: 0 50px 50px 50px;
-    background-color: black;
-}
-
-.category-btn {
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 15px 40px 5px 40px;
-}
-
-.category-btn p {
-    font-size: 15px;
-    color: white;
-}
-
-.category-btn p:hover {
-    color: var(--hover-bg);
-}
-
-.articles-title {
-    color: var(--text-primary);
-}
-
-.all-events-title {
-    color: var(--text-primary);
-}
-
-
-
-.category-img {
-    width: 25%;
-    filter: brightness(0) invert(1); 
-}
-
-.trending-event {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.swiper-slide {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: calc(25%-30px);
-}
-
-.event-infor {
-    padding: 16px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    text-align: center;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    margin: 16px;
-}
-
-.frame3 {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.events-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-}
-
-.events-container h3 {
-    font-size: 3rem;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    width: 90%;
-    margin: 0 auto;
-}
-
-.event-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 15px;
-    margin: 20px;
-}
-
-.event-image {
-    width: 100%;
-    height: 150px;
-    background-color: #f0f0f0;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-.event-details {
-    flex: 1;
-}
-
-.event-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.read-more-button {
-    padding: 10px 20px;
-    background-color: black;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.read-more-button, .event-button:hover {
-    background-color: black;
-}
-
-.star-button {
-    width: 42px; 
-    height: 42px; 
-    border-radius: 50%; 
-    background-color: black;
-    color: white;
-    border: none;
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    padding: 0; 
-}
-
-.star-button:hover {
-    background-color: black;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 1000px;
-    height: 80%;
-    align-items: center;
-    overflow-y: auto;
-}
-
-.modal-secondline h3 {
-    width: fit-content;
-    padding: 0;
-    margin: 0;
-}
-
-.modal-secondline {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    height: fit-content;
-}
-
-.register-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.register-button:hover {
-    background-color: black;
-}
-
-.modal-image {
-    width: 100%;
-    height: auto;
-    margin-bottom: 20px;
-}
-
-.close-button {
-    background-color: black;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.close-button:hover {
-    background-color: black;
-}
-
-.portfolio-language-switcher {
-  display: flex;
-  gap: 10px;
-}
-
-.portfolio-language-switcher button {
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.portfolio-language-switcher button img {
-  width: 40px;
-  height: auto;
-  transition: transform 0.2s ease;
-  border-radius: 4px;
-  border: 2px solid transparent;
-}
-
-.portfolio-language-switcher button:hover img {
-  transform: scale(1.1);
-}
-
-.portfolio-language-switcher button.active img {
-  border-color: black;
-}
-
-@media (max-width: 768px) {
-    .search-bar {
-        width: 100%;
-        font-size: 14px;
-        padding: 8px 16px;
-    }
-
-    .event-navbar-container {
-        flex-direction: column;
-    }
-
-    .event-navbar {
-        width: 100%;
-        margin: 5px;
-    }
-
-    .nav-btn {
-        margin: 10px 0;
-        width: 100%;
-        justify-content: space-around;
-    }
-
-    .event-category h3,
-    .events-container h3 {
-        font-size: 1.5rem;
     }
 
     .event-category-bg {
-        margin: 0 20px 20px 20px;
+    padding: 32px;
+    background: var(--card-bg);
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
     }
 
     .category-btn {
-        padding: 10px 20px;
-    }
-
-    .category-img {
-        width: 40%;
-    }
-
-    .grid-container {
-        grid-template-columns: 1fr;
-        width: 95%;
-    }
-
-    .event-card {
-        margin: 10px;
-    }
-
-    .slider-image-container {
-        height: 200px;
-    }
-
-    .slider-title {
-        font-size: 1.2rem;
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .event-category-bg {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .slider-image-container {
-        height: 400px;
-    }
-}
-
-.image-container {
-    width: 100%; 
-    height: 250px; 
-    overflow: hidden; 
     display: flex; 
-    justify-content: center; 
+    flex-direction: column;
     align-items: center;
-}
-
-.image-container img {
-    width: 100%; 
-    height: 100%;
-    object-fit: cover; 
-}
-
-.event-button {
-    background-color: black; 
-    color: white; 
-    border: none; 
-    border-radius: 5px; 
-    padding: 10px 20px; 
+    gap: 12px;
+    padding: 24px;
+    border-radius: 16px;
     cursor: pointer; 
-    transition: background-color 0.3s ease; 
+    transition: all 0.3s ease;
 }
 
-.image-container {
-    width: 100%; 
-    height: 250px; 
-    overflow: hidden; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
+.category-btn:hover {
+    transform: translateY(-4px);
+    background: var(--border-color);
 }
 
-.image-container img {
-    width: 100%; 
-    height: 100%;
+.category-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
     object-fit: cover; 
-}
-
-.event-button {
-    background-color: black; 
-    color: white; 
-    border: none; 
-    border-radius: 5px; 
-    padding: 10px 20px; 
-    cursor: pointer; 
-    transition: background-color 0.3s ease; 
-}
-
-.left-div {
-    border-right: 1px solid #e0e0e0; /* Optional: Add a border to separate the two sections */
-}
-
-.swiper-container {
-    width: 100%;
-    height: 600px;
-    position: relative;
-    margin-bottom: 24px;
-}
-
-.bottom-article img {
-    height: 300px; /* Set height for bottom articles */
 }
 
 .events-section {
-    width: 100%;
-    padding: 20px;
-}
-
-.content-wrapper {
-    display: flex;
-    gap: 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.left-div {
-    width: 25%;
-    padding: 20px;
-    border-right: 1px solid #e0e0e0;
-    min-height: 600px;
-}
-
-.right-div {
-    width: 75%;
-    padding: 20px;
-    position: relative;
+    margin: 48px 0;
+    padding: 32px;
+    background: var(--card-bg);
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
 }
 
 .trending-title {
-    color: var(--link-color);
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: var(--text-primary);
 }
 
 .event-item {
-    margin-bottom: 20px;
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
 }
 
-.event-link {
-    text-decoration: none;
-    color: var(--text-primary);
-}
-
-.event-link:hover {
-    text-decoration: underline;
-    color: var(--link-color); /* Change to a darker shade */
+.event-item:hover {
+    background: var(--border-color);
 }
 
 .event-number {
-    font-weight: bold;
-    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
 .event-description {
-    color: var(--text-primary);
+    font-size: 14px;
+    color: var(--text-secondary);
     margin-top: 8px;
-    font-size: 0.95rem; /* Slightly larger for readability */
 }
 
 .slider-content {
     position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.slider-image-container {
-    width: 100%;
-    height: 600px; /* Fixed height */
+    border-radius: 16px;
     overflow: hidden;
-    position: relative;
 }
 
 .slider-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center center;
 }
 
 .slider-info {
@@ -866,153 +594,283 @@ export default {
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 20px;
+    padding: 24px;
     background: linear-gradient(transparent, rgba(0,0,0,0.8));
     color: white;
 }
 
 .slider-title {
-    font-size: 1.8rem; /* Increase size for emphasis */
-    font-weight: 600; /* Use a bolder weight */
+    font-weight: 600;
     margin-bottom: 8px;
 }
 
 .slider-meta {
-    font-size: 0.9rem;
+    font-size: 14px;
     opacity: 0.8;
 }
 
-.swiper-nav-buttons {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    gap: 12px;
-    z-index: 10;
-}
-
 .nav-button {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background-color: black;  /* Black background */
+    background: white;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
 }
 
 .nav-button:hover {
-    background-color: white;  /* White background on hover */
-    transform: scale(1.1); /* Slightly enlarge the button */
+    transform: scale(1.1);
 }
 
 .nav-icon {
-    color: white;  /* White arrow color */
-    transition: all 0.3s ease;
-}
-
-.nav-button:hover .nav-icon {
-    color: #007bff;  /* Blue arrow on hover */
+    font-size: 24px;
+    color: var(--text-primary);
 }
 
 .bottom-articles {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns */
-    gap: 20px;
-    margin-top: 24px;
+    margin-top: 32px;
 }
 
 .article-card {
-    height: auto;
-    margin-bottom: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
-.article-link {
-    text-decoration: none;
-    color: #333;
+.article-card:hover {
+    transform: translateY(-4px);
 }
 
 .article-image {
     width: 100%;
-    height: 150px;
+    height: 200px;
     object-fit: cover;
-    border-radius: 8px;
 }
 
 .article-title {
-    margin-top: 12px;
-    font-size: 1.1rem;
-    line-height: 1.4;
-    text-decoration: underline;
+    padding: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .content-wrapper {
-        flex-direction: column;
-    }
+.articles-section {
+    margin: 4rem 0;
+    padding: 2rem;
+    background: var(--background-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
 
-    .left-div, .right-div {
-        width: 100%;
-        border-right: none;
-    }
+.articles-title {
+    font-size: 2rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+}
 
-    .left-div {
-        border-bottom: 1px solid #e0e0e0;
-        min-height: auto;
-        padding-bottom: 20px;
-    }
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
 
-    .swiper-container {
-        height: 400px;
-    }
+.article-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
 
-    .slider-image-container {
-        height: 350px;
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.article-image-container {
+    position: relative;
+    padding-top: 60%;
+    overflow: hidden;
+}
+
+.article-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.article-card:hover .article-image {
+    transform: scale(1.05);
+}
+
+.article-content {
+    padding: 1.5rem;
+}
+
+.article-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.article-date, .article-category {
+    padding: 0.25rem 0.75rem;
+    background: var(--surface-color);
+    border-radius: var(--radius-sm);
+}
+
+.article-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.article-excerpt {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.read-more-link {
+    display: inline-block;
+    color: var(--link-color);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
     }
     
-    .bottom-articles {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
-    }
+.read-more-link:hover {
+    color: var(--hover-bg);
 }
 
 @media (max-width: 768px) {
-    .bottom-articles {
-        grid-template-columns: 1fr; /* 1 column on small screens */
+    .banner {
+        height: 300px;
+        margin: 16px 0;
     }
 
-    .slider-image-container {
-        height: 250px;
+    .banner-content {
+        left: 24px;
+        padding-right: 24px;
+    }
+
+    .main-heading {
+        font-size: 32px;
+    }
+
+    .sub-heading {
+        font-size: 18px;
+    }
+
+    .event-category-bg {
+        padding: 16px;
+    }
+
+    .category-btn {
+        padding: 16px;
+    }
+
+    .category-img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .events-section {
+        padding: 20px;
+        margin: 24px 0;
+    }
+
+    .nav-button {
+        width: 40px;
+        height: 40px;
+    }
+
+    .articles-section {
+        padding: 1rem;
+        margin: 2rem 0;
+    }
+
+    .articles-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .article-title {
+        font-size: 1.125rem;
+    }
+
+    /* Fix layout break khi sidebar collapse */
+    .EventHubContainer {
+        width: 100%;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
     }
 }
 
-.icon-size {
-    font-size: 24px; /* Set the font size to 24px */
+/* Responsive cho desktop khi sidebar collapse */
+@media (min-width: 769px) {
+    .EventHubContainer {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+    
+    .banner, 
+    .event-category, 
+    .events-section, 
+    .articles-section {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: calc(100vw - 2rem);
+        box-sizing: border-box;
+    }
 }
 
-.slider-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    position: relative;
+/* Map error fallback styles */
+.event-map-section {
+    margin: 2rem 0;
 }
 
-.slider-link:hover .slider-image {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
+.map-error-fallback {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    margin: 2rem 0;
 }
 
-.slider-link:hover .slider-title {
-    text-decoration: underline;
+.error-content h3 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
 }
 
-.slider-image {
-    transition: transform 0.3s ease;
+.error-content p {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
 }
 </style>

@@ -241,7 +241,8 @@ td {
 
 <script>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/utils/api';
+import store from '@/store';
 
 export default {
   name: 'TransactionHistory',
@@ -255,12 +256,46 @@ export default {
     const fetchTransactions = async () => {
       isLoading.value = true;
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/transactions`);
-        transactions.value = response.data;
-        filteredTransactions.value = response.data;
+        // Ensure user data is loaded
+        await store.dispatch("users/fetchCurrentUser");
+        const userData = store.getters["users/currentUser"];
+
+        if (!userData) {
+          console.error('User data not available');
+          isLoading.value = false;
+          return;
+        }
+
+        // Fetch user's transactions from API
+        const response = await api.get(`/transactions/user/${userData._id}`, {
+          withCredentials: true
+        });
+        
+        transactions.value = response.data.transactions || [];
+        filteredTransactions.value = response.data.transactions || [];
         isLoading.value = false;
       } catch (error) {
         console.error('Error fetching transactions:', error);
+        // Fallback to mock data if API fails
+        transactions.value = [
+          {
+            _id: '1',
+            stockSymbol: 'AAPL',
+            quantity: 10,
+            type: 'buy',
+            price: 150.00,
+            date: new Date().toISOString()
+          },
+          {
+            _id: '2', 
+            stockSymbol: 'GOOGL',
+            quantity: 5,
+            type: 'sell',
+            price: 2800.00,
+            date: new Date(Date.now() - 86400000).toISOString()
+          }
+        ];
+        filteredTransactions.value = transactions.value;
         isLoading.value = false;
       }
     };
@@ -325,8 +360,8 @@ export default {
   --table-header-bg: #f8f9fa;
   --table-row-bg: #f2f2f2;
   --hover-bg: #e9ecef;
-  --button-bg: #007bff;
-  --button-hover-bg: #0056b3;
+  --button-bg: #000000;
+  --button-hover-bg: #333333;
   --date-picker-bg: white;
   --date-picker-border: #ced4da;
 }

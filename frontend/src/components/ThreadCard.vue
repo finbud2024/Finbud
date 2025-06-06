@@ -139,26 +139,32 @@ export default {
 
 <style scoped>
 .thread-card {
-  background: var(--background-primary);
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid var(--background-tertiary);
-  margin-bottom: 10px;
-  transition: background 0.2s ease-in-out;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #333333;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
   cursor: pointer;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .thread-card:hover {
-  background-color: #F2F4F7;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  border-color: #444444;
 }
 
 .thread-header {
   font-size: 14px;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .forum-logo {
@@ -168,52 +174,66 @@ export default {
 }
 
 .author-avatar {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
+  border: 2px solid #333333;
 }
 
 .forum-name {
   font-weight: 600;
-  color: var(--text-primary);
+  color: white;
 }
 
 .author, .date {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .separator {
-  color: var(--text-tertiary);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .thread-title {
   font-size: 18px;
-  font-weight: 600;
-  margin: 5px 0;
+  font-weight: 700;
+  margin: 8px 0 12px 0;
+  color: white;
+  line-height: 1.4;
 }
 
 .thread-content {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
-  line-height: 24px;
-  color: var(--text-primary);
-  margin-top: 10px;
-  margin-bottom: 5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 12px;
+  margin-bottom: 16px;
 }
 
 .thread-footer {
   display: flex;
   align-items: center;
-  gap: 32px;
-  padding-top: 8px;
+  gap: 24px;
+  padding-top: 12px;
+  border-top: 1px solid #333333;
 }
 
 .reaction {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.reaction:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
 }
 
 .icon {
@@ -223,11 +243,12 @@ export default {
 }
 
 .liked {
-  color: red;
-  fill: red; 
+  color: #ff4757;
+  fill: #ff4757; 
 }
+
 .liked-text {
-  color: red;
+  color: #ff4757;
   font-weight: bold;
 }
 

@@ -98,7 +98,7 @@ export default {
 
 .modal-footer button {
   padding: 8px 15px;
-  background-color: var(--link-color, #007bff);
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 5px;
@@ -107,6 +107,6 @@ export default {
 }
 
 .modal-footer button:hover {
-  background-color: var(--hover-bg, #0056b3);
+  background-color: #333333;
 }
 </style>

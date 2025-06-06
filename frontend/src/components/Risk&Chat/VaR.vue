@@ -188,7 +188,7 @@ select {
 }
 
 select:focus {
-    border-color: #007bff;
+    border-color: #000000;
     outline: none;
 }
 
@@ -201,7 +201,7 @@ input.styled {
     margin: 10px 0;
     border: none;
     border-radius: 4px;
-    background-color: #007bff;
+    background-color: #000000;
     color: #fff;
     font-size: 16px;
     cursor: pointer;
@@ -220,7 +220,7 @@ input.numberInput {
 }
 
 input.styled:hover {
-    background-color: #0056b3;
+    background-color: #333333;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -244,7 +244,7 @@ input.styled:disabled {
 }
 
 .VueDatePicker:focus {
-    border-color: #007bff;
+    border-color: #000000;
     outline: none;
 }
 

@@ -248,20 +248,20 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { 
   faList, faSearch, faDownload, faArrowUp, faArrowDown, 
-  faChartLine, faWallet, faReceipt, 
+  faWallet, faReceipt, 
   faSortUp, faSortDown, faPlus, faMinus, faEdit, faTrash,
   faChevronLeft, faChevronRight, faMoneyBillWave, faShoppingCart,
   faHome, faCar, faUtensils, faGamepad, faGraduationCap,
-  faMedkit, faPlane, faGift, faHandHoldingDollar, faCoins
+  faMedkit, faPlane, faGift, faCoins
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
   faList, faSearch, faDownload, faArrowUp, faArrowDown, 
-  faChartLine, faWallet, faReceipt, 
+  faWallet, faReceipt, 
   faSortUp, faSortDown, faPlus, faMinus, faEdit, faTrash,
   faChevronLeft, faChevronRight, faMoneyBillWave, faShoppingCart,
   faHome, faCar, faUtensils, faGamepad, faGraduationCap,
-  faMedkit, faPlane, faGift, faHandHoldingDollar, faCoins
+  faMedkit, faPlane, faGift, faCoins
 )
 
 export default {
@@ -435,11 +435,11 @@ export default {
     getCategoryIcon(category, type) {
       const incomeIcons = {
         'Salary': 'fa-solid fa-money-bill-wave',
-        'Freelance & Side Job': 'fa-solid fa-hand-holding-dollar',
+        'Freelance & Side Job': 'fa-solid fa-coins',
         'Allowance': 'fa-solid fa-gift',
         'Investment Return': 'fa-solid fa-coins',
         'Gift': 'fa-solid fa-gift',
-        'Refund': 'fa-solid fa-hand-holding-dollar'
+        'Refund': 'fa-solid fa-coins'
       }
 
       const expenseIcons = {
@@ -572,7 +572,7 @@ export default {
 
 .export-btn {
   padding: 0.5rem 1rem;
-  background: #3b82f6;
+  background: #000000;
   color: white;
   border: none;
   border-radius: 8px;
@@ -585,7 +585,7 @@ export default {
 }
 
 .export-btn:hover {
-  background: #2563eb;
+  background: #000000;
 }
 
 /* Summary Cards */
@@ -629,7 +629,7 @@ export default {
 }
 
 .summary-card.net.positive .card-icon {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #000000, #333333);
   color: white;
 }
 
@@ -675,7 +675,7 @@ export default {
   width: 32px;
   height: 32px;
   border: 3px solid #f3f4f6;
-  border-top: 3px solid #3b82f6;
+  border-top: 3px solid #000000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
@@ -779,7 +779,7 @@ export default {
 }
 
 .category-chip.food { background: #fef3c7; color: #92400e; }
-.category-chip.housing { background: #dbeafe; color: #1e40af; }
+.category-chip.housing { background: #dbeafe; color: #000000; }
 .category-chip.transport { background: #f3e8ff; color: #7c3aed; }
 .category-chip.health { background: #dcfce7; color: #166534; }
 .category-chip.lifestyle { background: #fce7f3; color: #be185d; }
@@ -883,7 +883,7 @@ export default {
 
 .page-btn:hover:not(:disabled) {
   background: #f8fafc;
-  border-color: #3b82f6;
+  border-color: #000000;
 }
 
 .page-btn:disabled {

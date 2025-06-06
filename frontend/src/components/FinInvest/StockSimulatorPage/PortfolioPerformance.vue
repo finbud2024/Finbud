@@ -318,10 +318,16 @@ export default {
   },
 
   beforeUnmount() {
-    window.removeEventListener("resize", this.handleResize);
+    // Cleanup chart before component is destroyed
     if (this.chart) {
       this.chart.remove();
+      this.chart = null;
     }
+    // Clear any intervals
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+    window.removeEventListener("resize", this.handleResize);
   },
 
   methods: {
@@ -424,66 +430,78 @@ export default {
 },
 
     initChart() {
-  const container = this.$refs.chartContainer;
-  if (!container) return;
+      const container = this.$refs.chartContainer;
+      if (!container) {
+        console.warn('Chart container not found');
+        return;
+      }
 
-  this.chart = createChart(container, {
-    width: container.clientWidth,
-    height: 400,
-    layout: {
-      background: { type: 'solid', color: '#FFFFFF' },
-      textColor: '#333333',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    },
-    grid: {
-      vertLines: { color: '#f0f0f0' },
-      horzLines: { color: '#f0f0f0' },
-    },
-    timeScale: {
-      timeVisible: true,
-      borderColor: '#f0f0f0',
-      fixLeftEdge: false,
-      fixRightEdge: false, // Changed to false to allow dragging past the last point
-      rightBarStaysOnScroll: false, // Changed to false to improve scrolling behavior
-      barSpacing: 6,
-      minBarSpacing: 2,
-      rightOffset: 5, // Added to keep some space on the right side
-    },
-    rightPriceScale: {
-      borderColor: '#f0f0f0',
-      scaleMargins: {
-        top: 0.1,
-        bottom: 0.1,
-      },
-      autoScale: true,
-    },
-    crosshair: {
-      mode: 1,
-      vertLine: {
-        width: 1,
-        color: 'rgba(0, 0, 0, 0.2)',
-        style: 0,
-      },
-      horzLine: {
-        width: 1,
-        color: 'rgba(0, 0, 0, 0.2)',
-        style: 0,
-      },
-    },
-    handleScroll: {
-      mouseWheel: true,
-      pressedMouseMove: true,
-      horzTouchDrag: true,
-      vertTouchDrag: false,
-    },
-    handleScale: {
-      axisPressedMouseMove: true,
-      mouseWheel: true,
-      pinch: true,
-    },
-  });
-},
+      try {
+        // Remove old chart if exists
+        if (this.chart) {
+          this.chart.remove();
+          this.chart = null;
+        }
 
+        this.chart = createChart(container, {
+          width: container.clientWidth,
+          height: 400,
+          layout: {
+            background: { type: 'solid', color: '#FFFFFF' },
+            textColor: '#333333',
+            fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          },
+          grid: {
+            vertLines: { color: '#f0f0f0' },
+            horzLines: { color: '#f0f0f0' },
+          },
+          timeScale: {
+            timeVisible: true,
+            borderColor: '#f0f0f0',
+            fixLeftEdge: false,
+            fixRightEdge: false,
+            rightBarStaysOnScroll: false,
+            barSpacing: 6,
+            minBarSpacing: 2,
+            rightOffset: 5,
+          },
+          rightPriceScale: {
+            borderColor: '#f0f0f0',
+            scaleMargins: {
+              top: 0.1,
+              bottom: 0.1,
+            },
+            autoScale: true,
+          },
+          crosshair: {
+            mode: 1,
+            vertLine: {
+              width: 1,
+              color: 'rgba(0, 0, 0, 0.2)',
+              style: 0,
+            },
+            horzLine: {
+              width: 1,
+              color: 'rgba(0, 0, 0, 0.2)',
+              style: 0,
+            },
+          },
+          handleScroll: {
+            mouseWheel: true,
+            pressedMouseMove: true,
+            horzTouchDrag: true,
+            vertTouchDrag: false,
+          },
+          handleScale: {
+            axisPressedMouseMove: true,
+            mouseWheel: true,
+            pinch: true,
+          },
+        });
+      } catch (error) {
+        console.error('Error creating chart:', error);
+      }
+    },
 
     createSeries() {
       if (!this.chart) return;
@@ -787,9 +805,9 @@ export default {
 }
 
 .time-range-selector button.active {
-  background-color: #1e40af;
+  background-color: #000000;
   color: white;
-  border-color: #1e40af;
+  border-color: #000000;
   box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
 }
 
@@ -822,7 +840,7 @@ export default {
 }
 
 .get-started-btn {
-  background-color: #1e40af;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 8px;
@@ -836,7 +854,7 @@ export default {
 }
 
 .get-started-btn:hover {
-  background-color: #1e3a8a;
+  background-color: #333333;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
 }

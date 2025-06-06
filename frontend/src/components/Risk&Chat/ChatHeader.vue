@@ -25,36 +25,37 @@
   
   <style scoped>
   .chat-header {
-    /* background-image: linear-gradient(to right,#7BDBBF, #7BDBBF); */
-    /* color: #ecf0f1; */
+    background: var(--bg-secondary);
+    color: var(--text-primary);
     padding: 20px;
     text-align: center;
     font-size: 1.5rem;
-    /* background-image: linear-gradient(to right, #7BDBBF, #7BDBBF); */
-    color: white;
-    box-shadow: 2 2px 10px rgba(0, 0, 0, 0.1);
-    /* border-bottom: 3px solid #86807f; */
-    padding: 20px 0;
-    transition: background-image 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
   }
   
   .chat-header:hover {
-    /* background-image: linear-gradient(to right, #7BDBBF, #7BDBBF); */
-    box-shadow: 2 4px 20px rgba(0, 0, 0, 0.2);
-    color: #f4f1f1;
-    transition: color 0.5s ease-in-out;
+    background: var(--bg-tertiary);
   }
   
-  h1, h2 {
+  h1 {
     margin: 0;
     padding: 10px 0;
-    animation: fadeInDown 1s ease-in-out;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    animation: fadeInDown 0.5s ease-in-out;
   }
   
   @keyframes fadeInDown {
     from {
       opacity: 0;
-      transform: translateY(-20px);
+      transform: translateY(-10px);
     }
     to {
       opacity: 1;
@@ -64,8 +65,12 @@
   
   @media (max-width: 768px) {
     .chat-header {
-      font-size: 1rem;
-      padding: 10px;
+      padding: 16px;
+      font-size: 1.2rem;
+    }
+    
+    h1 {
+      font-size: 1.2rem;
     }
   }
   </style>

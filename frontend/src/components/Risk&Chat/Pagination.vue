@@ -45,7 +45,7 @@
   button {
     padding: 10px;
     border: none;
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
     cursor: pointer;
     border-radius: 5px;

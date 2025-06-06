@@ -60,7 +60,7 @@ Here is the combined `TechnologySection` and `FeaturesSection` components into o
 
     <div class="partners-section animate fade-in">
       <h2 class="section-title">Integrate with the best tools in the market</h2>
-      <p class="section-description">Check out our connected partners. Don’t see your software on the list of partners? <a href="mailto:contact@yourdomain.com">Drop us a note</a> and we’ll get them added.</p>
+      <p class="section-description">Check out our connected partners. Don't see your software on the list of partners? <a href="mailto:contact@yourdomain.com">Drop us a note</a> and we'll get them added.</p>
       <div class="partners">
         <div class="partner animate slide-in-left">
           <img src = "@/assets/shop.png"  alt="Shop-Ware Logo">
@@ -68,7 +68,7 @@ Here is the combined `TechnologySection` and `FeaturesSection` components into o
         </div>
         <div class="partner animate slide-in-right">
           <img src="@/assets/tek.png" alt="Tekmetric Logo">
-          <p>Tekmetric lets you unleash your shop’s potential with their streamlined workflow settings. <a href="#">Learn more</a></p>
+          <p>Tekmetric lets you unleash your shop's potential with their streamlined workflow settings. <a href="#">Learn more</a></p>
         </div>
       </div>
     </div>
@@ -262,9 +262,7 @@ export default {
 }
 
 .feature-title {
-  font-size: 
-
-18px;
+  font-size: 18px;
   color: #333;
 }
 
@@ -357,7 +355,7 @@ export default {
 
 button {
   padding: 10px 20px;
-  background-color: #007BFF;
+  background-color: #000000;
   color: white;
   border: none;
   cursor: pointer;
@@ -366,7 +364,8 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3; /* darker blue on hover */
+  background-color: #333333; /* Even darker on hover */
+  transform: scale(1.05);
 }
 
 .computer-vision-section {
@@ -462,7 +461,7 @@ button:hover {
 }
 
 .feature-section {
-  background-color: #007bff; /* Blue background for consulting */
+  background-color: #000000; /* Blue background for consulting */
   color: white;
   padding: 40px;
   border-radius: 8px;
@@ -515,7 +514,7 @@ button:hover {
 }
 
 button {
-  background-color: #0056b3; /* Darker blue for buttons */
+  background-color: #333333; /* Darker blue for buttons */
   color: white;
   border: none;
   padding: 10px 20px;

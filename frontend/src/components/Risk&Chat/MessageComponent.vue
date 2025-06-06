@@ -99,9 +99,8 @@
     padding: 10px;
     margin: 4px 0;
     border-radius: 16px;
-    background-color: #7BDBBF;
+    background-color: #000000;
     color: #fff;
-    /* border: 2px solid #F1E5FF; */
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
     text-align: left;
     white-space: pre-wrap; 

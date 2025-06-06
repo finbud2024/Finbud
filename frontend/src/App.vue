@@ -2,31 +2,22 @@
   <LoadingPage v-if="showLoadingPage" />
   <div class="nav-actions">
     <NavBar v-if="showHeader" ref="headerBar" @logo-clicked="handleLogoClick" />
-    <div class="content"></div>
+    <div class="content-wrapper">
+      <router-view
+        @chatviewSelectingThread="loadThread"
+        @finbudBotResponse="displayMessage"
+        :chatBubbleThreadID="threadId"
+      />
+    </div>
   </div>
-  <router-view
-    @chatviewSelectingThread="loadThread"
-    @finbudBotResponse="displayMessage"
-    :chatBubbleThreadID="threadId"
-  />
   <FooterBar v-if="showFooter" ref="footerBar" />
-  <ChatBubble
-    v-if="showChatBubble && chatBubbleActive"
-    @closeChatBubble="toggleChatBubble"
-    :chatViewThreadID="threadId"
+  
+  <!-- Global Chat Toggle Button -->
+  <ChatToggleButton 
+    ref="chatToggle"
+    @chat-toggled="handleChatToggled"
   />
-  <img
-    class="finbudBot"
-    :class="{ hidden: !showChatBubble }"
-    src="@/assets/botrmbg_sm.webp"
-    alt="Finbud"
-    width="60"
-    height="60"
-    fetchpriority="high"
-    decoding="async"
-    @click="toggleChatBubble"
-    :style="botPosition"
-  />
+  
   <div v-if="showBotMessage" class="bot-message-container">
     <div
       class="finbudBotMessage"
@@ -42,10 +33,10 @@
 <script>
 import NavBar from "@/components/Basic/NavBar.vue";
 import FooterBar from "@/components/Basic/FooterBar.vue";
-import ChatBubble from "./components/ChatPage/ChatBubble.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import LoadingPage from "./views/Home/LoadingPage.vue";
+import ChatToggleButton from "@/components/ChatToggleButton.vue";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {
@@ -61,21 +52,19 @@ export default {
   components: {
     NavBar,
     FooterBar,
-    ChatBubble,
     LoadingPage,
+    ChatToggleButton,
   },
   data() {
     return {
       botSize: { width: 60, height: 60 },
       threadId: "",
-      chatBubbleActive: false,
       botMessage: "",
       displayedMessage: "",
       showBotMessage: true,
       typingSpeed: 20,
       isTyping: false,
       messageVisible: false,
-      botPosition: { right: "20px", bottom: "20px" },
       showLoadingPage: false,
       isInitialLoad: true,
       logoClicked: false,
@@ -172,29 +161,10 @@ export default {
       },
       { immediate: true }
     );
-
-    const savedPosition = localStorage.getItem("finbudBotPosition");
-    if (savedPosition) {
-      try {
-        const parsed = JSON.parse(savedPosition);
-        if (this.isValidPosition(parsed)) {
-          this.botPosition = parsed;
-        }
-      } catch (e) {
-        console.warn("Invalid saved position", e);
-      }
-    }
   },
   computed: {
     isAuthenticated() {
       return this.$store.getters["users/isAuthenticated"];
-    },
-    showChatBubble() {
-      return (
-        this.$route.path !== "/chat-view" &&
-        this.$route.path !== "/login" &&
-        this.$route.path !== "/signup"
-      );
     },
     showFooter() {
       return this.$route.path === "/about";
@@ -206,9 +176,6 @@ export default {
   methods: {
     loadThread(chatviewThreadID) {
       this.threadId = chatviewThreadID;
-    },
-    toggleChatBubble() {
-      this.chatBubbleActive = !this.chatBubbleActive;
     },
     async checkIfUserIsNew() {
       if (this.isAuthenticated) {
@@ -308,6 +275,22 @@ export default {
 
       this.$router.push("/");
     },
+    handleChatToggled(isOpen) {
+      console.log('Chat toggled:', isOpen);
+      // You can emit events or update global state here if needed
+      // For example, hide other UI elements when chat is open
+      if (isOpen) {
+        this.hideBotMessage();
+      }
+    },
+    hideBotMessage() {
+      this.messageVisible = false;
+      setTimeout(() => {
+        this.botMessage = "";
+        this.displayedMessage = "";
+        this.showBotMessage = false;
+      }, 300);
+    },
   },
   beforeDestroy() {
     document.removeEventListener("click", this.handleClickOutside);
@@ -320,8 +303,8 @@ export default {
 
 :root {
   --finbudBotMessageBG: #c8c5c5;
-  --finbudBotMessageColor: #007bff;
-  --finbudBotMessageBorderColor: #007bff;
+  --finbudBotMessageColor: #000000;
+  --finbudBotMessageBorderColor: #000000;
   --bg-primary: #ffffff;
   --text-primary: #333333;
   --nav-bg: transparent;
@@ -333,7 +316,7 @@ export default {
   --content-bg: #ffffff;
   --shadow-color: #e9e2e2;
   --progress-color: #c8c5c5;
-  --logo-color: #007bff;
+  --logo-color: #000000;
   --chat-text-color: #000000;
   /* --chat-message-bg-color: #f8f4f4; */
   --chat-user-bg-color: #f8f4f4;
@@ -365,7 +348,7 @@ body.dark-mode {
   --card-bg: #2d2d2d;
   --shadow-color: #0a6b10;
   --progress-color: #e9e2e2;
-  --logo-color: #007bff;
+  --logo-color: #000000;
   --content-bg: #736969;
   --chat-text-color: #ffffff;
   /* --chat-message-bg-color: #2d2d2d; */
@@ -373,7 +356,7 @@ body.dark-mode {
   --chat-user-text-color: #ffffff;
   --black-in-light-mode: #ffffff;
   --white-in-light-mode: #000000;
-  --agent-button-bg-color: #007bff;
+  --agent-button-bg-color: #000000;
   --agent-button-bg-active-color: #ffffff;
   --black-in-dark-mode: #0f0f14;
   --white-in-dark-mode: #ffffff;
@@ -388,9 +371,48 @@ body.dark-mode {
   --quant-divider-line-color: #3A3A3C;
 }
 /* Update content area */
-.content {
-  margin-top: 5%;
+.content-wrapper {
   background-color: var(--content-bg);
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+#app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.nav-actions {
+  margin: 0px;
+}
+
+/* Main router view positioning to avoid navbar */
+#app {
+  padding-left: 70px;
+  transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Expand margin when navbar is hovered or expanded */
+.nav-bar:hover ~ #app,
+.nav-bar.expanded ~ #app {
+  padding-left: 280px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  #app {
+    padding-left: 0;
+  }
+  
+  .nav-bar:hover ~ #app,
+  .nav-bar.expanded ~ #app {
+    padding-left: 0;
+  }
 }
 
 /* Add transition for all elements */
@@ -434,53 +456,28 @@ html {
 
 <style scoped>
 .nav-actions {
-  display: flex;
-  flex-direction: column;
   margin: 0px;
 }
 
-.content {
-  /* padding-top: 80px; */
+.content-wrapper {
   flex: 1;
 }
 
 a {
   text-decoration: none;
-  color: blue;
-  border: 1px solid blue;
+  color: #000000;
+  border: 1px solid #000000;
 }
 
 a:hover {
-  background-color: #e7f3ff;
-}
-
-.finbudBot {
-  position: fixed;
-  width: 60px;
-  aspect-ratio: 1;
-  z-index: 99998;
-  transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
-  cursor: grab;
-  user-select: none;
-  touch-action: none;
-}
-
-.finbudBot:active {
-  cursor: grabbing;
-  transform: scale(1.05);
-  transition: transform 0.1s ease;
-}
-
-.finbudBot:hover {
-  cursor: pointer;
-  transform: scale(1.05);
+  background-color: #f5f5f5;
 }
 
 .bot-message-container {
   position: fixed;
-  z-index: 99999;
-  bottom: calc(20px + 60px);
-  right: calc(3.125vw + 60px);
+  z-index: 9999;
+  bottom: 20px;
+  right: 20px;
 }
 
 .finbudBotMessage {
@@ -558,10 +555,6 @@ a:hover {
     max-width: 250px;
     font-size: 0.8125rem;
     padding: 12px;
-  }
-
-  .bot-message-container {
-    right: calc(3.125vw + 50px);
   }
 }
 

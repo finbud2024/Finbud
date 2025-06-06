@@ -1,8 +1,8 @@
 import express from 'express';
 import axios from 'axios';
-import Company from '../../Database Schema/finData/CompanySchema.js';
+import Company from '../../Database Schema/finData/CompanySchema';
 import { fetchFilingsDocument } from '../../functions/filingsDocuments';
-import Filings from '../../Database Schema/finData/FilingsSchema.js';
+import Filings from '../../Database Schema/finData/FilingsSchema';
 import csvtojson from "convert-csv-to-json"
 import { getRecentQuarter } from '../../utils/getRecentQuarter.js';
 import EarningCalendar from '../../Database Schema/finData/EarningCalendar.js';

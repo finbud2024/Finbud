@@ -49,15 +49,51 @@ export default {
 </script>
 
 <style scoped>
-.correct {
-  color: green;
+.question-item {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
-.wrong {
-  color: red;
-}
-label {
+
+.question-item label {
   display: block;
-  size: 300px;
-  margin-bottom: 50px;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.question-item label:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.question-item input[type="radio"] {
+  margin-right: 10px;
+}
+
+.question-item input[type="radio"]:checked + span {
+  color: #000000;
+  font-weight: bold;
+}
+
+.correct {
+  color: #000000;
+  font-weight: bold;
+}
+
+.wrong {
+  color: #ff0000;
+  font-weight: bold;
+}
+
+.explanation {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  color: #000000;
 }
 </style>

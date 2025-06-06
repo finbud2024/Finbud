@@ -45,7 +45,7 @@
   
       const stockDataList = await Promise.all(props.symbols.map(fetchDataForSymbol));
       const labels = stockDataList[0].dates;
-      const colors = ['blue', 'green', 'red'];
+      const colors = ['#000000', 'green', 'red'];
       const datasets = stockDataList.map((stock, i) => ({
         label: `${stock.symbol} Close`,
         data: stock.closePrices,

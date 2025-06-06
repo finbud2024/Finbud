@@ -665,7 +665,7 @@ export default {
 
 .tutorial-tooltip h3 {
   margin-top: 0;
-  color: #007bff; /* Match your FinBud brand color */
+  color: #000000;
   font-size: 1.2rem;
 }
 
@@ -739,7 +739,7 @@ body.dark-mode .tutorial-tooltip {
 
 :root.dark-mode .tutorial-tooltip h3,
 body.dark-mode .tutorial-tooltip h3 {
-  color: #4da3ff;
+  color: #333333;
 }
 
 :root.dark-mode .tutorial-tooltip p,

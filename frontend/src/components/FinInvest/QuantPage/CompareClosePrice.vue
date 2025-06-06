@@ -104,8 +104,8 @@ const loadChart = async () => {
       {
         label: `${props.tickerA} ${t('quantPage.CloseValue')}`,
         data: closeA,
-        borderColor: 'blue',
-        backgroundColor: 'blue',
+        borderColor: '#000000',
+        backgroundColor: '#000000',
         tension: 0.3
       },
       {

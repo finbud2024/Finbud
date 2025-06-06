@@ -278,13 +278,13 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { 
   faChartPie, faChartBar, faCircleNotch, faCalculator, faTags, faCrown, faList,
   faUtensils, faHome, faCar, faMedkit, faGamepad, faGraduationCap, faPlane,
-  faGift, faMoneyBillWave, faHandHoldingDollar, faCoins, faShoppingCart
+  faGift, faMoneyBillWave, faCoins, faShoppingCart
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
   faChartPie, faChartBar, faCircleNotch, faCalculator, faTags, faCrown, faList,
   faUtensils, faHome, faCar, faMedkit, faGamepad, faGraduationCap, faPlane,
-  faGift, faMoneyBillWave, faHandHoldingDollar, faCoins, faShoppingCart
+  faGift, faMoneyBillWave, faCoins, faShoppingCart
 )
 
 export default {
@@ -307,7 +307,7 @@ export default {
       hoveredBar: -1,
       loading: false,
       colors: [
-        '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+        '#000000', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
         '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1',
         '#14b8a6', '#eab308', '#a855f7', '#22c55e', '#f43f5e'
       ]
@@ -478,10 +478,10 @@ export default {
         'Travel': 'fa-solid fa-plane',
         'Gift': 'fa-solid fa-gift',
         'Salary': 'fa-solid fa-money-bill-wave',
-        'Freelance & Side Job': 'fa-solid fa-hand-holding-dollar',
+        'Freelance & Side Job': 'fa-solid fa-coins',
         'Investment Return': 'fa-solid fa-coins',
         'Allowance': 'fa-solid fa-gift',
-        'Refund': 'fa-solid fa-hand-holding-dollar'
+        'Refund': 'fa-solid fa-coins'
       }
       return icons[category] || 'fa-solid fa-shopping-cart'
     }
@@ -551,7 +551,7 @@ export default {
 
 .chart-btn.active {
   background: white;
-  color: #3b82f6;
+  color: #000000;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -595,7 +595,7 @@ export default {
   color: white;
 }
 
-.stat-card.total .stat-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.stat-card.total .stat-icon { background: linear-gradient(135deg, #000000, #333333); }
 .stat-card.categories .stat-icon { background: linear-gradient(135deg, #10b981, #047857); }
 .stat-card.top .stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
 .stat-card.transactions .stat-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
@@ -633,7 +633,7 @@ export default {
   width: 32px;
   height: 32px;
   border: 3px solid #f3f4f6;
-  border-top: 3px solid #3b82f6;
+  border-top: 3px solid #000000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;

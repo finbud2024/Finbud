@@ -485,7 +485,7 @@ body {
 }
 
 .header {
-  color: #007bff;
+  color: #000000;
   opacity: 1;
   text-align: left;
   margin-bottom: 20px;
@@ -755,7 +755,7 @@ body {
 .search-bar button {
   padding: 10px 20px;
   font-size: 1em;
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 3px;
@@ -763,142 +763,128 @@ body {
 }
 
 .search-bar button:hover {
-  background-color: #0056b3;
+  background-color: #333333;
 }
 
 /* Add the bot chat styles from the previous example here */
 .bot-chat-container {
   position: fixed;
-  right: -350px;
-  top: 30%;
-  width: 300px;
+  bottom: 20px;
+  right: 20px;
   display: flex;
-  flex-direction: column;
   align-items: flex-end;
-  padding: 15px;
-  z-index: 100;
-  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    opacity 0.6s ease;
-  opacity: 0;
-  transform: translateX(0);
-  pointer-events: none;
-}
-
-.bot-chat-container.bot-visible {
-  transform: translateX(-350px);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.bot-chat-container.bot-hidden {
-  transform: translateX(-350px) translateY(50px);
-  opacity: 0;
-  transition: transform 0.6s ease, opacity 0.6s ease;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .bot-image {
-  width: 40px;
-  height: auto;
-  display: block;
-  position: relative;
-  background: transparent;
-  transition: transform 0.3s ease;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   cursor: pointer;
+  transition: transform 0.3s ease;
+  background: var(--bg-secondary);
+  padding: 5px;
+  box-shadow: var(--shadow-md);
 }
 
-.bot-visible .bot-image {
-  animation: botBounce 0.6s ease-out;
-}
-
-@keyframes botBounce {
-  0% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-
-  60% {
-    transform: translateY(-5px);
-  }
-
-  80% {
-    transform: translateY(2px);
-  }
-
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.bot-image:hover {
+  transform: scale(1.1);
 }
 
 .bot-message {
-  margin-top: 10px;
-  background: #2196f3;
-  color: #ffffff;
-  padding: 12px 18px;
-  border-radius: 18px;
-  max-width: 280px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  transition-delay: 0.2s;
-  word-wrap: break-word;
-  white-space: pre-line;
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-right: 1rem;
+  max-width: 300px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
 }
 
-.bot-message.message-visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-
-.bot-message.message-hidden {
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+.bot-message::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  bottom: 20px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid var(--bg-secondary);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
 }
 
 .typing-animation {
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  gap: 0.3rem;
+  align-items: center;
+  padding: 0.5rem;
 }
 
 .dot {
   width: 8px;
   height: 8px;
+  background: var(--text-secondary);
   border-radius: 50%;
-  background-color: #ffffff;
-  opacity: 0.3;
-}
-
-.dot:nth-child(1) {
-  animation: typing 1s infinite 0s;
+  animation: bounce 1s infinite;
 }
 
 .dot:nth-child(2) {
-  animation: typing 1s infinite 0.2s;
+  animation-delay: 0.2s;
 }
 
 .dot:nth-child(3) {
-  animation: typing 1s infinite 0.4s;
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 .typed-message {
+  font-size: 0.95rem;
   line-height: 1.5;
-  word-wrap: break-word;
+  color: var(--text-primary);
 }
 
-@keyframes typing {
+/* Visibility classes */
+.bot-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-  0%,
-  100% {
-    opacity: 0.3;
-    transform: scale(1);
-  }
+.bot-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
 
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
+.message-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.message-hidden {
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
+}
+
+/* Dark mode adjustments */
+:root[data-theme="dark"] .bot-message {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .bot-message::after {
+  border-left-color: var(--bg-secondary);
+}
+
+:root[data-theme="dark"] .dot {
+  background: var(--text-secondary);
 }
 </style>

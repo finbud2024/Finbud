@@ -74,7 +74,7 @@ export default {
     return {
       hoveredSlice: -1,
       colors: [
-        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+        '#000000', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
         '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
       ]
     }
@@ -237,7 +237,7 @@ export default {
 .legend-percentage {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #3b82f6;
+  color: #000000;
 }
 
 .empty-chart {

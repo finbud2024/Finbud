@@ -165,10 +165,10 @@ export default {
 /* New styles for Crypto History section title */
 .crypto-history-container h1 {
     font-weight: bold;
-    color: #007bff; /* Blue color similar to Crypto Quotes section */
+    color: #000000;
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
-    border-bottom: 2px solid #007bff; /* Underline similar to Crypto Quotes section */
+    border-bottom: 2px solid #000000;
     padding-bottom: 0.5rem;
     text-align: left;
 }
@@ -202,12 +202,12 @@ select, .VueDatePicker, input.styled {
 }
 
 select:focus, .VueDatePicker:focus {
-    border-color: #007bff;
+    border-color: #000000;
     outline: none;
 }
 
 input.styled {
-    background-color: #007bff;
+    background-color: #000000;
     color: #fff;
     font-size: 16px;
     cursor: pointer;
@@ -215,12 +215,12 @@ input.styled {
 }
 
 input.styled:hover {
-    background-color: #0056b3;
+    background-color: #333333;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 input.styled:active {
-    background-color: #004494;
+    background-color: #666666;
 }
 
 table {

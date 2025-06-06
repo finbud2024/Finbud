@@ -110,53 +110,51 @@ export default {
     }, 60000); // Update every minute
   },
   renderChart(data) {
-    if (this.chart) {
-      this.chart.remove();
+    if (!this.$refs.chartContainer) {
+      console.warn('Chart container not found');
+      return;
     }
 
-    this.chart = createChart(this.$refs.chartContainer, {
-      width: this.$refs.chartContainer.clientWidth,
-      height: this.$refs.chartContainer.clientHeight,
-      layout: {
-        backgroundColor: '#FFFFFF',
-        textColor: '#333',
-      },
-      grid: {
-        vertLines: {
-          color: '#eee',
-        },
-        horzLines: {
-          color: '#eee',
-        },
-      },
-      timeScale: {
-        timeVisible: true,
-        secondsVisible: false,
-      },
-    });
-
-    this.lineSeries = this.chart.addLineSeries({
-      color: '#4caf50',
-      lineWidth: 2,
-      crossHairMarkerVisible: true,
-      crossHairMarkerRadius: 6,
-    });
-    this.lineSeries.setData(data);
-
-    this.chart.subscribeCrosshairMove((param) => {
-      if (!param || !param.time) {
-        this.removeTooltip();
-        return;
+    try {
+      // Remove old chart if exists
+      if (this.chart) {
+        this.chart.remove();
+        this.chart = null;
       }
 
-      const point = data.find(item => item.time === param.time);
-      if (point) {
-        this.showTooltip(point, param);
-      }
-    });
+      this.chart = createChart(this.$refs.chartContainer, {
+        width: this.$refs.chartContainer.clientWidth,
+        height: this.$refs.chartContainer.clientHeight,
+        layout: {
+          backgroundColor: '#FFFFFF',
+          textColor: '#333',
+        },
+        grid: {
+          vertLines: {
+            color: '#eee',
+          },
+          horzLines: {
+            color: '#eee',
+          },
+        },
+        timeScale: {
+          timeVisible: true,
+          secondsVisible: false,
+        },
+      });
 
-    // Resize the chart when the window size changes
-    window.addEventListener('resize', this.resizeChart);
+      if (this.chart && data) {
+        const lineSeries = this.chart.addLineSeries({
+          color: '#4caf50',
+          lineWidth: 2,
+          crossHairMarkerVisible: true,
+          crossHairMarkerRadius: 6,
+        });
+        lineSeries.setData(data);
+      }
+    } catch (error) {
+      console.error('Error rendering chart:', error);
+    }
   },
   resizeChart() {
     if (this.chart) {
@@ -197,6 +195,12 @@ mounted() {
   });
 },
 beforeUnmount() {
+  // Cleanup chart before component is destroyed
+  if (this.chart) {
+    this.chart.remove();
+    this.chart = null;
+  }
+  // Clear any intervals
   if (this.updateInterval) {
     clearInterval(this.updateInterval);
   }

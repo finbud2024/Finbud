@@ -96,7 +96,7 @@
   }
   
   .upload-btn:hover {
-    color: #0056b3;
+    color: #333333;
     transform: scale(1.1);
   }
   

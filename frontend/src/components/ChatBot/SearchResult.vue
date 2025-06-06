@@ -111,7 +111,7 @@ export default {
   position: absolute;
   font-size: 0.7rem;
   font-weight: bold;
-  color: #007bff;
+  color: #000000;
   width: 80%;
   word-wrap: break-word;
   overflow: hidden;
@@ -164,7 +164,7 @@ export default {
 }
 
 .view-more-button:hover {
-  color: #0056b3;
+  color: #333333;
 }
 
 /* Media Query for Responsive Layout */

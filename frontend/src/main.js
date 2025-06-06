@@ -4,9 +4,33 @@ import App from "./App.vue"; // Adjust the path to your main App component
 import router from "./router"; // Adjust the path to your router file
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import * as faSolid from "@fortawesome/free-solid-svg-icons";
-import * as faRegular from "@fortawesome/free-regular-svg-icons";
-import * as faBrand from "@fortawesome/free-brands-svg-icons";
+// Import only specific icons instead of entire packs
+import { 
+  faCamera,
+  faRightFromBracket,
+  faEye,
+  faEyeSlash,
+  faPaperclip,
+  faChevronUp,
+  faChevronDown,
+  faEllipsis,
+  faBars,
+  faPlay,
+  faXmark,
+  faPen,
+  faTrashCan,
+  faPlus,
+  faMagnifyingGlass,
+  faLocationDot,
+  faMoon,
+  faSun,
+  faBell,
+  faComments,
+  faWallet,
+  faChartBar,
+  faUser
+} from "@fortawesome/free-solid-svg-icons";
+import { faStar, faBell as faBellRegular } from "@fortawesome/free-regular-svg-icons";
 import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import i18n from "./i18n";
@@ -15,47 +39,73 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { VueQueryPlugin } from '@tanstack/vue-query';
-import { faBell } from '@fortawesome/free-solid-svg-icons';
+import VueApexCharts from 'vue3-apexcharts';
+
+// Create event bus for component communication using tiny-emitter
+class EventBus {
+  constructor() {
+    this.events = {};
+  }
+
+  $on(event, callback) {
+    if (!this.events[event]) {
+      this.events[event] = [];
+    }
+    this.events[event].push(callback);
+  }
+
+  $off(event, callback) {
+    if (this.events[event]) {
+      if (callback) {
+        this.events[event] = this.events[event].filter(cb => cb !== callback);
+      } else {
+        this.events[event] = [];
+      }
+    }
+  }
+
+  $emit(event, ...args) {
+    if (this.events[event]) {
+      this.events[event].forEach(callback => callback(...args));
+    }
+  }
+}
 
 // Add specific icons to the library
 const icons = [
-  faSolid.faCamera,
-  faSolid.faRightFromBracket,
-  faSolid.faEye,
-  faSolid.faEyeSlash,
-  faSolid.faPaperclip,
-  faSolid.faChevronUp,
-  faSolid.faChevronDown,
-  faSolid.faEllipsis,
-  faSolid.faBars,
-  faSolid.faPlay,
-  faSolid.faXmark,
-  faSolid.faPen,
-  faSolid.faTrashCan,
-  faSolid.faPlus,
-  faSolid.faMagnifyingGlass,
-  faSolid.faLocationDot,
-  faRegular.faStar,
-  faRegular.faBell,
-  faSolid.faMoon,
-  faSolid.faSun,
-  // Navigation icons
-  faSolid.faComment,
-  faSolid.faCompass,
-  faSolid.faRobot,
-  faSolid.faChartLine,
-  faSolid.faMoneyBillTrendUp,
-  faSolid.faGraduationCap,
-  faSolid.faChevronLeft,
-  faSolid.faChevronRight,
+  faCamera,
+  faRightFromBracket,
+  faEye,
+  faEyeSlash,
+  faPaperclip,
+  faChevronUp,
+  faChevronDown,
+  faEllipsis,
+  faBars,
+  faPlay,
+  faXmark,
+  faPen,
+  faTrashCan,
+  faPlus,
+  faMagnifyingGlass,
+  faLocationDot,
+  faStar,
+  faBellRegular,
+  faMoon,
+  faSun,
+  faBell,
+  faComments,
+  faWallet,
+  faChartBar,
+  faUser
 ];
 library.add(...icons); // Use the spread operator to add the icons
-library.add(faBell);
 
 // Create the application
 const app = createApp(App);
 
-
+// Add event bus to global properties
+app.config.globalProperties.$eventBus = new EventBus();
 
 app.use(VueGoogleMaps, {
   load: {
@@ -72,5 +122,6 @@ app.use(store);
 app.use(i18n);
 app.use(BootstrapVue3)
 app.use(VueQueryPlugin)
+app.use(VueApexCharts)
 // Mount the application to the DOM
 app.mount("#app");

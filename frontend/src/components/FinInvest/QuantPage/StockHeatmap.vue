@@ -71,7 +71,7 @@
   "showSymbolLogo": false,
   "isMonoSize": false,
   "width": "100%",
-  "height": 765,
+  "height": "100%",
 });
   
         // Append to widget container
@@ -91,53 +91,60 @@
   
   <style scoped>
   .frame-container {
-    position: relative; /* Make the container a positioning context */
-    width: 100%; /* Full width of the container */
-    max-width: 1200px; /* Limit the width */
-    margin: 30px auto; /* Center the container */
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 30px auto;
+    box-sizing: border-box;
+    overflow: hidden; /* Prevent container overflow */
   }
+  
   .border-wrapper {
-    position: relative; /* Position the wrapper relative to the heatmap */
-    border: 10px solid #444; /* Add a border around the graph */
-    border-radius: 12px; /* Round the corners of the border */
-    overflow: hidden; /* Hide any part of the graph that extends beyond the border */
-    width: 100%; /* Full width of the wrapper */
-    height: 725px; /* Match the height of the heatmap */
-    box-sizing: border-box; /* Include the border in the element's dimensions */
+    position: relative;
+    border: 10px solid #444;
+    border-radius: 12px;
+    overflow: hidden; /* Ensure content doesn't overflow */
+    width: 100%;
+    height: 600px; /* Reduced height for better fit */
+    box-sizing: border-box;
   }
   
   .frame-overlay {
-    position: absolute; /* Position the frame above the heatmap */
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    border: 10px solid #444; /* Frame border */
-    border-radius: 12px; /* Rounded corners for the frame */
-    pointer-events: none; /* Allow interaction with the heatmap below */
-    z-index: 1; /* Ensure the frame is above the heatmap */
+    border: 10px solid #444;
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 1;
   }
+  
   .heatmap-box {
-    border: 2px solid #ccc; /* Add a border around the box */
-    border-radius: 8px; /* Round the corners of the box */
-    padding: 16px; /* Add padding inside the box */
-    background-color: #f9f9f9; /* Light background color for contrast */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-    margin: 20px auto; /* Center the box and add spacing */
-    max-width: 1200px; /* Limit the width of the box */
-    width: 100%; /* Ensure the box takes full width of its container */
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .tradingview-heatmap-container {
-    position: relative; /* Ensure the heatmap is positioned correctly */
-    z-index: 0; /* Place the heatmap below the frame */
-    width: 100%; /* Full width of the container */
-    height: 600px; /* Set the height of the heatmap */
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
   
   .tradingview-widget-container {
-    width: 100%; /* Ensure the widget fills the container */
-    height: 100%; /* Ensure the widget fills the container */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
   
   .tradingview-widget-copyright {
@@ -160,5 +167,36 @@
   
   .tradingview-widget-copyright a:hover {
     color: #1E53E5;
+  }
+  
+  #tradingview-heatmap-widget {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    max-width: 100% !important;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .frame-container {
+      margin: 15px auto;
+    }
+    
+    .border-wrapper {
+      height: 400px; /* Smaller height on mobile */
+      border-width: 5px; /* Thinner border on mobile */
+    }
+    
+    .heatmap-box {
+      padding: 8px;
+      margin: 10px auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .border-wrapper {
+      height: 300px; /* Even smaller on very small screens */
+      border-width: 3px;
+    }
   }
   </style>

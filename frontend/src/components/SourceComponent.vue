@@ -46,12 +46,12 @@ export default {
   margin-bottom: 10px;
 }
 .sources-section a {
-  color: #007bff;
+  color: #000000;
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.3s ease;
 }
 .sources-section a:hover {
-  color: #0056b3;
+  color: #333333;
 }
 </style>

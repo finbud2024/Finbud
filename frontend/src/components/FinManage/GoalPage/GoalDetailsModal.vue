@@ -245,7 +245,7 @@ export default {
 .goal-icon {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #000000, #333333);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -310,7 +310,7 @@ export default {
 .progress-percentage {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #3b82f6;
+  color: #000000;
 }
 
 .progress-bar-container {
@@ -326,7 +326,7 @@ export default {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(90deg, #000000, #333333);
   border-radius: 6px;
   transition: width 0.3s ease;
 }
@@ -425,7 +425,7 @@ export default {
 .analysis-value {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #3b82f6;
+  color: #000000;
 }
 
 .modal-footer {
@@ -458,7 +458,7 @@ export default {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   color: white;
 }
 

@@ -465,7 +465,7 @@ export default {
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #000000;
   background: white;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
@@ -513,7 +513,7 @@ export default {
 }
 
 .suggestion-btn {
-  background: #3b82f6;
+  background: #000000;
   color: white;
   border: none;
   padding: 0.25rem 0.5rem;
@@ -564,7 +564,7 @@ export default {
 .insight-value {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #3b82f6;
+  color: #000000;
 }
 
 .motivation-section {
@@ -600,13 +600,13 @@ export default {
 }
 
 .motivation-tag:hover {
-  border-color: #3b82f6;
+  border-color: #000000;
 }
 
 .motivation-tag.active {
-  background: #3b82f6;
+  background: #000000;
   color: white;
-  border-color: #3b82f6;
+  border-color: #000000;
 }
 
 .modal-footer {
@@ -639,13 +639,19 @@ export default {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: #000000;
   color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary:disabled {
@@ -674,5 +680,37 @@ export default {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
+}
+
+.add-btn {
+  background: #000000;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.create-goal-btn {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.category-btn.selected {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  color: white;
+  border-color: #000000;
 }
 </style> 

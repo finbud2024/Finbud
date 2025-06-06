@@ -105,7 +105,7 @@ export default {
 }
 
 .try-button {
-  background-color: #4a78f7;
+  background-color: #000000;
   color: white;
   border: none;
   border-radius: 20px;
@@ -117,7 +117,7 @@ export default {
 }
 
 .try-button:hover {
-  background-color: #3a68e7;
+  background-color: #333333;
 }
 
 .form-container {
@@ -171,7 +171,7 @@ label {
 
 .email-input:focus {
   outline: none;
-  border-color: #4a78f7;
+  border-color: #000000;
 }
 
 .reset-button {
@@ -201,14 +201,14 @@ label {
 }
 
 .back-link a {
-  color: #4a78f7;
+  color: #000000;
   text-decoration: none;
   font-size: 16px;
   transition: color 0.2s;
 }
 
 .back-link a:hover {
-  color: #3a68e7;
+  color: #333333;
   text-decoration: underline;
 }
 </style>

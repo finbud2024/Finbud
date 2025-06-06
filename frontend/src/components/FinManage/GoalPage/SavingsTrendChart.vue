@@ -78,7 +78,7 @@
           v-if="chartData.length > 1"
           :d="linePath"
           fill="none"
-          stroke="#3b82f6"
+          stroke="#000000"
           stroke-width="3"
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -92,7 +92,7 @@
             :cx="40 + index * (320 / (chartData.length - 1))"
             :cy="getYPosition(point.amount)"
             r="4"
-            fill="#3b82f6"
+            fill="#000000"
             stroke="white"
             stroke-width="2"
             class="data-point"
@@ -104,8 +104,8 @@
         <!-- Gradient definition -->
         <defs>
           <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.5"/>
-            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+            <stop offset="0%" stop-color="#000000" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
           </linearGradient>
         </defs>
       </svg>
@@ -387,7 +387,7 @@ export default {
 .tooltip-value {
   font-size: 1rem;
   font-weight: 600;
-  color: #3b82f6;
+  color: #000000;
 }
 
 .chart-summary {

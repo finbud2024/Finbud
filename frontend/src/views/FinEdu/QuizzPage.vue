@@ -1,46 +1,157 @@
 <template>
-  <div class="quizPageContainer">
-    <!-- Bot Chat Component -->
+  <div class="quiz-page">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <font-awesome-icon icon="fa-solid fa-brain" class="hero-icon" />
+          Financial Knowledge Quiz
+        </h1>
+        <p class="hero-subtitle">Test your financial knowledge and learn with AI-powered personalized feedback</p>
+        <div class="hero-features">
+          <div class="feature-tag">
+            <font-awesome-icon icon="fa-solid fa-trophy" />
+            Earn Points
+          </div>
+          <div class="feature-tag">
+            <font-awesome-icon icon="fa-solid fa-lightbulb" />
+            AI Guidance
+          </div>
+          <div class="feature-tag">
+            <font-awesome-icon icon="fa-solid fa-chart-line" />
+            Track Progress
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Topics</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">1000+</span>
+            <span class="stat-label">Questions</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">95%</span>
+            <span class="stat-label">Success Rate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Enhanced Bot Chat Component -->
     <div
       class="bot-chat-container"
       :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }"
     >
+        <div class="bot-avatar" @click="toggleChat">
       <img
         class="bot-image"
         src="@/assets/botrmbg.png"
-        alt="Bot"
-        @click="toggleChat"
+            alt="FinBud AI Assistant"
       />
+          <div class="bot-status-indicator"></div>
+        </div>
       <div
-        class="bot-message"
+          class="bot-message-container"
         :class="{
           'message-visible': showMessage && !chatCollapsed,
           'message-hidden': hidingMessage || chatCollapsed,
         }"
       >
+          <div class="bot-header">
+            <span class="bot-name">FinBud AI</span>
+            <button class="minimize-btn" @click="toggleChat">
+              <font-awesome-icon :icon="chatCollapsed ? 'fa-solid fa-maximize' : 'fa-solid fa-minimize'" />
+            </button>
+          </div>
+          <div class="bot-message">
         <div v-if="isTyping" class="typing-animation">
+              <span class="typing-text">FinBud đang soạn tin nhắn</span>
+              <div class="typing-dots">
           <span class="dot"></span>
           <span class="dot"></span>
           <span class="dot"></span>
+              </div>
         </div>
         <div v-else class="typed-message" v-html="typedContent"></div>
       </div>
+        </div>
+      </div>
+
+      <!-- Quiz Component Container -->
+      <div class="quiz-container">
+        <div class="quiz-panel">
+          <div class="panel-header">
+            <h3>
+              <font-awesome-icon icon="fa-solid fa-graduation-cap" />
+              AI-Powered Quiz Generator
+            </h3>
+            <p>Enter any financial topic or keyword to generate custom quiz questions instantly</p>
     </div>
 
-    <div class="container">
       <quizComponent @messageToBot="$emit('finbudBotResponse', $event)" />
+        </div>
+      </div>
+
+      <!-- Quick Actions Panel -->
+      <div class="quick-actions">
+        <h3>Quick Actions</h3>
+        <div class="actions-grid">
+          <router-link to="/predictive-calculator" class="action-card">
+            <div class="action-icon">
+              <font-awesome-icon icon="fa-solid fa-calculator" />
+            </div>
+            <h4>Predictive Calculator</h4>
+            <p>Calculate financial predictions</p>
+          </router-link>
+          
+          <router-link to="/forum" class="action-card">
+            <div class="action-icon">
+              <font-awesome-icon icon="fa-solid fa-users" />
+            </div>
+            <h4>Join Community</h4>
+            <p>Connect with other learners</p>
+          </router-link>
+          
+          <div class="action-card" @click="startBotAnimation">
+            <div class="action-icon">
+              <font-awesome-icon icon="fa-solid fa-robot" />
+            </div>
+            <h4>Ask FinBud AI</h4>
+            <p>Get personalized guidance</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import quizComponent from "@/components/FinEdu/Quiz/quizComponent.vue";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { 
+  faBrain, faTrophy, faLightbulb, faChartLine, faGraduationCap, 
+  faRoute, faMap, faUsers, faRobot, faMaximize, faMinimize, faCalculator
+} from '@fortawesome/free-solid-svg-icons';
 import AOS from "aos";
 import "aos/dist/aos.css";
-//moving quiz into a component in case need to add more later on to Quiz Page
+
+// Add icons to library
+library.add(
+  faBrain, faTrophy, faLightbulb, faChartLine, faGraduationCap, 
+  faRoute, faMap, faUsers, faRobot, faMaximize, faMinimize, faCalculator
+);
+
 export default {
   name: "QuizzPage",
-  components: { quizComponent },
+  components: { 
+    quizComponent,
+    FontAwesomeIcon
+  },
   data() {
     return {
       // Bot Chat data
@@ -58,7 +169,6 @@ export default {
   },
   mounted() {
     AOS.init({ duration: 800, easing: "ease-out" });
-
     // Start bot animation when the component is mounted
     this.startBotAnimation();
   },
@@ -73,7 +183,7 @@ export default {
   },
   methods: {
     formatQuizIntroduction() {
-      return 'Welcome to FinBud Quiz!\n\nHere you can:\n\n📝 Create custom learning roadmaps based on your goals and schedule\n\n🧠 Test your financial knowledge with our keyword-based quizzes\n\n💰 Earn points and rewards as you learn\n\nEnter a finance topic you\'d like to learn about, or try generating a quiz with keywords like "stocks", "budgeting", or "crypto"!';
+      return 'Chào mừng bạn đến với FinBud Quiz! 🎯\n\n📚 Hãy khám phá:\n\n🧠 Tạo câu hỏi tùy chỉnh từ bất kỳ chủ đề tài chính nào\n\n🏆 Tích lũy điểm và phần thưởng khi học\n\n📈 Theo dõi tiến trình học tập của bạn\n\n💡 Nhận phản hồi chi tiết từ AI\n\nHãy nhập một chủ đề hoặc từ khóa tài chính bạn muốn học, ví dụ: "chứng khoán", "ngân sách", "đầu tư", "cryptocurrency", "bảo hiểm"!';
     },
 
     startBotAnimation() {
@@ -91,6 +201,7 @@ export default {
       this.showMessage = true;
       this.hidingMessage = false;
       this.typedContent = "";
+      this.chatCollapsed = false;
 
       // Show typing animation immediately
       this.isTyping = true;
@@ -100,7 +211,7 @@ export default {
         this.isTyping = false;
         this.botMessage = this.formatQuizIntroduction();
         this.startRealisticTyping();
-      }, 500);
+      }, 1500);
     },
 
     startRealisticTyping() {
@@ -108,10 +219,8 @@ export default {
       this.typedContent = "";
       let charIndex = 0;
 
-      // Simplified version to address potential issues
       const typeNextChar = () => {
         if (charIndex < this.botMessage.length) {
-          // Get the current character for typing
           const currentChar = this.botMessage.charAt(charIndex);
 
           // Add character to typed content with HTML handling
@@ -123,99 +232,38 @@ export default {
 
           charIndex++;
 
-          // Calculate a simpler typing speed based on character type
+          // Calculate typing speed based on character type
           let delay;
-
-          // Basic delays based on character type
           if ([".", "!", "?"].includes(currentChar)) {
-            delay = Math.random() * 100 + 80; // End of sentence
+            delay = Math.random() * 100 + 80;
           } else if ([",", ":", ";"].includes(currentChar)) {
-            delay = Math.random() * 60 + 40; // Mid-sentence pause
+            delay = Math.random() * 60 + 40;
           } else if (currentChar === " ") {
-            delay = Math.random() * 20 + 10; // Word break
+            delay = Math.random() * 20 + 10;
           } else if (currentChar === "\n") {
-            delay = Math.random() * 120 + 80; // Line break
-          } else if (!isNaN(parseInt(currentChar))) {
-            delay = Math.random() * 25 + 15; // Numbers
+            delay = Math.random() * 120 + 80;
           } else {
-            // Regular characters with occasional speed variation
-            delay =
-              Math.random() < 0.3
-                ? Math.random() * 8 + 5 // Fast typing (30% chance)
-                : Math.random() * 15 + 10; // Normal typing (70% chance)
+            delay = Math.random() * 25 + 15;
           }
 
-          // Add occasional small thinking pause (2% chance)
+          // Add occasional thinking pause
           if (Math.random() < 0.02) {
             delay += Math.random() * 150 + 50;
           }
 
-          // Schedule typing the next character
           this.typingTimer = setTimeout(typeNextChar, delay);
-        } else {
-          // Typing complete, but we no longer hide the bot
-          // Bot will stay visible
         }
       };
 
-      // Start typing with a small initial delay
       setTimeout(typeNextChar, 300);
-    },
-
-    scheduleHideBot() {
-      // Bot will stay visible (function kept for compatibility)
-    },
-
-    hideMessage() {
-      // Only hide the message, not the bot
-      this.hidingMessage = true;
-
-      // Reset message after animation completes
-      setTimeout(() => {
-        this.hidingMessage = false;
-        this.showMessage = true;
-
-        // Reset for new message
-        this.typedContent = "";
-        this.isTyping = true;
-
-        // After typing animation, restart with new message
-        setTimeout(() => {
-          this.isTyping = false;
-          this.botMessage = this.formatQuizIntroduction();
-          this.startRealisticTyping();
-        }, 500);
-      }, 800);
-    },
-
-    hideBot() {
-      // Start fade-out animations
-      this.hidingMessage = true;
-
-      // Wait for message to fade out, then hide bot
-      setTimeout(() => {
-        this.hidingBot = true;
-
-        // Reset states after animations complete
-        setTimeout(() => {
-          this.showBot = false;
-          this.showMessage = false;
-          this.hidingBot = false;
-          this.hidingMessage = false;
-          this.typedContent = "";
-        }, 500);
-      }, 300);
     },
 
     toggleChat() {
       this.chatCollapsed = !this.chatCollapsed;
 
-      // If expanding the chat and it was previously shown, just show it again
       if (!this.chatCollapsed && this.typedContent) {
         this.showMessage = true;
-      }
-      // If expanding and no content yet, restart the typing animation
-      else if (!this.chatCollapsed && !this.typedContent) {
+      } else if (!this.chatCollapsed && !this.typedContent) {
         this.startBotAnimation();
       }
     },
@@ -224,215 +272,445 @@ export default {
 </script>
 
 <style scoped>
-/* Light & Dark Mode Variables */
-:root {
-  --bg-primary: white;
-  --text-primary: black;
-  --container-bg: #f8f9fa;
-  --container-border: #ddd;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.quiz-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: 'Inter', sans-serif;
 }
 
-:root.dark-mode {
-  --bg-primary: #121212;
-  --text-primary: #f5f5f5;
-  --container-bg: #1e1e1e;
-  --container-border: #444;
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Quiz Page Container */
-.quizPageContainer {
-  width: 100%;
-  height: 100%;
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(180deg); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+  justify-content: center;
+  gap: 1rem;
+}
+
+.hero-icon {
+  background: linear-gradient(45deg, #000000, #333333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.hero-features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.feature-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.feature-tag:hover {
+  transform: translateY(-2px);
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Main Content */
+.main-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
   position: relative;
 }
 
-/* Container for Quiz Component */
-.container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  margin: 2rem 0;
-  background-color: var(--container-bg);
-  border: 1px solid var(--container-border);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Bot Chat Styles - Positioned on the left side */
+/* Enhanced Bot Chat */
 .bot-chat-container {
   position: fixed;
-  left: 5px;
-  top: 30%;
-  width: 250px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 15px;
-  z-index: 100;
-  opacity: 1; /* Always visible */
-  pointer-events: auto; /* Always interactive */
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 350px;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
-.bot-chat-container.bot-visible {
-  opacity: 1;
-}
-
-.bot-chat-container.bot-hidden {
-  opacity: 0;
-  transition: opacity 0.6s ease;
+.bot-avatar {
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 1rem;
 }
 
 .bot-image {
-  width: 40px;
-  height: auto;
-  display: block;
-  position: relative;
-  background: transparent;
-  transition: transform 0.3s ease;
-  cursor: pointer;
-  z-index: 2;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 3px solid #000000;
 }
 
 .bot-image:hover {
   transform: scale(1.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
-.bot-visible .bot-image {
-  animation: botBounce 0.6s ease-out;
+.bot-status-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  background: #10b981;
+  border-radius: 50%;
+  border: 3px solid white;
+  animation: pulse 2s infinite;
 }
 
-@keyframes botBounce {
-  0% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(-5px);
-  }
-  80% {
-    transform: translateY(2px);
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.bot-message-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.message-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.message-hidden {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.bot-header {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bot-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.minimize-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.minimize-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .bot-message {
-  margin-top: 10px;
-  background: #2196f3;
-  color: #ffffff;
-  padding: 12px 18px;
-  border-radius: 18px;
-  font-size: 15px;
-  max-width: 280px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease;
-  transition-delay: 0.2s;
-  word-wrap: break-word;
-  white-space: pre-line;
-  max-height: 0;
-  overflow: hidden;
-}
-
-.bot-message.message-visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-  max-height: 1000px;
-}
-
-.bot-message.message-hidden {
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  max-height: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease;
-  padding-top: 0;
-  padding-bottom: 0;
-  margin-top: 0;
+  padding: 1.5rem;
+  line-height: 1.6;
+  color: #374151;
 }
 
 .typing-animation {
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  align-items: center;
+  gap: 0.75rem;
+  color: #64748b;
+}
+
+.typing-text {
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 0.25rem;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
+  background: #000000;
   border-radius: 50%;
-  background-color: #ffffff;
-  opacity: 0.3;
+  animation: bounce 1.4s ease-in-out infinite both;
 }
 
-.dot:nth-child(1) {
-  animation: typing 1s infinite 0s;
-}
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
 
-.dot:nth-child(2) {
-  animation: typing 1s infinite 0.2s;
-}
-
-.dot:nth-child(3) {
-  animation: typing 1s infinite 0.4s;
-}
-
-.typed-message {
-  line-height: 1.5;
-  word-wrap: break-word;
-}
-
-@keyframes typing {
-  0%,
-  100% {
-    opacity: 0.3;
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
     transform: scale(1);
   }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
 }
 
-/* Responsive Styles */
-@media screen and (max-width: 768px) {
-  .container {
+/* Quiz Container */
+.quiz-container {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.quiz-panel {
+  width: 100%;
+}
+
+.panel-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.panel-header h3 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.panel-header p {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+/* Quick Actions */
+.quick-actions {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.quick-actions h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.action-card {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.action-card:hover {
+  border-color: #000000;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+  color: inherit;
+}
+
+.action-icon {
+  font-size: 3rem;
+  color: #000000;
+  margin-bottom: 1rem;
+}
+
+.action-card h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.action-card p {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .bot-chat-container {
+    position: static;
     width: 100%;
-    padding: 15px;
-  }
-
-  .bot-chat-container {
-    left: 10px;
-    right: auto;
-    bottom: 10px;
+    margin-bottom: 2rem;
+    transform: none;
     top: auto;
-  }
-
-  .bot-image {
-    width: 60px;
+    left: auto;
   }
 }
 
-@media screen and (max-width: 576px) {
-  .bot-chat-container {
-    width: 250px;
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
   }
+  
+  .hero-features {
+    gap: 1rem;
+  }
+  
+  .hero-stats {
+    gap: 2rem;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .quiz-container,
+  .quick-actions {
+    padding: 1.5rem;
+  }
+  
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .bot-message-container {
+    width: 100%;
+  }
+}
 
-  .bot-message {
-    max-width: 220px;
-  }
+.quiz-header h1 {
+  background: linear-gradient(45deg, #000000, #333333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.start-quiz-btn {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 auto;
+}
+
+.quiz-progress-bar {
+  background: #000000;
+  height: 6px;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.option:hover {
+  border-color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-nav a:hover {
+  color: #000000;
 }
 </style>

@@ -271,7 +271,7 @@ input[type="number"] {
 }
 
 .confirm {
-  background-color: var(--link-color, #007bff);
+  background-color: var(--link-color, #000000);
   color: white;
 }
 

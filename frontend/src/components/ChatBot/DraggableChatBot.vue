@@ -98,18 +98,12 @@
       const typeNextWord = () => {
         if (currentWordIndex.value < words.value.length) {
           const word = words.value[currentWordIndex.value];
-  
-          if (word === "\n") {
-            typedContent.value += "<br>";
-          } else {
-            typedContent.value += word;
-          }
-  
+          typedContent.value += word === "\n" ? "<br>" : word;
           currentWordIndex.value++;
   
           typingTimer.value = setTimeout(() => {
             typeNextWord();
-          }, props.typingSpeed * (word.length / 2 + 1));
+          }, props.typingSpeed);
         } else {
           scheduleHideBot();
         }
@@ -129,7 +123,8 @@
           setTimeout(() => {
             showMessage.value = false;
             hidingMessage.value = false;
-          }, 500);
+            typedContent.value = "";
+          }, 300);
         } else {
           hidingMessage.value = true;
           setTimeout(() => {
@@ -140,8 +135,8 @@
               hidingBot.value = false;
               hidingMessage.value = false;
               typedContent.value = "";
-            }, 1000);
-          }, 500);
+            }, 300);
+          }, 300);
         }
       };
   
@@ -187,6 +182,9 @@
       };
   
       const startBotAnimation = () => {
+        if (typingTimer.value) clearTimeout(typingTimer.value);
+        if (botHideTimer.value) clearTimeout(botHideTimer.value);
+  
         hidingBot.value = false;
         hidingMessage.value = false;
         typedContent.value = "";
@@ -255,80 +253,97 @@
   <style scoped>
   /* Add your bot chat styles here */
   .bot-chat-container {
-  position: fixed;
-  left: 20px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 15px;
-  z-index: 1000;
-  cursor: move;
-  user-select: none;
-  touch-action: none;
-  transform: translate(0, 0);
-}
+    position: fixed;
+    left: 30px;
+    top: 30%;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
 
-.bot-image {
-  width: 60px;
-  height: 60px;
-  cursor: grab;
-}
+  .bot-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 3px solid white;
+    background-color: white;
+  }
 
-.bot-image:active {
-  cursor: grabbing;
-}
+  .bot-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  }
 
-.bot-message {
-  margin-bottom: 10px;
-  margin-left: 10px;
-  background: #007bff;
-  color: #ffffff;
-  padding: 12px 18px;
-  border-radius: 18px;
-  max-width: 280px;
-  max-height: 200px;
-  overflow-y: auto;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
+  .bot-message {
+    margin-top: 1rem;
+    background: #1a1a1a;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    font-size: 15px;
+    max-width: 300px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    line-height: 1.6;
+    pointer-events: none;
+  }
 
-.bot-message.message-visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
+  .bot-message.message-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 
-.bot-message.message-hidden {
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
+  .bot-message.message-hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+  }
 
-.typing-animation {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-}
+  .typing-animation {
+    display: flex;
+    gap: 0.3rem;
+    justify-content: center;
+    padding: 0.5rem;
+  }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  opacity: 0.3;
-}
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: bounce 1s infinite;
+  }
 
-.dot:nth-child(1) {
-  animation: typing 1s infinite 0s;
-}
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
 
-.dot:nth-child(2) {
-  animation: typing 1s infinite 0.2s;
-}
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
 
-.dot:nth-child(3) {
-  animation: typing 1s infinite 0.4s;
-}
+  .typed-message {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .chatbot-trigger {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
   </style>

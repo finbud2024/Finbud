@@ -1,35 +1,38 @@
 <template>
   <div class="container">
     <div class="team-section">
-      <li class="title">{{ $t('aboutUsTitle') }}</li>
-      <li class="description">
+      <h1 class="title">{{ $t('aboutUsTitle') }}</h1>
+      <p class="description">
         {{ $t('aboutUsDescription') }}
-      </li>
+      </p>
     </div>
     <div class="team-section">
-      <li class="title">{{ $t('meetOurTeamTitle') }}</li>
+      <h2 class="title">{{ $t('meetOurTeamTitle') }}</h2>
       <swiper
         :slidesPerView="slidesPerView"
         :spaceBetween="30"
-        :speed="8000" 
+        :speed="3000" 
         :autoplay="{
-          delay: 0,
+          delay: 2000,
           disableOnInteraction: false,
-          pauseOnMouseEnter: true
+          pauseOnMouseEnter: true,
+          reverseDirection: false
         }"
         :loop="true"
-        :loopAdditionalSlides="10" 
-        :freeMode="{
-          enabled: true,
-          momentum: false
-        }"
+        :loopAdditionalSlides="2" 
+        :freeMode="false"
         :modules="modules"
         class="mySwiper-linear"
         :breakpoints="{
-          0: { slidesPerView: 1 },
-          768: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 }
+          0: { slidesPerView: 1, spaceBetween: 20 },
+          768: { slidesPerView: 2, spaceBetween: 25 },
+          1024: { slidesPerView: 3, spaceBetween: 30 },
+          1200: { slidesPerView: 4, spaceBetween: 30 }
         }"
+        :direction="'horizontal'"
+        :allowTouchMove="true"
+        :centeredSlides="false"
+        @swiper="onSwiper"
       >
      
         <swiper-slide v-for="member in teamMembers" :key="member.name">
@@ -46,6 +49,7 @@
                 :key="icon.name"
                 :href="icon.link"
                 target="_blank"
+                class="social-link"
               >
                 {{ icon.name }}
               </a>
@@ -57,7 +61,7 @@
 
     <!-- Testimonials Section -->
     <div class="testimonials-section">
-      <li class="title">{{ $t('testimonialsTitle') }}</li>
+      <h2 class="title">{{ $t('testimonialsTitle') }}</h2>
       <div class="testimonials-container">
         <div
           class="testimonial-card"
@@ -73,72 +77,104 @@
       </div>
     </div>
 
-    <section id="contact-page" class="animate fade-in">
+    <section id="contact-page" class="contact-section animate fade-in">
       <div class="contact-header animate slide-in-up">
         <h1>{{ $t('contactHeader') }}</h1>
         <p>{{ $t('contactSubheader') }}</p>
       </div>
 
+      <div class="contact-container">
       <form class="contact-form animate slide-in-up">
+          <div class="form-row">
         <div class="input-group">
-          <label for="full-name">{{ $t('fullNameLabel') }}</label>
+              <label for="full-name" class="form-label">{{ $t('fullNameLabel') }}</label>
           <input
             type="text"
             id="full-name"
             :placeholder="$t('fullNamePlaceholder')"
+                class="form-input"
             required
           />
         </div>
 
         <div class="input-group">
-          <label for="email">{{ $t('emailLabel') }}</label>
+              <label for="email" class="form-label">{{ $t('emailLabel') }}</label>
           <input
             type="email"
             id="email"
             placeholder="abc@gmail.com"
+                class="form-input"
             required
           />
+            </div>
         </div>
 
+          <div class="form-row">
         <div class="input-group">
-          <label for="company-name">{{ $t('companyNameLabel') }}</label>
+              <label for="company-name" class="form-label">{{ $t('companyNameLabel') }}</label>
           <input 
             type="text" 
             id="company-name" 
             :placeholder="$t('companyNamePlaceholder')" 
+                class="form-input"
           />
         </div>
 
         <div class="input-group">
-          <label for="mobile-number">{{ $t('mobileNumberLabel') }}</label>
+              <label for="mobile-number" class="form-label">{{ $t('mobileNumberLabel') }}</label>
           <input 
             type="tel" 
             id="mobile-number" 
             :placeholder="$t('mobileNumberPlaceholder')" 
+                class="form-input"
           />
+            </div>
         </div>
 
-        <div class="input-group">
-          <label for="message">{{ $t('messageLabel') }}</label>
+          <div class="input-group full-width">
+            <label for="message" class="form-label">{{ $t('messageLabel') }}</label>
           <textarea
             id="message"
             :placeholder="$t('messagePlaceholder')"
+              class="form-input form-textarea"
             required
           ></textarea>
         </div>
 
-        <button type="submit">{{ $t('sendMessageButton') }}</button>
+          <button type="submit" class="submit-btn">
+            <span>{{ $t('sendMessageButton') }}</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
       </form>
+        
       <div class="contact-info animate fade-in">
         <div class="info-block">
-          <div class="icon">&#x2709;</div>
-          <p>{{ $t('messageUsLabel') }}</p>
+            <div class="icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="info-content">
+              <h3>{{ $t('messageUsLabel') }}</h3>
           <a href="mailto:contact@detectauto.com">contact@detectauto.com</a>
         </div>
+          </div>
+          
         <div class="info-block">
-          <div class="icon">&#x260E;</div>
-          <p>{{ $t('callUsLabel') }}</p>
+            <div class="icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 16.92V19.92C22 20.52 21.39 21 20.92 21C9.36 21 0 11.64 0 0.08C0 -0.39 0.48 -1 1.08 -1H4.08C4.68 -1 5.08 -0.39 5.08 0.08C5.08 2.25 5.42 4.35 6.05 6.31C6.18 6.75 6.05 7.22 5.69 7.49L4.19 8.99C6.05 12.64 9.36 15.95 13.01 17.81L14.51 16.31C14.78 15.95 15.25 15.82 15.69 15.95C17.65 16.58 19.75 16.92 21.92 16.92C22.39 16.92 23 17.32 23 17.92V20.92Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="info-content">
+              <h3>{{ $t('callUsLabel') }}</h3>
           <a href="tel:+17632679917">+1 763-267-9917</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -154,7 +190,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
+import { Keyboard, Pagination, Navigation, Autoplay, FreeMode } from "swiper/modules";
 
 export default {
   name: "AboutUsPage",
@@ -165,7 +201,8 @@ export default {
 
   data() {
     return {
-      modules: [Keyboard, Pagination, Navigation, Autoplay],
+      modules: [Keyboard, Pagination, Navigation, Autoplay, FreeMode],
+      swiperInstance: null,
       teamMembers: [
         {
           name: "Tri Dinh Bui",
@@ -385,6 +422,31 @@ export default {
     ],
     };
   },
+  computed: {
+    slidesPerView() {
+      if (typeof window !== 'undefined') {
+        if (window.innerWidth < 768) return 1;
+        if (window.innerWidth < 1024) return 2;
+        if (window.innerWidth < 1200) return 3;
+        return 4;
+      }
+      return 3;
+    }
+  },
+  methods: {
+    onSwiper(swiper) {
+      this.swiperInstance = swiper;
+      // Ensure autoplay starts properly
+      if (swiper.autoplay) {
+        swiper.autoplay.start();
+      }
+    },
+    handleResize() {
+      if (this.swiperInstance) {
+        this.swiperInstance.update();
+      }
+    }
+  },
   mounted() {
     const observerOptions = {
       threshold: 0.1,
@@ -401,6 +463,13 @@ export default {
 
     const elements = document.querySelectorAll(".animate");
     elements.forEach((el) => observer.observe(el));
+    
+    // Add resize listener
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeUnmount() {
+    // Clean up event listener
+    window.removeEventListener('resize', this.handleResize);
   },
 };
 </script>
@@ -408,404 +477,752 @@ export default {
 <style scoped>
 @import "swiper/swiper-bundle.css";
 
-body {
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.mySwiper-linear .swiper-wrapper {
-  transition-timing-function: linear !important;
+/* Base Styles */
+:root {
+  --primary-color: #000000;
+  --secondary-color: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #6b7280;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .container {
-  list-style-type: none;
-  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  overflow: hidden;
+  list-style: none;
 }
 
+/* Remove any list styling */
+ul, ol, li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Team Section */
 .team-section {
-  background-color: white;
-  margin-bottom: 2rem;
-  padding: 2rem;
+  padding: 4rem 2rem;
+  margin: -2rem;
+  overflow: hidden;
 }
 
 .title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(45deg, #000, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-align: center;
-  color: var(--text-primary);
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  animation: fadeInDown 1s ease-in-out;
-  font-weight: 700;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+  list-style: none;
 }
 
 .description {
-  color: #333;
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-  animation: fadeInUp 1s ease-in-out;
-  font-weight: 300;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #666;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+  position: relative;
+  z-index: 1;
 }
 
-.team-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
+/* Team Members Slider */
+.mySwiper-linear {
+  padding: 20px 0;
+  overflow: visible !important;
+  margin: 0 -20px;
 }
 
 .team-member {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-  animation: fadeIn 1s ease-in-out;
-  font-weight: 300;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  height: auto; /* Ensure the height is dynamic */
-}
-
-.image-container {
-  width: 100%;
-  height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.image-container img {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
   max-width: 100%;
-  max-height: 100%;
-  border-radius: 50%;
-  animation: zoomIn 1s ease-in-out;
+  word-wrap: break-word;
+}
+
+.team-member::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #000, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
 }
 
 .team-member:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.team-member:hover::before {
+  transform: scaleX(1);
+}
+
+.image-container {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 2rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s ease;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .team-member h3 {
-  font-size: 1.2rem;
-  margin: 0.5rem 0;
-  color: #333;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(45deg, #000, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .team-member p {
   font-size: 1rem;
-  color: #777;
-  margin: 0.5rem 0 1rem;
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.5;
 }
 
 .team-member h2 {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 1.5rem;
+  max-height: 4.8rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .social-icons {
-  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .social-icons a {
-  font-size: 1rem;
-  color: var(--text-primary);
-  margin: 0 5px;
-  transition: color 0.3s;
-  text-decoration: none;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #000;
+  color: white;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.social-icons a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
 }
 
 .social-icons a:hover {
-  color: var(--text-primary);
-  font-weight: 500;
-  transition: font-weight 0.3s;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+.social-icons a:hover::before {
+  transform: translateY(0);
+}
+
+/* Testimonials Section */
 .testimonials-section {
-  background-color: white;
-  margin: 2rem 0;
-  padding: 2rem 13%; /* Adds spacing to the left and right */
+  padding: 6rem 2rem;
+  background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
+  border-radius: 30px;
+  margin: 4rem 0;
+  position: relative;
+  overflow: hidden;
 }
 
-.testimonials-container {
-  column-count: 3;
-  column-gap: 4rem;
+.testimonials-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(0,0,0,0.02) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .testimonial-card {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-  font-weight: 300;
-  display: inline-block;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  margin-bottom: 2rem;
+  height: 4px;
+  background: linear-gradient(90deg, #000, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.testimonial-card:hover::before {
+  transform: scaleX(1);
 }
 
 .testimonial-card h3 {
-  font-size: 1.2rem;
-  margin: 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 1rem;
 }
 
 .stars {
   display: flex;
-  justify-content: center;
-  margin: 0.5rem 0;
+  gap: 4px;
+  margin-bottom: 1.5rem;
 }
 
 .star {
-  color: gold;
-  font-size: 1.2rem;
+  color: #fbbf24;
+  font-size: 1.3rem;
+  filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.2));
 }
 
 .testimonial-card p {
   font-size: 1rem;
-  color: #777;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 1.5rem;
+  max-height: 9.6rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
 }
 
-@media (max-width: 1024px) {
-  .testimonials-container {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
-  }
-}
-
-@media (max-width: 768px) {
-  .testimonials-container {
+.testimonial-author {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.author-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
   }
 
-  .testimonial-card {
+.author-image img {
     width: 100%;
-    height: auto; /* Ensures cards can adjust height dynamically */
-    margin: 10px 0;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .team-section {
-    align-items: center;
-  }
-  .team-member {
-    margin-bottom: 20px;
-  }
-
-  .team-container,
-  .testimonials-container {
-    padding: 0 10px;
-  }
-
-  .contact-form {
-    padding: 20px;
-  }
+  height: 100%;
+  object-fit: cover;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.author-info {
+  flex-grow: 1;
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.author-name {
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0.25rem;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+.author-role {
+  font-size: 0.9rem;
+  color: #666;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@keyframes zoomIn {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-#contact-page {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  text-align: center;
+.contact-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  margin: 4rem -2rem 0;
 }
 
 .contact-header {
-  margin-bottom: 40px;
+  text-align: center;
+  margin-bottom: 4rem;
 }
 
 .contact-header h1 {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(45deg, #000, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  }
 
 .contact-header p {
-  font-size: 18px;
-  color: #666;
+  font-size: 1.2rem;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.contact-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .contact-form {
-  background: #f9f9f9;
-  padding: 40px 70px 40px 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 40px;
+  background: white;
+  padding: 3rem;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
 }
 
-.contact-header h1,
-.contact-header p {
-  margin-bottom: 20px;
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.contact-form .input-group {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.mySwiper {
-  height: 550px; /* Set your custom height here */
-}
-
-.swiper-slide {
+.input-group {
   display: flex;
-  align-items: stretch;
-  height: auto; /* Ensure slides take the height of their content */
+  flex-direction: column;
 }
 
-.contact-form label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
+.input-group.full-width {
+  grid-column: 1 / -1;
 }
 
-.contact-form input[type="text"],
-.contact-form input[type="email"],
-.contact-form input[type="tel"],
-.contact-form textarea {
-  width: 100%;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  transition: border-color 0.3s ease;
+.form-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
 }
 
-.contact-form input[type="text"]:focus,
-.contact-form input[type="email"]:focus,
-.contact-form input[type="tel"]:focus,
-.contact-form textarea:focus {
-  border-color: var(--text-primary);
+.form-input {
+  padding: 0.875rem 1.25rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+  color: #374151;
+}
+
+.form-input:focus {
   outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  background: white;
 }
 
-.contact-form button {
-  padding: 15px 30px;
-  background-color: black;
-  color: white;
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+  }
+
+.submit-btn {
+  width: 100%;
+  padding: 1rem 2rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  }
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #333 0%, #555 100%);
 }
 
-.contact-form button:hover {
-  background-color: var(--text-primary);
+.submit-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover svg {
+  transform: translateX(4px);
 }
 
 .contact-info {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .info-block {
-  text-align: center;
-  margin: 10px 0;
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.info-block:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
 }
 
 .info-block .icon {
-  font-size: 24px;
-  margin-bottom: 10px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
 }
 
-.info-block p {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 5px;
+.info-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.5rem 0;
 }
 
-.info-block a {
-  font-size: 16px;
-  color: var(--text-primary);
+.info-content a {
+  color: #000;
   text-decoration: none;
-}
-
-.info-block a:hover {
   font-weight: 500;
-  transition: font-weight 0.3s;
+  transition: color 0.3s ease;
 }
 
-/* Add animations */
-.animate {
+.info-content a:hover {
+  color: #333;
+}
+
+/* Social Links */
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.social-link {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #333 0%, #555 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-section {
+    padding: 4rem 1rem;
+    margin: 2rem -2rem 0;
+  }
+
+  .contact-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .contact-form {
+    padding: 2rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .info-block {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .social-icons {
+    flex-wrap: wrap;
+  }
+
+  .team-section {
+    padding: 3rem 1rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+  }
+
+  .team-member {
+    padding: 1.5rem;
+  }
+}
+
+/* Animations */
+@keyframes slideUpFade {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    transform: translateY(20px) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Staggered animations for team cards */
+.team-card:nth-child(1) { animation-delay: 0.1s; }
+.team-card:nth-child(2) { animation-delay: 0.2s; }
+.team-card:nth-child(3) { animation-delay: 0.3s; }
+.team-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Staggered animations for social links */
+.social-link:nth-child(1) { animation-delay: 0.6s; }
+.social-link:nth-child(2) { animation-delay: 0.7s; }
+.social-link:nth-child(3) { animation-delay: 0.8s; }
+
+/* Staggered animations for testimonial cards */
+.testimonial-card:nth-child(1) { animation-delay: 0.2s; }
+.testimonial-card:nth-child(2) { animation-delay: 0.3s; }
+.testimonial-card:nth-child(3) { animation-delay: 0.4s; }
+
+/* Dark mode support */
+:root.dark-mode .about-us {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+:root.dark-mode .hero-title,
+:root.dark-mode .section-title {
+  background: linear-gradient(135deg, #ffffff, #cccccc);
+  -webkit-background-clip: text;
+}
+
+:root.dark-mode .hero-description {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+:root.dark-mode .team-card,
+:root.dark-mode .testimonial-card,
+:root.dark-mode .contact-form {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .member-name,
+:root.dark-mode .author-name {
+  color: white;
+}
+
+:root.dark-mode .member-role,
+:root.dark-mode .member-bio,
+:root.dark-mode .author-role {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+:root.dark-mode .testimonial-content {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:root.dark-mode .form-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+:root.dark-mode .form-input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+:root.dark-mode .form-input:focus {
+  border-color: white;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+:root.dark-mode .social-link {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+:root.dark-mode .social-link:hover {
+  background: white;
+  color: black;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .about-us {
+    padding: 1rem;
+}
+
+  .hero-title {
+    font-size: 2.5rem;
+}
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .team-grid,
+  .testimonial-grid {
+    grid-template-columns: 1fr;
+}
+
+  .team-card,
+  .testimonial-card {
+    padding: 1.5rem;
+  }
+
+  .member-image {
+    width: 120px;
+    height: 120px;
+}
+
+  .contact-form {
+    padding: 1.5rem;
+  }
+}
+
+/* Hover effects */
+.team-card::before,
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), transparent);
+  border-radius: inherit;
   opacity: 0;
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 0.3s ease;
 }
 
-.animate-visible {
+.team-card:hover::before,
+.testimonial-card:hover::before {
   opacity: 1;
 }
 
-.fade-in {
-  transform: translateY(20px);
-}
-
-.fade-in.animate-visible {
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
   transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-.slide-in-up {
-  transform: translateY(20px);
+.team-card {
+  animation: float 6s ease-in-out infinite;
 }
 
-.slide-in-up.animate-visible {
-  transform: translateY(0);
-}
-
-.swiper-container-free-mode > .swiper-wrapper {
-  transition-timing-function : linear;
-}
+.team-card:nth-child(1) { animation-delay: 0s; }
+.team-card:nth-child(2) { animation-delay: -1.5s; }
+.team-card:nth-child(3) { animation-delay: -3s; }
+.team-card:nth-child(4) { animation-delay: -4.5s; }
 </style>

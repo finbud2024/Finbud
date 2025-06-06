@@ -4,7 +4,6 @@ export default {
   data() {
     return {
       partialMessage: "",
-      chatbotTriggeredByScroll: false,
       chatbotMessage: "",
       typingSpeed: 8,
       showChatBubble: true,
@@ -13,23 +12,14 @@ export default {
   },
   async mounted() {
     this.startTypingEffect();
-    window.addEventListener('scroll', this.handleScroll);
-    // Add window resize listener
-
-    await this.$nextTick(() => {
-      this.handleScroll();
-    });
   },
   beforeUnmount() {
-    // Clean up all event listeners
-    window.removeEventListener('scroll', this.handleScroll);
     if (this.typingInterval) {
       clearInterval(this.typingInterval);
     }
   },
   methods: {
     toggleChatBubble() {
-      this.chatbotTriggeredByScroll = false;
       this.startTypingEffect();
     },
 
@@ -56,6 +46,8 @@ export default {
       }, this.typingSpeed);
     },
     handleScroll() {
+      // Temporarily disable scroll handling for debugging message display
+      /*
       if (this.chatbotTriggeredByScroll) return;
 
       const chatbotContainer = document.querySelector('.chat-bot-container');
@@ -68,9 +60,10 @@ export default {
       );
 
       if (isVisible) {
-        this.startTypingEffect(this.message);
+        this.startTypingEffect(); // Note: original had this.message, but prop is this.message
         this.chatbotTriggeredByScroll = true;
       }
+      */
     },
     formatChatMessage(message) {
       return message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -97,63 +90,148 @@ export default {
 
 <style scoped>
 .chat-bot-container {
-  
   padding: 20px;
-  border-radius: 5px;
-  border: 1px solid #dee2e6;
+  border-radius: 15px;
+  border: 1px solid var(--border-color);
   min-height: 200px;
   height: auto;
   position: relative;
   display: flex;
   flex-direction: column;
+  background: var(--bg-secondary);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .chatbot-content {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-height: 150px; /* Fixed minimum height to prevent layout shifts */
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .chat-message {
-  background-color: var(--quant-background);
-  color: var(--quant-text-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
   border-radius: 15px;
-  padding: 12px 15px;
-  border: 1px solid #dee2e6;
-  max-width: 85%;
-  align-self: flex-start;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin-left: 10px;
-  margin-top: 30px;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  width: 100%; /* Full width to prevent shifts */
+  max-width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: 40px; /* Space for the bot icon */
+  box-shadow: var(--shadow-sm);
+  transition: none; /* Disable transitions to prevent shifts */
+  transform: none !important; /* Prevent transform animations */
+  opacity: 1 !important; /* Prevent opacity animations */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  box-sizing: border-box;
+  hyphens: auto;
 }
 
 .chat-message strong {
   font-weight: 600;
-  color: #007bff;
+  color: var(--text-primary);
+}
+
+.chat-message ul {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  max-width: 100%;
+}
+
+.chat-message li {
+  margin: 0.25rem 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .typing-cursor {
-  animation: blink 1s infinite;
-  font-weight: bold;
-  display: inline;
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: var(--text-primary);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
 
 .finbudBot {
-  width: 40px;
-  aspect-ratio: 1;
+  width: 35px;
+  height: 35px;
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  left: 15px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .finbudBot:hover {
   transform: scale(1.1);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .chat-bot-container {
+    padding: 15px;
+    min-height: 150px;
+  }
+
+  .chat-message {
+    padding: 12px;
+    font-size: 0.9rem;
+    margin-top: 35px;
+  }
+
+  .finbudBot {
+    width: 30px;
+    height: 30px;
+    top: 12px;
+    left: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-bot-container {
+    padding: 10px;
+    min-height: 120px;
+  }
+
+  .chat-message {
+    padding: 10px;
+    font-size: 0.85rem;
+    margin-top: 30px;
+  }
+
+  .finbudBot {
+    width: 25px;
+    height: 25px;
+    top: 10px;
+    left: 10px;
+  }
+}
+
+/* Dark mode adjustments */
+:root[data-theme="dark"] .chat-message {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="dark"] .chat-message strong {
+  color: var(--text-primary);
 }
 </style>

@@ -383,8 +383,8 @@ input {
 }
 
 input:focus {
-  outline: 2px solid #3b82f6;
-  border-color: #3b82f6;
+  outline: 2px solid #000000;
+  border-color: #000000;
 }
 
 .password-input-wrapper {
@@ -592,12 +592,12 @@ input:focus {
 }
 
 .signin-link a {
-  color: #2563eb;
+  color: #000000;
   text-decoration: none;
 }
 
 .signin-link a:hover {
-  color: #1d4ed8;
+  color: #333333;
   text-decoration: underline;
 }
 
@@ -660,5 +660,9 @@ input:focus {
   100% {
     box-shadow: inset 0px 0px 0px 30px #fff;
   }
+}
+
+.social-login p {
+  color: #000000;
 }
 </style>

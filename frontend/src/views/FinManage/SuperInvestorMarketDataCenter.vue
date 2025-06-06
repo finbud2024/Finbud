@@ -1,18 +1,18 @@
 <template>
   <section class="content">
     <div>
-      <h1 class="headtitle">Market Data Center</h1>
+      <h1 class="headtitle">{{ $t('marketDataCenter.title') }}</h1>
       <div class="market-data-center"> 
         <div class="market-section">
-          <div class="section-title">CRYPTOCURRENCY</div>
+          <div class="section-title">{{ $t('marketDataCenter.sections.crypto').toUpperCase() }}</div>
           <div class="margin-box">
             <CryptoWatch class="margin-box-content" />
           </div>
-          <div class="section-title">STOCK</div>
+          <div class="section-title">{{ $t('marketDataCenter.sections.stocks').toUpperCase() }}</div>
           <div class="margin-box">
             <StockWatch class="margin-box-content" />
           </div>
-          <div class="section-title">REAL ESTATE</div>
+          <div class="section-title">{{ $t('marketDataCenter.sections.realEstate').toUpperCase() }}</div>
           <RealEstateMap class="margin-box" />
         </div>
       </div>
@@ -72,10 +72,10 @@ export default {
 
 .section-title {
   font-weight: bold;
-  color: #007bff;
+  color: #000000;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid #000000;
   padding-bottom: 0.5rem;
 }
 
