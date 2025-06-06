@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 import GoogleStrategy from 'passport-google-oauth2'; 
 import User from '../Database Schema/User.js';
+=======
+import GoogleStrategy from "passport-google-oauth2";
+import User from "../database-schema/core/User.js";
+>>>>>>> Stashed changes
 
 const googleStrategy = new GoogleStrategy.Strategy ({
     clientID: process.env.GOOGLE_CLIENT_ID,

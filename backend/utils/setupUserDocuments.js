@@ -1,5 +1,5 @@
-import UserHolding from "../Database Schema/UserHolding.js";
-import Portfolio from "../Database Schema/Portfolio.js";
+import UserHolding from "../../database-schema/finance/UserHolding.js";
+import Portfolio from "../../database-schema/finance/Portfolio.js";
 
 export const setupUserDocuments = async (userId) => {
     try {

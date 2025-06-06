@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -26,6 +27,47 @@ import multiplierSimulatorRoute from '../Endpoints/quantSimulator/multiplierSimu
 import forumRoute from "../Endpoints/forumRoute.js";
 import postRoute from "../Endpoints/postRoute.js";
 import portfolioRoute from '../Endpoints/portfolioRoute.js';
+=======
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import mongoose from "mongoose";
+import Source from "../database-schema/core/Source.js";  
+import Article from "../database-schema/social/Article.js";
+import serverless from "serverless-http";
+import dotenv from "dotenv";
+import passportConfig from "../Passport/config.js";
+import { createServer } from "http";
+import { Server } from "socket.io";
+//routes for processing users request
+import authRoute from "../Endpoints/auth/authRoute.js";
+import threadRoute from "../Endpoints/social/threadRoute.js";
+import userRoute from "../Endpoints/auth/userRoute.js";
+import newsRoute from "../Endpoints/data/newsRoute.js";
+import chatRoute from "../Endpoints/services/chatRoute.js";
+import stockRoute from "../Endpoints/finance/stockRoute.js";
+import stockTransactionRoute from "../Endpoints/finance/stockTransactionRoute.js";
+import goalRoute from "../Endpoints/finance/goalRoute.js";
+import transactionRoute from "../Endpoints/finance/transactionRoute.js";
+import proxyRoute from "../Endpoints/services/proxyRoute.js";
+import eventRoute from "../Endpoints/social/eventRoute.js";
+import chatStockRoute from "../Endpoints/services/subChat/chatStockRoute.js";
+// Import the multiplier simulator route
+import multiplierSimulatorRoute from "../Endpoints/trading/quantSimulator/multiplierSimulatorEndpoints.js";
+import forumRoute from "../Endpoints/social/forumRoute.js";
+import postRoute from "../Endpoints/social/postRoute.js";
+import superInvestorsRoute from "../Endpoints/data/superInvestorsRoute.js";
+import finCoinRouter from "../Endpoints/finance/finCoinRouter.js";
+import portfolioRoute from "../Endpoints/finance/portfolioRoute.js";
+import plaidRoute from "../Endpoints/external/PlaidService.js";
+import filingsRoute, { loadCompanies } from "../Endpoints/data/finData/filingsRoute.js";
+import articleRoute from "../Endpoints/data/articleRoute.js";
+import insiderTransactionRoute from "../Endpoints/data/finData/transactionRoute.js";
+import notiRoute from "../Endpoints/auth/notiRoute.js";
+import courseRoute from "../Endpoints/social/courseRoute.js";
+import vietStock from "../Endpoints/data/vietStock.js";
+import finCompareRoute from "../Endpoints/finance/finCompareRoute.js";
+>>>>>>> Stashed changes
 
 dotenv.config();
 
@@ -110,6 +152,7 @@ app.use(cors());
 
 const router = express.Router();
 
+<<<<<<< Updated upstream
 router.use('/', authRoute);
 router.use('/', userRoute);
 router.use('/', threadRoute);
@@ -123,13 +166,44 @@ router.use('/', goalRoute);
 router.use('/', proxyRoute);
 router.use('/events', eventRoute);
 router.use('/', chatStockRoute);
+=======
+router.use("/", authRoute);
+router.use("/", userRoute);
+router.use("/", threadRoute);
+router.use("/", newsRoute);
+router.use("/", chatRoute);
+router.use("/", finCoinRouter);
+router.use("/", stockRoute);
+router.use("/", stockTransactionRoute);
+router.use("/", goalRoute);
+router.use("/", transactionRoute);
+router.use("/", proxyRoute);
+router.use("/events", eventRoute);
+router.use("/", chatStockRoute);
+>>>>>>> Stashed changes
 // Register the multiplier simulator route
 router.use('/multiplier-simulator', multiplierSimulatorRoute);
 // router.use('/', quantSimulatorRoute); // Commenting out undefined route
 router.use('/api/forums', forumRoute);
 router.use('/api/posts', postRoute);
 // router.use('/', chatStockRoute); // Duplicate route - already registered above
+<<<<<<< Updated upstream
 router.use('/', portfolioRoute);
+=======
+router.use("/", portfolioRoute);
+router.use("/api/investors", superInvestorsRoute);
+router.use("/api/forums", forumRoute);
+router.use("/api/articles", articleRoute);
+router.use("/api/posts", postRoute);
+router.use("/", finCoinRouter);
+router.use("/api/plaid", plaidRoute);
+router.use("/", filingsRoute);
+router.use("/", insiderTransactionRoute)
+router.use("/", notiRoute);
+router.use("/api/courses", courseRoute)
+router.use("/api/vietstock", vietStock);
+router.use("/", finCompareRoute);
+>>>>>>> Stashed changes
 
 app.use('/.netlify/functions/server', router);
 // Also use routes without Netlify prefix for local development

@@ -1,10 +1,17 @@
 import express from "express";
-import Chat from "../Database Schema/Chat.js";
-import validateRequest from "../utils/validateRequest.js";
+import Chat from "../../database-schema/core/Chat.js";
+import validateRequest from "../../utils/validation/validateRequest.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import { BraveSearch } from "@langchain/community/tools/brave_search";
+<<<<<<< Updated upstream:backend/Endpoints/chatRoute.js
 import { isAuthenticated, isAdmin } from '../middleware/auth.js';
+=======
+import { isAuthenticated, isAdmin } from '../../middleware/auth.js';
+import Transaction from "../../database-schema/trading/Transaction.js";
+import UserHolding from "../../database-schema/finance/UserHolding.js";
+import Portfolio from "../../database-schema/finance/Portfolio.js";
+>>>>>>> Stashed changes:backend/Endpoints/services/chatRoute.js
 import OpenAI from 'openai';
 // import { YoutubeTranscript } from 'youtube-transcript';
 // import { getVideoId } from '../utils/getVideoId.js';
