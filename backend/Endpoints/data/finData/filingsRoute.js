@@ -1,11 +1,11 @@
 import express from 'express';
 import axios from 'axios';
-import Company from '../../Database Schema/finData/CompanySchema';
-import { fetchFilingsDocument } from '../../functions/filingsDocuments';
-import Filings from '../../Database Schema/finData/FilingsSchema';
+import Company from '../../../Database_Schema/market-data/finData/CompanySchema.js';
+import { fetchFilingsDocument } from '../../../functions/scrapers/market/filingsDocuments.js';
+import Filings from '../../../Database_Schema/market-data/finData/FilingsSchema.js';
 import csvtojson from "convert-csv-to-json"
-import { getRecentQuarter } from '../../utils/getRecentQuarter.js';
-import EarningCalendar from '../../Database Schema/finData/EarningCalendar.js';
+import { getRecentQuarter } from '../../../utils/data-processing/getRecentQuarter.js';
+import EarningCalendar from '../../../Database_Schema/market-data/finData/EarningCalendar.js';
 
 const filingsRoute = express.Router();
 

@@ -1,5 +1,5 @@
 import express from "express";
-import Article from "../Database Schema/Article.js";
+import Article from "../../Database_Schema/social/Article.js";
 
 const articleRoute = express.Router();
 

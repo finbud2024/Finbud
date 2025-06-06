@@ -1,10 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import Post from "../Database Schema/Post.js";
-import Forum from "../Database Schema/Forum.js";
-import User from "../Database Schema/User.js";
-import ScrapedUser from "../Database Schema/ScrapedUser.js";
-import { isAuthenticated } from '../middleware/auth.js';
+import Post from "../../Database_Schema/social/Post.js";
+import Forum from "../../Database_Schema/social/Forum.js";
+import User from "../../Database_Schema/core/User.js";
+import ScrapedUser from "../../Database_Schema/market-data/ScrapedUser.js";
+import { isAuthenticated } from '../../middleware/auth.js';
 
 const postRouter = express.Router();
 

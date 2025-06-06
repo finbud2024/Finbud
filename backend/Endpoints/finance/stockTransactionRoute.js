@@ -1,9 +1,9 @@
 import express from 'express';
-import StockTransaction from '../Database Schema/StockTransaction.js';
-import UserHolding from '../Database Schema/UserHolding.js';
-import User from '../Database Schema/User.js';
-import validateRequest from '../utils/validateRequest.js';
-import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
+import StockTransaction from '../../Database_Schema/trading/StockTransaction.js';
+import UserHolding from '../../Database_Schema/finance/UserHolding.js';
+import User from '../../Database_Schema/core/User.js';
+import validateRequest from '../../utils/validation/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const stockTransactionRoute = express.Router();
 

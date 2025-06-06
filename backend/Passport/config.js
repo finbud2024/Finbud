@@ -2,7 +2,7 @@ import passport from "passport";
 import session from "express-session";
 import googleStrategy from "./googleStrategy.js";
 import localStrategy from "./localStrategy.js";
-import User from "../Database Schema/User.js";
+import User from "../Database_Schema/core/User.js";
 import MongoStore from "connect-mongo";
 
 const passportConfig = (app) => {

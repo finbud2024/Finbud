@@ -1,6 +1,6 @@
 import axios from "axios";
-import Filings from "../Database Schema/finData/FilingsSchema";
-import { getPeriodDateFilings } from "../utils/filingsDateUtils";
+import Filings from "../../../Database_Schema/market-data/finData/FilingsSchema.js";
+import { getPeriodDateFilings } from "../../../utils/data-processing/filingsDateUtils.js";
 
 const SEC_HEADERS = {
     "User-Agent": "Anh Tran anhtrannd2004@gmail.com"

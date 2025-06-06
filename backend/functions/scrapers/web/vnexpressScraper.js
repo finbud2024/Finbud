@@ -2,11 +2,11 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import ScrapedUser from '../Database Schema/ScrapedUser.js';
-import Article from '../Database Schema/Article.js';
+import ScrapedUser from '../../../Database_Schema/market-data/ScrapedUser.js';
+import Article from '../../../Database_Schema/social/Article.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Source from "../Database Schema/Source.js";
+import Source from "../../../Database_Schema/core/Source.js";
 
 puppeteer.use(StealthPlugin());
 
@@ -20,7 +20,7 @@ try {
   __dirname = path.resolve();
 }
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 const MONGO_URI = process.env.MONGO_URI;
 

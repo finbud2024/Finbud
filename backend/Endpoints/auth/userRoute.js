@@ -1,7 +1,7 @@
 import express from 'express';
-import User from '../Database Schema/User.js';
-import validateRequest from '../utils/validateRequest.js';
-import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
+import User from '../../Database_Schema/core/User.js';
+import validateRequest from '../../utils/validation/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const userRoute = express.Router();
 

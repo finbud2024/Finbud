@@ -1,6 +1,6 @@
 // recreateAllForums.js
 import mongoose from 'mongoose';
-import Forum from '../Database Schema/Forum.js'; // adjust path if needed
+import Forum from '../../../Database_Schema/social/Forum.js'; // adjust path if needed
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 // Setup .env
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 const MONGO_URI = process.env.MONGO_URI;
 

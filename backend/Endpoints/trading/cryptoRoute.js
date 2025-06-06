@@ -1,7 +1,7 @@
 import express from 'express';
-import CryptoCurrency from '../Database Schema/Crypto.js';
+import CryptoCurrency from '../../Database_Schema/trading/Crypto.js';
 import moment from 'moment';
-import validateRequest from '../utils/validateRequest.js';
+import validateRequest from '../../utils/validation/validateRequest.js';
 
 const cryptoRoute = express.Router();
 

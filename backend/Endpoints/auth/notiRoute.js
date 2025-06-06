@@ -1,7 +1,7 @@
 import express from 'express';
-import Noti from "../Database Schema/Noti.js";
-import validateRequest from '../utils/validateRequest.js';
-import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
+import Noti from "../../Database_Schema/core/Noti.js";
+import validateRequest from '../../utils/validation/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const notiRoute = express.Router(); 
 

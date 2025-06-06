@@ -1,7 +1,7 @@
 import express from 'express';
-import Thread from '../Database Schema/Thread.js';
-import validateRequest from '../utils/validateRequest.js';
-import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../middleware/auth.js';
+import Thread from '../../Database_Schema/social/Thread.js';
+import validateRequest from '../../utils/validation/validateRequest.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const threadRoute = express.Router();
 

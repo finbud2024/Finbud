@@ -1,6 +1,6 @@
 import express from "express";
-import Transaction from "../Database Schema/Transaction.js";
-import validateRequest from "../utils/validateRequest.js";
+import Transaction from "../../Database_Schema/trading/Transaction.js";
+import validateRequest from "../../utils/validation/validateRequest.js";
 
 const transactionRoute = express.Router();
 

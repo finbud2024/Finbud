@@ -1,12 +1,12 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import Investor from '../Database Schema/TopInvestors.js';
-import CompanyPortfolio from '../Database Schema/CompanyPortfolio.js';
+import Investor from '../../../Database_Schema/market-data/TopInvestors.js';
+import CompanyPortfolio from '../../../Database_Schema/market-data/CompanyPortfolio.js';
 import { 
     getRandomUserAgent,
     connectToMongoDB,
     disconnectFromMongoDB
-} from '../utils/scraperUtils.js';
+} from '../../../utils/scraping/scraperUtils.js';
 
 import { fileURLToPath } from 'url';
 
