@@ -1,12 +1,12 @@
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
-import Investor from "../Database Schema/TopInvestors.js";
+import Investor from "../../../Database_Schema/market-data/TopInvestors.js";
 import { 
     getRandomUserAgent,
     connectToMongoDB,
     disconnectFromMongoDB,
     saveToDatabase 
-} from '../utils/scraperUtils.js';
+} from '../../../utils/scraping/scraperUtils.js';
 import { fileURLToPath } from 'url';
 
 chromium.use(stealth());

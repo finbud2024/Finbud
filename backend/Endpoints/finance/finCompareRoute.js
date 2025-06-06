@@ -1,5 +1,5 @@
 import express from 'express';
-import Compare from '../Database Schema/FCompare.js';
+import Compare from '../../Database_Schema/finance/FCompare.js';
 
 const router = express.Router();
 

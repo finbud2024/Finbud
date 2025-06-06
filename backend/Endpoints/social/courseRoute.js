@@ -1,5 +1,5 @@
 import express from "express";
-import Course from "../Database Schema/Course.js";
+import Course from "../../Database_Schema/social/Course.js";
 
 const courseRoute = express.Router();
 

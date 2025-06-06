@@ -1,13 +1,13 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import Holding from '../Database Schema/Holding.js';
-import Investor from '../Database Schema/TopInvestors.js';
+import Holding from '../../../Database_Schema/market-data/Holding.js';
+import Investor from '../../../Database_Schema/market-data/TopInvestors.js';
 import { 
     getRandomUserAgent,
     connectToMongoDB,
     disconnectFromMongoDB,
     saveToDatabase 
-} from '../utils/scraperUtils.js';
+} from '../../../utils/scraping/scraperUtils.js';
 import { fileURLToPath } from 'url';
 import { extractDateValues } from './marketValueScraper.js';
 

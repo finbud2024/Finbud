@@ -1,7 +1,7 @@
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
 import mongoose from "mongoose";
-import Compare from "../Database Schema/FCompare.js";
+import Compare from "../../Database_Schema/finance/FCompare.js";
 import dotenv from 'dotenv';
 import puppeteer from 'puppeteer';
 

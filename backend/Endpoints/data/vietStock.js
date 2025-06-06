@@ -1,9 +1,9 @@
 import express from 'express';
-import vietStockOverview from '../Database Schema/vietStockOverview';
-import vietStockGDP from '../Database Schema/vietStockGDP';
-import vietStockCPI from '../Database Schema/vietStockCPI';
-import vietStockImportExport from '../Database Schema/vietStockImportExport';
-import vietStockFDI from '../Database Schema/vietStockFDI';
+import vietStockOverview from '../../Database_Schema/market-data/vietStockOverview.js';
+import vietStockGDP from '../../Database_Schema/market-data/vietStockGDP.js';
+import vietStockCPI from '../../Database_Schema/market-data/vietStockCPI.js';
+import vietStockImportExport from '../../Database_Schema/market-data/vietStockImportExport.js';
+import vietStockFDI from '../../Database_Schema/market-data/vietStockFDI.js';
 import { fixRequestBody } from 'http-proxy-middleware';
 
 const vietStockRoute = express.Router();

@@ -14,7 +14,7 @@ try {
 }
 
 // Load .env file from backend directory
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '..', '..', '.env') });
 
 export const browserConfig = {
     headless: true,

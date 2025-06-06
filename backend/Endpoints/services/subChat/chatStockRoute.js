@@ -1,5 +1,5 @@
 import express from "express"
-import ChatSimulator from "../../Database Schema/ChatStockSimulator.js";
+import ChatSimulator from "../../../Database_Schema/trading/ChatStockSimulator.js";
 const chatStockRoute = express.Router()
 
 chatStockRoute.post("/update-response", async (req, res) => {

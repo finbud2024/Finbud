@@ -1,5 +1,5 @@
 import express from "express";
-import Event from "../Database Schema/Event.js";
+import Event from "../../Database_Schema/social/Event.js";
 
 const eventRoute = express.Router();
 

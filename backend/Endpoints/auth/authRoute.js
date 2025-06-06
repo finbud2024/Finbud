@@ -4,7 +4,7 @@
 
 import passport from "passport";
 import express from "express";
-import { setupUserDocuments } from "../utils/setupUserDocuments.js";
+import { setupUserDocuments } from "../../utils/file-management/setupUserDocuments.js";
 const authRoute = express.Router();
 
 //AUTHENTICATE route: Uses passport to authenticate with GitHub.

@@ -1,5 +1,5 @@
 import GoogleStrategy from "passport-google-oauth2";
-import User from "../Database Schema/User.js";
+import User from "../Database_Schema/core/User.js";
 
 const googleStrategy = new GoogleStrategy.Strategy(
   {

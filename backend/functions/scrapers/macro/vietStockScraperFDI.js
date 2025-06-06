@@ -3,11 +3,11 @@ import stealth from 'puppeteer-extra-plugin-stealth';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import path from 'node:path';
-import vietStockFDI from '../Database Schema/vietStockFDI.js';
+import vietStockFDI from '../../../Database_Schema/market-data/vietStockFDI.js';
 import { fileURLToPath } from 'url';
 import {
     getRandomUserAgent
-} from '../utils/scraperUtils.js';
+} from '../../../utils/scraping/scraperUtils.js';
 
 
 chromium.use(stealth());
@@ -21,7 +21,7 @@ try {
   // Fallback for environments where import.meta is not available
   __dirname = path.resolve();
 }
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 const MONGO_URI = process.env.MONGO_URI;
 

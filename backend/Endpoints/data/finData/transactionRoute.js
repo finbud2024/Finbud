@@ -1,10 +1,10 @@
 import express from 'express';
 
-import Company from '../../Database Schema/finData/CompanySchema';
-import Filings from '../../Database Schema/finData/FilingsSchema';
-import parseXMLFile from '../../utils/parsingXML';
-import { processForm4 } from '../../utils/processForm4';
-import InsiderTransaction from '../../Database Schema/finData/TransactionSchema';
+import Company from '../../../Database_Schema/market-data/finData/CompanySchema.js';
+import Filings from '../../../Database_Schema/market-data/finData/FilingsSchema.js';
+import parseXMLFile from '../../../utils/xml-parsing/parsingXML.js';
+import { processForm4 } from '../../../utils/xml-parsing/processForm4.js';
+import InsiderTransaction from '../../../Database_Schema/market-data/finData/TransactionSchema.js';
 
 const insiderTransactionRoute = express.Router();
 

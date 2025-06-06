@@ -1,5 +1,5 @@
 import express from "express";
-import Forum from "../Database Schema/Forum.js";
+import Forum from "../../Database_Schema/social/Forum.js";
 
 const forumRouter = express.Router();
 

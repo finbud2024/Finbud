@@ -2,7 +2,7 @@
 // import dotenv from 'dotenv';
 
 // import mongoose from 'mongoose';
-// import Transaction from './Database Schema/Transaction.js'; 
+// import Transaction from './Database_Schema/Transaction.js'; 
 
 // dotenv.config();
 
