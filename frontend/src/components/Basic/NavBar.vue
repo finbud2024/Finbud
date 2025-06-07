@@ -82,6 +82,14 @@
               <font-awesome-icon icon="fa-solid fa-chart-pie" class="subsection-item-icon" />
               {{ $t("pestle") }}
             </router-link>
+            <router-link to="/ai-workflows" class="subsection-item">
+              <font-awesome-icon icon="fa-solid fa-cogs" class="subsection-item-icon" />
+              AI Workflows
+            </router-link>
+            <router-link to="/ai-breakthrough-workflows" class="subsection-item">
+              <font-awesome-icon icon="fa-solid fa-rocket" class="subsection-item-icon" />
+              AI Breakthrough Workflows
+            </router-link>
           </div>
         </li>
 
@@ -112,6 +120,14 @@
             <router-link to="/finxpert-equity" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-chart-line" class="subsection-item-icon" />
               Equity Researcher
+            </router-link>
+            <router-link to="/ai-finance-workflows" class="subsection-item">
+              <font-awesome-icon icon="fa-solid fa-brain" class="subsection-item-icon" />
+              AI Finance Workflows
+            </router-link>
+            <router-link to="/private-equity-deal-scout" class="subsection-item">
+              <font-awesome-icon icon="fa-solid fa-search-dollar" class="subsection-item-icon" />
+              Private Equity Deal Scout
             </router-link>
           </div>
         </li>
@@ -202,7 +218,8 @@ import {
   faRobot, faUserTie, faChartPie, 
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
-  faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain
+  faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
+  faCogs, faRocket, faSearchDollar
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -210,7 +227,8 @@ library.add(
   faRobot, faUserTie, faChartPie, 
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
-  faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain
+  faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
+  faCogs, faRocket, faSearchDollar
 );
 
 export default {
@@ -1289,7 +1307,7 @@ export default {
 .premium-text {
   background: linear-gradient(45deg, #ffffff, #e0e0e0, #ffffff);
   background-size: 200% 200%;
-  animation: shimmer 2s ease-in-out infinite;
+  animation: shimmer 2s ease-in-out infinite alternate;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

@@ -1,5 +1,10 @@
 <template>
   <div class="ai-hedge-fund-lab">
+    <!-- Universe Background Effect -->
+    <div class="universe-background">
+      <div class="bubble" v-for="n in 20" :key="n" :style="getBubbleStyle(n)"></div>
+    </div>
+
     <!-- Enhanced Header with Market Status -->
     <div class="lab-header">
       <div class="header-content">
@@ -841,6 +846,23 @@ export default {
         minimumFractionDigits: 0, 
         maximumFractionDigits: 0 
       });
+    },
+
+    getBubbleStyle(index) {
+      const size = Math.random() * 60 + 20; // 20-80px
+      const left = Math.random() * 100; // 0-100%
+      const animationDelay = Math.random() * 20; // 0-20s
+      const animationDuration = Math.random() * 10 + 15; // 15-25s
+      const opacity = Math.random() * 0.3 + 0.1; // 0.1-0.4
+      
+      return {
+        width: `${size}px`,
+        height: `${size}px`,
+        left: `${left}%`,
+        animationDelay: `${animationDelay}s`,
+        animationDuration: `${animationDuration}s`,
+        opacity: opacity
+      };
     }
   }
 };
@@ -2081,5 +2103,61 @@ export default {
   justify-content: space-between;
   font-size: 0.8rem;
   color: #cccccc;
+}
+
+/* Universe Background Effect */
+.universe-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: floatUp linear infinite;
+  backdrop-filter: blur(2px);
+}
+
+.bubble:nth-child(odd) {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.bubble:nth-child(3n) {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 50%, transparent 100%);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Ensure main content is above background */
+.lab-header,
+.dashboard-container {
+  position: relative;
+  z-index: 1;
 }
 </style> 

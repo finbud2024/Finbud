@@ -1,307 +1,280 @@
 <template>
-  <div class="ai-workflows-container">
+  <div class="ai-workflows">
+    <!-- Universe Background Effect -->
+    <div class="universe-background">
+      <div class="bubble" v-for="n in 15" :key="n" :style="getBubbleStyle(n)"></div>
+    </div>
+
     <!-- Header Section -->
-    <div class="workflows-header">
+    <div class="header-section">
       <div class="header-content">
         <div class="title-section">
-          <h1 class="main-title">AI Workflows</h1>
-          <p class="subtitle">Automate your financial analysis with intelligent workflows</p>
+          <h1 class="main-title">
+            <font-awesome-icon icon="fa-solid fa-cogs" class="workflow-icon" />
+            AI Workflows
+          </h1>
+          <p class="subtitle">Hệ thống quy trình AI tự động - Tối ưu hóa và phân tích thông minh</p>
         </div>
-        <div class="header-actions">
-          <button @click="showCreateWorkflowModal = true" class="create-btn">
-            <font-awesome-icon icon="fa-solid fa-plus" />
-            Create Workflow
-          </button>
-          <button @click="refreshWorkflows" class="refresh-btn">
-            <font-awesome-icon icon="fa-solid fa-refresh" />
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filter and Search Section -->
-    <div class="filter-section">
-      <div class="search-container">
-        <div class="search-input-wrapper">
-          <font-awesome-icon icon="fa-solid fa-search" class="search-icon" />
-          <input 
-            v-model="searchQuery" 
-            placeholder="Search workflows..."
-            class="search-input"
-          />
-        </div>
-      </div>
-      <div class="filter-controls">
-        <select v-model="selectedCategory" class="filter-select">
-          <option value="">All Categories</option>
-          <option value="market-analysis">Market Analysis</option>
-          <option value="portfolio-management">Portfolio Management</option>
-          <option value="risk-assessment">Risk Assessment</option>
-          <option value="trading-signals">Trading Signals</option>
-          <option value="research">Research</option>
-        </select>
-        <select v-model="selectedStatus" class="filter-select">
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="scheduled">Scheduled</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Workflows Grid -->
-    <div class="workflows-grid">
-      <div 
-        v-for="workflow in filteredWorkflows" 
-        :key="workflow.id"
-        :class="['workflow-card', workflow.status]"
-        @click="openWorkflowDetails(workflow)"
-      >
-        <div class="workflow-header">
-          <div class="workflow-icon">
-            <font-awesome-icon :icon="workflow.icon" />
+        <div class="stats-overview">
+          <div class="stat-card">
+            <div class="stat-value">{{ activeWorkflows }}</div>
+            <div class="stat-label">Active Workflows</div>
           </div>
-          <div class="workflow-actions">
-            <button @click.stop="toggleWorkflow(workflow)" class="action-btn">
-              <font-awesome-icon :icon="workflow.status === 'active' ? 'fa-solid fa-pause' : 'fa-solid fa-play'" />
-            </button>
-            <button @click.stop="editWorkflow(workflow)" class="action-btn">
-              <font-awesome-icon icon="fa-solid fa-edit" />
+          <div class="stat-card">
+            <div class="stat-value">{{ completedTasks }}</div>
+            <div class="stat-label">Completed Tasks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ efficiency }}%</div>
+            <div class="stat-label">Efficiency Rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workflow Categories -->
+    <div class="workflow-categories">
+      <div class="category-tabs">
+        <button v-for="category in categories" :key="category.id"
+                @click="activeCategory = category.id"
+                :class="['category-tab', { active: activeCategory === category.id }]">
+          <font-awesome-icon :icon="category.icon" />
+          {{ category.name }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Workflow Dashboard -->
+    <div class="workflow-dashboard">
+      
+      <!-- Data Processing Workflows -->
+      <div v-if="activeCategory === 'data'" class="workflow-section">
+        <div class="section-header">
+          <h2>Data Processing Workflows</h2>
+          <div class="workflow-controls">
+            <button @click="runDataProcessing" class="run-btn">
+              <font-awesome-icon icon="fa-solid fa-play" />
+              Run Processing
             </button>
           </div>
         </div>
         
-        <div class="workflow-content">
-          <h3 class="workflow-title">{{ workflow.name }}</h3>
-          <p class="workflow-description">{{ workflow.description }}</p>
-          
-          <div class="workflow-tags">
-            <span 
-              v-for="tag in workflow.tags" 
-              :key="tag"
-              class="tag"
-            >
-              {{ tag }}
-            </span>
-          </div>
-          
-          <div class="workflow-stats">
-            <div class="stat">
-              <span class="stat-label">Runs:</span>
-              <span class="stat-value">{{ workflow.runs }}</span>
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="card-header">
+              <h3>Data Ingestion Pipeline</h3>
+              <div class="status-indicator" :class="dataWorkflows.ingestion.status">
+                {{ dataWorkflows.ingestion.status }}
+              </div>
             </div>
-            <div class="stat">
-              <span class="stat-label">Success Rate:</span>
-              <span class="stat-value">{{ workflow.successRate }}%</span>
-            </div>
-          </div>
-          
-          <div class="workflow-schedule">
-            <div class="schedule-info">
-              <span class="schedule-icon">
-                <font-awesome-icon icon="fa-solid fa-clock" />
-              </span>
-              <span class="schedule-text">{{ workflow.schedule }}</span>
-            </div>
-            <div class="last-run">
-              Last run: {{ formatDate(workflow.lastRun) }}
-            </div>
-          </div>
-        </div>
-        
-        <div class="workflow-status">
-          <span :class="['status-badge', workflow.status]">
-            {{ workflow.status.toUpperCase() }}
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Create Workflow Modal -->
-    <div v-if="showCreateWorkflowModal" class="modal-overlay" @click="showCreateWorkflowModal = false">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h2>Create New Workflow</h2>
-          <button @click="showCreateWorkflowModal = false" class="close-btn">
-            <font-awesome-icon icon="fa-solid fa-times" />
-          </button>
-        </div>
-        
-        <div class="modal-body">
-          <div class="form-group">
-            <label for="workflowName">Workflow Name</label>
-            <input 
-              id="workflowName"
-              v-model="newWorkflow.name" 
-              placeholder="Enter workflow name"
-              class="form-input"
-            />
-          </div>
-          
-          <div class="form-group">
-            <label for="workflowDescription">Description</label>
-            <textarea 
-              id="workflowDescription"
-              v-model="newWorkflow.description" 
-              placeholder="Describe what this workflow does"
-              class="form-textarea"
-            ></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label for="workflowCategory">Category</label>
-            <select id="workflowCategory" v-model="newWorkflow.category" class="form-select">
-              <option value="">Select Category</option>
-              <option value="market-analysis">Market Analysis</option>
-              <option value="portfolio-management">Portfolio Management</option>
-              <option value="risk-assessment">Risk Assessment</option>
-              <option value="trading-signals">Trading Signals</option>
-              <option value="research">Research</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Workflow Template</label>
-            <div class="template-grid">
-              <div 
-                v-for="template in workflowTemplates" 
-                :key="template.id"
-                :class="['template-card', { selected: newWorkflow.template === template.id }]"
-                @click="newWorkflow.template = template.id"
-              >
-                <div class="template-icon">
-                  <font-awesome-icon :icon="template.icon" />
+            <div class="card-content">
+              <div class="pipeline-metrics">
+                <div class="metric">
+                  <span class="metric-label">Records Processed</span>
+                  <span class="metric-value">{{ dataWorkflows.ingestion.recordsProcessed.toLocaleString() }}</span>
                 </div>
-                <div class="template-info">
-                  <h4>{{ template.name }}</h4>
-                  <p>{{ template.description }}</p>
+                <div class="metric">
+                  <span class="metric-label">Processing Rate</span>
+                  <span class="metric-value">{{ dataWorkflows.ingestion.processingRate }}/sec</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">Error Rate</span>
+                  <span class="metric-value">{{ dataWorkflows.ingestion.errorRate }}%</span>
+                </div>
+              </div>
+              <div class="data-sources">
+                <h4>Active Data Sources</h4>
+                <div class="source-list">
+                  <div v-for="source in dataWorkflows.ingestion.sources" :key="source.name" 
+                       class="source-item">
+                    <span class="source-name">{{ source.name }}</span>
+                    <span class="source-status" :class="source.status">{{ source.status }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          
-          <div class="form-group">
-            <label for="workflowSchedule">Schedule</label>
-            <select id="workflowSchedule" v-model="newWorkflow.schedule" class="form-select">
-              <option value="manual">Manual</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="custom">Custom</option>
-            </select>
+
+          <div class="workflow-card">
+            <div class="card-header">
+              <h3>Data Quality Monitor</h3>
+              <div class="status-indicator" :class="dataWorkflows.quality.status">
+                {{ dataWorkflows.quality.status }}
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="quality-dashboard">
+                <div class="quality-score">
+                  <div class="score-circle">
+                    <span class="score-value">{{ dataWorkflows.quality.overallScore }}</span>
+                    <span class="score-label">Quality Score</span>
+                  </div>
+                </div>
+                <div class="quality-metrics">
+                  <div class="quality-item">
+                    <span>Completeness</span>
+                    <span class="quality-value">{{ dataWorkflows.quality.completeness }}%</span>
+                  </div>
+                  <div class="quality-item">
+                    <span>Accuracy</span>
+                    <span class="quality-value">{{ dataWorkflows.quality.accuracy }}%</span>
+                  </div>
+                  <div class="quality-item">
+                    <span>Consistency</span>
+                    <span class="quality-value">{{ dataWorkflows.quality.consistency }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div class="modal-footer">
-          <button @click="showCreateWorkflowModal = false" class="cancel-btn">Cancel</button>
-          <button @click="createWorkflow" class="create-workflow-btn">Create Workflow</button>
-        </div>
       </div>
-    </div>
 
-    <!-- Workflow Details Modal -->
-    <div v-if="selectedWorkflow" class="modal-overlay" @click="selectedWorkflow = null">
-      <div class="workflow-details-modal" @click.stop>
-        <div class="modal-header">
-          <h2>{{ selectedWorkflow.name }}</h2>
-          <button @click="selectedWorkflow = null" class="close-btn">
-            <font-awesome-icon icon="fa-solid fa-times" />
-          </button>
-        </div>
-        
-        <div class="workflow-details-content">
-          <div class="details-tabs">
-            <button 
-              v-for="tab in detailTabs" 
-              :key="tab"
-              :class="['tab-btn', { active: activeDetailsTab === tab }]"
-              @click="activeDetailsTab = tab"
-            >
-              {{ tab }}
+      <!-- Analysis Workflows -->
+      <div v-if="activeCategory === 'analysis'" class="workflow-section">
+        <div class="section-header">
+          <h2>Analysis Workflows</h2>
+          <div class="workflow-controls">
+            <button @click="runAnalysis" class="run-btn">
+              <font-awesome-icon icon="fa-solid fa-chart-line" />
+              Run Analysis
             </button>
           </div>
-          
-          <div class="tab-content">
-            <!-- Overview Tab -->
-            <div v-if="activeDetailsTab === 'Overview'" class="overview-content">
-              <div class="workflow-overview">
-                <div class="overview-section">
-                  <h3>Description</h3>
-                  <p>{{ selectedWorkflow.description }}</p>
-                </div>
-                
-                <div class="overview-section">
-                  <h3>Configuration</h3>
-                  <div class="config-grid">
-                    <div class="config-item">
-                      <span class="config-label">Category:</span>
-                      <span class="config-value">{{ selectedWorkflow.category }}</span>
-                    </div>
-                    <div class="config-item">
-                      <span class="config-label">Schedule:</span>
-                      <span class="config-value">{{ selectedWorkflow.schedule }}</span>
-                    </div>
-                    <div class="config-item">
-                      <span class="config-label">Created:</span>
-                      <span class="config-value">{{ formatDate(selectedWorkflow.created) }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        </div>
+        
+        <div class="workflow-grid">
+          <div class="workflow-card large">
+            <div class="card-header">
+              <h3>Predictive Analytics Engine</h3>
+              <div class="status-indicator active">running</div>
             </div>
-            
-            <!-- Execution History Tab -->
-            <div v-if="activeDetailsTab === 'History'" class="history-content">
-              <div class="execution-history">
-                <div v-for="execution in selectedWorkflow.executions" :key="execution.id" class="execution-item">
-                  <div class="execution-header">
-                    <span :class="['execution-status', execution.status]">{{ execution.status }}</span>
-                    <span class="execution-date">{{ formatDateTime(execution.timestamp) }}</span>
-                  </div>
-                  <div class="execution-details">
-                    <p>{{ execution.summary }}</p>
-                    <div class="execution-metrics">
-                      <span class="metric">Duration: {{ execution.duration }}s</span>
-                      <span class="metric">Output: {{ execution.outputItems }} items</span>
+            <div class="card-content">
+              <div class="analysis-dashboard">
+                <div class="model-performance">
+                  <h4>Model Performance</h4>
+                  <div class="model-grid">
+                    <div v-for="model in analysisWorkflows.models" :key="model.name" 
+                         class="model-item">
+                      <span class="model-name">{{ model.name }}</span>
+                      <span class="model-accuracy">{{ model.accuracy }}%</span>
+                      <span class="model-status" :class="model.status">{{ model.status }}</span>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Settings Tab -->
-            <div v-if="activeDetailsTab === 'Settings'" class="settings-content">
-              <div class="workflow-settings">
-                <div class="setting-group">
-                  <h3>Execution Settings</h3>
-                  <div class="setting-item">
-                    <label>Auto-retry on failure</label>
-                    <input type="checkbox" v-model="selectedWorkflow.settings.autoRetry" />
-                  </div>
-                  <div class="setting-item">
-                    <label>Max retries</label>
-                    <input type="number" v-model="selectedWorkflow.settings.maxRetries" min="0" max="5" />
-                  </div>
-                  <div class="setting-item">
-                    <label>Timeout (minutes)</label>
-                    <input type="number" v-model="selectedWorkflow.settings.timeout" min="1" max="60" />
-                  </div>
-                </div>
-                
-                <div class="setting-group">
-                  <h3>Notifications</h3>
-                  <div class="setting-item">
-                    <label>Email on success</label>
-                    <input type="checkbox" v-model="selectedWorkflow.settings.emailOnSuccess" />
-                  </div>
-                  <div class="setting-item">
-                    <label>Email on failure</label>
-                    <input type="checkbox" v-model="selectedWorkflow.settings.emailOnFailure" />
+                <div class="predictions">
+                  <h4>Recent Predictions</h4>
+                  <div class="prediction-list">
+                    <div v-for="prediction in analysisWorkflows.predictions" :key="prediction.id" 
+                         class="prediction-item">
+                      <span class="prediction-target">{{ prediction.target }}</span>
+                      <span class="prediction-value">{{ prediction.value }}</span>
+                      <span class="prediction-confidence">{{ prediction.confidence }}%</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Automation Workflows -->
+      <div v-if="activeCategory === 'automation'" class="workflow-section">
+        <div class="section-header">
+          <h2>Automation Workflows</h2>
+          <div class="workflow-controls">
+            <button @click="deployAutomation" class="run-btn">
+              <font-awesome-icon icon="fa-solid fa-robot" />
+              Deploy Automation
+            </button>
+          </div>
+        </div>
+        
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="card-header">
+              <h3>Task Automation Bot</h3>
+              <div class="status-indicator" :class="automationWorkflows.taskBot.status">
+                {{ automationWorkflows.taskBot.status }}
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="bot-metrics">
+                <div class="metric-row">
+                  <div class="metric">
+                    <span class="metric-label">Tasks Completed</span>
+                    <span class="metric-value">{{ automationWorkflows.taskBot.tasksCompleted }}</span>
+                  </div>
+                  <div class="metric">
+                    <span class="metric-label">Success Rate</span>
+                    <span class="metric-value">{{ automationWorkflows.taskBot.successRate }}%</span>
+                  </div>
+                </div>
+                <div class="recent-tasks">
+                  <h4>Recent Tasks</h4>
+                  <div class="task-list">
+                    <div v-for="task in automationWorkflows.taskBot.recentTasks" :key="task.id" 
+                         class="task-item">
+                      <span class="task-name">{{ task.name }}</span>
+                      <span class="task-status" :class="task.status">{{ task.status }}</span>
+                      <span class="task-duration">{{ task.duration }}s</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workflow-card">
+            <div class="card-header">
+              <h3>Report Generator</h3>
+              <div class="status-indicator" :class="automationWorkflows.reportGen.status">
+                {{ automationWorkflows.reportGen.status }}
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="report-dashboard">
+                <div class="generation-stats">
+                  <div class="stat">
+                    <span class="stat-label">Reports Generated</span>
+                    <span class="stat-value">{{ automationWorkflows.reportGen.reportsGenerated }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Avg Generation Time</span>
+                    <span class="stat-value">{{ automationWorkflows.reportGen.avgTime }}s</span>
+                  </div>
+                </div>
+                <div class="scheduled-reports">
+                  <h4>Scheduled Reports</h4>
+                  <div class="schedule-list">
+                    <div v-for="report in automationWorkflows.reportGen.scheduled" :key="report.id" 
+                         class="schedule-item">
+                      <span class="report-name">{{ report.name }}</span>
+                      <span class="report-frequency">{{ report.frequency }}</span>
+                      <span class="next-run">{{ report.nextRun }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Workflow Execution Log -->
+    <div class="execution-log">
+      <div class="log-header">
+        <h3>Execution Log</h3>
+        <button @click="clearLog" class="clear-btn">Clear</button>
+      </div>
+      <div class="log-content">
+        <div v-for="entry in executionLog" :key="entry.id" 
+             :class="['log-entry', entry.type]">
+          <span class="log-time">{{ formatTime(entry.timestamp) }}</span>
+          <span class="log-message">{{ entry.message }}</span>
+          <span class="log-status" :class="entry.status">{{ entry.status }}</span>
         </div>
       </div>
     </div>
@@ -309,969 +282,678 @@
 </template>
 
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { 
+  faPlay, faRobot, faChartLine, faCogs
+} from '@fortawesome/free-solid-svg-icons';
+
+library.add(faPlay, faRobot, faChartLine, faCogs);
 
 export default {
   name: 'AIWorkflowsPage',
-  components: {
-    FontAwesomeIcon
-  },
+  components: { FontAwesomeIcon },
   data() {
     return {
-      searchQuery: '',
-      selectedCategory: '',
-      selectedStatus: '',
-      showCreateWorkflowModal: false,
-      selectedWorkflow: null,
-      activeDetailsTab: 'Overview',
-      
-      detailTabs: ['Overview', 'History', 'Settings'],
-      
-      newWorkflow: {
-        name: '',
-        description: '',
-        category: '',
-        template: '',
-        schedule: 'manual'
-      },
-      
-      workflowTemplates: [
-        {
-          id: 'market-scanner',
-          name: 'Market Scanner',
-          description: 'Scan markets for trading opportunities',
-          icon: 'fa-solid fa-search'
-        },
-        {
-          id: 'portfolio-rebalancer',
-          name: 'Portfolio Rebalancer',
-          description: 'Automatically rebalance portfolio allocations',
-          icon: 'fa-solid fa-balance-scale'
-        },
-        {
-          id: 'risk-monitor',
-          name: 'Risk Monitor',
-          description: 'Monitor portfolio risk and send alerts',
-          icon: 'fa-solid fa-shield-alt'
-        },
-        {
-          id: 'news-analyzer',
-          name: 'News Analyzer',
-          description: 'Analyze financial news for sentiment',
-          icon: 'fa-solid fa-newspaper'
-        }
+      activeWorkflows: 8,
+      completedTasks: 1247,
+      efficiency: 94.2,
+      activeCategory: 'data',
+
+      categories: [
+        { id: 'data', name: 'Data Processing', icon: 'fa-solid fa-cogs' },
+        { id: 'analysis', name: 'Analysis', icon: 'fa-solid fa-chart-line' },
+        { id: 'automation', name: 'Automation', icon: 'fa-solid fa-robot' }
       ],
-      
-      workflows: [
+
+      dataWorkflows: {
+        ingestion: {
+          status: 'active',
+          recordsProcessed: 2847392,
+          processingRate: 1250,
+          errorRate: 0.02,
+          sources: [
+            { name: 'Market Data API', status: 'connected' },
+            { name: 'News Feed', status: 'connected' },
+            { name: 'Social Media', status: 'warning' },
+            { name: 'Economic Data', status: 'connected' }
+          ]
+        },
+        quality: {
+          status: 'monitoring',
+          overallScore: 96,
+          completeness: 98.5,
+          accuracy: 94.2,
+          consistency: 96.8
+        }
+      },
+
+      analysisWorkflows: {
+        models: [
+          { name: 'LSTM Predictor', accuracy: 87.3, status: 'active' },
+          { name: 'Random Forest', accuracy: 82.1, status: 'active' },
+          { name: 'XGBoost', accuracy: 89.7, status: 'training' },
+          { name: 'Neural Network', accuracy: 91.2, status: 'active' }
+        ],
+        predictions: [
+          { id: 1, target: 'AAPL Price', value: '$198.50', confidence: 87 },
+          { id: 2, target: 'Market Trend', value: 'Bullish', confidence: 73 },
+          { id: 3, target: 'VIX Level', value: '16.8', confidence: 82 }
+        ]
+      },
+
+      automationWorkflows: {
+        taskBot: {
+          status: 'active',
+          tasksCompleted: 342,
+          successRate: 96.8,
+          recentTasks: [
+            { id: 1, name: 'Data Backup', status: 'completed', duration: 45 },
+            { id: 2, name: 'Model Training', status: 'running', duration: 120 },
+            { id: 3, name: 'Report Generation', status: 'completed', duration: 23 }
+          ]
+        },
+        reportGen: {
+          status: 'active',
+          reportsGenerated: 156,
+          avgTime: 12.3,
+          scheduled: [
+            { id: 1, name: 'Daily Market Summary', frequency: 'Daily', nextRun: '09:00 AM' },
+            { id: 2, name: 'Weekly Performance', frequency: 'Weekly', nextRun: 'Monday 08:00 AM' },
+            { id: 3, name: 'Monthly Analysis', frequency: 'Monthly', nextRun: '1st of Month' }
+          ]
+        }
+      },
+
+      executionLog: [
         {
           id: 1,
-          name: 'Daily Market Analysis',
-          description: 'Comprehensive daily analysis of major market indices and trending stocks',
-          category: 'market-analysis',
-          status: 'active',
-          icon: 'fa-solid fa-chart-line',
-          tags: ['SPY', 'QQQ', 'VIX'],
-          runs: 156,
-          successRate: 94,
-          schedule: 'Daily at 9:00 AM',
-          lastRun: Date.now() - 3600000,
-          created: Date.now() - 86400000 * 30,
-          executions: [
-            {
-              id: 1,
-              status: 'success',
-              timestamp: Date.now() - 3600000,
-              summary: 'Analyzed 500+ stocks, identified 12 buy signals',
-              duration: 45,
-              outputItems: 12
-            },
-            {
-              id: 2,
-              status: 'success',
-              timestamp: Date.now() - 86400000,
-              summary: 'Analyzed 487 stocks, identified 8 buy signals',
-              duration: 42,
-              outputItems: 8
-            }
-          ],
-          settings: {
-            autoRetry: true,
-            maxRetries: 3,
-            timeout: 30,
-            emailOnSuccess: false,
-            emailOnFailure: true
-          }
+          timestamp: Date.now() - 300000,
+          message: 'Data processing workflow completed successfully',
+          type: 'success',
+          status: 'completed'
         },
         {
           id: 2,
-          name: 'Portfolio Rebalancing',
-          description: 'Automatically rebalance portfolio based on target allocations',
-          category: 'portfolio-management',
-          status: 'scheduled',
-          icon: 'fa-solid fa-balance-scale',
-          tags: ['Rebalance', 'Allocation'],
-          runs: 24,
-          successRate: 100,
-          schedule: 'Monthly on 1st',
-          lastRun: Date.now() - 86400000 * 7,
-          created: Date.now() - 86400000 * 90,
-          executions: [],
-          settings: {
-            autoRetry: true,
-            maxRetries: 2,
-            timeout: 15,
-            emailOnSuccess: true,
-            emailOnFailure: true
-          }
+          timestamp: Date.now() - 600000,
+          message: 'Model training initiated for LSTM predictor',
+          type: 'info',
+          status: 'running'
         },
         {
           id: 3,
-          name: 'Crypto Sentiment Analysis',
-          description: 'Monitor social media and news sentiment for major cryptocurrencies',
-          category: 'research',
-          status: 'active',
-          icon: 'fa-solid fa-bitcoin',
-          tags: ['BTC', 'ETH', 'Sentiment'],
-          runs: 72,
-          successRate: 89,
-          schedule: 'Every 4 hours',
-          lastRun: Date.now() - 14400000,
-          created: Date.now() - 86400000 * 15,
-          executions: [],
-          settings: {
-            autoRetry: false,
-            maxRetries: 1,
-            timeout: 10,
-            emailOnSuccess: false,
-            emailOnFailure: true
-          }
-        },
-        {
-          id: 4,
-          name: 'Risk Alert System',
-          description: 'Monitor portfolio risk metrics and send alerts when thresholds are exceeded',
-          category: 'risk-assessment',
-          status: 'active',
-          icon: 'fa-solid fa-exclamation-triangle',
-          tags: ['VaR', 'Drawdown', 'Alerts'],
-          runs: 340,
-          successRate: 97,
-          schedule: 'Real-time',
-          lastRun: Date.now() - 300000,
-          created: Date.now() - 86400000 * 60,
-          executions: [],
-          settings: {
-            autoRetry: true,
-            maxRetries: 5,
-            timeout: 5,
-            emailOnSuccess: false,
-            emailOnFailure: true
-          }
+          timestamp: Date.now() - 900000,
+          message: 'Quality check detected anomaly in data source',
+          type: 'warning',
+          status: 'alert'
         }
       ]
-    }
+    };
   },
-  
-  computed: {
-    filteredWorkflows() {
-      return this.workflows.filter(workflow => {
-        const matchesSearch = !this.searchQuery || 
-          workflow.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          workflow.description.toLowerCase().includes(this.searchQuery.toLowerCase());
-        
-        const matchesCategory = !this.selectedCategory || workflow.category === this.selectedCategory;
-        const matchesStatus = !this.selectedStatus || workflow.status === this.selectedStatus;
-        
-        return matchesSearch && matchesCategory && matchesStatus;
-      });
-    }
+
+  mounted() {
+    this.startRealTimeUpdates();
   },
-  
+
   methods: {
-    refreshWorkflows() {
-      console.log('Refreshing workflows...');
-      // Implement refresh logic
+    runDataProcessing() {
+      this.addLogEntry('Data processing workflow started', 'info', 'running');
+      setTimeout(() => {
+        this.addLogEntry('Data processing completed successfully', 'success', 'completed');
+      }, 3000);
     },
-    
-    openWorkflowDetails(workflow) {
-      this.selectedWorkflow = workflow;
-      this.activeDetailsTab = 'Overview';
+
+    runAnalysis() {
+      this.addLogEntry('Analysis workflow initiated', 'info', 'running');
+      setTimeout(() => {
+        this.addLogEntry('Analysis completed with 94% accuracy', 'success', 'completed');
+      }, 4000);
     },
-    
-    toggleWorkflow(workflow) {
-      workflow.status = workflow.status === 'active' ? 'inactive' : 'active';
+
+    deployAutomation() {
+      this.addLogEntry('Automation deployment started', 'info', 'deploying');
+      setTimeout(() => {
+        this.addLogEntry('Automation successfully deployed', 'success', 'active');
+      }, 2500);
     },
-    
-    editWorkflow(workflow) {
-      console.log('Editing workflow:', workflow.name);
-      // Implement edit functionality
+
+    clearLog() {
+      this.executionLog = [];
     },
-    
-    createWorkflow() {
-      if (!this.newWorkflow.name || !this.newWorkflow.category || !this.newWorkflow.template) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      const workflow = {
+
+    addLogEntry(message, type, status) {
+      this.executionLog.unshift({
         id: Date.now(),
-        name: this.newWorkflow.name,
-        description: this.newWorkflow.description,
-        category: this.newWorkflow.category,
-        status: 'inactive',
-        icon: 'fa-solid fa-cog',
-        tags: [this.newWorkflow.category],
-        runs: 0,
-        successRate: 0,
-        schedule: this.newWorkflow.schedule,
-        lastRun: null,
-        created: Date.now(),
-        executions: [],
-        settings: {
-          autoRetry: true,
-          maxRetries: 3,
-          timeout: 30,
-          emailOnSuccess: false,
-          emailOnFailure: true
-        }
-      };
+        timestamp: Date.now(),
+        message,
+        type,
+        status
+      });
       
-      this.workflows.push(workflow);
-      this.showCreateWorkflowModal = false;
-      this.resetNewWorkflow();
+      if (this.executionLog.length > 20) {
+        this.executionLog = this.executionLog.slice(0, 20);
+      }
     },
-    
-    resetNewWorkflow() {
-      this.newWorkflow = {
-        name: '',
-        description: '',
-        category: '',
-        template: '',
-        schedule: 'manual'
+
+    formatTime(timestamp) {
+      return new Date(timestamp).toLocaleTimeString();
+    },
+
+    getBubbleStyle(index) {
+      const size = Math.random() * 50 + 15;
+      const left = Math.random() * 100;
+      const animationDelay = Math.random() * 15;
+      const animationDuration = Math.random() * 8 + 12;
+      const opacity = Math.random() * 0.25 + 0.05;
+      
+      return {
+        width: `${size}px`,
+        height: `${size}px`,
+        left: `${left}%`,
+        animationDelay: `${animationDelay}s`,
+        animationDuration: `${animationDuration}s`,
+        opacity: opacity
       };
     },
-    
-    formatDate(timestamp) {
-      if (!timestamp) return 'Never';
-      return new Date(timestamp).toLocaleDateString();
-    },
-    
-    formatDateTime(timestamp) {
-      return new Date(timestamp).toLocaleString();
+
+    startRealTimeUpdates() {
+      setInterval(() => {
+        this.dataWorkflows.ingestion.recordsProcessed += Math.floor(Math.random() * 1000);
+        this.completedTasks += Math.floor(Math.random() * 3);
+        this.efficiency = Math.max(90, Math.min(100, this.efficiency + (Math.random() - 0.5) * 2));
+      }, 5000);
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.ai-workflows-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: #ffffff;
+.ai-workflows {
   min-height: 100vh;
-  color: #000000;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2a2a2a 100%);
+  color: #ffffff;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  padding: 2rem;
 }
 
-/* Header Section */
-.workflows-header {
+/* Universe Background Effect */
+.universe-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  animation: floatUp linear infinite;
+  backdrop-filter: blur(1px);
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.header-section {
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #f0f0f0;
+  position: relative;
+  z-index: 1;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.title-section {
-  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .main-title {
   font-size: 2.5rem;
   font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: #000000;
+  background: linear-gradient(135deg, #ffffff, #cccccc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.workflow-icon {
+  color: #ffffff;
 }
 
 .subtitle {
   font-size: 1.1rem;
-  color: #666666;
+  color: #999999;
   margin: 0;
 }
 
-.header-actions {
+.stats-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #999999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.workflow-categories {
+  max-width: 1400px;
+  margin: 0 auto 2rem auto;
+  position: relative;
+  z-index: 1;
+}
+
+.category-tabs {
   display: flex;
   gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 0.5rem;
 }
 
-.create-btn {
-  background: #000000;
-  color: white;
+.category-tab {
+  flex: 1;
+  background: transparent;
   border: none;
+  color: #999999;
+  padding: 1rem;
   border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
-.create-btn:hover {
-  background: #333333;
-  transform: translateY(-1px);
+.category-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
 }
 
-.refresh-btn {
-  background: white;
+.category-tab.active {
+  background: #ffffff;
   color: #000000;
-  border: 2px solid #000000;
-  border-radius: 8px;
-  padding: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  font-weight: 600;
 }
 
-.refresh-btn:hover {
-  background: #000000;
-  color: white;
+.workflow-dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
-/* Filter Section */
-.filter-section {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.search-container {
-  flex: 1;
-  max-width: 400px;
+.section-header h2 {
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin: 0;
 }
 
-.search-input-wrapper {
-  position: relative;
-}
-
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666666;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 2px solid #e0e0e0;
+.run-btn {
+  background: #ffffff;
+  color: #000000;
+  border: none;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #000000;
-}
-
-.filter-controls {
-  display: flex;
-  gap: 1rem;
-}
-
-.filter-select {
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  background: white;
-  font-size: 0.9rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
 }
 
-.filter-select:focus {
-  outline: none;
-  border-color: #000000;
+.run-btn:hover {
+  background: #cccccc;
+  transform: translateY(-2px);
 }
 
-/* Workflows Grid */
-.workflows-grid {
+.workflow-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .workflow-card {
-  background: white;
-  border: 2px solid #f0f0f0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
 }
 
-.workflow-card:hover {
-  border-color: #000000;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+.workflow-card.large {
+  grid-column: span 2;
 }
 
-.workflow-card.active {
-  border-color: #00aa00;
-}
-
-.workflow-card.inactive {
-  border-color: #cccccc;
-  opacity: 0.7;
-}
-
-.workflow-header {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-}
-
-.workflow-icon {
-  width: 50px;
-  height: 50px;
-  background: #f8f8f8;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: #000000;
-}
-
-.workflow-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.action-btn {
-  background: none;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 0.5rem;
-  cursor: pointer;
-  color: #666666;
-  transition: all 0.2s ease;
-}
-
-.action-btn:hover {
-  border-color: #000000;
-  color: #000000;
-}
-
-.workflow-content {
-  margin-bottom: 1rem;
-}
-
-.workflow-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-  color: #000000;
-}
-
-.workflow-description {
-  color: #666666;
-  line-height: 1.5;
-  margin: 0 0 1rem 0;
-}
-
-.workflow-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.tag {
-  background: #f0f0f0;
-  color: #000000;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.workflow-stats {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.stat-label {
-  font-size: 0.8rem;
-  color: #666666;
-}
-
-.stat-value {
-  font-weight: 600;
-  color: #000000;
-}
-
-.workflow-schedule {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-}
-
-.schedule-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #666666;
-}
-
-.schedule-icon {
-  color: #000000;
-}
-
-.last-run {
-  color: #888888;
-  font-size: 0.8rem;
-}
-
-.workflow-status {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-}
-
-.status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.status-badge.active {
-  background: #e6ffe6;
-  color: #006600;
-}
-
-.status-badge.inactive {
-  background: #f0f0f0;
-  color: #666666;
-}
-
-.status-badge.scheduled {
-  background: #fff3cd;
-  color: #856404;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.workflow-details-modal {
-  background: white;
-  border-radius: 12px;
-  max-width: 800px;
-  width: 90%;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.modal-header h2 {
-  margin: 0;
-  color: #000000;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #666666;
-  padding: 0.5rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.close-btn:hover {
-  background: #f0f0f0;
-  color: #000000;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-
-.form-group {
   margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #000000;
-}
-
-.form-input,
-.form-textarea,
-.form-select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.2s ease;
-}
-
-.form-input:focus,
-.form-textarea:focus,
-.form-select:focus {
-  outline: none;
-  border-color: #000000;
-}
-
-.form-textarea {
-  min-height: 100px;
-  resize: vertical;
-}
-
-.template-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.template-card {
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.template-card:hover {
-  border-color: #000000;
-}
-
-.template-card.selected {
-  border-color: #000000;
-  background: #f8f8f8;
-}
-
-.template-icon {
-  width: 40px;
-  height: 40px;
-  background: #f0f0f0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  color: #000000;
-  flex-shrink: 0;
-}
-
-.template-info h4 {
-  margin: 0 0 0.25rem 0;
-  color: #000000;
-}
-
-.template-info p {
+.card-header h3 {
   margin: 0;
-  color: #666666;
-  font-size: 0.9rem;
+  color: #ffffff;
+  font-size: 1.1rem;
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-top: 1px solid #f0f0f0;
-}
-
-.cancel-btn {
-  background: white;
-  color: #666666;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.cancel-btn:hover {
-  border-color: #000000;
-  color: #000000;
-}
-
-.create-workflow-btn {
-  background: #000000;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.create-workflow-btn:hover {
-  background: #333333;
-}
-
-/* Workflow Details Content */
-.workflow-details-content {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.details-tabs {
-  display: flex;
-  border-bottom: 1px solid #f0f0f0;
-  padding: 0 1.5rem;
-}
-
-.tab-btn {
-  background: none;
-  border: none;
-  padding: 1rem 1.5rem;
-  cursor: pointer;
-  color: #666666;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.tab-btn.active {
-  color: #000000;
-  border-bottom-color: #000000;
-}
-
-.tab-content {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-}
-
-.overview-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.overview-section h3 {
-  margin: 0 0 1rem 0;
-  color: #000000;
-}
-
-.config-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.config-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem;
-  background: #f8f8f8;
-  border-radius: 8px;
-}
-
-.config-label {
-  color: #666666;
-}
-
-.config-value {
-  font-weight: 600;
-  color: #000000;
-}
-
-.execution-history {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.execution-item {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1rem;
-}
-
-.execution-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.execution-status {
+.status-indicator {
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
 }
 
-.execution-status.success {
-  background: #e6ffe6;
-  color: #006600;
+.status-indicator.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
-.execution-status.failed {
-  background: #ffe6e6;
-  color: #cc0000;
-}
-
-.execution-date {
-  color: #666666;
-  font-size: 0.9rem;
-}
-
-.execution-details p {
-  margin: 0 0 0.5rem 0;
-  color: #000000;
-}
-
-.execution-metrics {
-  display: flex;
-  gap: 1rem;
+.status-indicator.monitoring {
+  background: rgba(255, 255, 255, 0.1);
+  color: #999999;
 }
 
 .metric {
-  color: #666666;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.metric-label {
+  color: #999999;
   font-size: 0.9rem;
 }
 
-.workflow-settings {
+.metric-value {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.source-list, .task-list, .schedule-list {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 0.5rem;
 }
 
-.setting-group h3 {
-  margin: 0 0 1rem 0;
-  color: #000000;
-}
-
-.setting-item {
+.source-item, .task-item, .schedule-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
 }
 
-.setting-item:last-child {
-  border-bottom: none;
-}
-
-.setting-item label {
-  color: #000000;
+.source-name, .task-name, .report-name {
+  color: #ffffff;
   font-weight: 500;
 }
 
-.setting-item input[type="checkbox"] {
-  transform: scale(1.2);
-  cursor: pointer;
-}
-
-.setting-item input[type="number"] {
-  padding: 0.5rem;
-  border: 1px solid #e0e0e0;
+.source-status, .task-status {
+  padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  width: 80px;
-  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
-/* Responsive Design */
+.source-status.connected, .task-status.completed {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.source-status.warning {
+  background: rgba(255, 153, 153, 0.2);
+  color: #ff9999;
+}
+
+.task-status.running {
+  background: rgba(255, 255, 255, 0.15);
+  color: #cccccc;
+}
+
+.quality-dashboard {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border: 8px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.score-label {
+  font-size: 0.8rem;
+  color: #999999;
+}
+
+.quality-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quality-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quality-value {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.execution-log {
+  max-width: 1400px;
+  margin: 2rem auto 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.log-header h3 {
+  margin: 0;
+  color: #ffffff;
+}
+
+.clear-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #999999;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.log-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  border-left: 3px solid;
+}
+
+.log-entry.success {
+  background: rgba(255, 255, 255, 0.05);
+  border-left-color: #ffffff;
+}
+
+.log-entry.warning {
+  background: rgba(255, 255, 255, 0.03);
+  border-left-color: #ff9999;
+}
+
+.log-entry.info {
+  background: rgba(255, 255, 255, 0.02);
+  border-left-color: #cccccc;
+}
+
+.log-time {
+  font-size: 0.8rem;
+  color: #999999;
+  font-family: monospace;
+}
+
+.log-message {
+  color: #ffffff;
+}
+
+.log-status {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.log-status.completed {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.log-status.alert {
+  background: rgba(255, 153, 153, 0.2);
+  color: #ff9999;
+}
+
+.log-status.running {
+  background: rgba(255, 255, 255, 0.15);
+  color: #cccccc;
+}
+
+@media (max-width: 1200px) {
+  .workflow-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .workflow-card.large {
+    grid-column: span 1;
+  }
+}
+
 @media (max-width: 768px) {
-  .ai-workflows-container {
+  .ai-workflows {
     padding: 1rem;
   }
   
   .header-content {
     flex-direction: column;
     gap: 1rem;
-    align-items: stretch;
   }
   
-  .filter-section {
+  .stats-overview {
+    grid-template-columns: 1fr;
+  }
+  
+  .category-tabs {
     flex-direction: column;
-    gap: 1rem;
   }
   
-  .workflows-grid {
+  .quality-dashboard {
     grid-template-columns: 1fr;
-  }
-  
-  .modal-content,
-  .workflow-details-modal {
-    width: 95%;
-    margin: 1rem;
-  }
-  
-  .template-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .details-tabs {
-    overflow-x: auto;
-  }
-  
-  .tab-btn {
-    white-space: nowrap;
+    text-align: center;
   }
 }
 </style> 
