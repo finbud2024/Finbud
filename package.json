@@ -6,7 +6,7 @@
     "netlify:build": "cd frontend && vue-cli-service build",
     "client": "cd frontend && vue-cli-service serve",
     "client:dev": "cd frontend && vue-cli-service serve --skip-plugins @vue/cli-plugin-eslint",
-    "start": "nodemon backend/functions/server.js",
+    "start": "nodemon backend/functions/server.mjs",
     "dev": "dotenv -e .env netlify dev",
     "seeding": "node backend/utils/stockSeeding.js",
     "install:python-deps": "pip install -r backend/functions/requirements.txt",
@@ -121,7 +121,6 @@
     "vue-3-slider-component": "^1.0.0",
     "webpack": "^5.99.7",
     "yarn": "^1.22.22",
-    
     "playwright": "^1.50.1",
     "playwright-extra": "^4.3.6",
     "puppeteer": "^24.8.0",

@@ -31,4 +31,4 @@ const TransactionSchema = new mongoose.Schema({
     }
 })
 const InsiderTransaction = mongoose.model("InsiderTransaction", TransactionSchema)
-export default InsiderTransaction
+export default InsiderTransaction;

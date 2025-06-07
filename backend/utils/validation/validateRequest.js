@@ -1,6 +1,6 @@
-// Universal validation request wrapper for environment compatibility
-// CommonJS version to avoid module conflicts
+// import { invalid } from "moment";
 
+// utils/validateRequest.js
 const validateRequest = (schema) => (req, res, next) => {
   const validKeys = Object.keys(schema.paths);
   //using breadth first search to get all keys in request body
@@ -31,5 +31,5 @@ const validateRequest = (schema) => (req, res, next) => {
   next();
 };
 
-// CommonJS export
-module.exports = validateRequest; 
+export default validateRequest;
+  

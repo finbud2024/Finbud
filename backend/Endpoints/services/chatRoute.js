@@ -1,8 +1,6 @@
 import express from "express";
 import Chat from "../../Database_Schema/core/Chat.js";
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const validateRequest = require('../../utils/validation/validateRequest.cjs');
+import validateRequest from "../../utils/validation/validateRequest.js";
 import axios from "axios";
 import dotenv from "dotenv";
 import { BraveSearch } from "@langchain/community/tools/brave_search";

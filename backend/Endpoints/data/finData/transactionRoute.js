@@ -112,4 +112,4 @@ insiderTransactionRoute.get("/transactions-db/:ticker", async (req, res) => {
         return res.status(500).json({ message: "Error fetching insider transactions" });
       }
 })
-export default insiderTransactionRoute
+export default insiderTransactionRoute;

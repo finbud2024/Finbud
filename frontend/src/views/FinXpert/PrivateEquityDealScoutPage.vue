@@ -1,512 +1,618 @@
 <template>
   <div class="pe-deal-scout">
-    <!-- Header Section -->
-    <div class="header-section">
-      <div class="header-content">
-        <div class="title-section">
-          <h1 class="main-title">
-            <font-awesome-icon icon="fa-solid fa-search-dollar" class="scout-icon" />
-            FinXpert: Private Equity Deal Scout
-          </h1>
-          <p class="subtitle">AI chuyên gia hỗ trợ khám phá, thẩm định và mô phỏng thương vụ PE</p>
-        </div>
-        <div class="quick-stats">
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">Private Equity Deal Scout</h1>
+        <p class="hero-subtitle">Advanced deal analysis and due diligence platform powered by AI</p>
+        <div class="hero-stats">
           <div class="stat-item">
-            <span class="stat-value">{{ totalDeals }}</span>
-            <span class="stat-label">Deals Analyzed</span>
+            <div class="stat-number">{{ totalDealsAnalyzed.toLocaleString() }}</div>
+            <div class="stat-label">Deals Analyzed</div>
           </div>
           <div class="stat-item">
-            <span class="stat-value">{{ avgIRR }}%</span>
-            <span class="stat-label">Avg IRR</span>
+            <div class="stat-number">${{ totalValueAnalyzed }}B</div>
+            <div class="stat-label">Total Value</div>
           </div>
           <div class="stat-item">
-            <span class="stat-value">${{ medianEV }}M</span>
-            <span class="stat-label">Median EV</span>
+            <div class="stat-number">{{ averageAccuracy }}%</div>
+            <div class="stat-label">Analysis Accuracy</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Main Dashboard -->
-    <div class="dashboard-container">
-      <div class="left-panel">
-        
-        <!-- Deal Input Section -->
-        <div class="feature-card deal-input">
+    <!-- Deal Analysis Dashboard -->
+    <div class="dashboard-section">
+      <div class="section-header">
+        <h2>Deal Analysis Dashboard</h2>
+        <div class="header-actions">
+          <button @click="openNewDealModal" class="btn-primary">
+            <i class="fas fa-plus"></i> New Deal Analysis
+          </button>
+          <button @click="exportReport" class="btn-secondary">
+            <i class="fas fa-download"></i> Export Report
+          </button>
+        </div>
+      </div>
+
+      <div class="analysis-grid">
+        <!-- Quick Analysis Panel -->
+        <div class="analysis-card quick-analysis">
           <div class="card-header">
-            <h3><font-awesome-icon icon="fa-solid fa-plus" /> Tạo Deal Mới</h3>
+            <h3>Quick Deal Assessment</h3>
+            <span class="status-indicator active"></span>
           </div>
           <div class="card-content">
-            <div class="input-group">
-              <label>Tên công ty</label>
-              <input v-model="dealForm.companyName" type="text" placeholder="VD: TechViet Solutions">
-            </div>
-            <div class="input-row">
-              <div class="input-group">
-                <label>Ngành</label>
-                <select v-model="dealForm.sector">
-                  <option value="saas">SaaS</option>
-                  <option value="fintech">FinTech</option>
-                  <option value="ecommerce">E-commerce</option>
-                  <option value="healthcare">HealthTech</option>
-                  <option value="edtech">EdTech</option>
-                </select>
+            <form @submit.prevent="performQuickAnalysis" class="quick-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Company Name</label>
+                  <input v-model="quickAnalysis.companyName" type="text" placeholder="Enter company name" required>
+                </div>
+                <div class="form-group">
+                  <label>Sector</label>
+                  <select v-model="quickAnalysis.sector" required>
+                    <option value="saas">SaaS</option>
+                    <option value="fintech">FinTech</option>
+                    <option value="ecommerce">E-commerce</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="edtech">EdTech</option>
+                  </select>
+                </div>
               </div>
-              <div class="input-group">
-                <label>Stage</label>
-                <select v-model="dealForm.stage">
-                  <option value="series-a">Series A</option>
-                  <option value="series-b">Series B</option>
-                  <option value="growth">Growth</option>
-                  <option value="buyout">Buyout</option>
-                </select>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Revenue ($M)</label>
+                  <input v-model.number="quickAnalysis.revenue" type="number" step="0.1" placeholder="Annual revenue" required>
+                </div>
+                <div class="form-group">
+                  <label>EBITDA ($M)</label>
+                  <input v-model.number="quickAnalysis.ebitda" type="number" step="0.1" placeholder="EBITDA" required>
+                </div>
               </div>
-            </div>
-            <div class="input-row">
-              <div class="input-group">
-                <label>EBITDA (M USD)</label>
-                <input v-model.number="dealForm.ebitda" type="number" placeholder="5">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Stage</label>
+                  <select v-model="quickAnalysis.stage" required>
+                    <option value="series-a">Series A</option>
+                    <option value="series-b">Series B</option>
+                    <option value="growth">Growth</option>
+                    <option value="buyout">Buyout</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Market Size ($B)</label>
+                  <input v-model.number="quickAnalysis.marketSize" type="number" step="0.1" placeholder="TAM">
+                </div>
               </div>
-              <div class="input-group">
-                <label>Revenue (M USD)</label>
-                <input v-model.number="dealForm.revenue" type="number" placeholder="20">
-              </div>
-            </div>
-            <button @click="analyzeDeal" class="analyze-btn">
-              <font-awesome-icon icon="fa-solid fa-chart-line" />
-              Phân tích Deal
-            </button>
+              <button type="submit" class="btn-analyze" :disabled="isAnalyzing">
+                <i class="fas fa-chart-line"></i>
+                {{ isAnalyzing ? 'Analyzing...' : 'Analyze Deal' }}
+              </button>
+            </form>
           </div>
         </div>
 
         <!-- LBO Calculator -->
-        <div class="feature-card lbo-calculator" v-if="showCalculator">
+        <div class="analysis-card lbo-calculator">
           <div class="card-header">
-            <h3><font-awesome-icon icon="fa-solid fa-calculator" /> LBO Calculator</h3>
+            <h3>LBO Model Calculator</h3>
+            <span class="tooltip-trigger" @mouseenter="showTooltip" @mouseleave="hideTooltip">
+              <i class="fas fa-info-circle"></i>
+            </span>
           </div>
           <div class="card-content">
-            <div class="calculator-inputs">
-              <div class="input-row">
-                <div class="input-group">
-                  <label>Debt/EBITDA Multiple</label>
-                  <input v-model.number="lboData.debtMultiple" type="range" min="3" max="8" step="0.5" 
-                         @input="calculateLBO">
-                  <span class="range-value">{{ lboData.debtMultiple }}x</span>
-                </div>
-                <div class="input-group">
-                  <label>Exit Multiple</label>
-                  <input v-model.number="lboData.exitMultiple" type="range" min="8" max="20" step="0.5"
-                         @input="calculateLBO">
-                  <span class="range-value">{{ lboData.exitMultiple }}x</span>
-                </div>
+            <div class="lbo-inputs">
+              <div class="input-group">
+                <label>EBITDA Multiple</label>
+                <input v-model.number="lboModel.debtMultiple" type="number" step="0.1" placeholder="5.0">
               </div>
-              <div class="input-row">
-                <div class="input-group">
-                  <label>Interest Rate (%)</label>
-                  <input v-model.number="lboData.interestRate" type="range" min="3" max="12" step="0.25"
-                         @input="calculateLBO">
-                  <span class="range-value">{{ lboData.interestRate }}%</span>
-                </div>
-                <div class="input-group">
-                  <label>Holding Period (Years)</label>
-                  <input v-model.number="lboData.holdingPeriod" type="range" min="3" max="8" step="1"
-                         @input="calculateLBO">
-                  <span class="range-value">{{ lboData.holdingPeriod }} năm</span>
-                </div>
+              <div class="input-group">
+                <label>Exit Multiple</label>
+                <input v-model.number="lboModel.exitMultiple" type="number" step="0.1" placeholder="8.0">
+              </div>
+              <div class="input-group">
+                <label>Interest Rate (%)</label>
+                <input v-model.number="lboModel.interestRate" type="number" step="0.1" placeholder="7.5">
+              </div>
+              <div class="input-group">
+                <label>Holding Period (Years)</label>
+                <input v-model.number="lboModel.holdingPeriod" type="number" placeholder="5">
               </div>
             </div>
+            <button @click="calculateLBO" class="btn-calculate">Calculate Returns</button>
             
-            <div class="lbo-results">
-              <div class="result-card">
-                <h4>IRR</h4>
-                <div class="result-value" :class="getIRRClass(lboResults.irr)">{{ lboResults.irr }}%</div>
+            <div v-if="lboResults" class="lbo-results">
+              <div class="result-metric">
+                <span class="metric-label">IRR</span>
+                <span class="metric-value">{{ lboResults.returns?.irr }}%</span>
               </div>
-              <div class="result-card">
-                <h4>Cash-on-Cash</h4>
-                <div class="result-value">{{ lboResults.cashOnCash }}x</div>
+              <div class="result-metric">
+                <span class="metric-label">Money Multiple</span>
+                <span class="metric-value">{{ lboResults.returns?.multipleOfMoney }}x</span>
               </div>
-              <div class="result-card">
-                <h4>Payback Period</h4>
-                <div class="result-value">{{ lboResults.paybackPeriod }} năm</div>
+              <div class="result-metric">
+                <span class="metric-label">Equity Value</span>
+                <span class="metric-value">${{ lboResults.exit?.equityValue }}M</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Deal Structuring -->
-        <div class="feature-card deal-structuring" v-if="showStructuring">
+        <!-- Deal Insights -->
+        <div class="analysis-card deal-insights" v-if="currentAnalysis">
           <div class="card-header">
-            <h3><font-awesome-icon icon="fa-solid fa-layer-group" /> Deal Structuring</h3>
+            <h3>Deal Insights</h3>
+            <div class="overall-score" :class="getScoreClass(currentAnalysis.scoring?.overall)">
+              {{ currentAnalysis.scoring?.overall || 0 }}
+            </div>
           </div>
           <div class="card-content">
-            <div class="structure-options">
-              <div class="input-group">
-                <label>Preferred Shares (%)</label>
-                <input v-model.number="structureData.preferredPercent" type="range" min="10" max="80" step="5"
-                       @input="calculateWaterfall">
-                <span class="range-value">{{ structureData.preferredPercent }}%</span>
-              </div>
-              <div class="input-group">
-                <label>Liquidation Preference</label>
-                <select v-model="structureData.liquidationPref" @change="calculateWaterfall">
-                  <option value="1x">1x Non-Participating</option>
-                  <option value="2x">2x Non-Participating</option>
-                  <option value="1x-participating">1x Participating</option>
-                </select>
-              </div>
-            </div>
-            
-            <div class="waterfall-chart">
-              <h4>Exit Waterfall Simulation</h4>
-              <div class="exit-scenarios">
-                <div v-for="scenario in exitScenarios" :key="scenario.name" class="scenario-card">
-                  <h5>{{ scenario.name }}</h5>
-                  <div class="scenario-value">${{ scenario.exitValue }}M</div>
-                  <div class="distribution">
-                    <div class="dist-item">
-                      <span>Investors: </span>
-                      <span class="amount">${{ scenario.investorReturn }}M</span>
-                    </div>
-                    <div class="dist-item">
-                      <span>Founders: </span>
-                      <span class="amount">${{ scenario.founderReturn }}M</span>
-                    </div>
-                  </div>
+            <div class="insights-list">
+              <div v-for="insight in currentAnalysis.insights" :key="insight.category" 
+                   class="insight-item" :class="insight.type">
+                <div class="insight-header">
+                  <span class="insight-category">{{ insight.category }}</span>
+                  <span class="insight-type">{{ insight.type }}</span>
                 </div>
+                <p class="insight-message">{{ insight.message }}</p>
+                <p class="insight-recommendation">{{ insight.recommendation }}</p>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Market Intelligence -->
+        <div class="analysis-card market-intel">
+          <div class="card-header">
+            <h3>Market Intelligence</h3>
+            <button @click="refreshMarketData" class="refresh-btn">
+              <i class="fas fa-sync-alt" :class="{ 'spinning': refreshing }"></i>
+            </button>
+          </div>
+          <div class="card-content">
+            <div v-if="marketIntelligence" class="market-stats">
+              <div class="market-metric">
+                <label>Market Size</label>
+                <value>{{ marketIntelligence.sector_overview?.market_size }}</value>
+              </div>
+              <div class="market-metric">
+                <label>Growth Rate</label>
+                <value>{{ marketIntelligence.sector_overview?.growth_rate }}</value>
+              </div>
+              <div class="market-metric">
+                <label>Recent Deals</label>
+                <value>{{ marketIntelligence.recent_transactions?.length || 0 }}</value>
+              </div>
+              <div class="market-metric">
+                <label>Sentiment</label>
+                <value :class="marketIntelligence.market_sentiment">
+                  {{ marketIntelligence.market_sentiment }}
+                </value>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Deals & Comparables -->
+    <div class="comparables-section">
+      <div class="section-header">
+        <h2>Recent Deals & Comparables</h2>
+        <div class="filter-controls">
+          <select v-model="comparableFilters.sector">
+            <option value="">All Sectors</option>
+            <option value="saas">SaaS</option>
+            <option value="fintech">FinTech</option>
+            <option value="ecommerce">E-commerce</option>
+            <option value="healthcare">Healthcare</option>
+          </select>
+          <select v-model="comparableFilters.timeframe">
+            <option value="12m">Last 12 Months</option>
+            <option value="24m">Last 24 Months</option>
+            <option value="36m">Last 36 Months</option>
+          </select>
+          <button @click="loadComparables" class="btn-filter">Apply Filters</button>
+        </div>
       </div>
 
-      <div class="right-panel">
-        
-        <!-- Deal Scoring -->
-        <div class="feature-card deal-scoring" v-if="dealScore">
-          <div class="card-header">
-            <h3><font-awesome-icon icon="fa-solid fa-star" /> Deal Score</h3>
-          </div>
-          <div class="card-content">
-            <div class="overall-score">
-              <div class="score-circle">
-                <span class="score-number">{{ dealScore.overall }}</span>
-                <span class="score-label">/100</span>
-              </div>
-              <div class="score-grade" :class="getScoreGrade(dealScore.overall)">
-                {{ getScoreLabel(dealScore.overall) }}
-              </div>
-            </div>
-            
-            <div class="score-breakdown">
-              <div v-for="metric in dealScore.metrics" :key="metric.name" class="metric-item">
-                <div class="metric-info">
-                  <span class="metric-name">{{ metric.name }}</span>
-                  <span class="metric-score">{{ metric.score }}/25</span>
-                </div>
-                <div class="metric-bar">
-                  <div class="metric-fill" :style="{ width: (metric.score/25*100) + '%' }"></div>
-                </div>
-              </div>
-            </div>
+      <div class="comparables-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Sector</th>
+              <th>Stage</th>
+              <th>Valuation</th>
+              <th>Revenue Multiple</th>
+              <th>Growth Rate</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="deal in comparableDeals" :key="deal.company_name">
+              <td class="company-name">{{ deal.company_name }}</td>
+              <td><span class="sector-tag">{{ deal.sector }}</span></td>
+              <td><span class="stage-badge">{{ deal.stage }}</span></td>
+              <td class="valuation">{{ deal.valuation }}</td>
+              <td class="multiple">{{ deal.revenue_multiple }}x</td>
+              <td class="growth">{{ deal.growth_rate }}</td>
+              <td class="date">{{ formatDate(deal.date) }}</td>
+              <td class="actions">
+                <button @click="viewDealDetails(deal)" class="btn-view">View</button>
+                <button @click="compareToDeal(deal)" class="btn-compare">Compare</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-            <div class="key-questions">
-              <h4>Key Questions to Ask:</h4>
-              <ul class="question-list">
-                <li v-for="question in keyQuestions" :key="question">{{ question }}</li>
-              </ul>
+    <!-- Due Diligence Checklist -->
+    <div class="due-diligence-section">
+      <div class="section-header">
+        <h2>Due Diligence Checklist</h2>
+        <div class="progress-indicator">
+          <span>{{ completedChecks }}/{{ totalChecks }} Completed</span>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: (completedChecks/totalChecks)*100 + '%' }"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="checklist-categories">
+        <div v-for="category in dueDiligenceChecklist" :key="category.name" class="checklist-category">
+          <div class="category-header" @click="toggleCategory(category.name)">
+            <h3>{{ category.name }}</h3>
+            <span class="category-progress">{{ category.completed }}/{{ category.items.length }}</span>
+            <i class="fas fa-chevron-down" :class="{ 'rotated': category.expanded }"></i>
+          </div>
+          <div v-if="category.expanded" class="category-items">
+            <div v-for="item in category.items" :key="item.id" class="checklist-item">
+              <input type="checkbox" v-model="item.completed" @change="updateProgress">
+              <label>{{ item.task }}</label>
+              <span class="item-priority" :class="item.priority">{{ item.priority }}</span>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Market Dashboard -->
-        <div class="feature-card market-dashboard">
-          <div class="card-header">
-            <h3><font-awesome-icon icon="fa-solid fa-chart-bar" /> Market Trends</h3>
-          </div>
-          <div class="card-content">
-            <div class="trend-stats">
-              <div class="trend-item">
-                <div class="trend-label">Q4 2024 Deals</div>
-                <div class="trend-value">847</div>
-                <div class="trend-change positive">+12%</div>
-              </div>
-              <div class="trend-item">
-                <div class="trend-label">Median EV/EBITDA</div>
-                <div class="trend-value">12.3x</div>
-                <div class="trend-change negative">-2%</div>
-              </div>
-            </div>
-            
-            <div class="hot-sectors">
-              <h4>Hot Sectors</h4>
-              <div class="sector-list">
-                <div v-for="sector in hotSectors" :key="sector.name" class="sector-item">
-                  <span class="sector-name">{{ sector.name }}</span>
-                  <span class="sector-deals">{{ sector.deals }} deals</span>
-                  <div class="sector-bar">
-                    <div class="sector-fill" :style="{ width: sector.percentage + '%' }"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <!-- Deal Memo Generator -->
+    <div class="memo-section">
+      <div class="section-header">
+        <h2>AI Deal Memo Generator</h2>
+        <button @click="generateMemo" class="btn-primary" :disabled="!currentAnalysis || generatingMemo">
+          <i class="fas fa-robot"></i>
+          {{ generatingMemo ? 'Generating...' : 'Generate Memo' }}
+        </button>
+      </div>
+
+      <div v-if="generatedMemo" class="memo-preview">
+        <div class="memo-header">
+          <h3>{{ generatedMemo.executiveSummary?.investment_thesis?.substring(0, 50) }}...</h3>
+          <div class="memo-actions">
+            <button @click="downloadMemo" class="btn-download">
+              <i class="fas fa-download"></i> Download PDF
+            </button>
+            <button @click="editMemo" class="btn-edit">
+              <i class="fas fa-edit"></i> Edit
+            </button>
           </div>
         </div>
-
-        <!-- Deal Memo Generator -->
-        <div class="feature-card deal-memo" v-if="showMemo">
-          <div class="card-header">
-            <h3><font-awesome-icon icon="fa-solid fa-file-alt" /> AI Deal Memo</h3>
-            <button @click="generateMemo" class="generate-btn">Generate</button>
+        <div class="memo-content">
+          <div class="memo-section-item">
+            <h4>Investment Thesis</h4>
+            <p>{{ generatedMemo.executiveSummary?.investment_thesis }}</p>
           </div>
-          <div class="card-content">
-            <div class="memo-preview" v-if="dealMemo.generated">
-              <div class="memo-section">
-                <h4>Investment Highlights</h4>
-                <ul>
-                  <li v-for="highlight in dealMemo.highlights" :key="highlight">{{ highlight }}</li>
-                </ul>
-              </div>
-              <div class="memo-section">
-                <h4>Key Risks</h4>
-                <ul>
-                  <li v-for="risk in dealMemo.risks" :key="risk">{{ risk }}</li>
-                </ul>
-              </div>
-              <div class="memo-section">
-                <h4>Next Steps</h4>
-                <ul>
-                  <li v-for="step in dealMemo.nextSteps" :key="step">{{ step }}</li>
-                </ul>
-              </div>
-            </div>
-            <div v-else class="memo-placeholder">
-              <p>Nhấn "Generate" để tạo deal memo dựa trên dữ liệu đã nhập</p>
-            </div>
+          <div class="memo-section-item">
+            <h4>Key Highlights</h4>
+            <ul>
+              <li v-for="highlight in generatedMemo.executiveSummary?.key_highlights" :key="highlight">
+                {{ highlight }}
+              </li>
+            </ul>
           </div>
         </div>
+      </div>
+    </div>
 
+    <!-- Modals -->
+    <div v-if="showNewDealModal" class="modal-overlay" @click="closeNewDealModal">
+      <div class="modal-content" @click.stop>
+        <div class="modal-header">
+          <h3>New Deal Analysis</h3>
+          <button @click="closeNewDealModal" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- Advanced deal input form would go here -->
+          <p>Comprehensive deal input form with financial modeling capabilities</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { 
-  faSearchDollar, faPlus, faCalculator, faChartLine, faLayerGroup,
-  faStar, faChartBar, faFileAlt
-} from '@fortawesome/free-solid-svg-icons';
-
-library.add(
-  faSearchDollar, faPlus, faCalculator, faChartLine, faLayerGroup,
-  faStar, faChartBar, faFileAlt
-);
+import axios from 'axios';
 
 export default {
   name: 'PrivateEquityDealScoutPage',
-  components: { FontAwesomeIcon },
   data() {
     return {
-      totalDeals: 1247,
-      avgIRR: 23.4,
-      medianEV: 125,
-      
-      showCalculator: false,
-      showStructuring: false,
-      showMemo: false,
-      
-      dealForm: {
+      // Hero stats
+      totalDealsAnalyzed: 1247,
+      totalValueAnalyzed: 45.8,
+      averageAccuracy: 89.3,
+
+      // Quick analysis form
+      quickAnalysis: {
         companyName: '',
         sector: 'saas',
-        stage: 'series-a',
-        ebitda: 0,
-        revenue: 0
+        revenue: null,
+        ebitda: null,
+        stage: 'growth',
+        marketSize: null,
+        teamScore: 75
       },
-      
-      lboData: {
+
+      // LBO model
+      lboModel: {
         debtMultiple: 5.0,
-        exitMultiple: 12.0,
-        interestRate: 6.5,
+        exitMultiple: 8.0,
+        interestRate: 7.5,
         holdingPeriod: 5
       },
-      
-      lboResults: {
-        irr: 0,
-        cashOnCash: 0,
-        paybackPeriod: 0
+
+      // State
+      isAnalyzing: false,
+      refreshing: false,
+      generatingMemo: false,
+      showNewDealModal: false,
+
+      // Results
+      currentAnalysis: null,
+      lboResults: null,
+      marketIntelligence: null,
+      comparableDeals: [],
+      generatedMemo: null,
+
+      // Filters
+      comparableFilters: {
+        sector: '',
+        timeframe: '24m'
       },
-      
-      structureData: {
-        preferredPercent: 60,
-        liquidationPref: '1x'
-      },
-      
-      exitScenarios: [],
-      
-      dealScore: null,
-      keyQuestions: [],
-      
-      hotSectors: [
-        { name: 'SaaS', deals: 156, percentage: 85 },
-        { name: 'FinTech', deals: 89, percentage: 65 },
-        { name: 'HealthTech', deals: 67, percentage: 45 },
-        { name: 'E-commerce', deals: 45, percentage: 30 }
-      ],
-      
-      dealMemo: {
-        generated: false,
-        highlights: [],
-        risks: [],
-        nextSteps: []
-      }
+
+      // Due diligence
+      dueDiligenceChecklist: [
+        {
+          name: 'Financial Analysis',
+          expanded: true,
+          completed: 0,
+          items: [
+            { id: 1, task: 'Audit historical financial statements', priority: 'high', completed: false },
+            { id: 2, task: 'Validate revenue recognition policies', priority: 'high', completed: false },
+            { id: 3, task: 'Assess working capital requirements', priority: 'medium', completed: false },
+            { id: 4, task: 'Review debt structure and covenants', priority: 'high', completed: false },
+            { id: 5, task: 'Analyze cash flow projections', priority: 'high', completed: false }
+          ]
+        },
+        {
+          name: 'Commercial Due Diligence',
+          expanded: false,
+          completed: 0,
+          items: [
+            { id: 6, task: 'Market size and growth validation', priority: 'high', completed: false },
+            { id: 7, task: 'Customer concentration analysis', priority: 'high', completed: false },
+            { id: 8, task: 'Competitive positioning assessment', priority: 'medium', completed: false },
+            { id: 9, task: 'Product differentiation review', priority: 'medium', completed: false }
+          ]
+        },
+        {
+          name: 'Operational Review',
+          expanded: false,
+          completed: 0,
+          items: [
+            { id: 10, task: 'Management team assessment', priority: 'high', completed: false },
+            { id: 11, task: 'Technology platform review', priority: 'medium', completed: false },
+            { id: 12, task: 'Operational scalability analysis', priority: 'medium', completed: false }
+          ]
+        },
+        {
+          name: 'Legal & Compliance',
+          expanded: false,
+          completed: 0,
+          items: [
+            { id: 13, task: 'Cap table and ownership structure', priority: 'high', completed: false },
+            { id: 14, task: 'IP portfolio assessment', priority: 'medium', completed: false },
+            { id: 15, task: 'Regulatory compliance review', priority: 'high', completed: false }
+          ]
+        }
+      ]
     };
   },
-  
+
+  computed: {
+    totalChecks() {
+      return this.dueDiligenceChecklist.reduce((sum, category) => sum + category.items.length, 0);
+    },
+
+    completedChecks() {
+      return this.dueDiligenceChecklist.reduce((sum, category) => 
+        sum + category.items.filter(item => item.completed).length, 0);
+    }
+  },
+
+  mounted() {
+    this.loadInitialData();
+  },
+
   methods: {
-    analyzeDeal() {
-      if (!this.dealForm.companyName || !this.dealForm.ebitda) {
-        alert('Vui lòng nhập đầy đủ thông tin cơ bản');
-        return;
+    async loadInitialData() {
+      await Promise.all([
+        this.refreshMarketData(),
+        this.loadComparables()
+      ]);
+    },
+
+    async performQuickAnalysis() {
+      this.isAnalyzing = true;
+      try {
+        const response = await axios.post('/api/pe-analysis/analyze-deal', {
+          ...this.quickAnalysis,
+          competitiveAdvantage: 'Strong',
+          teamScore: this.quickAnalysis.teamScore || 75
+        });
+
+        if (response.data.success) {
+          this.currentAnalysis = response.data.data;
+          this.$toast.success('Deal analysis completed successfully');
+        }
+      } catch (error) {
+        console.error('Analysis error:', error);
+        this.$toast.error('Failed to analyze deal');
+      } finally {
+        this.isAnalyzing = false;
       }
-      
-      this.showCalculator = true;
-      this.showStructuring = true;
-      this.showMemo = true;
-      
-      this.calculateLBO();
-      this.generateDealScore();
-      this.calculateWaterfall();
     },
-    
-    calculateLBO() {
-      const equity = this.dealForm.ebitda * this.lboData.exitMultiple;
-      const debt = this.dealForm.ebitda * this.lboData.debtMultiple;
-      const purchasePrice = equity + debt;
-      
-      // Simplified IRR calculation
-      const exitValue = this.dealForm.ebitda * 1.5 * this.lboData.exitMultiple; // Assume 50% EBITDA growth
-      const remainingDebt = debt * 0.3; // Assume 70% debt paydown
-      const equityValue = exitValue - remainingDebt;
-      
-      this.lboResults.cashOnCash = (equityValue / equity).toFixed(1);
-      this.lboResults.irr = (Math.pow(equityValue / equity, 1/this.lboData.holdingPeriod) - 1 * 100).toFixed(1);
-      this.lboResults.paybackPeriod = (this.lboData.holdingPeriod * 0.7).toFixed(1);
+
+    async calculateLBO() {
+      try {
+        const response = await axios.post('/api/pe-analysis/lbo-model', {
+          ebitda: this.quickAnalysis.ebitda || 10,
+          ...this.lboModel
+        });
+
+        if (response.data.success) {
+          this.lboResults = response.data.data;
+          this.$toast.success('LBO calculation completed');
+        }
+      } catch (error) {
+        console.error('LBO calculation error:', error);
+        this.$toast.error('Failed to calculate LBO model');
+      }
     },
-    
-    generateDealScore() {
-      // Simulate AI scoring
-      const baseScore = 60 + Math.random() * 30;
+
+    async refreshMarketData() {
+      if (!this.quickAnalysis.sector) return;
       
-      this.dealScore = {
-        overall: Math.round(baseScore),
-        metrics: [
-          { name: 'TAM & Market', score: Math.round(15 + Math.random() * 10) },
-          { name: 'Competitive Moat', score: Math.round(12 + Math.random() * 13) },
-          { name: 'Scalability', score: Math.round(14 + Math.random() * 11) },
-          { name: 'Team & Execution', score: Math.round(16 + Math.random() * 9) }
-        ]
-      };
-      
-      // Generate key questions based on lowest scoring area
-      const lowestMetric = this.dealScore.metrics.reduce((prev, current) => 
-        prev.score < current.score ? prev : current
-      );
-      
-      const questionMap = {
-        'TAM & Market': [
-          'Thị trường TAM thực tế có lớn như dự báo?',
-          'Tốc độ tăng trưởng thị trường có bền vững?',
-          'Rào cản gia nhập từ đối thủ lớn như thế nào?'
-        ],
-        'Competitive Moat': [
-          'Lợi thế cạnh tranh có thể bị copy dễ dàng?',
-          'Network effect có thực sự mạnh?',
-          'Chi phí chuyển đổi của khách hàng ra sao?'
-        ],
-        'Scalability': [
-          'Unit economics có cải thiện khi scale?',
-          'Operational leverage có rõ ràng?',
-          'Cần bao nhiều vốn để đạt breakeven?'
-        ],
-        'Team & Execution': [
-          'Founder có track record tương tự?',
-          'Key personnel retention như thế nào?',
-          'Execution capability trong giai đoạn scale?'
-        ]
-      };
-      
-      this.keyQuestions = questionMap[lowestMetric.name] || [];
+      this.refreshing = true;
+      try {
+        const response = await axios.get(`/api/pe-analysis/market-intelligence/${this.quickAnalysis.sector}`, {
+          params: { stage: this.quickAnalysis.stage }
+        });
+
+        if (response.data.success) {
+          this.marketIntelligence = response.data.data;
+        }
+      } catch (error) {
+        console.error('Market intelligence error:', error);
+      } finally {
+        this.refreshing = false;
+      }
     },
-    
-    calculateWaterfall() {
-      const scenarios = [
-        { name: 'Base Case', multiple: 1.0 },
-        { name: 'Upside', multiple: 2.0 },
-        { name: 'Moonshot', multiple: 4.0 }
-      ];
-      
-      this.exitScenarios = scenarios.map(scenario => {
-        const exitValue = this.dealForm.revenue * 5 * scenario.multiple; // 5x revenue multiple
-        const preferredAmount = exitValue * this.structureData.preferredPercent / 100;
-        const commonAmount = exitValue - preferredAmount;
-        
-        return {
-          name: scenario.name,
-          exitValue: exitValue.toFixed(0),
-          investorReturn: preferredAmount.toFixed(0),
-          founderReturn: commonAmount.toFixed(0)
-        };
-      });
+
+    async loadComparables() {
+      try {
+        const response = await axios.get('/api/pe-analysis/comparable-deals', {
+          params: this.comparableFilters
+        });
+
+        if (response.data.success) {
+          this.comparableDeals = response.data.data.deals || [];
+        }
+      } catch (error) {
+        console.error('Comparables loading error:', error);
+      }
     },
-    
-    generateMemo() {
-      this.dealMemo = {
-        generated: true,
-        highlights: [
-          `Công ty ${this.dealForm.companyName} trong lĩnh vực ${this.dealForm.sector} đang tăng trưởng mạnh`,
-          `EBITDA margin ${((this.dealForm.ebitda/this.dealForm.revenue)*100).toFixed(1)}% cho thấy hiệu quả vận hành tốt`,
-          `Thị trường ${this.dealForm.sector} dự kiến CAGR 25-30% trong 5 năm tới`,
-          'Management team có kinh nghiệm và vision rõ ràng',
-          'Competitive moat mạnh thông qua technology và network effect'
-        ],
-        risks: [
-          'Thị trường cạnh tranh ngày càng khốc liệt',
-          'Customer concentration risk nếu phụ thuộc vào vài khách hàng lớn',
-          'Regulatory risk trong lĩnh vực fintech/healthcare',
-          'Key person dependency trên founder team',
-          'Market downturn có thể ảnh hưởng đến growth trajectory'
-        ],
-        nextSteps: [
-          'Deep dive vào financial model và unit economics',
-          'Reference check với customers và partners',
-          'Technical due diligence về product và platform',
-          'Legal DD về IP, contracts và compliance',
-          'Management presentation và Q&A session'
-        ]
-      };
+
+    async generateMemo() {
+      if (!this.currentAnalysis) return;
+
+      this.generatingMemo = true;
+      try {
+        const response = await axios.post('/api/pe-analysis/generate-memo', {
+          dealData: this.quickAnalysis,
+          analysisResults: this.currentAnalysis
+        });
+
+        if (response.data.success) {
+          this.generatedMemo = response.data.data;
+          this.$toast.success('Deal memo generated successfully');
+        }
+      } catch (error) {
+        console.error('Memo generation error:', error);
+        this.$toast.error('Failed to generate memo');
+      } finally {
+        this.generatingMemo = false;
+      }
     },
-    
-    getIRRClass(irr) {
-      if (irr >= 25) return 'excellent';
-      if (irr >= 20) return 'good';
-      if (irr >= 15) return 'fair';
+
+    getScoreClass(score) {
+      if (score >= 80) return 'excellent';
+      if (score >= 70) return 'good';
+      if (score >= 60) return 'fair';
       return 'poor';
     },
-    
-    getScoreGrade(score) {
-      if (score >= 80) return 'grade-a';
-      if (score >= 70) return 'grade-b';
-      if (score >= 60) return 'grade-c';
-      return 'grade-d';
+
+    toggleCategory(categoryName) {
+      const category = this.dueDiligenceChecklist.find(c => c.name === categoryName);
+      if (category) {
+        category.expanded = !category.expanded;
+      }
     },
-    
-    getScoreLabel(score) {
-      if (score >= 80) return 'Excellent';
-      if (score >= 70) return 'Good';
-      if (score >= 60) return 'Fair';
-      return 'Poor';
+
+    updateProgress() {
+      this.dueDiligenceChecklist.forEach(category => {
+        category.completed = category.items.filter(item => item.completed).length;
+      });
+    },
+
+    formatDate(dateString) {
+      return new Date(dateString).toLocaleDateString();
+    },
+
+    openNewDealModal() {
+      this.showNewDealModal = true;
+    },
+
+    closeNewDealModal() {
+      this.showNewDealModal = false;
+    },
+
+    exportReport() {
+      // Export functionality
+      this.$toast.info('Report export feature coming soon');
+    },
+
+    downloadMemo() {
+      // Download memo functionality
+      this.$toast.info('Memo download feature coming soon');
+    },
+
+    editMemo() {
+      // Edit memo functionality
+      this.$toast.info('Memo editor opening soon');
+    },
+
+    viewDealDetails(deal) {
+      // View deal details
+      this.$toast.info(`Viewing details for ${deal.company_name}`);
+    },
+
+    compareToDeal(deal) {
+      // Compare to current deal
+      this.$toast.info(`Comparing to ${deal.company_name}`);
+    },
+
+    showTooltip() {
+      // Show tooltip
+    },
+
+    hideTooltip() {
+      // Hide tooltip  
     }
   }
 };
@@ -515,461 +621,770 @@ export default {
 <style scoped>
 .pe-deal-scout {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-  color: #ffffff;
-  font-family: 'Inter', 'Roboto', sans-serif;
-  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Inter', sans-serif;
 }
 
-.header-section {
-  margin-bottom: 2rem;
+.hero-section {
+  padding: 80px 20px 60px;
+  text-align: center;
+  color: white;
 }
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.main-title {
-  font-size: 2.5rem;
+.hero-title {
+  font-size: 3rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #fff, #f0f0f0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  opacity: 0.9;
+}
+
+.hero-stats {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.scout-icon {
-  color: #4facfe;
-}
-
-.subtitle {
-  font-size: 1.1rem;
-  color: #8892b0;
-  margin: 0;
-}
-
-.quick-stats {
-  display: flex;
-  gap: 2rem;
+  justify-content: center;
+  gap: 4rem;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .stat-item {
   text-align: center;
 }
 
-.stat-value {
-  display: block;
-  font-size: 1.8rem;
+.stat-number {
+  font-size: 2.5rem;
   font-weight: 700;
-  color: #4facfe;
+  margin-bottom: 0.5rem;
 }
 
 .stat-label {
   font-size: 0.9rem;
-  color: #8892b0;
+  opacity: 0.8;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
-.dashboard-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+.dashboard-section {
+  padding: 40px 20px;
+  background: white;
+  margin: -30px 20px 0;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
 }
 
-.feature-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.card-header {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 2rem;
 }
 
-.card-header h3 {
+.section-header h2 {
+  font-size: 1.8rem;
+  color: #2d3748;
   margin: 0;
-  font-size: 1.2rem;
-  color: #ffffff;
+}
+
+.header-actions {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.input-group {
-  margin-bottom: 1rem;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #8892b0;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.input-group input, .input-group select {
-  width: 100%;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 0.9rem;
-}
-
-.input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
 
-.analyze-btn, .generate-btn {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+.btn-primary, .btn-secondary {
+  padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  color: #000;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
   transition: all 0.3s ease;
-  width: 100%;
-  justify-content: center;
 }
 
-.analyze-btn:hover, .generate-btn:hover {
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-secondary {
+  background: #f7fafc;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
-.calculator-inputs {
-  margin-bottom: 2rem;
-}
-
-.input-group input[type="range"] {
-  width: calc(100% - 60px);
-  margin-right: 10px;
-}
-
-.range-value {
-  background: rgba(79, 172, 254, 0.2);
-  color: #4facfe;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  min-width: 50px;
-  display: inline-block;
-  text-align: center;
-}
-
-.lbo-results {
+.analysis-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
-.result-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.result-card h4 {
-  margin: 0 0 0.5rem 0;
-  color: #8892b0;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.result-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #4facfe;
-}
-
-.result-value.excellent { color: #00ff88; }
-.result-value.good { color: #4facfe; }
-.result-value.fair { color: #ffa500; }
-.result-value.poor { color: #ff4757; }
-
-.overall-score {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.score-circle {
-  display: inline-flex;
-  align-items: baseline;
-  justify-content: center;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  margin-bottom: 0.5rem;
-  position: relative;
-}
-
-.score-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #000;
-}
-
-.score-label {
-  font-size: 1rem;
-  color: #333;
-}
-
-.score-grade {
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  display: inline-block;
-}
-
-.grade-a { background: #00ff88; color: #000; }
-.grade-b { background: #4facfe; color: #000; }
-.grade-c { background: #ffa500; color: #000; }
-.grade-d { background: #ff4757; color: #fff; }
-
-.score-breakdown {
-  margin-bottom: 1.5rem;
-}
-
-.metric-item {
-  margin-bottom: 1rem;
-}
-
-.metric-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.metric-bar {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+.analysis-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
 }
 
-.metric-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4facfe, #00f2fe);
-  transition: width 0.5s ease;
-}
-
-.key-questions h4 {
-  margin-bottom: 0.75rem;
-  color: #ffffff;
-}
-
-.question-list {
-  list-style: none;
-  padding: 0;
-}
-
-.question-list li {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-  border-left: 3px solid #4facfe;
-  font-size: 0.9rem;
-}
-
-.waterfall-chart {
-  margin-top: 1.5rem;
-}
-
-.exit-scenarios {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-.scenario-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.scenario-card h5 {
-  margin: 0 0 0.5rem 0;
-  color: #8892b0;
-}
-
-.scenario-value {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #4facfe;
-  margin-bottom: 0.75rem;
-}
-
-.distribution {
-  font-size: 0.9rem;
-}
-
-.dist-item {
+.card-header {
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.25rem;
+  align-items: center;
 }
 
-.amount {
+.card-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: #ffffff;
 }
 
-.trend-stats {
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #48bb78;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.quick-form .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.trend-item {
-  text-align: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-.trend-label {
-  color: #8892b0;
+.form-group label {
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
   font-size: 0.9rem;
+}
+
+.form-group input, .form-group select {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-analyze, .btn-calculate {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-analyze:hover, .btn-calculate:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-analyze:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.lbo-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.input-group input {
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.lbo-results {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.result-metric {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 0.5rem;
 }
 
-.trend-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 0.25rem;
+.metric-label {
+  color: #718096;
+  font-size: 0.9rem;
 }
 
-.trend-change {
-  font-size: 0.8rem;
+.metric-value {
   font-weight: 600;
+  color: #2d3748;
 }
 
-.trend-change.positive { color: #00ff88; }
-.trend-change.negative { color: #ff4757; }
+.overall-score {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 1.1rem;
+}
 
-.hot-sectors h4 {
+.overall-score.excellent { background: #48bb78; }
+.overall-score.good { background: #38b2ac; }
+.overall-score.fair { background: #ed8936; }
+.overall-score.poor { background: #f56565; }
+
+.insights-list {
+  space-y: 1rem;
+}
+
+.insight-item {
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
   margin-bottom: 1rem;
-  color: #ffffff;
 }
 
-.sector-item {
+.insight-item.positive {
+  background: #f0fff4;
+  border-left-color: #48bb78;
+}
+
+.insight-item.warning {
+  background: #fffbf0;
+  border-left-color: #ed8936;
+}
+
+.insight-item.risk {
+  background: #fff5f5;
+  border-left-color: #f56565;
+}
+
+.insight-item.opportunity {
+  background: #f0f9ff;
+  border-left-color: #4299e1;
+}
+
+.insight-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.insight-category {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.insight-type {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.1);
+}
+
+.insight-message {
+  margin: 0.5rem 0;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.insight-recommendation {
+  margin: 0;
+  color: #718096;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.market-stats {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.market-metric {
+  text-align: center;
+}
+
+.market-metric label {
+  display: block;
+  font-size: 0.8rem;
+  color: #718096;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.market-metric value {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.market-metric value.bullish { color: #48bb78; }
+.market-metric value.bearish { color: #f56565; }
+.market-metric value.moderate { color: #ed8936; }
+
+.refresh-btn {
+  background: none;
+  border: none;
+  color: #4a5568;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: #f7fafc;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.comparables-section {
+  padding: 40px 20px;
+  background: #f7fafc;
+}
+
+.filter-controls {
+  display: flex;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 0.75rem;
 }
 
-.sector-bar {
-  width: 60px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
+.filter-controls select {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+}
+
+.btn-filter {
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.comparables-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  margin-top: 2rem;
+}
+
+.comparables-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparables-table th {
+  padding: 1rem;
+  background: #f7fafc;
+  color: #4a5568;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.comparables-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.company-name {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.sector-tag {
+  background: #e2e8f0;
+  color: #4a5568;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.stage-badge {
+  background: #667eea;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.valuation {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.btn-view, .btn-compare {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+}
+
+.btn-view {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.btn-compare {
+  background: #667eea;
+  color: white;
+}
+
+.due-diligence-section {
+  padding: 40px 20px;
+  background: white;
+}
+
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progress-bar {
+  width: 200px;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
   overflow: hidden;
 }
 
-.sector-fill {
+.progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.checklist-categories {
+  margin-top: 2rem;
+}
+
+.checklist-category {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.category-header {
+  padding: 1rem 1.5rem;
+  background: #f7fafc;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.category-header:hover {
+  background: #edf2f7;
+}
+
+.category-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+.category-progress {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.category-header i {
+  transition: transform 0.3s ease;
+}
+
+.category-header i.rotated {
+  transform: rotate(180deg);
+}
+
+.category-items {
+  padding: 1rem 1.5rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.checklist-item:last-child {
+  border-bottom: none;
+}
+
+.checklist-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+.checklist-item label {
+  flex: 1;
+  color: #4a5568;
+  cursor: pointer;
+}
+
+.item-priority {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.item-priority.high {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.item-priority.medium {
+  background: #feebc8;
+  color: #dd6b20;
+}
+
+.item-priority.low {
+  background: #c6f6d5;
+  color: #25855a;
 }
 
 .memo-section {
-  margin-bottom: 1.5rem;
+  padding: 40px 20px;
+  background: #f7fafc;
 }
 
-.memo-section h4 {
-  color: #ffffff;
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
+.memo-preview {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  margin-top: 2rem;
+  overflow: hidden;
 }
 
-.memo-section ul {
-  list-style: none;
-  padding: 0;
+.memo-header {
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.memo-section li {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
+.memo-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.2rem;
+}
+
+.memo-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-download, .btn-edit {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-download {
+  background: #667eea;
+  color: white;
+}
+
+.btn-edit {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.memo-content {
+  padding: 1.5rem;
+}
+
+.memo-section-item {
+  margin-bottom: 2rem;
+}
+
+.memo-section-item h4 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.memo-section-item p {
+  color: #4a5568;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.memo-section-item ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.memo-section-item li {
+  color: #4a5568;
+  line-height: 1.6;
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  line-height: 1.4;
 }
 
-.memo-placeholder {
-  text-align: center;
-  color: #8892b0;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
-  border: 2px dashed rgba(255, 255, 255, 0.1);
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-@media (max-width: 1200px) {
-  .dashboard-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2d3748;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #718096;
+}
+
+.modal-body {
+  padding: 1.5rem;
 }
 
 @media (max-width: 768px) {
-  .pe-deal-scout {
-    padding: 1rem;
-  }
-  
-  .main-title {
-    font-size: 2rem;
-  }
-  
-  .input-row {
+  .analysis-grid {
     grid-template-columns: 1fr;
   }
   
-  .lbo-results {
+  .hero-stats {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .quick-form .form-row {
     grid-template-columns: 1fr;
   }
   
-  .exit-scenarios {
+  .lbo-inputs {
     grid-template-columns: 1fr;
+  }
+  
+  .market-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .comparables-table {
+    overflow-x: auto;
   }
 }
 </style> 

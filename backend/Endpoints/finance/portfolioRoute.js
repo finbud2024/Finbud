@@ -1,11 +1,8 @@
 import express from 'express';
 import Portfolio from '../../Database_Schema/finance/Portfolio.js';
 import UserHolding from '../../Database_Schema/finance/UserHolding.js';
-import StockPrice from '../../Database_Schema/market-data/Stock.js';
-import User from '../../Database_Schema/auth/User.js';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const validateRequest = require('../../utils/validation/validateRequest.cjs');
+import User from '../../Database_Schema/core/User.js';
+import validateRequest from '../../utils/validation/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const portfolioRoute = express.Router();

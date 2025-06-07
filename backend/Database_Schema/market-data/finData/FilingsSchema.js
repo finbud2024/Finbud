@@ -16,4 +16,4 @@ const FilingsSchema = new mongoose.Schema({
     periodDate: String
 })
 const Filings = mongoose.model("Filings", FilingsSchema)
-export default Filings
+export default Filings;

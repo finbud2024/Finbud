@@ -15,5 +15,5 @@ const ChatSimulatorSchema = new mongoose.Schema({
         default: Date.now
     }
 })
-const ChatSimulator = mongoose.model('ChatSimulator', ChatSimulatorSchema)
-export default ChatSimulator
+const ChatSimulator = mongoose.model('ChatSimulator', ChatSimulatorSchema);
+export default ChatSimulator;

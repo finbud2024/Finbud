@@ -1,8 +1,6 @@
 import express from "express";
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const validateRequest = require('../../utils/validation/validateRequest.cjs');
-import Transaction from "../../Database_Schema/finance/Transaction.js";
+import Transaction from "../../Database_Schema/trading/Transaction.js";
+import validateRequest from "../../utils/validation/validateRequest.js";
 
 const transactionRoute = express.Router();
 

@@ -33,4 +33,4 @@ chatStockRoute.get('/all-responses/:userId', async(req, res) => {
         return res.status(500).json({message: 'Error getting the most recent', error})
     }
 })
-export default chatStockRoute
+export default chatStockRoute;

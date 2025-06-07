@@ -1,8 +1,6 @@
 import express from 'express';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const validateRequest = require('../../utils/validation/validateRequest.cjs');
 import StockPrice from '../../Database_Schema/market-data/Stock.js';
+import validateRequest from '../../utils/validation/validateRequest.js';
 import axios from 'axios';
 
 const stockRoute = express.Router();

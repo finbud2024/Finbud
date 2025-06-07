@@ -11,4 +11,4 @@ const EarningCalendarSchema = new mongoose.Schema({
     revenue: Number
 })
 const EarningCalendar = mongoose.model("EarningCalendar", EarningCalendarSchema);
-export default EarningCalendar
+export default EarningCalendar;

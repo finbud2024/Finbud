@@ -1,8 +1,6 @@
 import express from 'express';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const validateRequest = require('../../utils/validation/validateRequest.cjs');
 import Goal from '../../Database_Schema/finance/Goal.js';
+import validateRequest from '../../utils/validation/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const goalRoute = express.Router();

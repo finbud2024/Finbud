@@ -29,6 +29,7 @@ import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue"
 import AgentPage from "@/views/FinAgent/AgentPage.vue";
 import PestlePage from "@/views/FinAgent/PestlePage.vue";
 import AIBreakthroughWorkflowsPage from "@/views/FinAgent/AIBreakthroughWorkflowsPage.vue";
+import AIWorkflowsPage from "@/views/FinAgent/AIWorkflowsPage.vue";
 import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
 import AutoTradeAI from "@/views/FinInvest/AutoTradeAIPage.vue";
 import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
@@ -235,6 +236,11 @@ const routes = [
     component: AIBreakthroughWorkflowsPage,
   },
   {
+    path: "/ai-workflows",
+    name: "AIWorkflowsPage",
+    component: AIWorkflowsPage,
+  },
+  {
     path: "/forgot-password",
     name: "ForgotPassword",
     component: ForgotPassword,
@@ -312,6 +318,11 @@ const routes = [
   {
     path: "/finxpert-pe-deal-scout",
     name: "PrivateEquityDealScoutPage",
+    component: PrivateEquityDealScoutPage,
+  },
+  {
+    path: "/private-equity-deal-scout",
+    name: "PrivateEquityDealScoutPageAlias",
     component: PrivateEquityDealScoutPage,
   },
   {

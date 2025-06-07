@@ -1,0 +1,47 @@
+{
+  "name": "finbud-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "FinBud Backend API",
+  "main": "functions/server.mjs",
+  "scripts": {
+    "start": "node functions/server.mjs",
+    "dev": "nodemon functions/server.mjs",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "bcryptjs": "^2.4.3",
+    "express-session": "^1.17.3",
+    "connect-mongo": "^5.0.0",
+    "serverless-http": "^3.2.0",
+    "socket.io": "^4.7.2",
+    "axios": "^1.5.0",
+    "moment": "^2.29.4",
+    "xml2js": "^0.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "node-cron": "^3.0.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "fintech",
+    "trading",
+    "finance",
+    "api"
+  ],
+  "author": "FinBud Team",
+  "license": "ISC"
+} 

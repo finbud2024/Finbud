@@ -125,4 +125,4 @@ filingsRoute.get("/earnings-calendar/:ticker", async (req, res) => {
         return res.status(500).json({message: "Error in get calendar"})
     }
 })
-export default filingsRoute
+export default filingsRoute;

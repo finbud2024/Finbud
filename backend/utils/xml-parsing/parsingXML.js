@@ -31,4 +31,4 @@ const parseXMLFile = async(docURL) => {
         console.log("Parsing error", error)
     }
 }
-export default parseXMLFile
+export default parseXMLFile;
