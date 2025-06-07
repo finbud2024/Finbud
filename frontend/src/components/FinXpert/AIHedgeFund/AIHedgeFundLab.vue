@@ -146,102 +146,212 @@
             </div>
           </div>
 
-          <div class="panel trade-blotter-panel">
+          <div class="panel trade-execution-panel">
             <div class="panel-header">
-              <h3>Trade Blotter</h3>
-              <button @click="executeAllTrades" class="execute-btn">Execute All</button>
-            </div>
-            <div class="trade-blotter">
-              <div class="blotter-header">
-                <div>Symbol</div>
-                <div>Action</div>
-                <div>Quantity</div>
-                <div>Price</div>
-                <div>Status</div>
+              <h3>Smart Trade Execution</h3>
+              <div class="execution-controls">
+                <div class="execution-mode">
+                  <label>Mode:</label>
+                  <select v-model="executionMode" class="mode-select">
+                    <option value="conservative">Conservative</option>
+                    <option value="balanced">Balanced</option>
+                    <option value="aggressive">Aggressive</option>
+                  </select>
+                </div>
+                <button @click="executeAllTrades" class="execute-btn" :disabled="!hasValidTrades">
+                  <font-awesome-icon icon="fa-solid fa-bolt" />
+                  Execute All ({{ validTradesCount }})
+                </button>
               </div>
-              <div v-for="trade in proposedTrades" :key="trade.id" class="blotter-row">
-                <div class="symbol">{{ trade.symbol }}</div>
-                <div :class="['action', trade.action.toLowerCase()]">{{ trade.action }}</div>
-                <div class="quantity">{{ trade.quantity }}</div>
-                <div class="price">${{ trade.price }}</div>
-                <div :class="['status', trade.status.toLowerCase()]">{{ trade.status }}</div>
+            </div>
+            <div class="proposed-trades">
+              <div v-for="trade in proposedTrades" :key="trade.id" 
+                   :class="['trade-item', `trade-${trade.action.toLowerCase()}`]">
+                <div class="trade-main">
+                  <div class="trade-symbol">
+                    <span class="ticker">{{ trade.symbol }}</span>
+                    <span class="price">${{ trade.price.toFixed(2) }}</span>
+                  </div>
+                  <div class="trade-action">
+                    <span :class="['action-badge', trade.action.toLowerCase()]">
+                      {{ trade.action }}
+                    </span>
+                    <span class="quantity">{{ trade.quantity }} shares</span>
+                  </div>
+                  <div class="trade-confidence">
+                    <div class="confidence-bar">
+                      <div class="confidence-fill" :style="{ width: trade.confidence + '%' }"></div>
+                    </div>
+                    <span class="confidence-text">{{ trade.confidence }}%</span>
+                  </div>
+                  <div class="trade-controls">
+                    <button @click="editTrade(trade.id)" class="edit-btn">
+                      <font-awesome-icon icon="fa-solid fa-edit" />
+                    </button>
+                    <button @click="removeTrade(trade.id)" class="remove-btn">
+                      <font-awesome-icon icon="fa-solid fa-times" />
+                    </button>
+                  </div>
+                </div>
+                <div class="trade-reasoning" v-if="trade.reasoning">
+                  <div class="reasoning-text">{{ trade.reasoning }}</div>
+                  <div class="risk-metrics">
+                    <span class="risk-item">VaR: {{ trade.var }}%</span>
+                    <span class="risk-item">Sharpe: {{ trade.sharpe }}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Risk & Performance -->
-        <div class="panel-row">
-          <div class="panel risk-panel">
-            <div class="panel-header">
-              <h3>Risk Dashboard</h3>
-              <div :class="['risk-light', riskLevel]"></div>
+        <!-- Performance Analytics Panel -->
+        <div class="panel performance-panel">
+          <div class="panel-header">
+            <h3>Live Performance Analytics</h3>
+            <div class="performance-controls">
+              <select v-model="performancePeriod" @change="updatePerformanceChart">
+                <option value="1D">1 Day</option>
+                <option value="1W">1 Week</option>
+                <option value="1M">1 Month</option>
+                <option value="3M">3 Months</option>
+                <option value="1Y">1 Year</option>
+              </select>
             </div>
-            <div class="risk-metrics">
-              <div class="risk-item">
-                <div class="metric-label">VaR (1 Day)</div>
-                <div class="metric-value">$45,230</div>
-                <div class="metric-change">2.1% of NAV</div>
+          </div>
+          <div class="performance-content">
+            <div class="performance-metrics">
+              <div class="metric-card">
+                <div class="metric-value positive">{{ portfolioReturn }}%</div>
+                <div class="metric-label">Portfolio Return</div>
               </div>
-              <div class="risk-item">
-                <div class="metric-label">Beta</div>
-                <div class="metric-value">1.23</div>
-                <div class="metric-change">vs S&P 500</div>
-              </div>
-              <div class="risk-item">
-                <div class="metric-label">Max Drawdown</div>
-                <div class="metric-value">-3.2%</div>
-                <div class="metric-change">YTD</div>
-              </div>
-              <div class="risk-item">
+              <div class="metric-card">
+                <div class="metric-value">{{ sharpeRatio }}</div>
                 <div class="metric-label">Sharpe Ratio</div>
-                <div class="metric-value">1.84</div>
-                <div class="metric-change">12M</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value negative">{{ maxDrawdown }}%</div>
+                <div class="metric-label">Max Drawdown</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">{{ winRate }}%</div>
+                <div class="metric-label">Win Rate</div>
+              </div>
+            </div>
+            <div class="performance-chart">
+              <canvas ref="performanceChart" width="600" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Management Panel -->
+        <div class="panel risk-panel">
+          <div class="panel-header">
+            <h3>Advanced Risk Management</h3>
+            <div class="risk-status" :class="riskLevel">
+              <span class="risk-dot"></span>
+              <span>{{ riskLevel.toUpperCase() }} RISK</span>
+            </div>
+          </div>
+          <div class="risk-content">
+            <div class="risk-gauge">
+              <div class="gauge-container">
+                <div class="gauge-arc">
+                  <div class="gauge-needle" :style="{ transform: `rotate(${riskAngle}deg)` }"></div>
+                </div>
+                <div class="gauge-center">
+                  <div class="gauge-value">{{ portfolioRisk }}</div>
+                  <div class="gauge-label">VaR 95%</div>
+                </div>
+              </div>
+            </div>
+            <div class="risk-breakdown">
+              <div v-for="risk in riskFactors" :key="risk.name" class="risk-factor">
+                <div class="factor-info">
+                  <span class="factor-name">{{ risk.name }}</span>
+                  <span class="factor-value">{{ risk.value }}%</span>
+                </div>
+                <div class="factor-bar">
+                  <div class="factor-fill" :style="{ 
+                    width: risk.value + '%',
+                    backgroundColor: getRiskColor(risk.value)
+                  }"></div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="panel performance-panel">
-            <div class="panel-header">
-              <h3>Performance Chart</h3>
-              <div class="chart-controls">
-                <button 
-                  v-for="period in chartPeriods" 
-                  :key="period"
-                  @click="selectedPeriod = period"
-                  :class="['period-btn', { active: selectedPeriod === period }]"
-                >
-                  {{ period }}
-                </button>
-              </div>
+        <!-- Market Intelligence Panel -->
+        <div class="panel intelligence-panel">
+          <div class="panel-header">
+            <h3>Market Intelligence Feed</h3>
+            <div class="intelligence-filters">
+              <button v-for="filter in intelligenceFilters" :key="filter"
+                      :class="['filter-btn', { active: activeFilter === filter }]"
+                      @click="activeFilter = filter">
+                {{ filter }}
+              </button>
             </div>
-            <div class="chart-container">
-              <canvas ref="performanceChart" width="400" height="200"></canvas>
+          </div>
+          <div class="intelligence-feed">
+            <div v-for="intel in filteredIntelligence" :key="intel.id" 
+                 :class="['intel-item', intel.priority]">
+              <div class="intel-header">
+                <div class="intel-source">{{ intel.source }}</div>
+                <div class="intel-time">{{ formatTime(intel.timestamp) }}</div>
+                <div :class="['intel-priority', intel.priority]">{{ intel.priority }}</div>
+              </div>
+              <div class="intel-content">{{ intel.content }}</div>
+              <div class="intel-impact" v-if="intel.impact">
+                <span class="impact-label">Market Impact:</span>
+                <span :class="['impact-value', intel.impact.type]">
+                  {{ intel.impact.magnitude }}% {{ intel.impact.direction }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Agent Analysis Modal -->
+    <!-- Enhanced Agent Modal -->
     <div v-if="selectedAgentModal" class="modal-overlay" @click="selectedAgentModal = null">
-      <div class="agent-modal" @click.stop>
+      <div class="agent-modal enhanced-modal" @click.stop>
         <div class="modal-header">
           <div class="agent-info">
             <img :src="selectedAgentModal.avatar" :alt="selectedAgentModal.name" class="modal-avatar" />
             <div>
               <h3>{{ selectedAgentModal.name }}</h3>
               <p>{{ selectedAgentModal.style }}</p>
+              <div class="agent-stats">
+                <span class="stat">YTD: {{ selectedAgentModal.ytdReturn }}%</span>
+                <span class="stat">Win Rate: {{ selectedAgentModal.winRate }}%</span>
+                <span class="stat">Avg Hold: {{ selectedAgentModal.avgHold }}d</span>
+              </div>
             </div>
           </div>
           <button @click="selectedAgentModal = null" class="close-btn">
             <font-awesome-icon icon="fa-solid fa-times" />
           </button>
         </div>
+        
+        <div class="modal-tabs">
+          <button v-for="tab in modalTabs" :key="tab"
+                  :class="['tab-btn', { active: activeModalTab === tab }]"
+                  @click="activeModalTab = tab">
+            {{ tab }}
+          </button>
+        </div>
+        
         <div class="modal-content">
-          <div class="agent-analysis">
-            <h4>Current Analysis</h4>
+          <!-- Analysis Tab -->
+          <div v-if="activeModalTab === 'Analysis'" class="tab-content">
+            <h4>Current Market Analysis</h4>
             <p>{{ selectedAgentModal.analysis }}</p>
+            
+            <h4>Investment Philosophy</h4>
+            <p>{{ selectedAgentModal.philosophy }}</p>
             
             <h4>Key Positions</h4>
             <div class="positions-list">
@@ -249,24 +359,49 @@
                 <span class="symbol">{{ position.symbol }}</span>
                 <span :class="['action', position.action.toLowerCase()]">{{ position.action }}</span>
                 <span class="conviction">{{ position.conviction }}% conviction</span>
+                <span class="allocation">{{ position.allocation }}% portfolio</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Performance Tab -->
+          <div v-if="activeModalTab === 'Performance'" class="tab-content">
+            <div class="performance-grid">
+              <div class="perf-metric">
+                <div class="perf-value">{{ selectedAgentModal.ytdReturn }}%</div>
+                <div class="perf-label">YTD Return</div>
+              </div>
+              <div class="perf-metric">
+                <div class="perf-value">{{ selectedAgentModal.winRate }}%</div>
+                <div class="perf-label">Win Rate</div>
+              </div>
+              <div class="perf-metric">
+                <div class="perf-value">{{ selectedAgentModal.sharpe }}</div>
+                <div class="perf-label">Sharpe Ratio</div>
+              </div>
+              <div class="perf-metric">
+                <div class="perf-value">{{ selectedAgentModal.maxDrawdown }}%</div>
+                <div class="perf-label">Max Drawdown</div>
               </div>
             </div>
             
-            <h4>Performance Metrics</h4>
-            <div class="performance-metrics">
-              <div class="metric">
-                <span class="label">YTD Return:</span>
-                <span :class="['value', selectedAgentModal.ytdReturn >= 0 ? 'positive' : 'negative']">
-                  {{ selectedAgentModal.ytdReturn >= 0 ? '+' : '' }}{{ selectedAgentModal.ytdReturn }}%
-                </span>
-              </div>
-              <div class="metric">
-                <span class="label">Win Rate:</span>
-                <span class="value">{{ selectedAgentModal.winRate }}%</span>
-              </div>
-              <div class="metric">
-                <span class="label">Avg Hold:</span>
-                <span class="value">{{ selectedAgentModal.avgHold }} days</span>
+            <h4>Historical Performance</h4>
+            <div class="performance-chart-modal">
+              <canvas ref="agentPerformanceChart" width="500" height="250"></canvas>
+            </div>
+          </div>
+          
+          <!-- Insights Tab -->
+          <div v-if="activeModalTab === 'Insights'" class="tab-content">
+            <h4>Recent Insights</h4>
+            <div class="insights-list">
+              <div v-for="insight in selectedAgentModal.insights" :key="insight.id" class="insight-item">
+                <div class="insight-date">{{ formatDate(insight.date) }}</div>
+                <div class="insight-content">{{ insight.content }}</div>
+                <div class="insight-impact">
+                  <span>Impact: </span>
+                  <span :class="insight.impact.type">{{ insight.impact.value }}%</span>
+                </div>
               </div>
             </div>
           </div>
@@ -309,13 +444,24 @@ export default {
           selected: true,
           pnl: 2.3,
           analysis: 'Focus on undervalued companies with strong moats and long-term prospects.',
+          philosophy: 'Buy wonderful companies at fair prices and hold forever. Focus on business fundamentals, not market sentiment.',
           positions: [
-            { symbol: 'AAPL', action: 'HOLD', conviction: 85 },
-            { symbol: 'KO', action: 'BUY', conviction: 90 }
+            { symbol: 'AAPL', action: 'HOLD', conviction: 85, allocation: 25.5 },
+            { symbol: 'KO', action: 'BUY', conviction: 90, allocation: 15.2 }
           ],
           ytdReturn: 12.4,
           winRate: 78,
-          avgHold: 180
+          avgHold: 180,
+          sharpe: 1.89,
+          maxDrawdown: -8.3,
+          insights: [
+            {
+              id: 1,
+              date: Date.now() - 86400000,
+              content: 'Technology companies showing strong competitive moats despite valuation concerns',
+              impact: { type: 'positive', value: 3.2 }
+            }
+          ]
         },
         {
           id: 2,
@@ -369,9 +515,81 @@ export default {
       ],
       
       proposedTrades: [
-        { id: 1, symbol: 'NVDA', action: 'BUY', quantity: 100, price: 875.20, status: 'Pending' },
-        { id: 2, symbol: 'AAPL', action: 'HOLD', quantity: 0, price: 193.45, status: 'Active' },
-        { id: 3, symbol: 'TSLA', action: 'BUY', quantity: 50, price: 248.50, status: 'Pending' }
+        { 
+          id: 1, 
+          symbol: 'NVDA', 
+          action: 'BUY', 
+          quantity: 100, 
+          price: 875.20, 
+          confidence: 89,
+          reasoning: 'Strong AI momentum and data center growth. Multiple agents consensus.',
+          var: 15.2,
+          sharpe: 2.1,
+          status: 'Pending' 
+        },
+        { 
+          id: 2, 
+          symbol: 'AAPL', 
+          action: 'HOLD', 
+          quantity: 200, 
+          price: 193.45,
+          confidence: 76,
+          reasoning: 'Stable fundamentals but limited near-term catalysts.',
+          var: 8.9,
+          sharpe: 1.4,
+          status: 'Active' 
+        }
+      ],
+      
+      // New enhanced data
+      executionMode: 'balanced',
+      performancePeriod: '1M',
+      activeModalTab: 'Analysis',
+      activeFilter: 'All',
+      
+      modalTabs: ['Analysis', 'Performance', 'Insights'],
+      intelligenceFilters: ['All', 'Critical', 'Market', 'Economic', 'Company'],
+      
+      portfolioReturn: 8.45,
+      sharpeRatio: 1.67,
+      maxDrawdown: -4.2,
+      winRate: 73,
+      portfolioRisk: 12.5,
+      riskAngle: 45, // degrees for gauge needle
+      
+      riskFactors: [
+        { name: 'Market Risk', value: 35 },
+        { name: 'Sector Concentration', value: 22 },
+        { name: 'Currency Risk', value: 8 },
+        { name: 'Liquidity Risk', value: 15 },
+        { name: 'Credit Risk', value: 12 }
+      ],
+      
+      marketIntelligence: [
+        {
+          id: 1,
+          source: 'Fed Reserve',
+          content: 'FOMC minutes suggest potential pause in rate hikes amid inflation cooling',
+          priority: 'critical',
+          timestamp: Date.now() - 300000,
+          impact: { type: 'positive', direction: 'up', magnitude: 2.3 }
+        },
+        {
+          id: 2,
+          source: 'Goldman Sachs',
+          content: 'Upgraded NVDA to Buy on AI growth momentum and data center demand',
+          priority: 'high',
+          timestamp: Date.now() - 600000,
+          impact: { type: 'positive', direction: 'up', magnitude: 1.8 }
+        },
+        {
+          id: 3,
+          source: 'Economic Data',
+          content: 'Q3 GDP revised higher to 4.9% annualized growth rate',
+          priority: 'medium',
+          timestamp: Date.now() - 900000,
+          impact: { type: 'positive', direction: 'up', magnitude: 0.9 }
+        }
       ]
     };
   },
@@ -379,6 +597,21 @@ export default {
   computed: {
     selectedAgents() {
       return this.agents.filter(agent => agent.selected);
+    },
+    
+    hasValidTrades() {
+      return this.proposedTrades.some(trade => trade.confidence >= 70);
+    },
+    
+    validTradesCount() {
+      return this.proposedTrades.filter(trade => trade.confidence >= 70).length;
+    },
+    
+    filteredIntelligence() {
+      if (this.activeFilter === 'All') return this.marketIntelligence;
+      return this.marketIntelligence.filter(intel => 
+        intel.priority === this.activeFilter.toLowerCase()
+      );
     }
   },
   
@@ -414,7 +647,19 @@ export default {
     },
     
     executeAllTrades() {
-      console.log('Executing all trades...');
+      const validTrades = this.proposedTrades.filter(trade => trade.confidence >= 70);
+      console.log('Executing trades:', validTrades);
+      // Execute trade logic here
+      this.$emit('trades-executed', validTrades);
+    },
+    
+    editTrade(tradeId) {
+      console.log('Editing trade:', tradeId);
+      // Open trade editing modal
+    },
+    
+    removeTrade(tradeId) {
+      this.proposedTrades = this.proposedTrades.filter(trade => trade.id !== tradeId);
     },
     
     getSignal(agentId, ticker) {
@@ -505,6 +750,21 @@ export default {
         ctx.stroke();
         ctx.setLineDash([]);
       });
+    },
+    
+    getRiskColor(value) {
+      if (value < 20) return '#00ff88';
+      if (value < 50) return '#ffa500';
+      return '#ff4444';
+    },
+    
+    formatDate(timestamp) {
+      return new Date(timestamp).toLocaleDateString();
+    },
+    
+    updatePerformanceChart() {
+      // Update chart based on selected period
+      this.drawPerformanceChart();
     }
   }
 };
@@ -912,274 +1172,606 @@ export default {
   color: #ff4757;
 }
 
-.trade-blotter {
-  padding: 1.5rem;
+.trade-execution-panel {
+  margin-bottom: 1rem;
 }
 
-.blotter-header {
-  display: grid;
-  grid-template-columns: 1fr 80px 80px 80px 80px;
+.execution-controls {
+  display: flex;
+  align-items: center;
   gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #30363d;
-  font-weight: 600;
-  color: #7d8590;
+}
+
+.execution-mode {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.mode-select {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  color: #c9d1d9;
   font-size: 0.8rem;
 }
 
-.blotter-row {
+.execute-btn {
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.execute-btn:disabled {
+  background: #30363d;
+  color: #7d8590;
+  cursor: not-allowed;
+}
+
+.proposed-trades {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.trade-item {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.trade-item:hover {
+  border-color: #58a6ff;
+}
+
+.trade-item.trade-buy {
+  border-left: 4px solid #00ff88;
+}
+
+.trade-item.trade-sell {
+  border-left: 4px solid #ff4444;
+}
+
+.trade-main {
   display: grid;
-  grid-template-columns: 1fr 80px 80px 80px 80px;
+  grid-template-columns: 1fr 1fr 1fr auto;
   gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #30363d;
+  padding: 0.75rem;
   align-items: center;
 }
 
-.action.buy {
-  color: #00ff88;
+.trade-symbol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-.action.sell {
-  color: #ff4757;
-}
-
-.action.hold {
-  color: #7d8590;
-}
-
-.status.pending {
+.ticker {
+  font-weight: 700;
   color: #f0f6fc;
 }
 
-.status.active {
+.price {
+  font-size: 0.8rem;
+  color: #7d8590;
+}
+
+.action-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.action-badge.buy {
+  background: rgba(0, 255, 136, 0.2);
   color: #00ff88;
 }
 
+.action-badge.sell {
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff4444;
+}
+
+.confidence-bar {
+  width: 100px;
+  height: 6px;
+  background: #21262d;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4444, #ffa500, #00ff88);
+  transition: width 0.3s ease;
+}
+
+.confidence-text {
+  font-size: 0.8rem;
+  color: #c9d1d9;
+  margin-top: 0.25rem;
+}
+
+.trade-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn, .remove-btn {
+  background: none;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 0.25rem;
+  color: #7d8590;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
+
+.remove-btn:hover {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+.trade-reasoning {
+  padding: 0.75rem;
+  border-top: 1px solid #30363d;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.reasoning-text {
+  font-size: 0.9rem;
+  color: #c9d1d9;
+  margin-bottom: 0.5rem;
+}
+
 .risk-metrics {
-  padding: 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  display: flex;
+  gap: 1rem;
 }
 
 .risk-item {
+  font-size: 0.8rem;
+  color: #7d8590;
+}
+
+.performance-panel {
+  margin-bottom: 1rem;
+}
+
+.performance-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 1rem;
   text-align: center;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.metric-value.positive {
+  color: #00ff88;
+}
+
+.metric-value.negative {
+  color: #ff4444;
 }
 
 .metric-label {
   font-size: 0.8rem;
   color: #7d8590;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.performance-chart {
+  background: #161b22;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.risk-panel {
+  margin-bottom: 1rem;
+}
+
+.risk-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.risk-status.green {
+  color: #00ff88;
+}
+
+.risk-status.yellow {
+  color: #ffa500;
+}
+
+.risk-status.red {
+  color: #ff4444;
+}
+
+.risk-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.risk-content {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+}
+
+.gauge-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 1rem auto;
+}
+
+.gauge-arc {
+  width: 100%;
+  height: 50%;
+  border: 8px solid #30363d;
+  border-bottom: none;
+  border-radius: 75px 75px 0 0;
+  position: relative;
+}
+
+.gauge-needle {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  height: 70px;
+  background: #ff4444;
+  transform-origin: bottom;
+  transition: transform 0.5s ease;
+}
+
+.gauge-center {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.gauge-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f0f6fc;
+}
+
+.gauge-label {
+  font-size: 0.8rem;
+  color: #7d8590;
+}
+
+.risk-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.risk-factor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.factor-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.factor-name {
+  color: #c9d1d9;
+}
+
+.factor-value {
+  color: #f0f6fc;
+  font-weight: 600;
+}
+
+.factor-bar {
+  height: 8px;
+  background: #21262d;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.factor-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.intelligence-panel {
+  margin-bottom: 1rem;
+}
+
+.intelligence-filters {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  background: none;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  color: #7d8590;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn.active {
+  background: #58a6ff;
+  border-color: #58a6ff;
+  color: #fff;
+}
+
+.intelligence-feed {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.intel-item {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.intel-item.critical {
+  border-left: 4px solid #ff4444;
+}
+
+.intel-item.high {
+  border-left: 4px solid #ffa500;
+}
+
+.intel-item.medium {
+  border-left: 4px solid #58a6ff;
+}
+
+.intel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.intel-source {
+  font-weight: 600;
+  color: #f0f6fc;
+}
+
+.intel-time {
+  color: #7d8590;
+}
+
+.intel-priority {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.intel-priority.critical {
+  background: rgba(255, 68, 68, 0.2);
+  color: #ff4444;
+}
+
+.intel-priority.high {
+  background: rgba(255, 165, 0, 0.2);
+  color: #ffa500;
+}
+
+.intel-priority.medium {
+  background: rgba(88, 166, 255, 0.2);
+  color: #58a6ff;
+}
+
+.intel-content {
+  color: #c9d1d9;
+  line-height: 1.4;
   margin-bottom: 0.5rem;
 }
 
-.metric-value {
+.intel-impact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.impact-label {
+  color: #7d8590;
+}
+
+.impact-value.positive {
+  color: #00ff88;
+}
+
+.impact-value.negative {
+  color: #ff4444;
+}
+
+.enhanced-modal {
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-tabs {
+  display: flex;
+  border-bottom: 1px solid #30363d;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  color: #7d8590;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+  color: #58a6ff;
+  border-bottom-color: #58a6ff;
+}
+
+.tab-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.agent-stats {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.stat {
+  color: #7d8590;
+}
+
+.performance-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.perf-metric {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.perf-value {
   font-size: 1.5rem;
   font-weight: 700;
   color: #f0f6fc;
   margin-bottom: 0.25rem;
 }
 
-.metric-change {
-  font-size: 0.75rem;
-  color: #7d8590;
-}
-
-.risk-light {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.risk-light.green {
-  background: #00ff88;
-}
-
-.risk-light.yellow {
-  background: #ffcc00;
-}
-
-.risk-light.red {
-  background: #ff4757;
-}
-
-.chart-controls {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.period-btn {
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #30363d;
-  border-radius: 4px;
-  background: transparent;
-  color: #7d8590;
-  cursor: pointer;
+.perf-label {
   font-size: 0.8rem;
+  color: #7d8590;
+  text-transform: uppercase;
 }
 
-.period-btn.active {
-  background: #00ff88;
-  color: #000;
-  border-color: #00ff88;
+.performance-chart-modal {
+  background: #0d1117;
+  border-radius: 8px;
+  padding: 1rem;
 }
 
-.chart-container {
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.chart-container canvas {
-  background: #21262d;
-  border-radius: 4px;
-}
-
-.refresh-btn, .execute-btn {
-  background: #21262d;
-  border: 1px solid #30363d;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  color: #c9d1d9;
-  cursor: pointer;
+.insights-list {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.execute-btn {
-  background: #00ff88;
-  color: #000;
-  border-color: #00ff88;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.agent-modal {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 80vh;
-  overflow: hidden;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid #30363d;
-}
-
-.agent-info {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
 }
 
-.modal-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #30363d;
+.insight-item {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 1rem;
 }
 
-.modal-header h3 {
-  margin: 0;
-  color: #f0f6fc;
-}
-
-.modal-header p {
-  margin: 0.25rem 0 0 0;
+.insight-date {
+  font-size: 0.8rem;
   color: #7d8590;
-  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 
-.close-btn {
-  background: none;
-  border: none;
-  color: #7d8590;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 4px;
-}
-
-.close-btn:hover {
-  background: #30363d;
-}
-
-.modal-content {
-  padding: 1.5rem;
-  overflow-y: auto;
-  max-height: 60vh;
-}
-
-.agent-analysis h4 {
-  margin: 0 0 1rem 0;
-  color: #f0f6fc;
-  font-size: 1rem;
-}
-
-.agent-analysis p {
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
+.insight-content {
   color: #c9d1d9;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
 }
 
-.positions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+.insight-impact {
+  font-size: 0.8rem;
 }
 
-.position-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  background: #21262d;
-  border-radius: 6px;
-}
-
-.performance-metrics {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.metric {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.metric .label {
-  color: #7d8590;
-}
-
-.metric .value {
-  font-weight: 600;
-}
-
-.metric .value.positive {
+.insight-impact .positive {
   color: #00ff88;
 }
 
-.metric .value.negative {
-  color: #ff4757;
+.insight-impact .negative {
+  color: #ff4444;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .trade-main {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .performance-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .risk-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .enhanced-modal {
+    max-width: 95vw;
+    margin: 0.5rem;
+  }
+  
+  .performance-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style> 

@@ -548,6 +548,7 @@ export default {
   border: 1px solid #e2e8f0;
   overflow: hidden;
   transition: all 0.3s ease;
+  animation: slideInFromRight 0.3s ease-out;
 }
 
 .draggable-chat-bubble.minimized {
@@ -633,7 +634,7 @@ export default {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  background: #f8fafc;
+  background: #ffffff;
 }
 
 .welcome-message {
@@ -643,7 +644,7 @@ export default {
 
 .welcome-message h4 {
   margin: 0 0 16px 0;
-  color: #374151;
+  color: #000000;
   font-size: 14px;
 }
 
@@ -653,7 +654,7 @@ export default {
 
 .suggestions-title {
   font-size: 12px;
-  color: #6b7280;
+  color: #666666;
   margin-bottom: 8px;
   font-weight: 500;
 }
@@ -666,7 +667,7 @@ export default {
 
 .suggestion-chip {
   background: white;
-  border: 1px solid #d1d5db;
+  border: 1px solid #cccccc;
   border-radius: 16px;
   padding: 6px 12px;
   font-size: 12px;
@@ -715,7 +716,8 @@ export default {
   border-radius: 12px;
   font-size: 13px;
   line-height: 1.4;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e5e5;
+  color: #000000;
 }
 
 .message.user .message-text {
@@ -726,7 +728,7 @@ export default {
 
 .message-time {
   font-size: 10px;
-  color: #6b7280;
+  color: #666666;
   margin-top: 4px;
 }
 
@@ -737,13 +739,13 @@ export default {
   padding: 8px 12px;
   background: white;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e5e5e5;
 }
 
 .typing-indicator span {
   width: 6px;
   height: 6px;
-  background: #6b7280;
+  background: #666666;
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out;
 }
@@ -759,7 +761,7 @@ export default {
 
 /* Input Area */
 .input-area {
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #e5e5e5;
   padding: 12px;
   background: white;
 }
@@ -772,7 +774,7 @@ export default {
 
 .message-input {
   flex: 1;
-  border: 1px solid #d1d5db;
+  border: 1px solid #cccccc;
   border-radius: 20px;
   padding: 8px 12px;
   font-size: 13px;
@@ -804,7 +806,7 @@ export default {
 }
 
 .send-btn:disabled {
-  background: #9ca3af;
+  background: #cccccc;
   cursor: not-allowed;
 }
 
@@ -825,43 +827,42 @@ export default {
 }
 
 .suggestions-scroll::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 2px;
+  background: #f1f1f1;
 }
 
 .suggestions-scroll::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #cccccc;
   border-radius: 2px;
 }
 
 .smart-suggestion {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  background: white;
+  border: 1px solid #cccccc;
   border-radius: 12px;
   padding: 4px 8px;
   font-size: 11px;
-  white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #475569;
+  white-space: nowrap;
 }
 
 .smart-suggestion:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
+  background: #000000;
+  color: white;
+  border-color: #000000;
 }
 
 /* Footer */
 .bubble-footer {
-  padding: 8px 12px;
-  border-top: 1px solid #f1f5f9;
-  background: #f8fafc;
+  background: #f9f9f9;
+  padding: 8px 16px;
   text-align: center;
+  border-top: 1px solid #e5e5e5;
 }
 
 .powered-by {
   font-size: 10px;
-  color: #9ca3af;
+  color: #666666;
 }
 
 /* Drag hint */
@@ -874,63 +875,42 @@ export default {
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10px;
   white-space: nowrap;
+  pointer-events: none;
   opacity: 0;
-  animation: fadeInOut 2s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out 1s forwards;
 }
 
-@keyframes fadeInOut {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
+@keyframes fadeIn {
+  to { opacity: 1; }
 }
 
-/* Responsive */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .draggable-chat-bubble {
     width: 280px;
-    left: 10px !important;
     right: 10px;
-    width: calc(100vw - 20px);
-    max-width: 320px;
   }
-
+  
   .bubble-content {
-    height: 360px;
+    height: 350px;
+  }
+  
+  .messages-area {
+    padding: 12px;
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .draggable-chat-bubble {
-    background: #1f2937;
-    border-color: #374151;
+/* Animation for bubble appearance */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
-
-  .messages-area {
-    background: #111827;
-  }
-
-  .message-text {
-    background: #374151;
-    color: #f9fafb;
-    border-color: #4b5563;
-  }
-
-  .input-area {
-    background: #1f2937;
-    border-color: #374151;
-  }
-
-  .message-input {
-    background: #374151;
-    color: #f9fafb;
-    border-color: #4b5563;
-  }
-
-  .bubble-footer {
-    background: #111827;
-    border-color: #374151;
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 </style> 

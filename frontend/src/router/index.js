@@ -28,6 +28,7 @@ import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue"
 import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue"
 import AgentPage from "@/views/FinAgent/AgentPage.vue";
 import PestlePage from "@/views/FinAgent/PestlePage.vue";
+import AIBreakthroughWorkflowsPage from "@/views/FinAgent/AIBreakthroughWorkflowsPage.vue";
 import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
 import AutoTradeAI from "@/views/FinInvest/AutoTradeAIPage.vue";
 import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
@@ -47,6 +48,8 @@ import SubscriptionPage from "@/views/Subscription/SubscriptionPage.vue";
 import RealEstateAnalystPage from "@/views/FinXpert/RealEstateAnalystPage.vue";
 import EquityResearcherPage from "@/views/FinXpert/EquityResearcherPage.vue";
 import AIHedgeFundLabPage from "@/views/FinXpert/AIHedgeFundLabPage.vue";
+import PrivateEquityDealScoutPage from "@/views/FinXpert/PrivateEquityDealScoutPage.vue";
+import AIFinanceWorkflowsPage from "@/views/FinXpert/AIFinanceWorkflowsPage.vue";
 
 const routes = [
   {
@@ -227,6 +230,11 @@ const routes = [
     component: PestlePage,
   },
   {
+    path: "/ai-breakthrough-workflows",
+    name: "AIBreakthroughWorkflowsPage", 
+    component: AIBreakthroughWorkflowsPage,
+  },
+  {
     path: "/forgot-password",
     name: "ForgotPassword",
     component: ForgotPassword,
@@ -300,6 +308,16 @@ const routes = [
     path: "/ai-hedge-fund-lab",
     name: "AIHedgeFundLabPage",
     component: AIHedgeFundLabPage,
+  },
+  {
+    path: "/finxpert-pe-deal-scout",
+    name: "PrivateEquityDealScoutPage",
+    component: PrivateEquityDealScoutPage,
+  },
+  {
+    path: "/ai-finance-workflows",
+    name: "AIFinanceWorkflowsPage",
+    component: AIFinanceWorkflowsPage,
   }
 ];
 

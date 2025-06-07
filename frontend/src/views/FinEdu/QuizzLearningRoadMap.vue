@@ -448,7 +448,7 @@ import { ref, onMounted, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import html2pdf from "html2pdf.js";
 import { getVideos } from '@/services/serperService.js'
-import { gptServices } from '@/services/gptServices.js'
+import { gptServices, GPTService } from '@/services/gptServices.js'
 import axios from "axios";
 
 const route = useRoute();
@@ -730,24 +730,36 @@ async function searchVideos(sIdx, tIdx) {
   }
 }
 
-function startTopic(sIdx, tIdx) {
+// Enhanced topic starting function - Single version
+async function startTopic(sIdx, tIdx) {
+  if (!sections.value[sIdx] || !sections.value[sIdx].topics[tIdx]) {
+    return;
+  }
+
   const topic = sections.value[sIdx].topics[tIdx];
-  topic.inProgress = true;
-  
-  // Auto-generate content when starting a topic
-  const key = keyFor(sIdx, tIdx);
-  if (!topicDefinitions.value[key]) {
-    generateDefinition(sIdx, tIdx);
+  const section = sections.value[sIdx];
+
+  // Toggle topic visibility
+  topic.collapsed = !topic.collapsed;
+
+  // If expanding, mark as in progress and fetch content
+  if (!topic.collapsed && !topic.inProgress && !topic.completed) {
+    topic.inProgress = true;
+    section.active = true;
+
+    // Auto-generate content when starting a topic
+    const key = keyFor(sIdx, tIdx);
+    if (!topicDefinitions.value[key]) {
+      generateDefinition(sIdx, tIdx);
+    }
+    if (!videoResults.value[key]) {
+      searchVideos(sIdx, tIdx);
+    }
+    
+    // Expand the topic
+    activeMaterialTab.value = 'definition';
+    checkAchievements();
   }
-  if (!videoResults.value[key]) {
-    searchVideos(sIdx, tIdx);
-  }
-  
-  // Expand the topic
-  topic.collapsed = false;
-  activeMaterialTab.value = 'definition';
-  
-  checkAchievements();
 }
 
 function toggleSection(sIdx) {
@@ -838,60 +850,94 @@ async function generatePersonalizedRoadmap() {
   generatingRoadmap.value = true;
   
   try {
-    const prompt = `Create a personalized learning roadmap for someone with:
+    const prompt = `Create a comprehensive personalized learning roadmap for someone with:
     - Knowledge Level: ${personalizeData.value.level}
     - Learning Goals: ${personalizeData.value.goals.join(', ')}
     - Time Commitment: ${personalizeData.value.timeCommitment} hours/week
     - Learning Style: ${personalizeData.value.learningStyle}
     
-    Generate a comprehensive roadmap with 4-6 modules, each containing 3-5 topics.
-    Format as JSON with structure: 
-    {
-      "modules": [
+    Generate a detailed roadmap with 4-6 modules, each containing 4-6 specific topics.
+    Make it comprehensive and practical for real-world application.`;
+    
+    const schema = {
+      type: "object",
+      properties: {
+        modules: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              topics: {
+                type: "array",
+                items: { type: "string" }
+              }
+            },
+            required: ["title", "topics"]
+          }
+        },
+        duration: { type: "string" },
+        level: { type: "string" }
+      },
+      required: ["modules", "duration", "level"]
+    };
+    
+    // Use GPTService with auto provider selection
+    const roadmapData = await GPTService.generateStructuredJson({
+      messages: [
         {
-          "title": "Module Title",
-          "topics": ["Topic 1", "Topic 2", ...]
+          role: "system", 
+          content: "You are an expert finance education curriculum designer. Create comprehensive, practical learning roadmaps."
+        },
+        {
+          role: "user",
+          content: prompt
         }
       ],
-      "duration": "X weeks",
-      "level": "${personalizeData.value.level}"
-    }`;
+      json_schema: schema,
+      provider: "auto" // Will try all providers with fallback
+    });
     
-    const response = await gptServices.generateResponse(prompt);
-    const roadmapData = JSON.parse(response);
-    
-    // Update sections with new personalized roadmap
-    sections.value = roadmapData.modules.map((module, index) => ({
-      title: module.title,
-      collapsed: false,
-      completed: false,
-      active: index === 0,
-      estimatedDuration: `${Math.ceil(module.topics.length * 0.5)}-${Math.ceil(module.topics.length * 0.75)} hours`,
-      topics: module.topics.map((topic, topicIndex) => ({
-        id: Date.now() + index * 100 + topicIndex,
-        title: topic,
-        collapsed: true,
+    if (roadmapData && roadmapData.modules) {
+      // Update sections with new personalized roadmap
+      sections.value = roadmapData.modules.map((module, index) => ({
+        title: module.title,
+        collapsed: false,
         completed: false,
-        inProgress: false,
-        difficulty: getDifficultyLevel(topicIndex, module.topics.length),
-        estimatedTime: `${15 + Math.random() * 10 | 0}-${20 + Math.random() * 15 | 0} min`
-      }))
-    }));
-    
-    // Update course details
-    courseDetails.value = {
-      duration: roadmapData.duration || `${sections.value.length * 2} weeks`,
-      lectures: `${sections.value.length} modules`,
-      skillLevel: personalizeData.value.level,
-      language: "English",
-      studyPlan: `${personalizeData.value.timeCommitment} hours/week`,
-      deadline: calculateDeadline(sections.value.length),
-    };
+        active: index === 0,
+        estimatedDuration: `${Math.ceil(module.topics.length * 0.5)}-${Math.ceil(module.topics.length * 0.75)} hours`,
+        topics: module.topics.map((topic, topicIndex) => ({
+          id: Date.now() + index * 100 + topicIndex,
+          title: topic,
+          collapsed: true,
+          completed: false,
+          inProgress: false,
+          difficulty: getDifficultyLevel(topicIndex, module.topics.length),
+          estimatedTime: `${15 + Math.random() * 10 | 0}-${20 + Math.random() * 15 | 0} min`
+        }))
+      }));
+      
+      // Update course details
+      courseDetails.value = {
+        duration: roadmapData.duration || `${sections.value.length * 2} weeks`,
+        lectures: `${sections.value.length} modules`,
+        skillLevel: personalizeData.value.level,
+        language: "English",
+        studyPlan: `${personalizeData.value.timeCommitment} hours/week`,
+        deadline: calculateDeadline(sections.value.length),
+      };
+    } else {
+      throw new Error('Invalid roadmap data received');
+    }
     
     closePersonalizeModal();
   } catch (error) {
     console.error("Error generating personalized roadmap:", error);
-    alert("Error generating roadmap. Please try again.");
+    alert("Error generating roadmap. Using fallback content.");
+    
+    // Fallback to basic roadmap
+    initializeDefaultRoadmap();
+    closePersonalizeModal();
   } finally {
     generatingRoadmap.value = false;
   }
@@ -990,6 +1036,87 @@ onMounted(async () => {
 watch(() => route.params, () => {
   processRoadmapData();
 });
+
+// Function to fetch video content using Brave Search API
+async function fetchTopicVideos(topicTitle) {
+  const key = keyFor('video', topicTitle);
+  
+  if (loadingVideos.value[key]) {
+    return; // Already loading
+  }
+  
+  try {
+    loadingVideos.value[key] = true;
+    
+    // Use Brave Search API to find educational videos
+    const searchQuery = `${topicTitle} tutorial finance education`;
+    const videoResults = await getVideos(searchQuery);
+    
+    // Limit to top 3 videos
+    videoResults.value[key] = videoResults.slice(0, VIDEO_COUNT);
+    
+  } catch (error) {
+    console.error('Error fetching videos:', error);
+    videoResults.value[key] = [];
+  } finally {
+    loadingVideos.value[key] = false;
+  }
+}
+
+// Function to generate topic content using AI
+async function generateTopicContent(topicTitle) {
+  const key = keyFor('definition', topicTitle);
+  
+  if (loadingDefinitions.value[key]) {
+    return; // Already loading
+  }
+  
+  try {
+    loadingDefinitions.value[key] = true;
+    
+    // Use AI to generate educational content
+    const messages = [
+      {
+        role: "system",
+        content: "You are a finance education expert. Provide clear, comprehensive explanations of financial concepts. Include practical examples and actionable insights."
+      },
+      {
+        role: "user",
+        content: `Explain "${topicTitle}" in detail. Include:
+        1. Clear definition and key concepts
+        2. Why it's important in finance
+        3. Practical examples
+        4. Common mistakes to avoid
+        5. Next steps for learning
+        
+        Keep it educational but engaging, suitable for learners.`
+      }
+    ];
+    
+    // Try with auto provider (will fallback if needed)
+    const content = await gptServices(messages, "auto");
+    
+    topicDefinitions.value[key] = content;
+    
+  } catch (error) {
+    console.error('Error generating content:', error);
+    // Fallback content
+    topicDefinitions.value[key] = `
+      <h3>${topicTitle}</h3>
+      <p>This topic covers important concepts in ${topicTitle.toLowerCase()}. Understanding this topic will help you build a strong foundation in financial literacy.</p>
+      <p><strong>Key Points:</strong></p>
+      <ul>
+        <li>Fundamental concepts and definitions</li>
+        <li>Practical applications in real-world scenarios</li>
+        <li>Best practices and common approaches</li>
+        <li>Tips for successful implementation</li>
+      </ul>
+      <p><em>Content temporarily unavailable. Please try again later.</em></p>
+    `;
+  } finally {
+    loadingDefinitions.value[key] = false;
+  }
+}
 </script>
 
 <style scoped>
@@ -998,17 +1125,18 @@ watch(() => route.params, () => {
 /* Base Styles */
 .learning-roadmap-container {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
   min-height: 100vh;
   padding: 0;
   margin: 0;
+  color: #000000;
 }
 
 /* Header Styles */
 .roadmap-header {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 2rem 3rem;
   position: sticky;
   top: 0;
@@ -1026,7 +1154,7 @@ watch(() => route.params, () => {
 .header-text .main-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #000000;
   margin: 0;
   display: flex;
   align-items: center;
@@ -1034,11 +1162,11 @@ watch(() => route.params, () => {
 }
 
 .title-icon {
-  color: #667eea;
+  color: #000000;
 }
 
 .subtitle {
-  color: #718096;
+  color: #666666;
   font-size: 1.1rem;
   margin: 0.5rem 0 0 0;
 }
@@ -1062,18 +1190,18 @@ watch(() => route.params, () => {
 }
 
 .btn-personalize {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   color: white;
 }
 
 .btn-personalize:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .btn-export {
   background: #f7fafc;
-  color: #4a5568;
+  color: #000000;
   border: 2px solid #e2e8f0;
 }
 
@@ -1099,12 +1227,12 @@ watch(() => route.params, () => {
 
 .progress-text {
   font-weight: 600;
-  color: #4a5568;
+  color: #000000;
 }
 
 .progress-percentage {
   font-weight: 700;
-  color: #667eea;
+  color: #000000;
   font-size: 1.2rem;
 }
 
@@ -1117,7 +1245,7 @@ watch(() => route.params, () => {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #000000 0%, #333333 100%);
   border-radius: 10px;
   transition: width 0.8s ease;
 }
@@ -1153,7 +1281,7 @@ watch(() => route.params, () => {
 .panel-header h2 {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #000000;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1168,7 +1296,7 @@ watch(() => route.params, () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #718096;
+  color: #666666;
   font-weight: 500;
 }
 
@@ -1192,21 +1320,22 @@ watch(() => route.params, () => {
 .section-node:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  border-color: #667eea;
+  border-color: #000000;
 }
 
 .section-node.completed {
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  color: white;
+  background: linear-gradient(135deg, #e8f5e8 0%, #d4edd4 100%);
+  color: #000000;
+  border-color: #4caf50;
 }
 
 .section-node.active {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+  border-color: #000000;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
 }
 
 .node-icon {
-  background: #667eea;
+  background: #000000;
   color: white;
   width: 50px;
   height: 50px;
@@ -1225,12 +1354,13 @@ watch(() => route.params, () => {
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
+  color: #000000;
 }
 
 .section-meta {
   display: flex;
   gap: 1rem;
-  color: #718096;
+  color: #666666;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
 }
@@ -1286,17 +1416,17 @@ watch(() => route.params, () => {
   align-items: center;
   justify-content: center;
   background: #e2e8f0;
-  color: #718096;
+  color: #000000;
   font-size: 0.8rem;
 }
 
 .status-indicator.completed {
-  background: #48bb78;
+  background: #4caf50;
   color: white;
 }
 
 .status-indicator.in-progress {
-  background: #ed8936;
+  background: #ff9800;
   color: white;
 }
 
@@ -1307,7 +1437,7 @@ watch(() => route.params, () => {
 .topic-title {
   font-weight: 600;
   margin: 0 0 0.25rem 0;
-  color: #2d3748;
+  color: #000000;
 }
 
 .topic-meta {
@@ -1323,18 +1453,18 @@ watch(() => route.params, () => {
 }
 
 .difficulty.beginner {
-  background: #c6f6d5;
-  color: #22543d;
+  background: #e8f5e8;
+  color: #2e7d32;
 }
 
 .difficulty.intermediate {
-  background: #ffeaa7;
-  color: #744210;
+  background: #fff3e0;
+  color: #f57c00;
 }
 
 .difficulty.advanced {
-  background: #fed7d7;
-  color: #742a2a;
+  background: #ffebee;
+  color: #d32f2f;
 }
 
 .topic-actions {
@@ -1347,7 +1477,7 @@ watch(() => route.params, () => {
   height: 35px;
   border-radius: 50%;
   border: none;
-  background: #667eea;
+  background: #000000;
   color: white;
   cursor: pointer;
   display: flex;
@@ -1358,6 +1488,7 @@ watch(() => route.params, () => {
 
 .btn-icon:hover {
   transform: scale(1.1);
+  background: #333333;
 }
 
 /* Topic Content Panel */
@@ -1691,15 +1822,15 @@ watch(() => route.params, () => {
 
 .achievement-item.unlocked {
   opacity: 1;
-  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
-  color: white;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
+  color: #000000;
 }
 
 .achievement-icon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #667eea;
+  background: #000000;
   color: white;
   display: flex;
   align-items: center;
@@ -1735,18 +1866,18 @@ watch(() => route.params, () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   color: white;
 }
 
 .btn-outline {
   background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #000000;
+  border: 2px solid #000000;
 }
 
 .btn-outline:hover {
-  background: #667eea;
+  background: #000000;
   color: white;
 }
 
@@ -1776,7 +1907,7 @@ watch(() => route.params, () => {
 }
 
 .modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   color: white;
   padding: 2rem;
   display: flex;
@@ -1836,8 +1967,8 @@ watch(() => route.params, () => {
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .checkbox-group {
@@ -1876,8 +2007,8 @@ watch(() => route.params, () => {
 }
 
 .checkbox-label input[type="checkbox"]:checked + .checkmark {
-  background: #667eea;
-  border-color: #667eea;
+  background: #000000;
+  border-color: #000000;
 }
 
 .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
@@ -1899,14 +2030,14 @@ watch(() => route.params, () => {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
-  background: #667eea;
+  background: #000000;
   border-radius: 50%;
   cursor: pointer;
 }
 
 .range-value {
   font-weight: 600;
-  color: #667eea;
+  color: #000000;
   margin-top: 0.5rem;
 }
 

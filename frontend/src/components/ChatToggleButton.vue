@@ -300,20 +300,20 @@ export default {
   background: linear-gradient(135deg, #000000 0%, #333333 100%);
   border: none;
   border-radius: 50%;
-  color: white;
-  font-size: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  font-size: 24px;
+  color: white;
 }
 
 .chat-toggle-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
 }
 
 .chat-toggle-btn.btn-active {
@@ -331,14 +331,14 @@ export default {
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
   50% {
-    box-shadow: 0 4px 30px rgba(59, 130, 246, 0.8);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
     transform: scale(1.05);
   }
   100% {
-    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
 }
 

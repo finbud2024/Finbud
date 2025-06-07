@@ -252,11 +252,11 @@
     }));
 
     const tableSources = {
-        'Tổng quan': '.netlify/functions/server/api/vietstock/Overview',
-        'GDP': '.netlify/functions/server/api/vietstock/GDP/filter/',
-        'FDI': '.netlify/functions/server/api/vietstock/FDI',
-        'CPI': '.netlify/functions/server/api/vietstock/CPI/filter/',
-        'Xuất-Nhập khẩu': '.netlify/functions/server/api/vietstock/ImportExport/filter/',
+        'Tổng quan': 'http://localhost:8888/api/vietstock/Overview',
+        'GDP': 'http://localhost:8888/api/vietstock/GDP/filter/',
+        'FDI': 'http://localhost:8888/api/vietstock/FDI',
+        'CPI': 'http://localhost:8888/api/vietstock/CPI/filter/',
+        'Xuất-Nhập khẩu': 'http://localhost:8888/api/vietstock/ImportExport/filter/',
     };
 
     watch([selectedTable, header], ([newTable]) => {
