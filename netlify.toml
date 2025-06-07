@@ -12,9 +12,6 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["mongoose", "express", "socket.io", "axios"]
-
-[[functions]]
-  path = "backend/functions/server.js"
   included_files = ["backend/**/*"]
   
 [build.environment]

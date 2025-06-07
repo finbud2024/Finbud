@@ -1,334 +1,408 @@
 <template>
   <div class="pe-deal-scout">
-    <div class="hero-section">
-      <div class="hero-content">
-        <h1 class="hero-title">Private Equity Deal Scout</h1>
-        <p class="hero-subtitle">Advanced deal analysis and due diligence platform powered by AI</p>
-        <div class="hero-stats">
-          <div class="stat-item">
-            <div class="stat-number">{{ totalDealsAnalyzed.toLocaleString() }}</div>
-            <div class="stat-label">Deals Analyzed</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">${{ totalValueAnalyzed }}B</div>
-            <div class="stat-label">Total Value</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-number">{{ averageAccuracy }}%</div>
-            <div class="stat-label">Analysis Accuracy</div>
-          </div>
+    <!-- Mobile Sidebar Toggle Button -->
+    <button 
+      v-if="isMobile" 
+      @click="toggleSidebar" 
+      class="mobile-sidebar-toggle"
+      :class="{ 'sidebar-open': isSidebarOpen }"
+    >
+      <i class="fas fa-bars" v-if="!isSidebarOpen"></i>
+      <i class="fas fa-times" v-else></i>
+    </button>
+
+    <!-- Sidebar Overlay for mobile -->
+    <div 
+      v-if="isMobile && isSidebarOpen" 
+      class="sidebar-overlay" 
+      @click="closeSidebar"
+    ></div>
+
+    <!-- Sidebar -->
+    <aside 
+      class="deal-scout-sidebar" 
+      :class="{
+        'sidebar-open': isSidebarOpen,
+        'sidebar-mobile': isMobile,
+        'sidebar-desktop': !isMobile
+      }"
+    >
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-chart-line"></i>
+          <span>Deal Scout</span>
         </div>
-      </div>
-    </div>
-
-    <!-- Deal Analysis Dashboard -->
-    <div class="dashboard-section">
-      <div class="section-header">
-        <h2>Deal Analysis Dashboard</h2>
-        <div class="header-actions">
-          <button @click="openNewDealModal" class="btn-primary">
-            <i class="fas fa-plus"></i> New Deal Analysis
-          </button>
-          <button @click="exportReport" class="btn-secondary">
-            <i class="fas fa-download"></i> Export Report
-          </button>
-        </div>
-      </div>
-
-      <div class="analysis-grid">
-        <!-- Quick Analysis Panel -->
-        <div class="analysis-card quick-analysis">
-          <div class="card-header">
-            <h3>Quick Deal Assessment</h3>
-            <span class="status-indicator active"></span>
-          </div>
-          <div class="card-content">
-            <form @submit.prevent="performQuickAnalysis" class="quick-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Company Name</label>
-                  <input v-model="quickAnalysis.companyName" type="text" placeholder="Enter company name" required>
-                </div>
-                <div class="form-group">
-                  <label>Sector</label>
-                  <select v-model="quickAnalysis.sector" required>
-                    <option value="saas">SaaS</option>
-                    <option value="fintech">FinTech</option>
-                    <option value="ecommerce">E-commerce</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="edtech">EdTech</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Revenue ($M)</label>
-                  <input v-model.number="quickAnalysis.revenue" type="number" step="0.1" placeholder="Annual revenue" required>
-                </div>
-                <div class="form-group">
-                  <label>EBITDA ($M)</label>
-                  <input v-model.number="quickAnalysis.ebitda" type="number" step="0.1" placeholder="EBITDA" required>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Stage</label>
-                  <select v-model="quickAnalysis.stage" required>
-                    <option value="series-a">Series A</option>
-                    <option value="series-b">Series B</option>
-                    <option value="growth">Growth</option>
-                    <option value="buyout">Buyout</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label>Market Size ($B)</label>
-                  <input v-model.number="quickAnalysis.marketSize" type="number" step="0.1" placeholder="TAM">
-                </div>
-              </div>
-              <button type="submit" class="btn-analyze" :disabled="isAnalyzing">
-                <i class="fas fa-chart-line"></i>
-                {{ isAnalyzing ? 'Analyzing...' : 'Analyze Deal' }}
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <!-- LBO Calculator -->
-        <div class="analysis-card lbo-calculator">
-          <div class="card-header">
-            <h3>LBO Model Calculator</h3>
-            <span class="tooltip-trigger" @mouseenter="showTooltip" @mouseleave="hideTooltip">
-              <i class="fas fa-info-circle"></i>
-            </span>
-          </div>
-          <div class="card-content">
-            <div class="lbo-inputs">
-              <div class="input-group">
-                <label>EBITDA Multiple</label>
-                <input v-model.number="lboModel.debtMultiple" type="number" step="0.1" placeholder="5.0">
-              </div>
-              <div class="input-group">
-                <label>Exit Multiple</label>
-                <input v-model.number="lboModel.exitMultiple" type="number" step="0.1" placeholder="8.0">
-              </div>
-              <div class="input-group">
-                <label>Interest Rate (%)</label>
-                <input v-model.number="lboModel.interestRate" type="number" step="0.1" placeholder="7.5">
-              </div>
-              <div class="input-group">
-                <label>Holding Period (Years)</label>
-                <input v-model.number="lboModel.holdingPeriod" type="number" placeholder="5">
-              </div>
-            </div>
-            <button @click="calculateLBO" class="btn-calculate">Calculate Returns</button>
-            
-            <div v-if="lboResults" class="lbo-results">
-              <div class="result-metric">
-                <span class="metric-label">IRR</span>
-                <span class="metric-value">{{ lboResults.returns?.irr }}%</span>
-              </div>
-              <div class="result-metric">
-                <span class="metric-label">Money Multiple</span>
-                <span class="metric-value">{{ lboResults.returns?.multipleOfMoney }}x</span>
-              </div>
-              <div class="result-metric">
-                <span class="metric-label">Equity Value</span>
-                <span class="metric-value">${{ lboResults.exit?.equityValue }}M</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Deal Insights -->
-        <div class="analysis-card deal-insights" v-if="currentAnalysis">
-          <div class="card-header">
-            <h3>Deal Insights</h3>
-            <div class="overall-score" :class="getScoreClass(currentAnalysis.scoring?.overall)">
-              {{ currentAnalysis.scoring?.overall || 0 }}
-            </div>
-          </div>
-          <div class="card-content">
-            <div class="insights-list">
-              <div v-for="insight in currentAnalysis.insights" :key="insight.category" 
-                   class="insight-item" :class="insight.type">
-                <div class="insight-header">
-                  <span class="insight-category">{{ insight.category }}</span>
-                  <span class="insight-type">{{ insight.type }}</span>
-                </div>
-                <p class="insight-message">{{ insight.message }}</p>
-                <p class="insight-recommendation">{{ insight.recommendation }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Market Intelligence -->
-        <div class="analysis-card market-intel">
-          <div class="card-header">
-            <h3>Market Intelligence</h3>
-            <button @click="refreshMarketData" class="refresh-btn">
-              <i class="fas fa-sync-alt" :class="{ 'spinning': refreshing }"></i>
-            </button>
-          </div>
-          <div class="card-content">
-            <div v-if="marketIntelligence" class="market-stats">
-              <div class="market-metric">
-                <label>Market Size</label>
-                <value>{{ marketIntelligence.sector_overview?.market_size }}</value>
-              </div>
-              <div class="market-metric">
-                <label>Growth Rate</label>
-                <value>{{ marketIntelligence.sector_overview?.growth_rate }}</value>
-              </div>
-              <div class="market-metric">
-                <label>Recent Deals</label>
-                <value>{{ marketIntelligence.recent_transactions?.length || 0 }}</value>
-              </div>
-              <div class="market-metric">
-                <label>Sentiment</label>
-                <value :class="marketIntelligence.market_sentiment">
-                  {{ marketIntelligence.market_sentiment }}
-                </value>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Deals & Comparables -->
-    <div class="comparables-section">
-      <div class="section-header">
-        <h2>Recent Deals & Comparables</h2>
-        <div class="filter-controls">
-          <select v-model="comparableFilters.sector">
-            <option value="">All Sectors</option>
-            <option value="saas">SaaS</option>
-            <option value="fintech">FinTech</option>
-            <option value="ecommerce">E-commerce</option>
-            <option value="healthcare">Healthcare</option>
-          </select>
-          <select v-model="comparableFilters.timeframe">
-            <option value="12m">Last 12 Months</option>
-            <option value="24m">Last 24 Months</option>
-            <option value="36m">Last 36 Months</option>
-          </select>
-          <button @click="loadComparables" class="btn-filter">Apply Filters</button>
-        </div>
-      </div>
-
-      <div class="comparables-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Company</th>
-              <th>Sector</th>
-              <th>Stage</th>
-              <th>Valuation</th>
-              <th>Revenue Multiple</th>
-              <th>Growth Rate</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="deal in comparableDeals" :key="deal.company_name">
-              <td class="company-name">{{ deal.company_name }}</td>
-              <td><span class="sector-tag">{{ deal.sector }}</span></td>
-              <td><span class="stage-badge">{{ deal.stage }}</span></td>
-              <td class="valuation">{{ deal.valuation }}</td>
-              <td class="multiple">{{ deal.revenue_multiple }}x</td>
-              <td class="growth">{{ deal.growth_rate }}</td>
-              <td class="date">{{ formatDate(deal.date) }}</td>
-              <td class="actions">
-                <button @click="viewDealDetails(deal)" class="btn-view">View</button>
-                <button @click="compareToDeal(deal)" class="btn-compare">Compare</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Due Diligence Checklist -->
-    <div class="due-diligence-section">
-      <div class="section-header">
-        <h2>Due Diligence Checklist</h2>
-        <div class="progress-indicator">
-          <span>{{ completedChecks }}/{{ totalChecks }} Completed</span>
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: (completedChecks/totalChecks)*100 + '%' }"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="checklist-categories">
-        <div v-for="category in dueDiligenceChecklist" :key="category.name" class="checklist-category">
-          <div class="category-header" @click="toggleCategory(category.name)">
-            <h3>{{ category.name }}</h3>
-            <span class="category-progress">{{ category.completed }}/{{ category.items.length }}</span>
-            <i class="fas fa-chevron-down" :class="{ 'rotated': category.expanded }"></i>
-          </div>
-          <div v-if="category.expanded" class="category-items">
-            <div v-for="item in category.items" :key="item.id" class="checklist-item">
-              <input type="checkbox" v-model="item.completed" @change="updateProgress">
-              <label>{{ item.task }}</label>
-              <span class="item-priority" :class="item.priority">{{ item.priority }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Deal Memo Generator -->
-    <div class="memo-section">
-      <div class="section-header">
-        <h2>AI Deal Memo Generator</h2>
-        <button @click="generateMemo" class="btn-primary" :disabled="!currentAnalysis || generatingMemo">
-          <i class="fas fa-robot"></i>
-          {{ generatingMemo ? 'Generating...' : 'Generate Memo' }}
+        <button v-if="isMobile" @click="closeSidebar" class="sidebar-close">
+          <i class="fas fa-times"></i>
         </button>
       </div>
 
-      <div v-if="generatedMemo" class="memo-preview">
-        <div class="memo-header">
-          <h3>{{ generatedMemo.executiveSummary?.investment_thesis?.substring(0, 50) }}...</h3>
-          <div class="memo-actions">
-            <button @click="downloadMemo" class="btn-download">
-              <i class="fas fa-download"></i> Download PDF
-            </button>
-            <button @click="editMemo" class="btn-edit">
-              <i class="fas fa-edit"></i> Edit
-            </button>
+      <nav class="sidebar-nav">
+        <ul>
+          <li @click="scrollToSection('dashboard')" :class="{ active: activeSection === 'dashboard' }">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </li>
+          <li @click="scrollToSection('comparables')" :class="{ active: activeSection === 'comparables' }">
+            <i class="fas fa-balance-scale"></i>
+            <span>Comparables</span>
+          </li>
+          <li @click="scrollToSection('due-diligence')" :class="{ active: activeSection === 'due-diligence' }">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Due Diligence</span>
+          </li>
+          <li @click="scrollToSection('memo')" :class="{ active: activeSection === 'memo' }">
+            <i class="fas fa-file-alt"></i>
+            <span>Deal Memo</span>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="quick-stats">
+          <div class="stat-item">
+            <span class="stat-label">Active Deals</span>
+            <span class="stat-value">12</span>
           </div>
-        </div>
-        <div class="memo-content">
-          <div class="memo-section-item">
-            <h4>Investment Thesis</h4>
-            <p>{{ generatedMemo.executiveSummary?.investment_thesis }}</p>
-          </div>
-          <div class="memo-section-item">
-            <h4>Key Highlights</h4>
-            <ul>
-              <li v-for="highlight in generatedMemo.executiveSummary?.key_highlights" :key="highlight">
-                {{ highlight }}
-              </li>
-            </ul>
+          <div class="stat-item">
+            <span class="stat-label">This Month</span>
+            <span class="stat-value">3</span>
           </div>
         </div>
       </div>
-    </div>
+    </aside>
 
-    <!-- Modals -->
-    <div v-if="showNewDealModal" class="modal-overlay" @click="closeNewDealModal">
-      <div class="modal-content" @click.stop>
-        <div class="modal-header">
-          <h3>New Deal Analysis</h3>
-          <button @click="closeNewDealModal" class="close-btn">&times;</button>
+    <div class="main-content" :class="{ 'sidebar-open': !isMobile && isSidebarOpen }">
+      <div class="hero-section" id="dashboard">
+        <div class="hero-content">
+          <h1 class="hero-title">Private Equity Deal Scout</h1>
+          <p class="hero-subtitle">Advanced deal analysis and due diligence platform powered by AI</p>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-number">{{ totalDealsAnalyzed.toLocaleString() }}</div>
+              <div class="stat-label">Deals Analyzed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">${{ totalValueAnalyzed }}B</div>
+              <div class="stat-label">Total Value</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">{{ averageAccuracy }}%</div>
+              <div class="stat-label">Analysis Accuracy</div>
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
-          <!-- Advanced deal input form would go here -->
-          <p>Comprehensive deal input form with financial modeling capabilities</p>
+      </div>
+
+      <!-- Deal Analysis Dashboard -->
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h2>Deal Analysis Dashboard</h2>
+          <div class="header-actions">
+            <button @click="openNewDealModal" class="btn-primary">
+              <i class="fas fa-plus"></i> New Deal Analysis
+            </button>
+            <button @click="exportReport" class="btn-secondary">
+              <i class="fas fa-download"></i> Export Report
+            </button>
+          </div>
+        </div>
+
+        <div class="analysis-grid">
+          <!-- Quick Analysis Panel -->
+          <div class="analysis-card quick-analysis">
+            <div class="card-header">
+              <h3>Quick Deal Assessment</h3>
+              <span class="status-indicator active"></span>
+            </div>
+            <div class="card-content">
+              <form @submit.prevent="performQuickAnalysis" class="quick-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Company Name</label>
+                    <input v-model="quickAnalysis.companyName" type="text" placeholder="Enter company name" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Sector</label>
+                    <select v-model="quickAnalysis.sector" required>
+                      <option value="saas">SaaS</option>
+                      <option value="fintech">FinTech</option>
+                      <option value="ecommerce">E-commerce</option>
+                      <option value="healthcare">Healthcare</option>
+                      <option value="edtech">EdTech</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Revenue ($M)</label>
+                    <input v-model.number="quickAnalysis.revenue" type="number" step="0.1" placeholder="Annual revenue" required>
+                  </div>
+                  <div class="form-group">
+                    <label>EBITDA ($M)</label>
+                    <input v-model.number="quickAnalysis.ebitda" type="number" step="0.1" placeholder="EBITDA" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Stage</label>
+                    <select v-model="quickAnalysis.stage" required>
+                      <option value="series-a">Series A</option>
+                      <option value="series-b">Series B</option>
+                      <option value="growth">Growth</option>
+                      <option value="buyout">Buyout</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Market Size ($B)</label>
+                    <input v-model.number="quickAnalysis.marketSize" type="number" step="0.1" placeholder="TAM">
+                  </div>
+                </div>
+                <button type="submit" class="btn-analyze" :disabled="isAnalyzing">
+                  <i class="fas fa-chart-line"></i>
+                  {{ isAnalyzing ? 'Analyzing...' : 'Analyze Deal' }}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- LBO Calculator -->
+          <div class="analysis-card lbo-calculator">
+            <div class="card-header">
+              <h3>LBO Model Calculator</h3>
+              <span class="tooltip-trigger" @mouseenter="showTooltip" @mouseleave="hideTooltip">
+                <i class="fas fa-info-circle"></i>
+              </span>
+            </div>
+            <div class="card-content">
+              <div class="lbo-inputs">
+                <div class="input-group">
+                  <label>EBITDA Multiple</label>
+                  <input v-model.number="lboModel.debtMultiple" type="number" step="0.1" placeholder="5.0">
+                </div>
+                <div class="input-group">
+                  <label>Exit Multiple</label>
+                  <input v-model.number="lboModel.exitMultiple" type="number" step="0.1" placeholder="8.0">
+                </div>
+                <div class="input-group">
+                  <label>Interest Rate (%)</label>
+                  <input v-model.number="lboModel.interestRate" type="number" step="0.1" placeholder="7.5">
+                </div>
+                <div class="input-group">
+                  <label>Holding Period (Years)</label>
+                  <input v-model.number="lboModel.holdingPeriod" type="number" placeholder="5">
+                </div>
+              </div>
+              <button @click="calculateLBO" class="btn-calculate">Calculate Returns</button>
+              
+              <div v-if="lboResults" class="lbo-results">
+                <div class="result-metric">
+                  <span class="metric-label">IRR</span>
+                  <span class="metric-value">{{ lboResults.returns?.irr }}%</span>
+                </div>
+                <div class="result-metric">
+                  <span class="metric-label">Money Multiple</span>
+                  <span class="metric-value">{{ lboResults.returns?.multipleOfMoney }}x</span>
+                </div>
+                <div class="result-metric">
+                  <span class="metric-label">Equity Value</span>
+                  <span class="metric-value">${{ lboResults.exit?.equityValue }}M</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deal Insights -->
+          <div class="analysis-card deal-insights" v-if="currentAnalysis">
+            <div class="card-header">
+              <h3>Deal Insights</h3>
+              <div class="overall-score" :class="getScoreClass(currentAnalysis.scoring?.overall)">
+                {{ currentAnalysis.scoring?.overall || 0 }}
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="insights-list">
+                <div v-for="insight in currentAnalysis.insights" :key="insight.category" 
+                     class="insight-item" :class="insight.type">
+                  <div class="insight-header">
+                    <span class="insight-category">{{ insight.category }}</span>
+                    <span class="insight-type">{{ insight.type }}</span>
+                  </div>
+                  <p class="insight-message">{{ insight.message }}</p>
+                  <p class="insight-recommendation">{{ insight.recommendation }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Market Intelligence -->
+          <div class="analysis-card market-intel">
+            <div class="card-header">
+              <h3>Market Intelligence</h3>
+              <button @click="refreshMarketData" class="refresh-btn">
+                <i class="fas fa-sync-alt" :class="{ 'spinning': refreshing }"></i>
+              </button>
+            </div>
+            <div class="card-content">
+              <div v-if="marketIntelligence" class="market-stats">
+                <div class="market-metric">
+                  <label>Market Size</label>
+                  <value>{{ marketIntelligence.sector_overview?.market_size }}</value>
+                </div>
+                <div class="market-metric">
+                  <label>Growth Rate</label>
+                  <value>{{ marketIntelligence.sector_overview?.growth_rate }}</value>
+                </div>
+                <div class="market-metric">
+                  <label>Recent Deals</label>
+                  <value>{{ marketIntelligence.recent_transactions?.length || 0 }}</value>
+                </div>
+                <div class="market-metric">
+                  <label>Sentiment</label>
+                  <value :class="marketIntelligence.market_sentiment">
+                    {{ marketIntelligence.market_sentiment }}
+                  </value>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Deals & Comparables -->
+      <div class="comparables-section" id="comparables">
+        <div class="section-header">
+          <h2>Recent Deals & Comparables</h2>
+          <div class="filter-controls">
+            <select v-model="comparableFilters.sector">
+              <option value="">All Sectors</option>
+              <option value="saas">SaaS</option>
+              <option value="fintech">FinTech</option>
+              <option value="ecommerce">E-commerce</option>
+              <option value="healthcare">Healthcare</option>
+            </select>
+            <select v-model="comparableFilters.timeframe">
+              <option value="12m">Last 12 Months</option>
+              <option value="24m">Last 24 Months</option>
+              <option value="36m">Last 36 Months</option>
+            </select>
+            <button @click="loadComparables" class="btn-filter">Apply Filters</button>
+          </div>
+        </div>
+
+        <div class="comparables-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Sector</th>
+                <th>Stage</th>
+                <th>Valuation</th>
+                <th>Revenue Multiple</th>
+                <th>Growth Rate</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="deal in comparableDeals" :key="deal.company_name">
+                <td class="company-name">{{ deal.company_name }}</td>
+                <td><span class="sector-tag">{{ deal.sector }}</span></td>
+                <td><span class="stage-badge">{{ deal.stage }}</span></td>
+                <td class="valuation">{{ deal.valuation }}</td>
+                <td class="multiple">{{ deal.revenue_multiple }}x</td>
+                <td class="growth">{{ deal.growth_rate }}</td>
+                <td class="date">{{ formatDate(deal.date) }}</td>
+                <td class="actions">
+                  <button @click="viewDealDetails(deal)" class="btn-view">View</button>
+                  <button @click="compareToDeal(deal)" class="btn-compare">Compare</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Due Diligence Checklist -->
+      <div class="due-diligence-section" id="due-diligence">
+        <div class="section-header">
+          <h2>Due Diligence Checklist</h2>
+          <div class="progress-indicator">
+            <span>{{ completedChecks }}/{{ totalChecks }} Completed</span>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: (completedChecks/totalChecks)*100 + '%' }"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="checklist-categories">
+          <div v-for="category in dueDiligenceChecklist" :key="category.name" class="checklist-category">
+            <div class="category-header" @click="toggleCategory(category.name)">
+              <h3>{{ category.name }}</h3>
+              <span class="category-progress">{{ category.completed }}/{{ category.items.length }}</span>
+              <i class="fas fa-chevron-down" :class="{ 'rotated': category.expanded }"></i>
+            </div>
+            <div v-if="category.expanded" class="category-items">
+              <div v-for="item in category.items" :key="item.id" class="checklist-item">
+                <input type="checkbox" v-model="item.completed" @change="updateProgress">
+                <label>{{ item.task }}</label>
+                <span class="item-priority" :class="item.priority">{{ item.priority }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deal Memo Generator -->
+      <div class="memo-section" id="memo">
+        <div class="section-header">
+          <h2>AI Deal Memo Generator</h2>
+          <button @click="generateMemo" class="btn-primary" :disabled="!currentAnalysis || generatingMemo">
+            <i class="fas fa-robot"></i>
+            {{ generatingMemo ? 'Generating...' : 'Generate Memo' }}
+          </button>
+        </div>
+
+        <div v-if="generatedMemo" class="memo-preview">
+          <div class="memo-header">
+            <h3>{{ generatedMemo.executiveSummary?.investment_thesis?.substring(0, 50) }}...</h3>
+            <div class="memo-actions">
+              <button @click="downloadMemo" class="btn-download">
+                <i class="fas fa-download"></i> Download PDF
+              </button>
+              <button @click="editMemo" class="btn-edit">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+            </div>
+          </div>
+          <div class="memo-content">
+            <div class="memo-section-item">
+              <h4>Investment Thesis</h4>
+              <p>{{ generatedMemo.executiveSummary?.investment_thesis }}</p>
+            </div>
+            <div class="memo-section-item">
+              <h4>Key Highlights</h4>
+              <ul>
+                <li v-for="highlight in generatedMemo.executiveSummary?.key_highlights" :key="highlight">
+                  {{ highlight }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modals -->
+      <div v-if="showNewDealModal" class="modal-overlay" @click="closeNewDealModal">
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h3>New Deal Analysis</h3>
+            <button @click="closeNewDealModal" class="close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <!-- Advanced deal input form would go here -->
+            <p>Comprehensive deal input form with financial modeling capabilities</p>
+          </div>
         </div>
       </div>
     </div>
@@ -430,7 +504,12 @@ export default {
             { id: 15, task: 'Regulatory compliance review', priority: 'high', completed: false }
           ]
         }
-      ]
+      ],
+
+      // Sidebar state
+      isSidebarOpen: false,
+      isMobile: false,
+      activeSection: 'dashboard',
     };
   },
 
@@ -447,6 +526,14 @@ export default {
 
   mounted() {
     this.loadInitialData();
+    this.checkMobile();
+    window.addEventListener('resize', this.checkMobile);
+    window.addEventListener('scroll', this.handleScroll);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkMobile);
+    window.removeEventListener('scroll', this.handleScroll);
   },
 
   methods: {
@@ -613,7 +700,49 @@ export default {
 
     hideTooltip() {
       // Hide tooltip  
-    }
+    },
+
+    // Sidebar methods
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    },
+
+    closeSidebar() {
+      this.isSidebarOpen = false;
+    },
+
+    checkMobile() {
+      this.isMobile = window.innerWidth <= 768;
+      if (!this.isMobile) {
+        this.isSidebarOpen = true; // Open by default on desktop
+      } else {
+        this.isSidebarOpen = false; // Closed by default on mobile
+      }
+    },
+
+    scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        this.activeSection = sectionId;
+        if (this.isMobile) {
+          this.closeSidebar();
+        }
+      }
+    },
+
+    handleScroll() {
+      const sections = ['dashboard', 'comparables', 'due-diligence', 'memo'];
+      const scrollPosition = window.scrollY + 100;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const element = document.getElementById(sections[i]);
+        if (element && element.offsetTop <= scrollPosition) {
+          this.activeSection = sections[i];
+          break;
+        }
+      }
+    },
   }
 };
 </script>
@@ -621,8 +750,200 @@ export default {
 <style scoped>
 .pe-deal-scout {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
   font-family: 'Inter', sans-serif;
+  display: flex;
+  position: relative;
+}
+
+/* Mobile Sidebar Toggle Button */
+.mobile-sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.mobile-sidebar-toggle:hover {
+  background: white;
+  transform: scale(1.05);
+}
+
+.mobile-sidebar-toggle i {
+  font-size: 1.2rem;
+  color: #2d3748;
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+/* Sidebar Styles */
+.deal-scout-sidebar {
+  width: 280px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(45, 55, 72, 0.1);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.sidebar-desktop {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  transform: translateX(-100%);
+  z-index: 999;
+}
+
+.sidebar-mobile.sidebar-open {
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(45, 55, 72, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.sidebar-logo i {
+  font-size: 1.5rem;
+  color: #2d3748;
+}
+
+.sidebar-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #718096;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-close:hover {
+  background: #f7fafc;
+  color: #2d3748;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem 0;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav li:hover {
+  background: #f7fafc;
+  color: #2d3748;
+}
+
+.sidebar-nav li.active {
+  background: linear-gradient(135deg, rgba(45, 55, 72, 0.1), rgba(26, 32, 44, 0.1));
+  color: #2d3748;
+  border-left-color: #2d3748;
+  font-weight: 600;
+}
+
+.sidebar-nav li i {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(45, 55, 72, 0.1);
+}
+
+.quick-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 1.1rem;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  transition: all 0.3s ease;
+  min-width: 0; /* Prevent flex item from overflowing */
+}
+
+.main-content.sidebar-open {
+  margin-left: 0; /* Desktop sidebar is sticky, no need for margin */
 }
 
 .hero-section {
@@ -710,7 +1031,7 @@ export default {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2d3748, #1a202c);
   color: white;
 }
 
@@ -721,8 +1042,9 @@ export default {
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #1a202c, #171923);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(45, 55, 72, 0.4);
 }
 
 .analysis-grid {
@@ -796,14 +1118,14 @@ export default {
 
 .form-group input:focus, .form-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #2d3748;
+  box-shadow: 0 0 0 3px rgba(45, 55, 72, 0.1);
 }
 
 .btn-analyze, .btn-calculate {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2d3748, #1a202c);
   color: white;
   border: none;
   border-radius: 8px;
@@ -819,7 +1141,7 @@ export default {
 
 .btn-analyze:hover, .btn-calculate:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(45, 55, 72, 0.4);
 }
 
 .btn-analyze:disabled {
@@ -1029,7 +1351,7 @@ export default {
 
 .btn-filter {
   padding: 8px 16px;
-  background: #667eea;
+  background: #2d3748;
   color: white;
   border: none;
   border-radius: 6px;
@@ -1078,7 +1400,7 @@ export default {
 }
 
 .stage-badge {
-  background: #667eea;
+  background: #2d3748;
   color: white;
   padding: 4px 8px;
   border-radius: 12px;
@@ -1105,7 +1427,7 @@ export default {
 }
 
 .btn-compare {
-  background: #667eea;
+  background: #2d3748;
   color: white;
 }
 
@@ -1130,7 +1452,7 @@ export default {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2d3748, #1a202c);
   transition: width 0.3s ease;
 }
 
@@ -1274,7 +1596,7 @@ export default {
 }
 
 .btn-download {
-  background: #667eea;
+  background: #2d3748;
   color: white;
 }
 
@@ -1362,13 +1684,21 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .analysis-grid {
-    grid-template-columns: 1fr;
+  .pe-deal-scout {
+    flex-direction: column;
   }
-  
+
+  .main-content {
+    padding-top: 80px; /* Account for mobile toggle button */
+  }
+
   .hero-stats {
     flex-direction: column;
     gap: 2rem;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: 1fr;
   }
   
   .quick-form .form-row {
@@ -1385,6 +1715,17 @@ export default {
   
   .comparables-table {
     overflow-x: auto;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .filter-controls select,
+  .btn-filter {
+    width: 100%;
   }
 }
 </style> 
