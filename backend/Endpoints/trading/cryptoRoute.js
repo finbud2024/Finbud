@@ -1,15 +1,19 @@
 import express from 'express';
-import CryptoCurrency from '../../Database_Schema/trading/Crypto.js';
+import Crypto from '../../Database_Schema/trading/Crypto.js';
+import CryptoTransaction from '../../Database_Schema/trading/CryptoTransaction.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const validateRequest = require('../../utils/validation/validateRequest.cjs');
+import { isAuthenticated } from '../../middleware/auth.js';
 import moment from 'moment';
-import validateRequest from '../../utils/validation/validateRequest.js';
 
 const cryptoRoute = express.Router();
 
-cryptoRoute.post("/queryRoute", validateRequest(CryptoCurrency.schema), async (req, res) => {
+cryptoRoute.post("/queryRoute", validateRequest(Crypto.schema), async (req, res) => {
     console.log("From cryptoRoute.js: ", req.body["symbol"], req.body["startDate"], req.body["endDate"]);
     const symbol = req.body["symbol"];
     try {
-        const cryptoData = await CryptoCurrency.find().where({
+        const cryptoData = await Crypto.find().where({
             symbol: symbol,
             date: {
                 $gte: new Date(req.body["startDate"]),
@@ -28,7 +32,7 @@ cryptoRoute.post("/queryRoute", validateRequest(CryptoCurrency.schema), async (r
     }
 });
 
-cryptoRoute.post("/updateCryptoDB", validateRequest(CryptoCurrency.schema), async (req, res) => {
+cryptoRoute.post("/updateCryptoDB", validateRequest(Crypto.schema), async (req, res) => {
     try {
         await getCryptoPrice(req.body);
         return res.status(200).send("Success saving all Crypto Prices");
@@ -40,7 +44,7 @@ cryptoRoute.post("/updateCryptoDB", validateRequest(CryptoCurrency.schema), asyn
 // Function to get the latest entry in database
 cryptoRoute.get("/latestCrypto", async (req, res) => {
     try {
-        const latestEntry = await CryptoCurrency.findOne().sort({ date: -1 }).exec();
+        const latestEntry = await Crypto.findOne().sort({ date: -1 }).exec();
         if (latestEntry) {
             console.log(latestEntry.date);
             return res.status(200).json(latestEntry.date);
@@ -82,7 +86,7 @@ async function getCryptoPrice(listOfCryptos) {
 }
 
 async function getLatestDate(symbol) {
-    const latestEntry = await CryptoCurrency.findOne({ symbol: symbol }).sort({ date: -1 }).exec();
+    const latestEntry = await Crypto.findOne({ symbol: symbol }).sort({ date: -1 }).exec();
     if (latestEntry) {
         return latestEntry.date;
     } else {
@@ -91,7 +95,7 @@ async function getLatestDate(symbol) {
 }
 
 async function saveNewCrypto(metaData, data, recordDate) {
-    const newCrypto = new CryptoCurrency({
+    const newCrypto = new Crypto({
         cryptoName: metaData['3. Digital Currency Name'],
         symbol: metaData["2. Digital Currency Code"],
         open: data['1. open'],

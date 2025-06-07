@@ -10,7 +10,8 @@
   command = "yarn client"
 
 [functions]
-  node_bundler = "nft"
+  node_bundler = "esbuild"
+  external_node_modules = ["express", "mongoose", "socket.io"]
 
 [dev.environment]
   REDIS_URL = "redis://localhost:6379"

@@ -1,6 +1,8 @@
 import express from 'express';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const validateRequest = require('../../utils/validation/validateRequest.cjs');
 import User from '../../Database_Schema/core/User.js';
-import validateRequest from '../../utils/validation/validateRequest.js';
 import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
 
 const userRoute = express.Router();
