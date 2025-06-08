@@ -2,7 +2,7 @@
   <section class="content">
     <div>
       <h1 class="headtitle">Market Data Center</h1>
-      <div class="market-data-center"> 
+      <div class="market-data-center">
         <div class="market-section">
           <div class="section-title">CRYPTOCURRENCY</div>
           <div class="margin-box">
@@ -18,30 +18,27 @@
       </div>
       <NewsSection :disableClicks="showPopup" />
     </div>
-</section>
+  </section>
 </template>
 
-
 <script>
-import NewsSection from '@/components/MarketPage/NewsSection.vue';
-import CryptoWatch from '@/components/MarketPage/CryptoWatch.vue';
-import StockWatch from '@/components/MarketPage/StockWatch.vue';
-import RealEstateMap from '@/components/MarketPage/RealEstateMap.vue'; 
+import NewsSection from "@/components/marketPage/NewsSection.vue";
+import CryptoWatch from "@/components/marketPage/CryptoWatch.vue";
+import StockWatch from "@/components/marketPage/StockWatch.vue";
+import RealEstateMap from "@/components/marketPage/RealEstateMap.vue";
 
 export default {
-  name: 'MarketDataCenter',
+  name: "MarketDataCenter",
   components: {
     NewsSection,
     CryptoWatch,
     StockWatch,
-    RealEstateMap
+    RealEstateMap,
   },
 };
 </script>
 
 <style scoped>
-
-
 /*.content{
 }*/
 

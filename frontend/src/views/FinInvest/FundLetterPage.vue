@@ -8,8 +8,8 @@
       <div class="fund-archive-content">
         <!-- Main Header Section -->
         <div class="fund-archive-header">
-          <h1>{{ $t('fundLettersArchive') }}</h1>
-          <p>{{ $t('curatedListSubtitle') }}</p>
+          <h1>{{ $t("fundLettersArchive") }}</h1>
+          <p>{{ $t("curatedListSubtitle") }}</p>
         </div>
         <div class="outer-container-first">
           <!-- Search and Filter Section -->
@@ -26,15 +26,23 @@
 
             <div class="filters">
               <div class="filter-group">
-                <select id="year-select" v-model="selectedYear" class="dropdown">
-                  <option value="">{{ $t('allYears') }}</option>
+                <select
+                  id="year-select"
+                  v-model="selectedYear"
+                  class="dropdown"
+                >
+                  <option value="">{{ $t("allYears") }}</option>
                   <option v-for="year in years" :key="year">{{ year }}</option>
                 </select>
               </div>
 
               <div class="filter-group">
-                <select id="quarter-select" v-model="selectedQuarter" class="dropdown">
-                  <option value="">{{ $t('allQuarters') }}</option>
+                <select
+                  id="quarter-select"
+                  v-model="selectedQuarter"
+                  class="dropdown"
+                >
+                  <option value="">{{ $t("allQuarters") }}</option>
                   <option v-for="q in quarters" :key="q">{{ q }}</option>
                 </select>
               </div>
@@ -44,8 +52,8 @@
           <!-- Letters List Section -->
           <div v-if="filteredLetters.length" class="letters-container">
             <div class="letters-header">
-              <span class="header-fund">{{ $t('fundName') }}</span>
-              <span class="header-date">{{ $t('date') }}</span>
+              <span class="header-fund">{{ $t("fundName") }}</span>
+              <span class="header-date">{{ $t("date") }}</span>
             </div>
             <div class="letters-list-scroll-container">
               <div class="letters-list">
@@ -54,11 +62,7 @@
                   :key="index"
                   class="letter-item"
                 >
-                  <a
-                    :href="item.link"
-                    target="_blank"
-                    class="letter-link"
-                  >
+                  <a :href="item.link" target="_blank" class="letter-link">
                     {{ item.name }}
                   </a>
                   <span class="letter-meta">{{ item.date }}</span>
@@ -69,8 +73,10 @@
 
           <div v-else class="no-results">
             <i class="empty-icon">📄</i>
-            <p>{{ $t('noResults') }}</p>
-            <button @click="resetFilters" class="reset-button">{{ $t('resetFilters') }}</button>
+            <p>{{ $t("noResults") }}</p>
+            <button @click="resetFilters" class="reset-button">
+              {{ $t("resetFilters") }}
+            </button>
           </div>
         </div>
       </div>
@@ -80,10 +86,10 @@
     <div class="outer-container">
       <div class="investors-section">
         <div class="fund-archive-header">
-          <h1>{{ $t('greatestInvestors') }}</h1>
-          <p>{{ $t('learnFromMasters') }}</p>
+          <h1>{{ $t("greatestInvestors") }}</h1>
+          <p>{{ $t("learnFromMasters") }}</p>
         </div>
-        
+
         <div class="investors-grid">
           <div
             v-for="card in investorCards"
@@ -91,7 +97,7 @@
             class="investor-card"
           >
             <div class="card-overlay" aria-hidden="true"></div>
-            
+
             <a
               class="card-link"
               :href="card.url"
@@ -105,7 +111,7 @@
               />
               <h3 class="card-title">{{ card.name }}</h3>
               <p class="card-description">
-                {{ card.description[$i18n.locale]}}
+                {{ card.description[$i18n.locale] }}
               </p>
             </a>
           </div>
@@ -116,22 +122,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 //backend/functions/fundLetterData.json
-import rawData from '../../../../backend/functions/fundLetterData.json'
-import Papa from 'papaparse';
-import { saveAs } from 'file-saver';
-import investorData from '../../../../backend/functions/investorCards.json';
-import ChatBot from "../../components/ChatBot/DraggableChatBot.vue";
+import rawData from "../../../../backend/functions/fundLetterData.json";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
+import investorData from "../../../../backend/functions/investorCards.json";
+import ChatBot from "../../components/chatbot/DraggableChatBot.vue";
 const templateChat = `Hello! I'm here to help you find the best hedge fund letters. 
 You can search by fund name or filter by year and quarter. If you have any questions, feel free to ask!`;
 const investorCards = investorData;
-const selectedYear = ref('')
-const selectedQuarter = ref('')
-const searchTerm = ref('')
+const selectedYear = ref("");
+const selectedQuarter = ref("");
+const searchTerm = ref("");
 
-const years = Object.keys(rawData)
-const quarters = ['Q1', 'Q2', 'Q3', 'Q4']
+const years = Object.keys(rawData);
+const quarters = ["Q1", "Q2", "Q3", "Q4"];
 
 const allLetters = [];
 for (const year of years) {
@@ -139,36 +145,40 @@ for (const year of years) {
   for (const quarter in yearData) {
     const items = yearData[quarter];
     for (const item of items) {
-      const [nameWithDate, link] = item.split(' - ');
+      const [nameWithDate, link] = item.split(" - ");
       const match = nameWithDate.match(/^(.*)\(([^)]+)\)\s*$/);
       // Match name and date
       const fullName = match ? match[1].trim() : nameWithDate.trim(); // Extract name
-      const date = match ? match[2].trim() : ''; // Extract date
+      const date = match ? match[2].trim() : ""; // Extract date
       allLetters.push({ year, quarter, name: fullName, link, date });
     }
   }
 }
 
 const filteredLetters = computed(() => {
-  return allLetters.filter(letter => {
-    const matchesYear = !selectedYear.value || letter.year === selectedYear.value
-    const matchesQuarter = !selectedQuarter.value || letter.quarter === selectedQuarter.value
-    const matchesSearch = letter.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-    return matchesYear && matchesQuarter && matchesSearch
-  })
-})
+  return allLetters.filter((letter) => {
+    const matchesYear =
+      !selectedYear.value || letter.year === selectedYear.value;
+    const matchesQuarter =
+      !selectedQuarter.value || letter.quarter === selectedQuarter.value;
+    const matchesSearch = letter.name
+      .toLowerCase()
+      .includes(searchTerm.value.toLowerCase());
+    return matchesYear && matchesQuarter && matchesSearch;
+  });
+});
 
 const resetFilters = () => {
-  selectedYear.value = '';
-  selectedQuarter.value = '';
-  searchTerm.value = '';
-}
+  selectedYear.value = "";
+  selectedQuarter.value = "";
+  searchTerm.value = "";
+};
 </script>
 
 <style scoped>
 .fund-archive-background {
   background-color: var(--black-in-dark-mode);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   color: var(--white-in-dark-mode);
   padding-bottom: 4rem;
 }
@@ -192,9 +202,7 @@ const resetFilters = () => {
   margin: 0 auto;
   padding: 3rem 3rem;
   box-sizing: border-box;
-  background-color:var(--black-in-dark-mode);
-
-
+  background-color: var(--black-in-dark-mode);
 }
 
 .fund-archive-container {
@@ -330,7 +338,7 @@ const resetFilters = () => {
   flex-direction: column;
   border-radius: 1rem;
   overflow: hidden;
-  background-color:var(--card-bg);
+  background-color: var(--card-bg);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -460,7 +468,6 @@ const resetFilters = () => {
 /* Investors Section */
 .investors-section {
   width: 100%;
-
 }
 
 .investors-grid {
@@ -522,7 +529,7 @@ const resetFilters = () => {
   font-weight: bold;
   font-size: 1.25rem;
   margin: 1rem 0 0;
-  color:var(--black-in-dark-mode);
+  color: var(--black-in-dark-mode);
   text-align: center;
 }
 
@@ -538,15 +545,15 @@ const resetFilters = () => {
   .outer-container {
     padding: 0 1rem;
   }
-  
+
   .investors-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
-  
+
   .fund-archive-header h1 {
     font-size: 2rem;
   }
-  
+
   .fund-archive-header p {
     font-size: 1rem;
   }

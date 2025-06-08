@@ -1,60 +1,92 @@
 <template>
   <div class="section-container">
-    <QuizRewards v-if="showingReward" :reward-amount="rewardAmount" @close="showingReward = false" />
+    <QuizRewards
+      v-if="showingReward"
+      :reward-amount="rewardAmount"
+      @close="showingReward = false"
+    />
 
-    <search-input v-model="searchQuery" @search="createRoadmap" :placeholder="$t('searchPlaceholder')" />
+    <search-input
+      v-model="searchQuery"
+      @search="createRoadmap"
+      :placeholder="$t('searchPlaceholder')"
+    />
     <!-- data-aos="flip-right" -->
-     
+
     <div class="goal-form-card" data-aos="zoom-in-up">
-      <h1 class="title">{{ $t('goalTitle') }}</h1>
+      <h1 class="title">{{ $t("goalTitle") }}</h1>
 
       <div class="form-group">
-        <label for="proficiency">{{ $t('proficiencyLabel') }}</label>
+        <label for="proficiency">{{ $t("proficiencyLabel") }}</label>
         <select id="proficiency" v-model="proficiency" class="form-select">
-          <option value="" disabled selected>{{ $t('proficiencyPlaceholder') }}</option>
-          <option value="beginner">{{ $t('beginner') }}</option>
-          <option value="intermediate">{{ $t('intermediate') }}</option>
-          <option value="advanced">{{ $t('advanced') }}</option>
+          <option value="" disabled selected>
+            {{ $t("proficiencyPlaceholder") }}
+          </option>
+          <option value="beginner">{{ $t("beginner") }}</option>
+          <option value="intermediate">{{ $t("intermediate") }}</option>
+          <option value="advanced">{{ $t("advanced") }}</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="learning-hours">{{ $t('learningLabel') }}</label>
+        <label for="learning-hours">{{ $t("learningLabel") }}</label>
         <div class="input-row">
           <div class="input-group input-half-width">
-            <input type="number" id="hours-per-day" v-model="hoursPerDay" :placeholder="$t('hoursPlaceholder')" min="0"
-              class="form-input" />
+            <input
+              type="number"
+              id="hours-per-day"
+              v-model="hoursPerDay"
+              :placeholder="$t('hoursPlaceholder')"
+              min="0"
+              class="form-input"
+            />
           </div>
           <div class="input-group input-half-width">
-            <input type="number" id="days-per-week" v-model="daysPerWeek" :placeholder="$t('daysPlaceholder')" min="0"
-              max="7" class="form-input" />
+            <input
+              type="number"
+              id="days-per-week"
+              v-model="daysPerWeek"
+              :placeholder="$t('daysPlaceholder')"
+              min="0"
+              max="7"
+              class="form-input"
+            />
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label>{{ $t('periodLabel') }}</label>
+        <label>{{ $t("periodLabel") }}</label>
         <div class="input-row">
           <div class="input-group duration-input">
-            <input type="number" v-model="duration" :placeholder="$t('durationPlaceholder')" min="1"
-              class="form-input" />
+            <input
+              type="number"
+              v-model="duration"
+              :placeholder="$t('durationPlaceholder')"
+              min="1"
+              class="form-input"
+            />
           </div>
           <div class="input-group period-select">
             <select v-model="period" class="form-select">
-              <option value="" disabled selected>{{ $t('periodPlaceholder') }}</option>
-              <option value="days">{{ $t('days') }}</option>
-              <option value="weeks">{{ $t('weeks') }}</option>
-              <option value="months">{{ $t('months') }}</option>
+              <option value="" disabled selected>
+                {{ $t("periodPlaceholder") }}
+              </option>
+              <option value="days">{{ $t("days") }}</option>
+              <option value="weeks">{{ $t("weeks") }}</option>
+              <option value="months">{{ $t("months") }}</option>
             </select>
           </div>
         </div>
       </div>
 
-      <button class="submit-button" @click="createRoadmap" :disabled="!searchQuery.trim() || is_generating_roadmap">
+      <button
+        class="submit-button"
+        @click="createRoadmap"
+        :disabled="!searchQuery.trim() || is_generating_roadmap"
+      >
         {{
-          is_generating_roadmap
-            ? $t('generatingButton')
-            : $t('generateButton')
+          is_generating_roadmap ? $t("generatingButton") : $t("generateButton")
         }}
       </button>
     </div>
@@ -62,85 +94,115 @@
 
   <div class="section-container" data-aos="flip-right">
     <div class="quiz-card">
-      <h1 class="title">{{ $t('quizTitle') }}</h1>
+      <h1 class="title">{{ $t("quizTitle") }}</h1>
       <div class="form-group">
-        <label for="search-keyword">{{ $t('currentKeywordLabel') }}</label>
+        <label for="search-keyword">{{ $t("currentKeywordLabel") }}</label>
         <div id="search-keyword" class="search-container">
-          <input style="height: 100%; margin-bottom: 0" type="text" v-model="searchKeyword" :disabled="isLoading"
-            :placeholder="$t('keywordPlaceholder')" @keyup.enter="GenerateQuiz" />
-          <button class="button" @click="GenerateQuiz">{{ $t('generateQuizButton') }}</button>
+          <input
+            style="height: 100%; margin-bottom: 0"
+            type="text"
+            v-model="searchKeyword"
+            :disabled="isLoading"
+            :placeholder="$t('keywordPlaceholder')"
+            @keyup.enter="GenerateQuiz"
+          />
+          <button class="button" @click="GenerateQuiz">
+            {{ $t("generateQuizButton") }}
+          </button>
         </div>
       </div>
       <div class="form-group" v-if="relatedKeyword.length !== 0">
-        <label for="related-keyword">{{ $t('relatedKeywordsLabel') }}</label>
+        <label for="related-keyword">{{ $t("relatedKeywordsLabel") }}</label>
         <div class="carousel-wrapper">
-          <button class="carousel-nav left" @click="scrollLeft" :aria-label="$t('scrollLeft')">
+          <button
+            class="carousel-nav left"
+            @click="scrollLeft"
+            :aria-label="$t('scrollLeft')"
+          >
             &lt;
           </button>
 
           <div class="related-keyword-container" ref="carousel">
-            <button v-for="keyword in relatedKeyword" :key="keyword" :disabled="isLoading" class="button"
-              @click="handleSuggestedChoice(keyword)">
+            <button
+              v-for="keyword in relatedKeyword"
+              :key="keyword"
+              :disabled="isLoading"
+              class="button"
+              @click="handleSuggestedChoice(keyword)"
+            >
               {{ keyword }}
             </button>
           </div>
 
-          <button class="carousel-nav right" @click="scrollRight" :aria-label="$t('scrollRight')">
+          <button
+            class="carousel-nav right"
+            @click="scrollRight"
+            :aria-label="$t('scrollRight')"
+          >
             &gt;
           </button>
         </div>
       </div>
       <div v-if="currentKeyword" class="quiz-info">
-        <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
-        <div>{{ $t('pointsLabel') }} {{ score }}</div>
-        <div>{{ $t('timeLeftLabel') }} {{ timerCountdown }}</div>
+        <div>{{ $t("currentKeywordLabel") }} {{ currentKeyword }}</div>
+        <div>{{ $t("pointsLabel") }} {{ score }}</div>
+        <div>{{ $t("timeLeftLabel") }} {{ timerCountdown }}</div>
       </div>
       <div class="quiz-area">
-        <div :class="[
-          'quizQuestion',
-          { quizQuestionEnabled: question.length !== 0 },
-        ]">
-          {{ currentQuestion === -1 ? $t('questionPlaceholder') : question }}
+        <div
+          :class="[
+            'quizQuestion',
+            { quizQuestionEnabled: question.length !== 0 },
+          ]"
+        >
+          {{ currentQuestion === -1 ? $t("questionPlaceholder") : question }}
         </div>
         <div class="quizChoices">
-          <button v-for="index in 4" :key="index" :disabled="answerButtonDisabled" @click="handleUserChoice(index)"
+          <button
+            v-for="index in 4"
+            :key="index"
+            :disabled="answerButtonDisabled"
+            @click="handleUserChoice(index)"
             :class="[
               'answerButton',
               { answerButtonActive: answerOptions.length !== 0 },
-            ]">
+            ]"
+          >
             {{
               answerOptions.length === 0
-                ? $t('answerPlaceholder', { letter: String.fromCharCode(64 + index) })
+                ? $t("answerPlaceholder", {
+                    letter: String.fromCharCode(64 + index),
+                  })
                 : answerOptions[index - 1].replace(/\*$/, "")
             }}
           </button>
         </div>
         <div v-if="showExplaination" class="explanation-container">
           <div class="explanation-text">
-            <div class="explanation-title">{{ $t('explanationTitle') }}</div>
+            <div class="explanation-title">{{ $t("explanationTitle") }}</div>
             <div>{{ explanation }}</div>
           </div>
           <button class="button" @click="handleNextQuestion">
-            {{ $t('nextQuestionButton') }}
+            {{ $t("nextQuestionButton") }}
           </button>
         </div>
       </div>
       <div v-if="modalDisplay" class="overlay">
         <div class="modal-container">
-          <div class="result-title">{{ $t('quizResultTitle') }}</div>
+          <div class="result-title">{{ $t("quizResultTitle") }}</div>
           <div>
-            <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
-            <div>{{ $t('pointsLabel') }} {{ score }}/3</div>
+            <div>{{ $t("currentKeywordLabel") }} {{ currentKeyword }}</div>
+            <div>{{ $t("pointsLabel") }} {{ score }}/3</div>
           </div>
           <div class="result-button-container">
             <button class="button" @click="handleQuizResult('same')">
-              {{ $t('sameKeywordButton') }}
+              {{ $t("sameKeywordButton") }}
             </button>
             <button class="button" @click="handleQuizResult('different')">
-              {{ $t('differentKeywordButton') }}
+              {{ $t("differentKeywordButton") }}
             </button>
             <button class="button" @click="handleQuizResult('end')">
-              {{ $t('endQuizButton') }}
+              {{ $t("endQuizButton") }}
             </button>
           </div>
         </div>
@@ -150,19 +212,23 @@
 
   <div class="section-container" data-aos="fade-right">
     <div class="course-categories-section">
-      <span class="category-label">{{ $t('categoriesLabel') }}</span>
-      <h2 class="category-title">{{ $t('popularTopicsTitle') }}</h2>
+      <span class="category-label">{{ $t("categoriesLabel") }}</span>
+      <h2 class="category-title">{{ $t("popularTopicsTitle") }}</h2>
 
       <div class="categories-grid">
-        <div v-for="(category, index) in categories" :key="index"
-          :class="['category-card', { active: category.isActive }]" @click="setActiveCategory(index)">
+        <div
+          v-for="(category, index) in categories"
+          :key="index"
+          :class="['category-card', { active: category.isActive }]"
+          @click="setActiveCategory(index)"
+        >
           <div class="card-content">
             <div class="icon-wrapper">
               <i :class="category.icon"></i>
             </div>
             <div class="card-text">
               <h3>{{ category.name }}</h3>
-              <span>{{ category.courseCount }} {{ $t('coursesLabel') }}</span>
+              <span>{{ category.courseCount }} {{ $t("coursesLabel") }}</span>
             </div>
           </div>
         </div>
@@ -174,8 +240,8 @@
     <div class="courses-container">
       <!-- Header Section -->
       <div class="courses-header">
-        <h4 class="courses-subtitle">{{ $t('popularCoursesSubtitle') }}</h4>
-        <h2 class="courses-title">{{ $t('popularCoursesTitle') }}</h2>
+        <h4 class="courses-subtitle">{{ $t("popularCoursesSubtitle") }}</h4>
+        <h2 class="courses-title">{{ $t("popularCoursesTitle") }}</h2>
       </div>
 
       <!-- Courses Grid -->
@@ -186,11 +252,15 @@
           <div class="course-card-top">
             <span class="course-level" :class="course.level.toLowerCase()">{{
               course.level
-              }}</span>
+            }}</span>
             <button class="favorite-btn">
               <i class="fas fa-heart"></i>
             </button>
-            <img :src="require(`@/assets/${course.image}`)" :alt="course.title" class="course-image" />
+            <img
+              :src="require(`@/assets/${course.image}`)"
+              :alt="course.title"
+              class="course-image"
+            />
           </div>
 
           <!-- Details Section -->
@@ -198,7 +268,7 @@
             <div class="course-meta">
               <div class="course-lessons">
                 <i class="fas fa-book"></i>
-                <span>{{ course.lessons }} {{ $t('lessonsLabel') }}</span>
+                <span>{{ course.lessons }} {{ $t("lessonsLabel") }}</span>
               </div>
               <div class="course-duration">
                 <i class="fas fa-clock"></i>
@@ -210,24 +280,30 @@
 
             <div class="course-rating">
               <div class="stars">
-                <i v-for="n in 5" :key="n" :class="['fas', n <= course.rating ? 'fa-star' : 'fa-star-o']"></i>
+                <i
+                  v-for="n in 5"
+                  :key="n"
+                  :class="['fas', n <= course.rating ? 'fa-star' : 'fa-star-o']"
+                ></i>
               </div>
               <span class="reviews">({{ course.reviews }})</span>
             </div>
 
             <div class="course-price">
               <template v-if="course.isFree">
-                <span class="free-price">{{ $t('freeLabel') }}</span>
+                <span class="free-price">{{ $t("freeLabel") }}</span>
               </template>
               <template v-else>
                 <span class="current-price">${{ course.price }}</span>
-                <span class="original-price" v-if="course.originalPrice">${{ course.originalPrice }}</span>
+                <span class="original-price" v-if="course.originalPrice"
+                  >${{ course.originalPrice }}</span
+                >
               </template>
             </div>
 
             <div class="course-students">
               <i class="fas fa-user"></i>
-              <span>{{ course.students }} {{ $t('studentsLabel') }}</span>
+              <span>{{ course.students }} {{ $t("studentsLabel") }}</span>
             </div>
           </div>
         </div>
@@ -239,7 +315,7 @@
 <script>
 import { GPTService, gptServices } from "@/services/gptServices";
 import debounce from "lodash/debounce";
-import SearchInput from "@/components/Basic/SearchInput.vue";
+import SearchInput from "@/components/basic/SearchInput.vue";
 import QuizRewards from "@/components/FinEdu/Quiz/QuizRewards.vue";
 import { showReward } from "@/utils/utils";
 
@@ -446,7 +522,8 @@ export default {
         const response = await gptServices([
           {
             role: "system",
-            content: "You are a finance quiz generator. Return questions in EXACTLY this format:\n\n" +
+            content:
+              "You are a finance quiz generator. Return questions in EXACTLY this format:\n\n" +
               "Question: [question]\n" +
               "A. [option1]\n" +
               "B. [option2]\n" +
@@ -454,12 +531,12 @@ export default {
               "D. [option4]\n" +
               "Correct Answer: [A/B/C/D]\n" +
               "Explanation: [explanation]\n\n" +
-              "[Repeat for 3 questions]"
+              "[Repeat for 3 questions]",
           },
           {
             role: "user",
-            content: `Generate 3 multiple-choice questions about ${this.currentKeyword} in finance.`
-          }
+            content: `Generate 3 multiple-choice questions about ${this.currentKeyword} in finance.`,
+          },
         ]);
 
         // Improved parsing
@@ -472,7 +549,6 @@ export default {
         this.currentQuestion = 0;
         this.loadCurrentQuestion();
         await this.generateRelatedKeywords();
-
       } catch (error) {
         console.error("Quiz generation failed:", error);
         this.question = "Failed to generate questions. Please try again.";
@@ -488,15 +564,17 @@ export default {
       const blocks = response.split(/\n\n+/);
       const questions = [];
 
-      blocks.forEach(block => {
-        const lines = block.split('\n').filter(l => l.trim());
+      blocks.forEach((block) => {
+        const lines = block.split("\n").filter((l) => l.trim());
         if (lines.length < 7) return; // Skip incomplete questions
 
         questions.push({
-          question: lines[0].replace('Question:', '').trim(),
-          options: lines.slice(1, 5).map(opt => opt.replace(/^[A-D]\.\s*/, '').trim()),
-          correctAnswer: lines[5].replace('Correct Answer:', '').trim(),
-          explanation: lines[6].replace('Explanation:', '').trim()
+          question: lines[0].replace("Question:", "").trim(),
+          options: lines
+            .slice(1, 5)
+            .map((opt) => opt.replace(/^[A-D]\.\s*/, "").trim()),
+          correctAnswer: lines[5].replace("Correct Answer:", "").trim(),
+          explanation: lines[6].replace("Explanation:", "").trim(),
         });
       });
 
@@ -682,7 +760,6 @@ export default {
       this.answerOptions = q.options;
       this.correctAnswer = q.correctAnswer;
       this.explanation = q.explanation;
-
     },
     handleUserChoice(index) {
       this.stopTimer();
@@ -728,8 +805,11 @@ export default {
       this.showExplaination = false;
 
       // Reset button styles
-      document.querySelectorAll('.quizChoices button').forEach(button => {
-        button.classList.remove('answer-button-incorrect', 'answer-button-correct');
+      document.querySelectorAll(".quizChoices button").forEach((button) => {
+        button.classList.remove(
+          "answer-button-incorrect",
+          "answer-button-correct"
+        );
       });
 
       this.currentQuestion += 1;
@@ -804,7 +884,7 @@ export default {
     setActiveCategory(index) {
       this.categories = this.categories.map((category, i) => ({
         ...category,
-        isActive: i === index
+        isActive: i === index,
       }));
     },
     scrollTo(position) {
@@ -814,12 +894,11 @@ export default {
       // Smooth scroll animation
       container.scrollTo({
         left: position,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
 
       this.scrollPosition = position;
     },
-
   },
 
   computed: {
@@ -828,15 +907,15 @@ export default {
     },
     isAtEnd() {
       return this.scrollPosition >= this.maxScroll;
-    }
+    },
   },
 
   mounted() {
     this.calculateMaxScroll();
-    window.addEventListener('resize', this.calculateMaxScroll);
+    window.addEventListener("resize", this.calculateMaxScroll);
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.calculateMaxScroll);
+    window.removeEventListener("resize", this.calculateMaxScroll);
   },
 };
 </script>
@@ -866,7 +945,7 @@ export default {
   gap: 0.75rem;
 }
 
-.search-container>input {
+.search-container > input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #e2e8f0;
@@ -877,7 +956,7 @@ export default {
   margin-bottom: 0.75rem;
 }
 
-.search-container>input:focus {
+.search-container > input:focus {
   outline: none;
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
@@ -1312,16 +1391,12 @@ export default {
     font-size: clamp(2rem, 10%, 3rem);
   }
 
-  .quiz-container {
-    width: calc(100% - 40px);
-  }
-
   .search-container {
     flex-direction: column;
     gap: 10px;
   }
 
-  .search-container>input {
+  .search-container > input {
     width: 100%;
   }
 
@@ -1329,7 +1404,7 @@ export default {
     flex-direction: column;
   }
 
-  .suggest-keyword-container>select {
+  .suggest-keyword-container > select {
     width: 100%;
   }
 }
@@ -1591,7 +1666,6 @@ export default {
 }
 </style>
 
-
 <style scoped>
 /* Section 1: Quiz and Goal Form Styles */
 .section-container {
@@ -1726,7 +1800,7 @@ export default {
   gap: 0.75rem;
 }
 
-.search-container>input {
+.search-container > input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--border-color);
@@ -1740,7 +1814,7 @@ export default {
   margin-bottom: 0.75rem;
 }
 
-.search-container>input:focus {
+.search-container > input:focus {
   outline: none;
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
@@ -1753,7 +1827,7 @@ export default {
   width: 60vw;
 }
 
-.suggest-keyword-container>select {
+.suggest-keyword-container > select {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--border-color);
@@ -2025,7 +2099,6 @@ export default {
 
 /* Responsive Styles */
 @media (max-width: 640px) {
-
   .goal-form-card,
   .quiz-card {
     padding: 1.5rem;
@@ -2051,7 +2124,7 @@ export default {
     gap: 10px;
   }
 
-  .search-container>input {
+  .search-container > input {
     width: 100%;
   }
 
@@ -2059,7 +2132,7 @@ export default {
     flex-direction: column;
   }
 
-  .suggest-keyword-container>select {
+  .suggest-keyword-container > select {
     width: 100%;
   }
 }

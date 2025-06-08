@@ -1,29 +1,42 @@
 <template>
   <div>
-    <div class="news-section animate__animated animate__fadeIn" :class="{ 'no-interaction': disableClicks }">
+    <div
+      class="news-section animate__animated animate__fadeIn"
+      :class="{ 'no-interaction': disableClicks }"
+    >
       <div class="news-header">
         <h2>Most Popular</h2>
       </div>
       <div v-if="loading" class="loading">Loading...</div>
       <div v-else class="news-container">
-        <div class="news-item animate__animated animate__zoomIn" v-for="news in newsList" :key="news.url" @click="openArticle(news.url)">
-          <img :src="news.urlToImage" alt="news image" class="news-image">
+        <div
+          class="news-item animate__animated animate__zoomIn"
+          v-for="news in newsList"
+          :key="news.url"
+          @click="openArticle(news.url)"
+        >
+          <img :src="news.urlToImage" alt="news image" class="news-image" />
           <div class="news-title">
             <p>{{ news.title }}</p>
           </div>
         </div>
       </div>
     </div>
-    <Modal v-if="showModal" :show="showModal" :url="currentUrl" @close="showModal = false" />
+    <Modal
+      v-if="showModal"
+      :show="showModal"
+      :url="currentUrl"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Modal from '../MarketPage/Modal.vue';
+import axios from "axios";
+import Modal from "../marketPage/Modal.vue";
 
 export default {
-  name: 'NewsSection',
+  name: "NewsSection",
   components: {
     Modal,
   },
@@ -35,7 +48,7 @@ export default {
       newsList: [],
       loading: true,
       showModal: false,
-      currentUrl: '',
+      currentUrl: "",
     };
   },
   mounted() {
@@ -45,10 +58,12 @@ export default {
   methods: {
     async fetchNews() {
       try {
-        const response = await axios.get(`${process.env.VUE_APP_DEPLOY_URL}/news`);
+        const response = await axios.get(
+          `${process.env.VUE_APP_DEPLOY_URL}/news`
+        );
         this.newsList = response.data.articles;
       } catch (error) {
-        console.error('Error fetching news:', error);
+        console.error("Error fetching news:", error);
       } finally {
         this.loading = false;
       }
@@ -63,7 +78,7 @@ export default {
 </script>
 
 <style scoped>
-@import 'animate.css';
+@import "animate.css";
 
 .news-section {
   margin-top: 20px;

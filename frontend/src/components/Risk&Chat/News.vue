@@ -1,28 +1,40 @@
 <template>
-  <div class="news-section animate__animated animate__fadeIn" :class="{ 'no-interaction': disableClicks }">
+  <div
+    class="news-section animate__animated animate__fadeIn"
+    :class="{ 'no-interaction': disableClicks }"
+  >
     <div class="news-header">
       <h2>Related News</h2>
     </div>
     <div v-if="loading" class="loading">Loading...</div>
     <div v-else class="news-container">
-      <div class="news-item animate__animated animate__zoomIn" v-for="news in newsList" :key="news.url"
-        @click="openArticle(news.url)">
-        <img :src="news.urlToImage" alt="news image" class="news-image">
+      <div
+        class="news-item animate__animated animate__zoomIn"
+        v-for="news in newsList"
+        :key="news.url"
+        @click="openArticle(news.url)"
+      >
+        <img :src="news.urlToImage" alt="news image" class="news-image" />
         <div class="news-title">
           <p>{{ news.title }}</p>
         </div>
       </div>
     </div>
-    <Modal v-if="showModal" :show="showModal" :url="currentUrl" @close="showModal = false" />
+    <Modal
+      v-if="showModal"
+      :show="showModal"
+      :url="currentUrl"
+      @close="showModal = false"
+    />
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Modal from '@/components/MarketPage/Modal.vue'
+import axios from "axios";
+import Modal from "@/components/marketPage/Modal.vue";
 
 export default {
-  name: 'News',
+  name: "News",
   components: {
     Modal,
   },
@@ -35,7 +47,7 @@ export default {
       newsList: [],
       loading: true,
       showModal: false,
-      currentUrl: '',
+      currentUrl: "",
     };
   },
   mounted() {
@@ -44,18 +56,21 @@ export default {
   watch: {
     keyword(newKeyword) {
       this.fetchNews(newKeyword);
-    }
+    },
   },
   methods: {
     async fetchNews(keyword) {
       console.log("Keyword from AI:", keyword);
       try {
-        const response = await axios.post(`${process.env.VUE_APP_DEPLOY_URL}/news`, {"keyword": keyword});
-        console.log("Fetch complete!")
+        const response = await axios.post(
+          `${process.env.VUE_APP_DEPLOY_URL}/news`,
+          { keyword: keyword }
+        );
+        console.log("Fetch complete!");
         // console.log(response.data.articles)
         this.newsList = response.data.articles;
       } catch (error) {
-        console.error('Error fetching news:', error);
+        console.error("Error fetching news:", error);
       } finally {
         this.loading = false;
       }
@@ -69,7 +84,7 @@ export default {
 };
 </script>
 <style scoped>
-@import 'animate.css';
+@import "animate.css";
 
 .news-section {
   margin-top: 20px;
@@ -160,7 +175,6 @@ export default {
 }
 
 @media (max-width: 815px) {
-
   .news-section {
     width: 100%;
     /* Full width for news section */
@@ -193,7 +207,6 @@ export default {
     padding: 10px;
   }
 }
-
 
 @media (max-width: 480px) {
   .news-item {

@@ -1,12 +1,23 @@
 <template>
   <div>
     <!-- Bot Chat Component -->
-    <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-      <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" @click="hideMessage" />
-      <div class="bot-message" :class="{
-        'message-visible': showMessage,
-        'message-hidden': hidingMessage,
-      }">
+    <div
+      class="bot-chat-container"
+      :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }"
+    >
+      <img
+        class="bot-image"
+        src="@/assets/botrmbg.png"
+        alt="Bot"
+        @click="hideMessage"
+      />
+      <div
+        class="bot-message"
+        :class="{
+          'message-visible': showMessage,
+          'message-hidden': hidingMessage,
+        }"
+      >
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -21,14 +32,30 @@
       <div v-if="marketSummary" v-html="renderedSummary"></div>
       <p v-else>Loading summary…</p>
     </div>
-    <CryptoPopup v-if="showPopup" :crypto="selectedCrypto" @close="closePopup" />
+    <CryptoPopup
+      v-if="showPopup"
+      :crypto="selectedCrypto"
+      @close="closePopup"
+    />
 
     <!-- Top Series Section -->
     <section class="top-series">
       <TopSeries title="Hot Coins" :cryptos="hotCoins" :openPopup="openPopup" />
-      <TopSeries title="Top Losers" :cryptos="topLosers" :openPopup="openPopup" />
-      <TopSeries title="Top Gainers" :cryptos="topGainers" :openPopup="openPopup" />
-      <TopSeries title="Top Volume" :cryptos="topVolume" :openPopup="openPopup" />
+      <TopSeries
+        title="Top Losers"
+        :cryptos="topLosers"
+        :openPopup="openPopup"
+      />
+      <TopSeries
+        title="Top Gainers"
+        :cryptos="topGainers"
+        :openPopup="openPopup"
+      />
+      <TopSeries
+        title="Top Volume"
+        :cryptos="topVolume"
+        :openPopup="openPopup"
+      />
     </section>
 
     <!-- Search Bar -->
@@ -43,7 +70,12 @@
     </div> -->
 
     <div class="search-bar">
-      <input type="text" v-model="searchQuery" placeholder="Search for a coin..." @input="filterCryptos" />
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search for a coin..."
+        @input="filterCryptos"
+      />
     </div>
 
     <!-- Existing crypto list -->
@@ -51,15 +83,23 @@
       <div class="crypto-table">
         <div v-for="(row, rowIndex) in filteredRows" :key="rowIndex">
           <div class="crypto-row">
-            <div class="crypto-item animate__animated animate__fadeInUp" v-for="crypto in row" :key="crypto.symbol"
-              @click="openPopup(crypto)" @mouseover="showTooltip(crypto.uuid)" @mouseleave="hideTooltip">
-              <div :class="[
-                'crypto-bar',
-                {
-                  'positive-bar': crypto.change > 0,
-                  'negative-bar': crypto.change < 0,
-                },
-              ]"></div>
+            <div
+              class="crypto-item animate__animated animate__fadeInUp"
+              v-for="crypto in row"
+              :key="crypto.symbol"
+              @click="openPopup(crypto)"
+              @mouseover="showTooltip(crypto.uuid)"
+              @mouseleave="hideTooltip"
+            >
+              <div
+                :class="[
+                  'crypto-bar',
+                  {
+                    'positive-bar': crypto.change > 0,
+                    'negative-bar': crypto.change < 0,
+                  },
+                ]"
+              ></div>
               <div class="crypto-info">
                 <div class="crypto-symbol">
                   <h3>{{ crypto.symbol }}</h3>
@@ -69,34 +109,43 @@
                   <p class="price">${{ crypto.price.toFixed(6) }}</p>
                 </div>
                 <div class="crypto-change">
-                  <p :class="{
-                    positive: crypto.change > 0,
-                    negative: crypto.change < 0,
-                  }">
+                  <p
+                    :class="{
+                      positive: crypto.change > 0,
+                      negative: crypto.change < 0,
+                    }"
+                  >
                     {{ crypto.change > 0 ? "+" : ""
                     }}{{ crypto.change.toFixed(2) }}%
                   </p>
-                  <p :class="{
-                    positive: crypto.changeAmount > 0,
-                    negative: crypto.changeAmount < 0,
-                  }">
+                  <p
+                    :class="{
+                      positive: crypto.changeAmount > 0,
+                      negative: crypto.changeAmount < 0,
+                    }"
+                  >
                     {{ crypto.changeAmount.toFixed(6) }}
                   </p>
                 </div>
               </div>
               <!-- Tooltip element -->
-              <div :class="[
-                'tooltip',
-                {
-                  'tooltip-visible':
-                    tooltipVisible && activeCrypto === crypto.uuid,
-                },
-              ]">
+              <div
+                :class="[
+                  'tooltip',
+                  {
+                    'tooltip-visible':
+                      tooltipVisible && activeCrypto === crypto.uuid,
+                  },
+                ]"
+              >
                 Full chart
               </div>
             </div>
           </div>
-          <div v-if="rowIndex < filteredRows.length - 1" class="row-divider"></div>
+          <div
+            v-if="rowIndex < filteredRows.length - 1"
+            class="row-divider"
+          ></div>
         </div>
       </div>
     </div>
@@ -105,17 +154,17 @@
 
 <script>
 import axios from "axios";
-import TopSeries from "../MarketPage/TopSeries.vue";
-import CryptoPopup from "../MarketPage/CryptoPopup.vue";
+import TopSeries from "../marketPage/TopSeries.vue";
+import CryptoPopup from "../marketPage/CryptoPopup.vue";
 import { gptServices } from "@/services/gptServices.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import MarkdownIt from 'markdown-it'
+import MarkdownIt from "markdown-it";
 
 const md = new MarkdownIt({
-  html: true,        // allow inline HTML
-  linkify: true,        // autolink URLs
+  html: true, // allow inline HTML
+  linkify: true, // autolink URLs
   typographer: true,
-})
+});
 
 const DEPLOY_URL = process.env.VUE_APP_DEPLOY_URL;
 const BINANCE_API_KEY = process.env.VUE_APP_BINANCE_API_KEY;
@@ -127,13 +176,13 @@ export default {
   props: {
     marketSummary: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   computed: {
     renderedSummary() {
-      return md.render(this.marketSummary)
-    }
+      return md.render(this.marketSummary);
+    },
   },
   components: {
     TopSeries,
@@ -890,7 +939,6 @@ body {
 }
 
 @keyframes typing {
-
   0%,
   100% {
     opacity: 0.3;
