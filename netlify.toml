@@ -11,13 +11,12 @@
 
 [functions]
   node_bundler = "esbuild"
-  esbuild_options = { format = "esm" }
-
-[dev.environment]
-  REDIS_URL = "redis://localhost:6379"
-
+  external_node_modules = ["mongoose", "express", "socket.io", "axios"]
+  included_files = ["backend/**/*"]
+  
 [build.environment]
   NODE_VERSION = "18"
   YARN_VERSION = "1.22.22"
   YARN_FLAGS = "--network-timeout 600000"
+  NODE_OPTIONS = "--experimental-modules"
 

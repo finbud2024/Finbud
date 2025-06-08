@@ -5,10 +5,16 @@
   "scripts": {
     "netlify:build": "cd frontend && vue-cli-service build",
     "client": "cd frontend && vue-cli-service serve",
-    "start": "nodemon backend/functions/server.js",
+    "client:dev": "cd frontend && vue-cli-service serve --skip-plugins @vue/cli-plugin-eslint",
+    "start": "nodemon backend/functions/server.mjs",
     "dev": "dotenv -e .env netlify dev",
     "seeding": "node backend/utils/stockSeeding.js",
-    "install:python-deps": "pip install -r backend/functions/requirements.txt"
+    "install:python-deps": "pip install -r backend/functions/requirements.txt",
+    "install:client": "cd frontend && npm install",
+    "postinstall": "npm run install:client",
+    "optimize": "node optimize-build.mjs",
+    "clean": "rm -rf node_modules/.cache frontend/node_modules/.cache .cache frontend/.cache && npm run optimize",
+    "analyze-bundle": "cd frontend && npx webpack-bundle-analyzer dist/js/*.js"
   },
   "dependencies": {
     "@canvasjs/charts": "^3.10.0",
@@ -37,7 +43,6 @@
     "cheerio": "^1.0.0",
     "connect-mongo": "^5.1.0",
     "convert-csv-to-json": "^2.50.0",
-    "copy-webpack-plugin": "^12.0.2",
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
     "d3": "^7.9.0",
@@ -67,11 +72,7 @@
     "papaparse": "^5.4.1",
     "pdfjs-dist": "^2.16.105",
     "plaid": "^31.1.0",
-    "playwright": "^1.50.1",
-    "playwright-extra": "^4.3.6",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "selenium-webdriver": "^4.31.0",
+    "seedrandom": "^3.0.5",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "swiper": "^11.1.5",
@@ -87,7 +88,6 @@
     "xlsx": "^0.18.5",
     "xml2js": "^0.6.2",
     "yahoo-finance": "^0.3.8",
-    "yarn": "^1.22.22",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -101,6 +101,7 @@
     "@vuepic/vue-datepicker": "^8.8.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
+    "copy-webpack-plugin": "^12.0.2",
     "csv-loader": "^3.0.5",
     "dotenv-webpack": "^8.1.0",
     "eslint": "^7.32.0",
@@ -114,12 +115,18 @@
     "passport": "^0.7.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-local": "^1.0.0",
-    "puppeteer": "^24.8.0",
     "serverless-http": "^3.2.0",
     "typescript": "^5.8.3",
     "validator": "^13.12.0",
     "vue-3-slider-component": "^1.0.0",
-    "webpack": "^5.99.7"
+    "webpack": "^5.99.7",
+    "yarn": "^1.22.22",
+    "playwright": "^1.50.1",
+    "playwright-extra": "^4.3.6",
+    "puppeteer": "^24.8.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "selenium-webdriver": "^4.31.0"
   },
   "eslintConfig": {
     "root": true,

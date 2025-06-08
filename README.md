@@ -1,4 +1,5 @@
 # Trước khi push phải git pull origin main
+
 # FinBud
 
 ## Giới thiệu
@@ -9,7 +10,6 @@ FinBud là một ứng dụng web cung cấp thông tin tài chính và hỗ tr�
 - Định nghĩa các thuật ngữ tài chính
 - Phân tích cổ phiếu
 - Tạo câu đố tài chính
-
 
 ## Cấu trúc dự án
 
@@ -57,10 +57,10 @@ FinBud
 │   │       └── RecommendationGenerator.vue
 │   └── vue.config.js           # File cấu hình Vue.js
 ```
+
 ## Triển khai ứng dụng (deploy)
 
 Cách để tải Netlify package và những package cần thiết:
-
 
 ### 1. Tải package cần thiết
 
@@ -68,61 +68,47 @@ Cách để tải Netlify package và những package cần thiết:
 npm install
 ```
 
-
 ### 2. Tải Netlify-cli (giao diện dòng lệnh cho Netlify)
-
 
 ```sh
 npm install -g netlify-cli
 ```
 
-
 Tiếp theo, chạy lệnh để kiểm tra xem Netlify đã được cài đặt thành công chưa.
-
 
 ```sh
 netlify --version
 ```
 
-
 Nếu hệ thống trả về như này hoặc tương tự thì đã thành công.
-
 
 ```sh
 netlify-cli/18.1.0 darwin-arm64 node-v20.18.3
 ```
 
-
 ### 3. Kết nối repository với Netlify
 
-
 Sử dụng lệnh này để kết nối repo hiện tại với Netlify website (phải dùng github account Finbud để đăng nhập vào Netlify trước) thì sẽ hiện ra một trang để authorize cho Netlify.
-
 
 ```sh
 netlify link
 ```
 
-
-sau khi authorize xong thì vào terminal và chọn "Use current git remote origin (https://github.com/finbud2024/Finbud)" 
-
+sau khi authorize xong thì vào terminal và chọn "Use current git remote origin (https://github.com/finbud2024/Finbud)"
 
 ```sh
  How do you want to link this folder to a site? (Use arrow keys)
-❯ Use current git remote origin (https://github.com/finbud2024/Finbud) 
-  Search by full or partial site name 
-  Choose from a list of your recently updated sites 
-  Enter a site ID 
+❯ Use current git remote origin (https://github.com/finbud2024/Finbud)
+  Search by full or partial site name
+  Choose from a list of your recently updated sites
+  Enter a site ID
 ```
 
-
-cuối cùng sử dụng lệnh dưới đây và dùng url "http://localhost:8888/" 
-
+cuối cùng sử dụng lệnh dưới đây và dùng url "http://localhost:8888/"
 
 ```sh
 netlify dev
 ```
-
 
 ## Các lưu ý khác
 

@@ -6804,9 +6804,9 @@ p-timeout@^3.2.0:
     p-finally "^1.0.0"
 
 p-timeout@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.npmjs.org/p-timeout/-/p-timeout-6.0.0.tgz"
-  integrity sha512-5iS61MOdUMemWH9CORQRxVXTp9g5K8rPnI9uQpo97aWgsH3vVXKjkIhDi+OgIDmN3Ly9+AZ2fZV01Wut1yzfKA==
+  version "6.1.4"
+  resolved "https://registry.npmjs.org/p-timeout/-/p-timeout-6.1.4.tgz"
+  integrity sha512-MyIV3ZA/PmyBN/ud8vV9XzwTrNtR4jFrObymZYnZqMmW0zA8Z17vnT0rBgFE/TlohB+YCHqXMgZzb3Csp49vqg==
 
 p-try@^2.0.0:
   version "2.2.0"
