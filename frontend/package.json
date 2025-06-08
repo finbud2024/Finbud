@@ -1,0 +1,40 @@
+{
+  "name": "finbud-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@vueuse/core": "^10.0.0",
+    "apexcharts": "^4.7.0",
+    "axios": "^1.6.0",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "lodash": "^4.17.21",
+    "marked": "^15.0.12",
+    "vue": "^3.3.0",
+    "vue-3-slider-component": "^1.0.2",
+    "vue-i18n": "^9.2.0",
+    "vue-router": "^4.0.0",
+    "vue3-apexcharts": "^1.8.0",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-class-properties": "^7.27.1",
+    "@babel/plugin-transform-private-methods": "^7.27.1",
+    "@babel/plugin-transform-private-property-in-object": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-vuex": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "@vue/compiler-sfc": "^3.3.0",
+    "csv-loader": "^3.0.5",
+    "raw-loader": "^4.0.2"
+  }
+}
