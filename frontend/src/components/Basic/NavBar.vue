@@ -1,5 +1,16 @@
 <template>
-  <nav class="nav-bar" :class="{ active: isMenuOpen, expanded: navBarIsVisiblyExpanded }" id="nav-bar" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+
+  <button 
+    class="navbar-toggle"
+    @click="toggleMenu"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+    ref="toggleButton"
+  >
+    <font-awesome-icon icon="fa-solid fa-bars" />
+  </button> 
+
+  <nav class="nav-bar" :class="{ active: isMenuOpen, expanded: navBarIsVisiblyExpanded }" id="nav-bar" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" ref="navBar">
     <router-link to="/" class="logo-link">
       <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
     </router-link>
@@ -201,11 +212,7 @@
         <font-awesome-icon icon="fa-solid fa-user" class="icon" />
         <span>{{ $t("login") }}</span>
       </router-link>
-          </div>
-
-    <button class="navbar-toggle" @click="toggleMenu">
-      <font-awesome-icon icon="fa-solid fa-bars" />
-    </button>
+    </div>
   </nav>
 </template>
 
@@ -291,6 +298,23 @@ export default {
     }
   },
   methods: {
+    handleOutsideClick(event) {
+      // Check if the click is outside the nav-bar and toggle button
+      const nav = this.$refs.navBar;
+      const toggle = this.$refs.toggleButton;
+
+      if (
+        this.isMobile &&
+        this.isMenuOpen &&
+        nav &&
+        toggle &&
+        !nav.contains(event.target) &&
+        !toggle.contains(event.target)
+      ) {
+        this.isMenuOpen = false;
+        this.activeDropdown = null;
+      }
+    },
     handleMouseEnter() {
       if (!this.isMobile) {
         this.isHovered = true;
@@ -304,7 +328,7 @@ export default {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
       if(!this.isMenuOpen && this.isMobile) {
-          this.activeDropdown = null;
+        this.activeDropdown = null;
       }
     },
     checkMobile() {
@@ -318,6 +342,7 @@ export default {
               this.isMenuOpen = false;
           }
       }
+      console.log( 'isMobile: ', this.isMobile );
     },
     switchLanguage(lang) {
       this.$i18n.locale = lang;
@@ -432,6 +457,7 @@ export default {
   mounted() {
     this.checkMobile();
     window.addEventListener('resize', this.handleResize);
+    document.addEventListener('click', this.handleOutsideClick);
 
     const savedLang = localStorage.getItem("language");
     if (savedLang) this.$i18n.locale = savedLang;
@@ -941,10 +967,17 @@ export default {
 
   .nav-bar.active {
     transform: translateX(0);
+    width: 280px;
   }
 
   .navbar-toggle {
     display: flex;
+  }
+
+  .navbar-toggle:hover + .nav-bar,
+  .nav-bar.active {
+    transform: translateX(0);
+    width: 280px;
   }
 
   .expand-toggle {
@@ -965,6 +998,14 @@ export default {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     background: #f8fafc;
     margin-top: 0.5rem;
+  }
+
+  .nav-bar.expanded {
+    width: 280px;
+  }
+
+  .nav-bar:not(.expanded) {
+    width: 60px;
   }
 }
 
