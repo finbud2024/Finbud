@@ -1,4 +1,7 @@
 <template>
+  <button class="navbar-toggle" @click="toggleMenu">
+    <font-awesome-icon icon="fa-solid fa-bars" />
+  </button> 
   <nav class="nav-bar" :class="{ active: isMenuOpen, expanded: navBarIsVisiblyExpanded }" id="nav-bar" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
     <router-link to="/" class="logo-link">
       <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
@@ -197,11 +200,7 @@
         <font-awesome-icon icon="fa-solid fa-user" class="icon" />
         <span>{{ $t("login") }}</span>
       </router-link>
-          </div>
-
-    <button class="navbar-toggle" @click="toggleMenu">
-      <font-awesome-icon icon="fa-solid fa-bars" />
-    </button>
+    </div>
   </nav>
 </template>
 
@@ -314,6 +313,7 @@ export default {
               this.isMenuOpen = false;
           }
       }
+      console.log( 'isMobile: ', this.isMobile );
     },
     switchLanguage(lang) {
       this.$i18n.locale = lang;
