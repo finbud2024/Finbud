@@ -30,6 +30,8 @@ const messages = {
     finData: "Fin Data",
     agent: "Agent",
     pestle: "PESTLE",
+    finXpert: "FinXpert",
+    accountant: "AI Accountant",
     login: "Log In",
     darkMode: "Dark Mode",
     lightMode: "Light Mode",
@@ -1622,6 +1624,221 @@ const messages = {
         orderError: "Order Failed",
         networkError: "Network error occurred"
       }
+    },
+
+    // Accountant Page
+    accountantPage: {
+      title: "AI Financial Intelligence",
+      subtitle: "Smart financial document analysis with advanced AI technology. Optimize taxes, ensure compliance, and accurate financial forecasting.",
+      hero: {
+        title: "AI Financial Intelligence",
+        subtitle: "Smart financial document analysis with advanced AI technology. Optimize taxes, ensure compliance, and accurate financial forecasting.",
+        stats: {
+          analyzed: "Documents Analyzed",
+          savings: "Tax Savings",
+          compliance: "Compliance Rate"
+        }
+      },
+
+      // Upload Section
+      upload: {
+        title: "Document Analysis Center",
+        subtitle: "Upload financial documents to receive instant AI insights",
+        dragDrop: "Drag & Drop Documents",
+        formats: "Supports PDF, Excel (.xlsx, .xls), CSV",
+        chooseFiles: "Choose Files",
+        quickStart: "Quick Templates"
+      },
+
+      // Templates
+      templates: {
+        income: "Income Statement",
+        incomeDesc: "P&L Analysis",
+        balance: "Balance Sheet",
+        balanceDesc: "Financial Position Review",
+        cashflow: "Cash Flow",
+        cashflowDesc: "Track Money Flow",
+        tax: "Tax Documents",
+        taxDesc: "Tax Planning & Compliance"
+      },
+
+      // Dashboard
+      dashboard: {
+        title: "Smart Financial Dashboard",
+        refresh: "Refresh",
+        export: "Export Report",
+        assistant: "AI Assistant",
+        liveData: "Live Data",
+        overview: "Financial Overview",
+        aiInsights: "AI Insights", 
+        realtime: "Real-time",
+        expenseAnalysis: "Expense Analysis",
+        compliance: "Compliance Monitoring",
+        complianceScore: "Compliance Score",
+        taxOptimization: "Tax Optimization",
+        forecasting: "Financial Forecasting",
+        forecasting92: "92% Confidence",
+        total: "Total",
+        periods: {
+          month: "This Month",
+          quarter: "This Quarter",
+          year: "This Year"
+        },
+        forecastPeriods: {
+          next_month: "Next Month",
+          next_quarter: "Next Quarter", 
+          next_year: "Next Year"
+        },
+        metrics: {
+          revenue: "Revenue",
+          profit: "Profit",
+          strong_growth: "Strong Growth",
+          sustained_growth: "Sustained Growth",
+          exponential_growth: "Exponential Growth"
+        }
+      },
+
+      // Financial Metrics
+      metrics: {
+        revenue: "Total Revenue",
+        expenses: "Total Expenses", 
+        profit: "Net Profit",
+        margin: "Profit Margin"
+      },
+
+      // AI Insights
+      insights: {
+        viewDetails: "View Details",
+        revenue_growth: "Revenue Growth Opportunity",
+        revenue_growthDesc: "Q4 revenue trends show 23% growth potential in tech services segment",
+        cost_optimization: "Cost Optimization Alert",
+        cost_optimizationDesc: "Office expenses up 18% this quarter. Consider renegotiating vendor contracts",
+        cashflow_prediction: "Cash Flow Prediction", 
+        cashflow_predictionDesc: "Based on current trends, expect positive cash flow improvement next quarter",
+        impact: {
+          high: "High Impact",
+          medium: "Medium Impact",
+          low: "Low Impact"
+        }
+      },
+
+      // Expenses
+      expenses: {
+        operations: "Operations",
+        marketing: "Marketing",
+        technology: "Technology", 
+        personnel: "Personnel"
+      },
+
+      // Compliance
+      compliance: {
+        tax_filing: "Tax Filing Compliance",
+        tax_filingDesc: "All quarterly tax reports are up to date",
+        reporting_standards: "Financial Reporting Standards",
+        reporting_standardsDesc: "GAAP compliance verification complete",
+        audit_trail: "Audit Trail Verification",
+        audit_trailDesc: "Minor discrepancy detected in expense categorization",
+        statuses: {
+          compliant: "Compliant",
+          "review required": "Review Required"
+        }
+      },
+
+      // Tax Optimization
+      tax: {
+        savings: "Potential Savings",
+        depreciation: "Depreciation Optimization", 
+        depreciationDesc: "Accelerate equipment depreciation to reduce current year tax liability",
+        expenses: "Maximize Business Expenses",
+        expensesDesc: "Identify missed deductible expenses from travel and entertainment",
+        rd_credit: "R&D Tax Credit",
+        rd_creditDesc: "Qualify for research and development tax incentives",
+        actions: {
+          implement: "Implement Now",
+          review: "Review & Apply",
+          consult: "Consult Expert"
+        }
+      },
+
+      // Chatbot
+      chatbot: {
+        title: "FinXpert Assistant",
+        placeholder: "Ask me anything about financial analysis...",
+        greeting: "Hello! I'm your AI Financial Assistant. How can I help you today?",
+        options: {
+          upload: "Upload Documents",
+          insights: "Explain Insights", 
+          tax: "Tax Optimization",
+          compliance: "Check Compliance"
+        },
+        responses: {
+          upload: "I can help you analyze various financial documents like income statements, balance sheets, cash flow reports, and tax documents. Just drag and drop your files to the upload area!",
+          insights: "I provide AI-powered insights on financial performance, growth opportunities, cost optimization, and forecasting. What specific area would you like me to explain?",
+          tax: "I can help identify tax optimization strategies, available tax credits, depreciation maximization, and tax reduction opportunities. What type of optimization interests you?", 
+          compliance: "I perform comprehensive compliance checks for financial reporting standards, tax requirements, and industry regulations. What type of compliance do you need to verify?"
+        }
+      },
+
+      // Help & Processing
+      help: {
+        tooltip: "Need help? Ask our AI assistant!",
+        processing: "Processing Financial Data"
+      },
+
+      // Notifications  
+      notifications: {
+        title: "Financial Notifications",
+        taxDeadline: "Tax deadline in {days} days",
+        complianceAlert: "Compliance alert: Audit trail needs review",
+        insightUpdate: "New insight: 23% growth opportunity detected",
+        reportReady: "Analysis report completed",
+        markAllRead: "Mark All as Read",
+        viewAll: "View All"
+      },
+
+      // Advanced Features
+      advanced: {
+        realTimeMonitoring: "Real-Time Monitoring",
+        predictiveAnalytics: "Predictive Analytics", 
+        riskAssessment: "Risk Assessment",
+        benchmarking: "Benchmarking",
+        customReports: "Custom Reports",
+        dataVisualization: "Data Visualization",
+        automatedInsights: "Automated Insights",
+        smartAlerts: "Smart Alerts"
+      },
+
+      // Export Options
+      export: {
+        title: "Export Report",
+        pdf: "Export PDF",
+        excel: "Export Excel",
+        powerpoint: "Export PowerPoint", 
+        email: "Send via Email",
+        share: "Share Link",
+        schedule: "Schedule Report"
+      },
+
+      // Risk Analysis
+      risk: {
+        title: "Risk Analysis",
+        financial: "Financial Risk",
+        operational: "Operational Risk",
+        market: "Market Risk", 
+        regulatory: "Regulatory Risk",
+        low: "Low",
+        medium: "Medium",
+        high: "High",
+        critical: "Critical"
+      },
+
+      // Performance Metrics
+      performance: {
+        roi: "Return on Investment",
+        growth: "Growth Rate",
+        efficiency: "Efficiency Score",
+        profitability: "Profitability"
+      }
     }
   },
   vi: {
@@ -1650,11 +1867,216 @@ const messages = {
     finAgent: "Fin Tài chính",
     agent: "Agent",
     pestle: "PESTLE",
+    finXpert: "FinXpert",
+    accountant: "Kế toán AI",
     login: "Đăng nhập",
     darkMode: "Chế độ tối",
     lightMode: "Chế độ sáng",
     logout: "Đăng xuất",
     chat: "Chat",
+
+    // AccountantPage - Comprehensive Vietnamese translations
+    accountantPage: {
+      // Hero Section
+      hero: {
+        title: "Trí Tuệ Tài Chính AI",
+        subtitle: "Phân tích tài liệu tài chính thông minh với công nghệ AI tiên tiến. Tối ưu hóa thuế, tuân thủ pháp luật và dự báo tài chính chính xác.",
+        stats: {
+          analyzed: "Tài liệu đã phân tích",
+          savings: "Tiết kiệm thuế", 
+          compliance: "Tuân thủ"
+        }
+      },
+
+      // Upload Section
+      upload: {
+        title: "Trung Tâm Phân Tích Tài Liệu",
+        subtitle: "Tải lên tài liệu tài chính để nhận insights AI ngay lập tức",
+        dragDrop: "Kéo & Thả Tài Liệu",
+        formats: "Hỗ trợ PDF, Excel (.xlsx, .xls), CSV",
+        chooseFiles: "Chọn File",
+        quickStart: "Mẫu Nhanh"
+      },
+
+      // Templates
+      templates: {
+        income: "Báo Cáo Thu Nhập",
+        incomeDesc: "Phân tích báo cáo P&L",
+        balance: "Bảng Cân Đối",
+        balanceDesc: "Xem xét tình hình tài chính",
+        cashflow: "Dòng Tiền",
+        cashflowDesc: "Theo dõi luồng tiền",
+        tax: "Tài Liệu Thuế",
+        taxDesc: "Lập kế hoạch & tuân thủ thuế"
+      },
+
+      // Dashboard
+      dashboard: {
+        title: "Bảng Điều Khiển Thông Minh Tài Chính",
+        refresh: "Làm Mới",
+        export: "Xuất Báo Cáo",
+        assistant: "Trợ Lý AI",
+        liveData: "Dữ Liệu Trực Tiếp",
+        overview: "Tổng Quan Tài Chính",
+        aiInsights: "Phân Tích AI",
+        realtime: "Thời gian thực",
+        expenseAnalysis: "Phân Tích Chi Phí",
+        compliance: "Giám Sát Tuân Thủ",
+        complianceScore: "Điểm Tuân Thủ",
+        taxOptimization: "Tối Ưu Thuế",
+        forecasting: "Dự Báo Tài Chính",
+        forecasting92: "92% Độ Tin Cậy",
+        total: "Tổng Cộng",
+        periods: {
+          month: "Tháng Này",
+          quarter: "Quý Này", 
+          year: "Năm Này"
+        },
+        forecastPeriods: {
+          next_month: "Tháng Tới",
+          next_quarter: "Quý Tới",
+          next_year: "Năm Tới"
+        },
+        metrics: {
+          revenue: "Doanh Thu",
+          profit: "Lợi Nhuận",
+          strong_growth: "Tăng Trưởng Mạnh",
+          sustained_growth: "Tăng Trưởng Bền Vững",
+          exponential_growth: "Tăng Trưởng Vượt Trội"
+        }
+      },
+
+      // Financial Metrics
+      metrics: {
+        revenue: "Tổng Doanh Thu",
+        expenses: "Tổng Chi Phí",
+        profit: "Lợi Nhuận Ròng",
+        margin: "Tỷ Lệ Lợi Nhuận"
+      },
+
+      // AI Insights
+      insights: {
+        viewDetails: "Xem Chi Tiết",
+        revenue_growth: "Cơ Hội Tăng Trưởng Doanh Thu",
+        revenue_growthDesc: "Xu hướng doanh thu Q4 cho thấy tiềm năng tăng trưởng 23% ở mảng dịch vụ công nghệ",
+        cost_optimization: "Cảnh Báo Tối Ưu Chi Phí",
+        cost_optimizationDesc: "Chi phí văn phòng tăng 18% quý này. Nên cân nhắc đàm phán lại hợp đồng nhà cung cấp",
+        cashflow_prediction: "Dự Báo Dòng Tiền",
+        cashflow_predictionDesc: "Dựa trên xu hướng hiện tại, dự kiến cải thiện dòng tiền tích cực quý tới",
+        impact: {
+          high: "Tác Động Cao",
+          medium: "Tác Động Trung Bình", 
+          low: "Tác Động Thấp"
+        }
+      },
+
+      // Expenses
+      expenses: {
+        operations: "Vận Hành",
+        marketing: "Marketing",
+        technology: "Công Nghệ",
+        personnel: "Nhân Sự"
+      },
+
+      // Compliance
+      compliance: {
+        tax_filing: "Tuân Thủ Nộp Thuế",
+        tax_filingDesc: "Tất cả báo cáo thuế quý đã được cập nhật",
+        reporting_standards: "Tiêu Chuẩn Báo Cáo Tài Chính",
+        reporting_standardsDesc: "Xác minh tuân thủ GAAP hoàn tất",
+        audit_trail: "Xác Minh Kiểm Toán",
+        audit_trailDesc: "Phát hiện sai lệch nhỏ trong phân loại chi phí",
+        statuses: {
+          compliant: "Tuân Thủ",
+          "review required": "Cần Xem Xét"
+        }
+      },
+
+      // Tax Optimization
+      tax: {
+        savings: "Tiết Kiệm Tiềm Năng",
+        depreciation: "Tối Ưu Khấu Hao",
+        depreciationDesc: "Tăng tốc khấu hao thiết bị để giảm nghĩa vụ thuế năm hiện tại",
+        expenses: "Tối Đa Hóa Chi Phí Kinh Doanh",
+        expensesDesc: "Xác định chi phí khấu trừ bị bỏ lỡ từ đi lại và giải trí",
+        rd_credit: "Tín Dụng Thuế R&D",
+        rd_creditDesc: "Đủ điều kiện nhận ưu đãi thuế nghiên cứu và phát triển",
+        actions: {
+          implement: "Thực Hiện Ngay",
+          review: "Xem Xét & Áp Dụng",
+          consult: "Tham Vấn Chuyên Gia"
+        }
+      },
+
+      // Chatbot
+      chatbot: {
+        title: "Trợ Lý FinXpert",
+        placeholder: "Hỏi tôi bất cứ điều gì về phân tích tài chính..."
+      },
+
+      // Help & Processing
+      help: {
+        tooltip: "Cần trợ giúp? Hỏi trợ lý AI của chúng tôi!",
+        processing: "Đang Phân Tích Dữ Liệu Tài Chính"
+      },
+
+      // Notifications
+      notifications: {
+        title: "Thông Báo Tài Chính",
+        taxDeadline: "Hạn nộp thuế còn {days} ngày",
+        complianceAlert: "Cảnh báo tuân thủ: Cần xem xét audit trail",
+        insightUpdate: "Insight mới: Cơ hội tăng trưởng 23% được phát hiện",
+        reportReady: "Báo cáo phân tích hoàn tất",
+        markAllRead: "Đánh dấu tất cả đã đọc",
+        viewAll: "Xem tất cả"
+      },
+
+      // Advanced Features
+      advanced: {
+        realTimeMonitoring: "Giám Sát Thời Gian Thực",
+        predictiveAnalytics: "Phân Tích Dự Báo",
+        riskAssessment: "Đánh Giá Rủi Ro",
+        benchmarking: "So Sánh Chuẩn",
+        customReports: "Báo Cáo Tùy Chỉnh",
+        dataVisualization: "Trực Quan Hóa Dữ Liệu",
+        automatedInsights: "Insights Tự Động",
+        smartAlerts: "Cảnh Báo Thông Minh"
+      },
+
+      // Export Options
+      export: {
+        title: "Xuất Báo Cáo",
+        pdf: "Xuất PDF",
+        excel: "Xuất Excel", 
+        powerpoint: "Xuất PowerPoint",
+        email: "Gửi qua Email",
+        share: "Chia Sẻ Link",
+        schedule: "Lên Lịch Báo Cáo"
+      },
+
+      // Risk Analysis
+      risk: {
+        title: "Phân Tích Rủi Ro",
+        financial: "Rủi Ro Tài Chính",
+        operational: "Rủi Ro Vận Hành",
+        market: "Rủi Ro Thị Trường",
+        regulatory: "Rủi Ro Pháp Lý",
+        low: "Thấp",
+        medium: "Trung Bình",
+        high: "Cao",
+        critical: "Nghiêm Trọng"
+      },
+
+      // Performance Metrics
+      performance: {
+        roi: "Tỷ Suất Hoàn Vốn",
+        growth: "Tăng Trưởng",
+        efficiency: "Hiệu Quả",
+        profitability: "Khả Năng Sinh Lời",
+        liquidity: "Thanh Khoản",
+        leverage: "Đòn Bẩy"
+      }
+    },
     //Old
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",
     homePrice: "Giá nhà",
@@ -3239,6 +3661,144 @@ const messages = {
         sellSuccess: "Successfully sold {quantity} shares of {symbol}",
         orderError: "Order Failed",
         networkError: "Network error occurred"
+      }
+    },
+
+    // Accountant Page
+    accountantPage: {
+      title: "AI Kế Toán Thông Minh",
+      subtitle: "Phân tích tài chính tự động với AI tiên tiến",
+      hero: {
+        documentsProcessed: "Tài liệu đã xử lý",
+        accuracyRate: "Độ chính xác",
+        timeSaved: "Thời gian tiết kiệm"
+      },
+      upload: {
+        title: "Tải lên & Phân tích",
+        dragText: "Kéo thả file PDF, Excel hoặc CSV vào đây",
+        supportedFormats: "Hỗ trợ: PDF, XLSX, XLS, CSV (tối đa 10MB)",
+        browseFiles: "Duyệt file",
+        analyzing: "Đang phân tích...",
+        quickTemplates: "Mẫu nhanh",
+        templates: {
+          incomeStatement: "Báo cáo thu nhập",
+          incomeDesc: "Phân tích P&L",
+          balanceSheet: "Bảng cân đối kế toán", 
+          balanceDesc: "Xem xét tình hình tài chính",
+          cashFlow: "Báo cáo lưu chuyển tiền tệ",
+          cashDesc: "Theo dõi luồng tiền",
+          taxDocuments: "Tài liệu thuế",
+          taxDesc: "Lập kế hoạch & tuân thủ thuế"
+        }
+      },
+      chatbot: {
+        title: "Trợ lý AI Tài chính",
+        greeting: "Xin chào! Tôi là Trợ lý AI Tài chính của bạn. Hôm nay tôi có thể giúp gì cho bạn?",
+        placeholder: "Nhập tin nhắn của bạn...",
+        options: {
+          upload: "Tải lên tài liệu",
+          insights: "Giải thích thông tin chi tiết",
+          tax: "Tối ưu hóa thuế",
+          compliance: "Kiểm tra tuân thủ"
+        },
+        responses: {
+          upload: "Tôi có thể giúp bạn phân tích các loại tài liệu tài chính như báo cáo thu nhập, bảng cân đối kế toán, báo cáo lưu chuyển tiền tệ và tài liệu thuế. Chỉ cần kéo thả file của bạn vào khu vực tải lên!",
+          insights: "Tôi cung cấp thông tin chi tiết AI về hiệu suất tài chính, cơ hội tăng trưởng, tối ưu hóa chi phí và dự báo. Bạn muốn tôi giải thích điều gì cụ thể?",
+          tax: "Tôi có thể giúp xác định các chiến lược tối ưu hóa thuế, tín dụng thuế có sẵn, khấu hao tối đa và cơ hội giảm thuế. Loại tối ưu hóa nào bạn quan tâm?",
+          compliance: "Tôi thực hiện kiểm tra tuân thủ toàn diện cho các tiêu chuẩn báo cáo tài chính, yêu cầu thuế và quy định ngành. Bạn cần kiểm tra loại tuân thủ nào?"
+        }
+      },
+      dashboard: {
+        title: "Dashboard Thông minh",
+        financialOverview: "Tổng quan Tài chính",
+        totalRevenue: "Tổng doanh thu",
+        netProfit: "Lãi ròng",
+        operatingMargin: "Biên lợi nhuận hoạt động",
+        cashFlow: "Dòng tiền",
+        insights: "Thông tin Chi tiết AI",
+        expenseAnalysis: "Phân tích Chi phí",
+        categories: {
+          operations: "Hoạt động",
+          marketing: "Marketing", 
+          technology: "Công nghệ",
+          personnel: "Nhân sự"
+        },
+        compliance: "Giám sát Tuân thủ",
+        complianceScore: "Điểm tuân thủ",
+        taxOptimization: "Tối ưu hóa Thuế",
+        forecasting: "Dự báo Tài chính",
+        forecasting92: "Độ tin cậy 92%",
+        forecastPeriods: {
+          nextMonth: "Tháng tới",
+          nextQuarter: "Quý tới"
+        },
+        metrics: {
+          revenue: "Doanh thu",
+          profit: "Lãi",
+          strongGrowth: "Tăng trưởng mạnh",
+          sustainedGrowth: "Tăng trưởng bền vững"
+        }
+      },
+      actions: {
+        title: "Hành động Đề xuất",
+        priorities: {
+          all: "Tất cả",
+          high: "Cao", 
+          medium: "Trung bình",
+          low: "Thấp"
+        },
+        execute: "Thực hiện",
+        items: {
+          revenueOpportunity: "Cơ hội Tăng Doanh thu",
+          revenueDesc: "Xu hướng Q4 cho thấy tiềm năng tăng trưởng 23% trong phân khúc dịch vụ công nghệ",
+          costOptimization: "Cảnh báo Tối ưu Chi phí",
+          costDesc: "Chi phí văn phòng tăng 18% quý này. Xem xét đàm phán lại hợp đồng nhà cung cấp",
+          cashFlowPrediction: "Dự báo Dòng tiền",
+          cashFlowDesc: "Dựa trên xu hướng hiện tại, dự kiến cải thiện dòng tiền tích cực quý tới"
+        }
+      },
+      compliance: {
+        taxFiling: "Tuân thủ Khai thuế",
+        taxDesc: "Tất cả hồ sơ khai thuế hàng quý đều cập nhật",
+        reporting: "Tiêu chuẩn Báo cáo Tài chính",
+        reportingDesc: "Xác minh tuân thủ GAAP hoàn tất",
+        auditTrail: "Xác minh Dấu vết Kiểm toán",
+        auditDesc: "Phát hiện sai lệch nhỏ trong danh mục chi phí",
+        statuses: {
+          compliant: "Tuân thủ",
+          reviewRequired: "Cần xem xét",
+          passed: "Đạt",
+          warning: "Cảnh báo"
+        }
+      },
+      tax: {
+        depreciation: "Tối ưu hóa Khấu hao",
+        depreciationDesc: "Tăng tốc khấu hao thiết bị để giảm thuế năm hiện tại",
+        expenseMax: "Tối đa hóa Chi phí Kinh doanh", 
+        expenseDesc: "Xác định chi phí khấu trừ bị bỏ sót từ du lịch và giải trí",
+        rdCredit: "Tín dụng Thuế R&D",
+        rdDesc: "Đủ điều kiện cho ưu đãi thuế nghiên cứu và phát triển",
+        savings: "Tiết kiệm",
+        complexity: {
+          low: "Thấp",
+          medium: "Trung bình", 
+          high: "Cao"
+        },
+        actions: {
+          implementNow: "Thực hiện ngay",
+          reviewApply: "Xem xét & Áp dụng",
+          consultExpert: "Tư vấn Chuyên gia"
+        }
+      },
+      help: {
+        tooltip: "Cần trợ giúp? Hỏi Trợ lý AI",
+        processing: "Đang xử lý AI",
+        progressSteps: {
+          extracting: "Trích xuất dữ liệu từ tài liệu...",
+          analyzing: "Phân tích các số liệu tài chính...",
+          generating: "Tạo thông tin chi tiết...",
+          finalizing: "Hoàn thiện báo cáo..."
+        }
       }
     }
   }

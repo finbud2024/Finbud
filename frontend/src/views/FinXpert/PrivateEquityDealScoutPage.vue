@@ -1,8 +1,7 @@
 <template>
   <div class="pe-deal-scout">
-    <!-- Mobile Sidebar Toggle Button -->
+    <!-- Mobile Sidebar Toggle Button - Always show on mobile -->
     <button 
-      v-if="isMobile" 
       @click="toggleSidebar" 
       class="mobile-sidebar-toggle"
       :class="{ 'sidebar-open': isSidebarOpen }"
@@ -529,6 +528,11 @@ export default {
     this.checkMobile();
     window.addEventListener('resize', this.checkMobile);
     window.addEventListener('scroll', this.handleScroll);
+    
+    // Force check mobile on next tick to ensure DOM is ready
+    this.$nextTick(() => {
+      this.checkMobile();
+    });
   },
 
   beforeDestroy() {
@@ -712,12 +716,22 @@ export default {
     },
 
     checkMobile() {
-      this.isMobile = window.innerWidth <= 768;
+      const isMobileDevice = window.innerWidth <= 768 || 
+                           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      this.isMobile = isMobileDevice;
+      
       if (!this.isMobile) {
         this.isSidebarOpen = true; // Open by default on desktop
       } else {
         this.isSidebarOpen = false; // Closed by default on mobile
       }
+      
+      console.log('Mobile check:', { 
+        windowWidth: window.innerWidth, 
+        isMobile: this.isMobile, 
+        userAgent: navigator.userAgent.includes('Mobile') 
+      });
     },
 
     scrollToSection(sectionId) {
@@ -767,13 +781,97 @@ export default {
   background: rgba(255, 255, 255, 0.95);
   border: none;
   border-radius: 12px;
-  display: flex;
+  display: none; /* Hidden by default */
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+}
+
+/* Show toggle button only on mobile */
+@media (max-width: 768px) {
+  .mobile-sidebar-toggle {
+    display: flex !important;
+  }
+  
+  .pe-deal-scout {
+    flex-direction: column;
+  }
+
+  .main-content {
+    padding-top: 80px; /* Account for mobile toggle button */
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quick-form .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .lbo-inputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .market-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .comparables-table {
+    overflow-x: auto;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .filter-controls select,
+  .btn-filter {
+    width: 100%;
+  }
+  
+  /* Ensure sidebar is properly positioned on mobile */
+  .sidebar-mobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    width: 280px !important;
+    transform: translateX(-100%) !important;
+    z-index: 999 !important;
+  }
+  
+  .sidebar-mobile.sidebar-open {
+    transform: translateX(0) !important;
+  }
+}
+
+/* Additional mobile-specific styles */
+@media (max-width: 480px) {
+  .mobile-sidebar-toggle {
+    width: 45px;
+    height: 45px;
+    top: 15px;
+    left: 15px;
+  }
+  
+  .mobile-sidebar-toggle i {
+    font-size: 1.1rem;
+  }
+  
+  .sidebar-mobile {
+    width: 260px !important;
+  }
 }
 
 .mobile-sidebar-toggle:hover {
@@ -1681,51 +1779,5 @@ export default {
 
 .modal-body {
   padding: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .pe-deal-scout {
-    flex-direction: column;
-  }
-
-  .main-content {
-    padding-top: 80px; /* Account for mobile toggle button */
-  }
-
-  .hero-stats {
-    flex-direction: column;
-    gap: 2rem;
-  }
-  
-  .analysis-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .quick-form .form-row {
-    grid-template-columns: 1fr;
-  }
-  
-  .lbo-inputs {
-    grid-template-columns: 1fr;
-  }
-  
-  .market-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .comparables-table {
-    overflow-x: auto;
-  }
-
-  .filter-controls {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: stretch;
-  }
-
-  .filter-controls select,
-  .btn-filter {
-    width: 100%;
-  }
 }
 </style> 

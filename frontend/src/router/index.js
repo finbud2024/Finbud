@@ -51,6 +51,7 @@ import EquityResearcherPage from "@/views/FinXpert/EquityResearcherPage.vue";
 import AIHedgeFundLabPage from "@/views/FinXpert/AIHedgeFundLabPage.vue";
 import PrivateEquityDealScoutPage from "@/views/FinXpert/PrivateEquityDealScoutPage.vue";
 import AIFinanceWorkflowsPage from "@/views/FinXpert/AIFinanceWorkflowsPage.vue";
+import AccountantPage from "@/views/FinXpert/AccountantPage.vue";
 
 const routes = [
   {
@@ -329,6 +330,11 @@ const routes = [
     path: "/ai-finance-workflows",
     name: "AIFinanceWorkflowsPage",
     component: AIFinanceWorkflowsPage,
+  },
+  {
+    path: "/finxpert-accountant",
+    name: "AccountantPage",
+    component: AccountantPage,
   }
 ];
 

@@ -121,6 +121,10 @@
               <font-awesome-icon icon="fa-solid fa-chart-line" class="subsection-item-icon" />
               Equity Researcher
             </router-link>
+            <router-link to="/finxpert-accountant" class="subsection-item">
+              <font-awesome-icon icon="fa-solid fa-calculator" class="subsection-item-icon" />
+              {{ $t("accountant") }}
+            </router-link>
             <router-link to="/ai-finance-workflows" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-brain" class="subsection-item-icon" />
               AI Finance Workflows
@@ -219,7 +223,7 @@ import {
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
-  faCogs, faRocket, faSearchDollar
+  faCogs, faRocket, faSearchDollar, faCalculator, faBullseye
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -228,7 +232,7 @@ library.add(
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
-  faCogs, faRocket, faSearchDollar
+  faCogs, faRocket, faSearchDollar, faCalculator, faBullseye
 );
 
 export default {
