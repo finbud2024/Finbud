@@ -6,58 +6,7 @@
         {{ $t('aboutUsDescription') }}
       </p>
     </div>
-    <div class="team-section">
-      <h2 class="title">{{ $t('meetOurTeamTitle') }}</h2>
-      <swiper
-        :slidesPerView="slidesPerView"
-        :spaceBetween="30"
-        :speed="3000" 
-        :autoplay="{
-          delay: 2000,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true,
-          reverseDirection: false
-        }"
-        :loop="true"
-        :loopAdditionalSlides="2" 
-        :freeMode="false"
-        :modules="modules"
-        class="mySwiper-linear"
-        :breakpoints="{
-          0: { slidesPerView: 1, spaceBetween: 20 },
-          768: { slidesPerView: 2, spaceBetween: 25 },
-          1024: { slidesPerView: 3, spaceBetween: 30 },
-          1200: { slidesPerView: 4, spaceBetween: 30 }
-        }"
-        :direction="'horizontal'"
-        :allowTouchMove="true"
-        :centeredSlides="false"
-        @swiper="onSwiper"
-      >
-     
-        <swiper-slide v-for="member in teamMembers" :key="member.name">
-          <div class="team-member">
-            <div class="image-container">
-              <img :src="member.img" :alt="member.name" class="fade-in" />
-            </div>
-            <h3>{{ member.name }}</h3>
-            <p>{{ $t(member.roleKey) }}</p>
-            <h2>{{ $t(member.introKey) }}</h2>
-            <div class="social-icons">
-              <a
-                v-for="icon in member.socialIcons"
-                :key="icon.name"
-                :href="icon.link"
-                target="_blank"
-                class="social-link"
-              >
-                {{ icon.name }}
-              </a>
-            </div>
-          </div>
-        </swiper-slide>
-      </swiper>
-    </div>
+
 
     <!-- Testimonials Section -->
     <div class="testimonials-section">
