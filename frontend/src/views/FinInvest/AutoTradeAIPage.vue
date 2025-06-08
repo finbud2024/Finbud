@@ -1,78 +1,78 @@
 <template>
   <div class="autotrade-container">
-    <!-- ▸ Header -------------------------------------------------------------->
+    <!-- ▸ Tiêu đề -------------------------------------------------------------->
     <div class="page-header">
       <h1>AutoTrade AI</h1>
-      <p>Automated trading with AI-powered decision making</p>
+      <p>Giao dịch tự động với quyết định được hỗ trợ bởi AI</p>
     </div>
 
     <div class="autotrade-content">
-      <!-- 1 ▸ Strategy selection ---------------------------------------------->
+      <!-- 1 ▸ Chọn chiến lược -------------------------------------------------->
       <div class="strategy-section">
         <div class="section-number">1</div>
-        <h2>Start New Strategy</h2>
+        <h2>Bắt đầu chiến lược mới</h2>
 
         <div class="strategy-options">
-          <!-- Conservative -->
+          <!-- Bảo thủ -->
           <div class="strategy-card conservative" @click="toggleStrategy('conservative')" tabindex="0"
             :class="{ active: activeStrategy === 'conservative' }">
-            <h3>Conservative</h3>
-            <p>Low risk, steady growth</p>
+            <h3>Bảo thủ</h3>
+            <p>Rủi ro thấp, tăng trưởng ổn định</p>
             <div class="strategy-metrics">
               <div class="metric">
                 <span class="metric-value">15%</span>
-                <span class="metric-label">Max Duration</span>
+                <span class="metric-label">Thời hạn tối đa</span>
               </div>
               <div class="metric">
-                <span class="metric-label">30 days</span>
+                <span class="metric-label">30 ngày</span>
               </div>
             </div>
           </div>
 
-          <!-- Moderate -->
+          <!-- Trung bình -->
           <div class="strategy-card moderate" @click="toggleStrategy('moderate')" tabindex="0"
             :class="{ active: activeStrategy === 'moderate' }">
-            <h3>Moderate</h3>
-            <p>Balanced risk and reward</p>
+            <h3>Trung bình</h3>
+            <p>Cân bằng giữa rủi ro và lợi nhuận</p>
             <div class="strategy-metrics">
               <div class="metric">
                 <span class="metric-value">20%</span>
-                <span class="metric-label">Max Duration</span>
+                <span class="metric-label">Thời hạn tối đa</span>
               </div>
               <div class="metric">
-                <span class="metric-label">10 days</span>
+                <span class="metric-label">10 ngày</span>
               </div>
             </div>
           </div>
 
-          <!-- Aggressive -->
+          <!-- Mạo hiểm -->
           <div class="strategy-card aggressive" @click="toggleStrategy('aggressive')" tabindex="0"
             :class="{ active: activeStrategy === 'aggressive' }">
-            <h3>Aggressive</h3>
-            <p>High risk, high potential return</p>
+            <h3>Mạo hiểm</h3>
+            <p>Rủi ro cao, tiềm năng lợi nhuận lớn</p>
             <div class="strategy-metrics">
               <div class="metric">
                 <span class="metric-value">25%</span>
-                <span class="metric-label">Max Duration</span>
+                <span class="metric-label">Thời hạn tối đa</span>
               </div>
               <div class="metric">
-                <span class="metric-label">5 days</span>
+                <span class="metric-label">5 ngày</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Strategy Guide Section -->
+        <!-- Hướng dẫn chiến lược -->
         <transition name="slide-down">
           <div v-if="activeStrategy" class="strategy-guide">
             <div class="strategy-guide-header">
-              <h3>{{ strategies[activeStrategy].title }} Guide</h3>
-              <button class="close-guide" @click="closeStrategy" aria-label="Close guide">×</button>
+              <h3>Hướng dẫn: {{ strategies[activeStrategy].title }}</h3>
+              <button class="close-guide" @click="closeStrategy" aria-label="Đóng hướng dẫn">×</button>
             </div>
 
             <div class="strategy-guide-content">
               <div class="guide-section pros-section">
-                <h4>✓ Pros</h4>
+                <h4>✓ Ưu điểm</h4>
                 <ul>
                   <li v-for="(pro, index) in strategies[activeStrategy].pros" :key="'pro-' + index">
                     {{ pro }}
@@ -81,7 +81,7 @@
               </div>
 
               <div class="guide-section cons-section">
-                <h4>⚠ Cons</h4>
+                <h4>⚠ Nhược điểm</h4>
                 <ul>
                   <li v-for="(con, index) in strategies[activeStrategy].cons" :key="'con-' + index">
                     {{ con }}
@@ -90,71 +90,69 @@
               </div>
 
               <div class="guide-section action-section">
-                <h4>💡 Recommended Action</h4>
+                <h4>💡 Hành động khuyến nghị</h4>
                 <p>{{ strategies[activeStrategy].action }}</p>
               </div>
             </div>
           </div>
         </transition>
 
-        <!-- Capital entry -->
+        <!-- Nhập vốn -->
         <div class="capital-allocation">
-          <h3>Capital Allocation ($):</h3>
-          <input v-model.number="capital" type="number" min="0" placeholder="Enter amount" class="amount-input" />
+          <h3>Phân bổ vốn ($):</h3>
+          <input v-model.number="capital" type="number" min="0" placeholder="Nhập số tiền" class="amount-input" />
         </div>
 
         <button class="start-strategy-btn" @click="startStrategy">
-          START STRATEGY
+          BẮT ĐẦU CHIẾN LƯỢC
         </button>
       </div>
 
-      <!-- 2 ▸ Investments ------------------------------------------------------>
+      <!-- 2 ▸ Khoản đầu tư ----------------------------------------------------->
       <div class="investments-section">
         <div class="section-number">2</div>
-        <h2>Auto Investments</h2>
+        <h2>Danh mục đầu tư tự động</h2>
 
         <div class="investment-cards">
-          <!-- Static placeholder cards (replace with real data) -->
           <div class="investment-card" v-for="card in exampleCards" :key="card.ticker">
             <div class="stock-header">
               <div class="stock-name">{{ card.ticker }}</div>
               <div class="status" :class="card.status.toLowerCase()">
-                {{ card.status }}
+                {{ card.status === 'ACTIVE' ? 'ĐANG MỞ' : 'ĐÃ ĐÓNG' }}
               </div>
             </div>
             <div class="stock-details">
               <div class="strategy-tag" :class="card.strategy">
-                {{ card.strategy }}
+                {{ card.strategy === 'conservative' ? 'Bảo thủ' : card.strategy === 'moderate' ? 'Trung bình' : 'Mạo hiểm' }}
               </div>
-              <div class="transaction">Bought: {{ card.bought }}</div>
-              <div class="transaction">Sold: {{ card.sold }}</div>
+              <div class="transaction">Mua: {{ card.bought }}</div>
+              <div class="transaction">Bán: {{ card.sold }}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 3 ▸ Performance ------------------------------------------------------>
       <div class="performance-section">
         <div class="section-number">3</div>
-        <h2>Performance Overview</h2>
+        <h2>Tổng quan hiệu suất</h2>
 
         <div class="performance-metrics">
           <div class="metric-card">
-            <h3>Total Return</h3>
+            <h3>Tổng lợi nhuận</h3>
             <div class="metric-value positive">+20%</div>
           </div>
           <div class="metric-card">
-            <h3>Active Strategies</h3>
+            <h3>Chiến lược đang hoạt động</h3>
             <div class="metric-value">2</div>
           </div>
           <div class="metric-card">
-            <h3>Completed Trades</h3>
+            <h3>Giao dịch đã hoàn tất</h3>
             <div class="metric-value">6</div>
           </div>
         </div>
 
         <div class="chart-container">
-          <h3>Performance History</h3>
+          <h3>Lịch sử hiệu suất</h3>
         </div>
       </div>
     </div>
@@ -166,60 +164,53 @@ export default {
   name: "AutoTradeAI",
   data() {
     return {
-      /* ▸ Strategy state */
       activeStrategy: null,
-
-      /* ▸ Form state */
       capital: null,
-
-      /* ▸ Strategy lookup table */
       strategies: {
         conservative: {
-          title: "Conservative Strategy",
+          title: "Chiến lược Bảo thủ",
           pros: [
-            "Lower volatility versus the market benchmark",
-            "Preserves capital during drawdowns",
-            "Requires minimal monitoring once deployed"
+            "Biến động thấp hơn so với chỉ số thị trường",
+            "Bảo toàn vốn khi thị trường giảm",
+            "Không cần theo dõi thường xuyên"
           ],
           cons: [
-            "Returns may lag in strong bull rallies",
-            "Inflation-adjusted growth is moderate"
+            "Lợi nhuận thấp hơn khi thị trường tăng mạnh",
+            "Tăng trưởng sau lạm phát ở mức trung bình"
           ],
           action:
-            "Ideal for capital needed in 3–6 months or as a liquidity buffer. Keep position size under 20% of your portfolio and review quarterly."
+            "Phù hợp cho vốn cần dùng trong 3–6 tháng hoặc làm quỹ dự phòng. Giữ tỷ trọng <20% danh mục và đánh giá hàng quý."
         },
         moderate: {
-          title: "Moderate Strategy",
+          title: "Chiến lược Trung bình",
           pros: [
-            "Balanced exposure across sectors and factors",
-            "Automatic rebalancing targets risk parity",
-            "Captures upside in trending markets"
+            "Phân bổ cân bằng giữa các ngành và yếu tố",
+            "Tái cân bằng tự động để duy trì phân bổ rủi ro hợp lý",
+            "Tận dụng thị trường có xu hướng tăng"
           ],
           cons: [
-            "Drawdowns larger than conservative mode",
-            "Slightly higher turnover increases fees"
+            "Sụt giảm lớn hơn chiến lược bảo thủ",
+            "Tần suất giao dịch cao hơn, chi phí cao hơn"
           ],
           action:
-            "Suitable as a core growth sleeve. Allocate 20-50% of deployable capital, set a 10% trailing stop, and reassess monthly."
+            "Phù hợp làm lõi tăng trưởng. Phân bổ 20–50% vốn, đặt lệnh dừng lỗ theo đuôi 10%, đánh giá hàng tháng."
         },
         aggressive: {
-          title: "Aggressive Strategy",
+          title: "Chiến lược Mạo hiểm",
           pros: [
-            "Targets high-momentum equities and leveraged ETFs",
-            "Short holding periods reduce overnight risk",
-            "Opportunity for outsized alpha in volatile tapes"
+            "Tập trung vào cổ phiếu tăng mạnh và ETF đòn bẩy",
+            "Thời gian nắm giữ ngắn giúp giảm rủi ro qua đêm",
+            "Tạo alpha vượt trội trong giai đoạn biến động"
           ],
           cons: [
-            "Greater probability of sharp drawdowns",
-            "Requires active monitoring and strict risk controls",
-            "Higher slippage and trading-cost drag"
+            "Rủi ro giảm mạnh cao hơn",
+            "Yêu cầu theo dõi liên tục và kiểm soát rủi ro nghiêm ngặt",
+            "Trượt giá và chi phí giao dịch cao"
           ],
           action:
-            "Deploy only discretionary capital you can tolerate losing. Limit to <15% of account value, use tight stop-loss (3–5%), and evaluate after each trade cycle."
+            "Chỉ dùng vốn có thể mất. Giữ <15% giá trị tài khoản, đặt stop-loss chặt (3–5%), đánh giá sau mỗi vòng giao dịch."
         }
       },
-
-      /* ▸ Mock investment cards */
       exampleCards: [
         { ticker: "NVDA", status: "CLOSED", strategy: "aggressive", bought: 8.4367, sold: 0 },
         { ticker: "MSFT", status: "CLOSED", strategy: "conservative", bought: 2.5589, sold: 0 },
@@ -229,28 +220,19 @@ export default {
     };
   },
   methods: {
-    /* Toggles the strategy guide display */
     toggleStrategy(strategyKey) {
-      if (this.activeStrategy === strategyKey) {
-        this.activeStrategy = null;
-      } else {
-        this.activeStrategy = strategyKey;
-      }
+      this.activeStrategy = this.activeStrategy === strategyKey ? null : strategyKey;
     },
-
-    /* Closes the strategy guide */
     closeStrategy() {
       this.activeStrategy = null;
     },
-
-    /* Placeholder start logic */
     startStrategy() {
       if (!this.capital || this.capital <= 0) {
-        alert("Enter a valid capital amount before starting.");
+        alert("Vui lòng nhập số vốn hợp lệ trước khi bắt đầu.");
         return;
       }
-      console.log(`Starting strategy with $${this.capital}`);
-      /* TODO: call backend endpoint here */
+      console.log(`Bắt đầu chiến lược với $${this.capital}`);
+      // TODO: gọi API backend ở đây
     }
   }
 };
