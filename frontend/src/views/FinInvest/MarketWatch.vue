@@ -1,7 +1,9 @@
 <template>
     <div class="page-container">
-        <!-- ChatBot component -->
-        <ChatBot :botMessage="templateChat" />
+        <!-- ChatBot component - Fixed positioning to avoid content overlap -->
+        <div class="chatbot-wrapper">
+            <ChatBot :botMessage="templateChat" />
+        </div>
 
         <h1 class="page-title">
             {{ t('marketAnalysisPage.marketAnalysisTitle') }}
@@ -762,16 +764,192 @@ tbody tr td {
     }
 }
 
-@media (max-width: 460px) {
+/* ChatBot Wrapper - Fixed positioning to avoid content overlap */
+.chatbot-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 350px;
+    width: 350px;
+}
+
+/* Improved page container to prevent horizontal scroll */
+.page-container {
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    min-height: 100vh;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 1024px) {
+    .chatbot-wrapper {
+        bottom: 15px;
+        right: 15px;
+        max-width: 320px;
+        width: 320px;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        padding: 0 20px;
+        text-align: center;
+    }
+    
+    .trend-ai-news-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .trend-ai-news-container > .container-card-big {
+        width: 100% !important;
+        padding: 0 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .chatbot-wrapper {
+        bottom: 10px;
+        right: 10px;
+        max-width: 300px;
+        width: 300px;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+        padding: 0 15px;
+    }
+    
+    .button-group {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+    }
+    
+    .button {
+        padding: 0.4rem 0.8rem;
+        font-size: 13px;
+        min-width: auto;
+        white-space: nowrap;
+    }
+    
+    .card-container {
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .card {
+        min-width: auto;
+        flex: 1;
+    }
+    
+    .card-title {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+    
+    .news-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .news-image {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+    
+    .news-title {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+    
+    .small-news-card-wrapper {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .small-news-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.5rem;
+        padding: 0 10px;
+    }
+    
+    .container-card-big {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .component-title {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    
+    .button {
+        padding: 0.3rem 0.6rem;
+        font-size: 12px;
+    }
+    
+    .date-label {
+        width: 100%;
+        font-size: 12px;
+    }
+    
+    .table-container {
+        font-size: 12px;
+        margin-top: 15px;
+    }
+    
+    .table-container td,
+    .table-container th {
+        padding: 6px;
+    }
+    
+    .news-title {
+        font-size: 14px;
+    }
+    
     .stock-card-container {
         display: block;
         width: 100%;
+        padding: 10px 0;
     }
 
     .stock-card {
         width: 100%;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
+    
+    .chatbot-wrapper {
+        bottom: 10px;
+        right: 10px;
+        max-width: 280px;
+        width: 280px;
+    }
+}
 
+@media (max-width: 320px) {
+    .chatbot-wrapper {
+        max-width: 250px;
+        width: 250px;
+    }
+    
+    .page-title {
+        font-size: 1.3rem;
+    }
+    
+    .button {
+        padding: 0.25rem 0.5rem;
+        font-size: 11px;
+    }
 }
 </style>

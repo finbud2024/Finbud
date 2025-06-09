@@ -1558,4 +1558,799 @@ export default {
   border: 1px solid #444 !important;
   color: #e0e0e0 !important;
 }
+
+/* Enhanced Comprehensive Mobile Responsive Design - Fix UI Breaking */
+@media (max-width: 1400px) {
+  .quant-simulator {
+    padding: 1.5rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .simulator-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .market-panel,
+  .orderbook-panel,
+  .algorithm-panel,
+  .chart-panel,
+  .orders-panel,
+  .trade-feed-panel,
+  .portfolio-panel {
+    min-width: 0; /* Allow shrinking */
+    overflow: hidden;
+  }
+  
+  .notifications {
+    max-width: 100%;
+  }
+  
+  .notification-item {
+    padding: 0.875rem;
+    font-size: 0.9rem;
+  }
+  
+  .status-overview {
+    gap: 1rem;
+  }
+  
+  .status-item {
+    padding: 0.875rem;
+  }
+  
+  .status-value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .quant-simulator {
+    padding: 1.25rem;
+  }
+  
+  .simulator-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .simulator-header h1 {
+    font-size: 2.2rem;
+    text-align: center;
+  }
+  
+  .status-overview {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    max-width: 100%;
+  }
+  
+  .market-data-table {
+    min-width: 600px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 968px) {
+  .quant-simulator {
+    padding: 1rem;
+    overflow-x: hidden;
+  }
+  
+  .simulator-header {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .simulator-header h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .simulator-header p {
+    text-align: center;
+    font-size: 0.95rem;
+  }
+  
+  .notifications {
+    max-height: 250px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 280px;
+    z-index: 1001;
+  }
+  
+  .status-overview {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .simulator-grid {
+    gap: 1.25rem;
+  }
+  
+  /* Fix table overflow */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 100%;
+  }
+  
+  .market-data-table {
+    font-size: 0.85rem;
+    min-width: 650px;
+    border-collapse: collapse;
+  }
+  
+  .market-data-table th,
+  .market-data-table td {
+    padding: 0.5rem 0.25rem;
+    white-space: nowrap;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .market-data-table th:first-child,
+  .market-data-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: inherit;
+    z-index: 2;
+  }
+  
+  /* Fix orderbook layout */
+  .orderbook-container {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .orderbook-level {
+    padding: 0.25rem 0.375rem;
+    font-size: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .orderbook-side {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Fix algorithm panel */
+  .algorithm-list {
+    gap: 0.375rem;
+  }
+  
+  .algo-item {
+    padding: 0.875rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    border-radius: 8px;
+  }
+  
+  .algo-info,
+  .algo-performance,
+  .algo-status {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Fix chart panel */
+  .chart-container {
+    min-height: 250px;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  .quant-simulator {
+    padding: 0.75rem;
+    margin: 0;
+    overflow-x: hidden;
+  }
+  
+  .simulator-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .simulator-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .simulator-header p {
+    font-size: 0.9rem;
+  }
+  
+  /* Enhanced notifications for mobile */
+  .notifications-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  
+  .notification {
+    pointer-events: auto;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  /* Status overview mobile */
+  .status-overview {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .status-item {
+    padding: 0.75rem;
+    text-align: center;
+    border-radius: 8px;
+  }
+  
+  .status-value {
+    font-size: 1.25rem;
+  }
+  
+  .status-label {
+    font-size: 0.8rem;
+  }
+  
+  /* Grid layout mobile */
+  .simulator-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  /* Panel headers mobile */
+  .market-panel h2,
+  .orderbook-panel h2,
+  .algorithm-panel h2,
+  .chart-panel h2,
+  .orders-panel h2,
+  .trade-feed-panel h2,
+  .portfolio-panel h2 {
+    font-size: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .market-status,
+  .algo-controls,
+  .chart-controls {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+  
+  /* Enhanced table wrapper */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: calc(100vw - 1.5rem);
+    margin: 0 auto;
+  }
+  
+  .market-data-table {
+    min-width: 700px;
+    font-size: 0.8rem;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .market-data-table th,
+  .market-data-table td {
+    padding: 0.5rem 0.375rem;
+    white-space: nowrap;
+    border: 1px solid #e5e7eb;
+    text-align: center;
+  }
+  
+  .market-data-table th:first-child,
+  .market-data-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 2;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    font-weight: 600;
+  }
+  
+  /* Select elements mobile */
+  .symbol-selector,
+  .chart-controls select {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem;
+    font-size: 16px; /* Prevent iOS zoom */
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    min-height: 44px; /* Touch target */
+  }
+  
+  /* Current price display */
+  .current-price {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    border: 1px solid #dee2e6;
+  }
+  
+  /* Orderbook mobile improvements */
+  .orderbook-container {
+    max-height: 350px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .orderbook-side {
+    margin-bottom: 0.75rem;
+  }
+  
+  .orderbook-header {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #f8f9fa;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .orderbook-level {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #f1f3f4;
+  }
+  
+  .spread-indicator {
+    text-align: center;
+    padding: 0.5rem;
+    font-weight: 600;
+    background: #fff3cd;
+    border-radius: 4px;
+    margin: 0.5rem 0;
+  }
+  
+  /* Algorithm panel mobile */
+  .algo-item {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: white;
+  }
+  
+  .algo-info {
+    margin-bottom: 0.5rem;
+  }
+  
+  .algo-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .algo-strategy,
+  .algo-sharpe {
+    font-size: 0.75rem;
+    color: #6c757d;
+  }
+  
+  .algo-performance {
+    margin-bottom: 0.25rem;
+  }
+  
+  .algo-pnl {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  /* Orders panel mobile */
+  .orders-container {
+    max-height: 300px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .order-item {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 0.5rem;
+    background: white;
+  }
+  
+  .order-info,
+  .order-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+  }
+  
+  .order-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+  }
+  
+  .cancel-btn {
+    width: 100%;
+    padding: 0.5rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    min-height: 44px; /* Touch target */
+  }
+  
+  /* Trade feed mobile */
+  .trade-feed {
+    max-height: 250px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .trade-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 0.8rem;
+  }
+  
+  /* Chart improvements */
+  .chart-container {
+    min-height: 200px;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  
+  /* Empty states */
+  .empty-orders,
+  .empty-trades {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+  }
+  
+  .empty-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .empty-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .quant-simulator {
+    padding: 0.625rem;
+  }
+  
+  .simulator-header {
+    padding: 0.875rem;
+  }
+  
+  .simulator-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .status-item {
+    padding: 0.625rem;
+  }
+  
+  .status-value {
+    font-size: 1.125rem;
+  }
+  
+  .market-data-table {
+    font-size: 0.75rem;
+    min-width: 650px;
+  }
+  
+  .market-data-table th,
+  .market-data-table td {
+    padding: 0.375rem 0.25rem;
+  }
+  
+  .current-price {
+    font-size: 1rem;
+    padding: 0.625rem;
+  }
+  
+  .orderbook-level {
+    padding: 0.25rem 0.375rem;
+    font-size: 0.75rem;
+  }
+  
+  .algo-item {
+    padding: 0.625rem;
+  }
+  
+  .order-item {
+    padding: 0.625rem;
+  }
+  
+  .chart-container {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .quant-simulator {
+    padding: 0.5rem;
+  }
+  
+  .simulator-header {
+    padding: 0.75rem;
+  }
+  
+  .simulator-header h1 {
+    font-size: 1.375rem;
+  }
+  
+  .simulator-header p {
+    font-size: 0.85rem;
+  }
+  
+  .notifications-container {
+    top: 5px;
+    right: 5px;
+    left: 5px;
+  }
+  
+  .notification {
+    padding: 0.625rem;
+    font-size: 0.8rem;
+  }
+  
+  .status-item {
+    padding: 0.5rem;
+  }
+  
+  .status-value {
+    font-size: 1rem;
+  }
+  
+  .status-label {
+    font-size: 0.75rem;
+  }
+  
+  .table-wrapper {
+    max-width: calc(100vw - 1rem);
+  }
+  
+  .market-data-table {
+    font-size: 0.7rem;
+    min-width: 600px;
+  }
+  
+  .market-data-table th,
+  .market-data-table td {
+    padding: 0.25rem 0.125rem;
+  }
+  
+  .current-price {
+    font-size: 0.95rem;
+    padding: 0.5rem;
+  }
+  
+  .orderbook-container {
+    max-height: 250px;
+  }
+  
+  .orderbook-level {
+    padding: 0.25rem;
+    font-size: 0.7rem;
+  }
+  
+  .algo-item {
+    padding: 0.5rem;
+  }
+  
+  .order-item {
+    padding: 0.5rem;
+  }
+  
+  .chart-container {
+    min-height: 160px;
+  }
+  
+  .cancel-btn {
+    padding: 0.375rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .quant-simulator {
+    padding: 0.375rem;
+  }
+  
+  .simulator-header {
+    padding: 0.625rem;
+  }
+  
+  .simulator-header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .simulator-header p {
+    font-size: 0.8rem;
+  }
+  
+  .status-item {
+    padding: 0.375rem;
+  }
+  
+  .status-value {
+    font-size: 0.95rem;
+  }
+  
+  .table-wrapper {
+    max-width: calc(100vw - 0.75rem);
+  }
+  
+  .market-data-table {
+    font-size: 0.65rem;
+    min-width: 550px;
+  }
+  
+  .current-price {
+    font-size: 0.9rem;
+    padding: 0.375rem;
+  }
+  
+  .chart-container {
+    min-height: 140px;
+  }
+  
+  .market-clock {
+    bottom: 10px;
+    right: 10px;
+    padding: 0.375rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Mobile-specific optimizations and fixes */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  .hft-trading-interface,
+  .quant-simulator,
+  .simulator-grid,
+  .trading-grid {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  
+  /* Ensure all panels fit properly */
+  .market-panel,
+  .orderbook-panel,
+  .algorithm-panel,
+  .chart-panel,
+  .orders-panel,
+  .trade-feed-panel,
+  .portfolio-panel {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Better button styling */
+  .start-btn,
+  .cancel-btn,
+  button {
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 16px; /* Prevent iOS zoom */
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  /* Enhanced focus states */
+  .symbol-selector:focus,
+  select:focus,
+  button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Better loading states */
+  .chart-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    gap: 1rem;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Improve touch interactions */
+  .algo-item,
+  .order-item,
+  .trade-item {
+    -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+  }
+  
+  /* Better text rendering */
+  .market-data-table,
+  .orderbook-level,
+  .algo-item,
+  .order-item {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Ensure proper spacing */
+  .simulator-grid > * {
+    margin-bottom: 0;
+  }
+  
+  /* Fix potential layout issues */
+  * {
+    box-sizing: border-box;
+  }
+}
+
+/* Dark mode responsive adjustments */
+.dark-mode .market-clock {
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+}
+
+.dark-mode .notifications {
+  background: rgba(17, 24, 39, 0.95);
+  border: 1px solid #374151;
+}
+
+.dark-mode .current-price {
+  background: #374151;
+  color: #f9fafb;
+}
+
+.dark-mode .stat-item {
+  background: #374151;
+  color: #f9fafb;
+}
 </style>

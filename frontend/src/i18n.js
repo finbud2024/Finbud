@@ -896,9 +896,9 @@ const messages = {
       "This Month": "This Month",
       "mentions": "Mentions",
       "marketAnalysis": {
-        "Securities Company": "Securities Company",
-        "Press": "Press",
-        "Expert Community": "Expert Community"
+        "Securities Company": "Công ty Chứng khoán",
+        "Press": "Báo chí",
+        "Expert Community": "Cộng đồng Chuyên gia"
       },
       "trend": {
         "title": "Trend",

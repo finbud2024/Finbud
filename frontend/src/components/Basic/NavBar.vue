@@ -19,6 +19,7 @@
       <font-awesome-icon :icon="isExpanded ? 'fa-chevron-left' : 'fa-chevron-right'" class="icon" />
     </button>
 
+    
     <div class="nav-right">
       <ul class="nav-items">
         <li>

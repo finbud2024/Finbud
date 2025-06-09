@@ -732,4 +732,487 @@ export default {
     font-size: 1.5rem;
   }
 }
+
+/* Dark mode styles */
+.dark-mode .profile-page {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%);
+}
+
+.dark-mode .border {
+  background: #2d3748;
+  border-color: #4a5568;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .stock-simulator-container {
+  background: linear-gradient(45deg, #374151, #2d3748);
+}
+
+.dark-mode .stock-simulator-container h3 {
+  color: #9ca3af;
+}
+
+.dark-mode .header-section {
+  background: #1a1a1a;
+  color: #f8f9fa;
+}
+
+.dark-mode .form-group label {
+  color: #e2e8f0;
+}
+
+.dark-mode .form-group input {
+  background: #374151;
+  border-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.dark-mode .form-group input:focus {
+  border-color: #e2e8f0;
+  box-shadow: 0 0 0 3px rgba(226, 232, 240, 0.1);
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 1400px) {
+  .profile-page {
+    padding: 1.75rem;
+    flex-direction: row;
+    gap: 2rem;
+  }
+  
+  .balance-card {
+    margin: 0;
+    flex: 1;
+    max-width: 400px;
+  }
+  
+  .info-card {
+    margin: 0;
+    flex: 2;
+    min-width: 500px;
+  }
+  
+  .profile-image {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .stock-simulator-container h1 {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .profile-page {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .balance-card,
+  .info-card {
+    padding: 1.75rem;
+  }
+  
+  .profile-image {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .stock-simulator-container {
+    padding: 1.25rem;
+    margin-bottom: 0.875rem;
+  }
+  
+  .stock-simulator-container h1 {
+    font-size: 1.6rem;
+  }
+  
+  .header-section {
+    font-size: 1.1rem;
+    padding: 0.875rem 1.75rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .profile-page {
+    flex-direction: column;
+    padding: 1.25rem;
+    gap: 1.5rem;
+  }
+
+  .balance-card,
+  .info-card {
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    min-width: auto;
+  }
+
+  .balance-card {
+    margin-top: 0;
+    order: 1;
+  }
+  
+  .info-card {
+    order: 2;
+  }
+  
+  .profile-image {
+    width: 110px;
+    height: 110px;
+  }
+  
+  .balance {
+    padding-top: 60px;
+  }
+}
+
+@media (max-width: 968px) {
+  .profile-page {
+    padding: 1rem;
+    gap: 1.25rem;
+  }
+  
+  .balance-card,
+  .info-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+  
+  .profile-image {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .balance {
+    padding-top: 50px;
+  }
+  
+  .stock-simulator-container {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .stock-simulator-container h1 {
+    font-size: 1.4rem;
+  }
+  
+  .stock-simulator-container h3 {
+    font-size: 0.85rem;
+  }
+  
+  .header-section {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .form-group input {
+    padding: 0.625rem 0.875rem;
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 0.875rem;
+    gap: 1rem;
+  }
+  
+  .balance-card,
+  .info-card {
+    padding: 1.25rem;
+    border-radius: 14px;
+  }
+  
+  .profile-image {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .balance {
+    padding-top: 45px;
+  }
+  
+  .stock-simulator-container {
+    padding: 0.875rem;
+    margin-bottom: 0.625rem;
+    border-radius: 10px;
+  }
+  
+  .stock-simulator-container h1 {
+    font-size: 1.25rem;
+  }
+  
+  .stock-simulator-container h3 {
+    font-size: 0.8rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .custom-file-upload {
+    width: 35px;
+    height: 35px;
+    bottom: 8%;
+    left: 72%;
+  }
+  
+  .header-section {
+    font-size: 0.95rem;
+    padding: 0.625rem 1.25rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .form-group input {
+    padding: 0.75rem;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  
+  .btn-container {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-size: 16px;
+    border-radius: 6px;
+    min-height: 44px; /* Touch target minimum */
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-page {
+    padding: 0.75rem;
+  }
+  
+  .balance-card,
+  .info-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .profile-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .balance {
+    padding-top: 40px;
+  }
+  
+  .stock-simulator-container {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stock-simulator-container h1 {
+    font-size: 1.125rem;
+  }
+  
+  .stock-simulator-container h3 {
+    font-size: 0.75rem;
+  }
+  
+  .custom-file-upload {
+    width: 32px;
+    height: 32px;
+    left: 70%;
+  }
+  
+  .header-section {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+  }
+  
+  .form-group input {
+    padding: 0.625rem;
+    font-size: 16px;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 0.625rem;
+  }
+  
+  .balance-card,
+  .info-card {
+    padding: 0.875rem;
+    border-radius: 10px;
+  }
+  
+  .profile-image {
+    width: 75px;
+    height: 75px;
+  }
+  
+  .balance {
+    padding-top: 37px;
+  }
+  
+  .stock-simulator-container {
+    padding: 0.625rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .stock-simulator-container h1 {
+    font-size: 1rem;
+  }
+  
+  .stock-simulator-container h3 {
+    font-size: 0.7rem;
+  }
+  
+  .custom-file-upload {
+    width: 30px;
+    height: 30px;
+    bottom: 5%;
+    left: 68%;
+  }
+  
+  .header-section {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.875rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.875rem;
+  }
+  
+  .form-group label {
+    font-size: 0.85rem;
+  }
+  
+  .form-group input {
+    padding: 0.625rem;
+    font-size: 16px;
+  }
+  
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 320px) {
+  .profile-page {
+    padding: 0.5rem;
+  }
+  
+  .balance-card,
+  .info-card {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+  
+  .profile-image {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .balance {
+    padding-top: 35px;
+  }
+  
+  .stock-simulator-container {
+    padding: 0.5rem;
+  }
+  
+  .stock-simulator-container h1 {
+    font-size: 0.95rem;
+  }
+  
+  .stock-simulator-container h3 {
+    font-size: 0.65rem;
+  }
+  
+  .custom-file-upload {
+    width: 28px;
+    height: 28px;
+    left: 65%;
+  }
+  
+  .header-section {
+    font-size: 0.8rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .form-group input {
+    padding: 0.5rem;
+    font-size: 16px;
+  }
+  
+  .btn {
+    padding: 0.625rem 0.875rem;
+    font-size: 16px;
+    min-height: 44px;
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Ensure proper touch targets */
+  .btn,
+  .form-group input,
+  .custom-file-upload {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Optimize form for mobile */
+  .form-group input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Prevent zoom on iOS */
+  .form-group input,
+  .btn {
+    font-size: 16px !important;
+  }
+  
+  /* Enhanced animation performance on mobile */
+  .border:hover,
+  .stock-simulator-container:hover,
+  .profile-image:hover {
+    transform: none;
+  }
+  
+  /* Mobile-friendly spacing */
+  .balance-card {
+    position: relative;
+    margin-top: 2rem;
+  }
+  
+  .info-card {
+    position: relative;
+    margin-top: 2rem;
+  }
+  
+  .profile-image-container {
+    top: -45px;
+  }
+}
 </style>

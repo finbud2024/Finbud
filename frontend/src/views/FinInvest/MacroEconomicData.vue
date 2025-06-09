@@ -1,7 +1,9 @@
 <template>
     <div class="full-screen-container">
-        <!-- ChatBot component -->
-        <ChatBot :botMessage="templateChat" />
+        <!-- ChatBot component - Moved to fixed position to avoid content overlap -->
+        <div class="chatbot-wrapper">
+            <ChatBot :botMessage="templateChat" />
+        </div>
 
         <!-- Title -->
         <div class="title">{{ t('macroEconomic') }}</div>
@@ -807,7 +809,26 @@ tr:hover .header {
     100% { background-position: -100% 0; }
 }
 
+/* ChatBot Wrapper - Fixed positioning to avoid content overlap */
+.chatbot-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 350px;
+    width: 350px;
+}
+
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .chatbot-wrapper {
+        bottom: 15px;
+        right: 15px;
+        max-width: 320px;
+        width: 320px;
+    }
+}
+
 @media (max-width: 768px) {
     .button-group {
         padding-top: 60px;
@@ -832,6 +853,13 @@ tr:hover .header {
     table {
         width: 100%;
         min-width: 800px; /* Ensures table doesn't get too compressed */
+    }
+    
+    .chatbot-wrapper {
+        bottom: 10px;
+        right: 10px;
+        max-width: 300px;
+        width: 300px;
     }
 }
 

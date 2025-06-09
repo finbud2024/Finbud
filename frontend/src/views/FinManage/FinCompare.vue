@@ -216,10 +216,17 @@
     padding: 0.5rem;
     border-radius: 8px;
     transition: all 0.3s ease;
+    min-height: 44px; /* Touch target minimum */
   }
   
   .radio-option:hover {
     background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .radio-option input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
   }
   
   .main-content {
@@ -251,10 +258,12 @@
   .table-wrapper {
     overflow-x: auto;
     border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
   }
   
   .comparison-table {
     width: 100%;
+    min-width: 600px;
     border-collapse: separate;
     border-spacing: 0;
   }
@@ -270,6 +279,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    white-space: nowrap;
   }
   
   .table-row-title {
@@ -277,6 +287,7 @@
     font-weight: 600;
     color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
+    min-width: 150px;
   }
   
   .table-row {
@@ -284,6 +295,7 @@
     color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
     transition: all 0.3s ease;
+    white-space: nowrap;
   }
   
   tr {
@@ -394,5 +406,248 @@
   
   :root[data-theme="dark"] .best-choice td {
     color: white;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .sidebar {
+      width: 250px;
+      padding: 1.5rem;
+    }
+    
+    .main-content {
+      padding: 1.5rem;
+    }
+    
+    .main-title {
+      font-size: 2.2rem;
+    }
+    
+    .comparison-table-container {
+      padding: 1.5rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .flex-container {
+      flex-direction: column;
+    }
+    
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      padding: 1.5rem 1rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-content {
+      gap: 1.5rem;
+    }
+    
+    .title {
+      font-size: 1.8rem;
+      text-align: center;
+    }
+    
+    .subtitle {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .filter-options {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    
+    .radio-option {
+      flex: 1 1 auto;
+      min-width: 140px;
+      justify-content: center;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+    
+    .main-content {
+      padding: 1rem;
+    }
+    
+    .main-title {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    .comparison-table-container {
+      padding: 1rem;
+      border-radius: 12px;
+    }
+    
+    .table-header,
+    .table-row,
+    .table-row-title {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .comparison-table {
+      min-width: 500px;
+    }
+    
+    .suggested {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sidebar {
+      padding: 1rem 0.75rem;
+    }
+    
+    .title {
+      font-size: 1.5rem;
+    }
+    
+    .subtitle {
+      font-size: 0.85rem;
+    }
+    
+    .filter-options {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .radio-option {
+      min-width: auto;
+      padding: 0.625rem 0.75rem;
+      font-size: 0.85rem;
+    }
+    
+    .main-content {
+      padding: 0.75rem;
+    }
+    
+    .main-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .comparison-table-container {
+      padding: 0.75rem;
+    }
+    
+    .table-header,
+    .table-row,
+    .table-row-title {
+      padding: 0.5rem 0.375rem;
+      font-size: 0.8rem;
+    }
+    
+    .comparison-table {
+      min-width: 450px;
+    }
+    
+    .best-choice-label {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      margin-left: 0.25rem;
+    }
+    
+    .suggested {
+      padding: 0.625rem;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+    
+    tr:hover {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 320px) {
+    .sidebar {
+      padding: 0.75rem 0.5rem;
+    }
+    
+    .title {
+      font-size: 1.3rem;
+    }
+    
+    .subtitle {
+      font-size: 0.8rem;
+    }
+    
+    .radio-option {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+    
+    .main-content {
+      padding: 0.5rem;
+    }
+    
+    .main-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .comparison-table-container {
+      padding: 0.5rem;
+    }
+    
+    .table-header,
+    .table-row,
+    .table-row-title {
+      padding: 0.375rem 0.25rem;
+      font-size: 0.75rem;
+    }
+    
+    .comparison-table {
+      min-width: 400px;
+    }
+    
+    .best-choice-label {
+      font-size: 0.6rem;
+      padding: 0.15rem 0.4rem;
+    }
+    
+    .suggested {
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+    
+    .loading {
+      font-size: 1rem;
+      min-height: 150px;
+    }
+    
+    .error {
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Touch improvements */
+  @media (hover: none) and (pointer: coarse) {
+    tr:hover {
+      background: transparent;
+      transform: none;
+    }
+    
+    .radio-option:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .radio-option:active {
+      transform: scale(0.98);
+      background: rgba(255, 255, 255, 0.2);
+    }
   }
   </style>

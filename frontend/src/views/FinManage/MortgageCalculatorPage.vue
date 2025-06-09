@@ -618,15 +618,18 @@ export default {
 </script>
 
 <style scoped>
-/* Base styles */
+/* Base styles - Fixed horizontal scroll */
 .mortgage-calc {
   max-width: 95%;
+  width: 100%;
   margin: auto;
   padding: 20px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* Headings */
@@ -645,19 +648,43 @@ h2 {
   font-weight: 500;
 }
 
-/* Layout */
+/* Layout - Enhanced Mobile First */
 .content-wrapper {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
   animation: fadeIn 0.5s ease;
 }
 
-/* Input Section */
+/* Desktop layout */
+@media (min-width: 968px) {
+  .content-wrapper {
+    grid-template-columns: 400px 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    padding: 0 1rem;
+  }
+}
+
+/* Input Section - Mobile First */
 .input-section {
-  max-width: 30%;
-  flex-grow: 1;
+  width: 100%;
+  max-width: 100%;
   animation: slideIn 0.5s ease;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 0;
+}
+
+@media (min-width: 968px) {
+  .input-section {
+    max-width: 400px;
+  }
 }
 
 /* Input Groups */
@@ -680,21 +707,27 @@ label {
   transition: color 0.3s ease;
 }
 
-/* Input Wrapper */
+/* Input Wrapper - Mobile Optimized */
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 input, select {
   width: 100%;
+  max-width: 100%;
   padding: 12px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 16px;
   background: #ffffff;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 input:focus, select:focus {
@@ -729,8 +762,19 @@ input:focus, select:focus {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
+/* Payment Breakdown - Mobile First */
 .payment-breakdown {
-  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+@media (min-width: 968px) {
+  .payment-breakdown {
+    flex: 1;
+    min-width: 500px;
+  }
 }
 
 /* Breakdown Details */
@@ -819,6 +863,103 @@ input:focus, select:focus {
   animation: shimmer 1.5s infinite;
 }
 
+/* Bot Chat Styles - Base */
+.bot-chat-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.bot-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 3px solid #ffffff;
+}
+
+.bot-image:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.bot-message {
+  background: #2196f3;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  max-width: 280px;
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  position: relative;
+}
+
+.bot-message::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #2196f3;
+}
+
+.bot-message.message-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bot-message.message-hidden {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* Typing Animation */
+.typing-animation {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+.dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes typing {
+  0%, 80%, 100% { 
+    transform: scale(0.8);
+    opacity: 0.5; 
+  }
+  40% { 
+    transform: scale(1);
+    opacity: 1; 
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -876,496 +1017,618 @@ input:focus, select:focus {
   100% { transform: translateX(100%); }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Enhanced Responsive Design - Fix placeholder overflow and bot positioning */
+@media (max-width: 1400px) {
   .mortgage-calc {
-    padding: 15px;
+    max-width: 100%;
+    padding: 1.5rem;
   }
-
+  
   .content-wrapper {
-    gap: 20px;
+    gap: 2rem;
   }
-
+  
   .input-section {
     max-width: 100%;
   }
-
-  h1 {
-    font-size: 28px;
-  }
-
+  
   .payment-breakdown-box {
-    padding: 15px;
-  }
-}
-
-/* Language Switcher */
-.language-switcher {
-  position: fixed;
-  bottom: 10px;
-  left: 20px;
-  display: flex;
-}
-
-.language-switcher button {
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.language-switcher button img {
-  width: 40px;
-  height: auto;
-  transition: transform 0.2s ease;
-}
-
-.language-switcher button:hover img {
-  transform: scale(1.1); /* Slightly enlarge the flag on hover */
-}
-
-/* Mortgage Calculator Container */
-.mortgage-calc {
-  max-width: 95%;
-  margin: auto;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Layout */
-.content-wrapper {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-/* Input Section */
-.input-section {
-  max-width: 30%;
-  flex-grow: 1;
-}
-
-/* Loan Input Group */
-.loan-group {
-  margin-bottom: 15px;
-  width: 100%;
-  border-radius: 25px;
-}
-
-/* Payment Breakdown Box */
-.payment-breakdown-box {
-  border: 2px solid #ddd;
-  border-radius: 12px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  flex: 1;
-}
-
-.payment-breakdown {
-  flex: 1;
-}
-
-/* Input Groups */
-.input-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column; /* This will stack children vertically */
-}
-
-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-/* Input Wrapper */
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-input, select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.unit {
-  position: absolute;
-  right: 10px;
-  font-size: 14px;
-  color: #555;
-}
-
-/* Split Input */
-.split-input {
-  display: flex;
-  gap: 10px;
-}
-
-/* Toggle Header */
-.toggle-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.toggle-header button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-
-.toggle-header button label {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.dropdown-icon {
-  font-size: 12px;
-  transition: transform 0.3s ease;
-}
-
-.dropdown-icon.rotated {
-  transform: rotate(180deg);
-}
-
-.extra-content {
-  margin-top: 10px;
-  border-radius: 5px;
-}
-
-.error {
-  color: red;
-  font-size: 14px;
-}
-
-.payment-breakdown h2 {
-  text-align: center;
-  font-size: 25px;
-  margin-bottom: 20px;
-}
-
-.breakdown-content {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-h3 {
-  font-size: 12px;
-  font-weight:400;
-}
-
-.chart-container {
-  flex: 1;
-  max-width: 100%;
-}
-
-.breakdown-details {
-  flex: 2;
-}
-
-.monthly-total {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.breakdown-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.breakdown-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background: #fff;
-  border-radius: 5px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.percentage {
-  font-weight: bold;
-  color: #555;
-}
-
-.label {
-  flex: 1;
-  margin: 0 10px;
-}
-
-.amount {
-  font-weight: bold;
-  color: #333;
-}
-
-.fade-slide-enter-active, .fade-slide-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.fade-slide-enter-from, .fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-/* Add the bot chat styles from the previous example here */
-.bot-chat-container {
-  position: fixed;
-  right: -350px;
-  top: 30%;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 15px;
-  z-index: 100;
-  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 1s ease;
-  opacity: 0;
-  transform: translateX(0);
-  pointer-events: none;
-}
-
-.bot-chat-container.bot-visible {
-  transform: translateX(-350px);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.bot-chat-container.bot-hidden {
-  transform: translateX(-350px) translateY(50px); 
-  opacity: 0;
-  transition: transform 1s ease, opacity 1s ease;
-}
-
-.bot-image {
-  width: 40px;
-  height: auto;
-  display: block;
-  position: relative;
-  background: transparent;
-  transition: transform 0.5s ease;
-  cursor: pointer;
-}
-
-.bot-visible .bot-image {
-  animation: botBounce 1s ease-out;
-}
-
-@keyframes botBounce {
-  0% { transform: translateY(20px); opacity: 0; }
-  60% { transform: translateY(-5px); }
-  80% { transform: translateY(2px); }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-.bot-message {
-  margin-top: 10px;
-  background: #000000;
-  color: #ffffff;
-  padding: 12px 18px;
-  border-radius: 12px;
-  max-width: 280px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-  transition: all 0.3s ease;
-}
-
-.bot-message.message-visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-
-.bot-message.message-hidden {
-  opacity: 0;
-  transform: scale(0.8) translateY(10px);
-}
-
-.typing-animation {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  opacity: 0.6;
-}
-
-.dot:nth-child(1) {
-  animation: typing 1s infinite 0s;
-}
-
-.dot:nth-child(2) {
-  animation: typing 1s infinite 0.2s;
-}
-
-.dot:nth-child(3) {
-  animation: typing 1s infinite 0.4s;
-}
-
-.typed-message {
-  line-height: 1.5;
-  word-wrap: break-word;
-  color: #ffffff;
-}
-
-@keyframes typing {
-  0%, 100% { 
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .breakdown-content {
-    flex-direction: column;
-    gap: 30px;
+    padding: 2rem;
   }
   
-  .chart-container,
-  .breakdown-details {
+  /* Bot positioning adjustments */
+  .bot-chat-container {
+    right: 2rem;
+    bottom: 2rem;
+  }
+  
+  .bot-image {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .bot-message {
+    max-width: 250px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .content-wrapper {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .input-section {
+    max-width: 100%;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+  
+  .breakdown-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .chart-container {
+    min-height: 300px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  
+  /* Bot adjustments for medium screens */
+  .bot-chat-container {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+  
+  .bot-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .bot-message {
+    max-width: 220px;
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 968px) {
+  .mortgage-calc {
+    padding: 1.25rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .content-wrapper {
+    gap: 1.75rem;
+    position: relative; /* For bot positioning */
+  }
+  
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .split-input {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .split-input .input-wrapper {
     width: 100%;
   }
   
+  .payment-breakdown-box {
+    padding: 1.75rem;
+    position: relative; /* For bot container */
+  }
+  
+  .breakdown-details {
+    margin-top: 1rem;
+  }
+  
   .breakdown-item {
-    flex-wrap: wrap;
-    gap: 5px;
+    padding: 1rem;
+    font-size: 0.95rem;
   }
   
-  .breakdown-item .percentage {
-    order: 1;
-    width: 15%;
+  /* Fix input overflow issues */
+  .input-wrapper {
+    overflow: hidden;
+    position: relative;
   }
   
-  .breakdown-item .label {
-    order: 2;
-    width: 60%;
+  .input-wrapper input {
+    width: 100%;
+    padding-right: 60px; /* Make room for unit */
+    box-sizing: border-box;
   }
   
-  .breakdown-item .amount {
-    order: 3;
-    width: 25%;
-    text-align: right;
+  .unit {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    color: #666;
+    max-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+  
+  /* Relocate bot for mobile - smaller and less intrusive */
+  .bot-chat-container {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 100;
+  }
+  
+  .bot-image {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .bot-message {
+    max-width: 200px;
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+}
 
+@media (max-width: 768px) {
   .mortgage-calc {
+    padding: 1rem;
     max-width: 100%;
-    padding: 15px;
+    width: 100%;
+    overflow-x: hidden;
     margin: 0 auto;
   }
 
   h1 {
-    font-size: 28px;
-    margin-bottom: 15px;
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
   }
 
   .content-wrapper {
+    gap: 1.5rem;
+    position: relative;
     flex-direction: column;
-    gap: 15px;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .input-section {
     max-width: 100%;
-    width: 100%;
+    overflow: hidden;
   }
 
-  .payment-breakdown-box {
-    padding: 15px;
-    margin-top: 15px;
-  }
-
-  .payment-breakdown h2 {
-    font-size: 20px;
-    margin-bottom: 15px;
-  }
-
-  .breakdown-content {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .chart-container {
-    width: 100%;
-    height: 200px;
-  }
-
-  .breakdown-details {
-    width: 100%;
-  }
-
-  .breakdown-item {
-    padding: 8px;
-    font-size: 14px;
-  }
-
-  .percentage {
-    min-width: 40px;
-  }
-
-  .label {
-    margin: 0 8px;
-    font-size: 13px;
-  }
-
-  .amount {
-    min-width: 70px;
-    text-align: right;
-  }
-
-  /* Input adjustments */
-  input, select {
-    font-size: 14px;
-    padding: 8px 10px;
+  .input-group {
+    margin-bottom: 1.25rem;
   }
 
   .split-input {
     flex-direction: column;
-    gap: 8px;
+    gap: 1rem;
   }
 
-  .toggle-header button label {
-    font-size: 1rem;
+  .split-input .input-wrapper {
+    width: 100%;
   }
 
-  /* Bot chat adjustments for mobile */
+  /* Enhanced input wrapper for mobile */
+  .input-wrapper {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    max-width: 100%;
+  }
+
+  .input-wrapper input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0.875rem 0.75rem;
+    font-size: 16px; /* Prevent iOS zoom */
+    background: transparent;
+    min-width: 0; /* Allow shrinking */
+    width: calc(100% - 60px);
+  }
+
+  .input-wrapper .unit {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #6c757d;
+    white-space: nowrap;
+    max-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  /* Better select styling */
+  select {
+    padding: 0.875rem;
+    font-size: 16px;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    background: white;
+    width: 100%;
+    min-height: 44px; /* Touch target */
+  }
+
+  /* Enhanced payment breakdown */
+  .payment-breakdown {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .payment-breakdown-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .breakdown-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .chart-container {
+    min-height: 250px;
+    margin-bottom: 1rem;
+  }
+
+  .breakdown-item {
+    padding: 0.875rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .breakdown-item .percentage {
+    font-size: 0.9rem;
+    min-width: 40px;
+  }
+
+  .breakdown-item .label {
+    flex: 1;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+
+  .breakdown-item .amount {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  /* Enhanced bot positioning for mobile */
   .bot-chat-container {
-    right: -280px;
-    width: 250px;
-    top: auto;
-    bottom: 20px;
+    position: fixed;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    z-index: 100;
   }
 
-  .bot-chat-container.bot-visible {
-    transform: translateX(-280px);
+  .bot-image {
+    width: 42px;
+    height: 42px;
   }
 
   .bot-message {
-    max-width: 230px;
-    padding: 10px 15px;
+    max-width: 180px;
+    font-size: 11px;
+    padding: 8px 10px;
+  }
+
+  /* Error message improvements */
+  .error {
+    font-size: 0.8rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+    display: block;
+  }
+
+  /* Toggle button improvements */
+  .toggle-header button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 16px;
+    min-height: 44px;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 
+@media (max-width: 640px) {
+  .mortgage-calc {
+    padding: 0.875rem;
+  }
+
+  h1 {
+    font-size: 1.625rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .content-wrapper {
+    gap: 1.25rem;
+  }
+
+  .input-group {
+    margin-bottom: 1rem;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .input-wrapper input {
+    padding: 0.75rem;
+    font-size: 16px;
+    width: calc(100% - 55px);
+  }
+
+  .input-wrapper .unit {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    max-width: 45px;
+    right: 0.5rem;
+  }
+
+  .payment-breakdown-box {
+    padding: 1.25rem;
+  }
+
+  .breakdown-item {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .breakdown-item .percentage,
+  .breakdown-item .label,
+  .breakdown-item .amount {
+    font-size: 0.85rem;
+  }
+
+  /* Smaller bot for small screens */
+  .bot-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .bot-message {
+    max-width: 160px;
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mortgage-calc {
+    padding: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .content-wrapper {
+    gap: 1rem;
+  }
+
+  .input-group {
+    margin-bottom: 0.875rem;
+  }
+
+  .input-group label {
+    font-size: 0.85rem;
+  }
+
+  .input-wrapper input {
+    padding: 0.625rem;
+    font-size: 16px;
+    width: calc(100% - 50px);
+  }
+
+  .input-wrapper .unit {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.3rem;
+    max-width: 40px;
+    right: 0.4rem;
+  }
+
+  .payment-breakdown-box {
+    padding: 1rem;
+  }
+
+  .payment-breakdown-box h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .chart-container {
+    min-height: 200px;
+  }
+
+  .breakdown-item {
+    padding: 0.625rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .breakdown-item .percentage {
+    font-weight: 700;
+    color: #007bff;
+  }
+
+  /* Extra small bot */
+  .bot-chat-container {
+    right: 0.5rem;
+    bottom: 0.5rem;
+  }
+
+  .bot-image {
+    width: 38px;
+    height: 38px;
+  }
+
+  .bot-message {
+    max-width: 150px;
+    font-size: 9px;
+    padding: 5px 7px;
+  }
+}
+
+@media (max-width: 320px) {
+  .mortgage-calc {
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.375rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .input-group label {
+    font-size: 0.8rem;
+  }
+
+  .input-wrapper input {
+    padding: 0.5rem;
+    font-size: 16px;
+    width: calc(100% - 45px);
+  }
+
+  .input-wrapper .unit {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.25rem;
+    max-width: 35px;
+    right: 0.3rem;
+  }
+
+  .payment-breakdown-box {
+    padding: 0.875rem;
+  }
+
+  .payment-breakdown-box h2 {
+    font-size: 1.125rem;
+  }
+
+  .chart-container {
+    min-height: 180px;
+  }
+
+  .breakdown-item {
+    padding: 0.5rem;
+  }
+
+  .breakdown-item .percentage,
+  .breakdown-item .label,
+  .breakdown-item .amount {
+    font-size: 0.8rem;
+  }
+
+  /* Tiny bot for very small screens */
+  .bot-image {
+    width: 35px;
+    height: 35px;
+  }
+
+  .bot-message {
+    max-width: 130px;
+    font-size: 8px;
+    padding: 4px 6px;
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  .mortgage-calc,
+  .content-wrapper,
+  .input-section,
+  .payment-breakdown {
+    overflow-x: hidden;
+  }
+
+  /* Ensure inputs don't break layout */
+  .input-wrapper {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .input-wrapper input {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Better focus states */
+  .input-wrapper:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  }
+
+  select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  }
+
+  /* Enhanced touch targets */
+  .toggle-header button,
+  select,
+  .input-wrapper {
+    min-height: 44px;
+  }
+
+  /* Better text rendering */
+  .breakdown-item .amount {
+    word-break: break-all;
+  }
+
+  /* Improve bot visibility */
+  .bot-chat-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    padding: 0.25rem;
+    backdrop-filter: blur(5px);
+  }
+
+  /* Prevent zoom on iOS */
+  input,
+  select {
+    font-size: 16px !important;
+  }
+}
 </style>

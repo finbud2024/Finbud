@@ -119,12 +119,15 @@ export default {
       this.showChatBubble = !this.showChatBubble
       
       if (this.showChatBubble) {
-        this.$refs.chatBubble?.show()
+        this.handleChatOpened()
+        this.$nextTick(() => {
+          this.$refs.chatBubble?.show()
+        })
       } else {
+        this.handleChatClose()
         this.$refs.chatBubble?.hide()
       }
       
-      this.handleChatOpened()
       this.updateLastActivity()
       
       // Save state to localStorage
@@ -306,7 +309,7 @@ export default {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  z-index: 9999;
+  z-index: 10001; /* Increased z-index to be above chat bubble */
   font-size: 24px;
   color: white;
 }
@@ -439,6 +442,7 @@ export default {
     right: 15px;
     width: 50px;
     height: 50px;
+    z-index: 10002; /* Higher on mobile to ensure visibility */
   }
   
   .icon {
@@ -457,7 +461,56 @@ export default {
     bottom: 65px;
     font-size: 11px;
     padding: 6px 10px;
+    right: -50px; /* Center tooltip on mobile */
+    white-space: nowrap;
   }
+}
+
+@media (max-width: 480px) {
+  .chat-toggle-btn {
+    bottom: 10px;
+    right: 10px;
+    width: 45px;
+    height: 45px;
+  }
+  
+  .icon {
+    font-size: 18px;
+  }
+  
+  .notification-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 8px;
+    top: -5px;
+    right: -5px;
+  }
+  
+  .chat-tooltip {
+    bottom: 60px;
+    font-size: 10px;
+    padding: 5px 8px;
+    right: -60px;
+  }
+}
+
+/* Prevent conflicts with other UI elements */
+.chat-toggle-btn {
+  /* Add backdrop filter for better visibility */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.chat-toggle-btn:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* Ensure button is always clickable */
+.chat-toggle-btn,
+.chat-tooltip {
+  pointer-events: auto !important;
+  user-select: none;
 }
 
 /* Dark mode support */

@@ -672,271 +672,80 @@ export default {
   gap: 1rem;
 }
 
-.input-group {
-  display: flex;
-  flex-direction: column;
+/* Enhanced Mobile Responsive Design */
+@media (max-width: 1400px) {
+  .calculator-grid {
+    gap: 2rem;
+  }
+  
+  .input-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .comparison-cards {
+    gap: 1.5rem;
+  }
 }
 
-.input-group label {
-  color: #374151;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+@media (max-width: 1200px) {
+  .rent-buy-calculator {
+    padding: 1.5rem;
+  }
+  
+  .calculator-grid {
+    gap: 1.75rem;
+  }
+  
+  .input-panel, .results-panel {
+    padding: 1.75rem;
+  }
+  
+  .input-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
 }
 
-.form-input {
-  padding: 0.75rem;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.calculate-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: linear-gradient(45deg, #2563eb, #1d4ed8);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.calculate-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
-}
-
-.breakdown-section {
-  margin-bottom: 2rem;
-}
-
-.breakdown-section h3 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.comparison-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-
-.comparison-card {
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.buy-card {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-  border-left: 4px solid #2563eb;
-}
-
-.rent-card {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  border-left: 4px solid #059669;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.card-header h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #1f2937;
-}
-
-.total-cost {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #1f2937;
-}
-
-.cost-breakdown {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.cost-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  font-size: 0.9rem;
-}
-
-.cost-item:last-child {
-  border-bottom: none;
-}
-
-.cost-item.positive {
-  color: #059669;
-  font-weight: 600;
-}
-
-.visualization-section {
-  margin-bottom: 2rem;
-}
-
-.visualization-section h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.chart-container {
-  height: 200px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6b7280;
-}
-
-.sensitivity-section {
-  margin-bottom: 2rem;
-}
-
-.sensitivity-section h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.sensitivity-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.sensitivity-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.sensitivity-item .factor {
-  color: #374151;
-  font-weight: 500;
-}
-
-.sensitivity-item .impact {
-  font-weight: 600;
-}
-
-.sensitivity-item .impact.positive {
-  color: #059669;
-}
-
-.sensitivity-item .impact.negative {
-  color: #dc2626;
-}
-
-.guidance-section h3 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.guidance-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.guidance-item {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 10px;
-  border-left: 4px solid transparent;
-}
-
-.guidance-item .guide-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.guide-icon.success {
-  background: #d1fae5;
-  color: #059669;
-  border-left-color: #059669;
-}
-
-.guide-icon.info {
-  background: #dbeafe;
-  color: #2563eb;
-  border-left-color: #2563eb;
-}
-
-.guide-icon.warning {
-  background: #fef3c7;
-  color: #d97706;
-  border-left-color: #d97706;
-}
-
-.guide-content h5 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.guide-content p {
-  margin: 0;
-  color: #6b7280;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* Responsive */
 @media (max-width: 1024px) {
   .calculator-grid {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .input-panel {
+    width: 100%;
+  }
+  
+  .results-panel {
+    width: 100%;
+  }
+  
+  .input-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+  
+  .comparison-cards {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 968px) {
+  .rent-buy-calculator {
+    padding: 1.25rem;
+  }
+  
+  .calculator-header h2 {
+    font-size: 1.75rem;
+  }
+  
+  .input-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
   
   .comparison-cards {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 
@@ -945,16 +754,378 @@ export default {
     padding: 1rem;
   }
   
-  .result-summary {
-    grid-template-columns: 1fr;
+  .calculator-header h2 {
+    font-size: 1.625rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
   }
   
-  .input-grid {
-    grid-template-columns: 1fr;
+  .calculator-grid {
+    gap: 1.5rem;
   }
   
   .input-panel, .results-panel {
     padding: 1.5rem;
+    border-radius: 10px;
+  }
+  
+  .panel-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .panel-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .reset-btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 16px;
+    min-height: 44px; /* Touch target minimum */
+    border-radius: 8px;
+  }
+  
+  .input-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .input-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-section h4 {
+    font-size: 1.05rem;
+    text-align: center;
+  }
+  
+  .form-input {
+    padding: 0.875rem 1rem;
+    font-size: 16px; /* Prevent iOS zoom */
+    border-radius: 8px;
+    min-height: 44px;
+  }
+  
+  .calculate-btn {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 16px;
+    min-height: 44px;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+  }
+  
+  .comparison-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .comparison-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+  }
+  
+  .card-header h4 {
+    font-size: 1.125rem;
+  }
+  
+  .total-cost {
+    font-size: 2rem;
+  }
+  
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .breakdown-item {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .insights-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .guidance-item {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .guidance-item h5 {
+    font-size: 1rem;
+  }
+  
+  .guidance-item p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .rent-buy-calculator {
+    padding: 0.875rem;
+  }
+  
+  .calculator-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .input-panel, .results-panel {
+    padding: 1.25rem;
+  }
+  
+  .panel-header h3 {
+    font-size: 1.125rem;
+  }
+  
+  .input-section h4 {
+    font-size: 1rem;
+  }
+  
+  .form-input {
+    padding: 0.75rem;
+    font-size: 16px;
+  }
+  
+  .calculate-btn {
+    padding: 0.875rem 1.25rem;
+    font-size: 16px;
+  }
+  
+  .comparison-card {
+    padding: 1.25rem;
+  }
+  
+  .total-cost {
+    font-size: 1.875rem;
+  }
+  
+  .breakdown-item {
+    padding: 0.875rem;
+  }
+  
+  .guidance-item {
+    padding: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .rent-buy-calculator {
+    padding: 0.75rem;
+  }
+  
+  .calculator-header h2 {
+    font-size: 1.375rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .input-panel, .results-panel {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .panel-header {
+    margin-bottom: 1.25rem;
+  }
+  
+  .panel-header h3 {
+    font-size: 1.05rem;
+  }
+  
+  .reset-btn {
+    padding: 0.625rem 1rem;
+    font-size: 16px;
+  }
+  
+  .input-section {
+    margin-bottom: 1.25rem;
+  }
+  
+  .input-section h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .form-input {
+    padding: 0.75rem;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  
+  .calculate-btn {
+    padding: 0.875rem 1.125rem;
+    font-size: 16px;
+    border-radius: 6px;
+    margin-top: 1.25rem;
+  }
+  
+  .comparison-card {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .card-header h4 {
+    font-size: 1.05rem;
+  }
+  
+  .total-cost {
+    font-size: 1.75rem;
+  }
+  
+  .cost-breakdown {
+    font-size: 0.85rem;
+  }
+  
+  .breakdown-item {
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+  
+  .breakdown-item span {
+    font-size: 0.85rem;
+  }
+  
+  .guidance-item {
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+  
+  .guidance-item h5 {
+    font-size: 0.95rem;
+  }
+  
+  .guidance-item p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .rent-buy-calculator {
+    padding: 0.625rem;
+  }
+  
+  .calculator-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .input-panel, .results-panel {
+    padding: 0.875rem;
+  }
+  
+  .panel-header h3 {
+    font-size: 1rem;
+  }
+  
+  .input-section h4 {
+    font-size: 0.9rem;
+  }
+  
+  .form-input {
+    padding: 0.625rem;
+    font-size: 16px;
+  }
+  
+  .calculate-btn {
+    padding: 0.75rem 1rem;
+    font-size: 16px;
+  }
+  
+  .comparison-card {
+    padding: 0.875rem;
+  }
+  
+  .total-cost {
+    font-size: 1.625rem;
+  }
+  
+  .breakdown-item {
+    padding: 0.625rem;
+  }
+  
+  .guidance-item {
+    padding: 0.625rem;
+  }
+  
+  .guidance-item h5 {
+    font-size: 0.9rem;
+  }
+  
+  .guidance-item p {
+    font-size: 0.8rem;
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Prevent zoom on iOS */
+  .form-input,
+  .calculate-btn,
+  .reset-btn {
+    font-size: 16px !important;
+  }
+  
+  /* Enhanced touch targets */
+  .form-input,
+  .calculate-btn,
+  .reset-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better focus states for mobile */
+  .form-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+  
+  .calculate-btn:focus,
+  .reset-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+  
+  /* Optimize animations for mobile performance */
+  .comparison-card:hover {
+    transform: none; /* Disable hover animations on mobile */
+  }
+  
+  /* Better spacing for mobile */
+  .calculator-grid {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Enhanced readability */
+  .input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  /* Better button styling for mobile */
+  .calculate-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .calculate-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  }
+  
+  /* Improved card styling */
+  .comparison-card {
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .comparison-card.recommended {
+    border-color: #10b981;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
   }
 }
 </style> 

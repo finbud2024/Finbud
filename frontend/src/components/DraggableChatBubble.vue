@@ -186,9 +186,24 @@ export default {
     
     // Listen for window resize
     window.addEventListener('resize', this.constrainPosition)
+    
+    // Close on click outside (for better UX)
+    document.addEventListener('click', this.handleClickOutside)
+    
+    // Prevent iOS zoom on input focus
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      const viewport = document.querySelector('meta[name=viewport]')
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
+      }
+    }
+    
+    // Close on click outside (for better UX)
+    document.addEventListener('click', this.handleClickOutside)
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.constrainPosition)
+    document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
     show() {
@@ -532,6 +547,19 @@ export default {
 
       // Remove duplicates and limit to 4 suggestions
       return [...new Set(suggestions)].slice(0, 4);
+    },
+    handleClickOutside(event) {
+      // Only close if click is outside the bubble and not on the toggle button
+      if (this.isVisible && !this.isDragging) {
+        const bubbleElement = this.$el
+        const toggleButton = document.querySelector('.chat-toggle-btn')
+        
+        if (bubbleElement && 
+            !bubbleElement.contains(event.target) && 
+            !toggleButton?.contains(event.target)) {
+          this.closeBubble()
+        }
+      }
     }
   }
 }
@@ -544,11 +572,13 @@ export default {
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  z-index: 9999;
+  z-index: 10000; /* Lower than toggle button but above other content */
   border: 1px solid #e2e8f0;
   overflow: hidden;
   transition: all 0.3s ease;
   animation: slideInFromRight 0.3s ease-out;
+  max-width: calc(100vw - 40px); /* Prevent overflow on small screens */
+  max-height: calc(100vh - 40px); /* Prevent overflow on small screens */
 }
 
 .draggable-chat-bubble.minimized {
@@ -844,6 +874,112 @@ export default {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+}
+
+.smart-suggestion:hover {
+  background: #000000;
+  color: white;
+  border-color: #000000;
+}
+
+/* Keyframes for slide in animation */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .draggable-chat-bubble {
+    width: calc(100vw - 20px);
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 90px !important; /* Above the toggle button */
+    top: auto !important;
+    max-width: none;
+  }
+  
+  .bubble-content {
+    height: 350px; /* Shorter on mobile */
+  }
+  
+  .message-text {
+    font-size: 12px;
+  }
+  
+  .message-input {
+    font-size: 14px; /* Prevent iOS zoom */
+  }
+  
+  .send-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px; /* Prevent shrinking */
+  }
+  
+  .suggestion-chip,
+  .smart-suggestion {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .draggable-chat-bubble {
+    width: calc(100vw - 10px);
+    left: 5px !important;
+    bottom: 85px !important;
+  }
+  
+  .bubble-content {
+    height: 300px;
+  }
+  
+  .input-area {
+    padding: 8px;
+  }
+  
+  .message-input {
+    padding: 10px 12px; /* Larger touch target */
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+  
+  .send-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+}
+
+/* Prevent zoom on iOS */
+@media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  .message-input,
+  input[type="text"] {
+    font-size: 16px !important;
+  }
+}
+
+/* Fix for menu closing issue */
+.draggable-chat-bubble * {
+  pointer-events: auto;
+}
+
+.draggable-chat-bubble.dragging {
+  pointer-events: none;
+}
+
+.draggable-chat-bubble.dragging * {
+  pointer-events: none;
+}
+
+.draggable-chat-bubble.dragging .bubble-header {
+  pointer-events: auto;
 }
 
 .smart-suggestion:hover {

@@ -1,14 +1,20 @@
 <template>
   <div class="accountant-page">
-    <!-- Floating Background -->
-    <div class="floating-background">
-      <div class="bg-gradient gradient-1"></div>
-      <div class="bg-gradient gradient-2"></div>
-      <div class="bg-gradient gradient-3"></div>
-      <div class="bg-grid"></div>
+    <!-- Enhanced Universe Background Effect -->
+    <div class="universe-background">
+      <div class="atomic-particles">
+        <div class="atomic-particle" v-for="n in 50" :key="n" :style="getAtomicParticleStyle(n)"></div>
+      </div>
+      <div class="quantum-grid"></div>
+      <div class="floating-orbs">
+        <div class="orb" v-for="n in 8" :key="n" :style="getOrbStyle(n)"></div>
+      </div>
+      <div class="energy-waves">
+        <div class="wave" v-for="n in 3" :key="n"></div>
+      </div>
     </div>
 
-    <!-- Notifications Panel -->
+    <!-- Enhanced Notifications Panel -->
     <div v-if="showNotifications" class="notifications-panel" data-aos="slide-left">
       <div class="notifications-header">
         <h3>{{ $t('accountantPage.notifications.title') }}</h3>
@@ -43,19 +49,24 @@
       <!-- Enhanced Hero Section -->
       <section class="hero-section">
         <div class="hero-content">
-                  <div class="hero-text">
-          <div class="hero-badge">
-            <i class="fas fa-robot"></i>
-            <span>{{ $t('accountantPage.hero.title') }}</span>
-          </div>
-          <h1>{{ $t('accountantPage.hero.title') }}</h1>
-          <p>{{ $t('accountantPage.hero.subtitle') }}</p>
+          <div class="hero-text">
+            <div class="hero-badge">
+              <div class="badge-glow"></div>
+              <i class="fas fa-calculator"></i>
+              <span>{{ $t('accountantPage.hero.title') }}</span>
+            </div>
+            <h1>
+              <span class="text-gradient">AI Accounting</span>
+              <span class="text-normal">Excellence</span>
+            </h1>
+            <p>{{ $t('accountantPage.hero.subtitle') }}</p>
             
-            <!-- Real-time Stats with animations -->
+            <!-- Real-time Stats with enhanced animations -->
             <div class="hero-stats">
               <div class="stat-item" v-for="(stat, index) in heroStats" :key="index"
                    data-aos="fade-up" :data-aos-delay="index * 100">
                 <div class="stat-icon">
+                  <div class="icon-background"></div>
                   <i :class="stat.icon"></i>
                 </div>
                 <div class="stat-data">
@@ -69,24 +80,28 @@
               </div>
             </div>
 
-            <!-- Quick Action Buttons -->
+            <!-- Enhanced Quick Action Buttons -->
             <div class="hero-actions">
               <button @click="triggerFileInput" class="action-btn primary">
+                <div class="btn-bg"></div>
                 <i class="fas fa-upload"></i>
-                {{ $t('accountantPage.upload.chooseFiles') }}
+                <span>{{ $t('accountantPage.upload.chooseFiles') }}</span>
               </button>
               <button @click="openChatbot" class="action-btn secondary">
+                <div class="btn-bg"></div>
                 <i class="fas fa-robot"></i>
-                {{ $t('accountantPage.chatbot.title') }}
+                <span>{{ $t('accountantPage.chatbot.title') }}</span>
               </button>
               <button @click="showNotifications = !showNotifications" class="action-btn notifications">
+                <div class="btn-bg"></div>
                 <i class="fas fa-bell"></i>
-                {{ $t('accountantPage.notifications.title') }}
+                <span>{{ $t('accountantPage.notifications.title') }}</span>
                 <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
               </button>
               <button @click="showDemoAnalysis" class="action-btn demo">
+                <div class="btn-bg"></div>
                 <i class="fas fa-play"></i>
-                Demo Analysis
+                <span>Demo Analysis</span>
               </button>
             </div>
           </div>
@@ -95,6 +110,7 @@
             <div class="dashboard-preview">
               <div class="preview-card" v-for="(card, index) in previewCards" :key="index"
                    data-aos="zoom-in" :data-aos-delay="index * 150">
+                <div class="card-glow"></div>
                 <div class="card-icon">
                   <i :class="card.icon"></i>
                 </div>
@@ -108,7 +124,7 @@
                 <div class="card-chart">
                   <svg viewBox="0 0 100 30" class="mini-chart">
                     <polyline :points="card.chartData" 
-                              :stroke="card.trend === 'positive' ? '#4ade80' : '#f87171'"
+                              :stroke="card.trend === 'positive' ? '#ffffff' : '#808080'"
                               stroke-width="2" fill="none"/>
                   </svg>
                 </div>
@@ -121,7 +137,10 @@
       <!-- Enhanced Upload Section -->
       <section class="upload-section">
         <div class="section-header">
-          <h2>{{ $t('accountantPage.upload.title') }}</h2>
+          <h2>
+            <span class="text-gradient">Upload</span>
+            <span class="text-normal">Documents</span>
+          </h2>
           <p>{{ $t('accountantPage.upload.subtitle') }}</p>
         </div>
         
@@ -137,6 +156,7 @@
             
             <div class="upload-animation">
               <div class="upload-circle">
+                <div class="circle-glow"></div>
                 <i class="fas fa-upload"></i>
               </div>
               <div class="upload-ripples">
@@ -152,14 +172,16 @@
             <!-- File Type Icons -->
             <div class="file-types">
               <div class="file-type" v-for="type in supportedTypes" :key="type.ext">
+                <div class="file-type-bg"></div>
                 <i :class="type.icon"></i>
                 <span>{{ type.ext }}</span>
               </div>
             </div>
             
             <button @click="triggerFileInput" class="upload-btn">
+              <div class="btn-particles"></div>
               <i class="fas fa-upload"></i>
-              {{ $t('accountantPage.upload.chooseFiles') }}
+              <span>{{ $t('accountantPage.upload.chooseFiles') }}</span>
             </button>
             <input ref="fileInput" type="file" @change="handleFileSelect" 
                    accept=".pdf,.xlsx,.xls,.csv" multiple hidden>
@@ -168,6 +190,7 @@
             <div v-if="uploadProgress > 0" class="upload-progress">
               <div class="progress-bar">
                 <div class="progress-fill" :style="{ width: uploadProgress + '%' }"></div>
+                <div class="progress-glow" :style="{ width: uploadProgress + '%' }"></div>
               </div>
               <span class="progress-text">{{ uploadProgress }}%</span>
             </div>
@@ -178,8 +201,9 @@
             <div class="templates-header">
               <h3>{{ $t('accountantPage.upload.quickStart') }}</h3>
               <button @click="loadDemoData" class="demo-btn">
+                <div class="btn-bg"></div>
                 <i class="fas fa-star"></i>
-                Dữ Liệu Demo
+                <span>Dữ Liệu Demo</span>
               </button>
             </div>
             <div class="template-grid">
@@ -187,6 +211,7 @@
                    @click="loadTemplate(template)"
                    class="template-card"
                    data-aos="fade-up" :data-aos-delay="template.id * 100">
+                <div class="template-glow"></div>
                 <div class="template-icon">
                   <i :class="template.icon"></i>
                 </div>
@@ -198,14 +223,7 @@
                       <i class="fas fa-file"></i>
                       {{ template.sampleCount }} samples
                     </span>
-                    <span class="stat-item">
-                      <i class="fas fa-clock"></i>
-                      ~{{ template.processingTime }}s
-                    </span>
                   </div>
-                </div>
-                <div class="template-arrow">
-                  <i class="fas fa-arrow-right"></i>
                 </div>
               </div>
             </div>
@@ -762,18 +780,51 @@
       </div>
     </div>
 
-    <!-- Enhanced Floating Help -->
-    <div class="floating-widgets">
-      <button @click="openChatbot" class="floating-help">
-        <i class="fas fa-robot"></i>
-        <div class="help-tooltip">{{ $t('accountantPage.help.tooltip') }}</div>
-        <div class="pulse-ring"></div>
-      </button>
-      
-      <button @click="showNotifications = !showNotifications" class="floating-notifications">
-        <i class="fas fa-bell"></i>
-        <span v-if="unreadCount > 0" class="notification-count">{{ unreadCount }}</span>
-      </button>
+    <!-- Integrated Chatbot Widget - Inside Page -->
+    <div class="integrated-chatbot-widget">
+      <div class="chatbot-card" :class="{ 'widget-minimized': !chatWidgetExpanded }">
+        <div class="widget-header" @click="toggleChatWidget">
+          <div class="widget-icon">
+            <i class="fas fa-robot"></i>
+            <div class="icon-pulse"></div>
+          </div>
+          <div class="widget-info" v-if="chatWidgetExpanded">
+            <h4>AI Assistant</h4>
+            <p>Ready to help with accounting</p>
+          </div>
+          <button class="widget-toggle" v-if="chatWidgetExpanded">
+            <i class="fas fa-chevron-down"></i>
+          </button>
+        </div>
+        
+        <div class="widget-body" v-if="chatWidgetExpanded">
+          <div class="quick-actions">
+            <button @click="handleQuickAction('analyze')" class="quick-action-btn">
+              <i class="fas fa-chart-bar"></i>
+              <span>Quick Analysis</span>
+            </button>
+            <button @click="handleQuickAction('tax')" class="quick-action-btn">
+              <i class="fas fa-calculator"></i>
+              <span>Tax Optimize</span>
+            </button>
+            <button @click="openChatbot" class="quick-action-btn primary">
+              <i class="fas fa-comments"></i>
+              <span>Full Chat</span>
+            </button>
+          </div>
+          
+          <div class="widget-preview">
+            <div class="preview-message">
+              <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div class="message-content">
+                <p>{{ $t('accountantPage.widget.greeting') || 'Hi! I can help you analyze financial data and optimize taxes.' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Enhanced Processing Overlay -->
@@ -893,6 +944,7 @@ export default {
     const overallRiskScore = ref(7.2)
     const overallRiskLevel = ref('medium')
     const totalExpenses = ref(1247)
+    const chatWidgetExpanded = ref(true)
 
     // Enhanced hero stats with real-time data
     const heroStats = ref([
@@ -1415,6 +1467,37 @@ export default {
       fileInput.value?.click()
     }
 
+    // Universe background effects methods
+    const getAtomicParticleStyle = (index) => {
+      const delay = (index % 5) * 2 + 's'
+      const left = Math.random() * 100 + '%'
+      const animationDuration = (8 + Math.random() * 12) + 's'
+      return {
+        left: left,
+        animationDelay: delay,
+        animationDuration: animationDuration
+      }
+    }
+
+    const getOrbStyle = (index) => {
+      const size = (20 + Math.random() * 40) + 'px'
+      const left = Math.random() * 100 + '%'
+      const top = Math.random() * 100 + '%'
+      const delay = index * 2.5 + 's'
+      return {
+        width: size,
+        height: size,
+        left: left,
+        top: top,
+        animationDelay: delay
+      }
+    }
+
+    const initializeUniverseEffects = () => {
+      // Initialize any additional universe effects here
+      console.log('Universe effects initialized')
+    }
+
     const handleFileSelect = (event) => {
       const files = Array.from(event.target.files)
       processFiles(files)
@@ -1633,6 +1716,23 @@ export default {
     const handleChatOption = (option) => {
       chatInput.value = option.label
       sendMessage()
+    }
+
+    const toggleChatWidget = () => {
+      chatWidgetExpanded.value = !chatWidgetExpanded.value
+    }
+
+    const handleQuickAction = (action) => {
+      switch(action) {
+        case 'analyze':
+          // Trigger quick analysis
+          break
+        case 'tax':
+          // Trigger tax optimization
+          break
+        default:
+          openChatbot()
+      }
     }
 
     const attachFile = () => {
@@ -1876,6 +1976,7 @@ export default {
       dashboardView,
       chartType,
       complianceScore,
+      chatWidgetExpanded,
       totalTaxSavings,
       lastUpdated,
       currentProcessingStep,
@@ -1923,6 +2024,8 @@ export default {
       sendSuggestion,
       clearChat,
       handleChatOption,
+      toggleChatWidget,
+      handleQuickAction,
       attachFile,
       recordVoice,
       markAllAsRead,
@@ -1941,31 +2044,199 @@ export default {
       mitigateRisk,
       updateForecast,
       drillDownForecast,
-      segmentStyle
+      segmentStyle,
+      
+      // Universe effects methods
+      getAtomicParticleStyle,
+      getOrbStyle,
+      initializeUniverseEffects
     }
   }
 }
 </script>
 
 <style scoped>
-/* Magical Black & White Theme */
+/* Enhanced Black & White Theme with Atomic Effects */
 .accountant-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f2027 0%, #203a43 30%, #2c5530 70%, #0f2027 100%);
+  max-width: 100vw;
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 25%, #2d2d2d 50%, #1a1a1a 75%, #000000 100%);
   color: #ffffff;
   position: relative;
   overflow-x: hidden;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
 }
 
-/* Floating Background Effects */
-.floating-background {
+/* Enhanced Universe Background Effects */
+.universe-background {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
   pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(15, 15, 15, 0.9) 0%, rgba(0, 0, 0, 1) 100%);
+}
+
+/* Atomic Particles */
+.atomic-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.atomic-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: radial-gradient(circle, #ffffff 0%, transparent 70%);
+  border-radius: 50%;
+  animation: atomicFloat 12s linear infinite;
+  box-shadow: 
+    0 0 4px #ffffff,
+    0 0 8px rgba(255, 255, 255, 0.5),
+    0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+.atomic-particle:nth-child(2n) {
+  background: radial-gradient(circle, #e5e5e5 0%, transparent 70%);
+  box-shadow: 
+    0 0 4px #e5e5e5,
+    0 0 8px rgba(229, 229, 229, 0.5);
+  animation-duration: 15s;
+}
+
+.atomic-particle:nth-child(3n) {
+  background: radial-gradient(circle, #c0c0c0 0%, transparent 70%);
+  box-shadow: 
+    0 0 4px #c0c0c0,
+    0 0 8px rgba(192, 192, 192, 0.5);
+  animation-duration: 18s;
+  animation-direction: reverse;
+}
+
+@keyframes atomicFloat {
+  0% { 
+    transform: translate(0, 100vh) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  90% { 
+    opacity: 1;
+  }
+  100% { 
+    transform: translate(100vw, -10vh) scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Quantum Grid */
+.quantum-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: quantumShift 20s linear infinite;
+}
+
+@keyframes quantumShift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Floating Orbs */
+.floating-orbs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(1px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: orbFloat 25s ease-in-out infinite;
+}
+
+@keyframes orbFloat {
+  0%, 100% { 
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  25% { 
+    transform: translateY(-30px) rotate(90deg);
+    opacity: 0.6;
+  }
+  50% { 
+    transform: translateY(-10px) rotate(180deg);
+    opacity: 0.4;
+  }
+  75% { 
+    transform: translateY(-50px) rotate(270deg);
+    opacity: 0.7;
+  }
+}
+
+/* Energy Waves */
+.energy-waves {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.wave {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(255, 255, 255, 0.01) 40%, transparent 70%);
+  border-radius: 50%;
+  animation: waveExpand 20s ease-in-out infinite;
+}
+
+.wave:nth-child(1) {
+  animation-delay: 0s;
+  top: -25%;
+  left: -25%;
+}
+
+.wave:nth-child(2) {
+  animation-delay: 7s;
+  top: -30%;
+  left: -20%;
+}
+
+.wave:nth-child(3) {
+  animation-delay: 14s;
+  top: -20%;
+  left: -30%;
+}
+
+@keyframes waveExpand {
+  0% { 
+    transform: scale(0) rotate(0deg);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: scale(1) rotate(180deg);
+    opacity: 0.2;
+  }
+  100% { 
+    transform: scale(1.2) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 /* Notifications Panel */
@@ -2386,13 +2657,13 @@ export default {
   66% { transform: translate(-20px, 20px) rotate(240deg); }
 }
 
-/* Hero Section */
+/* Enhanced Hero Section with Black/White Theme */
 .hero-section {
   position: relative;
   z-index: 1;
   padding: 80px 20px;
   text-align: center;
-  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
 }
 
 .hero-content {
@@ -2402,16 +2673,95 @@ export default {
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 24px;
+  padding: 60px 40px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+.hero-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%, 
+    rgba(255, 255, 255, 0.02) 50%, 
+    transparent 70%
+  );
+  animation: heroShimmer 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes heroShimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: badgeGlow 3s ease-in-out infinite;
+}
+
+@keyframes badgeGlow {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
 }
 
 .hero-text h1 {
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 20px;
-  background: linear-gradient(45deg, #ffffff, #e0e0e0);
+  line-height: 1.2;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 50%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 30px rgba(255,255,255,0.3);
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+  animation: textShine 4s ease-in-out infinite;
+}
+
+.text-normal {
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+@keyframes textShine {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
 }
 
 .hero-text p {
@@ -2419,6 +2769,9 @@ export default {
   margin-bottom: 40px;
   color: #cccccc;
   line-height: 1.6;
+  word-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
 }
 
 .hero-stats {
@@ -2430,16 +2783,58 @@ export default {
 
 .stat-item {
   padding: 25px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 15px;
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.stat-item:hover::before {
+  transform: translateX(100%);
 }
 
 .stat-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(255,255,255,0.1);
+  transform: translateY(-8px);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.stat-icon {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.icon-background {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.8; }
 }
 
 .stat-number {
@@ -2508,6 +2903,10 @@ export default {
   font-weight: 600;
   margin-bottom: 15px;
   color: #ffffff;
+  word-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.2;
+  max-width: 100%;
 }
 
 .section-header p {
@@ -2557,23 +2956,96 @@ export default {
   margin-bottom: 30px;
 }
 
-.upload-btn {
-  background: linear-gradient(45deg, #22c55e, #16a34a);
-  color: #ffffff;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 25px;
+/* Enhanced Action Buttons */
+.action-btn {
+  position: relative;
+  padding: 16px 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.btn-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.action-btn:hover .btn-bg {
+  transform: translateX(0);
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #000000, #333333);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.action-btn.primary:hover {
+  background: linear-gradient(135deg, #1a1a1a, #404040);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(255, 255, 255, 0.15);
+}
+
+.upload-btn {
+  background: linear-gradient(135deg, #000000, #333333);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.upload-btn:hover .btn-particles {
+  transform: translateX(100%);
 }
 
 .upload-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .quick-templates {
@@ -3469,36 +3941,213 @@ export default {
   transform: scale(1.05);
 }
 
-/* Floating Help Button */
-.floating-help {
+/* Integrated Chatbot Widget */
+.integrated-chatbot-widget {
   position: fixed;
   bottom: 30px;
   right: 30px;
+  z-index: 999;
+  max-width: 350px;
+  width: 350px;
+}
+
+.chatbot-card {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chatbot-card.widget-minimized {
   width: 60px;
   height: 60px;
-  background: linear-gradient(45deg, #22c55e, #16a34a);
-  color: #ffffff;
-  border: none;
   border-radius: 50%;
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
   cursor: pointer;
-  font-size: 1.5rem;
-  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   transition: all 0.3s ease;
-  z-index: 999;
+}
+
+.widget-minimized .widget-header {
+  padding: 15px;
+  border-bottom: none;
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  justify-content: center;
+}
+
+.widget-icon {
+  position: relative;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  color: white;
+  font-size: 1rem;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.widget-minimized .widget-icon {
+  margin-right: 0;
+  font-size: 1.5rem;
+  width: 100%;
+  height: 100%;
+  background: transparent;
   animation: bounce 2s infinite;
 }
 
-.floating-help:hover {
-  transform: scale(1.1);
-  box-shadow: 0 15px 40px rgba(34, 197, 94, 0.6);
+.icon-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  animation: pulse-ring 2s ease-out infinite;
 }
 
-.floating-help:hover .help-tooltip {
-  opacity: 1;
-  transform: translateX(-100%) translateY(-50%);
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.widget-info {
+  flex: 1;
+  color: #000;
+}
+
+.widget-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+}
+
+.widget-info p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.widget-toggle {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.widget-toggle:hover {
+  background: rgba(0,0,0,0.1);
+  color: #000;
+}
+
+.widget-body {
+  padding: 20px;
+  background: rgba(255,255,255,0.9);
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 10px;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #333;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.quick-action-btn:hover {
+  background: rgba(255,255,255,0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.quick-action-btn.primary {
+  grid-column: 1 / -1;
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  color: white;
+  border-color: transparent;
+}
+
+.quick-action-btn.primary:hover {
+  background: linear-gradient(45deg, #16a34a, #15803d);
+}
+
+.quick-action-btn i {
+  font-size: 1.2rem;
+}
+
+.widget-preview {
+  border-top: 1px solid rgba(0,0,0,0.1);
+  padding-top: 15px;
+}
+
+.preview-message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.message-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #22c55e, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.message-content {
+  flex: 1;
+  background: rgba(0,0,0,0.05);
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+.message-content p {
+  margin: 0;
 }
 
 .help-tooltip {
@@ -3696,6 +4345,809 @@ export default {
     width: 50px;
     height: 50px;
     font-size: 1.2rem;
+  }
+}
+
+/* Risk Analysis Card */
+.risk-analysis {
+  position: relative;
+}
+
+.risk-score-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+}
+
+.risk-score-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.risk-score-background {
+  fill: none;
+  stroke: rgba(255,255,255,0.1);
+  stroke-width: 8;
+}
+
+.risk-score-progress {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.risk-score-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.risk-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.risk-label {
+  font-size: 0.8rem;
+  color: #cccccc;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.risk-level {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.risk-level-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.risk-level-badge.low {
+  background: linear-gradient(45deg, #10b981, #059669);
+  color: white;
+}
+
+.risk-level-badge.medium {
+  background: linear-gradient(45deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.risk-level-badge.high {
+  background: linear-gradient(45deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.risk-factors {
+  margin-top: 20px;
+}
+
+.risk-factor {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.risk-factor:last-child {
+  border-bottom: none;
+}
+
+.factor-name {
+  color: #cccccc;
+  font-size: 0.9rem;
+}
+
+.factor-score {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Enhanced processing overlay */
+.processing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(10px);
+}
+
+.processing-content {
+  text-align: center;
+  max-width: 400px;
+  padding: 40px;
+}
+
+.processing-animation {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 30px;
+}
+
+.processing-circle {
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  position: relative;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.circle-progress {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 100%;
+  height: 100%;
+  border: 4px solid transparent;
+  border-top-color: #22c55e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.processing-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: #22c55e;
+  animation: bounce 1.5s ease-in-out infinite;
+}
+
+.processing-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #888888;
+  transition: all 0.3s ease;
+}
+
+.step-item.active {
+  color: #22c55e;
+  transform: translateX(10px);
+}
+
+.step-item.completed {
+  color: #ffffff;
+}
+
+.step-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.step-item.active .step-icon {
+  background: #22c55e;
+  color: white;
+}
+
+.step-item.completed .step-icon {
+  background: #ffffff;
+  color: #000000;
+}
+
+.processing-progress {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Prevent Horizontal Scroll - Enhanced */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.accountant-page {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.main-content,
+.hero-content,
+.analysis-grid,
+.analysis-card,
+.card-content,
+.hero-stats,
+.dashboard-controls,
+.dashboard-section,
+.upload-section,
+.hero-section {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Enhanced text layout */
+.analysis-card h3,
+.card-title h3,
+.section-header h2,
+.dashboard-header h2,
+.hero-text h1,
+.hero-text p,
+.upload-zone h3,
+.upload-zone p {
+  word-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.3;
+  max-width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+  .main-content {
+    padding: 25px 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .hero-content {
+    padding: 40px 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .hero-stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .dashboard-controls {
+    gap: 12px;
+    max-width: 100%;
+    overflow-x: hidden;
+    flex-wrap: wrap;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 1200px) {
+  .hero-stats {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 18px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .control-btn {
+    padding: 12px 18px;
+    font-size: 0.9rem;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 968px) {
+  .main-content {
+    padding: 20px 15px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .hero-content {
+    padding: 35px 15px;
+    max-width: 100%;
+    overflow-x: hidden;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  
+  .hero-text h1 {
+    font-size: 2.2rem;
+    word-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.2;
+    text-align: center;
+  }
+  
+  .hero-text p {
+    font-size: 1.1rem;
+    word-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.5;
+    text-align: center;
+  }
+  
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .dashboard-preview {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 20px;
+  }
+  
+  .upload-area {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .upload-zone {
+    padding: 30px 20px;
+  }
+  
+  .upload-zone h3 {
+    font-size: 1.2rem;
+    word-wrap: break-word;
+  }
+  
+  .section-header h2 {
+    font-size: 2rem;
+    word-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.2;
+  }
+  
+  .section-header p {
+    font-size: 1rem;
+    word-wrap: break-word;
+    line-height: 1.4;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .dashboard-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .control-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 15px;
+    min-height: 44px; /* Touch target minimum */
+    font-size: 16px; /* Prevent iOS zoom */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .analysis-card {
+    padding: 20px 15px;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+  }
+  
+  .chart-container {
+    flex-direction: column;
+    gap: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .donut-chart {
+    align-self: center;
+    max-width: 200px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Chatbot widget responsive */
+  .integrated-chatbot-widget {
+    bottom: 20px;
+    right: 20px;
+    max-width: 320px;
+    width: 320px;
+    box-sizing: border-box;
+  }
+  
+  .widget-body {
+    padding: 15px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .quick-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .quick-action-btn {
+    padding: 12px 8px;
+    font-size: 0.75rem;
+    flex: 1;
+    min-width: 80px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Additional mobile-specific improvements */
+@media (max-width: 768px) {
+  /* Enhanced touch targets */
+  .control-btn,
+  .action-btn,
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 16px !important; /* Prevent iOS zoom */
+    border-radius: 10px;
+  }
+  
+  /* Better form inputs */
+  .period-selector,
+  input[type="text"],
+  input[type="number"],
+  select {
+    font-size: 16px !important; /* Prevent iOS zoom */
+    min-height: 44px;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+  
+  /* Optimize animations for mobile performance */
+  .analysis-card:hover,
+  .metric-item:hover {
+    transform: none; /* Disable hover animations on mobile */
+  }
+  
+  /* Better focus states for accessibility */
+  .control-btn:focus,
+  .action-btn:focus,
+  .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5);
+  }
+  
+  /* Improve spacing for mobile */
+  .hero-text {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  
+  .dashboard-section {
+    padding: 25px 15px;
+  }
+  
+  /* Better metric displays */
+  .metric-item {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .metric-value {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+  }
+  
+  .metric-label {
+    font-size: 0.85rem;
+  }
+  
+  /* Improved processing overlay for mobile */
+  .processing-overlay {
+    padding: 15px;
+  }
+  
+  .processing-content {
+    padding: 20px 15px;
+    max-width: 320px;
+    border-radius: 12px;
+  }
+  
+  .processing-animation {
+    width: 70px;
+    height: 70px;
+  }
+  
+  /* Mobile chatbot widget */
+  .integrated-chatbot-widget {
+    bottom: 15px;
+    right: 15px;
+    max-width: 300px;
+    width: 300px;
+  }
+  
+  .chatbot-card.widget-minimized {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .widget-minimized .widget-header {
+    padding: 12px;
+  }
+  
+  .widget-minimized .widget-icon {
+    font-size: 1.3rem;
+  }
+  
+  .widget-body {
+    padding: 12px;
+  }
+  
+  .quick-actions {
+    gap: 6px;
+    margin-bottom: 15px;
+  }
+  
+  .quick-action-btn {
+    padding: 10px 6px;
+    font-size: 0.7rem;
+    gap: 6px;
+  }
+  
+  .quick-action-btn i {
+    font-size: 1rem;
+  }
+  
+  .message-content {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .stat-item {
+    padding: 15px;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  
+  .analysis-card {
+    padding: 15px 12px;
+    margin-bottom: 12px;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  
+  .card-title h3 {
+    font-size: 1.1rem;
+    word-wrap: break-word;
+  }
+  
+  .control-btn {
+    padding: 10px 12px;
+    font-size: 16px;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+  }
+  
+  .metric-item {
+    padding: 12px;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  
+  .processing-content {
+    max-width: 280px;
+    padding: 18px 12px;
+    box-sizing: border-box;
+  }
+}
+
+/* Additional enhancements for very small screens */
+@media (max-width: 480px) {
+  .hero-text h1 {
+    font-size: 1.6rem;
+    line-height: 1.3;
+  }
+  
+  .hero-text p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .analysis-card {
+    padding: 12px 10px;
+    border-radius: 10px;
+  }
+  
+  .card-title {
+    margin-bottom: 12px;
+  }
+  
+  .card-title i {
+    font-size: 1.1rem;
+    padding: 8px;
+  }
+  
+  .control-btn {
+    padding: 8px 10px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+  
+  .metric-item {
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  .donut-chart {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 320px) {
+  .main-content {
+    padding: 12px 8px;
+  }
+  
+  .hero-content {
+    padding: 25px 8px;
+  }
+  
+  .dashboard-section {
+    padding: 20px 8px;
+  }
+  
+  .hero-text h1 {
+    font-size: 1.3rem;
+  }
+  
+  .hero-text p {
+    font-size: 0.85rem;
+  }
+  
+  .dashboard-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .analysis-card {
+    padding: 10px 8px;
+  }
+  
+  .control-btn {
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .metric-item {
+    padding: 8px;
+  }
+  
+  .processing-content {
+    max-width: 260px;
+    padding: 15px 10px;
+  }
+  
+  .processing-animation {
+    width: 50px;
+    height: 50px;
   }
 }
 </style> 

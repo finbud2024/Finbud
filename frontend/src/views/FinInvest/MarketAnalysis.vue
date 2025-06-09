@@ -3,9 +3,7 @@
         <!-- ChatBot component -->
         <ChatBot :botMessage="templateChat" />
 
-        <h1 class="page-title">
-            {{ t('marketAnalysisPage.marketAnalysisTitle') }}
-        </h1>
+
 
         <!-- Market Analysis -->
         <div class="market-analysis">
@@ -450,8 +448,9 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .market-header p {
-    color: #666;
     font-size: 1.1rem;
+    color: #64748b;
+    word-break: break-word;
     max-width: 700px;
     margin: 0 auto;
 }
@@ -772,6 +771,7 @@ watch(selectedCategory, (newCategory) => {
     font-weight: 800;
     color: var(--black-in-light-mode);
     margin: 0;
+    word-break: break-word;
 }
 
 .clamp-text {
@@ -779,6 +779,7 @@ watch(selectedCategory, (newCategory) => {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    word-break: break-word;
 }
 
 .news-datetime {
@@ -858,9 +859,101 @@ watch(selectedCategory, (newCategory) => {
     padding: 10px;
 }
 
-@media (max-width: 1000px) {
+/* === Enhanced Responsive Design === */
+
+/* Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) {
+    .market-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .trend-ai-news-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
     .trend-ai-news-container > .container-card-big {
         width: 100% !important;
+        padding: 0 !important;
+    }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+    .market-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+    .page-container, .market-analysis {
+        padding: 0.5rem;
+    }
+    .market-header h1 {
+        font-size: 1.5rem;
+    }
+    .market-header p {
+        font-size: 0.9rem;
+    }
+    .market-card, .topic-card {
+        padding: 1rem;
+    }
+    .title-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+    .button-group {
+        flex-wrap: wrap;
+    }
+    .date-label {
+        width: 100%;
+    }
+    .news-card {
+        flex-direction: column;
+        height: auto !important;
+        align-items: stretch;
+    }
+    .news-image {
+        width: 100% !important;
+        height: 180px !important;
+        object-fit: cover;
+    }
+    .small-news-card-wrapper {
+        flex-direction: column;
+    }
+    .small-news-card {
+      align-items: stretch;
+    }
+    .small-news-card .news-image {
+        width: 100% !important;
+        height: 150px !important;
+    }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+    .market-header {
+        text-align: center;
+    }
+    .details-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    .positive-detail-container, .neutral-detail-container, .negative-detail-container {
+        width: 100% !important;
+        text-align: center;
+    }
+    .table-container {
+        font-size: 12px;
+    }
+    .table-container th, .table-container td {
+        padding: 0.5rem 0.25rem;
+        word-break: break-all;
+    }
+    .button {
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -924,27 +1017,48 @@ tbody tr td {
     width: 150px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
+    .market-header h1 {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+    
+    .market-header p {
+        font-size: 0.85rem;
+        text-align: center;
+    }
+    
     .table-container {
-        font-size: 14px;
+        font-size: 12px;
+        overflow-x: auto;
     }
     
     .table-container td {
-        padding: 8px;
+        padding: 6px;
+        word-break: break-all;
     }
     
     .button {
-        padding: 0.3rem 0.7rem;
-        font-size: 14px;
+        padding: 0.4rem 0.8rem;
+        font-size: 12px;
+        min-height: 44px; /* Touch-friendly */
     }
     
     .date-label {
         width: 100%;
         margin-top: 10px;
+        padding: 0.5rem;
+        font-size: 16px; /* Prevent iOS zoom */
+        min-height: 44px;
     }
     
-    .date-label select {
-        width: 100%;
+    .news-title {
+        font-size: 16px !important;
+    }
+    
+    .component-title {
+        font-size: 1.125rem;
+        text-align: center;
     }
 }
 

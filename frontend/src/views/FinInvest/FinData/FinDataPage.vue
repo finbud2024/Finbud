@@ -731,68 +731,491 @@ const retryLoading = () => {
     color: #059669;
 }
 
-/* Responsive Design */
+/* Enhanced Mobile Responsive Design */
+@media (max-width: 1400px) {
+  .data-page-container {
+    padding: 1.5rem;
+  }
+  
+  .data-header {
+    gap: 1.5rem;
+  }
+  
+  .buttons-header {
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+  
+  .stats-overview {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .data-body {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.75rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .data-page-container {
+    padding: 1.25rem;
+  }
+  
+  .page-title {
+    font-size: 1.75rem;
+  }
+  
+  .data-header {
+    padding: 1.75rem;
+  }
+  
+  .action-button {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 2.25rem;
+  }
+  
+  .data-body {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .data-page-container {
+    padding: 1rem;
+  }
+  
+  .data-header {
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: center;
+    padding: 1.5rem;
+  }
+  
+  .header-info {
+    text-align: center;
+  }
+  
+  .buttons-header {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  
+  .action-button {
+    justify-content: center;
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+  }
+  
+  .stats-overview {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .stat-card {
+    padding: 1.25rem;
+  }
+  
+  .data-body {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .document-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+  
+  .document-actions {
+    align-self: flex-end;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  .document-meta {
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .earnings-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .earnings-table {
+    min-width: 600px;
+    font-size: 0.875rem;
+  }
+  
+  .earnings-table th,
+  .earnings-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
 @media (max-width: 768px) {
-    .data-page-container {
-        padding: 1rem;
-    }
-    
-    .data-header {
-        flex-direction: column;
-        gap: 1.5rem;
-        text-align: center;
-    }
-    
-    .buttons-header {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .action-button {
-        justify-content: center;
-    }
-    
-    .stats-overview {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    
-    .data-body {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .document-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .document-meta {
-        gap: 0.5rem;
-    }
-    
-    .earnings-table {
-        font-size: 0.875rem;
-    }
-    
-    .earnings-table th,
-    .earnings-table td {
-        padding: 0.75rem 0.5rem;
-    }
+  .data-page-container {
+    padding: 0.75rem;
+  }
+  
+  .data-header {
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  .page-subtitle {
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  
+  .buttons-header {
+    gap: 0.5rem;
+  }
+  
+  .action-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    min-height: 44px; /* Touch target minimum */
+  }
+  
+  .stats-overview {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+  
+  .data-body {
+    gap: 1rem;
+  }
+  
+  .document-list {
+    gap: 0.5rem;
+  }
+  
+  .document-row {
+    padding: 0.875rem;
+    border-radius: 6px;
+  }
+  
+  .document-info {
+    width: 100%;
+  }
+  
+  .doc-link {
+    font-size: 0.9rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .document-meta {
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .ticker-tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .date-info {
+    font-size: 0.8rem;
+  }
+  
+  .action-btn {
+    padding: 0.375rem;
+    min-height: 36px;
+    min-width: 36px;
+  }
+  
+  .earnings-section {
+    margin-top: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .earnings-table {
+    min-width: 550px;
+    font-size: 0.8rem;
+  }
+  
+  .earnings-table th,
+  .earnings-table td {
+    padding: 0.625rem 0.375rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .page-title {
-        font-size: 1.5rem;
-    }
-    
-    .stats-overview {
-        grid-template-columns: 1fr;
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-    }
+  .data-page-container {
+    padding: 0.5rem;
+  }
+  
+  .data-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.25rem;
+  }
+  
+  .page-subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .action-button {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .stats-overview {
+    gap: 0.75rem;
+  }
+  
+  .stat-card {
+    padding: 0.875rem;
+  }
+  
+  .stat-number {
+    font-size: 1.75rem;
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+  }
+  
+  .data-body {
+    gap: 0.875rem;
+  }
+  
+  .document-row {
+    padding: 0.75rem;
+  }
+  
+  .doc-link {
+    font-size: 0.85rem;
+  }
+  
+  .document-meta {
+    flex-direction: column;
+    gap: 0.375rem;
+    align-items: flex-start;
+  }
+  
+  .ticker-tag {
+    font-size: 0.65rem;
+  }
+  
+  .date-info {
+    font-size: 0.75rem;
+  }
+  
+  .document-actions {
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .action-btn {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    min-height: 40px;
+    min-width: 40px;
+  }
+  
+  .earnings-table {
+    min-width: 480px;
+    font-size: 0.75rem;
+  }
+  
+  .earnings-table th,
+  .earnings-table td {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .section-title {
+    font-size: 1.1rem;
+  }
+  
+  /* Empty State Mobile */
+  .empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  
+  .empty-state i {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .empty-state p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .data-page-container {
+    padding: 0.375rem;
+  }
+  
+  .data-header {
+    padding: 0.875rem;
+  }
+  
+  .page-title {
+    font-size: 1.125rem;
+  }
+  
+  .action-button {
+    padding: 0.625rem;
+    font-size: 0.75rem;
+  }
+  
+  .stat-card {
+    padding: 0.75rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .document-row {
+    padding: 0.625rem;
+  }
+  
+  .doc-link {
+    font-size: 0.8rem;
+  }
+  
+  .earnings-table {
+    min-width: 420px;
+    font-size: 0.7rem;
+  }
+  
+  .earnings-table th,
+  .earnings-table td {
+    padding: 0.375rem 0.2rem;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .action-button,
+  .retry-btn,
+  .action-btn {
+    min-height: 44px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .document-row {
+    min-height: 44px;
+  }
+  
+  .doc-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .document-row:hover,
+  .stat-card:hover,
+  .action-btn:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+}
+
+/* Improved scroll behavior for tables */
+.earnings-table-wrapper {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.earnings-table-wrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.earnings-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.earnings-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* Dark mode mobile adjustments */
+.dark-mode .stat-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark-mode .document-row {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark-mode .action-btn {
+  background: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+.dark-mode .action-btn:hover {
+  background: #4b5563;
+  color: #f9fafb;
+}
+
+.dark-mode .earnings-table {
+  background: #1f2937;
+}
+
+.dark-mode .earnings-table th {
+  background: #374151;
+  color: #d1d5db;
+}
+
+.dark-mode .earnings-table td {
+  border-bottom-color: #374151;
+  color: #d1d5db;
+}
+
+.dark-mode .symbol-cell {
+  color: #f9fafb;
 }
 </style>

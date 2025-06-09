@@ -889,45 +889,469 @@ export default {
   gap: 1rem;
 }
 
-.analysis-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
+/* Enhanced Mobile Responsive Design */
+@media (max-width: 1400px) {
+  .properties-container.grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .overview-stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+  }
 }
 
-.analysis-item .value {
-  font-weight: 700;
-  font-size: 1.1rem;
+@media (max-width: 1200px) {
+  .properties-container.grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .controls-section {
+    padding: 1.25rem;
+  }
+  
+  .filter-group {
+    gap: 1rem;
+  }
+  
+  .overview-stats {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
 }
 
-.analysis-item .value.positive {
-  color: #10b981;
+@media (max-width: 1024px) {
+  .properties-container.grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  
+  .controls-section {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .filter-group {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .overview-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .properties-container.grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  
+  .property-card {
+    border-radius: 14px;
+  }
+  
+  .property-details {
+    padding: 1.375rem;
+  }
+  
+  .property-image {
+    height: 180px;
+  }
+  
+  .modal-content {
+    border-radius: 16px;
+  }
 }
 
 @media (max-width: 768px) {
-  .overview-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
   .properties-container.grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 0.5rem;
   }
   
   .controls-section {
     flex-direction: column;
     gap: 1rem;
+    align-items: stretch;
+    padding: 1rem 0.75rem;
   }
   
-  .detail-grid,
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .filter-group select,
+  .filter-group input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 16px; /* Prevent zoom on iOS */
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    min-height: 44px; /* Touch target minimum */
+  }
+  
+  .view-toggle {
+    align-self: center;
+  }
+  
+  .view-toggle button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .overview-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .property-card {
+    margin: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  
+  .property-image {
+    height: 160px;
+  }
+  
+  .property-details {
+    padding: 1.25rem;
+  }
+  
+  .property-title {
+    font-size: 1.125rem;
+    line-height: 1.3;
+  }
+  
+  .property-specs {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .spec {
+    font-size: 0.8rem;
+  }
+  
+  .property-financials {
+    flex-direction: column;
+    gap: 0.875rem;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .current-price {
+    font-size: 1.25rem;
+  }
+  
+  .property-metrics {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .metric {
+    text-align: center;
+    padding: 0.5rem;
+  }
+  
+  .metric-label {
+    font-size: 0.75rem;
+  }
+  
+  .metric-value {
+    font-size: 0.875rem;
+  }
+  
+  /* Modal improvements for mobile */
+  .property-modal {
+    padding: 1rem;
+  }
+  
+  .modal-content {
+    margin: 0;
+    max-width: 100%;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    border-radius: 12px;
+  }
+  
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+  
+  .modal-body {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+  
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .detail-item {
+    padding: 0.875rem;
+    border-radius: 8px;
+  }
+  
   .analysis-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .close-btn {
+    width: 40px;
+    height: 40px;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .controls-section {
+    padding: 0.875rem 0.5rem;
+  }
+  
+  .overview-stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .stat-card {
+    padding: 0.875rem;
+  }
+  
+  .properties-container.grid {
+    padding: 0.25rem;
+    gap: 1rem;
+  }
+  
+  .property-card {
+    border-radius: 10px;
+  }
+  
+  .property-details {
+    padding: 1rem;
+  }
+  
+  .property-title {
+    font-size: 1.05rem;
+  }
+  
+  .property-financials {
+    padding: 0.875rem;
+    gap: 0.75rem;
+  }
+  
+  .current-price {
+    font-size: 1.125rem;
   }
   
   .property-metrics {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .modal-header {
+    padding: 1.25rem 1.25rem 0.875rem 1.25rem;
+  }
+  
+  .modal-body {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+  
+  .close-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls-section {
+    padding: 0.75rem 0.375rem;
+  }
+  
+  .filter-group select,
+  .filter-group input {
+    padding: 0.75rem;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  
+  .property-card {
+    border-radius: 8px;
+  }
+  
+  .property-image {
+    height: 140px;
+  }
+  
+  .property-details {
+    padding: 0.875rem;
+  }
+  
+  .property-title {
+    font-size: 1rem;
+  }
+  
+  .property-location {
+    font-size: 0.85rem;
+  }
+  
+  .spec {
+    font-size: 0.75rem;
+  }
+  
+  .property-financials {
+    padding: 0.75rem;
+    gap: 0.625rem;
+  }
+  
+  .current-price {
+    font-size: 1.05rem;
+  }
+  
+  .roi-value {
+    font-size: 1rem;
+  }
+  
+  .property-metrics {
+    gap: 0.375rem;
+  }
+  
+  .metric {
+    padding: 0.375rem;
+  }
+  
+  .metric-label {
+    font-size: 0.7rem;
+  }
+  
+  .metric-value {
+    font-size: 0.8rem;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .modal-header {
+    padding: 1rem 1rem 0.75rem 1rem;
+  }
+  
+  .modal-body {
+    padding: 0 1rem 1rem 1rem;
+  }
+  
+  .detail-item {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .close-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 320px) {
+  .controls-section {
+    padding: 0.625rem 0.25rem;
+  }
+  
+  .property-details {
+    padding: 0.75rem;
+  }
+  
+  .property-title {
+    font-size: 0.95rem;
+  }
+  
+  .property-image {
+    height: 120px;
+  }
+  
+  .property-financials {
+    padding: 0.625rem;
+  }
+  
+  .current-price {
+    font-size: 1rem;
+  }
+  
+  .modal-header {
+    padding: 0.875rem 0.875rem 0.625rem 0.875rem;
+  }
+  
+  .modal-body {
+    padding: 0 0.875rem 0.875rem 0.875rem;
+  }
+  
+  .close-btn {
+    width: 30px;
+    height: 30px;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Prevent zoom on iOS */
+  .filter-group select,
+  .filter-group input {
+    font-size: 16px !important;
+  }
+  
+  /* Enhanced touch targets */
+  .property-card,
+  .view-toggle button,
+  .close-btn {
+    min-height: 44px;
+  }
+  
+  /* Better focus states for mobile */
+  .filter-group select:focus,
+  .filter-group input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .property-card:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Optimize animations for mobile performance */
+  .property-card:hover {
+    transform: none; /* Disable hover animations on mobile */
+  }
+  
+  /* Ensure proper scrolling */
+  .modal-content {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Better spacing for mobile */
+  .properties-container {
+    margin-bottom: 2rem;
   }
 }
 </style> 

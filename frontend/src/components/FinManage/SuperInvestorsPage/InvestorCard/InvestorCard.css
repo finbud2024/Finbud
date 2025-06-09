@@ -8,6 +8,9 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
 }
 
 .investor-card:hover {
@@ -112,6 +115,8 @@
   border-top: 1px solid #e5e7eb;
   padding-top: 12px;
   transition: all 0.3s ease;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .stock-badge {
@@ -202,4 +207,210 @@
 .investor-card:nth-child(3) { animation-delay: 0.3s; }
 .investor-card:nth-child(4) { animation-delay: 0.4s; }
 .investor-card:nth-child(5) { animation-delay: 0.5s; }
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .investor-card {
+    padding: 18px;
+  }
+  
+  .investor-header {
+    gap: 15px;
+  }
+  
+  .investor-avatar {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .investor-name {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .investor-card {
+    padding: 16px;
+    min-height: 44px; /* Touch target minimum */
+  }
+  
+  .investor-header {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .investor-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .investor-name {
+    font-size: 1.15rem;
+  }
+  
+  .investor-company {
+    font-size: 0.8rem;
+  }
+  
+  .metric {
+    padding: 6px 0;
+  }
+  
+  .metric:hover {
+    padding-left: 4px;
+  }
+  
+  .metric-label, .metric-value {
+    font-size: 0.8rem;
+  }
+  
+  .stock-badge {
+    padding: 4px 10px;
+    font-size: 0.7rem;
+  }
+  
+  .investor-stocks {
+    gap: 6px;
+    padding-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .investor-card {
+    padding: 14px;
+  }
+  
+  .investor-header {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  
+  .investor-avatar {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .investor-name {
+    font-size: 1.1rem;
+  }
+  
+  .investor-company {
+    font-size: 0.75rem;
+  }
+  
+  .investor-metrics {
+    padding-top: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .metric {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 0;
+  }
+  
+  .metric:hover {
+    transform: none;
+    padding-left: 0;
+  }
+  
+  .metric-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  .metric-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  
+  .investor-stocks {
+    justify-content: center;
+    padding-top: 8px;
+  }
+  
+  .stock-badge {
+    padding: 3px 8px;
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .investor-card {
+    padding: 12px;
+  }
+  
+  .investor-header {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .investor-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .investor-name {
+    font-size: 1rem;
+  }
+  
+  .investor-company {
+    font-size: 0.7rem;
+  }
+  
+  .investor-metrics {
+    padding-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .metric {
+    padding: 6px 0;
+  }
+  
+  .metric-label {
+    font-size: 0.7rem;
+  }
+  
+  .metric-value {
+    font-size: 0.8rem;
+  }
+  
+  .investor-stocks {
+    gap: 4px;
+    padding-top: 6px;
+  }
+  
+  .stock-badge {
+    padding: 2px 6px;
+    font-size: 0.6rem;
+  }
+}
+
+/* Touch improvements */
+@media (hover: none) and (pointer: coarse) {
+  .investor-card:hover {
+    transform: none;
+  }
+  
+  .investor-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+  
+  .metric:hover {
+    background-color: transparent;
+    transform: none;
+    padding-left: 0;
+  }
+  
+  .stock-badge:hover {
+    background-color: #f3f4f6;
+    color: #000000;
+    transform: none;
+  }
+}
   

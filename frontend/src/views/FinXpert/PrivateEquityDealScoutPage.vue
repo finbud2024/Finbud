@@ -790,98 +790,932 @@ export default {
   backdrop-filter: blur(10px);
 }
 
-/* Show toggle button only on mobile */
-@media (max-width: 768px) {
-  .mobile-sidebar-toggle {
-    display: flex !important;
+/* Enhanced Comprehensive Mobile Responsive Design - Fix UI Breaking */
+@media (max-width: 1400px) {
+  .pe-deal-scout {
+    padding: 0;
+    overflow-x: hidden;
   }
   
-  .pe-deal-scout {
-    flex-direction: column;
-  }
-
   .main-content {
-    padding-top: 80px; /* Account for mobile toggle button */
+    padding: 1.5rem;
+    margin-left: 0;
+    max-width: 100%;
+    overflow-x: hidden;
   }
-
-  .hero-stats {
-    flex-direction: column;
-    gap: 2rem;
+  
+  .main-content.sidebar-open {
+    margin-left: 280px;
   }
   
   .analysis-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Stack on mobile */
+    gap: 1.5rem;
   }
   
-  .quick-form .form-row {
-    grid-template-columns: 1fr;
+  .analysis-card {
+    min-width: 0; /* Allow shrinking */
+    overflow: hidden;
   }
   
-  .lbo-inputs {
-    grid-template-columns: 1fr;
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
   }
   
-  .market-stats {
-    grid-template-columns: 1fr;
+  .form-group {
+    min-width: 0;
   }
   
-  .comparables-table {
-    overflow-x: auto;
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
-
-  .filter-controls {
+  
+  .hero-stats {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  .header-actions {
     flex-direction: column;
     gap: 0.5rem;
     align-items: stretch;
   }
+}
 
-  .filter-controls select,
-  .btn-filter {
-    width: 100%;
-  }
-  
-  /* Ensure sidebar is properly positioned on mobile */
-  .sidebar-mobile {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    height: 100vh !important;
-    width: 280px !important;
-    transform: translateX(-100%) !important;
-    z-index: 999 !important;
-  }
-  
-  .sidebar-mobile.sidebar-open {
-    transform: translateX(0) !important;
+@media (min-width: 968px) {
+  .analysis-grid {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
   }
 }
 
-/* Additional mobile-specific styles */
-@media (max-width: 480px) {
-  .mobile-sidebar-toggle {
-    width: 45px;
-    height: 45px;
-    top: 15px;
-    left: 15px;
+@media (min-width: 1400px) {
+  .analysis-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
   
-  .mobile-sidebar-toggle i {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
     font-size: 1.1rem;
   }
   
-  .sidebar-mobile {
-    width: 260px !important;
+  .card-content {
+    padding: 1.25rem;
+  }
+  
+  .form-row {
+    gap: 0.875rem;
+  }
+  
+  .input-group {
+    margin-bottom: 1rem;
+  }
+  
+  .btn-primary,
+  .btn-secondary,
+  .btn-analyze,
+  .btn-calculate {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
   }
 }
 
-.mobile-sidebar-toggle:hover {
-  background: white;
-  transform: scale(1.05);
+@media (max-width: 968px) {
+  .pe-deal-scout {
+    position: relative;
+  }
+  
+  .main-content {
+    padding: 1rem;
+    margin-left: 0 !important; /* Force no margin on mobile */
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .deal-scout-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+  }
+  
+  .deal-scout-sidebar.sidebar-open {
+    left: 0;
+  }
+  
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  
+  .mobile-sidebar-toggle {
+    display: flex !important;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    width: 48px;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .mobile-sidebar-toggle:hover {
+    background: rgba(0, 0, 0, 1);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.05);
+  }
+  
+  .hero-section {
+    padding: 4rem 1rem 2rem;
+    margin-top: 0;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .dashboard-section {
+    padding: 2rem 0;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1rem;
+    min-height: 44px; /* Touch target minimum */
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+  
+  .analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .analysis-card {
+    padding: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .card-header {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .card-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  
+  .card-content {
+    padding: 1.25rem;
+  }
+  
+  .quick-form {
+    width: 100%;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-group {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.9rem;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-size: 16px; /* Prevent iOS zoom */
+    min-height: 44px; /* Touch target minimum */
+    box-sizing: border-box;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  }
+  
+  .btn-analyze,
+  .btn-calculate {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-size: 16px;
+    min-height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #000000, #333333);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-analyze:hover,
+  .btn-calculate:hover {
+    background: linear-gradient(135deg, #1a1a1a, #404040);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  .lbo-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .input-group {
+    width: 100%;
+  }
+  
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.9rem;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-size: 16px;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+  
+  .lbo-results {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .result-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .result-metric:last-child {
+    border-bottom: none;
+  }
+  
+  .metric-label {
+    font-weight: 600;
+    color: #cccccc;
+  }
+  
+  .metric-value {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 1.1rem;
+  }
 }
 
-.mobile-sidebar-toggle i {
-  font-size: 1.2rem;
-  color: #2d3748;
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 0.75rem 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: 1.75rem;
+    line-height: 1.3;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  
+  .main-content {
+    padding: 0.75rem;
+  }
+  
+  .dashboard-section {
+    padding: 1.5rem 0;
+  }
+  
+  .analysis-card {
+    border-radius: 12px;
+  }
+  
+  .card-header {
+    padding: 1rem;
+  }
+  
+  .card-content {
+    padding: 1rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .input-group input {
+    padding: 0.625rem;
+    font-size: 16px;
+    min-height: 44px;
+  }
+  
+  .btn-analyze,
+  .btn-calculate,
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.875rem;
+    font-size: 16px;
+    min-height: 44px;
+  }
+  
+  .mobile-sidebar-toggle {
+    width: 44px;
+    height: 44px;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+  
+  .deal-scout-sidebar {
+    width: 260px;
+  }
+  
+  .sidebar-nav ul li {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .sidebar-nav ul li i {
+    font-size: 1rem;
+    margin-right: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .main-content {
+    padding: 0.5rem;
+  }
+  
+  .card-header {
+    padding: 0.875rem;
+  }
+  
+  .card-content {
+    padding: 0.875rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .input-group input {
+    padding: 0.5rem;
+    font-size: 16px;
+  }
+  
+  .btn-analyze,
+  .btn-calculate {
+    padding: 0.75rem;
+    font-size: 16px;
+  }
+  
+  .deal-scout-sidebar {
+    width: 240px;
+  }
+  
+  .mobile-sidebar-toggle {
+    width: 40px;
+    height: 40px;
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    padding: 2.5rem 0.5rem 1rem;
+  }
+  
+  .hero-title {
+    font-size: 1.3rem;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .main-content {
+    padding: 0.25rem;
+  }
+  
+  .dashboard-section {
+    padding: 1rem 0;
+  }
+  
+  .analysis-grid {
+    gap: 1rem;
+  }
+  
+  .analysis-card {
+    border-radius: 10px;
+  }
+  
+  .card-header {
+    padding: 0.75rem;
+  }
+  
+  .card-header h3 {
+    font-size: 1rem;
+  }
+  
+  .card-content {
+    padding: 0.75rem;
+  }
+  
+  .form-row {
+    gap: 0.75rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .input-group input {
+    padding: 0.5rem;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  
+  .btn-analyze,
+  .btn-calculate,
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.75rem;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+  
+  .deal-scout-sidebar {
+    width: 220px;
+  }
+  
+  .sidebar-nav ul li {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .hero-title {
+    font-size: 1.1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .main-content {
+    padding: 0.125rem;
+  }
+  
+  .card-header {
+    padding: 0.625rem;
+  }
+  
+  .card-content {
+    padding: 0.625rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .input-group input {
+    padding: 0.5rem;
+    font-size: 16px;
+  }
+  
+  .btn-analyze,
+  .btn-calculate {
+    padding: 0.625rem;
+    font-size: 16px;
+  }
+  
+  .deal-scout-sidebar {
+    width: 200px;
+  }
+  
+  .mobile-sidebar-toggle {
+    width: 36px;
+    height: 36px;
+    top: 0.25rem;
+    left: 0.25rem;
+  }
+  
+  /* Additional text and layout improvements */
+  .form-group label {
+    font-size: 0.8rem;
+    word-wrap: break-word;
+  }
+  
+  .btn-primary, .btn-secondary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Better table handling */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  table {
+    min-width: 280px;
+    width: 100%;
+  }
+}
+
+/* Ensure mobile sidebar toggle is always visible on mobile */
+@media (max-width: 968px) {
+  .mobile-sidebar-toggle {
+    display: flex !important;
+  }
+}
+
+/* Hide mobile toggle on desktop */
+@media (min-width: 969px) {
+  .mobile-sidebar-toggle {
+    display: none !important;
+  }
+  
+  .sidebar-overlay {
+    display: none !important;
+  }
+  
+  .deal-scout-sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    transform: none !important;
+  }
+}
+
+/* Prevent horizontal scroll - Enhanced */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+.pe-deal-scout {
+  max-width: 100vw;
+  overflow-x: hidden;
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 100%;
+  overflow-x: hidden;
+  min-width: 0; /* Allow flex shrinking */
+}
+
+.analysis-grid,
+.analysis-card,
+.card-content,
+.form-group,
+.input-group,
+.form-row,
+.lbo-inputs,
+.market-stats {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Enhanced touch targets and responsive layout for mobile */
+@media (max-width: 968px) {
+  .pe-deal-scout {
+    flex-direction: column;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .main-content {
+    padding: 0 1rem;
+    margin-left: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .main-content.sidebar-open {
+    margin-left: 0;
+  }
+  
+  .hero-section {
+    padding: 60px 1rem 40px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .hero-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .stat-item {
+    max-width: 100%;
+    text-align: center;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+    word-wrap: break-word;
+    line-height: 1.3;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    word-wrap: break-word;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 100%;
+  }
+  
+  .form-group {
+    min-width: auto;
+    max-width: 100%;
+  }
+  
+  .lbo-inputs {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .market-stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .analysis-card {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .card-header h3 {
+    font-size: 1rem;
+    word-wrap: break-word;
+    line-height: 1.3;
+  }
+  
+  .quick-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  button,
+  input,
+  select,
+  .btn-primary,
+  .btn-secondary,
+  .btn-analyze,
+  .btn-calculate {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    font-size: 16px !important; /* Prevent iOS zoom */
+  }
+  
+  /* Better focus states for accessibility */
+  button:focus,
+  input:focus,
+  select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3) !important;
+  }
+  
+  .main-content {
+    padding: 0 0.75rem;
+  }
+  
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+  
+  .hero-title {
+    font-size: 1.75rem;
+    text-align: center;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    text-align: center;
+  }
+  
+  .analysis-card {
+    padding: 1rem;
+  }
+  
+  .card-header h3 {
+    font-size: 1rem;
+  }
+  
+  .quick-form {
+    padding: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0 0.5rem;
+  }
+  
+  .hero-section {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .analysis-card {
+    padding: 0.75rem;
+  }
+  
+  .sidebar-mobile {
+    width: 260px;
+  }
 }
 
 /* Sidebar Overlay */
@@ -1057,12 +1891,19 @@ export default {
   background: linear-gradient(45deg, #fff, #f0f0f0);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  word-wrap: break-word;
+  hyphens: auto;
+  line-height: 1.2;
+  max-width: 100%;
 }
 
 .hero-subtitle {
   font-size: 1.2rem;
   margin-bottom: 3rem;
   opacity: 0.9;
+  word-wrap: break-word;
+  line-height: 1.5;
+  max-width: 100%;
 }
 
 .hero-stats {
@@ -1071,6 +1912,8 @@ export default {
   gap: 4rem;
   max-width: 800px;
   margin: 0 auto;
+  flex-wrap: wrap;
+  overflow: hidden;
 }
 
 .stat-item {
@@ -1109,6 +1952,9 @@ export default {
   font-size: 1.8rem;
   color: #2d3748;
   margin: 0;
+  word-wrap: break-word;
+  line-height: 1.3;
+  max-width: 100%;
 }
 
 .header-actions {
@@ -1212,6 +2058,9 @@ export default {
   border-radius: 6px;
   font-size: 0.9rem;
   transition: border-color 0.3s ease;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
 }
 
 .form-group input:focus, .form-group select:focus {

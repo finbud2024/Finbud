@@ -1555,6 +1555,27 @@ export default {
   }
 }
 
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .goal-page {
+    padding: 1.5rem;
+  }
+  
+  .header-content {
+    gap: 1.5rem;
+  }
+  
+  .goals-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .goal-page {
     padding: 1rem;
@@ -1566,32 +1587,168 @@ export default {
     gap: 1rem;
   }
   
+  .page-title h1 {
+    font-size: 1.75rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
   .header-actions {
-    justify-content: space-between;
+    justify-content: center;
     flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .primary-btn, .secondary-btn {
+    flex: 1;
+    min-width: 140px;
+    justify-content: center;
+  }
+  
+  .view-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
   }
   
   .quick-stats {
     grid-template-columns: 1fr;
     gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
   }
   
   .goals-filters {
-  flex-direction: column;
+    flex-direction: column;
     gap: 1rem;
   }
   
   .filter-group {
     flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .filter-select {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .search-box {
+    width: 100%;
   }
   
   .search-input {
-  width: 100%;
+    width: 100%;
   }
   
   .goals-grid {
     grid-template-columns: 1fr;
     padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .goal-card {
+    padding: 1rem;
+  }
+  
+  .goal-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .goal-actions {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  
+  .action-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .insights-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .insights-card {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .goal-page {
+    padding: 0.75rem;
+  }
+  
+  .page-title h1 {
+    font-size: 1.5rem;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .primary-btn, .secondary-btn {
+    width: 100%;
+    padding: 0.875rem;
+  }
+  
+  .quick-stats {
+    padding: 0.75rem;
+  }
+  
+  .stat-card {
+    padding: 0.75rem;
+  }
+  
+  .goals-grid {
+    padding: 0.75rem;
+  }
+  
+  .goal-card {
+    padding: 0.875rem;
+  }
+  
+  .goal-info h4 {
+    font-size: 1.1rem;
+  }
+  
+  .current-amount {
+    font-size: 1.25rem;
+  }
+  
+  .filter-group {
+    flex-direction: column;
+  }
+  
+  .filter-select {
+    width: 100%;
+  }
+  
+  .insights-card {
+    padding: 0.875rem;
+  }
+  
+  .insight-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .insight-actions {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
 </style>

@@ -769,12 +769,13 @@ body {
 /* Add the bot chat styles from the previous example here */
 .bot-chat-container {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 100px;
+  right: 30px;
   display: flex;
   align-items: flex-end;
   z-index: 1000;
   transition: all 0.3s ease;
+  max-width: 350px;
 }
 
 .bot-image {

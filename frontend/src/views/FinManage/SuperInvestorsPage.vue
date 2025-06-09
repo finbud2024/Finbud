@@ -179,6 +179,9 @@ const hideBot = () => {
   flex-direction: column;
   align-items: center;
   animation: fadeIn 0.5s ease;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .title {
@@ -210,6 +213,8 @@ const hideBot = () => {
   width: 100%;
   padding: 20px;
   animation: fadeInUp 0.5s ease;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* Loading Animation */
@@ -351,30 +356,137 @@ const hideBot = () => {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .investors-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
   }
   
   .title {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1.5rem 0.75rem;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .investors-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
   }
 
   .bot-chat-container {
-    right: -280px;
-    width: 250px;
+    right: -300px;
+    width: 280px;
+    bottom: 20px;
+    height: auto;
+    max-height: 60vh;
   }
 
   .bot-chat-container.bot-visible {
-    transform: translateX(-280px);
+    transform: translateX(-300px);
   }
   
   .bot-message {
-    max-width: 220px;
-    padding: 10px 15px;
+    max-width: 250px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .bot-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  /* Ensure touch targets are at least 44px */
+  .bot-chat-container {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 1rem 0.5rem;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .investors-grid {
+    gap: 0.75rem;
+    padding: 0.25rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .bot-chat-container {
+    right: -260px;
+    width: 240px;
+  }
+
+  .bot-chat-container.bot-visible {
+    transform: translateX(-260px);
+  }
+  
+  .bot-message {
+    max-width: 210px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .page-container {
+    padding: 0.75rem 0.25rem;
+  }
+  
+  .title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .investors-grid {
+    gap: 0.5rem;
+    padding: 0.125rem;
+  }
+  
+  .bot-chat-container {
+    right: -220px;
+    width: 200px;
+  }
+
+  .bot-chat-container.bot-visible {
+    transform: translateX(-220px);
+  }
+  
+  .bot-message {
+    max-width: 170px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .bot-image {
+    width: 45px;
+    height: 45px;
   }
 }
 </style>
