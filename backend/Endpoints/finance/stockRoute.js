@@ -86,7 +86,6 @@ stockRoute.get("/api/stocks", async (req, res) => {
     }
 });
 
-
 stockRoute.post("/updateStockDB", validateRequest(StockPrice.schema), async (req, res) => {
     const symbol = req.body.symbol;
     const listOfPrice = req.body.data;
@@ -155,5 +154,31 @@ async function saveNewStock(symbol, data, recordDate) {
         console.log("Error saving new stock", error);
     }
 }
+
+// Route for popular stocks
+stockRoute.get("/market/popular-stocks", async (req, res) => {
+    try {
+        // Return a list of popular stocks with mock data for now
+        const popularStocks = [
+            { ticker: 'AAPL', name: 'Apple Inc.', price: 175.84, change: '+2.5%', volume: 45678123 },
+            { ticker: 'GOOGL', name: 'Alphabet Inc.', price: 129.85, change: '+1.2%', volume: 34567890 },
+            { ticker: 'MSFT', name: 'Microsoft Corp.', price: 338.11, change: '-0.8%', volume: 23456789 },
+            { ticker: 'TSLA', name: 'Tesla Inc.', price: 248.42, change: '+3.2%', volume: 78901234 },
+            { ticker: 'AMZN', name: 'Amazon.com Inc.', price: 140.75, change: '+0.5%', volume: 56789012 },
+            { ticker: 'META', name: 'Meta Platforms Inc.', price: 326.08, change: '+1.8%', volume: 12345678 },
+            { ticker: 'NVDA', name: 'NVIDIA Corp.', price: 467.23, change: '+4.2%', volume: 23456789 },
+            { ticker: 'NFLX', name: 'Netflix Inc.', price: 421.56, change: '-1.1%', volume: 34567890 }
+        ];
+
+        res.json({
+            success: true,
+            stocks: popularStocks,
+            count: popularStocks.length
+        });
+    } catch (error) {
+        console.error("Error fetching popular stocks:", error);
+        res.status(500).json({ error: "Failed to fetch popular stocks" });
+    }
+});
 
 export default stockRoute;

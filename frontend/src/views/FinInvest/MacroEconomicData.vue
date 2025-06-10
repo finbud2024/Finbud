@@ -494,25 +494,46 @@
             console.log(`Currently fetching data from ${selectedTable.value}`);
             tableHeaders.value = [];
             tableRows.value = [];
+            
+            // Add safety check before DOM operations
+            await nextTick();
+            
             tableRows.value = await getData(tName);
             console.log(tableRows.value);
         }
         catch (error) {
             console.error('Failed to fetch data: ', error);
+            // Set default empty values on error
+            tableHeaders.value = [];
+            tableRows.value = [];
         }
     }
 
     onMounted(async () => {
-        document.body.setAttribute('data-route', 'macro-economic');
-        fetchData(selectedTable.value);
+        try {
+            document.body?.setAttribute('data-route', 'macro-economic');
+            await fetchData(selectedTable.value);
+        } catch (error) {
+            console.error('Error in mounted hook:', error);
+        }
     });
 
     onUnmounted(() => {
-        document.body.removeAttribute('data-route');
+        try {
+            document.body?.removeAttribute('data-route');
+        } catch (error) {
+            console.error('Error in unmounted hook:', error);
+        }
     });
 
-    watch(selectedTable, (newTable) => {
-        fetchData(newTable);
+    watch(selectedTable, async (newTable) => {
+        try {
+            if (newTable) {
+                await fetchData(newTable);
+            }
+        } catch (error) {
+            console.error('Error watching selectedTable:', error);
+        }
     });
 
 </script>

@@ -199,8 +199,9 @@ stockTransactionRoute.route('/stock-transactions/u/:userId')
     console.log('in /stock-transactions/u/:userId Route (GET) stock transactions with userId:' + JSON.stringify(userId));
     try {
       let transactions = await StockTransaction.find({ "userId": userId });
+      // Return empty array instead of 404 if no transactions found
       if (!transactions.length) {
-        return res.status(404).send(`No stock transactions with userId: ${userId} existed in database`);
+        return res.status(200).json([]);
       }
       return res.status(200).json(transactions);
     } catch (err) {

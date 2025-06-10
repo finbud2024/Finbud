@@ -267,12 +267,12 @@ export default {
         }
 
         // Fetch user's transactions from API
-        const response = await api.get(`/transactions/user/${userData._id}`, {
+        const response = await api.get(`/transactions/u/${userData._id}`, {
           withCredentials: true
         });
         
-        transactions.value = response.data.transactions || [];
-        filteredTransactions.value = response.data.transactions || [];
+        transactions.value = response.data || [];
+        filteredTransactions.value = response.data || [];
         isLoading.value = false;
       } catch (error) {
         console.error('Error fetching transactions:', error);
