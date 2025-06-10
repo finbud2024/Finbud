@@ -34,10 +34,10 @@
 					<div class="agent-btn">
 						<button
 							class="chat-mode-button"
-							:class="{ active: chatMode === 'agent' }"
-							@click="toggleAgentMode"
+							:class="{ active: chatMode === 'deep-research' }"
+							@click="toggleDeepResearchMode"
 						>
-							Agent
+							Deep Research
 						</button>
 					</div>
 					<div class="agent-btn">
@@ -216,11 +216,11 @@ export default {
 			this.selectedFile = event.target.files[0] || null;
 		},
 
-		toggleAgentMode() {
+		toggleDeepResearchMode() {
 			if (this.chatMode) {
 				this.chatMode = "";
 			} else {
-				this.chatMode = "agent";
+				this.chatMode = "deep-research";
 			}
 		},
 
@@ -233,9 +233,9 @@ export default {
 		},
 
 		checkChatMode() {
-			if (this.messageText.includes("#agent")) {
-				this.chatMode = "agent";
-				this.messageText = this.messageText.replace("#agent", "");
+			if (this.messageText.includes("#deep-research") || this.messageText.includes("#deepresearch")) {
+				this.chatMode = "deep-research";
+				this.messageText = this.messageText.replace("#deep-research", "").replace("#deepresearch", "");
 			} else if (this.messageText.includes("#think")) {
 				this.chatMode = "think";
 				this.messageText = this.messageText.replace("#think", "");

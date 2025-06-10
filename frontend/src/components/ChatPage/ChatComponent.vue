@@ -29,16 +29,17 @@
 					:scroll-to-bottom="scrollChatFrameToBottom"
 				/>
 
-				<!-- Agent Mode work flow -->
-				<ChatAgent
-					ref="chatAgent"
+				<!-- Deep Research Mode workflow -->
+				<DeepResearchAgent
+					ref="deepResearchAgent"
 					v-if="
-						chatMode === 'agent' &&
-						showAgentWorkflow &&
+						chatMode === 'deep-research' &&
+						showDeepResearchWorkflow &&
 						index === messages.length - 1
 					"
-					@workflow-complete="handleAgentWorkflowComplete"
+					@workflow-complete="handleDeepResearchWorkflowComplete"
 					:scroll-to-bottom="scrollChatFrameToBottom"
+					:user-prompt="currentUserMessageText"
 				/>
 
 				<!-- Add TradingView widget after stock messages -->
@@ -68,7 +69,7 @@ import ChatFrame from "./ChatFrame.vue";
 import MessageComponent from "../MessageComponent.vue";
 import UserInput from "../UserInput.vue";
 import TradingViewWidget from "../TradingViewWidget.vue";
-import ChatAgent from "./ChatAgent.vue";
+import DeepResearchAgent from "./DeepResearchAgent.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 
@@ -101,7 +102,7 @@ export default {
 		MessageComponent,
 		UserInput,
 		TradingViewWidget,
-		ChatAgent,
+		DeepResearchAgent,
 		FileIndicator,
 		ChatSuggestion,
 		ThinkingProcess,
@@ -115,8 +116,10 @@ export default {
 			relevantQuestions: [],
 			botAvatar: require("@/assets/botrmbg.png"),
 			chatMode: "",
-			showAgentWorkflow: false,
+			showDeepResearchWorkflow: false,
 			showThinkingProcess: false,
+			conversationHistory: [],
+			researchBrief: null,
 		};
 	},
 	computed: {
@@ -180,8 +183,8 @@ export default {
 
 				this.$nextTick(() => this.scrollChatFrameToBottom());
 
-				if (this.chatMode === "agent") {
-					this.showAgentWorkflow = true;
+				if (this.chatMode === "deep-research") {
+					this.sendDeepResearchMessage(this.currentUserMessageText);
 				} else if (this.chatMode === "think") {
 					this.showThinkingProcess = true;
 				} else {
@@ -968,9 +971,9 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 			console.log(`Chat mode changed to: ${mode}`);
 		},
 
-		handleAgentWorkflowComplete() {
+		handleDeepResearchWorkflowComplete() {
 			setTimeout(() => {
-				this.showAgentWorkflow = false;
+				this.showDeepResearchWorkflow = false;
 				this.sendMessage(this.currentUserMessageText);
 				this.currentUserMessageText = "";
 			}, 1500);
@@ -1500,6 +1503,75 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 
 			return category;
 		},
+		async onDeepResearchComplete() {
+			console.log('Deep research workflow completed');
+			this.currentMode = 'normal';
+			this.deepResearchMode = false;
+			
+			// Start normal chat with backend deep research
+			await this.sendDeepResearchMessage(this.userPrompt);
+		},
+
+		addMessage(role, content) {
+			const message = {
+				text: content,
+				isUser: role === 'user',
+				typing: false,
+				timestamp: new Date().toLocaleTimeString(),
+			};
+			
+			this.messages.push(message);
+			this.conversationHistory.push({ role, content });
+			
+			this.$nextTick(() => this.scrollChatFrameToBottom());
+		},
+
+		async sendDeepResearchMessage(message) {
+			try {
+				// Add user message to conversation history first
+				this.conversationHistory.push({ role: 'user', content: message });
+				
+				// Add thinking animation
+				this.addTypingResponse("🧠 FinBud đang xử lý yêu cầu deep research...", false, [], [], [], true);
+				
+				// Process with local deep research service
+				const { deepResearchService } = await import('@/services/deepResearchService.js');
+				const response = await deepResearchService.processMessage(message, this.conversationHistory);
+
+				// Remove thinking animation
+				if (this.messages.length > 0 && this.messages[this.messages.length - 1].thinking) {
+					this.messages.pop();
+				}
+
+				// Display response (only add to messages, not conversationHistory since it's already managed)
+				const assistantMessage = {
+					text: response,
+					isUser: false,
+					typing: false,
+					timestamp: new Date().toLocaleTimeString(),
+				};
+				
+				this.messages.push(assistantMessage);
+				this.conversationHistory.push({ role: 'assistant', content: response });
+				
+				this.$nextTick(() => this.scrollChatFrameToBottom());
+
+			} catch (error) {
+				console.error('Deep research error:', error);
+				// Remove thinking animation
+				if (this.messages.length > 0 && this.messages[this.messages.length - 1].thinking) {
+					this.messages.pop();
+				}
+				this.addMessage('assistant', `Xin lỗi, có lỗi khi xử lý yêu cầu deep research: ${error.message}. Vui lòng thử lại.`);
+			}
+		},
+
+			
+	
+
+		// Removed startMetaAnalysis - logic moved to deepResearchService.js
+
+
 	},
 	mounted() {
 		const autoMessage = this.$route.query.autoMessage;

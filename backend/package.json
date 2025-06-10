@@ -5,7 +5,8 @@
   "main": "functions/server.js",
   "scripts": {
     "start": "node functions/server.js",
-    "dev": "nodemon functions/server.js",
+    "dev": "node dev-server.mjs",
+    "dev:watch": "nodemon dev-server.mjs",
     "build": "echo 'No build step required'"
   },
   "dependencies": {

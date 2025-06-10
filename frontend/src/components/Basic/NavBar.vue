@@ -45,6 +45,7 @@
             <router-link to="/docs">{{ $t("FinData") }}</router-link>
             <router-link to="/macro-economic">{{ $t("macroEconomic") }}</router-link>
             <router-link to="/market-analysis">{{ $t("marketAnalysis") }}</router-link>
+            <router-link to="/blog">Blog</router-link>
           </div>
         </li>
 

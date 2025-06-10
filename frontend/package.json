@@ -11,6 +11,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
+    "@google/generative-ai": "^0.24.1",
     "@vueuse/core": "^10.0.0",
     "apexcharts": "^4.7.0",
     "axios": "^1.6.0",

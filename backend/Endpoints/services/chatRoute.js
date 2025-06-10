@@ -9,6 +9,7 @@ import Transaction from "../../Database_Schema/trading/Transaction.js";
 import UserHolding from "../../Database_Schema/finance/UserHolding.js";
 import Portfolio from "../../Database_Schema/finance/Portfolio.js";
 import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 // import { YoutubeTranscript } from 'youtube-transcript';
 // import { getVideoId } from '../utils/getVideoId.js';
 
@@ -176,6 +177,128 @@ chatRoute.post("/query", isAuthenticated, async (req, res) => {
     res.status(500).send({ error: "Internal Server Error" });
   }
 });
+
+// Deep Research Pipeline v1.0 - Simplified Backend Support
+chatRoute.post('/deep-research', isAuthenticated, async (req, res) => {
+    try {
+        const { message, conversationHistory = [], step = 1 } = req.body;
+        
+        console.log('Deep research pipeline request:', { message, step, historyLength: conversationHistory.length });
+        
+        // Since most logic is now in frontend deepResearchService, 
+        // this endpoint mainly serves as fallback for API calls
+        
+        switch (step) {
+            case 1:
+                // Step 1: Classification fallback
+                return res.json({
+                    response: await classifyFinanceRelevance(message),
+                    status: 'CLASSIFIED'
+                });
+                
+            case 2:
+                // Step 2: Clarification fallback  
+                return res.json({
+                    response: await generateClarificationQuestion(message),
+                    status: 'CLARIFYING'
+                });
+                
+            default:
+                // General clarification for backward compatibility
+                const clarificationQuestion = await generateClarificationQuestion(message);
+                return res.json({
+                    response: clarificationQuestion,
+                    status: 'CLARIFYING'
+                });
+        }
+
+    } catch (error) {
+        console.error('Deep research pipeline error:', error.response?.data || error.message);
+        
+        // Fallback clarification question
+        const isVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(message);
+        const fallbackQuestion = isVietnamese 
+            ? "Bạn muốn phân tích trong khoảng thời gian nào? (ví dụ: 2020-2024, 5 năm gần đây)"
+            : "What time period would you like to analyze? (e.g., 2020-2024, last 5 years)";
+        
+        res.json({
+            response: fallbackQuestion,
+            status: 'CLARIFYING'
+        });
+    }
+});
+
+// Helper function for Step 1: Classification
+async function classifyFinanceRelevance(message) {
+    try {
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            model: 'gpt-4o-mini',
+            messages: [{
+                role: 'system',
+                content: `Classify if this message is related to finance/economics. Respond with only "Finance/Economics" or "Other". Message: "${message}"`
+            }],
+            temperature: 0.1,
+            max_tokens: 10
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.VUE_APP_OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const classification = response.data.choices[0].message.content.trim();
+        
+        if (classification.includes('Finance') || classification.includes('Economics')) {
+            return "PROCEED_TO_STEP_2";
+        } else {
+            return "OUT_OF_SCOPE";
+        }
+        
+    } catch (error) {
+        console.error('Classification error:', error);
+        return "PROCEED_TO_STEP_2"; // Default to proceed if error
+    }
+}
+
+// Helper function for Step 2: Clarification
+async function generateClarificationQuestion(message) {
+    try {
+        const systemPrompt = `Bạn là FinBud Deep Research Agent. Phân tích yêu cầu tài chính và đặt CHÍNH XÁC 1 câu hỏi ngắn gọn để làm rõ thông tin quan trọng nhất.
+
+QUY TẮC:
+- CHỈ 1 câu hỏi duy nhất (tối đa 25 từ)
+- Tập trung vào: thời gian, phạm vi, hoặc mục tiêu cụ thể
+- Ngôn ngữ tự nhiên, thân thiện
+
+USER REQUEST: "${message}"
+
+Câu hỏi làm rõ:`;
+
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            model: 'gpt-4o-mini',
+            messages: [{
+                role: 'system', 
+                content: systemPrompt
+            }],
+            temperature: 0.3,
+            max_tokens: 100
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.VUE_APP_OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.data.choices[0].message.content.trim();
+        
+    } catch (error) {
+        console.error('Clarification error:', error);
+        const isVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(message);
+        return isVietnamese 
+            ? "Bạn muốn phân tích trong khoảng thời gian nào?"
+            : "What time period would you like to analyze?";
+    }
+}
 
 // PUT: update chat with given chat id
 chatRoute.put("/chats/:chatId", isAuthenticated, validateRequest(Chat.schema), async (req, res) => {
@@ -395,5 +518,127 @@ chatRoute.route("/chats/analyze-portfolio/:userId")
       return res.status(500).send("Error analyzing portfolio: " + error.message);
     }
   })
+
+// Meta Research endpoint with Gemini integration
+chatRoute.post('/meta-research', isAuthenticated, async (req, res) => {
+  try {
+    const { researchBrief } = req.body;
+    
+    console.log('Meta research request:', researchBrief);
+    
+    // Initialize Gemini AI
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
+    // Generate sophisticated meta-prompt
+    const metaPrompt = generateMetaPrompt(researchBrief);
+    
+    // Use meta-prompt to generate actual research with Gemini
+    const prompt = `${metaPrompt}
+
+RESEARCH REQUEST:
+Based on the above meta-prompt instructions, conduct a comprehensive financial research on this topic and provide a detailed professional report. Focus on delivering actionable insights with proper analysis.
+
+USER BRIEF:
+Domain: ${researchBrief.domain}
+Objective: ${researchBrief.objective}
+Entities: ${researchBrief.entities}
+Time Horizon: ${researchBrief.time_horizon}
+Geography: ${researchBrief.geography}
+Data Constraints: ${researchBrief.data_constraints}
+Output Preferences: ${researchBrief.output_preferences}
+
+Please provide a comprehensive analysis with executive summary, key findings, and actionable recommendations.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    // Format the response for frontend
+    const formattedResponse = `📊 **Báo cáo nghiên cứu chuyên sâu hoàn thành!**
+
+${text}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ **Nghiên cứu được thực hiện bởi FinBud Deep Research Engine**
+🔍 **Nguồn dữ liệu:** Multi-agent analysis với Gemini AI
+⚡ **Thời gian xử lý:** Real-time processing`;
+
+    res.status(200).json({
+      success: true,
+      response: formattedResponse
+    });
+
+  } catch (error) {
+    console.error('Meta research error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      response: `Xin lỗi, hệ thống nghiên cứu chuyên sâu đang được nâng cấp. Vui lòng thử lại sau hoặc sử dụng chế độ chat thông thường.
+
+**Lỗi kỹ thuật:** ${error.message}
+
+FinBud đang phát triển tính năng này để mang lại trải nghiệm tốt nhất cho bạn! 🚀`
+    });
+  }
+});
+
+// Helper function to generate meta-prompt
+function generateMetaPrompt(brief) {
+  const isVietnamese = brief.output_preferences && brief.output_preferences.includes('Vietnamese');
+  
+  const metaPrompt = `SYSTEM (FinBud Deep Research Assistant v2.0)
+
+╭─────────────────────── RESEARCH MISSION ────────────────────────╮
+│ Domain: ${brief.domain}                                         │
+│ Objective: ${brief.objective} ${brief.entities}                │
+│ Time Scope: ${brief.time_horizon}                              │ 
+│ Geographic Focus: ${brief.geography}                           │
+│ Data Preferences: ${brief.data_constraints}                    │
+│ Output Format: ${brief.output_preferences}                     │
+╰──────────────────────────────────────────────────────────────────╯
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 **CORE RESEARCH INSTRUCTIONS:**
+
+1. **SEARCH STRATEGY:**
+   • Focus on authoritative financial sources (SEC, analyst reports, market data)
+   • Prioritize recent data within specified time horizon: ${brief.time_horizon}
+   • Geographic relevance: ${brief.geography} markets and regulations
+   • Entity-specific materials for: ${brief.entities}
+
+2. **DATA PROCESSING PRIORITIES:**
+   • Extract quantitative metrics (ratios, growth rates, valuations)
+   • Identify key financial trends and patterns
+   • Cross-reference multiple sources for accuracy
+   • Maintain ${brief.data_constraints} compliance
+
+3. **ANALYSIS FRAMEWORK:**
+   • Apply ${brief.domain} methodologies and best practices
+   • Integrate macro-economic context where relevant
+   • Provide evidence-based conclusions with proper citations
+   • Address risk factors and limitations explicitly
+
+4. **OUTPUT REQUIREMENTS:**
+   • Format: ${brief.output_preferences}
+   • Include executive summary with key findings
+   • Provide actionable insights and recommendations
+   • Maintain professional tone and structure
+   ${isVietnamese ? '• Báo cáo bằng tiếng Việt với thuật ngữ tài chính chính xác' : '• Use clear, professional English with appropriate financial terminology'}
+
+5. **QUALITY CONTROL:**
+   • Fact-check all quantitative claims
+   • Ensure logical flow and coherent arguments
+   • Include confidence levels for predictions/forecasts
+   • Acknowledge data limitations and assumptions
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**EXECUTION NOTE:** This meta-prompt will guide all subsequent research agents to deliver a comprehensive, high-quality analysis aligned with user requirements.`;
+
+  return metaPrompt;
+}
 
 export default chatRoute;

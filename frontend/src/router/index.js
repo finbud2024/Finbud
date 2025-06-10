@@ -272,6 +272,11 @@ const routes = [
     component: MacroeconomicPage,
   },
   {
+    path: "/blog",
+    name: "BlogPage",
+    component: () => import("../views/Blog/BlogPage.vue"),
+  },
+  {
     path: "/market-analysis",
     name: "MarketAnalysisPage",
     component: MarketAnalysisPage,
