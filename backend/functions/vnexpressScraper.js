@@ -1,56 +1,118 @@
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import dotenv from 'dotenv';
+// vnexpress-scraper.js
+import { chromium } from 'playwright-extra';
+import stealth from 'puppeteer-extra-plugin-stealth';
 import mongoose from 'mongoose';
-import ScrapedUser from '../Database Schema/FinEdu/ScrapedUser.js';
-import Article from '../Database Schema/FinEdu/Article.js';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import Source from "../Database Schema/Source.js";
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
-puppeteer.use(StealthPlugin());
+// Use stealth plugin
+chromium.use(stealth());
 
-// Get the directory path of the current module - with fallback
+// Directory setup
 let __dirname;
 try {
   const __filename = fileURLToPath(import.meta.url);
   __dirname = path.dirname(__filename);
 } catch (e) {
-  // Fallback for environments where import.meta is not available
   __dirname = path.resolve();
 }
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
-const MONGO_URI = process.env.MONGO_URI;
-
-// Custom browser configuration with stealth options
-const browserConfig = {
-  headless: false, 
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-accelerated-2d-canvas',
-    '--disable-gpu',
-    '--window-size=1920,1080',
-    '--disable-web-security',
-    '--disable-features=IsolateOrigins,site-per-process'
-  ]
+// Configuration
+const CONFIG = {
+  userAgents: [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0'
+  ],
+  categories: [
+    { url: 'https://vnexpress.net/thoi-su', name: 'Thời sự' },
+    { url: 'https://vnexpress.net/the-gioi', name: 'Thế giới' },
+    { url: 'https://vnexpress.net/kinh-doanh/doanh-nghiep', name: 'Doanh Nghiep' },
+    { url: 'https://vnexpress.net/giai-tri', name: 'Giải trí' }
+  ],
+  source: {
+    name: 'VnExpress',
+    url: 'https://vnexpress.net',
+    id: '67d28bab5a9c17e61ac5555d'
+  },
+  maxArticlesPerCategory: 10,
+  timeout: 120000
 };
 
-// Custom user agents rotation
-const userAgents = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59'
-];
+// MongoDB connection
+const MONGO_URI = 'mongodb+srv://finbud123:finbud123@cluster0.8mbj0ln.mongodb.net/production?retryWrites=true&w=majority&appName=Cluster0';
+
+// Define MongoDB schemas
+const articleSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  content: String,
+  author: String,
+  sourceId: String,
+  url: { type: String, unique: true },
+  category: String,
+  featuredImage: String,
+  publishDate: Date,
+  createdAt: { type: Date, default: Date.now }
+});
+
+const sourceSchema = new mongoose.Schema({
+  _id: String,
+  name: String,
+  url: String,
+  lastScraped: Date
+});
+
+const userSchema = new mongoose.Schema({
+  username: String,
+  source: String,
+  lastScraped: Date
+});
+
+const Article = mongoose.model('Article', articleSchema);
+const Source = mongoose.model('Source', sourceSchema);
+const ScrapedUser = mongoose.model('ScrapedUser', userSchema);
 
 // Helper functions
 function getRandomUserAgent() {
-  return userAgents[Math.floor(Math.random() * userAgents.length)];
+  return CONFIG.userAgents[Math.floor(Math.random() * CONFIG.userAgents.length)];
+}
+
+async function randomDelay(min = 2000, max = 5000) {
+  const delay = Math.floor(Math.random() * (max - min + 1)) + min;
+  console.log(`Waiting ${delay/1000} seconds...`);
+  await new Promise(resolve => setTimeout(resolve, delay));
+}
+
+async function takeScreenshot(page, name = 'error') {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const screenshotPath = `screenshots/${name}-${timestamp}.png`;
+  await page.screenshot({ path: screenshotPath, fullPage: true });
+  console.log(`Screenshot saved as ${screenshotPath}`);
+  return screenshotPath;
+}
+
+async function checkForAntiBot(page) {
+  try {
+    const isBlocked = await page.evaluate(() => {
+      return document.body.innerText.includes('captcha') || 
+             document.body.innerText.includes('Access Denied') ||
+             document.querySelector('#captcha-form');
+    });
+    
+    if (isBlocked) {
+      console.log('⚠️ Anti-bot detection triggered!');
+      await takeScreenshot(page, 'antibot-detected');
+      await randomDelay(15000, 30000);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error checking for anti-bot:', error);
+    return false;
+  }
 }
 
 async function connectToMongoDB() {
@@ -73,261 +135,244 @@ async function disconnectFromMongoDB() {
   }
 }
 
-// Helper function to add random delay between actions
-async function randomDelay(min = 5000, max = 10000) {
-  const delay = Math.floor(Math.random() * (max - min + 1)) + min;
-  console.log(`Waiting ${delay/1000} seconds...`);
-  await new Promise(resolve => setTimeout(resolve, delay));
-}
-
-// Helper function to check for anti-bot detection
-async function checkForAntiBot(page) {
+async function scrapeArticle(page, articleUrl, categoryName) {
   try {
-    const antiBotElements = await page.$$eval('*', elements => {
-      return elements.some(el => {
-        const text = el.textContent.toLowerCase();
-        return text.includes('captcha') || 
-               text.includes('verify') || 
-               text.includes('robot') || 
-               text.includes('bot detection');
-      });
+    console.log(`Navigating to article: ${articleUrl}`);
+    await page.goto(articleUrl, { 
+      waitUntil: 'domcontentloaded',
+      timeout: CONFIG.timeout 
     });
 
-    if (antiBotElements) {
-      console.log('⚠️ Anti-bot detection found! Waiting longer...');
-      await randomDelay(15000, 30000); 
-      return true;
+    // Check for anti-bot
+    if (await checkForAntiBot(page)) {
+      console.log('Retrying after anti-bot detection...');
+      return await scrapeArticle(page, articleUrl, categoryName);
     }
-    return false;
+
+    // Wait for article content
+    await page.waitForSelector('article', { timeout: CONFIG.timeout });
+
+    const articleData = await page.evaluate(() => {
+      const getText = (selector) => 
+        document.querySelector(selector)?.innerText.trim() || '';
+      
+      const title = getText('h1.title-detail') || getText('h1.title-news');
+      const description = getText('.description') || getText('.lead_detail');
+      
+      const author = getText('.author_mail strong') || 
+                     getText('.author_mail') || 
+                     getText('.author-info') ||
+                     'VnExpress';
+      
+      // Extract publish date
+      let publishDateStr = getText('.date') || getText('.header-time');
+      let publishDate = new Date();
+      if (publishDateStr) {
+        try {
+          publishDateStr = publishDateStr.replace(/\s+/g, ' ').trim();
+          publishDate = new Date(publishDateStr);
+        } catch (e) {
+          console.error('Date parsing error:', e);
+        }
+      }
+      
+      // Extract article content
+      const contentNodes = document.querySelectorAll('.fck_detail p.Normal, .fck_detail p, article p.Normal');
+      let content = '';
+      contentNodes.forEach(node => {
+        if (node.innerText.trim() && !node.querySelector('strong')) {
+          content += node.innerText.trim() + '\n\n';
+        }
+      });
+      
+      // Get featured image
+      const featuredImage = document.querySelector('.fig-picture img, .tplCaption img')?.src || '';
+      
+      return {
+        title,
+        description,
+        author,
+        publishDate: publishDate.toISOString(),
+        content: content.trim(),
+        featuredImage,
+        url: window.location.href
+      };
+    });
+
+    // Add category if not found in article
+    if (!articleData.category) {
+      articleData.category = categoryName;
+    }
+
+    return articleData;
   } catch (error) {
-    console.error('Error checking for anti-bot:', error);
-    return false;
+    console.error(`Error scraping article ${articleUrl}:`, error);
+    await takeScreenshot(page, 'article-error');
+    throw error;
   }
 }
 
-// Define the source to scrape
-const SOURCE_ID = '67d28bab5a9c17e61ac5555d'; // Replace with your actual source ID
-const VNEXPRESS_URL = 'https://vnexpress.net/kinh-doanh';
+async function scrapeCategory(page, category) {
+  try {
+    console.log(`Navigating to category: ${category.url}`);
+    await page.goto(category.url, { 
+      waitUntil: 'domcontentloaded',
+      timeout: CONFIG.timeout 
+    });
+    
+    // Check for anti-bot
+    if (await checkForAntiBot(page)) {
+      console.log('Retrying after anti-bot detection...');
+      return await scrapeCategory(page, category);
+    }
 
-// List of categories to scrape
-const categories = [
-  { url: 'https://vnexpress.net/thoi-su', name: 'Thời sự' },
-  { url: 'https://vnexpress.net/the-gioi', name: 'Thế giới' },
-  { url: 'https://vnexpress.net/kinh-doanh/doanh-nghiep', name: 'Doanh Nghiep' },
-  { url: 'https://vnexpress.net/giai-tri', name: 'Giải trí' }
-];
+    // Wait for articles to load
+    await page.waitForSelector('.title-news a, .article-title a', { timeout: CONFIG.timeout });
+
+    // Extract article links
+    const articles = await page.$$eval(
+      '.title-news > h3 > a, .title-news a, .article-title a', 
+      (links, max) => links.slice(0, max).map(link => ({
+        url: link.href,
+        title: link.innerText.trim(),
+      })),
+      CONFIG.maxArticlesPerCategory
+    );
+
+    console.log(`Found ${articles.length} articles in ${category.name}`);
+    return articles;
+  } catch (error) {
+    console.error(`Error scraping category ${category.name}:`, error);
+    await takeScreenshot(page, 'category-error');
+    throw error;
+  }
+}
+
+async function processArticles(browser, articles, categoryName) {
+  const results = [];
+  
+  for (const article of articles) {
+    const articlePage = await browser.newPage();
+    try {
+      // Check if article already exists
+      const existingArticle = await Article.findOne({ url: article.url });
+      if (existingArticle) {
+        console.log(`Article already exists: ${article.title}`);
+        continue;
+      }
+
+      await randomDelay();
+      
+      // Set random user agent
+      await articlePage.setExtraHTTPHeaders({
+        'User-Agent': getRandomUserAgent()
+      });
+      
+      // Scrape article
+      const articleData = await scrapeArticle(articlePage, article.url, categoryName);
+      
+      // Save to database
+      const newArticle = new Article({
+        ...articleData,
+        sourceId: CONFIG.source.id,
+        category: categoryName,
+        publishDate: new Date(articleData.publishDate)
+      });
+
+      await newArticle.save();
+      
+      // Track author
+      await ScrapedUser.findOneAndUpdate(
+        { username: articleData.author },
+        {
+          username: articleData.author,
+          source: "vnexpress",
+          lastScraped: new Date()
+        },
+        { upsert: true, new: true }
+      );
+
+      console.log(`✅ Saved article: ${articleData.title}`);
+      results.push(articleData);
+    } catch (error) {
+      console.error(`Failed to process article ${article.title}:`, error);
+    } finally {
+      await articlePage.close();
+    }
+  }
+  
+  return results;
+}
 
 async function scrapeVnExpress() {
   let browser = null;
+  
   try {
-    console.log("Starting VnExpress scraper...");
+    console.log("🚀 Starting VnExpress Scraper...");
     await connectToMongoDB();
-    console.log("Connected to MongoDB");
 
-    // Create or update the source in database
+    // Update source info
     await Source.findOneAndUpdate(
-      { _id: SOURCE_ID },
+      { _id: CONFIG.source.id },
       {
-        name: 'VnExpress',
-        url: VNEXPRESS_URL,
+        name: CONFIG.source.name,
+        url: CONFIG.source.url,
         lastScraped: new Date()
       },
       { upsert: true, new: true }
     );
 
-    browser = await puppeteer.launch(browserConfig);
-    
+    // Launch browser with stealth
+    browser = await chromium.launch({ 
+      headless: true,
+      args: [
+        '--disable-setuid-sandbox',
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+        '--window-size=1920x1080',
+      ]
+    });
+
+    const context = await browser.newContext({
+      userAgent: getRandomUserAgent(),
+      viewport: { width: 1920, height: 1080 },
+      timeout: CONFIG.timeout
+    });
+
+    const page = await context.newPage();
+
     // Process each category
-    for (const category of categories) {
-      console.log(`\n--- Scraping category: ${category.name} (${category.url}) ---`);
-      
-      const page = await browser.newPage();
-      await page.setViewport({ width: 1920, height: 1080 });
-      await page.setUserAgent(getRandomUserAgent());
-      await page.setExtraHTTPHeaders({
-        'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'Cache-Control': 'max-age=0'
-      });
-
-      await page.goto(category.url, { 
-        waitUntil: "networkidle0",
-        timeout: 60000 
-      });
-
-      await checkForAntiBot(page);
-      
-      console.log('Category page loaded, finding articles...');
-      
-      // Extract article links from the category page
-      const articles = await page.$$eval('.title-news > h3 > a, .title-news a', links =>
-        links.slice(0, 10).map(link => ({
-          url: link.href,
-          title: link.innerText.trim(),
-        }))
-      );
-      
-      console.log(`Found ${articles.length} articles to scrape in category ${category.name}`);
-
-      // Process each article
-      for (const article of articles) {
-        try {
-          console.log(`\n=== Processing article ${articles.indexOf(article) + 1} of ${articles.length} ===`);
-          console.log(`URL: ${article.url}`);
-          console.log(`Title: ${article.title}`);
-          
-          // Check if article already exists in database
-          const existingArticle = await Article.findOne({
-            sourceId: SOURCE_ID,
-            title: article.title
-          });
-
-          if (existingArticle) {
-            console.log(`Article already exists: ${article.title}`);
-            continue; 
-          }
-          
-          await randomDelay();
-
-          const articlePage = await browser.newPage();
-          await articlePage.setUserAgent(getRandomUserAgent());
-          await articlePage.setViewport({ width: 1920, height: 1080 });
-
-          console.log('Navigating to article page...');
-          await articlePage.goto(article.url, { 
-            waitUntil: 'domcontentloaded',
-            timeout: 60000 
-          });
-          
-          // Wait for article content to load
-          await articlePage.waitForSelector('.sidebar-1');
-          console.log('Article page loaded');
-
-          // Extract article details
-          const articleData = await articlePage.evaluate(() => {
-            const title = document.querySelector('h1.title-detail')?.innerText.trim() || '';
-            const description = document.querySelector('.description')?.innerText.trim() || '';
-            const author = document.querySelector('.author_mail strong')?.innerText.trim() || 
-                           document.querySelector('.author_mail')?.innerText.trim() || 'VnExpress';
-            
-            // Extract publish date
-            let publishDateStr = document.querySelector('.date')?.innerText.trim() || '';
-            let publishDate = new Date();
-            if (publishDateStr) {
-              try {
-                // Convert Vietnamese date format to Date object
-                publishDateStr = publishDateStr.replace(/\s+/g, ' ').trim();
-                publishDate = new Date(publishDateStr);
-              } catch (e) {
-                console.error('Date parsing error:', e);
-              }
-            }
-            
-            // Extract article content
-            const contentNodes = document.querySelectorAll('.fck_detail p.Normal');
-            let content = '';
-            contentNodes.forEach(node => {
-              content += node.innerText.trim() + '\n\n';
-            });
-            
-            // Get featured image
-            const featuredImage = document.querySelector('.fig-picture img')?.src || '';
-            
-            // Get category
-            const category = document.querySelector('.breadcrumb li:nth-child(2) a')?.innerText.trim() || '';
-            
-            return {
-              title,
-              description,
-              author,
-              publishDate: publishDate.toISOString(),
-              content: content.trim(),
-              featuredImage,
-              category
-            };
-          });
-
-          console.log(`Extracted article: "${articleData.title}"`);
-          console.log(`Author: ${articleData.author}`);
-          console.log(`Category: ${articleData.category}`);
-          console.log(`Content length: ${articleData.content.length} characters`);
-
-          // Create or update author in database
-          const scrapedUser = await ScrapedUser.findOneAndUpdate(
-            { username: articleData.author },
-            {
-              username: articleData.author,
-              source: "vnexpress",
-              lastScraped: new Date()
-            },
-            { upsert: true, new: true }
-          );
-
-          // Create new article
-          const newArticle = new Article({
-            title: articleData.title,
-            description: articleData.description,
-            content: articleData.content,
-            authorId: scrapedUser._id,
-            sourceId: SOURCE_ID,
-            url: article.url,
-            category: articleData.category || category.name,
-            featuredImage: articleData.featuredImage,
-            createdAt: new Date(articleData.publishDate),
-            updatedAt: new Date()
-          });
-
-          await newArticle.save();
-          console.log(`✅ Saved new article: ${articleData.title}`);
-          
-          // Close article page
-          await articlePage.close();
-          
-        } catch (error) {
-          console.error(`Error processing article ${article.title}:`, error);
-          try {
-            await articlePage.close();
-          } catch (e) {
-            // Ignore errors when trying to close already closed pages
-          }
-        }
+    for (const category of CONFIG.categories) {
+      try {
+        console.log(`\n=== Processing category: ${category.name} ===`);
+        
+        // Get articles from category page
+        const articles = await scrapeCategory(page, category);
+        
+        // Process articles
+        await processArticles(browser, articles, category.name);
+        
+        console.log(`✅ Completed category: ${category.name}`);
+      } catch (error) {
+        console.error(`❌ Failed category ${category.name}:`, error);
       }
-      
-      await page.close();
     }
 
-    await disconnectFromMongoDB();
-    return { success: true, message: `Scraped articles from VnExpress` };
+    console.log('🎉 Scraping completed successfully!');
   } catch (error) {
     console.error("Scraper failed:", error);
-    return { success: false, error: error.message };
+    throw error;
   } finally {
     if (browser) {
       await browser.close();
     }
+    await disconnectFromMongoDB();
   }
 }
 
-export const handler = async (event, context) => {
-  try {
-    const result = await scrapeVnExpress();
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Scraping completed successfully', result }),
-    };
-  } catch (err) {
-    console.error('Scraper failed:', err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: 'Scraper failed', error: err.message }),
-    };
-  }
-};
-
-console.log('Starting VnExpress scraper...');
+// Run the scraper
 scrapeVnExpress().catch(err => {
   console.error('Scraper failed:', err);
   process.exit(1);
