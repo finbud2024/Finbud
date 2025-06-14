@@ -222,4 +222,14 @@ articleRoute.get("/:id", async (req, res) => {
   }
 });
 
+articleRoute.get('/limitArticles/:number', async( req, res ) => {
+  try {
+    const numberOfArticles = parseInt( req.params.number, 10 );
+    const articles = await Article.find().limit( numberOfArticles );
+    res.status(200).json(articles);
+  } catch ( err ) {
+    res.status( 500 ).json( { error: err.message } );
+  }
+} );
+
 export default articleRoute;

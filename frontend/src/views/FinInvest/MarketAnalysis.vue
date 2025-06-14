@@ -3,23 +3,21 @@
         <!-- ChatBot component -->
         <ChatBot :botMessage="templateChat" />
 
-
-
         <!-- Market Analysis -->
         <div class="market-analysis">
             <div class="market-header">
-                <h1>{{ t('marketAnalysisPage.marketAnalysisTitle') }}</h1>
-                <p>{{ t('marketAnalysisPage.marketAnalysisDescription') }}</p>
+                <h1>{{ marketAnalysis['marketAnalysisTitle'] }}</h1>
+                <p>{{ marketAnalysis['marketAnalysisDescription'] }}</p>
             </div>
 
             <div class="market-grid">
                 <div 
-                    v-for="(category, key, index) in marketAnalysis.marketAnalysis.components" 
+                    v-for="(category, key, index) in marketAnalysis['marketAnalysis']['components']" 
                     :key="key"
                     class="market-card"
                 >
                     <h3>
-                        {{ t('marketAnalysisPage.marketAnalysis.' + key) }}
+                        {{ marketAnalysis['marketAnalysis']['components'][key]['title'] }}
                         <i class="fas fa-chart-bar"></i>
                     </h3>
 
@@ -37,51 +35,50 @@
                             class="positive-detail-container"
                             :style="{ width: category.Positive }"
                         >
-                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Positive') }}</p>
+                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ marketAnalysis['marketAnalysis']['components'][key]['Positive'] }}</p>
                             <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Positive }}</p>
                         </div>
                         <div 
                             class="neutral-detail-container"
                             :style="{ width: category.Neutral }"
                         >
-                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Neutral') }}</p>
+                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ marketAnalysis['marketAnalysis']['components'][key]['Neutral'] }}</p>
                             <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Neutral }}</p>
                         </div>
                         <div 
                             class="negative-detail-container"
                             :style="{ width: category.Negative }"
                         >
-                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ t('marketAnalysisPage.Negative') }}</p>
+                            <p :style="{ fontSize: '11px', fontWeight: 600, margin: 0, padding: 0 }">{{ marketAnalysis['marketAnalysis']['components'][key]['Negative'] }}</p>
                             <p :style="{ margin: '2px 0 0 0', fontWeight: 600, padding: 0 }">{{ category.Negative }}</p>
                         </div>
                     </div>
                     <div style="display: flex; justify-content: space-between;">
-                        <p>{{ t('marketAnalysisPage.LastUpdated') }}: {{ category.LastUpdated }}</p>
+                        <p>{{ marketAnalysis['marketAnalysis']['components'][key]['LastUpdated'] }}: {{ category.LastUpdated }}</p>
                         <a :href="`/market-analysis/insight/${category.type}`" style="color: var(--black-in-light-mode); text-decoration: none;">{{ t('marketAnalysisPage.Insight') }}</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Trending AI News -->
         <div class="trend-ai-news-container">
             <div 
                 class="container-card-big"
                 style="width: calc(50% - 10px); padding-right: 0;"
             >
                 <div class="topic-container">
-                    <h2 class="component-title">{{ t('marketAnalysisPage.trend.title') }}</h2>
+                    <h2 class="component-title">{{ marketAnalysis['Topic']['Topic'] }}</h2>
                     <div class="topic-card">
                         <div class="title-group">
                             <div class="button-group">
                                 <button
                                     class="button"
                                     :class="{selected: selectedCategory === category}"
-                                    v-for="(category, index) in marketAnalysis.Topic.Categories"
+                                    v-for="(category, index) in marketAnalysis['Topic']['Categories']"
                                     :key="index"
                                     @click="selectedCategory = category"
                                 >
-                                    {{ t('marketAnalysisPage.trend.categories.' + category) }}
+                                    {{ marketAnalysis['Topic']['Categories'][index] }}
                                 </button>
                             </div>
 
@@ -92,11 +89,11 @@
                                         class="date-label"
                                     >
                                         <option
-                                            v-for="(date, index) in marketAnalysis.Date"
+                                            v-for="(date, index) in marketAnalysis['Date']"
                                             :key="index"
                                             :value="date"
                                         >
-                                            {{ t('marketAnalysisPage.' + date) }}
+                                            {{ marketAnalysis['Date'][date] }}
                                         </option>
                                     </select>
                                 </label>
@@ -107,7 +104,7 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>{{ t('marketAnalysisPage.trend.topic') }}</th>
+                                    <th>{{ marketAnalysis['Topic']['topic'] }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -117,12 +114,16 @@
                                 >
                                     <td>{{ row.Rank }}</td>
                                     <td>
-                                        <a
-                                            :style="{fontSize: '14px', fontWeight: '600', color: 'var(--black-in-light-mode)'}"
-                                            :href="row.Link"
-                                        >
-                                            {{ row.Title }}
-                                        </a>
+                                        <div class="tooltip-container" style="position: relative; display: inline-block;">
+                                            <a
+                                                :style="{fontSize: '14px', fontWeight: '600', color: 'var(--black-in-light-mode)'}"
+                                                :href="row.Link"
+                                                class="row-title"
+                                            >
+                                                {{ row.Title }}
+                                            </a>
+                                            <div class="tooltip-box">{{ row.Summary }}</div>
+                                        </div>
                                         <div style="display: flex; gap: 10px;">
                                             <div
                                                 :style="{fontSize: '12px', fontWeight: '400'}"
@@ -160,7 +161,7 @@
             >
                 <div class="topic-container">
                     <h2 class="component-title">
-                        {{ t('marketAnalysisPage.AINews') }}
+                        {{ marketAnalysis['AINews'] }}
                     </h2>
                     <div class="topic-card">
                         <div class="news-card" style="height: calc(30% - 5px);">
@@ -257,7 +258,7 @@
             <div class="container-card-big">
                 <div class="stock-card-container">
                     <div
-                        v-for="(title, index) in marketAnalysis.Stock.Title"
+                        v-for="(title, index) in marketAnalysis['Stock']['Title']"
                         :key="index"
                         class="stock-card"
                     >
@@ -275,7 +276,7 @@
                                         class="date-label"
                                     >
                                         <option
-                                            v-for="(date, index) in marketAnalysis.Date"
+                                            v-for="(date, index) in marketAnalysis['Date']"
                                             :key="index"
                                         >
                                             {{ date }}
@@ -288,9 +289,9 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>{{ t('marketAnalysisPage.trend.topic') }}</th>
+                                    <th>{{ marketAnalysis['Topic']['topic'] }}</th>
                                     <th></th>
-                                    <th>{{ t('marketAnalysisPage.mentions') }}</th>
+                                    <th>{{ marketAnalysis['mentions'] }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -330,6 +331,7 @@
 
 <script setup>
 
+import axios from 'axios';
 import ChatBot from "../../components/ChatBot/DraggableChatBot.vue";
 import marketAnalysisData from './MarketAnalysis/marketAnalysis.json';
 import trendingIcon from '@/assets/increaseTrend.png';
@@ -341,24 +343,69 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 const { t } = useI18n()
 
 const marketAnalysis = ref(marketAnalysisData);
-const selectedCategory = ref(marketAnalysis.value.Topic.Categories[0]);
+const selectedCategory = ref(marketAnalysis.value['Topic']['Categories'][0]);
 const tableRows = ref([]);
 const stockTableRows = ref([]);
-const selectedDate = ref(marketAnalysis.value.Date.Today);
+const selectedDate = ref(marketAnalysis.value['Date']['Today']);
 const smallNewsCardsFirst = ref([]);
 const smallNewsCardsSecond = ref([]);
 const maxVal = ref({});
 
-const getTable = (tName) => {
-    tableRows.value = marketAnalysis.value.Topic.Articles[selectedDate.value][tName];
+const newsSource = [
+    '.netlify/functions/server/api/articles/limitArticles'
+];
+
+const getTable = async (tName) => {
+    let newsList = [];
+
+    if (tName === 'All') {
+        let newsCount = 0;
+        
+        // Use Promise.all to wait for all async operations to complete
+        await Promise.all(newsSource.map(async (fetchingUrl) => {
+            try {
+                const news = await axios.get(`${fetchingUrl}/20`);
+                
+                if (!news.data) {
+                    console.error('Error getting news data');
+                    return;
+                }
+
+                news.data.forEach((article) => {
+                    newsList.push({
+                        Rank: ++newsCount,
+                        Title: article.title,
+                        Link: article.url,
+                        Summary: article.content
+                    });
+                });
+            } catch (error) {
+                console.error('Error fetching news:', error);
+            }
+        }));
+
+        // Shuffle the array and take only first 10 items
+        newsList = newsList
+            .sort(() => Math.random() - 0.5) // Shuffle array
+            .slice(0, 10) // Take only first 10 items
+            .map((item, index) => ({ // Update ranks to be sequential
+                ...item,
+                Rank: index + 1
+            }));
+    } else {
+        newsList = marketAnalysis.value['Topic']['Articles'][selectedDate.value][tName];
+    }
+
+    console.log(`[DEBUG] ${tName}:`, newsList);
+    tableRows.value = newsList;
 }
 
-watch(selectedDate, (newDate) => {
-    getTable(selectedCategory.value);
+watch(selectedDate, async (newDate) => {
+    await getTable(selectedCategory.value);
 });
 
 const getStockTable = (tName) => {
-    const temp = marketAnalysis.value.Stock.Stock[tName].Data;
+    const temp = marketAnalysis.value['Stock']['Stock'][tName]['Data'];
     let max = 0;
     for (let i = 0; i < temp.length; i++) {
         if (temp[i].mentions > max) {
@@ -377,22 +424,24 @@ const getIcon = (tag) => {
 
 onMounted(async () => {
     getTable(selectedCategory.value);
-    smallNewsCardsFirst.value = marketAnalysis.value.AI_News.AI_News.slice(1).slice(0, 3);
-    smallNewsCardsSecond.value = marketAnalysis.value.AI_News.AI_News.slice(1).slice(3, 6);
-    stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[0]));
-    stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[1]));
-    stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[2]));
+
+    console.log( tableRows.value );
+
+    smallNewsCardsFirst.value = marketAnalysis.value['AI_News']['AI_News'].slice(1).slice(0, 3);
+    smallNewsCardsSecond.value = marketAnalysis.value['AI_News']['AI_News'].slice(1).slice(3, 6);
+    stockTableRows.value.push(getStockTable(marketAnalysis.value['Stock']['Title'][0]));
+    stockTableRows.value.push(getStockTable(marketAnalysis.value['Stock']['Title'][1]));
+    stockTableRows.value.push(getStockTable(marketAnalysis.value['Stock']['Title'][2]));
     console.log(maxVal.value['Positive']);
 });
 
-watch(selectedCategory, (newCategory) => {
-    getTable(newCategory);
+watch(selectedCategory, async (newCategory) => {
+    await getTable(newCategory);
 });
     
 </script>
 
 <style scoped>
-
 .page-container {
     background-color: var(--white-in-light-mode);
     color: var(--black-in-light-mode);
@@ -1073,5 +1122,37 @@ tbody tr td {
         margin-bottom: 10px;
     }
 
+}
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-box {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, 0);
+    z-index: 9999;
+    background: #fff;
+    color: #222;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 20px 30px;
+    min-width: 300px;
+    max-width: 80vw;
+    max-height: 60vh;
+    overflow: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    font-size: 16px;
+    font-weight: 500;
+    white-space: pre-line;
+}
+
+.tooltip-container:hover .tooltip-box,
+.tooltip-container:focus-within .tooltip-box {
+    display: block !important;
 }
 </style>
