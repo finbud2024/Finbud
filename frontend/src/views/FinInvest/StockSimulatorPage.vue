@@ -334,10 +334,10 @@ export default {
   },
   async mounted() {
     // Fetch financial data from API
-    await this.fetchFinancialData()
+    // await this.fetchFinancialData()
     
     // Load initial stock data for filters
-    await this.loadInitialStocks()
+    // await this.loadInitialStocks()
     
     // Listen for stock buy and sell requests from chatbot
     if (this.$eventBus) {
@@ -349,6 +349,7 @@ export default {
     // Check if mobile
     this.checkMobile();
     window.addEventListener('resize', this.checkMobile);
+    this.showAssistant = true;
   },
   beforeDestroy() {
     // Clean up event listener
