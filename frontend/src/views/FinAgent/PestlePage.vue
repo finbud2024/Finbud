@@ -244,4 +244,72 @@ export default defineComponent({
     padding: 1.5rem;
   }
 }
+
+/* Dark mode styles */
+.dark-mode .pestle-page {
+  background: #374151;
+  color: #f9fafb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .title {
+  color: #f9fafb;
+}
+
+.dark-mode .text-content {
+  background: #4b5563;
+}
+
+.dark-mode .subtitle {
+  color: #e5e7eb;
+}
+
+.dark-mode .description {
+  color: #d1d5db;
+}
+
+.dark-mode .industry-input-container {
+  background: #4b5563;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .label {
+  color: #e5e7eb;
+}
+
+.dark-mode .required {
+  color: #f87171;
+}
+
+.dark-mode .input {
+  background: #374151;
+  border-color: #6b7280;
+  color: #f9fafb;
+}
+
+.dark-mode .input:focus {
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.1);
+}
+
+.dark-mode .start-button {
+  background: #1f2937;
+}
+
+.dark-mode .start-button:hover {
+  background: #374151;
+}
+
+.dark-mode .start-button:disabled {
+  background: #6b7280;
+}
+
+.dark-mode .back-button {
+  background: #6b7280;
+  color: #f9fafb;
+}
+
+.dark-mode .back-button:hover {
+  background: #4b5563;
+}
 </style>

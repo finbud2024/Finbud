@@ -45,7 +45,6 @@
             <router-link to="/docs">{{ $t("FinData") }}</router-link>
             <router-link to="/macro-economic">{{ $t("macroEconomic") }}</router-link>
             <router-link to="/market-analysis">{{ $t("marketAnalysis") }}</router-link>
-            <router-link to="/blog">Blog</router-link>
           </div>
         </li>
 
@@ -176,6 +175,14 @@
             <router-link to="/about">{{ $t("about") }}</router-link>
             <router-link to="/tech">{{ $t("technology") }}</router-link>
           </div>
+        </li>
+
+        <!-- Adding standalone blog section -->
+        <li v-if="isAuthenticated">
+          <router-link to="/blog" class="nav-link blog-link">
+            <font-awesome-icon icon="fa-solid fa-newspaper" class="icon" />
+            <span>Blog</span>
+          </router-link>
         </li>
       </ul>
 
@@ -1426,5 +1433,48 @@ export default {
     0 10px 50px rgba(0, 0, 0, 1),
     0 0 40px rgba(255, 255, 255, 0.3),
     inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  color: #4b5563;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.blog-link {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border: 1px solid #d1d5db;
+}
+
+.blog-link:hover {
+  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.blog-link .icon {
+  color: #4b5563;
+  font-size: 1.1rem;
+  min-width: 20px;
+}
+
+/* Dark mode styles */
+.dark-mode .blog-link {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-color: #374151;
+}
+
+.dark-mode .blog-link:hover {
+  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+}
+
+.dark-mode .blog-link .icon {
+  color: #d1d5db;
 }
 </style>
