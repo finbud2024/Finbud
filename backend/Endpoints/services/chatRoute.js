@@ -61,7 +61,7 @@ const countTokens = (txt) => approximateTokenCount(txt);
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 // Agent Route: Searcher
-chatRoute.post('/agents/search', async (req, res) => {
+chatRoute.post('/agents/search', isAuthenticated, async (req, res) => {
     const { query, numLinks = 5 } = req.body;
     if (!query) {
         return res.status(400).json({ error: 'Missing "query" in request body.' });
@@ -82,7 +82,7 @@ chatRoute.post('/agents/search', async (req, res) => {
 });
 
 // Agent Route: Scraper (using Postlight Parser)
-chatRoute.post('/agents/scrape', async (req, res) => {
+chatRoute.post('/agents/scrape', isAuthenticated, async (req, res) => {
     const { url } = req.body;
     if (!url) {
         return res.status(400).json({ error: 'Missing "url" in request body.' });
@@ -97,7 +97,7 @@ chatRoute.post('/agents/scrape', async (req, res) => {
 });
 
 // Agent Route: Leaf Summarizer
-chatRoute.post('/agents/summarize-leaf', async (req, res) => {
+chatRoute.post('/agents/summarize-leaf', isAuthenticated, async (req, res) => {
   const { contents, goal } = req.body;
   if (!groqClient) return res.status(500).json({ error: 'Backend Groq not initialized.' });
 
@@ -139,7 +139,7 @@ ${contents.join("\n\n")}
 
 // Agent Route: Master Report Compiler
 // Agent Route: Master Report Compiler
-chatRoute.post('/agents/compile-report', async (req, res) => {
+chatRoute.post('/agents/compile-report', isAuthenticated, async (req, res) => {
   let { synthesis, researchBrief = {} } = req.body;
   if (!groqClient) return res.status(500).json({ error: 'Backend Groq not initialized.' });
 
@@ -198,7 +198,7 @@ FINAL REPORT:
 
 
 // Agent Route: QA and Fact-Checker
-chatRoute.post('/agents/qa-fact-check', async (req, res) => {
+chatRoute.post('/agents/qa-fact-check',isAuthenticated, async (req, res) => {
     const { report } = req.body;
     // For now, this is a mock QA check. In a real system, this would be more complex.
     const qaResult = {

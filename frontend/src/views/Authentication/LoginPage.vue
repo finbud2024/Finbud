@@ -473,4 +473,100 @@ html, body {
   }
 }
 
+/* Dark mode styles */
+.dark-mode .signin-container {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #f9fafb;
+}
+
+.dark-mode .header h1 {
+  color: #f9fafb;
+}
+
+.dark-mode .header p {
+  color: #d1d5db;
+}
+
+.dark-mode .social-btn {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark-mode .social-btn:hover {
+  background-color: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .form-group label {
+  color: #f9fafb;
+}
+
+.dark-mode .forgot-password {
+  color: #d1d5db;
+}
+
+.dark-mode .forgot-password:hover {
+  color: #f9fafb;
+}
+
+.dark-mode .form-input {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark-mode .form-input:focus {
+  border-color: #6b7280;
+  background-color: #4b5563;
+}
+
+.dark-mode .form-input::placeholder {
+  color: #9ca3af;
+}
+
+.dark-mode .toggle-password {
+  color: #9ca3af;
+}
+
+.dark-mode .toggle-password:hover {
+  color: #d1d5db;
+}
+
+.dark-mode .submit-btn {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-mode .submit-btn:hover {
+  background-color: #374151;
+}
+
+.dark-mode .error-message {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+.dark-mode .signup-link {
+  color: #d1d5db;
+}
+
+.dark-mode .signup-link a {
+  color: #f9fafb;
+}
+
+.dark-mode .signup-link a:hover {
+  color: #d1d5db;
+}
+
+.dark-mode .or-separator::before,
+.dark-mode .or-separator::after {
+  background-color: #4b5563;
+}
+
+.dark-mode .or-separator span {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #d1d5db;
+}
+
 </style>

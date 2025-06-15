@@ -49,6 +49,15 @@
 							Think
 						</button>
 					</div>
+					<div class="agent-btn">
+						<button
+							class="chat-mode-button"
+							:class="{ active: chatMode === 'rag' }"
+							@click="toggleRAGMode"
+						>
+							RAG
+						</button>
+					</div>
 				</div>
 
 				<!-- Drop File -->
@@ -232,6 +241,14 @@ export default {
 			}
 		},
 
+		toggleRAGMode() {
+			if (this.chatMode) {
+				this.chatMode = "";
+			} else {
+				this.chatMode = "rag";
+			}
+		},
+
 		checkChatMode() {
 			if (this.messageText.includes("#deep-research") || this.messageText.includes("#deepresearch")) {
 				this.chatMode = "deep-research";
@@ -239,6 +256,9 @@ export default {
 			} else if (this.messageText.includes("#think")) {
 				this.chatMode = "think";
 				this.messageText = this.messageText.replace("#think", "");
+			} else if (this.messageText.includes("#rag")) {
+				this.chatMode = "rag";
+				this.messageText = this.messageText.replace("#rag", "");
 			}
 		},
 
