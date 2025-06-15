@@ -9,8 +9,16 @@ module.exports = defineConfig({
         '@': path.resolve(__dirname, 'src')
       }
     },
+    experiments: {
+      asyncWebAssembly: true,
+      syncWebAssembly: true
+    },
     module: {
       rules: [
+        {
+          test: /\.wasm$/,
+          type: 'webassembly/async'
+        },
         {
           test: /\.csv$/,
           use: [
