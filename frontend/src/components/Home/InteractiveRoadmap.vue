@@ -410,8 +410,9 @@ export default {
 <style scoped>
 .roadmap-section {
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #f8faff 0%, #e3f2fd 100%);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%);
   min-height: 100vh;
+  color: #e2e8f0;
 }
 
 .roadmap-container {
@@ -428,7 +429,7 @@ export default {
 .section-title {
   font-size: 2.5rem;
   font-weight: 700;
-  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  background: linear-gradient(45deg, #60a5fa, #3b82f6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -437,18 +438,19 @@ export default {
 
 .section-subtitle {
   font-size: 1.2rem;
-  color: #64748b;
+  color: #a0aec0;
   max-width: 600px;
   margin: 0 auto;
 }
 
 /* Progress Overview */
 .progress-overview {
-  background: white;
+  background: #2d3748;
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 3rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #4a5568;
 }
 
 .overall-progress {
@@ -459,14 +461,14 @@ export default {
 
 .progress-label {
   font-weight: 600;
-  color: #374151;
+  color: #e2e8f0;
   min-width: 150px;
 }
 
 .progress-bar-container {
   flex: 1;
   height: 10px;
-  background: #e5e7eb;
+  background: #4a5568;
   border-radius: 5px;
   overflow: hidden;
 }
@@ -497,7 +499,7 @@ export default {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: linear-gradient(to bottom, #e5e7eb, #d1d5db);
+  background: linear-gradient(to bottom, #4a5568, #2d3748);
   transform: translateX(-50%);
   border-radius: 2px;
 }
@@ -540,21 +542,21 @@ export default {
 .marker-icon {
   width: 60px;
   height: 60px;
-  background: white;
-  border: 4px solid #e5e7eb;
+  background: #2d3748;
+  border: 4px solid #4a5568;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: #6b7280;
+  color: #a0aec0;
   transition: all 0.3s ease;
 }
 
 .timeline-phase.active .marker-icon {
-  border-color: #1976d2;
-  color: #1976d2;
-  box-shadow: 0 0 20px rgba(25, 118, 210, 0.3);
+  border-color: #60a5fa;
+  color: #60a5fa;
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
 }
 
 .timeline-phase.completed .marker-icon {
@@ -570,7 +572,7 @@ export default {
   width: 80px;
   height: 80px;
   transform: translate(-50%, -50%);
-  border: 2px solid #1976d2;
+  border: 2px solid #60a5fa;
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
@@ -582,17 +584,17 @@ export default {
 
 /* Phase Content */
 .phase-content {
-  background: white;
+  background: #2d3748;
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border: 2px solid #4a5568;
 }
 
 .timeline-phase.active .phase-content {
-  border-color: #1976d2;
-  box-shadow: 0 8px 40px rgba(25, 118, 210, 0.15);
+  border-color: #60a5fa;
+  box-shadow: 0 8px 40px rgba(96, 165, 250, 0.2);
 }
 
 .phase-header {
@@ -605,13 +607,13 @@ export default {
 .phase-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #e2e8f0;
   margin: 0;
 }
 
 .phase-duration {
-  background: #f3f4f6;
-  color: #6b7280;
+  background: #4a5568;
+  color: #a0aec0;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.875rem;
@@ -619,7 +621,7 @@ export default {
 }
 
 .phase-description {
-  color: #6b7280;
+  color: #a0aec0;
   margin-bottom: 1.5rem;
   line-height: 1.6;
 }
@@ -640,11 +642,11 @@ export default {
 }
 
 .step-item:hover {
-  background: #f8fafc;
+  background: #4a5568;
 }
 
 .step-checkbox {
-  color: #6b7280;
+  color: #a0aec0;
   font-size: 1.2rem;
 }
 
@@ -661,23 +663,25 @@ export default {
 
 .step-title {
   font-weight: 500;
-  color: #374151;
+  color: #e2e8f0;
 }
 
 .step-action {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #1976d2;
+  color: #60a5fa;
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   transition: all 0.3s ease;
+  background: #374151;
+  border: 1px solid #4a5568;
 }
 
 .step-action:hover {
-  background: #e3f2fd;
+  background: #4a5568;
   transform: translateX(4px);
 }
 
@@ -692,7 +696,7 @@ export default {
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  background: linear-gradient(45deg, #60a5fa, #3b82f6);
   color: white;
   border: none;
   border-radius: 12px;
@@ -703,7 +707,7 @@ export default {
 
 .cta-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+  box-shadow: 0 8px 25px rgba(96, 165, 250, 0.4);
 }
 
 .cta-button:disabled {
@@ -777,7 +781,7 @@ export default {
   margin-bottom: 2rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: #e2e8f0;
 }
 
 .quick-actions {
@@ -791,25 +795,25 @@ export default {
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  background: white;
+  background: #2d3748;
   border-radius: 16px;
   text-decoration: none;
   color: inherit;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 2px solid transparent;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 2px solid #4a5568;
 }
 
 .quick-action-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
-  border-color: #1976d2;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  border-color: #60a5fa;
 }
 
 .action-icon {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -825,17 +829,17 @@ export default {
 .action-content h4 {
   margin: 0 0 0.5rem 0;
   font-weight: 600;
-  color: #1f2937;
+  color: #e2e8f0;
 }
 
 .action-content p {
   margin: 0;
-  color: #6b7280;
+  color: #a0aec0;
   font-size: 0.875rem;
 }
 
 .action-arrow {
-  color: #1976d2;
+  color: #60a5fa;
   font-size: 1.25rem;
   transition: transform 0.3s ease;
 }
