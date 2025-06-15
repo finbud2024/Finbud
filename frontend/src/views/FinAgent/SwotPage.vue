@@ -1,35 +1,33 @@
 <template>
-  <div class="pestle-page">
+  <div class="swot-page">
     <!-- Title -->
-    <h1 class="title">Phân tích PESTLE</h1>
+    <h1 class="title">Phân tích SWOT</h1>
 
     <!-- Text content, hidden after clicking Continue -->
-    <div v-if="!showPestle" class="text-content">
+    <div v-if="!showSwot" class="text-content">
       <p class="description">
-        Quy trình AI này hướng dẫn bạn thực hiện phân tích PESTLE chi tiết, giúp bạn đánh giá các yếu tố chính trị, kinh
-        tế, xã hội, công nghệ, pháp lý và môi trường ảnh hưởng đến ngành của bạn. Bằng cách cung cấp cái nhìn sâu sắc về
-        sáu lĩnh vực quan trọng này, công cụ hỗ trợ đưa ra các quyết định chiến lược kinh doanh dựa trên dữ liệu.
+        Quy trình AI này hướng dẫn bạn thực hiện phân tích SWOT chi tiết, giúp bạn đánh giá các điểm mạnh, điểm yếu, 
+        cơ hội và thách thức ảnh hưởng đến doanh nghiệp của bạn. Bằng cách cung cấp cái nhìn sâu sắc về 
+        bốn khía cạnh quan trọng này, công cụ hỗ trợ đưa ra các quyết định chiến lược kinh doanh dựa trên dữ liệu.
       </p>
 
       <h2 class="subtitle">Cách sử dụng</h2>
       <p class="description">
-        Nhập ngành: Bắt đầu bằng cách nhập ngành mà bạn muốn phân tích.
+        Nhập tên công ty hoặc doanh nghiệp: Bắt đầu bằng cách nhập tên công ty hoặc doanh nghiệp mà bạn muốn phân tích.
       </p>
 
       <h2 class="subtitle">Khi nào nên sử dụng</h2>
       <p class="description">
-        Công cụ này lý tưởng cho các nhà chiến lược kinh doanh, nhà phân tích thị trường và người ra quyết định cần hiểu
-        rõ các
-        yếu tố bên ngoài ảnh hưởng đến ngành của họ. Đặc biệt hữu ích trong quá trình lập kế hoạch chiến lược, phân tích
-        gia nhập thị trường,
-        và đánh giá rủi ro.
+        Công cụ này lý tưởng cho các nhà quản lý doanh nghiệp, nhà phân tích chiến lược và người ra quyết định cần hiểu
+        rõ các yếu tố nội tại và bên ngoài ảnh hưởng đến tổ chức của họ. Đặc biệt hữu ích trong quá trình lập kế hoạch 
+        chiến lược, phân tích thị trường, và đánh giá vị thế cạnh tranh.
       </p>
 
-      <div class="industry-input-container">
-        <!-- Input field for industry -->
-        <div class="industry-input">
-          <label for="industry" class="label">Ngành<span class="required">*</span></label>
-          <input id="industry" v-model="industry" type="text" placeholder="Nhập ngành bạn muốn phân tích"
+      <div class="company-input-container">
+        <!-- Input field for company -->
+        <div class="company-input">
+          <label for="company" class="label">Công ty<span class="required">*</span></label>
+          <input id="company" v-model="company" type="text" placeholder="Nhập tên công ty bạn muốn phân tích"
             class="input" />
         </div>
 
@@ -41,10 +39,8 @@
 
     </div>
 
-
-
-    <!-- Pestle Component -->
-    <div v-if="showPestle" class="pestle-container">
+    <!-- Swot Component -->
+    <div v-if="showSwot" class="swot-container">
       <div class="control-buttons">
         <button @click="resetWorkflow" class="back-button">Quay lại</button>
         <div class="analysis-controls">
@@ -63,24 +59,24 @@
           </button>
         </div>
       </div>
-      <Pestle :industry="industry" :paused="isPaused" :cancelled="isCancelled" @analysis-cancelled="onAnalysisCancelled" />
+      <Swot :company="company" :paused="isPaused" :cancelled="isCancelled" @analysis-cancelled="onAnalysisCancelled" />
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import Pestle from "@/components/PestlePage/Pestle.vue";
+import Swot from "@/components/SwotPage/Swot.vue";
 
 export default defineComponent({
-  name: "PestlePage",
+  name: "SwotPage",
   components: {
-    Pestle,
+    Swot,
   },
   data() {
     return {
-      showPestle: false, // Controls whether the Pestle component is shown
-      industry: "", // Stores the entered industry
+      showSwot: false, // Controls whether the Swot component is shown
+      company: "", // Stores the entered company
       inputEmpty: true, // Flag to check if the input is empty
       isPaused: false, // Controls pause state
       isCancelled: false, // Controls cancel state
@@ -91,13 +87,13 @@ export default defineComponent({
       if (this.inputEmpty) {
         return;
       }
-      this.showPestle = true; // Show the Pestle component
+      this.showSwot = true; // Show the Swot component
       this.isPaused = false;
       this.isCancelled = false;
     },
     resetWorkflow() {
-      this.showPestle = false; // Reset the workflow
-      this.industry = ""; // Clear the industry input
+      this.showSwot = false; // Reset the workflow
+      this.company = ""; // Clear the company input
       this.isPaused = false;
       this.isCancelled = false;
     },
@@ -115,7 +111,7 @@ export default defineComponent({
     },
   },
   watch: {
-    industry(newValue) {
+    company(newValue) {
       this.inputEmpty = newValue.trim() === "";
     },
   },
@@ -123,7 +119,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.pestle-page {
+.swot-page {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   padding: 2rem;
   max-width: 1000px;
@@ -163,7 +159,7 @@ export default defineComponent({
   color: #4a5568;
 }
 
-.industry-input-container {
+.company-input-container {
   margin-top: 3rem;
   background: white;
   padding: 2rem;
@@ -171,7 +167,7 @@ export default defineComponent({
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.industry-input {
+.company-input {
   margin-bottom: 1.5rem;
 }
 
@@ -233,27 +229,20 @@ export default defineComponent({
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: 500;
-  color: #2d3748;
-  background: #e2e8f0;
-  border: none;
+  color: #4a5568;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .back-button:hover {
-  background: #cbd5e0;
+  background: #e2e8f0;
+  border-color: #cbd5e0;
 }
 
-.back-button::before {
-  content: '←';
-  font-size: 1.2rem;
-}
-
-.pestle-container {
+.swot-container {
   margin-top: 2rem;
 }
 
@@ -317,7 +306,7 @@ export default defineComponent({
 }
 
 @media (max-width: 768px) {
-  .pestle-page {
+  .swot-page {
     padding: 1rem;
     margin: 1rem;
   }
@@ -334,7 +323,7 @@ export default defineComponent({
     font-size: 1rem;
   }
 
-  .industry-input-container {
+  .company-input-container {
     padding: 1.5rem;
   }
 
@@ -353,4 +342,4 @@ export default defineComponent({
     justify-content: center;
   }
 }
-</style>
+</style> 

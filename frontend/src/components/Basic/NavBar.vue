@@ -45,7 +45,6 @@
             <router-link to="/docs">{{ $t("FinData") }}</router-link>
             <router-link to="/macro-economic">{{ $t("macroEconomic") }}</router-link>
             <router-link to="/market-analysis">{{ $t("marketAnalysis") }}</router-link>
-            <router-link to="/blog">Blog</router-link>
           </div>
         </li>
 
@@ -95,13 +94,9 @@
               <font-awesome-icon icon="fa-solid fa-chart-pie" class="subsection-item-icon" />
               {{ $t("pestle") }}
             </router-link>
-            <router-link to="/ai-workflows" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-cogs" class="subsection-item-icon" />
-              AI Workflows
-            </router-link>
-            <router-link to="/ai-breakthrough-workflows" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-rocket" class="subsection-item-icon" />
-              AI Breakthrough Workflows
+            <router-link to="/swot-analysis" class="subsection-item">
+              <font-awesome-icon icon="fa-solid fa-bullseye" class="subsection-item-icon" />
+              Phân tích SWOT
             </router-link>
           </div>
         </li>
@@ -154,6 +149,14 @@
           <router-link to="/forum" class="nav-link finverse-link">
             <font-awesome-icon icon="fa-solid fa-users" class="icon" />
             <span>{{ $t("finVerse.title", "FinVerse") }}</span>
+            </router-link>
+        </li>
+
+        <!-- Blog Section - Independent -->
+        <li v-if="isAuthenticated">
+          <router-link to="/blog" class="nav-link blog-link">
+            <font-awesome-icon icon="fa-solid fa-blog" class="icon" />
+            <span>Blog</span>
             </router-link>
         </li>
 
@@ -232,7 +235,7 @@ import {
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
-  faCogs, faRocket, faSearchDollar, faCalculator, faBullseye
+  faCogs, faRocket, faSearchDollar, faCalculator, faBullseye, faBlog
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -241,7 +244,7 @@ library.add(
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
-  faCogs, faRocket, faSearchDollar, faCalculator, faBullseye
+  faCogs, faRocket, faSearchDollar, faCalculator, faBullseye, faBlog
 );
 
 export default {
@@ -1426,5 +1429,43 @@ export default {
     0 10px 50px rgba(0, 0, 0, 1),
     0 0 40px rgba(255, 255, 255, 0.3),
     inset 0 1px 1px rgba(255, 255, 255, 0.25);
+}
+
+/* Blog Link Styling */
+.blog-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  color: var(--nav-text);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: white !important;
+  border: 2px solid transparent;
+}
+
+.blog-link:hover {
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.blog-link .icon {
+  font-size: 1.2rem;
+  color: white;
+}
+
+/* Dark mode adjustments for Blog */
+.dark-mode .blog-link {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.dark-mode .blog-link:hover {
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.5);
 }
 </style>

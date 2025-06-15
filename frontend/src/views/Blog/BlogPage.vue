@@ -124,7 +124,7 @@
     </section>
 
     <!-- Interactive Robot -->
-    <div class="interactive-robot" ref="robot" :style="robotStyle">
+    <div class="interactive-robot" ref="robot">
       <div class="robot-body">
         <div class="robot-head" :style="headStyle">
           <div class="robot-eyes">
@@ -187,11 +187,9 @@ export default {
       currentPage: 1,
       itemsPerPage: 9,
       
-      // Robot data
+      // Robot data  
       mouseX: 0,
       mouseY: 0,
-      robotX: 50,
-      robotY: 50,
       showCommunication: false,
       isTyping: false,
       isRobotTalking: false,
@@ -208,16 +206,13 @@ export default {
     }
   },
   computed: {
-    robotStyle() {
-      return {
-        left: `${this.robotX}px`,
-        top: `${this.robotY}px`,
-        transform: `translate(-50%, -50%)`
-      }
-    },
     headStyle() {
-      const dx = this.mouseX - this.robotX
-      const dy = this.mouseY - this.robotY
+      // Robot ở vị trí cố định: bottom: 150px, right: 100px
+      const robotFixedX = window.innerWidth - 100
+      const robotFixedY = window.innerHeight - 150
+      
+      const dx = this.mouseX - robotFixedX
+      const dy = this.mouseY - robotFixedY
       const angle = Math.atan2(dy, dx) * (180 / Math.PI)
       const limitedAngle = Math.max(-30, Math.min(30, angle * 0.3))
       
@@ -400,40 +395,27 @@ export default {
         this.mouseX = event.clientX
         this.mouseY = event.clientY
         
-        // Smooth robot movement toward cursor
-        const targetX = Math.max(60, Math.min(window.innerWidth - 60, this.mouseX))
-        const targetY = Math.max(60, Math.min(window.innerHeight - 60, this.mouseY))
-        
-        // Ease toward target position
-        const ease = 0.1
-        this.robotX += (targetX - this.robotX) * ease
-        this.robotY += (targetY - this.robotY) * ease
+        // Robot ở vị trí cố định - chỉ theo dõi mouse để eyes và head theo dõi
       }
       
       document.addEventListener('mousemove', this.trackMouse)
-      
-      // Initial robot position
-      this.robotX = window.innerWidth - 100
-      this.robotY = window.innerHeight / 2
     },
     
     trackMouse(event) {
       this.mouseX = event.clientX
       this.mouseY = event.clientY
       
-      // Smooth robot movement toward cursor
-      const targetX = Math.max(60, Math.min(window.innerWidth - 60, this.mouseX))
-      const targetY = Math.max(60, Math.min(window.innerHeight - 60, this.mouseY))
-      
-      // Ease toward target position with improved smoothness
-      const ease = 0.08
-      this.robotX += (targetX - this.robotX) * ease
-      this.robotY += (targetY - this.robotY) * ease
+      // Robot vẫn đứng cố định, không di chuyển theo cursor
+      // Chỉ theo dõi mouse để robot eyes có thể nhìn theo
     },
     
     getEyeStyle(eyeOffset) {
-      const dx = this.mouseX - (this.robotX + eyeOffset)
-      const dy = this.mouseY - this.robotY
+      // Robot ở vị trí cố định
+      const robotFixedX = window.innerWidth - 100
+      const robotFixedY = window.innerHeight - 150
+      
+      const dx = this.mouseX - (robotFixedX + eyeOffset)
+      const dy = this.mouseY - robotFixedY
       const distance = Math.sqrt(dx * dx + dy * dy)
       const maxMovement = 3
       
@@ -977,11 +959,13 @@ export default {
 /* Interactive Robot */
 .interactive-robot {
   position: fixed;
+  bottom: 150px;
+  right: 100px;
   width: 90px;
   height: 90px;
   z-index: 1000;
   pointer-events: none;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Removed transition to prevent any movement */
 }
 
 .robot-body {

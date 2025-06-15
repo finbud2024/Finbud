@@ -36,7 +36,7 @@ import courseRoute from "./Endpoints/social/courseRoute.js";
 import vietStock from "./Endpoints/data/vietStock.js";
 import finCompareRoute from "./Endpoints/finance/finCompareRoute.js";
 import peAnalysisRoute from './Endpoints/services/peAnalysisService.js';
-import aiWorkflowRoute from './Endpoints/services/aiWorkflowService.js';
+
 
 dotenv.config();
 
@@ -167,7 +167,7 @@ app.use("/api/courses", courseRoute);
 app.use("/api/vietstock", vietStock);
 app.use("/", finCompareRoute);
 app.use("/api/pe-analysis", peAnalysisRoute);
-app.use("/api/ai-workflows", aiWorkflowRoute);
+
 
 // Health check endpoint
 app.get("/health", (req, res) => {

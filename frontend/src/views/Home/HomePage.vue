@@ -11,6 +11,9 @@
       </div>
     </div>
 
+    <!-- Interactive Roadmap Section -->
+    <InteractiveRoadmap />
+
     <section class="introduction-section animate">
       <header class="animate">
         <h1>{{ t('partneringTitle') }}</h1>
@@ -249,12 +252,24 @@ import BigGreenButton from "@/components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 import { useTypingEffect } from '@/composables/useTypingEffect';
 import UserInput from '@/components/UserInput.vue';
+import InteractiveRoadmap from '@/components/Home/InteractiveRoadmap.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faBrain, faMap, faTrophy, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faBrain, faMap, faTrophy, faArrowRight, faGraduationCap, faChartLine, 
+  faWallet, faShieldAlt, faCheck, faCircle, faCheckCircle, faChevronRight,
+  faComments, faCalculator, faQuestionCircle, faUserGraduate,
+  faLightbulb, faStar, faCrown, faGem, faFire
+} from '@fortawesome/free-solid-svg-icons';
+import { faCircle as faCircleRegular, faCheckCircle as faCheckCircleRegular } from '@fortawesome/free-regular-svg-icons';
 
 // Add icons to library
-library.add(faBrain, faMap, faTrophy, faArrowRight);
+library.add(
+  faBrain, faMap, faTrophy, faArrowRight, faGraduationCap, faChartLine, 
+  faWallet, faShieldAlt, faCheck, faCircle, faCheckCircle, faChevronRight,
+  faComments, faCalculator, faQuestionCircle, faUserGraduate,
+  faLightbulb, faStar, faCrown, faGem, faFire, faCircleRegular, faCheckCircleRegular
+);
 
 import axios from 'axios';
 
@@ -264,6 +279,7 @@ export default {
     BigGreenButton,
     TutorialOverlay,
     UserInput,
+    InteractiveRoadmap,
     FontAwesomeIcon,
   },
   setup() {

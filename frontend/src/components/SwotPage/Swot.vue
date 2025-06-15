@@ -1,6 +1,6 @@
 <template>
-    <div class="pestle-container">
-        <div class="pestle-card">
+    <div class="swot-container">
+        <div class="swot-card">
             <div>
                 <!-- User Input Section -->
                 <details class="section user-input-section" open="">
@@ -22,9 +22,9 @@
                     <div class="section-content">
                         <div class="form-group">
                             <label class="form-label">
-                                Ngành đã chọn<span class="required">*</span>
+                                Công ty đã chọn<span class="required">*</span>
                             </label>
-                            <input type="text" class="form-input" :value="industry" readonly />
+                            <input type="text" class="form-input" :value="company" readonly />
                         </div>
                     </div>
                 </details>
@@ -32,7 +32,7 @@
                 <!-- Initial Loading State -->
                 <div v-if="initialLoading" class="initial-loading">
                     <div class="spinner"></div>
-                    <p>Đang phân tích ngành {{ industry }}...</p>
+                    <p>Đang phân tích công ty {{ company }}...</p>
                 </div>
 
                 <!-- Sequential Analysis Sections -->
@@ -58,15 +58,15 @@
 <script>
 import { defineComponent, reactive, ref, watch, nextTick } from "vue";
 import AnalysisSection from "./AnalysisSection.vue";
-import { generateAndProcessRemainingPestleAnalysis, fetchPestleCategoryData, getPESTLECategories } from "./pestle.js";
+import { generateAndProcessRemainingSwotAnalysis, fetchSwotCategoryData, getSWOTCategories } from "./swot.js";
 
 export default defineComponent({
-    name: "Pestle",
+    name: "Swot",
     components: {
         AnalysisSection,
     },
     props: {
-        industry: {
+        company: {
             type: String,
             required: true,
         },
@@ -80,7 +80,7 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const orderedCategories = getPESTLECategories();
+        const orderedCategories = getSWOTCategories();
         const analysisResults = reactive({});
         const initialLoading = ref(true);
         const currentCategory = ref('');
@@ -107,16 +107,16 @@ export default defineComponent({
                 }
                 sectionRefs.value = {};
 
-                // Fetch and display the Political category first
-                currentCategory.value = 'Political';
-                const politicalResult = await fetchPestleCategoryData(props.industry, 'Political');
-                analysisResults['Political'] = politicalResult;
+                // Fetch and display the Strengths category first
+                currentCategory.value = 'Strengths';
+                const strengthsResult = await fetchSwotCategoryData(props.company, 'Strengths');
+                analysisResults['Strengths'] = strengthsResult;
 
                 initialLoading.value = false;
-                visibleCategories.value = ['Political'];
+                visibleCategories.value = ['Strengths'];
 
                 // Asynchronously fetch the remaining categories in the background
-                generateAndProcessRemainingPestleAnalysis(props.industry)
+                generateAndProcessRemainingSwotAnalysis(props.company)
                     .then(remainingResults => {
                         Object.entries(remainingResults).forEach(([category, result]) => {
                             analysisResults[category] = {
@@ -132,18 +132,18 @@ export default defineComponent({
                         });
                     })
                     .catch(error => {
-                        console.error("Error fetching remaining PESTLE categories:", error);
+                        console.error("Error fetching remaining SWOT categories:", error);
                         orderedCategories.forEach(cat => {
-                            if (cat !== 'Political' && !analysisResults[cat]) {
+                            if (cat !== 'Strengths' && !analysisResults[cat]) {
                                 analysisResults[cat] = { error: true, description: `Failed to load ${cat}.`, sections: [] };
                             }
                         });
                     });
 
             } catch (error) {
-                console.error("Error in initial analysis (Political):", error);
+                console.error("Error in initial analysis (Strengths):", error);
                 initialLoading.value = false;
-                analysisResults['Political'] = { error: true, description: "Failed to load Political analysis.", sections: [] };
+                analysisResults['Strengths'] = { error: true, description: "Failed to load Strengths analysis.", sections: [] };
             }
         };
 
@@ -164,14 +164,14 @@ export default defineComponent({
             regeneratingCategory.value = category;
 
             try {
-                const result = await fetchPestleCategoryData(props.industry, category);
+                const result = await fetchSwotCategoryData(props.company, category);
                 // Ensure the specific category object exists before assigning properties
                 if (!analysisResults[category]) {
                     analysisResults[category] = {};
                 }
                 // Reset the specific category data before assigning new results
                 analysisResults[category].description = '';
-                analysisResults[category].sections = []; // Changed from headings and items
+                analysisResults[category].sections = [];
                 // Assign new results after a short delay to allow UI update
                 await new Promise(resolve => setTimeout(resolve, 50)); // Small delay
                 analysisResults[category] = result;
@@ -199,54 +199,70 @@ export default defineComponent({
 
         const getIconPath = (category) => {
             const icons = {
-                Political: "M4 10h3v7H4zm6.5 0h3v7h-3zM2 19h19v3H2zm13.5-9h3v7h-3zm-5-9L2 6v2h19V6z",
-                Economic: "M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z",
-                Social: "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z",
-                Technological: "M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z",
-                Legal: "M1 21h12v2H1zM5.24 8.07l-2.12 2.12 6.01 6.01 2.12-2.12zM8.07 5.24L5.95 7.36l6.01 6.01 2.12-2.12zM12.36 15.48l-6.01-6.01 2.12-2.12 6.01 6.01zM15.19 12.66l-6.01-6.01 2.12-2.12 6.01 6.01zM21.5 8.5L18 5l-3.54 3.54 3.5 3.5z",
-                Environmental: "M17 12h2L12 2 5.05 12H7l-3.9 6h6.92v4h3.96v-4H21z"
+                Strengths: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+                Weaknesses: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+                Opportunities: "M12 2l2.09 6.26L20 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+                Threats: "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
             };
             return icons[category] || "";
         };
 
         const getInfoIconPath = () => {
-            return "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z";
-        };
-
-        const getInfoText = (category) => {
-            return `Phần này trình bày các yếu tố ${getTranslatedTitle(category).toLowerCase()} ảnh hưởng đến ngành ${props.industry}.`;
+            return "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z";
         };
 
         const getTranslatedTitle = (category) => {
             const translations = {
-                Political: "Political - Chính trị",
-                Economic: "Economic - Kinh tế",
-                Social: "Social - Xã hội",
-                Technological: "Technological - Công nghệ",
-                Legal: "Legal - Pháp lý",
-                Environmental: "Environmental - Môi trường",
+                Strengths: "Điểm mạnh",
+                Weaknesses: "Điểm yếu",
+                Opportunities: "Cơ hội",
+                Threats: "Thách thức"
             };
             return translations[category] || category;
         };
 
-        const copyCategory = (category) => {
-            const data = analysisResults[category];
-            if (!data) return;
-
-            const textToCopy = `## ${getTranslatedTitle(category)} Analysis\n\n${data.description || ''}\n\n` +
-                (data.sections?.length > 0 ? data.sections.map(section =>
-                    `### ${section.heading}\n${section.items.map(item =>
-                        `• ${item.highlight ? `**${item.highlight}:** ` : ''}${item.text}`
-                    ).join('\n')}`
-                ).join('\n\n') : '');
-
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => alert(`Phân tích ${getTranslatedTitle(category)} đã được sao chép vào clipboard!`))
-                .catch(err => {
-                    console.error('Lỗi sao chép văn bản: ', err);
-                    alert(`Sao chép phân tích ${getTranslatedTitle(category)} thất bại.`);
-                });
+        const getInfoText = (category) => {
+            const infoTexts = {
+                Strengths: "Điểm mạnh của công ty - những yếu tố nội tại giúp công ty có lợi thế cạnh tranh.",
+                Weaknesses: "Điểm yếu của công ty - những yếu tố nội tại cần được cải thiện.",
+                Opportunities: "Cơ hội từ môi trường bên ngoài - những yếu tố có thể giúp công ty phát triển.",
+                Threats: "Thách thức từ môi trường bên ngoài - những yếu tố có thể gây rủi ro cho công ty."
+            };
+            return infoTexts[category] || "";
         };
+
+        const copyCategory = (category) => {
+            const result = analysisResults[category];
+            if (result && result.description) {
+                let textToCopy = `${getTranslatedTitle(category)} - ${props.company}\n\n`;
+                textToCopy += `${result.description}\n\n`;
+                
+                if (result.sections && result.sections.length > 0) {
+                    result.sections.forEach(section => {
+                        textToCopy += `${section.heading}\n`;
+                        if (section.items && section.items.length > 0) {
+                            section.items.forEach(item => {
+                                textToCopy += `• ${item.highlight ? item.highlight + ': ' : ''}${item.text}\n`;
+                            });
+                        }
+                        textToCopy += '\n';
+                    });
+                }
+
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    alert(`Đã sao chép phân tích ${getTranslatedTitle(category)} vào clipboard`);
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
+                });
+            }
+        };
+
+        // Watch for company changes
+        watch(() => props.company, (newCompany) => {
+            if (newCompany) {
+                startAnalysis();
+            }
+        }, { immediate: true });
 
         // Watch for cancelled state
         watch(() => props.cancelled, (newCancelled) => {
@@ -276,8 +292,6 @@ export default defineComponent({
             });
         };
 
-        startAnalysis();
-
         return {
             orderedCategories,
             analysisResults,
@@ -285,220 +299,173 @@ export default defineComponent({
             currentCategory,
             visibleCategories,
             regeneratingCategory,
-            sectionRefs, // Expose refs
+            sectionRefs,
             onSectionComplete,
             regenerateCategory,
             getIconPath,
             getInfoIconPath,
-            getInfoText,
             getTranslatedTitle,
-            copyCategory,
+            getInfoText,
+            copyCategory
         };
     },
 });
 </script>
 
 <style scoped>
-/* General Container */
-.pestle-container {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    max-width: 900px;
-    margin: 20px auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.swot-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
 }
 
-.pestle-card {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 25px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-/* Section Styling */
-.section {
-    margin-bottom: 25px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+.swot-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    /* Ensures content stays within borders */
-    transition: box-shadow 0.3s ease;
 }
 
-.section:hover {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.section {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.section:last-child {
+    border-bottom: none;
 }
 
 .section-header {
     display: flex;
     align-items: center;
-    padding: 15px 20px;
-    background-color: #f5f7fa;
-    /* Slightly different background for header */
+    padding: 1.5rem 2rem;
     cursor: pointer;
-    border-bottom: 1px solid #e0e0e0;
     transition: background-color 0.3s ease;
 }
 
 .section-header:hover {
-    background-color: #e9edf1;
+    background-color: #f8fafc;
 }
 
 .section-title-container {
     display: flex;
     align-items: center;
-    flex-grow: 1;
+    gap: 1rem;
 }
 
 .section-icon {
-    margin-right: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: #e3f2fd;
-    /* Light blue background for icon */
-    color: #1e88e5;
-    /* Blue icon color */
-}
-
-.section-icon .icon {
-    width: 20px;
-    height: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #4a5568;
 }
 
 .user-icon {
-    background-color: #e8f5e9;
-    /* Light green for user */
-    color: #43a047;
+    background: #e6fffa;
+    color: #38b2ac;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
 }
 
 .section-title {
     display: flex;
     align-items: center;
-}
-
-.section-title h2 {
-    margin: 0;
-    font-size: 1.15em;
-    font-weight: 600;
-    color: #333;
+    gap: 0.5rem;
 }
 
 .status-indicator {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #ccc;
-    /* Default grey */
-    margin-right: 10px;
-    transition: background-color 0.3s ease;
+    background: #48bb78;
 }
 
-/* Add specific status colors if needed */
+.section-title h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+}
 
 .section-content {
-    padding: 20px;
-    background-color: #ffffff;
+    padding: 0 2rem 2rem 2rem;
 }
 
-/* Form Elements */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 1.5rem;
 }
 
 .form-label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
     font-weight: 500;
-    color: #555;
-    font-size: 0.95em;
+    color: #4a5568;
+}
+
+.required {
+    color: #e53e3e;
 }
 
 .form-input {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1em;
-    box-sizing: border-box;
-    background-color: #fdfdfd;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #4a5568;
+    background: #f8fafc;
 }
 
-.form-input:read-only {
-    background-color: #f0f0f0;
-    cursor: not-allowed;
-}
-
-.required {
-    color: #e53935;
-    /* Red color for required asterisk */
-    margin-left: 4px;
-}
-
-/* Loading State */
 .initial-loading {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
-    text-align: center;
-    color: #555;
+    padding: 4rem 2rem;
+    color: #4a5568;
 }
 
 .spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #3182ce;
     border-radius: 50%;
-    border-left-color: #1e88e5;
-    /* Blue spinner */
-    animation: spin 1s ease infinite;
-    margin-bottom: 15px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* Analysis Section specific margin */
 .analysis-section {
-    margin-bottom: 20px;
-    /* Space between analysis sections */
+    margin-bottom: 1rem;
 }
 
-/* Details marker */
-details>summary {
-    list-style: none;
-    /* Remove default marker */
-}
+@media (max-width: 768px) {
+    .swot-container {
+        padding: 1rem;
+    }
 
-details>summary::-webkit-details-marker {
-    display: none;
-    /* Remove default marker for Chrome/Safari */
-}
+    .section-header {
+        padding: 1rem;
+    }
 
-details>summary::before {
-    content: '►';
-    /* Collapsed state */
-    margin-right: 8px;
-    font-size: 0.8em;
-    transition: transform 0.2s ease-in-out;
-    display: inline-block;
-}
+    .section-content {
+        padding: 0 1rem 1rem 1rem;
+    }
 
-details[open]>summary::before {
-    transform: rotate(90deg);
-    /* Expanded state */
+    .section-title h2 {
+        font-size: 1.125rem;
+    }
 }
-</style>
+</style> 

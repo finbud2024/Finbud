@@ -30,6 +30,7 @@ const messages = {
     finData: "Fin Data",
     agent: "Agent",
     pestle: "PESTLE",
+    swot: "SWOT",
     finXpert: "FinXpert",
     accountant: "AI Accountant",
     login: "Log In",
@@ -1313,6 +1314,24 @@ const messages = {
       risk: "Mức độ Rủi ro",
       opportunity: "Cơ hội",
       loading: "Đang tải phân tích PESTLE...",
+      noData: "Không có dữ liệu phân tích"
+    },
+
+    // SWOT Page
+    swotPage: {
+      title: "Phân tích SWOT",
+      subtitle: "Phân tích Điểm mạnh, Điểm yếu, Cơ hội, Thách thức",
+      categories: {
+        strengths: "Điểm mạnh",
+        weaknesses: "Điểm yếu",
+        opportunities: "Cơ hội",
+        threats: "Thách thức"
+      },
+      analysis: "Phân tích",
+      impact: "Tác động",
+      priority: "Mức độ Ưu tiên",
+      strategy: "Chiến lược",
+      loading: "Đang tải phân tích SWOT...",
       noData: "Không có dữ liệu phân tích"
     },
 

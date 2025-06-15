@@ -134,12 +134,10 @@ export default {
   computed: {
     translatedTitle() {
       const translations = {
-        "Political Analysis": "Political - Chính trị",
-        "Economic Analysis": "Economic - Kinh tế",
-        "Social Analysis": "Social - Xã hội",
-        "Technological Analysis": "Technological - Công nghệ",
-        "Legal Analysis": "Legal - Pháp lý",
-        "Environmental Analysis": "Environmental - Môi trường",
+        "Phân tích Điểm mạnh": "Strengths - Điểm mạnh",
+        "Phân tích Điểm yếu": "Weaknesses - Điểm yếu",
+        "Phân tích Cơ hội": "Opportunities - Cơ hội",
+        "Phân tích Thách thức": "Threats - Thách thức",
       };
       return translations[this.title] || this.title;
     },
@@ -206,14 +204,16 @@ export default {
       // If it's the current section being processed
       if (sectionIndex === this.currentSectionIndex) {
         // Show item if its index is less than or equal to the current item being typed in this section
-        return itemIndex <= (this.currentItemIndices[sectionIndex] !== undefined ? this.currentItemIndices[sectionIndex] : -1);
+        return itemIndex <= (this.currentItemIndices[sectionIndex] || 0);
       }
 
-      // If sectionIndex > this.currentSectionIndex, it means this section's items haven't started processing yet.
+      // If section hasn't been reached yet
       return false;
     },
     getItemText(item) {
-      return item.highlight ? `${item.highlight}: ${item.text}` : item.text;
+      return item.highlight && item.highlight.trim() !== '' 
+        ? `${item.highlight}: ${item.text}` 
+        : item.text;
     },
     resetState() {
       this.descriptionComplete = false;
@@ -224,9 +224,16 @@ export default {
     }
   },
   watch: {
-    loading(newVal) {
-      if (newVal) {
-        this.resetState();
+    description() {
+      this.resetState();
+    },
+    sections() {
+      if (this.descriptionComplete) {
+        // Reset section-specific states if description is already complete
+        this.completedSectionHeadings = {};
+        this.currentSectionIndex = this.sections.length > 0 ? 0 : -1;
+        this.currentItemIndices = {};
+        this.allSectionsComplete = false;
       }
     }
   }
@@ -234,34 +241,27 @@ export default {
 </script>
 
 <style scoped>
-.section {
-  margin-bottom: 2rem;
+.analysis-section {
+  margin-bottom: 1rem;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  overflow: hidden;
   background: white;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.section:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
-  background: #f8fafc;
+  padding: 1.5rem 2rem;
   cursor: pointer;
-  border-bottom: 1px solid #e2e8f0;
   transition: background-color 0.3s ease;
+  list-style: none;
 }
 
 .section-header:hover {
-  background: #f1f5f9;
+  background-color: #f8fafc;
 }
 
 .section-title-container {
@@ -271,186 +271,174 @@ export default {
 }
 
 .section-icon {
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  transition: all 0.3s ease;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #f0f9ff;
+  color: #0ea5e9;
 }
 
-.globe-icon {
-  background: #f0fdf4;
-  color: #15803d;
+.icon {
+  width: 24px;
+  height: 24px;
 }
 
 .section-title {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-.section-title h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1a1a1a;
+  gap: 0.5rem;
 }
 
 .status-indicator {
   width: 8px;
   height: 8px;
-  background: #22c55e;
   border-radius: 50%;
+  background: #10b981;
+}
+
+.section-title h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.dropdown-arrow {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  transition: transform 0.3s ease;
+}
+
+.section[open] .dropdown-arrow {
+  transform: rotate(180deg);
 }
 
 .section-content {
-  padding: 2rem;
-}
-
-.info-box {
-  background: #f0f9ff;
-  border-radius: 10px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  animation: slideIn 0.5s ease;
-}
-
-.info-icon {
-  width: 24px;
-  height: 24px;
-  color: #0369a1;
-  flex-shrink: 0;
-}
-
-.info-box span {
-  color: #0c4a6e;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.action-toolbar {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.tool-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background: #f1f5f9;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.tool-button:hover {
-  background: #e2e8f0;
-  transform: translateY(-1px);
-}
-
-.tool-icon {
-  width: 18px;
-  height: 18px;
-}
-
-.analysis-content {
-  color: #334155;
-  font-size: 1rem;
-  line-height: 1.7;
-}
-
-.analysis-content h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 1.5rem 0 1rem;
-}
-
-.analysis-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.analysis-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.analysis-item:hover {
-  background: #f8fafc;
-}
-
-.bullet {
-  color: #94a3b8;
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
-.item-content {
-  flex: 1;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  padding: 0 2rem 2rem 2rem;
+  background: #fafafa;
 }
 
 .loading-indicator {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 3rem 0;
+  justify-content: center;
+  padding: 2rem;
+  color: #6b7280;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border: 3px solid #e2e8f0;
-  border-top-color: #000000;
+  border-top: 3px solid #3b82f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
 
-.loading-indicator p {
-  color: #64748b;
-  font-size: 0.95rem;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.info-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  color: #0c4a6e;
+  font-size: 0.875rem;
+}
+
+.info-icon {
+  width: 20px;
+  height: 20px;
+  color: #0ea5e9;
+  flex-shrink: 0;
+}
+
+.action-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tool-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tool-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.tool-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.analysis-content {
+  line-height: 1.6;
+  color: #374151;
+}
+
+.content-section {
+  margin-bottom: 2rem;
+}
+
+.content-section h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.analysis-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.analysis-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 0.75rem;
+}
+
+.bullet {
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+.item-content {
+  flex: 1;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
@@ -459,25 +447,20 @@ export default {
   }
 
   .section-content {
-    padding: 1.25rem;
-  }
-
-  .section-icon {
-    width: 32px;
-    height: 32px;
+    padding: 0 1rem 1rem 1rem;
   }
 
   .section-title h2 {
-    font-size: 1.1rem;
+    font-size: 1.125rem;
   }
 
-  .info-box {
-    padding: 1rem;
+  .action-toolbar {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .tool-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
+    justify-content: center;
   }
 }
-</style>
+</style> 

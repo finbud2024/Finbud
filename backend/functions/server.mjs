@@ -40,7 +40,7 @@ import vietStock from "../Endpoints/data/vietStock.js";
 import finCompareRoute from "../Endpoints/finance/finCompareRoute.js";
 // Import new services
 import peAnalysisRoute from '../Endpoints/services/peAnalysisService.js';
-import aiWorkflowRoute from '../Endpoints/services/aiWorkflowService.js';
+
 
 dotenv.config();
 
@@ -180,7 +180,7 @@ router.use("/api/vietstock", vietStock);
 router.use("/", finCompareRoute);
 // Register new routes
 router.use("/api/pe-analysis", peAnalysisRoute);
-router.use("/api/ai-workflows", aiWorkflowRoute);
+
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development

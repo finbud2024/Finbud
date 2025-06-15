@@ -28,8 +28,7 @@ import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue"
 import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue"
 import AgentPage from "@/views/FinAgent/AgentPage.vue";
 import PestlePage from "@/views/FinAgent/PestlePage.vue";
-import AIBreakthroughWorkflowsPage from "@/views/FinAgent/AIBreakthroughWorkflowsPage.vue";
-import AIWorkflowsPage from "@/views/FinAgent/AIWorkflowsPage.vue";
+import SwotPage from "@/views/FinAgent/SwotPage.vue";
 import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
 import AutoTradeAI from "@/views/FinInvest/AutoTradeAIPage.vue";
 import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
@@ -232,14 +231,9 @@ const routes = [
     component: PestlePage,
   },
   {
-    path: "/ai-breakthrough-workflows",
-    name: "AIBreakthroughWorkflowsPage", 
-    component: AIBreakthroughWorkflowsPage,
-  },
-  {
-    path: "/ai-workflows",
-    name: "AIWorkflowsPage",
-    component: AIWorkflowsPage,
+    path: "/swot-analysis/",
+    name: "SwotPage",
+    component: SwotPage,
   },
   {
     path: "/forgot-password",
