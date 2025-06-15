@@ -4,6 +4,16 @@
 			<div v-for="(message, index) in messages" :key="index">
 				<FileIndicator v-if="message.containFile" :file="message.file" />
 
+				<!-- Deep Research Result custom view -->
+				<DeepResearchResult
+					v-if="!message.isUser && message.isDeepResearch"
+					:report="message.report"
+					:symbol="message.symbol"
+					:relevantQuestions="message.relevantQuestions"
+					@question-click="handleQuestionClick"
+				/>
+
+				<!-- Regular message view -->
 				<MessageComponent
 					:is-user="message.isUser"
 					:text="message.text"
@@ -81,6 +91,7 @@ import MessageComponent from "../MessageComponent.vue";
 import UserInput from "../UserInput.vue";
 import TradingViewWidget from "../TradingViewWidget.vue";
 import DeepResearchAgent from "./DeepResearchAgent.vue";
+import DeepResearchResult from "./DeepResearchResult.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 
@@ -114,6 +125,7 @@ export default {
 		UserInput,
 		TradingViewWidget,
 		DeepResearchAgent,
+		DeepResearchResult,
 		FileIndicator,
 		ChatSuggestion,
 		ThinkingProcess,
@@ -1639,14 +1651,33 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 				if (this.messages.length > 0 && this.messages[this.messages.length - 1].thinking) {
 					this.messages.pop();
 				}
-
-				// Display response (only add to messages, not conversationHistory since it's already managed)
-				const assistantMessage = {
-					text: response,
-					isUser: false,
-					typing: false,
-					timestamp: new Date().toLocaleTimeString(),
-				};
+				
+				let assistantMessage;
+				if (typeof response === 'object' && response.report) {
+					assistantMessage = {
+						isUser: false,
+						isDeepResearch: true,
+						report: response.report,
+						symbol: (() => {
+							if (!response.ticker) return '';
+							const raw = Array.isArray(response.ticker) ? response.ticker[0] : response.ticker;
+							const codes = this.extractStockCode(raw);
+							return Array.isArray(codes) ? codes[0] : raw;
+						})(),
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+						relevantQuestions: response.relevantQuestions,
+					};
+				} else {
+					assistantMessage = {
+						text: response,
+						isUser: false,
+						markdown: true,
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+						relevantQuestions: response.relevantQuestions,
+					};
+				}
 				
 				this.messages.push(assistantMessage);
 				this.conversationHistory.push({ role: 'assistant', content: response });
