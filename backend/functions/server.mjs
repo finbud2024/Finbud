@@ -47,7 +47,7 @@ dotenv.config();
 const mongoURI = process.env.MONGO_URI;
 const app = express();
 
-const allowedOrigins = ["http://localhost:8888", "https://finbud.pro"];
+const allowedOrigins = ["http://localhost:8888", "https://finbud.pro", "http://localhost:8080"];
 
 app.use(
   cors({
@@ -113,6 +113,31 @@ simulatorIo.on("connection", (socket) => {
 
 // Make simulatorIo available for the multiplier simulator route
 app.set("simulatorIo", simulatorIo);
+
+// Deep Research Service Socket.io namespace for real-time logging
+const deepResearchIo = io.of("/deep-research");
+deepResearchIo.on("connection", (socket) => {
+  console.log("Client connected to deep research namespace:", socket.id);
+
+  // Handle progress logging events from the deep research service
+  socket.on("progress", (data) => {
+    console.log(`Deep Research Progress: ${data.message}`);
+    // Broadcast progress to all clients in the same research session
+    socket.broadcast.emit("progress", data);
+  });
+
+  socket.on("join-research", (researchId) => {
+    socket.join(`research:${researchId}`);
+    console.log(`Client ${socket.id} joined research: ${researchId} in deep research namespace`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected from deep research namespace:", socket.id);
+  });
+});
+
+app.set("deepResearchIo", deepResearchIo);
+
 
 if (!mongoURI) {
   console.error("MONGO_URI is not defined in the environment variables");
