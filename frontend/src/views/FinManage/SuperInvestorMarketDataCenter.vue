@@ -167,4 +167,30 @@ export default {
     padding: 0.25rem;
   }
 }
+
+/* Dark mode styles */
+.dark-mode .content {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #f9fafb;
+  min-height: 100vh;
+}
+
+.dark-mode .market-data-center {
+  background: #374151;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .headtitle {
+  color: #f9fafb;
+}
+
+.dark-mode .section-title {
+  color: #f9fafb;
+  border-bottom-color: #f9fafb;
+}
+
+.dark-mode .margin-box {
+  background: #4b5563;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
 </style>

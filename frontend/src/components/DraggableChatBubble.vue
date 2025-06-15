@@ -23,7 +23,7 @@
             <font-awesome-icon :icon="isMinimized ? 'fa-solid fa-expand' : 'fa-solid fa-minus'" />
           </button>
           <button
-            @click.stop="closeBubble"
+            @click.stop.prevent="closeBubble"
             class="control-btn close-btn"
             :title="$t('chatbotBubble.close')"
           >
@@ -150,8 +150,8 @@ export default {
       isDragging: false,
       showDragHint: false,
       position: {
-        x: window.innerWidth - 400,
-        y: 100
+        x: window.innerWidth - 360,
+        y: 120
       },
       dragOffset: { x: 0, y: 0 },
       messages: [],
@@ -204,6 +204,11 @@ export default {
   beforeUnmount() {
     window.removeEventListener('resize', this.constrainPosition)
     document.removeEventListener('click', this.handleClickOutside)
+    // Clean up any remaining event listeners
+    document.removeEventListener('mousemove', this.onDrag)
+    document.removeEventListener('mouseup', this.stopDrag)
+    document.removeEventListener('touchmove', this.onDrag)
+    document.removeEventListener('touchend', this.stopDrag)
   },
   methods: {
     show() {
@@ -224,8 +229,13 @@ export default {
       }
     },
     closeBubble() {
+      console.log('DraggableChatBubble: closeBubble called')
       this.isVisible = false
       this.$emit('close')
+      // Save state to localStorage
+      localStorage.setItem('chatBubbleState', JSON.stringify({
+        isOpen: false
+      }))
     },
     startDrag(event) {
       if (this.isMinimized || event.target.closest('.bubble-content')) return
@@ -272,11 +282,16 @@ export default {
       localStorage.setItem('chatBubblePosition', JSON.stringify(this.position))
     },
     constrainPosition() {
-      const maxX = window.innerWidth - 320
-      const maxY = window.innerHeight - (this.isMinimized ? 60 : 500)
+      const navbarHeight = 70 // Account for navbar height
+      const chatBubbleWidth = 350
+      const chatBubbleHeight = this.isMinimized ? 60 : 500
       
-      this.position.x = Math.max(0, Math.min(this.position.x, maxX))
-      this.position.y = Math.max(0, Math.min(this.position.y, maxY))
+      const maxX = window.innerWidth - chatBubbleWidth - 20 // 20px margin from edge
+      const maxY = window.innerHeight - chatBubbleHeight - 20 // 20px margin from bottom
+      const minY = navbarHeight + 10 // 10px margin from navbar
+      
+      this.position.x = Math.max(20, Math.min(this.position.x, maxX))
+      this.position.y = Math.max(minY, Math.min(this.position.y, maxY))
     },
     async sendMessage() {
       if (!this.currentMessage.trim()) return
@@ -550,13 +565,16 @@ export default {
     },
     handleClickOutside(event) {
       // Only close if click is outside the bubble and not on the toggle button
+      // Also ignore clicks on control buttons (close, minimize)
       if (this.isVisible && !this.isDragging) {
         const bubbleElement = this.$el
         const toggleButton = document.querySelector('.chat-toggle-btn')
+        const isControlButton = event.target.closest('.control-btn')
         
         if (bubbleElement && 
             !bubbleElement.contains(event.target) && 
-            !toggleButton?.contains(event.target)) {
+            !toggleButton?.contains(event.target) &&
+            !isControlButton) {
           this.closeBubble()
         }
       }
@@ -568,17 +586,22 @@ export default {
 <style scoped>
 .draggable-chat-bubble {
   position: fixed;
-  width: 320px;
+  width: 350px; /* Increased width for better chat experience */
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  z-index: 10000; /* Lower than toggle button but above other content */
-  border: 1px solid #e2e8f0;
+  border-radius: 20px; /* More rounded corners */
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.05); /* Enhanced multi-layer shadow */
+  z-index: 999; /* Below navbar (1000+) but above other content */
+  border: 1px solid #e5e7eb;
   overflow: hidden;
-  transition: all 0.3s ease;
-  animation: slideInFromRight 0.3s ease-out;
-  max-width: calc(100vw - 40px); /* Prevent overflow on small screens */
-  max-height: calc(100vh - 40px); /* Prevent overflow on small screens */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 120px); /* Account for navbar */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .draggable-chat-bubble.minimized {
@@ -592,10 +615,31 @@ export default {
 
 /* Header */
 .bubble-header {
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
   color: white;
-  padding: 12px 16px;
-  border-radius: 16px 16px 0 0;
+  padding: 16px 20px;
+  border-radius: 20px 20px 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bubble-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .cursor-move {
@@ -611,60 +655,95 @@ export default {
 .bot-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .bot-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .bot-name {
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 16px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .header-controls {
   display: flex;
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .control-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .control-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .close-btn:hover {
-  background: rgba(239, 68, 68, 0.8);
+  background: rgba(239, 68, 68, 0.9);
+  border-color: rgba(239, 68, 68, 1);
 }
 
 /* Content */
 .bubble-content {
-  height: 420px;
+  height: 450px; /* Increased height for better chat experience */
   display: flex;
   flex-direction: column;
+  background: linear-gradient(to bottom, #fafafa, #ffffff);
 }
 
 .messages-area {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  background: #ffffff;
+  padding: 20px;
+  background: transparent;
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.messages-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messages-area::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.messages-area::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .welcome-message {
@@ -884,76 +963,44 @@ export default {
 
 /* Keyframes for slide in animation */
 @keyframes slideInFromRight {
-  from {
-    transform: translateX(100%);
+  0% {
+    transform: translateX(100%) scale(0.8);
     opacity: 0;
   }
-  to {
-    transform: translateX(0);
+  100% {
+    transform: translateX(0) scale(1);
     opacity: 1;
   }
 }
 
-/* Responsive design for mobile */
+/* Mobile responsive */
 @media (max-width: 768px) {
   .draggable-chat-bubble {
     width: calc(100vw - 20px);
-    left: 10px !important;
+    max-width: 340px;
     right: 10px !important;
-    bottom: 90px !important; /* Above the toggle button */
-    top: auto !important;
-    max-width: none;
+    left: auto !important;
+  }
+  
+  .bubble-header {
+    padding: 14px 16px;
+  }
+  
+  .bot-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .bot-name {
+    font-size: 14px;
   }
   
   .bubble-content {
-    height: 350px; /* Shorter on mobile */
+    height: 400px;
   }
   
-  .message-text {
-    font-size: 12px;
-  }
-  
-  .message-input {
-    font-size: 14px; /* Prevent iOS zoom */
-  }
-  
-  .send-btn {
-    width: 36px;
-    height: 36px;
-    min-width: 36px; /* Prevent shrinking */
-  }
-  
-  .suggestion-chip,
-  .smart-suggestion {
-    font-size: 11px;
-    padding: 5px 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .draggable-chat-bubble {
-    width: calc(100vw - 10px);
-    left: 5px !important;
-    bottom: 85px !important;
-  }
-  
-  .bubble-content {
-    height: 300px;
-  }
-  
-  .input-area {
-    padding: 8px;
-  }
-  
-  .message-input {
-    padding: 10px 12px; /* Larger touch target */
-    font-size: 16px; /* Prevent iOS zoom */
-  }
-  
-  .send-btn {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
+  .messages-area {
+    padding: 16px;
   }
 }
 

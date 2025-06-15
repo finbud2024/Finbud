@@ -1218,4 +1218,106 @@ const retryLoading = () => {
 .dark-mode .symbol-cell {
   color: #f9fafb;
 }
+
+/* Additional comprehensive dark mode styles */
+.dark-mode .data-page-container {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #f9fafb;
+}
+
+.dark-mode .loading-container {
+  color: #9ca3af;
+}
+
+.dark-mode .loading-spinner-large {
+  border-color: #4b5563;
+  border-top-color: #f9fafb;
+}
+
+.dark-mode .error-container {
+  color: #f87171;
+}
+
+.dark-mode .error-icon {
+  color: #ef4444;
+}
+
+.dark-mode .retry-btn {
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.dark-mode .retry-btn:hover {
+  background: #374151;
+}
+
+.dark-mode .data-header {
+  background: #374151;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .page-title {
+  color: #f9fafb;
+}
+
+.dark-mode .page-subtitle {
+  color: #d1d5db;
+}
+
+.dark-mode .action-button {
+  background: #1f2937;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+.dark-mode .action-button:hover {
+  background: #374151;
+  border-color: #6b7280;
+}
+
+.dark-mode .stats-overview {
+  background: transparent;
+}
+
+.dark-mode .stat-number {
+  color: #f9fafb;
+}
+
+.dark-mode .stat-label {
+  color: #d1d5db;
+}
+
+.dark-mode .skeleton-card {
+  background: linear-gradient(90deg, #4b5563 25%, #6b7280 50%, #4b5563 75%);
+}
+
+.dark-mode .document-row:hover {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .doc-link {
+  color: #f9fafb;
+}
+
+.dark-mode .doc-link:hover {
+  color: #d1d5db;
+}
+
+.dark-mode .ticker-tag {
+  background: #1e40af;
+  color: #bfdbfe;
+}
+
+.dark-mode .date-info {
+  color: #9ca3af;
+}
+
+.dark-mode .empty-state {
+  color: #9ca3af;
+}
+
+.dark-mode .section-title {
+  color: #f9fafb;
+}
 </style>
