@@ -10,7 +10,7 @@ import pLimit from "p-limit";
 import {jsonrepair } from 'jsonrepair';
 // import Groq from "groq-sdk";
 const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
-const API_BASE_URL = "http://localhost:8888/.netlify/functions/server" //process.env.VUE_APP_DEPLOY_URL;
+const API_BASE_URL = process.env.VUE_APP_DEPLOY_URL; //"http://localhost:8888/.netlify/functions/server" 
 
 if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_gemini_api_key_here') {
   console.warn('⚠️ GEMINI API KEY NOT CONFIGURED! Please set VUE_APP_GEMINI_API_KEY in your environment.');
