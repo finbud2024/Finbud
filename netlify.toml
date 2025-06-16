@@ -10,7 +10,7 @@
   command = "yarn client"
 
 [functions]
-  node_bundler = "zisi"
+  node_bundler = "esbuild"
   included_files = ["backend/**/*"]
   
 [build.environment]
