@@ -47,7 +47,13 @@ dotenv.config();
 const mongoURI = process.env.MONGO_URI;
 const app = express();
 
-const allowedOrigins = ["http://localhost:8888", "https://finbud.pro", "http://localhost:8080", process.env.VUE_APP_DEPLOY_URL];
+const allowedOrigins = [
+  "http://localhost:8888",
+  "https://finbud.pro",
+  "http://localhost:8080",
+  process.env.VUE_APP_DEPLOY_URL,
+  "https://finbud-ai.netlify.app"
+];
 
 app.use(
   cors({
