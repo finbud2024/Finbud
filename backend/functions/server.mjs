@@ -41,7 +41,7 @@ import finCompareRoute from "../Endpoints/finance/finCompareRoute.js";
 // Import new services
 import peAnalysisRoute from '../Endpoints/services/peAnalysisService.js';
 import aiWorkflowRoute from '../Endpoints/services/aiWorkflowService.js';
-
+import qdrantRoute from '../Endpoints/services/qdrantRoute.js';
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -52,7 +52,7 @@ const allowedOrigins = [
   "https://finbud.pro",
   "http://localhost:8080",
   process.env.VUE_APP_DEPLOY_URL,
-  "https://finbud-ai.netlify.app"
+  "https://finbud-ai.netlify.app",
 ];
 
 app.use(
@@ -209,6 +209,7 @@ router.use("/", notiRoute);
 router.use("/api/courses", courseRoute);
 router.use("/api/vietstock", vietStock);
 router.use("/", finCompareRoute);
+router.use("/api/qdrant", qdrantRoute);
 // Register new routes
 router.use("/api/pe-analysis", peAnalysisRoute);
 router.use("/api/ai-workflows", aiWorkflowRoute);

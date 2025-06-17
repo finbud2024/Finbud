@@ -73,13 +73,15 @@ class RerankingTemplate extends BasePromptTemplate {
         this.prompt = `You are an AI language model assistant. Your task is to rerank passages related to a query
     based on their relevance. 
     The most relevant passages should be put at the beginning. 
-    You should only pick at max {keep_top_k} passages.
+    You MUST return EXACTLY {keep_top_k} passages, no more and no less.
     The provided and reranked documents are separated by '{separator}'.
     
     The following are passages related to this query: {question}.
     
     Passages: 
-    {passages}`;
+    {passages}
+
+    Remember to return EXACTLY {keep_top_k} passages, separated by '{separator}'.`;
     }
 
     get separator() {

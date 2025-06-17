@@ -59,8 +59,24 @@ class Reranker {
                 .map(item => item.trim())
                 .filter(item => item.length > 0);
 
-            console.log(`✅ Generated ${rerankedPassages.length} reranked passages`);
-            return rerankedPassages;
+            // Ensure we have the correct number of passages
+            if (rerankedPassages.length === 0) {
+                console.warn('No passages returned from reranker, falling back to original passages');
+                return passages.slice(0, keepTopK);
+            }
+
+            // If we got fewer passages than requested, pad with remaining passages
+            if (rerankedPassages.length < keepTopK) {
+                const remainingPassages = passages
+                    .filter(p => !rerankedPassages.includes(p))
+                    .slice(0, keepTopK - rerankedPassages.length);
+                rerankedPassages.push(...remainingPassages);
+            }
+
+            // Ensure we don't return more than keepTopK
+            const finalPassages = rerankedPassages.slice(0, keepTopK);
+            console.log(`✅ Generated ${finalPassages.length} reranked passages`);
+            return finalPassages;
         } catch (error) {
             console.error('❌ Error in generateResponse:', {
                 error: error.message,

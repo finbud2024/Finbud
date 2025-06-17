@@ -1699,35 +1699,24 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 		async sendRagMessage(message) {
 			try {
 				console.log('🤖 Starting RAG process for query:', message);
-				
+
 				// Initialize retriever
 				const retriever = new VectorRetriever(message);
 				console.log('✅ Retriever initialized');
-				
-				// Retrieve top K documents
+
+				// Retrieve top K documents (now returns reranked passages as strings)
 				console.log('🔍 Retrieving documents...');
-				const hits = await retriever.retrieveTopK();
-				console.log(`✅ Retrieved ${hits.length} documents`);
-				
-				if (hits.length === 0) {
-					console.warn('⚠️ No documents retrieved');
-					this.ragStatus = 'error';
-					return [];
-				}
-				
-				// Rerank documents
-				console.log('🔄 Reranking documents...');
-				const context = await retriever.rerank(hits);
-				console.log(`✅ Reranked into ${context.length} passages`);
-				
-				if (context.length === 0) {
+				const passages = await retriever.retrieveTopK();
+				console.log(`✅ Retrieved ${passages.length} passages`);
+
+				if (!passages || passages.length === 0) {
 					console.warn('⚠️ No context after reranking');
 					this.ragStatus = 'error';
 					return [];
 				}
-				
+
 				this.ragStatus = 'success';
-				return context;
+				return passages.join('\n\n');
 			} catch (error) {
 				console.error('❌ Error in RAG process:', {
 					error: error.message,
