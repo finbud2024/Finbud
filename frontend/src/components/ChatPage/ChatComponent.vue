@@ -53,7 +53,7 @@
 				/>
 
 				<!-- RAG Process -->
-				<RagProcess
+				<!-- <RagProcess
 					v-if="
 						chatMode === 'rag' &&
 						showRagProcess &&
@@ -61,7 +61,7 @@
 					"
 					:status="ragStatus"
 					@rag-complete="handleRagComplete"
-				/>
+				/> -->
 
 				<!-- Add TradingView widget after stock messages -->
 				<TradingViewWidget
@@ -110,6 +110,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import * as pdfjsLib from "pdfjs-dist";
 import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf";
+
+import VectorRetriever from "@/services/rag/retriever.js";
 
 GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
@@ -1696,39 +1698,44 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 
 		async sendRagMessage(message) {
 			try {
-				console.log("🤖 SENDING RAG REQUEST:", {
-					query: message,
-					top_k: 5,
-					expand_n_query: 2,
-					keep_top_k: 3
-				});
-
-				const response = await axios.post(`${process.env.RAG_API_BASE_URL}/api/query`, {
-					query: message,
-					top_k: 5,
-					expand_n_query: 2,
-					keep_top_k: 3
-				});
-
-				console.log("✅ RAG RESPONSE RECEIVED:", {
-					hasContext: !!response.data.context,
-					contextLength: response.data.context?.length || 0
-				});
-
-				// Extract context from response
-				const context = response.data.context;
-				if (!context) {
-					console.warn("⚠️ No context received from RAG");
+				console.log('🤖 Starting RAG process for query:', message);
+				
+				// Initialize retriever
+				const retriever = new VectorRetriever(message);
+				console.log('✅ Retriever initialized');
+				
+				// Retrieve top K documents
+				console.log('🔍 Retrieving documents...');
+				const hits = await retriever.retrieveTopK();
+				console.log(`✅ Retrieved ${hits.length} documents`);
+				
+				if (hits.length === 0) {
+					console.warn('⚠️ No documents retrieved');
 					this.ragStatus = 'error';
-					throw new Error("No context received from RAG");
+					return [];
 				}
-
+				
+				// Rerank documents
+				console.log('🔄 Reranking documents...');
+				const context = await retriever.rerank(hits);
+				console.log(`✅ Reranked into ${context.length} passages`);
+				
+				if (context.length === 0) {
+					console.warn('⚠️ No context after reranking');
+					this.ragStatus = 'error';
+					return [];
+				}
+				
 				this.ragStatus = 'success';
 				return context;
 			} catch (error) {
-				console.error("❌ Error in sendRagMessage:", error);
+				console.error('❌ Error in RAG process:', {
+					error: error.message,
+					stack: error.stack,
+					query: message
+				});
 				this.ragStatus = 'error';
-				throw error; // Propagate error to handleUserSubmit for fallback
+				return [];
 			}
 		},
 
