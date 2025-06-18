@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import axios from 'axios';
+import './cronjobs/newsCronJob.js';
 const key = "YOUR KEY";
 
 const scheduleJob = cron.schedule('* * * * *', async () => {

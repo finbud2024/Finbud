@@ -41,6 +41,7 @@ import finCompareRoute from "../Endpoints/finance/finCompareRoute.js";
 // Import new services
 import peAnalysisRoute from '../Endpoints/services/peAnalysisService.js';
 import aiWorkflowRoute from '../Endpoints/services/aiWorkflowService.js';
+import dailynewsRoute from '../Endpoints/data/dailynewsRoute.js';
 
 dotenv.config();
 
@@ -181,6 +182,7 @@ router.use("/", finCompareRoute);
 // Register new routes
 router.use("/api/pe-analysis", peAnalysisRoute);
 router.use("/api/ai-workflows", aiWorkflowRoute);
+router.use('/dailyNews', dailynewsRoute);
 
 app.use("/.netlify/functions/server", router);
 // Also use routes without Netlify prefix for local development

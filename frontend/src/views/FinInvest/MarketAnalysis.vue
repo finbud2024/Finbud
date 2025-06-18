@@ -163,25 +163,36 @@
                         {{ t('marketAnalysisPage.AINews') }}
                     </h2>
                     <div class="topic-card">
-                        <div class="news-card" style="height: calc(30% - 5px);">
+                        <div class="news-card" style="height: calc(30% - 5px);" v-if="news.length > 0">
                             <img 
-                                :src="marketAnalysis.AI_News.AI_News[0].link" 
+                                :src="news[0].featuredImage" 
                                 alt="AI News"
                                 class="news-image"
                             >
                             <div class="news-content">
-                                <a class="news-title clamp-text" :href="marketAnalysis.AI_News.AI_News[0].link" target="_blank">
-                                    {{ marketAnalysis.AI_News.AI_News[0].title }}
-                                </a>
-                                <p class="news-datetime">
-                                    {{ marketAnalysis.AI_News.AI_News[0].datetime }}
-                                </p>
+                                <router-link
+                                    class="news-title clamp-text"
+                                    :to="{ name: 'NewsDetail', params: { id: news[0]._id } }"
+                                >
+                                    {{ news[0].title }}
+                                </router-link>
+                                <span class="news-source">
+                                    {{ news[0].sourceId?.name || 'Unknown Source' }} -
+                                    {{ new Date(news[0].createdAt).toLocaleString(undefined, {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: false
+                                    }) }}
+                                </span>
                                 <p class="clamp-text">
-                                    {{ marketAnalysis.AI_News.AI_News[0].content }}
+                                    {{ news[0].description }}
                                 </p>
                                 <div class="news-tags-container">
                                     <div
-                                        v-for="(tag, index) in marketAnalysis.AI_News.AI_News[0].tags"
+                                        v-for="(tag, index) in news[0].tags"
                                         :key="index"
                                     >
                                         <div v-if="index < 3" class="news-tag">
@@ -192,23 +203,35 @@
                             </div>
                         </div>
                         <div class="small-news-card-wrapper">
-                            <div v-for="(news, index) in smallNewsCardsFirst" :key="index" class="small-news-card">
+                            <div v-for="(newsItem, index) in smallNewsCardsFirst" :key="index" class="small-news-card">
                                 <img 
-                                    :src="news.link" 
+                                    :src="newsItem.featuredImage" 
                                     alt="AI News"
                                     class="news-image"
                                     style="width: 50%; height: 40%;"
                                 >
                                 <div class="news-content">
-                                    <a class="news-title clamp-text" :href="news.link" target="_blank" style="font-size: 14px;">
-                                        {{ news.title }}
-                                    </a>
-                                    <p class="news-datetime">
-                                        {{ news.datetime }}
-                                    </p>
+                                    <router-link
+                                        class="news-title clamp-text"
+                                        :to="{ name: 'NewsDetail', params: { id: newsItem._id } }"
+                                        style="font-size: 14px;"
+                                    >
+                                        {{ newsItem.title }}
+                                    </router-link>
+                                    <span class="news-source">
+                                        {{ newsItem.sourceId?.name || 'Unknown Source' }} -
+                                        {{ new Date(newsItem.createdAt).toLocaleString(undefined, {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: false
+                                        }) }}
+                                    </span>
                                     <div class="news-tags-container">
                                         <div
-                                            v-for="(tag, index) in news.tags"
+                                            v-for="(tag, index) in newsItem.tags"
                                             :key="index"
                                         >
                                             <div v-if="index < 3" class="news-tag">
@@ -220,23 +243,35 @@
                             </div>
                         </div>
                         <div class="small-news-card-wrapper">
-                            <div v-for="(news, index) in smallNewsCardsSecond" :key="index" class="small-news-card">
+                            <div v-for="(newsItem, index) in smallNewsCardsSecond" :key="index" class="small-news-card">
                                 <img 
-                                    :src="news.link" 
+                                    :src="newsItem.featuredImage" 
                                     alt="AI News"
                                     class="news-image"
                                     style="width: 50%; height: 40%;"
                                 >
                                 <div class="news-content">
-                                    <a class="news-title clamp-text" :href="news.link" target="_blank" style="font-size: 14px;">
-                                        {{ news.title }}
-                                    </a>
-                                    <p class="news-datetime">
-                                        {{ news.datetime }}
-                                    </p>
+                                    <router-link
+                                        class="news-title clamp-text"
+                                        :to="{ name: 'NewsDetail', params: { id: newsItem._id } }"
+                                        style="font-size: 14px;"
+                                    >
+                                        {{ newsItem.title }}
+                                    </router-link>
+                                    <span class="news-source">
+                                        {{ newsItem.sourceId?.name || 'Unknown Source' }} -
+                                        {{ new Date(newsItem.createdAt).toLocaleString(undefined, {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: false
+                                        }) }}
+                                    </span>
                                     <div class="news-tags-container">
                                         <div
-                                            v-for="(tag, index) in news.tags"
+                                            v-for="(tag, index) in newsItem.tags"
                                             :key="index"
                                         >
                                             <div v-if="index < 3" class="news-tag">
@@ -332,6 +367,7 @@
 
 import ChatBot from "../../components/ChatBot/DraggableChatBot.vue";
 import marketAnalysisData from './MarketAnalysis/marketAnalysis.json';
+import { getAllNews } from '@/services/dailyNewsService';
 import trendingIcon from '@/assets/increaseTrend.png';
 import fallingIcon from '@/assets/decreaseTrend.png';
 import emergingIcon from '@/assets/emergingTrend.png';
@@ -348,6 +384,7 @@ const selectedDate = ref(marketAnalysis.value.Date.Today);
 const smallNewsCardsFirst = ref([]);
 const smallNewsCardsSecond = ref([]);
 const maxVal = ref({});
+const news = ref([]);
 
 const getTable = (tName) => {
     tableRows.value = marketAnalysis.value.Topic.Articles[selectedDate.value][tName];
@@ -375,14 +412,27 @@ const getIcon = (tag) => {
     if (tag === 'Emerging') return emergingIcon;
 }
 
+// Fetch news data
+const fetchNews = async () => {
+    try {
+        const newsData = await getAllNews();
+        news.value = newsData;
+        // Split news into featured and small cards
+        if (newsData.length > 0) {
+            smallNewsCardsFirst.value = newsData.slice(1, 4);
+            smallNewsCardsSecond.value = newsData.slice(4, 7);
+        }
+    } catch (error) {
+        console.error('Error fetching news:', error);
+    }
+};
+
 onMounted(async () => {
     getTable(selectedCategory.value);
-    smallNewsCardsFirst.value = marketAnalysis.value.AI_News.AI_News.slice(1).slice(0, 3);
-    smallNewsCardsSecond.value = marketAnalysis.value.AI_News.AI_News.slice(1).slice(3, 6);
+    await fetchNews();
     stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[0]));
     stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[1]));
     stockTableRows.value.push(getStockTable(marketAnalysis.value.Stock.Title[2]));
-    console.log(maxVal.value['Positive']);
 });
 
 watch(selectedCategory, (newCategory) => {
@@ -751,12 +801,12 @@ watch(selectedCategory, (newCategory) => {
     display: flex;
     gap: 10px;
     width: 100%;
-    height: 200px;
+    min-height: 180px;
     background-color: var(--white-in-light-mode);
     border-radius: 8px;
     box-shadow: 0 10px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
     align-items: center;
+    flex-direction: row;
 }
 
 .news-image {
@@ -767,7 +817,7 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .news-title {
-    font-size: 20px;
+    font-size: clamp(16px, 2vw, 20px);
     font-weight: 800;
     color: var(--black-in-light-mode);
     margin: 0;
@@ -820,24 +870,25 @@ watch(selectedCategory, (newCategory) => {
 }
 
 .small-news-card-wrapper {
-    padding-top: 10px;
     display: flex;
     gap: 10px;
+    flex-direction: row;
+    width: 100%;
     background-color: var(--white-in-light-mode);
     color: var(--black-in-light-mode);
     border-radius: 8px;
 }
 
 .small-news-card {
-    gap: 10px;
     width: 100%;
-    height: 100%;
-    align-items: center;
-    padding-top: 10px;
-    font-size: 10px;
-    height: calc(100% - 10px);
-    background-color: var(--white-in-light-mode);
-    color: var(--black-in-light-mode);
+    min-width: 0;
+}
+
+.small-news-card .news-image {
+    width: 100% !important;
+    height: 150px !important;
+    object-fit: cover;
+    border-radius: 4px;
 }
 
 .stock-card-container {
@@ -910,7 +961,7 @@ watch(selectedCategory, (newCategory) => {
     }
     .news-card {
         flex-direction: column;
-        height: auto !important;
+        min-height: unset;
         align-items: stretch;
     }
     .news-image {
@@ -920,13 +971,11 @@ watch(selectedCategory, (newCategory) => {
     }
     .small-news-card-wrapper {
         flex-direction: column;
+        gap: 10px;
     }
     .small-news-card {
-      align-items: stretch;
-    }
-    .small-news-card .news-image {
-        width: 100% !important;
-        height: 150px !important;
+        width: 100%;
+        min-width: 0;
     }
 }
 
