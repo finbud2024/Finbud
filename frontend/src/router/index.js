@@ -52,6 +52,7 @@ import AIHedgeFundLabPage from "@/views/FinXpert/AIHedgeFundLabPage.vue";
 import PrivateEquityDealScoutPage from "@/views/FinXpert/PrivateEquityDealScoutPage.vue";
 import AIFinanceWorkflowsPage from "@/views/FinXpert/AIFinanceWorkflowsPage.vue";
 import AccountantPage from "@/views/FinXpert/AccountantPage.vue";
+import NewsDetail from '@/views/FinInvest/MarketAnalysis/NewsDetailPage.vue';;
 
 const routes = [
   {
@@ -340,7 +341,12 @@ const routes = [
     path: "/finxpert-accountant",
     name: "AccountantPage",
     component: AccountantPage,
-  }
+  },
+  {
+    path: '/news/:id',
+    name: 'NewsDetail',
+    component: NewsDetail
+  },
 ];
 
 const router = createRouter({
