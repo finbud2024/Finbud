@@ -3,14 +3,34 @@ const { defineConfig } = require('@vue/cli-service');
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  devServer: {
+    proxy: {
+      '/.netlify/functions/server': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/.netlify/functions/server': ''
+        },
+        logLevel: 'debug'
+      }
+    }
+  },
   configureWebpack: {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src')
       }
     },
+    experiments: {
+      asyncWebAssembly: true,
+      syncWebAssembly: true
+    },
     module: {
       rules: [
+        {
+          test: /\.wasm$/,
+          type: 'webassembly/async'
+        },
         {
           test: /\.csv$/,
           use: [

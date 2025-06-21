@@ -268,10 +268,22 @@ export default {
     }
   },
   async mounted() {
-    if (this.isAuthenticated) {
-      const userId = this.$store.getters["users/userId"];
-      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
-      const res = await axios.get(threadApi);
+    if (!this.isAuthenticated) return;
+
+    // if store isn't hydrated yet, wait for it
+    if (!this.$store.getters["users/userId"]) {
+      await this.$store.dispatch("users/fetchCurrentUser");   // or whatever action loads profile
+    }
+
+    const userId = this.$store.getters["users/userId"];
+    if (!userId) {
+      console.warn("Sidebar: userId still undefined – skip thread fetch");
+      return;                         // prevents /threads/u/undefined
+    }
+
+    const api = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+    try {
+      const res = await axios.get(api);
       const historyThreadsData = res.data;
       if (historyThreadsData.length === 0) {
         await this.addThread();
@@ -296,7 +308,10 @@ export default {
           this.selectThread(historyThreadsData.length - matchIndex - 1);
         }
       }
+    } catch (e) {
+      console.error("thread fetch failed:", e);
     }
+
     document.addEventListener("click", this.handleOutsideClick);
   },
   beforeDestroy() {

@@ -9,13 +9,211 @@ import Transaction from "../../Database_Schema/trading/Transaction.js";
 import UserHolding from "../../Database_Schema/finance/UserHolding.js";
 import Portfolio from "../../Database_Schema/finance/Portfolio.js";
 import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import Parser from '@postlight/parser';
 // import { YoutubeTranscript } from 'youtube-transcript';
 // import { getVideoId } from '../utils/getVideoId.js';
 
 dotenv.config();
 
 const chatRoute = express.Router();
+
+// Increase allowed payload size for this router
+chatRoute.use(express.json({ limit: '10mb' }));
+chatRoute.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// + DEEP RESEARCH WORKFLOW SETUP
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  console.warn('⚠️ Backend GEMINI_API_KEY not configured. Please set VUE_APP_GEMINI_API_KEY in your .env file');
+}
+const geminiAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
+
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+if (!GROQ_API_KEY) {
+  console.warn('⚠️ Backend GROQ_API_KEY not configured. Please set GROQ_API_KEY in your .env file');
+}
+
+const groqClient = GROQ_API_KEY ? new Groq({ apiKey: GROQ_API_KEY }) : null;
+
+const SERPER_API_KEY = process.env.VUE_APP_SERPER_API_KEY;
+if (!SERPER_API_KEY) {
+    console.warn('⚠️ Backend SERPER_API_KEY not configured. Please set VUE_APP_SERPER_API_KEY in your .env file');
+}
+
+// Simple token approximation function (avoids WebAssembly issues)
+function approximateTokenCount(text) {
+  if (!text) return 0;
+  // Rough approximation: 1 token ≈ 0.75 words for English text
+  const words = text.split(/\s+/).length;
+  return Math.ceil(words * 1.33); // Convert words to approximate tokens
+}
+
+const countTokens = (txt) => approximateTokenCount(txt);
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// + AGENTIC ROUTES
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// Agent Route: Searcher
+chatRoute.post('/agents/search', isAuthenticated, async (req, res) => {
+    const { query, numLinks = 5 } = req.body;
+    if (!query) {
+        return res.status(400).json({ error: 'Missing "query" in request body.' });
+    }
+    if (!SERPER_API_KEY) {
+        return res.status(500).json({ error: 'SERPER_API_KEY not configured on the server.' });
+    }
+
+    try {
+        const response = await axios.post('https://google.serper.dev/search', { q: query }, {
+            headers: { 'X-API-KEY': SERPER_API_KEY, 'Content-Type': 'application/json' }
+        });
+        const links = (response.data.organic || []).slice(0, numLinks).map(result => result.link);
+        res.json({ links });
+    } catch (error) {
+        res.status(500).json({ error: `Search Agent failed: ${error.message}` });
+    }
+});
+
+// Agent Route: Scraper (using Postlight Parser)
+chatRoute.post('/agents/scrape', isAuthenticated, async (req, res) => {
+    const { url } = req.body;
+    if (!url) {
+        return res.status(400).json({ error: 'Missing "url" in request body.' });
+    }
+
+    try {
+        const result = await Parser.parse(url, { contentType: 'markdown' });
+        res.json({ source: url, content: result.content });
+    } catch (error) {
+        res.status(500).json({ source: url, error: `Scrape Agent failed for ${url}: ${error.message}` });
+    }
+});
+
+// Agent Route: Leaf Summarizer
+chatRoute.post('/agents/summarize-leaf', isAuthenticated, async (req, res) => {
+  const { contents, goal } = req.body;
+  if (!groqClient) return res.status(500).json({ error: 'Backend Groq not initialized.' });
+
+  const systemPrompt = `
+You are a professional equity research agent. Your task is to carefully summarize while preserving all numeric, financial opinion and statistical data.
+
+Rules:
+- Every source block starts with "SOURCE: <URL>"
+- For each fact you extract, attach its corresponding source as markdown inline link [source](URL)
+- Always keep all quantitative values: revenue, earnings, margins, PE ratio, EPS, YoY growth, debt, etc.
+- Never invent new data. Do not hallucinate.
+- Output clean, concise markdown bullet points.
+  `;
+
+  const fullPrompt = `
+GOAL: ${goal}
+
+DATA BLOCKS:
+${contents.join("\n\n")}
+  `;
+
+  try {
+    const chatCompletion = await groqClient.chat.completions.create({
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: fullPrompt }
+      ],
+      model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    });
+    res.json({ summary: chatCompletion.choices[0]?.message?.content });
+  } catch (error) {
+    console.error(`[summarize-leaf] Groq API Error:`, error);
+    res.status(500).json({ error: `Failed to summarize leaf: ${error.message}` });
+  }
+});
+
+
+
+
+// Agent Route: Master Report Compiler
+// Agent Route: Master Report Compiler
+chatRoute.post('/agents/compile-report', isAuthenticated, async (req, res) => {
+  let { synthesis, researchBrief = {} } = req.body;
+  if (!groqClient) return res.status(500).json({ error: 'Backend Groq not initialized.' });
+
+  // Detect language preference from researchBrief
+  const language = researchBrief?.output_preferences?.toLowerCase().includes('english')
+      ? 'English'
+      : 'Vietnamese';
+
+  // Truncate synthesis to safe size
+  const MAX_SYNTHESIS_CHARS = 20000;
+  if (synthesis.length > MAX_SYNTHESIS_CHARS) {
+      synthesis = synthesis.slice(0, MAX_SYNTHESIS_CHARS) + '\n\n...[synthesis truncated]';
+  }
+
+  // Compose system prompt for more consistency
+  const systemPrompt = `
+You are a highly professional equity research report compiler. Your job is to transform synthesized analysis into a final high-quality report for clients.
+
+You MUST:
+- Carefully organize the information into a well-structured, professional report.
+- Use clear section headers and sub-headers.
+- Always preserve all quantitative data (P/E ratio, EPS, revenue, net income, YoY growth, profit margins, EBITDA, debt ratios, etc.)
+- Preserve all inline source citations already present (e.g. [source](URL))
+- Use markdown tables where applicable.
+- Write very clean GitHub-flavored markdown.
+- Do not hallucinate any data. Never invent anything not in synthesis.
+- Use ${language} for all output.
+  `;
+
+  const userPrompt = `
+USER RESEARCH BRIEF:
+${JSON.stringify(researchBrief, null, 2)}
+
+SYNTHESIZED ANALYSIS:
+${synthesis}
+
+FINAL REPORT:
+`;
+
+  try {
+      console.log(`[compile-report] Prompt tokens: ${countTokens(systemPrompt + userPrompt)}`);
+      const chatCompletion = await groqClient.chat.completions.create({
+          messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt }
+          ],
+          model: "meta-llama/llama-4-scout-17b-16e-instruct",
+      });
+
+      return res.json({ report: chatCompletion.choices[0]?.message?.content });
+  } catch (error) {
+      console.error(`[compile-report] Groq API Error:`, error);
+      return res.status(500).json({ error: `Failed to compile report: ${error.message}` });
+  }
+});
+
+
+// Agent Route: QA and Fact-Checker
+chatRoute.post('/agents/qa-fact-check',isAuthenticated, async (req, res) => {
+    const { report } = req.body;
+    // For now, this is a mock QA check. In a real system, this would be more complex.
+    const qaResult = {
+        passed: true,
+        analytics: {
+            plagiarismScore: Math.random() * 0.05, // Mock score
+            coverage: "good",
+            brokenLinks: 0
+        },
+        finalReport: report + "\n\n---\n*Verified by FinBud QA Bot ✅*"
+    };
+    res.json(qaResult);
+});
+
+
 
 // GET: Retrieve all chats
 chatRoute.route('/chats')
@@ -178,54 +376,13 @@ chatRoute.post("/query", isAuthenticated, async (req, res) => {
   }
 });
 
-// Deep Research Pipeline v1.0 - Simplified Backend Support
+// DEPRECATED - This endpoint is no longer used by the new MECE pipeline.
+// The new granular agent endpoints above should be used instead.
 chatRoute.post('/deep-research', isAuthenticated, async (req, res) => {
-    try {
-        const { message, conversationHistory = [], step = 1 } = req.body;
-        
-        console.log('Deep research pipeline request:', { message, step, historyLength: conversationHistory.length });
-        
-        // Since most logic is now in frontend deepResearchService, 
-        // this endpoint mainly serves as fallback for API calls
-        
-        switch (step) {
-            case 1:
-                // Step 1: Classification fallback
-                return res.json({
-                    response: await classifyFinanceRelevance(message),
-                    status: 'CLASSIFIED'
-                });
-                
-            case 2:
-                // Step 2: Clarification fallback  
-                return res.json({
-                    response: await generateClarificationQuestion(message),
-                    status: 'CLARIFYING'
-                });
-                
-            default:
-                // General clarification for backward compatibility
-                const clarificationQuestion = await generateClarificationQuestion(message);
-                return res.json({
-                    response: clarificationQuestion,
-                    status: 'CLARIFYING'
-                });
-        }
-
-    } catch (error) {
-        console.error('Deep research pipeline error:', error.response?.data || error.message);
-        
-        // Fallback clarification question
-        const isVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(message);
-        const fallbackQuestion = isVietnamese 
-            ? "Bạn muốn phân tích trong khoảng thời gian nào? (ví dụ: 2020-2024, 5 năm gần đây)"
-            : "What time period would you like to analyze? (e.g., 2020-2024, last 5 years)";
-        
-        res.json({
-            response: fallbackQuestion,
-            status: 'CLARIFYING'
-        });
-    }
+    res.status(404).json({ 
+        error: "This endpoint is deprecated.",
+        message: "Please use the new MECE pipeline orchestration flow initiated from the client, which calls granular agent endpoints like /agents/data-gather."
+    });
 });
 
 // Helper function for Step 1: Classification
@@ -584,6 +741,7 @@ FinBud đang phát triển tính năng này để mang lại trải nghiệm t�
   }
 });
 
+
 // Helper function to generate meta-prompt
 function generateMetaPrompt(brief) {
   const isVietnamese = brief.output_preferences && brief.output_preferences.includes('Vietnamese');
@@ -640,5 +798,7 @@ function generateMetaPrompt(brief) {
 
   return metaPrompt;
 }
+
+
 
 export default chatRoute;

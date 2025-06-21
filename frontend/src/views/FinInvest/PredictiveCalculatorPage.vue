@@ -1298,4 +1298,220 @@ export default {
     gap: 0.75rem;
   }
 }
+
+/* Dark mode styles */
+.dark-mode .predictive-calculator {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #f9fafb;
+}
+
+.dark-mode .dashboard-header {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.dark-mode .dashboard-title {
+  color: #f9fafb;
+}
+
+.dark-mode .dashboard-subtitle {
+  color: #d1d5db;
+}
+
+.dark-mode .stat-card {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .stat-card:hover {
+  background: #6b7280;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .stat-label {
+  color: #9ca3af;
+}
+
+.dark-mode .stat-value {
+  color: #f9fafb;
+}
+
+.dark-mode .control-panel {
+  background: #374151;
+  border-color: #4b5563;
+}
+
+.dark-mode .section-title {
+  color: #f9fafb;
+}
+
+.dark-mode .stock-search-container {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .model-selection {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .model-card {
+  background: #6b7280;
+  border-color: #9ca3af;
+  color: #f9fafb;
+}
+
+.dark-mode .model-card.selected {
+  background: #1f2937;
+  border-color: #f9fafb;
+}
+
+.dark-mode .model-card:hover {
+  background: #9ca3af;
+  border-color: #d1d5db;
+}
+
+.dark-mode .model-icon {
+  color: #f9fafb;
+}
+
+.dark-mode .model-name {
+  color: #f9fafb;
+}
+
+.dark-mode .model-accuracy {
+  background: #059669;
+}
+
+.dark-mode .model-description {
+  color: #d1d5db;
+}
+
+.dark-mode .param-section {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .param-label {
+  color: #f9fafb;
+}
+
+.dark-mode .param-input {
+  background: #374151;
+  border-color: #6b7280;
+  color: #f9fafb;
+}
+
+.dark-mode .param-input:focus {
+  border-color: #9ca3af;
+}
+
+.dark-mode .run-prediction-btn {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: #f9fafb;
+}
+
+.dark-mode .run-prediction-btn:hover {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+}
+
+.dark-mode .guidance-section {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .guidance-content {
+  color: #d1d5db;
+}
+
+.dark-mode .main-content {
+  background: #374151;
+}
+
+.dark-mode .chart-section {
+  background: #4b5563;
+  border-color: #6b7280;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .loading-container {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark-mode .loading-title {
+  color: #f9fafb;
+}
+
+.dark-mode .loading-message {
+  color: #d1d5db;
+}
+
+.dark-mode .loading-subtext {
+  color: #9ca3af;
+}
+
+.dark-mode .progress-bar {
+  background: #6b7280;
+}
+
+.dark-mode .progress-fill {
+  background: linear-gradient(90deg, #1f2937, #374151);
+}
+
+.dark-mode .metrics-section {
+  background: #4b5563;
+  border-color: #6b7280;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .metric-card {
+  background: #6b7280;
+  border-color: #9ca3af;
+}
+
+.dark-mode .metric-card:hover {
+  background: #9ca3af;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .model-info .model-name {
+  color: #f9fafb;
+}
+
+.dark-mode .stat-item .stat-label {
+  color: #9ca3af;
+}
+
+.dark-mode .stat-item .stat-value {
+  color: #f9fafb;
+}
+
+.dark-mode .insights-section {
+  background: #4b5563;
+  border-color: #6b7280;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .insight-card {
+  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+  border-color: #9ca3af;
+}
+
+.dark-mode .insight-card:hover {
+  background: linear-gradient(135deg, #9ca3af 0%, #d1d5db 100%);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .insight-icon {
+  color: #f9fafb;
+}
+
+.dark-mode .insight-card h4 {
+  color: #f9fafb;
+}
+
+.dark-mode .insight-card p {
+  color: #d1d5db;
+}
 </style> 

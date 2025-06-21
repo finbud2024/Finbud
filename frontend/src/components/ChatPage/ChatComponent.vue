@@ -4,6 +4,16 @@
 			<div v-for="(message, index) in messages" :key="index">
 				<FileIndicator v-if="message.containFile" :file="message.file" />
 
+				<!-- Deep Research Result custom view -->
+				<DeepResearchResult
+					v-if="!message.isUser && message.isDeepResearch"
+					:report="message.report"
+					:symbol="message.symbol"
+					:relevantQuestions="message.relevantQuestions"
+					@question-click="handleQuestionClick"
+				/>
+
+				<!-- Regular message view -->
 				<MessageComponent
 					:is-user="message.isUser"
 					:text="message.text"
@@ -44,6 +54,17 @@
 					:user-prompt="currentUserMessageText"
 				/>
 
+				<!-- RAG Process -->
+				<RagProcess
+					v-if="
+						chatMode === 'rag' &&
+						showRagProcess &&
+						index === messages.length - 1
+					"
+					:status="ragStatus"
+					@rag-complete="handleRagComplete"
+				/>
+
 				<!-- Add TradingView widget after stock messages -->
 				<TradingViewWidget
 					v-if="message.showChart"
@@ -72,6 +93,7 @@ import MessageComponent from "../MessageComponent.vue";
 import UserInput from "../UserInput.vue";
 import TradingViewWidget from "../TradingViewWidget.vue";
 import DeepResearchAgent from "./DeepResearchAgent.vue";
+import DeepResearchResult from "./DeepResearchResult.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 import FinBudMenu from "./FinBudMenu.vue";
@@ -105,6 +127,7 @@ export default {
 		UserInput,
 		TradingViewWidget,
 		DeepResearchAgent,
+		DeepResearchResult,
 		FileIndicator,
 		ChatSuggestion,
 		ThinkingProcess,
@@ -121,6 +144,8 @@ export default {
 			chatMode: "",
 			showDeepResearchWorkflow: false,
 			showThinkingProcess: false,
+			showRagProcess: false,
+			ragStatus: 'loading',
 			conversationHistory: [],
 			researchBrief: null,
 		};
@@ -169,7 +194,7 @@ export default {
 	},
 	methods: {
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
-		handleUserSubmit({ message, file }) {
+		async handleUserSubmit({ message, file }) {
 			console.log(
 				`chat mode before sent from chat component: ${this.chatMode}`
 			);
@@ -190,7 +215,22 @@ export default {
 					this.sendDeepResearchMessage(this.currentUserMessageText);
 				} else if (this.chatMode === "think") {
 					this.showThinkingProcess = true;
-				} else {
+				} else if (this.chatMode === "rag") {
+					try {
+						this.showRagProcess = true;
+						const context = await this.sendRagMessage(this.currentUserMessageText);
+						// Pass both original message and context to sendMessage
+						await this.sendMessage({
+							message: this.currentUserMessageText,
+							context: context
+						});
+					} catch (error) {
+						console.error("Error in RAG mode:", error);
+						// Fall back to normal message if RAG fails
+						await this.sendMessage(this.currentUserMessageText);
+					}
+				}
+				else {
 					this.sendMessage(this.currentUserMessageText);
 				}
 			}
@@ -199,7 +239,11 @@ export default {
 
 		// ---------------------------- RESPONSE MESSGE ----------------------------
 		async sendMessage(newMessage) {
-			const userMessage = newMessage.trim();
+			// Handle both string messages and RAG message objects
+			const userMessage = typeof newMessage === 'string' 
+				? newMessage.trim() 
+				: newMessage.message.trim();
+
 			const language = await gptServices([
 				{
 					role: "user",
@@ -317,6 +361,71 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 				// Add thinking message
 				this.addTypingResponse("", false, [], [], [], true);
 
+				// If in RAG mode, process with enhanced context
+				if (this.chatMode === "rag" && typeof newMessage === 'object' && newMessage.context) {
+					try {
+						// Get response from GPT with enhanced context
+						const gptResponse = await gptServices([
+							{
+								role: "system",
+								content: `You are FinBud, a financial assistant. Use the following context to provide a detailed answer to the user's question.
+
+RELEVANT CONTEXT:
+${newMessage.context}
+
+Please provide a comprehensive answer that:
+1. Uses the context above to inform your response
+2. Maintains a friendly and professional tone
+3. Focuses on financial accuracy and clarity
+4. Includes specific details from the context when relevant`,
+							},
+							{
+								role: "user",
+								content: userMessage // Use original query
+							}
+						]);
+
+						answers.push(gptResponse);
+
+						// Remove thinking message
+						this.messages = this.messages.filter((msg) => !msg.isThinking);
+						
+						// Add response to messages
+						this.addTypingResponse(
+							gptResponse,
+							false,
+							newSources,
+							newVideos,
+							newRelevantQuestions
+						);
+
+						// Save chat to backend if authenticated
+						if (this.isAuthenticated) {
+							try {
+								const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+								const reqBody = {
+									prompt: this.currentUserMessageText, // Save original query
+									response: [gptResponse],
+									sources: newSources,
+									videos: newVideos,
+									threadId: this.currentThreadID,
+									context: newMessage.context // Save the context
+								};
+								await axios.post(chatApi, reqBody);
+							} catch (err) {
+								console.error("Error on saving chat:", err.message);
+							}
+						}
+
+						this.scrollChatFrameToBottom();
+						return;
+					} catch (error) {
+						console.error("Error in RAG mode:", error);
+						// Fall back to normal processing if RAG fails
+					}
+				}
+
+				// Continue with normal processing for non-RAG mode or if RAG failed
 				const gptDefine = await gptServices([
 					{
 						role: "user",
@@ -1615,14 +1724,33 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 				if (this.messages.length > 0 && this.messages[this.messages.length - 1].thinking) {
 					this.messages.pop();
 				}
-
-				// Display response (only add to messages, not conversationHistory since it's already managed)
-				const assistantMessage = {
-					text: response,
-					isUser: false,
-					typing: false,
-					timestamp: new Date().toLocaleTimeString(),
-				};
+				
+				let assistantMessage;
+				if (typeof response === 'object' && response.report) {
+					assistantMessage = {
+						isUser: false,
+						isDeepResearch: true,
+						report: response.report,
+						symbol: (() => {
+							if (!response.ticker) return '';
+							const raw = Array.isArray(response.ticker) ? response.ticker[0] : response.ticker;
+							const codes = this.extractStockCode(raw);
+							return Array.isArray(codes) ? codes[0] : raw;
+						})(),
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+						relevantQuestions: response.relevantQuestions,
+					};
+				} else {
+					assistantMessage = {
+						text: response,
+						isUser: false,
+						markdown: true,
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+						relevantQuestions: response.relevantQuestions,
+					};
+				}
 				
 				this.messages.push(assistantMessage);
 				this.conversationHistory.push({ role: 'assistant', content: response });
@@ -1639,12 +1767,48 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 			}
 		},
 
-			
-	
+		async sendRagMessage(message) {
+			try {
+				console.log("🤖 SENDING RAG REQUEST:", {
+					query: message,
+					top_k: 5,
+					expand_n_query: 2,
+					keep_top_k: 3
+				});
 
-		// Removed startMetaAnalysis - logic moved to deepResearchService.js
+				const response = await axios.post(`${process.env.RAG_API_BASE_URL}/api/query`, {
+					query: message,
+					top_k: 5,
+					expand_n_query: 2,
+					keep_top_k: 3
+				});
 
+				console.log("✅ RAG RESPONSE RECEIVED:", {
+					hasContext: !!response.data.context,
+					contextLength: response.data.context?.length || 0
+				});
 
+				// Extract context from response
+				const context = response.data.context;
+				if (!context) {
+					console.warn("⚠️ No context received from RAG");
+					this.ragStatus = 'error';
+					throw new Error("No context received from RAG");
+				}
+
+				this.ragStatus = 'success';
+				return context;
+			} catch (error) {
+				console.error("❌ Error in sendRagMessage:", error);
+				this.ragStatus = 'error';
+				throw error; // Propagate error to handleUserSubmit for fallback
+			}
+		},
+
+		async handleRagComplete() {
+			this.showRagProcess = false;
+			this.ragStatus = 'loading'; // Reset status for next use
+		},
 	},
 	mounted() {
 		const autoMessage = this.$route.query.autoMessage;
@@ -1858,3 +2022,4 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 	width: 90%;
 }
 </style>
+

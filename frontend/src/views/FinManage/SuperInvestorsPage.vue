@@ -489,4 +489,32 @@ const hideBot = () => {
     height: 45px;
   }
 }
+
+/* Dark mode styles */
+.dark-mode .page-container {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  color: #f9fafb;
+}
+
+.dark-mode .title {
+  color: #f9fafb;
+}
+
+.dark-mode .title::after {
+  background: #f9fafb;
+}
+
+.dark-mode .bot-message {
+  background: #374151;
+  color: #f9fafb;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .typed-message {
+  color: #f9fafb;
+}
+
+.dark-mode .dot {
+  background-color: #f9fafb;
+}
 </style>
