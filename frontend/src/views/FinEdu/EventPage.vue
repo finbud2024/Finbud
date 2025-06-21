@@ -162,6 +162,8 @@
                     </div>
                 </div>
             </div>
+
+        <VnExpressArticles></VnExpressArticles>
     </div>
 </template>
 
@@ -177,6 +179,7 @@ import EventMap from '@/components/FinEdu/Event/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Articles from '@/components/Articles.vue'; // Adjust the path if necessary
+import VnExpressArticles from './VnExpressArticles.vue';
 // import api from "@/utils/api";
 
 export default {
@@ -186,6 +189,7 @@ export default {
         SwiperSlide,
         EventMap,
         Articles,
+        VnExpressArticles
     },
     data() {
         return {
