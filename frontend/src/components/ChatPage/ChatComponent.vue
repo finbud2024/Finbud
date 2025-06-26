@@ -13,8 +13,17 @@
 					@question-click="handleQuestionClick"
 				/>
 
+				<!-- RAG Result custom view -->
+				<RagResult
+					v-if="!message.isUser && message.isRag"
+					:status="message.ragStatus || 'success'"
+					:formatted-answer="message.text"
+					:error-message="message.errorMessage"
+				/>
+
 				<!-- Regular message view -->
 				<MessageComponent
+					v-if="!message.isRag && !message.isDeepResearch"
 					:is-user="message.isUser"
 					:text="message.text"
 					:typing="message.typing"
@@ -92,6 +101,7 @@ import UserInput from "../UserInput.vue";
 import TradingViewWidget from "../TradingViewWidget.vue";
 import DeepResearchAgent from "./DeepResearchAgent.vue";
 import DeepResearchResult from "./DeepResearchResult.vue";
+import RagResult from "./RagResult.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 
@@ -128,6 +138,7 @@ export default {
 		TradingViewWidget,
 		DeepResearchAgent,
 		DeepResearchResult,
+		RagResult,
 		FileIndicator,
 		ChatSuggestion,
 		ThinkingProcess,
@@ -216,13 +227,7 @@ export default {
 					this.showThinkingProcess = true;
 				} else if (this.chatMode === "rag") {
 					try {
-						this.showRagProcess = true;
-						const context = await this.sendRagMessage(this.currentUserMessageText);
-						// Pass both original message and context to sendMessage
-						await this.sendMessage({
-							message: this.currentUserMessageText,
-							context: context
-						});
+						this.sendRagMessage(this.currentUserMessageText);
 					} catch (error) {
 						console.error("Error in RAG mode:", error);
 						// Fall back to normal message if RAG fails
@@ -293,70 +298,6 @@ Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, kh�
 
 				// Add thinking message
 				this.addTypingResponse("", false, [], [], [], true);
-
-				// If in RAG mode, process with enhanced context
-				if (this.chatMode === "rag" && typeof newMessage === 'object' && newMessage.context) {
-					try {
-						// Get response from GPT with enhanced context
-						const gptResponse = await gptServices([
-							{
-								role: "system",
-								content: `You are FinBud, a financial assistant. Use the following context to provide a detailed answer to the user's question.
-
-RELEVANT CONTEXT:
-${newMessage.context}
-
-Please provide a comprehensive answer that:
-1. Uses the context above to inform your response
-2. Maintains a friendly and professional tone
-3. Focuses on financial accuracy and clarity
-4. Includes specific details from the context when relevant`,
-							},
-							{
-								role: "user",
-								content: userMessage // Use original query
-							}
-						]);
-
-						answers.push(gptResponse);
-
-						// Remove thinking message
-						this.messages = this.messages.filter((msg) => !msg.isThinking);
-						
-						// Add response to messages
-						this.addTypingResponse(
-							gptResponse,
-							false,
-							newSources,
-							newVideos,
-							newRelevantQuestions
-						);
-
-						// Save chat to backend if authenticated
-						if (this.isAuthenticated) {
-							try {
-								const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-								const reqBody = {
-									prompt: this.currentUserMessageText, // Save original query
-									response: [gptResponse],
-									sources: newSources,
-									videos: newVideos,
-									threadId: this.currentThreadID,
-									context: newMessage.context // Save the context
-								};
-								await axios.post(chatApi, reqBody);
-							} catch (err) {
-								console.error("Error on saving chat:", err.message);
-							}
-						}
-
-						this.scrollChatFrameToBottom();
-						return;
-					} catch (error) {
-						console.error("Error in RAG mode:", error);
-						// Fall back to normal processing if RAG fails
-					}
-				}
 
 				// Continue with normal processing for non-RAG mode or if RAG failed
 				const gptDefine = await gptServices([
@@ -1056,21 +997,24 @@ Please provide a comprehensive answer that:
 					);
 				});
 				//save chat to backend
-				if (this.isAuthenticated) {
-					try {
-						const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
-						const reqBody = {
-							prompt: userMessage,
-							response: answers,
-							sources: newSources,
-							videos: newVideos,
-							threadId: this.currentThreadID,
-						};
-						await axios.post(chatApi, reqBody);
-					} catch (err) {
-						console.error("Error on saving chat:", err.message);
-					}
-				}
+				// if (this.isAuthenticated) {
+				// 	try {
+				// 		const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats`;
+				// 		const reqBody = {
+				// 			prompt: userMessage,
+				// 			response: answers,
+				// 			sources: newSources,
+				// 			videos: newVideos,
+				// 			threadId: this.currentThreadID,
+				// 			context: response.context || '',
+				// 			isRag: true,
+				// 			metadata: response.metadata || []
+				// 		};
+				// 		await axios.post(chatApi, reqBody);
+				// 	} catch (err) {
+				// 		console.error("Error on saving chat:", err.message);
+				// 	}
+				// }
 				this.scrollChatFrameToBottom();
 			}
 		},
@@ -1698,39 +1642,84 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 
 		async sendRagMessage(message) {
 			try {
-				console.log('🤖 Starting RAG process for query:', message);
+				// Add user message to conversation history first
+				this.conversationHistory.push({ role: 'user', content: message });
+				
+				// Add initial RAG message with loading state
+				const loadingMessage = {
+					text: '',
+					isUser: false,
+					isRag: true,
+					ragStatus: 'loading',
+					typing: false,
+					timestamp: new Date().toLocaleTimeString(),
+				};
+				this.messages.push(loadingMessage);
+				this.$nextTick(() => this.scrollChatFrameToBottom());
+				
+				// Process with local RAG service
+				const { ragService } = await import('@/services/ragService.js');
+				const ragInstance = new ragService(message);
+				const response = await ragInstance.processMessage(message, this.conversationHistory);
 
-				// Initialize retriever
-				const retriever = new VectorRetriever(message);
-				console.log('✅ Retriever initialized');
-
-				// Retrieve top K documents (now returns reranked passages as strings)
-				console.log('🔍 Retrieving documents...');
-				const passages = await retriever.retrieveTopK();
-				console.log(`✅ Retrieved ${passages.length} passages`);
-
-				if (!passages || passages.length === 0) {
-					console.warn('⚠️ No context after reranking');
-					this.ragStatus = 'error';
-					return [];
+				// Update the last message with the response
+				const lastMessageIndex = this.messages.length - 1;
+				if (response.status === 'success') {
+					this.messages[lastMessageIndex] = {
+						text: response.text,
+						isUser: false,
+						isRag: true,
+						ragStatus: 'success',
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+						sources: [] // No metadata in new format, sources are embedded in the text
+					};
+				} else {
+					this.messages[lastMessageIndex] = {
+						text: response.message || 'Có lỗi xảy ra trong quá trình xử lý RAG.',
+						isUser: false,
+						isRag: true,
+						ragStatus: 'error',
+						errorMessage: response.message || 'Có lỗi xảy ra trong quá trình xử lý RAG.',
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+					};
 				}
+				
+				this.conversationHistory.push({ role: 'assistant', content: this.messages[lastMessageIndex].text });
+				this.$nextTick(() => this.scrollChatFrameToBottom());
 
-				this.ragStatus = 'success';
-				return passages.join('\n\n');
 			} catch (error) {
-				console.error('❌ Error in RAG process:', {
-					error: error.message,
-					stack: error.stack,
-					query: message
-				});
-				this.ragStatus = 'error';
-				return [];
+				console.error('RAG error:', error);
+				
+				// Update the last message with error state
+				const lastMessageIndex = this.messages.length - 1;
+				if (lastMessageIndex >= 0 && this.messages[lastMessageIndex].isRag) {
+					this.messages[lastMessageIndex] = {
+						text: `Xin lỗi, có lỗi khi xử lý yêu cầu RAG: ${error.message}. Vui lòng thử lại.`,
+						isUser: false,
+						isRag: true,
+						ragStatus: 'error',
+						errorMessage: `Xin lỗi, có lỗi khi xử lý yêu cầu RAG: ${error.message}. Vui lòng thử lại.`,
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+					};
+				} else {
+					// Add error message if no RAG message exists
+					const errorMessage = {
+						text: `Xin lỗi, có lỗi khi xử lý yêu cầu RAG: ${error.message}. Vui lòng thử lại.`,
+						isUser: false,
+						isRag: true,
+						ragStatus: 'error',
+						errorMessage: `Xin lỗi, có lỗi khi xử lý yêu cầu RAG: ${error.message}. Vui lòng thử lại.`,
+						typing: false,
+						timestamp: new Date().toLocaleTimeString(),
+					};
+					this.messages.push(errorMessage);
+				}
+				
+				this.$nextTick(() => this.scrollChatFrameToBottom());
 			}
-		},
-
-		async handleRagComplete() {
-			this.showRagProcess = false;
-			this.ragStatus = 'loading'; // Reset status for next use
 		},
 	},
 	mounted() {

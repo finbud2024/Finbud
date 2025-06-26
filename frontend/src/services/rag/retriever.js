@@ -39,7 +39,7 @@ class VectorRetriever {
             const allResults = [];
             
             // Calculate limit per collection, ensuring it's at least 1
-            const limitPerCollection = Math.max(1, Math.ceil(k / VectorRetriever.COLLECTION_TYPES.length));
+            const limitPerCollection = Math.max(k);
             
             for (const dataType of VectorRetriever.COLLECTION_TYPES) {
                 const collectionName = this._getVectorCollectionName(dataType);
@@ -97,17 +97,17 @@ class VectorRetriever {
             
             console.log('Generated queries:', generatedQueries);
             
-            const allHits = [];
             // Search with each generated query
-            for (const query of generatedQueries) {
-                const hits = await this._searchSingleQuery(
-                    query,
-                    collectionType,
-                    additionalFilters,
-                    k * 2 // Double the k value to get more candidates for reranking
-                );
-                allHits.push(...hits);
-            }
+            const allHits = (await Promise.all(
+                generatedQueries.map(query => 
+                    this._searchSingleQuery(
+                        query,
+                        collectionType,
+                        additionalFilters,
+                        k * 2
+                    )
+            ))).flat();
+            
 
             // Sort by score and keep more results for reranking
             allHits.sort((a, b) => b.score - a.score);
@@ -122,21 +122,28 @@ class VectorRetriever {
         }
     }
 
-    async rerank(hits, keepTopK = 3) {
+    async rerank(hits, keepTopK = 5) {
         if (!hits?.length) return [];
         
         try {
+            console.log(`🔄 Starting reranking of ${hits.length} hits...`);
             const contentList = hits.map(hit => hit.payload.content);
-            const rerankedPassages = await this._reranker.generateResponse(
+            const rerankedIndices = await this._reranker.generateResponse(
                 this.query,
                 contentList,
                 keepTopK
             );
             
-            return rerankedPassages;
+            // Use the indices to get the corresponding hits
+            const rerankedHits = rerankedIndices.map(index => hits[index]).filter(Boolean);
+            console.log(`✅ Reranked ${rerankedHits.length} hits with full metadata`);
+            return rerankedHits;
         } catch (error) {
-            console.error('Reranking error:', error.message);
-            return hits.slice(0, keepTopK).map(hit => hit.payload.content); // Fallback to top k by score
+            console.error('❌ Reranking failed, falling back to score-based ranking:', error.message);
+            // Fallback to top k by score
+            const fallbackHits = hits.slice(0, keepTopK);
+            console.log(`🔄 Using fallback ranking for ${fallbackHits.length} hits`);
+            return fallbackHits;
         }
     }
 

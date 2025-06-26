@@ -73,29 +73,31 @@ class RerankingTemplate extends BasePromptTemplate {
         this.prompt = `You are an AI language model assistant. Your task is to rerank passages related to a query
     based on their relevance. 
     The most relevant passages should be put at the beginning. 
-    You MUST return EXACTLY {keep_top_k} passages, no more and no less.
-    The provided and reranked documents are separated by '{separator}'.
+    You MUST return EXACTLY {keep_top_k} indices, no more and no less.
+    Each index corresponds to the position of a passage in the provided list (starting from 0).
+    Return ONLY the indices separated by '{separator}', nothing else.
     
     The following are passages related to this query: {question}.
     
     Passages: 
     {passages}
 
-    Remember to return EXACTLY {keep_top_k} passages, separated by '{separator}'.`;
+    Remember to return EXACTLY {keep_top_k} indices (numbers from 0 to {max_index}), separated by '{separator}'.`;
     }
 
     get separator() {
-        return "\n#next-document#\n";
+        return ",";
     }
 
     createTemplate(keepTopK) {
         return {
-            format: ({ question, passages }) => {
+            format: ({ question, passages, maxIndex }) => {
                 return this.prompt
                     .replace('{keep_top_k}', keepTopK)
                     .replace('{separator}', this.separator)
                     .replace('{question}', question)
-                    .replace('{passages}', passages);
+                    .replace('{passages}', passages)
+                    .replace('{max_index}', maxIndex);
             }
         };
     }

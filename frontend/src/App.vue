@@ -326,6 +326,7 @@ export default {
   --agent-button-bg-active-color: #000000;
   --black-in-dark-mode: #ffffff;
   --white-in-dark-mode: #000000;
+  --source-pill-color: #f4f4f4;
 
   /*--QuantPage colors */
   --quant-background:#ffffff;
@@ -361,6 +362,7 @@ body.dark-mode {
   --black-in-dark-mode: #0f0f14;
   --white-in-dark-mode: #ffffff;
   --dark-grey: #0f0f14;
+  --source-pill-color: #383434;
 
   /*--QuantPage colors */
   --quant-background: #000000;
