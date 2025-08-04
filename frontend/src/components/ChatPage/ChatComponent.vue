@@ -263,12 +263,13 @@ export default {
 				const response = await gptServices([
 					{
 						role: "system",
-						content: `Bạn là một trợ lý đặt tên hội thoại bằng tiếng Việt ngắn gọn, mang tính mô tả chủ đề.
-Đây là vài ví dụ:
-- 'Kỳ nghỉ ở châu Âu' từ 'Các địa điểm du lịch châu Âu nên đi?'
-- 'Gia hạn dự án' từ 'Chúng ta cần lùi deadline 2 tuần do có vấn đề.'
+						content: `You are an assistant that names conversations in Vietnamese with short, descriptive titles.
 
-Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, không quá 5 từ:`,
+Here are some examples:
+- 'European Vacation' from 'Which tourist spots in Europe should I visit?'
+- 'Project Extension' from 'We need to push the deadline back 2 weeks due to an issue.'
+
+Summarize the following text into a Vietnamese conversation title, no more than 5 words:`,
 					},
 					{
 						role: "user",
@@ -1733,9 +1734,18 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 		if (!this.isAuthenticated) {
 			let botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
 			if (this.$i18n.locale === "vi") {
-				botInstruction = `Hế lô, bạn!\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
+				botInstruction = `Hế lô, bạn!\nBấm vào \"Hướng dẫn\" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
 			}
 			this.addTypingResponse(botInstruction, false);
+		} else {
+			// If the user is authenticated but no thread is loaded, show a default greeting.
+			if (!this.currentThreadID) {
+				let botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
+				if (this.$i18n.locale === "vi") {
+					botInstruction = `Hế lô, ${this.displayName}!\nHôm nay bạn cần FinBud giúp gì nè?`;
+				}
+				this.addTypingResponse(botInstruction, false);
+			}
 		}
 	},
 };

@@ -3,7 +3,7 @@
     <div class="sidebar-content">
       <button class="close-btn" @click="close">x</button>
       <div class="guidance-text">
-        <p>Chào mừng bạn đến với <span class="brand-name">FinBud</span>! Dưới đây là một số <span class="command">lệnh</span> để bạn bắt đầu:</p>
+        <p>Welcome to <span class="brand-name">FinBud</span>! Here are some <span class="command">commands</span> to get you started:</p>
         <ol class="guidance-list">
           <!-- guidance for general users -->
           <li v-for="(item, index) in generalGuidanceList" :key="index" @click="toggleExpansion(item)"
@@ -13,10 +13,10 @@
               <span class="command">{{ item.command }}</span>
             </div>
             <div v-if="item.instruction">{{ item.instruction }}.</div>
-            <div v-if="item.example">(VD: "{{ item.example }}").</div>
+            <div v-if="item.example">(e.g., "{{ item.example }}").</div>
             <div v-if="item.additionalInfo">{{ item.additionalInfo }}.</div>
             <div class="expanded-content">
-              <img class="explanation" :src="item.explanation" alt="minh họa" @click="handleImageClick(item)">
+              <img class="explanation" :src="item.explanation" alt="illustration" @click="handleImageClick(item)">
             </div>
           </li>
           <!-- guidance for authenticated users -->
@@ -28,9 +28,9 @@
                 <span class="command">{{ item.command }}</span>
               </div>
               <div v-if="item.instruction">{{ item.instruction }}.</div>
-              <div v-if="item.example">(VD: "{{ item.example }}").</div>
+              <div v-if="item.example">(e.g., "{{ item.example }}").</div>
               <div class="expanded-content">
-                <img class="explanation" :src="item.explanation" alt="minh họa" @click.stop="handleImageClick(item)">
+                <img class="explanation" :src="item.explanation" alt="illustration" @click.stop="handleImageClick(item)">
               </div>
             </li>
           </div>
@@ -63,118 +63,80 @@ export default {
   data() {
     return {
       generalGuidanceList: [
-  {
-    header: "Tìm kiếm nâng cao",
-    command: "#timkiem [từ_khóa]",
-    instruction: "Nhập từ khóa cần tìm",
-    example: "#timkiem thị trường chứng khoán",
-    explanation: search,
-  },
-  {
-    header: "Tra cứu giá cổ phiếu",
-    command: null,
-    instruction: "Nhập mã cổ phiếu viết hoa",
-    example: "TSLA",
-    explanation: stockPrice,
-  },
-  {
-    header: "Giải nghĩa thuật ngữ tài chính",
-    command: "#dinhnghia [thuật_ngữ]",
-    instruction: null,
-    example: "#dinhnghia IPO",
-    explanation: define,
-  },
-  {
-    header: "Xem Top 5 tiền điện tử",
-    command: "#tiendientu",
-    instruction: null,
-    example: null,
-    explanation: crypto,
-  },
-  {
-    header: "Xem 5 bất động sản khu vực",
-    command: "#batdongsan [tên_khu_vực]",
-    example: "#batdongsan new york",
-    additionalInfo: "Nếu không nhập khu vực, mặc định là San Jose.",
-    explanation: realestate,
-  },
-],
-userGuidanceList: [
-  {
-    header: "Thêm giao dịch",
-    command: "#them [mô_tả] [số_tiền]",
-    example: "#them Mua sắm 125",
-    explanation: add,
-  },
-  {
-    header: "Ghi lại chi tiêu",
-    command: "#chi [mô_tả] [số_tiền]",
-    example: "#chi Mua sắm 125",
-    explanation: spend,
-  },
-  {
-    header: "Mua cổ phiếu",
-    command: "#mua [mã_cổ_phiếu] [số_lượng]",
-    example: "#mua TSLA 10",
-    explanation: buy,
-  },
-  {
-    header: "Bán cổ phiếu",
-    command: "#ban [mã_cổ_phiếu] [số_lượng]",
-    example: "#ban TSLA 10",
-    explanation: sell,
-  },
-  {
-    header: "Thêm mục tiêu",
-    command: "#them_muctieu",
-    example: null,
-    explanation: create,
-  },
-  {
-    header: "Phân tích danh mục",
-    command: "#phantich",
-    example: null,
-    explanation: create,
-  },
-],
-userGuidanceList: [
-  {
-    header: "Thêm giao dịch",
-    command: "#them [mô_tả] [số_tiền]",
-    example: "#them Mua sắm 125",
-    explanation: add,
-  },
-  {
-    header: "Theo dõi chi tiêu",
-    command: "#chi [mô_tả] [số_tiền]",
-    example: "#chi Mua sắm 125",
-    explanation: spend,
-  },
-  {
-    header: "Mua cổ phiếu",
-    command: "#mua [mã_cổ_phiếu] [số_lượng]",
-    example: "#mua TSLA 10",
-    explanation: buy,
-  },
-  {
-    header: "Bán cổ phiếu",
-    command: "#ban [mã_cổ_phiếu] [số_lượng]",
-    example: "#ban TSLA 10",
-    explanation: sell,
-  },
-  {
-    header: "Tạo mục tiêu",
-    command: "#taomuctieu",
-    example: null,
-    explanation: create,
-  },
-  {
-    header: "Phân tích danh mục",
-    command: "#phantich",
-    example: null,
-    explanation: create,
-  },
-],
+        {
+          header: "Advanced Search",
+          command: "#search [keyword]",
+          instruction: "Enter the keyword to search for",
+          example: "#search stock market",
+          explanation: search,
+        },
+        {
+          header: "Look up stock price",
+          command: null,
+          instruction: "Enter the stock symbol in all caps",
+          example: "TSLA",
+          explanation: stockPrice,
+        },
+        {
+          header: "Define a financial term",
+          command: "#define [term]",
+          instruction: null,
+          example: "#define IPO",
+          explanation: define,
+        },
+        {
+          header: "See Top 5 cryptocurrencies",
+          command: "#crypto",
+          instruction: null,
+          example: null,
+          explanation: crypto,
+        },
+        {
+          header: "See 5 real estate properties in an area",
+          command: "#realestate [area_name]",
+          example: "#realestate new york",
+          additionalInfo: "If no area is entered, it defaults to San Jose.",
+          explanation: realestate,
+        },
+      ],
+      userGuidanceList: [
+        {
+          header: "Add transaction",
+          command: "#add [description] [amount]",
+          example: "#add Shopping 125",
+          explanation: add,
+        },
+        {
+          header: "Log expense",
+          command: "#spend [description] [amount]",
+          example: "#spend Shopping 125",
+          explanation: spend,
+        },
+        {
+          header: "Buy stock",
+          command: "#buy [symbol] [quantity]",
+          example: "#buy TSLA 10",
+          explanation: buy,
+        },
+        {
+          header: "Sell stock",
+          command: "#sell [symbol] [quantity]",
+          example: "#sell TSLA 10",
+          explanation: sell,
+        },
+        {
+          header: "Add goal",
+          command: "#add_goal",
+          example: null,
+          explanation: create,
+        },
+        {
+          header: "Analyze portfolio",
+          command: "#analyze",
+          example: null,
+          explanation: create,
+        },
+      ],
       expandedItem: null,
     };
   },

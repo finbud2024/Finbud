@@ -4,7 +4,7 @@
      
     <div class="quiz-card" data-aos="fade-up">
       <div class="form-group keyword-search-section">
-        <label for="search-keyword-input" class="keyword-label">{{ $t('currentKeywordLabel') }}</label>
+        <label for="search-keyword-input" class="keyword-label">Current Keyword</label>
         <div class="keyword-input-container">
           <div class="keyword-input-group">
             <font-awesome-icon icon="fa-solid fa-search" class="input-icon" />
@@ -13,7 +13,7 @@
               type="text" 
               v-model="searchKeyword" 
               :disabled="isLoading"
-              :placeholder="$t('keywordPlaceholder')" 
+              placeholder="Enter a keyword..." 
               @keyup.enter="GenerateQuiz"
               class="keyword-input"
             />
@@ -28,15 +28,15 @@
               :class="{ 'fa-spin': isLoading }"
               class="btn-icon"
             />
-            <span>{{ isLoading ? $t('generatingButton') : $t('generateQuizButton') }}</span>
+            <span>{{ isLoading ? 'Generating...' : 'Generate Quiz' }}</span>
           </button>
         </div>
       </div>
 
       <div class="form-group" v-if="relatedKeyword.length !== 0">
-        <label for="related-keyword">{{ $t('relatedKeywordsLabel') }}</label>
+        <label for="related-keyword">Related Keywords</label>
         <div class="carousel-wrapper">
-          <button class="carousel-nav left" @click="scrollLeft" :aria-label="$t('scrollLeft')">
+          <button class="carousel-nav left" @click="scrollLeft" aria-label="Scroll Left">
             &lt;
           </button>
 
@@ -47,22 +47,22 @@
             </button>
           </div>
 
-          <button class="carousel-nav right" @click="scrollRight" :aria-label="$t('scrollRight')">
+          <button class="carousel-nav right" @click="scrollRight" aria-label="Scroll Right">
             &gt;
           </button>
         </div>
       </div>
       <div v-if="currentKeyword" class="quiz-info">
-        <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
-        <div>{{ $t('pointsLabel') }} {{ score }}</div>
-        <div>{{ $t('timeLeftLabel') }} {{ timerCountdown }}</div>
+        <div>Current Keyword: {{ currentKeyword }}</div>
+        <div>Points: {{ score }}</div>
+        <div>Time Left: {{ timerCountdown }}</div>
       </div>
       <div class="quiz-area">
         <div :class="[
           'quizQuestion',
           { quizQuestionEnabled: question.length !== 0 },
         ]">
-          {{ currentQuestion === -1 ? $t('questionPlaceholder') : question }}
+          {{ currentQuestion === -1 ? 'Your question will appear here.' : question }}
         </div>
         <div class="quizChoices">
           <button v-for="index in 4" :key="index" :disabled="answerButtonDisabled" @click="handleUserChoice(index)"
@@ -72,37 +72,37 @@
             ]">
             {{
               answerOptions.length === 0
-                ? $t('answerPlaceholder', { letter: String.fromCharCode(64 + index) })
+                ? `Answer ${String.fromCharCode(64 + index)}`
                 : answerOptions[index - 1].replace(/\*$/, "")
             }}
           </button>
         </div>
         <div v-if="showExplaination" class="explanation-container">
           <div class="explanation-text">
-            <div class="explanation-title">{{ $t('explanationTitle') }}</div>
+            <div class="explanation-title">Explanation</div>
             <div>{{ explanation }}</div>
           </div>
           <button class="button" @click="handleNextQuestion">
-            {{ $t('nextQuestionButton') }}
+            Next Question
           </button>
         </div>
       </div>
       <div v-if="modalDisplay" class="overlay">
         <div class="modal-container">
-          <div class="result-title">{{ $t('quizResultTitle') }}</div>
+          <div class="result-title">Quiz Result</div>
           <div>
-            <div>{{ $t('currentKeywordLabel') }} {{ currentKeyword }}</div>
-            <div>{{ $t('pointsLabel') }} {{ score }}/3</div>
+            <div>Current Keyword: {{ currentKeyword }}</div>
+            <div>Points: {{ score }}/3</div>
           </div>
           <div class="result-button-container">
             <button class="button" @click="handleQuizResult('same')">
-              {{ $t('sameKeywordButton') }}
+              Same Keyword
             </button>
             <button class="button" @click="handleQuizResult('different')">
-              {{ $t('differentKeywordButton') }}
+              Different Keyword
             </button>
             <button class="button" @click="handleQuizResult('end')">
-              {{ $t('endQuizButton') }}
+              End Quiz
             </button>
           </div>
         </div>
