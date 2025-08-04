@@ -1751,6 +1751,15 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 				botInstruction = `Hế lô, bạn!\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
 			}
 			this.addTypingResponse(botInstruction, false);
+		} else {
+			// If the user is authenticated but no thread is loaded, show a default greeting.
+			if (!this.currentThreadID) {
+				let botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
+				if (this.$i18n.locale === "vi") {
+					botInstruction = `Hế lô, ${this.displayName}!\nHôm nay bạn cần FinBud giúp gì nè?`;
+				}
+				this.addTypingResponse(botInstruction, false);
+			}
 		}
 	},
 };
