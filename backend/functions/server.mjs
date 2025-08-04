@@ -41,7 +41,6 @@ import finCompareRoute from "../Endpoints/finance/finCompareRoute.js";
 // Import new services
 import peAnalysisRoute from '../Endpoints/services/peAnalysisService.js';
 import aiWorkflowRoute from '../Endpoints/services/aiWorkflowService.js';
-import qdrantRoute from '../Endpoints/services/qdrantRoute.js';
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -209,7 +208,6 @@ router.use("/", notiRoute);
 router.use("/api/courses", courseRoute);
 router.use("/api/vietstock", vietStock);
 router.use("/", finCompareRoute);
-router.use("/api/qdrant", qdrantRoute);
 // Register new routes
 router.use("/api/pe-analysis", peAnalysisRoute);
 router.use("/api/ai-workflows", aiWorkflowRoute);

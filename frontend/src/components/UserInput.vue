@@ -49,7 +49,7 @@
 							Think
 						</button>
 					</div>
-					<div class="agent-btn">
+					<!-- <div class="agent-btn">
 						<button
 							class="chat-mode-button"
 							:class="{ active: chatMode === 'rag' }"
@@ -57,7 +57,7 @@
 						>
 							RAG
 						</button>
-					</div>
+					</div> -->
 				</div>
 
 				<!-- Drop File -->

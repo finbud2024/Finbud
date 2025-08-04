@@ -14,12 +14,12 @@
 				/>
 
 				<!-- RAG Result custom view -->
-				<RagResult
+				<!-- <RagResult
 					v-if="!message.isUser && message.isRag"
 					:status="message.ragStatus || 'success'"
 					:formatted-answer="message.text"
 					:error-message="message.errorMessage"
-				/>
+				/> -->
 
 				<!-- Regular message view -->
 				<MessageComponent
@@ -119,9 +119,7 @@ import OpenAI from "openai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import * as pdfjsLib from "pdfjs-dist";
-import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf";
-
-import VectorRetriever from "@/services/rag/retriever.js";
+import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf"
 
 GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 

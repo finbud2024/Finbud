@@ -37,7 +37,6 @@ import vietStock from "./Endpoints/data/vietStock.js";
 import finCompareRoute from "./Endpoints/finance/finCompareRoute.js";
 import peAnalysisRoute from './Endpoints/services/peAnalysisService.js';
 import aiWorkflowRoute from './Endpoints/services/aiWorkflowService.js';
-import qdrantRoute from './Endpoints/services/qdrantRoute.js';
 
 dotenv.config();
 
@@ -180,7 +179,6 @@ app.use("/api/vietstock", vietStock);
 app.use("/", finCompareRoute);
 app.use("/api/pe-analysis", peAnalysisRoute);
 app.use("/api/ai-workflows", aiWorkflowRoute);
-app.use("/api/qdrant", qdrantRoute);
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.json({ 
