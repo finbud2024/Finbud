@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button class="toggle-btn" @click="toggleSidebar">
-      <svg v-if="isCollapsed" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <button v-if="showControls" class="toggle-btn" @click="toggleSidebar">
+      <svg v-if="!isVisible" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="12" x2="21" y2="12"></line>
         <line x1="3" y1="6" x2="21" y2="6"></line>
         <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -12,9 +12,9 @@
       </svg>
     </button>
 
-    <div class="overlay" :class="{ active: !isCollapsed }" @click="closeSidebar"></div>
+    <div v-if="showControls" class="overlay" :class="{ active: isVisible }" @click="closeSidebar"></div>
 
-    <div class="side-bar" :class="{ collapsed: isCollapsed }">
+    <div class="side-bar" :class="{ collapsed: !isVisible }">
       <div class="sidebar-header">
         <router-link to="/">
           <div class="footer-image">
@@ -119,13 +119,24 @@ export default {
   name: "SideBar",
   props: {
     initialThreadName: String,
+    isVisible: {
+      type: Boolean,
+      required: true,
+    },
+    showControls: {
+      type: Boolean,
+      default: true,
+    },
+    isMobile: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
       threads: [],
       deleteIndex: null,
       showConfirmDeleteModal: false,
-      isCollapsed: false
     };
   },
   computed: {
@@ -175,6 +186,7 @@ export default {
         newThread.creationDate = new Date();
         this.threads.unshift(newThread);
         this.selectThread(0);
+        this.$router.push({ name: 'Chat', params: { threadId: newThread.id } });
       } catch (err) {
         console.error("Error on adding new thread:", err);
       }
@@ -251,6 +263,9 @@ export default {
     handleClick(index) {
       if (event.detail === 1) {
         this.selectThread(index);
+        if (this.isMobile) {
+          this.$emit('update:isVisible', false);
+        }
       }
     },
     handleOutsideClick(event) {
@@ -261,10 +276,10 @@ export default {
       this.threads.forEach(thread => thread.openDropdown = false);
     },
     toggleSidebar() {
-      this.isCollapsed = !this.isCollapsed;
+      this.$emit('update:isVisible', !this.isVisible);
     },
     closeSidebar() {
-      this.isCollapsed = true;
+      this.$emit('update:isVisible', false);
     }
   },
   async mounted() {

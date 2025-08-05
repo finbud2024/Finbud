@@ -1,29 +1,28 @@
 <template>
   <div class="pestle-page">
     <!-- Title -->
-    <h1 class="title">Phân tích PESTLE</h1>
+    <h1 class="title">PESTLE Analysis</h1>
 
-    <!-- Text content, hidden after clicking Continue -->
-    <div v-if="!showPestle" class="text-content">
-      <p class="description">
-        Quy trình AI này hướng dẫn bạn thực hiện phân tích PESTLE chi tiết, giúp bạn đánh giá các yếu tố chính trị, kinh
-        tế, xã hội, công nghệ, pháp lý và môi trường ảnh hưởng đến ngành của bạn. Bằng cách cung cấp cái nhìn sâu sắc về
-        sáu lĩnh vực quan trọng này, công cụ hỗ trợ đưa ra các quyết định chiến lược kinh doanh dựa trên dữ liệu.
-      </p>
+<!-- Text content, hidden after clicking Continue -->
+<div v-if="!showPestle" class="text-content">
+  <p class="description">
+    This AI-driven process guides you through a detailed PESTLE analysis, helping you assess the political, economic,
+    social, technological, legal, and environmental factors affecting your industry. By providing deep insights into
+    these six critical areas, the tool supports making data-driven strategic business decisions.
+  </p>
 
-      <h2 class="subtitle">Cách sử dụng</h2>
-      <p class="description">
-        Nhập ngành: Bắt đầu bằng cách nhập ngành mà bạn muốn phân tích.
-      </p>
+  <h2 class="subtitle">How to Use</h2>
+  <p class="description">
+    Enter Industry: Start by entering the industry you want to analyze.
+  </p>
 
-      <h2 class="subtitle">Khi nào nên sử dụng</h2>
-      <p class="description">
-        Công cụ này lý tưởng cho các nhà chiến lược kinh doanh, nhà phân tích thị trường và người ra quyết định cần hiểu
-        rõ các
-        yếu tố bên ngoài ảnh hưởng đến ngành của họ. Đặc biệt hữu ích trong quá trình lập kế hoạch chiến lược, phân tích
-        gia nhập thị trường,
-        và đánh giá rủi ro.
-      </p>
+  <h2 class="subtitle">When to Use</h2>
+  <p class="description">
+    This tool is ideal for business strategists, market analysts, and decision-makers who need to clearly understand
+    the external factors affecting their industry. Especially useful during strategic planning, market entry analysis,
+    and risk assessment.
+  </p>
+
 
       <div class="industry-input-container">
         <!-- Input field for industry -->
