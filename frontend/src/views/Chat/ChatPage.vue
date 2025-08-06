@@ -35,7 +35,7 @@
 				/>
 				<!-- You can add other header controls here if needed -->
 			</div>
-			<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" ref="chatComponent" />
+			<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" ref="chatComponent" :autoMessage="autoMessage" :greeting="greeting" />
 		</div>
 
 		<!-- Guidance & Tutorial (Positioned relative to chat-view-container) -->
@@ -93,6 +93,8 @@ export default {
 			isNavbarExpanded: false,
 			isMobile: false,
 			nnavbarObserver: null,
+			autoMessage: null,
+			greeting: true,
 		};
 	},
 	computed: {
@@ -160,6 +162,10 @@ export default {
 
 		const autoMessage = this.$route.query.autoMessage, threadID = this.$route.query.threadID;
 		if (threadID) this.$store.dispatch("threads/updateThreadID", threadID);
+		if (autoMessage) {
+			this.autoMessage = autoMessage;
+			this.greeting = false;
+		}
 		if (this.$route.query.showTutorial && this.$refs.tutorialOverlay) setTimeout(() => this.$refs.tutorialOverlay.resetTutorial(), 500);
 	},
 	beforeDestroy() {

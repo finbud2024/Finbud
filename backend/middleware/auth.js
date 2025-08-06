@@ -6,6 +6,15 @@ export const isAuthenticated = (req, res, next) => {
   return res.status(401).json({ message: "Unauthorized: Please log in" });
 };
 
+// Optional authentication middleware
+export const softAuth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  // If not authenticated, just continue without user data
+  return next();
+};
+
 // Authorization middleware for admin-only routes
 export const isAdmin = (req, res, next) => {
   if (req.isAuthenticated() && req.user.accountData.priviledge === "admin") {
