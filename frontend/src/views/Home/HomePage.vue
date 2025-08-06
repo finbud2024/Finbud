@@ -342,19 +342,22 @@ export default {
     },
     async chatNow(message) {
       try {
-        // Create a new thread by making an API call
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = this.$store.getters["users/userId"]; // Get the current user ID
-        const response = await axios.post(api, { userId });
+        let requestBody = {};
 
-        // Extract the new thread ID from the response
+        if (this.isAuthenticated) {
+          const userId = this.$store.getters["users/userId"];
+          requestBody.userId = userId;
+        } else {
+          requestBody.userId = null;
+        }
+
+        const response = await axios.post(api, requestBody);
         const newThreadID = response.data._id;
 
-        // Update the Vuex store with the new thread ID
         this.$store.dispatch("threads/updateThreadID", newThreadID);
 
-        // Navigate to the chat view with the new thread ID and the message
-        this.$router.push({
+        await this.$router.push({
           path: "/chat-view",
           query: { autoMessage: message, threadID: newThreadID },
         });
@@ -385,6 +388,10 @@ export default {
     }
   },
   mounted() {
+    if (!this.isAuthenticated && !sessionStorage.getItem('anonymousToken')) {
+      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      sessionStorage.setItem('anonymousToken', token);
+    }
     this.startTypingSignInTitle();
     this.startTypingSignInDescription();
 

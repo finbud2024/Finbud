@@ -31,7 +31,7 @@
 					<div @click="triggerFileInput" class="upload-btn">
 						<font-awesome-icon icon="fa-solid fa-paperclip" />
 					</div>
-					<div class="agent-btn">
+					<!-- <div class="agent-btn">
 						<button
 							class="chat-mode-button"
 							:class="{ active: chatMode === 'deep-research' }"
@@ -57,7 +57,7 @@
 						>
 							RAG
 						</button>
-					</div>
+					</div> -->
 				</div>
 
 				<!-- Drop File -->

@@ -118,7 +118,16 @@ const geminiAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export default {
 	name: "ChatComponent",
-	props: {},
+	props: {
+		autoMessage: {
+			type: String,
+			default: null,
+		},
+		greeting: {
+			type: Boolean,
+			default: true,
+		},
+	},
 	components: {
 		ChatFrame,
 		MessageComponent,
@@ -182,6 +191,14 @@ export default {
 				}
 			},
 		},
+		autoMessage: {
+			immediate: true,
+			handler(newMessage) {
+				if (newMessage) {
+					this.handleUserSubmit({ message: newMessage });
+				}
+			}
+		}
 	},
 	created() {
 		this.openai = new OpenAI({
@@ -256,12 +273,14 @@ export default {
 				const response = await gptServices([
 					{
 						role: "system",
-						content: `Bạn là một trợ lý đặt tên hội thoại bằng tiếng Việt ngắn gọn, mang tính mô tả chủ đề.
-Đây là vài ví dụ:
-- 'Kỳ nghỉ ở châu Âu' từ 'Các địa điểm du lịch châu Âu nên đi?'
-- 'Gia hạn dự án' từ 'Chúng ta cần lùi deadline 2 tuần do có vấn đề.'
+						content: `You are an assistant for naming conversations with short, descriptive English titles.
+Here are a few examples:
 
-Hãy tóm tắt đoạn sau thành tên hội thoại bằng tiếng Việt, không quá 5 từ:`,
+"Europe Vacation" from "What are must-visit places in Europe?"
+
+"Project Extension" from "We need to push the deadline back by 2 weeks due to some issues."
+
+Summarize the following into an English conversation title, no more than 5 words`,
 					},
 					{
 						role: "user",
@@ -1490,19 +1509,9 @@ Bạn là FinBud — trợ lý tài chính.
 		async updateCurrentThread(threadID) {
 			try {
 				this.messages = [];
-				let botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat:
-"Ghi lại thu nhập 12.500.000 VNĐ", 
-"Phân tích ngân sách của tôi <3", 
-"Chi 70.000 VNĐ mua sáchhhhhh", 
-"Mua 5 cổ phiếu Apple cho tui nè", 
-"Giá cổ phiếu Tesla là bao nhiêu á Bud ơii"`;
+				let botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat`;
 				if (this.$i18n.locale != "vi") {
-					botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot:
-"Record income 12,500,000 VND", 
-"Analyze my budget <3", 
-"Spend 70,000 VND to buy bookshhhhh", 
-"Buy me 5 Apple shares", 
-"How much is Tesla stock, Bud"`;
+					botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot`;
 				}
 				await this.addTypingResponse(botInstruction, false);
 				const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
@@ -1597,7 +1606,7 @@ Respond ONLY with the category name, and nothing else.`;
 					// Nếu chưa phân loại được --> Gọi API tạo câu trả lời tự động giải thích tại sao
 					const explanationPrompt = `You are a smart finance assistant. The user described the transaction as: "${description}". 
 You tried to categorize it into type "${type}" but none of the expected categories match correctly.
-Please write a short, friendly explanation (in Vietnamese) telling the user why you cannot categorize this yet and politely ask them to clarify more.`;
+Please write a short, friendly explanation telling the user why you cannot categorize this yet and politely ask them to clarify more.`;
 
 					const explanation = await gptServices([
 						{ role: "user", content: explanationPrompt },
@@ -1738,26 +1747,17 @@ Please write a short, friendly explanation (in Vietnamese) telling the user why 
 		},
 	},
 	mounted() {
-		const autoMessage = this.$route.query.autoMessage;
-		if (autoMessage && !this.autoMessageSent) {
-			this.autoMessageSent = true;
-			this.handleUserSubmit({ message: autoMessage }); // gửi 1 lần
-			this.$router.replace({ query: null }); // xoá query để reload ko gửi lại
-		}
+		const hasMessages = this.messages.length > 0;
 
-		if (!this.isAuthenticated) {
-			let botInstruction = `Hello, Guest!\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
-			if (this.$i18n.locale === "vi") {
-				botInstruction = `Hế lô, bạn!\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat.\nNgoài ra, hãy đăng nhập để truy cập đầy đủ chức năng của Finbud!`;
+		if (this.greeting && !hasMessages) {
+			let botInstruction;
+			if (!this.isAuthenticated) {
+				botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+			} else if (!this.currentThreadID) {
+				botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
 			}
-			this.addTypingResponse(botInstruction, false);
-		} else {
-			// If the user is authenticated but no thread is loaded, show a default greeting.
-			if (!this.currentThreadID) {
-				let botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
-				if (this.$i18n.locale === "vi") {
-					botInstruction = `Hế lô, ${this.displayName}!\nHôm nay bạn cần FinBud giúp gì nè?`;
-				}
+
+			if (botInstruction) {
 				this.addTypingResponse(botInstruction, false);
 			}
 		}
