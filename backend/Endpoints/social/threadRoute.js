@@ -1,7 +1,7 @@
 import express from 'express';
 import Thread from '../../Database_Schema/social/Thread.js';
 import validateRequest from '../../utils/validation/validateRequest.js';
-import { isAuthenticated, isAdmin, isOwnerOrAdmin } from '../../middleware/auth.js';
+import { isAuthenticated, isAdmin, isOwnerOrAdmin, softAuth } from '../../middleware/auth.js';
 
 const threadRoute = express.Router();
 
@@ -101,25 +101,29 @@ threadRoute.route('/threads')
   })
 
   // POST: saving a new thread into database
-  .post(isAuthenticated, validateRequest(Thread.schema), async (req, res) => {
+  .post(softAuth, validateRequest(Thread.schema), async (req, res) => {
     console.log('in /threads Route (POST) new thread to database');
-    if (!req.body.userId) {
-      return res.status(501).send("Unable to save thread to database due to missing userId");
-    }
     
-    // Ensure users can only create threads for themselves unless they're an admin
-    if (req.user.accountData.priviledge !== 'admin' && req.body.userId !== req.user._id.toString()) {
+    // For authenticated users, ensure they can only create threads for themselves unless they're an admin
+    if (req.user && req.user.accountData && req.user.accountData.priviledge !== 'admin' && req.body.userId && req.body.userId !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Forbidden: You can only create threads for yourself' });
     }
     
     try {
-      const threadBody = {
-        userId: req.body.userId
-      };
+      const threadBody = {};
+
+      // If the user is authenticated, use their ID
+      if (req.user) {
+        threadBody.userId = req.body.userId || req.user._id;
+      } else if (req.body.anonymousToken) {
+        // For unauthenticated users, use the anonymous token
+        threadBody.userId = null;
+      }
 
       if (req.body.title) {
         threadBody.title = req.body.title;
       }
+      
       const thread = new Thread(threadBody);
       await thread.save();
       return res.status(200).json(thread);
