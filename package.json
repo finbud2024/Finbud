@@ -1,6 +1,7 @@
 {
-  "name": "FinBud-AI-bot",
+  "name": "finbud-ai-bot",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "netlify:build": "cd frontend && vue-cli-service build",

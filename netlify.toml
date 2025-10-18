@@ -16,6 +16,7 @@
 [build.environment]
   NODE_VERSION = "18"
   YARN_VERSION = "1.22.22"
-  YARN_FLAGS = "--network-timeout 600000"
+  YARN_FLAGS = "--network-timeout 600000 --ignore-engines"
+  YARN_CACHE_FOLDER = ".netlify/cache/yarn"
   NODE_OPTIONS = "--experimental-modules"
 
