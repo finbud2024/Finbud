@@ -6,7 +6,7 @@
       <div class="price-info">
         <!-- Live Price -->
         <span class="current-price">{{ livePrice }}</span>
-  
+
         <!-- Price change from previous close to current live price -->
         <span
           class="price-change"
@@ -16,12 +16,14 @@
         </span>
       </div>
     </div>
-  
+
     <!-- Stats Section - Now with proper grid layout -->
     <div class="card-stats">
       <div class="stat-item" v-for="stat in stats" :key="stat.label">
         <span class="label">{{ stat.label }}</span>
-        <span class="value">{{ typeof stat.value === 'number' ? stat.value.toFixed(2) : stat.value }}</span>
+        <span class="value">{{
+          typeof stat.value === "number" ? stat.value.toFixed(2) : stat.value
+        }}</span>
       </div>
     </div>
   </div>
@@ -32,46 +34,46 @@
 import { fetchSimBannerStockDatav3 } from "../services/stockServices";
 
 export default {
-  name: 'BannerCardSimulator',
+  name: "BannerCardSimulator",
   props: {
     stockCode: {
       type: String,
       required: true,
-      default: 'AAPL'
-    }
+      default: "AAPL",
+    },
   },
   data() {
     return {
-      livePrice: 'N/A',
-      open: 'N/A',
-      close: 'N/A',
-      high: 'N/A',
-      low: 'N/A',
-      volume: 'N/A',
-      marketCap: 'N/A',
-      eps: 'N/A',
-      peRatio: 'N/A',
-      pbr: 'N/A',
+      livePrice: "N/A",
+      open: "N/A",
+      close: "N/A",
+      high: "N/A",
+      low: "N/A",
+      volume: "N/A",
+      marketCap: "N/A",
+      eps: "N/A",
+      peRatio: "N/A",
+      pbr: "N/A",
       isLoading: true,
-      error: null
+      error: null,
     };
   },
   computed: {
     stats() {
       return [
-        { label: 'Open', value: this.open },
-        { label: 'High', value: this.high },
-        { label: 'Low', value: this.low },
-        { label: 'Previous Close', value: this.close },
-        { label: 'Market Cap', value: this.marketCap },
-        { label: 'Volume', value: this.volume },
-        { label: 'EPS', value: this.eps },
-        { label: 'P/E', value: this.peRatio },
-        { label: 'P/B', value: this.pbr }
+        { label: this.$t("investment.stats.open"), value: this.open },
+        { label: this.$t("investment.stats.high"), value: this.high },
+        { label: this.$t("investment.stats.low"), value: this.low },
+        { label: this.$t("investment.stats.prevClose"), value: this.close },
+        { label: this.$t("investment.stats.marketCap"), value: this.marketCap },
+        { label: this.$t("investment.stats.volume"), value: this.volume },
+        { label: this.$t("investment.stats.eps"), value: this.eps },
+        { label: this.$t("investment.stats.pe"), value: this.peRatio },
+        { label: this.$t("investment.stats.pb"), value: this.pbr },
       ];
     },
     priceChange() {
-      if (this.close !== 'N/A' && this.livePrice !== 'N/A') {
+      if (this.close !== "N/A" && this.livePrice !== "N/A") {
         const live = parseFloat(this.livePrice);
         const prevClose = parseFloat(this.close);
         return (live - prevClose).toFixed(2);
@@ -83,13 +85,17 @@ export default {
       return num > 0 ? `+${num}` : `${num}`;
     },
     priceChangePercent() {
-      if (this.close !== 'N/A' && parseFloat(this.close) !== 0 && this.livePrice !== 'N/A') {
+      if (
+        this.close !== "N/A" &&
+        parseFloat(this.close) !== 0 &&
+        this.livePrice !== "N/A"
+      ) {
         const change = parseFloat(this.priceChange);
         const prevClose = parseFloat(this.close);
         return ((change / prevClose) * 100).toFixed(2);
       }
       return 0;
-    }
+    },
   },
   async created() {
     try {
@@ -107,11 +113,11 @@ export default {
         this.pbr = data.pbr;
       }
     } catch (error) {
-      console.error('Error in BannerCardSimulator:', error);
+      console.error("Error in BannerCardSimulator:", error);
     } finally {
       this.isLoading = false;
     }
-  }
+  },
 };
 </script>
 
@@ -214,29 +220,29 @@ export default {
   .company-name {
     font-size: 1.3rem;
   }
-  
+
   .current-price {
     font-size: 1.3rem;
   }
-  
+
   .price-change {
     font-size: 0.9rem;
   }
-  
+
   .card-stats {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 8px;
   }
-  
+
   .stat-item {
     min-height: 50px;
     padding: 6px;
   }
-  
+
   .label {
     font-size: 0.75rem;
   }
-  
+
   .value {
     font-size: 0.9rem;
   }
