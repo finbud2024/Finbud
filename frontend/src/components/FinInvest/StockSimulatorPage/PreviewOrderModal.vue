@@ -28,13 +28,15 @@
       </div>
       <div class="modal-actions">
         <button @click="clearOrder" class="clear-btn">CLEAR ORDER</button>
-        <button @click="submitOrder" :disabled="isSubmittingOrder" class="submit-btn">
+        <button
+          @click="submitOrder"
+          :disabled="isSubmittingOrder"
+          class="submit-btn"
+        >
           <span v-if="isSubmittingOrder">
             <i class="fas fa-spinner fa-spin"></i> Submitting...
           </span>
-          <span v-else>
-            Submit Order
-          </span>
+          <span v-else> Submit Order </span>
         </button>
       </div>
     </div>
@@ -43,12 +45,21 @@
 
 <script>
 export default {
+  name: "PreviewOrderModal",
   props: {
     stockSymbol: String,
     quantity: Number,
-    estimatedPrice: Number, // Assume the base price is passed as a prop
+    estimatedPrice: Number,
     remainingBalance: Number,
     isSubmittingOrder: Boolean,
+  },
+  mounted() {
+    console.log("PreviewOrderModal mounted with props:", {
+      stockSymbol: this.stockSymbol,
+      quantity: this.quantity,
+      estimatedPrice: this.estimatedPrice,
+      remainingBalance: this.remainingBalance,
+    });
   },
   computed: {
     calculatedEstimatedPrice() {
@@ -85,33 +96,32 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(5px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
   animation: fadeIn 0.3s ease;
 }
 
 .order-modal {
-  background: var(--bg-primary);
+  background: var(--bg-primary, #ffffff);
   border-radius: 20px;
   padding: 30px;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e0e0e0);
   animation: slideIn 0.4s ease;
 }
 
 .order-modal h3 {
+  color: #333333;
   font-size: 1.8rem;
   margin-bottom: 25px;
   font-weight: 700;
-  background: linear-gradient(45deg, var(--text-primary), var(--text-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-align: center;
 }
 
 .order-details {
@@ -126,23 +136,24 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  background: var(--bg-secondary);
+  background: var(--bg-secondary, #f8f9fa);
   border-radius: 12px;
   transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
 }
 
 .detail:hover {
   transform: translateX(5px);
-  background: var(--hover-bg);
+  background: var(--hover-bg, #e9ecef);
 }
 
 .detail span:first-child {
-  color: var(--text-secondary);
+  color: var(--text-secondary, #212529);
   font-size: 1rem;
 }
 
 .detail span:last-child {
-  color: var(--text-primary);
+  color: var(--text-primary, #212529);
   font-weight: 600;
   font-size: 1.1rem;
 }
@@ -156,36 +167,45 @@ export default {
 .clear-btn,
 .submit-btn {
   flex: 1;
-  padding: 14px;
+  padding: 16px 20px;
   border-radius: 12px;
   font-weight: 600;
   font-size: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
+  border: none;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .clear-btn {
-  background: var(--bg-primary);
-  border: 2px solid var(--border-color);
-  color: var(--text-primary);
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  color: #495057;
+  font-weight: 600;
 }
 
 .clear-btn:hover {
-  background: var(--hover-bg);
-  border-color: var(--primary-color);
+  background: #e9ecef;
+  border-color: #007bff;
+  color: #007bff;
   transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
 }
 
 .submit-btn {
-  background: var(--primary-color);
+  background: #333333;
   border: none;
   color: white;
+  font-weight: 600;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: var(--primary-color-dark);
+  background: #0056b3;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
 }
 
 .submit-btn:disabled {
