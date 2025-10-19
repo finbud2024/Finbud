@@ -110,6 +110,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import * as pdfjsLib from "pdfjs-dist";
 import { GlobalWorkerOptions } from "pdfjs-dist/build/pdf";
+import { has } from "lodash";
 
 GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
@@ -1341,6 +1342,15 @@ Bạn là FinBud — trợ lý tài chính.
       relevantQuestions = [],
       isThinking = false
     ) {
+      // Auto-detect markdown patterns in text
+      const hasMarkdown =
+        text &&
+        (text.includes("**") || // Bold text
+          text.includes("*") || // Italic text
+          text.includes("`") || // Inline code
+          text.includes("\n") || // Line breaks
+          text.includes("#")); // Headers
+
       const typingMessage = {
         text: text,
         isUser: isUser,
@@ -1351,6 +1361,7 @@ Bạn là FinBud — trợ lý tài chính.
         videos: videos,
         relevantQuestions: relevantQuestions,
         isThinking,
+        markdown: !isUser && hasMarkdown, // Enable markdown for bot messages with markdown content
       };
       this.messages.push(typingMessage);
       setTimeout(() => {
