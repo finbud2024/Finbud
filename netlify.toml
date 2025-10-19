@@ -1,5 +1,5 @@
 [build]
-  command = "yarn netlify:build"
+  command = "git config --global url.\"https://github.com/\".insteadOf \"ssh://git@github.com/\" && yarn cache clean && yarn install && yarn netlify:build"
   publish = "frontend/dist"
   functions = "backend/functions"
 
