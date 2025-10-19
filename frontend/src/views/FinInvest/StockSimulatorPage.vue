@@ -382,7 +382,7 @@ export default {
   data() {
     return {
       activeTab: "investment",
-      selectedStock: "AAPL",
+      selectedStock: "NASDAQ:AAPL", // Use full TradingView format
       stockSymbol: "",
       quantity: 1,
       action: "buy",
@@ -981,8 +981,10 @@ export default {
       }
     },
     handleStockSelection(stock) {
+      console.log("handleStockSelection called with:", stock); // Debug log
       this.stockSymbol = stock.symbol;
       this.selectedStock = stock.symbol;
+      console.log("Updated selectedStock to:", this.selectedStock); // Debug log
       // Optionally update the main chart view
     },
     handleStockSearch(query) {
