@@ -158,8 +158,8 @@ export default {
       return symbol && typeof symbol === "string" && symbol.length > 0;
     },
     formatSymbolForTradingView(symbol) {
-      // Use the comprehensive validator
-      const validatedSymbol = validateAndFormatSymbol(symbol);
+      // Use the comprehensive validator without automatic exchange mapping
+      const validatedSymbol = validateAndFormatSymbol(symbol, false);
 
       if (!isKnownSymbol(symbol)) {
         console.warn(

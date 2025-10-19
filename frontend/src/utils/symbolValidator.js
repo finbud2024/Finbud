@@ -62,19 +62,20 @@ export const EXCHANGE_MAPPING = {
 };
 
 /**
- * Validate and format symbol for TradingView
+ * Validate and format symbol for TradingView (without automatic exchange mapping)
  * @param {string} symbol - Raw symbol input
- * @returns {string} - Properly formatted TradingView symbol
+ * @param {boolean} autoMap - Whether to automatically map to exchanges (default: false)
+ * @returns {string} - Validated symbol (with exchange prefix only if already present or autoMap=true)
  */
-export function validateAndFormatSymbol(symbol) {
+export function validateAndFormatSymbol(symbol, autoMap = false) {
   if (!symbol || typeof symbol !== "string") {
     console.warn("Invalid symbol provided:", symbol);
-    return "NASDAQ:AAPL"; // Safe fallback
+    return autoMap ? "NASDAQ:AAPL" : "AAPL"; // Safe fallback
   }
 
   const cleanSymbol = symbol.trim().toUpperCase();
 
-  // If already has exchange prefix, validate format
+  // If already has exchange prefix, validate format and keep it
   if (cleanSymbol.includes(":")) {
     const [exchange, ticker] = cleanSymbol.split(":");
     if (exchange && ticker && ticker.length > 0) {
@@ -83,14 +84,20 @@ export function validateAndFormatSymbol(symbol) {
     }
   }
 
-  // Check if we have a direct mapping
+  // If autoMap is disabled, return the clean symbol without exchange prefix
+  if (!autoMap) {
+    console.log(`📝 Using symbol without exchange prefix: ${cleanSymbol}`);
+    return cleanSymbol;
+  }
+
+  // Only map to exchange if explicitly requested
   if (SYMBOL_MAPPINGS[cleanSymbol]) {
     const mappedSymbol = SYMBOL_MAPPINGS[cleanSymbol];
     console.log(`✅ Mapped ${cleanSymbol} to ${mappedSymbol}`);
     return mappedSymbol;
   }
 
-  // For unknown symbols, try NASDAQ first (most common)
+  // For unknown symbols with autoMap enabled, try NASDAQ
   const formattedSymbol = `NASDAQ:${cleanSymbol}`;
   console.log(`⚠️ Unknown symbol ${cleanSymbol}, trying ${formattedSymbol}`);
   return formattedSymbol;

@@ -126,6 +126,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import { debounce } from "lodash";
+import TradingViewSearchService from "@/services/TradingViewSearchService";
 import {
   validateAndFormatSymbol,
   getPopularSymbols,
@@ -225,26 +226,11 @@ const searchStocks = async (query) => {
   try {
     console.log("Searching for:", query); // Debug log
 
-    // Try multiple API approaches
-
-    // Approach 1: Try Alpha Vantage API (if you have a key)
-    const alphaVantageKey = process.env.VUE_APP_ALPHA_VANTAGE_API_KEY;
-    if (alphaVantageKey) {
-      const response = await fetch(
-        `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=${alphaVantageKey}`
-      );
-      console.log("Alpha Vantage response:", response); // Debug log
-      const data = await response.json();
-      return (
-        data.bestMatches?.map((match) => ({
-          symbol: match["1. symbol"],
-          name: match["2. name"],
-          exchange: match["4. region"],
-          type: match["3. type"],
-          fullSymbol: `${match["4. region"]}:${match["1. symbol"]}`,
-        })) || []
-      );
-    }
+    // Use TradingView-compatible search service
+    const results = await TradingViewSearchService.searchStocks(query);
+    console.log("TradingView-compatible search results:", results);
+    
+    return results || [];
 
     // Approach 2: Try Finnhub API (alternative)
     // const finnhubKey = process.env.VUE_APP_FINNHUB_KEY;
