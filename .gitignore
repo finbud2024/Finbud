@@ -4,6 +4,9 @@
 # Node modules
 node_modules
 
+# Package manager lock files (using yarn.lock instead)
+package-lock.json
+
 # Distribution directory
 dist
 frontend/dist
