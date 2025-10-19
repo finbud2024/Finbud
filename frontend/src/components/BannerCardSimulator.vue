@@ -2,8 +2,8 @@
   <div class="company-card" v-if="!isLoading">
     <!-- Header: Ticker + Price/Change -->
     <div class="card-header">
-      <div class="company-name">{{ stockCode }}</div>
-      <div class="price-info">
+      <div class="company-name">{{ displaySymbol || "No Stock Selected" }}</div>
+      <div class="price-info" v-if="livePrice !== 'N/A'">
         <!-- Live Price -->
         <span class="current-price">{{ livePrice }}</span>
 
@@ -15,6 +15,14 @@
           {{ priceChangeDisplay }} ({{ priceChangePercent }}%)
         </span>
       </div>
+      <div class="price-info" v-else>
+        <span class="current-price text-muted">No data available</span>
+      </div>
+    </div>
+
+    <!-- Error message -->
+    <div v-if="error" class="error-message">
+      <small>Error loading stock data: {{ error }}</small>
     </div>
 
     <!-- Stats Section - Now with proper grid layout -->
@@ -27,7 +35,11 @@
       </div>
     </div>
   </div>
-  <div v-else>Loading...</div>
+  <div v-else class="loading-state">
+    <div class="loading-text">
+      Loading stock data for {{ displaySymbol }}...
+    </div>
+  </div>
 </template>
 
 <script>
@@ -59,6 +71,12 @@ export default {
     };
   },
   computed: {
+    displaySymbol() {
+      // Extract clean symbol for display (e.g., "NASDAQ:AAPL" -> "AAPL")
+      return this.stockCode && this.stockCode.includes(":")
+        ? this.stockCode.split(":")[1]
+        : this.stockCode;
+    },
     stats() {
       return [
         { label: this.$t("investment.stats.open"), value: this.open },
@@ -97,26 +115,74 @@ export default {
       return 0;
     },
   },
-  async created() {
-    try {
-      const data = await fetchSimBannerStockDatav3(this.stockCode);
-      if (data) {
-        this.livePrice = data.livePrice;
-        this.open = data.open;
-        this.close = data.close;
-        this.high = data.high;
-        this.low = data.low;
-        this.volume = data.volume;
-        this.marketCap = data.marketCap;
-        this.eps = data.eps;
-        this.peRatio = data.peRatio;
-        this.pbr = data.pbr;
+  watch: {
+    // Watch for changes in stockCode prop and refetch data
+    stockCode: {
+      handler(newStockCode, oldStockCode) {
+        console.log(
+          `Stock code changed from ${oldStockCode} to ${newStockCode}`
+        );
+        if (newStockCode && newStockCode !== oldStockCode) {
+          this.fetchStockData();
+        }
+      },
+      immediate: true, // Run on component mount
+    },
+  },
+  methods: {
+    async fetchStockData() {
+      if (!this.stockCode) {
+        console.warn("No stock code provided");
+        return;
       }
-    } catch (error) {
-      console.error("Error in BannerCardSimulator:", error);
-    } finally {
-      this.isLoading = false;
-    }
+
+      // Extract symbol from exchange-prefixed format (e.g., "NASDAQ:AAPL" -> "AAPL")
+      const cleanSymbol = this.stockCode.includes(":")
+        ? this.stockCode.split(":")[1]
+        : this.stockCode;
+
+      console.log(
+        `Fetching data for stock: ${this.stockCode} -> clean symbol: ${cleanSymbol}`
+      );
+      this.isLoading = true;
+      this.error = null; // Reset error state
+
+      try {
+        const data = await fetchSimBannerStockDatav3(cleanSymbol);
+        console.log("Banner card data received:", data);
+
+        if (data) {
+          this.livePrice = data.livePrice;
+          this.open = data.open;
+          this.close = data.close;
+          this.high = data.high;
+          this.low = data.low;
+          this.volume = data.volume;
+          this.marketCap = data.marketCap;
+          this.eps = data.eps;
+          this.peRatio = data.peRatio;
+          this.pbr = data.pbr;
+        } else {
+          console.warn("No data returned from API");
+          // Reset to N/A if no data
+          this.livePrice = "N/A";
+          this.open = "N/A";
+          this.close = "N/A";
+          this.high = "N/A";
+          this.low = "N/A";
+          this.volume = "N/A";
+          this.marketCap = "N/A";
+          this.eps = "N/A";
+          this.peRatio = "N/A";
+          this.pbr = "N/A";
+        }
+      } catch (error) {
+        console.error("Error in BannerCardSimulator:", error);
+        this.error = error.message;
+      } finally {
+        this.isLoading = false;
+      }
+    },
   },
 };
 </script>
@@ -178,6 +244,37 @@ export default {
 .price-change.negative {
   color: #e74c3c;
   background-color: rgba(231, 76, 60, 0.1);
+}
+
+.text-muted {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.error-message {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.loading-state {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.loading-text {
+  color: #6c757d;
+  font-size: 1rem;
 }
 
 /* Improved stats grid layout */

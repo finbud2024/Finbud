@@ -1,19 +1,19 @@
-const path = require('path');
-const { defineConfig } = require('@vue/cli-service');
+const path = require("path");
+const { defineConfig } = require("@vue/cli-service");
 
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
     proxy: {
-      '/.netlify/functions/server': {
-        target: 'http://localhost:3000',
+      "/.netlify/functions/server": {
+        target: "http://localhost:3000",
         changeOrigin: true,
         pathRewrite: {
-          '^/.netlify/functions/server': ''
+          "^/.netlify/functions/server": "",
         },
-        logLevel: 'debug'
-      }
-    }
+        logLevel: "debug",
+      },
+    },
   },
   configureWebpack: {
     resolve: {
@@ -29,44 +29,43 @@ module.exports = defineConfig({
       rules: [
         {
           test: /\.wasm$/,
-          type: 'webassembly/async'
+          type: "webassembly/async",
         },
         {
           test: /\.csv$/,
           use: [
             {
-              loader: 'csv-loader',
+              loader: "csv-loader",
               options: {
                 dynamicTyping: true,
                 header: true,
-                skipEmptyLines: true
-              }
-            }
-          ]
+                skipEmptyLines: true,
+              },
+            },
+          ],
         },
         {
           test: /node_modules[\\/](pdfjs-dist|@tanstack[\\/]query-core)[\\/].*\.js$/,
           use: {
-            loader: 'babel-loader',
+            loader: "babel-loader",
             options: {
-              presets: ['@vue/cli-plugin-babel/preset'],
+              presets: ["@vue/cli-plugin-babel/preset"],
               plugins: [
-                '@babel/plugin-transform-private-methods',
-                '@babel/plugin-transform-class-properties',
-                '@babel/plugin-transform-private-property-in-object'
-              ]
-          }
-        }
-        }
-      ]
-      }
+                "@babel/plugin-transform-private-methods",
+                "@babel/plugin-transform-class-properties",
+                "@babel/plugin-transform-private-property-in-object",
+              ],
+            },
+          },
+        },
+      ],
     },
-  chainWebpack: config => {
+  },
+  chainWebpack: (config) => {
     // Exclude problematic dependencies from babel processing
     config.module
-      .rule('js')
-      .exclude
-      .add(/node_modules[\\/](pdfjs-dist|@tanstack)/)
-      .end()
-  }
+      .rule("js")
+      .exclude.add(/node_modules[\\/](pdfjs-dist|@tanstack)/)
+      .end();
+  },
 });
