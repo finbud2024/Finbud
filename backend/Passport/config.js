@@ -10,14 +10,18 @@ const passportConfig = (app) => {
 
   // Conditionally import and use Google Strategy only if credentials exist
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-    import("./googleStrategy.js").then(googleStrategyModule => {
-      passport.use(googleStrategyModule.default);
-      console.log("✅ Google OAuth strategy configured.");
-    }).catch(err => {
+    import("./googleStrategy.js")
+      .then((googleStrategyModule) => {
+        passport.use(googleStrategyModule.default);
+        console.log("✅ Google OAuth strategy configured.");
+      })
+      .catch((err) => {
         console.error("❌ Failed to load Google OAuth strategy:", err);
-    });
+      });
   } else {
-    console.warn('⚠️ Google OAuth credentials not found. Skipping Google strategy setup.');
+    console.warn(
+      "⚠️ Google OAuth credentials not found. Skipping Google strategy setup."
+    );
   }
 
   app.use(
@@ -61,8 +65,15 @@ const passportConfig = (app) => {
     //   console.log("Error finding user in DB.");
     //   done(err);
     // }
-    // For testing, just create a dummy user object
-    done(null, { id: userId, name: "Test User" });
+    // For testing, just create a dummy user object with expected structure
+    done(null, {
+      _id: userId,
+      id: userId,
+      name: "Test User",
+      accountData: {
+        priviledge: "user", // Default to regular user, not admin
+      },
+    });
   });
 };
 

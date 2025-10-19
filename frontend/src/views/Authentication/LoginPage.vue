@@ -9,31 +9,43 @@
     <div class="auth-options">
       <button class="social-btn" @click="signInWithFacebook">
         <span class="btn-content">
-          <img src="@/assets/facebookLogo.png" class="facebook-logo" alt="Google Logo">
+          <img
+            src="@/assets/facebookLogo.png"
+            class="facebook-logo"
+            alt="Google Logo"
+          />
           Sign in with Facebook
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithGoogle">
         <span class="btn-content">
-          <img src="@/assets/googleLogo.png" class="google-logo" alt="Google Logo">
+          <img
+            src="@/assets/googleLogo.png"
+            class="google-logo"
+            alt="Google Logo"
+          />
           Sign in with Google
         </span>
       </button>
 
       <button class="social-btn" @click="signInWithApple">
         <span class="btn-content">
-          <img src="@/assets/appleLogo.png" class="apple-logo" alt="Google Logo">
+          <img
+            src="@/assets/appleLogo.png"
+            class="apple-logo"
+            alt="Google Logo"
+          />
           Sign in with Apple
         </span>
       </button>
     </div>
-    
+
     <!-- Divider -->
     <div class="or-separator">
-      <hr class="line"/>
+      <hr class="line" />
       <span>or</span>
-      <hr class="line"/>
+      <hr class="line" />
     </div>
 
     <!-- Email/Password Form -->
@@ -41,24 +53,33 @@
       <!-- Email Field -->
       <div class="form-group">
         <label for="email">Email</label>
-        <input class="form-input" type="text" id="username" v-model="username" placeholder="Email address" required>
+        <input
+          class="form-input"
+          type="text"
+          id="username"
+          v-model="username"
+          placeholder="Email address"
+          required
+        />
       </div>
 
       <!-- Password Field -->
       <div class="form-group">
         <div class="password-label">
           <label for="password">Password</label>
-          <a href="/forgot-password" class="forgot-password">Forgot password?</a>
+          <a href="/forgot-password" class="forgot-password"
+            >Forgot password?</a
+          >
         </div>
         <div class="password-input-wrapper">
-          <input 
+          <input
             class="form-input"
-            :type="showPassword ? 'text' : 'password'" 
-            id="password" 
-            v-model="password" 
-            placeholder="Password" 
+            :type="showPassword ? 'text' : 'password'"
+            id="password"
+            v-model="password"
+            placeholder="Password"
             required
-          >
+          />
           <button
             type="button"
             class="toggle-password"
@@ -91,70 +112,112 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   name: "LoginView",
   data() {
     return {
-      username: '',
-      password: '',
+      username: "",
+      password: "",
       showPassword: false,
       isLoading: false,
-      errorMessage: ''
+      errorMessage: "",
     };
   },
   methods: {
     async onLogin() {
       try {
         this.isLoading = true;
-        this.errorMessage = '';
-        
+        this.errorMessage = "";
+
         const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
         const reqBody = {
           username: this.username,
           password: this.password,
         };
-        const response = await axios.post(api, reqBody, { withCredentials: true });
-        
+        const response = await axios.post(api, reqBody, {
+          withCredentials: true,
+        });
+
         this.$store.dispatch("users/login", response.data.user);
-        
+
+        // Check for redirect parameter
+        const redirectPath = this.$route.query.redirect;
+        console.log("Login success - redirect path:", redirectPath);
+
         const isNewUser = response.data.isNewUser;
-        if (isNewUser) {
+
+        // Add a small delay to ensure store is updated
+        await this.$nextTick();
+
+        if (redirectPath) {
+          console.log("Redirecting to:", redirectPath);
+          // If there's a redirect path, use it
+          this.$router.push(redirectPath);
+        } else if (isNewUser) {
+          console.log("Redirecting new user to tutorial");
           this.$router.push("/?showTutorial=true");
         } else {
-          this.$router.push('/');
+          console.log("Redirecting to home");
+          this.$router.push("/");
         }
       } catch (err) {
-        console.error('Login Error:', err.response ? err.response.data : err.message);
-        this.errorMessage = err.response?.data?.message || 'Login failed. Please try again.';
+        console.error(
+          "Login Error:",
+          err.response ? err.response.data : err.message
+        );
+        this.errorMessage =
+          err.response?.data?.message || "Login failed. Please try again.";
       } finally {
         this.isLoading = false;
       }
     },
     signInWithGoogle() {
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      const redirectPath = this.$route.query.redirect;
+      console.log("Google OAuth - redirect path from query:", redirectPath);
+      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      // Add redirect parameter if it exists
+      if (redirectPath) {
+        api += `?redirect=${encodeURIComponent(redirectPath)}`;
+      }
+      console.log("Google OAuth - final API URL:", api);
       window.location.href = api;
     },
     signInWithFacebook() {
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      const redirectPath = this.$route.query.redirect;
+      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+
+      // Add redirect parameter if it exists
+      if (redirectPath) {
+        api += `?redirect=${encodeURIComponent(redirectPath)}`;
+      }
+
       window.location.href = api;
     },
     signInWithApple() {
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      const redirectPath = this.$route.query.redirect;
+      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+
+      // Add redirect parameter if it exists
+      if (redirectPath) {
+        api += `?redirect=${encodeURIComponent(redirectPath)}`;
+      }
+
       window.location.href = api;
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword;
-    }
+    },
   },
-}
+};
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap");
 
 /* Added styles for vertical centering */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
 }
@@ -171,7 +234,7 @@ html, body {
   max-width: 448px;
   margin: auto;
   padding: 1rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 9pt;
   display: flex;
   flex-direction: column;
@@ -213,7 +276,7 @@ html, body {
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.2s;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 9pt;
 }
 
@@ -229,16 +292,17 @@ html, body {
   font-weight: 500;
 }
 
-.facebook-logo, .apple-logo {
+.facebook-logo,
+.apple-logo {
   width: 2rem;
   height: 2rem;
-  margin-right:0.5rem;
+  margin-right: 0.5rem;
 }
 
 .google-logo {
   width: 1.5rem;
   height: 1.5rem;
-  margin-right:0.5rem;
+  margin-right: 0.5rem;
 }
 
 .or-separator {
@@ -314,7 +378,7 @@ html, body {
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   color: #000000;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 0.875rem;
   box-sizing: border-box;
 }
@@ -339,7 +403,8 @@ html, body {
 }
 
 /* Eye icons using SVG data URLs - matching signup page */
-.eye-on, .eye-off {
+.eye-on,
+.eye-off {
   width: 1.25rem;
   height: 1.25rem;
   display: inline-block;
@@ -367,7 +432,7 @@ html, body {
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 0.875rem;
   box-sizing: border-box;
 }
@@ -389,7 +454,7 @@ html, body {
   color: #b91c1c;
   border-radius: 0.375rem;
   font-size: 0.875rem;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   box-sizing: border-box;
 }
 
@@ -404,7 +469,7 @@ html, body {
   max-width: 320px;
   margin-left: auto;
   margin-right: auto;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
 }
 
 .signup-link a {
@@ -462,7 +527,8 @@ html, body {
   }
 
   /* Adjust logo sizes for mobile */
-  .facebook-logo, .apple-logo {
+  .facebook-logo,
+  .apple-logo {
     width: 1.5rem;
     height: 1.5rem;
   }
@@ -568,5 +634,4 @@ html, body {
   background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   color: #d1d5db;
 }
-
 </style>

@@ -1,6 +1,7 @@
 {
-  "name": "FinBud-AI-bot",
+  "name": "finbud-ai-bot",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "netlify:build": "cd frontend && vue-cli-service build",
@@ -52,6 +53,7 @@
     "d3": "^7.9.0",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
+    "difflib": "^0.2.4",
     "dompurify": "^3.1.6",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
