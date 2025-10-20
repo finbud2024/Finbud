@@ -67,7 +67,7 @@ Cách để tải Netlify package và những package cần thiết:
 ```sh
 npm install
 ```
-test
+
 
 ### 2. Tải Netlify-cli (giao diện dòng lệnh cho Netlify)
 
