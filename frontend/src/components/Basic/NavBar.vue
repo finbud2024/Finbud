@@ -87,20 +87,12 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finAgent'">
             <router-link to="/agent" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-user-tie" class="subsection-item-icon" />
-              {{ $t("agent") }}
+              <font-awesome-icon icon="fa-solid fa-newspaper" class="subsection-item-icon" />
+              News
             </router-link>
             <router-link to="/pestle" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-chart-pie" class="subsection-item-icon" />
               {{ $t("pestle") }}
-            </router-link>
-            <router-link to="/ai-workflows" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-cogs" class="subsection-item-icon" />
-              AI Workflows
-            </router-link>
-            <router-link to="/ai-breakthrough-workflows" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-rocket" class="subsection-item-icon" />
-              AI Breakthrough Workflows
             </router-link>
           </div>
         </li>
@@ -235,7 +227,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { 
   faComments, faChartLine, faWallet, faGraduationCap, faChartBar, 
-  faRobot, faUserTie, faChartPie, 
+  faRobot, faUserTie, faChartPie, faNewspaper,
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
@@ -244,7 +236,7 @@ import {
 
 library.add(
   faComments, faChartLine, faWallet, faGraduationCap, faChartBar, 
-  faRobot, faUserTie, faChartPie, 
+  faRobot, faUserTie, faChartPie, faNewspaper,
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
