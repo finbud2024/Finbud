@@ -4067,8 +4067,8 @@ const messages = {
 
 const i18n = createI18n({
   legacy: false,
-  locale: "vi",
-  fallbackLocale: "en",
+  locale: "en",
+  fallbackLocale: "vi",
   messages,
   globalInjection: true,
 });
