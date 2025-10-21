@@ -306,9 +306,22 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      console.log('🗺️ EventMap mounted - starting initialization');
       // Check Maps API first, then fetch events
       checkMapsApi();
       fetchEvents();
+      
+      // Debug logging after 2 seconds
+      setTimeout(() => {
+        console.log('🗺️ EventMap Debug:', {
+          mapsApiLoaded: mapsApiLoaded.value,
+          eventsCount: events.value.length,
+          filteredEventsCount: filteredEvents.value.length,
+          mapError: mapError.value,
+          loading: loading.value,
+          apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing'
+        });
+      }, 2000);
     });
 
     return {
