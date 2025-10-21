@@ -260,9 +260,16 @@ export default {
             
             // Cache 5 phút (300000ms)
             if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) {
-                this.trendingEvents = JSON.parse(cachedData);
-                this.loading = false;
-                return;
+                try {
+                    this.trendingEvents = JSON.parse(cachedData);
+                    this.loading = false;
+                    return;
+                } catch (error) {
+                    console.warn('⚠️ Failed to parse cached data, fetching fresh data', error);
+                    // Clear corrupted cache
+                    sessionStorage.removeItem('eventHeadlines');
+                    sessionStorage.removeItem('eventHeadlinesTime');
+                }
             }
 
             this.loading = true;
