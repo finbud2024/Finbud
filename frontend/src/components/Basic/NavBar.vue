@@ -29,7 +29,7 @@
           </router-link>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" ref="finInvestDropdown">
+        <li class="dropdown" ref="finInvestDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finInvest')">
             <font-awesome-icon icon="fa-solid fa-chart-line" class="icon" />
             <span>{{ $t("finInvest") }}</span>
@@ -48,7 +48,7 @@
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" ref="finManageDropdown">
+        <li class="dropdown" ref="finManageDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finManage')">
             <font-awesome-icon icon="fa-solid fa-wallet" class="icon" />
             <span>{{ $t("finManage") }}</span>
@@ -64,7 +64,7 @@
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" ref="finEduDropdown">
+        <li class="dropdown" ref="finEduDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finEdu')">
             <font-awesome-icon icon="fa-solid fa-graduation-cap" class="icon" />
             <span>{{ $t("finEdu") }}</span>
@@ -79,7 +79,7 @@
         </li>
 
         <!-- Fin Agent Section - Top-level item -->
-        <li v-if="isAuthenticated" class="dropdown" ref="finAgentDropdown">
+        <li class="dropdown" ref="finAgentDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finAgent')">
             <font-awesome-icon icon="fa-solid fa-robot" class="icon" />
             <span>{{ $t("finAgent.title", "Fin Agent") }}</span>
