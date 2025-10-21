@@ -193,13 +193,36 @@ export default defineComponent({
         loading.value = true;
         const response = await axios.get("/.netlify/functions/server/events");
         events.value = response.data;
+        
+        // Check if we actually got events
+        if (!events.value || events.value.length === 0) {
+          console.warn("⚠️ No events found in database");
+          mapError.value = "No events are currently available. The event database may be empty or under maintenance.";
+          loading.value = false;
+          return;
+        }
+        
         events.value.sort((a, b) => new Date(b.date) - new Date(a.date));
         if (events.value.length > 0 && mapsApiLoaded.value) {
           adjustMapToFitMarkers();
         }
       } catch (err) {
-        console.error("❌ Error fetching events:", err);
-        error.value = err.message || "An error occurred while fetching events.";
+        console.error("❌ Error fetching events:", {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data
+        });
+        
+        // Set user-friendly error message based on error type
+        if (err.response?.status === 500) {
+          mapError.value = "Database connection error. Unable to load events at this time.";
+        } else if (err.response?.status === 404) {
+          mapError.value = "Event service not found. Please contact support.";
+        } else {
+          mapError.value = err.message || "An error occurred while fetching events.";
+        }
+        
+        error.value = mapError.value;
       } finally {
         loading.value = false;
       }
