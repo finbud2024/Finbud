@@ -32,20 +32,23 @@ const props = defineProps({
     type: Number,
     default: 0.95,
   },
+  modelColors: {
+    type: Object,
+    default: () => ({
+      lr: "#22c55e", // Green for Linear Regression
+      rf: "#3b82f6", // Blue for Random Forest
+      xgb: "#f59e0b", // Orange for XGBoost
+      lstm: "#ef4444", // Red for LSTM
+      transformer: "#8b5cf6", // Purple for Transformer
+      ensemble: "#06b6d4", // Cyan for Ensemble
+    }),
+  },
 });
 
 const chartCanvas = ref(null);
 const chartInstance = ref(null);
 const hasError = ref(false);
-
-const modelColors = {
-  lr: "#22c55e", // Green for Linear Regression
-  rf: "#3b82f6", // Blue for Random Forest
-  xgb: "#000000",
-  lstm: "#000000",
-  transformer: "#000000",
-  ensemble: "#000000",
-};
+const isInitializing = ref(false);
 
 const hasValidData = computed(() => {
   return props.data && props.data.length > 0;
@@ -55,17 +58,55 @@ const initChart = async () => {
   if (!chartCanvas.value || !hasValidData.value) return;
 
   try {
+    console.log("Starting chart initialization...", {
+      hasCanvas: !!chartCanvas.value,
+      dataLength: props.data?.length,
+      modelsLength: props.models?.length,
+      models: props.models,
+    });
     hasError.value = false;
 
     await nextTick();
 
-    // Destroy existing chart
+    // Additional check after nextTick
+    if (!chartCanvas.value) {
+      return;
+    }
+
+    // Destroy existing chart with better cleanup
     if (chartInstance.value) {
-      chartInstance.value.destroy();
-      chartInstance.value = null;
+      try {
+        // Stop any ongoing animations before destroying
+        chartInstance.value.stop();
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for stop to complete
+        chartInstance.value.destroy();
+      } catch (destroyError) {
+        console.warn("Error destroying chart:", destroyError);
+      } finally {
+        chartInstance.value = null;
+      }
+    }
+
+    // Wait longer after destruction to ensure cleanup
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    // Validate canvas element and context again
+    if (!chartCanvas.value) {
+      throw new Error("Canvas element not available");
     }
 
     const ctx = chartCanvas.value.getContext("2d");
+    if (!ctx) {
+      throw new Error("Unable to get 2D context from canvas");
+    }
+
+    // Verify context is still valid
+    try {
+      ctx.save();
+      ctx.restore();
+    } catch (contextError) {
+      throw new Error("Canvas context is invalid");
+    }
 
     // Prepare data for Chart.js with validation
     const historicalData = props.data.filter(
@@ -79,6 +120,14 @@ const initChart = async () => {
       (item) => item && item.type === "prediction" && item.datetime
     );
 
+    console.log("Data processing:", {
+      totalData: props.data.length,
+      historicalCount: historicalData.length,
+      predictionCount: predictionData.length,
+      samplePrediction: predictionData[0],
+      models: props.models,
+    });
+
     const datasets = [];
 
     // Historical data
@@ -89,8 +138,8 @@ const initChart = async () => {
           x: new Date(item.datetime),
           y: item.close,
         })),
-        borderColor: "#ef4444", // Red for Historical Price
-        backgroundColor: "#ef4444", // Red for Historical Price
+        borderColor: "#1f2937", // Dark gray for Historical Price
+        backgroundColor: "#1f2937", // Dark gray for Historical Price
         borderWidth: 2,
         fill: false,
         pointRadius: 1,
@@ -102,52 +151,98 @@ const initChart = async () => {
 
     // Prediction data for each model
     if (props.models && props.models.length > 0) {
+      console.log("Processing models:", props.models);
       props.models.forEach((model, index) => {
+        console.log(`Processing model: ${model}`);
+
         const modelPredictions = predictionData.filter(
           (item) =>
             item[model] !== undefined &&
             typeof item[model] === "number" &&
-            !isNaN(item[model])
+            !isNaN(item[model]) &&
+            isFinite(item[model])
         );
 
+        console.log(`Model ${model} predictions:`, {
+          totalPredictionData: predictionData.length,
+          modelPredictions: modelPredictions.length,
+          sampleData: modelPredictions.slice(0, 3),
+          hasModelKey: predictionData.some((item) =>
+            item.hasOwnProperty(model)
+          ),
+        });
+
         if (modelPredictions.length > 0) {
-          datasets.push({
-            label: getModelName(model),
-            data: modelPredictions.map((item) => ({
+          // Additional validation for ensemble model
+          const validData = modelPredictions
+            .map((item) => ({
               x: new Date(item.datetime),
               y: item[model],
-            })),
-            borderColor: modelColors[model] || `hsl(${index * 60}, 70%, 50%)`,
-            backgroundColor:
-              modelColors[model] || `hsl(${index * 60}, 70%, 50%)`,
-            borderWidth: 2.5,
-            fill: false,
-            pointRadius: 0,
-            pointHoverRadius: 6,
-            tension: 0.1,
-            borderDash: [8, 4],
-            order: 2 + index,
-          });
+            }))
+            .filter(
+              (point) =>
+                point.x instanceof Date &&
+                !isNaN(point.x.getTime()) &&
+                typeof point.y === "number" &&
+                !isNaN(point.y) &&
+                isFinite(point.y)
+            );
+
+          console.log(`Valid data for ${model}:`, validData.length);
+
+          if (validData.length > 0) {
+            const dataset = {
+              label: getModelName(model),
+              data: validData,
+              borderColor:
+                props.modelColors[model] || `hsl(${index * 60}, 70%, 50%)`,
+              backgroundColor:
+                props.modelColors[model] || `hsl(${index * 60}, 70%, 50%)`,
+              borderWidth: 2.5,
+              fill: false,
+              pointRadius: 0,
+              pointHoverRadius: 6,
+              tension: 0.1,
+              borderDash: [8, 4],
+              order: 2 + index,
+              parsing: false, // Disable parsing for better performance
+              normalized: true, // Enable normalization
+            };
+
+            console.log(`Adding dataset for ${model}:`, dataset);
+            datasets.push(dataset);
+          }
         }
       });
     } else {
-      // No models case
+      console.log("No models provided or models array is empty");
     }
 
     if (datasets.length === 0) {
       throw new Error("No valid datasets to display");
     }
 
-    chartInstance.value = new Chart(ctx, {
+    console.log("Final datasets for chart:", {
+      count: datasets.length,
+      labels: datasets.map((d) => d.label),
+      datasets: datasets,
+    });
+
+    // Create chart with additional validation
+    const chartConfig = {
       type: "line",
       data: { datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         backgroundColor: "white",
+        devicePixelRatio: window.devicePixelRatio || 1,
         interaction: {
           intersect: false,
           mode: "index",
+        },
+        animation: {
+          duration: 0, // Disable animations to prevent context issues during rapid clicks
         },
         plugins: {
           legend: {
@@ -274,10 +369,6 @@ const initChart = async () => {
             },
           },
         },
-        animation: {
-          duration: 1500,
-          easing: "easeInOutQuart",
-        },
         elements: {
           line: {
             borderJoinStyle: "round",
@@ -288,9 +379,49 @@ const initChart = async () => {
           },
         },
       },
-    });
+    };
 
-    hasError.value = false;
+    // Create the chart instance with error handling
+    try {
+      // Final validation before chart creation - we should be initializing at this point
+      if (!chartCanvas.value) {
+        throw new Error("Canvas element not available during chart creation");
+      }
+
+      // Re-validate context one more time
+      const finalCtx = chartCanvas.value.getContext("2d");
+      if (!finalCtx || finalCtx !== ctx) {
+        throw new Error("Context changed during initialization");
+      }
+
+      chartInstance.value = new Chart(ctx, chartConfig);
+
+      // Validate chart was created successfully
+      if (!chartInstance.value || !chartInstance.value.canvas) {
+        throw new Error("Failed to create chart instance");
+      }
+
+      // Additional validation - ensure the chart context is the same
+      const chartCtx = chartInstance.value.canvas.getContext("2d");
+      if (!chartCtx || chartCtx !== ctx) {
+        throw new Error("Chart context mismatch");
+      }
+
+      console.log("Chart created successfully!");
+      hasError.value = false;
+    } catch (chartError) {
+      console.error("Chart creation error:", chartError);
+      if (chartInstance.value) {
+        try {
+          chartInstance.value.stop();
+          chartInstance.value.destroy();
+        } catch (e) {
+          console.warn("Error destroying failed chart:", e);
+        }
+        chartInstance.value = null;
+      }
+      throw chartError;
+    }
   } catch (error) {
     console.error("Error initializing chart:", error);
     hasError.value = true;
@@ -311,30 +442,68 @@ const getModelName = (modelKey) => {
 
 // Handle window resize
 const handleResize = () => {
-  if (chartInstance.value) {
-    chartInstance.value.resize();
+  if (chartInstance.value && chartInstance.value.canvas) {
+    try {
+      // Validate context before resizing
+      const ctx = chartInstance.value.canvas.getContext("2d");
+      if (ctx) {
+        ctx.save();
+        ctx.restore();
+        chartInstance.value.resize();
+      }
+    } catch (error) {
+      console.warn("Error resizing chart:", error);
+      // If resize fails due to context issues, reinitialize
+      hasError.value = true;
+      debouncedInitChart();
+    }
   }
+};
+
+// Debounce function to prevent rapid re-initialization
+let initTimeout = null;
+const debouncedInitChart = () => {
+  // Clear any pending initialization
+  if (initTimeout) {
+    clearTimeout(initTimeout);
+    initTimeout = null;
+  }
+
+  // Prevent multiple simultaneous initializations
+  if (isInitializing.value) {
+    console.log("Skipping initialization - already in progress");
+    return;
+  }
+
+  initTimeout = setTimeout(async () => {
+    if (hasValidData.value && !isInitializing.value) {
+      isInitializing.value = true;
+      try {
+        await initChart();
+      } catch (error) {
+        console.error("Chart initialization failed:", error);
+        hasError.value = true;
+      } finally {
+        isInitializing.value = false;
+        initTimeout = null;
+      }
+    }
+  }, 500); // Increased timeout to 500ms for better debouncing
 };
 
 // Watch for data changes
 watch(
   () => props.data,
-  async () => {
-    if (hasValidData.value) {
-      await nextTick();
-      initChart();
-    }
+  () => {
+    debouncedInitChart();
   },
   { deep: true }
 );
 
 watch(
   () => props.models,
-  async () => {
-    if (hasValidData.value) {
-      await nextTick();
-      initChart();
-    }
+  () => {
+    debouncedInitChart();
   },
   { deep: true }
 );
@@ -344,15 +513,28 @@ onMounted(async () => {
   // Wait for DOM to be fully rendered before initializing chart
   await nextTick();
   if (hasValidData.value) {
-    initChart();
+    debouncedInitChart();
   }
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
+
+  // Clear any pending initialization
+  if (initTimeout) {
+    clearTimeout(initTimeout);
+    initTimeout = null;
+  }
+
+  // Destroy chart instance
   if (chartInstance.value) {
-    chartInstance.value.destroy();
-    chartInstance.value = null;
+    try {
+      chartInstance.value.destroy();
+    } catch (error) {
+      console.warn("Error destroying chart on unmount:", error);
+    } finally {
+      chartInstance.value = null;
+    }
   }
 });
 </script>

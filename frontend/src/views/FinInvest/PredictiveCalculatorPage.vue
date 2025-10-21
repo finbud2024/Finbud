@@ -168,6 +168,7 @@
               :data="chartData"
               :models="selectedModels"
               :confidence-level="confidenceLevel"
+              :model-colors="modelColors"
             />
           </div>
 
@@ -344,12 +345,12 @@ export default {
         },
       ],
       modelColors: {
-        lr: "#000000",
-        rf: "#000000",
-        xgb: "#000000",
-        lstm: "#000000",
-        transformer: "#000000",
-        ensemble: "#000000",
+        lr: "#22c55e", // Green for Linear Regression
+        rf: "#3b82f6", // Blue for Random Forest
+        xgb: "#f59e0b", // Orange for XGBoost
+        lstm: "#ef4444", // Red for LSTM
+        transformer: "#8b5cf6", // Purple for Transformer
+        ensemble: "#06b6d4", // Cyan for Ensemble
       },
     };
   },
