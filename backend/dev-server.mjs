@@ -46,8 +46,7 @@ const app = express();
 
 // CORS configuration for development
 const allowedOrigins = [
-  "http://localhost:8081", // Vue frontend
-  "http://localhost:8080", 
+  "http://localhost:8080", // Vue frontend
   "http://localhost:3000",
   "https://finbud.pro"
 ];
@@ -130,13 +129,13 @@ app.set("simulatorIo", simulatorIo);
 //   }
 // };
 
-// Conditionally initialize Passport to prevent crash without .env file
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+// Initialize Passport with basic configuration
+try {
   passportConfig(app);
-  console.log("✅ Passport configured for Google OAuth.");
-} else {
-  console.warn("⚠️ Google OAuth credentials not found in .env file. Skipping Passport configuration.");
-  console.warn("   - Google login will not be available.");
+  console.log("✅ Passport configured.");
+} catch (error) {
+  console.warn("⚠️ Passport configuration failed:", error.message);
+  console.warn("   - Authentication features will not be available.");
 }
 
 // Body parser middleware
@@ -187,6 +186,260 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
     // mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
   });
+});
+
+// Logo proxy endpoint to avoid CORS issues
+app.get('/api/logo/:logoName', async (req, res) => {
+  try {
+    const { logoName } = req.params;
+    
+    // Map stock symbols to company domains for Clearbit
+    const domainMap = {
+      'microsoft': 'microsoft.com',
+      'alphabet': 'google.com',
+      'goog': 'google.com',
+      'googl': 'google.com',
+      'apple': 'apple.com',
+      'meta-platforms': 'meta.com',
+      'nvidia': 'nvidia.com',
+      'broadcom': 'broadcom.com',
+      'taiwan-semiconductor': 'tsmc.com',
+      'amazon': 'amazon.com',
+      'tesla': 'tesla.com',
+      'netflix': 'netflix.com',
+      'salesforce': 'salesforce.com',
+      'oracle': 'oracle.com',
+      'intel': 'intel.com',
+      'cisco': 'cisco.com',
+      'adobe': 'adobe.com',
+      'paypal': 'paypal.com',
+      'uber': 'uber.com',
+      'airbnb': 'airbnb.com',
+      'spotify': 'spotify.com',
+      'twitter': 'twitter.com',
+      'linkedin': 'linkedin.com',
+      'zoom': 'zoom.us',
+      'slack': 'slack.com',
+      'shopify': 'shopify.com',
+      'square': 'squareup.com',
+      'stripe': 'stripe.com',
+      'twilio': 'twilio.com',
+      'okta': 'okta.com',
+      'crowdstrike': 'crowdstrike.com',
+      'snowflake': 'snowflake.com',
+      'datadog': 'datadoghq.com',
+      'mongodb': 'mongodb.com',
+      'elastic': 'elastic.co',
+      'atlassian': 'atlassian.com',
+      'servicenow': 'servicenow.com',
+      'workday': 'workday.com',
+      'vmware': 'vmware.com',
+      'redhat': 'redhat.com',
+      'ibm': 'ibm.com',
+      'hp': 'hp.com',
+      'dell': 'dell.com',
+      'lenovo': 'lenovo.com',
+      'samsung': 'samsung.com',
+      'sony': 'sony.com',
+      'nintendo': 'nintendo.com',
+      'disney': 'disney.com',
+      'netflix': 'netflix.com',
+      'comcast': 'comcast.com',
+      'verizon': 'verizon.com',
+      'att': 'att.com',
+      'tmobile': 't-mobile.com',
+      'sprint': 'sprint.com',
+      'vodafone': 'vodafone.com',
+      'bt': 'bt.com',
+      'orange': 'orange.com',
+      'deutsche-telekom': 'telekom.de',
+      'telefonica': 'telefonica.com',
+      'vodafone': 'vodafone.com',
+      'china-mobile': 'chinamobile.com',
+      'china-unicom': 'chinaunicom.com',
+      'china-telecom': 'chinatelecom.com',
+      'softbank': 'softbank.com',
+      'ntt': 'ntt.com',
+      'kddi': 'kddi.com',
+      'sk-telecom': 'sktelecom.com',
+      'kt': 'kt.com',
+      'lg': 'lg.com',
+      'hyundai': 'hyundai.com',
+      'kia': 'kia.com',
+      'toyota': 'toyota.com',
+      'honda': 'honda.com',
+      'nissan': 'nissan.com',
+      'mazda': 'mazda.com',
+      'subaru': 'subaru.com',
+      'mitsubishi': 'mitsubishi.com',
+      'suzuki': 'suzuki.com',
+      'isuzu': 'isuzu.com',
+      'yamaha': 'yamaha.com',
+      'kawasaki': 'kawasaki.com',
+      'volkswagen': 'volkswagen.com',
+      'bmw': 'bmw.com',
+      'mercedes-benz': 'mercedes-benz.com',
+      'audi': 'audi.com',
+      'porsche': 'porsche.com',
+      'ferrari': 'ferrari.com',
+      'lamborghini': 'lamborghini.com',
+      'maserati': 'maserati.com',
+      'alfa-romeo': 'alfaromeo.com',
+      'fiat': 'fiat.com',
+      'peugeot': 'peugeot.com',
+      'renault': 'renault.com',
+      'citroen': 'citroen.com',
+      'volvo': 'volvo.com',
+      'saab': 'saab.com',
+      'koenigsegg': 'koenigsegg.com',
+      'rolls-royce': 'rolls-royce.com',
+      'bentley': 'bentley.com',
+      'aston-martin': 'astonmartin.com',
+      'jaguar': 'jaguar.com',
+      'land-rover': 'landrover.com',
+      'mini': 'mini.com',
+      'smart': 'smart.com',
+      'tesla': 'tesla.com',
+      'rivian': 'rivian.com',
+      'lucid': 'lucidmotors.com',
+      'nio': 'nio.com',
+      'xpeng': 'xpeng.com',
+      'li-auto': 'lixiang.com',
+      'byton': 'byton.com',
+      'faraday-future': 'faradayfuture.com',
+      'fisker': 'fisker.com',
+      'nikola': 'nikolamotor.com',
+      'lordstown': 'lordstownmotors.com',
+      'workhorse': 'workhorse.com',
+      'arrival': 'arrival.com',
+      'canoo': 'canoo.com',
+      'hyliion': 'hyliion.com',
+      'proterra': 'proterra.com',
+      'chargepoint': 'chargepoint.com',
+      'evgo': 'evgo.com',
+      'blink-charging': 'blinkcharging.com',
+      'volta': 'voltacharging.com',
+      'electrify-america': 'electrifyamerica.com',
+      'tesla': 'tesla.com',
+      'spacex': 'spacex.com',
+      'blue-origin': 'blueorigin.com',
+      'virgin-galactic': 'virgingalactic.com',
+      'boeing': 'boeing.com',
+      'airbus': 'airbus.com',
+      'lockheed-martin': 'lockheedmartin.com',
+      'raytheon': 'raytheon.com',
+      'northrop-grumman': 'northropgrumman.com',
+      'general-dynamics': 'generaldynamics.com',
+      'l3harris': 'l3harris.com',
+      'textron': 'textron.com',
+      'huntington-ingalls': 'huntingtoningalls.com',
+      'spirit-aerosystems': 'spiritaero.com',
+      'triumph-group': 'triumphgroup.com',
+      'transdigm': 'transdigm.com',
+      'hexcel': 'hexcel.com',
+      'woodward': 'woodward.com',
+      'cae': 'cae.com',
+      'bombardier': 'bombardier.com',
+      'embraer': 'embraer.com',
+      'safran': 'safran.com',
+      'thales': 'thalesgroup.com',
+      'leonardo': 'leonardocompany.com',
+      'saab': 'saab.com',
+      'kongsberg': 'kongsberg.com',
+      'bae-systems': 'baesystems.com',
+      'rolls-royce': 'rolls-royce.com',
+      'ge': 'ge.com',
+      'honeywell': 'honeywell.com',
+      'caterpillar': 'caterpillar.com',
+      'deere': 'deere.com',
+      'cnh-industrial': 'cnhindustrial.com',
+      'agco': 'agcocorp.com',
+      'kubota': 'kubota.com',
+      'yanmar': 'yanmar.com',
+      'mahindra': 'mahindra.com',
+      'tata-motors': 'tatamotors.com',
+      'maruti-suzuki': 'marutisuzuki.com',
+      'hero-motocorp': 'heromotocorp.com',
+      'bajaj-auto': 'bajajauto.com',
+      'tvs-motor': 'tvsmotor.com',
+      'royal-enfield': 'royalenfield.com',
+      'ktm': 'ktm.com',
+      'husqvarna': 'husqvarna.com',
+      'gas-gas': 'gasgas.com',
+      'beta': 'betamotor.com',
+      'sherco': 'sherco.com',
+      'tm-racing': 'tmracing.com',
+      'ossa': 'ossa.com',
+      'montesa': 'montesa.com',
+      'derbi': 'derbi.com',
+      'bultaco': 'bultaco.com',
+      'sanglas': 'sanglas.com',
+      'rieju': 'rieju.com',
+      'gas-gas': 'gasgas.com',
+      'beta': 'betamotor.com',
+      'sherco': 'sherco.com',
+      'tm-racing': 'tmracing.com',
+      'ossa': 'ossa.com',
+      'montesa': 'montesa.com',
+      'derbi': 'derbi.com',
+      'bultaco': 'bultaco.com',
+      'sanglas': 'sanglas.com',
+      'rieju': 'rieju.com'
+    };
+    
+    const domain = domainMap[logoName.toLowerCase()];
+    if (!domain) {
+      return res.status(404).json({ error: 'Company domain not found' });
+    }
+    
+    // Try multiple logo sources with fallbacks
+    const logoSources = [
+      `https://logo.clearbit.com/${domain}`,
+      `https://logo.clearbit.com/${domain}?size=128`,
+      `https://logo.clearbit.com/${domain}?size=64`,
+      `https://logo.clearbit.com/${domain}?size=32`,
+      // Alternative sources for companies not in Clearbit
+      `https://logo.clearbit.com/${domain.replace('.com', '')}.com`,
+      `https://logo.clearbit.com/www.${domain}`,
+      `https://logo.clearbit.com/${domain.replace('www.', '')}`
+    ];
+    
+    let lastError = null;
+    for (const logoUrl of logoSources) {
+      try {
+        console.log(`🔄 Trying logo: ${logoUrl}`);
+        const response = await fetch(logoUrl, { 
+          method: 'HEAD',
+          timeout: 5000 
+        });
+        
+        if (response.ok) {
+          // If HEAD request succeeds, fetch the actual image
+          const imageResponse = await fetch(logoUrl, { timeout: 10000 });
+          if (imageResponse.ok) {
+            const imageBuffer = await imageResponse.arrayBuffer();
+            res.set({
+              'Content-Type': imageResponse.headers.get('content-type') || 'image/png',
+              'Cache-Control': 'public, max-age=86400' // Cache for 24 hours
+            });
+            console.log(`✅ Logo found: ${logoUrl}`);
+            return res.send(Buffer.from(imageBuffer));
+          }
+        }
+      } catch (error) {
+        lastError = error;
+        console.log(`❌ Logo failed: ${logoUrl} - ${error.message}`);
+        continue;
+      }
+    }
+    
+    // If all sources failed, return 404
+    console.log(`❌ All logo sources failed for ${logoName}`);
+    return res.status(404).json({ error: 'Logo not found from any source' });
+  } catch (error) {
+    console.error('Logo proxy error:', error);
+    res.status(500).json({ error: 'Failed to fetch logo' });
+  }
 });
 
 // Test endpoint for Deep Research

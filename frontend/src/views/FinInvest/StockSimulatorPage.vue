@@ -169,16 +169,56 @@
 
       <!-- Filters Section -->
       <section v-if="activeTab === 'filters'" class="section">
-        <stockScreener @applyFilter="stockFilterHandler" />
+        <stockScreener ref="stockScreener" @applyFilter="stockFilterHandler" />
+        
+        <!-- Pagination Controls (Top) -->
+        <div v-if="displayStock.length && totalPages > 1" class="pagination-controls pagination-top">
+          <div class="pagination-buttons">
+            <button @click="goToPage(1)" :disabled="currentPage === 1" class="pagination-btn">
+              <i class="fas fa-angle-double-left"></i> First
+            </button>
+            <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" class="pagination-btn">
+              <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" class="pagination-btn">
+              Next <i class="fas fa-chevron-right"></i>
+            </button>
+            <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages" class="pagination-btn">
+              Last <i class="fas fa-angle-double-right"></i>
+            </button>
+          </div>
+          <div class="pagination-page-info">Page {{ currentPage }} of {{ totalPages }}</div>
+        </div>
+        
+        <!-- Stock Results -->
         <div v-if="displayStock.length" class="filtered-results">
-          <CompanyCard
+          <StockCard
             v-for="stock in displayStock" 
-            :key="stock.ticker || stock.symbol" 
-            :companyName="stock.ticker || stock.symbol"
-            :stockData="stock"
-            :width="'100%'"
+            :key="stock.name || stock.symbol || stock.ticker"
+            :stock="stock"
+            :last-updated="lastUpdated"
+            @select="handleStockSelection"
           />
-            </div>
+        </div>
+
+        <!-- Pagination Controls (Bottom) -->
+        <div v-if="displayStock.length && totalPages > 1" class="pagination-controls pagination-bottom">
+          <div class="pagination-buttons">
+            <button @click="goToPage(1)" :disabled="currentPage === 1" class="pagination-btn">
+              <i class="fas fa-angle-double-left"></i> First
+            </button>
+            <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" class="pagination-btn">
+              <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" class="pagination-btn">
+              Next <i class="fas fa-chevron-right"></i>
+            </button>
+            <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages" class="pagination-btn">
+              Last <i class="fas fa-angle-double-right"></i>
+            </button>
+          </div>
+          <div class="pagination-page-info">Page {{ currentPage }} of {{ totalPages }}</div>
+        </div>
       </section>
 
       <!-- Quiz Section -->
@@ -269,6 +309,7 @@ import PerformanceChart from '@/components/PerformanceChart.vue'
 import PortfolioPerformance from '@/components/FinInvest/StockSimulatorPage/PortfolioPerformance.vue'
 import stockScreener from '@/components/Stock/StockScreener.vue'
 import CompanyCard from '@/components/CompanyCard.vue'
+import StockCard from '@/components/Stock/StockCard.vue'
 import PreviewOrderModal from '@/components/FinInvest/StockSimulatorPage/PreviewOrderModal.vue'
 import QuizRewards from '@/components/FinEdu/Quiz/QuizRewards.vue'
 import StockSearchInput from '@/components/FinInvest/StockSimulatorPage/StockSearchInput.vue'
@@ -287,6 +328,7 @@ export default {
     PortfolioPerformance,
     stockScreener,
     CompanyCard,
+    StockCard,
     PreviewOrderModal,
     QuizRewards,
     StockSearchInput,
@@ -311,7 +353,11 @@ export default {
       userHoldings: [],
       loadingHoldings: false,
       holdingsError: null,
-      displayStock: [],
+      displayStock: [], // Start empty - only show stocks when filters are applied
+      lastUpdated: null,
+      currentPage: 1,
+      totalPages: 1,
+      totalCount: 0,
       currentQuestion: null,
       showingReward: false,
       rewardAmount: 0,
@@ -336,8 +382,7 @@ export default {
     // Fetch financial data from API
     await this.fetchFinancialData()
     
-    // Load initial stock data for filters
-    await this.loadInitialStocks()
+    // No initial stock loading - wait for filters to be applied
     
     // Listen for stock buy and sell requests from chatbot
     if (this.$eventBus) {
@@ -510,6 +555,11 @@ export default {
         if (filterData.results) {
           // Use results from the new screener
           this.displayStock = filterData.results
+          // Capture lastUpdated timestamp and pagination info from screener
+          this.lastUpdated = filterData.lastUpdated || Date.now()
+          this.currentPage = filterData.currentPage || 1
+          this.totalPages = filterData.totalPages || 1
+          this.totalCount = filterData.totalCount || filterData.results.length
         } else {
           // Fallback API call for backward compatibility
           const response = await api.post('/market/filter-stocks', {
@@ -518,16 +568,47 @@ export default {
           
           if (response.data && response.data.stocks) {
             this.displayStock = response.data.stocks
+            this.lastUpdated = Date.now()
+            this.currentPage = 1
+            this.totalPages = 1
+            this.totalCount = response.data.stocks.length
           } else {
             // Enhanced fallback with more realistic mock data
             this.displayStock = this.getEnhancedMockStocks(filterData.filters)
+            this.lastUpdated = Date.now()
+            this.currentPage = 1
+            this.totalPages = 1
+            this.totalCount = this.displayStock.length
           }
         }
       } catch (error) {
         console.error('Error filtering stocks:', error)
         // Enhanced fallback to mock data on error
         this.displayStock = this.getEnhancedMockStocks(filterData.filters)
+        this.lastUpdated = Date.now()
+        this.currentPage = 1
+        this.totalPages = 1
+        this.totalCount = this.displayStock.length
       }
+    },
+    
+    goToPage(page) {
+      if (page < 1 || page > this.totalPages || page === this.currentPage) return
+      // Emit event to StockScreener to load the requested page
+      this.$refs.stockScreener?.loadPage?.(page)
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+    handleStockSelection(stock) {
+      // Set the selected stock for trading
+      this.stockSymbol = stock.name || stock.symbol || stock.ticker
+      this.selectedStock = this.stockSymbol
+      
+      // Switch to investment tab
+      this.activeTab = 'investment'
+      
+      // Optional: Show a success message
+      this.$emit('success', `Selected ${this.stockSymbol} for trading`)
     },
     getEnhancedMockStocks(filters) {
       // Enhanced mock data based on filters
@@ -659,38 +740,7 @@ export default {
         // Show error notification
       }
     },
-    async loadInitialStocks() {
-      try {
-        // Fetch popular stocks by default
-        const response = await api.get('/market/popular-stocks')
-        
-        if (response.data && response.data.stocks) {
-          this.displayStock = response.data.stocks
-        } else {
-          // Load with default popular stocks if API fails
-          this.displayStock = [
-            { ticker: 'AAPL', name: 'Apple Inc.', price: 150.00, change: '+2.5%' },
-            { ticker: 'GOOGL', name: 'Alphabet Inc.', price: 2800.00, change: '+1.2%' },
-            { ticker: 'MSFT', name: 'Microsoft Corp.', price: 310.00, change: '-0.8%' },
-            { ticker: 'TSLA', name: 'Tesla Inc.', price: 800.00, change: '+3.2%' },
-            { ticker: 'AMZN', name: 'Amazon.com Inc.', price: 3300.00, change: '+0.5%' },
-            { ticker: 'META', name: 'Meta Platforms Inc.', price: 320.00, change: '+1.8%' },
-            { ticker: 'NVDA', name: 'NVIDIA Corp.', price: 220.00, change: '+4.2%' },
-            { ticker: 'NFLX', name: 'Netflix Inc.', price: 400.00, change: '-1.1%' }
-          ]
-        }
-      } catch (error) {
-        console.error('Error loading initial stocks:', error)
-        // Fallback to mock popular stocks
-        this.displayStock = [
-          { ticker: 'AAPL', name: 'Apple Inc.', price: 150.00, change: '+2.5%' },
-          { ticker: 'GOOGL', name: 'Alphabet Inc.', price: 2800.00, change: '+1.2%' },
-          { ticker: 'MSFT', name: 'Microsoft Corp.', price: 310.00, change: '-0.8%' },
-          { ticker: 'TSLA', name: 'Tesla Inc.', price: 800.00, change: '+3.2%' },
-          { ticker: 'AMZN', name: 'Amazon.com Inc.', price: 3300.00, change: '+0.5%' }
-        ]
-      }
-    },
+    // Removed loadInitialStocks() - no stocks shown until filters are applied
     handleStockSelection(stock) {
       this.stockSymbol = stock.symbol;
       this.selectedStock = stock.symbol;
@@ -1051,12 +1101,110 @@ export default {
   background: #f8fafc;
 }
 
-/* Filtered Results */
+/* Filtered Results - Responsive Grid Layout */
 .filtered-results {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   margin-top: 2rem;
+  padding: 1rem 0;
+}
+
+/* Responsive breakpoints for optimal card density */
+@media (min-width: 1400px) {
+  .filtered-results {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1399px) {
+  .filtered-results {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 899px) {
+  .filtered-results {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Pagination Controls */
+.pagination-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(0,0,0,.05);
+  border-radius: 12px;
+  margin-top: 2rem;
+  border: 1px solid rgba(0,0,0,.1);
+}
+
+.pagination-top {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.pagination-bottom {
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+.pagination-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.pagination-info .results-info {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.pagination-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.pagination-page-info {
+  margin-top: .5rem;
+  text-align: center;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+  color: #fff;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+
+.pagination-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.5;
 }
 
 /* Loading & Error States */
@@ -1475,7 +1623,7 @@ export default {
   }
   
   .filtered-results {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
 }

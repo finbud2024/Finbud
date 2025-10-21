@@ -96,6 +96,7 @@ import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 
 import ThinkingProcess from "../ThinkingProcess.vue";
+import RagProcess from "./RagProcess.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -138,24 +139,26 @@ export default {
 		FileIndicator,
 		ChatSuggestion,
 		ThinkingProcess,
+		RagProcess,
 	},
-	data() {
-		return {
-			currentUserMessageText: "",
-			messages: [],
-			sources: [],
-			videos: [],
-			relevantQuestions: [],
-			botAvatar: require("@/assets/botrmbg.png"),
-			chatMode: "",
-			showDeepResearchWorkflow: false,
-			showThinkingProcess: false,
-			showRagProcess: false,
-			ragStatus: 'loading',
-			conversationHistory: [],
-			researchBrief: null,
-		};
-	},
+		data() {
+			return {
+				currentUserMessageText: "",
+				messages: [],
+				sources: [],
+				videos: [],
+				relevantQuestions: [],
+				botAvatar: require("@/assets/botrmbg.png"),
+				chatMode: "",
+				showDeepResearchWorkflow: false,
+				showThinkingProcess: false,
+				showRagProcess: false,
+				ragStatus: 'loading',
+				conversationHistory: [],
+				researchBrief: null,
+				autoMessageProcessed: false,
+			};
+		},
 	computed: {
 		isAuthenticated() {
 			return this.$store.getters["users/isAuthenticated"];
@@ -194,7 +197,8 @@ export default {
 		autoMessage: {
 			immediate: true,
 			handler(newMessage) {
-				if (newMessage) {
+				if (newMessage && !this.autoMessageProcessed) {
+					this.autoMessageProcessed = true;
 					this.handleUserSubmit({ message: newMessage });
 				}
 			}
@@ -1351,9 +1355,18 @@ Bạn là FinBud — trợ lý tài chính.
 			}, 1000);
 		},
 		extractStockCode(message) {
-			const pattern = /\b[A-Z]{2,5}\b/g;
-			const matches = message.match(pattern);
-			return matches;
+			if (!message || typeof message !== 'string') return null;
+			// Match ticker-like tokens: 3-5 uppercase letters, optionally with a dot (BRK.B)
+			// Require token length >= 3 to avoid matching acronyms like 'AI' or 'OK'.
+			const pattern = /\b([A-Z]{3,5}(?:\.[A-Z])?)\b/g;
+			const matches = [];
+			let m;
+			while ((m = pattern.exec(message)) !== null) {
+				// Exclude very common short words or words that are followed by punctuation that indicates it's not a ticker
+				const token = m[1];
+				if (token && token.length >= 3) matches.push(token);
+			}
+			return matches.length ? matches : null;
 		},
 		openNewWindow(url) {
 			const screenWidth = window.screen.width;
@@ -1749,11 +1762,23 @@ Please write a short, friendly explanation telling the user why you cannot categ
 	mounted() {
 		const hasMessages = this.messages.length > 0;
 
-		if (this.greeting && !hasMessages) {
+		// Only show the initial greeting when:
+		// - the `greeting` prop is true
+		// - there are no messages yet
+		// - there's NO autoMessage being injected via route/query
+		// - there's NO current thread already selected
+		// This avoids duplicate greetings produced by parent/child lifecycle ordering
+		// and when the page was opened with an autoMessage or a pre-loaded thread.
+		if (
+			this.greeting &&
+			!hasMessages &&
+			!this.autoMessage &&
+			(!this.currentThreadID || this.currentThreadID.length === 0)
+		) {
 			let botInstruction;
 			if (!this.isAuthenticated) {
 				botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
-			} else if (!this.currentThreadID) {
+			} else {
 				botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
 			}
 

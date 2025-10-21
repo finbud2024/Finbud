@@ -107,6 +107,12 @@ const fetchSimBannerStockDatav2 = async (stockCode) => {
 const fetchSimBannerStockDatav3 = async (stockCode) => {
   try {
     const apiKey = process.env.VUE_APP_STOCK_API_KEY_FINNHUB;
+    
+    // Skip Finnhub API calls if no API key is available
+    if (!apiKey) {
+      console.warn('Finnhub API key not available, skipping external API calls');
+      return null;
+    }
 
     const quoteUrl = `https://finnhub.io/api/v1/quote?symbol=${stockCode}&token=${apiKey}`;
     
