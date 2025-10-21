@@ -268,8 +268,9 @@ export default defineComponent({
       highlightedEventId.value = eventId;
       await nextTick();
 
-      const eventElement = eventRefs.value[eventId];
-      if (eventElement) {
+      // Safety check to prevent null reference errors
+      if (eventRefs.value && eventId && eventRefs.value[eventId]) {
+        const eventElement = eventRefs.value[eventId];
         eventElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
