@@ -118,30 +118,39 @@ export default defineComponent({
     // Check if Google Maps API is available
     const checkMapsApi = () => {
       try {
+        console.log('🗺️ checkMapsApi called');
+        
         // Check if Google Maps API key is configured
         const apiKey = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
+        console.log('🗺️ API Key check:', apiKey ? 'Present' : 'Missing');
         if (!apiKey) {
           mapError.value = "Google Maps API key not configured";
           return false;
         }
 
         // Check if Google Maps components are available
+        console.log('🗺️ Map component:', Map ? 'Available' : 'Not available');
+        console.log('🗺️ Marker component:', Marker ? 'Available' : 'Not available');
         if (!Map || !Marker) {
+          console.warn('🗺️ Google Maps components not loaded yet');
           mapError.value = "Google Maps components not available";
           return false;
         }
 
         // Check if window.google is available (API loaded)
+        console.log('🗺️ window.google check:', typeof window !== 'undefined' && window.google ? 'Present' : 'Missing');
         if (typeof window !== 'undefined' && window.google && window.google.maps) {
+          console.log('✅ Google Maps API loaded successfully!');
           mapsApiLoaded.value = true;
           return true;
         }
 
         // Wait for API to load
+        console.log('🗺️ Waiting for Maps API to load, will retry in 1s...');
         setTimeout(checkMapsApi, 1000);
         return false;
       } catch (err) {
-        console.error('Maps API check error:', err);
+        console.error('❌ Maps API check error:', err);
         mapError.value = "Failed to load Google Maps";
         return false;
       }
@@ -313,14 +322,13 @@ export default defineComponent({
       
       // Debug logging after 2 seconds
       setTimeout(() => {
-        console.log('🗺️ EventMap Debug:', {
-          mapsApiLoaded: mapsApiLoaded.value,
-          eventsCount: events.value.length,
-          filteredEventsCount: filteredEvents.value.length,
-          mapError: mapError.value,
-          loading: loading.value,
-          apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing'
-        });
+        console.log('🗺️ mapsApiLoaded:', mapsApiLoaded.value);
+        console.log('🗺️ eventsCount:', events.value.length);
+        console.log('🗺️ filteredEventsCount:', filteredEvents.value.length);
+        console.log('🗺️ mapError:', mapError.value);
+        console.log('🗺️ loading:', loading.value);
+        console.log('🗺️ apiKey:', process.env.VUE_APP_GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing');
+        console.log('🗺️ First event:', events.value[0]);
       }, 2000);
     });
 
