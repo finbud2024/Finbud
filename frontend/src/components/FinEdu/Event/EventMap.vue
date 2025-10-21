@@ -115,6 +115,36 @@ export default defineComponent({
     const mapsApiLoaded = ref(false);
     const mapError = ref(null);
 
+    // Manually load Google Maps script if not already loaded
+    const loadGoogleMapsScript = (apiKey) => {
+      return new Promise((resolve, reject) => {
+        // Check if already loaded
+        if (window.google && window.google.maps) {
+          resolve();
+          return;
+        }
+
+        // Check if script tag already exists
+        const existing = document.querySelector('script[src*="maps.googleapis.com"]');
+        if (existing) {
+          // Wait for it to load
+          existing.addEventListener('load', resolve);
+          existing.addEventListener('error', reject);
+          return;
+        }
+
+        // Create and inject script tag
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+        console.log('🗺️ Manually loading Google Maps script');
+      });
+    };
+
     // Check if Google Maps API is available
     const checkMapsApi = () => {
       try {
@@ -125,6 +155,21 @@ export default defineComponent({
         console.log('🗺️ API Key check:', apiKey ? 'Present' : 'Missing');
         if (!apiKey) {
           mapError.value = "Google Maps API key not configured";
+          return false;
+        }
+
+        // Try to load the script manually if window.google is missing
+        if (!window.google || !window.google.maps) {
+          console.log('🗺️ Google Maps not loaded, attempting manual load...');
+          loadGoogleMapsScript(apiKey)
+            .then(() => {
+              console.log('✅ Google Maps script loaded manually!');
+              mapsApiLoaded.value = true;
+            })
+            .catch(err => {
+              console.error('❌ Failed to load Google Maps script:', err);
+              mapError.value = "Failed to load Google Maps";
+            });
           return false;
         }
 
