@@ -37,8 +37,8 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finInvest'">
             <router-link to="/stock-simulator">{{ $t("simulator") }}</router-link>
-            <router-link to="/predictive-calculator">Predictive Calculator</router-link>
-            <router-link to="/autotrade-ai">AutoTrade AI</router-link>
+            <router-link to="/predictive-calculator">{{ $t("predictiveCalculator") }}</router-link>
+            <router-link to="/autotrade-ai">{{ $t("autoTradeAI") }}</router-link>
             <router-link to="/quant-analysis">{{ $t("quant") }}</router-link>
             <router-link to="/quant-simulator">{{ $t("quantSimulator") }}</router-link>
             <router-link to="/fund-letter">{{ $t("FundLetter")}}</router-link>
@@ -72,7 +72,7 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finEdu'">
             <router-link to="/quizz">{{ $t("quiz") }}</router-link>
-            <router-link to="/create-roadmap">Learning Roadmap Creator</router-link>
+            <router-link to="/create-roadmap">{{ $t("learningRoadmap") }}</router-link>
             <router-link to="/event">{{ $t("event") }}</router-link>
             <router-link to="/course">{{ $t("course") }}</router-link>
           </div>
@@ -88,7 +88,7 @@
           <div class="dropdown-content" v-show="activeDropdown === 'finAgent'">
             <router-link to="/agent" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-newspaper" class="subsection-item-icon" />
-              News
+              {{ $t("news") }}
             </router-link>
             <router-link to="/pestle" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-chart-pie" class="subsection-item-icon" />
@@ -119,11 +119,11 @@
           <div class="dropdown-content" v-show="activeDropdown === 'finXpert'">
             <router-link to="/finxpert-real-estate" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-building" class="subsection-item-icon" />
-              Real Estate Analyst
+              {{ $t("realEstateAnalyst") }}
             </router-link>
             <router-link to="/finxpert-equity" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-chart-line" class="subsection-item-icon" />
-              Equity Researcher
+              {{ $t("equityResearcher") }}
             </router-link>
             <router-link to="/finxpert-accountant" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-calculator" class="subsection-item-icon" />
@@ -131,11 +131,11 @@
             </router-link>
             <router-link to="/ai-finance-workflows" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-brain" class="subsection-item-icon" />
-              AI Finance Workflows
+              {{ $t("aiFinanceWorkflows") }}
             </router-link>
             <router-link to="/private-equity-deal-scout" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-search-dollar" class="subsection-item-icon" />
-              Private Equity Deal Scout
+              {{ $t("privateEquityDealScout") }}
             </router-link>
           </div>
         </li>
@@ -144,7 +144,7 @@
         <li v-if="isAuthenticated">
           <router-link to="/forum" class="nav-link finverse-link">
             <font-awesome-icon icon="fa-solid fa-users" class="icon" />
-            <span>{{ $t("finVerse.title", "FinVerse") }}</span>
+            <span>{{ $t("finVerse") }}</span>
             </router-link>
         </li>
 
@@ -152,7 +152,7 @@
         <li v-if="isAuthenticated">
           <router-link to="/subscribe" class="nav-link finplus-link">
             <font-awesome-icon icon="fa-solid fa-crown" class="icon" />
-            <span>Subscribe FinPlus</span>
+            <span>{{ $t("subscribeFinPlus") }}</span>
             </router-link>
         </li>
 
