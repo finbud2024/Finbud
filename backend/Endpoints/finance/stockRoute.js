@@ -1,6 +1,7 @@
 import express from 'express';
 import StockPrice from '../../Database_Schema/market-data/Stock.js';
 import validateRequest from '../../utils/validation/validateRequest.js';
+import { isAuthenticated } from '../../middleware/auth.js';
 import axios from 'axios';
 
 const stockRoute = express.Router();
@@ -58,7 +59,6 @@ stockRoute.get("/api/stocks", async (req, res) => {
         dividendMin,
         dividendMax
     } = req.query;
-    
     const pageNumber = parseInt(page);
     const size = parseInt(pageSize);
 
@@ -904,7 +904,7 @@ stockRoute.post("/updateStockDB", validateRequest(StockPrice.schema), async (req
     }
 });
 
-stockRoute.get("/latestStock", async (req, res) => {
+stockRoute.get("/latestStock", isAuthenticated, async (req, res) => {
     try {
         const latestEntry = await StockPrice.findOne().sort({ date: -1 }).exec();
         if (latestEntry) {
@@ -963,7 +963,7 @@ async function saveNewStock(symbol, data, recordDate) {
 }
 
 // Route for popular stocks
-stockRoute.get("/market/popular-stocks", async (req, res) => {
+stockRoute.get("/market/popular-stocks", isAuthenticated, async (req, res) => {
     try {
         // Return a list of popular stocks with mock data for now
         const popularStocks = [

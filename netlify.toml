@@ -1,5 +1,5 @@
 [build]
-  command = "yarn netlify:build"
+  command = "git config --global url.\"https://github.com/\".insteadOf \"ssh://git@github.com/\" && yarn cache clean && yarn install && yarn netlify:build"
   publish = "frontend/dist"
   functions = "backend/functions"
 
@@ -16,6 +16,7 @@
 [build.environment]
   NODE_VERSION = "18"
   YARN_VERSION = "1.22.22"
-  YARN_FLAGS = "--network-timeout 600000"
+  YARN_FLAGS = "--network-timeout 600000 --ignore-engines"
+  YARN_CACHE_FOLDER = ".netlify/cache/yarn"
   NODE_OPTIONS = "--experimental-modules"
 

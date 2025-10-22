@@ -4,9 +4,9 @@
     <header class="simulator-header">
       <h1 class="page-title">
         <font-awesome-icon icon="fa-solid fa-chart-line" />
-        {{ $t('stockSimulator.pageTitle') }}
+        {{ $t("stockSimulator.pageTitle") }}
       </h1>
-      
+
       <nav class="tab-nav">
         <button
           v-for="tab in tabs"
@@ -17,7 +17,7 @@
           <font-awesome-icon :icon="tab.icon" />
           <span>{{ $t(`stockSimulator.tabs.${tab.key}`) }}</span>
         </button>
-    </nav>
+      </nav>
     </header>
 
     <!-- Content -->
@@ -29,27 +29,30 @@
           <div class="main-panel">
             <div class="chart-container" :class="{ 'mobile-chart': isMobile }">
               <!-- Mobile Chart Toggle Button -->
-              <button 
-                v-if="isMobile" 
-                @click="openMobileChart" 
+              <button
+                v-if="isMobile"
+                @click="openMobileChart"
                 class="mobile-chart-toggle"
               >
                 <font-awesome-icon icon="fa-solid fa-chart-line" />
-                <span>{{ $t('stockSimulator.trading.viewChart') }}</span>
+                <span>{{ $t("stockSimulator.trading.viewChart") }}</span>
                 <font-awesome-icon icon="fa-solid fa-external-link-alt" />
               </button>
-              
+
               <!-- Desktop Chart -->
               <div v-if="!isMobile" class="chart-wrapper">
-                <TradingViewChart :symbol="selectedStock" theme="light"/>
+                <TradingViewChart :symbol="selectedStock" theme="light" />
               </div>
-              
+
               <!-- Mobile Chart Placeholder -->
               <div v-else class="chart-placeholder">
                 <div class="placeholder-content">
-                  <font-awesome-icon icon="fa-solid fa-chart-area" class="placeholder-icon" />
+                  <font-awesome-icon
+                    icon="fa-solid fa-chart-area"
+                    class="placeholder-icon"
+                  />
                   <h4>{{ selectedStock }} Chart</h4>
-                  <p>{{ $t('stockSimulator.trading.tapToViewChart') }}</p>
+                  <p>{{ $t("stockSimulator.trading.tapToViewChart") }}</p>
                 </div>
               </div>
             </div>
@@ -61,47 +64,78 @@
           <!-- Trading Panel -->
           <div class="trading-panel">
             <div class="trade-form">
-              <h3>{{ $t('stockSimulator.trading.quickTrade') }}</h3>
+              <h3>{{ $t("stockSimulator.trading.quickTrade") }}</h3>
               <!-- Enhanced Stock Search -->
               <div class="stock-search-wrapper">
-                <label class="form-label">{{ $t('stockSimulator.trading.stockSymbol') }}</label>
+                <label class="form-label">{{
+                  $t("stockSimulator.trading.stockSymbol")
+                }}</label>
                 <StockSearchInput
                   v-model="stockSymbol"
-                  :placeholder="$t('stockSimulator.trading.stockSymbolPlaceholder')"
+                  :placeholder="
+                    $t('stockSimulator.trading.stockSymbolPlaceholder')
+                  "
                   @stock-selected="handleStockSelection"
                   @search="handleStockSearch"
                 />
               </div>
-              <input v-model="quantity" type="number" :placeholder="$t('stockSimulator.trading.quantity')" class="input" />
+              <input
+                v-model="quantity"
+                type="number"
+                :placeholder="$t('stockSimulator.trading.quantity')"
+                class="input"
+              />
               <select v-model="action" class="input">
-                <option value="buy">{{ $t('stockSimulator.trading.buy') }}</option>
-                <option value="sell">{{ $t('stockSimulator.trading.sell') }}</option>
+                <option value="buy">
+                  {{ $t("stockSimulator.trading.buy") }}
+                </option>
+                <option value="sell">
+                  {{ $t("stockSimulator.trading.sell") }}
+                </option>
               </select>
               <div class="form-buttons">
-                <button @click="clearForm" class="btn btn-secondary">{{ $t('stockSimulator.trading.clear') }}</button>
-                <button @click="previewOrder" class="btn btn-primary">{{ action === 'buy' ? $t('stockSimulator.trading.buy') : $t('stockSimulator.trading.sell') }}</button>
+                <button @click="clearForm" class="btn btn-secondary">
+                  {{ $t("stockSimulator.trading.clear") }}
+                </button>
+                <button @click="previewOrder" class="btn btn-primary">
+                  {{
+                    action === "buy"
+                      ? $t("stockSimulator.trading.buy")
+                      : $t("stockSimulator.trading.sell")
+                  }}
+                </button>
               </div>
             </div>
 
             <!-- Account Summary -->
             <div class="account-summary">
-              <h3>{{ $t('stockSimulator.account.summary') }}</h3>
+              <h3>{{ $t("stockSimulator.account.summary") }}</h3>
               <div class="summary-grid">
                 <div class="stat">
-                  <span class="label">{{ $t('stockSimulator.account.balance') }}</span>
+                  <span class="label">{{
+                    $t("stockSimulator.account.balance")
+                  }}</span>
                   <span class="value">${{ formatNumber(accountBalance) }}</span>
                 </div>
                 <div class="stat">
-                  <span class="label">{{ $t('stockSimulator.account.cash') }}</span>
+                  <span class="label">{{
+                    $t("stockSimulator.account.cash")
+                  }}</span>
                   <span class="value">${{ formatNumber(cash) }}</span>
                 </div>
                 <div class="stat">
-                  <span class="label">{{ $t('stockSimulator.account.stocks') }}</span>
+                  <span class="label">{{
+                    $t("stockSimulator.account.stocks")
+                  }}</span>
                   <span class="value">${{ formatNumber(stockValue) }}</span>
                 </div>
                 <div class="stat">
-                  <span class="label">{{ $t('stockSimulator.account.todayChange') }}</span>
-                  <span class="value" :class="getChangeClass(todaysChange)">{{ todaysChange }}</span>
+                  <span class="label">{{
+                    $t("stockSimulator.account.todayChange")
+                  }}</span>
+                  <span class="value" :class="getChangeClass(todaysChange)">{{
+                    todaysChange
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -118,48 +152,72 @@
       <section v-if="activeTab === 'portfolio'" class="section">
         <div class="portfolio-overview">
           <div class="overview-cards">
-          <div class="overview-card total">
-              <div class="card-title">{{ $t('stockSimulator.portfolio.totalPortfolio') }}</div>
+            <div class="overview-card total">
+              <div class="card-title">
+                {{ $t("stockSimulator.portfolio.totalPortfolio") }}
+              </div>
               <div class="card-value">${{ formatNumber(accountBalance) }}</div>
             </div>
-          <div class="overview-card">
-              <div class="card-title">{{ $t('stockSimulator.account.stocks') }}</div>
+            <div class="overview-card">
+              <div class="card-title">
+                {{ $t("stockSimulator.account.stocks") }}
+              </div>
               <div class="card-value">${{ formatNumber(stockValue) }}</div>
-          </div>
-          <div class="overview-card">
-              <div class="card-title">{{ $t('stockSimulator.account.cash') }}</div>
+            </div>
+            <div class="overview-card">
+              <div class="card-title">
+                {{ $t("stockSimulator.account.cash") }}
+              </div>
               <div class="card-value">${{ formatNumber(cash) }}</div>
+            </div>
           </div>
-        </div>
         </div>
 
         <PortfolioPerformance />
 
         <div class="holdings-section">
-          <h3>{{ $t('stockSimulator.portfolio.holdings') }}</h3>
-          <div v-if="loadingHoldings" class="loading">{{ $t('stockSimulator.portfolio.loading') }}</div>
+          <h3>{{ $t("stockSimulator.portfolio.holdings") }}</h3>
+          <div v-if="loadingHoldings" class="loading">
+            {{ $t("stockSimulator.portfolio.loading") }}
+          </div>
           <div v-else-if="holdingsError" class="error">{{ holdingsError }}</div>
-          <div v-else-if="userHoldings.length === 0" class="empty">{{ $t('stockSimulator.portfolio.noHoldings') }}</div>
+          <div v-else-if="userHoldings.length === 0" class="empty">
+            {{ $t("stockSimulator.portfolio.noHoldings") }}
+          </div>
           <div v-else class="holdings-table-container">
             <table class="holdings-table">
               <thead>
                 <tr>
-                  <th>{{ $t('stockSimulator.portfolio.table.symbol') }}</th>
-                  <th>{{ $t('stockSimulator.portfolio.table.shares') }}</th>
-                  <th>{{ $t('stockSimulator.portfolio.table.currentPrice') }}</th>
-                  <th>{{ $t('stockSimulator.portfolio.table.marketValue') }}</th>
-                  <th>{{ $t('stockSimulator.portfolio.table.gainLoss') }}</th>
-                  <th>{{ $t('stockSimulator.portfolio.table.change') }}</th>
+                  <th>{{ $t("stockSimulator.portfolio.table.symbol") }}</th>
+                  <th>{{ $t("stockSimulator.portfolio.table.shares") }}</th>
+                  <th>
+                    {{ $t("stockSimulator.portfolio.table.currentPrice") }}
+                  </th>
+                  <th>
+                    {{ $t("stockSimulator.portfolio.table.marketValue") }}
+                  </th>
+                  <th>{{ $t("stockSimulator.portfolio.table.gainLoss") }}</th>
+                  <th>{{ $t("stockSimulator.portfolio.table.change") }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="holding in userHoldings" :key="holding.symbol">
                   <td class="symbol">{{ holding.symbol }}</td>
                   <td>{{ holding.quantity }}</td>
-                  <td>${{ formatNumber(holding.currentPrice || holding.purchasePrice) }}</td>
+                  <td>
+                    ${{
+                      formatNumber(
+                        holding.currentPrice || holding.purchasePrice
+                      )
+                    }}
+                  </td>
                   <td>${{ formatNumber(calculateMarketValue(holding)) }}</td>
-                  <td :class="getGainLossClass(holding)">{{ formatGainLoss(calculateGainLoss(holding)) }}</td>
-                  <td :class="getGainLossClass(holding)">{{ formatPercentage(calculatePercentChange(holding)) }}</td>
+                  <td :class="getGainLossClass(holding)">
+                    {{ formatGainLoss(calculateGainLoss(holding)) }}
+                  </td>
+                  <td :class="getGainLossClass(holding)">
+                    {{ formatPercentage(calculatePercentChange(holding)) }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -224,7 +282,7 @@
       <!-- Quiz Section -->
       <section v-if="activeTab === 'quiz'" class="section">
         <div class="quiz-container">
-          <h2>{{ $t('stockSimulator.quiz.title') }}</h2>
+          <h2>{{ $t("stockSimulator.quiz.title") }}</h2>
           <div v-if="currentQuestion" class="question-container">
             <p class="question">{{ currentQuestion.text }}</p>
             <div class="options">
@@ -235,32 +293,50 @@
                 class="option-btn"
               >
                 {{ option.text }}
-            </button>
+              </button>
+            </div>
+          </div>
+          <div v-else class="loading">
+            {{ $t("stockSimulator.quiz.loading") }}
           </div>
         </div>
-          <div v-else class="loading">{{ $t('stockSimulator.quiz.loading') }}</div>
-      </div>
-    </section>
-
+      </section>
     </main>
 
     <!-- Mobile Chart Modal -->
-    <div v-if="showMobileChart" class="mobile-chart-modal" @click="closeMobileChart">
+    <div
+      v-if="showMobileChart"
+      class="mobile-chart-modal"
+      @click="closeMobileChart"
+    >
       <div class="mobile-chart-content" @click.stop>
         <div class="mobile-chart-header">
           <h3>{{ selectedStock }} Chart</h3>
           <div class="chart-controls">
             <button @click="toggleOrientation" class="orientation-btn">
-              <font-awesome-icon :icon="isLandscape ? 'fa-solid fa-mobile-alt' : 'fa-solid fa-tablet-alt'" />
-              <span>{{ isLandscape ? 'Portrait' : 'Landscape' }}</span>
+              <font-awesome-icon
+                :icon="
+                  isLandscape
+                    ? 'fa-solid fa-mobile-alt'
+                    : 'fa-solid fa-tablet-alt'
+                "
+              />
+              <span>{{ isLandscape ? "Portrait" : "Landscape" }}</span>
             </button>
             <button @click="closeMobileChart" class="close-btn">
               <font-awesome-icon icon="fa-solid fa-times" />
             </button>
           </div>
         </div>
-        <div class="mobile-chart-body" :class="{ 'landscape-mode': isLandscape }">
-          <TradingViewChart :symbol="selectedStock" theme="light" :key="chartKey" />
+        <div
+          class="mobile-chart-body"
+          :class="{ 'landscape-mode': isLandscape }"
+        >
+          <TradingViewChart
+            :symbol="selectedStock"
+            theme="light"
+            :key="chartKey"
+          />
         </div>
       </div>
     </div>
@@ -271,7 +347,9 @@
       :stockSymbol="stockSymbol"
       :quantity="quantity"
       :estimatedPrice="estimatedPrice"
-      :remainingBalance="calculateRemainingBalance(action, estimatedPrice, quantity)"
+      :remainingBalance="
+        calculateRemainingBalance(action, estimatedPrice, quantity)
+      "
       :isSubmittingOrder="isSubmittingOrder"
       @close="showModal = false"
       @clear-order="clearForm"
@@ -283,23 +361,32 @@
     <!-- Smart Assistant -->
     <div class="assistant-container" v-if="showAssistant">
       <div class="assistant-bubble" @click="toggleAssistant">
-        <img src="@/assets/botrmbg.png" alt="Assistant" class="assistant-avatar" />
+        <img
+          src="@/assets/botrmbg.png"
+          alt="Assistant"
+          class="assistant-avatar"
+        />
         <div v-if="showAssistantMessage" class="assistant-message">
           <div v-if="assistantTyping" class="typing-dots">
             <span></span><span></span><span></span>
-      </div>
-          <div v-else v-html="assistantMessage"></div>
           </div>
+          <div v-else v-html="assistantMessage"></div>
         </div>
-        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faChartLine, faBriefcase, faFilter, faGraduationCap } from '@fortawesome/free-solid-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import api from '@/utils/api'
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {
+  faChartLine,
+  faBriefcase,
+  faFilter,
+  faGraduationCap,
+} from "@fortawesome/free-solid-svg-icons";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import api from "@/utils/api";
 
 // Components
 // import StockChart from '@/components/StockChart.vue'
@@ -315,10 +402,10 @@ import QuizRewards from '@/components/FinEdu/Quiz/QuizRewards.vue'
 import StockSearchInput from '@/components/FinInvest/StockSimulatorPage/StockSearchInput.vue'
 import TradingViewChart from '@/components/TradingViewChart.vue'
 
-library.add(faChartLine, faBriefcase, faFilter, faGraduationCap)
+library.add(faChartLine, faBriefcase, faFilter, faGraduationCap);
 
 export default {
-  name: 'StockSimulatorPage',
+  name: "StockSimulatorPage",
   components: {
     FontAwesomeIcon,
     // StockChart,
@@ -332,22 +419,22 @@ export default {
     PreviewOrderModal,
     QuizRewards,
     StockSearchInput,
-    TradingViewChart
+    TradingViewChart,
   },
   data() {
     return {
-      activeTab: 'investment',
-      selectedStock: 'AAPL',
-      stockSymbol: '',
+      activeTab: "investment",
+      selectedStock: "NASDAQ:AAPL", // Use full TradingView format
+      stockSymbol: "",
       quantity: 1,
-      action: 'buy',
+      action: "buy",
       showModal: false,
       estimatedPrice: 0,
       isSubmittingOrder: false,
       accountBalance: 0,
       cash: 0,
       stockValue: 0,
-      todaysChange: '+$0.00',
+      todaysChange: "+$0.00",
       transactionKey: 0,
       performanceData: [],
       userHoldings: [],
@@ -364,102 +451,107 @@ export default {
       showAssistant: true,
       showAssistantMessage: false,
       assistantTyping: false,
-      assistantMessage: '',
+      assistantMessage: "",
       loadingFinancialData: true,
       tabs: [
-        { key: 'investment', label: 'Investment', icon: 'fa-solid fa-chart-line' },
-        { key: 'portfolio', label: 'Portfolio', icon: 'fa-solid fa-briefcase' },
-        { key: 'filters', label: 'Filters', icon: 'fa-solid fa-filter' },
-        { key: 'quiz', label: 'Quiz', icon: 'fa-solid fa-graduation-cap' }
+        {
+          key: "investment",
+          label: "Investment",
+          icon: "fa-solid fa-chart-line",
+        },
+        { key: "portfolio", label: "Portfolio", icon: "fa-solid fa-briefcase" },
+        { key: "filters", label: "Filters", icon: "fa-solid fa-filter" },
+        { key: "quiz", label: "Quiz", icon: "fa-solid fa-graduation-cap" },
       ],
       isMobile: false,
       showMobileChart: false,
       isLandscape: true,
-      chartKey: 0
-    }
+      chartKey: 0,
+    };
   },
   async mounted() {
     // Fetch financial data from API
     await this.fetchFinancialData()
     
     // No initial stock loading - wait for filters to be applied
-    
     // Listen for stock buy and sell requests from chatbot
     if (this.$eventBus) {
-      this.$eventBus.$on('stock-buy-request', this.handleStockBuyRequest);
-      this.$eventBus.$on('stock-sell-request', this.handleStockSellRequest);
+      this.$eventBus.$on("stock-buy-request", this.handleStockBuyRequest);
+      this.$eventBus.$on("stock-sell-request", this.handleStockSellRequest);
     }
-    this.generateAssistantMessage()
+    this.generateAssistantMessage();
 
     // Check if mobile
     this.checkMobile();
-    window.addEventListener('resize', this.checkMobile);
+    window.addEventListener("resize", this.checkMobile);
   },
   beforeDestroy() {
     // Clean up event listener
     if (this.$eventBus) {
-      this.$eventBus.$off('stock-buy-request', this.handleStockBuyRequest);
-      this.$eventBus.$off('stock-sell-request', this.handleStockSellRequest);
+      this.$eventBus.$off("stock-buy-request", this.handleStockBuyRequest);
+      this.$eventBus.$off("stock-sell-request", this.handleStockSellRequest);
     }
-    window.removeEventListener('resize', this.checkMobile);
+    window.removeEventListener("resize", this.checkMobile);
   },
   methods: {
     async fetchFinancialData() {
       try {
-        this.loadingFinancialData = true
-        
+        this.loadingFinancialData = true;
+
         // Ensure user data is loaded
-        await this.$store.dispatch("users/fetchCurrentUser")
-        const userData = this.$store.getters["users/currentUser"]
+        await this.$store.dispatch("users/fetchCurrentUser");
+        const userData = this.$store.getters["users/currentUser"];
 
         if (!userData) {
-          console.error('User data not available')
-          return
+          console.error("User data not available");
+          return;
         }
 
         // Fetch user's account balance from API
-        const response = await api.get(`/users/${userData._id}`)
-        const data = response.data
+        const response = await api.get(`/users/${userData._id}`);
+        const data = response.data;
 
         // Update financial data with real values from database
-        this.accountBalance = data.bankingAccountData.accountBalance || 0
-        this.stockValue = data.bankingAccountData.stockValue || 0  
-        this.cash = data.bankingAccountData.cash || 0
-        
+        this.accountBalance = data.bankingAccountData.accountBalance || 0;
+        this.stockValue = data.bankingAccountData.stockValue || 0;
+        this.cash = data.bankingAccountData.cash || 0;
+
         // Calculate today's change (you can expand this logic)
-        const change = this.accountBalance - (this.stockValue + this.cash)
-        this.todaysChange = change >= 0 ? `+$${Math.abs(change).toFixed(2)}` : `-$${Math.abs(change).toFixed(2)}`
-        
+        const change = this.accountBalance - (this.stockValue + this.cash);
+        this.todaysChange =
+          change >= 0
+            ? `+$${Math.abs(change).toFixed(2)}`
+            : `-$${Math.abs(change).toFixed(2)}`;
       } catch (error) {
-        console.error('Error fetching financial data:', error)
+        console.error("Error fetching financial data:", error);
         // Keep default values if API fails
-        this.accountBalance = 10000
-        this.cash = 5000  
-        this.stockValue = 5000
+        this.accountBalance = 10000;
+        this.cash = 5000;
+        this.stockValue = 5000;
       } finally {
-        this.loadingFinancialData = false
+        this.loadingFinancialData = false;
       }
     },
     formatNumber(value) {
-      return new Intl.NumberFormat('en-US', { 
-        minimumFractionDigits: 2, 
-        maximumFractionDigits: 2 
-      }).format(value || 0)
+      return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value || 0);
     },
     getChangeClass(change) {
-      const value = parseFloat(String(change).replace(/[$+,]/g, ''))
-      return value >= 0 ? 'positive' : 'negative'
+      const value = parseFloat(String(change).replace(/[$+,]/g, ""));
+      return value >= 0 ? "positive" : "negative";
     },
     clearForm() {
-      this.stockSymbol = ''
-      this.quantity = 1
-      this.estimatedPrice = 0
-      this.action = 'buy'
-      this.showModal = false
+      this.stockSymbol = "";
+      this.quantity = 1;
+      this.estimatedPrice = 0;
+      this.action = "buy";
+      this.showModal = false;
     },
     previewOrder() {
-      if (!this.stockSymbol || !this.quantity) return
-      this.showModal = true
+      if (!this.stockSymbol || !this.quantity) return;
+      this.showModal = true;
     },
     async submitOrder(action) {
       this.isSubmittingOrder = true;
@@ -470,31 +562,33 @@ export default {
           quantity: this.quantity,
           price: this.estimatedPrice,
           action: action,
-          userId: this.$store.getters['users/userId']
+          userId: this.$store.getters["users/userId"],
         };
 
         await this.processOrder(order);
-        
+
         // Close modal and reset form
         this.showModal = false;
         this.clearForm();
-        
+
         // Show success notification with translation
         this.$notify({
-          type: 'success',
-          title: this.$t('stockSimulator.notifications.orderSuccess'),
+          type: "success",
+          title: this.$t("stockSimulator.notifications.orderSuccess"),
           text: this.$t(`stockSimulator.notifications.${action}Success`, {
             quantity: this.quantity,
-            symbol: this.stockSymbol
-          })
+            symbol: this.stockSymbol,
+          }),
         });
       } catch (error) {
-        console.error('Error submitting order:', error);
+        console.error("Error submitting order:", error);
         // Show error notification with translation
         this.$notify({
-          type: 'error',
-          title: this.$t('stockSimulator.notifications.orderError'),
-          text: this.$t(`stockSimulator.notifications.${error.code || 'networkError'}`)
+          type: "error",
+          title: this.$t("stockSimulator.notifications.orderError"),
+          text: this.$t(
+            `stockSimulator.notifications.${error.code || "networkError"}`
+          ),
         });
       } finally {
         this.isSubmittingOrder = false;
@@ -503,55 +597,55 @@ export default {
     async processOrder(order) {
       try {
         // Make API call to process the order
-        const response = await api.post('/trading/execute-order', {
+        const response = await api.post("/trading/execute-order", {
           userId: order.userId,
           symbol: order.symbol,
           quantity: order.quantity,
           price: order.price,
-          action: order.action
-        })
+          action: order.action,
+        });
 
         if (response.data.success) {
           // Update local financial data
-          await this.fetchFinancialData()
-          
+          await this.fetchFinancialData();
+
           // Refresh transaction history
-        this.transactionKey++
-          
-          return response.data
+          this.transactionKey++;
+
+          return response.data;
         } else {
-          throw new Error(response.data.message || 'Order execution failed')
+          throw new Error(response.data.message || "Order execution failed");
         }
       } catch (error) {
-        console.error('Error processing order:', error)
-        throw error
+        console.error("Error processing order:", error);
+        throw error;
       }
     },
     async fetchStockPrice(symbol) {
       try {
-        const response = await api.get(`/market/stock-price/${symbol}`)
+        const response = await api.get(`/market/stock-price/${symbol}`);
         return {
           price: response.data.price || 100, // fallback price
-          symbol: symbol
-        }
+          symbol: symbol,
+        };
       } catch (error) {
-        console.error('Error fetching stock price:', error)
+        console.error("Error fetching stock price:", error);
         // Return fallback price if API fails
         return {
           price: 100,
-          symbol: symbol
-        }
+          symbol: symbol,
+        };
       }
     },
     calculateRemainingBalance(action, price, quantity) {
-      const total = price * quantity
-      return action === 'buy' ? this.cash - total : this.cash + total
+      const total = price * quantity;
+      return action === "buy" ? this.cash - total : this.cash + total;
     },
     async stockFilterHandler(filterData) {
       try {
         // Show loading state
-        this.displayStock = []
-        
+        this.displayStock = [];
+
         if (filterData.results) {
           // Use results from the new screener
           this.displayStock = filterData.results
@@ -562,10 +656,10 @@ export default {
           this.totalCount = filterData.totalCount || filterData.results.length
         } else {
           // Fallback API call for backward compatibility
-          const response = await api.post('/market/filter-stocks', {
-            filters: filterData.filters || filterData
-          })
-          
+          const response = await api.post("/market/filter-stocks", {
+            filters: filterData.filters || filterData,
+          });
+
           if (response.data && response.data.stocks) {
             this.displayStock = response.data.stocks
             this.lastUpdated = Date.now()
@@ -582,7 +676,7 @@ export default {
           }
         }
       } catch (error) {
-        console.error('Error filtering stocks:', error)
+        console.error("Error filtering stocks:", error);
         // Enhanced fallback to mock data on error
         this.displayStock = this.getEnhancedMockStocks(filterData.filters)
         this.lastUpdated = Date.now()
@@ -613,30 +707,157 @@ export default {
     getEnhancedMockStocks(filters) {
       // Enhanced mock data based on filters
       const allStocks = [
-        { ticker: 'AAPL', name: 'Apple Inc.', price: 150.00, change: '+2.5%', pe: 25.5, marketCap: 2500000000000, sector: 'technology', beta: 1.2, dividendYield: 0.5 },
-        { ticker: 'GOOGL', name: 'Alphabet Inc.', price: 2800.00, change: '+1.2%', pe: 22.1, marketCap: 1800000000000, sector: 'technology', beta: 1.1, dividendYield: 0 },
-        { ticker: 'MSFT', name: 'Microsoft Corp.', price: 310.00, change: '-0.8%', pe: 28.3, marketCap: 2300000000000, sector: 'technology', beta: 0.9, dividendYield: 0.7 },
-        { ticker: 'TSLA', name: 'Tesla Inc.', price: 800.00, change: '+3.2%', pe: 45.2, marketCap: 800000000000, sector: 'consumer_discretionary', beta: 2.1, dividendYield: 0 },
-        { ticker: 'AMZN', name: 'Amazon.com Inc.', price: 3300.00, change: '+0.5%', pe: 35.8, marketCap: 1700000000000, sector: 'consumer_discretionary', beta: 1.3, dividendYield: 0 },
-        { ticker: 'META', name: 'Meta Platforms Inc.', price: 320.00, change: '+1.8%', pe: 18.5, marketCap: 850000000000, sector: 'technology', beta: 1.4, dividendYield: 0 },
-        { ticker: 'NVDA', name: 'NVIDIA Corp.', price: 220.00, change: '+4.2%', pe: 55.2, marketCap: 550000000000, sector: 'technology', beta: 1.8, dividendYield: 0.1 },
-        { ticker: 'NFLX', name: 'Netflix Inc.', price: 400.00, change: '-1.1%', pe: 28.9, marketCap: 180000000000, sector: 'consumer_discretionary', beta: 1.2, dividendYield: 0 },
-        { ticker: 'JPM', name: 'JPMorgan Chase & Co.', price: 140.00, change: '+0.8%', pe: 12.5, marketCap: 420000000000, sector: 'financials', beta: 1.1, dividendYield: 2.8 },
-        { ticker: 'JNJ', name: 'Johnson & Johnson', price: 165.00, change: '+0.3%', pe: 16.2, marketCap: 435000000000, sector: 'healthcare', beta: 0.7, dividendYield: 2.6 },
-        { ticker: 'PG', name: 'Procter & Gamble Co.', price: 155.00, change: '+0.1%', pe: 24.8, marketCap: 370000000000, sector: 'consumer_staples', beta: 0.5, dividendYield: 2.4 },
-        { ticker: 'KO', name: 'The Coca-Cola Company', price: 58.00, change: '+0.2%', pe: 26.1, marketCap: 250000000000, sector: 'consumer_staples', beta: 0.6, dividendYield: 3.1 }
+        {
+          ticker: "AAPL",
+          name: "Apple Inc.",
+          price: 150.0,
+          change: "+2.5%",
+          pe: 25.5,
+          marketCap: 2500000000000,
+          sector: "technology",
+          beta: 1.2,
+          dividendYield: 0.5,
+        },
+        {
+          ticker: "GOOGL",
+          name: "Alphabet Inc.",
+          price: 2800.0,
+          change: "+1.2%",
+          pe: 22.1,
+          marketCap: 1800000000000,
+          sector: "technology",
+          beta: 1.1,
+          dividendYield: 0,
+        },
+        {
+          ticker: "MSFT",
+          name: "Microsoft Corp.",
+          price: 310.0,
+          change: "-0.8%",
+          pe: 28.3,
+          marketCap: 2300000000000,
+          sector: "technology",
+          beta: 0.9,
+          dividendYield: 0.7,
+        },
+        {
+          ticker: "TSLA",
+          name: "Tesla Inc.",
+          price: 800.0,
+          change: "+3.2%",
+          pe: 45.2,
+          marketCap: 800000000000,
+          sector: "consumer_discretionary",
+          beta: 2.1,
+          dividendYield: 0,
+        },
+        {
+          ticker: "AMZN",
+          name: "Amazon.com Inc.",
+          price: 3300.0,
+          change: "+0.5%",
+          pe: 35.8,
+          marketCap: 1700000000000,
+          sector: "consumer_discretionary",
+          beta: 1.3,
+          dividendYield: 0,
+        },
+        {
+          ticker: "META",
+          name: "Meta Platforms Inc.",
+          price: 320.0,
+          change: "+1.8%",
+          pe: 18.5,
+          marketCap: 850000000000,
+          sector: "technology",
+          beta: 1.4,
+          dividendYield: 0,
+        },
+        {
+          ticker: "NVDA",
+          name: "NVIDIA Corp.",
+          price: 220.0,
+          change: "+4.2%",
+          pe: 55.2,
+          marketCap: 550000000000,
+          sector: "technology",
+          beta: 1.8,
+          dividendYield: 0.1,
+        },
+        {
+          ticker: "NFLX",
+          name: "Netflix Inc.",
+          price: 400.0,
+          change: "-1.1%",
+          pe: 28.9,
+          marketCap: 180000000000,
+          sector: "consumer_discretionary",
+          beta: 1.2,
+          dividendYield: 0,
+        },
+        {
+          ticker: "JPM",
+          name: "JPMorgan Chase & Co.",
+          price: 140.0,
+          change: "+0.8%",
+          pe: 12.5,
+          marketCap: 420000000000,
+          sector: "financials",
+          beta: 1.1,
+          dividendYield: 2.8,
+        },
+        {
+          ticker: "JNJ",
+          name: "Johnson & Johnson",
+          price: 165.0,
+          change: "+0.3%",
+          pe: 16.2,
+          marketCap: 435000000000,
+          sector: "healthcare",
+          beta: 0.7,
+          dividendYield: 2.6,
+        },
+        {
+          ticker: "PG",
+          name: "Procter & Gamble Co.",
+          price: 155.0,
+          change: "+0.1%",
+          pe: 24.8,
+          marketCap: 370000000000,
+          sector: "consumer_staples",
+          beta: 0.5,
+          dividendYield: 2.4,
+        },
+        {
+          ticker: "KO",
+          name: "The Coca-Cola Company",
+          price: 58.0,
+          change: "+0.2%",
+          pe: 26.1,
+          marketCap: 250000000000,
+          sector: "consumer_staples",
+          beta: 0.6,
+          dividendYield: 3.1,
+        },
       ];
 
       if (!filters) return allStocks;
 
-      return allStocks.filter(stock => {
+      return allStocks.filter((stock) => {
         // Apply price range filter
-        if (filters.priceRange && (stock.price < filters.priceRange[0] || stock.price > filters.priceRange[1])) {
+        if (
+          filters.priceRange &&
+          (stock.price < filters.priceRange[0] ||
+            stock.price > filters.priceRange[1])
+        ) {
           return false;
         }
 
         // Apply P/E ratio filter
-        if (filters.peRatio && (stock.pe < filters.peRatio[0] || stock.pe > filters.peRatio[1])) {
+        if (
+          filters.peRatio &&
+          (stock.pe < filters.peRatio[0] || stock.pe > filters.peRatio[1])
+        ) {
           return false;
         }
 
@@ -654,12 +875,19 @@ export default {
         }
 
         // Apply beta filter
-        if (filters.beta && (stock.beta < filters.beta[0] || stock.beta > filters.beta[1])) {
+        if (
+          filters.beta &&
+          (stock.beta < filters.beta[0] || stock.beta > filters.beta[1])
+        ) {
           return false;
         }
 
         // Apply dividend yield filter
-        if (filters.dividendYield && (stock.dividendYield < filters.dividendYield[0] || stock.dividendYield > filters.dividendYield[1])) {
+        if (
+          filters.dividendYield &&
+          (stock.dividendYield < filters.dividendYield[0] ||
+            stock.dividendYield > filters.dividendYield[1])
+        ) {
           return false;
         }
 
@@ -667,11 +895,11 @@ export default {
       });
     },
     getMarketCapCategory(marketCap) {
-      if (marketCap > 200000000000) return 'mega';
-      if (marketCap > 10000000000) return 'large';
-      if (marketCap > 2000000000) return 'mid';
-      if (marketCap > 300000000) return 'small';
-      return 'micro';
+      if (marketCap > 200000000000) return "mega";
+      if (marketCap > 10000000000) return "large";
+      if (marketCap > 2000000000) return "mid";
+      if (marketCap > 300000000) return "small";
+      return "micro";
     },
     updatePerformanceData(timeframe) {
       // Update performance data
@@ -680,53 +908,58 @@ export default {
       // Handle quiz option
     },
     toggleAssistant() {
-      this.showAssistantMessage = !this.showAssistantMessage
+      this.showAssistantMessage = !this.showAssistantMessage;
       if (this.showAssistantMessage && !this.assistantMessage) {
-        this.generateAssistantMessage()
+        this.generateAssistantMessage();
       }
     },
     generateAssistantMessage() {
-      this.assistantTyping = true
+      this.assistantTyping = true;
       setTimeout(() => {
-        this.assistantTyping = false
-        this.assistantMessage = `Hi! I'm here to help with your trading. Your portfolio is performing well with a total value of $${this.formatNumber(this.accountBalance)}. Consider diversifying your holdings for better risk management.`
-      }, 1500)
+        this.assistantTyping = false;
+        this.assistantMessage = `Hi! I'm here to help with your trading. Your portfolio is performing well with a total value of $${this.formatNumber(
+          this.accountBalance
+        )}. Consider diversifying your holdings for better risk management.`;
+      }, 1500);
     },
     calculateMarketValue(holding) {
-      return (holding.currentPrice || holding.purchasePrice) * holding.quantity
+      return (holding.currentPrice || holding.purchasePrice) * holding.quantity;
     },
     calculateGainLoss(holding) {
-      return this.calculateMarketValue(holding) - (holding.purchasePrice * holding.quantity)
+      return (
+        this.calculateMarketValue(holding) -
+        holding.purchasePrice * holding.quantity
+      );
     },
     calculatePercentChange(holding) {
-      const gainLoss = this.calculateGainLoss(holding)
-      const purchaseValue = holding.purchasePrice * holding.quantity
-      return (gainLoss / purchaseValue) * 100
+      const gainLoss = this.calculateGainLoss(holding);
+      const purchaseValue = holding.purchasePrice * holding.quantity;
+      return (gainLoss / purchaseValue) * 100;
     },
     getGainLossClass(holding) {
-      const gainLoss = this.calculateGainLoss(holding)
-      return gainLoss >= 0 ? 'positive' : 'negative'
+      const gainLoss = this.calculateGainLoss(holding);
+      return gainLoss >= 0 ? "positive" : "negative";
     },
     formatGainLoss(value) {
-      const sign = value >= 0 ? '+' : ''
-      return `${sign}$${this.formatNumber(Math.abs(value))}`
+      const sign = value >= 0 ? "+" : "";
+      return `${sign}$${this.formatNumber(Math.abs(value))}`;
     },
     formatPercentage(value) {
-      const sign = value >= 0 ? '+' : ''
-      return `${sign}${value.toFixed(2)}%`
+      const sign = value >= 0 ? "+" : "";
+      return `${sign}${value.toFixed(2)}%`;
     },
     handleStockBuyRequest(data) {
-      console.log('Received stock buy request:', data);
+      console.log("Received stock buy request:", data);
       this.stockSymbol = data.symbol;
       this.quantity = data.quantity;
       this.action = data.action;
       this.previewOrder();
     },
     handleStockSellRequest(data) {
-      console.log('Received stock sell request:', data);
+      console.log("Received stock sell request:", data);
       this.stockSymbol = data.symbol;
       this.quantity = data.quantity;
-      this.action = 'sell';
+      this.action = "sell";
       this.previewOrder();
     },
     async previewOrder() {
@@ -736,19 +969,21 @@ export default {
         this.estimatedPrice = response.price;
         this.showModal = true;
       } catch (error) {
-        console.error('Error fetching stock price:', error);
+        console.error("Error fetching stock price:", error);
         // Show error notification
       }
     },
     // Removed loadInitialStocks() - no stocks shown until filters are applied
     handleStockSelection(stock) {
+      console.log("handleStockSelection called with:", stock); // Debug log
       this.stockSymbol = stock.symbol;
       this.selectedStock = stock.symbol;
+      console.log("Updated selectedStock to:", this.selectedStock); // Debug log
       // Optionally update the main chart view
     },
     handleStockSearch(query) {
       // Handle stock search logic if needed
-      console.log('Searching for:', query);
+      console.log("Searching for:", query);
     },
     checkMobile() {
       this.isMobile = window.innerWidth <= 768;
@@ -762,9 +997,9 @@ export default {
     toggleOrientation() {
       this.isLandscape = !this.isLandscape;
       this.chartKey++;
-    }
+    },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -836,8 +1071,14 @@ export default {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Investment Grid */
@@ -1271,13 +1512,25 @@ export default {
   animation: bounce 1.4s infinite ease-in-out;
 }
 
-.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-.typing-dots span:nth-child(3) { animation-delay: 0s; }
+.typing-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.typing-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+.typing-dots span:nth-child(3) {
+  animation-delay: 0s;
+}
 
 @keyframes bounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
 }
 
 /* Responsive */
@@ -1291,16 +1544,16 @@ export default {
   .simulator-content {
     padding: 0 1rem;
   }
-  
+
   .investment-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .summary-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .overview-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
@@ -1311,47 +1564,48 @@ export default {
   .stock-simulator {
     padding: 0.5rem;
   }
-  
+
   .simulator-header {
     padding: 1rem;
     margin-bottom: 1rem;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
     flex-direction: column;
     text-align: center;
     gap: 0.5rem;
   }
-  
+
   .tab-nav {
     gap: 0.25rem;
     padding: 0.25rem;
   }
-  
+
   .tab-btn {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
   }
-  
+
   .tab-btn span {
     display: none;
   }
-  
+
   .tab-btn i {
     font-size: 1.1rem;
   }
-  
+
   /* Mobile Investment Grid - Single Column */
   .investment-grid {
     display: block; /* Use block for simpler stacking */
   }
 
-  .main-panel, .trading-panel {
+  .main-panel,
+  .trading-panel {
     width: 100%;
     margin-bottom: 1rem; /* Replaces gap */
   }
-  
+
   .main-panel {
     display: block;
     order: 0; /* Reset order */
@@ -1360,11 +1614,12 @@ export default {
   .trading-panel {
     order: 0; /* Reset order */
   }
-  
-  .chart-container, .stock-info {
+
+  .chart-container,
+  .stock-info {
     margin-bottom: 1rem;
   }
-  
+
   .form-buttons {
     flex-direction: column;
     gap: 0.5rem;
@@ -1374,44 +1629,44 @@ export default {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .overview-card {
     padding: 1rem;
   }
-  
+
   .filtered-results {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .assistant-container {
     bottom: 1rem;
     right: 1rem;
   }
-  
+
   .assistant-message {
     max-width: calc(100vw - 6rem);
     font-size: 0.875rem;
   }
-  
+
   .trade-form {
     padding: 1rem;
     margin-bottom: 1rem;
   }
-  
+
   /* Ensure trading form is accessible on mobile */
   .trade-form h3 {
     font-size: 1.125rem;
     margin-bottom: 1rem;
   }
-  
+
   .input {
     width: 100%;
     margin-bottom: 0.75rem;
     font-size: 16px; /* Prevent iOS zoom */
     min-height: 44px; /* Touch-friendly */
   }
-  
+
   .btn {
     min-height: 44px;
     width: 100%;
@@ -1423,28 +1678,28 @@ export default {
   .stock-simulator {
     padding: 0.25rem;
   }
-  
+
   .simulator-header {
     padding: 0.75rem;
     border-radius: 12px;
   }
-  
+
   .page-title {
     font-size: 1.25rem;
   }
-  
+
   .tab-nav {
     overflow-x: auto;
     padding: 0.25rem;
     gap: 0.125rem;
   }
-  
+
   .tab-btn {
     padding: 0.5rem;
     min-width: 44px;
     white-space: nowrap;
   }
-  
+
   .chart-container,
   .stock-info,
   .trading-panel,
@@ -1453,26 +1708,26 @@ export default {
     padding: 0.75rem;
     border-radius: 12px;
   }
-  
+
   .input {
     padding: 0.625rem;
     font-size: 16px; /* Prevent zoom on iOS */
   }
-  
+
   .btn {
     padding: 0.75rem;
     font-size: 0.875rem;
   }
-  
+
   .overview-card {
     padding: 0.75rem;
   }
-  
+
   .assistant-avatar {
     width: 50px;
     height: 50px;
   }
-  
+
   .assistant-message {
     max-width: calc(100vw - 4rem);
     padding: 0.75rem;
@@ -1567,12 +1822,12 @@ export default {
     max-width: 1200px;
     padding: 0 1.5rem;
   }
-  
+
   .investment-grid {
     grid-template-columns: 1.8fr 1fr;
     gap: 1.5rem;
   }
-  
+
   .overview-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
@@ -1583,32 +1838,32 @@ export default {
   .stock-simulator {
     padding: 0.75rem;
   }
-  
+
   .simulator-header {
     padding: 1.25rem;
     margin-bottom: 1.5rem;
   }
-  
+
   .page-title {
     font-size: 1.75rem;
     margin-bottom: 1.25rem;
   }
-  
+
   .tab-nav {
     gap: 0.375rem;
     padding: 0.375rem;
   }
-  
+
   .tab-btn {
     padding: 0.625rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .investment-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
-  
+
   .chart-container,
   .stock-info,
   .trading-panel,
@@ -1616,12 +1871,12 @@ export default {
   .performance-container {
     padding: 1.25rem;
   }
-  
+
   .overview-cards {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .filtered-results {
     grid-template-columns: 1fr;
     gap: 1rem;
@@ -1632,25 +1887,25 @@ export default {
   .simulator-content {
     padding: 0 1rem;
   }
-  
+
   .investment-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .summary-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .overview-cards {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-  
+
   .trade-form {
     padding: 1.5rem;
   }
-  
+
   .form-buttons {
     gap: 0.5rem;
   }
@@ -1660,7 +1915,7 @@ export default {
   .simulator-header {
     padding: 1rem;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
     flex-direction: column;
@@ -1668,39 +1923,39 @@ export default {
     text-align: center;
     gap: 0.75rem;
   }
-  
+
   .tab-nav {
     justify-content: center;
     gap: 0.25rem;
     padding: 0.25rem;
   }
-  
+
   .tab-btn {
     padding: 0.5rem 0.875rem;
     font-size: 0.875rem;
   }
-  
+
   .main-panel {
     gap: 1.25rem;
   }
-  
+
   .trading-panel {
     gap: 1.25rem;
   }
-  
+
   .overview-cards {
     grid-template-columns: 1fr;
     gap: 0.875rem;
   }
-  
+
   .overview-card {
     padding: 1.25rem;
   }
-  
+
   .card-title {
     font-size: 0.9rem;
   }
-  
+
   .card-value {
     font-size: 1.5rem;
   }
@@ -1872,25 +2127,25 @@ export default {
   .mobile-chart-modal {
     padding: 0.25rem;
   }
-  
+
   .mobile-chart-content {
     max-height: 98%;
     border-radius: 8px;
   }
-  
+
   .mobile-chart-header {
     padding: 0.5rem 1rem;
   }
-  
+
   .mobile-chart-header h3 {
     font-size: 1rem;
   }
-  
+
   .mobile-chart-body {
     height: calc(100vh - 80px);
     padding: 0.25rem;
   }
-  
+
   .mobile-chart-body.landscape-mode {
     height: calc(100vh - 80px);
   }
@@ -1899,7 +2154,7 @@ export default {
 /* Chart wrapper for proper sizing */
 .chart-wrapper {
   width: 100%;
-  height: 400px;
+  height: 100%;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #e2e8f0;
@@ -1915,43 +2170,43 @@ export default {
   .chart-container.mobile-chart {
     min-height: 200px;
   }
-  
+
   .mobile-chart-toggle {
     height: 180px;
   }
-  
+
   .chart-placeholder {
     height: 180px;
   }
-  
+
   .mobile-chart-modal {
     padding: 0.5rem;
   }
-  
+
   .mobile-chart-content {
     max-height: 95%;
     border-radius: 12px;
   }
-  
+
   .mobile-chart-header {
     padding: 0.75rem 1rem;
   }
-  
+
   .mobile-chart-header h3 {
     font-size: 1.1rem;
   }
-  
+
   .orientation-btn,
   .close-btn {
     padding: 0.375rem 0.75rem;
     font-size: 0.8rem;
   }
-  
+
   .mobile-chart-body {
     padding: 0.75rem;
     height: 350px;
   }
-  
+
   .mobile-chart-body.landscape-mode {
     height: 250px;
   }
@@ -1962,13 +2217,13 @@ export default {
     padding: 0.5rem;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   }
-  
+
   .simulator-header {
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 12px;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
     flex-direction: column;
@@ -1976,11 +2231,11 @@ export default {
     gap: 0.5rem;
     margin-bottom: 1rem;
   }
-  
+
   .page-title svg {
     font-size: 1.5rem;
   }
-  
+
   .tab-nav {
     gap: 0.25rem;
     padding: 0.25rem;
@@ -1988,40 +2243,40 @@ export default {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  
+
   .tab-nav::-webkit-scrollbar {
     display: none;
   }
-  
+
   .tab-btn {
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
     min-width: 60px;
     flex-shrink: 0;
   }
-  
+
   .tab-btn span {
     display: none;
   }
-  
+
   .tab-btn i {
     font-size: 1.1rem;
   }
-  
+
   .simulator-content {
     max-width: 100%;
     padding: 0;
   }
-  
+
   .investment-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .main-panel {
     gap: 1rem;
   }
-  
+
   .chart-container,
   .stock-info,
   .trading-panel,
@@ -2030,235 +2285,239 @@ export default {
     padding: 1rem;
     border-radius: 12px;
   }
-  
+
   /* Mobile chart specific styles */
   .mobile-chart-toggle {
     height: 160px;
     font-size: 0.9rem;
   }
-  
+
   .chart-placeholder {
     height: 160px;
   }
-  
+
   .placeholder-icon {
     font-size: 2.5rem;
   }
-  
+
   .mobile-chart-modal {
     padding: 0.25rem;
   }
-  
+
   .mobile-chart-header {
     padding: 0.5rem 0.75rem;
     flex-direction: column;
     gap: 0.5rem;
     text-align: center;
   }
-  
+
   .chart-controls {
     justify-content: center;
     width: 100%;
   }
-  
+
   .orientation-btn,
   .close-btn {
     flex: 1;
     justify-content: center;
     max-width: 120px;
   }
-  
+
   .mobile-chart-body {
     padding: 0.5rem;
     height: 300px;
   }
-  
+
   .mobile-chart-body.landscape-mode {
     height: 220px;
   }
 }
-  
-  .trading-panel {
-    gap: 1rem;
-  }
-  
-  .trade-form {
-    padding: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .trade-form h3 {
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
-  }
-  
-  .stock-search-wrapper {
-    margin-bottom: 0.75rem;
-  }
-  
-  .form-label {
-    font-size: 0.8rem;
-    margin-bottom: 0.375rem;
-  }
-  
-  .input {
-    padding: 0.75rem;
-    font-size: 16px; /* Prevent iOS zoom */
-    border-radius: 8px;
-    min-height: 44px; /* Touch target minimum */
-  }
-  
-  .form-buttons {
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-  
-  .btn {
-    min-height: 44px;
-    font-size: 1rem;
-    border-radius: 8px;
-  }
-  
-  .summary-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-  
-  .summary-item {
-    padding: 1rem;
-    min-height: auto;
-  }
-  
-  .summary-label {
-    font-size: 0.8rem;
-  }
-  
-  .summary-value {
-    font-size: 1.25rem;
-  }
-  
-  .overview-cards {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .overview-card {
-    padding: 1rem;
-    min-height: auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  }
-  
-  .overview-card.total {
-    background: linear-gradient(135deg, #000000, #333333);
-    color: white;
-  }
-  
-  .card-title {
-    font-size: 0.875rem;
-    color: inherit;
-    margin-bottom: 0.5rem;
-  }
-  
-  .card-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: inherit;
-  }
-  
-  .filtered-results {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .assistant-container {
-    bottom: 1rem;
-    right: 1rem;
-    z-index: 1000;
-  }
-  
-  .assistant-toggle {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #000000;
-    color: white;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-  }
-  
-  .assistant-toggle:hover {
-    transform: scale(1.05);
-  }
-  
-  .assistant-message {
-    max-width: calc(100vw - 6rem);
-    font-size: 0.875rem;
-    background: white;
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    margin-bottom: 1rem;
-    line-height: 1.4;
-  }
-  
-  /* Scrollable table for mobile */
-  .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .table-container table {
-    min-width: 600px;
-  }
-  
-  /* Mobile-friendly chart container */
-  .chart-container {
-    position: relative;
-    min-height: 300px;
-    overflow: hidden;
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    box-sizing: border-box;
-  }
-  
-  .chart-container.mobile-chart {
-    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-    border: 2px solid #e2e8f0;
-    min-height: 200px;
-  }
-  
-  /* Touch-friendly elements */
-  button, .btn, .tab-btn, .input, select {
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-  }
+
+.trading-panel {
+  gap: 1rem;
+}
+
+.trade-form {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.trade-form h3 {
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+.stock-search-wrapper {
+  margin-bottom: 0.75rem;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  margin-bottom: 0.375rem;
+}
+
+.input {
+  padding: 0.75rem;
+  font-size: 16px; /* Prevent iOS zoom */
+  border-radius: 8px;
+  min-height: 44px; /* Touch target minimum */
+}
+
+.form-buttons {
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn {
+  min-height: 44px;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+.summary-grid {
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.summary-item {
+  padding: 1rem;
+  min-height: auto;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+}
+
+.summary-value {
+  font-size: 1.25rem;
+}
+
+.overview-cards {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.overview-card {
+  padding: 1rem;
+  min-height: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.overview-card.total {
+  background: linear-gradient(135deg, #000000, #333333);
+  color: white;
+}
+
+.card-title {
+  font-size: 0.875rem;
+  color: inherit;
+  margin-bottom: 0.5rem;
+}
+
+.card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.filtered-results {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.assistant-container {
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1000;
+}
+
+.assistant-toggle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #000000;
+  color: white;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.assistant-toggle:hover {
+  transform: scale(1.05);
+}
+
+.assistant-message {
+  max-width: calc(100vw - 6rem);
+  font-size: 0.875rem;
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+/* Scrollable table for mobile */
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-container table {
+  min-width: 600px;
+}
+
+/* Mobile-friendly chart container */
+.chart-container {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+}
+
+.chart-container.mobile-chart {
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  border: 2px solid #e2e8f0;
+  min-height: 200px;
+}
+
+/* Touch-friendly elements */
+button,
+.btn,
+.tab-btn,
+.input,
+select {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
 
 @media (max-width: 640px) {
   .stock-simulator {
     padding: 0.25rem;
   }
-  
+
   .simulator-header {
     padding: 0.875rem;
     margin-bottom: 0.875rem;
   }
-  
+
   .page-title {
     font-size: 1.375rem;
   }
-  
+
   .tab-btn {
     padding: 0.375rem 0.5rem;
     min-width: 50px;
   }
-  
+
   .chart-container,
   .stock-info,
   .trading-panel,
@@ -2266,38 +2525,38 @@ export default {
   .performance-container {
     padding: 0.875rem;
   }
-  
+
   .trade-form {
     padding: 0.875rem;
   }
-  
+
   .trade-form h3 {
     font-size: 1rem;
   }
-  
+
   .input {
     padding: 0.625rem;
   }
-  
+
   .btn {
     padding: 0.625rem 1rem;
     font-size: 0.9rem;
   }
-  
+
   .overview-card {
     padding: 0.875rem;
   }
-  
+
   .card-value {
     font-size: 1.375rem;
   }
-  
+
   .assistant-toggle {
     width: 50px;
     height: 50px;
     font-size: 1.125rem;
   }
-  
+
   .assistant-message {
     font-size: 0.8rem;
     padding: 0.875rem;
@@ -2308,29 +2567,29 @@ export default {
   .stock-simulator {
     padding: 0.125rem;
   }
-  
+
   .simulator-header {
     padding: 0.75rem;
     margin-bottom: 0.75rem;
   }
-  
+
   .page-title {
     font-size: 1.25rem;
   }
-  
+
   .tab-nav {
     padding: 0.125rem;
   }
-  
+
   .tab-btn {
     padding: 0.25rem 0.375rem;
     min-width: 44px;
   }
-  
+
   .tab-btn i {
     font-size: 1rem;
   }
-  
+
   .chart-container,
   .stock-info,
   .trading-panel,
@@ -2338,49 +2597,49 @@ export default {
   .performance-container {
     padding: 0.75rem;
   }
-  
+
   .trade-form {
     padding: 0.75rem;
   }
-  
+
   .input {
     padding: 0.5rem;
   }
-  
+
   .btn {
     padding: 0.5rem 0.875rem;
     font-size: 0.875rem;
   }
-  
+
   .overview-card {
     padding: 0.75rem;
   }
-  
+
   .card-title {
     font-size: 0.8rem;
   }
-  
+
   .card-value {
     font-size: 1.25rem;
   }
-  
+
   .assistant-container {
     bottom: 0.75rem;
     right: 0.75rem;
   }
-  
+
   .assistant-toggle {
     width: 44px;
     height: 44px;
     font-size: 1rem;
   }
-  
+
   .assistant-message {
     max-width: calc(100vw - 4rem);
     font-size: 0.75rem;
     padding: 0.75rem;
   }
-  
+
   .chart-container {
     min-height: 250px;
   }
@@ -2390,16 +2649,16 @@ export default {
   .simulator-header {
     padding: 0.5rem;
   }
-  
+
   .page-title {
     font-size: 1.125rem;
   }
-  
+
   .tab-btn {
     padding: 0.25rem;
     min-width: 40px;
   }
-  
+
   .chart-container,
   .stock-info,
   .trading-panel,
@@ -2407,43 +2666,43 @@ export default {
   .performance-container {
     padding: 0.5rem;
   }
-  
+
   .trade-form {
     padding: 0.5rem;
   }
-  
+
   .trade-form h3 {
     font-size: 0.9rem;
   }
-  
+
   .input {
     padding: 0.375rem;
     font-size: 16px;
   }
-  
+
   .btn {
     padding: 0.375rem 0.625rem;
     font-size: 0.8rem;
   }
-  
+
   .overview-card {
     padding: 0.5rem;
   }
-  
+
   .card-title {
     font-size: 0.75rem;
   }
-  
+
   .card-value {
     font-size: 1.125rem;
   }
-  
+
   .assistant-message {
     max-width: calc(100vw - 3rem);
     font-size: 0.7rem;
     padding: 0.5rem;
   }
-  
+
   .chart-container {
     min-height: 200px;
   }
@@ -2455,15 +2714,15 @@ export default {
     font-size: 1.125rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .tab-nav {
     margin-bottom: 0.5rem;
   }
-  
+
   .chart-container {
     min-height: 200px;
   }
-  
+
   .assistant-container {
     display: none; /* Hide on landscape mobile to save space */
   }
@@ -2485,10 +2744,14 @@ export default {
   .assistant-toggle {
     transition: none;
   }
-  
+
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
 
@@ -2497,22 +2760,22 @@ export default {
   .dark-mode .stock-simulator {
     background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%);
   }
-  
+
   .dark-mode .overview-card {
     background: #2d3748;
     color: #e2e8f0;
   }
-  
+
   .dark-mode .overview-card.total {
     background: linear-gradient(135deg, #ffffff, #f0f0f0);
     color: #000000;
   }
-  
+
   .dark-mode .assistant-message {
     background: #2d3748;
     color: #e2e8f0;
   }
-  
+
   .dark-mode .assistant-toggle {
     background: #ffffff;
     color: #000000;
