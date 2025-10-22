@@ -2,8 +2,7 @@ import passport from "passport";
 import session from "express-session";
 // import googleStrategy from "./googleStrategy.js"; // Do not import unconditionally
 import localStrategy from "./localStrategy.js";
-// import User from "../Database_Schema/core/User.js"; // No DB connection needed for this test
-// import MongoStore from "connect-mongo"; // No DB connection needed for this test
+// MongoStore is imported dynamically in passportConfig() when needed
 
 const passportConfig = (app) => {
   passport.use(localStrategy);
@@ -24,22 +23,32 @@ const passportConfig = (app) => {
     );
   }
 
-  app.use(
-    session({
-      secret: "some secret",
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 24 * 60 * 60 * 1000,
-        secure: false, // Set to true if using HTTPS
-      },
-      // Using in-memory store instead of MongoStore for testing without a DB
-      // store: MongoStore.create({
-      //   mongoUrl: process.env.MONGO_URI,
-      //   ttl: 24 * 60 * 60,
-      // }),
-    })
-  );
+  // Use MongoStore for persistent sessions (required for serverless functions)
+  const sessionConfig = {
+    secret: process.env.SESSION_SECRET || "some secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: process.env.NODE_ENV === 'production', // HTTPS in production
+      sameSite: 'lax',
+    },
+  };
+
+  // Use MongoDB for session storage if available (required for Netlify Functions)
+  if (process.env.MONGO_URI) {
+    const MongoStore = require('connect-mongo');
+    sessionConfig.store = MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      ttl: 24 * 60 * 60, // 24 hours
+      touchAfter: 3600, // Only update session every hour (reduces writes)
+    });
+    console.log("✅ Using MongoDB for session storage");
+  } else {
+    console.warn("⚠️ No MONGO_URI found - using memory store (sessions will be lost on restart!)");
+  }
+
+  app.use(session(sessionConfig));
 
   app.use(passport.initialize());
   app.use(passport.session());

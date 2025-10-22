@@ -29,7 +29,7 @@
           </router-link>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" ref="finInvestDropdown">
+        <li class="dropdown" ref="finInvestDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finInvest')">
             <font-awesome-icon icon="fa-solid fa-chart-line" class="icon" />
             <span>{{ $t("finInvest") }}</span>
@@ -37,8 +37,8 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finInvest'">
             <router-link to="/stock-simulator">{{ $t("simulator") }}</router-link>
-            <router-link to="/predictive-calculator">Predictive Calculator</router-link>
-            <router-link to="/autotrade-ai">AutoTrade AI</router-link>
+            <router-link to="/predictive-calculator">{{ $t("predictiveCalculator") }}</router-link>
+            <router-link to="/autotrade-ai">{{ $t("autoTradeAI") }}</router-link>
             <router-link to="/quant-analysis">{{ $t("quant") }}</router-link>
             <router-link to="/quant-simulator">{{ $t("quantSimulator") }}</router-link>
             <router-link to="/fund-letter">{{ $t("FundLetter")}}</router-link>
@@ -48,7 +48,7 @@
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" ref="finManageDropdown">
+        <li class="dropdown" ref="finManageDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finManage')">
             <font-awesome-icon icon="fa-solid fa-wallet" class="icon" />
             <span>{{ $t("finManage") }}</span>
@@ -64,7 +64,7 @@
           </div>
         </li>
 
-        <li v-if="isAuthenticated" class="dropdown" ref="finEduDropdown">
+        <li class="dropdown" ref="finEduDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finEdu')">
             <font-awesome-icon icon="fa-solid fa-graduation-cap" class="icon" />
             <span>{{ $t("finEdu") }}</span>
@@ -72,14 +72,14 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finEdu'">
             <router-link to="/quizz">{{ $t("quiz") }}</router-link>
-            <router-link to="/create-roadmap">Learning Roadmap Creator</router-link>
+            <router-link to="/create-roadmap">{{ $t("learningRoadmap") }}</router-link>
             <router-link to="/event">{{ $t("event") }}</router-link>
             <router-link to="/course">{{ $t("course") }}</router-link>
           </div>
         </li>
 
         <!-- Fin Agent Section - Top-level item -->
-        <li v-if="isAuthenticated" class="dropdown" ref="finAgentDropdown">
+        <li class="dropdown" ref="finAgentDropdown" v-if="isAuthenticated">
           <div class="services-dropdown" @click="toggleDropdown('finAgent')">
             <font-awesome-icon icon="fa-solid fa-robot" class="icon" />
             <span>{{ $t("finAgent.title", "Fin Agent") }}</span>
@@ -87,20 +87,12 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finAgent'">
             <router-link to="/agent" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-user-tie" class="subsection-item-icon" />
-              {{ $t("agent") }}
+              <font-awesome-icon icon="fa-solid fa-newspaper" class="subsection-item-icon" />
+              {{ $t("news") }}
             </router-link>
             <router-link to="/pestle" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-chart-pie" class="subsection-item-icon" />
               {{ $t("pestle") }}
-            </router-link>
-            <router-link to="/ai-workflows" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-cogs" class="subsection-item-icon" />
-              AI Workflows
-            </router-link>
-            <router-link to="/ai-breakthrough-workflows" class="subsection-item">
-              <font-awesome-icon icon="fa-solid fa-rocket" class="subsection-item-icon" />
-              AI Breakthrough Workflows
             </router-link>
           </div>
         </li>
@@ -127,11 +119,11 @@
           <div class="dropdown-content" v-show="activeDropdown === 'finXpert'">
             <router-link to="/finxpert-real-estate" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-building" class="subsection-item-icon" />
-              Real Estate Analyst
+              {{ $t("realEstateAnalyst") }}
             </router-link>
             <router-link to="/finxpert-equity" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-chart-line" class="subsection-item-icon" />
-              Equity Researcher
+              {{ $t("equityResearcher") }}
             </router-link>
             <router-link to="/finxpert-accountant" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-calculator" class="subsection-item-icon" />
@@ -139,11 +131,11 @@
             </router-link>
             <router-link to="/ai-finance-workflows" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-brain" class="subsection-item-icon" />
-              AI Finance Workflows
+              {{ $t("aiFinanceWorkflows") }}
             </router-link>
             <router-link to="/private-equity-deal-scout" class="subsection-item">
               <font-awesome-icon icon="fa-solid fa-search-dollar" class="subsection-item-icon" />
-              Private Equity Deal Scout
+              {{ $t("privateEquityDealScout") }}
             </router-link>
           </div>
         </li>
@@ -152,7 +144,7 @@
         <li v-if="isAuthenticated">
           <router-link to="/forum" class="nav-link finverse-link">
             <font-awesome-icon icon="fa-solid fa-users" class="icon" />
-            <span>{{ $t("finVerse.title", "FinVerse") }}</span>
+            <span>{{ $t("finVerse") }}</span>
             </router-link>
         </li>
 
@@ -160,7 +152,7 @@
         <li v-if="isAuthenticated">
           <router-link to="/subscribe" class="nav-link finplus-link">
             <font-awesome-icon icon="fa-solid fa-crown" class="icon" />
-            <span>Subscribe FinPlus</span>
+            <span>{{ $t("subscribeFinPlus") }}</span>
             </router-link>
         </li>
 
@@ -235,7 +227,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { 
   faComments, faChartLine, faWallet, faGraduationCap, faChartBar, 
-  faRobot, faUserTie, faChartPie, 
+  faRobot, faUserTie, faChartPie, faNewspaper,
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
@@ -244,7 +236,7 @@ import {
 
 library.add(
   faComments, faChartLine, faWallet, faGraduationCap, faChartBar, 
-  faRobot, faUserTie, faChartPie, 
+  faRobot, faUserTie, faChartPie, faNewspaper,
   faChevronLeft, faChevronRight, faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
