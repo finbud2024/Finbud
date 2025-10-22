@@ -41,7 +41,7 @@ function calculateMarketCap(price, sharesOutstanding) {
     return price * sharesOutstanding;
 }
 
-stockRoute.get("/api/stocks", async (req, res) => {
+stockRoute.get("/api/stocks", isAuthenticated, async (req, res) => {
     const { 
         page = 1, 
         pageSize = 10, // Match max concurrent TradingView widgets 
@@ -191,7 +191,7 @@ stockRoute.get("/api/stocks", async (req, res) => {
             "https://scanner.tradingview.com/global/scan?label-product=markets-screener",
             {
                 columns: [
-                    "name", "logoid", "description", "fundamental_currency_code", "close", "currency",
+                    "name", "description", "fundamental_currency_code", "close", "currency",
                         "change", "volume", "relative_volume_10d_calc", "price_earnings_ttm",
                         "earnings_per_share_diluted_ttm", "dividends_yield_current", "market", "sector",
                         "market_cap_basic"
@@ -332,7 +332,7 @@ stockRoute.get("/api/stocks", async (req, res) => {
                         "https://scanner.tradingview.com/global/scan?label-product=markets-screener",
                         {
                             columns: [
-                                "name", "logoid", "description", "fundamental_currency_code", "close", "currency",
+                                "name", "description", "fundamental_currency_code", "close", "currency",
                                 "change", "volume", "relative_volume_10d_calc", "price_earnings_ttm",
                                 "earnings_per_share_diluted_ttm", "dividends_yield_current", "market", "sector",
                                 "market_cap_basic"
@@ -523,7 +523,7 @@ stockRoute.get("/api/stocks", async (req, res) => {
             if (index < 3) {
                 console.log(`📊 Stock ${index}:`, {
                     symbol: stock.d[0],
-                    logo: stock.d[1],
+                    name: stock.d[1],
                     description: stock.d[2],
                     price: stock.d[4]
                 });
@@ -539,7 +539,6 @@ stockRoute.get("/api/stocks", async (req, res) => {
             return {
                 name: stock.d[0],
                 symbol: symbolOnly, // Add clean symbol field
-                logo: stock.d[1],
                 description: companyName,
                 companyName: companyName,
                 shortCompanyName: getShortCompanyName(stock.d[0]),

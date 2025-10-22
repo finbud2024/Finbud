@@ -3,13 +3,6 @@
     <!-- Header -->
     <div class="stock-header">
         <div class="stock-info-wrapper">
-          <img
-            v-if="companyLogo"
-            :src="companyLogo"
-            :alt="`${displayName} logo`"
-            class="company-logo"
-            @error="handleLogoError"
-          />
           <div class="stock-info">
             <a 
               :href="tradingViewUrl" 
@@ -77,11 +70,10 @@ export default {
       default: null
     }
   },
-      data() {
-        return {
-          logoError: false
-        };
-      },
+  data() {
+    return {
+    };
+  },
   computed: {
     changePercent() {
       return this.stock.priceChange || this.stock.changeAbs || this.stock.change || 0;
@@ -97,34 +89,6 @@ export default {
       }
       
       return `${companyName} - ${symbol}`;
-    },
-    companyLogo() {
-      if (this.logoError) {
-        console.log('🚫 Logo error for', this.stock.symbol, '- logoError:', this.logoError);
-        return null;
-      }
-      
-      // Use backend logo proxy to avoid CORS issues
-      if (this.stock.logo) {
-        const logoUrl = `http://localhost:3000/api/logo/${this.stock.logo.toLowerCase()}`;
-        console.log('✅ Using backend logo proxy for', this.stock.symbol, ':', logoUrl);
-        return logoUrl;
-      }
-      
-      // Fallback: construct logo URL from symbol using proxy
-      let symbol = this.stock.symbol || this.stock.name;
-      if (!symbol) {
-        console.log('❌ No symbol for stock:', this.stock);
-        return null;
-      }
-      
-      if (symbol.includes(':')) {
-        symbol = symbol.split(':')[1];
-      }
-      
-      const fallbackUrl = `http://localhost:3000/api/logo/${symbol.toLowerCase()}`;
-      console.log('⚠️ Using fallback logo proxy for', this.stock.symbol, ':', fallbackUrl);
-      return fallbackUrl;
     },
     tradingViewUrl() {
       // Get clean symbol (remove exchange prefix if it exists)
@@ -165,11 +129,6 @@ export default {
     }
   },
   methods: {
-    handleLogoError() {
-      console.log('🚫 Logo failed to load for', this.stock.symbol, '- disabling logo for this session');
-      this.logoError = true;
-      // Don't retry - just disable logo for this component instance
-    },
     formatPrice(value) {
       if (!value && value !== 0) return 'N/A';
       return Number(value).toFixed(2);
@@ -264,16 +223,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-
-.company-logo {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  object-fit: contain;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  flex-shrink: 0;
 }
 
 .stock-info {
@@ -418,11 +367,6 @@ export default {
   .stock-header {
     flex-direction: column;
     gap: 0.5rem;
-  }
-
-  .company-logo {
-    width: 28px;
-    height: 28px;
   }
 
   .stock-meta {
