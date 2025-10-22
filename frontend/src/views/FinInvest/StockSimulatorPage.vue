@@ -498,12 +498,18 @@ export default {
       try {
         this.loadingFinancialData = true;
 
-        // Ensure user data is loaded
-        await this.$store.dispatch("users/fetchCurrentUser");
-        const userData = this.$store.getters["users/currentUser"];
+        // Get user data from store (should already be loaded from login)
+        let userData = this.$store.getters["users/currentUser"];
+        
+        // Only fetch if not already in store
+        if (!userData) {
+          console.log("User data not in store, fetching...");
+          await this.$store.dispatch("users/fetchCurrentUser");
+          userData = this.$store.getters["users/currentUser"];
+        }
 
         if (!userData) {
-          console.error("User data not available");
+          console.error("User data not available after fetch");
           return;
         }
 
