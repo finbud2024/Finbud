@@ -33,24 +33,9 @@
     </div>
     
     <div class="map-container">
-      <!-- Show map only if Google Maps API is available and events are loaded -->
+      <!-- Native Google Maps implementation -->
       <div v-if="mapsApiLoaded && filteredEvents.length > 0" class="google-map-wrapper">
-        <Map
-          :center="mapCenter"
-          :zoom="mapZoom"
-          map-type-id="roadmap"
-          :style="{ width: '100%', height: mapHeight }"
-          :options="{ disableDefaultUI: false }"
-          @error="handleMapError"
-        >
-          <Marker
-            v-for="event in filteredEvents"
-            :key="event._id"
-            :position="{ lat: event.lat, lng: event.lng }"
-            :title="event.name"
-            @click="highlightEvent(event._id)"
-          />
-        </Map>
+        <div ref="mapDiv" id="google-map" :style="{ width: '100%', height: mapHeight }"></div>
       </div>
       
       <!-- Fallback content when Maps API is not available -->
@@ -80,7 +65,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted, nextTick } from "vue";
+import { defineComponent, ref, computed, onMounted, nextTick, watch } from "vue";
 import axios from "axios";
 import Fuse from "fuse.js";
 import { debounce } from "lodash";
@@ -114,34 +99,147 @@ export default defineComponent({
     const error = ref(null);
     const mapsApiLoaded = ref(false);
     const mapError = ref(null);
+    const mapDiv = ref(null);
+    let googleMap = null;
+
+    // Initialize native Google Maps
+    const initializeMap = () => {
+      if (!mapDiv.value || !window.google || !window.google.maps) {
+        console.warn('⚠️ Cannot initialize map - missing mapDiv or Google Maps');
+        return;
+      }
+
+      try {
+        console.log('🗺️ Initializing native Google Maps...');
+        
+        // Create map
+        googleMap = new window.google.maps.Map(mapDiv.value, {
+          center: mapCenter.value,
+          zoom: mapZoom.value,
+          mapTypeId: 'roadmap',
+        });
+
+        // Add markers for each event
+        filteredEvents.value.forEach(event => {
+          if (event.lat && event.lng) {
+            const marker = new window.google.maps.Marker({
+              position: { lat: event.lat, lng: event.lng },
+              map: googleMap,
+              title: event.name,
+            });
+
+            // Add click listener
+            marker.addListener('click', () => {
+              highlightEvent(event._id);
+              // Open info window
+              const infoWindow = new window.google.maps.InfoWindow({
+                content: `<div style="padding: 10px;">
+                  <h3 style="margin: 0 0 5px 0;">${event.name}</h3>
+                  <p style="margin: 5px 0;"><strong>Date:</strong> ${formatDate(event.date)}</p>
+                  <p style="margin: 5px 0;"><strong>Location:</strong> ${event.location}</p>
+                  <p style="margin: 5px 0;"><strong>Host:</strong> ${event.host}</p>
+                  ${event.url ? `<a href="${event.url}" target="_blank" style="color: #007bff;">View Event</a>` : ''}
+                </div>`
+              });
+              infoWindow.open(googleMap, marker);
+            });
+          }
+        });
+
+        console.log('✅ Map initialized with', filteredEvents.value.length, 'markers');
+      } catch (err) {
+        console.error('❌ Error initializing map:', err);
+        mapError.value = "Failed to initialize map";
+      }
+    };
+
+    // Manually load Google Maps script if not already loaded
+    const loadGoogleMapsScript = (apiKey) => {
+      return new Promise((resolve, reject) => {
+        // Check if already loaded
+        if (window.google && window.google.maps) {
+          resolve();
+          return;
+        }
+
+        // Check if script tag already exists
+        const existing = document.querySelector('script[src*="maps.googleapis.com"]');
+        if (existing) {
+          // Wait for it to load
+          existing.addEventListener('load', resolve);
+          existing.addEventListener('error', reject);
+          return;
+        }
+
+        // Create and inject script tag
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+        console.log('🗺️ Manually loading Google Maps script');
+      });
+    };
 
     // Check if Google Maps API is available
     const checkMapsApi = () => {
       try {
+        console.log('🗺️ checkMapsApi called');
+        
         // Check if Google Maps API key is configured
         const apiKey = process.env.VUE_APP_GOOGLE_MAPS_API_KEY;
+        console.log('🗺️ API Key check:', apiKey ? 'Present' : 'Missing');
         if (!apiKey) {
           mapError.value = "Google Maps API key not configured";
           return false;
         }
 
+        // Try to load the script manually if window.google is missing
+        if (!window.google || !window.google.maps) {
+          console.log('🗺️ Google Maps not loaded, attempting manual load...');
+          loadGoogleMapsScript(apiKey)
+            .then(() => {
+              console.log('✅ Google Maps script loaded manually!');
+              mapsApiLoaded.value = true;
+              // Initialize map after script loads
+              nextTick(() => initializeMap());
+            })
+            .catch(err => {
+              console.error('❌ Failed to load Google Maps script:', err);
+              mapError.value = "Failed to load Google Maps";
+            });
+          return false;
+        }
+        
+        // If already loaded, mark as ready
+        console.log('✅ Google Maps already loaded!');
+        mapsApiLoaded.value = true;
+
         // Check if Google Maps components are available
+        console.log('🗺️ Map component:', Map ? 'Available' : 'Not available');
+        console.log('🗺️ Marker component:', Marker ? 'Available' : 'Not available');
         if (!Map || !Marker) {
+          console.warn('🗺️ Google Maps components not loaded yet');
           mapError.value = "Google Maps components not available";
           return false;
         }
 
         // Check if window.google is available (API loaded)
+        console.log('🗺️ window.google check:', typeof window !== 'undefined' && window.google ? 'Present' : 'Missing');
         if (typeof window !== 'undefined' && window.google && window.google.maps) {
+          console.log('✅ Google Maps API loaded successfully!');
           mapsApiLoaded.value = true;
           return true;
         }
 
         // Wait for API to load
+        console.log('🗺️ Waiting for Maps API to load, will retry in 1s...');
         setTimeout(checkMapsApi, 1000);
         return false;
       } catch (err) {
-        console.error('Maps API check error:', err);
+        console.error('❌ Maps API check error:', err);
         mapError.value = "Failed to load Google Maps";
         return false;
       }
@@ -193,13 +291,36 @@ export default defineComponent({
         loading.value = true;
         const response = await axios.get("/.netlify/functions/server/events");
         events.value = response.data;
+        
+        // Check if we actually got events
+        if (!events.value || events.value.length === 0) {
+          console.warn("⚠️ No events found in database");
+          mapError.value = "No events are currently available. The event database may be empty or under maintenance.";
+          loading.value = false;
+          return;
+        }
+        
         events.value.sort((a, b) => new Date(b.date) - new Date(a.date));
         if (events.value.length > 0 && mapsApiLoaded.value) {
           adjustMapToFitMarkers();
         }
       } catch (err) {
-        console.error("❌ Error fetching events:", err);
-        error.value = err.message || "An error occurred while fetching events.";
+        console.error("❌ Error fetching events:", {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data
+        });
+        
+        // Set user-friendly error message based on error type
+        if (err.response?.status === 500) {
+          mapError.value = "Database connection error. Unable to load events at this time.";
+        } else if (err.response?.status === 404) {
+          mapError.value = "Event service not found. Please contact support.";
+        } else {
+          mapError.value = err.message || "An error occurred while fetching events.";
+        }
+        
+        error.value = mapError.value;
       } finally {
         loading.value = false;
       }
@@ -245,8 +366,9 @@ export default defineComponent({
       highlightedEventId.value = eventId;
       await nextTick();
 
-      const eventElement = eventRefs.value[eventId];
-      if (eventElement) {
+      // Safety check to prevent null reference errors
+      if (eventRefs.value && eventId && eventRefs.value[eventId]) {
+        const eventElement = eventRefs.value[eventId];
         eventElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
@@ -281,10 +403,31 @@ export default defineComponent({
       debouncedSearch(searchQuery.value);
     };
 
+    // Watch for changes to initialize map
+    watch([mapsApiLoaded, () => filteredEvents.value.length], () => {
+      if (mapsApiLoaded.value && filteredEvents.value.length > 0) {
+        nextTick(() => {
+          initializeMap();
+        });
+      }
+    });
+
     onMounted(() => {
+      console.log('🗺️ EventMap mounted - starting initialization');
       // Check Maps API first, then fetch events
       checkMapsApi();
       fetchEvents();
+      
+      // Debug logging after 2 seconds
+      setTimeout(() => {
+        console.log('🗺️ mapsApiLoaded:', mapsApiLoaded.value);
+        console.log('🗺️ eventsCount:', events.value.length);
+        console.log('🗺️ filteredEventsCount:', filteredEvents.value.length);
+        console.log('🗺️ mapError:', mapError.value);
+        console.log('🗺️ loading:', loading.value);
+        console.log('🗺️ apiKey:', process.env.VUE_APP_GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing');
+        console.log('🗺️ First event:', events.value[0]);
+      }, 2000);
     });
 
     return {
@@ -303,6 +446,7 @@ export default defineComponent({
       loading,
       error,
       mapsApiLoaded,
+      mapDiv,
       mapError,
       handleMapError,
       retryMapLoad,
