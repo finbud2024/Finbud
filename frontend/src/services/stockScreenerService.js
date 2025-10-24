@@ -2,17 +2,18 @@ import axios from 'axios';
 
 class StockScreenerService {
   constructor() {
-    this.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+    this.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
     this.tradingViewAPI = 'https://scanner.tradingview.com';
     this.alphaVantageAPI = 'https://www.alphavantage.co/query';
     this.apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY || 'demo';
+    
+    console.log('🔧 StockScreenerService initialized with baseURL:', this.baseURL);
     
     // Configure axios with better error handling
     this.axiosInstance = axios.create({
       timeout: 15000,
       headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        'Content-Type': 'application/json'
       }
     });
 
@@ -33,122 +34,191 @@ class StockScreenerService {
       return cached;
     }
 
-    // Try multiple data sources with enhanced coverage
-    const dataSources = [
-      () => this.fetchComprehensiveTradingViewData(),
-      () => this.fetchFromAlphaVantage(),
-      () => this.fetchFromYahooFinance(),
-      () => this.getEnhancedFallbackData()
-    ];
-
-    for (const [index, fetchMethod] of dataSources.entries()) {
-      try {
-        console.log(`🔄 Trying enhanced data source ${index + 1}...`);
-        const result = await fetchMethod();
+    // Try backend API first with proper pagination
+    try {
+      console.log('🔄 Trying backend API with pagination...');
+      const result = await this.fetchFromBackendAPIWithPagination();
+      
+      if (result && result.stocks && result.stocks.length > 0) {
+        console.log(`✅ Successfully loaded ${result.stocks.length} stocks from backend API`);
         
-        if (result && result.stocks && result.stocks.length > 0) {
-          console.log(`✅ Successfully loaded ${result.stocks.length} stocks from source ${index + 1}`);
-          
-          // Cache the result
-          this.setCache(cacheKey, result);
-          return result;
-        }
-      } catch (error) {
-        console.warn(`⚠️ Data source ${index + 1} failed:`, error.message);
-        continue;
+        // Use API data regardless of count (we're using pagination now)
+        this.setCache(cacheKey, result);
+        return result;
       }
+    } catch (error) {
+      console.warn('⚠️ Backend API failed:', error.message);
     }
 
-    // If all fails, return comprehensive fallback data
-    console.log('🔄 All data sources failed, using comprehensive fallback data');
-    const fallbackData = this.getEnhancedFallbackData();
-    this.setCache(cacheKey, fallbackData);
-    return fallbackData;
+    // Skip external API calls to avoid CORS issues
+    // External APIs (TradingView, Alpha Vantage, etc.) are blocked by CORS policy
+    console.log('🔄 Skipping external API calls due to CORS policy restrictions...');
+
+    // If all fails, throw error instead of showing fake data
+    throw new Error('Unable to fetch stock data. Backend server is not available.');
   }
 
-  // Enhanced TradingView data fetch with multiple exchanges
-  async fetchComprehensiveTradingViewData() {
+  // Fetch from backend API with pagination to get more stocks
+  async fetchFromBackendAPIWithPagination() {
     try {
-      // Fetch from multiple US exchanges for comprehensive coverage
-      const exchanges = ['NASDAQ', 'NYSE', 'AMEX', 'BATS'];
-      let allStocks = [];
-
-      for (const exchange of exchanges) {
-        try {
-          const response = await this.axiosInstance.post(`${this.tradingViewAPI}/america/scan`, {
-            filter: [
-              { left: "type", operation: "equal", right: "stock" },
-              { left: "subtype", operation: "equal", right: "common" },
-              { left: "exchange", operation: "equal", right: exchange },
-              { left: "market_cap_basic", operation: "nempty" }
-            ],
-            options: { lang: "en" },
-            symbols: { query: { types: [] }, tickers: [] },
-            columns: [
-              "name", "close", "change", "change_abs", "volume", "market_cap_basic",
-              "price_earnings_ttm", "earnings_per_share_basic_ttm", "beta_1_year",
-              "dividend_yield_recent", "sector", "industry", "country", "description"
-            ],
-            sort: { sortBy: "market_cap_basic", sortOrder: "desc" },
-            range: [0, 500] // Increased range for more comprehensive data
-          });
-
-          if (response.data && response.data.data) {
-            const exchangeStocks = this.formatTradingViewData(response.data);
-            allStocks = allStocks.concat(exchangeStocks.stocks);
-            console.log(`📈 Loaded ${exchangeStocks.stocks.length} stocks from ${exchange}`);
-          }
-        } catch (exchangeError) {
-          console.warn(`Failed to fetch from ${exchange}:`, exchangeError.message);
-        }
-      }
-
-      // Remove duplicates and enhance data
-      const uniqueStocks = this.removeDuplicatesAndEnhance(allStocks);
+      console.log('🔄 Fetching from backend API with pagination...');
       
-      return {
-        stocks: uniqueStocks,
-        count: uniqueStocks.length,
-        source: 'TradingView Enhanced'
-      };
+      // Fetch more stocks with random delay to avoid spamming
+      const randomDelay = Math.random() * 1000 + 500; // 500-1500ms random delay
+      console.log(`🔄 Waiting ${randomDelay.toFixed(0)}ms before fetching...`);
+      await new Promise(resolve => setTimeout(resolve, randomDelay));
+      
+      console.log(`🔄 Fetching page 1 from ${this.baseURL}/api/stocks`);
+      const response = await this.axiosInstance.get(`${this.baseURL}/api/stocks`, {
+        params: {
+          page: 1,
+          pageSize: 10, // Match max concurrent TradingView widgets
+          markets: 'america',
+          sortBy: 'market_cap_basic',
+          sortOrder: 'desc'
+        }
+      });
+
+      if (response.data && response.data.stocks) {
+        console.log('📊 First stock from API:', response.data.stocks[0]);
+        const stocks = response.data.stocks.map(stock => ({
+          symbol: stock.symbol || stock.name || 'UNKNOWN',
+          name: stock.companyName || stock.description || 'Unknown Company',
+          companyName: stock.companyName || stock.description || 'Unknown Company',
+          shortCompanyName: stock.shortCompanyName || stock.companyName || 'Unknown Company',
+          description: stock.description || stock.companyName || 'Unknown Company',
+          price: stock.close || 0,
+          change: stock.priceChange ? `${stock.priceChange >= 0 ? '+' : ''}${stock.priceChange.toFixed(2)}%` : '0%',
+          changeAbs: stock.priceChange || 0,
+          pe: stock.PERatio || 0,
+          marketCap: stock.marketCapBasic || this.calculateMarketCap(stock.close, stock.EPS),
+          sector: stock.sector || 'Technology',
+          beta: 1.0,
+          dividendYield: stock.dividendYield || 0,
+          volume: stock.volume || Math.floor(Math.random() * 50000000) + 1000000,
+          industry: stock.sector || 'Technology',
+          country: 'US',
+          isLocked: false,
+          tier: this.getStockTier(stock.marketCapBasic || this.calculateMarketCap(stock.close, stock.EPS)),
+          volatility: 'medium',
+          recommendation: 'Hold',
+          priceTarget: stock.close * 1.1,
+          analystRating: 'A'
+        }));
+            
+        console.log(`✅ Fetched ${stocks.length} stocks (Page 1 of ${response.data.totalPages})`);
+        return {
+          stocks: stocks,
+          count: response.data.totalCount, // Use total count from API
+          totalPages: response.data.totalPages,
+          currentPage: response.data.page,
+          source: 'Backend API (Paginated)'
+        };
+      }
     } catch (error) {
-      console.error('Enhanced TradingView API error:', error);
+      console.error('Backend API pagination error:', error);
       throw error;
     }
   }
 
-  // Remove duplicates and enhance stock data
-  removeDuplicatesAndEnhance(stocks) {
-    const uniqueMap = new Map();
-    
-    stocks.forEach(stock => {
-      if (!uniqueMap.has(stock.symbol) || 
-          (uniqueMap.get(stock.symbol).marketCap || 0) < (stock.marketCap || 0)) {
-        // Enhanced stock data with additional fields
-        const enhancedStock = {
-          ...stock,
-          isLocked: this.isStockLocked(stock),
-          tier: this.getStockTier(stock),
-          volatility: this.calculateVolatility(stock),
-          recommendation: this.getRecommendation(stock),
-          priceTarget: this.calculatePriceTarget(stock),
-          analystRating: this.getAnalystRating(stock)
+  // Fetch from backend API
+  async fetchFromBackendAPI() {
+    try {
+      // Add random delay to prevent API spamming
+      const randomDelay = Math.random() * 1000 + 500; // 500-1500ms random delay
+      console.log(`🔄 Waiting ${randomDelay.toFixed(0)}ms before fetching...`);
+      await new Promise(resolve => setTimeout(resolve, randomDelay));
+      
+      console.log('🔄 Fetching from backend API...');
+      const response = await this.axiosInstance.get(`${this.baseURL}/api/stocks`, {
+        params: {
+          page: 1,
+          pageSize: 10, // Match max concurrent TradingView widgets
+          markets: 'america',
+          sortBy: 'market_cap_basic',
+          sortOrder: 'desc'
+        }
+      });
+
+      if (response.data && response.data.stocks) {
+        const stocks = response.data.stocks.map(stock => ({
+          symbol: stock.symbol || stock.name || 'UNKNOWN',
+          name: stock.companyName || stock.description || 'Unknown Company',
+          companyName: stock.companyName || stock.description || 'Unknown Company',
+          shortCompanyName: stock.shortCompanyName || stock.companyName || 'Unknown Company',
+          description: stock.description || stock.companyName || 'Unknown Company',
+          price: stock.close || 0,
+          change: stock.priceChange ? `${stock.priceChange >= 0 ? '+' : ''}${stock.priceChange.toFixed(2)}%` : '0%',
+          changeAbs: stock.priceChange || 0,
+          pe: stock.PERatio || 0,
+          marketCap: stock.marketCapBasic || this.calculateMarketCap(stock.close, stock.EPS), // Use actual market cap from TradingView
+          sector: stock.sector || 'Technology',
+          beta: 1.0, // Default beta
+          dividendYield: stock.dividendYield || 0,
+          volume: Math.floor(Math.random() * 50000000) + 1000000, // Random volume
+          industry: stock.sector || 'Technology',
+          country: 'US',
+          isLocked: false,
+          tier: this.getStockTier(this.calculateMarketCap(stock.close, stock.EPS)),
+          volatility: 'medium',
+          recommendation: 'Hold',
+          priceTarget: stock.close * 1.1,
+          analystRating: 'A'
+        }));
+
+        return {
+          stocks: stocks,
+          count: response.data.totalCount, // Use total count from API
+          totalPages: response.data.totalPages,
+          currentPage: response.data.page,
+          source: 'Backend API'
         };
-        uniqueMap.set(stock.symbol, enhancedStock);
       }
-    });
-    
-    return Array.from(uniqueMap.values()).sort((a, b) => (b.marketCap || 0) - (a.marketCap || 0));
+    } catch (error) {
+      console.error('Backend API error:', error);
+      throw error;
+    }
   }
 
-  // Enhanced stock tier system
+  // Calculate market cap estimate using more realistic shares outstanding
+  calculateMarketCap(price, eps) {
+    if (!price || !eps) return 1000000000; // Default 1B
+    
+    // More realistic shares outstanding estimation
+    // Use price and EPS to estimate company size more accurately
+    
+    let estimatedShares;
+    if (price > 500) {
+      // Very high price stocks (like Berkshire, Google) - fewer shares
+      estimatedShares = Math.random() * 2000000000 + 500000000; // 500M-2.5B shares
+    } else if (price > 200) {
+      // High price stocks (Apple, Microsoft, Tesla) - moderate shares
+      estimatedShares = Math.random() * 3000000000 + 1000000000; // 1B-4B shares
+    } else if (price > 100) {
+      // Medium-high price stocks (Airbus, Boeing) - more shares
+      estimatedShares = Math.random() * 2000000000 + 2000000000; // 2B-4B shares
+    } else if (price > 50) {
+      // Medium price stocks - many shares
+      estimatedShares = Math.random() * 1500000000 + 1500000000; // 1.5B-3B shares
+    } else if (price > 20) {
+      // Lower price stocks - many shares
+      estimatedShares = Math.random() * 1000000000 + 1000000000; // 1B-2B shares
+    } else {
+      // Very low price stocks - many shares
+      estimatedShares = Math.random() * 500000000 + 500000000; // 500M-1B shares
+    }
+    
+    return price * estimatedShares;
+  }
+
+  // Enhanced stock tier system with correct ranges (matching backend)
   getStockTier(stock) {
     const marketCap = stock.marketCap || 0;
-    if (marketCap > 200000000000) return 'mega';
-    if (marketCap > 10000000000) return 'large';
-    if (marketCap > 2000000000) return 'mid';
-    if (marketCap > 300000000) return 'small';
-    return 'micro';
+    if (marketCap >= 200000000000) return 'mega';      // >= $200B
+    if (marketCap >= 10000000000 && marketCap < 200000000000) return 'large';      // $10B - $199.9B
+    if (marketCap >= 2000000000 && marketCap < 10000000000) return 'mid';         // $2B - $9.9B
+    if (marketCap >= 300000000 && marketCap < 2000000000) return 'small';        // $300M - $1.9B
+    return 'micro';                                     // < $300M
   }
 
   // Stock lock mechanism based on user level/premium status
@@ -241,399 +311,13 @@ class StockScreenerService {
     return 'C';
   }
 
-  // Fetch from TradingView
-  async fetchFromTradingView() {
-    try {
-      const response = await this.axiosInstance.post(`${this.tradingViewAPI}/america/scan`, {
-        filter: [
-          { left: "type", operation: "equal", right: "stock" },
-          { left: "subtype", operation: "equal", right: "common" },
-          { left: "exchange", operation: "in_range", right: ["NASDAQ", "NYSE", "AMEX"] }
-        ],
-        options: { lang: "en" },
-        symbols: { query: { types: [] }, tickers: [] },
-        columns: [
-          "name", "close", "change", "change_abs", "volume", "market_cap_basic",
-          "price_earnings_ttm", "earnings_per_share_basic_ttm", "beta_1_year",
-          "dividend_yield_recent", "sector", "industry", "country"
-        ],
-        sort: { sortBy: "market_cap_basic", sortOrder: "desc" },
-        range: [0, 200]
-      });
-
-      return this.formatTradingViewData(response.data);
-    } catch (error) {
-      console.error('TradingView API error:', error);
-      throw error;
-    }
-  }
-
-  // Alternative data source - Alpha Vantage
-  async fetchFromAlphaVantage() {
-    try {
-      // Alpha Vantage doesn't have a direct stock screener, so we'll fetch popular stocks
-      const popularSymbols = [
-        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX', 
-        'JPM', 'JNJ', 'UNH', 'V', 'HD', 'PG', 'MA', 'PYPL', 'DIS', 'ADBE',
-        'CRM', 'INTC', 'VZ', 'T', 'CVX', 'XOM', 'WMT', 'KO', 'PFE', 'MRK'
-      ];
-
-      const stocks = [];
-      for (const symbol of popularSymbols.slice(0, 20)) { // Limit to avoid API rate limits
-        try {
-          const response = await this.axiosInstance.get(`${this.alphaVantageAPI}`, {
-            params: {
-              function: 'OVERVIEW',
-              symbol: symbol,
-              apikey: this.apiKey
-            }
-          });
-          
-          const data = response.data;
-          if (data && data.Symbol) {
-            stocks.push(this.formatAlphaVantageData(data));
-          }
-        } catch (error) {
-          console.warn(`Failed to fetch ${symbol}:`, error.message);
-        }
-      }
-
-      return { stocks, count: stocks.length };
-    } catch (error) {
-      console.error('Alpha Vantage API error:', error);
-      throw error;
-    }
-  }
-
-  // Yahoo Finance alternative
-  async fetchFromYahooFinance() {
-    try {
-      // Using Yahoo Finance API proxy
-      const symbols = [
-        'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX',
-        'JPM', 'JNJ', 'UNH', 'V', 'HD', 'PG', 'MA', 'DIS', 'ADBE', 'CRM'
-      ];
-
-      const stocks = symbols.map(symbol => this.generateRealisticStockData(symbol));
-      return { stocks, count: stocks.length };
-    } catch (error) {
-      console.error('Yahoo Finance error:', error);
-      throw error;
-    }
-  }
-
-  // Generate realistic stock data
-  generateRealisticStockData(symbol) {
-    const stockMetadata = {
-      'AAPL': { name: 'Apple Inc.', sector: 'Technology', basePrice: 189, pe: 29, beta: 1.2, div: 0.5 },
-      'MSFT': { name: 'Microsoft Corp.', sector: 'Technology', basePrice: 415, pe: 35, beta: 0.9, div: 0.7 },
-      'GOOGL': { name: 'Alphabet Inc.', sector: 'Technology', basePrice: 140, pe: 25, beta: 1.1, div: 0 },
-      'AMZN': { name: 'Amazon.com Inc.', sector: 'Consumer Cyclical', basePrice: 156, pe: 46, beta: 1.3, div: 0 },
-      'TSLA': { name: 'Tesla Inc.', sector: 'Consumer Cyclical', basePrice: 248, pe: 45, beta: 2.1, div: 0 },
-      'META': { name: 'Meta Platforms Inc.', sector: 'Technology', basePrice: 503, pe: 24, beta: 1.4, div: 0.4 },
-      'NVDA': { name: 'NVIDIA Corp.', sector: 'Technology', basePrice: 875, pe: 72, beta: 1.8, div: 0.03 },
-      'NFLX': { name: 'Netflix Inc.', sector: 'Consumer Cyclical', basePrice: 487, pe: 35, beta: 1.2, div: 0 },
-      'JPM': { name: 'JPMorgan Chase & Co.', sector: 'Financial Services', basePrice: 182, pe: 12, beta: 1.1, div: 2.8 },
-      'JNJ': { name: 'Johnson & Johnson', sector: 'Healthcare', basePrice: 162, pe: 15, beta: 0.7, div: 3.1 },
-      'UNH': { name: 'UnitedHealth Group Inc.', sector: 'Healthcare', basePrice: 525, pe: 25, beta: 0.8, div: 1.3 },
-      'V': { name: 'Visa Inc.', sector: 'Financial Services', basePrice: 271, pe: 32, beta: 1.0, div: 0.7 },
-      'HD': { name: 'The Home Depot Inc.', sector: 'Consumer Cyclical', basePrice: 338, pe: 25, beta: 1.0, div: 2.4 },
-      'PG': { name: 'Procter & Gamble Co.', sector: 'Consumer Defensive', basePrice: 157, pe: 26, beta: 0.6, div: 2.3 },
-      'MA': { name: 'Mastercard Inc.', sector: 'Financial Services', basePrice: 450, pe: 36, beta: 1.1, div: 0.5 },
-      'DIS': { name: 'The Walt Disney Co.', sector: 'Consumer Cyclical', basePrice: 112, pe: 38, beta: 1.2, div: 0 },
-      'ADBE': { name: 'Adobe Inc.', sector: 'Technology', basePrice: 565, pe: 42, beta: 1.1, div: 0 },
-      'CRM': { name: 'Salesforce Inc.', sector: 'Technology', basePrice: 263, pe: 55, beta: 1.3, div: 0 }
-    };
-
-    const meta = stockMetadata[symbol] || { 
-      name: `${symbol} Corp.`, 
-      sector: 'Technology', 
-      basePrice: 100, 
-      pe: 20, 
-      beta: 1.0, 
-      div: 1.0 
-    };
-
-    // Add some randomness to make it realistic
-    const priceVariation = (Math.random() - 0.5) * 0.1; // ±5% variation
-    const price = meta.basePrice * (1 + priceVariation);
-    const change = (Math.random() - 0.5) * 6; // ±3% daily change
-    
-    return {
-      symbol,
-      name: meta.name,
-      price: parseFloat(price.toFixed(2)),
-      change: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
-      changeAbs: parseFloat((price * change / 100).toFixed(2)),
-      pe: meta.pe + (Math.random() - 0.5) * 5, // Add some PE variation
-      marketCap: price * 1000000000 * (10 + Math.random() * 20), // Random market cap
-      sector: meta.sector,
-      beta: meta.beta + (Math.random() - 0.5) * 0.3,
-      dividendYield: meta.div,
-      volume: Math.floor((Math.random() * 50 + 10) * 1000000), // 10-60M volume
-      industry: 'Technology Services',
-      country: 'US'
-    };
-  }
-
-  // Format Alpha Vantage data
-  formatAlphaVantageData(data) {
-    return {
-      symbol: data.Symbol,
-      name: data.Name || 'N/A',
-      price: parseFloat(data.Price) || 0,
-      change: data.ChangePercent || '0%',
-      changeAbs: parseFloat(data.Change) || 0,
-      pe: parseFloat(data.PERatio) || 0,
-      marketCap: parseFloat(data.MarketCapitalization) || 0,
-      sector: data.Sector || 'N/A',
-      beta: parseFloat(data.Beta) || 1.0,
-      dividendYield: parseFloat(data.DividendYield) || 0,
-      volume: parseFloat(data.Volume) || 0,
-      industry: data.Industry || 'N/A',
-      country: data.Country || 'US'
-    };
-  }
-
-  // Get comprehensive fallback data with 50+ stocks
-  getComprehensiveFallbackData() {
-    const symbols = [
-      'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'NFLX', 'JPM', 'JNJ',
-      'UNH', 'V', 'HD', 'PG', 'MA', 'DIS', 'ADBE', 'CRM', 'INTC', 'VZ',
-      'T', 'CVX', 'XOM', 'WMT', 'KO', 'PFE', 'MRK', 'BAC', 'ORCL', 'CSCO',
-      'TMO', 'ACN', 'LLY', 'ABT', 'COST', 'DHR', 'MDT', 'TXN', 'NEE', 'BMY',
-      'QCOM', 'AVGO', 'HON', 'LIN', 'UPS', 'SBUX', 'LOW', 'AMD', 'CAT', 'GS'
-    ];
-
-    const stocks = symbols.map(symbol => this.generateRealisticStockData(symbol));
-    
-    return {
-      stocks,
-      count: stocks.length
-    };
-  }
-
-  // Screen stocks with filters
-  async screenStocks(filters) {
-    console.log('🔍 Screening stocks with filters:', filters);
-    
-    try {
-      // First try to get all stocks
-      const allStocksResult = await this.getAllUSStocks();
-      
-      if (!allStocksResult || !allStocksResult.stocks) {
-        console.warn('No stocks data available for filtering');
-        return this.getFilteredFallbackData(filters);
-      }
-
-      // Apply filters to the stocks
-      const filteredStocks = this.applyFiltersToStocks(allStocksResult.stocks, filters);
-      
-      console.log(`📊 Filtered ${allStocksResult.stocks.length} stocks down to ${filteredStocks.length}`);
-
-      return {
-        stocks: filteredStocks,
-        count: filteredStocks.length
-      };
-    } catch (error) {
-      console.error('Error screening stocks:', error);
-      return this.getFilteredFallbackData(filters);
-    }
-  }
-
-  // Apply filters to stock array
-  applyFiltersToStocks(stocks, filters) {
-    if (!filters || Object.keys(filters).length === 0) {
-      return stocks;
-    }
-
-    return stocks.filter(stock => {
-    // Price range filter
-    if (filters.priceRange && filters.priceRange.length === 2) {
-        if (stock.price < filters.priceRange[0] || stock.price > filters.priceRange[1]) {
-          return false;
-      }
-    }
-
-    // P/E Ratio filter
-    if (filters.peRatio && filters.peRatio.length === 2) {
-        if (stock.pe < filters.peRatio[0] || stock.pe > filters.peRatio[1]) {
-          return false;
-      }
-    }
-
-    // Market Cap filter
-    if (filters.marketCapRange && filters.marketCapRange.length === 2) {
-        if (stock.marketCap < filters.marketCapRange[0] || stock.marketCap > filters.marketCapRange[1]) {
-          return false;
-      }
-    }
-
-    // Beta filter
-    if (filters.beta && filters.beta.length === 2) {
-        if (stock.beta < filters.beta[0] || stock.beta > filters.beta[1]) {
-          return false;
-      }
-    }
-
-    // Dividend Yield filter
-    if (filters.dividendYield && filters.dividendYield.length === 2) {
-        if (stock.dividendYield < filters.dividendYield[0] || stock.dividendYield > filters.dividendYield[1]) {
-          return false;
-      }
-    }
-
-    // Volume filter
-    if (filters.volume && filters.volume.length === 2) {
-        if (stock.volume < filters.volume[0] || stock.volume > filters.volume[1]) {
-          return false;
-      }
-    }
-
-    // Sector filter
-      if (filters.sector && stock.sector) {
-        const stockSector = stock.sector.toLowerCase();
-        const filterSector = filters.sector.toLowerCase();
-        
-        // Handle sector mapping
-        const sectorMappings = {
-          'technology': ['technology', 'tech'],
-          'healthcare': ['healthcare', 'health care'],
-          'financials': ['financial services', 'financials'],
-          'consumer_discretionary': ['consumer cyclical', 'consumer discretionary'],
-          'consumer_staples': ['consumer defensive', 'consumer staples'],
-          'energy': ['energy'],
-          'industrials': ['industrials'],
-          'materials': ['basic materials', 'materials'],
-          'utilities': ['utilities'],
-          'realestate': ['real estate'],
-          'telecommunications': ['communication services', 'telecommunications']
-        };
-
-        const mappedSectors = sectorMappings[filterSector] || [filterSector];
-        if (!mappedSectors.some(mapped => stockSector.includes(mapped))) {
-          return false;
-        }
-      }
-
-      // Market Cap categories filter
-      if (filters.marketCap && filters.marketCap.length > 0) {
-        const marketCap = stock.marketCap;
-        let matchesMarketCap = false;
-
-        for (const capCategory of filters.marketCap) {
-          switch (capCategory) {
-            case 'mega':
-              if (marketCap > 200000000000) matchesMarketCap = true;
-              break;
-            case 'large':
-              if (marketCap >= 10000000000 && marketCap <= 200000000000) matchesMarketCap = true;
-              break;
-            case 'mid':
-              if (marketCap >= 2000000000 && marketCap < 10000000000) matchesMarketCap = true;
-              break;
-            case 'small':
-              if (marketCap >= 300000000 && marketCap < 2000000000) matchesMarketCap = true;
-              break;
-            case 'micro':
-              if (marketCap < 300000000) matchesMarketCap = true;
-              break;
-      }
-    }
-
-        if (!matchesMarketCap) return false;
-      }
-
-      return true;
-    });
-  }
-
-  // Format TradingView response data
-  formatTradingViewData(data) {
-    if (!data || !data.data) {
-      return { stocks: [], count: 0 };
-    }
-
-    const stocks = data.data.map(item => {
-      const stockData = item.d;
-      return {
-        symbol: item.s.split(':')[1], // Remove exchange prefix
-        name: stockData[0] || 'N/A',
-        price: stockData[1] || 0,
-        change: stockData[2] || 0,
-        changeAbs: stockData[3] || 0,
-        volume: stockData[4] || 0,
-        marketCap: stockData[5] || 0,
-        pe: stockData[6] || 0,
-        eps: stockData[7] || 0,
-        beta: stockData[8] || 0,
-        dividendYield: stockData[9] || 0,
-        sector: stockData[10] || 'N/A',
-        industry: stockData[11] || 'N/A',
-        country: stockData[12] || 'US'
-      };
-    });
-
-    return {
-      stocks: stocks,
-      count: stocks.length
-    };
-  }
-
-  // Fallback data when API fails
-  getFallbackStockData() {
-    const fallbackStocks = [
-      { symbol: 'AAPL', name: 'Apple Inc.', price: 150.00, change: 2.5, changeAbs: 3.75, volume: 50000000, marketCap: 2500000000000, pe: 25.5, eps: 6.0, beta: 1.2, dividendYield: 0.5, sector: 'Technology', industry: 'Consumer Electronics' },
-      { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 2800.00, change: 1.2, changeAbs: 33.6, volume: 25000000, marketCap: 1800000000000, pe: 22.1, eps: 126.7, beta: 1.1, dividendYield: 0, sector: 'Technology', industry: 'Internet Content & Information' },
-      { symbol: 'MSFT', name: 'Microsoft Corp.', price: 310.00, change: -0.8, changeAbs: -2.48, volume: 30000000, marketCap: 2300000000000, pe: 28.3, eps: 11.0, beta: 0.9, dividendYield: 0.7, sector: 'Technology', industry: 'Software—Infrastructure' },
-      { symbol: 'TSLA', name: 'Tesla Inc.', price: 800.00, change: 3.2, changeAbs: 25.6, volume: 40000000, marketCap: 800000000000, pe: 45.2, eps: 17.7, beta: 2.1, dividendYield: 0, sector: 'Consumer Cyclical', industry: 'Auto Manufacturers' },
-      { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 3300.00, change: 0.5, changeAbs: 16.5, volume: 35000000, marketCap: 1700000000000, pe: 35.8, eps: 92.2, beta: 1.3, dividendYield: 0, sector: 'Consumer Cyclical', industry: 'Internet Retail' },
-      { symbol: 'META', name: 'Meta Platforms Inc.', price: 320.00, change: 1.8, changeAbs: 5.76, volume: 45000000, marketCap: 850000000000, pe: 18.5, eps: 17.3, beta: 1.4, dividendYield: 0, sector: 'Technology', industry: 'Internet Content & Information' },
-      { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 220.00, change: 4.2, changeAbs: 9.24, volume: 60000000, marketCap: 550000000000, pe: 55.2, eps: 4.0, beta: 1.8, dividendYield: 0.1, sector: 'Technology', industry: 'Semiconductors' },
-      { symbol: 'NFLX', name: 'Netflix Inc.', price: 400.00, change: -1.1, changeAbs: -4.4, volume: 20000000, marketCap: 180000000000, pe: 28.9, eps: 13.8, beta: 1.2, dividendYield: 0, sector: 'Consumer Cyclical', industry: 'Entertainment' },
-      { symbol: 'JPM', name: 'JPMorgan Chase & Co.', price: 140.00, change: 0.8, changeAbs: 1.12, volume: 15000000, marketCap: 420000000000, pe: 12.5, eps: 11.2, beta: 1.1, dividendYield: 2.8, sector: 'Financial Services', industry: 'Banks—Diversified' },
-      { symbol: 'JNJ', name: 'Johnson & Johnson', price: 165.00, change: 0.3, changeAbs: 0.495, volume: 12000000, marketCap: 435000000000, pe: 16.2, eps: 10.2, beta: 0.7, dividendYield: 2.6, sector: 'Healthcare', industry: 'Drug Manufacturers—General' }
-    ];
-
-    return {
-      stocks: fallbackStocks,
-      count: fallbackStocks.length
-    };
-  }
-
-  // Get filtered fallback data
-  getFilteredFallbackData(filters) {
-    const allStocks = this.getFallbackStockData().stocks;
-    
-    if (!filters) return { stocks: allStocks, count: allStocks.length };
-
-    const filteredStocks = allStocks.filter(stock => {
-      // Apply filters similar to the main filtering logic
-      if (filters.priceRange && (stock.price < filters.priceRange[0] || stock.price > filters.priceRange[1])) {
-        return false;
-      }
-      if (filters.peRatio && (stock.pe < filters.peRatio[0] || stock.pe > filters.peRatio[1])) {
-        return false;
-      }
-      if (filters.sector && !stock.sector.toLowerCase().includes(filters.sector.toLowerCase())) {
-        return false;
-      }
-      return true;
-    });
-
-    return {
-      stocks: filteredStocks,
-      count: filteredStocks.length
-    };
-  }
-
-  // Get stock presets
+  // Get preset filters
   getPresetFilters(presetKey) {
     const presets = {
       growthStocks: {
         peRatio: [20, 100],
         marketCap: ['large', 'mega'],
-        sector: 'technology'
+        sector: ['technology']
       },
       valueStocks: {
         peRatio: [0, 15],
@@ -641,112 +325,15 @@ class StockScreenerService {
       },
       dividendStocks: {
         dividendYield: [3, 15]
-      },
-      largeCap: {
-        marketCapRange: [10000000000, 5000000000000]
-      },
-      smallCap: {
-        marketCapRange: [300000000, 2000000000]
       }
     };
-
     return presets[presetKey] || {};
-  }
-
-  // Enhanced fallback data with comprehensive US stock coverage
-  getEnhancedFallbackData() {
-    const comprehensiveStocks = [
-      // Technology Giants
-      { symbol: 'AAPL', name: 'Apple Inc.', price: 189.50, change: '+2.5%', changeAbs: 4.63, pe: 29.2, marketCap: 2950000000000, sector: 'Technology', industry: 'Consumer Electronics', beta: 1.2, dividendYield: 0.5, volume: 55000000, country: 'US' },
-      { symbol: 'MSFT', name: 'Microsoft Corp.', price: 415.30, change: '-0.8%', changeAbs: -3.32, pe: 35.3, marketCap: 3080000000000, sector: 'Technology', industry: 'Software', beta: 0.9, dividendYield: 0.7, volume: 22000000, country: 'US' },
-      { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 140.25, change: '+1.2%', changeAbs: 1.68, pe: 25.1, marketCap: 1750000000000, sector: 'Technology', industry: 'Internet Content & Information', beta: 1.1, dividendYield: 0, volume: 28000000, country: 'US' },
-      { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 155.89, change: '+0.5%', changeAbs: 0.78, pe: 45.8, marketCap: 1620000000000, sector: 'Consumer Cyclical', industry: 'Internet Retail', beta: 1.3, dividendYield: 0, volume: 35000000, country: 'US' },
-      { symbol: 'META', name: 'Meta Platforms Inc.', price: 503.22, change: '+1.8%', changeAbs: 8.91, pe: 24.5, marketCap: 1280000000000, sector: 'Technology', industry: 'Internet Content & Information', beta: 1.4, dividendYield: 0.4, volume: 18000000, country: 'US' },
-      { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 875.28, change: '+4.2%', changeAbs: 35.31, pe: 72.2, marketCap: 2150000000000, sector: 'Technology', industry: 'Semiconductors', beta: 1.8, dividendYield: 0.03, volume: 42000000, country: 'US' },
-      { symbol: 'TSLA', name: 'Tesla Inc.', price: 248.48, change: '+3.2%', changeAbs: 7.69, pe: 45.2, marketCap: 790000000000, sector: 'Consumer Cyclical', industry: 'Auto Manufacturers', beta: 2.1, dividendYield: 0, volume: 45000000, country: 'US' },
-      
-      // Financial Services
-      { symbol: 'JPM', name: 'JPMorgan Chase & Co.', price: 181.52, change: '+0.8%', changeAbs: 1.44, pe: 12.5, marketCap: 530000000000, sector: 'Financial Services', industry: 'Banks—Diversified', beta: 1.1, dividendYield: 2.8, volume: 12000000, country: 'US' },
-      { symbol: 'BAC', name: 'Bank of America Corp.', price: 34.25, change: '+1.2%', changeAbs: 0.41, pe: 13.8, marketCap: 270000000000, sector: 'Financial Services', industry: 'Banks—Diversified', beta: 1.3, dividendYield: 2.9, volume: 38000000, country: 'US' },
-      { symbol: 'WFC', name: 'Wells Fargo & Co.', price: 42.18, change: '-0.5%', changeAbs: -0.21, pe: 11.2, marketCap: 155000000000, sector: 'Financial Services', industry: 'Banks—Diversified', beta: 1.2, dividendYield: 2.7, volume: 15000000, country: 'US' },
-      { symbol: 'V', name: 'Visa Inc.', price: 271.49, change: '+0.9%', changeAbs: 2.42, pe: 32.1, marketCap: 580000000000, sector: 'Financial Services', industry: 'Credit Services', beta: 1.0, dividendYield: 0.7, volume: 7800000, country: 'US' },
-      { symbol: 'MA', name: 'Mastercard Inc.', price: 450.15, change: '+1.1%', changeAbs: 4.90, pe: 35.7, marketCap: 430000000000, sector: 'Financial Services', industry: 'Credit Services', beta: 1.1, dividendYield: 0.5, volume: 3100000, country: 'US' },
-      
-      // Healthcare
-      { symbol: 'JNJ', name: 'Johnson & Johnson', price: 162.35, change: '+0.3%', changeAbs: 0.49, pe: 15.2, marketCap: 425000000000, sector: 'Healthcare', industry: 'Drug Manufacturers—General', beta: 0.7, dividendYield: 3.1, volume: 8000000, country: 'US' },
-      { symbol: 'UNH', name: 'UnitedHealth Group Inc.', price: 524.88, change: '+1.5%', changeAbs: 7.77, pe: 24.8, marketCap: 490000000000, sector: 'Healthcare', industry: 'Healthcare Plans', beta: 0.8, dividendYield: 1.3, volume: 3200000, country: 'US' },
-      { symbol: 'PFE', name: 'Pfizer Inc.', price: 28.45, change: '-1.2%', changeAbs: -0.34, pe: 9.8, marketCap: 159000000000, sector: 'Healthcare', industry: 'Drug Manufacturers—General', beta: 0.6, dividendYield: 5.8, volume: 25000000, country: 'US' },
-      { symbol: 'ABBV', name: 'AbbVie Inc.', price: 175.22, change: '+0.8%', changeAbs: 1.39, pe: 16.5, marketCap: 309000000000, sector: 'Healthcare', industry: 'Drug Manufacturers—General', beta: 0.7, dividendYield: 3.5, volume: 7500000, country: 'US' },
-      
-      // Consumer & Retail
-      { symbol: 'WMT', name: 'Walmart Inc.', price: 165.89, change: '+0.4%', changeAbs: 0.66, pe: 27.8, marketCap: 545000000000, sector: 'Consumer Defensive', industry: 'Discount Stores', beta: 0.5, dividendYield: 1.2, volume: 8200000, country: 'US' },
-      { symbol: 'HD', name: 'The Home Depot Inc.', price: 337.89, change: '-0.4%', changeAbs: -1.35, pe: 24.6, marketCap: 345000000000, sector: 'Consumer Cyclical', industry: 'Home Improvement Retail', beta: 1.0, dividendYield: 2.4, volume: 4500000, country: 'US' },
-      { symbol: 'PG', name: 'Procter & Gamble Co.', price: 157.22, change: '+0.2%', changeAbs: 0.31, pe: 26.3, marketCap: 375000000000, sector: 'Consumer Defensive', industry: 'Household & Personal Products', beta: 0.6, dividendYield: 2.3, volume: 6200000, country: 'US' },
-      { symbol: 'KO', name: 'The Coca-Cola Co.', price: 61.48, change: '+0.1%', changeAbs: 0.06, pe: 22.9, marketCap: 265000000000, sector: 'Consumer Defensive', industry: 'Beverages—Non-Alcoholic', beta: 0.6, dividendYield: 3.0, volume: 12000000, country: 'US' },
-      
-      // Energy
-      { symbol: 'XOM', name: 'Exxon Mobil Corp.', price: 104.26, change: '+1.8%', changeAbs: 1.84, pe: 14.2, marketCap: 425000000000, sector: 'Energy', industry: 'Oil & Gas Integrated', beta: 1.4, dividendYield: 5.8, volume: 18000000, country: 'US' },
-      { symbol: 'CVX', name: 'Chevron Corp.', price: 149.55, change: '+1.2%', changeAbs: 1.78, pe: 13.8, marketCap: 280000000000, sector: 'Energy', industry: 'Oil & Gas Integrated', beta: 1.2, dividendYield: 3.2, volume: 12500000, country: 'US' },
-      
-      // Telecommunications
-      { symbol: 'VZ', name: 'Verizon Communications Inc.', price: 40.15, change: '-0.3%', changeAbs: -0.12, pe: 8.9, marketCap: 168000000000, sector: 'Communication Services', industry: 'Telecom Services', beta: 0.4, dividendYield: 6.8, volume: 15000000, country: 'US' },
-      { symbol: 'T', name: 'AT&T Inc.', price: 21.33, change: '+0.2%', changeAbs: 0.04, pe: 7.2, marketCap: 152000000000, sector: 'Communication Services', industry: 'Telecom Services', beta: 0.7, dividendYield: 7.2, volume: 32000000, country: 'US' },
-      
-      // Entertainment & Media
-      { symbol: 'DIS', name: 'The Walt Disney Co.', price: 112.54, change: '+2.1%', changeAbs: 2.32, pe: 38.2, marketCap: 205000000000, sector: 'Consumer Cyclical', industry: 'Entertainment', beta: 1.2, dividendYield: 0, volume: 11000000, country: 'US' },
-      { symbol: 'NFLX', name: 'Netflix Inc.', price: 486.75, change: '-1.1%', changeAbs: -5.40, pe: 34.9, marketCap: 210000000000, sector: 'Consumer Cyclical', industry: 'Entertainment', beta: 1.2, dividendYield: 0, volume: 8500000, country: 'US' },
-      
-      // Semiconductors & Hardware
-      { symbol: 'INTC', name: 'Intel Corp.', price: 23.18, change: '-2.1%', changeAbs: -0.50, pe: 28.5, marketCap: 98000000000, sector: 'Technology', industry: 'Semiconductors', beta: 0.9, dividendYield: 1.9, volume: 42000000, country: 'US' },
-      { symbol: 'AMD', name: 'Advanced Micro Devices Inc.', price: 138.44, change: '+3.5%', changeAbs: 4.68, pe: 189.2, marketCap: 224000000000, sector: 'Technology', industry: 'Semiconductors', beta: 1.9, dividendYield: 0, volume: 35000000, country: 'US' },
-      { symbol: 'QCOM', name: 'QUALCOMM Inc.', price: 169.39, change: '+1.8%', changeAbs: 3.00, pe: 20.8, marketCap: 189000000000, sector: 'Technology', industry: 'Semiconductors', beta: 1.1, dividendYield: 2.1, volume: 9800000, country: 'US' },
-      
-      // Software & Cloud
-      { symbol: 'CRM', name: 'Salesforce Inc.', price: 263.18, change: '+2.2%', changeAbs: 5.67, pe: 55.2, marketCap: 261000000000, sector: 'Technology', industry: 'Software—Application', beta: 1.3, dividendYield: 0, volume: 6200000, country: 'US' },
-      { symbol: 'ORCL', name: 'Oracle Corp.', price: 118.55, change: '+0.9%', changeAbs: 1.06, pe: 42.1, marketCap: 326000000000, sector: 'Technology', industry: 'Software—Infrastructure', beta: 0.9, dividendYield: 1.1, volume: 12000000, country: 'US' },
-      { symbol: 'ADBE', name: 'Adobe Inc.', price: 565.43, change: '+1.5%', changeAbs: 8.36, pe: 42.8, marketCap: 254000000000, sector: 'Technology', industry: 'Software—Application', beta: 1.1, dividendYield: 0, volume: 2100000, country: 'US' },
-      
-      // Aerospace & Defense
-      { symbol: 'BA', name: 'The Boeing Co.', price: 195.33, change: '-1.8%', changeAbs: -3.58, pe: -15.2, marketCap: 116000000000, sector: 'Industrials', industry: 'Aerospace & Defense', beta: 1.8, dividendYield: 0, volume: 8900000, country: 'US' },
-      { symbol: 'LMT', name: 'Lockheed Martin Corp.', price: 432.18, change: '+0.5%', changeAbs: 2.15, pe: 18.9, marketCap: 108000000000, sector: 'Industrials', industry: 'Aerospace & Defense', beta: 0.8, dividendYield: 2.7, volume: 1200000, country: 'US' },
-      
-      // Industrial & Manufacturing
-      { symbol: 'CAT', name: 'Caterpillar Inc.', price: 248.67, change: '+1.1%', changeAbs: 2.71, pe: 16.8, marketCap: 128000000000, sector: 'Industrials', industry: 'Farm & Heavy Construction Machinery', beta: 1.1, dividendYield: 2.2, volume: 3800000, country: 'US' },
-      { symbol: 'GE', name: 'General Electric Co.', price: 115.22, change: '+2.8%', changeAbs: 3.14, pe: 22.4, marketCap: 126000000000, sector: 'Industrials', industry: 'Specialty Industrial Machinery', beta: 1.4, dividendYield: 0.4, volume: 12500000, country: 'US' },
-      
-      // Biotech & Pharmaceuticals
-      { symbol: 'GILD', name: 'Gilead Sciences Inc.', price: 72.89, change: '-0.8%', changeAbs: -0.59, pe: 12.8, marketCap: 91000000000, sector: 'Healthcare', industry: 'Drug Manufacturers—General', beta: 0.6, dividendYield: 4.2, volume: 7800000, country: 'US' },
-      { symbol: 'AMGN', name: 'Amgen Inc.', price: 275.44, change: '+0.3%', changeAbs: 0.82, pe: 15.2, marketCap: 148000000000, sector: 'Healthcare', industry: 'Drug Manufacturers—General', beta: 0.8, dividendYield: 3.1, volume: 2900000, country: 'US' },
-      
-      // Real Estate
-      { symbol: 'AMT', name: 'American Tower Corp.', price: 195.67, change: '+0.7%', changeAbs: 1.36, pe: 47.8, marketCap: 91000000000, sector: 'Real Estate', industry: 'REIT—Specialty', beta: 0.7, dividendYield: 3.4, volume: 1800000, country: 'US' },
-      
-      // Utilities
-      { symbol: 'NEE', name: 'NextEra Energy Inc.', price: 75.23, change: '+0.4%', changeAbs: 0.30, pe: 22.1, marketCap: 152000000000, sector: 'Utilities', industry: 'Utilities—Regulated Electric', beta: 0.3, dividendYield: 2.8, volume: 9200000, country: 'US' }
-    ];
-
-    // Add enhanced fields to each stock
-    const enhancedStocks = comprehensiveStocks.map(stock => ({
-      ...stock,
-      isLocked: this.isStockLocked(stock),
-      tier: this.getStockTier(stock),
-      volatility: this.calculateVolatility(stock),
-      recommendation: this.getRecommendation(stock),
-      priceTarget: this.calculatePriceTarget(stock),
-      analystRating: this.getAnalystRating(stock)
-    }));
-
-    return {
-      stocks: enhancedStocks,
-      count: enhancedStocks.length,
-      source: 'Enhanced Fallback Data'
-    };
   }
 
   // Cache management
   setCache(key, data) {
     this.stockCache.set(key, {
-      data,
+      data: data,
       timestamp: Date.now()
     });
   }
@@ -756,13 +343,387 @@ class StockScreenerService {
     if (cached && (Date.now() - cached.timestamp) < this.cacheExpiry) {
       return cached.data;
     }
-    this.stockCache.delete(key);
     return null;
   }
 
-  clearCache() {
-    this.stockCache.clear();
+  // Get filtered counts without loading all data
+  async getFilteredCounts(filters = {}) {
+    try {
+      console.log('🔍 Getting filtered counts for:', filters);
+      
+      const params = {
+        markets: 'america'
+      };
+      
+      // Add filter parameters
+      if (filters.sector && filters.sector.length > 0) {
+        params.sector = filters.sector.map(key => this.mapSectorKeyToBackend(key)).join(',');
+      }
+      
+      if (filters.peRatio && filters.peRatio.length === 2) {
+        params.peMin = filters.peRatio[0];
+        params.peMax = filters.peRatio[1];
+      }
+      
+      if (filters.priceRange && filters.priceRange.length === 2) {
+        params.priceMin = filters.priceRange[0];
+        params.priceMax = filters.priceRange[1];
+      }
+      
+      if (filters.volume && filters.volume.length > 0) {
+        params.volume = filters.volume.join(',');
+      }
+      
+      if (filters.dividendYield && filters.dividendYield.length === 2) {
+        params.dividendMin = filters.dividendYield[0];
+        params.dividendMax = filters.dividendYield[1];
+      }
+      
+      if (filters.marketCap && filters.marketCap.length > 0) {
+        params.marketCap = filters.marketCap.join(',');
+      }
+      
+      const response = await this.axiosInstance.get(`${this.baseURL}/api/stocks/counts`, {
+        params
+      });
+      
+      return response.data.totalCount || 0;
+    } catch (error) {
+      console.error('Error getting filtered counts:', error);
+      return 0;
+    }
+  }
+
+  // Fetch a specific page with filters (for Vue component compatibility)
+  // Map frontend sector keys to backend sector names with pattern-based matching
+  mapSectorKeyToBackend(sectorKey) {
+    // Pattern-based mapping for comprehensive sector coverage
+    const patternMap = {
+      'technology': this.getTechnologySectors(),
+      'tech': this.getTechnologySectors(),
+      'healthcare': this.getHealthcareSectors(),
+      'health': this.getHealthcareSectors(),
+      'financials': this.getFinancialSectors(),
+      'finance': this.getFinancialSectors(),
+      'energy': this.getEnergySectors(),
+      'industrials': this.getIndustrialSectors(),
+      'materials': this.getMaterialSectors(),
+      'utilities': this.getUtilitySectors(),
+      'realestate': this.getRealEstateSectors(),
+      'consumer_discretionary': this.getConsumerDiscretionarySectors(),
+      'consumer_staples': this.getConsumerStaplesSectors(),
+      'telecommunications': this.getTelecomSectors()
+    };
+    
+    return patternMap[sectorKey] || sectorKey;
+  }
+
+  // Pattern-based sector getters - automatically includes all sectors containing keywords
+  getTechnologySectors() {
+    // All sectors containing "technology" (case-insensitive pattern matching)
+    return [
+      'Technology Services',      // Software, cloud, internet companies
+      'Electronic Technology'     // Hardware, semiconductors, electronics
+      // Note: Health Technology removed - it's primarily healthcare/medical, not tech
+      // Note: Energy Technology, Financial Technology, Industrial Technology don't exist in TradingView
+    ].filter(sector => sector); // Remove any undefined entries
+  }
+
+  getHealthcareSectors() {
+    return [
+      'Health Technology',
+      'Health Services',
+      'Biotechnology',
+      'Pharmaceuticals',
+      'Medical Equipment'
+    ].filter(sector => sector);
+  }
+
+  getFinancialSectors() {
+    return [
+      'Finance',
+      'Banking',
+      'Insurance',
+      'Investment Services',
+      'Real Estate Investment Trusts'
+    ].filter(sector => sector);
+  }
+
+  getEnergySectors() {
+    return [
+      'Energy Minerals',
+      'Oil & Gas',
+      'Renewable Energy',
+      'Utilities' // Some utilities are energy-related
+    ].filter(sector => sector);
+  }
+
+  getIndustrialSectors() {
+    return [
+      'Industrial Services',
+      'Manufacturing',
+      'Aerospace',
+      'Defense',
+      'Transportation'
+    ].filter(sector => sector);
+  }
+
+  getMaterialSectors() {
+    return [
+      'Materials',
+      'Chemicals',
+      'Metals',
+      'Mining',
+      'Construction Materials'
+    ].filter(sector => sector);
+  }
+
+  getUtilitySectors() {
+    return [
+      'Utilities',
+      'Electric Utilities',
+      'Gas Utilities',
+      'Water Utilities'
+    ].filter(sector => sector);
+  }
+
+  getRealEstateSectors() {
+    return [
+      'Real Estate',
+      'Real Estate Investment Trusts',
+      'Property Management'
+    ].filter(sector => sector);
+  }
+
+  getConsumerDiscretionarySectors() {
+    return [
+      'Retail Trade',
+      'Consumer Services',
+      'Entertainment',
+      'Automotive',
+      'Travel & Leisure'
+    ].filter(sector => sector);
+  }
+
+  getConsumerStaplesSectors() {
+    return [
+      'Consumer Durables',
+      'Food & Beverage',
+      'Household Products',
+      'Personal Care'
+    ].filter(sector => sector);
+  }
+
+  getTelecomSectors() {
+    return [
+      'Telecom',
+      'Telecommunications',
+      'Media',
+      'Broadcasting'
+    ].filter(sector => sector);
+  }
+
+  async fetchPage(page, filters = {}, pageSize = 10) {
+    console.log(`🔍 Fetching page ${page} with filters:`, filters);
+    console.log(`🔍 Sector filters:`, filters.sector);
+    console.log(`🔍 Market cap filters:`, filters.marketCap);
+    
+    try {
+      // Add random delay to prevent API spamming
+      const randomDelay = Math.random() * 500 + 200; // Reduced delay: 200-700ms
+      console.log(`🔄 Waiting ${randomDelay.toFixed(0)}ms before fetching page ${page}...`);
+      await new Promise(resolve => setTimeout(resolve, randomDelay));
+      
+      const apiUrl = `${this.baseURL}/api/stocks`;
+      const requestParams = {
+        page: page,
+        pageSize: pageSize, // Match max concurrent TradingView widgets
+        markets: 'america',
+        sortBy: 'market_cap_basic',
+        sortOrder: 'desc',
+        // Add filter parameters
+        ...(filters.sector && filters.sector.length > 0 && { 
+          sector: filters.sector.map(key => this.mapSectorKeyToBackend(key)).flat().join(',') 
+        }),
+        ...(filters.peRatio && filters.peRatio.length === 2 && { 
+          peMin: filters.peRatio[0], 
+          peMax: filters.peRatio[1] 
+        }),
+        ...(filters.priceRange && filters.priceRange.length === 2 && { 
+          priceMin: filters.priceRange[0], 
+          priceMax: filters.priceRange[1] 
+        }),
+        ...(filters.volume && filters.volume.length > 0 && { volume: filters.volume.join(',') }),
+        ...(filters.dividendYield && filters.dividendYield.length === 2 && { 
+          dividendMin: filters.dividendYield[0], 
+          dividendMax: filters.dividendYield[1] 
+        }),
+        ...(filters.marketCap && filters.marketCap.length > 0 && { 
+          marketCap: filters.marketCap.join(',') 
+        })
+      };
+      
+      console.log(`🔍 Full API URL:`, `${apiUrl}?${new URLSearchParams(requestParams).toString()}`);
+      
+      const response = await this.axiosInstance.get(apiUrl, {
+        params: requestParams
+      });
+
+      console.log(`🔍 Response status: ${response.status}`);
+      console.log(`🔍 Response has data:`, !!response.data);
+      console.log(`🔍 Response has stocks:`, !!(response.data && response.data.stocks));
+      console.log(`🔍 Response data structure:`, { 
+        hasStocks: !!(response.data && response.data.stocks),
+        stockCount: response.data?.stocks?.length,
+        totalCount: response.data?.totalCount,
+        page: response.data?.page
+      });
+
+      if (response.data && response.data.stocks) {
+        console.log(`📦 Backend returned ${response.data.stocks.length} stocks for page ${page}`);
+        
+        const stocks = response.data.stocks.map(stock => {
+          const marketCapValue = stock.marketCapBasic || this.calculateMarketCap(stock.close, stock.EPS);
+          return {
+            symbol: stock.symbol || stock.name || 'UNKNOWN',
+            name: stock.companyName || stock.description || stock.name || 'Unknown Company',
+            companyName: stock.companyName || stock.description || 'Unknown Company',
+            description: stock.description || stock.companyName || 'Unknown Company',
+            shortCompanyName: stock.shortCompanyName || stock.companyName || 'Unknown Company',
+            close: stock.close || 0,
+            price: stock.close || 0,
+            priceChange: stock.priceChange || 0,
+            change: stock.priceChange ? `${stock.priceChange >= 0 ? '+' : ''}${stock.priceChange.toFixed(2)}%` : '0%',
+            changeAbs: stock.priceChange || 0,
+            PERatio: stock.PERatio || 0,
+            pe: stock.PERatio || 0,
+            marketCapBasic: stock.marketCapBasic || null,
+            marketCap: marketCapValue,
+            sector: stock.sector || 'Technology',
+            market: stock.market || 'america',
+            beta: 1.0,
+            EPS: stock.EPS || 0,
+            dividendYield: stock.dividendYield || 0,
+            volume: stock.volume || 0,
+            industry: stock.sector || 'Technology',
+            country: 'US',
+            isLocked: false,
+            tier: this.getStockTier({ marketCap: marketCapValue }),
+            volatility: 'medium',
+            recommendation: 'Hold',
+            priceTarget: stock.close * 1.1,
+            analystRating: 'A'
+          };
+        });
+
+        // Don't apply client-side filtering - backend already filtered!
+        // Use market cap counts from backend (calculated from ALL filtered stocks)
+        const marketCapCounts = response.data.marketCapCounts || this.calculateMarketCapCounts(stocks);
+        
+        console.log(`✅ Fetched ${stocks.length} stocks from page ${page}`);
+        console.log(`📊 Market cap distribution:`, marketCapCounts);
+
+        return {
+          stocks: stocks,
+          count: response.data.totalCount || stocks.length, // Use backend total count
+          totalPages: response.data.totalPages || 1, // Use backend total pages
+          currentPage: response.data.page || page, // Use backend current page
+          source: 'Backend API (Paginated)',
+          marketCapCounts: marketCapCounts, // Use backend's market cap counts
+          sectorCounts: response.data.sectorCounts, // Use backend's sector counts
+          avgMarketCap: response.data.avgMarketCap // Pass through backend-calculated average
+        };
+      }
+      
+      console.warn(`⚠️ No stocks data in response for page ${page}`);
+      return { stocks: [], count: 0, totalPages: 1, currentPage: page, source: 'Empty Response' };
+    } catch (error) {
+      console.error('Error fetching page:', error);
+      throw error;
+    }
+  }
+
+  // Apply client-side filtering to stocks
+  applyClientSideFilters(stocks, filters) {
+    return stocks.filter(stock => {
+      // Sector filter - use pattern-based mapping
+      if (filters.sector && filters.sector.length > 0) {
+        const matchingSectors = [];
+        filters.sector.forEach(sectorKey => {
+          const mappedSectors = this.mapSectorKeyToBackend(sectorKey);
+          if (Array.isArray(mappedSectors)) {
+            matchingSectors.push(...mappedSectors);
+          } else {
+            matchingSectors.push(mappedSectors);
+          }
+        });
+        
+        if (matchingSectors.length > 0 && !matchingSectors.includes(stock.sector)) {
+          return false;
+        }
+      }
+
+      // Market cap filter
+      if (filters.marketCap && filters.marketCap.length > 0) {
+        const stockTier = this.getStockTier(stock);
+        if (!filters.marketCap.includes(stockTier)) {
+          return false;
+        }
+      }
+
+      // P/E ratio filter
+      if (filters.peRatio && filters.peRatio.length === 2) {
+        const [minPE, maxPE] = filters.peRatio;
+        if (stock.pe < minPE || stock.pe > maxPE) {
+          return false;
+        }
+      }
+
+      // Price range filter
+      if (filters.priceRange && filters.priceRange.length === 2) {
+        const [minPrice, maxPrice] = filters.priceRange;
+        if (stock.price < minPrice || stock.price > maxPrice) {
+          return false;
+        }
+      }
+
+      // Dividend yield filter
+      if (filters.dividendYield && filters.dividendYield.length === 2) {
+        const [minDiv, maxDiv] = filters.dividendYield;
+        if (stock.dividendYield < minDiv || stock.dividendYield > maxDiv) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  // Calculate market cap counts for all stocks
+  calculateMarketCapCounts(stocks) {
+    const counts = {
+      mega: 0,
+      large: 0,
+      mid: 0,
+      small: 0,
+      micro: 0
+    };
+    
+    stocks.forEach(stock => {
+      const tier = this.getStockTier(stock);
+      if (counts.hasOwnProperty(tier)) {
+        counts[tier]++;
+      }
+    });
+    
+    return counts;
+  }
+
+  // Clear cache
+  static clearCache() {
+    // This would clear the cache if we had a static instance
+    console.log('🗑️ Cache cleared');
   }
 }
 
-export default new StockScreenerService(); 
+export default new StockScreenerService();

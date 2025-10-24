@@ -46,8 +46,7 @@ const app = express();
 
 // CORS configuration for development
 const allowedOrigins = [
-  "http://localhost:8081", // Vue frontend
-  "http://localhost:8080", 
+  "http://localhost:8080", // Vue frontend
   "http://localhost:3000",
   "https://finbud.pro"
 ];
@@ -130,13 +129,13 @@ app.set("simulatorIo", simulatorIo);
 //   }
 // };
 
-// Conditionally initialize Passport to prevent crash without .env file
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+// Initialize Passport with basic configuration
+try {
   passportConfig(app);
-  console.log("✅ Passport configured for Google OAuth.");
-} else {
-  console.warn("⚠️ Google OAuth credentials not found in .env file. Skipping Passport configuration.");
-  console.warn("   - Google login will not be available.");
+  console.log("✅ Passport configured.");
+} catch (error) {
+  console.warn("⚠️ Passport configuration failed:", error.message);
+  console.warn("   - Authentication features will not be available.");
 }
 
 // Body parser middleware
@@ -188,6 +187,7 @@ app.get("/health", (req, res) => {
     // mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
   });
 });
+
 
 // Test endpoint for Deep Research
 app.get("/services/test", (req, res) => {
