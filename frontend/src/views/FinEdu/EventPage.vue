@@ -43,8 +43,8 @@
                 <button 
                     v-for="(category, index) in categories" 
                     :key="`category-${index}`" 
-                    :class="['category-pill', { active: selectedCategory === category.name }]"
-                    @click="filterByCategory(category.name)"
+                    :class="['category-pill', { active: selectedCategory === category.key }]"
+                    @click="filterByCategory(category.key)"
                 >
                     <span class="category-icon">{{ category.icon }}</span>
                     <span class="category-name">{{ category.name }}</span>
@@ -162,18 +162,44 @@ export default {
         filteredEvents() {
             let events = this.trendingEvents;
             
+            // Filter by selected category
+            if (this.selectedCategory) {
+                const categoryKeywords = {
+                    'Business': ['business', 'company', 'corporate', 'enterprise'],
+                    'Conference': ['conference', 'summit', 'event', 'meeting'],
+                    'Technology': ['tech', 'technology', 'digital', 'software', 'ai', 'artificial intelligence'],
+                    'Finance': ['finance', 'financial', 'money', 'banking', 'investment'],
+                    'Workshop': ['workshop', 'training', 'seminar', 'course'],
+                    'Webinars': ['webinar', 'online', 'virtual', 'livestream'],
+                    'Networking': ['networking', 'connect', 'meetup', 'community'],
+                    'Crypto': ['crypto', 'cryptocurrency', 'bitcoin', 'blockchain', 'ethereum']
+                };
+                
+                const keywords = categoryKeywords[this.selectedCategory] || [];
+                if (keywords.length > 0) {
+                    events = events.filter(event => {
+                        const text = `${event.title} ${event.text || ''}`.toLowerCase();
+                        return keywords.some(keyword => text.includes(keyword));
+                    });
+                }
+            }
+            
             // Filter by search query
-            if (this.searchQuery) {
+            if (this.searchQuery.trim()) {
+                const query = this.searchQuery.toLowerCase().trim();
                 events = events.filter(event =>
-                    event.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                    event.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    event.title?.toLowerCase().includes(query) ||
+                    event.text?.toLowerCase().includes(query) ||
+                    event.summary?.toLowerCase().includes(query)
                 );
             }
             
             // Filter by location
-            if (this.locationQuery) {
+            if (this.locationQuery.trim()) {
+                const location = this.locationQuery.toLowerCase().trim();
                 events = events.filter(event =>
-                    event.source_country?.toLowerCase().includes(this.locationQuery.toLowerCase())
+                    event.source_country?.toLowerCase().includes(location) ||
+                    event.authors?.[0]?.toLowerCase().includes(location)
                 );
             }
             
@@ -181,14 +207,14 @@ export default {
         },
         categories() {
             return [
-                { name: this.$t('eventHub.categories.business'), icon: '💼' },
-                { name: this.$t('eventHub.categories.conference'), icon: '🎤' },
-                { name: this.$t('eventHub.categories.technology'), icon: '💻' },
-                { name: this.$t('eventHub.categories.finance'), icon: '📊' },
-                { name: this.$t('eventHub.categories.workshop'), icon: '🛠️' },
-                { name: this.$t('eventHub.categories.webinars'), icon: '📹' },
-                { name: this.$t('eventHub.categories.networking'), icon: '🤝' },
-                { name: this.$t('eventHub.categories.crypto'), icon: '₿' }
+                { name: this.$t('eventHub.categories.business'), icon: '💼', key: 'Business' },
+                { name: this.$t('eventHub.categories.conference'), icon: '🎤', key: 'Conference' },
+                { name: this.$t('eventHub.categories.technology'), icon: '💻', key: 'Technology' },
+                { name: this.$t('eventHub.categories.finance'), icon: '📊', key: 'Finance' },
+                { name: this.$t('eventHub.categories.workshop'), icon: '🛠️', key: 'Workshop' },
+                { name: this.$t('eventHub.categories.webinars'), icon: '📹', key: 'Webinars' },
+                { name: this.$t('eventHub.categories.networking'), icon: '🤝', key: 'Networking' },
+                { name: this.$t('eventHub.categories.crypto'), icon: '₿', key: 'Crypto' }
             ];
         },
         trendingCities() {
@@ -209,12 +235,17 @@ export default {
         toggleMapView() {
             this.showMap = !this.showMap;
         },
-        filterByCategory(categoryName) {
-            this.selectedCategory = this.selectedCategory === categoryName ? null : categoryName;
-            // TODO: Implement category filtering when backend supports it
+        filterByCategory(categoryKey) {
+            // Toggle category selection (click again to deselect)
+            this.selectedCategory = this.selectedCategory === categoryKey ? null : categoryKey;
         },
         filterByCity(cityName) {
             this.locationQuery = cityName;
+        },
+        containsChinese(text) {
+            // Check if text contains Chinese, Japanese, or Korean characters
+            const cjkRegex = /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF]/;
+            return cjkRegex.test(text);
         },
         formatDate(date) {
             if (!date) return '';
@@ -268,11 +299,18 @@ export default {
                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
                 const dateString = thirtyDaysAgo.toISOString().split('T')[0];
                 
+                // Use specific finance-related keywords to get relevant events
                 const response = await axios.get(
-                    `https://api.worldnewsapi.com/search-news?country=us&language=en&categories=business,technology&earliest-publish-date=${dateString}&number=8&api-key=${apiKey}`
+                    `https://api.worldnewsapi.com/search-news?text=finance OR fintech OR investment OR stock OR banking OR cryptocurrency OR trading OR economy OR market&language=en&source-countries=us,gb&earliest-publish-date=${dateString}&sort=publish-time&sort-direction=DESC&number=20&api-key=${apiKey}`
                 );
                 if (response.data.news) {
-                    this.trendingEvents = response.data.news.filter(article => article.image);
+                    // Filter for articles with images and English language
+                    this.trendingEvents = response.data.news.filter(article => 
+                        article.image && 
+                        article.language === 'en' &&
+                        article.title && 
+                        !this.containsChinese(article.title)
+                    );
                     
                     // Cache data
                     sessionStorage.setItem('eventHeadlines', JSON.stringify(this.trendingEvents));
