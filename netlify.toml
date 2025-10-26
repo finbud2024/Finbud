@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && npm run netlify:build"
+  command = "git config --global url.\"https://github.com/\".insteadOf \"ssh://git@github.com/\" && yarn cache clean && yarn install && yarn netlify:build"
   publish = "frontend/dist"
   functions = "backend/functions"
 
@@ -7,14 +7,16 @@
   port = 8888
   functions = "backend/functions"
   framework = "#auto"
-  command = "npm run client"
+  command = "yarn client"
 
 [functions]
   node_bundler = "esbuild"
   included_files = ["backend/**/*"]
   
 [build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS = "--legacy-peer-deps"
-  NODE_OPTIONS = "--no-warnings"
+  NODE_VERSION = "18"
+  YARN_VERSION = "1.22.22"
+  YARN_FLAGS = "--network-timeout 600000 --ignore-engines"
+  YARN_CACHE_FOLDER = ".netlify/cache/yarn"
+  NODE_OPTIONS = "--experimental-modules"
 

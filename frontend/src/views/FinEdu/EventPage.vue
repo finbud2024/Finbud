@@ -3,57 +3,65 @@
         <!-- Loading overlay -->
         <div v-if="loading" class="loading-overlay">
             <div class="loading-spinner"></div>
-            <p class="loading-text">Đang tải dữ liệu sự kiện...</p>
+            <p class="loading-text">{{ $t('eventHub.loadingEvents') }}</p>
         </div>
 
-        <nav class="w-full p-4 bg-white shadow-sm" data-aos="fade-left">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="event-navbar relative w-full md:w-1/2">
+        <!-- Hero Section - Events.com Style -->
+        <div class="hero-section" data-aos="fade-down">
+            <div class="hero-content">
+                <h1 class="hero-title">{{ $t('eventHub.heroTitle') }}</h1>
+                <p class="hero-subtitle">{{ $t('eventHub.heroSubtitle') }}</p>
+                
+                <!-- Enhanced Search Bar -->
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="search-icon" />
                         <input 
                             type="text" 
                             v-model="searchQuery" 
-                            :placeholder="isMobile ? '' : $t('eventHub.searchPlaceholder')" 
-                            class="search-bar w-full"
-                            @focus="searchExpanded = true"
-                            @blur="searchExpanded = false"
-                        />
-                        <font-awesome-icon 
-                            icon="fa-solid fa-magnifying-glass" 
-                            class="search-icon"
+                            :placeholder="$t('eventHub.searchPlaceholder')" 
+                            class="hero-search-bar"
                         />
                     </div>
-
-                <div class="event-navbar nav-btn">
-                    <div class="event-btn">
-                        <div class="round">
-                            <font-awesome-icon icon="fa-solid fa-location-dot" class="btn-icon" />
-                        </div>
-                        <p v-if="!isMobile">{{ $t('eventHub.exploreNearby') }}</p>
-                    </div>
-                    <div class="event-btn">
-                        <div class="round-star">
-                            <font-awesome-icon icon="fa-regular fa-star" class="btn-icon" />
-                        </div>
-                        <p v-if="!isMobile">{{ $t('eventHub.saved') }}</p>
-                    </div>
-                    <div class="event-btn">
-                        <font-awesome-icon icon="fa-regular fa-bell" class="btn-icon" />
-                        <p v-if="!isMobile">{{ $t('eventHub.allEvents') }}</p>
+                    <div class="location-input-wrapper">
+                        <font-awesome-icon icon="fa-solid fa-location-dot" class="location-icon" />
+                        <input 
+                            type="text" 
+                            v-model="locationQuery" 
+                            :placeholder="$t('eventHub.locationPlaceholder')" 
+                            class="location-search-bar"
+                        />
                     </div>
                 </div>
+                
+                <p class="event-count">{{ $t('eventHub.discoverEvents', { count: trendingEvents.length }) }}</p>
             </div>
-        </nav>
-        <div class="banner">
-            <div>
-                <div class="banner-content">
-                    <h1 class="main-heading">{{ $t('eventHub.dontMiss') }}</h1>
-                    <h2 class="sub-heading">{{ $t('eventHub.finDiscover') }}</h2>
-                </div>
-            </div>
-            <img src="https://media.istockphoto.com/id/1529811813/photo/team-building-asian-workshop-participants-in-small-group-discussion-brainstorming-during.jpg?s=612x612&w=0&k=20&c=20R95Z0NkiQJO2EwWGKivBUEwtdAYJrtclReELgoVsw=" alt="">
         </div>
-        <!-- Lazy load EventMap sau khi data đã sẵn sàng -->
-        <div v-if="!loading" class="event-map-section">
+        <!-- Categories Section - Horizontal Scrollable Pills -->
+        <div class="categories-section" data-aos="fade-right">
+            <div class="categories-scroll">
+                <button 
+                    v-for="(category, index) in categories" 
+                    :key="`category-${index}`" 
+                    :class="['category-pill', { active: selectedCategory === category.name }]"
+                    @click="filterByCategory(category.name)"
+                >
+                    <span class="category-icon">{{ category.icon }}</span>
+                    <span class="category-name">{{ category.name }}</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Map Toggle Button -->
+        <div class="view-controls" data-aos="fade-up">
+            <button @click="toggleMapView" class="map-toggle-btn">
+                <font-awesome-icon :icon="showMap ? 'fa-solid fa-list' : 'fa-solid fa-map'" />
+                <span>{{ showMap ? $t('eventHub.showList') : $t('eventHub.showMap') }}</span>
+            </button>
+        </div>
+
+        <!-- Map View (Toggleable, Default Hidden) -->
+        <div v-if="!loading && showMap" class="event-map-section" data-aos="fade-in">
             <EventMap 
                 v-if="trendingEvents.length > 0" 
                 :key="'event-map-' + trendingEvents.length"
@@ -61,195 +69,174 @@
             />
             <div v-else-if="mapError" class="map-error-fallback">
                 <div class="error-content">
-                    <h3>🗺️ Map Service Unavailable</h3>
+                    <h3>🗺️ {{ $t('eventHub.mapUnavailable') }}</h3>
                     <p>{{ mapError }}</p>
-                    <p>You can still browse events below.</p>
+                    <p>{{ $t('eventHub.browseBelow') }}</p>
                 </div>
             </div>
         </div>
-        <div class="event-category" data-aos="fade-right">
-            <h3 class="text-2xl md:text-3xl text-center">{{ $t('eventHub.eventCategories') }}</h3>
-            <div class="event-category-bg grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div v-for="(category, index) in categories" :key="`category-${index}`" class="category-btn">
-                    <img :src="category.image" :alt="category.name" class="category-img" />
-                    <p>{{ category.name }}</p>
+        <!-- Featured Events Grid - Events.com Style -->
+        <section class="events-section" data-aos="fade-up">
+            <!-- Show error message if no events loaded -->
+            <div v-if="!loading && filteredEvents.length === 0" class="no-events-message">
+                <div class="error-content">
+                    <h3>📰 {{ $t('eventHub.noEventsTitle') }}</h3>
+                    <p>{{ $t('eventHub.noEventsDescription') }}</p>
                 </div>
             </div>
-        </div>
-        <div class="rounded-xl md:bg-white md:p-4" data-aos="fade-right">
-            <section class="events-section">
-                <!-- Show error message if no events loaded -->
-                <div v-if="!loading && trendingEvents.length === 0" class="no-events-message">
-                    <div class="error-content">
-                        <h3>📰 Unable to Load Latest Events</h3>
-                        <p>We're having trouble fetching the latest financial news and events.</p>
-                        <p>Please check back later or contact support if this issue persists.</p>
-                    </div>
-                </div>
-                
-                <div v-else class="content-wrapper flex flex-col md:flex-row">
-                    <div class="left-div w-full md:w-1/4 mb-6 md:mb-0">
-                        <h2 class="trending-title">{{ $t('eventHub.trending') }}</h2>
-                        <div v-for="(event, index) in topTrendingEvents" :key="`trending-${index}-${event.title}`" class="event-item">
-                            <a :href="event.url" class="event-link">
-                                <span class="event-number">{{ index + 1 }}. {{ event.title }}</span>
-                            </a>
-                            <p class="event-description">{{ cropSummary(event.summary) }}</p>
-                        </div>
-                    </div>
-
-                    <div class="right-div w-full md:w-3/4">
-                        <div class="swiper-container">
-                            <swiper 
-                                :key="`swiper-${remainingEvents.length}`"
-                                :slidesPerView="1" 
-                                :spaceBetween="0" 
-                                :pagination="false" 
-                                :navigation="{
-                                    nextEl: '.next-button',
-                                    prevEl: '.prev-button'
-                                }" 
-                                :modules="modules"
-                                :autoplay="{
-                                    delay: 3000,
-                                    disableOnInteraction: false
-                                }"
-                                class="swiper"
-                            >
-                                <swiper-slide v-for="(event, index) in remainingEvents" :key="`slide-${index}-${event.title}`" class="swiper-slide">
-                                    <a :href="event.url" target="_blank" class="slider-link">
-                                        <div class="slider-content">
-                                            <div class="slider-image-container h-48 md:h-96">
-                                                <img :src="event.image" alt="Event image" class="slider-image" />
-                                            </div>
-                                            <div class="slider-info">
-                                                <h3 class="slider-title text-lg md:text-xl">{{ event.title }}</h3>
-                                                <p class="slider-meta">{{ event.author }}</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </swiper-slide>
-                            </swiper>
-                            <div class="swiper-nav-buttons">
-                                <button class="nav-button prev-button">
-                                    <i class="fas fa-angle-left nav-icon"></i>
-                                </button>
-                                <button class="nav-button next-button">
-                                    <i class="fas fa-angle-right nav-icon"></i>
-                                </button>
+            
+            <!-- Event Cards Grid -->
+            <div v-else class="events-grid">
+                <div 
+                    v-for="(event, index) in filteredEvents" 
+                    :key="`event-${index}-${event.title}`" 
+                    class="event-card"
+                    data-aos="fade-up"
+                    :data-aos-delay="index * 50"
+                >
+                    <a :href="event.url" target="_blank" class="event-card-link">
+                        <div class="event-image-container">
+                            <img :src="event.image" :alt="event.title" class="event-image" />
+                            <div class="event-date-badge">
+                                {{ formatEventDate(event.publish_date) }}
                             </div>
                         </div>
-
-                        <div class="bottom-articles grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div v-for="(event, index) in remainingEvents.slice(0, 3)" :key="`article-${index}-${event.title}`" class="article-card">
-                                <a :href="event.url" class="article-link">
-                                    <img :src="event.image" alt="Event image" class="article-image" />
-                                    <p class="article-title">{{ event.title }}</p>
-                                </a>
+                        <div class="event-info">
+                            <h3 class="event-title">{{ event.title }}</h3>
+                            <p class="event-description">{{ cropSummary(event.text || event.summary) }}</p>
+                            <div class="event-meta">
+                                <span class="event-source">
+                                    <font-awesome-icon icon="fa-solid fa-newspaper" />
+                                    {{ event.authors?.[0] || event.source_country || 'Financial News' }}
+                                </span>
                             </div>
+                            <button class="event-learn-more">{{ $t('eventHub.learnMore') }} →</button>
                         </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-        <div class="articles-section" data-aos="fade-up" v-if="articles && articles.length > 0">
-            <h3 class="text-2xl md:text-3xl mb-6 articles-title">{{ $t('eventHub.latestArticles') }}</h3>
-            <div class="articles-grid">
-                <div v-for="(article, index) in articles" :key="`news-article-${index}-${article.title}`" class="article-card" data-aos="fade-up">
-                    <div class="article-image-container">
-                        <img :src="article.image" :alt="article.title" class="article-image" />
-        </div>
-                    <div class="article-content">
-                        <div class="article-meta">
-                            <span class="article-date">{{ formatDate(article.date) }}</span>
-                            <span class="article-category">{{ article.category }}</span>
-                        </div>
-                        <h4 class="article-title">{{ article.title }}</h4>
-                        <p class="article-excerpt">{{ article.excerpt }}</p>
-                        <a :href="article.url" target="_blank" class="read-more-link">{{ $t('eventHub.readMore') }} →</a>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
+        </section>
+        
+        <!-- Trending Cities Section (Replaces Sidebar) -->
+        <section class="trending-cities-section" data-aos="fade-up" v-if="trendingEvents.length > 0">
+            <h3 class="section-title">{{ $t('eventHub.trendingCities') }}</h3>
+            <div class="cities-grid">
+                <div 
+                    v-for="(city, index) in trendingCities" 
+                    :key="`city-${index}`" 
+                    class="city-card"
+                    @click="filterByCity(city.name)"
+                >
+                    <span class="city-name">{{ city.name }}</span>
+                    <span class="city-count">{{ city.count }} {{ $t('eventHub.events') }}</span>
+                </div>
+            </div>
+        </section>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import { Keyboard, Pagination, Navigation, Autoplay } from "swiper/modules";
 import { gptNewsService } from '@/services/gptServices';
 import EventMap from '@/components/FinEdu/Event/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import Articles from '@/components/Articles.vue'; // Adjust the path if necessary
-// import api from "@/utils/api";
 
 export default {
     name: 'EventHub',
     components: {
-        Swiper,
-        SwiperSlide,
         EventMap,
-        Articles,
     },
     data() {
         return {
-            modules: [Keyboard, Pagination, Navigation, Autoplay],
             trendingEvents: [],
-            allEvents: [],
             loading: false,
             searchQuery: '',
-            searchExpanded: false,
-            isMobile: false,
+            locationQuery: '',
+            selectedCategory: null,
+            showMap: false,
             mapError: null,
         };
     },
     computed: {
-        topTrendingEvents() {
-            return this.trendingEvents.slice(0, 3);
-        },
-        remainingEvents() {
-            return this.trendingEvents.slice(3, 6);
+        filteredEvents() {
+            let events = this.trendingEvents;
+            
+            // Filter by search query
+            if (this.searchQuery) {
+                events = events.filter(event =>
+                    event.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                    event.text?.toLowerCase().includes(this.searchQuery.toLowerCase())
+                );
+            }
+            
+            // Filter by location
+            if (this.locationQuery) {
+                events = events.filter(event =>
+                    event.source_country?.toLowerCase().includes(this.locationQuery.toLowerCase())
+                );
+            }
+            
+            return events;
         },
         categories() {
-            // Use try-catch to handle potential require() failures in production
-            const getImage = (imageName) => {
-                try {
-                    return require(`@/assets/${imageName}`);
-                } catch (error) {
-                    console.warn(`Failed to load image: ${imageName}`, error);
-                    // Return a placeholder data URL as fallback
-                    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E';
-                }
-            };
-            
             return [
-                { name: this.$t('eventHub.categories.conference'), image: getImage('career fair.png') },
-                { name: this.$t('eventHub.categories.workshop'), image: getImage('workshop.png') },
-                { name: this.$t('eventHub.categories.webinars'), image: getImage('career fair.png') },
-                { name: this.$t('eventHub.categories.networking'), image: getImage('workshop.png') },
-                { name: this.$t('eventHub.categories.careerFairs'), image: getImage('career fair.png') }
+                { name: this.$t('eventHub.categories.business'), icon: '💼' },
+                { name: this.$t('eventHub.categories.conference'), icon: '🎤' },
+                { name: this.$t('eventHub.categories.technology'), icon: '💻' },
+                { name: this.$t('eventHub.categories.finance'), icon: '📊' },
+                { name: this.$t('eventHub.categories.workshop'), icon: '🛠️' },
+                { name: this.$t('eventHub.categories.webinars'), icon: '📹' },
+                { name: this.$t('eventHub.categories.networking'), icon: '🤝' },
+                { name: this.$t('eventHub.categories.crypto'), icon: '₿' }
             ];
+        },
+        trendingCities() {
+            // Extract unique cities from events
+            const cityMap = {};
+            this.trendingEvents.forEach(event => {
+                const city = event.source_country || 'United States';
+                cityMap[city] = (cityMap[city] || 0) + 1;
+            });
+            
+            return Object.entries(cityMap)
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 6);
         }
     },
     methods: {
-        checkMobile() {
-            this.isMobile = window.innerWidth <= 768;
+        toggleMapView() {
+            this.showMap = !this.showMap;
+        },
+        filterByCategory(categoryName) {
+            this.selectedCategory = this.selectedCategory === categoryName ? null : categoryName;
+            // TODO: Implement category filtering when backend supports it
+        },
+        filterByCity(cityName) {
+            this.locationQuery = cityName;
         },
         formatDate(date) {
             if (!date) return '';
             try {
-                return new Date(date).toLocaleDateString('vi-VN', {
+                return new Date(date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                 });
             } catch (error) {
                 return date;
+            }
+        },
+        formatEventDate(date) {
+            if (!date) return '';
+            try {
+                const d = new Date(date);
+                const month = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+                const day = d.getDate();
+                return `${month} ${day}`;
+            } catch (error) {
+                return '';
             }
         },
         async fetchHeadlines() {
@@ -322,52 +309,36 @@ export default {
                 console.error("GPT Service Error:", error);
             }
         },
-        openEventUrl(url) {
-            window.open(url, '_blank');
-        },
         cropSummary(summary) {
             if (!summary) return "";
-            const maxLength = 106; // Length of the reference summary
+            const maxLength = 150;
             return summary.length > maxLength ? summary.substring(0, maxLength) + "..." : summary;
-        },
-        switchLanguage(lang) {
-        this.$i18n.locale = lang;
         },
         handleMapError(error) {
             this.mapError = error;
         }
     },
     mounted() {
-        // Khởi tạo mobile check trước
-        this.checkMobile();
-        window.addEventListener('resize', this.checkMobile);
-        
-        // Delay AOS init để không block UI
+        // Initialize AOS
         this.$nextTick(() => {
             AOS.init({ duration: 1000, easing: "ease-out" });
         });
         
-        // Fetch data với timeout để tránh lag
+        // Fetch data
         setTimeout(() => {
             this.fetchHeadlines();
         }, 100);
     },
     beforeUnmount() {
-        // Cải thiện cleanup để tránh lỗi vnode
-        window.removeEventListener('resize', this.checkMobile);
-        
-        // Reset data để tránh reference issues
+        // Reset data
         this.trendingEvents = [];
-        this.allEvents = [];
-        this.articles = [];
         
-        // Clear cache nếu cần
+        // Clear cache if leaving page
         if (this.$route.name !== 'EventHub') {
             sessionStorage.removeItem('eventHeadlines');
             sessionStorage.removeItem('eventHeadlinesTime');
         }
     },
-    // Thêm beforeDestroy cho Vue 2 compatibility
     beforeDestroy() {
         this.beforeUnmount();
     }
@@ -375,18 +346,16 @@ export default {
 </script>
 
 <style scoped>
-@import "swiper/swiper-bundle.css";
-
 .EventHubContainer {
     min-height: 100vh;
-    background: var(--bg-primary);
+    background: #f8f9fa;
     padding-bottom: 48px;
     position: relative;
     max-width: 100%;
     overflow-x: hidden;
 }
 
-/* Loading overlay styles */
+/* Loading overlay */
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -422,319 +391,213 @@ export default {
     to { transform: rotate(360deg); }
 }
 
-.event-navbar {
-    display: flex;
-    align-items: center;
-    gap: 24px;
+/* Hero Section - Events.com Style */
+.hero-section {
+    background: white;
+    padding: 80px 24px 60px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.search-bar {
-    padding: 14px 18px 14px 48px;
-    border-radius: 16px;
-    border: 2px solid var(--border-color);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 15px;
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.search-container {
+    display: flex;
+    gap: 16px;
+    max-width: 700px;
+    margin: 0 auto 24px;
+    flex-wrap: wrap;
+}
+
+.search-input-wrapper,
+.location-input-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.hero-search-bar,
+.location-search-bar {
+    width: 100%;
+    padding: 16px 16px 16px 48px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 16px;
     transition: all 0.3s ease;
 }
 
-.search-bar:focus {
-    border-color: var(--link-color);
-    box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
+.hero-search-bar:focus,
+.location-search-bar:focus {
+    border-color: #007bff;
     outline: none;
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
 }
 
-.search-icon {
+.search-icon,
+.location-icon {
     position: absolute;
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--text-secondary);
+    color: #888;
     font-size: 18px;
 }
 
-.nav-btn {
-    display: flex;
-    gap: 24px;
+.event-count {
+    font-size: 16px;
+    color: #888;
 }
 
-.event-btn {
+/* Categories Section - Horizontal Pills */
+.categories-section {
+    background: white;
+    padding: 24px;
+    border-bottom: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+
+.categories-scroll {
+    display: flex;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.categories-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.categories-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.categories-scroll::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.category-pill {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.event-btn:hover {
-    background: var(--border-color);
-}
-
-.round, .round-star {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.round {
-    background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
-}
-
-.round-star {
-    background: linear-gradient(45deg, #FFD93D, #FFE869);
-}
-
-.btn-icon {
-    font-size: 16px;
-    color: white;
-}
-
-.banner {
-    position: relative;
-    height: 400px;
-    margin: 32px 0;
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border: 2px solid transparent;
     border-radius: 24px;
-    overflow: hidden;
-}
-
-.banner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.7);
-}
-
-.banner-content {
-    position: absolute;
-    top: 50%;
-    left: 48px;
-    transform: translateY(-50%);
-    color: white;
-    z-index: 1;
-}
-
-.main-heading {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.sub-heading {
-    font-size: 24px;
+    font-size: 15px;
     font-weight: 500;
-    opacity: 0.9;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-.event-category {
-    margin: 48px 0;
-    }
-
-.event-category h3 {
-    margin-bottom: 32px;
-    font-weight: 600;
-    color: var(--text-primary);
-    }
-
-    .event-category-bg {
-    padding: 32px;
-    background: var(--card-bg);
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-    }
-
-    .category-btn {
-    display: flex; 
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 24px;
-    border-radius: 16px;
-    cursor: pointer; 
+    color: #333;
+    cursor: pointer;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
-.category-btn:hover {
-    transform: translateY(-4px);
-    background: var(--border-color);
+.category-pill:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
 }
 
-.category-img {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
-    object-fit: cover; 
-}
-
-.events-section {
-    margin: 48px 0;
-    padding: 32px;
-    background: var(--card-bg);
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-}
-
-.trending-title {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: var(--text-primary);
-}
-
-.event-item {
-    padding: 16px;
-    border-radius: 12px;
-    margin-bottom: 16px;
-    transition: all 0.2s ease;
-}
-
-.event-item:hover {
-    background: var(--border-color);
-}
-
-.event-number {
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.event-description {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-top: 8px;
-}
-
-.slider-content {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-.slider-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.slider-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 24px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+.category-pill.active {
+    background: #007bff;
     color: white;
+    border-color: #0056b3;
 }
 
-.slider-title {
-    font-weight: 600;
-    margin-bottom: 8px;
+.category-icon {
+    font-size: 18px;
 }
 
-.slider-meta {
-    font-size: 14px;
-    opacity: 0.8;
+.category-name {
+    font-weight: 500;
 }
 
-.nav-button {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: white;
-    border: none;
-    cursor: pointer;
+/* View Controls */
+.view-controls {
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.map-toggle-btn {
     display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    gap: 8px;
+    padding: 12px 24px;
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 12px;
+    color: #007bff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.nav-button:hover {
-    transform: scale(1.1);
+.map-toggle-btn:hover {
+    background: #007bff;
+    color: white;
 }
 
-.nav-icon {
-    font-size: 24px;
-    color: var(--text-primary);
+/* Events Section */
+.events-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
 }
 
-.bottom-articles {
-    margin-top: 32px;
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
 }
 
-.article-card {
+.event-card {
+    background: white;
     border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
 }
 
-.article-card:hover {
-    transform: translateY(-4px);
+.event-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.article-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+.event-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
-.article-title {
-    padding: 16px;
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.articles-section {
-    margin: 4rem 0;
-    padding: 2rem;
-    background: var(--background-color);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color);
-}
-
-.articles-title {
-    font-size: 2rem;
-    color: var(--text-primary);
-    font-weight: 700;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.articles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.article-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
-    border: 1px solid var(--border-color);
-}
-
-.article-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-}
-
-.article-image-container {
+.event-image-container {
     position: relative;
     padding-top: 60%;
     overflow: hidden;
 }
 
-.article-image {
+.event-image {
     position: absolute;
     top: 0;
     left: 0;
@@ -744,40 +607,43 @@ export default {
     transition: transform 0.3s ease;
 }
 
-.article-card:hover .article-image {
+.event-card:hover .event-image {
     transform: scale(1.05);
 }
 
-.article-content {
-    padding: 1.5rem;
+.event-date-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.article-meta {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+.event-info {
+    padding: 20px;
 }
 
-.article-date, .article-category {
-    padding: 0.25rem 0.75rem;
-    background: var(--surface-color);
-    border-radius: var(--radius-sm);
-}
-
-.article-title {
-    font-size: 1.25rem;
+.event-title {
+    font-size: 18px;
     font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 1rem;
+    color: #1a1a1a;
+    margin-bottom: 12px;
     line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.article-excerpt {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
+.event-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
     line-height: 1.6;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -785,114 +651,104 @@ export default {
     overflow: hidden;
 }
 
-.read-more-link {
+.event-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #888;
+}
+
+.event-source {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.event-learn-more {
     display: inline-block;
-    color: var(--link-color);
-    font-weight: 500;
-    text-decoration: none;
+    color: #007bff;
+    font-weight: 600;
+    font-size: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
     transition: color 0.2s ease;
-    }
-    
-.read-more-link:hover {
-    color: var(--hover-bg);
 }
 
-@media (max-width: 768px) {
-    .banner {
-        height: 300px;
-        margin: 16px 0;
-    }
-
-    .banner-content {
-        left: 24px;
-        padding-right: 24px;
-    }
-
-    .main-heading {
-        font-size: 32px;
-    }
-
-    .sub-heading {
-        font-size: 18px;
-    }
-
-    .event-category-bg {
-        padding: 16px;
-    }
-
-    .category-btn {
-        padding: 16px;
-    }
-
-    .category-img {
-        width: 48px;
-        height: 48px;
-    }
-
-    .events-section {
-        padding: 20px;
-        margin: 24px 0;
-    }
-
-    .nav-button {
-        width: 40px;
-        height: 40px;
-    }
-
-    .articles-section {
-        padding: 1rem;
-        margin: 2rem 0;
-    }
-
-    .articles-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .article-title {
-        font-size: 1.125rem;
-    }
-
-    /* Fix layout break khi sidebar collapse */
-    .EventHubContainer {
-        width: 100%;
-        box-sizing: border-box;
-        transition: all 0.3s ease;
-    }
+.event-learn-more:hover {
+    color: #0056b3;
 }
 
-/* Responsive cho desktop khi sidebar collapse */
-@media (min-width: 769px) {
-    .EventHubContainer {
-        padding-left: 1rem;
-        padding-right: 1rem;
-        box-sizing: border-box;
-        transition: all 0.3s ease;
-    }
-    
-    .banner, 
-    .event-category, 
-    .events-section, 
-    .articles-section {
-        margin-left: auto;
-        margin-right: auto;
-        max-width: calc(100vw - 2rem);
-        box-sizing: border-box;
-    }
+/* Trending Cities Section */
+.trending-cities-section {
+    max-width: 1200px;
+    margin: 48px auto;
+    padding: 0 24px;
 }
 
-/* Map error fallback styles */
-.event-map-section {
-    margin: 2rem 0;
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 24px;
 }
 
-.map-error-fallback {
-    background: #f8f9fa;
-    border: 2px dashed #dee2e6;
+.cities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.city-card {
+    background: white;
+    padding: 20px;
     border-radius: 12px;
-    padding: 3rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+}
+
+.city-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    background: #f8f9fa;
+}
+
+.city-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.city-count {
+    font-size: 14px;
+    color: #007bff;
+    font-weight: 500;
+}
+
+/* No Events Message */
+.no-events-message {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    padding: 3rem 2rem;
     margin: 2rem 0;
+}
+
+.no-events-message .error-content {
+    max-width: 600px;
+    text-align: center;
 }
 
 .error-content h3 {
@@ -907,19 +763,112 @@ export default {
     font-size: 1rem;
 }
 
-.no-events-message {
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Map Section */
+.event-map-section {
+    margin: 2rem 0;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 24px;
+}
+
+.map-error-fallback {
     background: #f8f9fa;
+    border: 2px dashed #dee2e6;
     border-radius: 12px;
-    padding: 3rem 2rem;
+    padding: 3rem;
+    text-align: center;
     margin: 2rem 0;
 }
 
-.no-events-message .error-content {
-    max-width: 600px;
-    text-align: center;
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 48px 16px 40px;
+    }
+
+    .hero-title {
+        font-size: 32px;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+    }
+
+    .search-container {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .search-input-wrapper,
+    .location-input-wrapper {
+        min-width: 100%;
+    }
+
+    .categories-section {
+        padding: 16px;
+    }
+
+    .category-pill {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .view-controls {
+        padding: 0 16px;
+    }
+
+    .events-section {
+        padding: 32px 16px;
+    }
+
+    .events-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .trending-cities-section {
+        padding: 0 16px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+
+    .cities-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .city-card {
+        padding: 16px;
+    }
+
+    .city-name {
+        font-size: 16px;
+    }
+
+    .EventHubContainer {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* Tablet Responsive */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cities-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+    .events-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 </style>
