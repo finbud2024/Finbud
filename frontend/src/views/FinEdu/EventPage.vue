@@ -218,11 +218,40 @@ export default {
             ];
         },
         trendingCities() {
+            // Country code to full name mapping
+            const countryNames = {
+                'us': 'United States',
+                'gb': 'United Kingdom',
+                'in': 'India',
+                'ca': 'Canada',
+                'au': 'Australia',
+                'de': 'Germany',
+                'fr': 'France',
+                'jp': 'Japan',
+                'cn': 'China',
+                'br': 'Brazil',
+                'mx': 'Mexico',
+                'es': 'Spain',
+                'it': 'Italy',
+                'nl': 'Netherlands',
+                'se': 'Sweden',
+                'ch': 'Switzerland',
+                'sg': 'Singapore',
+                'hk': 'Hong Kong',
+                'ae': 'UAE',
+                'za': 'South Africa',
+                'ng': 'Nigeria',
+                'gh': 'Ghana',
+                'ke': 'Kenya',
+                'eg': 'Egypt'
+            };
+            
             // Extract unique cities from events
             const cityMap = {};
             this.trendingEvents.forEach(event => {
-                const city = event.source_country || 'United States';
-                cityMap[city] = (cityMap[city] || 0) + 1;
+                const countryCode = (event.source_country || 'us').toLowerCase();
+                const countryName = countryNames[countryCode] || countryCode.toUpperCase();
+                cityMap[countryName] = (cityMap[countryName] || 0) + 1;
             });
             
             return Object.entries(cityMap)
@@ -304,13 +333,18 @@ export default {
                     `https://api.worldnewsapi.com/search-news?text=finance&language=en&earliest-publish-date=${dateString}&number=20&api-key=${apiKey}`
                 );
                 if (response.data.news) {
-                    // Filter for articles with images and English language
-                    this.trendingEvents = response.data.news.filter(article => 
-                        article.image && 
-                        article.language === 'en' &&
-                        article.title && 
-                        !this.containsChinese(article.title)
-                    );
+                    // Filter for English language only, add fallback images
+                    this.trendingEvents = response.data.news
+                        .filter(article => 
+                            article.language === 'en' &&
+                            article.title && 
+                            !this.containsChinese(article.title)
+                        )
+                        .map(article => ({
+                            ...article,
+                            // Add fallback image if none exists
+                            image: article.image || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop'
+                        }));
                     
                     // Cache data
                     sessionStorage.setItem('eventHeadlines', JSON.stringify(this.trendingEvents));
