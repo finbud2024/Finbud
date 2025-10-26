@@ -370,18 +370,35 @@ export default {
                         'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&h=600&fit=crop'  // Investment planning
                     ];
                     
-                    // Filter for English language only, add fallback images
-                    this.trendingEvents = response.data.news
+                    // Filter for English language only
+                    const filteredArticles = response.data.news
                         .filter(article => 
                             article.language === 'en' &&
                             article.title && 
                             !this.containsChinese(article.title)
-                        )
-                        .map((article, index) => ({
+                        );
+                    
+                    // Track used images to detect duplicates
+                    const usedImages = new Set();
+                    let fallbackIndex = 0;
+                    
+                    // Map articles and replace duplicate/missing images
+                    this.trendingEvents = filteredArticles.map((article, index) => {
+                        let imageUrl = article.image;
+                        
+                        // If no image or duplicate image detected, use fallback
+                        if (!imageUrl || usedImages.has(imageUrl)) {
+                            imageUrl = fallbackImages[fallbackIndex % fallbackImages.length];
+                            fallbackIndex++;
+                        } else {
+                            usedImages.add(imageUrl);
+                        }
+                        
+                        return {
                             ...article,
-                            // Rotate through fallback images if article has no image or if image fails to load
-                            image: article.image || fallbackImages[index % fallbackImages.length]
-                        }));
+                            image: imageUrl
+                        };
+                    });
                     
                     // Cache data
                     sessionStorage.setItem('eventHeadlines', JSON.stringify(this.trendingEvents));
