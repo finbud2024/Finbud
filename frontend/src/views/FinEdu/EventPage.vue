@@ -286,7 +286,37 @@ export default {
             this.selectedCategory = this.selectedCategory === categoryKey ? null : categoryKey;
         },
         filterByCity(cityName) {
-            this.locationQuery = cityName;
+            // Map full country names back to codes for filtering
+            const countryNameToCode = {
+                'United States': 'us',
+                'United Kingdom': 'gb',
+                'India': 'in',
+                'Canada': 'ca',
+                'Australia': 'au',
+                'Germany': 'de',
+                'France': 'fr',
+                'Japan': 'jp',
+                'China': 'cn',
+                'Brazil': 'br',
+                'Mexico': 'mx',
+                'Spain': 'es',
+                'Italy': 'it',
+                'Netherlands': 'nl',
+                'Sweden': 'se',
+                'Switzerland': 'ch',
+                'Singapore': 'sg',
+                'Hong Kong': 'hk',
+                'UAE': 'ae',
+                'South Africa': 'za',
+                'Nigeria': 'ng',
+                'Ghana': 'gh',
+                'Kenya': 'ke',
+                'Egypt': 'eg'
+            };
+            
+            // Try to find the country code, otherwise use the name as-is
+            const countryCode = countryNameToCode[cityName] || cityName.toLowerCase();
+            this.locationQuery = countryCode;
         },
         containsChinese(text) {
             // Check if text contains Chinese, Japanese, or Korean characters
