@@ -96,7 +96,12 @@
                 >
                     <a :href="event.url" target="_blank" class="event-card-link">
                         <div class="event-image-container">
-                            <img :src="event.image" :alt="event.title" class="event-image" />
+                            <img 
+                                :src="event.image" 
+                                :alt="event.title" 
+                                class="event-image"
+                                @error="handleImageError($event, index)"
+                            />
                             <div class="event-date-badge">
                                 {{ formatEventDate(event.publish_date) }}
                             </div>
@@ -156,6 +161,18 @@ export default {
             selectedCategory: null,
             showMap: false,
             mapError: null,
+            fallbackImages: [
+                'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1560221328-12fe60f83ab8?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&h=600&fit=crop'
+            ],
         };
     },
     computed: {
@@ -276,6 +293,12 @@ export default {
             const cjkRegex = /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF]/;
             return cjkRegex.test(text);
         },
+        handleImageError(event, index) {
+            // Replace broken image with a fallback image
+            event.target.src = this.fallbackImages[index % this.fallbackImages.length];
+            // Prevent infinite loop if fallback also fails
+            event.target.onerror = null;
+        },
         formatDate(date) {
             if (!date) return '';
             try {
@@ -333,6 +356,20 @@ export default {
                     `https://api.worldnewsapi.com/search-news?text=finance&language=en&earliest-publish-date=${dateString}&number=20&api-key=${apiKey}`
                 );
                 if (response.data.news) {
+                    // Fallback images for events without images (finance/business themed)
+                    const fallbackImages = [
+                        'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop', // Stock market charts
+                        'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop', // Business data analysis
+                        'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&h=600&fit=crop', // Cryptocurrency coins
+                        'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&h=600&fit=crop', // Trading desk
+                        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop', // Data charts on laptop
+                        'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=600&fit=crop', // Math and finance
+                        'https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=800&h=600&fit=crop', // Stock exchange board
+                        'https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9?w=800&h=600&fit=crop', // Office building finance
+                        'https://images.unsplash.com/photo-1560221328-12fe60f83ab8?w=800&h=600&fit=crop', // Business meeting
+                        'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&h=600&fit=crop'  // Investment planning
+                    ];
+                    
                     // Filter for English language only, add fallback images
                     this.trendingEvents = response.data.news
                         .filter(article => 
@@ -340,10 +377,10 @@ export default {
                             article.title && 
                             !this.containsChinese(article.title)
                         )
-                        .map(article => ({
+                        .map((article, index) => ({
                             ...article,
-                            // Add fallback image if none exists
-                            image: article.image || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop'
+                            // Rotate through fallback images if article has no image or if image fails to load
+                            image: article.image || fallbackImages[index % fallbackImages.length]
                         }));
                     
                     // Cache data
