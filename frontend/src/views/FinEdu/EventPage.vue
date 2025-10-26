@@ -328,8 +328,8 @@ export default {
             const cacheTime = sessionStorage.getItem('eventHeadlinesTime');
             const now = Date.now();
             
-            // Cache 5 phút (300000ms)
-            if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) {
+            // Cache 30 seconds (30000ms) for testing - change back to 300000 for production
+            if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 30000) {
                 try {
                     this.trendingEvents = JSON.parse(cachedData);
                     this.loading = false;
@@ -381,15 +381,19 @@ export default {
                     // Track used images to detect duplicates
                     const usedImages = new Set();
                     let fallbackIndex = 0;
+                    let duplicatesReplaced = 0;
                     
                     // Map articles and replace duplicate/missing images
                     this.trendingEvents = filteredArticles.map((article, index) => {
                         let imageUrl = article.image;
+                        const originalUrl = imageUrl;
                         
                         // If no image or duplicate image detected, use fallback
                         if (!imageUrl || usedImages.has(imageUrl)) {
                             imageUrl = fallbackImages[fallbackIndex % fallbackImages.length];
                             fallbackIndex++;
+                            duplicatesReplaced++;
+                            console.log(`🔄 Duplicate detected for "${article.title.substring(0, 50)}..." - replaced with fallback`);
                         } else {
                             usedImages.add(imageUrl);
                         }
@@ -399,6 +403,8 @@ export default {
                             image: imageUrl
                         };
                     });
+                    
+                    console.log(`✅ Event images processed: ${this.trendingEvents.length} total, ${duplicatesReplaced} duplicates replaced`);
                     
                     // Cache data
                     sessionStorage.setItem('eventHeadlines', JSON.stringify(this.trendingEvents));
