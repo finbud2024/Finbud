@@ -299,9 +299,9 @@ export default {
                 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
                 const dateString = thirtyDaysAgo.toISOString().split('T')[0];
                 
-                // Use specific finance-related keywords to get relevant events
+                // Get finance and technology news
                 const response = await axios.get(
-                    `https://api.worldnewsapi.com/search-news?text=finance OR fintech OR investment OR stock OR banking OR cryptocurrency OR trading OR economy OR market&language=en&source-countries=us,gb&earliest-publish-date=${dateString}&sort=publish-time&sort-direction=DESC&number=20&api-key=${apiKey}`
+                    `https://api.worldnewsapi.com/search-news?text=finance&language=en&earliest-publish-date=${dateString}&number=20&api-key=${apiKey}`
                 );
                 if (response.data.news) {
                     // Filter for articles with images and English language
