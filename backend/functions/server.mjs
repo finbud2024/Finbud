@@ -146,23 +146,28 @@ app.set("deepResearchIo", deepResearchIo);
 
 
 if (!mongoURI) {
-  console.error("MONGO_URI is not defined in the environment variables");
-  process.exit(1);
+  console.warn("⚠️ MONGO_URI is not defined - MongoDB features will be disabled");
 }
 
 const connectToMongoDB = async () => {
+  if (!mongoURI) {
+    console.log("⚠️ Skipping MongoDB connection (no MONGO_URI configured)");
+    return Promise.resolve();
+  }
+  
   return new Promise((resolve, reject) => {
     mongoose
       .connect(mongoURI, {
         serverSelectionTimeoutMS: 5000, // 5 seconds timeout
       })
       .then(() => {
-        console.log("MongoDB connected");
+        console.log("✅ MongoDB connected");
         resolve();
       })
       .catch((err) => {
-        console.error("Error connecting to MongoDB:", err.message);
-        reject(err);
+        console.warn("⚠️ MongoDB connection failed:", err.message);
+        console.log("⚠️ Continuing without MongoDB - some features may be limited");
+        resolve(); // Resolve anyway to allow server to start
       });
   });
 };
@@ -241,18 +246,39 @@ if (
   process.env.NODE_ENV !== "production" &&
   process.env.NETLIFY_DEV !== "true"
 ) {
+  console.log("🚀 Starting backend server...");
+  console.log("NODE_ENV:", process.env.NODE_ENV);
+  console.log("NETLIFY_DEV:", process.env.NETLIFY_DEV);
   const PORT = process.env.PORT || 8889;
+  console.log("Connecting to MongoDB...");
   connectToMongoDB()
-    .then(() => loadCompanies())
+    .then(async () => {
+      console.log("✅ MongoDB connected successfully");
+      console.log("Loading companies...");
+      try {
+        await loadCompanies();
+        console.log("✅ Companies loaded");
+      } catch (err) {
+        console.warn("⚠️ Failed to load companies:", err.message);
+        console.log("⚠️ Continuing without companies data");
+      }
+    })
     .then(() => {
       httpServer.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-        console.log(`Socket.io server listening on port ${PORT}`);
+        console.log(`✅ Server running on port ${PORT}`);
+        console.log(`✅ Socket.io server listening on port ${PORT}`);
       });
     })
     .catch((err) => {
-      console.error("Failed to start server:", err);
+      console.error("❌ Failed to start server:", err);
+      console.error("❌ Error stack:", err.stack);
+      process.exit(1);
     });
+} else {
+  console.log("⚠️ Server not starting - Environment check failed:");
+  console.log("   NODE_ENV:", process.env.NODE_ENV);
+  console.log("   NETLIFY_DEV:", process.env.NETLIFY_DEV);
+  console.log("   Condition:", process.env.NODE_ENV !== "production", "&&", process.env.NETLIFY_DEV !== "true");
 }
 
 export { handler };

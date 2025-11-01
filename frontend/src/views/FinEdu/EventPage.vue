@@ -78,7 +78,16 @@
         </div>
         <div class="rounded-xl md:bg-white md:p-4" data-aos="fade-right">
             <section class="events-section">
-                <div class="content-wrapper flex flex-col md:flex-row">
+                <!-- Show error message if no events loaded -->
+                <div v-if="!loading && trendingEvents.length === 0" class="no-events-message">
+                    <div class="error-content">
+                        <h3>📰 Unable to Load Latest Events</h3>
+                        <p>We're having trouble fetching the latest financial news and events.</p>
+                        <p>Please check back later or contact support if this issue persists.</p>
+                    </div>
+                </div>
+                
+                <div v-else class="content-wrapper flex flex-col md:flex-row">
                     <div class="left-div w-full md:w-1/4 mb-6 md:mb-0">
                         <h2 class="trending-title">{{ $t('eventHub.trending') }}</h2>
                         <div v-for="(event, index) in topTrendingEvents" :key="`trending-${index}-${event.title}`" class="event-item">
@@ -207,12 +216,23 @@ export default {
             return this.trendingEvents.slice(3, 6);
         },
         categories() {
+            // Use try-catch to handle potential require() failures in production
+            const getImage = (imageName) => {
+                try {
+                    return require(`@/assets/${imageName}`);
+                } catch (error) {
+                    console.warn(`Failed to load image: ${imageName}`, error);
+                    // Return a placeholder data URL as fallback
+                    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E';
+                }
+            };
+            
             return [
-                { name: this.$t('eventHub.categories.conference'), image: require('@/assets/career fair.png') },
-                { name: this.$t('eventHub.categories.workshop'), image: require('@/assets/workshop.png') },
-                { name: this.$t('eventHub.categories.webinars'), image: require('@/assets/career fair.png') },
-                { name: this.$t('eventHub.categories.networking'), image: require('@/assets/workshop.png') },
-                { name: this.$t('eventHub.categories.careerFairs'), image: require('@/assets/career fair.png') }
+                { name: this.$t('eventHub.categories.conference'), image: getImage('career fair.png') },
+                { name: this.$t('eventHub.categories.workshop'), image: getImage('workshop.png') },
+                { name: this.$t('eventHub.categories.webinars'), image: getImage('career fair.png') },
+                { name: this.$t('eventHub.categories.networking'), image: getImage('workshop.png') },
+                { name: this.$t('eventHub.categories.careerFairs'), image: getImage('career fair.png') }
             ];
         }
     },
@@ -240,9 +260,16 @@ export default {
             
             // Cache 5 phút (300000ms)
             if (cachedData && cacheTime && (now - parseInt(cacheTime)) < 300000) {
-                this.trendingEvents = JSON.parse(cachedData);
-                this.loading = false;
-                return;
+                try {
+                    this.trendingEvents = JSON.parse(cachedData);
+                    this.loading = false;
+                    return;
+                } catch (error) {
+                    console.warn('⚠️ Failed to parse cached data, fetching fresh data', error);
+                    // Clear corrupted cache
+                    sessionStorage.removeItem('eventHeadlines');
+                    sessionStorage.removeItem('eventHeadlinesTime');
+                }
             }
 
             this.loading = true;
@@ -270,7 +297,13 @@ export default {
                     });
                 }
             } catch (error) {
-                console.error('Fetch error:', error.response ? error.response.data : error.message);
+                console.error('❌ WorldNewsAPI Fetch Error:', {
+                    message: error.message,
+                    status: error.response?.status,
+                    data: error.response?.data,
+                    apiKeyPresent: !!process.env.VUE_APP_NEWS_API_KEY,
+                    apiKeyLength: process.env.VUE_APP_NEWS_API_KEY?.length
+                });
                 // Fallback với empty data để tránh crash
                 this.trendingEvents = [];
             } finally {
@@ -872,5 +905,21 @@ export default {
     color: #6c757d;
     margin-bottom: 0.5rem;
     font-size: 1rem;
+}
+
+.no-events-message {
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    margin: 2rem 0;
+}
+
+.no-events-message .error-content {
+    max-width: 600px;
+    text-align: center;
 }
 </style>

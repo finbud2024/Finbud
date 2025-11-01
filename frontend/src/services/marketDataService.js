@@ -24,47 +24,129 @@ export async function fetchStockQuote(symbols = [
   "CSCO", "ORCL", "ADBE", "CRM", "PYPL", "AMD", "QCOM", "TXN", "AVGO", "SHOP"
 ]) {
   try {
-    // Check if API key is available
-    if (!ALPHA_VANTAGE_KEY) {
-      console.warn('Alpha Vantage API key not found, using fallback data');
-      return getFallbackStockData(symbols);
+    // Fetch from backend which gets data from TradingView (includes company names)
+    const baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
+    const response = await axios.get(`${baseURL}/api/stocks`, {
+      params: {
+        page: 1,
+        pageSize: 20,
+        markets: 'america',
+        sortBy: 'market_cap_basic',
+        sortOrder: 'desc'
+      },
+      timeout: 10000
+    });
+
+    if (response.data && response.data.stocks && response.data.stocks.length > 0) {
+      // Map backend response to expected format
+      const stockData = response.data.stocks.map(stock => {
+        console.log('📊 Processing stock:', stock.name, 'Company:', stock.companyName);
+        return {
+          symbol: stock.symbol || stock.name, // Use clean symbol from backend
+          companyName: stock.companyName || stock.description || stock.name,
+          price: parseFloat(stock.close) || 0,
+          volume: parseFloat(stock.volume) || 0,
+          previousClose: parseFloat(stock.prevClose) || parseFloat(stock.close) || 0,
+          change: parseFloat(stock.change) || 0,
+          changePercent: parseFloat(stock.priceChange) || 0
+        };
+      });
+
+      // Filter to only requested symbols if specific symbols were requested
+      if (symbols && symbols.length > 0) {
+        const filteredData = stockData.filter(stock => 
+          symbols.includes(stock.symbol)
+        );
+        
+        // If we have enough filtered data, return it
+        if (filteredData.length >= symbols.length / 2) {
+          return filteredData;
+        }
+      }
+
+      // Return all data if filtering didn't work or wasn't needed
+      return stockData;
     }
 
-    const requests = symbols.map(symbol =>
-      axios.get(
-        `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_KEY}`,
-        { timeout: 10000 } // 10 second timeout
-      ).catch(error => {
-        console.warn(`Failed to fetch data for ${symbol}:`, error.message);
-        return null;
-      })
-    );
-
-    const responses = await Promise.all(requests);
-    const validData = responses
-      .filter(response => response && response.data && response.data["Global Quote"])
-      .map(r => r.data["Global Quote"])
-      .filter(q => q && Object.keys(q).length > 0)
-      .map(q => ({
-        symbol: q["01. symbol"],
-        price: parseFloat(q["05. price"]) || 0,
-        volume: parseFloat(q["06. volume"]) || 0,
-        previousClose: parseFloat(q["08. previous close"]) || 0,
-        change: parseFloat(q["09. change"]) || 0,
-        changePercent: parseFloat(q["10. change percent"].replace('%', '')) || 0
-      }));
-
-    // If we got less than half the expected data, supplement with fallback
-    if (validData.length < symbols.length / 2) {
-      console.warn('Insufficient API data received, supplementing with fallback data');
-      return getFallbackStockData(symbols);
-    }
-
-    return validData;
+    // If backend fails, fall back to Alpha Vantage
+    console.warn('Backend API failed, trying Alpha Vantage...');
+    return await fetchFromAlphaVantage(symbols);
   } catch (error) {
     console.error('Stock data fetch failed:', error);
-    return getFallbackStockData(symbols);
+    // Try Alpha Vantage as fallback
+    try {
+      return await fetchFromAlphaVantage(symbols);
+    } catch (fallbackError) {
+      console.error('Alpha Vantage fallback also failed:', fallbackError);
+      return getFallbackStockDataWithNames(symbols);
+    }
   }
+}
+
+// Helper function to fetch from Alpha Vantage (without company names)
+async function fetchFromAlphaVantage(symbols) {
+  if (!ALPHA_VANTAGE_KEY) {
+    console.warn('Alpha Vantage API key not found');
+    throw new Error('No API key');
+  }
+
+  const requests = symbols.map(symbol =>
+    axios.get(
+      `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_KEY}`,
+      { timeout: 10000 }
+    ).catch(error => {
+      console.warn(`Failed to fetch data for ${symbol}:`, error.message);
+      return null;
+    })
+  );
+
+  const responses = await Promise.all(requests);
+  const validData = responses
+    .filter(response => response && response.data && response.data["Global Quote"])
+    .map(r => r.data["Global Quote"])
+    .filter(q => q && Object.keys(q).length > 0)
+    .map(q => ({
+      symbol: q["01. symbol"],
+      companyName: getCompanyNameFromSymbol(q["01. symbol"]),
+      price: parseFloat(q["05. price"]) || 0,
+      volume: parseFloat(q["06. volume"]) || 0,
+      previousClose: parseFloat(q["08. previous close"]) || 0,
+      change: parseFloat(q["09. change"]) || 0,
+      changePercent: parseFloat(q["10. change percent"].replace('%', '')) || 0
+    }));
+
+  if (validData.length === 0) {
+    throw new Error('No valid data from Alpha Vantage');
+  }
+
+  return validData;
+}
+
+// Helper to get company name from symbol (basic mapping)
+function getCompanyNameFromSymbol(symbol) {
+  const companyNames = {
+    'IBM': 'International Business Machines Corporation',
+    'AAPL': 'Apple Inc.',
+    'GOOGL': 'Alphabet Inc.',
+    'MSFT': 'Microsoft Corporation',
+    'AMZN': 'Amazon.com, Inc.',
+    'META': 'Meta Platforms, Inc.',
+    'TSLA': 'Tesla, Inc.',
+    'NFLX': 'Netflix, Inc.',
+    'NVDA': 'NVIDIA Corporation',
+    'INTC': 'Intel Corporation',
+    'CSCO': 'Cisco Systems, Inc.',
+    'ORCL': 'Oracle Corporation',
+    'ADBE': 'Adobe Inc.',
+    'CRM': 'Salesforce, Inc.',
+    'PYPL': 'PayPal Holdings, Inc.',
+    'AMD': 'Advanced Micro Devices, Inc.',
+    'QCOM': 'QUALCOMM Incorporated',
+    'TXN': 'Texas Instruments Incorporated',
+    'AVGO': 'Broadcom Inc.',
+    'SHOP': 'Shopify Inc.'
+  };
+  return companyNames[symbol] || symbol;
 }
 
 function getFallbackStockData(symbols) {
@@ -72,6 +154,7 @@ function getFallbackStockData(symbols) {
     const fallback = fallbackStockData[index] || fallbackStockData[0];
     return {
       symbol: symbol,
+      companyName: getCompanyNameFromSymbol(symbol),
       price: fallback.price + (Math.random() - 0.5) * 10, // Add some variation
       volume: fallback.volume + Math.floor((Math.random() - 0.5) * 1000000),
       previousClose: fallback.previousClose,
@@ -79,6 +162,10 @@ function getFallbackStockData(symbols) {
       changePercent: parseFloat((Math.random() - 0.5) * 3).toFixed(2)
     };
   });
+}
+
+function getFallbackStockDataWithNames(symbols) {
+  return getFallbackStockData(symbols);
 }
 
 export async function fetchCryptoList() {

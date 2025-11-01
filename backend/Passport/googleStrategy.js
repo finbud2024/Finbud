@@ -5,7 +5,10 @@ const googleStrategy = new GoogleStrategy.Strategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.VUE_APP_DEPLOY_URL + "/auth/google/callback",
+    // Prefer explicit override, fallback to Netlify Dev Functions URL for local development
+    callbackURL:
+      process.env.GOOGLE_REDIRECT_URI ||
+      "http://localhost:8888/.netlify/functions/server/auth/google/callback",
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
@@ -20,12 +23,9 @@ const googleStrategy = new GoogleStrategy.Strategy(
 
       // Check for existing user by either email or username
       let existingUser = await User.findOne({
-        $or: [
-          { email: userEmail },
-          { "accountData.username": userEmail }
-        ]
+        $or: [{ email: userEmail }, { "accountData.username": userEmail }],
       });
-      
+
       if (existingUser) {
         console.log("Existing user found");
         // Update user profile if needed
@@ -35,10 +35,13 @@ const googleStrategy = new GoogleStrategy.Strategy(
             {
               $set: {
                 "identityData.profilePicture": profile.picture,
-                "identityData.firstName": profile.given_name || existingUser.identityData.firstName,
-                "identityData.lastName": profile.family_name || existingUser.identityData.lastName,
-                "identityData.displayName": profile.displayName || existingUser.identityData.displayName
-              }
+                "identityData.firstName":
+                  profile.given_name || existingUser.identityData.firstName,
+                "identityData.lastName":
+                  profile.family_name || existingUser.identityData.lastName,
+                "identityData.displayName":
+                  profile.displayName || existingUser.identityData.displayName,
+              },
             },
             { new: true }
           );
@@ -47,20 +50,20 @@ const googleStrategy = new GoogleStrategy.Strategy(
       }
 
       console.log("Creating new user from Google profile");
-      
+
       // Create new user with Google profile data
       const newUser = new User({
         email: userEmail,
         accountData: {
           username: userEmail,
-          priviledge: "user"
+          priviledge: "user",
         },
         identityData: {
           firstName: profile.given_name,
           lastName: profile.family_name,
           displayName: profile.displayName,
-          profilePicture: profile.picture
-        }
+          profilePicture: profile.picture,
+        },
       });
 
       try {
@@ -71,10 +74,7 @@ const googleStrategy = new GoogleStrategy.Strategy(
         if (error.code === 11000) {
           // In case of race condition, try to find the user one more time
           const user = await User.findOne({
-            $or: [
-              { email: userEmail },
-              { "accountData.username": userEmail }
-            ]
+            $or: [{ email: userEmail }, { "accountData.username": userEmail }],
           });
           if (user) {
             return done(null, user, { isNewUser: false });

@@ -1,227 +1,74 @@
+// Mock serperService.js - không cần API keys
 import axios from 'axios';
-import { load } from "cheerio";
-import { OpenAIEmbeddings } from '@langchain/openai';
-import { VectorStore } from '@langchain/core/vectorstores';
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
-import OpenAI from 'openai';
 
-const SERPER_API_KEY = process.env.VUE_APP_SERPER_API_KEY;
-const BRAVE_SEARCH_API_KEY = process.env.VUE_APP_BRAVE_SEARCH_API_KEY;
-const OPENAI_API_KEY = process.env.VUE_APP_OPENAI_API_KEY;
 const DEPLOY_URL = process.env.VUE_APP_DEPLOY_URL;
-
-// Set up OpenAI configuration
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true
-});
 
 export async function getSources(message) {
   try {
-    const encodedMessage = encodeURIComponent(message);
-    const response = await axios.post(`${DEPLOY_URL}/proxy`, {
-      url: `https://api.search.brave.com/res/v1/web/search?q=${encodedMessage}&count=10`,
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'X-Subscription-Token': BRAVE_SEARCH_API_KEY,
+    // Mock search results
+    const mockResults = [
+      {
+        title: "Financial Planning Guide",
+        link: "https://example.com/financial-planning",
+        snippet: "Learn about financial planning and investment strategies",
+        favicon: "https://example.com/favicon.ico",
+        host: "Financial News"
+      },
+      {
+        title: "Stock Market Analysis",
+        link: "https://example.com/stock-analysis", 
+        snippet: "Current stock market trends and analysis",
+        favicon: "https://example.com/favicon.ico",
+        host: "Market Watch"
       }
-    });
-    const results = response.data.web.results.map(result => ({
-      title: result.title,
-      link: result.url,
-      snippet: result.description,
-      favicon: result.profile.img,
-      host: result.profile.name
-    }));
-    return results;
+    ];
+    
+    console.log('Mock search results for:', message);
+    return mockResults;
   } catch (error) {
     console.error('Error fetching search results:', error);
-    throw error;
+    return [];
   }
 }
 
 export async function get10BlueLinksContents(sources) {
-  async function fetchWithTimeout(url, options = {}, timeout = 800) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    const response = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(timeoutId);
-    return response;
-  }
-
-  function extractMainContent(html) {
-    const $ = load(html);
-    $("script, style, head, nav, footer, iframe, img").remove();
-    return $("body").text().replace(/\s+/g, " ").trim();
-  }
-
-  const promises = sources.map(async source => {
-    try {
-      const response = await fetchWithTimeout(source.link);
-      const html = await response.text();
-      const mainContent = extractMainContent(html);
-      return { ...source, html: mainContent };
-    } catch (error) {
-      console.error(`Error processing ${source.link}:`, error);
-      return null;
-    }
-  });
-
-  const results = await Promise.all(promises);
-  return results.filter(source => source !== null);
+  // Mock content processing
+  return sources.map(source => ({
+    ...source,
+    html: `Mock content for ${source.title}. This is sample financial content that would normally be scraped from the web.`
+  }));
 }
 
 export async function processAndVectorizeContent(contents, query) {
-  const embeddings = new OpenAIEmbeddings();
-  const allVectors = [];
-  for (const content of contents) {
-    if (content.html.length > 0) {
-      try {
-        const splitText = await new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 400 }).splitText(content.html);
-        const vectorStore = await VectorStore.fromTexts(splitText, { title: content.title, link: content.link }, embeddings);
-        const vectors = await vectorStore.similaritySearch(query, 4);
-        allVectors.push(...vectors);
-      } catch (error) {
-        console.error(`Error processing content for ${content.link}:`, error);
-      }
-    }
-  }
-  return allVectors;
+  // Mock vectorization - return first 2 contents as "relevant"
+  return contents.slice(0, 2).map(content => ({
+    pageContent: content.html,
+    metadata: { title: content.title, link: content.link }
+  }));
 }
 
-// export async function getVideos(message) {
-//   const data = JSON.stringify({ q: message });
-//   try {
-//     // axios post request to the proxy endpoint
-//     const response = await axios.post(`${DEPLOY_URL}/proxy`, {
-//       method: 'POST',
-//       url: 'https://google.serper.dev/videos',
-//       headers: {
-//         'X-API-KEY': SERPER_API_KEY,
-//         'Content-Type': 'application/json',
-//       },
-//       data: data,
-//     });
-//     if (response.status === 403) {
-//       console.error("Forbidden: Check your API key and permissions.");
-//       return [];
-//     }
-//     const responseData = response.data;
-//     // Filter out videos without images
-//     const validLinks = await Promise.all(responseData.videos.map(async video => {
-//       const imageUrl = video.imageUrl;
-//       if(!imageUrl) return null;
-//       // Check if the image URL is valid
-//       const imageResponse = await axios.post(`${DEPLOY_URL}/proxy`, {
-//         method: 'HEAD',
-//         url: imageUrl,
-//       });
-//       if (imageResponse.status === 200) {
-//         return { title: video.title, imageUrl, link: video.link };
-//       }
-//       return null;
-//     }));
-//     console.log('validLinks:', validLinks);
-//     return validLinks.filter(link => link !== null).slice(0, 4);
-//   } catch (error) {
-//     console.error('Error fetching videos:', error);
-//     throw error;
-//   }
-// }
-
 export async function getVideos(message, count = 1) {
-  // 1) build your POST body with both q & num
-  const body = JSON.stringify({ q: message, num: count });
-
-  try {
-    // 2) hit your proxy exactly as before
-    const response = await axios.post(`${DEPLOY_URL}/proxy`, {
-      method: 'POST',
-      url:    'https://google.serper.dev/videos',
-      headers:{
-        'X-API-KEY':      SERPER_API_KEY,
-        'Content-Type':   'application/json',
-      },
-      data: body,
-    });
-
-    if (response.status === 403) {
-      console.error("Forbidden: Check your API key and permissions.");
-      return [];
+  // Mock video results
+  const mockVideos = [
+    {
+      title: "Financial Education Video",
+      imageUrl: "https://via.placeholder.com/300x200?text=Financial+Video",
+      link: "https://example.com/financial-video"
     }
-
-    const apiVideos = Array.isArray(response.data.videos)
-      ? response.data.videos.slice(0, count)    // <-- only look at the first `count` items
-      : [];
-
-    // 3) head-check only those first `count` videos
-    const validLinks = await Promise.all(
-      apiVideos.map(async (video) => {
-        if (!video.imageUrl) return null;
-        try {
-          const headRes = await axios.post(`${DEPLOY_URL}/proxy`, {
-            method: 'HEAD',
-            url:    video.imageUrl,
-          });
-          if (headRes.status === 200) {
-            return {
-              title:    video.title,
-              imageUrl: video.imageUrl,
-              link:     video.link,
-            };
-          }
-        } catch {
-          // network or 404 on image, skip it
-        }
-        return null;
-      })
-    );
-
-    // 4) filter out any nulls
-    return validLinks.filter((l) => l !== null);
-  }
-  catch (error) {
-    console.error('Error fetching videos:', error);
-    return [];  
-  }
+  ];
+  
+  console.log('Mock video results for:', message);
+  return mockVideos.slice(0, count);
 }
 
 export async function getRelevantQuestions(sources, lan) {
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: `
-            You are a Question generator who generates in JSON an array of 3 follow-up questions in this language: ${lan}.
-            The JSON schema should include {
-              "followUp": [
-                "Question 1",
-                "Question 2", 
-                "Question 3"
-              ]
-            }
-          `
-        },
-        {
-          role: "user",
-          content: `Here are the top results from a similarity search: ${JSON.stringify(sources)}.`
-        },
-      ]
-    });
-
-    // Assuming the content is correctly formatted as JSON within the response text
-    const messageContent = response.choices[0].message.content.trim();
-    const jsonStart = messageContent.indexOf('{');
-    const jsonEnd = messageContent.lastIndexOf('}') + 1;
-    const jsonString = messageContent.substring(jsonStart, jsonEnd);
-    const parsedResponse = JSON.parse(jsonString);
-
-    return parsedResponse.followUp;
-  } catch (error) {
-    console.error('Error generating relevant questions:', error);
-    throw error;
-  }
+  // Mock follow-up questions
+  const mockQuestions = [
+    "What are the best investment strategies for beginners?",
+    "How can I start building an emergency fund?",
+    "What should I know about retirement planning?"
+  ];
+  
+  console.log('Mock follow-up questions generated');
+  return mockQuestions;
 }

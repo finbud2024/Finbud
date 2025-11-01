@@ -22,10 +22,17 @@
                 <div
                   :class="['stock-bar', { 'positive-bar': parseFloat(stock['09. change']) > 0, 'negative-bar': parseFloat(stock['09. change']) < 0 }]">
                 </div>
-                <div class="stock-info">
+                <div class="stock-info-content">
+                  <img 
+                    v-if="stock.logo" 
+                    :src="stock.logo" 
+                    :alt="`${stock.name} logo`"
+                    class="stock-logo"
+                    @error="handleLogoError(stock)"
+                  />
                   <div class="stock-symbol">
-                    <h3>{{ stock['01. symbol'] }}</h3>
-                    <p>{{ stock['name'] }}</p> <!-- Display stock name here -->
+                    <h3>{{ stock.name }}</h3> <!-- Display: "Company Name - SYMBOL" -->
+                    <p>{{ stock['01. symbol'] }}</p> <!-- Display symbol separately -->
                   </div>
                   <div class="stock-price">
                     <p class="price">${{ stock['05. price'] }}</p>
@@ -53,7 +60,7 @@
 <script>
 import axios from 'axios';
 import StockPopup from './StockPopup.vue';
-import MarkdownIt from 'markdown-it'
+import MarkdownIt from 'markdown-it';
 
 const md = new MarkdownIt({
   html:        true,        // allow inline HTML
@@ -108,13 +115,15 @@ export default {
         const { fetchStockQuote } = await import('@/services/marketDataService.js');
         const stockData = await fetchStockQuote(symbols);
         
-        // Transform the data to match the expected format
+        // Transform the data to match the expected format with TradingView company names
         this.stockQuotes = stockData.map(stock => ({
           '01. symbol': stock.symbol,
           '05. price': stock.price.toFixed(2),
           '09. change': stock.change.toFixed(2),
           '10. change percent': `${stock.changePercent.toFixed(2)}%`,
-          'name': this.getStockName(stock.symbol)
+          'name': `${stock.companyName || stock.name} - ${stock.symbol}`, // Format: "Company Name - SYMBOL"
+          'logo': `https://s3-symbol-logo.tradingview.com/${stock.symbol.toLowerCase()}.svg`,
+          'showLogo': true
         }));
         
         this.distributeStocks();
@@ -130,41 +139,18 @@ export default {
       }
     },
     
-    getStockName(symbol) {
-      const stockNames = {
-        'IBM': 'International Business Machines',
-        'AAPL': 'Apple Inc.',
-        'GOOGL': 'Alphabet Inc.',
-        'MSFT': 'Microsoft Corporation',
-        'AMZN': 'Amazon.com Inc.',
-        'META': 'Meta Platforms Inc.',
-        'TSLA': 'Tesla Inc.',
-        'NFLX': 'Netflix Inc.',
-        'NVDA': 'NVIDIA Corporation',
-        'INTC': 'Intel Corporation',
-        'CSCO': 'Cisco Systems Inc.',
-        'ORCL': 'Oracle Corporation',
-        'ADBE': 'Adobe Inc.',
-        'CRM': 'Salesforce Inc.',
-        'PYPL': 'PayPal Holdings Inc.',
-        'AMD': 'Advanced Micro Devices',
-        'QCOM': 'QUALCOMM Incorporated',
-        'TXN': 'Texas Instruments',
-        'AVGO': 'Broadcom Inc.',
-        'SHOP': 'Shopify Inc.'
-      };
-      return stockNames[symbol] || symbol;
-    },
-    
     getFallbackQuotes() {
       return [
-        { '01. symbol': 'AAPL', '05. price': '175.84', '09. change': '1.34', '10. change percent': '0.77%', 'name': 'Apple Inc.' },
-        { '01. symbol': 'MSFT', '05. price': '338.11', '09. change': '2.44', '10. change percent': '0.73%', 'name': 'Microsoft Corporation' },
-        { '01. symbol': 'GOOGL', '05. price': '129.85', '09. change': '0.93', '10. change percent': '0.72%', 'name': 'Alphabet Inc.' },
-        { '01. symbol': 'AMZN', '05. price': '140.75', '09. change': '1.54', '10. change percent': '1.11%', 'name': 'Amazon.com Inc.' },
-        { '01. symbol': 'TSLA', '05. price': '248.42', '09. change': '2.75', '10. change percent': '1.12%', 'name': 'Tesla Inc.' },
-        { '01. symbol': 'META', '05. price': '326.08', '09. change': '1.76', '10. change percent': '0.54%', 'name': 'Meta Platforms Inc.' },
+        { '01. symbol': 'AAPL', '05. price': '175.84', '09. change': '1.34', '10. change percent': '0.77%', 'name': 'Apple Inc. - AAPL', 'logo': 'https://s3-symbol-logo.tradingview.com/aapl.svg', 'showLogo': true },
+        { '01. symbol': 'MSFT', '05. price': '338.11', '09. change': '2.44', '10. change percent': '0.73%', 'name': 'Microsoft Corporation - MSFT', 'logo': 'https://s3-symbol-logo.tradingview.com/msft.svg', 'showLogo': true },
+        { '01. symbol': 'GOOGL', '05. price': '129.85', '09. change': '0.93', '10. change percent': '0.72%', 'name': 'Alphabet Inc. - GOOGL', 'logo': 'https://s3-symbol-logo.tradingview.com/googl.svg', 'showLogo': true },
+        { '01. symbol': 'AMZN', '05. price': '140.75', '09. change': '1.54', '10. change percent': '1.11%', 'name': 'Amazon.com Inc. - AMZN', 'logo': 'https://s3-symbol-logo.tradingview.com/amzn.svg', 'showLogo': true },
+        { '01. symbol': 'TSLA', '05. price': '248.42', '09. change': '2.75', '10. change percent': '1.12%', 'name': 'Tesla Inc. - TSLA', 'logo': 'https://s3-symbol-logo.tradingview.com/tsla.svg', 'showLogo': true },
+        { '01. symbol': 'META', '05. price': '326.08', '09. change': '1.76', '10. change percent': '0.54%', 'name': 'Meta Platforms Inc. - META', 'logo': 'https://s3-symbol-logo.tradingview.com/meta.svg', 'showLogo': true },
       ];
+    },
+    handleLogoError(stock) {
+      stock.showLogo = false;
     },
     distributeStocks() {
       for (let i = 0; i < this.stockQuotes.length; i++) {
@@ -264,7 +250,7 @@ export default {
   background-color: red;
 }
 
-.stock-info {
+.stock-info-content {
   display: flex;
   justify-content: space-between;
   /* Distribute space between children */
@@ -272,6 +258,17 @@ export default {
   width: 100%;
   /* Make sure it takes the full width of the container */
   padding-left: 10px;
+  gap: 10px;
+}
+
+.stock-logo {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f3f4f6;
+  padding: 4px;
 }
 
 .stock-symbol {
@@ -279,17 +276,21 @@ export default {
   /* Take all the available space on the left */
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .stock-symbol h3 {
   margin: 0;
-  font-size: 1.0em;
+  font-size: 0.95em;
   font-weight: bold;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .stock-symbol p {
   margin: 0;
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: #666;
   word-wrap: break-word;
   /* Ensure long words break to the next line */

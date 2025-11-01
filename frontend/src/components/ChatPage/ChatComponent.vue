@@ -96,6 +96,7 @@ import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
 
 import ThinkingProcess from "../ThinkingProcess.vue";
+import RagProcess from "./RagProcess.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";
 import { gptServices } from "@/services/gptServices";
@@ -139,6 +140,7 @@ export default {
     FileIndicator,
     ChatSuggestion,
     ThinkingProcess,
+    RagProcess,
   },
   data() {
     return {
@@ -152,9 +154,10 @@ export default {
       showDeepResearchWorkflow: false,
       showThinkingProcess: false,
       showRagProcess: false,
-      ragStatus: "loading",
+      ragStatus: 'loading',
       conversationHistory: [],
       researchBrief: null,
+      autoMessageProcessed: false,
     };
   },
   computed: {
@@ -163,66 +166,67 @@ export default {
     },
     currentThreadID() {
       return this.$store.getters["threads/getThreadID"];
-    },
-    displayName() {
-      return this.$store.getters["users/userDisplayName"];
-    },
-    userAvatar() {
-      return (
-        this.$store.getters["users/userProfileImage"] ||
-        require("@/assets/anonymous.png")
-      );
-    },
-    showSuggestion() {
-      return this.messages.length === 1;
-    },
-  },
-  watch: {
-    currentThreadID: {
-      immediate: true,
-      handler(newThreadID) {
-        if (
-          newThreadID !== null &&
-          newThreadID !== undefined &&
-          newThreadID.length != 0
-        ) {
-          this.updateCurrentThread(newThreadID);
-        } else {
-          this.messages = [];
-        }
-      },
-    },
-    autoMessage: {
-      immediate: true,
-      handler(newMessage) {
-        if (newMessage) {
-          this.handleUserSubmit({ message: newMessage });
-        }
-      },
-    },
-  },
-  created() {
-    this.openai = new OpenAI({
-      apiKey: process.env.VUE_APP_OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true,
-    });
-  },
-  methods: {
-    // ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
-    async handleUserSubmit({ message, file }) {
-      console.log(
-        `chat mode before sent from chat component: ${this.chatMode}`
-      );
-      if (file) {
-        this.handleFileUpload(message, file);
-      } else if (message) {
-        this.currentUserMessageText = message.trim();
-        this.messages.push({
-          text: this.currentUserMessageText,
-          isUser: true,
-          typing: false,
-          timestamp: new Date().toLocaleTimeString(),
-        });
+		},
+		displayName() {
+			return this.$store.getters["users/userDisplayName"];
+		},
+		userAvatar() {
+			return (
+				this.$store.getters["users/userProfileImage"] ||
+				require("@/assets/anonymous.png")
+			);
+		},
+		showSuggestion() {
+			return this.messages.length === 1;
+		},
+	},
+	watch: {
+		currentThreadID: {
+			immediate: true,
+			handler(newThreadID) {
+				if (
+					newThreadID !== null &&
+					newThreadID !== undefined &&
+					newThreadID.length != 0
+				) {
+					this.updateCurrentThread(newThreadID);
+				} else {
+					this.messages = [];
+				}
+			},
+		},
+		autoMessage: {
+			immediate: true,
+			handler(newMessage) {
+				if (newMessage && !this.autoMessageProcessed) {
+					this.autoMessageProcessed = true;
+					this.handleUserSubmit({ message: newMessage });
+				}
+			}
+		}
+	},
+	created() {
+		this.openai = new OpenAI({
+			apiKey: process.env.VUE_APP_OPENAI_API_KEY,
+			dangerouslyAllowBrowser: true,
+		});
+	},
+	methods: {
+		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
+		async handleUserSubmit({ message, file }) {
+			console.log(
+				`chat mode before sent from chat component: ${this.chatMode}`
+			);
+			if (file) {
+				this.handleFileUpload(message, file);
+			} else if (message) {
+				this.currentUserMessageText = message.trim();
+				this.messages.push({
+					text: this.currentUserMessageText,
+					isUser: true,
+					typing: false,
+					timestamp: new Date().toLocaleTimeString(),
+				});
 
         this.$nextTick(() => this.scrollChatFrameToBottom());
 
@@ -1370,9 +1374,18 @@ Bạn là FinBud — trợ lý tài chính.
       }, 1000);
     },
     extractStockCode(message) {
-      const pattern = /\b[A-Z]{2,5}\b/g;
-      const matches = message.match(pattern);
-      return matches;
+      if (!message || typeof message !== 'string') return null;
+      // Match ticker-like tokens: 3-5 uppercase letters, optionally with a dot (BRK.B)
+      // Require token length >= 3 to avoid matching acronyms like 'AI' or 'OK'.
+      const pattern = /\b([A-Z]{3,5}(?:\.[A-Z])?)\b/g;
+      const matches = [];
+      let m;
+      while ((m = pattern.exec(message)) !== null) {
+        // Exclude very common short words or words that are followed by punctuation that indicates it's not a ticker
+        const token = m[1];
+        if (token && token.length >= 3) matches.push(token);
+      }
+      return matches.length ? matches : null;
     },
     openNewWindow(url) {
       const screenWidth = window.screen.width;

@@ -11,7 +11,7 @@ import Portfolio from "../../Database_Schema/finance/Portfolio.js";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import Parser from '@postlight/parser';
+// import Parser from '@postlight/parser'; // Temporarily disabled due to dependency issues
 // import { YoutubeTranscript } from 'youtube-transcript';
 // import { getVideoId } from '../utils/getVideoId.js';
 
@@ -88,12 +88,18 @@ chatRoute.post('/agents/scrape', isAuthenticated, async (req, res) => {
         return res.status(400).json({ error: 'Missing "url" in request body.' });
     }
 
-    try {
+    // Temporarily disabled - Parser dependency has issues
+    res.status(503).json({ 
+        source: url, 
+        error: 'Parser service temporarily unavailable' 
+    });
+    
+    /* try {
         const result = await Parser.parse(url, { contentType: 'markdown' });
         res.json({ source: url, content: result.content });
     } catch (error) {
         res.status(500).json({ source: url, error: `Scrape Agent failed for ${url}: ${error.message}` });
-    }
+    } */
 });
 
 // Agent Route: Leaf Summarizer
