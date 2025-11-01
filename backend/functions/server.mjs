@@ -48,23 +48,31 @@ const mongoURI = process.env.MONGO_URI;
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:8888",
   "https://finbud.pro",
-  "http://localhost:8080",
   process.env.VUE_APP_DEPLOY_URL,
   "https://finbud-ai.netlify.app"
-];
+].filter(Boolean); // Remove any undefined values
 
 app.use(
   cors({
     origin: function (origin, callback) {
       // ✅ Allow undefined origins (like Postman, curl, or internal requests)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`CORS blocked request from origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
+      if (!origin) {
+        return callback(null, true);
       }
+      
+      // Allow any localhost port for development
+      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+        return callback(null, true);
+      }
+      
+      // Allow production origins
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      
+      console.warn(`CORS blocked request from origin: ${origin}`);
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })

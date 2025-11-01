@@ -1,40 +1,36 @@
 <template>
   <div class="pestle-page">
     <!-- Title -->
-    <h1 class="title">PESTLE Analysis</h1>
+    <h1 class="title">{{ $t('pestlePage.title') }}</h1>
 
 <!-- Text content, hidden after clicking Continue -->
 <div v-if="!showPestle" class="text-content">
   <p class="description">
-    This AI-driven process guides you through a detailed PESTLE analysis, helping you assess the political, economic,
-    social, technological, legal, and environmental factors affecting your industry. By providing deep insights into
-    these six critical areas, the tool supports making data-driven strategic business decisions.
+    {{ $t('pestlePage.description') }}
   </p>
 
-  <h2 class="subtitle">How to Use</h2>
+  <h2 class="subtitle">{{ $t('pestlePage.howToUseTitle') }}</h2>
   <p class="description">
-    Enter Industry: Start by entering the industry you want to analyze.
+    {{ $t('pestlePage.howToUseText') }}
   </p>
 
-  <h2 class="subtitle">When to Use</h2>
+  <h2 class="subtitle">{{ $t('pestlePage.whenToUseTitle') }}</h2>
   <p class="description">
-    This tool is ideal for business strategists, market analysts, and decision-makers who need to clearly understand
-    the external factors affecting their industry. Especially useful during strategic planning, market entry analysis,
-    and risk assessment.
+    {{ $t('pestlePage.whenToUseText') }}
   </p>
 
 
       <div class="industry-input-container">
         <!-- Input field for industry -->
         <div class="industry-input">
-          <label for="industry" class="label">Ngành<span class="required">*</span></label>
-          <input id="industry" v-model="industry" type="text" placeholder="Nhập ngành bạn muốn phân tích"
+          <label for="industry" class="label">{{ $t('pestlePage.industry') }}<span class="required">*</span></label>
+          <input id="industry" v-model="industry" type="text" :placeholder="$t('pestlePage.industryPlaceholder')"
             class="input" />
         </div>
 
         <!-- Start Analysis Button -->
         <button @click="startWorkflow" class="start-button" :disabled="inputEmpty">
-          Phân tích →
+          {{ $t('pestlePage.analyzeButton') }} →
         </button>
       </div>
 
@@ -44,7 +40,7 @@
 
     <!-- Pestle Component -->
     <div v-if="showPestle" class="pestle-container">
-      <button @click="resetWorkflow" class="back-button">Quay lại</button>
+      <button @click="resetWorkflow" class="back-button">{{ $t('pestlePage.backButton') }}</button>
       <Pestle :industry="industry" />
     </div>
   </div>

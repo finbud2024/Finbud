@@ -1,5 +1,5 @@
 // src/main.js
-import { createApp } from "vue"; // Importing createApp directly from 'vue'
+import { createApp, watch } from "vue"; // Importing createApp and watch from 'vue'
 import App from "./App.vue"; // Adjust the path to your main App component
 import router from "./router"; // Adjust the path to your router file
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -129,6 +129,19 @@ app.use(router);
 app.use(store);
 app.use(i18n);
 app.use(BootstrapVue3);
+
+// Auto-sync i18n locale changes to localStorage
+// This ensures language persistence when changed anywhere in the app
+watch(() => i18n.global.locale.value, (newLocale) => {
+  try {
+    if (newLocale === 'en' || newLocale === 'vi') {
+      localStorage.setItem("language", newLocale);
+    }
+  } catch (e) {
+    // localStorage might not be available (private browsing, etc.)
+    console.warn("Could not save language preference:", e);
+  }
+});
 app.use(VueQueryPlugin);
 app.use(VueApexCharts);
 // Mount the application to the DOM

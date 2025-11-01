@@ -50,7 +50,23 @@ authRoute.get("/auth/google/callback", (req, res, next) => {
 
     if (!user) {
       console.log("No user found");
-      return res.redirect("/login");
+      // Determine frontend URL for login redirect
+      const getFrontendURL = () => {
+        if (process.env.FRONTEND_URL) {
+          return process.env.FRONTEND_URL;
+        }
+        const referer = req.get('referer') || req.get('Referer');
+        if (referer) {
+          try {
+            const url = new URL(referer);
+            return `${url.protocol}//${url.host}`;
+          } catch (e) {
+            // Fallback
+          }
+        }
+        return process.env.VUE_APP_DEPLOY_URL || "http://localhost:8080";
+      };
+      return res.redirect(`${getFrontendURL()}/login`);
     }
 
     await setupUserDocuments(user._id);
@@ -77,17 +93,40 @@ authRoute.get("/auth/google/callback", (req, res, next) => {
         delete req.session.redirectAfterAuth;
       }
 
+      // Determine frontend URL dynamically
+      // Try to get it from referer header, or use environment variable, or default to common ports
+      const getFrontendURL = () => {
+        if (process.env.FRONTEND_URL) {
+          return process.env.FRONTEND_URL;
+        }
+        // Try to extract from referer
+        const referer = req.get('referer') || req.get('Referer');
+        if (referer) {
+          try {
+            const url = new URL(referer);
+            return `${url.protocol}//${url.host}`;
+          } catch (e) {
+            // Fallback to defaults
+          }
+        }
+        // Default to common frontend ports
+        return process.env.VUE_APP_DEPLOY_URL || "http://localhost:8080";
+      };
+
+      const frontendURL = getFrontendURL();
+      console.log("Frontend URL:", frontendURL);
+
       if (redirectPath) {
-        console.log("Redirecting user to:", redirectPath);
-        return res.redirect(redirectPath);
+        console.log("Redirecting user to:", `${frontendURL}${redirectPath}`);
+        return res.redirect(`${frontendURL}${redirectPath}`);
       } else if (isNewUser) {
         console.log("Redirecting new user to tutorial");
         // Set isNewUser flag in session
         req.session.isNewUser = true;
-        return res.redirect("/?showTutorial=true");
+        return res.redirect(`${frontendURL}/?showTutorial=true`);
       } else {
         console.log("Redirecting existing user to home");
-        return res.redirect("/");
+        return res.redirect(`${frontendURL}/`);
       }
     });
   })(req, res, next);

@@ -1,14 +1,27 @@
 import GoogleStrategy from "passport-google-oauth2";
 import User from "../Database_Schema/core/User.js";
 
+// Determine the callback URL dynamically
+const getCallbackURL = () => {
+  if (process.env.GOOGLE_REDIRECT_URI) {
+    return process.env.GOOGLE_REDIRECT_URI;
+  }
+  
+  // Use Netlify Dev URL if running in Netlify dev mode
+  if (process.env.NETLIFY_DEV === "true") {
+    return "http://localhost:8888/.netlify/functions/server/auth/google/callback";
+  }
+  
+  // For local development, use the backend port (default 3000)
+  const backendPort = process.env.PORT || 3000;
+  return `http://localhost:${backendPort}/auth/google/callback`;
+};
+
 const googleStrategy = new GoogleStrategy.Strategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    // Prefer explicit override, fallback to Netlify Dev Functions URL for local development
-    callbackURL:
-      process.env.GOOGLE_REDIRECT_URI ||
-      "http://localhost:8888/.netlify/functions/server/auth/google/callback",
+    callbackURL: getCallbackURL(),
   },
   async (accessToken, refreshToken, profile, done) => {
     try {

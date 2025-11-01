@@ -346,8 +346,12 @@ export default {
       console.log( 'isMobile: ', this.isMobile );
     },
     switchLanguage(lang) {
-      this.$i18n.locale = lang;
-      localStorage.setItem("language", lang);
+      // Switch language - localStorage sync is handled automatically in main.js
+      if (lang === 'en' || lang === 'vi') {
+        this.$i18n.locale = lang;
+        // Note: localStorage is automatically synced by watcher in main.js
+        // No need to manually set localStorage.setItem here
+      }
     },
     async logout() {
       try {
@@ -460,8 +464,8 @@ export default {
     window.addEventListener('resize', this.handleResize);
     document.addEventListener('click', this.handleOutsideClick);
 
-    const savedLang = localStorage.getItem("language");
-    if (savedLang) this.$i18n.locale = savedLang;
+    // Language is now loaded automatically in i18n.js initialization
+    // No need to manually restore from localStorage here
 
     if (!this.$store.getters["users/currentUser"]) {
       this.$store.dispatch("users/fetchCurrentUser");

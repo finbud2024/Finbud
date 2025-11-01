@@ -13,6 +13,16 @@ module.exports = defineConfig({
         },
         logLevel: "debug",
       },
+      "/auth": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        logLevel: "debug",
+      },
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        logLevel: "debug",
+      },
     },
   },
   configureWebpack: {

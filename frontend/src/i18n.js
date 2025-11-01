@@ -1398,6 +1398,17 @@ const messages = {
       opportunity: "Opportunity",
       loading: "Loading PESTLE analysis...",
       noData: "No analysis data available",
+      // Form fields
+      industry: "Industry",
+      industryPlaceholder: "Enter the industry you want to analyze",
+      analyzeButton: "Analyze",
+      backButton: "Back",
+      // Description sections
+      description: "This AI-driven process guides you through a detailed PESTLE analysis, helping you assess the political, economic, social, technological, legal, and environmental factors affecting your industry. By providing deep insights into these six critical areas, the tool supports making data-driven strategic business decisions.",
+      howToUseTitle: "How to Use",
+      howToUseText: "Enter Industry: Start by entering the industry you want to analyze.",
+      whenToUseTitle: "When to Use",
+      whenToUseText: "This tool is ideal for business strategists, market analysts, and decision-makers who need to clearly understand the external factors affecting their industry. Especially useful during strategic planning, market entry analysis, and risk assessment.",
     },
     // Quant Analysis Page
     quantAnalysisPage: {
@@ -3581,6 +3592,17 @@ const messages = {
       opportunity: "Cơ hội",
       loading: "Đang tải phân tích PESTLE...",
       noData: "Không có dữ liệu phân tích",
+      // Form fields
+      industry: "Ngành",
+      industryPlaceholder: "Nhập ngành bạn muốn phân tích",
+      analyzeButton: "Phân tích",
+      backButton: "Quay lại",
+      // Description sections
+      description: "Quy trình được hỗ trợ bởi AI này hướng dẫn bạn thực hiện phân tích PESTLE chi tiết, giúp bạn đánh giá các yếu tố chính trị, kinh tế, xã hội, công nghệ, pháp lý và môi trường ảnh hưởng đến ngành của bạn. Bằng cách cung cấp những hiểu biết sâu sắc về sáu lĩnh vực quan trọng này, công cụ hỗ trợ đưa ra các quyết định kinh doanh chiến lược dựa trên dữ liệu.",
+      howToUseTitle: "Cách sử dụng",
+      howToUseText: "Nhập Ngành: Bắt đầu bằng cách nhập ngành bạn muốn phân tích.",
+      whenToUseTitle: "Khi nào sử dụng",
+      whenToUseText: "Công cụ này lý tưởng cho các nhà chiến lược kinh doanh, nhà phân tích thị trường và người ra quyết định cần hiểu rõ các yếu tố bên ngoài ảnh hưởng đến ngành của họ. Đặc biệt hữu ích trong quá trình lập kế hoạch chiến lược, phân tích thâm nhập thị trường và đánh giá rủi ro.",
     },
 
     // Quant Analysis Page
@@ -4085,12 +4107,50 @@ const messages = {
   },
 };
 
+// Get initial locale from localStorage or browser
+const getInitialLocale = () => {
+  // Only run in browser environment
+  if (typeof window === 'undefined') {
+    return "en"; // Default for SSR
+  }
+  
+  // Try localStorage first (user preference)
+  try {
+    const saved = localStorage.getItem("language");
+    if (saved === "en" || saved === "vi") {
+      return saved;
+    }
+  } catch (e) {
+    // localStorage might not be available (private browsing, etc.)
+    console.warn("Could not access localStorage:", e);
+  }
+  
+  // Fallback to browser language
+  try {
+    if (navigator && navigator.language) {
+      const browserLang = navigator.language.split("-")[0];
+      if (browserLang === "vi") {
+        return "vi";
+      }
+    }
+  } catch (e) {
+    // Navigator might not be available
+    console.warn("Could not access navigator:", e);
+  }
+  
+  // Default to English
+  return "en";
+};
+
 const i18n = createI18n({
   legacy: false,
-  locale: "en",
-  fallbackLocale: "vi",
+  locale: getInitialLocale(), // ✅ Dynamic initialization from localStorage/browser
+  fallbackLocale: "en",
   messages,
   globalInjection: true,
 });
+
+// Note: Auto-sync to localStorage on locale changes is handled in main.js
+// after Vue is available. The initialization above already loads from localStorage.
 
 export default i18n;
