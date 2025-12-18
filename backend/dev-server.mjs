@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import dotenv from "dotenv";
 import passportConfig from "./Passport/config.js";
 import { createServer } from "http";
@@ -40,14 +40,13 @@ import peAnalysisRoute from './Endpoints/services/peAnalysisService.js';
 
 dotenv.config();
 
-const mongoURI = process.env.MONGO_URI;
+// const mongoURI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 // CORS configuration for development
 const allowedOrigins = [
-  "http://localhost:8081", // Vue frontend
-  "http://localhost:8080", 
+  "http://localhost:8080", // Vue frontend
   "http://localhost:3000",
   "https://finbud.pro"
 ];
@@ -69,24 +68,29 @@ app.use(
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
+    origin: "*", // Allow all origins for simplicity
+    methods: ["GET", "POST"]
   },
+  path: '/socket.io' // Added path for deep research client
 });
 
-app.set("io", io);
+// Pass `io` instance to the request object so routes can use it
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
-// Socket.io connection handling
-io.on("connection", (socket) => {
-  console.log("Client connected:", socket.id);
+// Socket.io connection handling for deep research logs
+io.on('connection', (socket) => {
+  console.log('🔌 A client connected to the WebSocket for logging.');
 
-  socket.on("join-simulation", (simulationId) => {
-    socket.join(`simulation:${simulationId}`);
-    console.log(`Client ${socket.id} joined simulation: ${simulationId}`);
+  socket.on('progress', (data) => {
+    // This is for client-to-server, we can just log it
+    console.log(`[WS-IN] ${data.message}`);
   });
 
-  socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
+  socket.on('disconnect', () => {
+    console.log('🔌 Client disconnected from WebSocket.');
   });
 });
 
@@ -107,26 +111,32 @@ simulatorIo.on("connection", (socket) => {
 app.set("simulatorIo", simulatorIo);
 
 // Connect to MongoDB
-const connectToMongoDB = async () => {
-  if (!mongoURI) {
-    console.error("MONGO_URI is not defined in the environment variables");
-    console.log("Starting server without database connection for testing...");
-    return;
-  }
+// const connectToMongoDB = async () => {
+//   if (!mongoURI) {
+//     console.error("MONGO_URI is not defined in the environment variables");
+//     console.log("Starting server without database connection for testing...");
+//     return;
+//   }
 
-  try {
-    await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 5000,
-    });
-    console.log("✅ MongoDB connected successfully");
-  } catch (err) {
-    console.error("❌ Error connecting to MongoDB:", err.message);
-    console.log("Starting server without database connection...");
-  }
-};
+//   try {
+//     await mongoose.connect(mongoURI, {
+//       serverSelectionTimeoutMS: 5000,
+//     });
+//     console.log("✅ MongoDB connected successfully");
+//   } catch (err) {
+//     console.error("❌ Error connecting to MongoDB:", err.message);
+//     console.log("Starting server without database connection...");
+//   }
+// };
 
-// Initialize Passport
-passportConfig(app);
+// Initialize Passport with basic configuration
+try {
+  passportConfig(app);
+  console.log("✅ Passport configured.");
+} catch (error) {
+  console.warn("⚠️ Passport configuration failed:", error.message);
+  console.warn("   - Authentication features will not be available.");
+}
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
@@ -174,9 +184,10 @@ app.get("/health", (req, res) => {
   res.json({ 
     status: "OK", 
     timestamp: new Date().toISOString(),
-    mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
+    // mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
   });
 });
+
 
 // Test endpoint for Deep Research
 app.get("/services/test", (req, res) => {
@@ -187,7 +198,7 @@ app.get("/services/test", (req, res) => {
 const startServer = async () => {
   try {
     // Connect to MongoDB first
-    await connectToMongoDB();
+    // await connectToMongoDB();
     
     // Load companies if filingsRoute needs it
     try {
@@ -200,7 +211,7 @@ const startServer = async () => {
     }
 
     // Start HTTP server
-    httpServer.listen(PORT, () => {
+    httpServer.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 FinBud Backend Development Server running on:`);
       console.log(`   - Local:   http://localhost:${PORT}`);
       console.log(`   - Health:  http://localhost:${PORT}/health`);
@@ -209,6 +220,11 @@ const startServer = async () => {
       console.log(`   - POST /services/deep-research`);
       console.log(`   - POST /services/meta-research`);
       console.log(`   - GET /health`);
+      if (process.env.NODE_ENV === 'production') {
+        console.log('Server running in production mode.');
+        console.log(`Frontend production build served from 'dist' folder`);
+        console.log(`Access it at http://localhost:${PORT}`);
+      }
     });
 
   } catch (error) {
@@ -222,10 +238,11 @@ process.on('SIGTERM', () => {
   console.log('🛑 SIGTERM received, shutting down gracefully...');
   httpServer.close(() => {
     console.log('✅ HTTP server closed');
-    mongoose.connection.close(false, () => {
-      console.log('✅ MongoDB connection closed');
-      process.exit(0);
-    });
+    // mongoose.connection.close(false, () => {
+    //   console.log('✅ MongoDB connection closed');
+    //   process.exit(0);
+    // });
+    process.exit(0);
   });
 });
 
@@ -233,10 +250,11 @@ process.on('SIGINT', () => {
   console.log('🛑 SIGINT received, shutting down gracefully...');
   httpServer.close(() => {
     console.log('✅ HTTP server closed');
-    mongoose.connection.close(false, () => {
-      console.log('✅ MongoDB connection closed');
-      process.exit(0);
-    });
+    // mongoose.connection.close(false, () => {
+    //   console.log('✅ MongoDB connection closed');
+    //   process.exit(0);
+    // });
+    process.exit(0);
   });
 });
 

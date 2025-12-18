@@ -20,7 +20,7 @@
             <span class="dot"></span>
             <span class="dot"></span>
           </div>
-          <p v-else>{{ displayedText }}</p>
+          <p v-else v-html="displayedText"></p>
         </div>
         <!-- Sources -->
         <section class="sources" v-if="sources && sources.length > 0">
@@ -116,13 +116,65 @@ export default {
   },
   computed: {
     displayedText() {
-      if (!this.typing) {
-        return this.text;
+      let text = this.typing
+        ? this.text.substring(0, this.textProgress)
+        : this.text;
+
+      // Always apply basic markdown formatting as a safety net
+      // Process in specific order to avoid conflicts
+      let processedText = text
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold text first
+        .replace(/\*([^*\n]+?)\*/g, function (match, p1) {
+          // Only replace single * if it's not part of ** and doesn't span lines
+          if (match.includes("<strong>")) {
+            return match; // Already processed
+          }
+          return `<em>${p1}</em>`;
+        })
+        .replace(/`(.*?)`/g, "<code>$1</code>"); // Inline code
+
+      // Handle list items properly by wrapping them in ul tags
+      let lines = processedText.split("\n");
+      let result = [];
+      let inList = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        let isListItem = /^(\s*)[*-]\s+(.+)$/.test(line);
+
+        if (isListItem) {
+          if (!inList) {
+            result.push('<ul style="margin: 0; padding-left: 20px;">');
+            inList = true;
+          }
+          let listContent = line.replace(/^(\s*)[*-]\s+(.+)$/, "$2");
+          result.push(`<li style="margin: 4px 0;">${listContent}</li>`);
+        } else {
+          if (inList) {
+            result.push("</ul>");
+            inList = false;
+          }
+          if (line.trim()) {
+            result.push(line);
+          }
+          // Add line break for any line (including empty ones) except the last one
+          if (i < lines.length - 1) {
+            result.push("<br>");
+          }
+        }
       }
-      // Return the substring of text based on the current typing progress
-      return this.text.substring(0, this.textProgress);
+
+      if (inList) {
+        result.push("</ul>");
+      }
+
+      return result.join("");
     },
     renderedMarkdown() {
+      console.log("renderedMarkdown called with:", {
+        markdown: this.markdown,
+        text: this.text,
+      });
       try {
         if (this.markdown && this.text) {
           // Configure marked options
@@ -134,8 +186,43 @@ export default {
             sanitize: false, // Don't sanitize HTML
           });
 
-          return marked(this.text);
+          let processedText = this.text;
+
+          // Apply basic markdown formatting as fallback
+          processedText = processedText
+            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold text
+            .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, "<em>$1</em>") // Italic text (not preceded or followed by *)
+            .replace(/`(.*?)`/g, "<code>$1</code>") // Inline code
+            .replace(/\n/g, "<br>"); // Line breaks
+
+          console.log("Manual processed text:", processedText);
+
+          // Try to use marked for more complex markdown
+          try {
+            const markedResult = marked(this.text);
+            console.log("Marked result:", markedResult);
+            // If marked successfully processes the text and includes proper formatting, use it
+            if (
+              markedResult &&
+              (markedResult.includes("<strong>") ||
+                markedResult.includes("<em>") ||
+                markedResult.includes("<h"))
+            ) {
+              console.log("Using marked result");
+              return markedResult;
+            }
+          } catch (markedError) {
+            console.warn(
+              "Marked failed, using fallback formatting:",
+              markedError
+            );
+          }
+
+          // Return the manually processed text as fallback
+          console.log("Using manual processed text");
+          return processedText;
         }
+        console.log("No markdown flag or text, returning original text");
         return this.text;
       } catch (error) {
         console.error("Error rendering markdown:", error);
@@ -257,10 +344,18 @@ tr:nth-child(odd) {
 }
 
 :deep(.markdown-content strong) {
-  font-weight: bold;
+  font-weight: 700;
+  color: inherit; /* inherit text color from user/bot message */
 }
 
 :deep(.markdown-content em) {
+  font-style: italic;
+  color: inherit;
+}
+
+:deep(.markdown-content strong em),
+:deep(.markdown-content em strong) {
+  font-weight: 700;
   font-style: italic;
 }
 
@@ -356,9 +451,10 @@ tr:nth-child(odd) {
     5.6vw,
     1rem
   ); /*12px, x/3.2 vw, 20px ___ 1vw = 3.2px*/
+  font-family: "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 2%;
   border-radius: 16px;
   background-color: var(--chat-message-bg-color);
   color: var(--chat-text-color);
@@ -612,28 +708,29 @@ tr:nth-child(odd) {
 }
 
 .message-wrapper:not(.user) .message-content {
-  background: #000;
-  color: #fff;
+  background: #f7f7f8;
+  color: #202123;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .message-wrapper.user .message-content {
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: #f7f7f8;
+  color: #202123;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .message-content p {
   margin: 0;
   line-height: 1.5;
+  font-weight: 450;
 }
 
 .message-wrapper:not(.user) .message-content p {
-  color: #fff;
+  color: #202123;
 }
 
 .message-wrapper:not(.user) .message-content a {
-  color: #fff;
+  color: #007bff;
   text-decoration: underline;
 }
 
@@ -642,5 +739,25 @@ tr:nth-child(odd) {
   color: #fff;
   padding: 0.2em 0.4em;
   border-radius: 4px;
+}
+
+/* Better styling for standalone list items created by markdown processing */
+.message-content ul {
+  margin: 8px 0 !important;
+  padding-left: 20px !important;
+}
+
+.message-content li {
+  list-style-type: disc;
+  margin: 4px 0 !important;
+  padding-left: 0 !important;
+  line-height: 1.5;
+}
+
+/* Reduce padding for markdown ul/ol as well */
+:deep(.markdown-content ul),
+:deep(.markdown-content ol) {
+  padding-left: 20px !important; /* Reduced from 2em (32px) */
+  margin: 8px 0 !important;
 }
 </style>

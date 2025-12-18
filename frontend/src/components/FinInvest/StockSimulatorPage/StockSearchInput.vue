@@ -9,7 +9,7 @@
           type="text"
           :placeholder="placeholder"
           class="stock-search-input"
-          @input="handleInput"
+          @input="handleInputCombined"
           @focus="showSuggestions = true"
           @blur="handleBlur"
           @keydown="handleKeydown"
@@ -21,7 +21,10 @@
       </div>
 
       <!-- Search Suggestions Dropdown -->
-      <div v-if="showSuggestions && (suggestions.length > 0 || loading)" class="suggestions-dropdown">
+      <div
+        v-if="showSuggestions && (suggestions.length > 0 || loading)"
+        class="suggestions-dropdown"
+      >
         <!-- Loading State -->
         <div v-if="loading" class="suggestion-item loading">
           <div class="loading-spinner"></div>
@@ -29,12 +32,18 @@
         </div>
 
         <!-- Popular Stocks (when no search query) -->
-        <div v-else-if="!searchQuery.trim() && popularStocks.length > 0" class="suggestions-section">
+        <div
+          v-else-if="!searchQuery.trim() && popularStocks.length > 0"
+          class="suggestions-section"
+        >
           <div class="section-header">Popular Stocks</div>
           <div
             v-for="(stock, index) in popularStocks"
             :key="stock.symbol"
-            :class="['suggestion-item', { highlighted: highlightedIndex === index }]"
+            :class="[
+              'suggestion-item',
+              { highlighted: highlightedIndex === index },
+            ]"
             @mousedown="selectStock(stock)"
             @mouseenter="highlightedIndex = index"
           >
@@ -45,7 +54,10 @@
               </div>
               <div class="stock-meta">
                 <span class="stock-price">${{ formatPrice(stock.price) }}</span>
-                <span class="stock-change" :class="getChangeClass(stock.change)">
+                <span
+                  class="stock-change"
+                  :class="getChangeClass(stock.change)"
+                >
                   {{ formatChange(stock.change) }}
                 </span>
               </div>
@@ -59,7 +71,10 @@
           <div
             v-for="(stock, index) in suggestions"
             :key="stock.symbol"
-            :class="['suggestion-item', { highlighted: highlightedIndex === index }]"
+            :class="[
+              'suggestion-item',
+              { highlighted: highlightedIndex === index },
+            ]"
             @mousedown="selectStock(stock)"
             @mouseenter="highlightedIndex = index"
           >
@@ -77,7 +92,10 @@
         </div>
 
         <!-- No Results -->
-        <div v-else-if="searchQuery.trim() && !loading" class="suggestion-item no-results">
+        <div
+          v-else-if="searchQuery.trim() && !loading"
+          class="suggestion-item no-results"
+        >
           <font-awesome-icon icon="fa-solid fa-exclamation-circle" />
           <span>No stocks found for "{{ searchQuery }}"</span>
         </div>
@@ -85,7 +103,10 @@
     </div>
 
     <!-- Recent Searches -->
-    <div v-if="showRecentSearches && recentSearches.length > 0" class="recent-searches">
+    <div
+      v-if="showRecentSearches && recentSearches.length > 0"
+      class="recent-searches"
+    >
       <div class="recent-header">Recent Searches</div>
       <div class="recent-items">
         <button
@@ -103,225 +124,515 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
-import { debounce } from 'lodash'
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { debounce } from "lodash";
+import TradingViewSearchService from "@/services/TradingViewSearchService";
+import {
+  validateAndFormatSymbol,
+  getPopularSymbols,
+  SYMBOL_MAPPINGS,
+} from "@/utils/symbolValidator";
 
 // Props
 const props = defineProps({
   placeholder: {
     type: String,
-    default: 'Search stocks by symbol or company name...'
+    default: "Search stocks by symbol or company name...",
   },
   modelValue: {
     type: String,
-    default: ''
+    default: "",
   },
   showRecentSearches: {
     type: Boolean,
-    default: true
-  }
-})
+    default: true,
+  },
+});
 
 // Emits
-const emit = defineEmits(['update:modelValue', 'stock-selected', 'search'])
+const emit = defineEmits(["update:modelValue", "stock-selected", "search"]);
 
 // Reactive data
-const searchInput = ref(null)
-const searchQuery = ref(props.modelValue)
-const suggestions = ref([])
-const showSuggestions = ref(false)
-const loading = ref(false)
-const highlightedIndex = ref(-1)
+const searchInput = ref(null);
+const searchQuery = ref(props.modelValue);
+const suggestions = ref([]);
+const showSuggestions = ref(false);
+const loading = ref(false);
+const highlightedIndex = ref(-1);
 
-// Popular stocks data (could be fetched from API)
-const popularStocks = ref([
-  { symbol: 'AAPL', name: 'Apple Inc.', price: 175.43, change: 2.34 },
-  { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 2734.12, change: -12.45 },
-  { symbol: 'MSFT', name: 'Microsoft Corporation', price: 412.78, change: 5.67 },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 3298.91, change: 15.23 },
-  { symbol: 'TSLA', name: 'Tesla Inc.', price: 245.67, change: -8.91 },
-  { symbol: 'NVDA', name: 'NVIDIA Corporation', price: 789.45, change: 23.12 },
-  { symbol: 'META', name: 'Meta Platforms Inc.', price: 321.54, change: 4.76 },
-  { symbol: 'NFLX', name: 'Netflix Inc.', price: 567.23, change: -2.34 }
-])
+// Helper function to get company names
+const getCompanyNameFromSymbol = (symbol) => {
+  const names = {
+    AAPL: "Apple Inc.",
+    GOOGL: "Alphabet Inc.",
+    MSFT: "Microsoft Corporation",
+    AMZN: "Amazon.com Inc.",
+    META: "Meta Platforms Inc.",
+    TSLA: "Tesla Inc.",
+    NVDA: "NVIDIA Corporation",
+    NFLX: "Netflix Inc.",
+    JPM: "JPMorgan Chase & Co.",
+    BAC: "Bank of America Corp.",
+  };
+  return names[symbol] || `${symbol} Corporation`;
+};
 
+// Popular stocks data (using validated symbols)
+const popularStocks = ref(getPopularSymbols());
 // Recent searches (stored in localStorage)
-const recentSearches = ref([])
+const recentSearches = ref([]);
 
 // Computed
-const maxSuggestions = 8
+const maxSuggestions = 8;
 
 // Methods
+const handleInputCombined = () => {
+  handleInputTest();
+  handleInput();
+};
+
+const handleInputTest = () => {
+  console.log("handleInputTest called - input is working!", searchQuery.value);
+};
+
 const handleInput = debounce(async () => {
-  emit('update:modelValue', searchQuery.value)
-  
+  console.log("handleInput called with:", searchQuery.value); // Debug log
+  emit("update:modelValue", searchQuery.value);
+
   if (searchQuery.value.trim().length < 2) {
-    suggestions.value = []
-    return
+    suggestions.value = [];
+    showSuggestions.value = false;
+    return;
   }
 
-  loading.value = true
-  highlightedIndex.value = -1
+  loading.value = true;
+  highlightedIndex.value = -1;
+  showSuggestions.value = true; // Ensure suggestions are shown
 
   try {
-    // Simulate API call (replace with actual stock search API)
-    const results = await searchStocks(searchQuery.value)
-    suggestions.value = results.slice(0, maxSuggestions)
+    console.log("Calling searchStocks..."); // Debug log
+    const results = await searchStocks(searchQuery.value);
+    console.log("Search results received:", results); // Debug log
+    suggestions.value = results.slice(0, maxSuggestions);
   } catch (error) {
-    console.error('Error searching stocks:', error)
-    suggestions.value = []
+    console.error("Error searching stocks:", error);
+    suggestions.value = [];
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}, 300)
+}, 300);
 
 const searchStocks = async (query) => {
-  // Mock API response (replace with real API call)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const mockStocks = [
-        { symbol: 'AAPL', name: 'Apple Inc.', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'GOOGL', name: 'Alphabet Inc.', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'MSFT', name: 'Microsoft Corporation', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'AMZN', name: 'Amazon.com Inc.', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'TSLA', name: 'Tesla Inc.', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'NVDA', name: 'NVIDIA Corporation', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'META', name: 'Meta Platforms Inc.', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'NFLX', name: 'Netflix Inc.', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'AMD', name: 'Advanced Micro Devices Inc.', exchange: 'NASDAQ', type: 'Common Stock' },
-        { symbol: 'INTC', name: 'Intel Corporation', exchange: 'NASDAQ', type: 'Common Stock' }
-      ]
-      
-      const filtered = mockStocks.filter(stock =>
+  try {
+    console.log("Searching for:", query); // Debug log
+
+    // Use TradingView-compatible search service
+    const results = await TradingViewSearchService.searchStocks(query);
+    console.log("TradingView-compatible search results:", results);
+    
+    return results || [];
+
+    // Approach 2: Try Finnhub API (alternative)
+    // const finnhubKey = process.env.VUE_APP_FINNHUB_KEY;
+    // if (finnhubKey) {
+    //   const response = await fetch(`https://finnhub.io/api/v1/search?q=${query}&token=${finnhubKey}`);
+    //   const data = await response.json();
+    //   return data.result?.map(result => ({
+    //     symbol: result.symbol,
+    //     name: result.description,
+    //     exchange: result.primary_exchange || 'NASDAQ',
+    //     type: result.type || 'Stock',
+    //     fullSymbol: `${result.primary_exchange || 'NASDAQ'}:${result.symbol}`
+    //   })) || [];
+    // }
+
+    // Approach 3: Enhanced fallback with broader search
+    console.log("Using enhanced fallback search for:", query);
+
+    const enhancedStockList = [
+      // Tech Giants
+      {
+        symbol: "AAPL",
+        name: "Apple Inc.",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:AAPL",
+      },
+      {
+        symbol: "GOOGL",
+        name: "Alphabet Inc. Class A",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:GOOGL",
+      },
+      {
+        symbol: "GOOG",
+        name: "Alphabet Inc. Class C",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:GOOG",
+      },
+      {
+        symbol: "MSFT",
+        name: "Microsoft Corporation",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:MSFT",
+      },
+      {
+        symbol: "AMZN",
+        name: "Amazon.com Inc.",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:AMZN",
+      },
+      {
+        symbol: "TSLA",
+        name: "Tesla Inc.",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:TSLA",
+      },
+      {
+        symbol: "NVDA",
+        name: "NVIDIA Corporation",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:NVDA",
+      },
+      {
+        symbol: "META",
+        name: "Meta Platforms Inc.",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:META",
+      },
+      {
+        symbol: "NFLX",
+        name: "Netflix Inc.",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:NFLX",
+      },
+      {
+        symbol: "AMD",
+        name: "Advanced Micro Devices Inc.",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:AMD",
+      },
+      {
+        symbol: "INTC",
+        name: "Intel Corporation",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:INTC",
+      },
+
+      // Financial
+      {
+        symbol: "JPM",
+        name: "JPMorgan Chase & Co.",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:JPM",
+      },
+      {
+        symbol: "BAC",
+        name: "Bank of America Corp.",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:BAC",
+      },
+      {
+        symbol: "WFC",
+        name: "Wells Fargo & Company",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:WFC",
+      },
+      {
+        symbol: "GS",
+        name: "Goldman Sachs Group Inc.",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:GS",
+      },
+
+      // Healthcare
+      {
+        symbol: "JNJ",
+        name: "Johnson & Johnson",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:JNJ",
+      },
+      {
+        symbol: "PFE",
+        name: "Pfizer Inc.",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:PFE",
+      },
+      {
+        symbol: "UNH",
+        name: "UnitedHealth Group Inc.",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:UNH",
+      },
+
+      // Energy
+      {
+        symbol: "XOM",
+        name: "Exxon Mobil Corporation",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:XOM",
+      },
+      {
+        symbol: "CVX",
+        name: "Chevron Corporation",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:CVX",
+      },
+
+      // Consumer
+      {
+        symbol: "KO",
+        name: "Coca-Cola Company",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:KO",
+      },
+      {
+        symbol: "PEP",
+        name: "PepsiCo Inc.",
+        exchange: "NASDAQ",
+        type: "Common Stock",
+        fullSymbol: "NASDAQ:PEP",
+      },
+      {
+        symbol: "WMT",
+        name: "Walmart Inc.",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:WMT",
+      },
+      {
+        symbol: "DIS",
+        name: "Walt Disney Company",
+        exchange: "NYSE",
+        type: "Common Stock",
+        fullSymbol: "NYSE:DIS",
+      },
+
+      // Index ETFs
+      {
+        symbol: "SPY",
+        name: "SPDR S&P 500 ETF Trust",
+        exchange: "NYSE",
+        type: "ETF",
+        fullSymbol: "NYSE:SPY",
+      },
+      {
+        symbol: "QQQ",
+        name: "Invesco QQQ Trust",
+        exchange: "NASDAQ",
+        type: "ETF",
+        fullSymbol: "NASDAQ:QQQ",
+      },
+      {
+        symbol: "VTI",
+        name: "Vanguard Total Stock Market ETF",
+        exchange: "NYSE",
+        type: "ETF",
+        fullSymbol: "NYSE:VTI",
+      },
+    ];
+
+    const filtered = enhancedStockList.filter(
+      (stock) =>
         stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
         stock.name.toLowerCase().includes(query.toLowerCase())
-      )
-      
-      resolve(filtered)
-    }, 200)
-  })
-}
+    );
+
+    console.log("Search results:", filtered);
+    return filtered;
+  } catch (error) {
+    console.error("Error in searchStocks:", error);
+    return [];
+  }
+};
 
 const selectStock = (stock) => {
-  searchQuery.value = stock.symbol
-  showSuggestions.value = false
-  highlightedIndex.value = -1
-  
+  console.log("selectStock called with:", stock); // Debug log
+
+  // Validate stock object
+  if (!stock || !stock.symbol) {
+    console.error("Invalid stock object:", stock);
+    return;
+  }
+
+  searchQuery.value = stock.symbol;
+  showSuggestions.value = false;
+  highlightedIndex.value = -1;
+
   // Add to recent searches
-  addToRecentSearches(stock)
-  
+  addToRecentSearches(stock);
+
+  // Create enhanced stock object with full symbol for TradingView
+  // Ensure we have proper exchange prefix for TradingView
+  const exchange = stock.exchange || "NASDAQ";
+  const fullSymbol = `${stock.symbol}`;
+
+  const enhancedStock = {
+    ...stock,
+    symbol: fullSymbol, // Use full symbol (e.g., "NASDAQ:AAPL") for TradingView
+    displaySymbol: stock.symbol, // Keep original symbol for display
+    exchange: exchange,
+    fullSymbol: fullSymbol,
+  };
+
+  console.log("Emitting stock-selected with:", enhancedStock); // Debug log
   // Emit events
-  emit('update:modelValue', stock.symbol)
-  emit('stock-selected', stock)
-  emit('search', stock.symbol)
-}
+  emit("update:modelValue", stock.symbol); // Display symbol for input
+  emit("stock-selected", enhancedStock); // Enhanced symbol for TradingView
+  emit("search", stock.symbol);
+};
 
 const clearSearch = () => {
-  searchQuery.value = ''
-  suggestions.value = []
-  showSuggestions.value = false
-  emit('update:modelValue', '')
-}
+  searchQuery.value = "";
+  suggestions.value = [];
+  showSuggestions.value = false;
+  emit("update:modelValue", "");
+};
 
 const handleBlur = () => {
   // Delay hiding suggestions to allow for click events
   setTimeout(() => {
-    showSuggestions.value = false
-  }, 200)
-}
+    showSuggestions.value = false;
+  }, 200);
+};
 
 const handleKeydown = (event) => {
-  if (!showSuggestions.value) return
+  if (!showSuggestions.value) return;
 
-  const totalItems = searchQuery.value.trim() ? suggestions.value.length : popularStocks.value.length
+  const totalItems = searchQuery.value.trim()
+    ? suggestions.value.length
+    : popularStocks.value.length;
 
   switch (event.key) {
-    case 'ArrowDown':
-      event.preventDefault()
-      highlightedIndex.value = Math.min(highlightedIndex.value + 1, totalItems - 1)
-      break
-    case 'ArrowUp':
-      event.preventDefault()
-      highlightedIndex.value = Math.max(highlightedIndex.value - 1, -1)
-      break
-    case 'Enter':
-      event.preventDefault()
+    case "ArrowDown":
+      event.preventDefault();
+      highlightedIndex.value = Math.min(
+        highlightedIndex.value + 1,
+        totalItems - 1
+      );
+      break;
+    case "ArrowUp":
+      event.preventDefault();
+      highlightedIndex.value = Math.max(highlightedIndex.value - 1, -1);
+      break;
+    case "Enter":
+      event.preventDefault();
       if (highlightedIndex.value >= 0) {
-        const selectedStock = searchQuery.value.trim() 
+        const selectedStock = searchQuery.value.trim()
           ? suggestions.value[highlightedIndex.value]
-          : popularStocks.value[highlightedIndex.value]
+          : popularStocks.value[highlightedIndex.value];
         if (selectedStock) {
-          selectStock(selectedStock)
+          selectStock(selectedStock);
+        }
+      } else if (suggestions.value.length > 0) {
+        // Auto-select first suggestion if none is highlighted
+        console.log("Auto-selecting first suggestion:", suggestions.value[0]); // Debug log
+        selectStock(suggestions.value[0]);
+      } else if (searchQuery.value.trim().length >= 2) {
+        // Try to find exact match in popular stocks
+        const exactMatch = popularStocks.value.find(
+          (stock) =>
+            stock.symbol.toLowerCase() ===
+            searchQuery.value.trim().toLowerCase()
+        );
+        if (exactMatch) {
+          console.log("Found exact match in popular stocks:", exactMatch); // Debug log
+          selectStock(exactMatch);
         }
       }
-      break
-    case 'Escape':
-      showSuggestions.value = false
-      searchInput.value?.blur()
-      break
+      break;
+    case "Escape":
+      showSuggestions.value = false;
+      searchInput.value?.blur();
+      break;
   }
-}
+};
 
 // Utility functions
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(price)
-}
+    maximumFractionDigits: 2,
+  }).format(price);
+};
 
 const formatChange = (change) => {
-  const sign = change >= 0 ? '+' : ''
-  return `${sign}${change.toFixed(2)}`
-}
+  const sign = change >= 0 ? "+" : "";
+  return `${sign}${change.toFixed(2)}`;
+};
 
 const getChangeClass = (change) => {
   return {
     positive: change > 0,
     negative: change < 0,
-    neutral: change === 0
-  }
-}
+    neutral: change === 0,
+  };
+};
 
 // Recent searches management
 const loadRecentSearches = () => {
   try {
-    const saved = localStorage.getItem('stockSearchRecents')
+    const saved = localStorage.getItem("stockSearchRecents");
     if (saved) {
-      recentSearches.value = JSON.parse(saved)
+      recentSearches.value = JSON.parse(saved);
     }
   } catch (error) {
-    console.error('Error loading recent searches:', error)
+    console.error("Error loading recent searches:", error);
   }
-}
+};
 
 const addToRecentSearches = (stock) => {
   // Remove if already exists
-  recentSearches.value = recentSearches.value.filter(item => item.symbol !== stock.symbol)
-  
+  recentSearches.value = recentSearches.value.filter(
+    (item) => item.symbol !== stock.symbol
+  );
+
   // Add to beginning
-  recentSearches.value.unshift(stock)
-  
+  recentSearches.value.unshift(stock);
+
   // Keep only last 5
-  recentSearches.value = recentSearches.value.slice(0, 5)
-  
+  recentSearches.value = recentSearches.value.slice(0, 5);
+
   // Save to localStorage
   try {
-    localStorage.setItem('stockSearchRecents', JSON.stringify(recentSearches.value))
+    localStorage.setItem(
+      "stockSearchRecents",
+      JSON.stringify(recentSearches.value)
+    );
   } catch (error) {
-    console.error('Error saving recent searches:', error)
+    console.error("Error saving recent searches:", error);
   }
-}
+};
 
 // Lifecycle
 onMounted(() => {
-  loadRecentSearches()
-})
+  loadRecentSearches();
+});
 
 // Cleanup
 onUnmounted(() => {
   // Any cleanup if needed
-})
+});
 </script>
 
 <style scoped>
@@ -451,8 +762,12 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .stock-info {
@@ -568,21 +883,21 @@ onUnmounted(() => {
     padding: 10px 36px 10px 32px;
     font-size: 16px; /* Prevents zoom on iOS */
   }
-  
+
   .suggestions-dropdown {
     max-height: 300px;
   }
-  
+
   .stock-info {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
-  
+
   .stock-meta {
     align-items: flex-start;
     flex-direction: row;
     gap: 12px;
   }
 }
-</style> 
+</style>

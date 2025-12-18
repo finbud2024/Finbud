@@ -183,22 +183,22 @@
     <!-- Quick Access Cards Section -->
     <section class="quick-access-section">
       <div class="container">
-        <h2 class="section-title">New Features</h2>
+        <h2 class="section-title">{{ t('newFeatures.title') }}</h2>
         <div class="features-grid">
           <!-- AI Predictive Calculator -->
           <div class="feature-card">
             <div class="feature-icon">
               <font-awesome-icon icon="fa-solid fa-brain" />
             </div>
-            <h3>AI Predictive Calculator</h3>
-            <p>Advanced stock price prediction with multiple AI models and customizable parameters</p>
+            <h3>{{ t('newFeatures.aiCalculator.title') }}</h3>
+            <p>{{ t('newFeatures.aiCalculator.description') }}</p>
             <div class="feature-tags">
-              <span class="tag">AI Models</span>
-              <span class="tag">Real-time Data</span>
-              <span class="tag">Charts</span>
+              <span class="tag">{{ t('newFeatures.aiCalculator.tags.aiModels') }}</span>
+              <span class="tag">{{ t('newFeatures.aiCalculator.tags.realTimeData') }}</span>
+              <span class="tag">{{ t('newFeatures.aiCalculator.tags.charts') }}</span>
             </div>
             <router-link to="/predictive-calculator" class="feature-btn">
-              Try Calculator
+              {{ t('newFeatures.aiCalculator.button') }}
               <font-awesome-icon icon="fa-solid fa-arrow-right" />
             </router-link>
           </div>
@@ -208,15 +208,15 @@
             <div class="feature-icon gradient-edu">
               <font-awesome-icon icon="fa-solid fa-map" />
             </div>
-            <h3>Learning Roadmap Creator</h3>
-            <p>Create personalized financial learning paths based on your goals and experience level</p>
+            <h3>{{ t('newFeatures.roadmapCreator.title') }}</h3>
+            <p>{{ t('newFeatures.roadmapCreator.description') }}</p>
             <div class="feature-tags">
-              <span class="tag">Personalized</span>
-              <span class="tag">Step-by-step</span>
-              <span class="tag">AI-powered</span>
+              <span class="tag">{{ t('newFeatures.roadmapCreator.tags.personalized') }}</span>
+              <span class="tag">{{ t('newFeatures.roadmapCreator.tags.stepByStep') }}</span>
+              <span class="tag">{{ t('newFeatures.roadmapCreator.tags.aiPowered') }}</span>
             </div>
             <router-link to="/create-roadmap" class="feature-btn">
-              Create Roadmap
+              {{ t('newFeatures.roadmapCreator.button') }}
               <font-awesome-icon icon="fa-solid fa-arrow-right" />
             </router-link>
           </div>
@@ -226,15 +226,15 @@
             <div class="feature-icon gradient-quiz">
               <font-awesome-icon icon="fa-solid fa-trophy" />
             </div>
-            <h3>Enhanced Financial Quiz</h3>
-            <p>Test your financial knowledge with AI-powered feedback and personalized learning</p>
+            <h3>{{ t('newFeatures.enhancedQuiz.title') }}</h3>
+            <p>{{ t('newFeatures.enhancedQuiz.description') }}</p>
             <div class="feature-tags">
-              <span class="tag">Interactive</span>
-              <span class="tag">AI Feedback</span>
-              <span class="tag">Progress Tracking</span>
+              <span class="tag">{{ t('newFeatures.enhancedQuiz.tags.interactive') }}</span>
+              <span class="tag">{{ t('newFeatures.enhancedQuiz.tags.aiFeedback') }}</span>
+              <span class="tag">{{ t('newFeatures.enhancedQuiz.tags.progressTracking') }}</span>
             </div>
             <router-link to="/quizz" class="feature-btn">
-              Take Quiz
+              {{ t('newFeatures.enhancedQuiz.button') }}
               <font-awesome-icon icon="fa-solid fa-arrow-right" />
             </router-link>
           </div>
@@ -358,19 +358,22 @@ export default {
     },
     async chatNow(message) {
       try {
-        // Create a new thread by making an API call
         const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
-        const userId = this.$store.getters["users/userId"]; // Get the current user ID
-        const response = await axios.post(api, { userId });
+        let requestBody = {};
 
-        // Extract the new thread ID from the response
+        if (this.isAuthenticated) {
+          const userId = this.$store.getters["users/userId"];
+          requestBody.userId = userId;
+        } else {
+          requestBody.userId = null;
+        }
+
+        const response = await axios.post(api, requestBody);
         const newThreadID = response.data._id;
 
-        // Update the Vuex store with the new thread ID
         this.$store.dispatch("threads/updateThreadID", newThreadID);
 
-        // Navigate to the chat view with the new thread ID and the message
-        this.$router.push({
+        await this.$router.push({
           path: "/chat-view",
           query: { autoMessage: message, threadID: newThreadID },
         });
@@ -401,6 +404,10 @@ export default {
     }
   },
   mounted() {
+    if (!this.isAuthenticated && !sessionStorage.getItem('anonymousToken')) {
+      const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      sessionStorage.setItem('anonymousToken', token);
+    }
     this.startTypingSignInTitle();
     this.startTypingSignInDescription();
 

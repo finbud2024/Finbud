@@ -2,7 +2,10 @@
 	<div class="chat-view-container" :class="{ 'navbar-expanded': isNavbarExpanded }">
 		<!-- Desktop Sidebar (Fixed, Toggles Visibility) -->
 		<SideBar
-			v-if="isAuthenticated && !isMobile && isSidebarVisibleBigScreen"
+			v-if="isAuthenticated && !isMobile"
+			:is-visible.sync="isSidebarVisibleBigScreen"
+			:show-controls="false"
+			:is-mobile="false"
 			class="sidebar-desktop"
 			:class="{ 'navbar-expanded': isNavbarExpanded }"
 			:initialThreadName="newThreadName"
@@ -10,11 +13,12 @@
 
 		<!-- Mobile Sidebar (Slides In) -->
 		<SideBar
-			v-if="isAuthenticated && isMobile && isSidebarVisibleMobile"
+			v-if="isAuthenticated && isMobile"
+			:is-visible.sync="isSidebarVisibleMobile"
+			:show-controls="false"
+			:is-mobile="true"
 			class="sidebar-mobile"
-			:class="{ 'is-visible': isSidebarVisibleMobile }"
 			:initialThreadName="newThreadName"
-			@close="closeSidebarMobile"
 		/>
 		<div v-if="isAuthenticated && isMobile && isSidebarVisibleMobile" class="sidebar-mobile-overlay" @click="closeSidebarMobile"></div>
 
@@ -31,7 +35,7 @@
 				/>
 				<!-- You can add other header controls here if needed -->
 			</div>
-			<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" ref="chatComponent" />
+			<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" ref="chatComponent" :autoMessage="autoMessage" :greeting="greeting" />
 		</div>
 
 		<!-- Guidance & Tutorial (Positioned relative to chat-view-container) -->
@@ -89,6 +93,8 @@ export default {
 			isNavbarExpanded: false,
 			isMobile: false,
 			nnavbarObserver: null,
+			autoMessage: null,
+			greeting: true,
 		};
 	},
 	computed: {
@@ -156,6 +162,10 @@ export default {
 
 		const autoMessage = this.$route.query.autoMessage, threadID = this.$route.query.threadID;
 		if (threadID) this.$store.dispatch("threads/updateThreadID", threadID);
+		if (autoMessage) {
+			this.autoMessage = autoMessage;
+			this.greeting = false;
+		}
 		if (this.$route.query.showTutorial && this.$refs.tutorialOverlay) setTimeout(() => this.$refs.tutorialOverlay.resetTutorial(), 500);
 	},
 	beforeDestroy() {
@@ -215,13 +225,7 @@ export default {
 	height: 100vh;
 	background-color: var(--card-bg);
 	z-index: 1060; /* High z-index to be on top */
-	transform: translateX(-100%);
-	transition: transform 0.3s ease-in-out;
 	box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-}
-
-.sidebar-mobile.is-visible {
-	transform: translateX(0);
 }
 
 .sidebar-mobile-overlay {

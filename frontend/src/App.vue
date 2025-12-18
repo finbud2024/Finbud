@@ -240,7 +240,13 @@ export default {
     },
     showEventHubGreeting() {},
     async checkDailyLoginReward() {
-      const lastLogin = localStorage.getItem("lastLoginDate");
+      // TEMPORARILY DISABLED - FinCoin /earn endpoint causing 500 errors and logging out users
+      // The /earn endpoint requires MongoDB which may not be properly connected
+      // TODO: Re-enable after fixing MongoDB connection for FinCoin transactions
+      console.log("Daily login reward check disabled - preventing session logout issue");
+      return;
+      
+      /* const lastLogin = localStorage.getItem("lastLoginDate");
       const today = new Date().toISOString().split("T")[0];
 
       if (!lastLogin || lastLogin !== today) {
@@ -262,7 +268,7 @@ export default {
         } catch (error) {
           console.error("Failed to award daily login FinCoins:", error);
         }
-      }
+      } */
     },
     handleLogoClick() {
       this.showLoadingPage = true;

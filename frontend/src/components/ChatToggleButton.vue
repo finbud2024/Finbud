@@ -139,7 +139,9 @@ export default {
       this.$emit('chat-toggled', this.showChatBubble)
     },
     handleChatClose() {
+      console.log('ChatToggleButton: handleChatClose called')
       this.showChatBubble = false
+      this.$refs.chatBubble?.hide()
       localStorage.setItem('chatBubbleState', JSON.stringify({
         isOpen: false
       }))

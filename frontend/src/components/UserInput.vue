@@ -31,7 +31,7 @@
 					<div @click="triggerFileInput" class="upload-btn">
 						<font-awesome-icon icon="fa-solid fa-paperclip" />
 					</div>
-					<div class="agent-btn">
+					<!-- <div class="agent-btn">
 						<button
 							class="chat-mode-button"
 							:class="{ active: chatMode === 'deep-research' }"
@@ -49,6 +49,15 @@
 							Think
 						</button>
 					</div>
+					<div class="agent-btn">
+						<button
+							class="chat-mode-button"
+							:class="{ active: chatMode === 'rag' }"
+							@click="toggleRAGMode"
+						>
+							RAG
+						</button>
+					</div> -->
 				</div>
 
 				<!-- Drop File -->
@@ -102,25 +111,25 @@ export default {
 			isDragging: false,
 			typingPlaceholder: "",
 			placeholderTexts: [
-				"Hỏi giá cổ phiếu AAPL",
-				"Tìm hiểu về lạm phát",
-				"Mua 5 cổ phiếu của TSLA",
-				"Theo dõi chi tiêu hôm nay",
-				"Thêm giao dịch: ăn trưa 50k",
-				"Tìm bất động sản ở TP. HCM",
-				"Xem top 5 đồng tiền ảo",
-				"Định nghĩa thuật ngữ IPO",
-				"Xem xu hướng thị trường tuần này",
-				"Gợi ý danh mục đầu tư ngắn hạn",
-				"Tạo kế hoạch tiết kiệm 6 tháng",
-				"Tính toán lợi nhuận đầu tư cổ phiếu",
-				"Hỏi giá vàng hôm nay",
-				"Tìm công ty có ROE cao nhất",
-				"Giải thích chỉ số P/E",
-				"So sánh ETF và cổ phiếu",
-				"Có nên đầu tư vào Bitcoin lúc này?",
-				"Lên danh sách cổ phiếu tăng trưởng",
-				"Đề xuất chia tỷ lệ đầu tư 60/30/10",
+				"Ask for AAPL stock price",
+				"Learn about inflation",
+				"Buy 5 shares of TSLA",
+				"Track today's spending",
+				"Add transaction: lunch 50k",
+				"Find real estate in Ho Chi Minh City",
+				"See top 5 cryptocurrencies",
+				"Define the term IPO",
+				"See this week's market trends",
+				"Suggest a short-term investment portfolio",
+				"Create a 6-month savings plan",
+				"Calculate stock investment profit",
+				"Ask for today's gold price",
+				"Find company with the highest ROE",
+				"Explain the P/E ratio",
+				"Compare ETF and stocks",
+				"Should I invest in Bitcoin right now?",
+				"List growth stocks",
+				"Propose a 60/30/10 investment allocation",
 			],
 			typingIndex: 0,
 			charIndex: 0,
@@ -232,6 +241,14 @@ export default {
 			}
 		},
 
+		toggleRAGMode() {
+			if (this.chatMode) {
+				this.chatMode = "";
+			} else {
+				this.chatMode = "rag";
+			}
+		},
+
 		checkChatMode() {
 			if (this.messageText.includes("#deep-research") || this.messageText.includes("#deepresearch")) {
 				this.chatMode = "deep-research";
@@ -239,6 +256,9 @@ export default {
 			} else if (this.messageText.includes("#think")) {
 				this.chatMode = "think";
 				this.messageText = this.messageText.replace("#think", "");
+			} else if (this.messageText.includes("#rag")) {
+				this.chatMode = "rag";
+				this.messageText = this.messageText.replace("#rag", "");
 			}
 		},
 

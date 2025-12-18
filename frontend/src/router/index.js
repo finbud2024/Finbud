@@ -25,7 +25,7 @@ import StartThread from "@/views/FinEdu/ForumThreadStart.vue";
 import MortgageCalc from "@/views/FinManage/MortgageCalculatorPage.vue";
 import SuperInvestors from "@/views/FinManage/SuperInvestorsPage.vue";
 import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue";
-import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue"
+import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue";
 import AgentPage from "@/views/FinAgent/AgentPage.vue";
 import PestlePage from "@/views/FinAgent/PestlePage.vue";
 import SwotPage from "@/views/FinAgent/SwotPage.vue";
@@ -114,11 +114,13 @@ const routes = [
     path: "/stock-simulator",
     name: "StockSimulator",
     component: StockSimulator,
+    meta: { requiresAuth: true },
   },
   {
     path: "/quant-simulator",
     name: "QuantSimulator",
     component: QuantSimulator,
+    meta: { requiresAuth: true },
   },
   {
     path: "/autotrade-ai",
@@ -164,10 +166,10 @@ const routes = [
     props: true,
   },
   {
-    path: '/courses/:categorySlug',
-    name: 'CourseCategory',
+    path: "/courses/:categorySlug",
+    name: "CourseCategory",
     component: CourseCategoryPage,
-    props: true
+    props: true,
   },
   {
     path: "/thread",
@@ -205,20 +207,20 @@ const routes = [
   },
   {
     path: "/docs",
-    redirect: "/docs/aapl"
+    redirect: "/docs/aapl",
   },
   {
     path: "/docs/:ticker",
     name: "Financial Docs",
-    component: FinDataPage
+    component: FinDataPage,
   },
   {
     path: "/company-report/:ticker",
-    component: InsiderTransactionPage
+    component: InsiderTransactionPage,
   },
   {
     path: "/earning-calendars",
-    component: EarningCalendarPage
+    component: EarningCalendarPage,
   },
   {
     path: "/agent/",
@@ -253,11 +255,11 @@ const routes = [
   {
     path: "/notifications",
     name: "NotificationCenter",
-    component: NotificationCenter, 
+    component: NotificationCenter,
   },
   {
-    path: '/courses/:categorySlug',
-    name: 'CourseCategory', // Must match exactly what you use in router-link
+    path: "/courses/:categorySlug",
+    name: "CourseCategory", // Must match exactly what you use in router-link
     component: CourseCategoryPage,
   },
   {
@@ -334,7 +336,7 @@ const routes = [
     path: "/finxpert-accountant",
     name: "AccountantPage",
     component: AccountantPage,
-  }
+  },
 ];
 
 const router = createRouter({
@@ -344,10 +346,33 @@ const router = createRouter({
 
 // Add navigation guard
 router.beforeEach(async (to, from, next) => {
+  console.log(
+    "Router guard - navigating to:",
+    to.path,
+    "requires auth:",
+    to.meta.requiresAuth
+  );
+
   if (!store.getters["users/isAuthenticated"]) {
     await store.dispatch("users/fetchCurrentUser");
   }
-  next();
+
+  console.log(
+    "Router guard - authenticated:",
+    store.getters["users/isAuthenticated"]
+  );
+
+  // Check if route requires authentication
+  if (to.meta.requiresAuth && !store.getters["users/isAuthenticated"]) {
+    console.log(
+      "Router guard - redirecting to login with redirect:",
+      to.fullPath
+    );
+    // Redirect to login page
+    next({ name: "Login", query: { redirect: to.fullPath } });
+  } else {
+    next();
+  }
 });
 
 export default router;

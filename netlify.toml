@@ -1,5 +1,5 @@
 [build]
-  command = "yarn netlify:build"
+  command = "npm install && npm run netlify:build"
   publish = "frontend/dist"
   functions = "backend/functions"
 
@@ -7,16 +7,14 @@
   port = 8888
   functions = "backend/functions"
   framework = "#auto"
-  command = "yarn client"
+  command = "npm run client"
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["mongoose", "express", "socket.io", "axios"]
   included_files = ["backend/**/*"]
   
 [build.environment]
-  NODE_VERSION = "18"
-  YARN_VERSION = "1.22.22"
-  YARN_FLAGS = "--network-timeout 600000"
-  NODE_OPTIONS = "--experimental-modules"
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+  NODE_OPTIONS = "--no-warnings"
 

@@ -4,8 +4,10 @@ import App from "./App.vue"; // Adjust the path to your main App component
 import router from "./router"; // Adjust the path to your router file
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+// Import console filter for cleaner development experience
+import { enableDevConsoleFilter } from "./utils/consoleFilter";
 // Import only specific icons instead of entire packs
-import { 
+import {
   faCamera,
   faRightFromBracket,
   faEye,
@@ -28,18 +30,21 @@ import {
   faComments,
   faWallet,
   faChartBar,
-  faUser
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
-import { faStar, faBell as faBellRegular } from "@fortawesome/free-regular-svg-icons";
+import {
+  faStar,
+  faBell as faBellRegular,
+} from "@fortawesome/free-regular-svg-icons";
 import store from "./store"; // Import the vuex store
 import VueGoogleMaps from "@fawmi/vue-google-maps";
 import i18n from "./i18n";
-import BootstrapVue3 from 'bootstrap-vue-3'
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap-vue-3/dist/bootstrap-vue-3.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import { VueQueryPlugin } from '@tanstack/vue-query';
-import VueApexCharts from 'vue3-apexcharts';
+import BootstrapVue3 from "bootstrap-vue-3";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import { VueQueryPlugin } from "@tanstack/vue-query";
+import VueApexCharts from "vue3-apexcharts";
 
 // Create event bus for component communication using tiny-emitter
 class EventBus {
@@ -57,7 +62,7 @@ class EventBus {
   $off(event, callback) {
     if (this.events[event]) {
       if (callback) {
-        this.events[event] = this.events[event].filter(cb => cb !== callback);
+        this.events[event] = this.events[event].filter((cb) => cb !== callback);
       } else {
         this.events[event] = [];
       }
@@ -66,7 +71,7 @@ class EventBus {
 
   $emit(event, ...args) {
     if (this.events[event]) {
-      this.events[event].forEach(callback => callback(...args));
+      this.events[event].forEach((callback) => callback(...args));
     }
   }
 }
@@ -97,7 +102,7 @@ const icons = [
   faComments,
   faWallet,
   faChartBar,
-  faUser
+  faUser,
 ];
 library.add(...icons); // Use the spread operator to add the icons
 
@@ -116,12 +121,15 @@ app.use(VueGoogleMaps, {
 // Register FontAwesomeIcon component
 app.component("font-awesome-icon", FontAwesomeIcon);
 
+// Enable console filtering for cleaner development experience
+enableDevConsoleFilter();
+
 // Use the router and vuex store
 app.use(router);
 app.use(store);
 app.use(i18n);
-app.use(BootstrapVue3)
-app.use(VueQueryPlugin)
-app.use(VueApexCharts)
+app.use(BootstrapVue3);
+app.use(VueQueryPlugin);
+app.use(VueApexCharts);
 // Mount the application to the DOM
 app.mount("#app");

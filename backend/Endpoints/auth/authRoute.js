@@ -11,6 +11,19 @@ const authRoute = express.Router();
 //Log In page.
 authRoute.get(
   "/auth/google",
+  (req, res, next) => {
+    console.log("In /auth/google route");
+    console.log("Query parameters:", req.query);
+    // Store redirect parameter in session
+    if (req.query.redirect) {
+      console.log("Storing redirect in session:", req.query.redirect);
+      req.session.redirectAfterAuth = req.query.redirect;
+    } else {
+      console.log("No redirect parameter found in query");
+    }
+    console.log("Session after storing redirect:", req.session);
+    next();
+  },
   passport.authenticate("google", {
     scope: ["email", "profile"],
     prompt: "select_account",
@@ -22,6 +35,10 @@ authRoute.get(
 //OAuth authentication process is complete.
 //req.isAuthenticated() tells us whether authentication was successful.
 authRoute.get("/auth/google/callback", (req, res, next) => {
+  console.log("=== GOOGLE CALLBACK START ===");
+  console.log("Session ID:", req.sessionID);
+  console.log("Full session object:", JSON.stringify(req.session, null, 2));
+
   passport.authenticate("google", async (err, user, info) => {
     console.log("in google authenticate callback");
     console.log("Auth info received:", info);
@@ -42,6 +59,10 @@ authRoute.get("/auth/google/callback", (req, res, next) => {
     const isNewUser = info && info.isNewUser;
     console.log("Is new user flag:", isNewUser);
 
+    // ⚠️ IMPORTANT: Store redirect path BEFORE req.logIn() as it may regenerate the session
+    const redirectPath = req.session.redirectAfterAuth;
+    console.log("Redirect path BEFORE login:", redirectPath);
+
     req.logIn(user, (err) => {
       if (err) {
         console.error("Login error:", err);
@@ -49,8 +70,17 @@ authRoute.get("/auth/google/callback", (req, res, next) => {
       }
 
       console.log("User logged in successfully");
+      console.log("Redirect path AFTER login:", redirectPath);
 
-      if (isNewUser) {
+      // Clear the redirect path from session (if it still exists)
+      if (req.session.redirectAfterAuth) {
+        delete req.session.redirectAfterAuth;
+      }
+
+      if (redirectPath) {
+        console.log("Redirecting user to:", redirectPath);
+        return res.redirect(redirectPath);
+      } else if (isNewUser) {
         console.log("Redirecting new user to tutorial");
         // Set isNewUser flag in session
         req.session.isNewUser = true;
@@ -73,14 +103,14 @@ authRoute.post(
     // Check if this is a new user (for local login)
     // We can determine this by checking if this is their first login
     // or by checking a specific field in the user document
-    const isNewUser = req.user.isNew || false;
+    const isNewUser = req.user?.isNew || false;
 
     // Set isNewUser flag in session if user is new
     if (isNewUser) {
       req.session.isNewUser = true;
     }
 
-    await setupUserDocuments(req.user._id);
+    await setupUserDocuments(req.user?._id);
     // Send the user data along with the isNewUser flag
     res.status(200).json({
       user: req.user,

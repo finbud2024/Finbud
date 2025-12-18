@@ -6,9 +6,18 @@ export const isAuthenticated = (req, res, next) => {
   return res.status(401).json({ message: "Unauthorized: Please log in" });
 };
 
+// Optional authentication middleware
+export const softAuth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  // If not authenticated, just continue without user data
+  return next();
+};
+
 // Authorization middleware for admin-only routes
 export const isAdmin = (req, res, next) => {
-  if (req.isAuthenticated() && req.user.accountData.priviledge === "admin") {
+  if (req.isAuthenticated() && req.user?.accountData?.priviledge === "admin") {
     return next();
   }
   return res.status(403).json({ message: "Forbidden: Admin access required" });
@@ -21,13 +30,13 @@ export const isOwnerOrAdmin = (req, res, next) => {
   }
 
   // Allow access if user is an admin
-  if (req.user.accountData.priviledge === "admin") {
+  if (req.user?.accountData?.priviledge === "admin") {
     return next();
   }
 
   // Allow access if user is accessing their own data
   const requestedUserId = req.params.userId || req.params.id;
-  if (requestedUserId && req.user._id.toString() === requestedUserId) {
+  if (requestedUserId && req.user?._id?.toString() === requestedUserId) {
     return next();
   }
 
