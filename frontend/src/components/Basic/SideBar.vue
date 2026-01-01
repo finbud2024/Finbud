@@ -343,22 +343,22 @@ export default {
   height: 100vh;
   overflow-y: auto;
   color: var(--text-primary);
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   position: fixed;
-  left: 70px;
+  right: 0;
   top: 0;
   z-index: 1050;
 }
 
 .side-bar.collapsed {
-  transform: translateX(-100%);
+  transform: translateX(100%);
 }
 
 .toggle-btn {
   position: fixed;
-  left: 20px;
+  right: 20px;
   top: 20px;
   z-index: 1001;
   background: var(--bg-primary);

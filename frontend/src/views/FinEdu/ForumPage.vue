@@ -313,6 +313,8 @@ export default {
   min-height: 100vh;
   background: #f8f9fa;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Enhanced Header */
@@ -333,7 +335,7 @@ export default {
 .header-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 3rem 0 5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -419,6 +421,8 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  margin-left: auto;
+  min-width: 240px;
 }
 
 .action-btn {

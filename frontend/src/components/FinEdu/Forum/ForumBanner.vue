@@ -100,6 +100,9 @@ export default {
   font-size: 15px;
   font-weight: 600;
   transition: background 0.2s ease-in-out;
+  margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .start-thread-btn:hover {
@@ -109,5 +112,21 @@ export default {
 .icon {
   width: 18px;
   height: 18px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .forum-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  
+  .start-thread-btn {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
 }
 </style>
