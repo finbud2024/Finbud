@@ -1013,6 +1013,8 @@ export default {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   padding: 1rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Header */

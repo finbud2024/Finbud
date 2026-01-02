@@ -382,6 +382,10 @@ body.dark-mode {
   flex: 1;
   position: relative;
   z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #app-container {
