@@ -37,14 +37,7 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finInvest'">
             <router-link to="/stock-simulator">{{ $t("simulator") }}</router-link>
-            <router-link to="/predictive-calculator">{{ $t("predictiveCalculator") }}</router-link>
-            <router-link to="/autotrade-ai">{{ $t("autoTradeAI") }}</router-link>
-            <router-link to="/quant-analysis">{{ $t("quant") }}</router-link>
-            <router-link to="/quant-simulator">{{ $t("quantSimulator") }}</router-link>
             <router-link to="/fund-letter">{{ $t("FundLetter")}}</router-link>
-            <router-link to="/docs">{{ $t("FinData") }}</router-link>
-            <router-link to="/macro-economic">{{ $t("macroEconomic") }}</router-link>
-            <router-link to="/market-analysis">{{ $t("marketAnalysis") }}</router-link>
           </div>
         </li>
 
@@ -73,8 +66,6 @@
           <div class="dropdown-content" v-show="activeDropdown === 'finEdu'">
             <router-link to="/quizz">{{ $t("quiz") }}</router-link>
             <router-link to="/create-roadmap">{{ $t("learningRoadmap") }}</router-link>
-            <router-link to="/event">{{ $t("event") }}</router-link>
-            <router-link to="/course">{{ $t("course") }}</router-link>
           </div>
         </li>
 
@@ -84,6 +75,14 @@
             <font-awesome-icon icon="fa-solid fa-users" class="icon" />
             <span>{{ $t("finVerse") }}</span>
             </router-link>
+        </li>
+
+        <!-- Fin Event moved below FinVerse -->
+        <li v-if="isAuthenticated">
+          <router-link to="/event" class="nav-link">
+            <font-awesome-icon icon="fa-solid fa-calendar" class="icon" />
+            <span>{{ $t("event") }}</span>
+          </router-link>
         </li>
 
         <!-- Subscribe FinPlus Section -->

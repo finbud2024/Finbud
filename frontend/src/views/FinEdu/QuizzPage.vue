@@ -100,14 +100,6 @@
       <div class="quick-actions">
         <h3>Quick Actions</h3>
         <div class="actions-grid">
-          <router-link to="/predictive-calculator" class="action-card">
-            <div class="action-icon">
-              <font-awesome-icon icon="fa-solid fa-calculator" />
-            </div>
-            <h4>Predictive Calculator</h4>
-            <p>Calculate financial predictions</p>
-          </router-link>
-          
           <router-link to="/forum" class="action-card">
             <div class="action-icon">
               <font-awesome-icon icon="fa-solid fa-users" />

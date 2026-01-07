@@ -229,12 +229,14 @@ export default {
       window.location.href = api;
     },
     signUpWithFacebook() {
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
-      window.location.href = api;
+      // Facebook OAuth not yet implemented
+      this.errorMessage = "Facebook sign-up is coming soon! Please use Google or email sign-up.";
+      console.log("Facebook OAuth not implemented yet");
     },
     signUpWithApple() {
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
-      window.location.href = api;
+      // Apple OAuth not yet implemented
+      this.errorMessage = "Apple sign-up is coming soon! Please use Google or email sign-up.";
+      console.log("Apple OAuth not implemented yet");
     },
     async register() {
       this.infoFields.forEach(field => this.validateField(field.name));

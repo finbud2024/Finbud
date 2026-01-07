@@ -533,9 +533,9 @@ async function generateAutomatedReport(reportType, dataSource, timeframe, format
   const reportId = `report_${Date.now()}`;
   
   const reportTypes = {
-    'market_analysis': {
-      title: 'Market Analysis Report',
-      sections: ['Executive Summary', 'Market Overview', 'Technical Analysis', 'Risk Assessment'],
+    'market_overview': {
+      title: 'Market Overview Report',
+      sections: ['Executive Summary', 'Market Overview', 'Technical Indicators', 'Risk Assessment'],
       generation_time: 45
     },
     'portfolio_performance': {

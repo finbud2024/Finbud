@@ -28,11 +28,8 @@ import superInvestorsRoute from "./Endpoints/data/superInvestorsRoute.js";
 import finCoinRouter from "./Endpoints/finance/finCoinRouter.js";
 import portfolioRoute from "./Endpoints/finance/portfolioRoute.js";
 import plaidRoute from "./Endpoints/external/PlaidService.js";
-import filingsRoute from "./Endpoints/data/finData/filingsRoute.js";
 import articleRoute from "./Endpoints/data/articleRoute.js";
-import insiderTransactionRoute from "./Endpoints/data/finData/transactionRoute.js";
 import notiRoute from "./Endpoints/auth/notiRoute.js";
-import courseRoute from "./Endpoints/social/courseRoute.js";
 import vietStock from "./Endpoints/data/vietStock.js";
 import finCompareRoute from "./Endpoints/finance/finCompareRoute.js";
 import peAnalysisRoute from './Endpoints/services/peAnalysisService.js';
@@ -170,10 +167,7 @@ app.use("/api/articles", articleRoute);
 app.use("/api/posts", postRoute);
 app.use("/", finCoinRouter);
 app.use("/api/plaid", plaidRoute);
-app.use("/", filingsRoute);
-app.use("/", insiderTransactionRoute);
 app.use("/", notiRoute);
-app.use("/api/courses", courseRoute);
 app.use("/api/vietstock", vietStock);
 app.use("/", finCompareRoute);
 app.use("/api/pe-analysis", peAnalysisRoute);
@@ -197,18 +191,8 @@ app.get("/services/test", (req, res) => {
 // Start server
 const startServer = async () => {
   try {
-    // Connect to MongoDB first
+    // Connect to MongoDB first (disabled for now)
     // await connectToMongoDB();
-    
-    // Load companies if filingsRoute needs it
-    try {
-      if (filingsRoute.loadCompanies && typeof filingsRoute.loadCompanies === 'function') {
-        await filingsRoute.loadCompanies();
-        console.log("✅ Companies loaded successfully");
-      }
-    } catch (err) {
-      console.log("⚠️  Could not load companies:", err.message);
-    }
 
     // Start HTTP server
     httpServer.listen(PORT, '0.0.0.0', () => {

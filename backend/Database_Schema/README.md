@@ -17,7 +17,6 @@ Social features and educational content schemas:
 - `Thread.js` - Discussion thread schema
 - `Comment.js` - Comment and reply schema
 - `Forum.js` - Forum category and structure schema
-- `Course.js` - Educational course content schema
 - `Event.js` - Financial events and calendar schema
 - `Article.js` - Article and blog content schema
 - `Quiz.js` - Educational quiz and assessment schema
@@ -51,13 +50,6 @@ Market information and data aggregation schemas:
 - `vietStockImportExport.js` - Vietnamese trade data schema
 - `vietStockOverview.js` - Vietnamese market overview schema
 
-#### `/market-data/finData`
-Financial data sub-schemas:
-- `CompanySchema.js` - Company information schema
-- `EarningCalendar.js` - Earnings calendar schema
-- `FilingsSchema.js` - SEC filings schema
-- `TransactionSchema.js` - Financial transaction data schema
-
 ### `/analytics` (Reserved)
 Future analytics and reporting schemas
 
@@ -70,7 +62,6 @@ Future analytics and reporting schemas
 ### Social Network
 ```
 Forum.js → Thread.js → Post.js → Comment.js
-Course.js → Quiz.js
 Event.js → Calendar integration
 ```
 
@@ -100,7 +91,6 @@ const Chat = require('./core/Chat');
 ```javascript
 const Post = require('./social/Post');
 const Thread = require('./social/Thread');
-const Course = require('./social/Course');
 ```
 
 ### Trading
@@ -113,7 +103,6 @@ const StockTransaction = require('./trading/StockTransaction');
 ```javascript
 const Stock = require('./market-data/Stock');
 const MarketValue = require('./market-data/MarketValue');
-const CompanyData = require('./market-data/finData/CompanySchema');
 ```
 
 ## 📝 Schema Design Guidelines

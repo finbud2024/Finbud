@@ -312,6 +312,114 @@ async function generateFollowUpQuestions(responseText) {
   }
 }
 
+// POST: Simple chat endpoint with AI fallback (no auth required for basic chat)
+chatRoute.post("/simple-chat", async (req, res) => {
+  const { messages } = req.body;
+  
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "Messages array is required" });
+  }
+
+  try {
+    // Try OpenAI first
+    try {
+      const response = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-3.5-turbo",
+          messages: messages,
+          temperature: 0.7,
+          max_tokens: 1000,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.VUE_APP_OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return res.json({ answer: response.data.choices[0]?.message?.content || "" });
+    } catch (openaiError) {
+      console.log("OpenAI failed, trying Gemini:", openaiError.response?.status);
+      
+      // Fallback to Gemini using official SDK
+      try {
+        const geminiApiKey = process.env.VUE_APP_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+        
+        if (!geminiApiKey || geminiApiKey === 'mock-gemini-key') {
+          throw new Error("Gemini API key not configured or is mock key");
+        }
+        
+        console.log("Trying Gemini with API key:", geminiApiKey.substring(0, 10) + "...");
+        
+        const genAI = new GoogleGenerativeAI(geminiApiKey);
+        
+        // Try different model names in order
+        const modelsToTry = ["gemini-1.5-flash", "gemini-pro", "gemini-1.0-pro"];
+        
+        for (const modelName of modelsToTry) {
+          try {
+            console.log(`Trying Gemini model: ${modelName}`);
+            const model = genAI.getGenerativeModel({ model: modelName });
+            
+            // Format messages for Gemini
+            const prompt = messages.map(m => {
+              if (m.role === 'system') return `Instructions: ${m.content}`;
+              if (m.role === 'user') return `Question: ${m.content}`;
+              return `Answer: ${m.content}`;
+            }).join('\n\n');
+            
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            const text = response.text();
+            
+            console.log(`✅ Gemini succeeded with model: ${modelName}`);
+            return res.json({ answer: text });
+          } catch (modelError) {
+            console.log(`Model ${modelName} failed:`, modelError.message);
+            // Continue to next model
+          }
+        }
+        
+        throw new Error("All Gemini models failed");
+      } catch (geminiError) {
+        console.error("All Gemini attempts failed:", geminiError.message);
+        
+        // Try Groq as final fallback
+        try {
+          const groqApiKey = process.env.GROQ_API_KEY;
+          
+          if (!groqApiKey) {
+            throw new Error("Groq API key not configured");
+          }
+          
+          const groq = new Groq({ apiKey: groqApiKey });
+          
+          const groqResponse = await groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages: messages,
+            temperature: 0.7,
+            max_tokens: 1000,
+          });
+          
+          console.log("✅ Groq succeeded!");
+          return res.json({ answer: groqResponse.choices[0]?.message?.content || "" });
+        } catch (groqError) {
+          console.error("All AI services failed. Groq error:", groqError.message);
+          return res.status(500).json({ 
+            error: "AI service temporarily unavailable. Please try again later." 
+          });
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ 
+      error: "AI service temporarily unavailable. Please try again later." 
+    });
+  }
+});
+
 // POST: Handle OpenAI API request
 chatRoute.post("/query", isAuthenticated, async (req, res) => {
   const {
@@ -781,7 +889,7 @@ function generateMetaPrompt(brief) {
 
 3. **ANALYSIS FRAMEWORK:**
    • Apply ${brief.domain} methodologies and best practices
-   • Integrate macro-economic context where relevant
+   • Integrate broader economic context where relevant
    • Provide evidence-based conclusions with proper citations
    • Address risk factors and limitations explicitly
 

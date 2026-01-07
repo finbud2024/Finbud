@@ -184,26 +184,14 @@ export default {
       window.location.href = api;
     },
     signInWithFacebook() {
-      const redirectPath = this.$route.query.redirect;
-      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
-
-      // Add redirect parameter if it exists
-      if (redirectPath) {
-        api += `?redirect=${encodeURIComponent(redirectPath)}`;
-      }
-
-      window.location.href = api;
+      // Facebook OAuth not yet implemented
+      this.errorMessage = "Facebook sign-in is coming soon! Please use Google or email sign-in.";
+      console.log("Facebook OAuth not implemented yet");
     },
     signInWithApple() {
-      const redirectPath = this.$route.query.redirect;
-      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
-
-      // Add redirect parameter if it exists
-      if (redirectPath) {
-        api += `?redirect=${encodeURIComponent(redirectPath)}`;
-      }
-
-      window.location.href = api;
+      // Apple OAuth not yet implemented
+      this.errorMessage = "Apple sign-in is coming soon! Please use Google or email sign-in.";
+      console.log("Apple OAuth not implemented yet");
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword;

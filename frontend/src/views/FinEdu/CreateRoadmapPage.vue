@@ -68,7 +68,7 @@
           </div>
 
           <div class="custom-goal-input">
-            <label>Describe Your Topic/Course (Optional)</label>
+            <label>Describe Your Topic (Optional)</label>
             <textarea 
               v-model="customGoal" 
               placeholder="E.g., 'Introduction to Cryptocurrency', 'Advanced Options Trading Strategies', 'Family Budgeting Workshop' ..."
