@@ -28,23 +28,42 @@ const googleStrategy = new GoogleStrategy.Strategy(
 
       if (existingUser) {
         console.log("Existing user found");
-        // Update user profile if needed
-        if (!existingUser.identityData.profilePicture && profile.picture) {
-          existingUser = await User.findOneAndUpdate(
-            { _id: existingUser._id },
-            {
-              $set: {
-                "identityData.profilePicture": profile.picture,
-                "identityData.firstName":
-                  profile.given_name || existingUser.identityData.firstName,
-                "identityData.lastName":
-                  profile.family_name || existingUser.identityData.lastName,
-                "identityData.displayName":
-                  profile.displayName || existingUser.identityData.displayName,
-              },
-            },
-            { new: true }
-          );
+        
+        // Update user profile with Google data only if missing
+        if (profile) {
+          const updateData = {};
+          
+          // Only update profile picture if missing or if user wants to sync from Google
+          // Always sync profile picture to keep it up-to-date with Google
+          if (profile.picture) {
+            updateData["identityData.profilePicture"] = profile.picture;
+          }
+          
+          // Only update display name if it's missing (respect user customization)
+          if (!existingUser.identityData?.displayName && (profile.displayName || profile.given_name)) {
+            updateData["identityData.displayName"] = 
+              profile.displayName || profile.given_name || "User";
+            console.log("Setting initial display name from Google:", updateData["identityData.displayName"]);
+          }
+          
+          // Only update first/last name if missing (respect user customization)
+          if (!existingUser.identityData?.firstName && profile.given_name) {
+            updateData["identityData.firstName"] = profile.given_name;
+          }
+          if (!existingUser.identityData?.lastName && profile.family_name) {
+            updateData["identityData.lastName"] = profile.family_name;
+          }
+          
+          if (Object.keys(updateData).length > 0) {
+            existingUser = await User.findOneAndUpdate(
+              { _id: existingUser._id },
+              { $set: updateData },
+              { new: true }
+            );
+            console.log("Updated user with Google profile data (only missing fields):", updateData);
+          } else {
+            console.log("No updates needed - user profile is complete");
+          }
         }
         return done(null, existingUser, { isNewUser: false });
       }
@@ -59,10 +78,10 @@ const googleStrategy = new GoogleStrategy.Strategy(
           priviledge: "user",
         },
         identityData: {
-          firstName: profile.given_name,
-          lastName: profile.family_name,
-          displayName: profile.displayName,
-          profilePicture: profile.picture,
+          firstName: profile.given_name || "",
+          lastName: profile.family_name || "",
+          displayName: profile.displayName || profile.given_name || "User",
+          profilePicture: profile.picture || "",
         },
       });
 

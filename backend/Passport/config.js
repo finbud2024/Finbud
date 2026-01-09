@@ -2,6 +2,7 @@ import passport from "passport";
 import session from "express-session";
 // import googleStrategy from "./googleStrategy.js"; // Do not import unconditionally
 import localStrategy from "./localStrategy.js";
+import User from "../Database_Schema/core/User.js";
 // MongoStore is imported dynamically in passportConfig() when needed
 
 const passportConfig = (app) => {
@@ -59,30 +60,43 @@ const passportConfig = (app) => {
   });
 
   passport.deserializeUser(async (userId, done) => {
-    console.log("In deserializeUser.");
-    // Bypassing database call for testing without DB
-    // let thisUser;
-    // try {
-    //   thisUser = await User.findOne({ _id: userId });
-    //   console.log(
-    //     "User with id " +
-    //       userId +
-    //       " found in DB. User object will be available in server routes as req.user."
-    //   );
-    //   done(null, thisUser);
-    // } catch (err) {
-    //   console.log("Error finding user in DB.");
-    //   done(err);
-    // }
-    // For testing, just create a dummy user object with expected structure
-    done(null, {
-      _id: userId,
-      id: userId,
-      name: "Test User",
-      accountData: {
-        priviledge: "user", // Default to regular user, not admin
-      },
-    });
+    console.log("========================================");
+    console.log("In deserializeUser for userId:", userId);
+    console.log("userId type:", typeof userId);
+    
+    if (!userId) {
+      console.log("⚠️ No userId provided to deserializeUser");
+      return done(null, null);
+    }
+    
+    try {
+      console.log("Attempting to find user in database...");
+      const thisUser = await User.findById(userId);
+      
+      if (!thisUser) {
+        console.log("⚠️ User with id " + userId + " not found in DB");
+        console.log("This might be due to an old session. User needs to log in again.");
+        return done(null, null);
+      }
+      
+      console.log("✅ User found in DB:", {
+        _id: thisUser._id,
+        email: thisUser.email,
+        accountData: thisUser.accountData,
+        hasIdentityData: !!thisUser.identityData,
+        displayName: thisUser.identityData?.displayName,
+        profilePicture: thisUser.identityData?.profilePicture ? "YES" : "NO"
+      });
+      console.log("========================================");
+      
+      done(null, thisUser);
+    } catch (err) {
+      console.log("❌ Error in deserializeUser:", err.message);
+      console.log("Error stack:", err.stack);
+      console.log("========================================");
+      // Don't throw error, return null to prevent auth breaking
+      done(null, null);
+    }
   });
 };
 

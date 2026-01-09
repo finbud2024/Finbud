@@ -392,7 +392,7 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.checkMobile();
     window.addEventListener('resize', this.handleResize);
     document.addEventListener('click', this.handleOutsideClick);
@@ -400,9 +400,14 @@ export default {
     const savedLang = localStorage.getItem("language");
     if (savedLang) this.$i18n.locale = savedLang;
 
-    if (!this.$store.getters["users/currentUser"]) {
-      this.$store.dispatch("users/fetchCurrentUser");
-    }
+    // Always fetch current user data to ensure we have the latest info
+    await this.$store.dispatch("users/fetchCurrentUser");
+    
+    // Debug logging
+    const userData = this.$store.getters["users/currentUser"];
+    console.log("NavBar - User data loaded:", userData);
+    console.log("NavBar - Display name:", this.profileName);
+    console.log("NavBar - Profile image:", this.profileImage);
 
     const storedDarkMode = localStorage.getItem("darkMode");
     this.isDarkMode = storedDarkMode === "true";
