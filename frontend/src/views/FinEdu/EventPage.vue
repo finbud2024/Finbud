@@ -181,24 +181,31 @@ export default {
         Articles,
     },
     beforeRouteLeave(to, from, next) {
-        // Clean up before leaving the route
-        try {
-            // Destroy swiper instance if it exists
-            if (this.swiperInstance && typeof this.swiperInstance.destroy === 'function') {
-                this.swiperInstance.destroy(true, true);
-                this.swiperInstance = null;
-            }
-            
-            this.trendingEvents = [];
-            this.allEvents = [];
-            this.loading = false;
-            this.searchQuery = '';
-            this.mapError = null;
-        } catch (err) {
-            console.error('Route leave cleanup error:', err);
-        }
-        // Always call next to allow navigation
+        console.log('🚀 EventHub beforeRouteLeave called - navigating to:', to.path);
+        
+        // Allow navigation immediately
         next();
+        
+        console.log('✅ Navigation allowed, cleaning up...');
+        
+        // Clean up asynchronously after navigation starts
+        this.$nextTick(() => {
+            try {
+                // Destroy swiper instance if it exists
+                if (this.swiperInstance && typeof this.swiperInstance.destroy === 'function') {
+                    this.swiperInstance.destroy(true, true);
+                    this.swiperInstance = null;
+                }
+                
+                this.trendingEvents = [];
+                this.allEvents = [];
+                this.loading = false;
+                this.searchQuery = '';
+                this.mapError = null;
+            } catch (err) {
+                console.error('Route leave cleanup error:', err);
+            }
+        });
     },
     data() {
         return {
@@ -359,25 +366,19 @@ export default {
     },
     beforeUnmount() {
         try {
-            // Cải thiện cleanup để tránh lỗi vnode
             window.removeEventListener('resize', this.checkMobile);
-            
-            // Reset data để tránh reference issues
-            this.trendingEvents = [];
-            this.allEvents = [];
-            
-            // Clear cache nếu cần
-            if (this.$route && this.$route.name !== 'EventHub') {
-                sessionStorage.removeItem('eventHeadlines');
-                sessionStorage.removeItem('eventHeadlinesTime');
-            }
         } catch (err) {
             console.error('Cleanup error:', err);
         }
     },
-    // Thêm beforeDestroy cho Vue 2 compatibility
-    beforeDestroy() {
-        this.beforeUnmount();
+    unmounted() {
+        // Clear cache after component is fully unmounted
+        try {
+            sessionStorage.removeItem('eventHeadlines');
+            sessionStorage.removeItem('eventHeadlinesTime');
+        } catch (err) {
+            console.error('Cache cleanup error:', err);
+        }
     }
 };
 </script>
