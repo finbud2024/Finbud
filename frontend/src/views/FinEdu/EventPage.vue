@@ -57,8 +57,8 @@
         <!-- Lazy load EventMap sau khi data đã sẵn sàng -->
         <div v-if="!loading && isEventPageActive" class="event-map-section">
             <EventMap 
-                v-if="trendingEvents.length > 0" 
-                :key="'event-map-' + trendingEvents.length"
+                v-if="trendingEvents.length > 0 && isEventPageActive" 
+                :key="eventMapKey"
                 @error="handleMapError"
             />
             <div v-else-if="mapError" class="map-error-fallback">
@@ -181,34 +181,18 @@ export default {
         Articles,
     },
     beforeRouteLeave(to, from, next) {
-        console.log('🚀 EventHub beforeRouteLeave called - navigating to:', to.path);
+        console.log('🚀 EventHub beforeRouteLeave - navigating to:', to.path);
         
-        // Immediately destroy the EventMap component by setting flag to false
+        // Completely destroy EventMap by removing it from DOM
         this.isEventPageActive = false;
         
-        // Allow navigation immediately
+        // Immediately allow navigation - don't wait for anything
         next();
-        
-        console.log('✅ Navigation allowed, cleaning up...');
-        
-        // Clean up asynchronously after navigation starts
-        this.$nextTick(() => {
-            try {
-                // Destroy swiper instance if it exists
-                if (this.swiperInstance && typeof this.swiperInstance.destroy === 'function') {
-                    this.swiperInstance.destroy(true, true);
-                    this.swiperInstance = null;
-                }
-                
-                this.trendingEvents = [];
-                this.allEvents = [];
-                this.loading = false;
-                this.searchQuery = '';
-                this.mapError = null;
-            } catch (err) {
-                console.error('Route leave cleanup error:', err);
-            }
-        });
+    },
+    errorCaptured(err, instance, info) {
+        console.error('EventHub error captured:', err, info);
+        // Prevent error from blocking navigation
+        return false;
     },
     data() {
         return {
@@ -222,6 +206,7 @@ export default {
             mapError: null,
             swiperInstance: null,
             isEventPageActive: true,
+            eventMapKey: 0,
         };
     },
     computed: {
@@ -368,20 +353,13 @@ export default {
             this.fetchHeadlines();
         }, 100);
     },
-    beforeUnmount() {
+    unmounted() {
         try {
             window.removeEventListener('resize', this.checkMobile);
-        } catch (err) {
-            console.error('Cleanup error:', err);
-        }
-    },
-    unmounted() {
-        // Clear cache after component is fully unmounted
-        try {
             sessionStorage.removeItem('eventHeadlines');
             sessionStorage.removeItem('eventHeadlinesTime');
         } catch (err) {
-            console.error('Cache cleanup error:', err);
+            // Silently fail - don't block anything
         }
     }
 };

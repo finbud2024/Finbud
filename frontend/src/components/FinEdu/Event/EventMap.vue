@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from "vue";
+import { defineComponent, ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
 import axios from "axios";
 import Fuse from "fuse.js";
 import { debounce } from "lodash";
@@ -86,6 +86,11 @@ export default defineComponent({
   components: { 
     ...(Map && Marker ? { Map, Marker } : {})
   },
+  errorCaptured(err) {
+    console.error('EventMap error captured:', err);
+    // Prevent error from propagating
+    return false;
+  },
   setup() {
     const events = ref([]);
     const mapHeight = ref("580px");
@@ -101,6 +106,8 @@ export default defineComponent({
     const mapError = ref(null);
     const mapDiv = ref(null);
     let googleMap = null;
+    let debugTimeout = null;
+    let mapWatcher = null;
 
     // Initialize native Google Maps
     const initializeMap = () => {
@@ -419,7 +426,7 @@ export default defineComponent({
     };
 
     // Watch for changes to initialize map
-    watch([mapsApiLoaded, () => filteredEvents.value.length], () => {
+    mapWatcher = watch([mapsApiLoaded, () => filteredEvents.value.length], () => {
       if (mapsApiLoaded.value && filteredEvents.value.length > 0) {
         nextTick(() => {
           initializeMap();
@@ -434,7 +441,7 @@ export default defineComponent({
       fetchEvents();
       
       // Debug logging after 2 seconds
-      setTimeout(() => {
+      debugTimeout = setTimeout(() => {
         console.log('🗺️ mapsApiLoaded:', mapsApiLoaded.value);
         console.log('🗺️ eventsCount:', events.value.length);
         console.log('🗺️ filteredEventsCount:', filteredEvents.value.length);
@@ -445,34 +452,25 @@ export default defineComponent({
       }, 2000);
     });
 
-    onBeforeUnmount(() => {
-      // Use setTimeout to ensure cleanup happens after Vue finishes its work
-      setTimeout(() => {
+    onUnmounted(() => {
+      // Stop the watcher
+      if (mapWatcher) {
+        mapWatcher();
+      }
+      
+      // Clear the timeout
+      if (debugTimeout) {
+        clearTimeout(debugTimeout);
+      }
+      
+      // Clear Google Maps listeners
+      if (googleMap && window.google?.maps?.event) {
         try {
-          // Remove all Google Maps event listeners first
-          if (googleMap) {
-            window.google?.maps?.event?.clearInstanceListeners(googleMap);
-            googleMap = null;
-          }
-          
-          // Clear event refs
-          if (eventRefs.value) {
-            eventRefs.value = {};
-          }
-          
-          // Clear events
-          if (events.value) {
-            events.value = [];
-          }
-          
-          // Clear map div reference
-          if (mapDiv.value) {
-            mapDiv.value = null;
-          }
-        } catch (err) {
-          console.error('EventMap cleanup error:', err);
+          window.google.maps.event.clearInstanceListeners(googleMap);
+        } catch (e) {
+          // Silently ignore
         }
-      }, 0);
+      }
     });
 
     return {
