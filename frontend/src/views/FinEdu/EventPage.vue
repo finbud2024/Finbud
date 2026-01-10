@@ -55,7 +55,7 @@
             <img src="https://media.istockphoto.com/id/1529811813/photo/team-building-asian-workshop-participants-in-small-group-discussion-brainstorming-during.jpg?s=612x612&w=0&k=20&c=20R95Z0NkiQJO2EwWGKivBUEwtdAYJrtclReELgoVsw=" alt="">
         </div>
         <!-- Lazy load EventMap sau khi data đã sẵn sàng -->
-        <div v-if="!loading" class="event-map-section">
+        <div v-if="!loading && isEventPageActive" class="event-map-section">
             <EventMap 
                 v-if="trendingEvents.length > 0" 
                 :key="'event-map-' + trendingEvents.length"
@@ -183,6 +183,9 @@ export default {
     beforeRouteLeave(to, from, next) {
         console.log('🚀 EventHub beforeRouteLeave called - navigating to:', to.path);
         
+        // Immediately destroy the EventMap component by setting flag to false
+        this.isEventPageActive = false;
+        
         // Allow navigation immediately
         next();
         
@@ -218,6 +221,7 @@ export default {
             isMobile: false,
             mapError: null,
             swiperInstance: null,
+            isEventPageActive: true,
         };
     },
     computed: {

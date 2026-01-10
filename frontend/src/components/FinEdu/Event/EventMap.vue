@@ -112,12 +112,25 @@ export default defineComponent({
       try {
         console.log('🗺️ Initializing native Google Maps...');
         
+        // Clear any existing map first
+        if (googleMap) {
+          try {
+            window.google?.maps?.event?.clearInstanceListeners(googleMap);
+          } catch (e) {
+            console.warn('Could not clear map listeners:', e);
+          }
+          googleMap = null;
+        }
+        
         // Create map
         googleMap = new window.google.maps.Map(mapDiv.value, {
           center: mapCenter.value,
           zoom: mapZoom.value,
           mapTypeId: 'roadmap',
         });
+
+        // Store markers so we can clean them up later
+        const markers = [];
 
         // Add markers for each event
         filteredEvents.value.forEach(event => {
@@ -127,6 +140,8 @@ export default defineComponent({
               map: googleMap,
               title: event.name,
             });
+
+            markers.push(marker);
 
             // Add click listener
             marker.addListener('click', () => {
@@ -431,20 +446,33 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      try {
-        // Clean up map instance
-        if (googleMap) {
-          googleMap = null;
+      // Use setTimeout to ensure cleanup happens after Vue finishes its work
+      setTimeout(() => {
+        try {
+          // Remove all Google Maps event listeners first
+          if (googleMap) {
+            window.google?.maps?.event?.clearInstanceListeners(googleMap);
+            googleMap = null;
+          }
+          
+          // Clear event refs
+          if (eventRefs.value) {
+            eventRefs.value = {};
+          }
+          
+          // Clear events
+          if (events.value) {
+            events.value = [];
+          }
+          
+          // Clear map div reference
+          if (mapDiv.value) {
+            mapDiv.value = null;
+          }
+        } catch (err) {
+          console.error('EventMap cleanup error:', err);
         }
-        // Clear event refs
-        eventRefs.value = {};
-        // Clear events
-        events.value = [];
-        // Clear map div reference
-        mapDiv.value = null;
-      } catch (err) {
-        console.error('EventMap cleanup error:', err);
-      }
+      }, 0);
     });
 
     return {
