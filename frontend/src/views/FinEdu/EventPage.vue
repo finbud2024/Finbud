@@ -9,18 +9,20 @@
         <nav class="w-full p-4 bg-white shadow-sm" data-aos="fade-left">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="event-navbar relative w-full md:w-1/2">
-                        <input 
-                            type="text" 
-                            v-model="searchQuery" 
-                            :placeholder="isMobile ? '' : $t('eventHub.searchPlaceholder')" 
-                            class="search-bar w-full"
-                            @focus="searchExpanded = true"
-                            @blur="searchExpanded = false"
-                        />
+                      <div class="search-wrapper">
                         <font-awesome-icon 
-                            icon="fa-solid fa-magnifying-glass" 
-                            class="search-icon"
+                          icon="fa-solid fa-magnifying-glass" 
+                          class="search-icon"
                         />
+                        <input 
+                          type="text" 
+                          v-model="searchQuery" 
+                          :placeholder="isMobile ? '' : $t('eventHub.searchPlaceholder')" 
+                          class="search-bar w-full"
+                          @focus="searchExpanded = true"
+                          @blur="searchExpanded = false"
+                        />
+                      </div>
                     </div>
 
                 <div class="event-navbar nav-btn">
@@ -152,25 +154,6 @@
                 </div>
             </section>
         </div>
-        <div class="articles-section" data-aos="fade-up" v-if="articles && articles.length > 0">
-            <h3 class="text-2xl md:text-3xl mb-6 articles-title">{{ $t('eventHub.latestArticles') }}</h3>
-            <div class="articles-grid">
-                <div v-for="(article, index) in articles" :key="`news-article-${index}-${article.title}`" class="article-card" data-aos="fade-up">
-                    <div class="article-image-container">
-                        <img :src="article.image" :alt="article.title" class="article-image" />
-        </div>
-                    <div class="article-content">
-                        <div class="article-meta">
-                            <span class="article-date">{{ formatDate(article.date) }}</span>
-                            <span class="article-category">{{ article.category }}</span>
-                        </div>
-                        <h4 class="article-title">{{ article.title }}</h4>
-                        <p class="article-excerpt">{{ article.excerpt }}</p>
-                        <a :href="article.url" target="_blank" class="read-more-link">{{ $t('eventHub.readMore') }} →</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
     </div>
 </template>
 
@@ -451,6 +434,11 @@ export default {
     transform: translateY(-50%);
     color: var(--text-secondary);
     font-size: 18px;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
 }
 
 .nav-btn {

@@ -8,7 +8,12 @@
     @touchstart="startDrag"
   >
     <!-- Header -->
-    <div class="bubble-header" :class="{ 'cursor-move': !isMinimized }">
+    <div
+      class="bubble-header"
+      :class="{ 'cursor-move': !isMinimized }"
+      @mousedown.stop="handleHeaderMouseDown"
+      @touchstart.stop="handleHeaderMouseDown"
+    >
       <div class="header-content">
         <div class="bot-info">
           <img :src="botAvatar" alt="FinBud" class="bot-avatar" />
@@ -17,6 +22,8 @@
         <div class="header-controls">
           <button
             @click.stop="toggleMinimize"
+            @mousedown.stop
+            @touchstart.stop
             class="control-btn"
             :title="isMinimized ? $t('chatbotBubble.maximize') : $t('chatbotBubble.minimize')"
           >
@@ -24,6 +31,8 @@
           </button>
           <button
             @click.stop.prevent="closeBubble"
+            @mousedown.stop
+            @touchstart.stop
             class="control-btn close-btn"
             :title="$t('chatbotBubble.close')"
           >
@@ -220,6 +229,14 @@ export default {
     toggle() {
       this.isVisible = !this.isVisible
     },
+    handleHeaderMouseDown(event) {
+      // Prevent drag from starting when clicking header controls
+      if (event.target.closest('.header-controls')) {
+        return
+      }
+      // Otherwise allow drag to start
+      this.startDrag(event)
+    },
     toggleMinimize() {
       this.isMinimized = !this.isMinimized
       if (!this.isMinimized) {
@@ -238,6 +255,9 @@ export default {
       }))
     },
     startDrag(event) {
+      // Do not start dragging when interacting with header control buttons
+      if (event.target.closest('.control-btn')) return
+
       if (this.isMinimized || event.target.closest('.bubble-content')) return
       
       this.isDragging = true

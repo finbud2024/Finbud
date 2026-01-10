@@ -59,7 +59,7 @@ export default {
 
 .headtitle {
   text-align: center;
-  color: #333;
+  color: #000;
   font-size: 2rem;
   margin-bottom: 1rem;
 }
@@ -72,11 +72,18 @@ export default {
 
 .section-title {
   font-weight: bold;
-  color: #000000;
+  color: #000;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
   border-bottom: 2px solid #000000;
   padding-bottom: 0.5rem;
+}
+
+/* Force black text even in dark mode for readability */
+.dark-mode .headtitle,
+.dark-mode .section-title {
+  color: #000;
+  border-bottom-color: #000;
 }
 
 .margin-box {

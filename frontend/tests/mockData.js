@@ -368,7 +368,7 @@ export const MECE_JSON_FULL_RESPONSE = {
           ]
         },
         {
-          "name": "Fixed Income Market Analysis",
+          "name": "Fixed Income Overview",
           "id": "0.2",
           "children": [
             {

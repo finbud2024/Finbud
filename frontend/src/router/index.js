@@ -14,10 +14,8 @@ import RiskAnalysis from "@/views/FinManage/RiskAnalysisPage.vue";
 import GoalPage from "@/views/FinManage/GoalPage.vue";
 import MarketDataCenter from "@/views/FinManage/SuperInvestorMarketDataCenter.vue";
 import ProfilePage from "@/views/Home/ProfilePage.vue";
-import QuantAnalysis from "@/views/FinInvest/QuantPage.vue";
 import EventHub from "@/views/FinEdu/EventPage.vue";
 import LearningRoadMap from "@/views/FinEdu/QuizzLearningRoadMap.vue";
-import QuantSimulator from "@/views/FinInvest/QuantSimulatorPage.vue";
 import ForumView from "@/views/FinEdu/ForumPage.vue";
 import ThreadCard from "@/components/ThreadCard.vue";
 import ThreadView from "@/views/FinEdu/ForumThreadView.vue";
@@ -25,21 +23,11 @@ import StartThread from "@/views/FinEdu/ForumThreadStart.vue";
 import MortgageCalc from "@/views/FinManage/MortgageCalculatorPage.vue";
 import SuperInvestors from "@/views/FinManage/SuperInvestorsPage.vue";
 import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue";
-import FinDataPage from "@/views/FinInvest/FinData/FinDataPage.vue";
 import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
-import AutoTradeAI from "@/views/FinInvest/AutoTradeAIPage.vue";
 import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
-import InsiderTransactionPage from "@/views/FinInvest/FinData/InsiderTransactionPage.vue";
-import EarningCalendarPage from "@/views/Unused/EarningCalendarPage.vue";
 import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
-import CourseCategoryPage from "@/views/FinEdu/CourseCategoryPage.vue";
-import CoursePage from "@/views/FinEdu/CoursePage.vue";
-import MacroeconomicPage from "@/views/FinInvest/MacroEconomicData.vue";
-import MarketAnalysisPage from "@/views/FinInvest/MarketAnalysis.vue";
-import MarketAnalysisInsight from "@/views/FinInvest/MarketAnalysis/MarketAnalysisInsight.vue";
 import FinCompare from "@/views/FinManage/FinCompare.vue";
-import PredictiveCalculatorPage from "@/views/FinInvest/PredictiveCalculatorPage.vue";
 import CreateRoadmapPage from "@/views/FinEdu/CreateRoadmapPage.vue";
 import SubscriptionPage from "@/views/Subscription/SubscriptionPage.vue";
 
@@ -87,11 +75,6 @@ const routes = [
     component: RiskAnalysis,
   },
   {
-    path: "/quant-analysis",
-    name: "QuantAnalysis",
-    component: QuantAnalysis,
-  },
-  {
     path: "/about",
     name: "AboutUsPage",
     component: AboutUsPage,
@@ -106,17 +89,6 @@ const routes = [
     name: "StockSimulator",
     component: StockSimulator,
     meta: { requiresAuth: true },
-  },
-  {
-    path: "/quant-simulator",
-    name: "QuantSimulator",
-    component: QuantSimulator,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/autotrade-ai",
-    name: "AutoTradeAI",
-    component: AutoTradeAI,
   },
   {
     path: "/goal",
@@ -148,18 +120,6 @@ const routes = [
     path: "/forum",
     name: "ForumView",
     component: ForumView,
-    props: true,
-  },
-  {
-    path: "/course",
-    name: "CoursePage",
-    component: CoursePage,
-    props: true,
-  },
-  {
-    path: "/courses/:categorySlug",
-    name: "CourseCategory",
-    component: CourseCategoryPage,
     props: true,
   },
   {
@@ -197,23 +157,6 @@ const routes = [
     component: InvestorDetail,
   },
   {
-    path: "/docs",
-    redirect: "/docs/aapl",
-  },
-  {
-    path: "/docs/:ticker",
-    name: "Financial Docs",
-    component: FinDataPage,
-  },
-  {
-    path: "/company-report/:ticker",
-    component: InsiderTransactionPage,
-  },
-  {
-    path: "/earning-calendars",
-    component: EarningCalendarPage,
-  },
-  {
     path: "/forgot-password",
     name: "ForgotPassword",
     component: ForgotPassword,
@@ -234,39 +177,14 @@ const routes = [
     component: NotificationCenter,
   },
   {
-    path: "/courses/:categorySlug",
-    name: "CourseCategory", // Must match exactly what you use in router-link
-    component: CourseCategoryPage,
-  },
-  {
-    path: "/macro-economic",
-    name: "MacroeconomicPage",
-    component: MacroeconomicPage,
-  },
-  {
     path: "/blog",
     name: "BlogPage",
     component: () => import("../views/Blog/BlogPage.vue"),
   },
   {
-    path: "/market-analysis",
-    name: "MarketAnalysisPage",
-    component: MarketAnalysisPage,
-  },
-  {
-    path: "/market-analysis/insight/:type",
-    name: "MarketAnalysisInsight",
-    component: MarketAnalysisInsight,
-  },
-  {
     path: "/fin-compare",
     name: "FinCompare",
     component: FinCompare,
-  },
-  {
-    path: "/predictive-calculator",
-    name: "PredictiveCalculatorPage",
-    component: PredictiveCalculatorPage,
   },
   {
     path: "/create-roadmap",

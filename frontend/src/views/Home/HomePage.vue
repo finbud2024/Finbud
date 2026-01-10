@@ -182,24 +182,6 @@
       <div class="container">
         <h2 class="section-title">{{ t('newFeatures.title') }}</h2>
         <div class="features-grid">
-          <!-- AI Predictive Calculator -->
-          <div class="feature-card">
-            <div class="feature-icon">
-              <font-awesome-icon icon="fa-solid fa-brain" />
-            </div>
-            <h3>{{ t('newFeatures.aiCalculator.title') }}</h3>
-            <p>{{ t('newFeatures.aiCalculator.description') }}</p>
-            <div class="feature-tags">
-              <span class="tag">{{ t('newFeatures.aiCalculator.tags.aiModels') }}</span>
-              <span class="tag">{{ t('newFeatures.aiCalculator.tags.realTimeData') }}</span>
-              <span class="tag">{{ t('newFeatures.aiCalculator.tags.charts') }}</span>
-            </div>
-            <router-link to="/predictive-calculator" class="feature-btn">
-              {{ t('newFeatures.aiCalculator.button') }}
-              <font-awesome-icon icon="fa-solid fa-arrow-right" />
-            </router-link>
-          </div>
-
           <!-- Learning Roadmap Creator -->
           <div class="feature-card">
             <div class="feature-icon gradient-edu">

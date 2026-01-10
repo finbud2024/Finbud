@@ -559,8 +559,11 @@ Give me a concise overall summary of these combined markets.
 	font-weight: 700;
 	text-align: center;
 	margin: 1rem 0 2rem 0;
-	color: var(--text-primary, #1a1a1a);
+	color: #000;
 	letter-spacing: -0.5px;
+}
+.dark-mode .page-title {
+	color: #000;
 }
 
 .market-section {
@@ -641,10 +644,14 @@ Give me a concise overall summary of these combined markets.
 .section-title {
 	font-size: 1.75rem;
 	font-weight: 600;
-	color: var(--text-primary, #1a1a1a);
+	color: #000;
 	margin: 2rem 0 1.25rem 0;
 	padding-bottom: 0.5rem;
-	border-bottom: 2px solid var(--border-color-light, #e2e8f0);
+	border-bottom: 2px solid #000;
+}
+.dark-mode .section-title {
+	color: #000;
+	border-bottom-color: #000;
 }
 
 .data-card {

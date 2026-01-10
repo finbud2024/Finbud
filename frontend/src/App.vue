@@ -312,10 +312,11 @@ export default {
   --finbudBotMessageColor: #000000;
   --finbudBotMessageBorderColor: #000000;
   --bg-primary: #ffffff;
-  --text-primary: #333333;
+  --text-primary: #000000;
+  --text-secondary: #444444;
   --nav-bg: transparent;
   --border-color: #f5f5f5;
-  --link-color: black;
+  --link-color: #000000;
   /* --hover-bg: #024384; */
   --hover-bg: #949393;
   --card-bg: #ffffff;
@@ -333,13 +334,6 @@ export default {
   --black-in-dark-mode: #ffffff;
   --white-in-dark-mode: #000000;
 
-  /*--QuantPage colors */
-  --quant-background:#ffffff;
-  --quant-text-color: #000000;
-  --quant-secondary-text-color: #8E8E93;
-  --quant-card-background:#f9f9f9;
-  --quant-description-text-color: #8E8E93;
-  --quant-divider-line-color: #C6C6C8;
 }
 
 :root.dark-mode,
@@ -347,6 +341,7 @@ body.dark-mode {
   /* Dark theme */
   --bg-primary: #1a1a1a;
   --text-primary: #ffffff;
+  --text-secondary: #d0d0d0;
   --nav-bg: transparent;
   --border-color: #404040;
   --link-color: #ffffff;
@@ -368,13 +363,6 @@ body.dark-mode {
   --white-in-dark-mode: #ffffff;
   --dark-grey: #0f0f14;
 
-  /*--QuantPage colors */
-  --quant-background: #000000;
-  --quant-text-color: #ffffff;
-  --quant-secondary-text-color: #8E8E93;
-  --quant-card-background: #1C1C1E;
-  --quant-description-text-color: #8E8E93;
-  --quant-divider-line-color: #3A3A3C;
 }
 /* Update content area */
 .content-wrapper {

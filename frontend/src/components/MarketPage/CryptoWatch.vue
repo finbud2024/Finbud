@@ -715,6 +715,17 @@ body {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 5px;
+  color: #000;
+}
+
+.market-summary h3 {
+  margin: 0 0 0.75rem 0;
+  color: #000;
+}
+
+.market-summary p {
+  margin: 0;
+  color: #000;
 }
 
 /* Responsive Design */

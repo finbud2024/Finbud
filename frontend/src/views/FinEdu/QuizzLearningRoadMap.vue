@@ -235,14 +235,14 @@
     </div>
       </div>
 
-      <!-- Right Panel: Course Details & Study Plan -->
+      <!-- Right Panel: Learning Plan Overview -->
       <div class="details-panel">
-        <!-- Course Overview Card -->
+        <!-- Learning Overview Card -->
         <div class="overview-card">
           <div class="card-header">
             <h3>
               <font-awesome-icon icon="fa-solid fa-graduation-cap" />
-              Course Overview
+              Learning Plan Overview
             </h3>
         </div>
           <div class="course-image">
@@ -487,7 +487,6 @@ const estimatedTime = computed(() => {
   return `${Math.round(totalHours)}h ${Math.round((totalHours % 1) * 60)}m`;
 });
 
-// Course details with enhanced information
 const courseDetails = ref({
   duration: "Not specified",
   lectures: "0 modules",

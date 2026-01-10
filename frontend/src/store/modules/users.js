@@ -147,9 +147,27 @@ export default {
       }
     },
     userDisplayName(state) {
-      return state.userData && state.userData.identityData
-        ? state.userData.identityData.displayName
-        : "User";
+      if (state.userData) {
+        // Try to get display name from various sources
+        if (state.userData.identityData?.displayName) {
+          return state.userData.identityData.displayName;
+        }
+        // Fallback to first name + last name
+        if (state.userData.identityData?.firstName) {
+          const firstName = state.userData.identityData.firstName;
+          const lastName = state.userData.identityData?.lastName || "";
+          return `${firstName} ${lastName}`.trim();
+        }
+        // Fallback to email username
+        if (state.userData.accountData?.username) {
+          return state.userData.accountData.username.split('@')[0];
+        }
+        // Fallback to email
+        if (state.userData.email) {
+          return state.userData.email.split('@')[0];
+        }
+      }
+      return "User";
     },
   },
 };
