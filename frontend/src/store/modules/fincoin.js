@@ -17,7 +17,7 @@ const actions = {
     commit("SET_LOADING", true);
     try {
       const response = await axios.get(
-        `http://localhost:3000/balance`,
+        `${process.env.VUE_APP_DEPLOY_URL}/balance`,
         {
           withCredentials: true,
         }
@@ -34,7 +34,7 @@ const actions = {
     commit("SET_LOADING", true);
     try {
       const response = await axios.get(
-        `http://localhost:3000/transactions`,
+        `${process.env.VUE_APP_DEPLOY_URL}/transactions`,
         {
           withCredentials: true,
         }
@@ -54,7 +54,7 @@ const actions = {
     commit("SET_LOADING", true);
     try {
       const response = await axios.post(
-        `http://localhost:3000/earn`,
+        `${process.env.VUE_APP_DEPLOY_URL}/earn`,
         {
           amount,
           source,

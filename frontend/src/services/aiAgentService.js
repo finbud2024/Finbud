@@ -1,7 +1,7 @@
 // AI Agent Service for Breakthrough Workflows
 class AIAgentService {
   constructor() {
-    this.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:8888';
+    this.baseURL = process.env.VUE_APP_DEPLOY_URL || 'http://localhost:8888';
     this.agents = new Map();
     this.workflows = new Map();
     this.realTimeData = {
