@@ -162,6 +162,7 @@
 <script>
 import axios from 'axios';
 import validator from 'validator';
+import { API_BASE_URL } from "@/utils/api";
 
 export default {
   data() {
@@ -225,7 +226,7 @@ export default {
       }
     },
     signUpWithGoogle() {
-      const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      const api = `${API_BASE_URL}/auth/google`;
       window.location.href = api;
     },
     signUpWithFacebook() {
@@ -249,7 +250,7 @@ export default {
       //check all value in errors object, if all false, then no error
       if (!Object.values(this.errors).some(error => error)) {
         try {
-          const api = `${process.env.VUE_APP_DEPLOY_URL}/users`
+          const api = `${API_BASE_URL}/users`
           await axios.post(api, {
             accountData: {
               username: this.formData.email,
@@ -264,7 +265,7 @@ export default {
 
           // Automatically log in the user after successful registration
           try {
-            const loginApi = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
+            const loginApi = `${API_BASE_URL}/auth/login`;
             await axios.post(loginApi, {
               username: this.formData.email,
               password: this.formData.password

@@ -1,14 +1,20 @@
 import GoogleStrategy from "passport-google-oauth2";
 import User from "../Database_Schema/core/User.js";
 
+// Determine callback URL based on environment
+const callbackURL = process.env.NETLIFY_DEV === "true"
+  ? "http://localhost:8888/.netlify/functions/server/auth/google/callback"
+  : process.env.GOOGLE_REDIRECT_URI || "https://finbud.net/.netlify/functions/server/auth/google/callback";
+
+console.log("🔧 Google OAuth Configuration:");
+console.log("   NETLIFY_DEV:", process.env.NETLIFY_DEV);
+console.log("   Callback URL:", callbackURL);
+
 const googleStrategy = new GoogleStrategy.Strategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    // Prefer explicit override, fallback to Netlify Dev Functions URL for local development
-    callbackURL:
-      process.env.GOOGLE_REDIRECT_URI ||
-      "http://localhost:8888/.netlify/functions/server/auth/google/callback",
+    callbackURL: callbackURL,
   },
   async (accessToken, refreshToken, profile, done) => {
     try {

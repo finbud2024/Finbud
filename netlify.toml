@@ -18,5 +18,4 @@
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   NODE_OPTIONS = "--no-warnings"
-  VUE_APP_DEPLOY_URL = "https://finbud.net/.netlify/functions/server"
 
