@@ -113,6 +113,8 @@
 
 <script>
 import axios from "axios";
+import { API_BASE_URL } from "@/utils/api";
+
 export default {
   name: "LoginView",
   data() {
@@ -130,7 +132,7 @@ export default {
         this.isLoading = true;
         this.errorMessage = "";
 
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
+        const api = `${API_BASE_URL}/auth/login`;
         const reqBody = {
           username: this.username,
           password: this.password,
@@ -175,7 +177,7 @@ export default {
     signInWithGoogle() {
       const redirectPath = this.$route.query.redirect;
       console.log("Google OAuth - redirect path from query:", redirectPath);
-      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
+      let api = `${API_BASE_URL}/auth/google`;
       // Add redirect parameter if it exists
       if (redirectPath) {
         api += `?redirect=${encodeURIComponent(redirectPath)}`;

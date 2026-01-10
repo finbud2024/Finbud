@@ -39,16 +39,28 @@ const passportConfig = (app) => {
   };
 
   // Use MongoDB for session storage if available (required for Netlify Functions)
-  if (process.env.MONGO_URI) {
-    const MongoStore = require('connect-mongo');
-    sessionConfig.store = MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-      ttl: 24 * 60 * 60, // 24 hours
-      touchAfter: 3600, // Only update session every hour (reduces writes)
-    });
-    console.log("✅ Using MongoDB for session storage");
+  // Skip MongoDB for local development to avoid connection timeouts
+  if (process.env.MONGO_URI && process.env.NETLIFY_DEV !== "true") {
+    try {
+      const MongoStore = require('connect-mongo');
+      sessionConfig.store = MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        ttl: 24 * 60 * 60, // 24 hours
+        touchAfter: 3600, // Only update session every hour (reduces writes)
+        connectTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 5000,
+      });
+      console.log("✅ Using MongoDB for session storage");
+    } catch (err) {
+      console.warn("⚠️ Failed to connect to MongoDB for sessions:", err.message);
+      console.warn("⚠️ Using memory store (sessions will be lost on restart!)");
+    }
   } else {
-    console.warn("⚠️ No MONGO_URI found - using memory store (sessions will be lost on restart!)");
+    if (process.env.NETLIFY_DEV === "true") {
+      console.log("🔧 Local development mode - using memory store for sessions");
+    } else {
+      console.warn("⚠️ No MONGO_URI found - using memory store (sessions will be lost on restart!)");
+    }
   }
 
   app.use(session(sessionConfig));
