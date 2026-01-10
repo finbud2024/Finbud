@@ -25,7 +25,7 @@ export async function fetchStockQuote(symbols = [
 ]) {
   try {
     // Fetch from backend which gets data from TradingView (includes company names)
-    const baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
+    const baseURL = process.env.VUE_APP_DEPLOY_URL || 'http://localhost:3000';
     const response = await axios.get(`${baseURL}/api/stocks`, {
       params: {
         page: 1,

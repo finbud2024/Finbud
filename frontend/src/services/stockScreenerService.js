@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class StockScreenerService {
   constructor() {
-    this.baseURL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
+    this.baseURL = process.env.VUE_APP_DEPLOY_URL || 'http://localhost:3000';
     this.tradingViewAPI = 'https://scanner.tradingview.com';
     this.alphaVantageAPI = 'https://www.alphavantage.co/query';
     this.apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY || 'demo';
