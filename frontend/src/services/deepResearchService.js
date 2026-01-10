@@ -212,7 +212,7 @@ Goal: From <USER_PROMPT>, extract full 7-D metadata by:
 • Asking max 1 turn (1–2 combo questions) to complete weak/conflicting fields
 
 7-D Metadata Fields:
-- domain: Asset Pricing & PM | Risk Management | Macro & Policy | Corporate Finance | FinTech & Digital Assets | Derivatives & Quant
+- domain: Asset Pricing & PM | Risk Management | Macro & Policy | Corporate Finance | FinTech & Digital Assets | Derivatives
 - objective: analyze | forecast | compare | evaluate | optimize
 - entities: specific companies, indices, sectors, or financial instruments
 - time_horizon: historical periods, forecast periods (e.g., "2020-2024", "5-year analysis")
@@ -325,7 +325,7 @@ Analyze and respond:`;
 // Theoretical Framework:
 // - MECE Principle: Mutually Exclusive (no overlap), Collectively Exhaustive (complete coverage)
 // - Type Theory Application: Each level represents a distinct categorical type with specific properties
-// - Financial Domain Taxonomy: Asset Pricing & PM | Risk Management | Macro & Policy | Corporate Finance | FinTech & Digital Assets | Derivatives & Quant
+// - Financial Domain Taxonomy: Asset Pricing & PM | Risk Management | Macro & Policy | Corporate Finance | FinTech & Digital Assets | Derivatives
 // - Research Methodology Hierarchy: Strategic → Tactical → Operational → Implementation → Execution
 
 // ### 3. STEP-BY-STEP STRUCTURED REASONING
@@ -1042,7 +1042,7 @@ ${formattedJson}
         "id": "0",
         "children": [
           {
-            "name": "Market Analysis",
+        "name": "Market Overview",
             "id": "0.0",
             "children": [
               {

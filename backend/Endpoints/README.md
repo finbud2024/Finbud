@@ -25,16 +25,11 @@ Social features and educational content:
 - `forumRoute.js` - Community forum endpoints
 - `threadRoute.js` - Forum thread management
 - `postRoute.js` - Post creation and management
-- `courseRoute.js` - Educational course content
 - `eventRoute.js` - Financial events and calendar
 
 ### `/trading`
 Trading simulation and analysis:
-- `QuantSimulatorRoute.js` - Quantitative trading simulator
 - `cryptoRoute.js` - Cryptocurrency trading endpoints
-- `quantSimulator/` - Advanced simulation modules
-  - `multiplierSimulator.js` - Leverage trading simulation
-  - `multiplierSimulatorEndpoints.js` - API endpoints for multiplier trading
 
 ### `/data`
 Data aggregation and market information:
@@ -42,9 +37,6 @@ Data aggregation and market information:
 - `newsRoute.js` - Financial news aggregation
 - `articleRoute.js` - Article content management
 - `superInvestorsRoute.js` - Super investor tracking
-- `finData/` - Financial data sub-modules
-  - `filingsRoute.js` - SEC filings and regulatory data
-  - `transactionRoute.js` - Transaction data processing
 
 ### `/services`
 Core platform services:

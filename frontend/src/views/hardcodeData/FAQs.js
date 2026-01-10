@@ -9,7 +9,7 @@ const faqs = [
     },
     {
         question: "Does FinBud support investment tracking and management?",
-        answer: "Yes, our Quant and Simulator pages provide an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and even practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience.",
+        answer: "Yes, our Simulator page provides an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and practice simulated trading — perfect for beginners looking to gain hands-on investment experience.",
     },
     {
         question: "Can I set financial goals with FinBud and track my progress?",

@@ -31,11 +31,8 @@ import superInvestorsRoute from "../Endpoints/data/superInvestorsRoute.js";
 import finCoinRouter from "../Endpoints/finance/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/finance/portfolioRoute.js";
 import plaidRoute from "../Endpoints/external/PlaidService.js";
-import filingsRoute, { loadCompanies } from "../Endpoints/data/finData/filingsRoute.js";
 import articleRoute from "../Endpoints/data/articleRoute.js";
-import insiderTransactionRoute from "../Endpoints/data/finData/transactionRoute.js";
 import notiRoute from "../Endpoints/auth/notiRoute.js";
-import courseRoute from "../Endpoints/social/courseRoute.js";
 import vietStock from "../Endpoints/data/vietStock.js";
 import finCompareRoute from "../Endpoints/finance/finCompareRoute.js";
 // Import new services
@@ -208,10 +205,7 @@ router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);
-router.use("/", filingsRoute);
-router.use("/", insiderTransactionRoute);
 router.use("/", notiRoute);
-router.use("/api/courses", courseRoute);
 router.use("/api/vietstock", vietStock);
 router.use("/", finCompareRoute);
 // Register new routes
@@ -228,7 +222,6 @@ const handler = async (event, context) => {
   if (!mongoose.connection.readyState) {
     try {
       await connectToMongoDB();
-      await loadCompanies();
     } catch (error) {
       console.log("Error starting the server");
       return {
@@ -254,14 +247,6 @@ if (
   connectToMongoDB()
     .then(async () => {
       console.log("✅ MongoDB connected successfully");
-      console.log("Loading companies...");
-      try {
-        await loadCompanies();
-        console.log("✅ Companies loaded");
-      } catch (err) {
-        console.warn("⚠️ Failed to load companies:", err.message);
-        console.log("⚠️ Continuing without companies data");
-      }
     })
     .then(() => {
       httpServer.listen(PORT, () => {

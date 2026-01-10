@@ -15,9 +15,9 @@ export async function getSources(message) {
         host: "Financial News"
       },
       {
-        title: "Stock Market Analysis",
-        link: "https://example.com/stock-analysis", 
-        snippet: "Current stock market trends and analysis",
+        title: "Stock Market Overview",
+        link: "https://example.com/stock-overview", 
+        snippet: "Current stock market trends and data highlights",
         favicon: "https://example.com/favicon.ico",
         host: "Market Watch"
       }

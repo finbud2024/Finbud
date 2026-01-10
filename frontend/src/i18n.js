@@ -1,6 +1,5 @@
 import { monthsToYears } from "date-fns";
 import { createI18n } from "vue-i18n";
-import StockComparision from "./components/FinInvest/QuantPage/StockComparision.vue";
 
 const messages = {
   en: {
@@ -17,19 +16,11 @@ const messages = {
     superInvestors: "Super Investors",
     finInvest: "Fin Invest",
     simulator: "Simulator",
-    predictiveCalculator: "Predictive Calculator",
-    autoTradeAI: "AutoTrade AI",
-    quant: "Quant",
-    quantSimulator: "Quant Simulator",
-    macroEconomic: "Macro Economic Data",
-    marketAnalysis: "Market Analysis",
     finEdu: "Fin Edu",
     quiz: "Quiz",
     learningRoadmap: "Learning Roadmap Creator",
-    course: "Course",
-    event: "Event",
+    event: "Fin Event",
     forum: "Forum",
-    finData: "Fin Data",
     news: "News",
     finVerse: "FinVerse",
     subscribeFinPlus: "Subscribe to FinPlus",
@@ -144,19 +135,6 @@ const messages = {
     sameKeywordButton: "New Game With Same Keyword",
     differentKeywordButton: "New Game With Different Keyword",
     endQuizButton: "End",
-
-    // Course Categories
-    categoriesLabel: "COURSE CATEGORIES",
-    popularTopicsTitle: "Popular Topics To Learn",
-    coursesLabel: "Courses",
-
-    // Popular Courses
-    popularCoursesSubtitle: "POPULAR COURSES",
-    popularCoursesTitle: "Our Popular Courses",
-    lessonsLabel: "Lessons",
-    reviewsLabel: "Reviews",
-    freeLabel: "Free",
-    studentsLabel: "Students",
 
     //Goal Section
 
@@ -335,7 +313,6 @@ const messages = {
       transactionHistory: "Transaction History",
       filters: "Filters",
       quiz: "Quiz",
-      predictiveCalc: "Predictive Calculator",
     },
     investment: {
       keyStatistics: "Key Statistics",
@@ -555,7 +532,7 @@ const messages = {
       investment: {
         question: "Does FinBud support investment tracking and management?",
         answer:
-          "Yes, our Quant and Simulator pages provide an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and even practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience.",
+          "Yes, our Simulator page provides an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience.",
       },
       goals: {
         question:
@@ -698,23 +675,6 @@ const messages = {
           linkHref: "#",
         },
       },
-    },
-
-    coursePage: {
-      loadingText: "Loading data...",
-      errorMessage: "Error loading data: }",
-      retryButton: "Try Again",
-      categories: {
-        beginners: "FOR BEGINNERS",
-        investments: "EFFECTIVE INVESTMENTS",
-        fundamental: "FUNDAMENTAL ANALYSIS",
-        technical: "TECHNICAL ANALYSIS",
-      },
-      viewMore: "View More",
-      views: "views",
-      emptyState: "No articles available in this category.",
-      botMessage:
-        "Hello there! 👋<br><br>This is FinBud financial learning hub. Here you can:<br><br>📚 Learn investment knowledge from basic to advanced<br>💡 Discover effective investment strategies<br>📊 Dive deep into fundamental and technical analysis<br><br>Explore articles by topic or search for content you are interested in!",
     },
 
     macroEcon: {
@@ -952,45 +912,6 @@ const messages = {
         },
       },
     },
-    marketAnalysisPage: {
-      marketAnalysisTitle: "Market Analysis",
-      All: "All",
-      Positive: "Positive",
-      Negative: "Negative",
-      Neutral: "Neutral",
-      LastUpdated: "Last Updated",
-      Insight: "Insight",
-      Today: "Today",
-      "This Week": "This Week",
-      "This Month": "This Month",
-      mentions: "Mentions",
-      marketAnalysis: {
-        "Securities Company": "Công ty Chứng khoán",
-        Press: "Báo chí",
-        "Expert Community": "Cộng đồng Chuyên gia",
-      },
-      trend: {
-        title: "Trend",
-        topic: "Topic",
-        categories: {
-          All: "All",
-          Securities: "Securities",
-          Economy: "Economy",
-          Industry: "Industry",
-          Other: "Other",
-        },
-      },
-      AINews: "AI News",
-      insight: {
-        "Market Analysis": "Market Analysis",
-        Assessment: "Assessment",
-        Details: "Details",
-        Source: "Source",
-        Analysis: "Analysis",
-        Reference: "Reference",
-        "Market Sentiment Over Time": "Market Sentiment Over Time",
-      },
-    },
     quantPage: {
       Date: "Date",
       StockComparison: "Stock Comparision",
@@ -1065,7 +986,6 @@ const messages = {
     `,
     },
     FundLetter: "Fund Letter",
-    FinData: "Fin Data",
     ProductComparison: "Product Comparison",
 
     // Financial Dashboard translations
@@ -1110,7 +1030,7 @@ const messages = {
       investment: {
         question: "Does FinBud support investment tracking and management?",
         answer:
-          "Yes, our Quant and Simulator pages provide an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and even practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience.",
+          "Yes, our Simulator page provides an immersive experience for those exploring advanced finance. You can manage your investment portfolio, access in-depth stock analysis, and practice real stock trading through our Simulator - perfect for beginners looking to gain hands-on investment experience.",
       },
       goals: {
         question:
@@ -1126,60 +1046,6 @@ const messages = {
       },
     },
 
-    // Course Page
-    coursePage: {
-      title: "Financial Courses",
-      subtitle: "Learn and improve financial knowledge",
-      categories: {
-        beginners: "For Beginners",
-        investments: "Effective Investments",
-        fundamental: "Fundamental Analysis",
-        technical: "Technical Analysis",
-      },
-      views: "views",
-      viewMore: "View More",
-      loading: "Loading courses...",
-      noData: "No courses available",
-      readTime: "min read",
-    },
-
-    // Market Analysis Page
-    marketAnalysisPage: {
-      marketAnalysisTitle: "Market Analysis",
-      marketAnalysisDescription:
-        "Comprehensive market data and analysis for informed investment decisions",
-      Positive: "Positive",
-      Neutral: "Neutral",
-      Negative: "Negative",
-      LastUpdated: "Last Updated",
-      Insight: "Insight",
-      mentions: "Mentions",
-      AINews: "AI News",
-      marketAnalysis: {
-        StockCompany: "Stock Company",
-        FinanceStock: "Finance Stock",
-        TechCommunity: "Tech Community",
-      },
-      insight: {
-        Assessment: "Assessment",
-        Details: "Details",
-        Source: "Source",
-        Analysis: "Analysis",
-        Reference: "Reference",
-      },
-      trend: {
-        title: "Market Trends",
-        topic: "Topic",
-        categories: {
-          All: "All",
-          Securities: "Securities",
-          Economy: "Economy",
-          Industry: "Industry",
-          Other: "Other",
-        },
-      },
-    },
-
     stockSimulator: {
       pageTitle: "Stock Simulator",
       tabs: {
@@ -1187,7 +1053,6 @@ const messages = {
         portfolio: "Portfolio",
         filters: "Stock Screener",
         quiz: "Quiz",
-        predictiveCalc: "Predictive Calculator",
       },
       trading: {
         quickTrade: "Quick Trade",
@@ -1352,65 +1217,6 @@ const messages = {
         flexibleTerms: "most flexible terms",
       },
     },
-    // Quant Analysis Page
-    quantAnalysisPage: {
-      title: "Quantitative Analysis",
-      subtitle: "Advanced market analysis and visualization tools",
-      sections: {
-        marketAnalysis: "Market Analysis",
-        dashboard: "Market Dashboard",
-        heatmap: "Market Heatmap",
-        monteCarlo: "Monte Carlo Simulation",
-      },
-      interpretation: "Market Analysis Interpretation",
-      loading: "Loading market data...",
-      loadingHeatmap: "Loading heatmap data...",
-      loadingMonteCarlo: "Loading Monte Carlo simulation...",
-      controls: {
-        indicator: "Indicator",
-        period: "Time Period",
-        returnType: "Return Type",
-        dataSource: "Data Source",
-      },
-    },
-    // Quant Page detailed translations
-    quantPage: {
-      StockComparison: "Stock Comparison",
-      StockPortfolioDashboard: "Stock Portfolio Dashboard",
-      Indicator: "Indicator",
-      Period: "Period",
-      Returns: "Returns",
-      Cummulative: "Cumulative",
-      Daily: "Daily",
-      RiskRatio: "Risk Ratio",
-      SharpeRatio: "Sharpe Ratio",
-      SortinoRatio: "Sortino Ratio",
-      StandardDeviation: "Standard Deviation",
-      PastTrendVsFutureProjection: "Past Trend vs Future Projection",
-      Simulation: "Simulation",
-      CloseValue: "Close Value",
-      IndicatorValue: "Indicator Value",
-      GBMSimulation: "GBM Simulation",
-      GARCHSimulation: "GARCH Simulation",
-      GraphPrice: "Graph Price",
-      TimeStep: "Time Step",
-      Date: "Date",
-      Value: "Value",
-      MonteCarloSimulation: "Monte Carlo Simulation",
-      SelectTicker: "Select Ticker",
-      TickerNameSearch: "Search ticker name...",
-      StockTicker: "Stock Ticker",
-      PriceChange: "Price Change",
-      RelativeVolume: "Relative Volume",
-      PERatio: "P/E Ratio",
-      EPSDistributed: "EPS Distributed",
-      DividendYield: "Dividend Yield",
-      IndustrySector: "Industry/Sector",
-      simulationChatBot: "Simulation from chatbot",
-      closeValueChatBot: "Close value from chatbot",
-      indicatorAndReturnChatBot: "Indicator and return from chatbot",
-    },
-
     // Super Investor Page
     superInvestorPage: {
       title: "Great Investors",
@@ -1473,96 +1279,6 @@ const messages = {
       offline: "You are offline",
       poweredBy: "Powered by FinBud AI",
     },
-    // Course Page
-    coursePage: {
-      title: "Finance Courses",
-      subtitle: "Learn and enhance your financial knowledge",
-      categories: {
-        beginners: "For Beginners",
-        investments: "Effective Investing",
-        fundamental: "Fundamental Analysis",
-        technical: "Technical Analysis",
-      },
-      views: "views",
-      viewMore: "View More",
-      loading: "Loading courses...",
-      noData: "No courses available",
-      readTime: "min read",
-    },
-    // Market Analysis Page
-    marketAnalysisPage: {
-      marketAnalysisTitle: "Market Analysis",
-      marketAnalysisDescription:
-        "Comprehensive market data and analysis for informed investment decisions",
-      Positive: "Positive",
-      Neutral: "Neutral",
-      Negative: "Negative",
-      LastUpdated: "Last Updated",
-      Insight: "Insight",
-      mentions: "Mentions",
-      AINews: "AI News",
-      marketAnalysis: {
-        StockCompany: "Stock Company",
-        FinanceStock: "Finance Stocks",
-        TechCommunity: "Tech Community",
-      },
-      insight: {
-        Assessment: "Assessment",
-        Details: "Details",
-        Source: "Source",
-        Analysis: "Analysis",
-        Reference: "Reference",
-      },
-      trend: {
-        title: "Market Trends",
-        topic: "Topic",
-        categories: {
-          All: "All",
-          Securities: "Securities",
-          Economy: "Economy",
-          Industry: "Industry",
-          Other: "Other",
-        },
-      },
-    },
-    // Quant Page
-    quantPage: {
-      StockComparison: "Stock Comparison",
-      Indicator: "Indicator",
-      Period: "Period",
-      Returns: "Returns",
-      Cummulative: "Cumulative",
-      Daily: "Daily",
-      RiskRatio: "Risk Ratio",
-      SharpeRatio: "Sharpe Ratio",
-      SortinoRatio: "Sortino Ratio",
-      StandardDeviation: "Standard Deviation",
-      PastTrendVsFutureProjection: "Past Trend vs Future Projection",
-      Simulation: "Simulation",
-      CloseValue: "Close Price",
-      IndicatorValue: "Indicator Value",
-      Date: "Date",
-      Value: "Value",
-      GraphPrice: "Price Chart",
-      TimeStep: "Time Step",
-      GBMSimulation: "GBM Simulation",
-      GARCHSimulation: "GARCH Simulation",
-      MonteCarloSimulation: "Monte Carlo Simulation",
-      StockPortfolioDashboard: "Stock Portfolio Dashboard",
-      TickerNameSearch: "Search stock ticker...",
-      StockTicker: "Stock Ticker",
-      PriceChange: "Price Change",
-      RelativeVolume: "Relative Volume",
-      PERatio: "P/E Ratio",
-      EPSDistributed: "Distributed EPS",
-      DividendYield: "Dividend Yield",
-      IndustrySector: "Industry Sector",
-      SelectTicker: "Select Stock Ticker",
-      simulationChatBot: "Simulation analysis complete",
-      closeValueChatBot: "Close price analysis ready",
-      indicatorAndReturnChatBot: "Indicator and return analysis available",
-    },
-
     stockSimulator: {
       pageTitle: "Stock Simulator",
       tabs: {
@@ -1570,7 +1286,6 @@ const messages = {
         portfolio: "Portfolio",
         filters: "Stock Filters",
         quiz: "Quiz",
-        predictiveCalc: "Predictive Calculator",
       },
       trading: {
         quickTrade: "Quick Trade",
@@ -1664,17 +1379,6 @@ const messages = {
     newFeatures: {
       title: "New Features",
       subtitle: "Explore Our Latest Tools",
-      aiCalculator: {
-        title: "AI Predictive Calculator",
-        description:
-          "Advanced AI-powered investment predictions and portfolio optimization",
-        tags: {
-          aiModels: "AI Models",
-          realTimeData: "Real-Time Data",
-          charts: "Charts",
-        },
-        button: "Try AI Calculator",
-      },
       roadmapCreator: {
         title: "Learning Roadmap Creator",
         description:
@@ -1712,17 +1416,10 @@ const messages = {
     superInvestors: "Đầu tư tài chính",
     finInvest: "Fin Đầu tư",
     simulator: "Đầu Tư Mô Phỏng",
-    predictiveCalculator: "Máy Tính Dự Đoán",
-    autoTradeAI: "AI Giao Dịch Tự Động",
-    quant: "Định lượng",
-    quantSimulator: "Mô phỏng Định lượng",
-    macroEconomic: "Kinh Tế Vĩ Mô",
-    marketAnalysis: "Phân tích Thị trường",
     finEdu: "Fin Giáo dục",
     quiz: "Câu Đố",
     learningRoadmap: "Lộ Trình Học Tập",
-    course: "Khoá học",
-    event: "Sự kiện",
+    event: "Sự kiện Fin",
     forum: "Diễn Đàn",
     news: "Tin Tức",
     finVerse: "FinVerse",
@@ -1838,19 +1535,6 @@ const messages = {
     sameKeywordButton: "Chơi lại với cùng từ khóa",
     differentKeywordButton: "Chơi với từ khóa khác",
     endQuizButton: "Kết thúc",
-
-    // Course Categories
-    categoriesLabel: "DANH MỤC KHÓA HỌC",
-    popularTopicsTitle: "Chủ đề phổ biến để học",
-    coursesLabel: "Khóa học",
-
-    // Popular Courses
-    popularCoursesSubtitle: "KHÓA HỌC PHỔ BIẾN",
-    popularCoursesTitle: "Các khóa học phổ biến của chúng tôi",
-    lessonsLabel: "Bài học",
-    reviewsLabel: "Đánh giá",
-    freeLabel: "Miễn phí",
-    studentsLabel: "Học viên",
 
     //Goal Section
 
@@ -2030,7 +1714,6 @@ const messages = {
       transactionHistory: "Lịch sử giao dịch",
       filters: "Bộ lọc",
       quiz: "Quiz",
-      predictiveCalc: "Máy tính dự đoán",
     },
     investment: {
       keyStatistics: "Thống kê chính",
@@ -2251,7 +1934,7 @@ const messages = {
       investment: {
         question: "FinBud có hỗ trợ theo dõi và quản lý đầu tư không?",
         answer:
-          "Có, các trang Quant và Simulator của chúng tôi cung cấp trải nghiệm nhập vai cho những người khám phá tài chính nâng cao. Bạn có thể quản lý danh mục đầu tư, truy cập phân tích cổ phiếu chuyên sâu, và thậm chí thực hành giao dịch cổ phiếu thực thông qua Simulator - hoàn hảo cho người mới bắt đầu muốn có kinh nghiệm đầu tư thực tế.",
+          "Có, trang Simulator của chúng tôi mang lại trải nghiệm nhập vai cho những người khám phá tài chính nâng cao. Bạn có thể quản lý danh mục đầu tư, truy cập phân tích cổ phiếu chuyên sâu, và thực hành giao dịch cổ phiếu thực thông qua Simulator - hoàn hảo cho người mới bắt đầu muốn có kinh nghiệm đầu tư thực tế.",
       },
       goals: {
         question:
@@ -2393,23 +2076,6 @@ const messages = {
           linkHref: "#",
         },
       },
-    },
-
-    coursePage: {
-      loadingText: "Đang tải dữ liệu...",
-      errorMessage: "Lỗi khi tải dữ liệu: }",
-      retryButton: "Thử lại",
-      categories: {
-        beginners: "CHO NGƯỜI MỚI BẮT ĐẦU",
-        investments: "ĐẦU TƯ HIỆU QUẢ",
-        fundamental: "PHÂN TÍCH CƠ BẢN",
-        technical: "PHÂN TÍCH KỸ THUẬT",
-      },
-      viewMore: "Xem thêm",
-      views: "lượt xem",
-      emptyState: "Không có bài viết nào trong danh mục này.",
-      botMessage:
-        "Xin chào! 👋<br><br>Đây là trung tâm học tài chính FinBud. Tại đây bạn có thể:<br><br>📚 Học kiến thức đầu tư từ cơ bản đến nâng cao<br>💡 Khám phá chiến lược đầu tư hiệu quả<br>📊 Tìm hiểu sâu về phân tích cơ bản và kỹ thuật<br><br>Khám phá bài viết theo chủ đề hoặc tìm kiếm nội dung bạn quan tâm!",
     },
 
     macroEcon: {
@@ -2647,45 +2313,6 @@ const messages = {
         },
       },
     },
-    marketAnalysisPage: {
-      marketAnalysisTitle: "Phân tích thị trường",
-      All: "Tất cả",
-      Positive: "Tích cực",
-      Negative: "Tiêu cực",
-      Neutral: "Trung lập",
-      LastUpdated: "Cập nhật lần cuối",
-      Insight: "Nhận định",
-      Today: "Hôm nay",
-      "This Week": "Tuần này",
-      "This Month": "Tháng này",
-      mentions: "Lượt nhắc đến",
-      marketAnalysis: {
-        "Securities Company": "Công ty chứng khoán",
-        Press: "Báo chí",
-        "Expert Community": "Cộng đồng chuyên gia",
-      },
-      trend: {
-        title: "Xu hướng",
-        topic: "Chủ đề",
-        categories: {
-          All: "Tất cả",
-          Securities: "Chứng khoán",
-          Economy: "Kinh tế",
-          Industry: "Ngành nghề",
-          Other: "Khác",
-        },
-      },
-      AINews: "Tin tức AI",
-      insight: {
-        "Market Analysis": "Phân tích thị trường",
-        Assessment: "Đánh giá",
-        Details: "Chi tiết",
-        Source: "Nguồn",
-        Analysis: "Phân tích",
-        Reference: "Tham khảo",
-        "Market Sentiment Over Time": "Tâm lý thị trường theo thời gian",
-      },
-    },
 
     quantPage: {
       Date: "Ngày",
@@ -2763,7 +2390,6 @@ const messages = {
     },
 
     FundLetter: "Thư quỹ đầu tư",
-    FinData: "Dữ liệu tài chính",
     ProductComparison: "So sánh sản phẩm",
 
     // Financial Dashboard translations
@@ -2808,7 +2434,7 @@ const messages = {
       investment: {
         question: "FinBud có hỗ trợ theo dõi và quản lý đầu tư không?",
         answer:
-          "Có, các trang Quant và Simulator mang lại trải nghiệm đầu tư thực tế cho người dùng. Bạn có thể quản lý danh mục đầu tư, xem phân tích cổ phiếu chuyên sâu và thực hành giao dịch mô phỏng – rất phù hợp cho người mới bắt đầu muốn tích lũy kinh nghiệm thực tế.",
+          "Có, trang Simulator mang lại trải nghiệm đầu tư thực tế cho người dùng. Bạn có thể quản lý danh mục đầu tư, xem phân tích cổ phiếu chuyên sâu và thực hành giao dịch mô phỏng – rất phù hợp cho người mới bắt đầu muốn tích lũy kinh nghiệm thực tế.",
       },
       goals: {
         question:
@@ -2824,60 +2450,6 @@ const messages = {
       },
     },
 
-    // Course Page
-    coursePage: {
-      title: "Khóa học tài chính",
-      subtitle: "Học và nâng cao kiến thức tài chính",
-      categories: {
-        beginners: "Dành cho người mới bắt đầu",
-        investments: "Đầu tư hiệu quả",
-        fundamental: "Phân tích cơ bản",
-        technical: "Phân tích kỹ thuật",
-      },
-      views: "lượt xem",
-      viewMore: "Xem thêm",
-      loading: "Đang tải khóa học...",
-      noData: "Không có khóa học nào",
-      readTime: "phút đọc",
-    },
-
-    // Market Analysis Page (second instance)
-    marketAnalysisPage: {
-      marketAnalysisTitle: "Phân tích thị trường",
-      marketAnalysisDescription:
-        "Dữ liệu và phân tích thị trường toàn diện để đưa ra quyết định đầu tư thông minh",
-      Positive: "Tích cực",
-      Neutral: "Trung lập",
-      Negative: "Tiêu cực",
-      LastUpdated: "Cập nhật lần cuối",
-      Insight: "Nhận định",
-      mentions: "Lượt nhắc đến",
-      AINews: "Tin tức AI",
-      marketAnalysis: {
-        StockCompany: "Công ty cổ phiếu",
-        FinanceStock: "Cổ phiếu tài chính",
-        TechCommunity: "Cộng đồng công nghệ",
-      },
-      insight: {
-        Assessment: "Đánh giá",
-        Details: "Chi tiết",
-        Source: "Nguồn",
-        Analysis: "Phân tích",
-        Reference: "Tham khảo",
-      },
-      trend: {
-        title: "Xu hướng thị trường",
-        topic: "Chủ đề",
-        categories: {
-          All: "Tất cả",
-          Securities: "Chứng khoán",
-          Economy: "Kinh tế",
-          Industry: "Ngành nghề",
-          Other: "Khác",
-        },
-      },
-    },
-
     stockSimulator: {
       pageTitle: "Mô Phỏng Chứng Khoán",
       tabs: {
@@ -2885,7 +2457,6 @@ const messages = {
         portfolio: "Danh Mục",
         filters: "Lọc Cổ Phiếu",
         quiz: "Câu Hỏi",
-        predictiveCalc: "Tính Toán Dự Đoán",
       },
       trading: {
         quickTrade: "Giao Dịch Nhanh",
@@ -3053,66 +2624,6 @@ const messages = {
       },
     },
 
-    // Quant Analysis Page
-    quantAnalysisPage: {
-      title: "Phân tích định lượng",
-      subtitle: "Công cụ phân tích và trực quan hóa thị trường nâng cao",
-      sections: {
-        marketAnalysis: "Phân tích thị trường",
-        dashboard: "Bảng điều khiển thị trường",
-        heatmap: "Bản đồ nhiệt thị trường",
-        monteCarlo: "Mô phỏng Monte Carlo",
-      },
-      interpretation: "Giải thích phân tích thị trường",
-      loading: "Đang tải dữ liệu thị trường...",
-      loadingHeatmap: "Đang tải dữ liệu bản đồ nhiệt...",
-      loadingMonteCarlo: "Đang tải mô phỏng Monte Carlo...",
-      controls: {
-        indicator: "Chỉ báo",
-        period: "Khoảng thời gian",
-        returnType: "Loại lợi nhuận",
-        dataSource: "Nguồn dữ liệu",
-      },
-    },
-
-    // Quant Page detailed translations
-    quantPage: {
-      StockComparison: "So sánh cổ phiếu",
-      StockPortfolioDashboard: "Bảng điều khiển danh mục cổ phiếu",
-      Indicator: "Chỉ báo",
-      Period: "Khoảng thời gian",
-      Returns: "Lợi nhuận",
-      Cummulative: "Tích lũy",
-      Daily: "Hàng ngày",
-      RiskRatio: "Tỷ lệ rủi ro",
-      SharpeRatio: "Tỷ suất Sharpe",
-      SortinoRatio: "Tỷ suất Sortino",
-      StandardDeviation: "Độ lệch chuẩn",
-      PastTrendVsFutureProjection: "Xu hướng quá khứ & Dự đoán tương lai",
-      Simulation: "Mô phỏng",
-      CloseValue: "Giá đóng cửa",
-      IndicatorValue: "Giá trị chỉ báo",
-      GBMSimulation: "Mô phỏng GBM",
-      GARCHSimulation: "Mô phỏng GARCH",
-      GraphPrice: "Biểu đồ giá",
-      TimeStep: "Bước thời gian",
-      Date: "Ngày",
-      Value: "Giá trị",
-      MonteCarloSimulation: "Mô phỏng Monte Carlo",
-      SelectTicker: "Chọn mã cổ phiếu",
-      TickerNameSearch: "Tìm kiếm mã cổ phiếu...",
-      StockTicker: "Mã cổ phiếu",
-      PriceChange: "Biến động giá",
-      RelativeVolume: "Khối lượng tương đối",
-      PERatio: "Hệ số P/E",
-      EPSDistributed: "EPS đã phân bổ",
-      DividendYield: "Tỷ suất cổ tức",
-      IndustrySector: "Ngành/ Lĩnh vực",
-      simulationChatBot: "Mô phỏng từ trợ lý ảo",
-      closeValueChatBot: "Giá đóng cửa từ trợ lý ảo",
-      indicatorAndReturnChatBot: "Chỉ báo và lợi nhuận từ trợ lý ảo",
-    },
-
     // Super Investor Page
     superInvestorPage: {
       title: "Nhà Đầu tư Vĩ đại",
@@ -3177,98 +2688,6 @@ const messages = {
       poweredBy: "Được hỗ trợ bởi FinBud AI",
     },
 
-    // Course Page
-    coursePage: {
-      title: "Khóa học Tài chính",
-      subtitle: "Học hỏi và nâng cao kiến thức tài chính",
-      categories: {
-        beginners: "Dành cho người mới bắt đầu",
-        investments: "Đầu tư hiệu quả",
-        fundamental: "Phân tích cơ bản",
-        technical: "Phân tích kỹ thuật",
-      },
-      views: "lượt xem",
-      viewMore: "Xem thêm",
-      loading: "Đang tải khóa học...",
-      noData: "Không có khóa học nào",
-      readTime: "phút đọc",
-    },
-
-    // Market Analysis Page
-    marketAnalysisPage: {
-      marketAnalysisTitle: "Phân tích Thị trường",
-      marketAnalysisDescription:
-        "Dữ liệu và phân tích thị trường toàn diện cho quyết định đầu tư sáng suốt",
-      Positive: "Tích cực",
-      Neutral: "Trung tính",
-      Negative: "Tiêu cực",
-      LastUpdated: "Cập nhật cuối",
-      Insight: "Thông tin chi tiết",
-      mentions: "Đề cập",
-      AINews: "Tin tức AI",
-      marketAnalysis: {
-        StockCompany: "Công ty Cổ phiếu",
-        FinanceStock: "Cổ phiếu Tài chính",
-        TechCommunity: "Cộng đồng Công nghệ",
-      },
-      insight: {
-        Assessment: "Đánh giá",
-        Details: "Chi tiết",
-        Source: "Nguồn",
-        Analysis: "Phân tích",
-        Reference: "Tham khảo",
-      },
-      trend: {
-        title: "Xu hướng Thị trường",
-        topic: "Chủ đề",
-        categories: {
-          All: "Tất cả",
-          Securities: "Chứng khoán",
-          Economy: "Kinh tế",
-          Industry: "Ngành nghề",
-          Other: "Khác",
-        },
-      },
-    },
-
-    // Quant Page
-    quantPage: {
-      StockComparison: "So sánh Cổ phiếu",
-      Indicator: "Chỉ báo",
-      Period: "Thời kỳ",
-      Returns: "Lợi nhuận",
-      Cummulative: "Tích lũy",
-      Daily: "Hàng ngày",
-      RiskRatio: "Tỷ lệ Rủi ro",
-      SharpeRatio: "Tỷ lệ Sharpe",
-      SortinoRatio: "Tỷ lệ Sortino",
-      StandardDeviation: "Độ lệch Chuẩn",
-      PastTrendVsFutureProjection: "Xu hướng Quá khứ vs Dự báo Tương lai",
-      Simulation: "Mô phỏng",
-      CloseValue: "Giá Đóng cửa",
-      IndicatorValue: "Giá trị Chỉ báo",
-      Date: "Ngày",
-      Value: "Giá trị",
-      GraphPrice: "Biểu đồ Giá",
-      TimeStep: "Bước Thời gian",
-      GBMSimulation: "Mô phỏng GBM",
-      GARCHSimulation: "Mô phỏng GARCH",
-      MonteCarloSimulation: "Mô phỏng Monte Carlo",
-      StockPortfolioDashboard: "Bảng điều khiển Danh mục Cổ phiếu",
-      TickerNameSearch: "Tìm kiếm mã cổ phiếu...",
-      StockTicker: "Mã Cổ phiếu",
-      PriceChange: "Thay đổi Giá",
-      RelativeVolume: "Khối lượng Tương đối",
-      PERatio: "Tỷ lệ P/E",
-      EPSDistributed: "EPS Phân phối",
-      DividendYield: "Lợi suất Cổ tức",
-      IndustrySector: "Ngành Công nghiệp",
-      SelectTicker: "Chọn Mã cổ phiếu",
-      simulationChatBot: "Phân tích mô phỏng hoàn thành",
-      closeValueChatBot: "Phân tích giá đóng cửa sẵn sàng",
-      indicatorAndReturnChatBot: "Phân tích chỉ báo và lợi nhuận có sẵn",
-    },
-
     // Stock Simulator
     stockSimulator: {
       pageTitle: "Mô Phỏng Chứng Khoán",
@@ -3277,7 +2696,6 @@ const messages = {
         portfolio: "Danh Mục",
         filters: "Bộ Lọc Cổ Phiếu",
         quiz: "Câu Hỏi",
-        predictiveCalc: "Máy Tính Dự Đoán",
       },
       trading: {
         quickTrade: "Giao Dịch Nhanh",
@@ -3371,17 +2789,6 @@ const messages = {
     newFeatures: {
       title: "Tính năng mới",
       subtitle: "Khám phá các công cụ mới nhất của chúng tôi",
-      aiCalculator: {
-        title: "Máy tính dự đoán bằng AI",
-        description:
-          "Dự đoán đầu tư và tối ưu hóa danh mục thông minh với công nghệ AI tiên tiến",
-        tags: {
-          aiModels: "Mô hình AI",
-          realTimeData: "Dữ liệu thời gian thực",
-          charts: "Biểu đồ",
-        },
-        button: "Dùng thử AI Calculator",
-      },
       roadmapCreator: {
         title: "Trình tạo lộ trình học tập",
         description:

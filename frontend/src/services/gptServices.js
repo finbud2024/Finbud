@@ -1,4 +1,4 @@
-// Mock gptServices.js - không gọi API trực tiếp
+// gptServices.js - AI chat service with backend fallback
 import axios from "axios";
 
 // Mock environment variables
@@ -27,21 +27,29 @@ async function tryWithFallback(actionFn, providersToTry, options = {}) {
 }
 
 /**
- * Mock function to send message through mock server
+ * Function to send message through backend with AI fallback
  */
 async function sendMessage(messages, options = {}) {
   try {
-    // Send to mock server instead of OpenAI
-    const response = await axios.post(`${API_BASE_URL}/threads`, {
-      message: messages[messages.length - 1]?.content || "Hello",
-      messages: messages,
-      options: options
-    });
+    // Use backend endpoint that handles AI fallback automatically
+    const response = await axios.post(
+      `${API_BASE_URL}/simple-chat`,
+      { messages: messages },
+      { 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: false // No auth required for this endpoint
+      }
+    );
     
-    return response.data.message;
+    return response.data.answer || "";
   } catch (error) {
-    console.error("MOCK: Error sending message:", error);
-    throw error;
+    console.error("Error sending message:", error);
+    throw new Error(
+      error.response?.data?.error || 
+      "AI service temporarily unavailable. Please try again."
+    );
   }
 }
 

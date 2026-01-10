@@ -60,7 +60,6 @@ backend/Database Schema/
 ├── trading/           # Trading & transaction schemas
 ├── finance/           # Portfolio & financial schemas
 ├── market-data/       # Market information schemas
-│   └── finData/       # Financial data sub-schemas
 └── analytics/         # Future analytics schemas (empty)
 ```
 

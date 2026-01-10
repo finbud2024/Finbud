@@ -232,11 +232,11 @@ export default {
 
         //check if user profile change or not
         if (
-          newIdentityData.displayName === userData.identityData.displayName &&
-          newIdentityData.firstName === userData.identityData.firstName &&
-          newIdentityData.lastName === userData.identityData.lastName &&
+          newIdentityData.displayName === userData.identityData?.displayName &&
+          newIdentityData.firstName === userData.identityData?.firstName &&
+          newIdentityData.lastName === userData.identityData?.lastName &&
           newIdentityData.profilePicture ===
-            userData.identityData.profilePicture
+            userData.identityData?.profilePicture
         ) {
           toast.info("No changes detected!", {
             autoClose: 1000,
@@ -277,8 +277,8 @@ export default {
         console.log(err);
       }
     },
-    cancelChange() {
-      // Get user data from store
+    async cancelChange() {
+      // Get fresh user data from API
       const userData = this.$store.getters["users/currentUser"];
       if (!userData) {
         toast.error("User data not available", {
@@ -288,21 +288,33 @@ export default {
         return;
       }
 
-      // Reset profile data from store
-      this.profile = {
-        displayName: userData.identityData.displayName,
-        firstName: userData.identityData.firstName,
-        lastName: userData.identityData.lastName,
-        email: userData.accountData.username,
-        image: userData.identityData.profilePicture,
-      };
+      try {
+        const userId = userData._id;
+        const response = await api.get(`/users/${userId}`);
+        const data = response.data;
 
-      // Reset imageUploaded
-      this.imageUploaded = false;
-      toast.success("Changes canceled!", {
-        autoClose: 1000,
-        collapsed: false,
-      });
+        // Reset profile data from API
+        this.profile = {
+          displayName: data.identityData?.displayName || "",
+          firstName: data.identityData?.firstName || "",
+          lastName: data.identityData?.lastName || "",
+          email: data.accountData?.username || "",
+          image: data.identityData?.profilePicture || "",
+        };
+
+        // Reset imageUploaded
+        this.imageUploaded = false;
+        toast.success("Changes canceled!", {
+          autoClose: 1000,
+          collapsed: false,
+        });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Failed to reset profile data", {
+          autoClose: 1000,
+          collapsed: false,
+        });
+      }
     },
     async fetchLeaderboardData() {
       try {
@@ -354,8 +366,8 @@ export default {
           this.currentUserRank = {
             rank: 12,
             _id: userData._id,
-            displayName: userData.identityData.displayName,
-            profilePicture: userData.identityData.profilePicture,
+            displayName: userData.identityData?.displayName || userData.name || "User",
+            profilePicture: userData.identityData?.profilePicture || "",
             fincoins: 1500,
             quizzesCompleted: 3,
             tradesExecuted: 5,
@@ -373,16 +385,19 @@ export default {
     await this.$store.dispatch("users/fetchCurrentUser");
     const userData = this.$store.getters["users/currentUser"];
 
+    console.log("User data from store:", userData);
+
     if (!userData) {
       toast.error("Failed to load user data", { autoClose: 1000 });
       return;
     }
 
-    // Fetch user's account balance
+    // Fetch user's complete data including account balance
     try {
       const userId = userData._id;
       const response = await api.get(`/users/${userId}`);
       const data = response.data;
+      console.log("Full user data from API:", data);
 
       this.financialData = [
         {
@@ -398,6 +413,17 @@ export default {
           value: `$${data.bankingAccountData.cash.toLocaleString()}`,
         },
       ];
+
+      // Set profile data from API response (more complete than store)
+      this.profile = {
+        displayName: data.identityData?.displayName || userData.identityData?.displayName || userData.name || "",
+        firstName: data.identityData?.firstName || userData.identityData?.firstName || "",
+        lastName: data.identityData?.lastName || userData.identityData?.lastName || "",
+        email: data.accountData?.username || userData.accountData?.username || userData.email || "",
+        image: data.identityData?.profilePicture || userData.identityData?.profilePicture || "",
+      };
+
+      console.log("Profile data set:", this.profile);
 
       // Change color of balance based on value
       this.$nextTick(() => {
@@ -416,18 +442,18 @@ export default {
         });
       });
     } catch (error) {
-      console.error("Error fetching financial data:", error);
-      toast.error("Failed to load financial data", { autoClose: 1000 });
+      console.error("Error fetching user data:", error);
+      toast.error("Failed to load user data", { autoClose: 1000 });
+      
+      // Fallback to store data if API call fails
+      this.profile = {
+        displayName: userData.identityData?.displayName || userData.name || "",
+        firstName: userData.identityData?.firstName || "",
+        lastName: userData.identityData?.lastName || "",
+        email: userData.accountData?.username || userData.email || "",
+        image: userData.identityData?.profilePicture || "",
+      };
     }
-
-    // Set profile data from store
-    this.profile = {
-      displayName: userData.identityData.displayName,
-      firstName: userData.identityData.firstName,
-      lastName: userData.identityData.lastName,
-      email: userData.accountData.username,
-      image: userData.identityData.profilePicture,
-    };
 
     // Set current user ID for leaderboard comparison
     if (userData) {
@@ -510,6 +536,7 @@ export default {
   font-weight: 700;
   margin: 0;
   background: linear-gradient(45deg, #2d3748, #4a5568);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: all 0.3s ease;
@@ -541,6 +568,11 @@ export default {
 .image-uploaded {
   border: 4px solid #000000;
   animation: pulse 2s infinite;
+}
+
+/* Hide the default file input */
+#file-upload {
+  display: none;
 }
 
 .custom-file-upload {
