@@ -14,7 +14,7 @@
 
       <div v-for="event in filteredEvents"
            :key="event._id" 
-           :ref="el => eventRefs[event._id] = el"
+           :ref="el => { if (el) eventRefs[event._id] = el }"
            class="event-card"
            :class="{ highlighted: highlightedEventId === event._id }"
            @click="goToEvent(event.url)">
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted, nextTick, watch } from "vue";
+import { defineComponent, ref, computed, onMounted, onBeforeUnmount, nextTick, watch } from "vue";
 import axios from "axios";
 import Fuse from "fuse.js";
 import { debounce } from "lodash";
@@ -428,6 +428,17 @@ export default defineComponent({
         console.log('🗺️ apiKey:', process.env.VUE_APP_GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing');
         console.log('🗺️ First event:', events.value[0]);
       }, 2000);
+    });
+
+    onBeforeUnmount(() => {
+      // Clean up map instance
+      if (googleMap) {
+        googleMap = null;
+      }
+      // Clear event refs
+      eventRefs.value = {};
+      // Clear events
+      events.value = [];
     });
 
     return {
