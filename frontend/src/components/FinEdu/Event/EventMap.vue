@@ -431,14 +431,20 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
-      // Clean up map instance
-      if (googleMap) {
-        googleMap = null;
+      try {
+        // Clean up map instance
+        if (googleMap) {
+          googleMap = null;
+        }
+        // Clear event refs
+        eventRefs.value = {};
+        // Clear events
+        events.value = [];
+        // Clear map div reference
+        mapDiv.value = null;
+      } catch (err) {
+        console.error('EventMap cleanup error:', err);
       }
-      // Clear event refs
-      eventRefs.value = {};
-      // Clear events
-      events.value = [];
     });
 
     return {

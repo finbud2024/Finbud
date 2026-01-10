@@ -101,7 +101,7 @@
                     </div>
 
                     <div class="right-div w-full md:w-3/4">
-                        <div class="swiper-container">
+                        <div class="swiper-container" v-if="remainingEvents.length > 0">
                             <swiper 
                                 :key="`swiper-${remainingEvents.length}`"
                                 :slidesPerView="1" 
@@ -116,6 +116,7 @@
                                     delay: 3000,
                                     disableOnInteraction: false
                                 }"
+                                :allowTouchMove="true"
                                 class="swiper"
                             >
                                 <swiper-slide v-for="(event, index) in remainingEvents" :key="`slide-${index}-${event.title}`" class="swiper-slide">
@@ -179,6 +180,26 @@ export default {
         EventMap,
         Articles,
     },
+    beforeRouteLeave(to, from, next) {
+        // Clean up before leaving the route
+        try {
+            // Destroy swiper instance if it exists
+            if (this.swiperInstance && typeof this.swiperInstance.destroy === 'function') {
+                this.swiperInstance.destroy(true, true);
+                this.swiperInstance = null;
+            }
+            
+            this.trendingEvents = [];
+            this.allEvents = [];
+            this.loading = false;
+            this.searchQuery = '';
+            this.mapError = null;
+        } catch (err) {
+            console.error('Route leave cleanup error:', err);
+        }
+        // Always call next to allow navigation
+        next();
+    },
     data() {
         return {
             modules: [Keyboard, Pagination, Navigation, Autoplay],
@@ -189,6 +210,7 @@ export default {
             searchExpanded: false,
             isMobile: false,
             mapError: null,
+            swiperInstance: null,
         };
     },
     computed: {
@@ -336,18 +358,21 @@ export default {
         }, 100);
     },
     beforeUnmount() {
-        // Cải thiện cleanup để tránh lỗi vnode
-        window.removeEventListener('resize', this.checkMobile);
-        
-        // Reset data để tránh reference issues
-        this.trendingEvents = [];
-        this.allEvents = [];
-        this.articles = [];
-        
-        // Clear cache nếu cần
-        if (this.$route.name !== 'EventHub') {
-            sessionStorage.removeItem('eventHeadlines');
-            sessionStorage.removeItem('eventHeadlinesTime');
+        try {
+            // Cải thiện cleanup để tránh lỗi vnode
+            window.removeEventListener('resize', this.checkMobile);
+            
+            // Reset data để tránh reference issues
+            this.trendingEvents = [];
+            this.allEvents = [];
+            
+            // Clear cache nếu cần
+            if (this.$route && this.$route.name !== 'EventHub') {
+                sessionStorage.removeItem('eventHeadlines');
+                sessionStorage.removeItem('eventHeadlinesTime');
+            }
+        } catch (err) {
+            console.error('Cleanup error:', err);
         }
     },
     // Thêm beforeDestroy cho Vue 2 compatibility
