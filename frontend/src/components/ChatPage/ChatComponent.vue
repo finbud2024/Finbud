@@ -300,7 +300,9 @@ Summarize the following into an English conversation title, no more than 5 words
           try {
             const currentThreadID = this.$store.getters["threads/getThreadID"];
             const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/${currentThreadID}`;
-            axios.put(threadApi, { title: response });
+            axios.put(threadApi, { title: response }, {
+              withCredentials: true,
+            });
           } catch (err) {
             console.error("Error on updating thread name:", err.message);
           }
