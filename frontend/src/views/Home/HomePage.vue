@@ -334,7 +334,9 @@ export default {
           requestBody.userId = null;
         }
 
-        const response = await axios.post(api, requestBody);
+        const response = await axios.post(api, requestBody, {
+          withCredentials: true,
+        });
         const newThreadID = response.data._id;
 
         this.$store.dispatch("threads/updateThreadID", newThreadID);

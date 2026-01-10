@@ -46,9 +46,9 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:8888",
-  "https://finbud.pro",
   "http://localhost:8080",
-  process.env.VUE_APP_DEPLOY_URL,
+  "https://finbud.net",              // ✅ Actual production domain
+  "https://finbud.pro",              // Keep old domain for compatibility
   "https://finbud-ai.netlify.app"
 ];
 
