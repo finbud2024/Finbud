@@ -12,9 +12,11 @@
 [functions]
   node_bundler = "esbuild"
   included_files = ["backend/**/*"]
+  external_node_modules = ["@google/generative-ai", "groq-sdk", "openai", "axios", "mongoose"]
   
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   NODE_OPTIONS = "--no-warnings"
+  VUE_APP_DEPLOY_URL = "https://finbud.net/.netlify/functions/server"
 
