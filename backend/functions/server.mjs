@@ -21,12 +21,9 @@ import stockTransactionRoute from "../Endpoints/finance/stockTransactionRoute.js
 import goalRoute from "../Endpoints/finance/goalRoute.js";
 import transactionRoute from "../Endpoints/finance/transactionRoute.js";
 import proxyRoute from "../Endpoints/services/proxyRoute.js";
-import eventRoute from "../Endpoints/social/eventRoute.js";
 import chatStockRoute from "../Endpoints/services/subChat/chatStockRoute.js";
 // Import the multiplier simulator route
 import multiplierSimulatorRoute from "../Endpoints/trading/quantSimulator/multiplierSimulatorEndpoints.js";
-import forumRoute from "../Endpoints/social/forumRoute.js";
-import postRoute from "../Endpoints/social/postRoute.js";
 import superInvestorsRoute from "../Endpoints/data/superInvestorsRoute.js";
 import finCoinRouter from "../Endpoints/finance/finCoinRouter.js";
 import portfolioRoute from "../Endpoints/finance/portfolioRoute.js";
@@ -191,7 +188,6 @@ router.use("/", stockTransactionRoute);
 router.use("/", goalRoute);
 router.use("/", transactionRoute);
 router.use("/", proxyRoute);
-router.use("/events", eventRoute);
 router.use("/", chatStockRoute);
 // Register the multiplier simulator route
 router.use("/multiplier-simulator", multiplierSimulatorRoute);
@@ -199,9 +195,7 @@ router.use("/multiplier-simulator", multiplierSimulatorRoute);
 // router.use('/', chatStockRoute); // Duplicate route - already registered above
 router.use("/", portfolioRoute);
 router.use("/api/investors", superInvestorsRoute);
-router.use("/api/forums", forumRoute);
 router.use("/api/articles", articleRoute);
-router.use("/api/posts", postRoute);
 router.use("/", portfolioRoute);
 router.use("/", finCoinRouter);
 router.use("/api/plaid", plaidRoute);

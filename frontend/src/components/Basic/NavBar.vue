@@ -3,21 +3,61 @@
   <button 
     class="navbar-toggle"
     @click="toggleMenu"
-    @mouseenter="handleMouseEnter"
-    @mouseleave="handleMouseLeave"
     ref="toggleButton"
+    :aria-expanded="isMobile ? isMenuOpen : isExpanded"
+    aria-controls="nav-bar"
   >
     <font-awesome-icon icon="fa-solid fa-bars" />
   </button> 
 
-  <nav class="nav-bar" :class="{ active: isMenuOpen, expanded: navBarIsVisiblyExpanded }" id="nav-bar" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" ref="navBar">
-    <router-link to="/" class="logo-link">
-      <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
-    </router-link>
+  <div
+    v-if="isMobile"
+    class="nav-overlay"
+    :class="{ active: isMenuOpen }"
+    @click="closeMobileMenu"
+  ></div>
 
-    <button class="expand-toggle" @click="toggleExpand">
-      <font-awesome-icon :icon="isExpanded ? 'fa-chevron-left' : 'fa-chevron-right'" class="icon" />
-    </button>
+  <nav class="nav-bar" :class="navBarClasses" id="nav-bar"  ref="navBar">
+    <div
+      class="nav-header"
+      @mouseenter="handleLogoHover(true)"
+      @mouseleave="handleLogoHover(false)"
+    >
+      <router-link
+        v-if="!showCollapsedHoverToggle"
+        to="/"
+        class="logo-link"
+        :class="{ 'logo-link-collapsed': !isMobile && !isExpanded }"
+      >
+        <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
+      </router-link>
+
+      <button
+        v-if="!isMobile && isExpanded"
+        type="button"
+        class="panel-toggle-btn"
+        @click="toggleExpand"
+        aria-label="Collapse navigation"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3.5" y="5" width="17" height="14" rx="3"></rect>
+          <path d="M10 5v14"></path>
+        </svg>
+      </button>
+
+      <button
+        v-else-if="showCollapsedHoverToggle"
+        type="button"
+        class="panel-toggle-btn panel-toggle-btn-collapsed"
+        @click="toggleExpand"
+        aria-label="Expand navigation"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3.5" y="5" width="17" height="14" rx="3"></rect>
+          <path d="M10 5v14"></path>
+        </svg>
+      </button>
+    </div>
 
     
     <div class="nav-right">
@@ -57,34 +97,6 @@
           </div>
         </li>
 
-        <li class="dropdown" ref="finEduDropdown" v-if="isAuthenticated">
-          <div class="services-dropdown" @click="toggleDropdown('finEdu')">
-            <font-awesome-icon icon="fa-solid fa-graduation-cap" class="icon" />
-            <span>{{ $t("finEdu") }}</span>
-            <span class="arrow-down"></span>
-          </div>
-          <div class="dropdown-content" v-show="activeDropdown === 'finEdu'">
-            <router-link to="/quizz">{{ $t("quiz") }}</router-link>
-            <router-link to="/create-roadmap">{{ $t("learningRoadmap") }}</router-link>
-          </div>
-        </li>
-
-        <!-- FinVerse Social Section - Simplified to single link -->
-        <li v-if="isAuthenticated">
-          <router-link to="/forum" class="nav-link finverse-link">
-            <font-awesome-icon icon="fa-solid fa-users" class="icon" />
-            <span>{{ $t("finVerse") }}</span>
-            </router-link>
-        </li>
-
-        <!-- Fin Event moved below FinVerse -->
-        <li v-if="isAuthenticated">
-          <router-link to="/event" class="nav-link">
-            <font-awesome-icon icon="fa-solid fa-calendar" class="icon" />
-            <span>{{ $t("event") }}</span>
-          </router-link>
-        </li>
-
         <!-- Subscribe FinPlus Section -->
         <li v-if="isAuthenticated">
           <router-link to="/subscribe" class="nav-link finplus-link">
@@ -92,6 +104,16 @@
             <span>{{ $t("subscribeFinPlus") }}</span>
             </router-link>
         </li>
+        <div class="nav-bottom">
+          <div class="language-switcher">
+              <button @click="switchLanguage('en')">
+                <img src="@/assets/us.png" alt="English" />
+              </button>
+              <button @click="switchLanguage('vi')">
+                <img src="@/assets/vn.png" alt="Tiếng Việt" />
+              </button>
+          </div>
+        </div>
 
         <!-- Overview section - Appears after FinVerse -->
         <li class="dropdown overview-section" ref="overviewDropdown">
@@ -105,34 +127,26 @@
             <router-link to="/tech">{{ $t("technology") }}</router-link>
           </div>
         </li>
-
-        <!-- Adding standalone blog section -->
-        <li v-if="isAuthenticated">
-          <router-link to="/blog" class="nav-link blog-link">
-            <font-awesome-icon icon="fa-solid fa-newspaper" class="icon" />
-            <span>Blog</span>
-          </router-link>
-        </li>
       </ul>
 
       <div class="profile-wrapper" v-if="isAuthenticated">
         <router-link to="/profile" class="user-profile">
-          <img :src="profileImage" alt="User Image" class="user-image" @error="handleImageError" />
+          <img :key="resolvedProfileImage" :src="resolvedProfileImage" alt="User Image" class="user-image" referrerpolicy="no-referrer" @error="handleImageError" />
           <div class="user-info">
             <div class="user-name">{{ profileName }}</div>
                 <FinCoinDisplay :balance="finCoinBalance" />
-              </div>
+            </div>
         </router-link>
         
         <div class="nav-bottom">
-              <div class="language-switcher">
-                <button @click="switchLanguage('en')">
-                  <img src="@/assets/us.png" alt="English" />
-                </button>
-                <button @click="switchLanguage('vi')">
-                  <img src="@/assets/vn.png" alt="Tiếng Việt" />
-                </button>
-              </div>
+          <!-- <div class="language-switcher">
+            <button @click="switchLanguage('en')">
+              <img src="@/assets/us.png" alt="English" />
+            </button>
+            <button @click="switchLanguage('vi')">
+              <img src="@/assets/vn.png" alt="Tiếng Việt" />
+            </button>
+          </div> -->
           
           <a href="#" class="dark-mode-toggle" @click.prevent="toggleDarkMode">
                 <font-awesome-icon :icon="isDarkMode ? 'fa-moon' : 'fa-sun'" class="icon" />
@@ -143,10 +157,9 @@
                 <font-awesome-icon icon="fa-solid fa-right-from-bracket" class="icon" />
             <span>{{ $t("logout") }}</span>
           </a>
-            </div>
-          </div>
-
-      <router-link v-if="!isAuthenticated && !isAuthLoading" to="/login" class="login-button">
+        </div>
+      </div>
+      <router-link v-if="!isAuthenticated && !isAuthLoading" to="/login" class="login-button" @click.native="closeMobileMenu">
         <font-awesome-icon icon="fa-solid fa-user" class="icon" />
         <span>{{ $t("login") }}</span>
       </router-link>
@@ -165,7 +178,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { 
   faComments, faChartLine, faWallet, faGraduationCap, faChartBar, 
   faRobot, faUserTie, faChartPie, faNewspaper,
-  faChevronLeft, faChevronRight, faMoon, faSun, 
+  faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
   faCogs, faRocket, faSearchDollar, faCalculator, faBullseye
@@ -174,7 +187,7 @@ import {
 library.add(
   faComments, faChartLine, faWallet, faGraduationCap, faChartBar, 
   faRobot, faUserTie, faChartPie, faNewspaper,
-  faChevronLeft, faChevronRight, faMoon, faSun, 
+  faMoon, faSun, 
   faRightFromBracket, faBars, faUser,
   faUsers, faHeart, faCalendar, faTrophy, faCrown, faBuilding, faMicroscope, faBrain,
   faCogs, faRocket, faSearchDollar, faCalculator, faBullseye
@@ -193,9 +206,11 @@ export default {
       isDarkMode: false,
       isMenuOpen: false,
       isMobile: false,
-      isExpanded: false,
+      isExpanded: true,
       activeDropdown: null,
       isHovered: false,
+      isLogoHovered: false,
+      hasProfileImageError: false,
     };
   },
   watch: {
@@ -207,6 +222,11 @@ export default {
     isHovered(newIsHoveredState) {
       if (!newIsHoveredState && !this.isExpanded) {
         this.activeDropdown = null;
+      }
+    },
+    profileImage(newProfileImage, oldProfileImage) {
+      if (newProfileImage !== oldProfileImage) {
+        this.hasProfileImageError = false;
       }
     }
   },
@@ -224,18 +244,36 @@ export default {
       const userImage = this.$store.getters["users/userProfileImage"];
       return userImage && userImage.trim() !== "" ? userImage : defaultImage;
     },
+    resolvedProfileImage() {
+      return this.hasProfileImageError ? defaultImage : this.profileImage;
+    },
     profileName() {
       return this.$store.getters["users/userDisplayName"];
     },
     finCoinBalance() {
       return this.$store.getters["finCoin/finCoinBalance"];
     },
-    navBarIsVisiblyExpanded() {
-      if (this.isMobile) return this.isMenuOpen;
-      return this.isExpanded || this.isHovered;
+    navBarClasses() {
+      return {
+        expanded: !this.isMobile && this.isExpanded,
+        collapsed: !this.isMobile && !this.isExpanded,
+        'mobile-open': this.isMobile && this.isMenuOpen,
+        'mobile-closed': this.isMobile && !this.isMenuOpen,
+      };
+    },
+    showCollapsedHoverToggle() {
+      return !this.isMobile && !this.isExpanded && this.isLogoHovered;
     }
   },
   methods: {
+    handleLogoHover(isHovered) {
+      if (this.isMobile || this.isExpanded) {
+        this.isLogoHovered = false;
+        return;
+      }
+
+      this.isLogoHovered = isHovered;
+    },
     handleOutsideClick(event) {
       // Check if the click is outside the nav-bar and toggle button
       const nav = this.$refs.navBar;
@@ -249,35 +287,42 @@ export default {
         !nav.contains(event.target) &&
         !toggle.contains(event.target)
       ) {
-        this.isMenuOpen = false;
-        this.activeDropdown = null;
-      }
-    },
-    handleMouseEnter() {
-      if (!this.isMobile) {
-        this.isHovered = true;
-      }
-    },
-    handleMouseLeave() {
-      if (!this.isMobile) {
-        this.isHovered = false;
+        this.closeMobileMenu();
       }
     },
     toggleMenu() {
+      if (!this.isMobile) {
+        this.isExpanded = !this.isExpanded;
+        return;
+      }
+
       this.isMenuOpen = !this.isMenuOpen;
-      if(!this.isMenuOpen && this.isMobile) {
+      if (!this.isMenuOpen) {
         this.activeDropdown = null;
       }
+
+      document.body.style.overflow = this.isMenuOpen ? 'hidden' : '';
+    },
+    closeMobileMenu() {
+      if (!this.isMobile) {
+        return;
+      }
+
+      this.isMenuOpen = false;
+      this.activeDropdown = null;
+      document.body.style.overflow = '';
     },
     checkMobile() {
       const mobileState = window.innerWidth <= 768;
       if (this.isMobile !== mobileState) {
           this.isMobile = mobileState;
+          this.activeDropdown = null;
+          this.isMenuOpen = false;
+          this.isLogoHovered = false;
+          document.body.style.overflow = '';
           if(this.isMobile) {
               this.isExpanded = false;
               this.isHovered = false;
-          } else {
-              this.isMenuOpen = false;
           }
       }
       console.log( 'isMobile: ', this.isMobile );
@@ -316,16 +361,18 @@ export default {
         }
       }
     },
-    handleImageError(event) {
-      event.target.src = defaultImage;
+    handleImageError() {
+      if (this.profileImage !== defaultImage) {
+        this.hasProfileImageError = true;
+      }
     },
     toggleExpand() {
       if (this.isMobile) {
-        // For mobile, toggle the menu instead
         this.toggleMenu();
         return;
       }
       this.isExpanded = !this.isExpanded;
+      this.isLogoHovered = false;
     },
     toggleDropdown(name) {
       // Allow dropdown toggle in mobile when menu is open
@@ -334,7 +381,7 @@ export default {
         return;
       }
 
-      if (!this.isMobile && !this.navBarIsVisiblyExpanded) {
+      if (!this.isMobile && !this.isExpanded) {
         this.isExpanded = true;
         this.$nextTick(() => {
           this.activeDropdown = name;
@@ -365,7 +412,7 @@ export default {
         const dropdown = dropdownRef.querySelector('.dropdown-content');
         if (dropdown) {
           const navBarElement = document.getElementById('nav-bar');
-          let navBarWidth = 70; 
+          let navBarWidth = 80; 
           if (navBarElement && navBarElement.classList.contains('expanded')) {
              navBarWidth = 280;
           }
@@ -384,7 +431,7 @@ export default {
     handleResize() {
       this.checkMobile();
       if (this.activeDropdown) {
-          if (this.navBarIsVisiblyExpanded || this.isMenuOpen) { 
+          if ((this.isMobile && this.isMenuOpen) || (!this.isMobile && this.isExpanded)) { 
               this.positionDropdown(this.activeDropdown);
           } else {
               this.activeDropdown = null; 
@@ -422,6 +469,8 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);
     document.removeEventListener('click', this.closeDropdowns);
+    document.removeEventListener('click', this.handleOutsideClick);
+    document.body.style.overflow = '';
   }
 };
 </script>
@@ -433,7 +482,7 @@ export default {
   position: fixed;
   left: 0;
   top: 0;
-  width: 70px;
+  width: 80px;
   height: 100vh;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(10px);
@@ -441,6 +490,8 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 1.5rem 0.75rem;
+  box-sizing: border-box;
+  overflow: visible;
   z-index: 1000;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -449,12 +500,28 @@ export default {
   width: 280px;
 }
 
+.nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  margin-bottom: 2rem;
+  gap: 0.75rem;
+}
+
+.nav-bar.expanded .nav-header {
+  justify-content: space-between;
+}
+
 .logo-link {
   display: flex;
   justify-content: center;
-  margin-bottom: 2rem;
   padding: 0.5rem;
   transition: all 0.3s ease;
+}
+
+.logo-link-collapsed {
+  margin: 0 auto;
 }
 
 .navbar-brand {
@@ -464,26 +531,55 @@ export default {
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
 }
 
+.panel-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #4b5563;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.panel-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.panel-toggle-btn:hover {
+  background: #f8fafc;
+  color: #111827;
+  border-color: #9ca3af;
+}
+
+.panel-toggle-btn-collapsed {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
 .nav-right {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .nav-right::-webkit-scrollbar {
-  width: 4px;
-}
-
-.nav-right::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.nav-right::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  display: none;
 }
 
 .nav-items {
@@ -505,6 +601,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-height: 56px;
   padding: 0.875rem 1rem;
   color: #1a1a1a;
   text-decoration: none;
@@ -554,6 +651,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-height: 56px;
   padding: 0.875rem 1rem;
   color: #4b5563;
   cursor: pointer;
@@ -720,6 +818,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-height: 56px;
   padding: 0.875rem 1rem;
   color: #1a1a1a;
   text-decoration: none;
@@ -770,16 +869,16 @@ export default {
 .language-switcher button {
   width: 32px;
   height: 32px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 6px;
   cursor: pointer;
   padding: 0;
   transition: all 0.2s ease;
-  background: #f8fafc;
+  background: transparent;
 }
 
 .language-switcher button:hover {
-  background: #e2e8f0;
+  background: rgba(148, 163, 184, 0.12);
   transform: scale(1.05);
 }
 
@@ -793,6 +892,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-height: 48px;
   padding: 0.75rem 1rem;
   color: #6b7280;
   text-decoration: none;
@@ -832,32 +932,6 @@ export default {
 }
 
 /* Expand toggle */
-.expand-toggle {
-  position: absolute;
-  top: 50%;
-  right: -12px;
-  width: 24px;
-  height: 24px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  color: #6b7280;
-  transition: all 0.3s ease;
-  z-index: 1001;
-}
-
-.expand-toggle:hover {
-  background: #f8fafc;
-  border-color: #000000;
-  color: #000000;
-  transform: scale(1.1);
-}
-
 /* Mobile toggle */
 .navbar-toggle {
   display: none;
@@ -886,51 +960,112 @@ export default {
 }
 
 /* Hide text when collapsed */
-.nav-bar:not(.expanded) span {
+.nav-bar.collapsed span {
   opacity: 0;
   width: 0;
   overflow: hidden;
   transition: all 0.3s ease;
 }
+.nav-bar.collapsed .profile-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+.nav-bar.collapsed .user-profile {
+  justify-content: center;
+  padding: 0.5rem;
+  gap: 0;
+  width: 100%;
+}
+
+.nav-bar.collapsed .user-info {
+  display: none;
+}
+
+.nav-bar.collapsed .user-image {
+  margin: 0 auto;
+}
+
+/* Collapsed state: center bottom action icons */
+.nav-bar.collapsed .nav-bottom {
+  align-items: center;
+}
+
+.nav-bar.collapsed .dark-mode-toggle,
+.nav-bar.collapsed .logout {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  gap: 0;
+  margin: 0 auto;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.nav-bar.collapsed .dark-mode-toggle span,
+.nav-bar.collapsed .logout span {
+  display: none;
+}
+
+.nav-bar.collapsed .dark-mode-toggle .icon,
+.nav-bar.collapsed .logout .icon {
+  margin: 0;
+  font-size: 1.2rem;
+}
 .nav-bar.expanded span {
   opacity: 1;
   width: auto;
   transition: all 0.3s ease 0.1s;
 }
 
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.32);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 998;
+}
+
+.nav-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Mobile styles */
 @media (max-width: 768px) {
   .nav-bar {
-    transform: translateX(-100%);
-    width: 280px;
+    width: min(86vw, 320px);
+    transform: translateX(calc(-100% - 16px));
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
+    box-shadow: 8px 0 28px rgba(0, 0, 0, 0.18);
   }
 
-  .nav-bar.active {
+  .nav-bar.mobile-open {
     transform: translateX(0);
-    width: 280px;
+  }
+
+  .nav-bar.mobile-closed {
+    transform: translateX(calc(-100% - 16px));
   }
 
   .navbar-toggle {
     display: flex;
-  }
-
-  .navbar-toggle:hover + .nav-bar,
-  .nav-bar.active {
-    transform: translateX(0);
-    width: 280px;
-  }
-
-  .expand-toggle {
-    display: none;
+    z-index: 1001;
   }
 
   /* Always show text in mobile */
   .nav-bar span {
     opacity: 1 !important;
     width: auto !important;
+    overflow: visible !important;
+  }
+
+  .nav-bar .user-info {
+    display: block !important;
   }
 
   /* Mobile dropdown positioning */
@@ -942,14 +1077,6 @@ export default {
     background: #f8fafc;
     margin-top: 0.5rem;
   }
-
-  .nav-bar.expanded {
-    width: 280px;
-  }
-
-  .nav-bar:not(.expanded) {
-    width: 60px;
-  }
 }
 
 /* Dark mode styles */
@@ -958,13 +1085,46 @@ export default {
   border-right: 1px solid #374151;
 }
 
+.dark-mode .panel-toggle-btn {
+  background: rgba(31, 41, 55, 0.92);
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark-mode .panel-toggle-btn:hover {
+  background: rgba(55, 65, 81, 0.95);
+  border-color: #9ca3af;
+  color: #ffffff;
+}
+
+.dark-mode .overview-section,
+.dark-mode .profile-wrapper {
+  border-top-color: rgba(255, 255, 255, 0.22);
+}
+
 .dark-mode .services-dropdown {
-  color: #d1d5db;
+  color: #f9fafb;
 }
 
 .dark-mode .services-dropdown:hover {
   background: #374151;
   color: #f9fafb;
+}
+
+.dark-mode .services-dropdown .icon {
+  color: #d1d5db;
+}
+
+.dark-mode .services-dropdown:hover .icon {
+  color: #f9fafb;
+}
+
+.dark-mode .arrow-down {
+  border-top-color: #d1d5db;
+}
+
+.dark-mode .services-dropdown:hover .arrow-down {
+  border-top-color: #f9fafb;
 }
 
 .dark-mode .chat-button {
@@ -984,6 +1144,73 @@ export default {
 .dark-mode .dropdown-content a:hover {
   background: linear-gradient(135deg, #000000, #333333);
   color: white;
+}
+
+.dark-mode .user-profile {
+  color: #f9fafb;
+}
+
+.dark-mode .user-profile:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dark-mode .user-image {
+  border-color: #4b5563;
+}
+
+.dark-mode .user-name {
+  color: #f9fafb;
+}
+
+.dark-mode .dark-mode-toggle,
+.dark-mode .logout {
+  color: #f9fafb;
+}
+
+.dark-mode .dark-mode-toggle .icon,
+.dark-mode .logout .icon {
+  color: #d1d5db;
+}
+
+.dark-mode .dark-mode-toggle:hover,
+.dark-mode .logout:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f9fafb;
+}
+
+.dark-mode .dark-mode-toggle:hover .icon,
+.dark-mode .logout:hover .icon {
+  color: #f9fafb;
+}
+
+.dark-mode .logout:hover {
+  background: rgba(220, 38, 38, 0.18);
+  color: #fca5a5;
+}
+
+.dark-mode .logout:hover .icon {
+  color: #fca5a5;
+}
+
+.dark-mode .language-switcher button {
+  background: transparent;
+  border-color: transparent;
+}
+
+.dark-mode .language-switcher button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark-mode .finplus-link {
+  color: #f9fafb;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.1));
+  border-color: rgba(251, 191, 36, 0.28);
+}
+
+.dark-mode .finplus-link:hover,
+.dark-mode .finplus-link.router-link-exact-active {
+  color: #ffffff;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.18));
 }
 
 /* Ensure navbar doesn't interfere with chat sidebar */
@@ -1042,37 +1269,6 @@ export default {
   gap: 0.5rem;
 }
 
-.finverse-link .icon {
-  font-size: 1.1rem;
-  min-width: 20px;
-  color: #6b7280;
-  transition: color 0.3s ease;
-}
-.finverse-link:hover .icon,
-.finverse-link.router-link-exact-active .icon {
-  color: #000000;
-}
-.finverse-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1rem;
-  color: #4b5563;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  position: relative;
-  background: transparent;
-  box-shadow: none;
-}
-.finverse-link:hover,
-.finverse-link.router-link-exact-active {
-  background: #f8fafc;
-  color: #000000;
-  transform: translateX(4px);
-  box-shadow: none;
-  border-color: transparent;
-}
 
 /* FinPlus Link Styling */
 .finplus-link .icon {
@@ -1092,6 +1288,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-height: 56px;
   padding: 0.875rem 1rem;
   color: #4b5563;
   border-radius: 12px;
@@ -1124,34 +1321,17 @@ export default {
   font-weight: 500;
 }
 
-.blog-link {
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-  border: 1px solid #d1d5db;
-}
-
-.blog-link:hover {
-  background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.blog-link .icon {
-  color: #4b5563;
-  font-size: 1.1rem;
-  min-width: 20px;
-}
-
-/* Dark mode styles */
-.dark-mode .blog-link {
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border-color: #374151;
-}
-
-.dark-mode .blog-link:hover {
-  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-}
-
-.dark-mode .blog-link .icon {
-  color: #d1d5db;
+.chat-button span,
+.services-dropdown > span:first-of-type,
+.finplus-link span,
+.dark-mode-toggle span,
+.logout span,
+.login-button span {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
 }
 </style>

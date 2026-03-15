@@ -356,7 +356,7 @@
       @submit-order="submitOrder(action)"
     />
 
-    <QuizRewards v-if="showingReward" :reward-amount="rewardAmount" />
+
 
     <!-- Smart Assistant -->
     <div class="assistant-container" v-if="showAssistant">
@@ -398,7 +398,6 @@ import stockScreener from '@/components/Stock/StockScreener.vue'
 import CompanyCard from '@/components/CompanyCard.vue'
 import StockCard from '@/components/Stock/StockCard.vue'
 import PreviewOrderModal from '@/components/FinInvest/StockSimulatorPage/PreviewOrderModal.vue'
-import QuizRewards from '@/components/FinEdu/Quiz/QuizRewards.vue'
 import StockSearchInput from '@/components/FinInvest/StockSimulatorPage/StockSearchInput.vue'
 import TradingViewChart from '@/components/TradingViewChart.vue'
 
@@ -417,7 +416,6 @@ export default {
     CompanyCard,
     StockCard,
     PreviewOrderModal,
-    QuizRewards,
     StockSearchInput,
     TradingViewChart,
   },

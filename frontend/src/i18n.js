@@ -16,13 +16,9 @@ const messages = {
     superInvestors: "Super Investors",
     finInvest: "Fin Invest",
     simulator: "Simulator",
-    finEdu: "Fin Edu",
-    quiz: "Quiz",
-    learningRoadmap: "Learning Roadmap Creator",
     event: "Fin Event",
     forum: "Forum",
     news: "News",
-    finVerse: "FinVerse",
     subscribeFinPlus: "Subscribe to FinPlus",
     login: "Log In",
     darkMode: "Dark Mode",
@@ -448,32 +444,26 @@ const messages = {
     debtReduction: "Debt Reduction",
     debtDesc: "after 1 year",
     creditScore: "Improved Credit Score",
-    creditDesc: "tháng trong vòng",
+    creditDesc: "months",
 
     // Features Section
-    chatbotFeatureTitle: "Giải quyết lo lắng tài chính với",
+    chatbotFeatureTitle: "Ease your financial worries with",
     chatbotFeatureName: "AI Chatbot,",
     chatbotDesc:
-      "Chỉ với những lệnh đơn giản và truy cập vào nguồn thông tin chính xác, đáng tin cậy, tất cả các câu hỏi tài chính của bạn có thể được trả lời ngay lập tức.",
-    chatNow: "Trò chuyện ngay",
+      "With just simple commands and access to accurate, trustworthy information, all your financial questions can be answered instantly.",
+    chatNow: "Chat Now",
 
-    simulatorFeatureTitle: "Làm chủ đầu tư của bạn với",
+    simulatorFeatureTitle: "Take control of your investments with",
     simulatorFeatureName: "FinBud Simulator,",
     simulatorDesc:
-      "Theo dõi hiệu suất đầu tư của bạn theo thời gian thực, cung cấp thông tin hữu ích từ đầu tư và thị trường để đưa ra quyết định đầu tư tốt hơn.",
-    simulatorNow: "Mô phỏng ngay",
+      "Track your investment performance in real-time, providing useful insights from investments and the market to make better investment decisions.",
+    simulatorNow: "Simulate Now",
 
-    goalFeatureTitle: "Dự đoán chi phí của bạn với",
+    goalFeatureTitle: "Predict your expenses with",
     goalFeatureName: "FinBud Goal,",
     goalDesc:
-      "AI của chúng tôi dự đoán các chi phí sắp tới để giúp bạn lập kế hoạch trước, hiểu mô hình chi tiêu và nhận lời khuyên để quản lý ngân sách tốt hơn.",
-    goalNow: "Đặt mục tiêu ngay",
-
-    quizFeatureTitle: "Nâng cao kỹ năng tài chính với",
-    quizFeatureName: "FinBud Quiz,",
-    quizDesc:
-      "Câu đố tài chính với các chủ đề khác nhau liên quan đến nhiều từ khóa giúp bạn thực hành và học kiến thức tài chính một cách thông minh và tương tác.",
-    quizNow: "Thử câu đố ngay",
+      "Our AI predicts upcoming expenses to help you plan ahead, understand spending patterns, and receive advice for better budget management.",
+    goalNow: "Set Goal Now",
 
     // Goal Page
     connect: "Connect Your Bank Account",
@@ -1416,13 +1406,11 @@ const messages = {
     superInvestors: "Đầu tư tài chính",
     finInvest: "Fin Đầu tư",
     simulator: "Đầu Tư Mô Phỏng",
-    finEdu: "Fin Giáo dục",
     quiz: "Câu Đố",
     learningRoadmap: "Lộ Trình Học Tập",
     event: "Sự kiện Fin",
     forum: "Diễn Đàn",
     news: "Tin Tức",
-    finVerse: "FinVerse",
     subscribeFinPlus: "Đăng Ký FinPlus",
     login: "Đăng nhập",
     darkMode: "Chế độ tối",
@@ -1870,12 +1858,6 @@ const messages = {
     goalDesc:
       "AI của chúng tôi dự đoán các khoản chi sắp tới, giúp bạn lập kế hoạch trước, hiểu rõ thói quen chi tiêu và nhận lời khuyên để quản lý ngân sách hiệu quả hơn.",
     goalNow: "Đặt mục tiêu ngay",
-
-    quizFeatureTitle: "Nâng cao kỹ năng tài chính với",
-    quizFeatureName: "FinBud Quiz,",
-    quizDesc:
-      "Bộ câu đố tài chính với nhiều chủ đề và từ khóa đa dạng giúp bạn luyện tập và học hỏi kiến thức tài chính một cách thông minh, tương tác và thú vị.",
-    quizNow: "Làm bài quiz ngay",
 
     // Goal Page
     connect: "Kết nối tài khoản ngân hàng của bạn",

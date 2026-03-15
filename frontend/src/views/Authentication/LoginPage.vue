@@ -141,7 +141,7 @@ export default {
           withCredentials: true,
         });
 
-        this.$store.dispatch("users/login", response.data.user);
+        await this.$store.dispatch("users/login", response.data.user);
 
         // Check for redirect parameter
         const redirectPath = this.$route.query.redirect;

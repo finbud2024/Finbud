@@ -456,10 +456,8 @@ tr:nth-child(odd) {
   flex-direction: column;
   padding: 2%;
   border-radius: 16px;
-  background-color: var(--chat-message-bg-color);
-  color: var(--chat-text-color);
-  /* background-color: papayawhip;
-    color: black; */
+  background-color: transparent;
+  color: var(--text-primary);
   border: 1px solid transparent;
   text-align: left;
   white-space: pre-wrap;
@@ -487,7 +485,7 @@ tr:nth-child(odd) {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: currentColor;
   opacity: 0.3;
 }
 
@@ -708,9 +706,10 @@ tr:nth-child(odd) {
 }
 
 .message-wrapper:not(.user) .message-content {
-  background: #f7f7f8;
-  color: #202123;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: var(--chat-assistant-bg-color);
+  color: var(--chat-assistant-text-color);
+  box-shadow: none;
+  border: none;
 }
 
 .message-wrapper.user .message-content {
@@ -726,17 +725,17 @@ tr:nth-child(odd) {
 }
 
 .message-wrapper:not(.user) .message-content p {
-  color: #202123;
+  color: inherit;
 }
 
 .message-wrapper:not(.user) .message-content a {
-  color: #007bff;
+  color: var(--chat-assistant-link-color);
   text-decoration: underline;
 }
 
 .message-wrapper:not(.user) .message-content code {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--chat-assistant-code-bg-color);
+  color: inherit;
   padding: 0.2em 0.4em;
   border-radius: 4px;
 }

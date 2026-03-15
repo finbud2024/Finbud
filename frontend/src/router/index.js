@@ -8,18 +8,11 @@ import SideBar from "@/components/Basic/SideBar.vue";
 import TechnologyPage from "@/views/Overview/TechnologyPage.vue";
 import PricingPage from "@/views/Unused/PricingPage.vue";
 import AboutUsPage from "@/views/Overview/AboutUsPage.vue";
-import QuizzPage from "@/views/FinEdu/QuizzPage.vue";
 import StockSimulator from "@/views/FinInvest/StockSimulatorPage.vue";
 import RiskAnalysis from "@/views/FinManage/RiskAnalysisPage.vue";
 import GoalPage from "@/views/FinManage/GoalPage.vue";
 import MarketDataCenter from "@/views/FinManage/SuperInvestorMarketDataCenter.vue";
 import ProfilePage from "@/views/Home/ProfilePage.vue";
-import EventHub from "@/views/FinEdu/EventPage.vue";
-import LearningRoadMap from "@/views/FinEdu/QuizzLearningRoadMap.vue";
-import ForumView from "@/views/FinEdu/ForumPage.vue";
-import ThreadCard from "@/components/ThreadCard.vue";
-import ThreadView from "@/views/FinEdu/ForumThreadView.vue";
-import StartThread from "@/views/FinEdu/ForumThreadStart.vue";
 import MortgageCalc from "@/views/FinManage/MortgageCalculatorPage.vue";
 import SuperInvestors from "@/views/FinManage/SuperInvestorsPage.vue";
 import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue";
@@ -28,7 +21,6 @@ import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue
 import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
 import FinCompare from "@/views/FinManage/FinCompare.vue";
-import CreateRoadmapPage from "@/views/FinEdu/CreateRoadmapPage.vue";
 import SubscriptionPage from "@/views/Subscription/SubscriptionPage.vue";
 
 const routes = [
@@ -80,11 +72,6 @@ const routes = [
     component: AboutUsPage,
   },
   {
-    path: "/quizz",
-    name: "QuizzPage",
-    component: QuizzPage,
-  },
-  {
     path: "/stock-simulator",
     name: "StockSimulator",
     component: StockSimulator,
@@ -104,41 +91,6 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: ProfilePage,
-  },
-  {
-    path: "/event",
-    name: "EventHub",
-    component: EventHub,
-  },
-  {
-    path: "/learning-roadmap",
-    name: "LearningRoadMap",
-    component: LearningRoadMap,
-    props: true,
-  },
-  {
-    path: "/forum",
-    name: "ForumView",
-    component: ForumView,
-    props: true,
-  },
-  {
-    path: "/thread",
-    name: "ThreadCard",
-    component: ThreadCard,
-    props: true,
-  },
-  {
-    path: "/forum/thread/:id",
-    name: "ThreadView",
-    component: ThreadView,
-    props: true,
-  },
-  {
-    path: "/start-thread",
-    name: "StartThread",
-    component: StartThread,
-    props: true,
   },
   {
     path: "/mortgage-calc",
@@ -177,19 +129,9 @@ const routes = [
     component: NotificationCenter,
   },
   {
-    path: "/blog",
-    name: "BlogPage",
-    component: () => import("../views/Blog/BlogPage.vue"),
-  },
-  {
     path: "/fin-compare",
     name: "FinCompare",
     component: FinCompare,
-  },
-  {
-    path: "/create-roadmap",
-    name: "CreateRoadmapPage",
-    component: CreateRoadmapPage,
   },
   {
     path: "/subscribe",

@@ -12,11 +12,6 @@
   </div>
   <FooterBar v-if="showFooter" ref="footerBar" />
   
-  <!-- Global Chat Toggle Button -->
-  <ChatToggleButton 
-    ref="chatToggle"
-    @chat-toggled="handleChatToggled"
-  />
   
   <div v-if="showBotMessage" class="bot-message-container">
     <div
@@ -36,7 +31,6 @@ import FooterBar from "@/components/Basic/FooterBar.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import LoadingPage from "./views/Home/LoadingPage.vue";
-import ChatToggleButton from "@/components/ChatToggleButton.vue";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {
@@ -53,7 +47,6 @@ export default {
     NavBar,
     FooterBar,
     LoadingPage,
-    ChatToggleButton,
   },
   data() {
     return {
@@ -152,15 +145,6 @@ export default {
       document.body.classList.remove("dark-mode");
     }
 
-    this.$watch(
-      () => this.$route.path,
-      (newPath) => {
-        if (newPath === "/event") {
-          this.showEventHubGreeting();
-        }
-      },
-      { immediate: true }
-    );
   },
   computed: {
     isAuthenticated() {
@@ -280,23 +264,7 @@ export default {
       }, minLoadingTime);
 
       this.$router.push("/");
-    },
-    handleChatToggled(isOpen) {
-      console.log('Chat toggled:', isOpen);
-      // You can emit events or update global state here if needed
-      // For example, hide other UI elements when chat is open
-      if (isOpen) {
-        this.hideBotMessage();
-      }
-    },
-    hideBotMessage() {
-      this.messageVisible = false;
-      setTimeout(() => {
-        this.botMessage = "";
-        this.displayedMessage = "";
-        this.showBotMessage = false;
-      }, 300);
-    },
+    }
   },
   beforeDestroy() {
     document.removeEventListener("click", this.handleClickOutside);
@@ -325,7 +293,10 @@ export default {
   --progress-color: #c8c5c5;
   --logo-color: #000000;
   --chat-text-color: #000000;
-  /* --chat-message-bg-color: #f8f4f4; */
+  --chat-assistant-bg-color: var(--bg-primary);
+  --chat-assistant-text-color: var(--text-primary);
+  --chat-assistant-link-color: #0f6cbd;
+  --chat-assistant-code-bg-color: #f3f4f6;
   --chat-user-bg-color: #f8f4f4;
   --chat-user-text-color: #ffffff;
   --black-in-light-mode: #000000;
@@ -352,7 +323,10 @@ body.dark-mode {
   --logo-color: #000000;
   --content-bg: #736969;
   --chat-text-color: #ffffff;
-  /* --chat-message-bg-color: #2d2d2d; */
+  --chat-assistant-bg-color: var(--bg-primary);
+  --chat-assistant-text-color: var(--text-primary);
+  --chat-assistant-link-color: #8ab4f8;
+  --chat-assistant-code-bg-color: #2d2d2d;
   --chat-user-bg-color: #2d2d2d;
   --chat-user-text-color: #ffffff;
   --black-in-light-mode: #ffffff;
@@ -388,7 +362,7 @@ body.dark-mode {
 
 /* Main router view positioning to avoid navbar */
 #app {
-  padding-left: 70px;
+  padding-left: 80px;
   transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-grow: 1;
   display: flex;
