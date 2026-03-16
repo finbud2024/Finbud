@@ -11,7 +11,7 @@
     "dev": "dotenv -e .env netlify dev",
     "seeding": "node backend/utils/stockSeeding.js",
     "install:python-deps": "pip install -r backend/functions/requirements.txt",
-    "install:client": "cd frontend && npm install --legacy-peer-deps",
+    "install:client": "cd frontend && npm install",
     "postinstall": "npm run install:client",
     "optimize": "node optimize-build.mjs",
     "clean": "rm -rf node_modules/.cache frontend/node_modules/.cache .cache frontend/.cache && npm run optimize",
