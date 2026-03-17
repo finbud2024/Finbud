@@ -4,23 +4,37 @@ import session from "express-session";
 import localStrategy from "./localStrategy.js";
 // MongoStore is imported dynamically in passportConfig() when needed
 
-const passportConfig = (app) => {
+const passportConfig = async (app) => {
   passport.use(localStrategy);
 
   // Conditionally import and use Google Strategy only if credentials exist
   if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-    import("./googleStrategy.js")
-      .then((googleStrategyModule) => {
-        passport.use(googleStrategyModule.default);
-        console.log("✅ Google OAuth strategy configured.");
-      })
-      .catch((err) => {
-        console.error("❌ Failed to load Google OAuth strategy:", err);
-      });
+    try {
+      const googleStrategyModule = await import("./googleStrategy.js");
+      const googleStrategy = googleStrategyModule.default;
+      // Register strategy - passport-google-oauth2 automatically uses name "google"
+      passport.use(googleStrategy);
+      console.log("✅ Google OAuth strategy configured.");
+      
+      // Verify strategy is registered
+      const registeredStrategies = Object.keys(passport._strategies || {});
+      console.log("📋 Registered Passport strategies:", registeredStrategies);
+      if (!registeredStrategies.includes("google")) {
+        throw new Error("Google strategy was not registered successfully");
+      }
+    } catch (err) {
+      console.error("❌ Failed to load Google OAuth strategy:", err);
+      console.error("   Error details:", err.stack);
+      // Don't throw - allow server to start but warn about auth issues
+      console.warn("   - Server will continue, but Google login will not work");
+    }
   } else {
     console.warn(
       "⚠️ Google OAuth credentials not found. Skipping Google strategy setup."
     );
+    console.warn("   - GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID ? "✅ Set" : "❌ Missing");
+    console.warn("   - GOOGLE_CLIENT_SECRET:", process.env.GOOGLE_CLIENT_SECRET ? "✅ Set" : "❌ Missing");
+    console.warn("   - Google login routes will return an error if accessed");
   }
 
   // Use MongoStore for persistent sessions (required for serverless functions)

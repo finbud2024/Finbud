@@ -251,7 +251,7 @@ import { useStore } from 'vuex';
 import BigGreenButton from "@/components/Button/ChatNow.vue";
 import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 import { useTypingEffect } from '@/composables/useTypingEffect';
-import UserInput from '@/components/UserInput.vue';
+import UserInput from '@/components/Shared/UI/UserInput.vue';
 import InteractiveRoadmap from '@/components/Home/InteractiveRoadmap.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';

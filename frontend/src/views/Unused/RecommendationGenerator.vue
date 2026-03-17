@@ -71,7 +71,7 @@
 
 <script>
 import axios from 'axios';
-import CompanyCard from '@/components/CompanyCard.vue';
+import CompanyCard from '@/components/Shared/UI/CompanyCard.vue';
 import SmallCompanyCard from '@/components/dashboard/SmallCompanyCard.vue';
 import TechAnalysis from '@/components/dashboard/TechAnalysis.vue';
 

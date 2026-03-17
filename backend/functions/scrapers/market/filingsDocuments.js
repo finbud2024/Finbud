@@ -1,5 +1,5 @@
 import axios from "axios";
-import Filings from "../../../Database_Schema/market-data/finData/FilingsSchema.js";
+import Filings from "../../../models/market-data/finData/FilingsSchema.js";
 import { getPeriodDateFilings } from "../../../utils/data-processing/filingsDateUtils.js";
 
 const SEC_HEADERS = {

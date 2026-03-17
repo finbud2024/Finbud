@@ -1,11 +1,11 @@
 import GoogleStrategy from "passport-google-oauth2";
-import User from "../Database_Schema/core/User.js";
+import User from "../models/core/User.js";
 
 const googleStrategy = new GoogleStrategy.Strategy(
   {
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    // Prefer explicit override, fallback to Netlify Dev Functions URL for local development
+    // Use environment variable if set, otherwise use Netlify Functions URL for local development
     callbackURL:
       process.env.GOOGLE_REDIRECT_URI ||
       "http://localhost:8888/.netlify/functions/server/auth/google/callback",

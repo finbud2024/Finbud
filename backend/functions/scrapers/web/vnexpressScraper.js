@@ -2,11 +2,11 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import ScrapedUser from '../../../Database_Schema/market-data/ScrapedUser.js';
-import Article from '../../../Database_Schema/social/Article.js';
+import ScrapedUser from '../../../models/market-data/ScrapedUser.js';
+import Article from '../../../models/social/Article.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Source from "../../../Database_Schema/core/Source.js";
+import Source from "../../../models/core/Source.js";
 
 puppeteer.use(StealthPlugin());
 

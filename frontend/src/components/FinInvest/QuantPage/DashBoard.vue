@@ -198,7 +198,7 @@ import * as XLSX from 'xlsx';
 import { debounce } from 'lodash';
 import VueApexCharts from 'vue3-apexcharts';
 import BollingerBands from './BollingerBands.vue';
-import Pagination from "@/components/Risk&Chat/Pagination.vue";
+import Pagination from "@/components/RiskChat/Pagination.vue";
 import axios from "axios";
 import { useI18n } from 'vue-i18n';
 // Register Chart.js components

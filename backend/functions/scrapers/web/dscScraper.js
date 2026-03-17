@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import mongoose from 'mongoose';
-import Course from '../../../Database_Schema/social/Course.js';
+import Course from '../../../models/social/Course.js';
 import dotenv from 'dotenv';
 
 puppeteer.use(StealthPlugin());

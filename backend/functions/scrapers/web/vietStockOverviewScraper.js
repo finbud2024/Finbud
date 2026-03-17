@@ -3,7 +3,7 @@ import stealth from 'puppeteer-extra-plugin-stealth';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import path from 'node:path';
-import vietStockOverview from '../../../Database_Schema/market-data/vietStockOverview.js';
+import vietStockOverview from '../../../models/market-data/vietStockOverview.js';
 import { fileURLToPath } from 'url';
 import {
     getRandomUserAgent

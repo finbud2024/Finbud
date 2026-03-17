@@ -19,7 +19,7 @@ import EventHub from "@/views/FinEdu/EventPage.vue";
 import LearningRoadMap from "@/views/FinEdu/QuizzLearningRoadMap.vue";
 import QuantSimulator from "@/views/FinInvest/QuantSimulatorPage.vue";
 import ForumView from "@/views/FinEdu/ForumPage.vue";
-import ThreadCard from "@/components/ThreadCard.vue";
+import ThreadCard from "@/components/Shared/UI/ThreadCard.vue";
 import ThreadView from "@/views/FinEdu/ForumThreadView.vue";
 import StartThread from "@/views/FinEdu/ForumThreadStart.vue";
 import MortgageCalc from "@/views/FinManage/MortgageCalculatorPage.vue";

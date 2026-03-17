@@ -1,4 +1,4 @@
-import Stock from "../../Database_Schema/market-data/Stock.js";
+import Stock from "../../models/market-data/Stock.js";
 import mongoose from "mongoose";
 import axios from "axios";
 import stockData from '../../frontend/src/views/hardcodeData/StockData.js'

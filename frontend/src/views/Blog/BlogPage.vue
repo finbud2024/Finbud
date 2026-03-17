@@ -96,6 +96,7 @@
           </button>
         </div>
       </section>
+    </div>
 
     <!-- Interactive Robot -->
     <div class="interactive-robot" ref="robot">

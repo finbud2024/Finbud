@@ -142,7 +142,7 @@
 
 <script>
 import api from "@/utils/api";
-import ThreadCard from "@/components/ThreadCard.vue";
+import ThreadCard from "@/components/Shared/UI/ThreadCard.vue";
 import ForumSidebar from "@/components/FinEdu/Forum/ForumSidebar.vue";
 import ForumBanner from "@/components/FinEdu/Forum/ForumBanner.vue";
 import { computed, ref, onMounted, watch } from "vue";

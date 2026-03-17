@@ -86,7 +86,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useHead } from "@vueuse/head";
 import { Heart, MessageCircle, Repeat, Send } from "lucide-vue-next";
-import ShareButton from "@/components/ShareButton.vue";
+import ShareButton from "@/components/Shared/UI/ShareButton.vue";
 import ForumSidebar from "@/components/FinEdu/Forum/ForumSidebar.vue";
 import ForumBanner from "@/components/FinEdu/Forum/ForumBanner.vue";
 

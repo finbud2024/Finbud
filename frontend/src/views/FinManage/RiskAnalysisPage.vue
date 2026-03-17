@@ -172,8 +172,8 @@
 
 <script>
 import axios from "axios";
-import Pagination from "@/components/Risk&Chat/Pagination.vue";
-import RiskChat from "@/components/Risk&Chat/RiskChat.vue";
+import Pagination from "@/components/RiskChat/Pagination.vue";
+import RiskChat from "@/components/RiskChat/RiskChat.vue";
 import CryptoWatch from "@/components/MarketPage/CryptoWatch.vue";
 import StockWatch from "@/components/MarketPage/StockWatch.vue";
 import VietnamStockWatch from "@/components/MarketPage/VietnamStockWatch.vue";

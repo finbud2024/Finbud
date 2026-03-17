@@ -87,15 +87,15 @@
 <script>
 // COMPONENT IMPORT
 import ChatFrame from "./ChatFrame.vue";
-import MessageComponent from "../MessageComponent.vue";
-import UserInput from "../UserInput.vue";
-import TradingViewWidget from "../TradingViewWidget.vue";
+import MessageComponent from "../Shared/UI/MessageComponent.vue";
+import UserInput from "../Shared/UI/UserInput.vue";
+import TradingViewWidget from "../Shared/UI/TradingViewWidget.vue";
 import DeepResearchAgent from "./DeepResearchAgent.vue";
 import DeepResearchResult from "./DeepResearchResult.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
-import FileIndicator from "../FileIndicator.vue";
+import FileIndicator from "../Shared/UI/FileIndicator.vue";
 
-import ThinkingProcess from "../ThinkingProcess.vue";
+import ThinkingProcess from "../Shared/UI/ThinkingProcess.vue";
 import RagProcess from "./RagProcess.vue";
 // SERVICES + LIBRARY IMPORT
 import axios from "axios";

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with default configuration
 const api = axios.create({
-  baseURL: process.env.VUE_APP_DEPLOY_URL,
+  baseURL: process.env.VUE_APP_DEPLOY_URL || 'http://localhost:3000',
   withCredentials: true, // This ensures cookies are sent with every request
   headers: {
     'Content-Type': 'application/json',

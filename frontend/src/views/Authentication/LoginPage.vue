@@ -113,6 +113,9 @@
 
 <script>
 import axios from "axios";
+
+const DEFAULT_BASE_URL = 'http://localhost:8888/.netlify/functions/server';
+
 export default {
   name: "LoginView",
   data() {
@@ -124,86 +127,65 @@ export default {
       errorMessage: "",
     };
   },
+  computed: {
+    baseURL() {
+      return process.env.VUE_APP_DEPLOY_URL || DEFAULT_BASE_URL;
+    },
+    redirectPath() {
+      return this.$route.query.redirect;
+    },
+  },
   methods: {
     async onLogin() {
       try {
         this.isLoading = true;
         this.errorMessage = "";
 
-        const api = `${process.env.VUE_APP_DEPLOY_URL}/auth/login`;
-        const reqBody = {
-          username: this.username,
-          password: this.password,
-        };
-        const response = await axios.post(api, reqBody, {
-          withCredentials: true,
-        });
+        const response = await axios.post(
+          `${this.baseURL}/auth/login`,
+          {
+            username: this.username,
+            password: this.password,
+          },
+          { withCredentials: true }
+        );
 
         this.$store.dispatch("users/login", response.data.user);
-
-        // Check for redirect parameter
-        const redirectPath = this.$route.query.redirect;
-        console.log("Login success - redirect path:", redirectPath);
-
-        const isNewUser = response.data.isNewUser;
-
-        // Add a small delay to ensure store is updated
         await this.$nextTick();
 
-        if (redirectPath) {
-          console.log("Redirecting to:", redirectPath);
-          // If there's a redirect path, use it
-          this.$router.push(redirectPath);
-        } else if (isNewUser) {
-          console.log("Redirecting new user to tutorial");
-          this.$router.push("/?showTutorial=true");
-        } else {
-          console.log("Redirecting to home");
-          this.$router.push("/");
-        }
+        this.handleRedirect(response.data.isNewUser);
       } catch (err) {
-        console.error(
-          "Login Error:",
-          err.response ? err.response.data : err.message
-        );
+        console.error("Login Error:", err.response?.data || err.message);
         this.errorMessage =
           err.response?.data?.message || "Login failed. Please try again.";
       } finally {
         this.isLoading = false;
       }
     },
-    signInWithGoogle() {
-      const redirectPath = this.$route.query.redirect;
-      console.log("Google OAuth - redirect path from query:", redirectPath);
-      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
-      // Add redirect parameter if it exists
-      if (redirectPath) {
-        api += `?redirect=${encodeURIComponent(redirectPath)}`;
+    handleRedirect(isNewUser = false) {
+      if (this.redirectPath) {
+        this.$router.push(this.redirectPath);
+      } else if (isNewUser) {
+        this.$router.push("/?showTutorial=true");
+      } else {
+        this.$router.push("/");
       }
-      console.log("Google OAuth - final API URL:", api);
-      window.location.href = api;
+    },
+    redirectToOAuth(provider = 'google') {
+      const api = `${this.baseURL}/auth/${provider}`;
+      const url = this.redirectPath
+        ? `${api}?redirect=${encodeURIComponent(this.redirectPath)}`
+        : api;
+      window.location.href = url;
+    },
+    signInWithGoogle() {
+      this.redirectToOAuth('google');
     },
     signInWithFacebook() {
-      const redirectPath = this.$route.query.redirect;
-      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
-
-      // Add redirect parameter if it exists
-      if (redirectPath) {
-        api += `?redirect=${encodeURIComponent(redirectPath)}`;
-      }
-
-      window.location.href = api;
+      this.redirectToOAuth('google'); // Note: Currently using Google OAuth for all social logins
     },
     signInWithApple() {
-      const redirectPath = this.$route.query.redirect;
-      let api = `${process.env.VUE_APP_DEPLOY_URL}/auth/google`;
-
-      // Add redirect parameter if it exists
-      if (redirectPath) {
-        api += `?redirect=${encodeURIComponent(redirectPath)}`;
-      }
-
-      window.location.href = api;
+      this.redirectToOAuth('google'); // Note: Currently using Google OAuth for all social logins
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword;

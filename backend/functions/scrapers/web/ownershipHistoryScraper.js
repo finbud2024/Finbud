@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import Investor from '../../../Database_Schema/market-data/TopInvestors.js';
-import CompanyPortfolio from '../../../Database_Schema/market-data/CompanyPortfolio.js';
+import Investor from '../../../models/market-data/TopInvestors.js';
+import CompanyPortfolio from '../../../models/market-data/CompanyPortfolio.js';
 import { 
     getRandomUserAgent,
     connectToMongoDB,

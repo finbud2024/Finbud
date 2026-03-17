@@ -185,7 +185,7 @@ import { gptNewsService } from '@/services/gptServices';
 import EventMap from '@/components/FinEdu/Event/EventMap.vue';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import Articles from '@/components/Articles.vue'; // Adjust the path if necessary
+import Articles from '@/components/Shared/UI/Articles.vue'; // Adjust the path if necessary
 // import api from "@/utils/api";
 
 export default {

@@ -1,8 +1,8 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { fileURLToPath } from 'url';
-import Investor from '../../../Database_Schema/market-data/TopInvestors.js';
-import InvestorData from '../../../Database_Schema/market-data/MarketValue.js';
+import Investor from '../../../models/market-data/TopInvestors.js';
+import InvestorData from '../../../models/market-data/MarketValue.js';
 import { 
     getRandomUserAgent,
     connectToMongoDB,

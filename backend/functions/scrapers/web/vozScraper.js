@@ -2,11 +2,11 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import ScrapedUser from '../../../Database_Schema/market-data/ScrapedUser.js';
-import Post from '../../../Database_Schema/social/Post.js';
+import ScrapedUser from '../../../models/market-data/ScrapedUser.js';
+import Post from '../../../models/social/Post.js';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Forum from "../../../Database_Schema/social/Forum.js";
+import Forum from "../../../models/social/Forum.js";
 
 puppeteer.use(StealthPlugin());
 

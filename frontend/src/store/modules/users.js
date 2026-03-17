@@ -48,8 +48,9 @@ export default {
       commit("setLoading", true);
       commit("setError", null);
 
+      const baseURL = process.env.VUE_APP_DEPLOY_URL || 'http://localhost:3000';
       state._promise = axios.get(
-        `${process.env.VUE_APP_DEPLOY_URL}/auth/current-user`,
+        `${baseURL}/auth/current-user`,
         { withCredentials: true }
       );
 

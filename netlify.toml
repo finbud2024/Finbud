@@ -9,6 +9,9 @@
   framework = "#auto"
   command = "npm run client"
 
+[dev.environment]
+  VUE_APP_DEPLOY_URL = "http://localhost:8888/.netlify/functions/server"
+
 [functions]
   node_bundler = "esbuild"
   included_files = ["backend/**/*"]

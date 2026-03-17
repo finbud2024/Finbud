@@ -9,7 +9,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
 import mongoose from "mongoose";
-import Event from "../../../Database_Schema/social/Event.js"; 
+import Event from "../../../models/social/Event.js"; 
 
 chromium.use(stealth());
 

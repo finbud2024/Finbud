@@ -70,7 +70,7 @@
 <script>
 import ChatComponent from "@/components/ChatPage/ChatComponent.vue";
 import SideBar from "@/components/Basic/SideBar.vue";
-import GuidanceModal from "@/components/GuidanceModal.vue";
+import GuidanceModal from "@/components/Shared/UI/GuidanceModal.vue";
 import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 
 export default {

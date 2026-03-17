@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import TradingViewWidget from "../TradingViewWidget.vue";
+import TradingViewWidget from "../Shared/UI/TradingViewWidget.vue";
 import SearchResult from "../ChatBot/SearchResult.vue";
 import Video from "../ChatBot/Video.vue";
 import { marked } from "marked";

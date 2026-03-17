@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import TypeWriter from '../TypeWriter.vue';
+import TypeWriter from '../Shared/UI/TypeWriter.vue';
 
 export default {
   name: "AnalysisSection",

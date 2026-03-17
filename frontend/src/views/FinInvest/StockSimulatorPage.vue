@@ -390,17 +390,17 @@ import api from "@/utils/api";
 
 // Components
 // import StockChart from '@/components/StockChart.vue'
-import BannerCardSimulator from '@/components/BannerCardSimulator.vue'
+import BannerCardSimulator from '@/components/Shared/UI/BannerCardSimulator.vue'
 import TransactionHistory from '@/components/FinInvest/StockSimulatorPage/TransactionHistory.vue'
-import PerformanceChart from '@/components/PerformanceChart.vue'
+import PerformanceChart from '@/components/Shared/UI/PerformanceChart.vue'
 import PortfolioPerformance from '@/components/FinInvest/StockSimulatorPage/PortfolioPerformance.vue'
 import stockScreener from '@/components/Stock/StockScreener.vue'
-import CompanyCard from '@/components/CompanyCard.vue'
+import CompanyCard from '@/components/Shared/UI/CompanyCard.vue'
 import StockCard from '@/components/Stock/StockCard.vue'
 import PreviewOrderModal from '@/components/FinInvest/StockSimulatorPage/PreviewOrderModal.vue'
 import QuizRewards from '@/components/FinEdu/Quiz/QuizRewards.vue'
 import StockSearchInput from '@/components/FinInvest/StockSimulatorPage/StockSearchInput.vue'
-import TradingViewChart from '@/components/TradingViewChart.vue'
+import TradingViewChart from '@/components/Shared/UI/TradingViewChart.vue'
 
 library.add(faChartLine, faBriefcase, faFilter, faGraduationCap);
 

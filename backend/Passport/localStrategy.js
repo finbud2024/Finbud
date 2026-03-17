@@ -1,5 +1,5 @@
 import passportLocal from 'passport-local'; 
-import User from '../Database_Schema/core/User.js';
+import User from '../models/core/User.js';
 
 const localStrategy = new passportLocal.Strategy({passReqToCallback: true},
     async (req, username, password, done) => {

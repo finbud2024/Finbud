@@ -72,7 +72,7 @@
 import axios from 'axios';
 import Pagination from '../components/Risk&Chat/Pagination.vue';
 import RiskChat from '../components/Risk&Chat/RiskChat.vue';
-import VaR from '@/components/Risk&Chat/VaR.vue';
+import VaR from '@/components/RiskChat/VaR.vue';
 
 const apiKey = process.env.VUE_APP_ALPHA_VANTAGE_KEY;
 const apiKeyCrypto = process.env.VUE_APP_COINRANKING_KEY;

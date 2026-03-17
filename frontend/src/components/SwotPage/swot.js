@@ -2,7 +2,16 @@ import { GoogleGenAI } from "@google/genai";
 
 // Initialize Google GenAI with the API key
 const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+
+// Only initialize if API key is available
+let ai = null;
+if (GEMINI_API_KEY) {
+  try {
+    ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+  } catch (error) {
+    console.warn("Failed to initialize GoogleGenAI:", error);
+  }
+}
 
 // SWOT categories
 const SWOT_CATEGORIES = ["Strengths", "Weaknesses", "Opportunities", "Threats"];
@@ -53,6 +62,10 @@ Ví dụ cấu trúc cho một hạng mục (ví dụ: "Weaknesses"):
 }
 
 Chỉ trả về đối tượng JSON. Không bao gồm bất kỳ văn bản giải thích nào trước hoặc sau đối tượng JSON.`;
+
+    if (!ai) {
+        throw new Error("Google Generative AI chưa được cấu hình. Vui lòng kiểm tra API key.");
+    }
 
     try {
         const response = await ai.models.generateContent({
@@ -121,6 +134,10 @@ Trả lời bằng một đối tượng JSON duy nhất. Đối tượng JSON p
   ]
 }
 Chỉ trả về đối tượng JSON. Không bao gồm bất kỳ văn bản giải thích nào trước hoặc sau đối tượng JSON.`;
+
+    if (!ai) {
+        throw new Error("Google Generative AI chưa được cấu hình. Vui lòng kiểm tra API key.");
+    }
 
     const response = await ai.models.generateContent({
         model: "gemini-2.0-flash",

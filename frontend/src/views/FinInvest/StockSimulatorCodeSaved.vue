@@ -389,12 +389,12 @@
     fetchSimBannerStockDatav3,
   } from "../../services/stockServices";
   import StockScreener from "../components/StockScreener.vue";
-  import CompanyCard from "@/components/CompanyCard.vue";
-  import BannerCardSimulator from "@/components/BannerCardSimulator.vue";
-  import stockData from "../hardcodeData/StockData.js";
+  import CompanyCard from "@/components/Shared/UI/CompanyCard.vue";
+  import BannerCardSimulator from "@/components/Shared/UI/BannerCardSimulator.vue";
+  import stockData from "@/assets/data/StockData.js";
   import PreviewOrderModal from "../components/FinInvest/StockSimulatorPage/PreviewOrderModal.vue";
   import TransactionHistory from "../components/FinInvest/StockSimulatorPage/TransactionHistory.vue";
-  import PerformanceChart from "../components/PerformanceChart.vue";
+  import PerformanceChart from "@/components/Shared/UI/PerformanceChart.vue";
   import PredicitveCalc from "../components/FinInvest/StockSimulatorPage/PredicitveCalc.vue";
   import PortfolioPerformance from "../components/FinInvest/StockSimulatorPage/PortfolioPerformance.vue";
   import { toast } from "vue3-toastify";

@@ -1,9 +1,16 @@
 // Mock pestle.js - không cần API keys
 import { GoogleGenAI } from "@google/genai";
 
-// Mock API key để tránh lỗi
-const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY || "mock-gemini-key";
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+// Only initialize if API key is available
+const GEMINI_API_KEY = process.env.VUE_APP_GEMINI_API_KEY;
+let ai = null;
+if (GEMINI_API_KEY) {
+  try {
+    ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+  } catch (error) {
+    console.warn("Failed to initialize GoogleGenAI:", error);
+  }
+}
 
 // PESTLE categories
 const PESTLE_CATEGORIES = ["Political", "Economic", "Social", "Technological", "Legal", "Environmental"];

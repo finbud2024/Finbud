@@ -11,7 +11,7 @@
   </button> 
 
   <nav class="nav-bar" :class="{ active: isMenuOpen, expanded: navBarIsVisiblyExpanded }" id="nav-bar" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" ref="navBar">
-    <router-link to="/" class="logo-link">
+    <router-link to="/" class="logo-link" @click="$emit('logoClicked')">
       <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
     </router-link>
 
@@ -232,7 +232,7 @@
 <script>
 import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
-import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
+import FinCoinDisplay from "@/components/Shared/UI/FinCoinDisplay.vue";
 import NavbarNoti from "../Notification/NavbarNoti.vue";
 import LoadingPage from "@/views/Home/LoadingPage.vue";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -257,6 +257,7 @@ library.add(
 
 export default {
   name: "NavBar",
+  emits: ['logoClicked'],
   components: {
     FinCoinDisplay,
     NavbarNoti,

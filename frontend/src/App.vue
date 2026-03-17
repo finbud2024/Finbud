@@ -36,7 +36,7 @@ import FooterBar from "@/components/Basic/FooterBar.vue";
 import axios from "axios";
 import "@fortawesome/fontawesome-free/css/all.css";
 import LoadingPage from "./views/Home/LoadingPage.vue";
-import ChatToggleButton from "@/components/ChatToggleButton.vue";
+import ChatToggleButton from "@/components/Shared/UI/ChatToggleButton.vue";
 
 // Initialize dark mode from localStorage before Vue loads
 (function initializeDarkMode() {
@@ -109,7 +109,8 @@ export default {
 
     if (this.isAuthenticated && userData) {
       const userId = userData._id;
-      const threadApi = `${process.env.VUE_APP_DEPLOY_URL}/threads/u/${userId}`;
+      const baseURL = process.env.VUE_APP_DEPLOY_URL || 'http://localhost:3000';
+      const threadApi = `${baseURL}/threads/u/${userId}`;
       try {
         const historyThreads = await axios.get(threadApi, {
           withCredentials: true,
@@ -117,7 +118,7 @@ export default {
         const historyThreadsData = historyThreads.data;
         if (historyThreadsData.length === 0) {
           console.log("No threads found, creating new thread for user");
-          const api = `${process.env.VUE_APP_DEPLOY_URL}/threads`;
+          const api = `${baseURL}/threads`;
           const reqBody = { userId };
           const thread = await axios.post(api, reqBody, {
             withCredentials: true,
@@ -180,8 +181,9 @@ export default {
     async checkIfUserIsNew() {
       if (this.isAuthenticated) {
         try {
+          const baseURL = process.env.VUE_APP_DEPLOY_URL || 'http://localhost:3000';
           const response = await axios.get(
-            `${process.env.VUE_APP_DEPLOY_URL}/auth/is-new-user`,
+            `${baseURL}/auth/is-new-user`,
             {
               withCredentials: true,
             }

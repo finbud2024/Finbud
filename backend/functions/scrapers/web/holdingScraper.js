@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import Holding from '../../../Database_Schema/market-data/Holding.js';
-import Investor from '../../../Database_Schema/market-data/TopInvestors.js';
+import Holding from '../../../models/market-data/Holding.js';
+import Investor from '../../../models/market-data/TopInvestors.js';
 import { 
     getRandomUserAgent,
     connectToMongoDB,
