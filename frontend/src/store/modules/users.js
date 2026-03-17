@@ -1,5 +1,39 @@
 import axios from "axios";
 
+const normalizeUserData = (userData) => {
+  if (!userData) {
+    return null;
+  }
+
+  const identityData = userData.identityData || {};
+  const normalizedFirstName =
+    identityData.firstName || userData.firstName || userData.given_name || "";
+  const normalizedLastName =
+    identityData.lastName || userData.lastName || userData.family_name || "";
+  const normalizedDisplayName =
+    identityData.displayName ||
+    userData.displayName ||
+    [normalizedFirstName, normalizedLastName].filter(Boolean).join(" ") ||
+    "";
+  const normalizedProfilePicture =
+    identityData.profilePicture ||
+    userData.profilePicture ||
+    userData.picture ||
+    userData.photoURL ||
+    "";
+
+  return {
+    ...userData,
+    identityData: {
+      ...identityData,
+      firstName: normalizedFirstName,
+      lastName: normalizedLastName,
+      displayName: normalizedDisplayName,
+      profilePicture: normalizedProfilePicture,
+    },
+  };
+};
+
 export default {
   namespaced: true,
   state: {
@@ -18,8 +52,9 @@ export default {
       state.error = error;
     },
     setUserData(state, userData) {
-      state.userData = userData;
-      state.userID = userData ? userData._id : null;
+      const normalizedUserData = normalizeUserData(userData);
+      state.userData = normalizedUserData;
+      state.userID = normalizedUserData ? normalizedUserData._id : null;
     },
     clearUserData(state) {
       state.userData = null;
@@ -30,9 +65,11 @@ export default {
     },
   },
   actions: {
-    async fetchCurrentUser({ state, commit }) {
+    async fetchCurrentUser({ state, commit }, options = {}) {
+      const force = options.force === true;
+
       /* 1️⃣ already checked during this page-life? */
-      if (state.authChecked) return state.userData;
+      if (state.authChecked && !force) return state.userData;
 
       /* 2️⃣ another call already in flight?  → just await it here */
       if (state._promise) {
@@ -98,6 +135,7 @@ export default {
     },
     async login({ commit, dispatch }, userData) {
       commit("setUserData", userData);
+      commit("setAuthChecked", false);
 
       // Check if the user is new (this information might be in the userData)
       if (userData && userData.isNewUser) {
@@ -108,10 +146,11 @@ export default {
       }
 
       // After login, fetch the complete user data
-      await dispatch("fetchCurrentUser");
+      await dispatch("fetchCurrentUser", { force: true });
     },
     async logout({ commit }) {
       commit("clearUserData");
+      commit("setAuthChecked", false);
     },
   },
   getters: {

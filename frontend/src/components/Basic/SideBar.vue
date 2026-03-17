@@ -430,6 +430,10 @@ export default {
   transition: transform 0.3s ease;
 }
 
+.dark-mode .logo-img {
+  filter: brightness(0) invert(1);
+}
+
 .logo-img:hover {
   transform: scale(1.05);
 }
@@ -588,12 +592,11 @@ input:focus {
 
 @media (max-width: 768px) {
   .side-bar {
-    width: 80%;
-    max-width: 300px;
+    box-shadow: none;
   }
 }
 
-.delete-prompt-overlay {
+.delete-prnetsompt-overlay {
   position: absolute;
   top: 0;
   left: 0;

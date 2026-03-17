@@ -7,7 +7,10 @@
 			:show-controls="false"
 			:is-mobile="false"
 			class="sidebar-desktop"
-			:class="{ 'navbar-expanded': isNavbarExpanded }"
+			:class="{
+				'navbar-expanded': isNavbarExpanded,
+				'sidebar-hidden': !isSidebarVisibleBigScreen
+			}"
 			:initialThreadName="newThreadName"
 		/>
 
@@ -18,23 +21,12 @@
 			:show-controls="false"
 			:is-mobile="true"
 			class="sidebar-mobile"
+			:class="{ 'is-open': isSidebarVisibleMobile }"
 			:initialThreadName="newThreadName"
 		/>
 		<div v-if="isAuthenticated && isMobile && isSidebarVisibleMobile" class="sidebar-mobile-overlay" @click="closeSidebarMobile"></div>
 
 		<div class="chat-main-area">
-			<div v-if="isAuthenticated" class="chat-controls-header">
-				<button v-if="isMobile" @click="toggleSidebarMobile" class="mobile-sidebar-toggle-btn">
-					<font-awesome-icon icon="fa-solid fa-bars" />
-				</button>
-				<font-awesome-icon 
-					v-if="!isMobile" 
-					class="toggle-sidebar-btn-big-fa"
-					@click="toggleSidebarBigScreen" 
-					:icon="isSidebarVisibleBigScreen ? 'fa-solid fa-chevron-left' : 'fa-solid fa-chevron-right'" 
-				/>
-				<!-- You can add other header controls here if needed -->
-			</div>
 			<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" ref="chatComponent" :autoMessage="autoMessage" :greeting="greeting" />
 		</div>
 
@@ -106,19 +98,45 @@ export default {
 	watch: {
     isAuthenticatedStore(newVal) {
       this.isAuthenticated = newVal;
-    }
+    },
+    isNavbarExpanded() {
+			this.syncSidebarWithNavbar();
+		}
   },
 	methods: {
 		updateAuthStatus() {
       this.isAuthenticated = this.$store.getters["users/isAuthenticated"];
     },
-		toggleSidebarMobile() { this.isSidebarVisibleMobile = !this.isSidebarVisibleMobile; },
+		toggleSidebarMobile() {
+			if (this.isNavbarExpanded) return;
+			this.isSidebarVisibleMobile = !this.isSidebarVisibleMobile;
+		},
 		closeSidebarMobile() { this.isSidebarVisibleMobile = false; },
-		toggleSidebarBigScreen() { this.isSidebarVisibleBigScreen = !this.isSidebarVisibleBigScreen; },
-		checkMobile() { this.isMobile = window.innerWidth <= 768; },
+		toggleSidebarBigScreen() {
+			if (this.isNavbarExpanded) return;
+			this.isSidebarVisibleBigScreen = !this.isSidebarVisibleBigScreen;
+		},
+		checkMobile() {
+			this.isMobile = window.innerWidth <= 768;
+			this.syncSidebarWithNavbar();
+		},
 		updateNavbarState() {
 			const navbar = document.getElementById('nav-bar');
-			if (navbar) this.isNavbarExpanded = navbar.classList.contains('expanded') || navbar.matches(':hover');
+			if (!navbar) return;
+
+			// Sync only with explicit expand-toggle state to avoid hover jitter.
+			this.isNavbarExpanded = navbar.classList.contains('expanded');
+		},
+		syncSidebarWithNavbar() {
+			if (this.isNavbarExpanded) {
+				this.isSidebarVisibleBigScreen = false;
+				this.isSidebarVisibleMobile = false;
+				return;
+			}
+
+			if (!this.isMobile) {
+				this.isSidebarVisibleBigScreen = true;
+			}
 		},
 		openNewWindow(url) {
 			const screenWidth = window.screen.width, screenHeight = window.screen.height;
@@ -152,12 +170,11 @@ export default {
 		window.addEventListener('resize', this.checkMobile);
 
 		this.updateNavbarState();
+		this.syncSidebarWithNavbar();
 		const navbarElement = document.getElementById('nav-bar');
 		if (navbarElement) {
 			this.navbarObserver = new MutationObserver(this.updateNavbarState);
 			this.navbarObserver.observe(navbarElement, { attributes: true, attributeFilter: ['class'] });
-			navbarElement.addEventListener('mouseenter', this.updateNavbarState);
-			navbarElement.addEventListener('mouseleave', this.updateNavbarState);
 		}
 
 		const autoMessage = this.$route.query.autoMessage, threadID = this.$route.query.threadID;
@@ -173,8 +190,6 @@ export default {
 		if (this.navbarObserver) this.navbarObserver.disconnect();
 		const navbarElement = document.getElementById('nav-bar');
     if (navbarElement) {
-      navbarElement.removeEventListener('mouseenter', this.updateNavbarState);
-      navbarElement.removeEventListener('mouseleave', this.updateNavbarState);
     }
 		if (this.windowCheckInterval) clearInterval(this.windowCheckInterval);
 		window.removeEventListener("click", this.closeOnClickOutside);
@@ -189,7 +204,7 @@ export default {
 	min-height: 100vh;
 	background-color: var(--bg-primary);
 	color: var(--text-primary);
-	padding-left: 70px; /* Collapsed NavBar width */
+	padding-left: 80px; /* Collapsed NavBar width */
 	transition: padding-left 0.3s ease-in-out;
 	box-sizing: border-box;
 	position: relative; /* For absolute positioning of guidance btn */
@@ -202,30 +217,30 @@ export default {
 /* Desktop Sidebar Styling */
 .sidebar-desktop {
 	position: fixed;
-	left: 70px; /* After collapsed NavBar */
+	left: 80px; /* After collapsed NavBar */
 	top: 0;
 	height: 100vh;
 	width: 250px; /* Sidebar width */
-	background-color: var(--bg-secondary);
-	border-right: 1px solid var(--border-color);
+	overflow: hidden;
 	z-index: 990; /* Below NavBar (1000), Above Chat Area (10) */
-	transition: left 0.3s ease-in-out;
+	transition: left 0.3s ease-in-out, width 0.25s ease-in-out;
 }
 
 .sidebar-desktop.navbar-expanded {
 	left: 280px; /* After expanded NavBar */
 }
 
+.sidebar-desktop.sidebar-hidden {
+	width: 0;
+	pointer-events: none;
+}
+
 /* Mobile Sidebar Styling */
 .sidebar-mobile {
-	position: fixed;
-	left: 0;
-	top: 0;
-	width: 260px; /* Or percentage like 70% */
-	height: 100vh;
-	background-color: var(--card-bg);
-	z-index: 1060; /* High z-index to be on top */
-	box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+	box-shadow: none;
+}
+.sidebar-mobile.is-open {
+  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
 }
 
 .sidebar-mobile-overlay {

@@ -200,7 +200,6 @@ finCoinRouter.get("/leaderboard", async (req, res) => {
         profilePicture: user.identityData.profilePicture || null,
         fincoin_balance: user.fincoin_balance || 0,
         // Add these fields with default values since we don't track them yet
-        quizzesCompleted: 0,
         tradesExecuted: 0,
       }));
 
@@ -229,7 +228,6 @@ finCoinRouter.get("/leaderboard", async (req, res) => {
                 `User ${user._id.toString().slice(-4)}`,
               profilePicture: user.identityData.profilePicture || null,
               fincoin_balance: user.fincoin_balance || 0,
-              quizzesCompleted: 0,
               tradesExecuted: 0,
             };
           }
@@ -275,7 +273,6 @@ finCoinRouter.get("/leaderboard", async (req, res) => {
           entry.displayName || `User ${entry._id.toString().slice(-4)}`,
         profilePicture: entry.profilePicture || null,
         fincoin_balance: entry.total_earned || 0,
-        quizzesCompleted: 0,
         tradesExecuted: 0,
       }));
 
@@ -332,7 +329,6 @@ finCoinRouter.get("/leaderboard", async (req, res) => {
                 `User ${userId.toString().slice(-4)}`,
               profilePicture: user.identityData.profilePicture || null,
               fincoin_balance: userTotal,
-              quizzesCompleted: 0,
               tradesExecuted: 0,
             };
           }

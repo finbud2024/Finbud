@@ -5,6 +5,10 @@
       <div class="intro-text">
         <div class="title animate">{{ t('empoweringTitle') }}</div>
         <div class="description animate">{{ t('anytimeAnswers') }}</div>
+        <div v-if="!isAuthenticated" class="auth-cta-group animate">
+          <button class="auth-cta-btn auth-cta-signin" @click="goToLogin">Sign In</button>
+          <button class="auth-cta-btn auth-cta-signup" @click="goToSignup">Sign Up For Free</button>
+        </div>
         <div class="animate">
           <UserInput @send-message="chatNow" :redirectOnSend="true" class="front-search-bar" />
         </div>
@@ -127,17 +131,6 @@
             <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
           </div>
         </div>
-        <div class="feature-row animate">
-          <div class="feature-text">
-            <h2>{{ t('quizFeatureTitle') }} <div class="feature-name">{{ t('quizFeatureName') }}</div>
-            </h2>
-            <p>{{ t('quizDesc') }}</p>
-            <a href="/quizz" class="button">{{ t('quizNow') }}</a>
-          </div>
-          <div class="feature-image">
-            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
-          </div>
-        </div>
       </div>
     </section>
 
@@ -177,50 +170,7 @@
     <TutorialOverlay :steps="tutorialSteps" storageKey="finbudHomeTutorialShown" :autoStart="true"
       @tutorial-completed="onTutorialCompleted" ref="tutorialOverlay" />
 
-    <!-- Quick Access Cards Section -->
-    <section class="quick-access-section">
-      <div class="container">
-        <h2 class="section-title">{{ t('newFeatures.title') }}</h2>
-        <div class="features-grid">
-          <!-- Learning Roadmap Creator -->
-          <div class="feature-card">
-            <div class="feature-icon gradient-edu">
-              <font-awesome-icon icon="fa-solid fa-map" />
-            </div>
-            <h3>{{ t('newFeatures.roadmapCreator.title') }}</h3>
-            <p>{{ t('newFeatures.roadmapCreator.description') }}</p>
-            <div class="feature-tags">
-              <span class="tag">{{ t('newFeatures.roadmapCreator.tags.personalized') }}</span>
-              <span class="tag">{{ t('newFeatures.roadmapCreator.tags.stepByStep') }}</span>
-              <span class="tag">{{ t('newFeatures.roadmapCreator.tags.aiPowered') }}</span>
-            </div>
-            <router-link to="/create-roadmap" class="feature-btn">
-              {{ t('newFeatures.roadmapCreator.button') }}
-              <font-awesome-icon icon="fa-solid fa-arrow-right" />
-            </router-link>
-          </div>
-
-          <!-- Enhanced Quiz -->
-          <div class="feature-card">
-            <div class="feature-icon gradient-quiz">
-              <font-awesome-icon icon="fa-solid fa-trophy" />
-            </div>
-            <h3>{{ t('newFeatures.enhancedQuiz.title') }}</h3>
-            <p>{{ t('newFeatures.enhancedQuiz.description') }}</p>
-            <div class="feature-tags">
-              <span class="tag">{{ t('newFeatures.enhancedQuiz.tags.interactive') }}</span>
-              <span class="tag">{{ t('newFeatures.enhancedQuiz.tags.aiFeedback') }}</span>
-              <span class="tag">{{ t('newFeatures.enhancedQuiz.tags.progressTracking') }}</span>
-            </div>
-            <router-link to="/quizz" class="feature-btn">
-              {{ t('newFeatures.enhancedQuiz.button') }}
-              <font-awesome-icon icon="fa-solid fa-arrow-right" />
-            </router-link>
-          </div>
-        </div>
-      </div>
     </section>
-  </section>
 </template>
 
 <script>
@@ -319,6 +269,12 @@ export default {
     };
   },
   methods: {
+    goToLogin() {
+      this.$router.push('/login');
+    },
+    goToSignup() {
+      this.$router.push('/signup');
+    },
     learnMore() {
       this.$router.push('/tech');
     },
@@ -532,6 +488,42 @@ export default {
   font-size: 1.2rem;
   padding: 20px 17% 0;
   font-weight: 300;
+}
+
+.auth-cta-group {
+  position: fixed;
+  top: 22px;
+  right: 64px;
+  z-index: 1200;
+  display: flex;
+  gap: 12px;
+}
+
+.auth-cta-btn {
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.auth-cta-signin {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.auth-cta-signup {
+  background: linear-gradient(135deg, #000000, #333333);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.auth-cta-signin:hover,
+.auth-cta-signup:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .photo img {
@@ -792,6 +784,18 @@ body.dark-mode .feature-icon {
 
 .feature-name {
   color: #000000;
+}
+
+:root.dark-mode .feature-name,
+body.dark-mode .feature-name {
+  color: var(--text-primary);
+}
+
+:root.dark-mode .feature-image img,
+body.dark-mode .feature-image img,
+:root.dark-mode .site-footer .footer-image img,
+body.dark-mode .site-footer .footer-image img {
+  filter: brightness(0) invert(1);
 }
 
 
@@ -1067,6 +1071,18 @@ img {
     padding: 10px 5%;
     margin-top: 2rem;
     /* thêm margin cách chữ trên */
+  }
+
+  .auth-cta-group {
+    top: 16px;
+    right: 16px;
+    gap: 8px;
+  }
+
+  .auth-cta-btn {
+    min-width: 100px;
+    padding: 8px 14px;
+    font-size: 0.88rem;
   }
 
   .title {
