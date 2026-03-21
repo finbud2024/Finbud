@@ -7,14 +7,20 @@
         <div
           v-if="htmlContent"
           class="message-content"
+          @click="handleContentClick"
           v-html="htmlContent"
         ></div>
         <div
           v-else-if="markdown"
           class="message-content markdown-content"
+          @click="handleContentClick"
           v-html="renderedMarkdown"
         ></div>
-        <div v-else :class="['message-content', { typing: typing }]">
+        <div
+          v-else
+          :class="['message-content', { typing: typing }]"
+          @click="handleContentClick"
+        >
           <div v-if="isThinking" class="thinking-animation">
             <span class="dot"></span>
             <span class="dot"></span>
@@ -243,6 +249,21 @@ export default {
     },
   },
   methods: {
+    handleContentClick(event) {
+      const anchor = event.target.closest("a");
+
+      if (!anchor || this.isUser) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.$emit("link-click", {
+        href: anchor.getAttribute("href"),
+        text: (anchor.textContent || "").trim(),
+      });
+    },
     startTypingEffect() {
       // Reset the progress
       this.textProgress = 0;

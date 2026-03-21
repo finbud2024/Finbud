@@ -26,8 +26,30 @@
 		/>
 		<div v-if="isAuthenticated && isMobile && isSidebarVisibleMobile" class="sidebar-mobile-overlay" @click="closeSidebarMobile"></div>
 
-		<div class="chat-main-area">
-			<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" ref="chatComponent" :autoMessage="autoMessage" :greeting="greeting" />
+		<div
+			class="chat-layout"
+			:class="{
+				'preview-open': showDesktopPreview,
+				'right-sidebar-visible': showDesktopRightSidebar,
+				'navbar-expanded': isNavbarExpanded,
+			}"
+			:style="layoutStyles"
+		>
+			<LinkPreviewFlyout
+				v-if="showDesktopPreview"
+				class="chat-preview-panel"
+				:is-open="true"
+				:title="previewPanel.title"
+				:subtitle="previewPanel.subtitle"
+				:description="previewPanel.description"
+				:items="previewPanel.items"
+				:entries="previewPanel.entries"
+				@close="closePreviewPanel"
+			/>
+
+			<div class="chat-main-area">
+				<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" @preview-update="handlePreviewUpdate" @preview-link-click="handlePreviewLinkClick" ref="chatComponent" :autoMessage="autoMessage" :greeting="greeting" />
+			</div>
 		</div>
 
 		<!-- Guidance & Tutorial (Positioned relative to chat-view-container) -->
@@ -61,14 +83,24 @@
 
 <script>
 import ChatComponent from "@/components/ChatPage/ChatComponent.vue";
+import LinkPreviewFlyout from "@/components/ChatPage/LinkPreviewFlyout.vue";
 import SideBar from "@/components/Basic/SideBar.vue";
 import GuidanceModal from "@/components/GuidanceModal.vue";
 import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 
+const RIGHT_SIDEBAR_WIDTH = 280;
+const PREVIEW_PANEL_WIDTH = 340;
+
 export default {
 	name: "ChatView",
 	props: { chatBubbleThreadID: String },
-	components: { ChatComponent, SideBar, GuidanceModal, TutorialOverlay },
+	components: {
+		ChatComponent,
+		LinkPreviewFlyout,
+		SideBar,
+		GuidanceModal,
+		TutorialOverlay,
+	},
 	data() {
 		return {
 			isAuthenticated: false, // This should be derived from Vuex
@@ -87,12 +119,47 @@ export default {
 			nnavbarObserver: null,
 			autoMessage: null,
 			greeting: true,
+			showPreviewPanel: false,
+			previewPanel: {
+				title: "Reference preview",
+				subtitle: "Connected to ChatView layout",
+				description:
+					"This preview panel opens only when requested and fits into the available space between the nav-bar and the main chat.",
+				items: [
+					"Preview area for linked companies and exchanges",
+					"No overlap with nav-bar",
+					"No overlap with main chat",
+					"Preserves current chat and sidebar behavior when closed",
+				],
+				entries: [],
+			},
+			previewEntryCache: [],
 		};
 	},
 	computed: {
     // Re-enable isAuthenticated from Vuex store
     isAuthenticatedStore() {
       return this.$store.getters["users/isAuthenticated"];
+		},
+		showDesktopPreview() {
+			return (
+				!this.isMobile &&
+				this.showPreviewPanel &&
+				Array.isArray(this.previewPanel.entries) &&
+				this.previewPanel.entries.length > 0
+			);
+		},
+		showDesktopRightSidebar() {
+			return this.isAuthenticated && !this.isMobile && this.isSidebarVisibleBigScreen;
+		},
+		layoutStyles() {
+			return {
+				"--preview-width": this.showDesktopPreview ? `${PREVIEW_PANEL_WIDTH}px` : "0px",
+				"--right-sidebar-width":
+					this.showDesktopPreview && this.showDesktopRightSidebar
+						? `${RIGHT_SIDEBAR_WIDTH}px`
+						: "0px",
+			};
     }
 	},
 	watch: {
@@ -157,6 +224,125 @@ export default {
 		},
 		initialThreadName(name) { this.newThreadName = name; },
 		sendMessageToChat(message) { if (this.$refs.chatComponent) this.$refs.chatComponent.sendMessage(message); },
+		handlePreviewUpdate(previewPanel) {
+			const incomingEntries = Array.isArray(previewPanel.entries)
+				? previewPanel.entries
+				: [];
+
+			this.previewEntryCache = this.mergePreviewEntries(
+				this.previewEntryCache,
+				incomingEntries
+			);
+
+			this.previewPanel = {
+				...this.previewPanel,
+				...previewPanel,
+				entries: incomingEntries,
+			};
+
+			this.showPreviewPanel = false;
+		},
+		handlePreviewLinkClick({ href, text }) {
+			const previewEntry = this.findPreviewEntry(href, text);
+
+			if (!previewEntry) {
+				if (href) {
+					window.open(href, "_blank", "noopener,noreferrer");
+				}
+				return;
+			}
+
+			this.previewPanel = {
+				...this.previewPanel,
+				title: previewEntry.title,
+				subtitle: previewEntry.sourceLabel || "",
+				description: "",
+				items: [],
+				entries: [previewEntry],
+			};
+
+			this.showPreviewPanel = !this.isMobile;
+		},
+		mergePreviewEntries(existingEntries, incomingEntries) {
+			const mergedEntries = new Map();
+
+			[...(existingEntries || []), ...(incomingEntries || [])].forEach((entry) => {
+				if (!entry) {
+					return;
+				}
+
+				const key = entry.id || entry.url || entry.title;
+				if (key) {
+					mergedEntries.set(key, entry);
+				}
+			});
+
+			return Array.from(mergedEntries.values());
+		},
+		findPreviewEntry(href, text) {
+			const normalizedHref = this.normalizePreviewLink(href);
+			const normalizedText = this.normalizePreviewText(text);
+
+			return this.previewEntryCache.find((entry) => {
+				const entryHref = this.normalizePreviewLink(entry.url || entry.id);
+				const entryTitle = this.normalizePreviewText(entry.title);
+
+				return (
+					(normalizedHref && entryHref === normalizedHref) ||
+					(normalizedText && entryTitle === normalizedText)
+				);
+			}) || null;
+		},
+		normalizePreviewLink(link) {
+			if (!link || typeof link !== "string") {
+				return "";
+			}
+
+			const trimmedLink = link.trim();
+			if (!trimmedLink) {
+				return "";
+			}
+
+			if (/^https?:\/\//i.test(trimmedLink)) {
+				return trimmedLink;
+			}
+
+			if (/^\/\/[^/]/.test(trimmedLink)) {
+				return `https:${trimmedLink}`;
+			}
+
+			if (/^(?:www\.)?[^\s]+\.[^\s]+/i.test(trimmedLink)) {
+				return `https://${trimmedLink}`;
+			}
+
+			if (/^(?:en\.)?wikipedia\.org\/wiki\//i.test(trimmedLink)) {
+				return `https://${trimmedLink}`;
+			}
+
+			if (/^wikipedia\/wiki\//i.test(trimmedLink)) {
+				return `https://en.wikipedia.org/${trimmedLink.replace(/^wikipedia\//i, "")}`;
+			}
+
+			if (/^wiki\//i.test(trimmedLink)) {
+				return `https://en.wikipedia.org/${trimmedLink}`;
+			}
+
+			if (/^\/wiki\//i.test(trimmedLink)) {
+				return `https://en.wikipedia.org${trimmedLink}`;
+			}
+
+			return trimmedLink;
+		},
+		normalizePreviewText(text) {
+			if (!text || typeof text !== "string") {
+				return "";
+			}
+
+			return text.trim().toLowerCase().replace(/\s+/g, " ");
+		},
+		closePreviewPanel() {
+			this.showPreviewPanel = false;
+		},
 		onTutorialCompleted() { console.log("ChatView Tutorial completed!"); },
 		restartTutorial() { if (this.$refs.tutorialOverlay) this.$refs.tutorialOverlay.resetTutorial(); },
 	},
@@ -214,6 +400,24 @@ export default {
 	padding-left: 280px; /* Expanded NavBar width */
 }
 
+.chat-layout {
+	display: flex;
+	flex: 1;
+	min-width: 0;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.chat-layout.preview-open {
+	gap: 16px;
+	align-items: stretch;
+	padding-right: var(--right-sidebar-width, 0px);
+}
+
+.chat-layout.preview-open.navbar-expanded {
+	padding-left: 12px;
+}
+
 /* Desktop Sidebar Styling */
 .sidebar-desktop {
 	position: fixed;
@@ -259,10 +463,20 @@ export default {
 	display: flex;
 	flex-direction: column;
 	width: 100%; /* Will be constrained by chat-view-container padding */
+	min-width: 0;
 	position: relative;
 	z-index: 10; /* Base for chat content */
 	box-sizing: border-box;
 	overflow: hidden; /* Prevent chat-main-area itself from scrolling */
+}
+
+.chat-preview-panel {
+	width: var(--preview-width, 340px);
+	max-width: var(--preview-width, 340px);
+	flex: 0 0 var(--preview-width, 340px);
+	align-self: stretch;
+	position: relative;
+	z-index: 995;
 }
 
 .chat-controls-header {
@@ -362,6 +576,12 @@ export default {
 @media (max-width: 768px) {
 	.chat-view-container, .chat-view-container.navbar-expanded {
 		padding-left: 0; /* NavBar is typically overlaid or hidden on mobile */
+	}
+	.chat-layout,
+	.chat-layout.preview-open,
+	.chat-layout.preview-open.navbar-expanded {
+		padding-left: 0;
+		padding-right: 0;
 	}
 	.desktop-sidebar-toggle-btn {
 		display: none;

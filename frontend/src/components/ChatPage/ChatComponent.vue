@@ -26,6 +26,7 @@
           :videos="message.isUser ? [] : message.videos"
           :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
           @question-click="handleQuestionClick"
+          @link-click="handleMessageLinkClick"
         />
 
         <!-- Only show ThinkingProcess for the current message when in think mode -->
@@ -257,7 +258,7 @@ export default {
       this.$refs.userInput && this.$refs.userInput.clearInput?.();
     },
 
-    // ---------------------------- RESPONSE MESSGE ----------------------------
+    // ---------------------------- RESPONSE MESSAGE ----------------------------
     async sendMessage(newMessage) {
       // Handle both string messages and RAG message objects
       const userMessage =
@@ -270,7 +271,8 @@ export default {
           role: "user",
           content: `Detect the language of this message and return only the language name in English. Examples:
 					- For "Hello": "English"
-					- For "Xin chào": "Vietnamese"
+					- For "Xin chào", "alo": "Vietnamese"
+          - For any language that you cannot detect, return "Vietnamese" by default.
 					Now detect this message: "${userMessage}"`,
         },
       ]);
@@ -401,10 +403,14 @@ Please provide a comprehensive answer that:
 					- Example: "Tell me about the weather today" → "Tell me about the weather today"
 
 					1. **Stock Price**  
-					- User intent: Ask for a stock price, return only the stock code (ticker symbol) in uppercase.
-					- Phrases may include: "giá cổ phiếu", "stock price of", "bao nhiêu tiền cổ phiếu", etc.
+					- User intent: Ask for the CURRENT MARKET PRICE (a number) of a specific stock - "how much does it cost right now?"
+          - Only trigger when the user wants a live price value, not an explanation.
+					- Phrases may include: "bao nhiêu tiền", "giá bao nhiêu", "price of ", "how much is", "current price of", "hiện tại bao nhiêu", "price of" etc.
+          - Do not trigger for definition-style questions such as "là gì", "nghĩa là gì", "what is", "what does ... mean" - those are definitions, not price queries.
 					- Format: **[STOCK_CODE_IN_UPPERCASE]**  
-					- Example: "giá cổ phiếu của Coca Cola" → Return "KO", "What's the price of tesla stock?" → "TSLA", 
+					- Example: "giá cổ phiếu của Coca Cola" → Return "KO", "What's the price of tesla stock?" → "TSLA"
+          - COUNTER-EXAMPLE: "giá cổ phiếu của tesla là gì?" → NOT this action (this is a definition question)
+          - COUNTER-EXAMPLE: "cổ phiếu là gì?" → NOT this action
 
 					2. **Search**  
 					- Trigger only when the user is requesting for detailed information or definitions about specific concepts, terms, or topics that are not related to stock prices, not conversational questions.
@@ -412,9 +418,17 @@ Please provide a comprehensive answer that:
 					- Format: #search [term]					
 
 					3. **Define Financial Term**  
-					- User intent: Ask for meaning of a financial term  
-					- Format: **#define [term]**  
-					- Example: "What does IPO mean?" → "#define IPO"
+					- User intent: Ask for the MEANING, DEFINITION, or CONCEPT of a financial term, instrument, or asset — "what is X?", "explain X"
+          - Trigger phrases: "là gì", "nghĩa là gì", "what is", "what does ... mean", "explain", "define"
+          - Preserve the FULL phrase being defined. Do not reduce it to a shorter generic term unless the user clearly asks only about the generic term.
+          - If the phrase includes a company name, keep the company name in the returned term when it is part of the concept being asked about.
+          - Do not convert a definition question into a live stock price query.
+					- Format: **#define [term]**
+          - Example: "What does IPO mean?" → "#define IPO"
+          - Example: "cổ phiếu là gì?" → "#define cổ phiếu" (asking what a share/stock is in general, not a specific stock price)
+          - Example: "cổ phiếu apple là gì?" → "#define cổ phiếu apple" (asking what a share/stock of apple is)
+          - Example: "giá cổ phiếu của tesla là gì?" → "#define cổ phiếu tesla" (asking what a stock price is)
+          - Example: "What is a bond?" → "#define bond"
 
 					4. **Top 5 Cryptocurrencies**  
 					- User intent: Ask about top cryptocurrencies  
@@ -472,10 +486,151 @@ Please provide a comprehensive answer that:
                 gptDefine.toLowerCase().indexOf("define") + "define".length
               )
               .trim();
-            const prompt = `Explain ${term} to me as if I'm 15 in this language ${language} `;
+            const prompt = `
+            You are a financial tutor.
+
+            Explain the exact phrase: "${term}"
+
+            Requirements:
+            - Keep the full phrase exactly as written.
+            - Answer in ${language}.
+            - Write in a simple, beginner-friendly way (like explaining to a student).
+            - Do NOT skip structure. Follow the format strictly.
+            - Sections title should be translated into ${language} as well.
+            - Never in this format : [Company name] (url), Company name (url), (url), [url]
+            Structure:
+
+            **Definition:**
+            - Clearly explain what the phrase means in 1–2 sentences.
+            - Mention the company and market if relevant.
+
+            **Simple explanation:**
+            - Break it down in bullet points.
+            - Explain what happens when someone buys this asset.
+            - Explain what the price represents.
+
+            **Example:**
+            - Give a realistic numerical example (use USD or appropriate currency).
+            - Show how much money is needed to buy 1 share and multiple shares.
+
+            Rules
+            - Be clear, structured, and easy to scan.
+            - Use bullet points where helpful.
+            - Do NOT hallucinate real-time data or fake sources.
+            - Do NOT give investment advice.
+            - Always include the company name if the term is related to a specific company, and link to the company's official website if it exists.
+            - Bold the section titles.
+              - In definition section:
+                - Bold important financial terms.
+                - Bold the company name, stock exchange name, index name, organization name, or any specific named entity
+              - In explanation section:
+                - Bold any important points or concepts.
+              - In example section:
+                - Bold important numbers, prices, quantities, and specific values that help the user understand the concept.
+            - Bold the name of company and group, specific name, or stock exchange, for example NASDAQ
+            - Inclue the link of the real wikipedia page of the company, specific group,or stock exchange that it exists, does not include if it does not.
+            - If the link of the real wikipedia page related to the company exists, replace anywhere that had the full company name with <a = href="wikipedia_url" target="_blank"> full company name </a> that has the "wikipedia_url" in this format wikipedia/wiki/companyname, bold its name and just appear one time at the first time the company name is mentioned in the answer, and keep the company name without link in the rest of the answer.
+            - If the link of the real wikipedia page related to the organization exists, replace anywhere that had the organization name with <a = href="wikipedia_url" target="_blank">organization name </a> that has the "wikipedia_url" in this format wikipedia/wiki/organizationname, and just appear one time at the first time the organization name is mentioned in the answer, and keep the organization name without link in the rest of the answer.
+            - If a stock exchange is mentioned in the answer and there is a real Wikipedia page for that exact stock exchange, then on its first mention:
+              - bold its name
+              - wrap it with a link to that Wikipedia page
+              - use this format: <a href="WIKIPEDIA_URL" target="_blank"><b>Stock Exchange Name</b></a> that has the "WIKIPEDIA_URL" in this format wikipedia/wiki/stockexchangename
+            - After the first mention, keep the stock exchange name as plain bold text without a link.
+            `;
             const gptResponse = await gptServices([
               { role: "user", content: prompt },
             ]);
+            if (!gptResponse) {
+              throw new Error("No response from GPT for definition.");
+            }
+            const links = this.extractDistinctPreviewLinks(gptResponse);
+            const previewEntries = await Promise.all(
+              links.map(async (link) => {
+                const prompt_summarize = `
+              You are a helpful assistant that summarizes the content of a webpage based on its ${link}
+              Write the answer in ${language}.
+              Your goals is to produce a clean, structured summary that helps the user understand the content in the page.
+              Follow these rules carefully:
+              - Use only information that is clearly supported by the webpage content.
+              - Do not invent missing facts.
+              - Do not include a section if the information is not available or not relevant.
+              - Keep the writing clear, factual, and easy to scan.
+              - Prefer short paragraphs over long dense blocks.
+              - If the page is about a company, use the company-focused format below.
+              - If the page is not about a company, use the non-company format below.
+              - Do not mention these instructions in the answer.
+              - Bold the section titles.
+              If the webpage is about a company, use this exact format:
+              [Title] is the name of company, organization, stock exchange, or financial instrument that the webpage is about and it will be written in English even though ${language} is different than English.
+
+              [Title] is [1-2 sentence summary explaining what the company is, what it does, where it is based if available, and why it is notable].
+
+              Key facts
+              - Founded: [date or year if available]
+              - Founders: [name(s) if available]
+              - Headquarters: [location if available]
+              - Core products/services: [main products or services if available]
+              - CEO: [name if available]
+
+              Business segments
+              [Write 1 short paragraph explaining the company’s main business areas, major revenue segments, or how its operations are divided.]
+
+              Technology and innovation
+              [Write 1 short paragraph about the company’s technology, product strengths, innovations, or operating approach, only if available.]
+
+              Ecosystem / market position
+              [Write 1 short paragraph about its broader ecosystem, partnerships, infrastructure, customer base, or market role, only if available.]
+
+              Recent developments and challenges
+              [Write 1 short paragraph about recent strategy shifts, competition, risks, or major challenges, only if available from the page.]
+
+              If the webpage is NOT about a company, use this format instead:
+
+              [Title]
+
+              [1-2 sentence summary of what the page is about.]
+
+              Key points
+              - [important point 1]
+              - [important point 2]
+              - [important point 3]
+
+              Why it matters
+              [1 short paragraph explaining the significance, purpose, or practical meaning of the topic.]
+
+              Important details
+              [1 short paragraph with any extra context that helps the user understand the topic better.]
+
+              Style requirements:
+              - The title must appear first on its own line.
+              - Use the section headings exactly as written when relevant.
+              - Skip empty or unsupported sections.
+              - Do not add bullet points outside the "Key facts" or "Key points" sections.
+              - Do not include opinions, investment advice, or speculation.
+              - Except only the title, key facts, business segments, technology and innovation, ecosystem/market position, and recent developments and challenges sections could be in ${language}.
+              `;
+
+                try {
+                  const gptResponse_summarize = await gptServices([
+                    { role: "user", content: prompt_summarize },
+                  ]);
+
+                  if (!gptResponse_summarize) {
+                    return null;
+                  }
+
+                  return this.createPreviewEntry(link, gptResponse_summarize);
+                } catch (summaryError) {
+                  console.error(
+                    `Error generating preview summary for ${link}:`,
+                    summaryError
+                  );
+                  return null;
+                }
+              })
+            );
+
+            this.emitPreviewUpdate(term, previewEntries.filter(Boolean));
             answers.push(gptResponse);
           } catch (err) {
             console.error("Error in define message:", err);
@@ -1389,6 +1544,175 @@ Bạn là FinBud — trợ lý tài chính.
       }
       return matches.length ? matches : null;
     },
+    extractDistinctPreviewLinks(html) {
+      if (!html || typeof html !== "string") {
+        return [];
+      }
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      const uniqueLinks = new Map();
+
+      Array.from(doc.querySelectorAll("a"))
+        .map((link) => this.normalizePreviewLink(link.getAttribute("href")))
+        .filter(Boolean)
+        .forEach((link) => {
+          if (!uniqueLinks.has(link)) {
+            uniqueLinks.set(link, link);
+          }
+        });
+
+      return Array.from(uniqueLinks.values());
+    },
+    normalizePreviewLink(link) {
+      if (!link || typeof link !== "string") {
+        return null;
+      }
+
+      const trimmedLink = link.trim();
+      if (!trimmedLink) {
+        return null;
+      }
+
+      if (/^https?:\/\//i.test(trimmedLink)) {
+        return trimmedLink;
+      }
+
+      if (/^\/\/[^/]/.test(trimmedLink)) {
+        return `https:${trimmedLink}`;
+      }
+
+      if (/^(?:www\.)?[^\s]+\.[^\s]+/i.test(trimmedLink)) {
+        return `https://${trimmedLink}`;
+      }
+
+      if (/^(?:en\.)?wikipedia\.org\/wiki\//i.test(trimmedLink)) {
+        return `https://${trimmedLink}`;
+      }
+
+      if (/^wikipedia\/wiki\//i.test(trimmedLink)) {
+        return `https://en.wikipedia.org/${trimmedLink.replace(/^wikipedia\//i, "")}`;
+      }
+
+      if (/^wiki\//i.test(trimmedLink)) {
+        return `https://en.wikipedia.org/${trimmedLink}`;
+      }
+
+      if (/^\/wiki\//i.test(trimmedLink)) {
+        return `https://en.wikipedia.org${trimmedLink}`;
+      }
+
+      return trimmedLink;
+    },
+    createPreviewEntry(link, summary) {
+      const title = this.extractPreviewTitle(summary, link);
+      return {
+        id: link,
+        title,
+        url: link,
+        sourceLabel: this.formatPreviewSourceLabel(link),
+        content: this.formatPreviewSummary(summary, title),
+      };
+    },
+    extractPreviewTitle(summary, link) {
+      const titleMatch = summary && summary.match(/^\s*\*\*(.+?)\*\*/m);
+      if (titleMatch && titleMatch[1]) {
+        return titleMatch[1].trim();
+      }
+
+      try {
+        const url = new URL(link);
+        const lastSegment = url.pathname.split("/").filter(Boolean).pop();
+        return lastSegment
+          ? decodeURIComponent(lastSegment).replace(/_/g, " ")
+          : url.hostname;
+      } catch (error) {
+        return link;
+      }
+    },
+    formatPreviewSourceLabel(link) {
+      try {
+        const url = new URL(link);
+        return `${url.hostname}${url.pathname}`;
+      } catch (error) {
+        return link;
+      }
+    },
+    formatPreviewSummary(summary, title) {
+      const lines = (summary || "")
+        .split("\n")
+        .map((line) => line.trim());
+
+      if (title && lines[0] === `**${title}**`) {
+        lines.shift();
+      }
+
+      const htmlBlocks = [];
+      let listItems = [];
+
+      const formatInlineText = (text) =>
+        text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+      const flushList = () => {
+        if (!listItems.length) {
+          return;
+        }
+
+        htmlBlocks.push(
+          `<ul class="preview-card-list">${listItems
+            .map((item) => `<li>${formatInlineText(item)}</li>`)
+            .join("")}</ul>`
+        );
+        listItems = [];
+      };
+
+      lines.forEach((line) => {
+        if (!line) {
+          flushList();
+          return;
+        }
+
+        if (/^[-*]\s+/.test(line)) {
+          listItems.push(line.replace(/^[-*]\s+/, ""));
+          return;
+        }
+
+        flushList();
+
+        const formattedLine = formatInlineText(line);
+        if (/^<strong>.*<\/strong>:?$/.test(formattedLine)) {
+          htmlBlocks.push(
+            `<h4 class="preview-card-section-title">${formattedLine.replace(/:$/, "")}</h4>`
+          );
+          return;
+        }
+
+        htmlBlocks.push(`<p>${formattedLine}</p>`);
+      });
+
+      flushList();
+      return htmlBlocks.join("");
+    },
+    emitPreviewUpdate(term, entries) {
+      const entryCount = entries.length;
+
+      this.$emit("preview-update", {
+        title: "Reference preview",
+        subtitle: entryCount
+          ? `${entryCount} reference ${entryCount === 1 ? "window" : "windows"} for \"${term}\"`
+          : `No reference links found for \"${term}\"`,
+        description: entryCount
+          ? `Showing one preview card for each distinct link returned in the answer. Each card contains the summary generated for that source.`
+          : `The answer did not include any distinct links that could be shown in the preview panel.`,
+        items: entryCount
+          ? []
+          : [
+              "No linked company or exchange was found in this answer",
+              "Ask another define question with a company or exchange name",
+            ],
+        entries,
+      });
+    },
     openNewWindow(url) {
       const screenWidth = window.screen.width;
       const screenHeight = window.screen.height;
@@ -1544,14 +1868,22 @@ Bạn là FinBud — trợ lý tài chính.
       const searchQuery = `#search ${question}`;
       this.sendMessage(searchQuery);
     },
+    handleMessageLinkClick({ href, text }) {
+      const normalizedHref = this.normalizePreviewLink(href);
+
+      this.$emit("preview-link-click", {
+        href: normalizedHref,
+        text: text || "",
+      });
+    },
     async updateCurrentThread(threadID) {
       try {
         this.messages = [];
-        let botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat`;
-        if (this.$i18n.locale != "vi") {
-          botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot`;
-        }
-        await this.addTypingResponse(botInstruction, false);
+        // let botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat`;
+        // if (this.$i18n.locale != "vi") {
+        //   botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot`;
+        // }
+        // await this.addTypingResponse(botInstruction, false);
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
         const chats = await axios.get(chatApi);
         const chatsData = chats.data;
@@ -1809,22 +2141,22 @@ Please write a short, friendly explanation telling the user why you cannot categ
       this.ragStatus = "loading"; // Reset status for next use
     },
   },
-  mounted() {
-    const hasMessages = this.messages.length > 0;
+  // mounted() {
+  //   const hasMessages = this.messages.length > 0;
 
-    if (this.greeting && !hasMessages) {
-      let botInstruction;
-      if (!this.isAuthenticated) {
-        botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
-      } else if (!this.currentThreadID) {
-        botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
-      }
+  //   if (this.greeting && !hasMessages) {
+  //     let botInstruction;
+  //     if (!this.isAuthenticated) {
+  //       botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
+  //     } else if (!this.currentThreadID) {
+  //       botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
+  //     }
 
-      if (botInstruction) {
-        this.addTypingResponse(botInstruction, false);
-      }
-    }
-  },
+  //     if (botInstruction) {
+  //       this.addTypingResponse(botInstruction, false);
+  //     }
+  //   }
+  // },
 };
 </script>
 

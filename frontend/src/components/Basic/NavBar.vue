@@ -484,7 +484,7 @@ export default {
   top: 0;
   width: 80px;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--bg-primary);
   backdrop-filter: blur(10px);
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
   display: flex;
@@ -536,7 +536,7 @@ export default {
   height: 36px;
   border: 1px solid #d1d5db;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--bg-primary);
   color: #4b5563;
   display: inline-flex;
   align-items: center;
@@ -699,7 +699,7 @@ export default {
 /* Dropdown content */
 .dropdown-content {
   position: fixed;
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   padding: 0.75rem;
@@ -940,7 +940,7 @@ export default {
   left: 1rem;
   width: 48px;
   height: 48px;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--bg-primary);
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   cursor: pointer;
@@ -1074,14 +1074,14 @@ export default {
     left: 0 !important;
     top: 0 !important;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-    background: #f8fafc;
+    background: var(--bg-primary);
     margin-top: 0.5rem;
   }
 }
 
 /* Dark mode styles */
 .dark-mode .nav-bar {
-  background: rgba(17, 24, 39, 0.95);
+  background: var(--bg-primary);
   border-right: 1px solid #374151;
 }
 

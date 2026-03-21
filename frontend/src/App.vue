@@ -387,10 +387,18 @@ body.dark-mode {
   }
 }
 
-/* Add transition for all elements */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease;
+/* Keep theme transitions lightweight. Applying them to every element
+   causes expensive full-page repaints when dark mode changes. */
+html,
+body,
+#app,
+.content-wrapper,
+.card,
+.container,
+.dropdown-menu,
+.nav-actions {
+  transition: background-color 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 /* Update common elements */
