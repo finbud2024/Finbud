@@ -17,7 +17,14 @@
     @click="closeMobileMenu"
   ></div>
 
-  <nav class="nav-bar" :class="navBarClasses" id="nav-bar"  ref="navBar">
+  <nav
+    class="nav-bar"
+    :class="navBarClasses"
+    id="nav-bar"
+    ref="navBar"
+    @mouseenter="onNavMouseEnter"
+    @mouseleave="onNavMouseLeave"
+  >
     <div
       class="nav-header"
       @mouseenter="handleLogoHover(true)"
@@ -93,7 +100,6 @@
             <router-link to="/investment-calculator">{{ $t("investmentCalculator") }}</router-link>
             <router-link to="/mortgage-calc">{{ $t("mortgageCalculator") }}</router-link>
             <router-link to="/super-investors">{{ $t("superInvestors") }}</router-link>
-            <router-link to="/fin-compare">{{ $t("ProductComparison") }}</router-link>
           </div>
         </li>
 
@@ -206,11 +212,12 @@ export default {
       isDarkMode: false,
       isMenuOpen: false,
       isMobile: false,
-      isExpanded: true,
+      isExpanded: false,
       activeDropdown: null,
       isHovered: false,
       isLogoHovered: false,
       hasProfileImageError: false,
+      navCollapseTimeout: null,
     };
   },
   watch: {
@@ -273,6 +280,21 @@ export default {
       }
 
       this.isLogoHovered = isHovered;
+    },
+    onNavMouseEnter() {
+      if (this.isMobile) return;
+      if (this.navCollapseTimeout) {
+        clearTimeout(this.navCollapseTimeout);
+        this.navCollapseTimeout = null;
+      }
+      this.isExpanded = true;
+    },
+    onNavMouseLeave() {
+      if (this.isMobile) return;
+      this.navCollapseTimeout = setTimeout(() => {
+        this.isExpanded = false;
+        this.navCollapseTimeout = null;
+      }, 300);
     },
     handleOutsideClick(event) {
       // Check if the click is outside the nav-bar and toggle button

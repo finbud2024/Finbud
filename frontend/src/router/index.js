@@ -20,7 +20,6 @@ import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
 import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
 import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
-import FinCompare from "@/views/FinManage/FinCompare.vue";
 import SubscriptionPage from "@/views/Subscription/SubscriptionPage.vue";
 
 const routes = [
@@ -127,11 +126,6 @@ const routes = [
     path: "/notifications",
     name: "NotificationCenter",
     component: NotificationCenter,
-  },
-  {
-    path: "/fin-compare",
-    name: "FinCompare",
-    component: FinCompare,
   },
   {
     path: "/subscribe",
