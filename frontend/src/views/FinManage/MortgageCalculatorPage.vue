@@ -1,7 +1,12 @@
 <template>
-  <div class="mortgage-calc">    
-    <h1>{{ $t('title') }}</h1>
+  <div class="mortgage-calc fin-speak-page">
+    <header class="fin-speak-hero-block mortgage-hero">
+      <p class="fin-speak-eyebrow">{{ $t('finSpeak.slogan') }}</p>
+      <h1 class="fin-speak-page-title">{{ $t('title') }}</h1>
+      <p class="fin-speak-lead">{{ $t('finSpeak.mortgageCalcLead') }}</p>
+    </header>
 
+    <div class="mortgage-panel">
     <div class="content-wrapper">
       <!-- Bot Chat Component -->
       <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
@@ -139,6 +144,7 @@
           </div>
         </div>
       </div> 
+    </div>
     </div>
   </div>
 </template>
@@ -620,20 +626,56 @@ export default {
 <style scoped>
 /* Base styles - Fixed horizontal scroll */
 .mortgage-calc {
-  max-width: 95%;
+  max-width: 1200px;
   width: 100%;
-  margin: auto;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2.5rem;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
   transition: all 0.3s ease;
   box-sizing: border-box;
   overflow-x: hidden;
 }
 
-/* Headings */
-h1 {
+.mortgage-hero {
+  margin-bottom: 1rem;
+}
+
+.mortgage-panel {
+  background: var(--card-bg, #fff);
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #e8eaef);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+  padding: 1.25rem 1rem 1.5rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .mortgage-calc {
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 0;
+  }
+
+  .breakdown-content {
+    flex-direction: column !important;
+    gap: 1rem;
+  }
+
+  .chart-container {
+    min-height: 220px;
+    max-width: 100%;
+  }
+
+  .chart-container canvas {
+    max-width: 100% !important;
+  }
+}
+
+/* Headings inside panel */
+.mortgage-panel h1 {
   font-size: 40px;
   margin-bottom: 20px;
   color: #000000;

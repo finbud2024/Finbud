@@ -1,7 +1,11 @@
 <template>
-  <section class="content">
+  <section class="content fin-speak-page">
     <div>
-      <h1 class="headtitle">{{ $t('marketDataCenter.title') }}</h1>
+      <header class="fin-speak-hero-block">
+        <p class="fin-speak-eyebrow">{{ $t('finSpeak.slogan') }}</p>
+        <h1 class="fin-speak-page-title headtitle">{{ $t('marketDataCenter.title') }}</h1>
+        <p class="fin-speak-lead">{{ $t('finSpeak.marketDataLead') }}</p>
+      </header>
       <div class="market-data-center"> 
         <div class="market-section">
           <div class="section-title">{{ $t('marketDataCenter.sections.crypto').toUpperCase() }}</div>
@@ -59,9 +63,7 @@ export default {
 
 .headtitle {
   text-align: center;
-  color: #000;
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.35rem;
 }
 
 .market-section {
@@ -79,11 +81,13 @@ export default {
   padding-bottom: 0.5rem;
 }
 
-/* Force black text even in dark mode for readability */
-.dark-mode .headtitle,
+.dark-mode .headtitle {
+  color: inherit;
+}
+
 .dark-mode .section-title {
-  color: #000;
-  border-bottom-color: #000;
+  color: #0f172a;
+  border-bottom-color: var(--fin-speak-accent, #34d399);
 }
 
 .margin-box {

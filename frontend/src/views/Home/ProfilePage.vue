@@ -1,39 +1,39 @@
 <template>
-  <div class="profile-page">
-    <div class="balance-card border">
-      <div class="balance">
-        <div
-          class="stock-simulator-container"
-          v-for="item in financialData"
-          :key="item.label"
-        >
-          <h3>{{ item.label }}</h3>
-          <h1>{{ item.value }}</h1>
+  <div class="profile-root">
+    <div class="profile-page">
+      <div class="balance-card border">
+        <div class="balance">
+          <div
+            class="stat-tile"
+            v-for="item in financialData"
+            :key="item.label"
+          >
+            <h3 class="stat-label">{{ item.label }}</h3>
+            <p class="stat-value" :class="statValueClass(item.value)">{{ item.value }}</p>
+          </div>
+        </div>
+        <div class="profile-image-container">
+          <img
+            class="profile-image"
+            :class="{ 'image-uploaded': imageUploaded }"
+            :src="profileImage"
+            alt="Profile Image"
+          />
+          <label for="file-upload" class="custom-file-upload">
+            <font-awesome-icon icon="fa-solid fa-camera" />
+          </label>
+          <input id="file-upload" type="file" @change="uploadImage" />
         </div>
       </div>
-      <div class="profile-image-container">
-        <img
-          class="profile-image"
-          :class="{ 'image-uploaded': imageUploaded }"
-          :src="profileImage"
-          alt="Profile Image"
-        />
-        <label for="file-upload" class="custom-file-upload">
-          <font-awesome-icon icon="fa-solid fa-camera" />
-        </label>
-        <input id="file-upload" type="file" @change="uploadImage" />
-      </div>
-    </div>
-    <div class="info-card border">
-      <div class="info-body">
+      <div class="info-card border">
+        <div class="info-body">
         <form @submit.prevent="updateProfile">
           <div
             class="section"
             v-for="(section, sectionIndex) in sections"
             :key="sectionIndex"
           >
-            <div class="header-section border">User information</div>
-            <!-- <h3>{{ section.title }}</h3> -->
+            <div class="header-section">{{ section.title }}</div>
             <div
               class="form-group"
               v-for="(field, fieldIndex) in section.fields"
@@ -62,19 +62,21 @@
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
+
+    <FinCoinLeaderboard
+      class="profile-leaderboard"
+      :leaderboard-data="leaderboardData"
+      :current-user-rank="currentUserRank"
+      :selected-time-frame="selectedTimeFrame"
+      :time-frames="timeFrames"
+      :current-user-id="currentUserId"
+      :default-image="defaultImage"
+      @time-frame-change="changeTimeFrame"
+    />
   </div>
-  <!-- FinCoin Leaderboard Section -->
-  <FinCoinLeaderboard
-    :leaderboard-data="leaderboardData"
-    :current-user-rank="currentUserRank"
-    :selected-time-frame="selectedTimeFrame"
-    :time-frames="timeFrames"
-    :current-user-id="currentUserId"
-    :default-image="defaultImage"
-    @time-frame-change="changeTimeFrame"
-  />
 </template>
 
 <script>
@@ -140,9 +142,9 @@ export default {
         // },
       ],
       financialData: [
-        { label: "Account Value", value: "$" },
-        { label: "Buying Power", value: "$" },
-        { label: "Cash", value: "$" },
+        { label: "Account Value", value: "$0" },
+        { label: "Stock Value", value: "$0" },
+        { label: "Cash", value: "$0" },
       ],
       // Leaderboard related data
       leaderboardData: [],
@@ -165,6 +167,11 @@ export default {
     },
   },
   methods: {
+    statValueClass(value) {
+      const n = parseFloat(String(value).replace(/[$,]/g, ""));
+      if (Number.isNaN(n)) return "";
+      return n < 5000 ? "stat-value--low" : "stat-value--high";
+    },
     uploadImage(e) {
       const file = e.target.files[0];
       //check file type
@@ -399,18 +406,19 @@ export default {
       const data = response.data;
       console.log("Full user data from API:", data);
 
+      const b = data.bankingAccountData || {};
       this.financialData = [
         {
           label: "Account Value",
-          value: `$${data.bankingAccountData.accountBalance.toLocaleString()}`,
+          value: `$${Number(b.accountBalance ?? 0).toLocaleString()}`,
         },
         {
           label: "Stock Value",
-          value: `$${data.bankingAccountData.stockValue.toLocaleString()}`,
+          value: `$${Number(b.stockValue ?? 0).toLocaleString()}`,
         },
         {
           label: "Cash",
-          value: `$${data.bankingAccountData.cash.toLocaleString()}`,
+          value: `$${Number(b.cash ?? 0).toLocaleString()}`,
         },
       ];
 
@@ -424,23 +432,6 @@ export default {
       };
 
       console.log("Profile data set:", this.profile);
-
-      // Change color of balance based on value
-      this.$nextTick(() => {
-        const accountValue = document.querySelectorAll(
-          ".stock-simulator-container h1"
-        );
-        accountValue.forEach((value) => {
-          const v = parseFloat(
-            value.textContent.replace("$", "").replace(",", "")
-          );
-          if (v < 5000) {
-            value.style.color = "red";
-          } else {
-            value.style.color = "green";
-          }
-        });
-      });
     } catch (error) {
       console.error("Error fetching user data:", error);
       toast.error("Failed to load user data", { autoClose: 1000 });
@@ -467,281 +458,300 @@ export default {
 </script>
 
 <style scoped>
-.profile-page {
-  display: flex;
-  justify-content: space-evenly;
-  padding: 2rem;
+.profile-root {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9ff 0%, #f1f4ff 100%);
-  animation: fadeIn 0.5s ease;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 2.5rem;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, var(--bg-secondary, #f1f5f9) 0%, var(--bg-primary, #fff) 45%);
+  animation: profileFade 0.45s ease;
+}
+
+.profile-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 1.5rem;
+  align-items: start;
 }
 
 .border {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.border:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-}
-
-.info-card {
-  margin: 100px 100px 100px 50px;
-  position: relative;
-  flex: 2;
-  padding: 2rem;
-  animation: slideInRight 0.5s ease;
+@media (hover: hover) {
+  .border:hover {
+    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.1);
+  }
 }
 
 .balance-card {
-  margin: 100px 50px 100px 100px;
   position: relative;
-  flex: 1;
-  padding: 2rem;
-  animation: slideInLeft 0.5s ease;
+  padding: 5.5rem 1.25rem 1.5rem;
+  min-width: 0;
 }
 
 .balance {
-  padding-top: 70px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
   text-align: center;
 }
 
-.stock-simulator-container {
-  padding: 1.5rem;
-  margin-bottom: 1rem;
+.stat-tile {
+  padding: 0.85rem 0.5rem;
   border-radius: 12px;
-  background: linear-gradient(45deg, #f8f9ff, #ffffff);
-  transition: all 0.3s ease;
+  background: var(--bg-secondary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
-.stock-simulator-container:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.stock-simulator-container h3 {
-  color: #666;
-  font-size: 0.9rem;
+.stat-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary, #64748b);
 }
 
-.stock-simulator-container h1 {
-  font-size: 2rem;
-  font-weight: 700;
+.stat-value {
   margin: 0;
-  background: linear-gradient(45deg, #2d3748, #4a5568);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: all 0.3s ease;
+  font-size: clamp(1.1rem, 2.5vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary, #0f172a);
+  word-break: break-word;
+}
+
+.stat-value--high {
+  color: #059669;
+}
+
+.stat-value--low {
+  color: #dc2626;
 }
 
 .profile-image-container {
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
+  transform: translate(-50%, -42%);
+  z-index: 2;
 }
 
 .profile-image {
-  width: 150px;
-  height: 150px;
+  width: 112px;
+  height: 112px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid white;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.profile-image:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 4px solid var(--card-bg, #fff);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  display: block;
 }
 
 .image-uploaded {
-  border: 4px solid #000000;
-  animation: pulse 2s infinite;
+  border-color: var(--primary-color, #000);
+  animation: profilePulse 2s ease-in-out infinite;
 }
 
-/* Hide the default file input */
 #file-upload {
   display: none;
 }
 
 .custom-file-upload {
   position: absolute;
-  bottom: 10%;
-  left: 75%;
-  width: 40px;
-  height: 40px;
+  bottom: 4px;
+  right: -2px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: #000;
-  color: white;
+  background: var(--primary-color, #000);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
 }
 
-.custom-file-upload:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+@media (hover: hover) {
+  .custom-file-upload:hover {
+    transform: scale(1.06);
+  }
+}
+
+.info-card {
+  position: relative;
+  padding: 3.25rem 1.25rem 1.25rem;
+  min-width: 0;
 }
 
 .info-body {
-  padding: 2rem;
-  background: white;
+  padding: 0;
+}
+
+.section {
+  position: relative;
 }
 
 .header-section {
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 1rem 2rem;
-  background: #000;
-  color: white;
-  border-radius: 12px;
   position: absolute;
   top: 0;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.65rem 1.25rem;
+  background: var(--primary-color, #000);
+  color: var(--secondary-color, #fff);
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+  max-width: calc(100% - 2rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.1rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  color: #4a5568;
+  color: var(--text-secondary, #475569);
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
   font-size: 1rem;
-  transition: all 0.3s ease;
-  background: #f8fafc;
+  background: var(--bg-primary, #fff);
+  color: var(--text-primary, #0f172a);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-group input:focus {
+.form-group textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
   outline: none;
-  border-color: #000;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color, #000);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
 }
 
-.form-group input:hover {
-  border-color: #cbd5e0;
+.form-group input[readonly] {
+  background: var(--bg-secondary, #f1f5f9);
+  color: var(--text-secondary, #64748b);
 }
 
 .btn-container {
   display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 .btn {
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
+  padding: 0.65rem 1.35rem;
+  border-radius: 10px;
   font-weight: 600;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
   cursor: pointer;
+  border: none;
+  min-height: 44px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .btn-save {
-  background: #000;
-  color: white;
-  border: none;
-}
-
-.btn-save:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: var(--primary-color, #000);
+  color: var(--secondary-color, #fff);
 }
 
 .btn-cancel {
-  background: white;
-  color: #000;
-  border: 2px solid #000;
+  background: transparent;
+  color: var(--primary-color, #000);
+  border: 2px solid var(--primary-color, #000);
 }
 
-.btn-cancel:hover {
-  background: #f8fafc;
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .btn-save:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+  .btn-cancel:hover {
+    background: var(--bg-secondary, #f8fafc);
+  }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.profile-leaderboard {
+  margin-top: 2rem;
 }
 
-@keyframes slideInLeft {
+@keyframes profileFade {
   from {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
-  }
+@keyframes profilePulse {
+  0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   .profile-page {
-    flex-direction: column;
-    padding: 1rem;
+    grid-template-columns: 1fr;
   }
 
-  .balance-card,
-  .info-card {
-    margin: 2rem 1rem;
-    width: auto;
+  .balance {
+    grid-template-columns: 1fr;
+    max-width: 320px;
+    margin: 0 auto;
   }
 
   .balance-card {
-    margin-top: 100px;
+    padding-top: 5rem;
   }
 }
 
 @media (max-width: 640px) {
+  .profile-root {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .balance-card,
+  .info-card {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   .btn-container {
     flex-direction: column;
   }
@@ -750,501 +760,36 @@ export default {
     width: 100%;
   }
 
-  .profile-image {
-    width: 120px;
-    height: 120px;
-  }
-
-  .custom-file-upload {
-    width: 35px;
-    height: 35px;
-  }
-
-  .stock-simulator-container h1 {
-    font-size: 1.5rem;
-  }
-}
-
-/* Dark mode styles */
-.dark-mode .profile-page {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%);
-}
-
-.dark-mode .border {
-  background: #2d3748;
-  border-color: #4a5568;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.dark-mode .stock-simulator-container {
-  background: linear-gradient(45deg, #374151, #2d3748);
-}
-
-.dark-mode .stock-simulator-container h3 {
-  color: #9ca3af;
-}
-
-.dark-mode .header-section {
-  background: #1a1a1a;
-  color: #f8f9fa;
-}
-
-.dark-mode .form-group label {
-  color: #e2e8f0;
-}
-
-.dark-mode .form-group input {
-  background: #374151;
-  border-color: #4a5568;
-  color: #e2e8f0;
-}
-
-.dark-mode .form-group input:focus {
-  border-color: #e2e8f0;
-  box-shadow: 0 0 0 3px rgba(226, 232, 240, 0.1);
-}
-
-/* Enhanced Responsive Design */
-@media (max-width: 1400px) {
-  .profile-page {
-    padding: 1.75rem;
-    flex-direction: row;
-    gap: 2rem;
-  }
-  
-  .balance-card {
-    margin: 0;
-    flex: 1;
-    max-width: 400px;
-  }
-  
-  .info-card {
-    margin: 0;
-    flex: 2;
-    min-width: 500px;
-  }
-  
-  .profile-image {
-    width: 130px;
-    height: 130px;
-  }
-  
-  .stock-simulator-container h1 {
-    font-size: 1.8rem;
-  }
-}
-
-@media (max-width: 1200px) {
-  .profile-page {
-    padding: 1.5rem;
-    gap: 1.5rem;
-  }
-  
-  .balance-card,
-  .info-card {
-    padding: 1.75rem;
-  }
-  
-  .profile-image {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .stock-simulator-container {
-    padding: 1.25rem;
-    margin-bottom: 0.875rem;
-  }
-  
-  .stock-simulator-container h1 {
-    font-size: 1.6rem;
-  }
-  
   .header-section {
-    font-size: 1.1rem;
-    padding: 0.875rem 1.75rem;
+    font-size: 0.72rem;
+    padding: 0.55rem 1rem;
   }
 }
 
-@media (max-width: 1024px) {
-  .profile-page {
-    flex-direction: column;
-    padding: 1.25rem;
-    gap: 1.5rem;
-  }
-
-  .balance-card,
-  .info-card {
-    margin: 0;
-    width: 100%;
-    max-width: none;
-    min-width: auto;
-  }
-
-  .balance-card {
-    margin-top: 0;
-    order: 1;
-  }
-  
-  .info-card {
-    order: 2;
-  }
-  
-  .profile-image {
-    width: 110px;
-    height: 110px;
-  }
-  
-  .balance {
-    padding-top: 60px;
+@media (max-width: 640px) and (hover: hover) {
+  .border:hover {
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
   }
 }
 
-@media (max-width: 968px) {
-  .profile-page {
-    padding: 1rem;
-    gap: 1.25rem;
-  }
-  
-  .balance-card,
-  .info-card {
-    padding: 1.5rem;
-    border-radius: 16px;
-  }
-  
-  .profile-image {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .balance {
-    padding-top: 50px;
-  }
-  
-  .stock-simulator-container {
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-  }
-  
-  .stock-simulator-container h1 {
-    font-size: 1.4rem;
-  }
-  
-  .stock-simulator-container h3 {
-    font-size: 0.85rem;
-  }
-  
-  .header-section {
-    font-size: 1rem;
-    padding: 0.75rem 1.5rem;
-  }
-  
-  .form-group {
-    margin-bottom: 1.25rem;
-  }
-  
-  .form-group input {
-    padding: 0.625rem 0.875rem;
-    font-size: 16px; /* Prevent iOS zoom */
-  }
+.dark-mode .profile-root {
+  background: linear-gradient(160deg, #1e293b 0%, #0f172a 50%);
 }
 
-@media (max-width: 768px) {
-  .profile-page {
-    padding: 0.875rem;
-    gap: 1rem;
-  }
-  
-  .balance-card,
-  .info-card {
-    padding: 1.25rem;
-    border-radius: 14px;
-  }
-  
-  .profile-image {
-    width: 90px;
-    height: 90px;
-  }
-  
-  .balance {
-    padding-top: 45px;
-  }
-  
-  .stock-simulator-container {
-    padding: 0.875rem;
-    margin-bottom: 0.625rem;
-    border-radius: 10px;
-  }
-  
-  .stock-simulator-container h1 {
-    font-size: 1.25rem;
-  }
-  
-  .stock-simulator-container h3 {
-    font-size: 0.8rem;
-    margin-bottom: 0.375rem;
-  }
-  
-  .custom-file-upload {
-    width: 35px;
-    height: 35px;
-    bottom: 8%;
-    left: 72%;
-  }
-  
-  .header-section {
-    font-size: 0.95rem;
-    padding: 0.625rem 1.25rem;
-    letter-spacing: 0.5px;
-  }
-  
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  
-  .form-group label {
-    font-size: 0.9rem;
-    margin-bottom: 0.375rem;
-  }
-  
-  .form-group input {
-    padding: 0.75rem;
-    font-size: 16px;
-    border-radius: 6px;
-  }
-  
-  .btn-container {
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-  
-  .btn {
-    width: 100%;
-    padding: 0.875rem 1.5rem;
-    font-size: 16px;
-    border-radius: 6px;
-    min-height: 44px; /* Touch target minimum */
-  }
+.dark-mode .stat-tile {
+  background: #334155;
+  border-color: #475569;
 }
 
-@media (max-width: 640px) {
-  .profile-page {
-    padding: 0.75rem;
-  }
-  
-  .balance-card,
-  .info-card {
-    padding: 1rem;
-    border-radius: 12px;
-  }
-  
-  .profile-image {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .balance {
-    padding-top: 40px;
-  }
-  
-  .stock-simulator-container {
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .stock-simulator-container h1 {
-    font-size: 1.125rem;
-  }
-  
-  .stock-simulator-container h3 {
-    font-size: 0.75rem;
-  }
-  
-  .custom-file-upload {
-    width: 32px;
-    height: 32px;
-    left: 70%;
-  }
-  
-  .header-section {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-  }
-  
-  .form-group input {
-    padding: 0.625rem;
-    font-size: 16px;
-  }
-  
-  .btn {
-    padding: 0.75rem 1.25rem;
-    font-size: 16px;
-  }
+.dark-mode .stat-value {
+  color: #f1f5f9;
 }
 
-@media (max-width: 480px) {
-  .profile-page {
-    padding: 0.625rem;
-  }
-  
-  .balance-card,
-  .info-card {
-    padding: 0.875rem;
-    border-radius: 10px;
-  }
-  
-  .profile-image {
-    width: 75px;
-    height: 75px;
-  }
-  
-  .balance {
-    padding-top: 37px;
-  }
-  
-  .stock-simulator-container {
-    padding: 0.625rem;
-    margin-bottom: 0.375rem;
-  }
-  
-  .stock-simulator-container h1 {
-    font-size: 1rem;
-  }
-  
-  .stock-simulator-container h3 {
-    font-size: 0.7rem;
-  }
-  
-  .custom-file-upload {
-    width: 30px;
-    height: 30px;
-    bottom: 5%;
-    left: 68%;
-  }
-  
-  .header-section {
-    font-size: 0.85rem;
-    padding: 0.5rem 0.875rem;
-  }
-  
-  .form-group {
-    margin-bottom: 0.875rem;
-  }
-  
-  .form-group label {
-    font-size: 0.85rem;
-  }
-  
-  .form-group input {
-    padding: 0.625rem;
-    font-size: 16px;
-  }
-  
-  .btn {
-    padding: 0.75rem 1rem;
-    font-size: 16px;
-  }
+.dark-mode .stat-value--high {
+  color: #34d399;
 }
 
-@media (max-width: 320px) {
-  .profile-page {
-    padding: 0.5rem;
-  }
-  
-  .balance-card,
-  .info-card {
-    padding: 0.75rem;
-    border-radius: 8px;
-  }
-  
-  .profile-image {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .balance {
-    padding-top: 35px;
-  }
-  
-  .stock-simulator-container {
-    padding: 0.5rem;
-  }
-  
-  .stock-simulator-container h1 {
-    font-size: 0.95rem;
-  }
-  
-  .stock-simulator-container h3 {
-    font-size: 0.65rem;
-  }
-  
-  .custom-file-upload {
-    width: 28px;
-    height: 28px;
-    left: 65%;
-  }
-  
-  .header-section {
-    font-size: 0.8rem;
-    padding: 0.375rem 0.75rem;
-  }
-  
-  .form-group input {
-    padding: 0.5rem;
-    font-size: 16px;
-  }
-  
-  .btn {
-    padding: 0.625rem 0.875rem;
-    font-size: 16px;
-    min-height: 44px;
-  }
-}
-
-/* Mobile-specific optimizations */
-@media (max-width: 768px) {
-  /* Ensure proper touch targets */
-  .btn,
-  .form-group input,
-  .custom-file-upload {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  /* Optimize form for mobile */
-  .form-group input:focus {
-    outline: none;
-    border-color: #000;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Prevent zoom on iOS */
-  .form-group input,
-  .btn {
-    font-size: 16px !important;
-  }
-  
-  /* Enhanced animation performance on mobile */
-  .border:hover,
-  .stock-simulator-container:hover,
-  .profile-image:hover {
-    transform: none;
-  }
-  
-  /* Mobile-friendly spacing */
-  .balance-card {
-    position: relative;
-    margin-top: 2rem;
-  }
-  
-  .info-card {
-    position: relative;
-    margin-top: 2rem;
-  }
-  
-  .profile-image-container {
-    top: -45px;
-  }
+.dark-mode .stat-value--low {
+  color: #f87171;
 }
 </style>

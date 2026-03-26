@@ -1,16 +1,15 @@
 <template>
-  <div class="fund-archive-background">
+  <div class="fin-speak-page fund-letter-page">
     <!-- Bot chat component -->
     <ChatBot :botMessage="templateChat" />
 
-    <!-- Outer container added here -->
     <div class="fund-archive-container">
       <div class="fund-archive-content">
-        <!-- Main Header Section -->
-        <div class="fund-archive-header">
-          <h1>{{ $t('fundLettersArchive') }}</h1>
-          <p>{{ $t('curatedListSubtitle') }}</p>
-        </div>
+        <header class="fin-speak-hero-block">
+          <p class="fin-speak-eyebrow">{{ $t('finSpeak.slogan') }}</p>
+          <h1 class="fin-speak-page-title">{{ $t('fundLettersArchive') }}</h1>
+          <p class="fin-speak-lead">{{ $t('curatedListSubtitle') }}</p>
+        </header>
         <div class="outer-container-first">
           <!-- Search and Filter Section -->
           <div class="search-filter-section">
@@ -79,10 +78,11 @@
     <!-- Greatest Investors Section -->
     <div class="outer-container">
       <div class="investors-section">
-        <div class="fund-archive-header">
-          <h1>{{ $t('greatestInvestors') }}</h1>
-          <p>{{ $t('learnFromMasters') }}</p>
-        </div>
+        <header class="fin-speak-hero-block investors-hero">
+          <p class="fin-speak-eyebrow">{{ $t('finSpeak.slogan') }}</p>
+          <h2 class="fin-speak-page-title">{{ $t('greatestInvestors') }}</h2>
+          <p class="fin-speak-lead">{{ $t('learnFromMasters') }}</p>
+        </header>
         
         <div class="investors-grid">
           <div
@@ -166,42 +166,14 @@ const resetFilters = () => {
 </script>
 
 <style scoped>
-.fund-archive-background {
-  background-color: var(--black-in-dark-mode);
-  font-family: 'Inter', system-ui, sans-serif;
-  color: var(--white-in-dark-mode);
-  padding-bottom: 4rem;
-}
-
-/* Added outer container styling */
-.outer-container-first {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 3rem 3rem;
-  box-sizing: border-box;
-  background-color: var(--chat-text-color);
-  border-radius: 1rem;
-  margin-bottom: 3rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-.outer-container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 3rem 3rem;
-  box-sizing: border-box;
-  background-color:var(--black-in-dark-mode);
-
-
+.fund-letter-page {
+  padding-bottom: 3rem;
 }
 
 .fund-archive-container {
-  min-height: 80vh;
-
   display: flex;
   justify-content: center;
+  padding: 0 1rem;
 }
 
 .fund-archive-content {
@@ -209,63 +181,63 @@ const resetFilters = () => {
   max-width: 1200px;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
 }
 
-.fund-archive-header {
-  text-align: center;
-  margin-bottom: 1rem;
-  padding: 1rem;
+.investors-hero {
+  margin-top: 2rem;
 }
 
-.fund-archive-header h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--white-in-dark-mode);
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.025em;
-  background: var(--white-in-dark-mode);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.outer-container-first {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem;
+  box-sizing: border-box;
+  background: var(--card-bg, #fff);
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #e8eaef);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
 }
 
-.fund-archive-header p {
-  color: #9ca3af;
-  font-size: 1.25rem;
+.outer-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+  box-sizing: border-box;
 }
 
-/* Search and Filters */
 .search-filter-section {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .search-container {
   position: relative;
-  width: 98%;
+  width: 100%;
 }
 
 .search-input {
-  width: 97%;
-  padding: 0.875rem 1rem 0.875rem 2.5rem;
-  border-radius: 0.5rem;
-  background-color: var(--card-bg);
-  color: var(--white-in-dark-mode);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: 10px;
+  background: var(--bg-secondary, #f8fafc);
+  color: var(--text-primary, #0f172a);
+  border: 1px solid var(--border-color, #e2e8f0);
   font-size: 1rem;
-  transition: all 0.2s ease;
 }
 
 .search-input:focus {
   outline: none;
-
-  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+  border-color: #22a36a;
+  box-shadow: 0 0 0 3px rgba(34, 163, 106, 0.15);
 }
 
 .search-input::placeholder {
-  color: #6b7280;
+  color: #94a3b8;
 }
 
 .search-icon {
@@ -273,7 +245,7 @@ const resetFilters = () => {
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #6b7280;
+  color: #94a3b8;
   font-style: normal;
 }
 
@@ -295,55 +267,46 @@ const resetFilters = () => {
   gap: 0.5rem;
 }
 
-.filter-group label {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
 .dropdown {
   width: 100%;
   padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--card-bg);
-  color: var(--white-in-dark-mode);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: var(--bg-secondary, #f8fafc);
+  color: var(--text-primary, #0f172a);
+  border: 1px solid var(--border-color, #e2e8f0);
   font-size: 1rem;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   background-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .dropdown:focus {
   outline: none;
-  border-color: black;
-  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+  border-color: #22a36a;
 }
 
-/* Letters List Section */
 .letters-container {
   display: flex;
   flex-direction: column;
-  border-radius: 1rem;
+  border-radius: 12px;
   overflow: hidden;
-  background-color:var(--card-bg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .letters-header {
   display: flex;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
-  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-secondary, #f1f5f9);
   font-weight: 600;
-  color: #9ca3af;
-  font-size: 0.875rem;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .header-fund {
@@ -351,21 +314,17 @@ const resetFilters = () => {
 }
 
 .letters-list-scroll-container {
-  max-height: 500px;
+  max-height: 480px;
   overflow-y: auto;
-}
-
-.letters-list {
-  background-color: transparent;
 }
 
 .letter-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: background-color 0.2s ease;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border-color, #e8eaef);
+  transition: background-color 0.15s ease;
 }
 
 .letter-item:last-child {
@@ -373,126 +332,90 @@ const resetFilters = () => {
 }
 
 .letter-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(34, 163, 106, 0.06);
 }
 
 .letter-link {
   font-weight: 500;
-  color: var(--white-in-dark-mode);
+  color: var(--text-primary, #0f172a);
   text-decoration: none;
   word-break: break-word;
   flex-grow: 1;
-  transition: color 0.2s ease;
 }
 
 .letter-link:hover {
-  color: grey;
+  color: #22a36a;
 }
 
 .letter-meta {
   font-size: 0.875rem;
-  color: #9ca3af;
+  color: var(--text-secondary, #64748b);
   white-space: nowrap;
   margin-left: 1rem;
 }
 
-.results-counter {
-  padding: 0.75rem 1.5rem;
-  text-align: right;
-  font-size: 0.875rem;
-  color: #9ca3af;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
 .no-results {
-  color: #9ca3af;
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 3rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  background-color: rgba(30, 30, 35, 0.5);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.empty-icon {
-  font-size: 3rem;
-  opacity: 0.5;
-  font-style: normal;
+  background: var(--bg-secondary, #f8fafc);
+  border-radius: 12px;
+  border: 1px dashed var(--border-color, #cbd5e1);
+  color: var(--text-secondary, #64748b);
 }
 
 .reset-button {
-  padding: 0.5rem 1.5rem;
-  background-color: var(--white-in-dark-mode);
-  color: var(--black-in-dark-mode);
+  padding: 0.5rem 1.25rem;
+  background: var(--primary-color, #000);
+  color: #fff;
   border: none;
-  border-radius: 0.5rem;
-  font-weight: 500;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .reset-button:hover {
-  background-color: var(--white-in-dark-mode);
+  opacity: 0.9;
 }
 
-/* Scrollbar styling */
-.letters-list-scroll-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.letters-list-scroll-container::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.letters-list-scroll-container::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.letters-list-scroll-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Investors Section */
 .investors-section {
   width: 100%;
-
 }
 
 .investors-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.5rem;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
 }
 
 .investor-card {
   position: relative;
-  border-radius: 1rem;
-  background-color: var(--white-in-dark-mode);
+  border-radius: 14px;
+  background: var(--card-bg, #fff);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--border-color, #e8eaef);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   height: 300px;
 }
 
 .investor-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
 }
 
 .card-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  height: 60px;
+  height: 56px;
   width: 100%;
-  background: var(--black-in-dark-mode);
-  opacity: 0.85;
+  background: linear-gradient(90deg, #1a1d26 0%, #2d3142 100%);
+  opacity: 0.92;
   z-index: 0;
 }
 
@@ -505,50 +428,66 @@ const resetFilters = () => {
   padding: 2rem 1.5rem;
   height: 100%;
   text-decoration: none;
-  color: white;
+  color: inherit;
 }
 
 .profile-image {
-  width: 100px;
-  height: 100px;
+  width: 96px;
+  height: 96px;
   border-radius: 9999px;
   object-fit: cover;
-  border: 4px solid white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
 }
 
 .card-title {
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: bold;
-  font-size: 1.25rem;
+  font-weight: 700;
+  font-size: 1.15rem;
   margin: 1rem 0 0;
-  color:var(--black-in-dark-mode);
+  color: var(--text-primary, #0f172a);
   text-align: center;
 }
 
 .card-description {
   font-size: 0.875rem;
-  color: var(--black-in-dark-mode);
+  color: var(--text-secondary, #64748b);
   text-align: center;
   line-height: 1.5;
 }
 
-/* Responsive adjustments */
+.dark-mode .outer-container-first {
+  background: var(--card-bg, #1e293b);
+  border-color: #334155;
+}
+
+.dark-mode .letter-link {
+  color: var(--text-primary, #f1f5f9);
+}
+
+.dark-mode .letter-link:hover {
+  color: #34d399;
+}
+
+.dark-mode .investor-card {
+  background: var(--card-bg, #1e293b);
+  border-color: #334155;
+}
+
+.dark-mode .card-title {
+  color: #f1f5f9;
+}
+
+.dark-mode .card-description {
+  color: #94a3b8;
+}
+
 @media (max-width: 768px) {
-  .outer-container {
-    padding: 0 1rem;
+  .outer-container-first {
+    padding: 1.25rem 1rem;
   }
-  
+
   .investors-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-  
-  .fund-archive-header h1 {
-    font-size: 2rem;
-  }
-  
-  .fund-archive-header p {
-    font-size: 1rem;
   }
 }
 </style>

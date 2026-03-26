@@ -1,6 +1,6 @@
 <template>
   <div class="leaderboard-card border">
-    <div class="header-section border">FinCoin Leaderboard</div>
+    <div class="header-section">FinCoin Leaderboard</div>
     <div class="leaderboard-body">
       <div class="leaderboard-filters">
         <button
@@ -16,14 +16,15 @@
         </button>
       </div>
 
-      <div class="leaderboard-table">
-        <div class="leaderboard-header">
+      <div class="leaderboard-table-wrap">
+        <div class="leaderboard-table">
+          <div class="leaderboard-header">
           <div class="rank">Rank</div>
           <div class="user">User</div>
           <div class="quizzes">Quizzes</div>
           <div class="trades">Trades</div>
           <div class="fincoins">FinCoins</div>
-        </div>
+          </div>
 
         <div
           v-for="(user, index) in leaderboardData"
@@ -71,6 +72,7 @@
           <div class="trades">{{ currentUserRank.tradesExecuted }}</div>
           <div class="fincoins">{{ currentUserRank.fincoins }}</div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -145,106 +147,148 @@ export default {
 </script>
 
 <style scoped>
-/* Leaderboard Styles */
 .leaderboard-card {
-  margin: 20px auto 50px;
+  margin: 0 auto;
   position: relative;
-  width: 90%;
+  width: 100%;
   max-width: 1200px;
-  padding: 30px;
+  padding: 3.25rem 1rem 1.25rem;
+  box-sizing: border-box;
 }
 
 .border {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-  border-radius: 15px;
-  background: rgb(248, 249, 254);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .leaderboard-body {
-  padding: 70px 15px 15px;
-  background-color: rgb(248, 249, 254);
+  padding: 0 0.25rem 0.5rem;
+  background: transparent;
 }
 
 .header-section {
-  font-size: 20px;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: bold;
+  letter-spacing: 0.08em;
+  font-weight: 700;
   position: absolute;
-  padding: 20px;
-  top: 0%;
+  padding: 0.65rem 1.25rem;
+  top: 0;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #000000;
-  color: white;
+  background: var(--primary-color, #000);
+  color: var(--secondary-color, #fff);
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+  max-width: calc(100% - 2rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .leaderboard-filters {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 20px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .filter-btn {
-  padding: 8px 16px;
-  margin: 0 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 20px;
+  padding: 0.45rem 1rem;
+  min-height: 40px;
+  background: var(--bg-secondary, #f1f5f9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 999px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary, #0f172a);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .filter-btn.active {
-  background-color: #000408;
-  color: white;
-  border-color: #000000;
+  background: var(--primary-color, #000);
+  color: var(--secondary-color, #fff);
+  border-color: var(--primary-color, #000);
+}
+
+.leaderboard-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .leaderboard-table {
   width: 100%;
+  min-width: 520px;
 }
 
 .leaderboard-header {
   display: flex;
-  padding: 10px 0;
-  font-weight: bold;
-  border-bottom: 2px solid #ddd;
+  padding: 0.65rem 0.5rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary, #64748b);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-secondary, #f8fafc);
 }
 
 .leaderboard-row {
   display: flex;
-  padding: 15px 0;
-  border-bottom: 1px solid #eee;
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
   align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-primary, #0f172a);
+}
+
+.leaderboard-row:last-child {
+  border-bottom: none;
 }
 
 .current-user {
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: rgba(59, 130, 246, 0.08);
   border-radius: 8px;
 }
 
 .current-user-position {
   display: flex;
-  padding: 15px 0;
-  margin-top: 20px;
-  border-top: 2px dashed #000000;
-  border-bottom: 2px dashed #000000;
-  background-color: rgba(0, 123, 255, 0.1);
-  border-radius: 8px;
+  padding: 0.65rem 0.5rem;
+  margin-top: 0.75rem;
+  border: 1px dashed var(--border-color, #cbd5e1);
+  background-color: rgba(59, 130, 246, 0.08);
+  border-radius: 10px;
   align-items: center;
+  font-size: 0.9rem;
 }
 
 .rank {
   width: 10%;
+  min-width: 3rem;
   text-align: center;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .user {
   width: 40%;
+  min-width: 0;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+}
+
+.user span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .quizzes,
@@ -256,22 +300,38 @@ export default {
 .fincoins {
   width: 20%;
   text-align: center;
-  font-weight: bold;
-  color: #fbc900;
+  font-weight: 700;
+  color: #ca8a04;
 }
 
 .leaderboard-user-image {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  margin-right: 10px;
+  flex-shrink: 0;
   object-fit: cover;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .no-data {
   text-align: center;
-  padding: 20px;
-  color: #666;
+  padding: 2rem 1rem;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.95rem;
+}
+
+.dark-mode .fincoins {
+  color: #fbbf24;
+}
+
+@media (max-width: 640px) {
+  .leaderboard-card {
+    padding: 3rem 0.75rem 1rem;
+  }
+
+  .header-section {
+    font-size: 0.72rem;
+    padding: 0.55rem 1rem;
+  }
 }
 </style>

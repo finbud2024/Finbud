@@ -1,11 +1,15 @@
 <template>
-  <div class="stock-simulator">
+  <div class="stock-simulator fin-speak-page">
     <!-- Header -->
     <header class="simulator-header">
-      <h1 class="page-title">
-        <font-awesome-icon icon="fa-solid fa-chart-line" />
-        {{ $t("stockSimulator.pageTitle") }}
-      </h1>
+      <div class="fin-speak-hero-block simulator-hero">
+        <p class="fin-speak-eyebrow">{{ $t("finSpeak.slogan") }}</p>
+        <h1 class="fin-speak-page-title simulator-page-title">
+          <font-awesome-icon icon="fa-solid fa-chart-line" />
+          {{ $t("stockSimulator.pageTitle") }}
+        </h1>
+        <p class="fin-speak-lead">{{ $t("finSpeak.stockSimulatorLead") }}</p>
+      </div>
 
       <nav class="tab-nav">
         <button
@@ -1009,7 +1013,7 @@ export default {
 <style scoped>
 .stock-simulator {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: transparent;
   padding: 1rem;
   width: 100%;
   max-width: 100%;
@@ -1024,14 +1028,20 @@ export default {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.page-title {
-  font-size: 2rem;
+.simulator-hero {
+  margin-bottom: 1rem;
+}
+
+.simulator-page-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 1.5rem;
+  color: var(--fin-speak-heading, #1a1d26);
+  margin-bottom: 0.35rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
 }
 
 .tab-nav {
@@ -1576,7 +1586,7 @@ export default {
     margin-bottom: 1rem;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.5rem;
     flex-direction: column;
     text-align: center;
@@ -1690,7 +1700,7 @@ export default {
     border-radius: 12px;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.25rem;
   }
 
@@ -1785,9 +1795,9 @@ export default {
   transition: all 0.3s ease;
 }
 
-/* Dark mode */
+/* Dark mode — page background from .fin-speak-page */
 .dark-mode .stock-simulator {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%);
+  background: transparent;
 }
 
 .dark-mode .simulator-header,
@@ -1800,7 +1810,7 @@ export default {
   border: 1px solid #4a5568;
 }
 
-.dark-mode .page-title {
+.dark-mode .simulator-page-title {
   color: #e2e8f0;
 }
 
@@ -1850,7 +1860,7 @@ export default {
     margin-bottom: 1.5rem;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.75rem;
     margin-bottom: 1.25rem;
   }
@@ -1922,7 +1932,7 @@ export default {
     padding: 1rem;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.5rem;
     flex-direction: column;
     align-items: center;
@@ -2230,7 +2240,7 @@ export default {
     border-radius: 12px;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.5rem;
     flex-direction: column;
     text-align: center;
@@ -2238,7 +2248,7 @@ export default {
     margin-bottom: 1rem;
   }
 
-  .page-title svg {
+  .simulator-page-title svg {
     font-size: 1.5rem;
   }
 
@@ -2515,7 +2525,7 @@ select {
     margin-bottom: 0.875rem;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.375rem;
   }
 
@@ -2579,7 +2589,7 @@ select {
     margin-bottom: 0.75rem;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.25rem;
   }
 
@@ -2656,7 +2666,7 @@ select {
     padding: 0.5rem;
   }
 
-  .page-title {
+  .simulator-page-title {
     font-size: 1.125rem;
   }
 
@@ -2714,9 +2724,87 @@ select {
   }
 }
 
+/* Mobile: prevent horizontal bleed; scrollable tabs & tables */
+@media (max-width: 768px) {
+  .stock-simulator {
+    box-sizing: border-box;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    padding: 0.5rem;
+  }
+
+  .simulator-header {
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .tab-nav {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    gap: 0.35rem;
+  }
+
+  .tab-btn {
+    flex-shrink: 0;
+  }
+
+  .simulator-content {
+    max-width: 100%;
+    overflow-x: hidden;
+    padding: 0;
+  }
+
+  .holdings-table-container {
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .holdings-table {
+    min-width: 520px;
+    font-size: 0.8125rem;
+  }
+
+  .holdings-table th,
+  .holdings-table td {
+    padding: 0.5rem 0.4rem;
+  }
+
+  .pagination-controls {
+    padding: 1rem 0.75rem;
+  }
+
+  .pagination-buttons {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .pagination-btn {
+    flex: 1 1 calc(50% - 0.35rem);
+    min-width: 0;
+    justify-content: center;
+    font-size: 0.75rem;
+    padding: 0.55rem 0.5rem;
+  }
+
+  .pagination-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .filtered-results {
+    padding: 0;
+  }
+}
+
 /* Landscape mobile specific adjustments */
 @media (max-height: 500px) and (orientation: landscape) {
-  .page-title {
+  .simulator-page-title {
     font-size: 1.125rem;
     margin-bottom: 0.5rem;
   }
@@ -2736,7 +2824,7 @@ select {
 
 /* High DPI displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .page-title svg,
+  .simulator-page-title svg,
   .tab-btn i {
     transform: translateZ(0); /* Force hardware acceleration */
   }

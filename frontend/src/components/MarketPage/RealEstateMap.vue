@@ -15,27 +15,31 @@
         </option>
       </select>
     </div>
-    <div ref="mapContainer" class="leaflet-map" style="height:500px;"></div>
-    <table v-if="displayedProperties.length" class="property-table">
-      <thead>
-        <tr>
-          <th>Image</th>
-          <th>Type</th>
-          <th>Address</th>
-          <th>Price</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="property in displayedProperties" :key="property.zpid">
-          <td><img :src="property.imgSrc" alt="Property Image" class="property-table-img"></td>
-          <td>{{ property.propertyType }}</td>
-          <td>{{ property.address }}</td>
-          <td>${{ property.price }}</td>
-          <td>{{ property.listingStatus }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div ref="mapContainer" class="leaflet-map"></div>
+    <div v-if="displayedProperties.length" class="property-table-wrapper">
+      <table class="property-table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Type</th>
+            <th>Address</th>
+            <th>Price</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="property in displayedProperties" :key="property.zpid">
+            <td data-label="Image" class="property-table-img-cell">
+              <img :src="property.imgSrc" alt="Property Image" class="property-table-img">
+            </td>
+            <td data-label="Type">{{ property.propertyType }}</td>
+            <td data-label="Address">{{ property.address }}</td>
+            <td data-label="Price">${{ property.price }}</td>
+            <td data-label="Status">{{ property.listingStatus }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="buttons">
       <button v-if="displayedProperties.length < properties.length" @click="showMore" class="show-more-button">
         Show More
@@ -260,6 +264,10 @@ export default {
   background-color: #f9f9f9;
   border-radius: 5px;
   color: #000;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .market-summary h3 {
@@ -276,6 +284,28 @@ export default {
   position: relative;
   z-index: 1;
   padding: 10px;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.leaflet-map {
+  width: 100%;
+  height: 500px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@media (max-width: 991px) {
+  .leaflet-map {
+    height: 380px;
+  }
+}
+
+@media (max-width: 576px) {
+  .leaflet-map {
+    height: 280px;
+  }
 }
 
 #map {
@@ -308,11 +338,28 @@ export default {
   background-color: #333333;
 }
 
+.property-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  box-sizing: border-box;
+  overscroll-behavior-x: contain;
+}
+
 .property-table {
   width: 100%;
-  margin-bottom: 1rem;
+  margin: 0;
   border-collapse: collapse;
-  overflow-x: auto;
+  table-layout: auto;
+}
+
+@media (min-width: 992px) {
+  .property-table {
+    min-width: 640px;
+  }
 }
 
 .property-table th,
@@ -320,6 +367,21 @@ export default {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  vertical-align: top;
+}
+
+@media (min-width: 992px) {
+  .property-table th,
+  .property-table td {
+    white-space: nowrap;
+  }
+
+  .property-table th:nth-child(3),
+  .property-table td:nth-child(3) {
+    white-space: normal;
+    max-width: min(280px, 26vw);
+    word-break: break-word;
+  }
 }
 
 .property-table-img {
@@ -358,15 +420,90 @@ export default {
   background-color: #333333;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .property-table {
-    font-size: 12px;
+/* Stacked rows on phones / small tablets (matches Market Data Center tables) */
+@media (max-width: 991px) {
+  .property-table-wrapper {
+    overflow-x: visible;
   }
 
-  .property-table th,
+  .property-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .property-table thead {
+    display: none;
+  }
+
+  .property-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .property-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
   .property-table td {
-    padding: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    white-space: normal;
+    word-break: break-word;
+    text-align: right;
+  }
+
+  .property-table tr td:last-child {
+    border-bottom: none;
+  }
+
+  .property-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748b;
+    text-align: left;
+    flex-shrink: 0;
+    max-width: 42%;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    padding-top: 0.15rem;
+  }
+
+  .property-table td.property-table-img-cell {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .property-table td.property-table-img-cell::before {
+    max-width: 100%;
+    margin-bottom: 0.35rem;
+  }
+
+  .property-table-img {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 768px) {
+  .property-table td {
+    font-size: 0.8125rem;
   }
 
   .property-table-img {
@@ -378,8 +515,14 @@ export default {
 @media (max-width: 576px) {
   .controls {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
+  .location-dropdown {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 }
 </style>

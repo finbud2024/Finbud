@@ -1,27 +1,27 @@
 <template>
-    <div class="chat-frame">
-        <slot></slot> <!-- Content from parent component will be inserted here -->
-    </div>
+  <div class="chat-frame">
+    <slot></slot>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'ChatFrame'
-}
+  name: "ChatFrame",
+};
 </script>
 
 <style>
 .chat-frame {
-    height: 50vh; /* Fixed height */
-    overflow-y: auto; /* Enables vertical scrolling */
-	max-width: 150%;
-	width: 100%;
-    /* padding: 0 10px; */
-    /* border: 1px solid #ccc;  */
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chat-frame::-webkit-scrollbar {
-    /* width: 2px; Make the scrollbar thinner */
-    display: none; /* Hide the scrollbar */
+  display: none;
 }
 </style>

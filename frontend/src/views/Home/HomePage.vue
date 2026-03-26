@@ -276,7 +276,7 @@ export default {
       this.$router.push('/signup');
     },
     learnMore() {
-      this.$router.push('/tech');
+      this.$router.push({ path: '/about', hash: '#technology' });
     },
     async chatNow(message) {
       try {

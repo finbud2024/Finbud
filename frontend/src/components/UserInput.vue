@@ -1,88 +1,85 @@
 <template>
 	<div class="user-input-container">
-
 		<div class="user-input">
-			<!-- File label -->
 			<div v-if="selectedFile" class="file-label left-align">
 				<span>{{ selectedFile.name }}</span>
-				<button @click="removeFile">×</button>
+				<button type="button" @click="removeFile">×</button>
 			</div>
-			<div class="input-container">
-				
-				<!-- Text Input Field -->
+
+			<div v-if="isDragging" class="drag-overlay"></div>
+
+			<input
+				type="file"
+				ref="fileInput"
+				@change="handleFileUpload"
+				style="display: none"
+			/>
+
+			<div class="pill-row">
+				<button
+					type="button"
+					class="pill-btn pill-btn--circle pill-btn--muted"
+					@click="triggerFileInput"
+					aria-label="Attach file"
+				>
+					<font-awesome-icon icon="fa-solid fa-plus" />
+				</button>
+
 				<input
+					ref="textInput"
 					type="text"
+					class="pill-input"
 					v-model="messageText"
 					@input="handleInput"
 					@keyup.enter="send"
 					:placeholder="typingPlaceholder"
 				/>
-			</div>
-			<div class="buttons-container">
-				<!-- Left side buttons -->
-				<div class="left-buttons">
-					<!-- File Upload Button -->
-					<input
-						type="file"
-						ref="fileInput"
-						@change="handleFileUpload"
-						style="display: none"
-					/>
-					<div @click="triggerFileInput" class="upload-btn">
-						<font-awesome-icon icon="fa-solid fa-paperclip" />
-					</div>
-					<!-- <div class="agent-btn">
-						<button
-							class="chat-mode-button"
-							:class="{ active: chatMode === 'deep-research' }"
-							@click="toggleDeepResearchMode"
-						>
-							Deep Research
-						</button>
-					</div>
-					<div class="agent-btn">
-						<button
-							class="chat-mode-button"
-							:class="{ active: chatMode === 'think' }"
-							@click="toggleThinkMode"
-						>
-							Think
-						</button>
-					</div>
-					<div class="agent-btn">
-						<button
-							class="chat-mode-button"
-							:class="{ active: chatMode === 'rag' }"
-							@click="toggleRAGMode"
-						>
-							RAG
-						</button>
-					</div> -->
-				</div>
 
-				<!-- Drop File -->
-				<div v-if="isDragging" class="drag-overlay"></div>
-
-				<div class="flex-spacer"></div>
-
-				<!-- Right side buttons -->
-				<div class="right-buttons">
-					<!-- Voice Recording Button or Send Button -->
-					<div
-						v-if="!isTyping"
+				<template v-if="!isTyping">
+					<button
+						type="button"
+						class="pill-btn pill-btn--circle pill-btn--muted"
+						:class="{ recording: isRecording }"
 						@mousedown="startRecording"
 						@mouseup="stopRecording"
 						@mouseleave="stopRecording"
-						class="mic-btn"
-						:class="{ recording: isRecording }"
+						@touchstart.prevent="startRecording"
+						@touchend.prevent="stopRecording"
+						@touchcancel.prevent="stopRecording"
+						aria-label="Hold to record"
 					>
-						<i class="fa-solid fa-microphone-lines"></i>
-					</div>
+						<font-awesome-icon icon="fa-solid fa-microphone" />
+					</button>
+					<button
+						type="button"
+						class="pill-btn pill-btn--circle pill-btn--primary"
+						aria-label="Voice input"
+						@click="onVoicePrimaryClick"
+					>
+						<svg
+							class="waveform-icon"
+							viewBox="0 0 22 24"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+						>
+							<rect x="1" y="12" width="3" height="6" rx="1.5" fill="currentColor" />
+							<rect x="6.5" y="8" width="3" height="14" rx="1.5" fill="currentColor" />
+							<rect x="12" y="10" width="3" height="10" rx="1.5" fill="currentColor" />
+							<rect x="17.5" y="14" width="3" height="2" rx="1" fill="currentColor" />
+						</svg>
+					</button>
+				</template>
 
-					<div v-else @click="send" class="send-btn">
-						<font-awesome-icon icon="fa-solid fa-chevron-up" />
-					</div>
-				</div>
+				<button
+					v-else
+					type="button"
+					class="pill-btn pill-btn--circle pill-btn--primary"
+					@click="send"
+					aria-label="Send"
+				>
+					<font-awesome-icon icon="fa-solid fa-arrow-up" />
+				</button>
 			</div>
 		</div>
 	</div>
@@ -98,6 +95,11 @@ export default {
 		redirectOnSend: {
 			type: Boolean,
 			default: false,
+		},
+		/** When set, disables animated placeholder rotation (FinBud chat). */
+		staticPlaceholder: {
+			type: String,
+			default: "",
 		},
 	},
 	data() {
@@ -143,7 +145,11 @@ export default {
 		window.addEventListener("dragover", this.onDragOver);
 		window.addEventListener("dragleave", this.onDragLeave);
 		window.addEventListener("drop", this.onFileDrop);
-		this.startTypingPlaceholder();
+		if (this.staticPlaceholder) {
+			this.typingPlaceholder = this.staticPlaceholder;
+		} else {
+			this.startTypingPlaceholder();
+		}
 	},
 
 	beforeUnmount() {
@@ -177,8 +183,13 @@ export default {
 			this.$refs.fileInput.value = "";
 		},
 		startTypingPlaceholder() {
+			if (this.staticPlaceholder) {
+				this.typingPlaceholder = this.staticPlaceholder;
+				return;
+			}
 			// Only run the animation if the input is not focused
-			if (document.activeElement === this.$el.querySelector("input")) {
+			const textEl = this.$refs.textInput;
+			if (textEl && document.activeElement === textEl) {
 				return;
 			}
 
@@ -214,6 +225,14 @@ export default {
 		},
 		triggerFileInput() {
 			this.$refs.fileInput.click();
+		},
+
+		onVoicePrimaryClick() {
+			if (this.isRecording) {
+				this.stopRecording();
+			} else {
+				this.startRecording();
+			}
 		},
 
 		async handleFileChange(event) {
@@ -419,75 +438,108 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: center;
-	padding: 10px 15px;
+	align-items: stretch;
+	padding: 0;
 	position: relative;
 	height: fit-content;
-	background-color: var(--card-bg);
-	border: 2px solid var(--border-color);
-	border-radius: 30px;
-}
-
-.input-container {
-	width: 100%;
-	position: relative;
-	margin-bottom: 0;
-	align-items: flex-start;
+	background: transparent;
+	border: none;
+	box-shadow: none;
 }
 
 .left-align {
-  align-self: flex-start; /* Force left alignment */
-  margin-left: 0; /* Remove any default margin */
-  margin-right: auto; /* Push to left */
+	align-self: flex-start;
+	margin-left: 0;
+	margin-right: auto;
 }
 
-.user-input input[type="text"] {
+.pill-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
 	width: 100%;
-	flex-grow: 1;
-	padding: 10px 20px;
+	padding: 6px 8px 6px 10px;
+	box-sizing: border-box;
+	background-color: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 9999px;
+	box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+}
+
+.pill-input {
+	flex: 1;
+	min-width: 0;
+	padding: 8px 6px;
 	border: none;
 	border-radius: 0;
 	background-color: transparent;
 	color: var(--text-primary);
-	transition: none;
 	box-sizing: border-box;
 	outline: none;
 	box-shadow: none;
 	font-size: 16px;
+	font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
-.user-input input[type="text"]:focus {
-	border-color: transparent;
+.pill-input:focus {
 	outline: none;
 	box-shadow: none;
 }
 
-.buttons-container {
+.pill-btn {
+	border: none;
+	background: none;
+	padding: 0;
+	font: inherit;
+}
+
+.pill-btn--circle {
+	width: 40px;
+	height: 40px;
+	min-width: 40px;
+	border-radius: 50%;
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	padding: 0 10px;
-	width: 100%;
-	margin-top: 10px;
+	justify-content: center;
+	flex-shrink: 0;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
-.left-buttons,
-.right-buttons {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	width: fit-content;
+.pill-btn--circle:active {
+	transform: scale(0.96);
 }
 
-.flex-spacer {
-	flex: 1;
-	min-width: 20px;
+.pill-btn--muted {
+	background-color: #f3f4f6;
+	color: #111827;
 }
 
-.upload-btn,
-.chat-mode-button,
-.mic-btn,
-.send-btn {
+.pill-btn--muted:hover {
+	background-color: #e5e7eb;
+}
+
+.pill-btn--muted.recording {
+	background-color: #fecaca;
+	color: #b91c1c;
+}
+
+.pill-btn--primary {
+	background-color: #111827;
+	color: #ffffff;
+}
+
+.pill-btn--primary:hover {
+	background-color: #000000;
+}
+
+.waveform-icon {
+	width: 20px;
+	height: 20px;
+	display: block;
+}
+
+.chat-mode-button {
 	position: relative;
 	cursor: pointer;
 	color: var(--link-color);
@@ -521,28 +573,42 @@ export default {
 	transform: scale(1.1);
 }
 
-.upload-btn:hover,
-.mic-btn:hover,
-.send-btn:hover {
-	color: var(--link-color);
-	transform: scale(1.1);
+.pill-input::placeholder {
+	color: #9ca3af;
+	opacity: 1;
 }
 
-.upload-btn:focus,
-.send-btn:focus {
-	outline: none;
-	box-shadow: 0 0 5px var(--shadow-color);
+:global(html.dark-mode) .pill-row {
+	background-color: var(--card-bg, #1f2937);
+	border-color: var(--border-color, #374151);
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Hiệu ứng nháy cho placeholder giống như con trỏ */
-input::placeholder {
-	animation: blink 1s step-end infinite;
+:global(html.dark-mode) .pill-btn--muted {
+	background-color: #374151;
+	color: #f9fafb;
 }
 
-@keyframes blink {
-	50% {
-		opacity: 0.5;
-	}
+:global(html.dark-mode) .pill-btn--muted:hover {
+	background-color: #4b5563;
+}
+
+:global(html.dark-mode) .pill-btn--muted.recording {
+	background-color: #7f1d1d;
+	color: #fecaca;
+}
+
+:global(html.dark-mode) .pill-btn--primary {
+	background-color: #f9fafb;
+	color: #111827;
+}
+
+:global(html.dark-mode) .pill-btn--primary:hover {
+	background-color: #e5e7eb;
+}
+
+:global(html.dark-mode) .pill-input::placeholder {
+	color: #9ca3af;
 }
 
 /* Remove or comment out the container query if not needed */

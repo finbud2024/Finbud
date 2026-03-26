@@ -1,5 +1,11 @@
 <template>
-	<div class="chat-view-container" :class="{ 'navbar-expanded': isNavbarExpanded }">
+	<div
+		class="chat-view-container"
+		:class="{
+			'navbar-expanded': isNavbarExpanded,
+			'chat-view--mobile': isMobile,
+		}"
+	>
 		<!-- Desktop Sidebar (Fixed, Toggles Visibility) -->
 		<SideBar
 			v-if="isAuthenticated && !isMobile"
@@ -30,31 +36,6 @@
 			<ChatComponent class="chat-component-instance" @initialThreadName="initialThreadName" ref="chatComponent" :autoMessage="autoMessage" :greeting="greeting" />
 		</div>
 
-		<!-- Guidance & Tutorial (Positioned relative to chat-view-container) -->
-		<div
-			class="guidance-btn"
-			id="tutorial-guidance-button"
-			:class="{ 'is-guidance-visible': showGuidance }"
-			@click="showGuidance = true"
-		>
-			<div class="guidance-image-container">
-				<img class="guidance-image" src="@/assets/botrmbg.png" alt="Finbud" />
-			</div>
-			<span class="guidance-text">{{ $t("chatComponent.guildence") }}</span>
-		</div>
-		<GuidanceModal
-			v-if="showGuidance"
-			@close="showGuidance = false"
-			@sendMessage="sendMessageToChat"
-			:showModal="showGuidance"
-		/>
-		<TutorialOverlay
-			:steps="tutorialSteps"
-			storageKey="finbudChatViewTutorialShown"
-			:autoStart="true"
-			@tutorial-completed="onTutorialCompleted"
-			ref="tutorialOverlay"
-		/>
 		<div v-if="overlayEnabled" class="new-window-overlay"></div>
 	</div>
 </template>
@@ -62,26 +43,20 @@
 <script>
 import ChatComponent from "@/components/ChatPage/ChatComponent.vue";
 import SideBar from "@/components/Basic/SideBar.vue";
-import GuidanceModal from "@/components/GuidanceModal.vue";
-import TutorialOverlay from "@/components/TutorialPage/TutorialOverlay.vue";
 
 export default {
 	name: "ChatView",
 	props: { chatBubbleThreadID: String },
-	components: { ChatComponent, SideBar, GuidanceModal, TutorialOverlay },
+	components: { ChatComponent, SideBar },
 	data() {
 		return {
 			isAuthenticated: false, // This should be derived from Vuex
 			isSidebarVisibleMobile: false,
 			isSidebarVisibleBigScreen: true, // Default for desktop
-			showGuidance: false,
 			overlayEnabled: false, // For new window pop-ups
 			newWindow: null,
 			windowCheckInterval: null,
 			newThreadName: "",
-			tutorialSteps: [
-				{ element: "#tutorial-guidance-button", message: "Click here for guidance on how to ask questions to FinBud!", title: "Need help with queries?" },
-			],
 			isNavbarExpanded: false,
 			isMobile: false,
 			nnavbarObserver: null,
@@ -101,9 +76,20 @@ export default {
     },
     isNavbarExpanded() {
 			this.syncSidebarWithNavbar();
-		}
+		},
+		isMobile() {
+			this.syncChatBodyScrollLock();
+		},
+		"$route.path"() {
+			this.syncChatBodyScrollLock();
+		},
   },
 	methods: {
+		syncChatBodyScrollLock() {
+			const lock = this.isMobile && this.$route.path === "/chat-view";
+			document.documentElement.classList.toggle("finbud-chat-mobile-lock", lock);
+			document.body.classList.toggle("finbud-chat-mobile-lock", lock);
+		},
 		updateAuthStatus() {
       this.isAuthenticated = this.$store.getters["users/isAuthenticated"];
     },
@@ -156,9 +142,6 @@ export default {
 			this.overlayEnabled = false; this.newWindow = null;
 		},
 		initialThreadName(name) { this.newThreadName = name; },
-		sendMessageToChat(message) { if (this.$refs.chatComponent) this.$refs.chatComponent.sendMessage(message); },
-		onTutorialCompleted() { console.log("ChatView Tutorial completed!"); },
-		restartTutorial() { if (this.$refs.tutorialOverlay) this.$refs.tutorialOverlay.resetTutorial(); },
 	},
 	mounted() {
 		this.updateAuthStatus(); // Initial auth status check
@@ -183,14 +166,13 @@ export default {
 			this.autoMessage = autoMessage;
 			this.greeting = false;
 		}
-		if (this.$route.query.showTutorial && this.$refs.tutorialOverlay) setTimeout(() => this.$refs.tutorialOverlay.resetTutorial(), 500);
+		this.syncChatBodyScrollLock();
 	},
 	beforeDestroy() {
+		document.documentElement.classList.remove("finbud-chat-mobile-lock");
+		document.body.classList.remove("finbud-chat-mobile-lock");
 		window.removeEventListener('resize', this.checkMobile);
 		if (this.navbarObserver) this.navbarObserver.disconnect();
-		const navbarElement = document.getElementById('nav-bar');
-    if (navbarElement) {
-    }
 		if (this.windowCheckInterval) clearInterval(this.windowCheckInterval);
 		window.removeEventListener("click", this.closeOnClickOutside);
 	},
@@ -200,6 +182,7 @@ export default {
 <style scoped>
 .chat-view-container {
 	display: flex;
+	flex-direction: column;
 	width: 100%;
 	min-height: 100vh;
 	background-color: var(--bg-primary);
@@ -207,20 +190,20 @@ export default {
 	padding-left: 80px; /* Collapsed NavBar width */
 	transition: padding-left 0.3s ease-in-out;
 	box-sizing: border-box;
-	position: relative; /* For absolute positioning of guidance btn */
+	position: relative;
 }
 
 .chat-view-container.navbar-expanded {
 	padding-left: 280px; /* Expanded NavBar width */
 }
 
-/* Desktop Sidebar Styling */
+/* Desktop Sidebar Styling — width matches SideBar (.side-bar) via --finbud-chat-sidebar-width */
 .sidebar-desktop {
 	position: fixed;
 	left: 80px; /* After collapsed NavBar */
 	top: 0;
 	height: 100vh;
-	width: 250px; /* Sidebar width */
+	width: var(--finbud-chat-sidebar-width, clamp(248px, 16vw, 280px));
 	overflow: hidden;
 	z-index: 990; /* Below NavBar (1000), Above Chat Area (10) */
 	transition: left 0.3s ease-in-out, width 0.25s ease-in-out;
@@ -255,14 +238,15 @@ export default {
 
 /* Main Chat Area Styling */
 .chat-main-area {
-	flex-grow: 1;
+	flex: 1;
 	display: flex;
 	flex-direction: column;
-	width: 100%; /* Will be constrained by chat-view-container padding */
+	width: 100%;
+	min-height: 0;
 	position: relative;
-	z-index: 10; /* Base for chat content */
+	z-index: 10;
 	box-sizing: border-box;
-	overflow: hidden; /* Prevent chat-main-area itself from scrolling */
+	overflow: hidden;
 }
 
 .chat-controls-header {
@@ -297,12 +281,12 @@ export default {
 }
 
 .chat-component-instance {
-	flex-grow: 1;
-	display: flex; /* Ensure it takes up space */
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 	width: 100%;
-	overflow-y: auto; /* ChatComponent scrolls its own content */
-	display: flex; /* Ensure it is a flex container if ChatComponent root expects to grow within flex */
-    flex-direction: column; /* Assuming ChatComponent stacks content vertically */
+	min-height: 0;
+	overflow: hidden;
 }
 
 /* Overlay for new window pop-ups */
@@ -313,89 +297,22 @@ export default {
 	z-index: 1080; /* Highest for pop-ups */
 }
 
-/* Guidance Button & Modal - Z-indexing */
-.guidance-btn {
-	position: fixed;
-	bottom: 30px;
-	right: 30px;
-	z-index: 1000;
-	/* Added styles for desktop appearance and layout */
-	display: flex;
-	align-items: center;
-	padding: 8px 12px; /* Adjust padding as needed */
-	background-color: var(--card-bg); /* Use theme variable */
-	border-radius: 20px; /* Rounded corners */
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	cursor: pointer;
-	transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.guidance-btn:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* New styles for desktop image container */
-.guidance-image-container {
-	width: 40px; /* Desktop image container size */
-	height: 40px;
-	margin-right: 8px; /* Space between image and text */
-	overflow: hidden; /* Crucial to contain the image */
-	border-radius: 50%; /* Make the image container circular */
-	flex-shrink: 0; /* Prevent shrinking */
-}
-
-/* New styles for desktop image */
-.guidance-image {
-	width: 100%;
-	height: 100%;
-	object-fit: cover; /* Ensures the image covers the container, might crop */
-	display: block;
-}
-
-.guidance-text {
-	font-size: 0.9rem;
-	color: var(--text-primary); /* Use theme variable */
-	font-weight: 500;
-}
-
 @media (max-width: 768px) {
-	.chat-view-container, .chat-view-container.navbar-expanded {
-		padding-left: 0; /* NavBar is typically overlaid or hidden on mobile */
+	.chat-view-container.chat-view--mobile,
+	.chat-view-container.chat-view--mobile.navbar-expanded {
+		padding-left: 0;
+		height: 100dvh;
+		max-height: 100dvh;
+		min-height: 0;
+		overflow: hidden;
 	}
+
 	.desktop-sidebar-toggle-btn {
 		display: none;
 	}
-  .chat-controls-header {
-    padding-left: 15px; /* Ensure mobile toggle isn't at very edge */
-  }
-	/* Adjust guidance button for mobile */
-	.guidance-btn {
-		width: 60px; 
-		height: 60px;
-		border-radius: 50%;
-		right: 15px; 
-		bottom: 15px;
-		padding: 0; /* Remove padding for circular button if image container takes full space */
-		justify-content: center; /* Center the image container if it's the only child visible */
+	.chat-controls-header {
+		padding-left: 15px;
 	}
-	.guidance-text { 
-		display: none; 
-	}
-	.guidance-image-container { 
-		margin: 0; /* Remove margin if centered by flex parent */
-		width: 45px;  /* Slightly smaller image for the 60px button */
-		height: 45px;
-	}
-    /* .guidance-image styling for mobile can remain as is if it works, or inherit from desktop */
-    /* The explicit width/height for .guidance-image in mobile (35px) might be too small if container is 45px.
-       Let's ensure it fills its container on mobile too.
-    */
-    .guidance-image { /* Overriding for mobile if necessary, or just rely on desktop's 100% if container is sized */
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
 }
 
 /* Remaining styles from before, ensure they don't conflict */

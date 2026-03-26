@@ -5,9 +5,8 @@ import SignUp from "@/views/Authentication/SignUpPage.vue";
 import Home from "@/views/Home/HomePage.vue";
 import ChatPage from "@/views/Chat/ChatPage.vue";
 import SideBar from "@/components/Basic/SideBar.vue";
-import TechnologyPage from "@/views/Overview/TechnologyPage.vue";
 import PricingPage from "@/views/Unused/PricingPage.vue";
-import AboutUsPage from "@/views/Overview/AboutUsPage.vue";
+import AboutTechnologyPage from "@/views/Overview/AboutTechnologyPage.vue";
 import StockSimulator from "@/views/FinInvest/StockSimulatorPage.vue";
 import RiskAnalysis from "@/views/FinManage/RiskAnalysisPage.vue";
 import GoalPage from "@/views/FinManage/GoalPage.vue";
@@ -52,8 +51,7 @@ const routes = [
   },
   {
     path: "/tech",
-    name: "TechnologyPage",
-    component: TechnologyPage,
+    redirect: { path: "/about", hash: "#technology" },
   },
   {
     path: "/pricing",
@@ -67,8 +65,8 @@ const routes = [
   },
   {
     path: "/about",
-    name: "AboutUsPage",
-    component: AboutUsPage,
+    name: "AboutTechnologyPage",
+    component: AboutTechnologyPage,
   },
   {
     path: "/stock-simulator",

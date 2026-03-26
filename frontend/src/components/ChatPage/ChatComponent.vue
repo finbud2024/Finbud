@@ -1,5 +1,13 @@
 <template>
-  <div class="chat-container">
+  <div class="chat-container finbud-chat">
+    <section
+      v-if="showWelcomeHero"
+      class="finbud-hero"
+      aria-label="FinBud welcome"
+    >
+      <p class="finbud-slogan">We speak finance</p>
+      <div class="finbud-hero-copy" v-html="welcomeHeroHtml"></div>
+    </section>
     <ChatFrame class="chat-frame-content">
       <div v-for="(message, index) in messages" :key="index">
         <FileIndicator v-if="message.containFile" :file="message.file" />
@@ -25,6 +33,8 @@
           :sources="message.isUser ? [] : message.sources"
           :videos="message.isUser ? [] : message.videos"
           :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
+          :mentor-parts="message.mentorParts"
+          :finance-card="message.financeCard"
           @question-click="handleQuestionClick"
         />
 
@@ -71,13 +81,14 @@
       </div>
     </ChatFrame>
     <ChatSuggestion
-      v-if="showSuggestion"
+      v-if="showWelcomeChips"
       :lan="this.$i18n.locale"
       class="suggestion-wrapper"
       @suggestion-selected="handleSuggestion"
     />
     <UserInput
       ref="userInput"
+      :static-placeholder="finbudInputPlaceholder"
       @send-message="handleUserSubmit"
       @chat-mode="handleChatMode"
     />
@@ -176,8 +187,54 @@ export default {
 				require("@/assets/anonymous.png")
 			);
 		},
-		showSuggestion() {
-			return this.messages.length === 1;
+		showWelcomeChips() {
+			if (!this.greeting || this.autoMessage) return false;
+			return this.messages.length === 0;
+		},
+		showWelcomeHero() {
+			return this.showWelcomeChips;
+		},
+		welcomeHeroHtml() {
+			const vi = this.$i18n.locale === "vi";
+			if (vi) {
+				if (!this.isAuthenticated) {
+					return [
+						"Chào bạn 👋",
+						"Anh là FinBud — <em>we speak finance</em>",
+						"Tụi mình nói chuyện tiền bạc theo cách dễ hiểu, không cần thuật ngữ hàn lâm.",
+						"<span class=\"finbud-hero-hint\">Đăng nhập để lưu hội thoại và dùng đủ tính năng nhé.</span>",
+						"Bạn muốn bắt đầu từ đâu?",
+					].join("<br>");
+				}
+				return [
+					"Chào em 👋",
+					"Anh là FinBud — <em>we speak finance</em>",
+					"Tụi mình sẽ nói về tiền theo cách dễ hiểu hơn",
+					"Không cần biết quá nhiều thuật ngữ",
+					"Em muốn bắt đầu từ đâu?",
+				].join("<br>");
+			}
+			if (!this.isAuthenticated) {
+				return [
+					"Hey there 👋",
+					"I'm FinBud — <em>we speak finance</em>",
+					"We'll talk about money in plain language—no jargon required.",
+					"<span class=\"finbud-hero-hint\">Sign in to save chats and unlock the full experience.</span>",
+					"Where would you like to start?",
+				].join("<br>");
+			}
+			return [
+				"Hi there 👋",
+				"I'm FinBud — <em>we speak finance</em>",
+				"We'll unpack money together in a calmer, clearer way.",
+				"No need to master every term first.",
+				"Where do you want to begin?",
+			].join("<br>");
+		},
+		finbudInputPlaceholder() {
+			return this.$i18n.locale === "vi"
+				? "Hỏi về tiền, cổ phiếu, hoặc mục tiêu của em..."
+				: "Ask about money, stocks, or your goals...";
 		},
 	},
 	watch: {
@@ -1547,11 +1604,6 @@ Bạn là FinBud — trợ lý tài chính.
     async updateCurrentThread(threadID) {
       try {
         this.messages = [];
-        let botInstruction = `Hế lô ${this.displayName} 👋\nBấm vào "Hướng dẫn" ở góc phải màn hình hoặc thử chat`;
-        if (this.$i18n.locale != "vi") {
-          botInstruction = `Hello ${this.displayName} 👋\nPlease click \"Guidance\" for detailed instructions on how to use the chatbot`;
-        }
-        await this.addTypingResponse(botInstruction, false);
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
         const chats = await axios.get(chatApi);
         const chatsData = chats.data;
@@ -1810,20 +1862,7 @@ Please write a short, friendly explanation telling the user why you cannot categ
     },
   },
   mounted() {
-    const hasMessages = this.messages.length > 0;
-
-    if (this.greeting && !hasMessages) {
-      let botInstruction;
-      if (!this.isAuthenticated) {
-        botInstruction = `Hello, Guest!\nPlease click "Guidance" for detailed instructions on how to use the chatbot.\nAlso, sign in to access the full functionality of Finbud!`;
-      } else if (!this.currentThreadID) {
-        botInstruction = `Hello, ${this.displayName} 👋\nHow can I help you today?`;
-      }
-
-      if (botInstruction) {
-        this.addTypingResponse(botInstruction, false);
-      }
-    }
+    // Welcome is shown via hero + chips when messages are empty (see showWelcomeHero).
   },
 };
 </script>
@@ -1832,27 +1871,78 @@ Please write a short, friendly explanation telling the user why you cannot categ
 .chat-container {
   width: 100%;
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   position: relative;
   container-type: size;
   container-name: messageComponent userInputComponent;
+  overflow: hidden;
 
-  --content-max-width: 800px;
-  /* Define max width */
-  --content-padding-horizontal: 15px;
-  /* Define horizontal padding */
+  --content-max-width: 600px;
+  --content-padding-horizontal: 20px;
+}
+
+.finbud-chat {
+  background: linear-gradient(180deg, #fafbfc 0%, #f4f6f9 100%);
+  min-height: 0;
+  flex: 1;
+}
+
+.finbud-hero {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 28px var(--content-padding-horizontal) 8px;
+  box-sizing: border-box;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.finbud-slogan {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #22a36a;
+  margin: 0 0 16px;
+}
+
+.finbud-hero-copy {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: #2d3142;
+  text-align: left;
+  max-width: 100%;
+}
+
+.finbud-hero-copy :deep(em) {
+  font-style: normal;
+  font-weight: 600;
+  color: #1a1d26;
+}
+
+.finbud-hero-copy :deep(.finbud-hero-hint) {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.9375rem;
+  color: #5c6378;
 }
 
 .chat-frame-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
   margin-bottom: 10px;
-  padding: 20px var(--content-padding-horizontal) 0;
+  padding: 12px var(--content-padding-horizontal) 0;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
 .messages-container {
@@ -2018,6 +2108,15 @@ Please write a short, friendly explanation telling the user why you cannot categ
 }
 
 .suggestion-wrapper {
-  width: 90%;
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--content-padding-horizontal);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.chat-container :deep(.user-input-container) {
+  flex-shrink: 0;
 }
 </style>

@@ -53,11 +53,13 @@
     padding: 20px;
     border-radius: 10px;
     width: 23%;
+    min-width: 0;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-right: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    box-sizing: border-box;
   }
   
   .section-header {
@@ -79,9 +81,10 @@
   }
   
   .crypto-table-wrapper {
-    overflow-x: hidden;
-    overflow-y: hidden; 
-    white-space: nowrap; 
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
   }
   
   .crypto-table {
@@ -169,14 +172,17 @@
   /* Responsive Design */
   @media (max-width: 992px) {
     .top-series-container {
-      width: 48%;
+      width: calc(50% - 8px);
+      max-width: 100%;
+      margin-right: 0;
       margin-bottom: 20px;
     }
   }
-  
+
   @media (max-width: 768px) {
     .top-series-container {
       width: 100%;
+      margin-right: 0;
       margin-bottom: 20px;
     }
   }

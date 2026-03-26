@@ -7,6 +7,8 @@ const messages = {
 
     overview: "Overview",
     about: "About",
+    aboutTechnologyNav: "About & Technology",
+    aboutSectionLabel: "About us",
     technology: "Technology",
     finManage: "Fin Manage",
     goal: "Goal",
@@ -25,6 +27,20 @@ const messages = {
     lightMode: "Light Mode",
     logout: "Log Out",
     chat: "Chat",
+
+    finSpeak: {
+      slogan: "We speak finance",
+      marketDataLead:
+        "Stocks, crypto, and real estate — clearer data for clearer decisions.",
+      stockSimulatorLead:
+        "Practice with live-style charts. Learn markets by doing.",
+      superInvestorsLead:
+        "How legendary investors deploy capital — explained in plain language.",
+      investmentCalcLead:
+        "Compound growth, rate, and contributions — visualized simply.",
+      mortgageCalcLead:
+        "Payments, equity, and total cost — without spreadsheet headaches.",
+    },
 
     //Old
     title: "Mortgage Payment Calculator",
@@ -1397,6 +1413,8 @@ const messages = {
     //Nav Bar
     overview: "Tổng quan",
     about: "Giới thiệu",
+    aboutTechnologyNav: "Giới thiệu & Công nghệ",
+    aboutSectionLabel: "Về chúng tôi",
     technology: "Công nghệ",
     finManage: "Fin Quản lý",
     goal: "Chi tiêu",
@@ -1417,6 +1435,20 @@ const messages = {
     lightMode: "Chế độ sáng",
     logout: "Đăng xuất",
     chat: "Chat",
+
+    finSpeak: {
+      slogan: "We speak finance",
+      marketDataLead:
+        "Cổ phiếu, crypto và bất động sản — dữ liệu rõ ràng để quyết định tự tin.",
+      stockSimulatorLead:
+        "Luyện tập với biểu đồ gần thời gian thực. Học thị trường qua thực hành.",
+      superInvestorsLead:
+        "Cách các nhà đầu tư huyền thoại phân bổ vốn — diễn giải dễ hiểu.",
+      investmentCalcLead:
+        "Lãi kép, lãi suất và góp thêm — trực quan, đơn giản.",
+      mortgageCalcLead:
+        "Thanh toán, vốn chủ và tổng chi phí — không cần bảng tính rối mắt.",
+    },
 
     //Old
     title: "Máy Tính Khoản Thanh Toán Thế Chấp",

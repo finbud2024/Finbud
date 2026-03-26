@@ -187,7 +187,7 @@ export default {
       });
     }, observerOptions);
 
-    const elements = document.querySelectorAll('.animate');
+    const elements = this.$el.querySelectorAll('.animate');
     elements.forEach(el => observer.observe(el));
   }
 }

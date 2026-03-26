@@ -337,7 +337,9 @@ export default {
 
 <style scoped>
 .side-bar {
-  width: 280px;
+  width: var(--finbud-chat-sidebar-width, clamp(248px, 16vw, 280px));
+  max-width: 100vw;
+  box-sizing: border-box;
   background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
   padding: 20px;
   height: 100vh;
@@ -593,6 +595,8 @@ input:focus {
 @media (max-width: 768px) {
   .side-bar {
     box-shadow: none;
+    width: var(--finbud-mobile-drawer-width, min(272px, calc(100vw - 56px)));
+    max-width: var(--finbud-mobile-drawer-width, min(272px, calc(100vw - 56px)));
   }
 }
 

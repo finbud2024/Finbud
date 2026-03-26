@@ -586,6 +586,22 @@ export default {
   font-weight: 500;
 }
 
+.market-summary {
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #000;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+.market-summary h3 {
+  margin: 0 0 0.5rem 0;
+}
+
 /* Responsive Design - Updated for 3 columns layout */
 @media (max-width: 1200px) {
   .stock-item {
@@ -596,6 +612,35 @@ export default {
 @media (max-width: 992px) {
   .stock-item {
     width: calc(33.333% - 14px);
+  }
+}
+
+/* Avoid three squeezed columns on small tablets */
+@media (max-width: 900px) {
+  .stock-row {
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+
+  .stock-item {
+    width: 100%;
+    flex: none;
+    box-sizing: border-box;
+  }
+
+  .card-content {
+    flex-direction: row;
+    min-height: auto;
+  }
+
+  .stock-company {
+    width: 40%;
+  }
+
+  .stock-details {
+    width: 60%;
   }
 }
 

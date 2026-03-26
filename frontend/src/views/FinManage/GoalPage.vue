@@ -1013,6 +1013,10 @@ export default {
   min-height: 100vh;
   background: linear-gradient(135deg, #000000 0%, #333333 100%);
   padding: 2rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Page Header */
@@ -1579,6 +1583,7 @@ export default {
 @media (max-width: 768px) {
   .goal-page {
     padding: 1rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
   
   .header-content {
@@ -1683,11 +1688,23 @@ export default {
   .insights-card {
     padding: 1rem;
   }
+
+  .content-section {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-content {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 }
 
 @media (max-width: 480px) {
   .goal-page {
     padding: 0.75rem;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
   
   .page-title h1 {

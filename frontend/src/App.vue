@@ -124,19 +124,14 @@ export default {
       }
 
       const storedDarkMode = localStorage.getItem("darkMode");
-      if (storedDarkMode !== null) {
-        if (storedDarkMode === "true") {
-          document.documentElement.classList.add("dark-mode");
-          document.body.classList.add("dark-mode");
-        } else {
-          document.documentElement.classList.remove("dark-mode");
-          document.body.classList.remove("dark-mode");
-        }
-      } else {
+      if (storedDarkMode === "true") {
+        document.documentElement.classList.add("dark-mode");
+        document.body.classList.add("dark-mode");
+      } else if (storedDarkMode === "false") {
         document.documentElement.classList.remove("dark-mode");
         document.body.classList.remove("dark-mode");
-        localStorage.setItem("darkMode", "false");
       }
+      /* If unset (null), keep whatever IIFE / user already applied — do not force light */
     }
 
     if (this.$route.query.showTutorial === "true") {
@@ -276,6 +271,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
+  color-scheme: light;
   --finbudBotMessageBG: #c8c5c5;
   --finbudBotMessageColor: #000000;
   --finbudBotMessageBorderColor: #000000;
@@ -293,8 +289,8 @@ export default {
   --progress-color: #c8c5c5;
   --logo-color: #000000;
   --chat-text-color: #000000;
-  --chat-assistant-bg-color: var(--bg-primary);
-  --chat-assistant-text-color: var(--text-primary);
+  --chat-assistant-bg-color: #f7f8fa;
+  --chat-assistant-text-color: #1a1d26;
   --chat-assistant-link-color: #0f6cbd;
   --chat-assistant-code-bg-color: #f3f4f6;
   --chat-user-bg-color: #f8f4f4;
@@ -304,24 +300,27 @@ export default {
   --agent-button-bg-active-color: #000000;
   --black-in-dark-mode: #ffffff;
   --white-in-dark-mode: #000000;
-
+  /* Chat thread list rail: ~ChatGPT (~15–18% width, cap ~280px) */
+  --finbud-chat-sidebar-width: clamp(248px, 16vw, 280px);
+  /* Mobile slide-out menus (main nav + chat threads): narrow rail, leave ~56px content peek */
+  --finbud-mobile-drawer-width: min(272px, calc(100vw - 56px));
 }
 
 :root.dark-mode,
 body.dark-mode {
-  /* Dark theme */
-  --bg-primary: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #d0d0d0;
+  /* Dark theme — neutral surfaces (avoid mauve #736969 banding) */
+  --bg-primary: #12141a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
   --nav-bg: transparent;
-  --border-color: #404040;
-  --link-color: #ffffff;
-  --hover-bg: #024384;
-  --card-bg: #2d2d2d;
-  --shadow-color: #0a6b10;
+  --border-color: #334155;
+  --link-color: #e2e8f0;
+  --hover-bg: #1e293b;
+  --card-bg: #1e293b;
+  --shadow-color: rgba(0, 0, 0, 0.35);
   --progress-color: #e9e2e2;
-  --logo-color: #000000;
-  --content-bg: #736969;
+  --logo-color: #f1f5f9;
+  --content-bg: #12141a;
   --chat-text-color: #ffffff;
   --chat-assistant-bg-color: var(--bg-primary);
   --chat-assistant-text-color: var(--text-primary);
@@ -333,11 +332,83 @@ body.dark-mode {
   --white-in-light-mode: #000000;
   --agent-button-bg-color: #000000;
   --agent-button-bg-active-color: #ffffff;
-  --black-in-dark-mode: #0f0f14;
-  --white-in-dark-mode: #ffffff;
-  --dark-grey: #0f0f14;
-
+  --black-in-dark-mode: #0b0d12;
+  --white-in-dark-mode: #f8fafc;
+  --dark-grey: #0b0d12;
 }
+
+html.dark-mode {
+  color-scheme: dark;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+html.dark-mode body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Fin Invest — shared “We speak finance” surface (aligned with chat hero) */
+.fin-speak-page {
+  --fin-speak-accent: #22a36a;
+  --fin-speak-heading: #1a1d26;
+  --fin-speak-text: #2d3142;
+  --fin-speak-muted: #5c6378;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: var(--fin-speak-text);
+  background: linear-gradient(180deg, #fafbfc 0%, #f4f6f9 100%) !important;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.dark-mode .fin-speak-page {
+  --fin-speak-accent: #34d399;
+  --fin-speak-heading: #f8fafc;
+  --fin-speak-text: #e2e8f0;
+  --fin-speak-muted: #94a3b8;
+  /* Bottom stop matches --bg-primary for seamless blend with #app */
+  background: linear-gradient(180deg, #161922 0%, #12141a 100%) !important;
+  color: var(--fin-speak-text);
+}
+
+.fin-speak-eyebrow {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fin-speak-accent, #22a36a);
+  margin: 0 0 0.75rem;
+  text-align: center;
+}
+
+.fin-speak-hero-block {
+  text-align: center;
+  max-width: 42rem;
+  margin: 0 auto 1.5rem;
+  padding: 0.5rem 1rem 0;
+}
+
+.fin-speak-page-title {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: clamp(1.65rem, 3.5vw, 2.15rem);
+  font-weight: 700;
+  color: var(--fin-speak-heading, #1a1d26);
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.fin-speak-lead {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--fin-speak-muted, #5c6378);
+  margin: 0;
+}
+
 /* Update content area */
 .content-wrapper {
   background-color: var(--content-bg);
@@ -345,9 +416,11 @@ body.dark-mode {
   position: relative;
   z-index: 1;
   width: 100%;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 
 #app-container {
@@ -367,6 +440,10 @@ body.dark-mode {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 /* Expand margin when navbar is hovered or expanded */
@@ -387,20 +464,68 @@ body.dark-mode {
   }
 }
 
-/* Add transition for all elements */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease;
+/* Chat view on mobile: lock document scroll; messages scroll inside chat frame */
+html.finbud-chat-mobile-lock,
+body.finbud-chat-mobile-lock {
+  overflow: hidden !important;
+  height: 100% !important;
+  max-height: 100dvh;
 }
 
-/* Update common elements */
+@media (max-width: 768px) {
+  html.finbud-chat-mobile-lock #app,
+  body.finbud-chat-mobile-lock #app {
+    height: 100%;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  html.finbud-chat-mobile-lock .nav-actions,
+  body.finbud-chat-mobile-lock .nav-actions {
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 100dvh;
+  }
+
+  html.finbud-chat-mobile-lock .content-wrapper,
+  body.finbud-chat-mobile-lock .content-wrapper {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    align-items: stretch;
+  }
+}
+
+/* Theme transitions — keep narrow to avoid layout thrash / broken paints in dark mode */
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  #app,
+  .content-wrapper {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+/* Surfaces — do not target .container globally (breaks mixed layouts & dark mode) */
 .card,
-.container,
-.dropdown-menu,
-.nav-actions {
-  background-color: var(--bg-primary);
+.dropdown-menu {
+  background-color: var(--card-bg);
   color: var(--text-primary);
   border-color: var(--border-color);
+}
+
+.nav-actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: transparent;
+  color: inherit;
 }
 
 .dark-mode .nav-bar {
@@ -416,13 +541,25 @@ body {
   min-height: 100%;
   margin: 0;
   padding: 0;
-  font-family: Noto sans, sans-serif;
-  overflow-x: none;
+  font-family: "Noto Sans", system-ui, sans-serif;
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 html {
   height: 100%;
-  scrollbar-gutter: auto;
+  scrollbar-gutter: stable;
+  background-color: var(--bg-primary);
+}
+
+/* Default link appearance (theme-aware; avoid hard-coded black borders) */
+a {
+  color: var(--link-color);
+}
+
+a:hover {
+  color: var(--text-primary);
 }
 </style>
 
@@ -433,16 +570,8 @@ html {
 
 .content-wrapper {
   flex: 1;
-}
-
-a {
-  text-decoration: none;
-  color: #000000;
-  border: 1px solid #000000;
-}
-
-a:hover {
-  background-color: #f5f5f5;
+  min-width: 0;
+  min-height: 0;
 }
 
 .bot-message-container {

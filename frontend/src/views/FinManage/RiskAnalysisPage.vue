@@ -1,5 +1,5 @@
 <template>
-	<div class="container risk-analysis-page">
+	<div class="container risk-analysis-page fin-speak-page">
 		<!-- Bot Chat Component - Consistently on the right -->
 		<div class="bot-chat-container" :class="{ 'bot-hidden': hidingBot }">
 			<div class="bot-message" :class="{
@@ -16,7 +16,11 @@
 
 		<!-- Market Data Section -->
 		<section class="market-section">
-			<h1 class="page-title">Market Data Center</h1>
+			<header class="fin-speak-hero-block">
+				<p class="fin-speak-eyebrow">{{ $t('finSpeak.slogan') }}</p>
+				<h1 class="fin-speak-page-title">{{ $t('riskAnalysis') }}</h1>
+				<p class="fin-speak-lead">{{ $t('finSpeak.marketDataLead') }}</p>
+			</header>
 
 			<!-- Sub Navigation Bar -->
 			<div class="sub-nav-container">
@@ -540,7 +544,7 @@ Give me a concise overall summary of these combined markets.
 
 <style scoped>
 .risk-analysis-page {
-	background-color: var(--bg-secondary, #f8fafc);
+	background: transparent;
 	min-height: 100vh;
 	padding-top: 1rem;
 }
@@ -554,16 +558,8 @@ Give me a concise overall summary of these combined markets.
 	box-sizing: border-box;
 }
 
-.page-title {
-	font-size: 2.5rem;
-	font-weight: 700;
-	text-align: center;
-	margin: 1rem 0 2rem 0;
-	color: #000;
-	letter-spacing: -0.5px;
-}
-.dark-mode .page-title {
-	color: #000;
+.risk-analysis-page .fin-speak-page-title {
+	margin-bottom: 0.25rem;
 }
 
 .market-section {
@@ -577,16 +573,22 @@ Give me a concise overall summary of these combined markets.
 	justify-content: center;
 	margin-bottom: 2.5rem;
 	padding: 0 1rem;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .sub-nav {
 	display: flex;
 	justify-content: center;
+	flex-wrap: wrap;
 	gap: 0.75rem;
 	background-color: var(--card-bg, #ffffff);
 	padding: 0.5rem;
 	border-radius: 12px;
 	box-shadow: var(--shadow-md, 0 4px 15px rgba(0, 0, 0, 0.08));
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .tab-button {
@@ -628,6 +630,7 @@ Give me a concise overall summary of these combined markets.
 	margin: 0 auto;
 	width: 100%;
 	max-width: 1300px;
+	min-width: 0;
 	padding: 0 1rem;
 	box-sizing: border-box;
 }
@@ -661,22 +664,45 @@ Give me a concise overall summary of these combined markets.
 	padding: 1.5rem;
 	margin-bottom: 2rem;
 	transition: all 0.3s ease;
+	min-width: 0;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
-.data-card:hover {
-	transform: translateY(-4px);
-	box-shadow: var(--shadow-lg, 0 8px 25px rgba(0,0,0,0.12));
+@media (hover: hover) and (pointer: fine) {
+	.data-card:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--shadow-lg, 0 8px 25px rgba(0, 0, 0, 0.12));
+	}
 }
 
 .table-responsive-wrapper {
 	overflow-x: auto;
 	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	-webkit-overflow-scrolling: touch;
+	border-radius: 12px;
+	box-sizing: border-box;
+	overscroll-behavior-x: contain;
+}
+
+/* Large screens: horizontal scroll instead of squashing narrow columns */
+@media (min-width: 992px) {
+	.table-responsive-wrapper {
+		border: 1px solid var(--border-color, #e2e8f0);
+		background: var(--card-bg, #fff);
+	}
+	.custom-table {
+		min-width: 640px;
+	}
 }
 
 .custom-table {
 	width: 100%;
 	border-collapse: collapse;
 	margin: 0;
+	table-layout: auto;
 }
 
 .custom-table th,
@@ -684,7 +710,21 @@ Give me a concise overall summary of these combined markets.
 	padding: 0.9rem 1rem;
 	text-align: left;
 	border-bottom: 1px solid var(--border-color, #e2e8f0);
-	white-space: nowrap;
+	vertical-align: top;
+}
+
+@media (min-width: 992px) {
+	.custom-table th,
+	.custom-table td {
+		white-space: nowrap;
+	}
+	/* Long addresses: allow wrap on wide tables */
+	.estate-table th:nth-child(2),
+	.estate-table td:nth-child(2) {
+		white-space: normal;
+		max-width: min(320px, 28vw);
+		word-break: break-word;
+	}
 }
 
 .custom-table th {
@@ -861,17 +901,133 @@ Give me a concise overall summary of these combined markets.
 	40% { transform: scale(1.0); }
 }
 
+@media (max-width: 991px) {
+	.sub-nav-container {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		justify-content: flex-start;
+		padding: 0 0.5rem;
+	}
+	.sub-nav-container .sub-nav {
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		min-width: min-content;
+	}
+	.tab-button {
+		flex-shrink: 0;
+	}
+
+	.table-responsive-wrapper {
+		overflow-x: visible;
+		border: none;
+		background: transparent;
+	}
+
+	.custom-table {
+		min-width: 0;
+		display: block;
+		width: 100%;
+	}
+
+	.custom-table thead {
+		display: none;
+	}
+
+	.custom-table tbody {
+		display: block;
+		width: 100%;
+	}
+
+	.custom-table tr {
+		display: block;
+		margin-bottom: 1rem;
+		border: 1px solid var(--border-color, #e2e8f0);
+		border-radius: 12px;
+		overflow: hidden;
+		background: var(--card-bg, #ffffff);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+	}
+
+	.custom-table td {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 0.75rem;
+		width: 100%;
+		box-sizing: border-box;
+		border-bottom: 1px solid var(--border-color, #e2e8f0);
+		padding: 0.75rem 1rem;
+		text-align: right;
+		font-size: 0.875rem;
+		white-space: normal;
+		word-break: break-word;
+	}
+
+	.custom-table tr td:last-child {
+		border-bottom: none;
+	}
+
+	.custom-table td::before {
+		content: attr(data-label);
+		font-weight: 600;
+		color: var(--text-secondary, #64748b);
+		text-align: left;
+		flex-shrink: 0;
+		max-width: 42%;
+		text-transform: uppercase;
+		font-size: 0.65rem;
+		letter-spacing: 0.04em;
+		line-height: 1.4;
+		padding-top: 0.15rem;
+	}
+
+	.custom-table td[colspan] {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	}
+
+	.custom-table td[colspan]::before {
+		display: none;
+	}
+
+	.custom-table td.crypto-name-cell {
+		flex-direction: column;
+		align-items: flex-start;
+		text-align: left;
+	}
+
+	.custom-table td.crypto-name-cell::before {
+		max-width: 100%;
+		margin-bottom: 0.35rem;
+	}
+
+	.custom-table .crypto-name-cell span {
+		text-align: left;
+	}
+
+	.table-row-hover:active td {
+		background-color: var(--hover-bg-table, #f1f5f9);
+	}
+}
+
 @media (max-width: 768px) {
 	.page-title { font-size: 2rem; }
 	.market-section { padding: 0 0.75rem; }
-	.sub-nav-container { margin-bottom: 1.5rem; padding: 0 0.5rem;}
+	.sub-nav-container {
+		margin-bottom: 1.5rem;
+	}
 	.sub-nav { gap: 0.5rem; padding: 0.4rem; }
-	.tab-button { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+	.tab-button {
+		padding: 0.5rem 0.8rem;
+		font-size: 0.85rem;
+	}
 	.market-data-content { padding: 0 0.5rem; }
 	.section-title { font-size: 1.4rem; margin: 1.5rem 0 1rem 0; }
 	.data-card { padding: 1rem; border-radius: 12px;}
-	
-	.custom-table th, .custom-table td { padding: 0.7rem 0.8rem; font-size: 0.85rem; }
+
 	.crypto-icon { width: 22px; height: 22px; margin-right: 0.5rem; }
 
 	.bot-chat-container {
@@ -888,7 +1044,6 @@ Give me a concise overall summary of these combined markets.
 	.page-title { font-size: 1.75rem; }
 	.tab-button { gap: 0.25rem; }
 	.tab-button .tab-icon { display: none; }
-	.custom-table th, .custom-table td { font-size: 0.8rem; padding: 0.6rem 0.7rem; }
 	.crypto-icon { width: 20px; height: 20px; }
 }
 </style>

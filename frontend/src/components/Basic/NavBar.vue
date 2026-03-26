@@ -85,6 +85,10 @@
           <div class="dropdown-content" v-show="activeDropdown === 'finInvest'">
             <router-link to="/stock-simulator">{{ $t("simulator") }}</router-link>
             <router-link to="/fund-letter">{{ $t("FundLetter")}}</router-link>
+            <router-link to="/market-data-center">{{ $t("riskAnalysis") }}</router-link>
+            <router-link to="/investment-calculator">{{ $t("investmentCalculator") }}</router-link>
+            <router-link to="/mortgage-calc">{{ $t("mortgageCalculator") }}</router-link>
+            <router-link to="/super-investors">{{ $t("superInvestors") }}</router-link>
           </div>
         </li>
 
@@ -96,10 +100,6 @@
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'finManage'">
             <router-link to="/goal">{{ $t("goal") }}</router-link>
-            <router-link to="/market-data-center">{{ $t("riskAnalysis") }}</router-link>
-            <router-link to="/investment-calculator">{{ $t("investmentCalculator") }}</router-link>
-            <router-link to="/mortgage-calc">{{ $t("mortgageCalculator") }}</router-link>
-            <router-link to="/super-investors">{{ $t("superInvestors") }}</router-link>
           </div>
         </li>
 
@@ -129,8 +129,7 @@
             <span class="arrow-down"></span>
           </div>
           <div class="dropdown-content" v-show="activeDropdown === 'overview'">
-            <router-link to="/about">{{ $t("about") }}</router-link>
-            <router-link to="/tech">{{ $t("technology") }}</router-link>
+            <router-link to="/about">{{ $t("aboutTechnologyNav") }}</router-link>
           </div>
         </li>
       </ul>
@@ -1059,7 +1058,8 @@ export default {
 /* Mobile styles */
 @media (max-width: 768px) {
   .nav-bar {
-    width: min(86vw, 320px);
+    width: var(--finbud-mobile-drawer-width, min(272px, calc(100vw - 56px)));
+    max-width: var(--finbud-mobile-drawer-width, min(272px, calc(100vw - 56px)));
     transform: translateX(calc(-100% - 16px));
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;

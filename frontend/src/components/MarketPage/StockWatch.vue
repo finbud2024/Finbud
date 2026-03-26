@@ -175,6 +175,7 @@ export default {
   margin: 0 auto;
   padding: 20px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .header {
@@ -191,6 +192,9 @@ export default {
   background-color: #f9f9f9;
   border-radius: 5px;
   color: #000;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .market-summary h3 {
@@ -353,22 +357,40 @@ export default {
   margin: 10px 0;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
+/* Responsive: stack cards on narrow screens; scroll row only on large screens */
+@media (max-width: 900px) {
+  .stock-table-wrapper {
+    overflow-x: visible;
+    white-space: normal;
+  }
+
+  .stock-table {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .stock-row {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
   .stock-item {
-    width: 363px;
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0;
+    box-sizing: border-box;
+  }
+
+  .stock-watch {
+    padding: 12px;
   }
 }
 
-@media (max-width: 992px) {
+@media (min-width: 901px) {
   .stock-item {
-    width: 500px;
-  }
-}
-
-@media (max-width: 768px) {
-  .stock-item {
-    width: 350px;
+    width: min(350px, 32vw);
+    flex-shrink: 0;
   }
 }
 </style>

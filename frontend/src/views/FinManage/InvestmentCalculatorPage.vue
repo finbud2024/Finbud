@@ -1,6 +1,11 @@
 <template>
-  <div class="calculator-container">
-    <h1 class="title"> {{$t('investmentTitle')}}</h1>
+  <div class="calculator-container fin-speak-page">
+    <header class="fin-speak-hero-block calc-hero">
+      <p class="fin-speak-eyebrow">{{ $t('finSpeak.slogan') }}</p>
+      <h1 class="fin-speak-page-title calc-page-title">{{ $t('investmentTitle') }}</h1>
+      <p class="fin-speak-lead">{{ $t('finSpeak.investmentCalcLead') }}</p>
+    </header>
+    <div class="calculator-panel">
       <!-- Bot Chat Component -->
       <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
         <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" @click="hideMessage"/>
@@ -58,6 +63,7 @@
         <ChartLoader v-if="isLoading" :text="$t('calculatingInvestment')" />
       <canvas id="investmentChart"></canvas>
       </div>
+    </div>
     </div>
 
   </div>
@@ -445,25 +451,33 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  width: 800px;
-  margin: 40px auto;
+  background: transparent;
+  padding: 1.5rem 1rem 3rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
   min-height: 730px;
   animation: fadeIn 0.5s ease;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-/* Title */
-.title {
-  font-size: 32px;
-  font-weight: 600;
-  color: #000000;
-  margin-bottom: 30px;
-  text-align: center;
-  animation: slideInDown 0.5s ease;
+.calc-hero {
+  width: 100%;
+}
+
+.calc-page-title {
+  margin-bottom: 0.35rem;
+}
+
+.calculator-panel {
+  width: 100%;
+  background: var(--card-bg, #fff);
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #e8eaef);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+  padding: 1.5rem 1.25rem 2rem;
+  box-sizing: border-box;
 }
 
 /* Input Section */
@@ -659,18 +673,18 @@ input:focus, select:focus {
 /* Responsive Design */
 @media (max-width: 850px) {
   .calculator-container {
-    width: 95%;
-    padding: 20px;
-    margin: 20px auto;
+    width: 100%;
+    padding: 1rem 0.75rem 2rem;
+    margin: 0 auto;
+  }
+
+  .calculator-panel {
+    padding: 1.25rem 1rem;
   }
 
   .input-section {
     grid-template-columns: 1fr;
 }
-
-  .title {
-    font-size: 24px;
-  }
 
   .chart-section {
     height: 300px;
@@ -683,6 +697,32 @@ input:focus, select:focus {
 
   .calculate-btn {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .calculator-container {
+    width: 100%;
+    max-width: 100vw;
+    padding: 0.75rem 0.5rem 1.5rem;
+    margin: 0 auto;
+    min-height: auto;
+    box-sizing: border-box;
+  }
+
+  .calculator-panel {
+    padding: 1rem 0.75rem;
+  }
+
+  .chart-section {
+    height: 280px;
+    padding: 12px;
+    margin-top: 16px;
+  }
+
+  .result-text {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
   }
 }
 
@@ -803,11 +843,43 @@ input:focus, select:focus {
 
 .chart-wrapper {
   position: relative;
-    width: 100%;
+  width: 100%;
   height: 400px;
+  min-height: 220px;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-    }
+}
+
+@media (max-width: 850px) {
+  .chart-wrapper {
+    height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    height: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bot-chat-container {
+    right: 12px;
+    bottom: 80px;
+    top: auto;
+    transform: none;
+    opacity: 1;
+  }
+
+  .bot-chat-container.bot-visible {
+    transform: none;
+  }
+
+  .bot-chat-container.bot-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
 </style>

@@ -5,22 +5,109 @@
       <div class="message-content-wrapper">
         <!-- Displayed text -->
         <div
-          v-if="htmlContent"
-          class="message-content"
-          v-html="htmlContent"
-        ></div>
-        <div
-          v-else-if="markdown"
-          class="message-content markdown-content"
-          v-html="renderedMarkdown"
-        ></div>
-        <div v-else :class="['message-content', { typing: typing }]">
+          v-if="mentorParts && !isUser"
+          class="message-content finbud-mentor-bubble"
+        >
           <div v-if="isThinking" class="thinking-animation">
             <span class="dot"></span>
             <span class="dot"></span>
             <span class="dot"></span>
           </div>
-          <p v-else v-html="displayedText"></p>
+          <template v-else>
+            <p v-if="mentorParts.insight" class="mentor-insight">
+              {{ mentorParts.insight }}
+            </p>
+            <p v-if="mentorParts.explanation" class="mentor-explanation">
+              {{ mentorParts.explanation }}
+            </p>
+            <p v-if="mentorParts.suggestion" class="mentor-suggestion">
+              {{ mentorParts.suggestion }}
+            </p>
+            <div
+              v-if="financeCard && financeCard.symbol"
+              class="finance-mini-card"
+              :aria-label="'Quote ' + financeCard.symbol"
+            >
+              <span class="finance-mini-card__sym">{{ financeCard.symbol }}</span>
+              <span
+                v-if="financeCard.trend"
+                class="finance-mini-card__trend"
+                :class="
+                  financeCard.trendDir === 'down'
+                    ? 'finance-mini-card__trend--down'
+                    : 'finance-mini-card__trend--up'
+                "
+                >Trend: {{ financeCard.trend }}</span
+              >
+              <span
+                v-if="financeCard.risk"
+                class="finance-mini-card__risk"
+                :class="
+                  financeCard.riskLevel === 'high'
+                    ? 'finance-mini-card__risk--high'
+                    : ''
+                "
+                >Risk: {{ financeCard.risk }}</span
+              >
+            </div>
+          </template>
+        </div>
+        <div
+          v-else-if="htmlContent"
+          :class="['message-content', { 'finbud-bot-bubble': !isUser }]"
+          v-html="htmlContent"
+        ></div>
+        <div
+          v-else-if="markdown"
+          :class="[
+            'message-content',
+            'markdown-content',
+            { 'finbud-bot-bubble': !isUser },
+          ]"
+          v-html="renderedMarkdown"
+        ></div>
+        <div
+          v-else
+          :class="[
+            'message-content',
+            { typing: typing, 'finbud-bot-bubble': !isUser },
+          ]"
+        >
+          <div v-if="isThinking" class="thinking-animation">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <template v-else>
+            <p v-html="displayedText"></p>
+            <div
+              v-if="!isUser && financeCard && financeCard.symbol && !mentorParts"
+              class="finance-mini-card"
+              :aria-label="'Quote ' + financeCard.symbol"
+            >
+              <span class="finance-mini-card__sym">{{ financeCard.symbol }}</span>
+              <span
+                v-if="financeCard.trend"
+                class="finance-mini-card__trend"
+                :class="
+                  financeCard.trendDir === 'down'
+                    ? 'finance-mini-card__trend--down'
+                    : 'finance-mini-card__trend--up'
+                "
+                >Trend: {{ financeCard.trend }}</span
+              >
+              <span
+                v-if="financeCard.risk"
+                class="finance-mini-card__risk"
+                :class="
+                  financeCard.riskLevel === 'high'
+                    ? 'finance-mini-card__risk--high'
+                    : ''
+                "
+                >Risk: {{ financeCard.risk }}</span
+              >
+            </div>
+          </template>
         </div>
         <!-- Sources -->
         <section class="sources" v-if="sources && sources.length > 0">
@@ -32,10 +119,9 @@
         </section>
         <!-- Follow-up questions -->
         <div
-          class="relevant-questions"
+          class="relevant-questions relevant-questions--chips"
           v-if="relevantQuestions && relevantQuestions.length > 0"
         >
-          <h3>Suggested Question</h3>
           <ul>
             <li
               v-for="(question, i) in relevantQuestions"
@@ -107,6 +193,14 @@ export default {
     markdown: {
       type: Boolean,
       default: false,
+    },
+    mentorParts: {
+      type: Object,
+      default: null,
+    },
+    financeCard: {
+      type: Object,
+      default: null,
     },
   },
   data() {
@@ -758,5 +852,95 @@ tr:nth-child(odd) {
 :deep(.markdown-content ol) {
   padding-left: 20px !important; /* Reduced from 2em (32px) */
   margin: 8px 0 !important;
+}
+
+.finbud-bot-bubble,
+.finbud-mentor-bubble {
+  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06);
+  border-radius: 16px !important;
+  padding: 16px !important;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: #1a1d26;
+}
+
+.mentor-insight {
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: #1a1d26;
+}
+
+.mentor-explanation {
+  margin: 0 0 12px;
+  color: #4a5166;
+  font-weight: 400;
+}
+
+.mentor-suggestion {
+  margin: 0;
+  color: #5c6378;
+  font-size: 0.9rem;
+}
+
+.finance-mini-card {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e8eaef;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+}
+
+.finance-mini-card__sym {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.finance-mini-card__trend {
+  font-size: 0.875rem;
+}
+
+.finance-mini-card__trend--up {
+  color: #15803d;
+}
+
+.finance-mini-card__trend--down {
+  color: #c2410c;
+}
+
+.finance-mini-card__risk {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.finance-mini-card__risk--high {
+  color: #ea580c;
+  font-weight: 500;
+}
+
+.relevant-questions--chips ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.relevant-questions--chips li {
+  padding: 8px 14px;
+  background: #eceef2;
+  border-radius: 999px;
+  margin: 0 !important;
+  border: none !important;
+  font-size: 0.8125rem;
+  color: #3d4354;
+}
+
+.relevant-questions--chips li:hover {
+  background: #e0e3ea;
+  transform: none;
 }
 </style>

@@ -1,14 +1,15 @@
 <template>
   <div class="suggestion-bar">
     <div class="suggestion-scroll">
-      <div
-        class="suggestion-item"
-        v-for="(suggestion, index) in randomSuggestions"
+      <button
+        type="button"
+        class="suggestion-chip"
+        v-for="(suggestion, index) in displaySuggestions"
         :key="index"
-        @click="selectSuggestion(suggestion)" 
+        @click="selectSuggestion(suggestion)"
       >
         {{ suggestion }}
-      </div>
+      </button>
     </div>
   </div>
 </template>
@@ -16,60 +17,51 @@
 <script>
 export default {
   props: {
-    lan: String
+    lan: String,
   },
   data() {
     return {
-      randomSuggestions: []
-    }
+      randomSuggestions: [],
+    };
   },
   computed: {
-    localizedSuggestions() {
-      if (this.lan === 'vi') {
+    conversationalSuggestions() {
+      if (this.lan === "vi") {
         return [
-          'Mua cổ phiếu',
-          'Giao dịch giá chứng khoán',
-          'REALESTATE',
-          'Phân tích ngân sách của tôi',
-          'Xem Top 5 tiền điện tử',
-          'Tính toán lợi nhuận đầu tư chứng khoán',
-          'Phân tích danh mục đầu tư',
-          'Tạo mục tiêu',
-          'Tạo kế hoạch tiết kiệm 6 tháng',
-          'Giá vàng hôm nay'
-        ]
-      } else {
-        return [
-          'Buy stock',
-          'Stock price transactions',
-          'REALESTATE',
-          'Analyze my budget',
-          'View Top 5 cryptocurrencies',
-          'Calculate stock investment profit',
-          'Portfolio analysis',
-          'Create goals',
-          'Create a 6-month savings plan',
-          'Gold price today'
-        ]
+          "Danh mục của em ổn không?",
+          "Hôm nay có gì đáng chú ý?",
+          "Nếu em mua cổ phiếu thì sao?",
+          "Giải thích giúp em cái này",
+        ];
       }
-    }
+      return [
+        "Is my portfolio on track?",
+        "What's worth watching today?",
+        "What if I buy a stock now?",
+        "Explain this in simple terms",
+      ];
+    },
+    displaySuggestions() {
+      return this.randomSuggestions.length
+        ? this.randomSuggestions
+        : this.conversationalSuggestions;
+    },
   },
   methods: {
     getRandomSuggestions() {
-      const suggestions = [...this.localizedSuggestions];
-      const randomSuggestions = [];
-      
-      for (let i = 0; i < 4 && suggestions.length > 0; i++) {
-        const randomIndex = Math.floor(Math.random() * suggestions.length);
-        randomSuggestions.push(suggestions[randomIndex]);
-        suggestions.splice(randomIndex, 1);
+      const pool = [...this.conversationalSuggestions];
+      const out = [];
+      const count = Math.min(4, pool.length);
+      for (let i = 0; i < count && pool.length; i++) {
+        const idx = Math.floor(Math.random() * pool.length);
+        out.push(pool[idx]);
+        pool.splice(idx, 1);
       }
-      
-      return randomSuggestions;
+      return out;
     },
     selectSuggestion(suggestion) {
-      this.$emit('suggestion-selected', suggestion);  // Emit the selected suggestion
-    }
+      this.$emit("suggestion-selected", suggestion);
+    },
   },
   created() {
     this.randomSuggestions = this.getRandomSuggestions();
@@ -77,45 +69,50 @@ export default {
   watch: {
     lan() {
       this.randomSuggestions = this.getRandomSuggestions();
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-/* Your existing styles remain the same */
 .suggestion-bar {
-  align-items: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: stretch;
   width: 100%;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding: 10px 5px;
+  padding: 6px 0 14px;
+  box-sizing: border-box;
 }
 
 .suggestion-scroll {
   display: flex;
-  gap: 12px;
-  padding: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 
-.suggestion-item {
-  padding: 8px 14px;
-  background-color: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 20px;
+.suggestion-chip {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  padding: 10px 18px;
+  background: #eceef2;
+  color: #3d4354;
+  border: none;
+  border-radius: 999px;
   cursor: pointer;
-  flex-shrink: 0;
-  font-size: 14px;
-  white-space: nowrap;
-  transition: all 0.2s;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  text-align: left;
+  max-width: 100%;
 }
 
-.suggestion-item:hover {
-  background-color: #f0f0f0;
-  border-color: #ccc;
+.suggestion-chip:hover {
+  background: #e0e4eb;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
   transform: translateY(-1px);
+}
+
+.suggestion-chip:active {
+  transform: translateY(0);
 }
 </style>

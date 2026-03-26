@@ -132,7 +132,7 @@ const hideBot = () => {
 </script>
 
 <template>
-  <div class="page-container">
+  <div class="page-container fin-speak-page">
     <!-- Bot Chat Component -->
     <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
       <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
@@ -146,10 +146,11 @@ const hideBot = () => {
       </div>
     </div>
 
-    <!-- Header -->
-    <div class="text-center mb-12">
-      <h1 class="title">{{ $t('superInvestorPage.title') }}</h1>
-    </div>
+    <header class="fin-speak-hero-block super-investors-hero">
+      <p class="fin-speak-eyebrow">{{ $t('finSpeak.slogan') }}</p>
+      <h1 class="fin-speak-page-title super-investors-title">{{ $t('superInvestorPage.title') }}</h1>
+      <p class="fin-speak-lead">{{ $t('finSpeak.superInvestorsLead') }}</p>
+    </header>
 
     <!-- Investors Grid -->
     <div class="investors-grid">
@@ -171,15 +172,29 @@ const hideBot = () => {
 </template>
 
 <style scoped>
+.super-investors-hero {
+  margin-bottom: 1rem;
+}
+
+.super-investors-title {
+  margin-bottom: 0.35rem;
+}
+
+.super-investors-title::after {
+  display: none;
+}
+
 .page-container {
   min-height: 100vh;
-  background-color: #ffffff;
+  background: transparent;
   padding: 3rem 1rem;
+  padding-bottom: max(3rem, env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   align-items: center;
   animation: fadeIn 0.5s ease;
   max-width: 100vw;
+  width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
 }
@@ -187,7 +202,7 @@ const hideBot = () => {
 .title {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #000000;
+  color: var(--fin-speak-heading, #1a1d26);
   margin-bottom: 2rem;
   position: relative;
   animation: slideInDown 0.5s ease;
@@ -201,17 +216,17 @@ const hideBot = () => {
   transform: translateX(-50%);
   width: 60px;
   height: 3px;
-  background: #000000;
+  background: var(--fin-speak-accent, #22a36a);
   border-radius: 2px;
 }
 
 .investors-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 24px;
   max-width: 1400px;
   width: 100%;
-  padding: 20px;
+  padding: 16px;
   animation: fadeInUp 0.5s ease;
   box-sizing: border-box;
   overflow-x: hidden;
@@ -370,7 +385,8 @@ const hideBot = () => {
 
 @media (max-width: 768px) {
   .page-container {
-    padding: 1.5rem 0.75rem;
+    padding: 1.25rem 0.75rem;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
     max-width: 100vw;
     overflow-x: hidden;
   }
@@ -378,27 +394,44 @@ const hideBot = () => {
   .investors-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
-    padding: 0.5rem;
+    padding: 0.5rem 0;
     max-width: 100%;
     overflow-x: hidden;
   }
   
   .title {
-    font-size: 1.8rem;
+    font-size: 1.65rem;
     margin-bottom: 1rem;
     text-align: center;
+    padding: 0 0.25rem;
+    line-height: 1.2;
+  }
+
+  .text-center.mb-12 {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
   }
 
   .bot-chat-container {
-    right: -300px;
-    width: 280px;
-    bottom: 20px;
-    height: auto;
-    max-height: 60vh;
+    right: 12px;
+    left: auto;
+    width: min(300px, calc(100vw - 24px));
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    top: auto;
+    transform: none;
+    max-height: 50vh;
   }
 
   .bot-chat-container.bot-visible {
-    transform: translateX(-300px);
+    transform: none;
+    opacity: 1;
+  }
+
+  .bot-chat-container.bot-hidden {
+    opacity: 0;
+    pointer-events: none;
   }
   
   .bot-message {
@@ -427,24 +460,20 @@ const hideBot = () => {
   }
   
   .title {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     margin-bottom: 0.75rem;
   }
   
   .investors-grid {
     gap: 0.75rem;
-    padding: 0.25rem;
+    padding: 0.25rem 0;
     max-width: 100%;
     overflow-x: hidden;
   }
   
   .bot-chat-container {
-    right: -260px;
-    width: 240px;
-  }
-
-  .bot-chat-container.bot-visible {
-    transform: translateX(-260px);
+    width: min(280px, calc(100vw - 20px));
+    right: 10px;
   }
   
   .bot-message {
@@ -470,12 +499,12 @@ const hideBot = () => {
   }
   
   .bot-chat-container {
-    right: -220px;
-    width: 200px;
+    right: 8px;
+    width: min(260px, calc(100vw - 16px));
   }
 
   .bot-chat-container.bot-visible {
-    transform: translateX(-220px);
+    transform: none;
   }
   
   .bot-message {
@@ -492,8 +521,8 @@ const hideBot = () => {
 
 /* Dark mode styles */
 .dark-mode .page-container {
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  color: #f9fafb;
+  background: transparent;
+  color: var(--fin-speak-text, #e4e7ec);
 }
 
 .dark-mode .title {
@@ -501,7 +530,7 @@ const hideBot = () => {
 }
 
 .dark-mode .title::after {
-  background: #f9fafb;
+  background: var(--fin-speak-accent, #34d399);
 }
 
 .dark-mode .bot-message {
