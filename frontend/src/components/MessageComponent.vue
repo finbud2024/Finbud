@@ -1012,6 +1012,58 @@ tr:nth-child(odd) {
   overflow: hidden;
 }
 
+/* Responsive Data Table Styles */
+.responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #E2E8F0;
+  margin: 16px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.finbud-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 0.9rem;
+  min-width: 600px; /* Force minimum width to enable scrolling */
+}
+
+.finbud-data-table th {
+  background: #F8FAFC;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 700;
+  color: #64748B;
+  border-bottom: 2px solid #E2E8F0;
+  white-space: nowrap;
+}
+
+.finbud-data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #1E293B;
+  vertical-align: middle;
+}
+
+.finbud-data-table tr:hover {
+  background: #F1F5F9;
+}
+
+.finbud-data-table img {
+  vertical-align: middle;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.table-title {
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: #1E293B;
+  margin-bottom: 12px;
+}
+
 .animate-up {
   animation: fadeInUp 0.5s ease-out;
 }

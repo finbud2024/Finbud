@@ -962,8 +962,9 @@ Please provide a comprehensive answer that:
             console.error("Failed to fetch cr quotes:", err);
           }
           let tableTemplate = `
-				<div style="font-weight: 900; font-size: 30px"> Top 10 đồng Coin vốn hóa lớn nhất </div>
-				<table>
+				<div class="table-title"> Top 10 đồng Coin vốn hóa lớn nhất </div>
+				<div class="responsive-table-wrapper">
+				<table class="finbud-data-table">
 				<thead>
 				    <tr>
 				    <th>Tên</th>
@@ -990,7 +991,7 @@ Please provide a comprehensive answer that:
 				    </tr>
 				`;
           });
-          tableTemplate += `</tbody></table>`;
+          tableTemplate += `</tbody></table></div>`;
           this.messages.push({
             text: ``,
             htmlContent: tableTemplate,
