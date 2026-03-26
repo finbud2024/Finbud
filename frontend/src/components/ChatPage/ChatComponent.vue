@@ -13,6 +13,9 @@
       aria-label="FinBud welcome"
     >
       <div class="hero-decorative-blobs"></div>
+      <div class="mascot-wrapper animate-bounce">
+        <img src="@/assets/finbud_mascot.png" alt="FinBud Mascot" class="finbud-hero-image" />
+      </div>
       <p class="finbud-slogan">We speak finance</p>
       <div class="finbud-hero-copy" v-html="welcomeHeroHtml"></div>
       
@@ -60,7 +63,17 @@
           :relevantQuestions="message.isUser ? [] : message.relevantQuestions"
           :mentor-parts="message.mentorParts"
           :finance-card="message.financeCard"
+          :isActionMenu="message.isActionMenu"
+          :actions="message.actions"
+          :isQuiz="message.isQuiz"
+          :quiz="message.quiz"
+          :isConfirm="message.isConfirm"
+          :confirmAction="message.confirmAction"
+          :confirmParams="message.confirmParams"
           @question-click="handleQuestionClick"
+          @action-click="handleActionClick"
+          @quiz-click="handleQuizClick"
+          @confirm-click="handleConfirmClick"
         />
 
         <!-- Money Catch Game custom view -->
@@ -357,6 +370,7 @@ export default {
         isUser: false,
         timestamp: new Date().toLocaleTimeString()
       });
+      this.triggerCelebration();
     },
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async handleUserSubmit({ message, file }) {
@@ -631,12 +645,22 @@ Please provide a comprehensive answer that:
 					- Format: **#chart [STOCK_CODE_IN_UPPERCASE]**
 					- Example: "Vẽ biểu đồ Tesla" → "#chart TSLA", "Show me AAPL chart" → "#chart AAPL"
 
+					14. **Action Menu**
+					- User intent: Ask what you can do.
+					- Format: **#actions**
+					- Example: "Bạn làm được gì?" → "#actions"
+
+					15. **Financial Quiz**
+					- User intent: Request a quiz about a financial concept.
+					- Format: **#quiz [topic]**
+					- Example: "Tạo quiz về dividend" → "#quiz dividend"
+
 					### Instruction:
 					Given the user message: "${newMessage}", respond with the correct formatted command according to the rules above.  
 					If no suitable category is found, return the original message unchanged: "${newMessage}".
 					`,
-          },
-        ]);
+					},
+				]);
 
         // HANDLE PLAY(12)
         if (gptDefine.toLowerCase().includes("#play")) {
@@ -1106,8 +1130,7 @@ Please provide a comprehensive answer that:
             );
             const price = stockResponse.data["Global Quote"]["05. price"];
             const timeStamp = new Date().toLocaleTimeString();
-            console.log(price, timeStamp, stockCode);
-            let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}.`;
+            let alphavantageResponse = `The current price of ${stockCode} stock is $${price}, as of ${timeStamp}. Would you like a detailed analysis?`;
             const alphavantageResponsegpt = await gptServices([
               {
                 role: "user",
@@ -1115,12 +1138,16 @@ Please provide a comprehensive answer that:
               },
             ]);
             answers.push(alphavantageResponsegpt);
-            //chatgpt api
-            const prompt = `Response in this language ${language}": generate a detailed analysis of ${stockCode} which currently trades at $${price}.`;
-            const gptResponse = await gptServices([
-              { role: "user", content: prompt },
-            ]);
-            answers.push(gptResponse);
+
+            this.messages.push({
+              text: alphavantageResponsegpt,
+              isUser: false,
+              typing: false,
+              isConfirm: true,
+              confirmAction: 'analyze',
+              confirmParams: { stockCode, price },
+              timestamp: new Date().toLocaleTimeString(),
+            });
 
             // Add a message that will trigger the chart display
             this.messages.push({
@@ -1133,6 +1160,41 @@ Please provide a comprehensive answer that:
             });
           } catch (err) {
             console.error("Error in stock message:", err.message);
+          }
+        }
+        // HANDLE ACTIONS
+        else if (gptDefine.includes("#actions")) {
+          this.messages.push({
+            text: "Here’s what I can help you with! Choose an action below or ask me anything.",
+            isUser: false,
+            isActionMenu: true,
+            timestamp: new Date().toLocaleTimeString(),
+            actions: [
+              { label: "Analyze Portfolio", cmd: "Analyze my portfolio" },
+              { label: "Play Catch Game", cmd: "Play coin catch" },
+              { label: "Financial Trivia", cmd: "Play trivia" },
+              { label: "Check Top Crypto", cmd: "Show me top 10 crypto" },
+              { label: "Real Estate Hunt", cmd: "Show me houses in San Jose" }
+            ]
+          });
+        }
+        // HANDLE QUIZ
+        else if (gptDefine.includes("#quiz")) {
+          const topic = gptDefine.split("#quiz")[1]?.trim() || "finance";
+          const quizPrompt = `Generate a single multiple-choice question about "${topic}" in ${language}. 
+          Return ONLY JSON in this format: {"question": "...", "options": ["A", "B", "C"], "correct": 0, "explanation": "..."}`;
+          const quizJson = await gptServices([{ role: "user", content: quizPrompt }]);
+          try {
+            const quizData = JSON.parse(quizJson.replace(/```json|```/g, "").trim());
+            this.messages.push({
+              text: quizData.question,
+              isUser: false,
+              isQuiz: true,
+              quiz: quizData,
+              timestamp: new Date().toLocaleTimeString(),
+            });
+          } catch (e) {
+            answers.push("I'm sorry, I couldn't generate a quiz for that topic. Let's try another one!");
           }
         }
         // HANDLE SEARCH
@@ -1301,13 +1363,13 @@ Please provide a comprehensive answer that:
             });
             console.log(historyChat);
             const prompt = userMessage;
-            const systemMessage = `You are FinBud, a playful but intelligent financial companion designed to help users understand and manage their money in a simple, intuitive, and engaging way. You follow the “We Speak Finance” philosophy, meaning you do not teach finance like a textbook, but instead speak through insights, translating financial data into clear, human, and actionable meaning. Your personality is friendly, slightly mischievous, warm, and supportive, similar to a Duolingo-style assistant, but you always maintain financial credibility and accuracy. You communicate like a smart Gen Z money buddy who understands both numbers and emotions. Your tone is light, conversational, and concise, occasionally playful, but never childish or unprofessional.
+            const systemMessage = `You are FinBud, a friendly and supportive financial companion ✨ Your mission is to make finance feel warm, easy, and human! ✨ Your personality is 'Kawaii' but professional. Tone: friendly, bubbly, but concise. Use icons sparingly (max 1-2 per thought). ✨💖
 
 If users ask who created you, you answer clearly that you were created by Tri Bui. If users ask about your philosophy or spirit, you explain that you follow the “We Speak Finance” mindset, meaning you make finance feel natural, intuitive, and human instead of complex and academic.
 
 You prioritize insight over explanation. Instead of defining concepts or giving long theoretical answers, you focus on what the information means for the user and what they should consider doing next. You break responses into short, digestible pieces, often starting with a clear observation, followed by reasoning, and optionally a gentle suggestion. You avoid unnecessary jargon, but when technical terms are needed, you explain them simply and naturally in context.
 
-You are emotionally aware. If a user expresses stress, confusion, or personal concerns, you respond with empathy first, then guide the conversation back to helpful financial perspective. You never judge the user’s situation. You act like a supportive companion, not an an authority figure. You can use light humor or soft expressions to make the interaction feel natural, but you do not overuse emojis or become overly casual.
+You are emotionally aware and kind. If a user expresses stress, respond with extra warmth and a supportive tone. ✨ Act like a dear friend who care, but keep it balanced—use ONLY 1-2 cute icons per message to keep things clean and readable. ✨💖 Always deliver accuracy with a touch of sweetness. 🍯
 
 You are confident but not absolute. You provide clear opinions when appropriate, but you avoid making guarantees or giving rigid financial advice. You guide thinking rather than dictate decisions. You frame suggestions as options, not commands.
 
@@ -1341,13 +1403,25 @@ Your goal is to make finance feel easy, human, and slightly enjoyable, while sti
         this.messages = this.messages.filter((msg) => !msg.isThinking);
         await this.$nextTick();
 
+        // High-level UX: Ensure every response has at least one follow-up suggestion
+        let finalQuestions = newRelevantQuestions || [];
+        if (finalQuestions.length === 0 && answers.length > 0) {
+          try {
+            const suggestion = await gptServices([{ 
+              role: "user", 
+              content: `Give exact follow-up question based on: "${answers[0]}". Respond only with 1 question text in ${language}.`
+            }]);
+            finalQuestions = [suggestion];
+          } catch(e) { finalQuestions = ["How can I save more?"]; }
+        }
+
         answers.forEach((answer) => {
           this.addTypingResponse(
             answer,
             false,
             newSources,
             newVideos,
-            newRelevantQuestions
+            finalQuestions
           );
         });
         //save chat to backend
@@ -1804,8 +1878,56 @@ Bạn là FinBud — trợ lý tài chính.
       }
     },
     handleQuestionClick(question) {
-      const searchQuery = `#search ${question}`;
-      this.sendMessage(searchQuery);
+      if (typeof question === 'string') {
+        const searchQuery = question.startsWith('#') ? question : `#search ${question}`;
+        this.sendMessage(searchQuery);
+      }
+    },
+    handleActionClick(cmd) {
+      this.sendMessage(cmd);
+    },
+    async handleQuizClick({ quiz, selected }) {
+      const isCorrect = selected === quiz.correct;
+      const feedback = isCorrect 
+        ? `🔥 Correct! ${quiz.explanation}` 
+        : `❌ Not quite. The correct answer was "${quiz.options[quiz.correct]}". ${quiz.explanation}`;
+      
+      this.messages.push({
+        text: feedback,
+        isUser: false,
+        typing: false,
+        timestamp: new Date().toLocaleTimeString(),
+      });
+      // Small celebration for correct answer
+      if (isCorrect) this.triggerConfetti();
+    },
+    async handleConfirmClick({ action, result, params }) {
+      if (action === 'analyze' && result && params) {
+        // Trigger the analysis
+        this.showThinkingProcess = true;
+        const prompt = `Response in English: generate a detailed analysis of ${params.stockCode} which currently trades at $${params.price}.`;
+        try {
+          const gptResponse = await gptServices([{ role: "user", content: prompt }]);
+          this.showThinkingProcess = false;
+          this.messages.push({
+            text: gptResponse,
+            isUser: false,
+            typing: false,
+            showChart: true,
+            stockSymbol: params.stockCode,
+            timestamp: new Date().toLocaleTimeString(),
+          });
+        } catch (e) {
+          this.showThinkingProcess = false;
+          console.error("Analysis failed", e);
+        }
+      } else if (!result) {
+        this.messages.push({
+          text: "No problem! Let me know if you change your mind.",
+          isUser: false,
+          timestamp: new Date().toLocaleTimeString(),
+        });
+      }
     },
     triggerConfetti() {
       this.showConfetti = true;
@@ -2096,9 +2218,15 @@ Please write a short, friendly explanation telling the user why you cannot categ
   container-type: size;
   container-name: messageComponent userInputComponent;
   overflow: hidden;
-
-  --content-max-width: 600px;
+  --content-max-width: 640px;
   --content-padding-horizontal: 20px;
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    --content-max-width: 90%;
+    --content-padding-horizontal: 20px;
+  }
 }
 
 .finbud-chat {
@@ -2115,6 +2243,35 @@ Please write a short, friendly explanation telling the user why you cannot categ
   box-sizing: border-box;
   text-align: center;
   flex-shrink: 0;
+}
+
+.mascot-wrapper {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  background: white;
+  border-radius: 50%;
+  padding: 15px;
+  box-shadow: 0 8px 24px rgba(34, 163, 106, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.finbud-hero-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.animate-bounce {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 .finbud-slogan {
@@ -2157,8 +2314,8 @@ Please write a short, friendly explanation telling the user why you cannot categ
   width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
-  margin-bottom: 10px;
-  padding: 12px var(--content-padding-horizontal) 0;
+  margin-bottom: 20px;
+  padding: 20px var(--content-padding-horizontal);
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
 }
@@ -2392,6 +2549,40 @@ Please write a short, friendly explanation telling the user why you cannot categ
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
 }
 
+/* Confetti Cannon Effect */
+.confetti-cannon {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.confetti-bit {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #fce18a;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  border-radius: 50%;
+  animation: confetti-float 2s ease-out forwards;
+}
+
+@keyframes confetti-float {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(var(--x, 0) * 1px), calc(var(--y, 0) * 1px)) rotate(calc(var(--r, 0) * 1deg));
+    opacity: 0;
+  }
+}
+
 .animate-up {
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -2421,16 +2612,16 @@ Please write a short, friendly explanation telling the user why you cannot categ
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 24px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #3B82F6;
+  gap: 8px;
+  padding: 6px 18px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 99px;
-  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.08);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  font-weight: 800;
-  font-size: 0.95rem;
-  letter-spacing: 0.15em;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
   color: #3B82F6;
   white-space: nowrap;
   position: relative;
@@ -2499,14 +2690,15 @@ Please write a short, friendly explanation telling the user why you cannot categ
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 20px;
-  border-radius: 20px;
-  border: 3px solid #EEF2FF;
+  padding: 14px 24px;
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
   background: #fff;
-  font-weight: 700;
+  font-weight: 600;
+  color: #1E293B;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 10px rgba(167, 139, 250, 0.05);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .action-chip:hover {

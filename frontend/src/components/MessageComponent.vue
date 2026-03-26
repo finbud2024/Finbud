@@ -132,6 +132,54 @@
           </div>
         </div>
         
+        <!-- Action Menu Grid -->
+        <div v-if="isActionMenu && actions.length" class="action-menu-grid animate-up">
+          <button
+            v-for="(action, i) in actions"
+            :key="i"
+            class="menu-action-btn"
+            @click="$emit('action-click', action.cmd)"
+          >
+            {{ action.label }}
+          </button>
+        </div>
+
+        <!-- Inline Quiz Card -->
+        <div v-if="isQuiz && quiz" class="quiz-card-inline animate-up">
+          <div class="quiz-question-header">Quick Quiz: {{ quiz.topic || 'Finance' }}</div>
+          <div class="quiz-question-text">{{ quiz.question }}</div>
+          <div class="quiz-options-list">
+            <button
+              v-for="(opt, i) in quiz.options"
+              :key="i"
+              class="quiz-opt-btn"
+              @click="$emit('quiz-click', { quiz, selected: i })"
+            >
+              <span class="opt-index">{{ String.fromCharCode(65 + i) }}</span>
+              <span class="opt-text">{{ opt }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirmation Buttons (e.g., Stock analysis) -->
+        <div v-if="isConfirm" class="confirm-actions-inline animate-up">
+          <div class="confirm-query" v-if="text">Analyze this further?</div>
+          <div class="confirm-btn-row">
+            <button
+              class="confirm-btn yes"
+              @click="$emit('confirm-click', { action: confirmAction, result: true, params: confirmParams })"
+            >
+              Analyze now
+            </button>
+            <button
+              class="confirm-btn no"
+              @click="$emit('confirm-click', { action: confirmAction, result: false })"
+            >
+              Maybe later
+            </button>
+          </div>
+        </div>
+
         <!-- Sources -->
         <section class="sources" v-if="sources && sources.length > 0">
           <SearchResult :sources="sources" />
@@ -193,37 +241,33 @@ export default {
       type: String,
       default: "",
     },
-    avatarSrc: {
-      type: String,
-      default: "",
-    },
-    htmlContent: {
-      type: String,
-      default: "",
-    },
-    sources: {
-      type: Array,
-      default: () => [],
-    },
-    videos: {
-      type: Array,
-      default: () => [],
-    },
-    relevantQuestions: {
-      type: Array,
-      default: () => [],
-    },
-    markdown: {
-      type: Boolean,
-      default: false,
-    },
-    mentorParts: {
-      type: Object,
-      default: null,
-    },
     financeCard: {
       type: Object,
       default: null,
+    },
+    isActionMenu: {
+      type: Boolean,
+      default: false,
+    },
+    actions: {
+      type: Array,
+      default: () => [],
+    },
+    isQuiz: {
+      type: Boolean,
+      default: false,
+    },
+    quiz: {
+      type: Object,
+      default: null,
+    },
+    isConfirm: {
+      type: Boolean,
+      default: false,
+    },
+    confirmAction: {
+      type: String,
+      default: "",
     },
   },
   data() {
@@ -886,20 +930,21 @@ tr:nth-child(odd) {
 
 .finbud-bot-bubble,
 .finbud-mentor-bubble {
-  background-color: var(--chat-assistant-bg-color);
-  box-shadow: var(--shadow-soft, 0 8px 24px rgba(148, 163, 184, 0.12));
-  border-radius: var(--radius-lg, 24px) !important;
-  padding: 16px 20px !important;
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--chat-assistant-text-color, #1E293B);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 10px 0 !important;
+  font-family: inherit;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #1E293B;
+  border: none !important;
 }
+
 .finbud-bot-bubble:hover,
 .finbud-mentor-bubble:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .mentor-insight {
@@ -1062,6 +1107,152 @@ tr:nth-child(odd) {
   font-size: 1.25rem;
   color: #1E293B;
   margin-bottom: 12px;
+}
+
+/* Action Menu Styles */
+.action-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.menu-action-btn {
+  background: white;
+  border: 1px solid #E2E8F0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1E293B;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.menu-action-btn:hover {
+  background: #F8FAFC;
+  border-color: #3B82F6;
+  color: #3B82F6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+}
+
+/* Quiz Styles */
+.quiz-card-inline {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+.quiz-question-header {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748B;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.quiz-question-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-opt-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid #E2E8F0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.quiz-opt-btn:hover {
+  border-color: #3B82F6;
+  background: #EFF6FF;
+}
+
+.opt-index {
+  background: #F1F5F9;
+  color: #64748B;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.quiz-opt-btn:hover .opt-index {
+  background: #3B82F6;
+  color: white;
+}
+
+/* Confirm Buttons */
+.confirm-actions-inline {
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.confirm-query {
+  font-weight: 600;
+  color: #64748B;
+  font-size: 0.95rem;
+}
+
+.confirm-btn-row {
+  display: flex;
+  gap: 12px;
+}
+
+.confirm-btn {
+  padding: 10px 20px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #E2E8F0;
+}
+
+.confirm-btn.yes {
+  background: #3B82F6;
+  color: white;
+  border-color: #3B82F6;
+}
+
+.confirm-btn.yes:hover {
+  background: #2563EB;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.confirm-btn.no {
+  background: white;
+  color: #64748B;
+}
+
+.confirm-btn.no:hover {
+  background: #F1F5F9;
 }
 
 .animate-up {
