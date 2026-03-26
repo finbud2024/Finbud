@@ -997,6 +997,9 @@ tr:nth-child(odd) {
   font-weight: 600;
   color: #1E293B;
   margin-bottom: 20px;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 100%;
 }
 
 .summary-chart {
@@ -1005,6 +1008,8 @@ tr:nth-child(odd) {
   padding: 10px;
   display: flex;
   justify-content: center;
+  min-height: 220px;
+  overflow: hidden;
 }
 
 .animate-up {

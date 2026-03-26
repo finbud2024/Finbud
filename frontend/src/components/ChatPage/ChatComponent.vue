@@ -659,11 +659,14 @@ Please provide a comprehensive answer that:
           const isAdd = gptDefine.toLowerCase().includes("#add");
           const parts = gptDefine.split(" ");
           const amount = parseFloat(parts.pop()) || 0;
-          const desc = parts.slice(1, -1).join(" ") || (isAdd ? "Income" : "Expense");
+          // Clean the description: get only the part between command and amount, remove any AI chatter
+          let desc = parts.slice(1).join(" ").replace(/\*\*|#add|#spend/gi, "").trim();
+          if (desc.split('\n').length > 1) desc = desc.split('\n')[0]; // Take only first line to avoid AI reasoning
+          desc = desc || (isAdd ? "Income" : "Expense");
           
           const botMessage = {
             id: Date.now(),
-            text: `${isAdd ? 'Income' : 'Expense'} of $${amount} for "${desc}" added to your tracker!`,
+            text: `${isAdd ? 'Thu nhập' : 'Chi tiêu'} $${amount} cho "${desc}" đã được ghi lại!`,
             isUser: false,
             timestamp: new Date().toLocaleTimeString(),
             financeCard: {
