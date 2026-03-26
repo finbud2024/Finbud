@@ -269,6 +269,34 @@ export default {
       type: String,
       default: "",
     },
+    confirmParams: {
+      type: Object,
+      default: null,
+    },
+    avatarSrc: {
+      type: String,
+      default: "",
+    },
+    sources: {
+      type: Array,
+      default: () => [],
+    },
+    videos: {
+      type: Array,
+      default: () => [],
+    },
+    relevantQuestions: {
+      type: Array,
+      default: () => [],
+    },
+    htmlContent: {
+      type: String,
+      default: "",
+    },
+    mentorParts: {
+      type: Array,
+      default: null,
+    },
   },
   data() {
     return {
@@ -614,6 +642,23 @@ tr:nth-child(odd) {
   display: flex;
   flex-direction: row-reverse;
   align-items: flex-end;
+}
+
+/* Mobile: wider messages like ChatGPT */
+@media (max-width: 768px) {
+  .bot .message-content-wrapper {
+    padding-right: 8px;
+  }
+  .user .message-content-wrapper {
+    max-width: 85%;
+  }
+  .bot .avatar,
+  .user .avatar {
+    width: 28px;
+  }
+  .message-wrapper {
+    gap: 6px;
+  }
 }
 
 .message-content {
