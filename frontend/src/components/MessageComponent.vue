@@ -571,7 +571,10 @@ tr:nth-child(odd) {
 
 .bot .message-content-wrapper {
   max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   padding-right: calc(1% + 30px + 18px);
+  box-sizing: border-box;
 }
 
 .user .message-content {
@@ -1007,11 +1010,14 @@ tr:nth-child(odd) {
 /* New Finance Summary Card Styles */
 .finance-summary-card {
   margin: 16px 0;
-  padding: 20px;
+  padding: 16px;
   background: white;
   border-radius: 20px;
   border: 1px solid #E2E8F0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .summary-header {
@@ -1019,10 +1025,12 @@ tr:nth-child(odd) {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .summary-label {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #64748B;
   text-transform: uppercase;
@@ -1030,7 +1038,7 @@ tr:nth-child(odd) {
 }
 
 .summary-amount {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
@@ -1038,13 +1046,15 @@ tr:nth-child(odd) {
 .summary-amount.expense { color: #EF4444; }
 
 .summary-desc {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #1E293B;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   word-break: break-word;
+  overflow-wrap: break-word;
   white-space: normal;
   max-width: 100%;
+  overflow: hidden;
 }
 
 .summary-chart {
@@ -1053,8 +1063,10 @@ tr:nth-child(odd) {
   padding: 10px;
   display: flex;
   justify-content: center;
-  min-height: 220px;
+  max-width: 100%;
+  min-height: 200px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Responsive Data Table Styles */
