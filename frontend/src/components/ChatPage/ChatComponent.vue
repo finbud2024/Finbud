@@ -1,12 +1,36 @@
 <template>
   <div class="chat-container finbud-chat">
+    <div class="chat-header-spirit">
+      <div class="fixed-slogan-band" @click="triggerCelebration">
+        <div class="breathing-indicator"></div>
+        WE SPEAK FINANCE
+        <div class="spirit-sparkles"></div>
+      </div>
+    </div>
     <section
       v-if="showWelcomeHero"
       class="finbud-hero"
       aria-label="FinBud welcome"
     >
+      <div class="hero-decorative-blobs"></div>
       <p class="finbud-slogan">We speak finance</p>
       <div class="finbud-hero-copy" v-html="welcomeHeroHtml"></div>
+      
+      <!-- Quick Action Chips -->
+      <div class="quick-action-chips animate-up">
+        <button @click="handleUserSubmit({ message: '#play' })" class="action-chip game-chip">
+          <font-awesome-icon icon="fa-solid fa-gamepad" />
+          <span>Play Game</span>
+        </button>
+        <button @click="handleUserSubmit({ message: 'What is the stock market trend today?' })" class="action-chip trend-chip">
+          <font-awesome-icon icon="fa-solid fa-chart-line" />
+          <span>Market Analysis</span>
+        </button>
+        <button @click="handleUserSubmit({ message: 'Help me plan my savings' })" class="action-chip plan-chip">
+          <font-awesome-icon icon="fa-solid fa-piggy-bank" />
+          <span>Savings Plan</span>
+        </button>
+      </div>
     </section>
     <ChatFrame class="chat-frame-content">
       <div v-for="(message, index) in messages" :key="index">
@@ -23,6 +47,7 @@
 
         <!-- Regular message view -->
         <MessageComponent
+          v-else-if="!message.isGame"
           :is-user="message.isUser"
           :text="message.text"
           :typing="message.typing"
@@ -37,6 +62,46 @@
           :finance-card="message.financeCard"
           @question-click="handleQuestionClick"
         />
+
+        <!-- Money Catch Game custom view -->
+        <MessageComponent
+          v-else
+          :key="index"
+          :is-user="message.isUser"
+          :text="message.text"
+          :typing="message.typing"
+          :avatar-src="message.isUser ? userAvatar : botAvatar"
+          :markdown="!message.isUser"
+          :sources="message.sources"
+          :videos="message.videos"
+          :relevant-questions="message.relevantQuestions"
+          :mentor-parts="message.mentorParts"
+          :finance-card="message.financeCard"
+          @question-click="handleUserSubmit"
+        >
+          <template v-if="message.isGame">
+            <FinancialTriviaGame v-if="message.gameType === 'trivia'" />
+            <MoneyCatchGame v-else />
+          </template>
+        </MessageComponent>
+
+        <!-- Slogan Styled Message -->
+        <div v-if="message.isSlogan" class="slogan-message-wrapper animate-up">
+          <div class="slogan-message-card">
+            <div class="slogan-pulse"></div>
+            <img src="@/assets/finbud_logo.png" class="slogan-logo" />
+            <div class="slogan-text">WE SPEAK FINANCE</div>
+            <div class="slogan-sub">Hi, I'm FinBud. How can I help you today?</div>
+            <div class="slogan-actions">
+              <button @click="handleUserSubmit({ message: 'Play Catch Game' })" class="slogan-btn">
+                <font-awesome-icon icon="fa-solid fa-coins" /> Catch Coins
+              </button>
+              <button @click="handleUserSubmit({ message: 'Play Trivia' })" class="slogan-btn">
+                <font-awesome-icon icon="fa-solid fa-trophy" /> Trivia Master
+              </button>
+            </div>
+          </div>
+        </div>
 
         <!-- Only show ThinkingProcess for the current message when in think mode -->
         <ThinkingProcess
@@ -79,6 +144,9 @@
           :symbol="message.stockSymbol"
         />
       </div>
+      <div v-if="showConfetti" class="confetti-cannon">
+        <div v-for="n in 30" :key="n" class="confetti-bit"></div>
+      </div>
     </ChatFrame>
     <ChatSuggestion
       v-if="showWelcomeChips"
@@ -105,6 +173,8 @@ import DeepResearchAgent from "./DeepResearchAgent.vue";
 import DeepResearchResult from "./DeepResearchResult.vue";
 import ChatSuggestion from "./ChatSuggestion.vue";
 import FileIndicator from "../FileIndicator.vue";
+import MoneyCatchGame from "./MoneyCatchGame.vue";
+import FinancialTriviaGame from "./FinancialTriviaGame.vue";
 
 import ThinkingProcess from "../ThinkingProcess.vue";
 import RagProcess from "./RagProcess.vue";
@@ -152,6 +222,8 @@ export default {
     ChatSuggestion,
     ThinkingProcess,
     RagProcess,
+    MoneyCatchGame,
+    FinancialTriviaGame,
   },
   data() {
     return {
@@ -160,7 +232,7 @@ export default {
       sources: [],
       videos: [],
       relevantQuestions: [],
-      botAvatar: require("@/assets/botrmbg.png"),
+      botAvatar: require("@/assets/finbud_logo.png"),
       chatMode: "",
       showDeepResearchWorkflow: false,
       showThinkingProcess: false,
@@ -169,6 +241,8 @@ export default {
       conversationHistory: [],
       researchBrief: null,
       autoMessageProcessed: false,
+      isLoadingMessages: false,
+      showConfetti: false,
     };
   },
   computed: {
@@ -187,15 +261,15 @@ export default {
 				require("@/assets/anonymous.png")
 			);
 		},
-		showWelcomeChips() {
-			if (!this.greeting || this.autoMessage) return false;
-			return this.messages.length === 0;
-		},
-		showWelcomeHero() {
-			return this.showWelcomeChips;
-		},
-		welcomeHeroHtml() {
-			const vi = this.$i18n.locale === "vi";
+    showWelcomeChips() {
+      if (this.autoMessage || this.isLoadingMessages) return false;
+      return this.messages.length === 0 || (this.messages.length === 1 && this.messages[0].isSlogan);
+    },
+    showWelcomeHero() {
+      return this.showWelcomeChips;
+    },
+    welcomeHeroHtml() {
+      const vi = this.$i18n.locale === "vi";
 			if (vi) {
 				if (!this.isAuthenticated) {
 					return [
@@ -260,7 +334,12 @@ export default {
 					this.handleUserSubmit({ message: newMessage });
 				}
 			}
-		}
+		},
+    messages(newVal) {
+      if (newVal.length === 0 && !this.isLoadingMessages) {
+        this.pushSloganMessage();
+      }
+    },
 	},
 	created() {
 		this.openai = new OpenAI({
@@ -269,8 +348,37 @@ export default {
 		});
 	},
 	methods: {
+    pushSloganMessage() {
+      if (this.messages.some(m => m.isSlogan)) return;
+      this.messages.push({
+        id: 'slogan-' + Date.now(),
+        isSlogan: true,
+        text: "WE SPEAK FINANCE",
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString()
+      });
+    },
 		// ---------------------------- MAIN FUNCTIONS FOR HANDLING EVENTS --------------------------------
 		async handleUserSubmit({ message, file }) {
+      if (message && (message.toLowerCase().includes("#play") || message.toLowerCase().includes("#game"))) {
+        this.messages.push({ text: message, isUser: true, timestamp: new Date().toLocaleTimeString() });
+        this.$nextTick(() => this.scrollChatFrameToBottom());
+        setTimeout(() => {
+          this.messages.push({
+            text: "Oh! You want to play? Let's go! Catch as many coins as you can! 💰🚀",
+            isUser: false,
+            isGame: true,
+            typing: false,
+            timestamp: new Date().toLocaleTimeString()
+          });
+          this.triggerConfetti();
+          this.$nextTick(() => this.scrollChatFrameToBottom());
+        }, 500);
+        this.currentUserMessageText = "";
+        this.$refs.userInput && this.$refs.userInput.clearInput?.();
+        return;
+      }
+
 			console.log(
 				`chat mode before sent from chat component: ${this.chatMode}`
 			);
@@ -511,8 +619,17 @@ Please provide a comprehensive answer that:
 
 					11. **Analyze Portfolio**
 					- User intent: Analyze portfolio
-					- Format: **#analyze**
-					- Example: "Analyze my portfolio" → "#analyze"
+					- Format: **#analyze Portfolio**
+					
+					12. **Play Game**
+					- User intent: Play a game or trivia
+					- Format: **#play [game_type]** (Type can be 'catch' or 'trivia')
+					- Example: "Chơi game" → "#play catch", "Chơi giải đố" → "#play trivia"
+
+					13. **Draw Chart**
+					- User intent: Request a visual chart or diagram of a stock or financial trend.
+					- Format: **#chart [STOCK_CODE_IN_UPPERCASE]**
+					- Example: "Vẽ biểu đồ Tesla" → "#chart TSLA", "Show me AAPL chart" → "#chart AAPL"
 
 					### Instruction:
 					Given the user message: "${newMessage}", respond with the correct formatted command according to the rules above.  
@@ -520,6 +637,69 @@ Please provide a comprehensive answer that:
 					`,
           },
         ]);
+
+        // HANDLE PLAY(12)
+        if (gptDefine.toLowerCase().includes("#play")) {
+          const gameType = gptDefine.split(" ").pop() === 'trivia' ? 'trivia' : 'catch';
+          const botMessage = {
+            id: Date.now(),
+            text: gameType === 'trivia' ? "Let's test your financial knowledge!" : "Catch as many coins as you can!",
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString(),
+            isGame: true,
+            gameType: gameType
+          };
+          this.messages.push(botMessage);
+          this.scrollChatFrameToBottom();
+          return;
+        }
+
+        // HANDLE TRANSACTION (#add / #spend)
+        if (gptDefine.toLowerCase().includes("#add") || gptDefine.toLowerCase().includes("#spend")) {
+          const isAdd = gptDefine.toLowerCase().includes("#add");
+          const parts = gptDefine.split(" ");
+          const amount = parseFloat(parts.pop()) || 0;
+          const desc = parts.slice(1, -1).join(" ") || (isAdd ? "Income" : "Expense");
+          
+          const botMessage = {
+            id: Date.now(),
+            text: `${isAdd ? 'Income' : 'Expense'} of $${amount} for "${desc}" added to your tracker!`,
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString(),
+            financeCard: {
+              type: isAdd ? 'income' : 'expense',
+              amount: amount,
+              description: desc,
+              chartData: {
+                series: [isAdd ? 100 : 40, isAdd ? 40 : 100],
+                options: {
+                  labels: ['Income', 'Expenses'],
+                  colors: ['#10B981', '#EF4444'],
+                  chart: { type: 'donut' }
+                }
+              }
+            }
+          };
+          this.messages.push(botMessage);
+          this.scrollChatFrameToBottom();
+          return;
+        }
+
+        // HANDLE CHART(13)
+        if (gptDefine.toLowerCase().includes("#chart")) {
+          const symbol = gptDefine.split(" ").pop() || "AAPL";
+          const botMessage = {
+            id: Date.now(),
+            text: `Đây là biểu đồ của ${symbol.toUpperCase()} mà bạn yêu cầu.`,
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString(),
+            showChart: true,
+            stockSymbol: symbol.toUpperCase(),
+          };
+          this.messages.push(botMessage);
+          this.scrollChatFrameToBottom();
+          return;
+        }
 
         // HANDLE DEFINE(2)
         if (gptDefine.toLowerCase().includes("#define")) {
@@ -1117,11 +1297,33 @@ Please provide a comprehensive answer that:
             });
             console.log(historyChat);
             const prompt = userMessage;
+            const systemMessage = `You are FinBud, a playful but intelligent financial companion designed to help users understand and manage their money in a simple, intuitive, and engaging way. You follow the “We Speak Finance” philosophy, meaning you do not teach finance like a textbook, but instead speak through insights, translating financial data into clear, human, and actionable meaning. Your personality is friendly, slightly mischievous, warm, and supportive, similar to a Duolingo-style assistant, but you always maintain financial credibility and accuracy. You communicate like a smart Gen Z money buddy who understands both numbers and emotions. Your tone is light, conversational, and concise, occasionally playful, but never childish or unprofessional.
+
+If users ask who created you, you answer clearly that you were created by Tri Bui. If users ask about your philosophy or spirit, you explain that you follow the “We Speak Finance” mindset, meaning you make finance feel natural, intuitive, and human instead of complex and academic.
+
+You prioritize insight over explanation. Instead of defining concepts or giving long theoretical answers, you focus on what the information means for the user and what they should consider doing next. You break responses into short, digestible pieces, often starting with a clear observation, followed by reasoning, and optionally a gentle suggestion. You avoid unnecessary jargon, but when technical terms are needed, you explain them simply and naturally in context.
+
+You are emotionally aware. If a user expresses stress, confusion, or personal concerns, you respond with empathy first, then guide the conversation back to helpful financial perspective. You never judge the user’s situation. You act like a supportive companion, not an an authority figure. You can use light humor or soft expressions to make the interaction feel natural, but you do not overuse emojis or become overly casual.
+
+You are confident but not absolute. You provide clear opinions when appropriate, but you avoid making guarantees or giving rigid financial advice. You guide thinking rather than dictate decisions. You frame suggestions as options, not commands.
+
+Your responses follow a natural structure:
+
+A short, intuitive insight or reaction
+A brief explanation of why it matters
+An optional suggestion or next step
+
+Keep responses concise, usually under 3–5 sentences unless the user explicitly asks for deeper detail. Avoid long paragraphs.
+
+Do not behave like a generic chatbot. Do not output textbook-style explanations, long lists of definitions, or overly technical breakdowns unless explicitly requested. Do not sound robotic, overly formal, or like a financial report. Do not overwhelm the user with too much data.
+
+Your goal is to make finance feel easy, human, and slightly enjoyable, while still being accurate and useful. Every response should help the user feel more in control of their money, not more confused.`;
+
             const gptResponse = await gptServices([
+              { role: "system", content: systemMessage },
               {
                 role: "user",
-                content: `${prompt}. 
-						Response in this language ${language}. Previous Context to refer to if user asks ${historyChat}`,
+                content: `${prompt}. \nResponse in this language ${language}. Previous Context to refer to if user asks: ${JSON.stringify(historyChat)}`,
               },
             ]);
 
@@ -1601,7 +1803,14 @@ Bạn là FinBud — trợ lý tài chính.
       const searchQuery = `#search ${question}`;
       this.sendMessage(searchQuery);
     },
+    triggerConfetti() {
+      this.showConfetti = true;
+      setTimeout(() => {
+        this.showConfetti = false;
+      }, 5000);
+    },
     async updateCurrentThread(threadID) {
+      this.isLoadingMessages = true;
       try {
         this.messages = [];
         const chatApi = `${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadID}`;
@@ -1655,6 +1864,11 @@ Bạn là FinBud — trợ lý tài chính.
         }
         // Scroll to the bottom after loading messages
         await this.setScrollHeightBottomn();
+        
+        if (this.messages.length === 0) {
+          this.pushSloganMessage();
+        }
+        this.isLoadingMessages = false;
       } catch (err) {
         console.error("Error on updating to current thread:", err.message);
       }
@@ -2083,18 +2297,250 @@ Please write a short, friendly explanation telling the user why you cannot categ
   line-height: 1.5;
 }
 
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
+/* Slogan Message Styles */
+.slogan-message-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 32px 0;
+  width: 100%;
+}
 
-  50% {
-    opacity: 0.6;
-  }
+.slogan-message-card {
+  position: relative;
+  background: white;
+  padding: 40px;
+  border-radius: 32px;
+  text-align: center;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
+  width: 90%;
+  overflow: hidden;
+}
 
-  100% {
-    opacity: 1;
+.slogan-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: slogan-pulse-anim 4s infinite alternate;
+}
+
+@keyframes slogan-pulse-anim {
+  from { scale: 0.8; opacity: 0.5; }
+  to { scale: 1.2; opacity: 1; }
+}
+
+.slogan-logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+}
+
+.slogan-text {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #1E293B;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.slogan-sub {
+  font-size: 0.95rem;
+  color: #64748B;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.slogan-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.slogan-btn {
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  padding: 10px 20px;
+  border-radius: 99px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1E293B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.slogan-btn:hover {
+  background: white;
+  border-color: #3B82F6;
+  color: #3B82F6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.animate-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-header-spirit {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(250, 251, 252, 0.9) 0%, rgba(250, 251, 252, 0) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.fixed-slogan-band {
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #3B82F6;
+  border-radius: 99px;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.15em;
+  color: #3B82F6;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.fixed-slogan-band:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2);
+  background: white;
+}
+
+.breathing-indicator {
+  width: 10px;
+  height: 10px;
+  background: #10B981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  animation: breathe 2s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  50% { transform: scale(1.4); opacity: 0.6; box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.spirit-sparkles {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: skewX(-20deg);
+  animation: sparkle-sweep 3s infinite;
+}
+
+@keyframes sparkle-sweep {
+  0% { left: -100%; }
+  20% { left: 150%; }
+  100% { left: 150%; }
+}
+
+@media (max-width: 768px) {
+  .chat-header-spirit {
+    height: 50px;
   }
+  .fixed-slogan-band {
+    font-size: 0.75rem;
+    padding: 6px 16px;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* Quick Actions Style */
+.quick-action-chips {
+  display: flex;
+  gap: 12px;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: 3px solid #EEF2FF;
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 10px rgba(167, 139, 250, 0.05);
+}
+
+.action-chip:hover {
+  transform: translateY(-5px) scale(1.05);
+  border-color: var(--agent-button-bg-color, #A78BFA);
+  box-shadow: 0 10px 25px rgba(167, 139, 250, 0.15);
+}
+
+.game-chip { color: #A78BFA; }
+.trend-chip { color: #4ADE80; }
+.plan-chip { color: #60A5FA; }
+
+.hero-decorative-blobs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.hero-decorative-blobs::after {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, rgba(167, 139, 250, 0) 70%);
+  filter: blur(40px);
+  animation: float-blob 10s infinite alternate;
+}
+
+@keyframes float-blob {
+  from { transform: translate(0, 0); }
+  to { transform: translate(50px, 30px); }
 }
 
 @keyframes spin {
@@ -2119,4 +2565,84 @@ Please write a short, friendly explanation telling the user why you cannot categ
 .chat-container :deep(.user-input-container) {
   flex-shrink: 0;
 }
+.fixed-slogan-band {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-primary, rgba(248, 250, 255, 0.9));
+  backdrop-filter: blur(8px);
+  text-align: center;
+  padding: 10px 0;
+  font-weight: 800;
+  color: var(--fin-speak-accent, #4ADE80);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.online-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: var(--fin-speak-accent, #4ADE80);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px var(--fin-speak-accent, #4ADE80);
+  animation: pulse-online 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes pulse-online {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+:global(html.dark-mode) .fixed-slogan-band {
+  background: var(--bg-primary, #1e1e2e);
+}
+.confetti-cannon {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.confetti-bit {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #A78BFA;
+  top: -20px;
+  border-radius: 2px;
+  animation: confettiFall 4s linear infinite;
+}
+
+.confetti-bit:nth-child(3n) { background: #4ADE80; }
+.confetti-bit:nth-child(3n+1) { background: #FF7A7A; }
+.confetti-bit:nth-child(3n+2) { background: #60A5FA; }
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* Randomize positions */
+.confetti-bit:nth-child(1) { left: 10%; animation-delay: 0s; }
+.confetti-bit:nth-child(2) { left: 20%; animation-delay: 0.5s; }
+.confetti-bit:nth-child(3) { left: 30%; animation-delay: 1s; }
+.confetti-bit:nth-child(4) { left: 40%; animation-delay: 0.2s; }
+.confetti-bit:nth-child(5) { left: 50%; animation-delay: 1.5s; }
+.confetti-bit:nth-child(6) { left: 60%; animation-delay: 0.8s; }
+.confetti-bit:nth-child(7) { left: 70%; animation-delay: 2s; }
+.confetti-bit:nth-child(8) { left: 80%; animation-delay: 0.4s; }
+.confetti-bit:nth-child(9) { left: 90%; animation-delay: 1.2s; }
+.confetti-bit:nth-child(10) { left: 5%; animation-delay: 1.8s; }
 </style>

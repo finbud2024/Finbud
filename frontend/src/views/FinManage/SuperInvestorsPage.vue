@@ -135,7 +135,7 @@ const hideBot = () => {
   <div class="page-container fin-speak-page">
     <!-- Bot Chat Component -->
     <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-      <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" />
+      <img class="bot-image" src="@/assets/finbud_logo.png" alt="Bot" />
       <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
         <div v-if="isTyping" class="typing-animation">
           <span class="dot"></span>
@@ -305,7 +305,7 @@ const hideBot = () => {
 }
 
 .bot-message {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 12px;

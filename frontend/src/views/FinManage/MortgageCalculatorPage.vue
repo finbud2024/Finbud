@@ -10,7 +10,7 @@
     <div class="content-wrapper">
       <!-- Bot Chat Component -->
       <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-        <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" @click="hideMessage"/>
+        <img class="bot-image" src="@/assets/finbud_logo.png" alt="Bot" @click="hideMessage"/>
         <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
           <div v-if="isTyping" class="typing-animation">
             <span class="dot"></span>

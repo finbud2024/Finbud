@@ -392,12 +392,13 @@ const messages = {
     chatComponent: {
       rename: "Rename",
       delete: "Delete",
-      deleteConfirm: "Delete Chat ?",
+      deleteConfirm: "Delete Chat?",
       deleteConfirmMessage: "This will delete",
       cancel: "Cancel",
+      newChat: "New Chat",
       guildence: "Guidence",
       sendButton: "Send",
-      responsePlaceholder: "Phản hồi từ FinBud sẽ xuất hiện ở đây",
+      responsePlaceholder: "Response from FinBud will appear here",
     },
 
     //Envent Hub
@@ -1804,6 +1805,7 @@ const messages = {
       deleteConfirm: "Xóa cuộc trò chuyện?",
       deleteConfirmMessage: "Cuộc trò chuyện này sẽ bị xóa",
       cancel: "Hủy",
+      newChat: "Chat mới",
       guildence: "Hướng dẫn",
       sendButton: "Gửi",
       responsePlaceholder: "Phản hồi từ FinBud sẽ xuất hiện ở đây",

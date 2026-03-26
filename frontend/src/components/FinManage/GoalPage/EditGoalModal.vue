@@ -659,7 +659,7 @@ export default {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   color: white;
 }
 

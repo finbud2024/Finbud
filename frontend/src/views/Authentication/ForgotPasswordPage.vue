@@ -91,7 +91,7 @@ export default {
 }
 
 .logo-icon {
-  background-color: #000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   font-weight: bold;
   padding: 4px 10px;
@@ -105,7 +105,7 @@ export default {
 }
 
 .try-button {
-  background-color: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   border-radius: 20px;

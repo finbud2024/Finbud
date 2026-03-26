@@ -1,81 +1,118 @@
 <template>
   <div class="profile-root">
-    <div class="profile-page">
-      <div class="balance-card border">
-        <div class="balance">
-          <div
-            class="stat-tile"
-            v-for="item in financialData"
-            :key="item.label"
-          >
-            <h3 class="stat-label">{{ item.label }}</h3>
-            <p class="stat-value" :class="statValueClass(item.value)">{{ item.value }}</p>
-          </div>
-        </div>
-        <div class="profile-image-container">
-          <img
-            class="profile-image"
-            :class="{ 'image-uploaded': imageUploaded }"
-            :src="profileImage"
-            alt="Profile Image"
-          />
-          <label for="file-upload" class="custom-file-upload">
-            <font-awesome-icon icon="fa-solid fa-camera" />
-          </label>
-          <input id="file-upload" type="file" @change="uploadImage" />
+    <!-- Hero Header -->
+    <header class="profile-hero animate-in">
+      <div class="hero-content">
+        <img src="@/assets/finbud_logo.png" alt="FinBud Mascot" class="hero-mascot" />
+        <div class="hero-text">
+          <h1 class="hero-title">Hey, {{ profile.displayName || 'Friend' }}! 👋</h1>
+          <p class="hero-subtitle">Welcome to your financial command center. Looking sharp today!</p>
         </div>
       </div>
-      <div class="info-card border">
-        <div class="info-body">
-        <form @submit.prevent="updateProfile">
-          <div
-            class="section"
-            v-for="(section, sectionIndex) in sections"
-            :key="sectionIndex"
-          >
-            <div class="header-section">{{ section.title }}</div>
-            <div
-              class="form-group"
-              v-for="(field, fieldIndex) in section.fields"
-              :key="fieldIndex"
-            >
-              <label :for="field.id">{{ field.label }}</label>
-              <input
-                v-if="field.type !== 'textarea'"
-                :type="field.type"
-                :id="field.id"
-                v-model="profile[field.model]"
-                :placeholder="field.label"
-                :readonly="field.id === 'email'"
+    </header>
+
+    <div class="profile-grid">
+      <!-- Left Column: Stats & Balance -->
+      <aside class="profile-sidebar">
+        <div class="balance-card border card-glow">
+          <div class="profile-image-section">
+            <div class="profile-image-container">
+              <img
+                class="profile-image"
+                :class="{ 'image-uploaded': imageUploaded }"
+                :src="profileImage"
+                alt="Profile Image"
               />
-              <textarea
-                v-else
-                :id="field.id"
-                v-model="profile[field.model]"
-              ></textarea>
+              <label for="file-upload" class="custom-file-upload" title="Change Avatar">
+                <font-awesome-icon icon="fa-solid fa-camera" />
+              </label>
+              <input id="file-upload" type="file" @change="uploadImage" hidden />
             </div>
           </div>
-          <div class="btn-container">
-            <button type="submit" class="btn btn-save">Save</button>
-            <button type="button" @click="cancelChange" class="btn btn-cancel">
-              Cancel
-            </button>
+
+          <div class="balance">
+            <div
+              class="stat-tile"
+              v-for="item in financialData"
+              :key="item.label"
+            >
+              <h3 class="stat-label">{{ item.label }}</h3>
+              <p class="stat-value" :class="statValueClass(item.value)">{{ item.value }}</p>
+            </div>
           </div>
-        </form>
         </div>
-      </div>
+      </aside>
+
+      <!-- Right Column: Info Form -->
+      <main class="profile-main">
+        <div class="info-card border">
+          <div class="info-body">
+            <form @submit.prevent="updateProfile">
+              <div
+                class="section"
+                v-for="(section, sectionIndex) in sections"
+                :key="sectionIndex"
+              >
+                <div class="header-section">{{ section.title }}</div>
+                <div class="form-grid">
+                  <div
+                    class="form-group"
+                    v-for="(field, fieldIndex) in section.fields"
+                    :key="fieldIndex"
+                    :class="{ 'full-width': field.type === 'textarea' }"
+                  >
+                    <label :for="field.id">{{ field.label }}</label>
+                    <div class="input-wrapper">
+                      <input
+                        v-if="field.type !== 'textarea'"
+                        :type="field.type"
+                        :id="field.id"
+                        v-model="profile[field.model]"
+                        :placeholder="field.label"
+                        :readonly="field.id === 'email'"
+                      />
+                      <textarea
+                        v-else
+                        :id="field.id"
+                        v-model="profile[field.model]"
+                        :placeholder="field.label"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="btn-container">
+                <button type="submit" class="btn btn-save">
+                  <span>Save Changes</span>
+                  <font-awesome-icon icon="fa-solid fa-check" class="btn-icon" />
+                </button>
+                <button type="button" @click="cancelChange" class="btn btn-cancel">
+                  <span>Cancel</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
     </div>
 
-    <FinCoinLeaderboard
-      class="profile-leaderboard"
-      :leaderboard-data="leaderboardData"
-      :current-user-rank="currentUserRank"
-      :selected-time-frame="selectedTimeFrame"
-      :time-frames="timeFrames"
-      :current-user-id="currentUserId"
-      :default-image="defaultImage"
-      @time-frame-change="changeTimeFrame"
-    />
+    <!-- Leaderboard Section -->
+    <section class="leaderboard-section border">
+      <div class="section-header">
+        <font-awesome-icon icon="fa-solid fa-trophy" class="header-icon" />
+        <h2>FinCoin Leaderboard</h2>
+      </div>
+      <FinCoinLeaderboard
+        :leaderboard-data="leaderboardData"
+        :current-user-rank="currentUserRank"
+        :selected-time-frame="selectedTimeFrame"
+        :time-frames="timeFrames"
+        :current-user-id="currentUserId"
+        :default-image="defaultImage"
+        @time-frame-change="changeTimeFrame"
+      />
+    </section>
   </div>
 </template>
 
@@ -458,338 +495,380 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+
 .profile-root {
   min-height: 100vh;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 1.25rem 1.25rem 2.5rem;
+  padding: 2rem 1.5rem 5rem;
   box-sizing: border-box;
-  background: linear-gradient(160deg, var(--bg-secondary, #f1f5f9) 0%, var(--bg-primary, #fff) 45%);
-  animation: profileFade 0.45s ease;
+  background: var(--bg-primary, #F8FAFF);
+  font-family: 'Outfit', sans-serif;
 }
 
-.profile-page {
+/* Hero Header */
+.profile-hero {
+  margin-bottom: 3rem;
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 32px;
+  border: 4px solid #EEF2FF;
+  box-shadow: 0 15px 40px rgba(167, 139, 250, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.hero-mascot {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 15px rgba(167, 139, 250, 0.3));
+  animation: float 4s ease-in-out infinite;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1F2937;
+  margin: 0 0 0.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #6B7280;
+  margin: 0;
+  max-width: 600px;
+}
+
+/* Layout Grid */
+.profile-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
-  gap: 1.5rem;
-  align-items: start;
+  grid-template-columns: 350px 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
 }
 
 .border {
-  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
-  border-radius: 16px;
-  background: var(--card-bg, #fff);
-  border: 1px solid var(--border-color, #e2e8f0);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  background: #fff;
+  border: 4px solid #EEF2FF;
+  border-radius: 32px;
+  box-shadow: 0 10px 30px rgba(167, 139, 250, 0.05);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@media (hover: hover) {
-  .border:hover {
-    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.1);
-  }
+.border:hover {
+  transform: translateY(-8px);
+  border-color: var(--agent-button-bg-color, #A78BFA);
+  box-shadow: 0 20px 50px rgba(167, 139, 250, 0.15);
 }
 
+/* Sidebar Stats */
 .balance-card {
-  position: relative;
-  padding: 5.5rem 1.25rem 1.5rem;
-  min-width: 0;
-}
-
-.balance {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  padding: 2.5rem;
   text-align: center;
 }
 
-.stat-tile {
-  padding: 0.85rem 0.5rem;
-  border-radius: 12px;
-  background: var(--bg-secondary, #f8fafc);
-  border: 1px solid var(--border-color, #e2e8f0);
-}
-
-.stat-label {
-  margin: 0 0 0.35rem;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary, #64748b);
-}
-
-.stat-value {
-  margin: 0;
-  font-size: clamp(1.1rem, 2.5vw, 1.65rem);
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--text-primary, #0f172a);
-  word-break: break-word;
-}
-
-.stat-value--high {
-  color: #059669;
-}
-
-.stat-value--low {
-  color: #dc2626;
+.profile-image-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.5rem;
 }
 
 .profile-image-container {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, -42%);
-  z-index: 2;
+  position: relative;
+  width: 160px;
+  height: 160px;
 }
 
 .profile-image {
-  width: 112px;
-  height: 112px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid var(--card-bg, #fff);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-  display: block;
+  border: 8px solid #fff;
+  box-shadow: 0 10px 25px rgba(167, 139, 250, 0.2);
 }
 
 .image-uploaded {
-  border-color: var(--primary-color, #000);
+  border-color: var(--agent-button-bg-color, #A78BFA);
   animation: profilePulse 2s ease-in-out infinite;
-}
-
-#file-upload {
-  display: none;
 }
 
 .custom-file-upload {
   position: absolute;
-  bottom: 4px;
-  right: -2px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--primary-color, #000);
+  bottom: 8px;
+  right: 8px;
+  width: 48px;
+  height: 48px;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: #fff;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
+  box-shadow: 0 8px 15px rgba(167, 139, 250, 0.3);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: 1.2rem;
+  border: 4px solid #fff;
 }
 
-@media (hover: hover) {
-  .custom-file-upload:hover {
-    transform: scale(1.06);
-  }
+.custom-file-upload:hover {
+  transform: scale(1.2) rotate(15deg);
+  background: #8B5CF6;
 }
 
+.balance {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.stat-tile {
+  padding: 1.5rem;
+  background: #F8FAFF;
+  border-radius: 24px;
+  border: 2px solid #EEF2FF;
+  transition: all 0.3s ease;
+}
+
+.stat-tile:hover {
+  background: #fff;
+  border-color: var(--fin-speak-accent, #4ADE80);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6B7280;
+  margin: 0 0 0.5rem;
+}
+
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #1F2937;
+}
+
+.stat-value--high { color: var(--fin-speak-accent, #4ADE80); }
+.stat-value--low { color: var(--error-color, #FF7A7A); }
+
+/* Main Content Info */
 .info-card {
-  position: relative;
-  padding: 3.25rem 1.25rem 1.25rem;
-  min-width: 0;
-}
-
-.info-body {
-  padding: 0;
-}
-
-.section {
-  position: relative;
+  padding: 3rem;
 }
 
 .header-section {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.8rem;
-  font-weight: 700;
+  display: inline-block;
+  background: var(--agent-button-bg-color, #A78BFA);
+  color: #fff;
+  padding: 0.75rem 2rem;
+  border-radius: 99px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.65rem 1.25rem;
-  background: var(--primary-color, #000);
-  color: var(--secondary-color, #fff);
-  border-radius: 999px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  white-space: nowrap;
-  max-width: calc(100% - 2rem);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 20px rgba(167, 139, 250, 0.3);
 }
 
-.form-group {
-  margin-bottom: 1.1rem;
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group.full-width {
+  grid-column: span 2;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.35rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-secondary, #475569);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  color: #374151;
+  padding-left: 0.5rem;
 }
 
-.form-group input,
-.form-group textarea {
+.input-wrapper input,
+.input-wrapper textarea {
   width: 100%;
+  padding: 1rem 1.5rem;
+  background: #F8FAFF;
+  border: 3px solid #EEF2FF;
+  border-radius: 20px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1F2937;
+  transition: all 0.3s ease;
   box-sizing: border-box;
-  padding: 0.65rem 0.85rem;
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 10px;
-  font-size: 1rem;
-  background: var(--bg-primary, #fff);
-  color: var(--text-primary, #0f172a);
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-group textarea {
-  min-height: 96px;
-  resize: vertical;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
+.input-wrapper input:focus,
+.input-wrapper textarea:focus {
   outline: none;
-  border-color: var(--primary-color, #000);
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+  background: #fff;
+  border-color: var(--agent-button-bg-color, #A78BFA);
+  box-shadow: 0 0 0 6px rgba(167, 139, 250, 0.1);
 }
 
-.form-group input[readonly] {
-  background: var(--bg-secondary, #f1f5f9);
-  color: var(--text-secondary, #64748b);
+.input-wrapper textarea {
+  min-height: 120px;
 }
 
 .btn-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: 1.5rem;
+  margin-top: 3rem;
 }
 
 .btn {
-  padding: 0.65rem 1.35rem;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  border-radius: 99px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
   border: none;
-  min-height: 44px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .btn-save {
-  background: var(--primary-color, #000);
-  color: var(--secondary-color, #fff);
+  background: var(--agent-button-bg-color, #A78BFA);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(167, 139, 250, 0.3);
+}
+
+.btn-save:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: #8B5CF6;
+  box-shadow: 0 15px 35px rgba(167, 139, 250, 0.4);
 }
 
 .btn-cancel {
-  background: transparent;
-  color: var(--primary-color, #000);
-  border: 2px solid var(--primary-color, #000);
+  background: #fff;
+  color: var(--agent-button-bg-color, #A78BFA);
+  border: 4px solid #EEF2FF;
 }
 
-@media (hover: hover) {
-  .btn-save:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-  }
-  .btn-cancel:hover {
-    background: var(--bg-secondary, #f8fafc);
-  }
+.btn-cancel:hover {
+  background: #F5F3FF;
+  border-color: var(--agent-button-bg-color, #A78BFA);
+  transform: translateY(-3px);
 }
 
-.profile-leaderboard {
-  margin-top: 2rem;
+/* Leaderboard Section */
+.leaderboard-section {
+  padding: 3rem;
 }
 
-@keyframes profileFade {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.header-icon {
+  font-size: 2rem;
+  color: #FBBF24;
+  filter: drop-shadow(0 4px 10px rgba(251, 191, 36, 0.4));
+}
+
+.section-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #1F2937;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-15px) rotate(5deg); }
 }
 
 @keyframes profilePulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+  0%, 100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.4); }
+  50% { box-shadow: 0 0 0 15px rgba(167, 139, 250, 0); }
+}
+
+.animate-in {
+  animation: slideBottom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideBottom {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 960px) {
-  .profile-page {
-    grid-template-columns: 1fr;
-  }
-
-  .balance {
-    grid-template-columns: 1fr;
-    max-width: 320px;
-    margin: 0 auto;
-  }
-
-  .balance-card {
-    padding-top: 5rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .profile-root {
-    padding: 1rem 0.75rem 2rem;
-  }
-
-  .balance-card,
-  .info-card {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .btn-container {
+@media (max-width: 768px) {
+  .hero-content {
     flex-direction: column;
+    text-align: center;
   }
-
-  .btn {
-    width: 100%;
+  .form-grid {
+    grid-template-columns: 1fr;
   }
-
-  .header-section {
-    font-size: 0.72rem;
-    padding: 0.55rem 1rem;
+  .form-group.full-width {
+    grid-column: span 1;
   }
-}
-
-@media (max-width: 640px) and (hover: hover) {
-  .border:hover {
-    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+  .profile-hero {
+    padding: 1.5rem;
+  }
+  .hero-title {
+    font-size: 1.8rem;
   }
 }
 
-.dark-mode .profile-root {
-  background: linear-gradient(160deg, #1e293b 0%, #0f172a 50%);
+/* Dark Mode Overrides */
+:global(.dark-mode) .profile-root {
+  background: #0F172A;
 }
 
-.dark-mode .stat-tile {
-  background: #334155;
-  border-color: #475569;
+:global(.dark-mode) .profile-hero,
+:global(.dark-mode) .border {
+  background: #1E293B;
+  border-color: #334155;
 }
 
-.dark-mode .stat-value {
-  color: #f1f5f9;
+:global(.dark-mode) .stat-tile,
+:global(.dark-mode) .input-wrapper input,
+:global(.dark-mode) .input-wrapper textarea {
+  background: #0F172A;
+  border-color: #334155;
+  color: #F8FAFC;
 }
 
-.dark-mode .stat-value--high {
-  color: #34d399;
+:global(.dark-mode) .hero-title,
+:global(.dark-mode) .section-header h2 {
+  color: #F1F5F9;
 }
 
-.dark-mode .stat-value--low {
-  color: #f87171;
+:global(.dark-mode) .btn-cancel {
+  background: #1E293B;
+  border-color: #334155;
 }
 </style>

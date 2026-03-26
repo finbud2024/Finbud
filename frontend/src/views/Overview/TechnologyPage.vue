@@ -391,7 +391,7 @@ export default {
 
 button {
   padding: 12px 24px;
-  background-color: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   border-radius: 8px;
@@ -532,7 +532,7 @@ button:hover {
 
 /* Feature Sections (Consulting & Education) */
 .feature-section {
-  background-color: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   padding: 40px;
   border-radius: 12px;

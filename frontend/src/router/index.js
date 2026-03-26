@@ -21,6 +21,8 @@ import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
 import NotificationCenter from "@/views/Home/NotificationCenter.vue";
 import SubscriptionPage from "@/views/Subscription/SubscriptionPage.vue";
 
+import CalculatorsPage from "@/views/FinManage/CalculatorsPage.vue";
+
 const routes = [
   {
     path: "/",
@@ -90,10 +92,13 @@ const routes = [
     component: ProfilePage,
   },
   {
+    path: "/calculators",
+    name: "CalculatorsPage",
+    component: CalculatorsPage,
+  },
+  {
     path: "/mortgage-calc",
-    name: "MortgageCalc",
-    component: MortgageCalc,
-    props: true,
+    redirect: "/calculators?tab=mortgage",
   },
   {
     path: "/super-investors",
@@ -112,8 +117,7 @@ const routes = [
   },
   {
     path: "/investment-calculator",
-    name: "InvestmentCalculator",
-    component: InvestmentCalculator,
+    redirect: "/calculators?tab=investment",
   },
   {
     path: "/fund-letter",

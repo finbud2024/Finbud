@@ -366,7 +366,7 @@
     <div class="assistant-container" v-if="showAssistant">
       <div class="assistant-bubble" @click="toggleAssistant">
         <img
-          src="@/assets/botrmbg.png"
+          src="@/assets/finbud_logo.png"
           alt="Assistant"
           class="assistant-avatar"
         />
@@ -1072,7 +1072,7 @@ export default {
 }
 
 .tab-btn.active {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
 }
 
@@ -1194,7 +1194,7 @@ export default {
 }
 
 .btn-primary {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
 }
 
@@ -1267,7 +1267,7 @@ export default {
 }
 
 .overview-card.total {
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   color: white;
 }
 
@@ -1523,7 +1523,7 @@ export default {
 .typing-dots span {
   width: 8px;
   height: 8px;
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   border-radius: 50%;
   animation: bounce 1.4s infinite ease-in-out;
 }
@@ -1752,7 +1752,7 @@ export default {
 }
 
 .control-btn {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -1763,7 +1763,7 @@ export default {
 }
 
 .trade-btn {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -1774,7 +1774,7 @@ export default {
 }
 
 .action-btn {
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -1785,7 +1785,7 @@ export default {
 }
 
 .tutorial-btn {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -2423,7 +2423,7 @@ export default {
 }
 
 .overview-card.total {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
 }
 
@@ -2454,7 +2454,7 @@ export default {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   font-size: 1.25rem;

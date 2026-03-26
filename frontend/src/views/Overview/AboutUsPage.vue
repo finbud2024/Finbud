@@ -465,7 +465,7 @@ ul, ol, li {
 .title {
   font-size: 3.5rem;
   font-weight: 800;
-  background: linear-gradient(45deg, #000, #333);
+  background: linear-gradient(45deg, #A78BFA, #8B5CF6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
@@ -549,7 +549,7 @@ ul, ol, li {
   font-size: 1.6rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  background: linear-gradient(45deg, #000, #333);
+  background: linear-gradient(45deg, #A78BFA, #8B5CF6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   white-space: nowrap;
@@ -590,7 +590,7 @@ ul, ol, li {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   font-size: 1.1rem;
   transition: all 0.3s ease;
@@ -754,7 +754,7 @@ ul, ol, li {
 .contact-header h1 {
   font-size: 3rem;
   font-weight: 800;
-  background: linear-gradient(45deg, #000, #333);
+  background: linear-gradient(45deg, #A78BFA, #8B5CF6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 1rem;

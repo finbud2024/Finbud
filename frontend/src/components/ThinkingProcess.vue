@@ -108,6 +108,14 @@ export default defineComponent({
 	aspect-ratio: 1;
 	border-radius: 50%;
 	margin-left: 1%;
+	box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+	animation: thinking-aura 2s infinite ease-in-out;
+}
+
+@keyframes thinking-aura {
+	0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+	70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+	100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
 }
 
 .thinking-content {

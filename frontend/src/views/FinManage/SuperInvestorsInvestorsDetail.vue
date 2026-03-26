@@ -102,7 +102,7 @@ const selectedTab = ref('Holding');
 
 .tab-buttons button.active {
   color: white;
-  background-color: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   font-weight: bold;
 }
 

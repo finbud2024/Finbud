@@ -11,7 +11,7 @@
 				</div>
 				<div v-else class="typed-message" v-html="typedContent"></div>
 			</div>
-			<img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" @click="triggerBotManually" />
+			<img class="bot-image" src="@/assets/finbud_logo.png" alt="Bot" @click="triggerBotManually" />
 		</div>
 
 		<!-- Market Data Section -->
@@ -617,9 +617,9 @@ Give me a concise overall summary of these combined markets.
 }
 
 .tab-button.active {
-	background-color: var(--primary-color, #000000);
-	color: var(--secondary-color, white);
-	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	background-color: var(--agent-button-bg-color, #A78BFA);
+	color: white;
+	box-shadow: 0 4px 12px rgba(167, 139, 250, 0.4);
 }
 
 .market-data-content {
@@ -646,15 +646,15 @@ Give me a concise overall summary of these combined markets.
 
 .section-title {
 	font-size: 1.75rem;
-	font-weight: 600;
-	color: #000;
+	font-weight: 700;
+	color: var(--text-primary, #1E293B);
 	margin: 2rem 0 1.25rem 0;
 	padding-bottom: 0.5rem;
-	border-bottom: 2px solid #000;
+	border-bottom: 2px solid var(--agent-button-bg-color, #A78BFA);
 }
 .dark-mode .section-title {
-	color: #000;
-	border-bottom-color: #000;
+	color: var(--text-primary, #1E293B);
+	border-bottom-color: var(--agent-button-bg-color, #A78BFA);
 }
 
 .data-card {

@@ -415,7 +415,7 @@ body {
   width: 70%;
   height: 44px;
   margin: 0.5rem auto 0;
-  background-color: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   border-radius: 0.5rem;

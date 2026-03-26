@@ -12,7 +12,7 @@
 .agent-title {
   font-size: 3rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 1rem;

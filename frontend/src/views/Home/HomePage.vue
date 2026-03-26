@@ -106,7 +106,7 @@
             <a href="/chat-view" class="button">{{ t('chatNow') }}</a>
           </div>
           <div class="feature-image">
-            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
+            <img src="@/assets/finbud_logo.png" alt="FinBud Logo">
           </div>
         </div>
         <div class="feature-row animate">
@@ -117,7 +117,7 @@
             <a href="/stock-simulator" class="button">{{ t('simulatorNow') }}</a>
           </div>
           <div class="feature-image">
-            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
+            <img src="@/assets/finbud_logo.png" alt="FinBud Logo">
           </div>
         </div>
         <div class="feature-row animate">
@@ -128,7 +128,7 @@
             <a href="/goal" class="button">{{ t('goalNow') }}</a>
           </div>
           <div class="feature-image">
-            <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
+            <img src="@/assets/finbud_logo.png" alt="FinBud Logo">
           </div>
         </div>
       </div>
@@ -160,7 +160,7 @@
 
     <footer class="site-footer animate">
       <div class="footer-image">
-        <img src="@/assets/home-page/FinBudPix.png" alt="FinBud Logo">
+        <img src="@/assets/finbud_logo.png" alt="FinBud Logo">
       </div>
       <div class="footer-text">
         © Copyright 2025, All Rights Reserved by FinBud
@@ -515,7 +515,7 @@ export default {
 }
 
 .auth-cta-signup {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: #ffffff;
   border-color: transparent;
 }
@@ -1325,7 +1325,7 @@ a:hover {
   width: 80px;
   height: 80px;
   margin: 0 auto 1.5rem;
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -1335,7 +1335,7 @@ a:hover {
 }
 
 .gradient-edu {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--fin-speak-accent, #4ADE80) 0%, #34D399 100%);
 }
 
 .gradient-quiz {
@@ -1376,7 +1376,7 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   color: white;
   padding: 0.75rem 2rem;
   border-radius: 12px;

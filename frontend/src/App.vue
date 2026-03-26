@@ -272,69 +272,82 @@ export default {
 
 :root {
   color-scheme: light;
-  --finbudBotMessageBG: #c8c5c5;
-  --finbudBotMessageColor: #000000;
-  --finbudBotMessageBorderColor: #000000;
-  --bg-primary: #ffffff;
-  --text-primary: #000000;
-  --text-secondary: #444444;
-  --nav-bg: transparent;
-  --border-color: #f5f5f5;
-  --link-color: #000000;
-  /* --hover-bg: #024384; */
-  --hover-bg: #949393;
-  --card-bg: #ffffff;
-  --content-bg: #ffffff;
-  --shadow-color: #e9e2e2;
-  --progress-color: #c8c5c5;
-  --logo-color: #000000;
-  --chat-text-color: #000000;
-  --chat-assistant-bg-color: #f7f8fa;
-  --chat-assistant-text-color: #1a1d26;
-  --chat-assistant-link-color: #0f6cbd;
-  --chat-assistant-code-bg-color: #f3f4f6;
-  --chat-user-bg-color: #f8f4f4;
-  --chat-user-text-color: #ffffff;
-  --black-in-light-mode: #000000;
-  --white-in-light-mode: #ffffff;
-  --agent-button-bg-active-color: #000000;
-  --black-in-dark-mode: #ffffff;
-  --white-in-dark-mode: #000000;
-  /* Chat thread list rail: ~ChatGPT (~15–18% width, cap ~280px) */
-  --finbud-chat-sidebar-width: clamp(248px, 16vw, 280px);
-  /* Mobile slide-out menus (main nav + chat threads): narrow rail, leave ~56px content peek */
-  --finbud-mobile-drawer-width: min(272px, calc(100vw - 56px));
+  /* Duolingo-inspired playful palette */
+  --bg-primary: #F8FAFF;
+  --content-bg: #F8FAFF;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --nav-bg: #FFFFFF;
+  --border-color: #E2E8F0;
+  --link-color: #60A5FA;
+  --hover-bg: #F1F5F9;
+  --card-bg: #FFFFFF;
+  
+  /* Accent Colors */
+  --fin-speak-accent: #4ADE80; /* Positive/Mint */
+  --agent-button-bg-color: #A78BFA; /* Playful Purple for AI */
+  --agent-button-bg-active-color: #8B5CF6;
+  --error-color: #FF7A7A; /* Gentle Coral */
+  --trust-color: #60A5FA; /* Soft Blue */
+  --progress-color: #4ADE80;
+
+  /* Chat Colors */
+  --chat-text-color: #1E293B;
+  --chat-assistant-bg-color: #ede9fe; /* Lavender */
+  --chat-assistant-text-color: #1E293B;
+  --chat-assistant-link-color: #60A5FA;
+  --chat-assistant-code-bg-color: #F8FAFF;
+  --chat-user-bg-color: #d1fae5; /* Light Mint */
+  --chat-user-text-color: #064e3b;
+  
+  /* Shadows & Shapes */
+  --shadow-color: rgba(148, 163, 184, 0.15);
+  --shadow-soft: 0 8px 24px rgba(148, 163, 184, 0.12);
+  --shadow-hover: 0 12px 32px rgba(148, 163, 184, 0.2);
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+
+  /* Legacy vars just in case */
+  --black-in-light-mode: #1E293B;
+  --white-in-light-mode: #FFFFFF;
+  --black-in-dark-mode: #FFFFFF;
+  --white-in-dark-mode: #1E293B;
+  
+  --finbud-chat-sidebar-width: clamp(240px, 18vw, 300px);
+  --finbud-mobile-drawer-width: min(280px, calc(100vw - 56px));
 }
 
 :root.dark-mode,
 body.dark-mode {
-  /* Dark theme — neutral surfaces (avoid mauve #736969 banding) */
-  --bg-primary: #12141a;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --nav-bg: transparent;
-  --border-color: #334155;
-  --link-color: #e2e8f0;
-  --hover-bg: #1e293b;
-  --card-bg: #1e293b;
-  --shadow-color: rgba(0, 0, 0, 0.35);
-  --progress-color: #e9e2e2;
-  --logo-color: #f1f5f9;
-  --content-bg: #12141a;
-  --chat-text-color: #ffffff;
-  --chat-assistant-bg-color: var(--bg-primary);
-  --chat-assistant-text-color: var(--text-primary);
-  --chat-assistant-link-color: #8ab4f8;
-  --chat-assistant-code-bg-color: #2d2d2d;
-  --chat-user-bg-color: #2d2d2d;
-  --chat-user-text-color: #ffffff;
-  --black-in-light-mode: #ffffff;
-  --white-in-light-mode: #000000;
-  --agent-button-bg-color: #000000;
-  --agent-button-bg-active-color: #ffffff;
-  --black-in-dark-mode: #0b0d12;
-  --white-in-dark-mode: #f8fafc;
-  --dark-grey: #0b0d12;
+  /* Soft dark mode, avoiding heavy finance blacks */
+  --bg-primary: #1E1E2E;
+  --content-bg: #1E1E2E;
+  --text-primary: #F8FAFF;
+  --text-secondary: #94A3B8;
+  --nav-bg: #27273A;
+  --border-color: #33334D;
+  --link-color: #A78BFA;
+  --hover-bg: #2D2D42;
+  --card-bg: #27273A;
+  
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.35);
+
+  --chat-assistant-bg-color: #2D2D42;
+  --chat-assistant-text-color: #F8FAFF;
+  --chat-user-bg-color: #3B82F6; /* Playful blue instead of dark green to keep it crisp */
+  --chat-user-text-color: #FFFFFF;
+  
+  --agent-button-bg-color: #A78BFA;
+  --agent-button-bg-active-color: #C4B5FD;
+  
+  --black-in-light-mode: #FFFFFF;
+  --white-in-light-mode: #1E1E2E;
+  --black-in-dark-mode: #1E1E2E;
+  --white-in-dark-mode: #FFFFFF;
 }
 
 html.dark-mode {
@@ -517,6 +530,14 @@ body.finbud-chat-mobile-lock {
   background-color: var(--card-bg);
   color: var(--text-primary);
   border-color: var(--border-color);
+  border-radius: var(--radius-lg, 24px);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
 }
 
 .nav-actions {

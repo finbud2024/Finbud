@@ -568,7 +568,7 @@ export default {
 
 .weight-fill {
   height: 100%;
-  background-color: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
 }
 
 .weight-value {

@@ -88,13 +88,13 @@
 }
 
 .preview-btn {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   border: 1px solid #000000;
   color: #ffffff;
 }
 
 .preview-btn:hover {
-  background: #1a1a1a;
+  background: var(--agent-button-bg-color, #A78BFA);
   transform: translateY(-2px);
 }
 

@@ -456,14 +456,19 @@ export default {
 .pill-row {
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: 8px;
 	width: 100%;
-	padding: 6px 8px 6px 10px;
+	padding: 8px 10px 8px 14px;
 	box-sizing: border-box;
-	background-color: #ffffff;
-	border: 1px solid #e5e7eb;
-	border-radius: 9999px;
-	box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+	background-color: var(--card-bg, #ffffff);
+	border: 1px solid var(--border-color, #e5e7eb);
+	border-radius: var(--radius-pill, 9999px);
+	box-shadow: var(--shadow-soft, 0 8px 24px rgba(148, 163, 184, 0.12));
+	transition: box-shadow 0.3s ease;
+}
+
+.pill-row:focus-within {
+  box-shadow: var(--shadow-hover);
 }
 
 .pill-input {
@@ -494,20 +499,20 @@ export default {
 }
 
 .pill-btn--circle {
-	width: 40px;
-	height: 40px;
-	min-width: 40px;
+	width: 44px;
+	height: 44px;
+	min-width: 44px;
 	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
 	cursor: pointer;
-	transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+	transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .pill-btn--circle:active {
-	transform: scale(0.96);
+	transform: scale(0.92);
 }
 
 .pill-btn--muted {
@@ -525,12 +530,13 @@ export default {
 }
 
 .pill-btn--primary {
-	background-color: #111827;
+	background-color: var(--agent-button-bg-color, #A78BFA); /* Playful Purple */
 	color: #ffffff;
 }
 
 .pill-btn--primary:hover {
-	background-color: #000000;
+	background-color: var(--agent-button-bg-active-color, #8B5CF6);
+	transform: scale(1.05); /* Bouncy hover */
 }
 
 .waveform-icon {
@@ -599,12 +605,12 @@ export default {
 }
 
 :global(html.dark-mode) .pill-btn--primary {
-	background-color: #f9fafb;
+	background-color: var(--agent-button-bg-color, #A78BFA);
 	color: #111827;
 }
 
 :global(html.dark-mode) .pill-btn--primary:hover {
-	background-color: #e5e7eb;
+	background-color: var(--agent-button-bg-active-color, #C4B5FD);
 }
 
 :global(html.dark-mode) .pill-input::placeholder {

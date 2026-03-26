@@ -595,7 +595,7 @@ export default {
   color: white;
 }
 
-.stat-card.total .stat-icon { background: linear-gradient(135deg, #000000, #333333); }
+.stat-card.total .stat-icon { background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6); }
 .stat-card.categories .stat-icon { background: linear-gradient(135deg, #10b981, #047857); }
 .stat-card.top .stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
 .stat-card.transactions .stat-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }

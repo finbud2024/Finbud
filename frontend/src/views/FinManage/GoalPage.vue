@@ -1011,7 +1011,7 @@ export default {
 <style scoped>
 .goal-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   padding: 2rem;
   box-sizing: border-box;
   width: 100%;
@@ -1054,7 +1054,7 @@ export default {
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -1154,7 +1154,7 @@ export default {
   color: white;
 }
 
-.stat-card.balance .stat-icon { background: linear-gradient(135deg, #000000, #333333); }
+.stat-card.balance .stat-icon { background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6); }
 .stat-card.income .stat-icon { background: linear-gradient(135deg, #10b981, #047857); }
 .stat-card.expense .stat-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
 .stat-card.goals .stat-icon { background: linear-gradient(135deg, #000000, #444444); }
@@ -1330,7 +1330,7 @@ export default {
 }
 
 .edit-btn:hover {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
 }
 
@@ -1397,7 +1397,7 @@ export default {
   height: 100%;
   border-radius: 4px;
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
 }
 
 .goal-dates {
@@ -1490,7 +1490,7 @@ export default {
 
 .insight-icon.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
 .insight-icon.success { background: linear-gradient(135deg, #10b981, #047857); }
-.insight-icon.info { background: linear-gradient(135deg, #000000, #333333); }
+.insight-icon.info { background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6); }
 
 .insight-text {
   flex: 1;
@@ -1511,7 +1511,7 @@ export default {
 
 .insight-btn {
   padding: 0.5rem 1rem;
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   border-radius: 8px;

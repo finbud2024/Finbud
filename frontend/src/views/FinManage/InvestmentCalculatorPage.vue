@@ -8,7 +8,7 @@
     <div class="calculator-panel">
       <!-- Bot Chat Component -->
       <div class="bot-chat-container" :class="{ 'bot-visible': showBot, 'bot-hidden': hidingBot }">
-        <img class="bot-image" src="@/assets/botrmbg.png" alt="Bot" @click="hideMessage"/>
+        <img class="bot-image" src="@/assets/finbud_logo.png" alt="Bot" @click="hideMessage"/>
         <div class="bot-message" :class="{ 'message-visible': showMessage, 'message-hidden': hidingMessage }">
           <div v-if="isTyping" class="typing-animation">
             <span class="dot"></span>
@@ -552,7 +552,7 @@ input:focus, select:focus {
 
 /* Calculate Button */
 .calculate-btn {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   padding: 14px 30px;
   border: none;
@@ -778,7 +778,7 @@ input:focus, select:focus {
 }
 
 .bot-message {
-  background: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 12px;

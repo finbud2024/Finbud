@@ -355,7 +355,7 @@ export default {
 
 button {
   padding: 10px 20px;
-  background-color: #000000;
+  background: var(--agent-button-bg-color, #A78BFA);
   color: white;
   border: none;
   cursor: pointer;
@@ -461,7 +461,7 @@ button:hover {
 }
 
 .feature-section {
-  background-color: #000000; /* Blue background for consulting */
+  background: var(--agent-button-bg-color, #A78BFA); /* Blue background for consulting */
   color: white;
   padding: 40px;
   border-radius: 8px;

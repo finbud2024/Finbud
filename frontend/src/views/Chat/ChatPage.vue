@@ -4,13 +4,14 @@
 		:class="{
 			'navbar-expanded': isNavbarExpanded,
 			'chat-view--mobile': isMobile,
+			'has-sidebar': isSidebarVisibleBigScreen && !isMobile
 		}"
 	>
 		<!-- Desktop Sidebar (Fixed, Toggles Visibility) -->
 		<SideBar
 			v-if="isAuthenticated && !isMobile"
 			:is-visible.sync="isSidebarVisibleBigScreen"
-			:show-controls="false"
+			:show-controls="true"
 			:is-mobile="false"
 			class="sidebar-desktop"
 			:class="{
@@ -74,9 +75,6 @@ export default {
     isAuthenticatedStore(newVal) {
       this.isAuthenticated = newVal;
     },
-    isNavbarExpanded() {
-			this.syncSidebarWithNavbar();
-		},
 		isMobile() {
 			this.syncChatBodyScrollLock();
 		},
@@ -104,25 +102,11 @@ export default {
 		},
 		checkMobile() {
 			this.isMobile = window.innerWidth <= 768;
-			this.syncSidebarWithNavbar();
 		},
 		updateNavbarState() {
 			const navbar = document.getElementById('nav-bar');
 			if (!navbar) return;
-
-			// Sync only with explicit expand-toggle state to avoid hover jitter.
 			this.isNavbarExpanded = navbar.classList.contains('expanded');
-		},
-		syncSidebarWithNavbar() {
-			if (this.isNavbarExpanded) {
-				this.isSidebarVisibleBigScreen = false;
-				this.isSidebarVisibleMobile = false;
-				return;
-			}
-
-			if (!this.isMobile) {
-				this.isSidebarVisibleBigScreen = true;
-			}
 		},
 		openNewWindow(url) {
 			const screenWidth = window.screen.width, screenHeight = window.screen.height;
@@ -153,7 +137,6 @@ export default {
 		window.addEventListener('resize', this.checkMobile);
 
 		this.updateNavbarState();
-		this.syncSidebarWithNavbar();
 		const navbarElement = document.getElementById('nav-bar');
 		if (navbarElement) {
 			this.navbarObserver = new MutationObserver(this.updateNavbarState);
@@ -184,33 +167,39 @@ export default {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
+	max-width: 100%;
 	min-height: 100vh;
 	background-color: var(--bg-primary);
 	color: var(--text-primary);
-	padding-left: 80px; /* Collapsed NavBar width */
-	transition: padding-left 0.3s ease-in-out;
+	padding-left: 0;
+	transition: padding 0.3s ease-in-out;
 	box-sizing: border-box;
 	position: relative;
+	overflow: hidden; /* Prevent any internal overflow from creating page scrolls */
+}
+
+.chat-view-container.has-sidebar {
+	padding-right: var(--finbud-chat-sidebar-width, clamp(248px, 16vw, 280px));
 }
 
 .chat-view-container.navbar-expanded {
-	padding-left: 280px; /* Expanded NavBar width */
+	padding-left: 0; /* Handled by App.vue */
 }
 
 /* Desktop Sidebar Styling — width matches SideBar (.side-bar) via --finbud-chat-sidebar-width */
 .sidebar-desktop {
 	position: fixed;
-	left: 80px; /* After collapsed NavBar */
+	right: 0;
 	top: 0;
 	height: 100vh;
 	width: var(--finbud-chat-sidebar-width, clamp(248px, 16vw, 280px));
-	overflow: hidden;
-	z-index: 990; /* Below NavBar (1000), Above Chat Area (10) */
-	transition: left 0.3s ease-in-out, width 0.25s ease-in-out;
+	z-index: 990;
+	transition: transform 0.3s ease-in-out, width 0.25s ease-in-out;
+	pointer-events: none; /* Let clicks pass through empty areas */
 }
 
-.sidebar-desktop.navbar-expanded {
-	left: 280px; /* After expanded NavBar */
+.sidebar-desktop > * {
+	pointer-events: auto; /* Re-enable for the component itself */
 }
 
 .sidebar-desktop.sidebar-hidden {

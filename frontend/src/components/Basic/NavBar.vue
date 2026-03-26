@@ -36,7 +36,7 @@
         class="logo-link"
         :class="{ 'logo-link-collapsed': !isMobile && !isExpanded }"
       >
-        <img src="@/assets/home-page/FinbudSmallLogo.png" class="navbar-brand" alt="FinBud Logo" />
+        <img src="@/assets/finbud_logo.png" class="navbar-brand" alt="FinBud Logo" />
       </router-link>
 
       <button
@@ -92,15 +92,11 @@
           </div>
         </li>
 
-        <li class="dropdown" ref="finManageDropdown" v-if="isAuthenticated">
-          <div class="services-dropdown" @click="toggleDropdown('finManage')">
+        <li v-if="isAuthenticated">
+          <router-link to="/goal" class="services-dropdown" style="text-decoration: none;">
             <font-awesome-icon icon="fa-solid fa-wallet" class="icon" />
             <span>{{ $t("finManage") }}</span>
-            <span class="arrow-down"></span>
-          </div>
-          <div class="dropdown-content" v-show="activeDropdown === 'finManage'">
-            <router-link to="/goal">{{ $t("goal") }}</router-link>
-          </div>
+          </router-link>
         </li>
 
         <!-- Subscribe FinPlus Section -->
@@ -140,6 +136,7 @@
           <div class="user-info">
             <div class="user-name">{{ profileName }}</div>
                 <FinCoinDisplay :balance="finCoinBalance" />
+                <StreakBar />
             </div>
         </router-link>
         
@@ -176,6 +173,7 @@
 import axios from "axios";
 import defaultImage from "@/assets/anonymous.png";
 import FinCoinDisplay from "@/components/FinCoinDisplay.vue";
+import StreakBar from "@/components/Basic/StreakBar.vue";
 import NavbarNoti from "../Notification/NavbarNoti.vue";
 import LoadingPage from "@/views/Home/LoadingPage.vue";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -202,6 +200,7 @@ export default {
   name: "NavBar",
   components: {
     FinCoinDisplay,
+    StreakBar,
     NavbarNoti,
     LoadingPage,
     FontAwesomeIcon,
@@ -630,7 +629,7 @@ export default {
   transition: all 0.3s ease;
   font-weight: 600;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   border: 2px solid transparent;
@@ -645,7 +644,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, #000000, #333333, #000000);
+  background: linear-gradient(45deg, #A78BFA, #8B5CF6, #A78BFA);
   z-index: -1;
   border-radius: 10px;
 }
@@ -744,7 +743,7 @@ export default {
 }
 
 .dropdown-content a:hover {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   transform: translateX(4px);
 }
@@ -938,7 +937,7 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 0.875rem 1rem;
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   text-decoration: none;
   border-radius: 12px;
@@ -1164,7 +1163,7 @@ export default {
 }
 
 .dark-mode .dropdown-content a:hover {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
 }
 
@@ -1246,7 +1245,7 @@ export default {
 }
 
 .auth-btn {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -1266,7 +1265,7 @@ export default {
 }
 
 .mobile-menu-toggle {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   border: none;
   padding: 0.5rem;
@@ -1276,7 +1275,7 @@ export default {
 }
 
 .mobile-auth-btn {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;

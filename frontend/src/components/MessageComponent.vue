@@ -109,6 +109,29 @@
             </div>
           </template>
         </div>
+        <!-- SLOTS FOR CUSTOM CONTENT (GAMES, ETC) -->
+        <slot></slot>
+        
+        <!-- Finance Card (Transactions/Charts) -->
+        <div v-if="financeCard" class="finance-summary-card animate-up">
+          <div class="summary-header">
+            <span class="summary-label">{{ financeCard.type === 'income' ? 'Income' : 'Expense' }} Recorded</span>
+            <span class="summary-amount" :class="financeCard.type">
+              {{ financeCard.type === 'income' ? '+' : '-' }}${{ financeCard.amount }}
+            </span>
+          </div>
+          <div class="summary-desc">{{ financeCard.description }}</div>
+          
+          <div v-if="financeCard.chartData" class="summary-chart">
+            <apexchart 
+              type="donut" 
+              height="200" 
+              :options="financeCard.chartData.options" 
+              :series="financeCard.chartData.series" 
+            />
+          </div>
+        </div>
+        
         <!-- Sources -->
         <section class="sources" v-if="sources && sources.length > 0">
           <SearchResult :sources="sources" />
@@ -475,14 +498,13 @@ tr:nth-child(odd) {
   overflow: auto;
 }
 
-/* Make sure user messages with markdown have proper styling */
 .user .message-content.markdown-content :deep(h1),
 .user .message-content.markdown-content :deep(h2),
 .user .message-content.markdown-content :deep(h3),
 .user .message-content.markdown-content :deep(h4),
 .user .message-content.markdown-content :deep(p),
 .user .message-content.markdown-content :deep(li) {
-  color: #000;
+  color: inherit;
 }
 .message-wrapper {
   display: flex;
@@ -511,8 +533,16 @@ tr:nth-child(odd) {
 .user .message-content {
   position: relative;
   padding: 1rem 1.25rem;
-  border-radius: 15px;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg, 24px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background-color: var(--chat-user-bg-color, #d1fae5);
+  color: var(--chat-user-text-color, #064e3b);
+  box-shadow: var(--shadow-soft, 0 8px 24px rgba(148, 163, 184, 0.12));
+}
+
+.user .message-content:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 .user .message-content-wrapper {
@@ -598,12 +628,12 @@ tr:nth-child(odd) {
 @keyframes thinking {
   0%,
   100% {
-    opacity: 0.3;
-    transform: scale(1);
+    opacity: 0.4;
+    transform: translateY(0) scale(0.9);
   }
   50% {
     opacity: 1;
-    transform: scale(1.2);
+    transform: translateY(-4px) scale(1.1);
   }
 }
 
@@ -617,8 +647,8 @@ tr:nth-child(odd) {
 }
 
 .message-container.is-user .message-content {
-  background-color: #f0f0f0;
-  color: #000;
+  background-color: var(--chat-user-bg-color, #f0f0f0);
+  color: var(--chat-user-text-color, #000);
 }
 
 .combined-content {
@@ -671,8 +701,8 @@ tr:nth-child(odd) {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #fff; /* Added background color for sidebar */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
+  background-color: var(--card-bg, #fff); /* Replaced hardcoded #fff */
+  box-shadow: 0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.1));
   border-radius: 8px; /* Added border-radius for rounded corners */
   margin-right: 20px; /* Added margin for spacing */
 }
@@ -700,10 +730,10 @@ tr:nth-child(odd) {
   flex-direction: column;
   flex: 1;
   position: relative;
-  background-color: #fff; /* Added background color for chat container */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Added shadow for depth */
-  border-radius: 8px; /* Added border-radius for rounded corners */
-  padding: 20px; /* Added padding for spacing */
+  background-color: var(--bg-primary, #fff); /* Fix background */
+  box-shadow: 0 2px 8px var(--shadow-color, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
+  padding: 20px;
 }
 
 @media (max-width: 768px) {
@@ -739,7 +769,7 @@ tr:nth-child(odd) {
   top: 0;
   width: 60%;
   height: 100%;
-  background-color: rgb(248, 249, 254);
+  background-color: var(--bg-primary, rgb(248, 249, 254));
   z-index: 1001;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
@@ -856,13 +886,20 @@ tr:nth-child(odd) {
 
 .finbud-bot-bubble,
 .finbud-mentor-bubble {
-  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06);
-  border-radius: 16px !important;
-  padding: 16px !important;
+  background-color: var(--chat-assistant-bg-color);
+  box-shadow: var(--shadow-soft, 0 8px 24px rgba(148, 163, 184, 0.12));
+  border-radius: var(--radius-lg, 24px) !important;
+  padding: 16px 20px !important;
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  font-size: 0.9375rem;
-  line-height: 1.55;
-  color: #1a1d26;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--chat-assistant-text-color, #1E293B);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.finbud-bot-bubble:hover,
+.finbud-mentor-bubble:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 .mentor-insight {
@@ -920,6 +957,63 @@ tr:nth-child(odd) {
 .finance-mini-card__risk--high {
   color: #ea580c;
   font-weight: 500;
+}
+
+/* New Finance Summary Card Styles */
+.finance-summary-card {
+  margin: 16px 0;
+  padding: 20px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.summary-amount {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.summary-amount.income { color: #10B981; }
+.summary-amount.expense { color: #EF4444; }
+
+.summary-desc {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 20px;
+}
+
+.summary-chart {
+  background: #F8FAFC;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.animate-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .relevant-questions--chips ul {

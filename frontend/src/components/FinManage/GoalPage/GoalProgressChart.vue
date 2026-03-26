@@ -137,7 +137,7 @@ export default {
 .goal-icon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   border-radius: 8px;
   display: flex;
   align-items: center;

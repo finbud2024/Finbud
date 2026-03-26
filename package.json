@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "netlify:build": "cd frontend && vue-cli-service build",
+    "netlify:build": "cd frontend && vue-cli-service build && mv dist/_redirects.txt dist/_redirects || true",
     "client": "cd frontend && vue-cli-service serve",
     "client:dev": "cd frontend && vue-cli-service serve --skip-plugins @vue/cli-plugin-eslint",
     "start": "nodemon backend/functions/server.mjs",

@@ -408,7 +408,7 @@ export default {
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   color: white;
   padding: 6rem 2rem;
   position: relative;
@@ -683,7 +683,7 @@ export default {
 }
 
 .basic-btn {
-  background: linear-gradient(135deg, #000000, #333333);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
 }
 
@@ -732,7 +732,7 @@ export default {
 .table-header {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  background: linear-gradient(135deg, #000000, #1a1a1a);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA), #8B5CF6);
   color: white;
   font-weight: 700;
   padding: 1.5rem;
@@ -829,7 +829,7 @@ export default {
 
 /* CTA Section */
 .cta-section {
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  background: linear-gradient(135deg, var(--agent-button-bg-color, #A78BFA) 0%, #8B5CF6 100%);
   color: white;
   padding: 6rem 2rem;
   text-align: center;

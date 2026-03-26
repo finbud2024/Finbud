@@ -120,8 +120,8 @@ export default {
 
 .about-tech-subnav__link.active {
   color: var(--secondary-color, #fff);
-  background: var(--primary-color, #000);
-  border-color: var(--primary-color, #000);
+  background: var(--agent-button-bg-color, #A78BFA);
+  border-color: var(--agent-button-bg-color, #A78BFA);
 }
 
 .about-technology-page__section {

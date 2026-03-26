@@ -12,19 +12,25 @@
       </svg>
     </button>
 
-    <div v-if="showControls" class="overlay" :class="{ active: isVisible }" @click="closeSidebar"></div>
+    <div v-if="showControls && isMobile" class="overlay" :class="{ active: isVisible }" @click="closeSidebar"></div>
 
     <div class="side-bar" :class="{ collapsed: !isVisible }">
       <div class="sidebar-header">
         <router-link to="/">
           <div class="footer-image">
-            <img src="@/assets/home-page/FinBudPix.png" class="logo-img" alt="FinBud Logo" />
+            <img src="@/assets/finbud_logo.png" class="logo-img" alt="FinBud Logo" />
           </div>
         </router-link>
       </div>
-      <button class="add-thread-btn" @click="addThread()">
-        <font-awesome-icon icon="fa-solid fa-plus" />
-      </button>
+      <div class="sidebar-actions">
+        <button class="add-thread-btn" @click="addThread()" title="New Chat">
+          <font-awesome-icon icon="fa-solid fa-plus" />
+          <span>{{ $t('chatComponent.newChat') || 'New' }}</span>
+        </button>
+        <button class="delete-all-btn" @click="promptDeleteAll" title="Delete All chats">
+          <font-awesome-icon icon="fa-solid fa-trash-can" />
+        </button>
+      </div>
       <ul class="thread-list">
         <template v-if="groupedThreads.today.length">
           <div class="group-label">Today</div>
@@ -107,6 +113,18 @@
           </div>
         </div>
       </div>
+    <div v-if="showConfirmDeleteAllModal" class="delete-prompt-overlay">
+      <div class="delete-prompt-content">
+        <div class="delete-header">Delete All Chats?</div>
+        <div class="delete-body">
+          <p>Are you sure you want to delete <strong class="delete-thread-name">EVERYTHING</strong>? This cannot be undone.</p>
+          <div class="delete-button-container">
+            <button class="cancel-button" @click="showConfirmDeleteAllModal = false">{{ $t('chatComponent.cancel') }}</button>
+            <button class="confirm-button" @click="confirmDeleteAll">Delete Everything</button>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -137,6 +155,7 @@ export default {
       threads: [],
       deleteIndex: null,
       showConfirmDeleteModal: false,
+      showConfirmDeleteAllModal: false,
     };
   },
   computed: {
@@ -214,15 +233,45 @@ export default {
       try {
         this.threads.splice(index, 1);
         if (this.threads.length > 0) {
-          this.selectThread(0);
+          const newIdx = index === 0 ? 0 : index - 1;
+          this.selectThread(newIdx);
         } else {
           this.currentThread = {};
           this.messages = [];
+          this.$store.commit("threads/setThreadID", "");
+          this.$router.push({ name: 'Chat' });
         }
         await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/chats/t/${threadId}`);
         await axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/threads/${threadId}`);
       } catch (err) {
         console.error("Error on deleting thread or its associated chats:", err);
+      }
+    },
+    promptDeleteAll() {
+      if (this.threads.length === 0) return;
+      this.showConfirmDeleteAllModal = true;
+    },
+    async confirmDeleteAll() {
+      try {
+        const userId = this.$store.getters["users/userId"];
+        // Assuming there is a bulk delete endpoint, if not, we loop
+        // For now, let's assume we can loop safely or there is an endpoint
+        // I'll try to find a bulk endpoint or just clear local state and call backend
+        const threadIds = this.threads.map(t => t.id);
+        
+        this.threads = [];
+        this.$store.commit("threads/setThreadID", "");
+        this.showConfirmDeleteAllModal = false;
+        
+        // Parallel deletes
+        await Promise.all(threadIds.map(id => {
+          return axios.delete(`${process.env.VUE_APP_DEPLOY_URL}/threads/${id}`);
+        }));
+        
+        this.$router.push({ name: 'Chat' });
+        toast.success("All chats cleared!");
+      } catch (err) {
+        console.error("Error on deleting all threads:", err);
       }
     },
     editThread(index) {
@@ -340,13 +389,13 @@ export default {
   width: var(--finbud-chat-sidebar-width, clamp(248px, 16vw, 280px));
   max-width: 100vw;
   box-sizing: border-box;
-  background: linear-gradient(to bottom, var(--bg-primary), var(--bg-secondary));
+  background: var(--bg-primary); /* Remove linear gradient which might use undefined vars */
   padding: 20px;
   height: 100vh;
   overflow-y: auto;
   color: var(--text-primary);
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05);
+  border-left: 1px solid var(--border-color);
+  box-shadow: -4px 0 15px var(--shadow-color, rgba(0, 0, 0, 0.05));
   transition: all 0.3s ease;
   position: fixed;
   right: 0;
@@ -360,11 +409,11 @@ export default {
 
 .toggle-btn {
   position: fixed;
-  right: 20px;
-  top: 20px;
-  z-index: 1001;
+  right: 15px;
+  top: 15px;
+  z-index: 1060;
   background: var(--bg-primary);
-  border: none;
+  border: 1px solid var(--border-color);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -372,7 +421,7 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px var(--shadow-color, rgba(0, 0, 0, 0.1));
   transition: all 0.3s ease;
 }
 
@@ -440,28 +489,53 @@ export default {
   transform: scale(1.05);
 }
 
+.sidebar-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
 .add-thread-btn {
-  width: 100%;
+  flex: 1;
   padding: 12px;
-  background: linear-gradient(45deg, #000, #333);
+  background: linear-gradient(45deg, #A78BFA, #8B5CF6);
   color: white;
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 20px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(167, 139, 250, 0.2);
+}
+
+.delete-all-btn {
+  width: 48px;
+  padding: 12px;
+  background: #fff;
+  color: #EF4444;
+  border: 2px solid #FEE2E2;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.delete-all-btn:hover {
+  background: #FEE2E2;
+  transform: translateY(-2px);
 }
 
 .add-thread-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(45deg, #333, #000);
+  box-shadow: 0 6px 20px rgba(167, 139, 250, 0.3);
+  background: linear-gradient(45deg, #8B5CF6, #A78BFA);
 }
 
 .thread-list {
@@ -485,7 +559,14 @@ export default {
   border-radius: 10px;
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible !important;
+}
+
+.thread-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: visible !important;
 }
 
 .thread-item {
@@ -493,8 +574,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-primary);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: var(--card-bg, var(--bg-primary));
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -506,9 +587,14 @@ export default {
 }
 
 .thread.clicked .thread-item {
-  background: #000;
-  color: white;
+  background: var(--agent-button-bg-color, #000);
+  color: var(--white-in-light-mode, #fff);
   transform: translateX(5px);
+  border-color: transparent;
+}
+.dark-mode .thread.clicked .thread-item {
+  background: var(--agent-button-bg-active-color, #fff);
+  color: var(--black-in-dark-mode, #000);
 }
 
 .thread-name {
@@ -533,14 +619,16 @@ export default {
 
 .dropdown {
   position: absolute;
-  right: 0;
-  top: 100%;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  overflow: hidden;
-  animation: slideIn 0.3s ease;
+  right: 15px;
+  top: 40px;
+  background: var(--card-bg, white);
+  border: 2px solid var(--agent-button-bg-color, #A78BFA);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(167, 139, 250, 0.2);
+  z-index: 9999 !important;
+  overflow: visible;
+  animation: slideIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-width: 140px;
 }
 
 .dropdown > div {
@@ -600,27 +688,37 @@ input:focus {
   }
 }
 
-.delete-prnetsompt-overlay {
-  position: absolute;
+.delete-prompt-overlay {
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 10000;
+  pointer-events: auto;
 }
 
 .delete-prompt-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
+  position: relative;
+  width: 90%;
+  max-width: 400px;
   background: var(--bg-primary);
   color: var(--text-primary);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0 10px var(--shadow-color);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color);
+  animation: modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalScaleUp {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .delete-header {
@@ -658,22 +756,35 @@ input:focus {
 }
 
 .confirm-button {
-  background: red;
+  background: #EF4444;
   color: white;
+  border: none;
+  font-weight: 700;
+  padding: 12px 28px !important;
+  border-radius: 99px !important;
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
+  transition: all 0.3s ease;
 }
 
 .confirm-button:hover {
-  background: #b30900;
+  background: #DC2626;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px rgba(239, 68, 68, 0.3);
 }
 
 .cancel-button {
-  color: var(--text-primary);
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  color: #64748b;
+  background-color: #f1f5f9;
+  border: none;
+  font-weight: 600;
+  padding: 12px 28px !important;
+  border-radius: 99px !important;
+  transition: all 0.3s ease;
 }
 
 .cancel-button:hover {
-  background: var(--hover-bg);
+  background: #e2e8f0;
+  color: #1e293b;
 }
 
 .footer-image img {
