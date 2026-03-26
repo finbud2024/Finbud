@@ -2224,8 +2224,12 @@ Please write a short, friendly explanation telling the user why you cannot categ
 
 @media (max-width: 768px) {
   .chat-container {
-    --content-max-width: 90%;
-    --content-padding-horizontal: 20px;
+    --content-max-width: 100%;
+    --content-padding-horizontal: 12px;
+  }
+  .chat-frame-content {
+    margin-bottom: 8px;
+    padding: 12px var(--content-padding-horizontal);
   }
 }
 

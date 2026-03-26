@@ -644,20 +644,30 @@ tr:nth-child(odd) {
   align-items: flex-end;
 }
 
-/* Mobile: wider messages like ChatGPT */
+/* Mobile: spacious messages like ChatGPT */
 @media (max-width: 768px) {
+  .bot .avatar {
+    display: none;
+  }
+  .user .avatar {
+    width: 24px;
+  }
   .bot .message-content-wrapper {
-    padding-right: 8px;
+    padding-right: 0;
+    max-width: 100%;
   }
   .user .message-content-wrapper {
-    max-width: 85%;
-  }
-  .bot .avatar,
-  .user .avatar {
-    width: 28px;
+    max-width: 88%;
   }
   .message-wrapper {
     gap: 6px;
+    margin-bottom: 12px;
+  }
+  .message-content {
+    padding: 4px 0;
+  }
+  .user .message-content {
+    padding: 0.75rem 1rem;
   }
 }
 
