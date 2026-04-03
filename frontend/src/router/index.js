@@ -1,27 +1,35 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store";
-import LoginView from "@/views/Authentication/LoginPage.vue";
-import SignUp from "@/views/Authentication/SignUpPage.vue";
-import Home from "@/views/Home/HomePage.vue";
-import ChatPage from "@/views/Chat/ChatPage.vue";
-import SideBar from "@/components/Basic/SideBar.vue";
-import PricingPage from "@/views/Unused/PricingPage.vue";
-import AboutTechnologyPage from "@/views/Overview/AboutTechnologyPage.vue";
-import StockSimulator from "@/views/FinInvest/StockSimulatorPage.vue";
-import RiskAnalysis from "@/views/FinManage/RiskAnalysisPage.vue";
-import GoalPage from "@/views/FinManage/GoalPage.vue";
-import MarketDataCenter from "@/views/FinManage/SuperInvestorMarketDataCenter.vue";
-import ProfilePage from "@/views/Home/ProfilePage.vue";
-import MortgageCalc from "@/views/FinManage/MortgageCalculatorPage.vue";
-import SuperInvestors from "@/views/FinManage/SuperInvestorsPage.vue";
-import InvestorDetail from "@/views/FinManage/SuperInvestorsInvestorsDetail.vue";
-import ForgotPassword from "@/views/Authentication/ForgotPasswordPage.vue";
-import InvestmentCalculator from "@/views/FinManage/InvestmentCalculatorPage.vue";
-import FundLetterPage from "@/views/FinInvest/FundLetterPage.vue";
-import NotificationCenter from "@/views/Home/NotificationCenter.vue";
-import SubscriptionPage from "@/views/Subscription/SubscriptionPage.vue";
 
-import CalculatorsPage from "@/views/FinManage/CalculatorsPage.vue";
+const LoginView = () => import("@/views/Authentication/LoginPage.vue");
+const SignUp = () => import("@/views/Authentication/SignUpPage.vue");
+const Home = () => import("@/views/Home/HomePage.vue");
+const ChatPage = () => import("@/views/Chat/ChatPage.vue");
+const SideBar = () => import("@/components/Basic/SideBar.vue");
+const PricingPage = () => import("@/views/Unused/PricingPage.vue");
+const AboutTechnologyPage = () =>
+  import("@/views/Overview/AboutTechnologyPage.vue");
+const StockSimulator = () => import("@/views/FinInvest/StockSimulatorPage.vue");
+const RiskAnalysis = () => import("@/views/FinManage/RiskAnalysisPage.vue");
+const GoalPage = () => import("@/views/FinManage/GoalPage.vue");
+const MarketDataCenter = () =>
+  import("@/views/FinManage/SuperInvestorMarketDataCenter.vue");
+const ProfilePage = () => import("@/views/Home/ProfilePage.vue");
+const MortgageCalc = () =>
+  import("@/views/FinManage/MortgageCalculatorPage.vue");
+const SuperInvestors = () =>
+  import("@/views/FinManage/SuperInvestorsPage.vue");
+const InvestorDetail = () =>
+  import("@/views/FinManage/SuperInvestorsInvestorsDetail.vue");
+const ForgotPassword = () =>
+  import("@/views/Authentication/ForgotPasswordPage.vue");
+const FundLetterPage = () => import("@/views/FinInvest/FundLetterPage.vue");
+const NotificationCenter = () =>
+  import("@/views/Home/NotificationCenter.vue");
+const SubscriptionPage = () =>
+  import("@/views/Subscription/SubscriptionPage.vue");
+const CalculatorsPage = () =>
+  import("@/views/FinManage/CalculatorsPage.vue");
 
 const routes = [
   {
@@ -30,8 +38,8 @@ const routes = [
     component: Home,
   },
   {
-    path: "/*",
-    component: 404,
+    path: "/:pathMatch(.*)*",
+    redirect: "/",
   },
   {
     path: "/login",
@@ -50,6 +58,7 @@ const routes = [
       default: ChatPage,
       sidebar: SideBar,
     },
+    meta: { requiresAuth: true },
   },
   {
     path: "/tech",
@@ -80,6 +89,7 @@ const routes = [
     path: "/goal",
     name: "GoalPage",
     component: GoalPage,
+    meta: { requiresAuth: true },
   },
   {
     path: "/market",
@@ -90,6 +100,7 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: ProfilePage,
+    meta: { requiresAuth: true },
   },
   {
     path: "/calculators",
@@ -128,6 +139,7 @@ const routes = [
     path: "/notifications",
     name: "NotificationCenter",
     component: NotificationCenter,
+    meta: { requiresAuth: true },
   },
   {
     path: "/subscribe",
@@ -141,35 +153,18 @@ const router = createRouter({
   routes,
 });
 
-// Add navigation guard
 router.beforeEach(async (to, from, next) => {
-  console.log(
-    "Router guard - navigating to:",
-    to.path,
-    "requires auth:",
-    to.meta.requiresAuth
-  );
+  const needsAuth = Boolean(to.meta.requiresAuth);
 
-  if (!store.getters["users/isAuthenticated"]) {
+  if (needsAuth && !store.state.users.authChecked) {
     await store.dispatch("users/fetchCurrentUser");
   }
 
-  console.log(
-    "Router guard - authenticated:",
-    store.getters["users/isAuthenticated"]
-  );
-
-  // Check if route requires authentication
-  if (to.meta.requiresAuth && !store.getters["users/isAuthenticated"]) {
-    console.log(
-      "Router guard - redirecting to login with redirect:",
-      to.fullPath
-    );
-    // Redirect to login page
-    next({ name: "Login", query: { redirect: to.fullPath } });
-  } else {
-    next();
+  if (needsAuth && !store.getters["users/isAuthenticated"]) {
+    return next({ name: "Login", query: { redirect: to.fullPath } });
   }
+
+  next();
 });
 
 export default router;

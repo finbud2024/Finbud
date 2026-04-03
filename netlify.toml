@@ -19,4 +19,10 @@
   NODE_VERSION = "20"
   NPM_FLAGS = "--legacy-peer-deps"
   NODE_OPTIONS = "--no-warnings"
-
+[[headers]]
+  for = "/*"  # Applies to all paths; you can scope to specific routes like "/api/*" if needed
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' https: data:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"

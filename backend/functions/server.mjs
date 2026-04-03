@@ -35,7 +35,7 @@ import finCompareRoute from "../Endpoints/finance/finCompareRoute.js";
 // Import new services
 import peAnalysisRoute from '../Endpoints/services/peAnalysisService.js';
 import aiWorkflowRoute from '../Endpoints/services/aiWorkflowService.js';
-
+import helmet from "helmet";
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
@@ -50,6 +50,7 @@ const allowedOrigins = [
 ];
 
 app.use(
+  helmet(),
   cors({
     origin: function (origin, callback) {
       // ✅ Allow undefined origins (like Postman, curl, or internal requests)
