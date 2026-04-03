@@ -466,25 +466,37 @@ export default {
 
     const savedLang = localStorage.getItem("language");
     if (savedLang) this.$i18n.locale = savedLang;
+    const routeNeedsAuth =
+      this.$route.meta.requiresAuth || this.$route.path === "/chat-view";
 
-    // Always fetch current user data to ensure we have the latest info
-    await this.$store.dispatch("users/fetchCurrentUser");
+    if (routeNeedsAuth && !this.$store.state.users.authChecked) {
+      await this.$store.dispatch("users/fetchCurrentUser");
+    }
+    // // Always fetch current user data to ensure we have the latest info
+    // await this.$store.dispatch("users/fetchCurrentUser");
     
-    // Debug logging
-    const userData = this.$store.getters["users/currentUser"];
-    console.log("NavBar - User data loaded:", userData);
-    console.log("NavBar - Display name:", this.profileName);
-    console.log("NavBar - Profile image:", this.profileImage);
+    // // Debug logging
+    // const userData = this.$store.getters["users/currentUser"];
+    // console.log("NavBar - User data loaded:", userData);
+    // console.log("NavBar - Display name:", this.profileName);
+    // console.log("NavBar - Profile image:", this.profileImage);
 
     const storedDarkMode = localStorage.getItem("darkMode");
     this.isDarkMode = storedDarkMode === "true";
     document.documentElement.classList.toggle("dark-mode", this.isDarkMode);
     document.body.classList.toggle("dark-mode", this.isDarkMode);
 
-    if (this.isAuthenticated) {
-      this.$store.dispatch("finCoin/fetchFinCoinBalance");
+    if (this.$store.getters["users/isAuthenticated"]) {
+      const run = () => this.$store.dispatch("finCoin/fetchFinCoinBalance");
+
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(run);
+      } else {
+        setTimeout(run, 300);
+      }
     }
-    document.addEventListener('click', this.closeDropdowns);
+
+  document.addEventListener("click", this.closeDropdowns);
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);

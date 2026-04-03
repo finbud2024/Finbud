@@ -59,22 +59,10 @@ export default {
       isTyping: false,
       messageVisible: false,
       showLoadingPage: false,
-      isInitialLoad: true,
       logoClicked: false,
     };
   },
   async mounted() {
-    if (this.isInitialLoad) {
-      this.showLoadingPage = true;
-      this.loadingStartTime = Date.now();
-
-      const minLoadingTime = 1200;
-      setTimeout(() => {
-        this.showLoadingPage = false;
-        this.isInitialLoad = false;
-      }, minLoadingTime);
-    }
-
     this.displayedMessage = "Hello! Welcome to FinBud.";
     document.addEventListener("click", this.handleClickOutside);
 
